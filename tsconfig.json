@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "plugins": [{ "name": "typescript-tslint-plugin" }]
+  },
+  "include": ["src/**/*"]
+}

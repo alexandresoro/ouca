@@ -1,0 +1,14 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "import-spacing": false,
+    "max-line-length": [
+      true,
+      { "limit": 120, "ignore-pattern": "^import |^export {(.*?)}" }
+    ],
+    "member-access": false,
+    "no-console": false,
+    "object-literal-sort-keys": false,
+    "trailing-comma": false
+  }
+}

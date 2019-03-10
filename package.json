@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "build": "tsc",
+    "dev": "yarn build && yarn start",
+    "start": "node dist/backend"
+  },
+  "dependencies": {
+    "lodash": "*",
+    "mysql": "*"
+  },
+  "devDependencies": {
+    "@types/lodash": "*",
+    "@types/mysql": "*",
+    "@types/node": "10",
+    "basenaturaliste-model": "file:./../basenaturaliste-model",
+    "tslint": "*",
+    "typescript": "*",
+    "typescript-tslint-plugin": "*"
+  }
+}
