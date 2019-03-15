@@ -11,6 +11,4 @@ export interface Espece extends EntiteAvecLibelle {
   nomFrancais: string;
 
   nomLatin: string;
-
-  nbDonnees: number;
 }

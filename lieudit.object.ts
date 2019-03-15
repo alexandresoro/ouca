@@ -11,8 +11,6 @@ export interface Lieudit extends EntiteSimple {
 
   altitude: number;
 
-  longitude: number;
-
   latitude: number;
 
   nbDonnees: number;
