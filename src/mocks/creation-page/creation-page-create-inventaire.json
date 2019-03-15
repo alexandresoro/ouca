@@ -1,0 +1,61 @@
+{
+  "object": {
+    "id": 7,
+    "date": "2018-07-14",
+    "heure": "14:00",
+    "duree": "00:15",
+    "temperature": 18,
+    "dateCreation": 1531569898534,
+    "observateur": {
+      "id": 27,
+      "libelle": "CARRIER Laurent"
+    },
+    "lieudit": {
+      "id": 1020,
+      "nom": "la Griotte",
+      "altitude": 190,
+      "longitude": 811705,
+      "latitude": 2021515,
+      "commune": {
+        "id": 4,
+        "code": 77,
+        "nom": "CHARMES-SUR-L'HERBASSE",
+        "departement": {
+          "id": 6,
+          "code": "26"
+        }
+      }
+    },
+    "altitude": null,
+    "longitude": null,
+    "latitude": null,
+    "meteos": [
+      {
+        "id": 19,
+        "libelle": "Vent fort"
+      },
+      {
+        "id": 17,
+        "libelle": "Soleil"
+      }
+    ],
+    "associes": [
+      {
+        "id": 28,
+        "libelle": "CARRIER Marie"
+      },
+      {
+        "id": 26,
+        "libelle": "CARRIER Camille"
+      }
+    ]
+  },
+  "messages": [
+    {
+      "fieldId": null,
+      "type": "SUCCESS",
+      "value": "L'inventaire a été créé avec succès."
+    }
+  ],
+  "status": "SUCCESS"
+}

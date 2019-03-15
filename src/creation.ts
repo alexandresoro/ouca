@@ -1,7 +1,7 @@
 import { CreationPage } from "basenaturaliste-model/creation-page.object";
 import * as _ from "lodash";
 import * as mysql from "mysql";
-import creationPageInitMock from "./mocks/creation-page-init.json";
+import creationPageInitMock from "./mocks/creation-page/creation-page-init.json";
 import { getAllFromTablesQuery, SqlConnection } from "./sql/sql-connection.js";
 
 const getDefaultValueForConfigurationField = (
@@ -12,7 +12,7 @@ const getDefaultValueForConfigurationField = (
 ): any | number | boolean => {
   const retrievedValue = _.find(
     configuration,
-    value => value.libelle === libelle
+    (value) => value.libelle === libelle
   ).value;
   if (isBoolean) {
     return +retrievedValue === 1;
@@ -110,14 +110,14 @@ export function creationInit(
             ),
             observateurs: results[1],
             departements: results[2],
-            communes: _.map(results[3], communeDb => {
+            communes: _.map(results[3], (communeDb) => {
               const { departement_id, ...otherParams } = communeDb;
               return {
                 ...otherParams,
                 departementId: communeDb.departement_id
               };
             }),
-            lieudits: _.map(results[4], lieuDitDb => {
+            lieudits: _.map(results[4], (lieuDitDb) => {
               const { commune_id, ...otherParams } = lieuDitDb;
               return {
                 ...otherParams,
@@ -126,7 +126,7 @@ export function creationInit(
             }),
             meteos: results[5],
             classes: results[6],
-            especes: _.map(results[7], especeDb => {
+            especes: _.map(results[7], (especeDb) => {
               const { classe_id, ...otherParams } = especeDb;
               return {
                 ...otherParams,

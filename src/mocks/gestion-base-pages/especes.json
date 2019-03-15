@@ -1,0 +1,5906 @@
+[{
+  "id": 1228,
+  "code": "ACCGEN",
+  "nomFrancais": "Autour des palombes",
+  "nomLatin": "Accipiter gentilis",
+  "classeId": 14
+}, {
+  "id": 1396,
+  "code": "ACCNIS",
+  "nomFrancais": "Epervier d'Europe",
+  "nomLatin": "Accipiter nisus",
+  "classeId": 14
+}, {
+  "id": 969,
+  "code": "ACHATR",
+  "nomFrancais": "Sphinx à tête de mort",
+  "nomLatin": "Acherontia atropos",
+  "classeId": 11
+}, {
+  "id": 1741,
+  "code": "ACRAGR   ",
+  "nomFrancais": "Rousserolle isabelle",
+  "nomLatin": "Acrocephalus agricola",
+  "classeId": 14
+}, {
+  "id": 1742,
+  "code": "ACRARU",
+  "nomFrancais": "Rousserolle turdoïde",
+  "nomLatin": "Acrocephalus arundinaceus",
+  "classeId": 14
+}, {
+  "id": 1739,
+  "code": "ACRDUM   ",
+  "nomFrancais": "Rousserolle des buissons",
+  "nomLatin": "Acrocephalus dumetorum",
+  "classeId": 14
+}, {
+  "id": 1842,
+  "code": "ACRINSINS",
+  "nomFrancais": "Oedipode grenadine",
+  "nomLatin": "Acrotylus insubricus insubricus",
+  "classeId": 15
+}, {
+  "id": 1556,
+  "code": "ACRMEL   ",
+  "nomFrancais": "Lusciniole à moustaches",
+  "nomLatin": "Acrocephalus melanopogon",
+  "classeId": 14
+}, {
+  "id": 1655,
+  "code": "ACRPAL   ",
+  "nomFrancais": "Phragmite aquatique",
+  "nomLatin": "Acrocephalus paludicola",
+  "classeId": 14
+}, {
+  "id": 1743,
+  "code": "ACRRIS",
+  "nomFrancais": "Rousserolle verderolle",
+  "nomLatin": "Acrocephalus palustris",
+  "classeId": 14
+}, {
+  "id": 1656,
+  "code": "ACRSCH",
+  "nomFrancais": "Phragmite des joncs",
+  "nomLatin": "Acrocephalus schoenobaenus",
+  "classeId": 14
+}, {
+  "id": 1740,
+  "code": "ACRSCI",
+  "nomFrancais": "Rousserolle effarvatte",
+  "nomLatin": "Acrocephalus scirpaceus",
+  "classeId": 14
+}, {
+  "id": 1852,
+  "code": "ACRUNGMED",
+  "nomFrancais": "Truxale méditerranéenne",
+  "nomLatin": "Acrida ungarica mediterranea",
+  "classeId": 15
+}, {
+  "id": 1339,
+  "code": "ACTHYP",
+  "nomFrancais": "Chevalier guignette",
+  "nomLatin": "Actitis hypoleucos",
+  "classeId": 14
+}, {
+  "id": 1338,
+  "code": "ACTMAC",
+  "nomFrancais": "Chevalier grivelé",
+  "nomLatin": "Actitis macularia",
+  "classeId": 14
+}, {
+  "id": 1574,
+  "code": "AEGCAU",
+  "nomFrancais": "Mésange à longue queue",
+  "nomLatin": "Aegithalos caudatus",
+  "classeId": 14
+}, {
+  "id": 1575,
+  "code": "AEGCAUCAU",
+  "nomFrancais": "Mésange à longue queue de Scandinavie",
+  "nomLatin": "Aegithalos caudatus caudatus",
+  "classeId": 14
+}, {
+  "id": 1576,
+  "code": "AEGCAUROS",
+  "nomFrancais": "Mésange à longue queue rosaceus",
+  "nomLatin": "Aegithalos caudatus rosaceus",
+  "classeId": 14
+}, {
+  "id": 1352,
+  "code": "AEGFUN",
+  "nomFrancais": "Chouette de Tengmalm",
+  "nomLatin": "Aegolius funereus",
+  "classeId": 14
+}, {
+  "id": 1802,
+  "code": "AEGMON   ",
+  "nomFrancais": "Vautour moine",
+  "nomLatin": "Aegypius monachus",
+  "classeId": 14
+}, {
+  "id": 1100,
+  "code": "AESAFF",
+  "nomFrancais": "Aeschne affine",
+  "nomLatin": "Aeschne affinis",
+  "classeId": 13
+}, {
+  "id": 1101,
+  "code": "AESCAE",
+  "nomFrancais": "Aeschne azurée",
+  "nomLatin": "Aeshna caerulea",
+  "classeId": 13
+}, {
+  "id": 1102,
+  "code": "AESCYA",
+  "nomFrancais": "Aeschne bleue",
+  "nomLatin": "Aeshna cyanea",
+  "classeId": 13
+}, {
+  "id": 1170,
+  "code": "AESGRA",
+  "nomFrancais": "Grande aeschne",
+  "nomLatin": "Aeshna grandis",
+  "classeId": 13
+}, {
+  "id": 1111,
+  "code": "AESISO",
+  "nomFrancais": "Aeshne isocèle",
+  "nomLatin": "Aeshna isoceles",
+  "classeId": 13
+}, {
+  "id": 1103,
+  "code": "AESJUN",
+  "nomFrancais": "Aeschne des joncs",
+  "nomLatin": "Aeshna juncea",
+  "classeId": 13
+}, {
+  "id": 1105,
+  "code": "AESMIX",
+  "nomFrancais": "Aeschne mixte",
+  "nomLatin": "Aeshna mixta",
+  "classeId": 13
+}, {
+  "id": 1108,
+  "code": "AESSUB",
+  "nomFrancais": "Aeschne subarctique",
+  "nomLatin": "Aeshna subarctica",
+  "classeId": 13
+}, {
+  "id": 1109,
+  "code": "AESSUBELI",
+  "nomFrancais": "Aeschne subarctique d'Elisabeth",
+  "nomLatin": "Aeshna subarctica elisabethae",
+  "classeId": 13
+}, {
+  "id": 1110,
+  "code": "AESVIR",
+  "nomFrancais": "Aeschne verte",
+  "nomLatin": "Aeshna viridis",
+  "classeId": 13
+}, {
+  "id": 1861,
+  "code": "AIOPUI",
+  "nomFrancais": "Aïolope élancée",
+  "nomLatin": "Aiolopus puissanti",
+  "classeId": 15
+}, {
+  "id": 1840,
+  "code": "AIOSTR",
+  "nomFrancais": "Aïolope automnale",
+  "nomLatin": "Aiolopus strepens",
+  "classeId": 15
+}, {
+  "id": 1876,
+  "code": "AIOTHATHA",
+  "nomFrancais": "Aïolope émeraudine",
+  "nomLatin": "Aiolopus thalassinus thalassinus",
+  "classeId": 15
+}, {
+  "id": 1321,
+  "code": "AIXGAL",
+  "nomFrancais": "Canard mandarin",
+  "nomLatin": "Aix galericulata",
+  "classeId": 14
+}, {
+  "id": 1316,
+  "code": "AIXSPO",
+  "nomFrancais": "Canard carolin",
+  "nomLatin": "Aix sponsa",
+  "classeId": 14
+}, {
+  "id": 1223,
+  "code": "ALAARV",
+  "nomFrancais": "Alouette des champs",
+  "nomLatin": "Alauda arvensis",
+  "classeId": 14
+}, {
+  "id": 1569,
+  "code": "ALCATT",
+  "nomFrancais": "Martin-pêcheur d'Europe",
+  "nomLatin": "Alcedo atthis",
+  "classeId": 14
+}, {
+  "id": 1678,
+  "code": "ALCTOR   ",
+  "nomFrancais": "Pingouin torda",
+  "nomLatin": "Alca torda",
+  "classeId": 14
+}, {
+  "id": 1645,
+  "code": "ALEBAR   ",
+  "nomFrancais": "Perdrix gambra",
+  "nomLatin": "Alectoris barbara",
+  "classeId": 14
+}, {
+  "id": 1644,
+  "code": "ALECHU   ",
+  "nomFrancais": "Perdrix choukar",
+  "nomLatin": "Alectoris chukar",
+  "classeId": 14
+}, {
+  "id": 1643,
+  "code": "ALEGRA",
+  "nomFrancais": "Perdrix bartavelle",
+  "nomLatin": "Alectoris graeca",
+  "classeId": 14
+}, {
+  "id": 1647,
+  "code": "ALEUFA",
+  "nomFrancais": "Perdrix rouge",
+  "nomLatin": "Alectoris rufa",
+  "classeId": 14
+}, {
+  "id": 1882,
+  "code": "ALGFIT",
+  "nomFrancais": "Algyroide de Fitzinger",
+  "nomLatin": "Algyroides fitzingeri",
+  "classeId": 16
+}, {
+  "id": 1570,
+  "code": "ALLALL   ",
+  "nomFrancais": "Mergule nain",
+  "nomLatin": "Alle alle",
+  "classeId": 14
+}, {
+  "id": 1632,
+  "code": "ALOAEG",
+  "nomFrancais": "Ouette d'Egypte",
+  "nomLatin": "Alopochen aegyptiacus",
+  "classeId": 14
+}, {
+  "id": 935,
+  "code": "ALYOBS",
+  "nomFrancais": "Alyte accoucheur",
+  "nomLatin": "Alytes obstetricans",
+  "classeId": 10
+}, {
+  "id": 1323,
+  "code": "ANAACU",
+  "nomFrancais": "Canard pilet",
+  "nomLatin": "Anas acuta",
+  "classeId": 14
+}, {
+  "id": 1843,
+  "code": "ANAAEGAEG",
+  "nomFrancais": "Criquet égyptien",
+  "nomLatin": "Anacridium aegypium aegypium",
+  "classeId": 15
+}, {
+  "id": 1315,
+  "code": "ANAAME",
+  "nomFrancais": "Canard à front blanc",
+  "nomLatin": "Anas americana Gmelin",
+  "classeId": 14
+}, {
+  "id": 1319,
+  "code": "ANAAOS",
+  "nomFrancais": "Canard hybride colvert x pilet",
+  "nomLatin": "Anas platyrhynchos x acuta",
+  "classeId": 14
+}, {
+  "id": 1325,
+  "code": "ANACLY",
+  "nomFrancais": "Canard souchet",
+  "nomLatin": "Anas clypeata",
+  "classeId": 14
+}, {
+  "id": 1746,
+  "code": "ANACRE",
+  "nomFrancais": "Sarcelle d'hiver",
+  "nomLatin": "Anas crecca",
+  "classeId": 14
+}, {
+  "id": 1744,
+  "code": "ANADIS",
+  "nomFrancais": "Sarcelle à ailes bleues",
+  "nomLatin": "Anas discors",
+  "classeId": 14
+}, {
+  "id": 1317,
+  "code": "ANAERA",
+  "nomFrancais": "Canard chipeau",
+  "nomLatin": "Anas strepera",
+  "classeId": 14
+}, {
+  "id": 1747,
+  "code": "ANAFOR",
+  "nomFrancais": "Sarcelle élégante",
+  "nomLatin": "Anas formosa Georgi",
+  "classeId": 14
+}, {
+  "id": 1318,
+  "code": "ANAHOS",
+  "nomFrancais": "Canard colvert",
+  "nomLatin": "Anas platyrhynchos",
+  "classeId": 14
+}, {
+  "id": 1135,
+  "code": "ANAIMP",
+  "nomFrancais": "Anax empereur",
+  "nomLatin": "Anax imperator",
+  "classeId": 13
+}, {
+  "id": 1104,
+  "code": "ANAISO",
+  "nomFrancais": "Aeschne isocèle ",
+  "nomLatin": "Anaciaeschna isosceles ",
+  "classeId": 13
+}, {
+  "id": 1320,
+  "code": "ANAMOS",
+  "nomFrancais": "Canard de Barbarie domestique",
+  "nomLatin": "Anas moschata",
+  "classeId": 14
+}, {
+  "id": 1136,
+  "code": "ANAPAR",
+  "nomFrancais": "Anax napolitain",
+  "nomLatin": "Anax parthenope",
+  "classeId": 13
+}, {
+  "id": 1324,
+  "code": "ANAPEN",
+  "nomFrancais": "Canard siffleur",
+  "nomLatin": "Anas penelope",
+  "classeId": 14
+}, {
+  "id": 1313,
+  "code": "ANAPOE",
+  "nomFrancais": "Canard à bec tacheté",
+  "nomLatin": "Anas poecilorhyncha",
+  "classeId": 14
+}, {
+  "id": 1745,
+  "code": "ANAQUE",
+  "nomFrancais": "Sarcelle d'été",
+  "nomLatin": "Anas querquedula",
+  "classeId": 14
+}, {
+  "id": 1322,
+  "code": "ANARUB",
+  "nomFrancais": "Canard noir",
+  "nomLatin": "Anas rubripes Brewster",
+  "classeId": 14
+}, {
+  "id": 1904,
+  "code": "ANGFRA",
+  "nomFrancais": "Orvet",
+  "nomLatin": "Anguis fragilis",
+  "classeId": 16
+}, {
+  "id": 1629,
+  "code": "ANSALB",
+  "nomFrancais": "Oie rieuse",
+  "nomLatin": "Anser albifrons",
+  "classeId": 14
+}, {
+  "id": 1631,
+  "code": "ANSALBALB",
+  "nomFrancais": "Oie rieuse eurasienne",
+  "nomLatin": "Anser albifrons albifrons",
+  "classeId": 14
+}, {
+  "id": 1630,
+  "code": "ANSALBFLA",
+  "nomFrancais": "Oie rieuse du Groenland",
+  "nomLatin": "Anser albifrons flavirostris",
+  "classeId": 14
+}, {
+  "id": 1617,
+  "code": "ANSANS",
+  "nomFrancais": "Oie cendrée",
+  "nomLatin": "Anser anser",
+  "classeId": 14
+}, {
+  "id": 1619,
+  "code": "ANSANSANS",
+  "nomFrancais": "Oie cendrée occidentale",
+  "nomLatin": "Anser anser anser",
+  "classeId": 14
+}, {
+  "id": 1618,
+  "code": "ANSANSDOM",
+  "nomFrancais": "Oie cendrée domestique",
+  "nomLatin": "Anser anser domestique",
+  "classeId": 14
+}, {
+  "id": 1620,
+  "code": "ANSANSRUB",
+  "nomFrancais": "Oie cendrée orientale",
+  "nomLatin": "Anser anser rubrirostris",
+  "classeId": 14
+}, {
+  "id": 1616,
+  "code": "ANSBRA   ",
+  "nomFrancais": "Oie à bec court",
+  "nomLatin": "Anser brachyrhynchus Baillon",
+  "classeId": 14
+}, {
+  "id": 1625,
+  "code": "ANSCAE   ",
+  "nomFrancais": "Oie des neiges",
+  "nomLatin": "Anser caerulescens",
+  "classeId": 14
+}, {
+  "id": 1626,
+  "code": "ANSCAEATL",
+  "nomFrancais": "Oie des neiges de l'Est",
+  "nomLatin": "Anser caerulescens atlanticus",
+  "classeId": 14
+}, {
+  "id": 1627,
+  "code": "ANSCAECAE",
+  "nomFrancais": "Oie des neiges occidentale",
+  "nomLatin": "Anser caerulescens caerulescens",
+  "classeId": 14
+}, {
+  "id": 1814,
+  "code": "ANSCYG",
+  "nomFrancais": "Oie cygnoïde",
+  "nomLatin": "Anser cygnoides",
+  "classeId": 14
+}, {
+  "id": 1628,
+  "code": "ANSERY   ",
+  "nomFrancais": "Oie naine",
+  "nomLatin": "Anser erythropus",
+  "classeId": 14
+}, {
+  "id": 1621,
+  "code": "ANSFAB",
+  "nomFrancais": "Oie des moissons",
+  "nomLatin": "Anser fabalis",
+  "classeId": 14
+}, {
+  "id": 1622,
+  "code": "ANSFABFAB",
+  "nomFrancais": "Oie des moissons de la taïga",
+  "nomLatin": "Anser fabalis fabalis",
+  "classeId": 14
+}, {
+  "id": 1624,
+  "code": "ANSFABJOH",
+  "nomFrancais": "Oie des moissons ouest-sibérienne",
+  "nomLatin": "Anser fabalis johanseni",
+  "classeId": 14
+}, {
+  "id": 1623,
+  "code": "ANSFABROS",
+  "nomFrancais": "Oie des moissons de la toundra",
+  "nomLatin": "Anser fabalis rossicus",
+  "classeId": 14
+}, {
+  "id": 1813,
+  "code": "ANSIND",
+  "nomFrancais": "Oie à tête barrée",
+  "nomLatin": "Anser indicus",
+  "classeId": 14
+}, {
+  "id": 1682,
+  "code": "ANTCER",
+  "nomFrancais": "Pipit à gorge rousse",
+  "nomLatin": "Anthus cervinus",
+  "classeId": 14
+}, {
+  "id": 1683,
+  "code": "ANTGUS   ",
+  "nomFrancais": "Pipit de la Petchora",
+  "nomLatin": "Anthus gustavi Swinhoe",
+  "classeId": 14
+}, {
+  "id": 1681,
+  "code": "ANTHOD",
+  "nomFrancais": "Pipit à dos olive",
+  "nomLatin": "Anthus hodgsoni Richmond",
+  "classeId": 14
+}, {
+  "id": 1687,
+  "code": "ANTPET   ",
+  "nomFrancais": "Pipit maritime",
+  "nomLatin": "Anthus petrosus",
+  "classeId": 14
+}, {
+  "id": 1688,
+  "code": "ANTPETLIT",
+  "nomFrancais": "Pipit maritime nordique",
+  "nomLatin": "Anthus petrosus littoralis",
+  "classeId": 14
+}, {
+  "id": 1686,
+  "code": "ANTPRA",
+  "nomFrancais": "Pipit farlouse",
+  "nomLatin": "Anthus pratensis",
+  "classeId": 14
+}, {
+  "id": 1684,
+  "code": "ANTRIC   ",
+  "nomFrancais": "Pipit de Richard",
+  "nomLatin": "Anthus richardi Vieillot",
+  "classeId": 14
+}, {
+  "id": 1689,
+  "code": "ANTRIS",
+  "nomFrancais": "Pipit rousseline",
+  "nomLatin": "Anthus campestris",
+  "classeId": 14
+}, {
+  "id": 1690,
+  "code": "ANTSPI",
+  "nomFrancais": "Pipit spioncelle",
+  "nomLatin": "Anthus spinoletta",
+  "classeId": 14
+}, {
+  "id": 1685,
+  "code": "ANTTRI",
+  "nomFrancais": "Pipit des arbres",
+  "nomLatin": "Anthus trivialis",
+  "classeId": 14
+}, {
+  "id": 1037,
+  "code": "APOAGR",
+  "nomFrancais": "Mulot rayé",
+  "nomLatin": "Apodemus agrarius",
+  "classeId": 12
+}, {
+  "id": 1035,
+  "code": "APOALP",
+  "nomFrancais": "Mulot Alpestre",
+  "nomLatin": "Apodemus alpicola",
+  "classeId": 12
+}, {
+  "id": 1033,
+  "code": "APOFLA",
+  "nomFrancais": "Mulot à collier roux",
+  "nomLatin": "Apodemus flavicollis",
+  "classeId": 12
+}, {
+  "id": 1036,
+  "code": "APOMIC",
+  "nomFrancais": "Mulot microps",
+  "nomLatin": "Apodemus microps",
+  "classeId": 12
+}, {
+  "id": 1038,
+  "code": "APOMYS",
+  "nomFrancais": "Mulot rupestre",
+  "nomLatin": "Apodemus mystacinus",
+  "classeId": 12
+}, {
+  "id": 1034,
+  "code": "APOSPE",
+  "nomFrancais": "Mulot à collier roux/ sylvestre",
+  "nomLatin": "Apodemus species",
+  "classeId": 12
+}, {
+  "id": 1039,
+  "code": "APOSYL",
+  "nomFrancais": "Mulot sylvestre",
+  "nomLatin": "Apodemus sylvaticus",
+  "classeId": 12
+}, {
+  "id": 1567,
+  "code": "APUAPU",
+  "nomFrancais": "Martinet noir",
+  "nomLatin": "Apus apus",
+  "classeId": 14
+}, {
+  "id": 1566,
+  "code": "APUCAF   ",
+  "nomFrancais": "Martinet cafre",
+  "nomLatin": "Apus caffer",
+  "classeId": 14
+}, {
+  "id": 1565,
+  "code": "APUMEL",
+  "nomFrancais": "Martinet à ventre blanc",
+  "nomLatin": "Apus melba",
+  "classeId": 14
+}, {
+  "id": 1568,
+  "code": "APUPAL   ",
+  "nomFrancais": "Martinet pâle",
+  "nomLatin": "Apus pallidus",
+  "classeId": 14
+}, {
+  "id": 1213,
+  "code": "AQUADA",
+  "nomFrancais": "Aigle ibérique",
+  "nomLatin": "Aquila adalberti",
+  "classeId": 14
+}, {
+  "id": 1216,
+  "code": "AQUCHR",
+  "nomFrancais": "Aigle royal",
+  "nomLatin": "Aquila chrysaetos",
+  "classeId": 14
+}, {
+  "id": 1210,
+  "code": "AQUCLA   ",
+  "nomFrancais": "Aigle criard",
+  "nomLatin": "Aquila clanga Pallas",
+  "classeId": 14
+}, {
+  "id": 1214,
+  "code": "AQUHEL   ",
+  "nomFrancais": "Aigle impérial",
+  "nomLatin": "Aquila heliaca",
+  "classeId": 14
+}, {
+  "id": 1212,
+  "code": "AQUNIP   ",
+  "nomFrancais": "Aigle des steppes",
+  "nomLatin": "Aquila nipalensis",
+  "classeId": 14
+}, {
+  "id": 1215,
+  "code": "AQUPOM   ",
+  "nomFrancais": "Aigle pomarin",
+  "nomLatin": "Aquila pomarina",
+  "classeId": 14
+}, {
+  "id": 1895,
+  "code": "ARCBED",
+  "nomFrancais": "Lézard de Bédriaga",
+  "nomLatin": "Archeolacerta bedriagae",
+  "classeId": 16
+}, {
+  "id": 1899,
+  "code": "ARCMON",
+  "nomFrancais": "Lézard montagnard",
+  "nomLatin": "Archeolacerta monticola",
+  "classeId": 16
+}, {
+  "id": 1519,
+  "code": "ARDCIN",
+  "nomFrancais": "Héron cendré",
+  "nomLatin": "Ardea cinerea",
+  "classeId": 14
+}, {
+  "id": 1521,
+  "code": "ARDMEL",
+  "nomFrancais": "Héron mélanocéphale",
+  "nomLatin": "Ardea melanocephala",
+  "classeId": 14
+}, {
+  "id": 1522,
+  "code": "ARDPUR",
+  "nomFrancais": "Héron pourpré",
+  "nomLatin": "Ardea purpurea",
+  "classeId": 14
+}, {
+  "id": 1381,
+  "code": "ARDRAL",
+  "nomFrancais": "Crabier chevelu",
+  "nomLatin": "Ardeola ralloides",
+  "classeId": 14
+}, {
+  "id": 1782,
+  "code": "AREINT   ",
+  "nomFrancais": "Tournepierre à collier",
+  "nomLatin": "Arenaria interpres",
+  "classeId": 14
+}, {
+  "id": 978,
+  "code": "ARVSAP",
+  "nomFrancais": "Campagnol amphibie",
+  "nomLatin": "Arvicola sapidus",
+  "classeId": 12
+}, {
+  "id": 992,
+  "code": "ARVSCH",
+  "nomFrancais": "Campagnol schermaus",
+  "nomLatin": "Arvicola scherman",
+  "classeId": 12
+}, {
+  "id": 994,
+  "code": "ARVTER",
+  "nomFrancais": "Campagnol terrestre",
+  "nomLatin": "Arvicola terrestris",
+  "classeId": 12
+}, {
+  "id": 1524,
+  "code": "ASIFLA",
+  "nomFrancais": "Hibou des marais",
+  "nomLatin": "Asio flammeus",
+  "classeId": 14
+}, {
+  "id": 1525,
+  "code": "ASIOTU",
+  "nomFrancais": "Hibou moyen-duc",
+  "nomLatin": "Asio otus",
+  "classeId": 14
+}, {
+  "id": 1344,
+  "code": "ATHNOC",
+  "nomFrancais": "Chevêche d'Athéna",
+  "nomLatin": "Athene noctua",
+  "classeId": 14
+}, {
+  "id": 1432,
+  "code": "AYTAFF",
+  "nomFrancais": "Fuligule à tête noire",
+  "nomLatin": "Aythya affinis",
+  "classeId": 14
+}, {
+  "id": 1431,
+  "code": "AYTCOL   ",
+  "nomFrancais": "Fuligule à bec cerclé ",
+  "nomLatin": "Aythya collaris",
+  "classeId": 14
+}, {
+  "id": 1437,
+  "code": "AYTFEL",
+  "nomFrancais": "Fuligule hybride morillon x milouin",
+  "nomLatin": "Aythya ferina x fuligula",
+  "classeId": 14
+}, {
+  "id": 1433,
+  "code": "AYTFER",
+  "nomFrancais": "Fuligule milouin",
+  "nomLatin": "Aythya ferina",
+  "classeId": 14
+}, {
+  "id": 1438,
+  "code": "AYTFLA",
+  "nomFrancais": "Fuligule hybride morillon x milouinan",
+  "nomLatin": "Aythya marila x fuligula",
+  "classeId": 14
+}, {
+  "id": 1435,
+  "code": "AYTFUL",
+  "nomFrancais": "Fuligule morillon",
+  "nomLatin": "Aythya fuligula",
+  "classeId": 14
+}, {
+  "id": 1808,
+  "code": "AYTFYR",
+  "nomFrancais": "Fuligule hybride milouin x nyroca",
+  "nomLatin": "Aythya hybride ferina x nyroca",
+  "classeId": 14
+}, {
+  "id": 1439,
+  "code": "AYTHYB",
+  "nomFrancais": "Fuligule hybride",
+  "nomLatin": "Aythya hybride",
+  "classeId": 14
+}, {
+  "id": 1434,
+  "code": "AYTMAR",
+  "nomFrancais": "Fuligule milouinan",
+  "nomLatin": "Aythya marila",
+  "classeId": 14
+}, {
+  "id": 1436,
+  "code": "AYTNYR",
+  "nomFrancais": "Fuligule nyroca",
+  "nomLatin": "Aythya nyroca",
+  "classeId": 14
+}, {
+  "id": 1440,
+  "code": "AYTSPE",
+  "nomFrancais": "Fuligule indéterminé",
+  "nomLatin": "Aythya sp",
+  "classeId": 14
+}, {
+  "id": 972,
+  "code": "BARBAR",
+  "nomFrancais": "Barbastelle",
+  "nomLatin": "Barbastella barbastellus",
+  "classeId": 12
+}, {
+  "id": 1234,
+  "code": "BARLON",
+  "nomFrancais": "Bartramie des champs",
+  "nomLatin": "Bartramia longicauda",
+  "classeId": 14
+}, {
+  "id": 1851,
+  "code": "BARSER",
+  "nomFrancais": "Barbitiste des bois",
+  "nomLatin": "Barbitistes serricauda",
+  "classeId": 15
+}, {
+  "id": 936,
+  "code": "BATRAC",
+  "nomFrancais": "Batracien",
+  "nomLatin": "Batracien",
+  "classeId": 10
+}, {
+  "id": 1850,
+  "code": "BICBICBIC",
+  "nomFrancais": "Deticelle bicolore",
+  "nomLatin": "Bicolorana bicolor bicolor",
+  "classeId": 15
+}, {
+  "id": 1540,
+  "code": "BOMGAR   ",
+  "nomFrancais": "Jaseur boréal",
+  "nomLatin": "Bombycilla garrulus",
+  "classeId": 14
+}, {
+  "id": 963,
+  "code": "BOMVAR",
+  "nomFrancais": "Sonneur à ventre jaune",
+  "nomLatin": "Bombina variegata",
+  "classeId": 10
+}, {
+  "id": 1447,
+  "code": "BONBON",
+  "nomFrancais": "Gélinotte des bois",
+  "nomLatin": "Bonasa bonasia",
+  "classeId": 14
+}, {
+  "id": 1311,
+  "code": "BOTSTE",
+  "nomFrancais": "Butor étoilé",
+  "nomLatin": "Botaurus stellaris",
+  "classeId": 14
+}, {
+  "id": 1106,
+  "code": "BOYIRE",
+  "nomFrancais": "Aeschne paisible",
+  "nomLatin": "Boyeria irene",
+  "classeId": 13
+}, {
+  "id": 1276,
+  "code": "BRABER   ",
+  "nomFrancais": "Bernache cravant",
+  "nomLatin": "Branta bernicla",
+  "classeId": 14
+}, {
+  "id": 1278,
+  "code": "BRABERBER",
+  "nomFrancais": "Bernache cravant type",
+  "nomLatin": "Branta bernicla bernicla",
+  "classeId": 14
+}, {
+  "id": 1277,
+  "code": "BRABERHRO",
+  "nomFrancais": "Bernache cravant occidentale",
+  "nomLatin": "Branta bernicla hrota",
+  "classeId": 14
+}, {
+  "id": 1279,
+  "code": "BRACAN",
+  "nomFrancais": "Bernache du Canada",
+  "nomLatin": "Branta canadensis",
+  "classeId": 14
+}, {
+  "id": 1107,
+  "code": "BRAPRA",
+  "nomFrancais": "Aeschne printanière",
+  "nomLatin": "Brachytron pratense",
+  "classeId": 13
+}, {
+  "id": 1275,
+  "code": "BRARUF",
+  "nomFrancais": "Bernache à cou roux",
+  "nomLatin": "Branta ruficollis",
+  "classeId": 14
+}, {
+  "id": 1280,
+  "code": "BRASIS",
+  "nomFrancais": "Bernache nonnette",
+  "nomLatin": "Branta leucopsis",
+  "classeId": 14
+}, {
+  "id": 1479,
+  "code": "BUBBUB",
+  "nomFrancais": "Grand-duc d'Europe",
+  "nomLatin": "Bubo bubo",
+  "classeId": 14
+}, {
+  "id": 1520,
+  "code": "BUBIBI",
+  "nomFrancais": "Héron garde-boeufs",
+  "nomLatin": "Bubulcus ibis",
+  "classeId": 14
+}, {
+  "id": 1445,
+  "code": "BUCCLA",
+  "nomFrancais": "Garrot à oeil d'or",
+  "nomLatin": "Bucephala clangula",
+  "classeId": 14
+}, {
+  "id": 938,
+  "code": "BUFBUF",
+  "nomFrancais": "Crapaud commun",
+  "nomLatin": "Bufo bufo",
+  "classeId": 10
+}, {
+  "id": 937,
+  "code": "BUFCAL",
+  "nomFrancais": "Crapaud calamite",
+  "nomLatin": "Bufo calamita",
+  "classeId": 10
+}, {
+  "id": 939,
+  "code": "BUFSPI",
+  "nomFrancais": "Crapaud épineux",
+  "nomLatin": "Bufo spinosus",
+  "classeId": 10
+}, {
+  "id": 940,
+  "code": "BUFSUF",
+  "nomFrancais": "Crapaud épineux ou commun",
+  "nomLatin": "Bufo spinosus ou bufo",
+  "classeId": 10
+}, {
+  "id": 941,
+  "code": "BUFVIR",
+  "nomFrancais": "Crapaud vert",
+  "nomLatin": "Bufo viridis",
+  "classeId": 10
+}, {
+  "id": 1651,
+  "code": "BULBUL",
+  "nomFrancais": "Pétrel de Bulwer",
+  "nomLatin": "Bulweria bulwerii",
+  "classeId": 14
+}, {
+  "id": 1615,
+  "code": "BUROED",
+  "nomFrancais": "Oedicnème criard",
+  "nomLatin": "Burhinus oedicnemus",
+  "classeId": 14
+}, {
+  "id": 1309,
+  "code": "BUTBUT",
+  "nomFrancais": "Buse variable",
+  "nomLatin": "Buteo buteo",
+  "classeId": 14
+}, {
+  "id": 1310,
+  "code": "BUTBUTBUT",
+  "nomFrancais": "Buse variable type",
+  "nomLatin": "Buteo buteo buteo",
+  "classeId": 14
+}, {
+  "id": 1306,
+  "code": "BUTBUTVUL",
+  "nomFrancais": "Buse de Russie (des steppes)",
+  "nomLatin": "Buteo buteo vulpinus",
+  "classeId": 14
+}, {
+  "id": 1308,
+  "code": "BUTLAG   ",
+  "nomFrancais": "Buse pattue",
+  "nomLatin": "Buteo lagopus",
+  "classeId": 14
+}, {
+  "id": 1307,
+  "code": "BUTRUF   ",
+  "nomFrancais": "Buse féroce",
+  "nomLatin": "Buteo rufinus",
+  "classeId": 14
+}, {
+  "id": 1523,
+  "code": "BUTVIR",
+  "nomFrancais": "Héron vert",
+  "nomLatin": "Butorides virescens",
+  "classeId": 14
+}, {
+  "id": 1238,
+  "code": "CALACU",
+  "nomFrancais": "Bécasseau à queue pointue",
+  "nomLatin": "Calidris acuminata",
+  "classeId": 14
+}, {
+  "id": 1248,
+  "code": "CALALB",
+  "nomFrancais": "Bécasseau sanderling",
+  "nomLatin": "Calidris alba",
+  "classeId": 14
+}, {
+  "id": 1251,
+  "code": "CALALP",
+  "nomFrancais": "Bécasseau variable",
+  "nomLatin": "Calidris alpina",
+  "classeId": 14
+}, {
+  "id": 1253,
+  "code": "CALALPALP",
+  "nomFrancais": "Bécasseau variable nordique",
+  "nomLatin": "Calidris alpina alpina",
+  "classeId": 14
+}, {
+  "id": 1252,
+  "code": "CALALPSCH",
+  "nomFrancais": "Bécasseau variable méridional",
+  "nomLatin": "Calidris alpina schinzii",
+  "classeId": 14
+}, {
+  "id": 1241,
+  "code": "CALBAI",
+  "nomFrancais": "Bécasseau de Baird",
+  "nomLatin": "Calidris bairdii",
+  "classeId": 14
+}, {
+  "id": 1830,
+  "code": "CALBARBAR",
+  "nomFrancais": "Caloptène de Barbarie",
+  "nomLatin": " Calliptamus barbarus barbarus",
+  "classeId": 15
+}, {
+  "id": 1222,
+  "code": "CALBRA   ",
+  "nomFrancais": "Alouette calandrelle",
+  "nomLatin": "Calandrella brachydactyla",
+  "classeId": 14
+}, {
+  "id": 1363,
+  "code": "CALCAL",
+  "nomFrancais": "Colin de Californie",
+  "nomLatin": "Callipepla californica",
+  "classeId": 14
+}, {
+  "id": 1244,
+  "code": "CALCAN",
+  "nomFrancais": "Bécasseau maubèche",
+  "nomLatin": "Calidris canutus",
+  "classeId": 14
+}, {
+  "id": 1717,
+  "code": "CALDIO   ",
+  "nomFrancais": "Puffin cendré",
+  "nomLatin": "Calonectris diomedea",
+  "classeId": 14
+}, {
+  "id": 1226,
+  "code": "CALENS",
+  "nomFrancais": "Alouette pispolette",
+  "nomLatin": "Calandrella rufescens",
+  "classeId": 14
+}, {
+  "id": 1239,
+  "code": "CALFER",
+  "nomFrancais": "Bécasseau cocorli",
+  "nomLatin": "Calidris ferruginea",
+  "classeId": 14
+}, {
+  "id": 1142,
+  "code": "CALHAE",
+  "nomFrancais": "Caloptéryx hémoroïdal",
+  "nomLatin": "Calopteryx haemorrhoidalis",
+  "classeId": 13
+}, {
+  "id": 1820,
+  "code": "CALITAITA",
+  "nomFrancais": "Caloptène italien",
+  "nomLatin": "Calliptamus italicus italicus",
+  "classeId": 15
+}, {
+  "id": 1295,
+  "code": "CALLAP   ",
+  "nomFrancais": "Bruant lapon",
+  "nomLatin": "Calcarius lapponicus",
+  "classeId": 14
+}, {
+  "id": 1314,
+  "code": "CALLEU",
+  "nomFrancais": "Canard à collier noir",
+  "nomLatin": "Callonette leucophrys",
+  "classeId": 14
+}, {
+  "id": 1236,
+  "code": "CALLIS",
+  "nomFrancais": "Bécasseau à cou roux",
+  "nomLatin": "Calidris ruficollis Wagler",
+  "classeId": 14
+}, {
+  "id": 1245,
+  "code": "CALLLA",
+  "nomFrancais": "Bécasseau minuscule",
+  "nomLatin": "Calidris minutilla",
+  "classeId": 14
+}, {
+  "id": 1254,
+  "code": "CALMAR   ",
+  "nomFrancais": "Bécasseau violet",
+  "nomLatin": "Calidris maritima",
+  "classeId": 14
+}, {
+  "id": 1240,
+  "code": "CALMAU",
+  "nomFrancais": "Bécasseau d'Alaska",
+  "nomLatin": "Calidris mauri",
+  "classeId": 14
+}, {
+  "id": 1250,
+  "code": "CALMEL",
+  "nomFrancais": "Bécasseau tacheté",
+  "nomLatin": "Calidris melanotos",
+  "classeId": 14
+}, {
+  "id": 1246,
+  "code": "CALMIN",
+  "nomFrancais": "Bécasseau minute",
+  "nomLatin": "Calidris minuta",
+  "classeId": 14
+}, {
+  "id": 1249,
+  "code": "CALPUS",
+  "nomFrancais": "Bécasseau semipalmé",
+  "nomLatin": "Calidris pusilla",
+  "classeId": 14
+}, {
+  "id": 1837,
+  "code": "CALSIC",
+  "nomFrancais": "Caloptène sicilien",
+  "nomLatin": "Calliptamus siciliae",
+  "classeId": 15
+}, {
+  "id": 1139,
+  "code": "CALSPL",
+  "nomFrancais": "Caloptéryx éclatant",
+  "nomLatin": "Calopteryx splendens",
+  "classeId": 13
+}, {
+  "id": 1141,
+  "code": "CALSPLCAP",
+  "nomFrancais": "Calopteryx éclatant de la sous espèce caprai",
+  "nomLatin": "Calopteryx splendens caprai",
+  "classeId": 13
+}, {
+  "id": 1140,
+  "code": "CALSPLSPL",
+  "nomFrancais": "Caloptéryx éclatant de la sous espèce splendens",
+  "nomLatin": "Calopteryx splendens splendens",
+  "classeId": 13
+}, {
+  "id": 1242,
+  "code": "CALTEM",
+  "nomFrancais": "Bécasseau de Temminck",
+  "nomLatin": "Calidris temminckii",
+  "classeId": 14
+}, {
+  "id": 1143,
+  "code": "CALVIR",
+  "nomFrancais": "Caloptéryx vierge",
+  "nomLatin": "Calopteryx virgo",
+  "classeId": 13
+}, {
+  "id": 1145,
+  "code": "CALVIRMER",
+  "nomFrancais": "Caloptéryx vierge méridional",
+  "nomLatin": "Calopteryx virgo meridionalis",
+  "classeId": 13
+}, {
+  "id": 1144,
+  "code": "CALVIRVIR",
+  "nomFrancais": "Caloptéryx vierge de la sous espèce virgo",
+  "nomLatin": "Calopteryx virgo virgo",
+  "classeId": 13
+}, {
+  "id": 1138,
+  "code": "CALXAN",
+  "nomFrancais": "Caloptéryx occitan",
+  "nomLatin": "Calopteryx xanthostoma",
+  "classeId": 13
+}, {
+  "id": 1024,
+  "code": "CANLUP",
+  "nomFrancais": "Loup",
+  "nomLatin": "Canis lupus",
+  "classeId": 12
+}, {
+  "id": 1001,
+  "code": "CAPCAP",
+  "nomFrancais": "Chevreuil",
+  "nomLatin": "Capreolus capreolus",
+  "classeId": 12
+}, {
+  "id": 1395,
+  "code": "CAPEUR",
+  "nomFrancais": "Engoulevent d'Europe",
+  "nomLatin": "Caprimulgus europaeus",
+  "classeId": 14
+}, {
+  "id": 975,
+  "code": "CAPIBE",
+  "nomFrancais": "Bouquetin",
+  "nomLatin": "Capra ibex",
+  "classeId": 12
+}, {
+  "id": 976,
+  "code": "CAPPYR",
+  "nomFrancais": "Bouquetin d'Espagne",
+  "nomLatin": "Capra pyrenaïca",
+  "classeId": 12
+}, {
+  "id": 1394,
+  "code": "CAPRUF   ",
+  "nomFrancais": "Engoulevent à collier roux",
+  "nomLatin": "Caprimulgus ruficollis",
+  "classeId": 14
+}, {
+  "id": 1806,
+  "code": "CARCHL",
+  "nomFrancais": "Verdier d'Europe",
+  "nomLatin": "Carduelis chloris",
+  "classeId": 14
+}, {
+  "id": 1731,
+  "code": "CARERY",
+  "nomFrancais": "Roselin cramoisi",
+  "nomLatin": "Carpodacus erythrinus",
+  "classeId": 14
+}, {
+  "id": 1910,
+  "code": "CARETT",
+  "nomFrancais": "Tortue couanne",
+  "nomLatin": "Caretta caretta",
+  "classeId": 16
+}, {
+  "id": 1754,
+  "code": "CARHOR",
+  "nomFrancais": "Sizerin blanchâtre",
+  "nomLatin": "Carduelis hornemanni",
+  "classeId": 14
+}, {
+  "id": 1755,
+  "code": "CARHOREXI",
+  "nomFrancais": "Sizerin blanchâtre exilipes",
+  "nomLatin": "Carduelis hornemanni exilipes",
+  "classeId": 14
+}, {
+  "id": 1756,
+  "code": "CARHORHOR",
+  "nomFrancais": "Sizerin blanchâtre hornemanni",
+  "nomLatin": "Carduelis hornemanni hornemanni",
+  "classeId": 14
+}, {
+  "id": 1548,
+  "code": "CARINA",
+  "nomFrancais": "Linotte mélodieuse",
+  "nomLatin": "Carduelis cannabina",
+  "classeId": 14
+}, {
+  "id": 1329,
+  "code": "CARLIS",
+  "nomFrancais": "Chardonneret élégant",
+  "nomLatin": "Carduelis carduelis",
+  "classeId": 14
+}, {
+  "id": 1758,
+  "code": "CARMEACAB",
+  "nomFrancais": "Sizerin cabaret",
+  "nomLatin": "Acanthis cabaret",
+  "classeId": 14
+}, {
+  "id": 1757,
+  "code": "CARMEAFLA",
+  "nomFrancais": "Sizerin flammé",
+  "nomLatin": "Acanthis flammea",
+  "classeId": 14
+}, {
+  "id": 1759,
+  "code": "CARMEAROS",
+  "nomFrancais": "Sizerin flammé groenlandais",
+  "nomLatin": "Carduelis flammea rostrata",
+  "classeId": 14
+}, {
+  "id": 1778,
+  "code": "CARNUS",
+  "nomFrancais": "Tarin des aulnes",
+  "nomLatin": "Carduelis spinus",
+  "classeId": 14
+}, {
+  "id": 1547,
+  "code": "CARRIS",
+  "nomFrancais": "Linotte à bec jaune",
+  "nomLatin": "Carduelis flavirostris",
+  "classeId": 14
+}, {
+  "id": 995,
+  "code": "CASFIB",
+  "nomFrancais": "Castor",
+  "nomLatin": "Castor fiber",
+  "classeId": 12
+}, {
+  "id": 1494,
+  "code": "CATMIN",
+  "nomFrancais": "Grive à joues grises",
+  "nomLatin": "Catharus minimus",
+  "classeId": 14
+}, {
+  "id": 1340,
+  "code": "CATSEM",
+  "nomFrancais": "Chevalier semi-palmé",
+  "nomLatin": "Catoptrophorus semipalmatus",
+  "classeId": 14
+}, {
+  "id": 1490,
+  "code": "CATUST",
+  "nomFrancais": "Grive à dos olive",
+  "nomLatin": "Catharus ustulatus",
+  "classeId": 14
+}, {
+  "id": 1509,
+  "code": "CEPGRY   ",
+  "nomFrancais": "Guillemot à miroir",
+  "nomLatin": "Cepphus grylle",
+  "classeId": 14
+}, {
+  "id": 996,
+  "code": "CERELA",
+  "nomFrancais": "Cerf élaphe",
+  "nomLatin": "Cervus elaphus",
+  "classeId": 12
+}, {
+  "id": 1208,
+  "code": "CERGAL   ",
+  "nomFrancais": "Agrobate roux",
+  "nomLatin": "Cercotrichas galactotes",
+  "classeId": 14
+}, {
+  "id": 1488,
+  "code": "CERRIS",
+  "nomFrancais": "Grimpereau des bois",
+  "nomLatin": "Certhia familiaris",
+  "classeId": 14
+}, {
+  "id": 1120,
+  "code": "CERTEN",
+  "nomFrancais": "Agrion délicat",
+  "nomLatin": "Ceriagrion tenellum",
+  "classeId": 13
+}, {
+  "id": 1121,
+  "code": "CERTENERY",
+  "nomFrancais": "Agrion délicat de la sous espèce erythrogastrum",
+  "nomLatin": "Ceriagrion tenellum erythrogastrum",
+  "classeId": 13
+}, {
+  "id": 1122,
+  "code": "CERTENFOR",
+  "nomFrancais": "Agrion délicat de la sous espèce forma-typica",
+  "nomLatin": "Ceriagrion tenellum forma-typica",
+  "classeId": 13
+}, {
+  "id": 1123,
+  "code": "CERTENINT",
+  "nomFrancais": "Agrion délicat de la sous espèce intermedium",
+  "nomLatin": "Ceriagrion tenellum intermedium",
+  "classeId": 13
+}, {
+  "id": 1124,
+  "code": "CERTENMEL",
+  "nomFrancais": "Agrion délicat de la sous espèce melanogastrum",
+  "nomLatin": "Ceriagrion tenellum melanogastrum",
+  "classeId": 13
+}, {
+  "id": 1489,
+  "code": "CERYLA",
+  "nomFrancais": "Grimpereau des jardins",
+  "nomLatin": "Certhia brachydactyla",
+  "classeId": 14
+}, {
+  "id": 1284,
+  "code": "CETCET",
+  "nomFrancais": "Bouscarle de Cetti",
+  "nomLatin": "Cettia cetti",
+  "classeId": 14
+}, {
+  "id": 1481,
+  "code": "CHAALE",
+  "nomFrancais": "Gravelot à collier interrompu",
+  "nomLatin": "Charadrius alexandrinus",
+  "classeId": 14
+}, {
+  "id": 1696,
+  "code": "CHAASI",
+  "nomFrancais": "Pluvier asiatique",
+  "nomLatin": "Charadrius asiaticus",
+  "classeId": 14
+}, {
+  "id": 1908,
+  "code": "CHACHA",
+  "nomFrancais": "Seps tridactyle",
+  "nomLatin": "Chalcides chalcides",
+  "classeId": 16
+}, {
+  "id": 1649,
+  "code": "CHADUB",
+  "nomFrancais": "Petit Gravelot",
+  "nomLatin": "Charadrius dubius",
+  "classeId": 14
+}, {
+  "id": 1476,
+  "code": "CHAHIA",
+  "nomFrancais": "Grand Gravelot",
+  "nomLatin": "Charadrius hiaticula",
+  "classeId": 14
+}, {
+  "id": 1702,
+  "code": "CHAMOR",
+  "nomFrancais": "Pluvier guignard",
+  "nomLatin": "Charadrius morinellus",
+  "classeId": 14
+}, {
+  "id": 1178,
+  "code": "CHAVIR",
+  "nomFrancais": "Leste vert",
+  "nomLatin": "Chalcolestes viridis",
+  "classeId": 13
+}, {
+  "id": 1750,
+  "code": "CHEDUP   ",
+  "nomFrancais": "Sirli de Dupont",
+  "nomLatin": "Chersophilus duponti",
+  "classeId": 14
+}, {
+  "id": 1800,
+  "code": "CHEGRE   ",
+  "nomFrancais": "Vanneau sociable",
+  "nomLatin": "Chettusia gregaria",
+  "classeId": 14
+}, {
+  "id": 1797,
+  "code": "CHELEU",
+  "nomFrancais": "Vanneau à queue blanche",
+  "nomLatin": "Chettusia leucura",
+  "classeId": 14
+}, {
+  "id": 1915,
+  "code": "CHEMYD",
+  "nomFrancais": "Tortue verte",
+  "nomLatin": "Chelonia mydas",
+  "classeId": 16
+}, {
+  "id": 1000,
+  "code": "CHIRO",
+  "nomFrancais": "Chauves-souris",
+  "nomLatin": "chiroptères sp",
+  "classeId": 12
+}, {
+  "id": 1507,
+  "code": "CHLDUS",
+  "nomFrancais": "Guifette moustac",
+  "nomLatin": "Chlidonias hybridus",
+  "classeId": 14
+}, {
+  "id": 1506,
+  "code": "CHLLEU",
+  "nomFrancais": "Guifette leucoptère",
+  "nomLatin": "Chlidonias leucopterus",
+  "classeId": 14
+}, {
+  "id": 1508,
+  "code": "CHLNIG",
+  "nomFrancais": "Guifette noire",
+  "nomLatin": "Chlidonias niger",
+  "classeId": 14
+}, {
+  "id": 1635,
+  "code": "CHLUND",
+  "nomFrancais": "Outarde houbara",
+  "nomLatin": "Chlamydotis undulata",
+  "classeId": 14
+}, {
+  "id": 1838,
+  "code": "CHOALBALB",
+  "nomFrancais": "Criquet marginé",
+  "nomLatin": "Chlothippus albomarginatus albomarginatus",
+  "classeId": 15
+}, {
+  "id": 1825,
+  "code": "CHOBIGBIG",
+  "nomFrancais": "Criquet mélodieux",
+  "nomLatin": "Chorthippus biguttulus biguttulus",
+  "classeId": 15
+}, {
+  "id": 1829,
+  "code": "CHOBRUBRU",
+  "nomFrancais": "Criquet duettiste",
+  "nomLatin": "Chorthippus brunneus brunneus",
+  "classeId": 15
+}, {
+  "id": 1864,
+  "code": "CHODORDOR",
+  "nomFrancais": "Criquet vert-échine",
+  "nomLatin": "Chorthippus dorsatus dorsatus",
+  "classeId": 15
+}, {
+  "id": 1839,
+  "code": "CHOMOLMOL",
+  "nomFrancais": "Criquet des pelouses",
+  "nomLatin": "Chorthippus mollis mollis",
+  "classeId": 15
+}, {
+  "id": 1827,
+  "code": "CHOVAGVAG",
+  "nomFrancais": "Criquet des Pins",
+  "nomLatin": "Chorthippus vagans vagans",
+  "classeId": 15
+}, {
+  "id": 1856,
+  "code": "CHRDISDIS",
+  "nomFrancais": "Criquet des clairières",
+  "nomLatin": "Chrysochraon dispar dispar",
+  "classeId": 15
+}, {
+  "id": 1911,
+  "code": "CHRSCR",
+  "nomFrancais": "Tortue de Floride",
+  "nomLatin": "Chrysemis scripta",
+  "classeId": 16
+}, {
+  "id": 1356,
+  "code": "CICCIC",
+  "nomFrancais": "Cigogne blanche",
+  "nomLatin": "Ciconia ciconia",
+  "classeId": 14
+}, {
+  "id": 1358,
+  "code": "CICLUS",
+  "nomFrancais": "Cincle plongeur",
+  "nomLatin": "Cinclus cinclus",
+  "classeId": 14
+}, {
+  "id": 1357,
+  "code": "CICNIG",
+  "nomFrancais": "Cigogne noire",
+  "nomLatin": "Ciconia nigra",
+  "classeId": 14
+}, {
+  "id": 1303,
+  "code": "CIRAER",
+  "nomFrancais": "Busard des roseaux",
+  "nomLatin": "Circus aeruginosus",
+  "classeId": 14
+}, {
+  "id": 1305,
+  "code": "CIRCYA",
+  "nomFrancais": "Busard Saint-Martin",
+  "nomLatin": "Circus cyaneus",
+  "classeId": 14
+}, {
+  "id": 1359,
+  "code": "CIRGAL",
+  "nomFrancais": "Circaète Jean-le-blanc",
+  "nomLatin": "Circaetus gallicus",
+  "classeId": 14
+}, {
+  "id": 1304,
+  "code": "CIRMAC   ",
+  "nomFrancais": "Busard pâle",
+  "nomLatin": "Circus macrourus",
+  "classeId": 14
+}, {
+  "id": 1302,
+  "code": "CIRPYG",
+  "nomFrancais": "Busard cendré",
+  "nomLatin": "Circus pygargus",
+  "classeId": 14
+}, {
+  "id": 1360,
+  "code": "CISJUN",
+  "nomFrancais": "Cisticole des joncs",
+  "nomLatin": "Cisticola juncidis",
+  "classeId": 14
+}, {
+  "id": 1374,
+  "code": "CLAGLA",
+  "nomFrancais": "Coucou geai",
+  "nomLatin": "Clamator glandarius",
+  "classeId": 14
+}, {
+  "id": 1513,
+  "code": "CLAHYE   ",
+  "nomFrancais": "Harelde boréale",
+  "nomLatin": "Clangula hyemalis",
+  "classeId": 14
+}, {
+  "id": 991,
+  "code": "CLEGLA",
+  "nomFrancais": "Campagnol roussâtre",
+  "nomLatin": "Clethrionomys glareolus",
+  "classeId": 12
+}, {
+  "id": 985,
+  "code": "CLERUF",
+  "nomFrancais": "Campagnol de Sundevall",
+  "nomLatin": "Clethrionomys rufocanus",
+  "classeId": 12
+}, {
+  "id": 980,
+  "code": "CLERUT",
+  "nomFrancais": "Campagnol boréal",
+  "nomLatin": "Clethrionomys rutilus",
+  "classeId": 12
+}, {
+  "id": 1376,
+  "code": "COCAME",
+  "nomFrancais": "Coulicou à bec jaune",
+  "nomLatin": "Coccyzus americanus",
+  "classeId": 14
+}, {
+  "id": 1502,
+  "code": "COCTES",
+  "nomFrancais": "Grosbec casse-noyaux",
+  "nomLatin": "Coccothraustes coccothraustes",
+  "classeId": 14
+}, {
+  "id": 1348,
+  "code": "CODULA",
+  "nomFrancais": "Choucas des tours",
+  "nomLatin": "Corvus monedula",
+  "classeId": 14
+}, {
+  "id": 1114,
+  "code": "COEARM",
+  "nomFrancais": "Agrion à longs cerques",
+  "nomLatin": "Coenagrion armatum",
+  "classeId": 13
+}, {
+  "id": 1127,
+  "code": "COEHAS",
+  "nomFrancais": "Agrion hasté",
+  "nomLatin": "Coenagrion hastulatum",
+  "classeId": 13
+}, {
+  "id": 1115,
+  "code": "COELUN",
+  "nomFrancais": "Agrion à lunules",
+  "nomLatin": "Coenagrion lunulatum",
+  "classeId": 13
+}, {
+  "id": 1119,
+  "code": "COEMER",
+  "nomFrancais": "Agrion de Mercure",
+  "nomLatin": "Coenagrion mercuriale",
+  "classeId": 13
+}, {
+  "id": 1132,
+  "code": "COEORN",
+  "nomFrancais": "Agrion orné",
+  "nomLatin": "Coenagrion ornatum",
+  "classeId": 13
+}, {
+  "id": 1128,
+  "code": "COEPUE",
+  "nomFrancais": "Agrion jouvencelle",
+  "nomLatin": "Coenagrion puella",
+  "classeId": 13
+}, {
+  "id": 1126,
+  "code": "COEPUL",
+  "nomFrancais": "Agrion exclamatif",
+  "nomLatin": "Coenagrion pulchellum",
+  "classeId": 13
+}, {
+  "id": 1129,
+  "code": "COESCI",
+  "nomFrancais": "Agrion mignon",
+  "nomLatin": "Coenagrion scitulum",
+  "classeId": 13
+}, {
+  "id": 1677,
+  "code": "COLBUS",
+  "nomFrancais": "Pigeon ramier",
+  "nomLatin": "Columba palumbus",
+  "classeId": 14
+}, {
+  "id": 1674,
+  "code": "COLLIV",
+  "nomFrancais": "Pigeon biset",
+  "nomLatin": "Columba livia",
+  "classeId": 14
+}, {
+  "id": 1676,
+  "code": "COLLIVDOM",
+  "nomFrancais": "Pigeon domestique",
+  "nomLatin": "Columba livia domestique",
+  "classeId": 14
+}, {
+  "id": 1675,
+  "code": "COLNAS",
+  "nomFrancais": "Pigeon colombin",
+  "nomLatin": "Columba oenas",
+  "classeId": 14
+}, {
+  "id": 1890,
+  "code": "COLVIR",
+  "nomFrancais": "Couleuvre verte et jaune",
+  "nomLatin": "Coluber viridiflavus",
+  "classeId": 16
+}, {
+  "id": 1848,
+  "code": "CONFUS",
+  "nomFrancais": "Conocéphale commun",
+  "nomLatin": "Conocéphalus fuscus",
+  "classeId": 15
+}, {
+  "id": 1155,
+  "code": "CORAEN",
+  "nomFrancais": "Cordulie bronzée",
+  "nomLatin": "Cordulia aenea",
+  "classeId": 13
+}, {
+  "id": 1150,
+  "code": "CORATA",
+  "nomFrancais": "Cordulégastre bidenté",
+  "nomLatin": "Cordulegaster bidentata",
+  "classeId": 13
+}, {
+  "id": 1885,
+  "code": "CORAUS",
+  "nomFrancais": "Coronelle lisse",
+  "nomLatin": "Coronella austriaca",
+  "classeId": 16
+}, {
+  "id": 1147,
+  "code": "CORBOL",
+  "nomFrancais": "Cordulégastre annelé",
+  "nomLatin": "Cordulegaster boltonii",
+  "classeId": 13
+}, {
+  "id": 1148,
+  "code": "CORBOLBOL",
+  "nomFrancais": "Cordulégastre annelé de la sous espèce boltonii",
+  "nomLatin": "Cordulegaster boltonii boltonii",
+  "classeId": 13
+}, {
+  "id": 1149,
+  "code": "CORBOLIMM",
+  "nomFrancais": "Cordulegastre annelé de la sous espèce immaculifrons",
+  "nomLatin": "Cordulegaster boltonii immaculifrons",
+  "classeId": 13
+}, {
+  "id": 1370,
+  "code": "CORCOXNIX",
+  "nomFrancais": "Corneille hybride noire X mantelée",
+  "nomLatin": "Corvus corone corone X C.c.cornix",
+  "classeId": 14
+}, {
+  "id": 1347,
+  "code": "CORDAU",
+  "nomFrancais": "Choucas de Daourie",
+  "nomLatin": "Corvus dauuricus",
+  "classeId": 14
+}, {
+  "id": 1365,
+  "code": "CORFRU",
+  "nomFrancais": "Corbeau freux",
+  "nomLatin": "Corvus frugilegus",
+  "classeId": 14
+}, {
+  "id": 1730,
+  "code": "CORGAR",
+  "nomFrancais": "Rollier d'Europe",
+  "nomLatin": "Coracias garrulus",
+  "classeId": 14
+}, {
+  "id": 1884,
+  "code": "CORGIR",
+  "nomFrancais": "Coronelle girondine",
+  "nomLatin": "Coronella girondica",
+  "classeId": 16
+}, {
+  "id": 1372,
+  "code": "CORONE",
+  "nomFrancais": "Corneille noire",
+  "nomLatin": "Corvus corone",
+  "classeId": 14
+}, {
+  "id": 1371,
+  "code": "CORONENIX",
+  "nomFrancais": "Corneille mantelée",
+  "nomLatin": "Corvus corone cornix",
+  "classeId": 14
+}, {
+  "id": 1146,
+  "code": "CORPICPIC",
+  "nomFrancais": "Cordulegaster pictus pictus",
+  "nomLatin": "Cordulegaster pictus pictus",
+  "classeId": 13
+}, {
+  "id": 1472,
+  "code": "CORRAX",
+  "nomFrancais": "Grand Corbeau",
+  "nomLatin": "Corvus corax",
+  "classeId": 14
+}, {
+  "id": 1373,
+  "code": "CORSPE   ",
+  "nomFrancais": "Corvidé",
+  "nomLatin": "Corvidae",
+  "classeId": 14
+}, {
+  "id": 1350,
+  "code": "CORULAMON",
+  "nomFrancais": "Choucas des tours scandinave",
+  "nomLatin": "Corvus monedula monedula",
+  "classeId": 14
+}, {
+  "id": 1349,
+  "code": "CORULASPE",
+  "nomFrancais": "Choucas des tours continental",
+  "nomLatin": "Corvus monedula spermologus",
+  "classeId": 14
+}, {
+  "id": 1312,
+  "code": "COTNIX",
+  "nomFrancais": "Caille des blés",
+  "nomLatin": "Coturnix coturnix",
+  "classeId": 14
+}, {
+  "id": 1725,
+  "code": "CRECRE",
+  "nomFrancais": "Râle des genêts",
+  "nomLatin": "Crex crex",
+  "classeId": 14
+}, {
+  "id": 1186,
+  "code": "CROERY",
+  "nomFrancais": "Libellule écarlate",
+  "nomLatin": "Crocothemis erythraea",
+  "classeId": 13
+}, {
+  "id": 1052,
+  "code": "CROLEU",
+  "nomFrancais": "Crocidure leucode",
+  "nomLatin": "Crocidura leucodon",
+  "classeId": 12
+}, {
+  "id": 1062,
+  "code": "CRORUS",
+  "nomFrancais": "Crocidure musette",
+  "nomLatin": "Crocidura russula",
+  "classeId": 12
+}, {
+  "id": 1057,
+  "code": "CROSUA",
+  "nomFrancais": "Musaraigne des jardins",
+  "nomLatin": "Crocidura suaveolens",
+  "classeId": 12
+}, {
+  "id": 1375,
+  "code": "CUCCAN",
+  "nomFrancais": "Coucou gris",
+  "nomLatin": "Cuculus canorus",
+  "classeId": 14
+}, {
+  "id": 1380,
+  "code": "CURCUR",
+  "nomFrancais": "Courvite isabelle",
+  "nomLatin": "Cursorius cursor",
+  "classeId": 14
+}, {
+  "id": 1667,
+  "code": "CYACYA   ",
+  "nomFrancais": "Pie bleue",
+  "nomLatin": "Cyanopica cyana",
+  "classeId": 14
+}, {
+  "id": 1385,
+  "code": "CYGATE",
+  "nomFrancais": "Cygne noir",
+  "nomLatin": "Cygnus ater",
+  "classeId": 14
+}, {
+  "id": 1384,
+  "code": "CYGCOL   ",
+  "nomFrancais": "Cygne de Bewick",
+  "nomLatin": "Cygnus columbianus Yarrell",
+  "classeId": 14
+}, {
+  "id": 1383,
+  "code": "CYGCYG",
+  "nomFrancais": "Cygne chanteur",
+  "nomLatin": "Cygnus cygnus",
+  "classeId": 14
+}, {
+  "id": 1386,
+  "code": "CYGOLO",
+  "nomFrancais": "Cygne tuberculé",
+  "nomLatin": "Cygnus olor",
+  "classeId": 14
+}, {
+  "id": 1003,
+  "code": "DAMDAM",
+  "nomFrancais": "Daim",
+  "nomLatin": "Dama dama",
+  "classeId": 12
+}, {
+  "id": 1835,
+  "code": "DECALB",
+  "nomFrancais": "Dectique à front blanc",
+  "nomLatin": "Decticus albifrons",
+  "classeId": 15
+}, {
+  "id": 1526,
+  "code": "DELURB",
+  "nomFrancais": "Hirondelle de fenêtre",
+  "nomLatin": "Delichon urbicum",
+  "classeId": 14
+}, {
+  "id": 1659,
+  "code": "DENMAJ",
+  "nomFrancais": "Pic épeiche",
+  "nomLatin": "Dendrocopos major",
+  "classeId": 14
+}, {
+  "id": 1661,
+  "code": "DENMED",
+  "nomFrancais": "Pic mar",
+  "nomLatin": "Dendrocopos medius",
+  "classeId": 14
+}, {
+  "id": 1660,
+  "code": "DENMIN",
+  "nomFrancais": "Pic épeichette",
+  "nomLatin": "Dendrocopos minor",
+  "classeId": 14
+}, {
+  "id": 1640,
+  "code": "DENSTR",
+  "nomFrancais": "Paruline rayée",
+  "nomLatin": "Dendroica striata",
+  "classeId": 14
+}, {
+  "id": 1663,
+  "code": "DENSYR   ",
+  "nomFrancais": "Pic syriaque",
+  "nomLatin": "Dendrocopos syriacus",
+  "classeId": 14
+}, {
+  "id": 1657,
+  "code": "DENTOS",
+  "nomFrancais": "Pic à dos blanc",
+  "nomLatin": "Dendrocopos leucotos",
+  "classeId": 14
+}, {
+  "id": 1914,
+  "code": "DERCOR",
+  "nomFrancais": "Tortue luth",
+  "nomLatin": "Dermochelys coriacea",
+  "classeId": 16
+}, {
+  "id": 1220,
+  "code": "DIOEXU",
+  "nomFrancais": "Albatros hurleur",
+  "nomLatin": "Diomedea exulans",
+  "classeId": 14
+}, {
+  "id": 1219,
+  "code": "DIOMEL",
+  "nomFrancais": "Albatros à sourcils noirs",
+  "nomLatin": "Diomedea melanophrys",
+  "classeId": 14
+}, {
+  "id": 1857,
+  "code": "DOCJAGOCC",
+  "nomFrancais": "Criquet de Jago",
+  "nomLatin": "Dociostaurus jagoi occidentalis",
+  "classeId": 15
+}, {
+  "id": 1662,
+  "code": "DRYMAR",
+  "nomFrancais": "Pic noir",
+  "nomLatin": "Dryocopus martius",
+  "classeId": 14
+}, {
+  "id": 1018,
+  "code": "DRYNIT",
+  "nomFrancais": "Lérotin",
+  "nomLatin": "Dryomis nitedula",
+  "classeId": 12
+}, {
+  "id": 1480,
+  "code": "EGRALB",
+  "nomFrancais": "Grande Aigrette",
+  "nomLatin": "Casmerodius albus",
+  "classeId": 14
+}, {
+  "id": 1218,
+  "code": "EGRGAR",
+  "nomFrancais": "Aigrette garzette",
+  "nomLatin": "Egretta garzetta",
+  "classeId": 14
+}, {
+  "id": 1217,
+  "code": "EGRGUL",
+  "nomFrancais": "Aigrette des récifs",
+  "nomLatin": "Egretta gularis",
+  "classeId": 14
+}, {
+  "id": 1393,
+  "code": "ELACAE   ",
+  "nomFrancais": "Elanion blanc",
+  "nomLatin": "Elanus caeruleus",
+  "classeId": 14
+}, {
+  "id": 1889,
+  "code": "ELALON",
+  "nomFrancais": "Couleuvre d'Esculape",
+  "nomLatin": "Elaphe longissima",
+  "classeId": 16
+}, {
+  "id": 1887,
+  "code": "ELASCA",
+  "nomFrancais": "Couleuvre à échelons",
+  "nomLatin": "Elaphe scalaris",
+  "classeId": 16
+}, {
+  "id": 1017,
+  "code": "ELIQUE",
+  "nomFrancais": "Lérot",
+  "nomLatin": "Eliomys quercinus",
+  "classeId": 12
+}, {
+  "id": 1289,
+  "code": "EMBAUR   ",
+  "nomFrancais": "Bruant auréole",
+  "nomLatin": "Emberiza aureola",
+  "classeId": 14
+}, {
+  "id": 1290,
+  "code": "EMBCAE   ",
+  "nomFrancais": "Bruant cendrillard",
+  "nomLatin": "Emberiza caesia",
+  "classeId": 14
+}, {
+  "id": 1293,
+  "code": "EMBCIA",
+  "nomFrancais": "Bruant fou",
+  "nomLatin": "Emberiza cia",
+  "classeId": 14
+}, {
+  "id": 1301,
+  "code": "EMBCIR",
+  "nomFrancais": "Bruant zizi",
+  "nomLatin": "Emberiza cirlus",
+  "classeId": 14
+}, {
+  "id": 1294,
+  "code": "EMBCIT",
+  "nomFrancais": "Bruant jaune",
+  "nomLatin": "Emberiza citrinella",
+  "classeId": 14
+}, {
+  "id": 1298,
+  "code": "EMBHOR",
+  "nomFrancais": "Bruant ortolan",
+  "nomLatin": "Emberiza hortulana",
+  "classeId": 14
+}, {
+  "id": 1288,
+  "code": "EMBLEU",
+  "nomFrancais": "Bruant à calotte blanche",
+  "nomLatin": "Emberiza leucocephalos",
+  "classeId": 14
+}, {
+  "id": 1296,
+  "code": "EMBMEL   ",
+  "nomFrancais": "Bruant mélanocéphale",
+  "nomLatin": "Emberiza melanocephala",
+  "classeId": 14
+}, {
+  "id": 1297,
+  "code": "EMBPUS   ",
+  "nomFrancais": "Bruant nain",
+  "nomLatin": "Emberiza pusilla",
+  "classeId": 14
+}, {
+  "id": 1300,
+  "code": "EMBRUS   ",
+  "nomFrancais": "Bruant rustique",
+  "nomLatin": "Emberiza rustica",
+  "classeId": 14
+}, {
+  "id": 1292,
+  "code": "EMBSCH",
+  "nomFrancais": "Bruant des roseaux",
+  "nomLatin": "Emberiza schoeniclus",
+  "classeId": 14
+}, {
+  "id": 1811,
+  "code": "EMBSCHWHI",
+  "nomFrancais": "Bruant des roseaux whiterby",
+  "nomLatin": "Emberiza schoeniclus whiterby",
+  "classeId": 14
+}, {
+  "id": 1883,
+  "code": "EMYORB",
+  "nomFrancais": "Cistude d'Europe",
+  "nomLatin": "Emys orbicularis",
+  "classeId": 16
+}, {
+  "id": 1133,
+  "code": "ENACYA",
+  "nomFrancais": "Agrion porte coupe",
+  "nomLatin": "Enallagma cyathigerum",
+  "classeId": 13
+}, {
+  "id": 1152,
+  "code": "EPIBIM",
+  "nomFrancais": "Cordulie à deux taches",
+  "nomLatin": "Epitheca bimaculata",
+  "classeId": 13
+}, {
+  "id": 1096,
+  "code": "EPTIND",
+  "nomFrancais": "Serotine indéterminée",
+  "nomLatin": "Serotine indéterminée",
+  "classeId": 12
+}, {
+  "id": 1095,
+  "code": "EPTNIL",
+  "nomFrancais": "Sérotine de Nilsson",
+  "nomLatin": "Eptesicus nilssoni",
+  "classeId": 12
+}, {
+  "id": 1094,
+  "code": "EPTSER",
+  "nomFrancais": "Sérotine commune",
+  "nomLatin": "Eptesicus serotinus",
+  "classeId": 12
+}, {
+  "id": 1224,
+  "code": "EREALP   ",
+  "nomFrancais": "Alouette hausse-col",
+  "nomLatin": "Eremophila alpestris",
+  "classeId": 14
+}, {
+  "id": 1012,
+  "code": "ERIEUR",
+  "nomFrancais": "Hérisson d'Europe",
+  "nomLatin": "Erinaceus europaeus",
+  "classeId": 12
+}, {
+  "id": 1735,
+  "code": "ERIRUB",
+  "nomFrancais": "Rougegorge familier",
+  "nomLatin": "Erithacus rubecula",
+  "classeId": 14
+}, {
+  "id": 1113,
+  "code": "ERYLIN",
+  "nomFrancais": "Agrion de Vander Linden",
+  "nomLatin": "Erythromma lindenii",
+  "classeId": 13
+}, {
+  "id": 1116,
+  "code": "ERYNAJ",
+  "nomFrancais": "Agrion à yeux rouges",
+  "nomLatin": "Erythromma najas",
+  "classeId": 13
+}, {
+  "id": 1134,
+  "code": "ERYVIR",
+  "nomFrancais": "Agrion vert",
+  "nomLatin": "Erythroma viridulum",
+  "classeId": 13
+}, {
+  "id": 1833,
+  "code": "EUCDEC",
+  "nomFrancais": "Criquet des Bromes",
+  "nomLatin": "Euchorthippus declivus",
+  "classeId": 15
+}, {
+  "id": 1818,
+  "code": "EUCELE",
+  "nomFrancais": "Criquet blafard",
+  "nomLatin": "Euchorthippus elegantulus",
+  "classeId": 15
+}, {
+  "id": 1878,
+  "code": "EUGPIP",
+  "nomFrancais": "Grillon tintinnabulant",
+  "nomLatin": "Eugryllodes pipiens",
+  "classeId": 15
+}, {
+  "id": 943,
+  "code": "EUPASP",
+  "nomFrancais": "Euprocte des Pyrénées",
+  "nomLatin": "Euproctus asper",
+  "classeId": 10
+}, {
+  "id": 942,
+  "code": "EUPMON",
+  "nomFrancais": "Euprocte corse",
+  "nomLatin": "Euproctus montanus",
+  "classeId": 10
+}, {
+  "id": 1411,
+  "code": "FALBIA   ",
+  "nomFrancais": "Faucon lanier",
+  "nomLatin": "Falco biarmicus",
+  "classeId": 14
+}, {
+  "id": 1413,
+  "code": "FALCHE   ",
+  "nomFrancais": "Faucon sacre",
+  "nomLatin": "Falco cherrug",
+  "classeId": 14
+}, {
+  "id": 1407,
+  "code": "FALCOL",
+  "nomFrancais": "Faucon émerillon",
+  "nomLatin": "Falco columbarius",
+  "classeId": 14
+}, {
+  "id": 1406,
+  "code": "FALELE   ",
+  "nomFrancais": "Faucon d'Eléonore",
+  "nomLatin": "Falco eleonorae",
+  "classeId": 14
+}, {
+  "id": 1405,
+  "code": "FALNAU   ",
+  "nomFrancais": "Faucon crécerellette",
+  "nomLatin": "Falco naumanni",
+  "classeId": 14
+}, {
+  "id": 1412,
+  "code": "FALPER",
+  "nomFrancais": "Faucon pèlerin",
+  "nomLatin": "Falco peregrinus",
+  "classeId": 14
+}, {
+  "id": 1408,
+  "code": "FALRUS   ",
+  "nomFrancais": "Faucon gerfaut",
+  "nomLatin": "Falco rusticolus",
+  "classeId": 14
+}, {
+  "id": 1409,
+  "code": "FALTEO",
+  "nomFrancais": "Faucon hobereau",
+  "nomLatin": "Falco subbuteo",
+  "classeId": 14
+}, {
+  "id": 1404,
+  "code": "FALTIN",
+  "nomFrancais": "Faucon crécerelle",
+  "nomLatin": "Falco tinnunculus",
+  "classeId": 14
+}, {
+  "id": 1410,
+  "code": "FALVES",
+  "nomFrancais": "Faucon kobez",
+  "nomLatin": "Falco vespertinus",
+  "classeId": 14
+}, {
+  "id": 998,
+  "code": "FELSIL",
+  "nomFrancais": "Chat domestique",
+  "nomLatin": "Felis silvestris catus",
+  "classeId": 12
+}, {
+  "id": 999,
+  "code": "FELSYL",
+  "nomFrancais": "Chat sauvage",
+  "nomLatin": "Felis sylvestris",
+  "classeId": 12
+}, {
+  "id": 1450,
+  "code": "FICALB",
+  "nomFrancais": "Gobemouche à collier",
+  "nomLatin": "Ficedula albicollis",
+  "classeId": 14
+}, {
+  "id": 1452,
+  "code": "FICPAR   ",
+  "nomFrancais": "Gobemouche nain",
+  "nomLatin": "Ficedula parva",
+  "classeId": 14
+}, {
+  "id": 1453,
+  "code": "FICUCA",
+  "nomFrancais": "Gobemouche noir",
+  "nomLatin": "Ficedula hypoleuca",
+  "classeId": 14
+}, {
+  "id": 1557,
+  "code": "FRAARC   ",
+  "nomFrancais": "Macareux moine",
+  "nomLatin": "Fratercula arctica",
+  "classeId": 14
+}, {
+  "id": 1430,
+  "code": "FREMAG",
+  "nomFrancais": "Frégate superbe",
+  "nomLatin": "Fregata magnificens",
+  "classeId": 14
+}, {
+  "id": 1679,
+  "code": "FRICOE",
+  "nomFrancais": "Pinson des arbres",
+  "nomLatin": "Fringilla coelebs",
+  "classeId": 14
+}, {
+  "id": 1680,
+  "code": "FRIMON",
+  "nomFrancais": "Pinson du Nord",
+  "nomLatin": "Fringilla montifringilla",
+  "classeId": 14
+}, {
+  "id": 1429,
+  "code": "FULATR",
+  "nomFrancais": "Foulque macroule",
+  "nomLatin": "Fulica atra",
+  "classeId": 14
+}, {
+  "id": 1428,
+  "code": "FULCRI   ",
+  "nomFrancais": "Foulque caronculée",
+  "nomLatin": "Fulica cristata",
+  "classeId": 14
+}, {
+  "id": 1441,
+  "code": "FULLIS",
+  "nomFrancais": "Fulmar boréal",
+  "nomLatin": "Fulmarus glacialis",
+  "classeId": 14
+}, {
+  "id": 1256,
+  "code": "GALAGO",
+  "nomFrancais": "Bécassine des marais",
+  "nomLatin": "Gallinago gallinago",
+  "classeId": 14
+}, {
+  "id": 1362,
+  "code": "GALATA",
+  "nomFrancais": "Cochevis huppé",
+  "nomLatin": "Galerida cristata",
+  "classeId": 14
+}, {
+  "id": 1442,
+  "code": "GALCHL",
+  "nomFrancais": "Gallinule poule-d'eau",
+  "nomLatin": "Gallinula chloropus",
+  "classeId": 14
+}, {
+  "id": 1257,
+  "code": "GALMED",
+  "nomFrancais": "Bécassine double",
+  "nomLatin": "Gallinago media",
+  "classeId": 14
+}, {
+  "id": 1004,
+  "code": "GALPYR",
+  "nomFrancais": "Desman des Pyrénées",
+  "nomLatin": "Galemys pyrenaïcus  1",
+  "classeId": 12
+}, {
+  "id": 1361,
+  "code": "GALTHE   ",
+  "nomFrancais": "Cochevis de Thékla",
+  "nomLatin": "Galerida theklae",
+  "classeId": 14
+}, {
+  "id": 1446,
+  "code": "GARGLA",
+  "nomFrancais": "Geai des chênes",
+  "nomLatin": "Garrulus glandarius",
+  "classeId": 14
+}, {
+  "id": 1691,
+  "code": "GAVADA   ",
+  "nomFrancais": "Plongeon à bec blanc",
+  "nomLatin": "Gavia adamsii",
+  "classeId": 14
+}, {
+  "id": 1692,
+  "code": "GAVARC",
+  "nomFrancais": "Plongeon arctique",
+  "nomLatin": "Gavia arctica",
+  "classeId": 14
+}, {
+  "id": 1694,
+  "code": "GAVIMM",
+  "nomFrancais": "Plongeon imbrin",
+  "nomLatin": "Gavia immer",
+  "classeId": 14
+}, {
+  "id": 1693,
+  "code": "GAVSTE",
+  "nomFrancais": "Plongeon catmarin",
+  "nomLatin": "Gavia stellata",
+  "classeId": 14
+}, {
+  "id": 1768,
+  "code": "GELNIL",
+  "nomFrancais": "Sterne hansel",
+  "nomLatin": "Gelochelidon nilotica",
+  "classeId": 14
+}, {
+  "id": 1007,
+  "code": "GENGEN",
+  "nomFrancais": "Genette",
+  "nomLatin": "Genetta genetta",
+  "classeId": 12
+}, {
+  "id": 1448,
+  "code": "GLANOR   ",
+  "nomFrancais": "Glaréole à ailes noires",
+  "nomLatin": "Glareola Nordmanni",
+  "classeId": 14
+}, {
+  "id": 1345,
+  "code": "GLAPAS",
+  "nomFrancais": "Chevêchette d'Europe",
+  "nomLatin": "Glaucidium passerinum",
+  "classeId": 14
+}, {
+  "id": 1449,
+  "code": "GLAPRA   ",
+  "nomFrancais": "Glaréole à collier",
+  "nomLatin": "Glareola pratincola",
+  "classeId": 14
+}, {
+  "id": 1023,
+  "code": "GLIGLI",
+  "nomFrancais": "Loir gris",
+  "nomLatin": "Myoxus glis",
+  "classeId": 12
+}, {
+  "id": 1165,
+  "code": "GOMGRA",
+  "nomFrancais": "Gomphus de Graslin",
+  "nomLatin": "Gomphus graslini",
+  "classeId": 13
+}, {
+  "id": 1166,
+  "code": "GOMPUL",
+  "nomFrancais": "Gomphus gentil",
+  "nomLatin": "Gomphus pulchellus",
+  "classeId": 13
+}, {
+  "id": 1863,
+  "code": "GOMRUF",
+  "nomFrancais": "Gomphocère roux",
+  "nomLatin": "Gomphocerippus rufus",
+  "classeId": 15
+}, {
+  "id": 1168,
+  "code": "GOMSIM",
+  "nomFrancais": "Gomphus similaire",
+  "nomLatin": "Gomphus simillimus",
+  "classeId": 13
+}, {
+  "id": 1169,
+  "code": "GOMVUL",
+  "nomFrancais": "Gomphe vulgaire",
+  "nomLatin": "Gomphus vulgatissimus",
+  "classeId": 13
+}, {
+  "id": 1503,
+  "code": "GRUGRU",
+  "nomFrancais": "Grue cendrée",
+  "nomLatin": "Grus grus",
+  "classeId": 14
+}, {
+  "id": 1879,
+  "code": "GRYBIM",
+  "nomFrancais": "Grillon bimaculé",
+  "nomLatin": "Gryllus bimaculatus",
+  "classeId": 15
+}, {
+  "id": 1826,
+  "code": "GRYCAM",
+  "nomFrancais": "Grillon champêtre",
+  "nomLatin": "Gryllus campestris",
+  "classeId": 15
+}, {
+  "id": 1844,
+  "code": "GRYDALDAL",
+  "nomFrancais": "Grillon des bastides",
+  "nomLatin": "Gryllomorpha dalmatina dalmatina",
+  "classeId": 15
+}, {
+  "id": 1867,
+  "code": "GRYGRY",
+  "nomFrancais": "Courtilière commune",
+  "nomLatin": "Gryllotalpa gryllotalpa",
+  "classeId": 15
+}, {
+  "id": 1512,
+  "code": "GYPBAR",
+  "nomFrancais": "Gypaète barbu",
+  "nomLatin": "Gypaetus barbatus",
+  "classeId": 14
+}, {
+  "id": 1801,
+  "code": "GYPFUL",
+  "nomFrancais": "Vautour fauve",
+  "nomLatin": "Gyps fulvus",
+  "classeId": 14
+}, {
+  "id": 1531,
+  "code": "HAEOST",
+  "nomFrancais": "Huîtrier pie",
+  "nomLatin": "Haematopus ostralegus",
+  "classeId": 14
+}, {
+  "id": 1723,
+  "code": "HALALB",
+  "nomFrancais": "Pygargue à queue blanche",
+  "nomLatin": "Haliaeetus albicilla",
+  "classeId": 14
+}, {
+  "id": 1137,
+  "code": "HEMEPH",
+  "nomFrancais": "Anax porte selle",
+  "nomLatin": "Hemianax ephippiger",
+  "classeId": 13
+}, {
+  "id": 1893,
+  "code": "HEMTUR",
+  "nomFrancais": "Hémidactyle verruqueux",
+  "nomLatin": "Hemidactylus turcicus",
+  "classeId": 16
+}, {
+  "id": 1211,
+  "code": "HIEFAS",
+  "nomFrancais": "Aigle de bonelli",
+  "nomLatin": " Aquila fasciata",
+  "classeId": 14
+}, {
+  "id": 1209,
+  "code": "HIEPEN",
+  "nomFrancais": "Aigle botté",
+  "nomLatin": "Aquila pennata",
+  "classeId": 14
+}, {
+  "id": 1388,
+  "code": "HIMHIM",
+  "nomFrancais": "Echasse blanche",
+  "nomLatin": "Himantopus himantopus",
+  "classeId": 14
+}, {
+  "id": 1533,
+  "code": "HIPCAL",
+  "nomFrancais": "Hypolaïs bottée",
+  "nomLatin": "Hippolais caligata",
+  "classeId": 14
+}, {
+  "id": 1535,
+  "code": "HIPICT",
+  "nomFrancais": "Hypolaïs ictérine",
+  "nomLatin": "Hippolais icterina",
+  "classeId": 14
+}, {
+  "id": 1534,
+  "code": "HIPOLI   ",
+  "nomFrancais": "Hypolaïs des oliviers",
+  "nomLatin": "Hippolais olivetorum",
+  "classeId": 14
+}, {
+  "id": 1536,
+  "code": "HIPPAL   ",
+  "nomFrancais": "Hypolaïs pâle",
+  "nomLatin": "Hippolais pallida",
+  "classeId": 14
+}, {
+  "id": 1537,
+  "code": "HIPPOL",
+  "nomFrancais": "Hypolaïs polyglotte",
+  "nomLatin": "Hippolais polyglotta",
+  "classeId": 14
+}, {
+  "id": 1529,
+  "code": "HIRDAU",
+  "nomFrancais": "Hirondelle rousseline",
+  "nomLatin": "Cecropis daurica",
+  "classeId": 14
+}, {
+  "id": 1530,
+  "code": "HIRRUS",
+  "nomFrancais": "Hirondelle rustique",
+  "nomLatin": "Hirundo rustica",
+  "classeId": 14
+}, {
+  "id": 1227,
+  "code": "HISHIS   ",
+  "nomFrancais": "Arlequin plongeur",
+  "nomLatin": "Histrionicus histrionicus",
+  "classeId": 14
+}, {
+  "id": 1798,
+  "code": "HOPSPI   ",
+  "nomFrancais": "Vanneau éperonné",
+  "nomLatin": "Hoplopterus spinosus",
+  "classeId": 14
+}, {
+  "id": 1614,
+  "code": "HYDPEL   ",
+  "nomFrancais": "Océanite tempête",
+  "nomLatin": "Hydrobates pelagicus",
+  "classeId": 14
+}, {
+  "id": 960,
+  "code": "HYLARB",
+  "nomFrancais": "Rainette verte",
+  "nomLatin": "Hyla arborea",
+  "classeId": 10
+}, {
+  "id": 959,
+  "code": "HYLMER",
+  "nomFrancais": "Rainette méridionale",
+  "nomLatin": "Hyla meridionalis",
+  "classeId": 10
+}, {
+  "id": 1125,
+  "code": "ISCELE",
+  "nomFrancais": "Agrion élégant",
+  "nomLatin": "Ischnura elegans",
+  "classeId": 13
+}, {
+  "id": 1130,
+  "code": "ISCPUM",
+  "nomFrancais": "Agrion nain",
+  "nomLatin": "Ischnura pumilio",
+  "classeId": 13
+}, {
+  "id": 1821,
+  "code": "ISOPYR",
+  "nomFrancais": "Barbitiste des Pyrénées",
+  "nomLatin": "Isophya pyreneae",
+  "classeId": 15
+}, {
+  "id": 1282,
+  "code": "IXOMIN",
+  "nomFrancais": "Blongios nain",
+  "nomLatin": "Ixobrychus minutus",
+  "classeId": 14
+}, {
+  "id": 1781,
+  "code": "JYNTOR",
+  "nomFrancais": "Torcol fourmilier",
+  "nomLatin": "Jynx torquilla",
+  "classeId": 14
+}, {
+  "id": 1894,
+  "code": "LACAGI",
+  "nomFrancais": "Lézard agile ou des souches",
+  "nomLatin": "Lacerta agilis",
+  "classeId": 16
+}, {
+  "id": 1900,
+  "code": "LACLEP",
+  "nomFrancais": "Lézard ocellé",
+  "nomLatin": "Lacerta lepida",
+  "classeId": 16
+}, {
+  "id": 1902,
+  "code": "LACVIR",
+  "nomFrancais": "Lézard vert",
+  "nomLatin": "Lacerta viridis",
+  "classeId": 16
+}, {
+  "id": 1903,
+  "code": "LACVIV",
+  "nomFrancais": "Lézard vivipare",
+  "nomLatin": "Lacerta vivipara",
+  "classeId": 16
+}, {
+  "id": 1546,
+  "code": "LAGLAG   ",
+  "nomFrancais": "Lagopède des saules",
+  "nomLatin": "Lagopus lagopus",
+  "classeId": 14
+}, {
+  "id": 1545,
+  "code": "LAGLAGSCO",
+  "nomFrancais": "Lagopède d'Ecosse",
+  "nomLatin": "Lagopus lagopus scoticus",
+  "classeId": 14
+}, {
+  "id": 1544,
+  "code": "LAGMUT",
+  "nomFrancais": "Lagopède alpin",
+  "nomLatin": "Lagopus muta",
+  "classeId": 14
+}, {
+  "id": 1672,
+  "code": "LANISA",
+  "nomFrancais": "Pie-grièche isabelle",
+  "nomLatin": "Lanius isabellinus Ehrenberg",
+  "classeId": 14
+}, {
+  "id": 1673,
+  "code": "LANMER",
+  "nomFrancais": "Pie-grièche méridionale",
+  "nomLatin": "Lanius meridionalis Temminck",
+  "classeId": 14
+}, {
+  "id": 1668,
+  "code": "LANMIN",
+  "nomFrancais": "Pie-grièche à poitrine rose",
+  "nomLatin": "Lanius minor Gmelin",
+  "classeId": 14
+}, {
+  "id": 1670,
+  "code": "LANRIO",
+  "nomFrancais": "Pie-grièche écorcheur",
+  "nomLatin": "Lanius collurio",
+  "classeId": 14
+}, {
+  "id": 1669,
+  "code": "LANSEN",
+  "nomFrancais": "Pie-grièche à tête rousse",
+  "nomLatin": "Lanius senato",
+  "classeId": 14
+}, {
+  "id": 1671,
+  "code": "LANTOR",
+  "nomFrancais": "Pie-grièche grise",
+  "nomLatin": "Lanius excubitor",
+  "classeId": 14
+}, {
+  "id": 1456,
+  "code": "LARARG",
+  "nomFrancais": "Goéland argenté",
+  "nomLatin": "Larus argentatus",
+  "classeId": 14
+}, {
+  "id": 1597,
+  "code": "LARATR",
+  "nomFrancais": "Mouette atricille",
+  "nomLatin": "Larus atricilla",
+  "classeId": 14
+}, {
+  "id": 1462,
+  "code": "LARAUD   ",
+  "nomFrancais": "Goéland d'Audouin",
+  "nomLatin": "Larus audouinii Payraudeau",
+  "classeId": 14
+}, {
+  "id": 1464,
+  "code": "LARCAC",
+  "nomFrancais": "Goéland pontique",
+  "nomLatin": "Larus cachinnans",
+  "classeId": 14
+}, {
+  "id": 1461,
+  "code": "LARCAN",
+  "nomFrancais": "Goéland cendré",
+  "nomLatin": "Larus canus",
+  "classeId": 14
+}, {
+  "id": 1455,
+  "code": "LARDEL",
+  "nomFrancais": "Goéland à bec cerclé",
+  "nomLatin": "Larus delawarensis Ord",
+  "classeId": 14
+}, {
+  "id": 1458,
+  "code": "LARFUS",
+  "nomFrancais": "Goéland brun",
+  "nomLatin": "Larus fuscus",
+  "classeId": 14
+}, {
+  "id": 1459,
+  "code": "LARFUSFUS",
+  "nomFrancais": "Goéland brun des Pays Baltes",
+  "nomLatin": "Larus fuscus fuscus",
+  "classeId": 14
+}, {
+  "id": 1460,
+  "code": "LARFUSGRA",
+  "nomFrancais": "Goéland brun d'Europe de l'Ouest",
+  "nomLatin": "Larus fuscus graellsii",
+  "classeId": 14
+}, {
+  "id": 1467,
+  "code": "LARGEN   ",
+  "nomFrancais": "Goéland railleur",
+  "nomLatin": "Chroicocephalus genei",
+  "classeId": 14
+}, {
+  "id": 1454,
+  "code": "LARGLA   ",
+  "nomFrancais": "Goéland à ailes blanches ",
+  "nomLatin": "Larus glaucoides",
+  "classeId": 14
+}, {
+  "id": 1463,
+  "code": "LARHEU   ",
+  "nomFrancais": "Goéland de Sibérie",
+  "nomLatin": "Larus heuglini",
+  "classeId": 14
+}, {
+  "id": 1457,
+  "code": "LARHYP   ",
+  "nomFrancais": "Goéland bourgmestre",
+  "nomLatin": "Larus hyperboreus",
+  "classeId": 14
+}, {
+  "id": 1466,
+  "code": "LARMAR   ",
+  "nomFrancais": "Goéland marin",
+  "nomLatin": "Larus marinus",
+  "classeId": 14
+}, {
+  "id": 1602,
+  "code": "LARMEL",
+  "nomFrancais": "Mouette mélanocéphale",
+  "nomLatin": "Larus melanocephalus",
+  "classeId": 14
+}, {
+  "id": 1465,
+  "code": "LARMIC",
+  "nomFrancais": "Goéland leucophée",
+  "nomLatin": "Larus michahellis",
+  "classeId": 14
+}, {
+  "id": 1604,
+  "code": "LARMIN",
+  "nomFrancais": "Mouette pygmée",
+  "nomLatin": "Hydrocoloeus minutus",
+  "classeId": 14
+}, {
+  "id": 1598,
+  "code": "LARPHI",
+  "nomFrancais": "Mouette de Bonaparte",
+  "nomLatin": "Larus philadelphia",
+  "classeId": 14
+}, {
+  "id": 1599,
+  "code": "LARPIP",
+  "nomFrancais": "Mouette de Franklin",
+  "nomLatin": "Larus pipixcan Wagler",
+  "classeId": 14
+}, {
+  "id": 1605,
+  "code": "LARRID",
+  "nomFrancais": "Mouette rieuse",
+  "nomLatin": "Chroicocephalus ridibundus",
+  "classeId": 14
+}, {
+  "id": 1601,
+  "code": "LARSAB   ",
+  "nomFrancais": "Mouette de Sabine",
+  "nomLatin": "Larus sabini Sabine",
+  "classeId": 14
+}, {
+  "id": 1603,
+  "code": "LARSPE   ",
+  "nomFrancais": "Mouette ou Goéland",
+  "nomLatin": "Larus sp.",
+  "classeId": 14
+}, {
+  "id": 1020,
+  "code": "LEPCAP",
+  "nomFrancais": "Lièvre ibérique",
+  "nomLatin": "Lepus capensis",
+  "classeId": 12
+}, {
+  "id": 1019,
+  "code": "LEPEUR",
+  "nomFrancais": "Lièvre",
+  "nomLatin": "Lepus europaeus",
+  "classeId": 12
+}, {
+  "id": 1912,
+  "code": "LEPKEM",
+  "nomFrancais": "Tortue de Kemp",
+  "nomLatin": "Lepidochelys kempii",
+  "classeId": 16
+}, {
+  "id": 1021,
+  "code": "LEPTIMTIM",
+  "nomFrancais": "Lièvre variable de Scandinavie",
+  "nomLatin": "Lepus timidus timidus",
+  "classeId": 12
+}, {
+  "id": 1022,
+  "code": "LEPTIMVAR",
+  "nomFrancais": "Lièvre variable des Alpes",
+  "nomLatin": "Lepus timidus varronis",
+  "classeId": 12
+}, {
+  "id": 1176,
+  "code": "LESBAR",
+  "nomFrancais": "Leste sauvage",
+  "nomLatin": "Lestes barbarus",
+  "classeId": 13
+}, {
+  "id": 1173,
+  "code": "LESDRY",
+  "nomFrancais": "Leste dryade",
+  "nomLatin": "Lestes dryas",
+  "classeId": 13
+}, {
+  "id": 1171,
+  "code": "LESMAC",
+  "nomFrancais": "Leste à grands stigmas",
+  "nomLatin": "Lestes macrostigma",
+  "classeId": 13
+}, {
+  "id": 1175,
+  "code": "LESSPO",
+  "nomFrancais": "Leste fiancé",
+  "nomLatin": "Lestes sponsa",
+  "classeId": 13
+}, {
+  "id": 1177,
+  "code": "LESVIR",
+  "nomFrancais": "Leste verdoyant",
+  "nomLatin": "Lestes virens",
+  "classeId": 13
+}, {
+  "id": 1205,
+  "code": "LESVIRVIR",
+  "nomFrancais": "Leste verdoyant méridional",
+  "nomLatin": "Lestes virens virens",
+  "classeId": 13
+}, {
+  "id": 1179,
+  "code": "LEUALB",
+  "nomFrancais": "Leucorrhine à front blanc",
+  "nomLatin": "Leucorrhinia albifrons",
+  "classeId": 13
+}, {
+  "id": 1181,
+  "code": "LEUCAU",
+  "nomFrancais": "Leucorrhine à large queue",
+  "nomLatin": "Leucorrhinia caudalis",
+  "classeId": 13
+}, {
+  "id": 1182,
+  "code": "LEUDUB",
+  "nomFrancais": "Leucorrhine douteuse",
+  "nomLatin": "Leucorrhinia dubia",
+  "classeId": 13
+}, {
+  "id": 1180,
+  "code": "LEUPEC",
+  "nomFrancais": "Leucorrhine à gros thorax",
+  "nomLatin": "Leucorrhinia pectoralis",
+  "classeId": 13
+}, {
+  "id": 1183,
+  "code": "LEURUB",
+  "nomFrancais": "Leucorrhine rubiconde",
+  "nomLatin": "Leucorrhinia rubicunda",
+  "classeId": 13
+}, {
+  "id": 1185,
+  "code": "LIBDEP",
+  "nomFrancais": "Libellule déprimée",
+  "nomLatin": "Libellula depressa",
+  "classeId": 13
+}, {
+  "id": 1187,
+  "code": "LIBFUL",
+  "nomFrancais": "Libellule fauve",
+  "nomLatin": "Libellula fulva",
+  "classeId": 13
+}, {
+  "id": 1184,
+  "code": "LIBQUA",
+  "nomFrancais": "Libellule à quatre taches",
+  "nomLatin": "Libellula quadrimaculata",
+  "classeId": 13
+}, {
+  "id": 1243,
+  "code": "LIMFAL   ",
+  "nomFrancais": "Bécasseau falcinelle",
+  "nomLatin": "Limicola falcinellus",
+  "classeId": 14
+}, {
+  "id": 1232,
+  "code": "LIMLAP",
+  "nomFrancais": "Barge rousse",
+  "nomLatin": "Limosa lapponica",
+  "classeId": 14
+}, {
+  "id": 1231,
+  "code": "LIMLIM",
+  "nomFrancais": "Barge à queue noire",
+  "nomLatin": "Limosa limosa",
+  "classeId": 14
+}, {
+  "id": 1255,
+  "code": "LIMSCO",
+  "nomFrancais": "Bécassin à long bec",
+  "nomLatin": "Limnodromus scolopaceus",
+  "classeId": 14
+}, {
+  "id": 1549,
+  "code": "LOCCER",
+  "nomFrancais": "Locustelle de Pallas",
+  "nomLatin": "Locustella certhiola",
+  "classeId": 14
+}, {
+  "id": 1841,
+  "code": "LOCCINCIN",
+  "nomFrancais": "Criquet cendré",
+  "nomLatin": " Locusta cinerascens cinerascens",
+  "classeId": 15
+}, {
+  "id": 1550,
+  "code": "LOCFAS",
+  "nomFrancais": "Locustelle fasciée",
+  "nomLatin": "Locustella fasciolata",
+  "classeId": 14
+}, {
+  "id": 1551,
+  "code": "LOCFLU   ",
+  "nomFrancais": "Locustelle fluviatile",
+  "nomLatin": "Locustella fluviatilis",
+  "classeId": 14
+}, {
+  "id": 1552,
+  "code": "LOCLAN   ",
+  "nomFrancais": "Locustelle lancéolée",
+  "nomLatin": "Locustella lanceolata",
+  "classeId": 14
+}, {
+  "id": 1553,
+  "code": "LOCLUS",
+  "nomFrancais": "Locustelle luscinioïde",
+  "nomLatin": "Locustella luscinioides",
+  "classeId": 14
+}, {
+  "id": 1554,
+  "code": "LOCNAE",
+  "nomFrancais": "Locustelle tachetée",
+  "nomLatin": "Locustella naevia",
+  "classeId": 14
+}, {
+  "id": 1809,
+  "code": "LONICA",
+  "nomFrancais": "Capucin bec-de-plomb",
+  "nomLatin": "Lonchura malabarica",
+  "classeId": 14
+}, {
+  "id": 1261,
+  "code": "LOXCUR",
+  "nomFrancais": "Bec-croisé des sapins",
+  "nomLatin": "Loxia curvirostra",
+  "classeId": 14
+}, {
+  "id": 1259,
+  "code": "LOXLEU   ",
+  "nomFrancais": "Bec-croisé bifascié",
+  "nomLatin": "Loxia leucoptera Gmelin",
+  "classeId": 14
+}, {
+  "id": 1262,
+  "code": "LOXPYT   ",
+  "nomFrancais": "Bec-croisé perroquet",
+  "nomLatin": "Loxia pytyopsittacus",
+  "classeId": 14
+}, {
+  "id": 1260,
+  "code": "LOXSCO   ",
+  "nomFrancais": "Bec-croisé d'Ecosse",
+  "nomLatin": "Loxia scotica",
+  "classeId": 14
+}, {
+  "id": 1225,
+  "code": "LULARB",
+  "nomFrancais": "Alouette lulu",
+  "nomLatin": "Lullula arborea",
+  "classeId": 14
+}, {
+  "id": 1734,
+  "code": "LUSLUS   ",
+  "nomFrancais": "Rossignol progné",
+  "nomLatin": "Luscinia luscinia",
+  "classeId": 14
+}, {
+  "id": 1733,
+  "code": "LUSMEG",
+  "nomFrancais": "Rossignol philomèle",
+  "nomLatin": "Luscinia megarhynchos",
+  "classeId": 14
+}, {
+  "id": 1468,
+  "code": "LUSSVE",
+  "nomFrancais": "Gorgebleue à miroir",
+  "nomLatin": "Luscinia svecica",
+  "classeId": 14
+}, {
+  "id": 1469,
+  "code": "LUSSVECYA",
+  "nomFrancais": "Gorgebleue à miroir cyanecula",
+  "nomLatin": "Luscinia svecica cyanecula",
+  "classeId": 14
+}, {
+  "id": 1470,
+  "code": "LUSSVENAM",
+  "nomFrancais": "Gorgebleue à miroir namnetum",
+  "nomLatin": "Luscinia svecica namnetum",
+  "classeId": 14
+}, {
+  "id": 1471,
+  "code": "LUSSVESVE",
+  "nomFrancais": "Gorgebleue à miroir svecica",
+  "nomLatin": "Luscinia svecica svecica",
+  "classeId": 14
+}, {
+  "id": 1025,
+  "code": "LUTLUT",
+  "nomFrancais": "Loutre d'Europe",
+  "nomLatin": "Lutra lutra",
+  "classeId": 12
+}, {
+  "id": 1258,
+  "code": "LYMMIN",
+  "nomFrancais": "Bécassine sourde",
+  "nomLatin": "Lymnocryptes minimus",
+  "classeId": 14
+}, {
+  "id": 1026,
+  "code": "LYNLYN",
+  "nomFrancais": "Lynx",
+  "nomLatin": "Lynx lynx",
+  "classeId": 12
+}, {
+  "id": 1159,
+  "code": "MACSPL",
+  "nomFrancais": "Cordulie splendide",
+  "nomLatin": "Macromia splendens",
+  "classeId": 13
+}, {
+  "id": 1888,
+  "code": "MALMON",
+  "nomFrancais": "Couleuvre de Montpellier",
+  "nomLatin": "Malpolon monspessulanus",
+  "classeId": 16
+}, {
+  "id": 1748,
+  "code": "MARANG   ",
+  "nomFrancais": "Sarcelle marbrée",
+  "nomLatin": "Marmaronetta angustirostris",
+  "classeId": 14
+}, {
+  "id": 1006,
+  "code": "MARFOI",
+  "nomFrancais": "Fouine",
+  "nomLatin": "Martes foina",
+  "classeId": 12
+}, {
+  "id": 1028,
+  "code": "MARMAR",
+  "nomFrancais": "Martre",
+  "nomLatin": "Martes martes",
+  "classeId": 12
+}, {
+  "id": 1027,
+  "code": "MARMOT",
+  "nomFrancais": "Marmotte",
+  "nomLatin": "Marmota marmota",
+  "classeId": 12
+}, {
+  "id": 1029,
+  "code": "MARSPE",
+  "nomFrancais": "martres/fouine",
+  "nomLatin": "Martes species",
+  "classeId": 12
+}, {
+  "id": 1892,
+  "code": "MAULEP",
+  "nomFrancais": "Emyde lépreuse",
+  "nomLatin": "Mauremys leprosa",
+  "classeId": 16
+}, {
+  "id": 1880,
+  "code": "MECMER",
+  "nomFrancais": "Méconème fragile",
+  "nomLatin": "Meconema meridionale",
+  "classeId": 15
+}, {
+  "id": 1854,
+  "code": "MECPARPAR",
+  "nomFrancais": "Criquet des roseaux",
+  "nomLatin": "Mecostethus parapleurus parapleurus",
+  "classeId": 15
+}, {
+  "id": 1559,
+  "code": "MELACA",
+  "nomFrancais": "Macreuse brune",
+  "nomLatin": "Melanitta fusca",
+  "classeId": 14
+}, {
+  "id": 1560,
+  "code": "MELARA",
+  "nomFrancais": "Macreuse noire",
+  "nomLatin": "Melanitta nigra",
+  "classeId": 14
+}, {
+  "id": 1221,
+  "code": "MELCAL",
+  "nomFrancais": "Alouette calandre",
+  "nomLatin": "Melanocorypha calandra",
+  "classeId": 14
+}, {
+  "id": 974,
+  "code": "MELMEL",
+  "nomFrancais": "Blaireau européen",
+  "nomLatin": "Meles meles  Linnaeus",
+  "classeId": 12
+}, {
+  "id": 1558,
+  "code": "MELPER",
+  "nomFrancais": "Macreuse à front blanc",
+  "nomLatin": "Melanitta perspicillata",
+  "classeId": 14
+}, {
+  "id": 1518,
+  "code": "MERALB",
+  "nomFrancais": "Harle piette",
+  "nomLatin": "Mergus albellus",
+  "classeId": 14
+}, {
+  "id": 1505,
+  "code": "MERAPI",
+  "nomFrancais": "Guêpier d'Europe",
+  "nomLatin": "Merops apiaster",
+  "classeId": 14
+}, {
+  "id": 1516,
+  "code": "MERCUC",
+  "nomFrancais": "Harle couronnée",
+  "nomLatin": "Mergus cucullatus",
+  "classeId": 14
+}, {
+  "id": 1515,
+  "code": "MERMER",
+  "nomFrancais": "Harle bièvre",
+  "nomLatin": "Mergus merganser",
+  "classeId": 14
+}, {
+  "id": 1504,
+  "code": "MERPER",
+  "nomFrancais": "Guêpier de Perse",
+  "nomLatin": "Merops persicus",
+  "classeId": 14
+}, {
+  "id": 1517,
+  "code": "MERSER",
+  "nomFrancais": "Harle huppé",
+  "nomLatin": "Mergus serrator",
+  "classeId": 14
+}, {
+  "id": 1011,
+  "code": "MESAUR",
+  "nomFrancais": "Hamster doré",
+  "nomLatin": "Mesocricetus auratus",
+  "classeId": 12
+}, {
+  "id": 977,
+  "code": "MICAGR",
+  "nomFrancais": "Campagnol agreste",
+  "nomLatin": "Microtus agrestis",
+  "classeId": 12
+}, {
+  "id": 986,
+  "code": "MICARV",
+  "nomFrancais": "Campagnol des champs",
+  "nomLatin": "Microtus arvalis",
+  "classeId": 12
+}, {
+  "id": 981,
+  "code": "MICCAB",
+  "nomFrancais": "Campagnol cabrerae",
+  "nomLatin": "Microtus cabrerae",
+  "classeId": 12
+}, {
+  "id": 988,
+  "code": "MICGUE",
+  "nomFrancais": "Campagnol guentheri",
+  "nomLatin": "Microtus guentheri",
+  "classeId": 12
+}, {
+  "id": 1237,
+  "code": "MICHIM",
+  "nomFrancais": "Bécasseau à échasses",
+  "nomLatin": "Micropalama himantopus",
+  "classeId": 14
+}, {
+  "id": 979,
+  "code": "MICLUS",
+  "nomFrancais": "Campagnol Basque",
+  "nomLatin": "Microtus lusitanicus",
+  "classeId": 12
+}, {
+  "id": 1084,
+  "code": "MICMIN",
+  "nomFrancais": "Rat des moissons",
+  "nomLatin": "Micromys minutus",
+  "classeId": 12
+}, {
+  "id": 987,
+  "code": "MICNIV",
+  "nomFrancais": "Campagnol des neiges",
+  "nomLatin": "Chionomys nivalis",
+  "classeId": 12
+}, {
+  "id": 989,
+  "code": "MICOEC",
+  "nomFrancais": "Campagnol nordique",
+  "nomLatin": "Microtus oeconomus",
+  "classeId": 12
+}, {
+  "id": 1299,
+  "code": "MILCAL",
+  "nomFrancais": "Bruant proyer",
+  "nomLatin": "Emberiza calandra",
+  "classeId": 14
+}, {
+  "id": 1587,
+  "code": "MILMIG",
+  "nomFrancais": "Milan noir",
+  "nomLatin": "Milvus migrans",
+  "classeId": 14
+}, {
+  "id": 1588,
+  "code": "MILMIL",
+  "nomFrancais": "Milan royal",
+  "nomLatin": "Milvus milvus",
+  "classeId": 14
+}, {
+  "id": 1030,
+  "code": "MINSCH",
+  "nomFrancais": "Minioptère de Schreibers",
+  "nomLatin": "Miniopterus schreibersi",
+  "classeId": 12
+}, {
+  "id": 1609,
+  "code": "MONNIV",
+  "nomFrancais": "Niverolle alpine",
+  "nomLatin": "Montifringilla nivalis",
+  "classeId": 14
+}, {
+  "id": 1596,
+  "code": "MONSAX",
+  "nomFrancais": "Monticole de roche",
+  "nomLatin": "Monticola saxatilis",
+  "classeId": 14
+}, {
+  "id": 1595,
+  "code": "MONSOL   ",
+  "nomFrancais": "Monticole bleu",
+  "nomLatin": "Monticola solitarius",
+  "classeId": 14
+}, {
+  "id": 1267,
+  "code": "MOTALB",
+  "nomFrancais": "Bergeronnette grise",
+  "nomLatin": "Motacilla alba",
+  "classeId": 14
+}, {
+  "id": 1268,
+  "code": "MOTALBALB",
+  "nomFrancais": "Bergeronnette grise type",
+  "nomLatin": "Motacilla alba alba",
+  "classeId": 14
+}, {
+  "id": 1264,
+  "code": "MOTALBYAR",
+  "nomFrancais": "Bergeronnette de Yarrell",
+  "nomLatin": "Motacilla alba yarrellii",
+  "classeId": 14
+}, {
+  "id": 1265,
+  "code": "MOTCIN",
+  "nomFrancais": "Bergeronnette des ruisseaux",
+  "nomLatin": "Motacilla cinerea",
+  "classeId": 14
+}, {
+  "id": 1263,
+  "code": "MOTCIT   ",
+  "nomFrancais": "Bergeronnette citrine",
+  "nomLatin": "Motacilla citreola Pallas",
+  "classeId": 14
+}, {
+  "id": 1270,
+  "code": "MOTFLA",
+  "nomFrancais": "Bergeronnette printanière",
+  "nomLatin": "Motacilla flava",
+  "classeId": 14
+}, {
+  "id": 1272,
+  "code": "MOTFLAAVA",
+  "nomFrancais": "Bergeronnette printanière type",
+  "nomLatin": "Motacilla flava flava",
+  "classeId": 14
+}, {
+  "id": 1269,
+  "code": "MOTFLAEGG",
+  "nomFrancais": "Bergeronnette print. feldegg",
+  "nomLatin": "Motacilla flava feldegg",
+  "classeId": 14
+}, {
+  "id": 1274,
+  "code": "MOTFLAIAE",
+  "nomFrancais": "Bergeronnette print. iberiae",
+  "nomLatin": "Motacilla flava iberiae",
+  "classeId": 14
+}, {
+  "id": 1273,
+  "code": "MOTFLALLA",
+  "nomFrancais": "Bergeronnette print. cinereocapilla",
+  "nomLatin": "Motacilla flava cinereocapilla",
+  "classeId": 14
+}, {
+  "id": 1271,
+  "code": "MOTFLARGI",
+  "nomFrancais": "Bergeronnette printanière nordique",
+  "nomLatin": "Motacilla flava thunbergi",
+  "classeId": 14
+}, {
+  "id": 1266,
+  "code": "MOTIMA   ",
+  "nomFrancais": "Bergeronnette flavéole",
+  "nomLatin": "Motacilla flavissima",
+  "classeId": 14
+}, {
+  "id": 1046,
+  "code": "MURMUR",
+  "nomFrancais": "Murin de grande taille",
+  "nomLatin": "Myotis grande taille",
+  "classeId": 12
+}, {
+  "id": 1066,
+  "code": "MUSAVE",
+  "nomFrancais": "Muscardin",
+  "nomLatin": "Muscardinus avellanarius",
+  "classeId": 12
+}, {
+  "id": 1013,
+  "code": "MUSERM",
+  "nomFrancais": "Hermine",
+  "nomLatin": "Mustela erminea",
+  "classeId": 12
+}, {
+  "id": 1098,
+  "code": "MUSMUS",
+  "nomFrancais": "Souris domestique",
+  "nomLatin": "Mus musculus domesticus",
+  "classeId": 12
+}, {
+  "id": 973,
+  "code": "MUSNIV",
+  "nomFrancais": "Belette",
+  "nomLatin": "Mustela nivalis",
+  "classeId": 12
+}, {
+  "id": 1081,
+  "code": "MUSPUT",
+  "nomFrancais": "Putois",
+  "nomLatin": "Mustela putorius",
+  "classeId": 12
+}, {
+  "id": 1097,
+  "code": "MUSSPR",
+  "nomFrancais": "Souris à queue courte",
+  "nomLatin": "Mus spetrus",
+  "classeId": 12
+}, {
+  "id": 1451,
+  "code": "MUSSTR",
+  "nomFrancais": "Gobemouche gris",
+  "nomLatin": "Muscicapa striata",
+  "classeId": 14
+}, {
+  "id": 1042,
+  "code": "MYOBEC",
+  "nomFrancais": "Murin de Bechstein",
+  "nomLatin": "Myotis bechsteini",
+  "classeId": 12
+}, {
+  "id": 1073,
+  "code": "MYOBLY",
+  "nomFrancais": "Petit murin",
+  "nomLatin": "Myotis blythi",
+  "classeId": 12
+}, {
+  "id": 1043,
+  "code": "MYOBRA",
+  "nomFrancais": "Murin de Brandt",
+  "nomLatin": "Myotis brandti",
+  "classeId": 12
+}, {
+  "id": 1044,
+  "code": "MYOCAP",
+  "nomFrancais": "Murin de Capaccini",
+  "nomLatin": "Myotis capaccinii",
+  "classeId": 12
+}, {
+  "id": 1083,
+  "code": "MYOCOY",
+  "nomFrancais": "Ragondin",
+  "nomLatin": "Myocastor coypus",
+  "classeId": 12
+}, {
+  "id": 1045,
+  "code": "MYODAU",
+  "nomFrancais": "Murin de Daubenton",
+  "nomLatin": "Myotis daubentoni",
+  "classeId": 12
+}, {
+  "id": 1041,
+  "code": "MYOEMA",
+  "nomFrancais": "Murin à oreilles échancrées",
+  "nomLatin": "Myotis emarginatus",
+  "classeId": 12
+}, {
+  "id": 1075,
+  "code": "MYOMYB",
+  "nomFrancais": "Petit/Grand murin",
+  "nomLatin": "Myotis blythi/myotis",
+  "classeId": 12
+}, {
+  "id": 1008,
+  "code": "MYOMYO",
+  "nomFrancais": "Grand murin",
+  "nomLatin": "Myotis myotis",
+  "classeId": 12
+}, {
+  "id": 1040,
+  "code": "MYOMYS",
+  "nomFrancais": "Murin à moustaches",
+  "nomLatin": "Myotis mystacinus",
+  "classeId": 12
+}, {
+  "id": 1047,
+  "code": "MYONAT",
+  "nomFrancais": "Murin de Natterer",
+  "nomLatin": "Myotis nattereri",
+  "classeId": 12
+}, {
+  "id": 1016,
+  "code": "MYOSCH",
+  "nomFrancais": "Lemming des forêts",
+  "nomLatin": "Myopus schisticolor",
+  "classeId": 12
+}, {
+  "id": 1049,
+  "code": "MYOSPE",
+  "nomFrancais": "Murin indéterminé",
+  "nomLatin": "Myotis species",
+  "classeId": 12
+}, {
+  "id": 1891,
+  "code": "NATMAU",
+  "nomFrancais": "Couleuvre vipérine",
+  "nomLatin": "Natrix maura",
+  "classeId": 16
+}, {
+  "id": 1886,
+  "code": "NATNAT",
+  "nomFrancais": "Couleuvre à collier",
+  "nomLatin": "Natrix natrix",
+  "classeId": 16
+}, {
+  "id": 1160,
+  "code": "NEHSPE",
+  "nomFrancais": "Déesse précieuse",
+  "nomLatin": "Nehalennia speciosa",
+  "classeId": 13
+}, {
+  "id": 1845,
+  "code": "NEMSYLSYL",
+  "nomFrancais": "Grillon des bois",
+  "nomLatin": "Nemobius sylvestris sylvestris",
+  "classeId": 15
+}, {
+  "id": 1056,
+  "code": "NEOANO",
+  "nomFrancais": "Musaraigne de Miller",
+  "nomLatin": "Neomys anomalus",
+  "classeId": 12
+}, {
+  "id": 1051,
+  "code": "NEOFOD",
+  "nomFrancais": "Musaraigne aquatique",
+  "nomLatin": "Neomys fodiens",
+  "classeId": 12
+}, {
+  "id": 1804,
+  "code": "NEOPER",
+  "nomFrancais": "Vautour percnoptère",
+  "nomLatin": "Neophron percnopterus",
+  "classeId": 14
+}, {
+  "id": 1607,
+  "code": "NETPEP",
+  "nomFrancais": "Nette d'Amérique du sud",
+  "nomLatin": "Netta peposaca",
+  "classeId": 14
+}, {
+  "id": 1608,
+  "code": "NETRUF",
+  "nomFrancais": "Nette rousse",
+  "nomLatin": "Netta rufina",
+  "classeId": 14
+}, {
+  "id": 1326,
+  "code": "NUCCAR",
+  "nomFrancais": "Cassenoix moucheté",
+  "nomLatin": "Nucifraga caryocatactes",
+  "classeId": 14
+}, {
+  "id": 1328,
+  "code": "NUCCARCAR",
+  "nomFrancais": "Cassenoix moucheté type",
+  "nomLatin": "Nucifraga caryocatactes caryocatactes",
+  "classeId": 14
+}, {
+  "id": 1327,
+  "code": "NUCCARMAC",
+  "nomFrancais": "Cassenoix moucheté sibérien",
+  "nomLatin": "Nucifraga caryocatactes macrorhynchos",
+  "classeId": 14
+}, {
+  "id": 1378,
+  "code": "NUMARQ",
+  "nomFrancais": "Courlis cendré",
+  "nomLatin": "Numenius arquata",
+  "classeId": 14
+}, {
+  "id": 1379,
+  "code": "NUMPHA",
+  "nomFrancais": "Courlis corlieu",
+  "nomLatin": "Numenius phaeopus",
+  "classeId": 14
+}, {
+  "id": 1377,
+  "code": "NUMTEN   ",
+  "nomFrancais": "Courlis à bec grêle",
+  "nomLatin": "Numenius tenuirostris",
+  "classeId": 14
+}, {
+  "id": 1010,
+  "code": "NYCLAS",
+  "nomFrancais": "Grande Noctule",
+  "nomLatin": "Nyctalus lasiopterus",
+  "classeId": 12
+}, {
+  "id": 1068,
+  "code": "NYCLEI",
+  "nomFrancais": "Noctule de Leisler",
+  "nomLatin": "Nyctalus leisleri",
+  "classeId": 12
+}, {
+  "id": 1067,
+  "code": "NYCNOC",
+  "nomFrancais": "Noctule commune",
+  "nomLatin": "Nyctalus noctula",
+  "classeId": 12
+}, {
+  "id": 1281,
+  "code": "NYCNYC",
+  "nomFrancais": "Bihoreau gris",
+  "nomLatin": "Nycticorax nycticorax",
+  "classeId": 14
+}, {
+  "id": 1002,
+  "code": "NYCPRO",
+  "nomFrancais": "Chien viverrin",
+  "nomLatin": "Nyctereutes procyonoïdes",
+  "classeId": 12
+}, {
+  "id": 1514,
+  "code": "NYCSCA   ",
+  "nomFrancais": "Harfang des neiges",
+  "nomLatin": "Bubo scandiaca",
+  "classeId": 14
+}, {
+  "id": 1611,
+  "code": "OCECAS",
+  "nomFrancais": "Océanite de Castro",
+  "nomLatin": "Oceanodroma castro",
+  "classeId": 14
+}, {
+  "id": 1610,
+  "code": "OCELEU   ",
+  "nomFrancais": "Océanite culblanc",
+  "nomLatin": "Oceanodroma leucorhoa",
+  "classeId": 14
+}, {
+  "id": 1612,
+  "code": "OCEMON",
+  "nomFrancais": "Océanite de Swinhoe",
+  "nomLatin": "Oceanodroma monorhis",
+  "classeId": 14
+}, {
+  "id": 1613,
+  "code": "OCEOCE   ",
+  "nomFrancais": "Océanite de Wilson",
+  "nomLatin": "Oceanites oceanicus",
+  "classeId": 14
+}, {
+  "id": 1865,
+  "code": "OECPELPEL",
+  "nomFrancais": "Grillon d'Italie",
+  "nomLatin": "Oecanthus pellucens pellucens",
+  "classeId": 15
+}, {
+  "id": 1819,
+  "code": "OEDCAECAE",
+  "nomFrancais": "Oedipode turquoise",
+  "nomLatin": "Oedipoda caerulescens caerulescens",
+  "classeId": 15
+}, {
+  "id": 1817,
+  "code": "OEDDEC",
+  "nomFrancais": "Oedipode soufrée",
+  "nomLatin": "Oedaleus decorus",
+  "classeId": 15
+}, {
+  "id": 1822,
+  "code": "OEDGERGER",
+  "nomFrancais": "Oedipode rouge",
+  "nomLatin": "Oedipoda germanica germanica",
+  "classeId": 15
+}, {
+  "id": 1787,
+  "code": "OENDES",
+  "nomFrancais": "Traquet du désert",
+  "nomLatin": "Oenanthe deserti",
+  "classeId": 14
+}, {
+  "id": 1792,
+  "code": "OENHIS",
+  "nomFrancais": "Traquet oreillard",
+  "nomLatin": "Oenanthe hispanica",
+  "classeId": 14
+}, {
+  "id": 1788,
+  "code": "OENISA   ",
+  "nomFrancais": "Traquet isabelle",
+  "nomLatin": "Oenanthe isabellina",
+  "classeId": 14
+}, {
+  "id": 1794,
+  "code": "OENLEU   ",
+  "nomFrancais": "Traquet rieur",
+  "nomLatin": "Oenanthe leucura",
+  "classeId": 14
+}, {
+  "id": 1789,
+  "code": "OENOEN",
+  "nomFrancais": "Traquet motteux",
+  "nomLatin": "Oenanthe oenanthe",
+  "classeId": 14
+}, {
+  "id": 1790,
+  "code": "OENOENLEU",
+  "nomFrancais": "Traquet motteux leucorhoa",
+  "nomLatin": "Oenanthe oenanthe leucorhoa",
+  "classeId": 14
+}, {
+  "id": 1791,
+  "code": "OENOENOEN",
+  "nomFrancais": "Traquet motteux type",
+  "nomLatin": "Oenanthe oenanthe oenanthe",
+  "classeId": 14
+}, {
+  "id": 1793,
+  "code": "OENPLE   ",
+  "nomFrancais": "Traquet pie",
+  "nomLatin": "Oenanthe pleschanka",
+  "classeId": 14
+}, {
+  "id": 1832,
+  "code": "OMORUF",
+  "nomFrancais": "Criquet noir-ébène",
+  "nomLatin": " Omocestus rufipes",
+  "classeId": 15
+}, {
+  "id": 1085,
+  "code": "ONDZIB",
+  "nomFrancais": "Rat musqué",
+  "nomLatin": "Ondatra zibethicus",
+  "classeId": 12
+}, {
+  "id": 1163,
+  "code": "ONYFOR",
+  "nomFrancais": "Gomphe à pinces",
+  "nomLatin": "Onychogomphus forcipatus",
+  "classeId": 13
+}, {
+  "id": 1204,
+  "code": "ONYFORFOR",
+  "nomFrancais": "Gomphe à pinces septentrional",
+  "nomLatin": "Onychocomphus forcipatus forcipatus",
+  "classeId": 13
+}, {
+  "id": 1164,
+  "code": "ONYFORUNG",
+  "nomFrancais": "Gomphe à pinces méridional",
+  "nomLatin": "Onychogomphus forciaptus unguiculatus",
+  "classeId": 13
+}, {
+  "id": 1161,
+  "code": "ONYUNC",
+  "nomFrancais": "Gomphus à crochets",
+  "nomLatin": "Onychogomphus uncatus",
+  "classeId": 13
+}, {
+  "id": 1167,
+  "code": "OPHSER",
+  "nomFrancais": "Gomphus serpentin",
+  "nomLatin": "Ophiogomphus cecilia",
+  "classeId": 13
+}, {
+  "id": 1070,
+  "code": "OREILLARD",
+  "nomFrancais": "Oreillard brun ou gris",
+  "nomLatin": "Oreillard sp",
+  "classeId": 12
+}, {
+  "id": 1555,
+  "code": "ORIORI",
+  "nomFrancais": "Loriot d'Europe",
+  "nomLatin": "Oriolus oriolus",
+  "classeId": 14
+}, {
+  "id": 1188,
+  "code": "ORTALB",
+  "nomFrancais": "Orthétrum à stylets blancs",
+  "nomLatin": "Orthetrum albistylum",
+  "classeId": 13
+}, {
+  "id": 1190,
+  "code": "ORTBRU",
+  "nomFrancais": "Orthétrum brun",
+  "nomLatin": "Orthetrum brunneum",
+  "classeId": 13
+}, {
+  "id": 1191,
+  "code": "ORTCAN",
+  "nomFrancais": "Orthétrum réticulé",
+  "nomLatin": "Orthetrum cancellatum",
+  "classeId": 13
+}, {
+  "id": 1189,
+  "code": "ORTCOE",
+  "nomFrancais": "Orthétrum bleuissant",
+  "nomLatin": "Orthetrum coerulescens",
+  "classeId": 13
+}, {
+  "id": 1015,
+  "code": "ORYCUN",
+  "nomFrancais": "Lapin de garenne",
+  "nomLatin": "Oryctolagus cuniculus",
+  "classeId": 12
+}, {
+  "id": 1633,
+  "code": "OTITAR",
+  "nomFrancais": "Outarde barbue",
+  "nomLatin": "Otis tarda",
+  "classeId": 14
+}, {
+  "id": 1650,
+  "code": "OTUSCO",
+  "nomFrancais": "Petit-duc scops",
+  "nomLatin": "Otus scops",
+  "classeId": 14
+}, {
+  "id": 1032,
+  "code": "OVIMUS",
+  "nomFrancais": "Mouflon de Corse",
+  "nomLatin": "Ovis musimom Pallas",
+  "classeId": 12
+}, {
+  "id": 1151,
+  "code": "OXYCUR",
+  "nomFrancais": "Cordulie à corps fin",
+  "nomLatin": "Oxygastra curtisii",
+  "classeId": 13
+}, {
+  "id": 1398,
+  "code": "OXYJAM   ",
+  "nomFrancais": "Erismature rousse",
+  "nomLatin": "Oxyura jamaicensis",
+  "classeId": 14
+}, {
+  "id": 1397,
+  "code": "OXYLEU   ",
+  "nomFrancais": "Erismature à tête blanche",
+  "nomLatin": "Oxyura leucocephala",
+  "classeId": 14
+}, {
+  "id": 1636,
+  "code": "PANBIA",
+  "nomFrancais": "Panure à moustaches",
+  "nomLatin": "Panurus biarmicus",
+  "classeId": 14
+}, {
+  "id": 1230,
+  "code": "PANHAL",
+  "nomFrancais": "Balbuzard pêcheur",
+  "nomLatin": "Pandion haliaetus",
+  "classeId": 14
+}, {
+  "id": 1585,
+  "code": "PAPALU",
+  "nomFrancais": "Mésange nonnette",
+  "nomLatin": "Poecile palustris",
+  "classeId": 14
+}, {
+  "id": 970,
+  "code": "PAPMAC",
+  "nomFrancais": "Machaon",
+  "nomLatin": "Papilio  machaon",
+  "classeId": 11
+}, {
+  "id": 1637,
+  "code": "PARAME",
+  "nomFrancais": "Paruline à collier",
+  "nomLatin": "Parula americana",
+  "classeId": 14
+}, {
+  "id": 1584,
+  "code": "PARATE",
+  "nomFrancais": "Mésange noire",
+  "nomLatin": "Periparus ater",
+  "classeId": 14
+}, {
+  "id": 1578,
+  "code": "PARCAE",
+  "nomFrancais": "Mésange bleue",
+  "nomLatin": "Cyanistes caeruleus",
+  "classeId": 14
+}, {
+  "id": 1582,
+  "code": "PARCIN   ",
+  "nomFrancais": "Mésange lapone",
+  "nomLatin": "Poecile cinctus",
+  "classeId": 14
+}, {
+  "id": 1581,
+  "code": "PARCRI",
+  "nomFrancais": "Mésange huppée",
+  "nomLatin": "Lophophanes cristatus",
+  "classeId": 14
+}, {
+  "id": 1577,
+  "code": "PARCYA   ",
+  "nomFrancais": "Mésange azurée",
+  "nomLatin": "Cyanistes cyanus",
+  "classeId": 14
+}, {
+  "id": 1583,
+  "code": "PARLUG   ",
+  "nomFrancais": "Mésange lugubre",
+  "nomLatin": "Poecile lugubris",
+  "classeId": 14
+}, {
+  "id": 1580,
+  "code": "PARMAJ",
+  "nomFrancais": "Mésange charbonnière",
+  "nomLatin": "Parus major",
+  "classeId": 14
+}, {
+  "id": 1858,
+  "code": "PARMER",
+  "nomFrancais": "Tétrix méridional",
+  "nomLatin": "Paratettix meridionalis",
+  "classeId": 15
+}, {
+  "id": 1579,
+  "code": "PARNUS",
+  "nomFrancais": "Mésange boréale",
+  "nomLatin": "Poecile montanus",
+  "classeId": 14
+}, {
+  "id": 1590,
+  "code": "PASDOM",
+  "nomFrancais": "Moineau domestique",
+  "nomLatin": "Passer domesticus",
+  "classeId": 14
+}, {
+  "id": 1593,
+  "code": "PASDOXMON",
+  "nomFrancais": "Moineau hybride : domestique x friquet",
+  "nomLatin": "Passer domesticus x P.montanus",
+  "classeId": 14
+}, {
+  "id": 1591,
+  "code": "PASHIS   ",
+  "nomFrancais": "Moineau espagnol",
+  "nomLatin": "Passer hispaniolensis",
+  "classeId": 14
+}, {
+  "id": 1589,
+  "code": "PASITA   ",
+  "nomFrancais": "Moineau cisalpin",
+  "nomLatin": "Passer italiae",
+  "classeId": 14
+}, {
+  "id": 1592,
+  "code": "PASMON",
+  "nomFrancais": "Moineau friquet",
+  "nomLatin": "Passer montanus",
+  "classeId": 14
+}, {
+  "id": 1642,
+  "code": "PELCRI   ",
+  "nomFrancais": "Pélican frisé",
+  "nomLatin": "Pelecanus crispus",
+  "classeId": 14
+}, {
+  "id": 957,
+  "code": "PELCUL",
+  "nomFrancais": "Pélobate cultripède",
+  "nomLatin": "Pelobates cultripes",
+  "classeId": 10
+}, {
+  "id": 956,
+  "code": "PELFUS",
+  "nomFrancais": "Pelobate brun",
+  "nomLatin": "Pelobates fuscus",
+  "classeId": 10
+}, {
+  "id": 1641,
+  "code": "PELONO   ",
+  "nomFrancais": "Pélican blanc",
+  "nomLatin": "Pelecanus onocrotalus",
+  "classeId": 14
+}, {
+  "id": 958,
+  "code": "PELPUN",
+  "nomFrancais": "Pelodyte ponctué",
+  "nomLatin": "Pelodytes punctatus",
+  "classeId": 10
+}, {
+  "id": 954,
+  "code": "PELSPE",
+  "nomFrancais": "Grenouilles vertes indéterminées",
+  "nomLatin": "Pelophylax sp.",
+  "classeId": 10
+}, {
+  "id": 1283,
+  "code": "PERAPI",
+  "nomFrancais": "Bondrée apivore",
+  "nomLatin": "Pernis apivorus",
+  "classeId": 14
+}, {
+  "id": 1586,
+  "code": "PERINF   ",
+  "nomFrancais": "Mésangeai imitateur",
+  "nomLatin": "Perisoreus infaustus",
+  "classeId": 14
+}, {
+  "id": 1646,
+  "code": "PERPER",
+  "nomFrancais": "Perdrix grise",
+  "nomLatin": "Perdix perdix",
+  "classeId": 14
+}, {
+  "id": 1048,
+  "code": "PETMUR",
+  "nomFrancais": "Murin de petite taille",
+  "nomLatin": "Myotis petite taille",
+  "classeId": 12
+}, {
+  "id": 1594,
+  "code": "PETPET",
+  "nomFrancais": "Moineau soulcie",
+  "nomLatin": "Petronia petronia",
+  "classeId": 14
+}, {
+  "id": 1834,
+  "code": "PEZGIO",
+  "nomFrancais": "Criquet pansu",
+  "nomLatin": "Pezotettix giornae",
+  "classeId": 15
+}, {
+  "id": 1366,
+  "code": "PHAARI   ",
+  "nomFrancais": "Cormoran huppé",
+  "nomLatin": "Phalacrocorax aristotelis",
+  "classeId": 14
+}, {
+  "id": 1368,
+  "code": "PHAARIARI",
+  "nomFrancais": "Cormoran huppé type",
+  "nomLatin": "Phalacrocorax aristotelis aristotelis",
+  "classeId": 14
+}, {
+  "id": 1367,
+  "code": "PHAARIDES",
+  "nomFrancais": "Cormoran huppé méditerranéen",
+  "nomLatin": "Phalacrocorax aristotelis desmarestii",
+  "classeId": 14
+}, {
+  "id": 1473,
+  "code": "PHACAR",
+  "nomFrancais": "Grand Cormoran",
+  "nomLatin": "Phalacrocorax carbo",
+  "classeId": 14
+}, {
+  "id": 1474,
+  "code": "PHACARCAR",
+  "nomFrancais": "Grand Cormoran atlantique",
+  "nomLatin": "Phalacrocorax carbo carbo",
+  "classeId": 14
+}, {
+  "id": 1475,
+  "code": "PHACARSIN",
+  "nomFrancais": "Grand Cormoran continental",
+  "nomLatin": "Phalacrocorax carbo sinensis",
+  "classeId": 14
+}, {
+  "id": 1402,
+  "code": "PHACUS",
+  "nomFrancais": "Faisan de Colchide",
+  "nomLatin": "Phasianus colchicus",
+  "classeId": 14
+}, {
+  "id": 1823,
+  "code": "PHAFAL",
+  "nomFrancais": "Phanéroptère commun",
+  "nomLatin": "Phaneroptera falcata",
+  "classeId": 15
+}, {
+  "id": 1653,
+  "code": "PHAFUL   ",
+  "nomFrancais": "Phalarope à bec large",
+  "nomLatin": "Phalaropus fulicarius",
+  "classeId": 14
+}, {
+  "id": 1652,
+  "code": "PHALOB   ",
+  "nomFrancais": "Phalarope à bec étroit",
+  "nomLatin": "Phalaropus lobatus",
+  "classeId": 14
+}, {
+  "id": 1828,
+  "code": "PHANAN",
+  "nomFrancais": "Phanéroptère méridional",
+  "nomLatin": "Phaneroptera nana",
+  "classeId": 15
+}, {
+  "id": 1369,
+  "code": "PHAPYG",
+  "nomFrancais": "Cormoran pygmée",
+  "nomLatin": "Phalacrocorax pygmeus",
+  "classeId": 14
+}, {
+  "id": 1654,
+  "code": "PHATRI",
+  "nomFrancais": "Phalarope de Wilson",
+  "nomLatin": "Phalaropus tricolor",
+  "classeId": 14
+}, {
+  "id": 1364,
+  "code": "PHIPUG",
+  "nomFrancais": "Combattant varié",
+  "nomLatin": "Philomachus pugnax",
+  "classeId": 14
+}, {
+  "id": 1812,
+  "code": "PHOCHI",
+  "nomFrancais": "Flamant du Chili",
+  "nomLatin": "Phoenicopterus chilensis",
+  "classeId": 14
+}, {
+  "id": 1849,
+  "code": "PHOGRI",
+  "nomFrancais": "Pholidoptère cendrée",
+  "nomLatin": "Pholidoptera griseoaptera",
+  "classeId": 15
+}, {
+  "id": 1810,
+  "code": "PHOMIN",
+  "nomFrancais": "Flamant nain",
+  "nomLatin": "Phoenicopterus minor",
+  "classeId": 14
+}, {
+  "id": 1737,
+  "code": "PHOMOU",
+  "nomFrancais": "Rougequeue de Moussier",
+  "nomLatin": "Phoenicurus moussieri",
+  "classeId": 14
+}, {
+  "id": 1738,
+  "code": "PHOOCH",
+  "nomFrancais": "Rougequeue noir",
+  "nomLatin": "Phoenicurus ochruros",
+  "classeId": 14
+}, {
+  "id": 1815,
+  "code": "PHOOCO",
+  "nomFrancais": "Rougequeue hybride noir x front blanc",
+  "nomLatin": "Phoenicurus ochurus x phoenicurus",
+  "classeId": 14
+}, {
+  "id": 1736,
+  "code": "PHOPHO",
+  "nomFrancais": "Rougequeue à front blanc",
+  "nomLatin": "Phoenicurus phoenicurus",
+  "classeId": 14
+}, {
+  "id": 1426,
+  "code": "PHORUB",
+  "nomFrancais": "Flamant rose",
+  "nomLatin": "Phoenicopterus roseus",
+  "classeId": 14
+}, {
+  "id": 1706,
+  "code": "PHYBON",
+  "nomFrancais": "Pouillot de Bonelli",
+  "nomLatin": "Phylloscopus bonelli",
+  "classeId": 14
+}, {
+  "id": 1704,
+  "code": "PHYBOR   ",
+  "nomFrancais": "Pouillot boréal",
+  "nomLatin": "Phylloscopus borealis",
+  "classeId": 14
+}, {
+  "id": 1712,
+  "code": "PHYCOL",
+  "nomFrancais": "Pouillot véloce",
+  "nomLatin": "Phylloscopus collybita",
+  "classeId": 14
+}, {
+  "id": 1713,
+  "code": "PHYCOLABI",
+  "nomFrancais": "Pouillot véloce de Scandinavie",
+  "nomLatin": "Phylloscopus collybita abietinus",
+  "classeId": 14
+}, {
+  "id": 1715,
+  "code": "PHYCOLBRE",
+  "nomFrancais": "Pouillot véloce ibérique",
+  "nomLatin": "Phylloscopus collybita brehmii",
+  "classeId": 14
+}, {
+  "id": 1714,
+  "code": "PHYCOLTRI",
+  "nomFrancais": "Pouillot véloce de Sibérie",
+  "nomLatin": "Phylloscopus collybita tristis",
+  "classeId": 14
+}, {
+  "id": 1716,
+  "code": "PHYDES   ",
+  "nomFrancais": "Pouillot verdâtre",
+  "nomLatin": "Phylloscopus trochiloides",
+  "classeId": 14
+}, {
+  "id": 1905,
+  "code": "PHYEUR",
+  "nomFrancais": "Phyllodatyle d'Europe",
+  "nomLatin": "Phyllodactylus europaeus",
+  "classeId": 16
+}, {
+  "id": 1705,
+  "code": "PHYFUS",
+  "nomFrancais": "Pouillot brun",
+  "nomLatin": "Phylloscopus fuscatus",
+  "classeId": 14
+}, {
+  "id": 1703,
+  "code": "PHYINO   ",
+  "nomFrancais": "Pouillot à grands sourcils",
+  "nomLatin": "Phylloscopus inornatus",
+  "classeId": 14
+}, {
+  "id": 1709,
+  "code": "PHYLUS",
+  "nomFrancais": "Pouillot fitis",
+  "nomLatin": "Phylloscopus trochilus",
+  "classeId": 14
+}, {
+  "id": 1707,
+  "code": "PHYPRO",
+  "nomFrancais": "Pouillot de Pallas",
+  "nomLatin": "Phylloscopus proregulus",
+  "classeId": 14
+}, {
+  "id": 1708,
+  "code": "PHYSCH",
+  "nomFrancais": "Pouillot de Schwarz",
+  "nomLatin": "Phylloscopus schwarzi",
+  "classeId": 14
+}, {
+  "id": 1711,
+  "code": "PHYSIB",
+  "nomFrancais": "Pouillot siffleur",
+  "nomLatin": "Phylloscopus sibilatrix",
+  "classeId": 14
+}, {
+  "id": 1710,
+  "code": "PHYTROACR",
+  "nomFrancais": "Pouillot fitis du nord-est",
+  "nomLatin": "Phylloscopus trochilus acredula",
+  "classeId": 14
+}, {
+  "id": 1658,
+  "code": "PICCAN",
+  "nomFrancais": "Pic cendré",
+  "nomLatin": "Picus canus",
+  "classeId": 14
+}, {
+  "id": 1665,
+  "code": "PICDIS",
+  "nomFrancais": "Pic vert",
+  "nomLatin": "Picus viridis",
+  "classeId": 14
+}, {
+  "id": 1666,
+  "code": "PICPIC",
+  "nomFrancais": "Pie bavarde",
+  "nomLatin": "Pica pica",
+  "classeId": 14
+}, {
+  "id": 1664,
+  "code": "PICTRI",
+  "nomFrancais": "Pic tridactyle",
+  "nomLatin": "Picoides tridactylus",
+  "classeId": 14
+}, {
+  "id": 1387,
+  "code": "PINENU   ",
+  "nomFrancais": "Durbec des sapins",
+  "nomLatin": "Pinicola enucleator",
+  "classeId": 14
+}, {
+  "id": 1077,
+  "code": "PIPKUH",
+  "nomFrancais": "Pipistrelle de Khul",
+  "nomLatin": "Pipistrellus kuhli",
+  "classeId": 12
+}, {
+  "id": 1078,
+  "code": "PIPNAT",
+  "nomFrancais": "Pipistrelle de Nathusius",
+  "nomLatin": "Pipistrellus nathusii",
+  "classeId": 12
+}, {
+  "id": 1076,
+  "code": "PIPPIP",
+  "nomFrancais": "Pipistrelle commune",
+  "nomLatin": "Pipistrellus pipistrellus",
+  "classeId": 12
+}, {
+  "id": 1080,
+  "code": "PIPPYG",
+  "nomFrancais": "Pipistrelle pygmée",
+  "nomLatin": "Pipistrelle pygmaeus",
+  "classeId": 12
+}, {
+  "id": 1079,
+  "code": "PIPSPE",
+  "nomFrancais": "Pipistrelle indéterminée",
+  "nomLatin": "Pipistrelle indéterminée",
+  "classeId": 12
+}, {
+  "id": 983,
+  "code": "PITPYR",
+  "nomFrancais": "Campagnol de Gerbe",
+  "nomLatin": "Microtus pyrenaïcus",
+  "classeId": 12
+}, {
+  "id": 1131,
+  "code": "PLAACU",
+  "nomFrancais": "Agrion orangé",
+  "nomLatin": "Platycnemis acutipennis",
+  "classeId": 13
+}, {
+  "id": 1875,
+  "code": "PLAAFFAFF",
+  "nomFrancais": "Decticelle rudérale",
+  "nomLatin": "Platycleis affinis affinis",
+  "classeId": 15
+}, {
+  "id": 1824,
+  "code": "PLAALBALB",
+  "nomFrancais": "Decticelle chagrinée",
+  "nomLatin": "Platycleis albopunctata albopunctata",
+  "classeId": 15
+}, {
+  "id": 1760,
+  "code": "PLADIA",
+  "nomFrancais": "Spatule blanche",
+  "nomLatin": "Platalea leucorodia",
+  "classeId": 14
+}, {
+  "id": 1816,
+  "code": "PLAINTINT",
+  "nomFrancais": "Decticelle intermédiaire",
+  "nomLatin": "Platycleis intermedia intermedia",
+  "classeId": 15
+}, {
+  "id": 1118,
+  "code": "PLALAT",
+  "nomFrancais": "Agrion blanchâtre",
+  "nomLatin": "Platycnemis latipes",
+  "classeId": 13
+}, {
+  "id": 1112,
+  "code": "PLAPEN",
+  "nomFrancais": "Agrion à larges pattes",
+  "nomLatin": "Platycnemis pennipes",
+  "classeId": 13
+}, {
+  "id": 1069,
+  "code": "PLEAUR",
+  "nomFrancais": "Oreillard brun",
+  "nomLatin": "Plecotus auritus",
+  "classeId": 12
+}, {
+  "id": 1071,
+  "code": "PLEAUS",
+  "nomFrancais": "Oreillard gris",
+  "nomLatin": "Plecotus austriacus",
+  "classeId": 12
+}, {
+  "id": 1538,
+  "code": "PLEFAL",
+  "nomFrancais": "Ibis falcinelle",
+  "nomLatin": "Plegadis falcinellus",
+  "classeId": 14
+}, {
+  "id": 1291,
+  "code": "PLENIV   ",
+  "nomFrancais": "Bruant des neiges",
+  "nomLatin": "Plectrophenax nivalis",
+  "classeId": 14
+}, {
+  "id": 1698,
+  "code": "PLUAPR",
+  "nomFrancais": "Pluvier doré",
+  "nomLatin": "Pluvialis apricaria",
+  "classeId": 14
+}, {
+  "id": 1700,
+  "code": "PLUAPRALT",
+  "nomFrancais": "Pluvier doré du sud",
+  "nomLatin": "Pluvialis apricaria altifrons",
+  "classeId": 14
+}, {
+  "id": 1699,
+  "code": "PLUAPRAPR",
+  "nomFrancais": "Pluvier doré du nord",
+  "nomLatin": "Pluvialis apricaria apricaria",
+  "classeId": 14
+}, {
+  "id": 1697,
+  "code": "PLUDOM",
+  "nomFrancais": "Pluvier bronzé",
+  "nomLatin": "Pluvialis dominica",
+  "classeId": 14
+}, {
+  "id": 1701,
+  "code": "PLUFUL",
+  "nomFrancais": "Pluvier fauve",
+  "nomLatin": "Pluvialis fulva",
+  "classeId": 14
+}, {
+  "id": 1695,
+  "code": "PLUSQU",
+  "nomFrancais": "Pluvier argenté",
+  "nomLatin": "Pluvialis squatarola",
+  "classeId": 14
+}, {
+  "id": 1485,
+  "code": "PODAUR",
+  "nomFrancais": "Grèbe esclavon",
+  "nomLatin": "Podiceps auritus",
+  "classeId": 14
+}, {
+  "id": 1486,
+  "code": "PODCRI",
+  "nomFrancais": "Grèbe huppé",
+  "nomLatin": "Podiceps cristatus",
+  "classeId": 14
+}, {
+  "id": 1487,
+  "code": "PODGRI",
+  "nomFrancais": "Grèbe jougris",
+  "nomLatin": "Podiceps grisegena",
+  "classeId": 14
+}, {
+  "id": 1898,
+  "code": "PODHIS",
+  "nomFrancais": "Lézard hispanique",
+  "nomLatin": "Podarcis hispanica",
+  "classeId": 16
+}, {
+  "id": 1896,
+  "code": "PODMUR",
+  "nomFrancais": "Lézard des murailles",
+  "nomLatin": "Podarcis muralis",
+  "classeId": 16
+}, {
+  "id": 1483,
+  "code": "PODNIG",
+  "nomFrancais": "Grèbe à cou noir",
+  "nomLatin": "Podiceps nigricollis",
+  "classeId": 14
+}, {
+  "id": 1482,
+  "code": "PODPOD",
+  "nomFrancais": "Grèbe à bec bigarré",
+  "nomLatin": "Podilymbus podiceps",
+  "classeId": 14
+}, {
+  "id": 1897,
+  "code": "PODSIC",
+  "nomFrancais": "Lézard des ruines",
+  "nomLatin": "Podarcis sicula",
+  "classeId": 16
+}, {
+  "id": 1901,
+  "code": "PODTIL",
+  "nomFrancais": "Lézard tyrrhénien",
+  "nomLatin": "Podarcis tiliguerta",
+  "classeId": 16
+}, {
+  "id": 1392,
+  "code": "POLSTE   ",
+  "nomFrancais": "Eider de Steller",
+  "nomLatin": "Polysticta stelleri",
+  "classeId": 14
+}, {
+  "id": 1563,
+  "code": "PORANA",
+  "nomFrancais": "Marouette ponctuée",
+  "nomLatin": "Porzana porzana",
+  "classeId": 14
+}, {
+  "id": 1562,
+  "code": "PORCAR",
+  "nomFrancais": "Marouette de Caroline",
+  "nomLatin": "Porzana carolina",
+  "classeId": 14
+}, {
+  "id": 1564,
+  "code": "PORPAR",
+  "nomFrancais": "Marouette poussin",
+  "nomLatin": "Porzana parva",
+  "classeId": 14
+}, {
+  "id": 1561,
+  "code": "PORPUS",
+  "nomFrancais": "Marouette de Baillon",
+  "nomLatin": "Porzana pusilla",
+  "classeId": 14
+}, {
+  "id": 1775,
+  "code": "PORRIO   ",
+  "nomFrancais": "Talève sultane",
+  "nomLatin": "Porphyrio porphyrio",
+  "classeId": 14
+}, {
+  "id": 1088,
+  "code": "PROLOT",
+  "nomFrancais": "Raton laveur",
+  "nomLatin": "Procyon lotor  Linnaeus",
+  "classeId": 12
+}, {
+  "id": 1206,
+  "code": "PRUCOL",
+  "nomFrancais": "Accenteur alpin",
+  "nomLatin": "Prunella collaris",
+  "classeId": 14
+}, {
+  "id": 1207,
+  "code": "PRUMOD",
+  "nomFrancais": "Accenteur mouchet",
+  "nomLatin": "Prunella modularis",
+  "classeId": 14
+}, {
+  "id": 1906,
+  "code": "PSAALG",
+  "nomFrancais": "Psammodrome algire",
+  "nomLatin": "Psammodromus algirus",
+  "classeId": 16
+}, {
+  "id": 1907,
+  "code": "PSAHIS",
+  "nomFrancais": "Psammodrome d'Edwards",
+  "nomLatin": "Psammodromus hispanicus",
+  "classeId": 16
+}, {
+  "id": 1847,
+  "code": "PSEPARPAR",
+  "nomFrancais": "Criquet des pâtures",
+  "nomLatin": "Pseudochorthippus parallelus parallelus",
+  "classeId": 15
+}, {
+  "id": 1648,
+  "code": "PSIKRA",
+  "nomFrancais": "Perruche à collier",
+  "nomLatin": "Psittacula krameri",
+  "classeId": 14
+}, {
+  "id": 1862,
+  "code": "PSOSTRSTR",
+  "nomFrancais": "Oedipode stidulant",
+  "nomLatin": "Psophus stridulus stridulus",
+  "classeId": 15
+}, {
+  "id": 1443,
+  "code": "PTEALC   ",
+  "nomFrancais": "Ganga cata",
+  "nomLatin": "Pterocles alchata",
+  "classeId": 14
+}, {
+  "id": 1873,
+  "code": "PTEHEYHEY",
+  "nomFrancais": "Grillon des marais",
+  "nomLatin": "Pteronemobius heydenii heydenii",
+  "classeId": 15
+}, {
+  "id": 1444,
+  "code": "PTEORI   ",
+  "nomFrancais": "Ganga unibande",
+  "nomLatin": "Pterocles orientalis",
+  "classeId": 14
+}, {
+  "id": 1528,
+  "code": "PTYRUP",
+  "nomFrancais": "Hirondelle de rochers",
+  "nomLatin": "Ptyonoprogne rupestris",
+  "classeId": 14
+}, {
+  "id": 1722,
+  "code": "PUFASS   ",
+  "nomFrancais": "Puffin semblable",
+  "nomLatin": "Puffinus assimilis",
+  "classeId": 14
+}, {
+  "id": 1721,
+  "code": "PUFGRA   ",
+  "nomFrancais": "Puffin majeur",
+  "nomLatin": "Puffinus gravis",
+  "classeId": 14
+}, {
+  "id": 1720,
+  "code": "PUFGRI   ",
+  "nomFrancais": "Puffin fuligineux",
+  "nomLatin": "Puffinus griseus",
+  "classeId": 14
+}, {
+  "id": 1719,
+  "code": "PUFPUF   ",
+  "nomFrancais": "Puffin des Anglais",
+  "nomLatin": "Puffinus puffinus",
+  "classeId": 14
+}, {
+  "id": 1718,
+  "code": "PUFYEL   ",
+  "nomFrancais": "Puffin de Méditerranée",
+  "nomLatin": "Puffinus yelkouan",
+  "classeId": 14
+}, {
+  "id": 1346,
+  "code": "PYRGRA",
+  "nomFrancais": "Chocard à bec jaune",
+  "nomLatin": "Pyrrhocorax graculus",
+  "classeId": 14
+}, {
+  "id": 1117,
+  "code": "PYRNYM",
+  "nomFrancais": "Agrion au corps de feu",
+  "nomLatin": "Pyrrhosoma nymphula",
+  "classeId": 13
+}, {
+  "id": 1286,
+  "code": "PYRPYREUR",
+  "nomFrancais": "Bouvreuil pivoine d'Europe de l'Ouest",
+  "nomLatin": "Pyrrhula pyrrhula europaea",
+  "classeId": 14
+}, {
+  "id": 1287,
+  "code": "PYRPYRPYR",
+  "nomFrancais": "Bouvreuil pivoine nordique",
+  "nomLatin": "Pyrrhula pyrrhula pyrrhula",
+  "classeId": 14
+}, {
+  "id": 1382,
+  "code": "PYRRAX",
+  "nomFrancais": "Crave à bec rouge",
+  "nomLatin": "Pyrrhocorax pyrrhocorax",
+  "classeId": 14
+}, {
+  "id": 1285,
+  "code": "PYRULA",
+  "nomFrancais": "Bouvreuil pivoine",
+  "nomLatin": "Pyrrhula pyrrhula",
+  "classeId": 14
+}, {
+  "id": 990,
+  "code": "PYTDUO",
+  "nomFrancais": "Campagnol provençal",
+  "nomLatin": "Microtus duodecimcostatus",
+  "classeId": 12
+}, {
+  "id": 982,
+  "code": "PYTMUL",
+  "nomFrancais": "Campagnol de Fatio",
+  "nomLatin": "Microtus multiplex",
+  "classeId": 12
+}, {
+  "id": 984,
+  "code": "PYTSAV",
+  "nomFrancais": "Campagnol de Savi",
+  "nomLatin": "Microtus savii",
+  "classeId": 12
+}, {
+  "id": 993,
+  "code": "PYTSUB",
+  "nomFrancais": "Campagnol souterrain",
+  "nomLatin": "Microtus subterraneus",
+  "classeId": 12
+}, {
+  "id": 1724,
+  "code": "RALAQU",
+  "nomFrancais": "Râle d'eau",
+  "nomLatin": "Rallus aquaticus",
+  "classeId": 14
+}, {
+  "id": 947,
+  "code": "RANARV",
+  "nomFrancais": "Grenouille des champs",
+  "nomLatin": "Rana arvalis",
+  "classeId": 10
+}, {
+  "id": 944,
+  "code": "RANDAL",
+  "nomFrancais": "Grenouille agile",
+  "nomLatin": "Rana dalmatina",
+  "classeId": 10
+}, {
+  "id": 953,
+  "code": "RANESC",
+  "nomFrancais": "Grenouille verte",
+  "nomLatin": "Rana esculenta",
+  "classeId": 10
+}, {
+  "id": 948,
+  "code": "RANIBE",
+  "nomFrancais": "Grenouille ibérique",
+  "nomLatin": "Rana iberica",
+  "classeId": 10
+}, {
+  "id": 945,
+  "code": "RANLESESC",
+  "nomFrancais": "Grenouille de Lesson",
+  "nomLatin": "Rana lessonae",
+  "classeId": 10
+}, {
+  "id": 946,
+  "code": "RANPER",
+  "nomFrancais": "Grenouille de Perez",
+  "nomLatin": "Rana perezi",
+  "classeId": 10
+}, {
+  "id": 950,
+  "code": "RANRIDPER",
+  "nomFrancais": "Grenouille rieuse",
+  "nomLatin": "Rana ridibunda",
+  "classeId": 10
+}, {
+  "id": 949,
+  "code": "RANSPE",
+  "nomFrancais": "Grenouille non identifiée",
+  "nomLatin": "Rana spé",
+  "classeId": 10
+}, {
+  "id": 952,
+  "code": "RANTEL",
+  "nomFrancais": "Grenouille rousse ou agile",
+  "nomLatin": "Rana temporaria ou dalmatina",
+  "classeId": 10
+}, {
+  "id": 951,
+  "code": "RANTEM",
+  "nomFrancais": "Grenouille rousse",
+  "nomLatin": "Rana temporaria",
+  "classeId": 10
+}, {
+  "id": 1087,
+  "code": "RATNOR",
+  "nomFrancais": "Rat surmulot",
+  "nomLatin": "Rattus norvegicus",
+  "classeId": 12
+}, {
+  "id": 1086,
+  "code": "RATRAT",
+  "nomFrancais": "Rat noir",
+  "nomLatin": "Rattus rattus",
+  "classeId": 12
+}, {
+  "id": 1229,
+  "code": "RECAVO",
+  "nomFrancais": "Avocette élégante",
+  "nomLatin": "Recurvirostra avosetta",
+  "classeId": 14
+}, {
+  "id": 1728,
+  "code": "REGIGN",
+  "nomFrancais": "Roitelet à triple bandeau",
+  "nomLatin": "Regulus ignicapilla",
+  "classeId": 14
+}, {
+  "id": 1729,
+  "code": "REGREG",
+  "nomFrancais": "Roitelet huppé",
+  "nomLatin": "Regulus regulus",
+  "classeId": 14
+}, {
+  "id": 1726,
+  "code": "REMPEN",
+  "nomFrancais": "Rémiz penduline",
+  "nomLatin": "Remiz pendulinus",
+  "classeId": 14
+}, {
+  "id": 1090,
+  "code": "RHIEUR",
+  "nomFrancais": "Rhinolophe euryale",
+  "nomLatin": "Rhinilophus euryale",
+  "classeId": 12
+}, {
+  "id": 1009,
+  "code": "RHIFER",
+  "nomFrancais": "Grand rhinolophe",
+  "nomLatin": "Rhinolophus ferrumequinum",
+  "classeId": 12
+}, {
+  "id": 1074,
+  "code": "RHIHIP",
+  "nomFrancais": "Petit rhinolophe",
+  "nomLatin": "Rhinolophus hipposideros",
+  "classeId": 12
+}, {
+  "id": 1091,
+  "code": "RHIIND",
+  "nomFrancais": "Rhinolophe inderterminé",
+  "nomLatin": "Rhinolophus",
+  "classeId": 12
+}, {
+  "id": 1732,
+  "code": "RHOGIT   ",
+  "nomFrancais": "Roselin githagine",
+  "nomLatin": "Rhodopechys githaginea",
+  "classeId": 14
+}, {
+  "id": 1600,
+  "code": "RHOROS",
+  "nomFrancais": "Mouette de Ross",
+  "nomLatin": "Rhodostethia rosea",
+  "classeId": 14
+}, {
+  "id": 1527,
+  "code": "RIPRIP",
+  "nomFrancais": "Hirondelle de rivage",
+  "nomLatin": "Riparia riparia",
+  "classeId": 14
+}, {
+  "id": 1606,
+  "code": "RISTRI",
+  "nomFrancais": "Mouette tridactyle",
+  "nomLatin": "Rissa tridactyla",
+  "classeId": 14
+}, {
+  "id": 1859,
+  "code": "ROEROE",
+  "nomFrancais": "Decticelle bariolée",
+  "nomLatin": "Roeseliana roeselii",
+  "classeId": 15
+}, {
+  "id": 997,
+  "code": "RUPRUP",
+  "nomFrancais": "Chamois",
+  "nomLatin": "Rupicapra rupicapra",
+  "classeId": 12
+}, {
+  "id": 1831,
+  "code": "RUSNITNIT",
+  "nomFrancais": "Ruspolie à tête de cône",
+  "nomLatin": "Ruspolia nitidula nitidula",
+  "classeId": 15
+}, {
+  "id": 961,
+  "code": "SALATR",
+  "nomFrancais": "Salamandre noire",
+  "nomLatin": "Salamandra atra",
+  "classeId": 10
+}, {
+  "id": 962,
+  "code": "SALSAL",
+  "nomFrancais": "Salamandre tachetée",
+  "nomLatin": "Salamandra salamandra",
+  "classeId": 10
+}, {
+  "id": 1776,
+  "code": "SAXRUB",
+  "nomFrancais": "Tarier des prés",
+  "nomLatin": "Saxicola rubetra",
+  "classeId": 14
+}, {
+  "id": 1777,
+  "code": "SAXTOR",
+  "nomFrancais": "Tarier pâtre",
+  "nomLatin": "Saxicola torquatus",
+  "classeId": 14
+}, {
+  "id": 1005,
+  "code": "SCIVUL",
+  "nomFrancais": "Ecureuil roux",
+  "nomLatin": "Sciurus vulgaris",
+  "classeId": 12
+}, {
+  "id": 1235,
+  "code": "SCORUS",
+  "nomFrancais": "Bécasse des bois",
+  "nomLatin": "Scolopax rusticola",
+  "classeId": 14
+}, {
+  "id": 1638,
+  "code": "SEINOV",
+  "nomFrancais": "Paruline des ruisseaux",
+  "nomLatin": "Seiurus noveboracensis",
+  "classeId": 14
+}, {
+  "id": 1805,
+  "code": "SERLLA",
+  "nomFrancais": "Venturon montagnard",
+  "nomLatin": "Serinus citrinella",
+  "classeId": 14
+}, {
+  "id": 1749,
+  "code": "SERSER",
+  "nomFrancais": "Serin cini",
+  "nomLatin": "Serinus serinus",
+  "classeId": 14
+}, {
+  "id": 1639,
+  "code": "SETRUT",
+  "nomFrancais": "Paruline flamboyante",
+  "nomLatin": "Setophaga ruticilla",
+  "classeId": 14
+}, {
+  "id": 1753,
+  "code": "SITEUR",
+  "nomFrancais": "Sittelle torchepot",
+  "nomLatin": "Sitta europaea",
+  "classeId": 14
+}, {
+  "id": 1752,
+  "code": "SITNEU   ",
+  "nomFrancais": "Sittelle des rochers",
+  "nomLatin": "Sitta neumayer",
+  "classeId": 14
+}, {
+  "id": 1751,
+  "code": "SITWHI   ",
+  "nomFrancais": "Sittelle corse",
+  "nomLatin": "Sitta whiteheadi",
+  "classeId": 14
+}, {
+  "id": 1156,
+  "code": "SOMALP",
+  "nomFrancais": "Cordulie des Alpes",
+  "nomLatin": "Somatochlora alpestris",
+  "classeId": 13
+}, {
+  "id": 1154,
+  "code": "SOMARC",
+  "nomFrancais": "Cordulie arctique",
+  "nomLatin": "Somatochlora arctica",
+  "classeId": 13
+}, {
+  "id": 1153,
+  "code": "SOMFLA",
+  "nomFrancais": "Cordulie à taches jaunes",
+  "nomLatin": "Somatochlora flavomaculata",
+  "classeId": 13
+}, {
+  "id": 1157,
+  "code": "SOMMET",
+  "nomFrancais": "Cordulie métallique",
+  "nomLatin": "Somatochlora metallica",
+  "classeId": 13
+}, {
+  "id": 1158,
+  "code": "SOMMETMET",
+  "nomFrancais": "Cordulie métallique metallica",
+  "nomLatin": "Somatochlora metallica metallica",
+  "classeId": 13
+}, {
+  "id": 1390,
+  "code": "SOMMOL",
+  "nomFrancais": "Eider à duvet",
+  "nomLatin": "Somateria mollissima",
+  "classeId": 14
+}, {
+  "id": 1391,
+  "code": "SOMSPE   ",
+  "nomFrancais": "Eider à tête grise",
+  "nomLatin": "Somateria spectabilis",
+  "classeId": 14
+}, {
+  "id": 1050,
+  "code": "SORALP",
+  "nomFrancais": "Musaraigne alpine",
+  "nomLatin": "Sorex alpinus",
+  "classeId": 12
+}, {
+  "id": 1053,
+  "code": "SORARA",
+  "nomFrancais": "Musaraigne carrelet",
+  "nomLatin": "Sorex araneus",
+  "classeId": 12
+}, {
+  "id": 1054,
+  "code": "SORARACOR",
+  "nomFrancais": "Musaraigne carrelet ou couronnée",
+  "nomLatin": "Sorex araneus/coronatus",
+  "classeId": 12
+}, {
+  "id": 1061,
+  "code": "SORCAE",
+  "nomFrancais": "Musaraigne lapone",
+  "nomLatin": "Sorex caecutiens",
+  "classeId": 12
+}, {
+  "id": 1055,
+  "code": "SORCOR",
+  "nomFrancais": "Musaraigne couronnée",
+  "nomLatin": "Sorex coronatus",
+  "classeId": 12
+}, {
+  "id": 1059,
+  "code": "SORGRA",
+  "nomFrancais": "Musaraigne ibérique",
+  "nomLatin": "Sorex granarius",
+  "classeId": 12
+}, {
+  "id": 1065,
+  "code": "SORISO",
+  "nomFrancais": "Musariagne sombre",
+  "nomLatin": "Sorex isodon",
+  "classeId": 12
+}, {
+  "id": 1063,
+  "code": "SORISS",
+  "nomFrancais": "Musaraigne naine",
+  "nomLatin": "Sorex minutissimus",
+  "classeId": 12
+}, {
+  "id": 1064,
+  "code": "SORMIN",
+  "nomFrancais": "Musaraigne pygmée",
+  "nomLatin": "Sorex minutus",
+  "classeId": 12
+}, {
+  "id": 1060,
+  "code": "SORSAM",
+  "nomFrancais": "Musaraigne italienne",
+  "nomLatin": "Sorex samniticus",
+  "classeId": 12
+}, {
+  "id": 955,
+  "code": "SPEAMB",
+  "nomFrancais": "Hydromante d'Italie",
+  "nomLatin": "Speleomantes ambrosii",
+  "classeId": 10
+}, {
+  "id": 1853,
+  "code": "SPHCAE",
+  "nomFrancais": "Oedipode aigue-marine",
+  "nomLatin": "Sphingolnotus caerulans",
+  "classeId": 15
+}, {
+  "id": 971,
+  "code": "SPHLIG",
+  "nomFrancais": "Sphinx du troène",
+  "nomLatin": "Sphinx ligustri",
+  "classeId": 11
+}, {
+  "id": 1761,
+  "code": "STEAEA",
+  "nomFrancais": "Sterne arctique",
+  "nomLatin": "Sterna paradisaea",
+  "classeId": 14
+}, {
+  "id": 1769,
+  "code": "STEALB",
+  "nomFrancais": "Sterne naine",
+  "nomLatin": "Sternula albifrons",
+  "classeId": 14
+}, {
+  "id": 1762,
+  "code": "STEANA",
+  "nomFrancais": "Sterne bridée",
+  "nomLatin": "Sterna anaethetus",
+  "classeId": 14
+}, {
+  "id": 1771,
+  "code": "STEBEN",
+  "nomFrancais": "Sterne voyageuse",
+  "nomLatin": "Sterna bengalensis",
+  "classeId": 14
+}, {
+  "id": 1763,
+  "code": "STECAS",
+  "nomFrancais": "Sterne caspienne",
+  "nomLatin": "Sterna caspia",
+  "classeId": 14
+}, {
+  "id": 1542,
+  "code": "STECUS   ",
+  "nomFrancais": "Labbe parasite",
+  "nomLatin": "Stercorarius parasiticus",
+  "classeId": 14
+}, {
+  "id": 1765,
+  "code": "STEDOU   ",
+  "nomFrancais": "Sterne de Dougall",
+  "nomLatin": "Sterna dougallii",
+  "classeId": 14
+}, {
+  "id": 1766,
+  "code": "STEELE",
+  "nomFrancais": "Sterne élégante",
+  "nomLatin": "Sterna elegans",
+  "classeId": 14
+}, {
+  "id": 1767,
+  "code": "STEFUS",
+  "nomFrancais": "Sterne fuligineuse",
+  "nomLatin": "Sterna fuscata",
+  "classeId": 14
+}, {
+  "id": 1855,
+  "code": "STEGRO",
+  "nomFrancais": "Criquet ensanglanté",
+  "nomLatin": "Stethophyma grossum",
+  "classeId": 15
+}, {
+  "id": 1866,
+  "code": "STELINLIN",
+  "nomFrancais": "Sténobothre commun",
+  "nomLatin": "Stenobothrus lineatus lineatus",
+  "classeId": 15
+}, {
+  "id": 1541,
+  "code": "STELON   ",
+  "nomFrancais": "Labbe à longue queue",
+  "nomLatin": "Stercorarius longicaudus",
+  "classeId": 14
+}, {
+  "id": 1770,
+  "code": "STENDO",
+  "nomFrancais": "Sterne pierregarin",
+  "nomLatin": "Sterna hirundo",
+  "classeId": 14
+}, {
+  "id": 1543,
+  "code": "STEPOM   ",
+  "nomFrancais": "Labbe pomarin",
+  "nomLatin": "Stercorarius pomarinus",
+  "classeId": 14
+}, {
+  "id": 1764,
+  "code": "STESAN   ",
+  "nomFrancais": "Sterne caugek",
+  "nomLatin": "Sterna sandvicensis Latham",
+  "classeId": 14
+}, {
+  "id": 1477,
+  "code": "STESKU   ",
+  "nomFrancais": "Grand Labbe",
+  "nomLatin": "Stercorarius skua",
+  "classeId": 14
+}, {
+  "id": 1354,
+  "code": "STRALU",
+  "nomFrancais": "Chouette hulotte",
+  "nomLatin": "Strix aluco",
+  "classeId": 14
+}, {
+  "id": 1786,
+  "code": "STRCTO",
+  "nomFrancais": "Tourterelle turque",
+  "nomLatin": "Streptopelia decaocto",
+  "classeId": 14
+}, {
+  "id": 1355,
+  "code": "STRNEB   ",
+  "nomFrancais": "Chouette lapone",
+  "nomLatin": "Strix nebulosa",
+  "classeId": 14
+}, {
+  "id": 1785,
+  "code": "STRORI",
+  "nomFrancais": "Tourterelle orientale",
+  "nomLatin": "Streptopelia orientalis",
+  "classeId": 14
+}, {
+  "id": 1784,
+  "code": "STRSEN   ",
+  "nomFrancais": "Tourterelle maillée",
+  "nomLatin": "Streptopelia senegalensis",
+  "classeId": 14
+}, {
+  "id": 1783,
+  "code": "STRTUR",
+  "nomFrancais": "Tourterelle des bois",
+  "nomLatin": "Streptopelia turtur",
+  "classeId": 14
+}, {
+  "id": 1351,
+  "code": "STRURA   ",
+  "nomFrancais": "Chouette de l'Oural",
+  "nomLatin": "Strix uralensis",
+  "classeId": 14
+}, {
+  "id": 1399,
+  "code": "STUROS   ",
+  "nomFrancais": "Étourneau roselin",
+  "nomLatin": "Sturnus roseus",
+  "classeId": 14
+}, {
+  "id": 1401,
+  "code": "STUUNI   ",
+  "nomFrancais": "Étourneau unicolore",
+  "nomLatin": "Sturnus unicolor",
+  "classeId": 14
+}, {
+  "id": 1400,
+  "code": "STUVUL",
+  "nomFrancais": "Étourneau sansonnet",
+  "nomLatin": "Sturnus vulgaris",
+  "classeId": 14
+}, {
+  "id": 1162,
+  "code": "STYFLA",
+  "nomFrancais": "Gomphus à pattes jaunes",
+  "nomLatin": "Gomphus flavipes",
+  "classeId": 13
+}, {
+  "id": 1427,
+  "code": "SULBAS   ",
+  "nomFrancais": "Fou de Bassan",
+  "nomLatin": "Morus bassanus",
+  "classeId": 14
+}, {
+  "id": 1058,
+  "code": "SUNETR",
+  "nomFrancais": "Musaraigne étrusque",
+  "nomLatin": "Suncus etruscus",
+  "classeId": 12
+}, {
+  "id": 1353,
+  "code": "SURULU   ",
+  "nomFrancais": "Chouette épervière",
+  "nomLatin": "Surnia ulula",
+  "classeId": 14
+}, {
+  "id": 1092,
+  "code": "SUSSCR",
+  "nomFrancais": "Sanglier",
+  "nomLatin": "Sus scrofa",
+  "classeId": 12
+}, {
+  "id": 1421,
+  "code": "SYLALA",
+  "nomFrancais": "Fauvette mélanocéphale",
+  "nomLatin": "Sylvia melanocephala",
+  "classeId": 14
+}, {
+  "id": 1415,
+  "code": "SYLATR",
+  "nomFrancais": "Fauvette à tête noire",
+  "nomLatin": "Sylvia atricapilla",
+  "classeId": 14
+}, {
+  "id": 1418,
+  "code": "SYLBOR",
+  "nomFrancais": "Fauvette des jardins",
+  "nomLatin": "Sylvia borin",
+  "classeId": 14
+}, {
+  "id": 1423,
+  "code": "SYLCAN",
+  "nomFrancais": "Fauvette passerinette",
+  "nomLatin": "Sylvia cantillans",
+  "classeId": 14
+}, {
+  "id": 1420,
+  "code": "SYLCOM",
+  "nomFrancais": "Fauvette grisette",
+  "nomLatin": "Sylvia communis",
+  "classeId": 14
+}, {
+  "id": 1414,
+  "code": "SYLCON",
+  "nomFrancais": "Fauvette à lunettes",
+  "nomLatin": "Sylvia conspicillata",
+  "classeId": 14
+}, {
+  "id": 1416,
+  "code": "SYLCUR",
+  "nomFrancais": "Fauvette babillarde",
+  "nomLatin": "Sylvia curruca",
+  "classeId": 14
+}, {
+  "id": 1014,
+  "code": "SYLFLO",
+  "nomFrancais": "Lapin de Floride",
+  "nomLatin": "Sylvilagus floridanus",
+  "classeId": 12
+}, {
+  "id": 1422,
+  "code": "SYLHOR",
+  "nomFrancais": "Fauvette orphée",
+  "nomLatin": "Sylvia hortensis",
+  "classeId": 14
+}, {
+  "id": 1419,
+  "code": "SYLNIS   ",
+  "nomFrancais": "Fauvette épervière",
+  "nomLatin": "Sylvia nisoria",
+  "classeId": 14
+}, {
+  "id": 1417,
+  "code": "SYLRUE   ",
+  "nomFrancais": "Fauvette de Rüppell",
+  "nomLatin": "Sylvia rueppelli",
+  "classeId": 14
+}, {
+  "id": 1425,
+  "code": "SYLSAR   ",
+  "nomFrancais": "Fauvette sarde",
+  "nomLatin": "Sylvia sarda",
+  "classeId": 14
+}, {
+  "id": 1424,
+  "code": "SYLUND",
+  "nomFrancais": "Fauvette pitchou",
+  "nomLatin": "Sylvia undata",
+  "classeId": 14
+}, {
+  "id": 1199,
+  "code": "SYMDAN",
+  "nomFrancais": "Sympétrum noir",
+  "nomLatin": "Sympetrum danae",
+  "classeId": 13
+}, {
+  "id": 1192,
+  "code": "SYMDEP",
+  "nomFrancais": "Sympétrum à corps déprimé",
+  "nomLatin": "Sympetrum depressiusculum",
+  "classeId": 13
+}, {
+  "id": 1197,
+  "code": "SYMFLA",
+  "nomFrancais": "Sympétrum jaune",
+  "nomLatin": "Sympetrum flaveolum",
+  "classeId": 13
+}, {
+  "id": 1194,
+  "code": "SYMFON",
+  "nomFrancais": "Sympétrum à nervures rouges",
+  "nomLatin": "Sympetrum fonscolombii",
+  "classeId": 13
+}, {
+  "id": 1172,
+  "code": "SYMFUS",
+  "nomFrancais": "Leste brun",
+  "nomLatin": "Sympecma fusca",
+  "classeId": 13
+}, {
+  "id": 1198,
+  "code": "SYMMER",
+  "nomFrancais": "Sympétrum méridional",
+  "nomLatin": "Sympetrum meridionale",
+  "classeId": 13
+}, {
+  "id": 1174,
+  "code": "SYMPAE",
+  "nomFrancais": "Leste enfant",
+  "nomLatin": "Sympecma paedisca",
+  "classeId": 13
+}, {
+  "id": 1196,
+  "code": "SYMPED",
+  "nomFrancais": "Sympétrum du Piémont",
+  "nomLatin": "Sympetrum pedemontanum",
+  "classeId": 13
+}, {
+  "id": 1200,
+  "code": "SYMSAN",
+  "nomFrancais": "Sympétrum rouge sang",
+  "nomLatin": "Sympetrum sanguineum",
+  "classeId": 13
+}, {
+  "id": 1193,
+  "code": "SYMSTR",
+  "nomFrancais": "Sympétrum à côtés striés",
+  "nomLatin": "Sympetrum striolatum",
+  "classeId": 13
+}, {
+  "id": 1195,
+  "code": "SYMVUL",
+  "nomFrancais": "Sympétrum commun",
+  "nomLatin": "Sympetrum vulgatum",
+  "classeId": 13
+}, {
+  "id": 1772,
+  "code": "SYRPAR   ",
+  "nomFrancais": "Syrrhapte paradoxal",
+  "nomLatin": "Syrrhaptes paradoxus",
+  "classeId": 14
+}, {
+  "id": 1403,
+  "code": "SYRREE",
+  "nomFrancais": "Faisan vénéré",
+  "nomLatin": "Syrmaticus reevesii",
+  "classeId": 14
+}, {
+  "id": 1484,
+  "code": "TACLIS",
+  "nomFrancais": "Grèbe castagneux",
+  "nomLatin": "Tachybaptus ruficollis",
+  "classeId": 14
+}, {
+  "id": 1773,
+  "code": "TADFER   ",
+  "nomFrancais": "Tadorne casarca",
+  "nomLatin": "Tadorna ferruginea",
+  "classeId": 14
+}, {
+  "id": 1774,
+  "code": "TADRNA",
+  "nomFrancais": "Tadorne de Belon",
+  "nomLatin": "Tadorna tadorna",
+  "classeId": 14
+}, {
+  "id": 1031,
+  "code": "TADTEN",
+  "nomFrancais": "Molosse de Cestonie",
+  "nomLatin": "Tadarida teniotis",
+  "classeId": 12
+}, {
+  "id": 1099,
+  "code": "TALEUR",
+  "nomFrancais": "Taupe d'Europe",
+  "nomLatin": "Talpa europaea",
+  "classeId": 12
+}, {
+  "id": 1727,
+  "code": "TARCYA   ",
+  "nomFrancais": "Robin à flancs roux",
+  "nomLatin": "Tarsiger cyanurus",
+  "classeId": 14
+}, {
+  "id": 1909,
+  "code": "TARMAU",
+  "nomFrancais": "Tarente de Mauritanie",
+  "nomLatin": "Tarentola mauritanica",
+  "classeId": 16
+}, {
+  "id": 1913,
+  "code": "TESHER",
+  "nomFrancais": "Tortue d'Hermann",
+  "nomLatin": "Testudo hermanni",
+  "classeId": 16
+}, {
+  "id": 1860,
+  "code": "TESTESTES",
+  "nomFrancais": "Decticelle carroyée",
+  "nomLatin": "Tessellana tessellata tessellata",
+  "classeId": 15
+}, {
+  "id": 1870,
+  "code": "TETBIP",
+  "nomFrancais": "Tétrix à deux points",
+  "nomLatin": "Tetrix bipunctata",
+  "classeId": 15
+}, {
+  "id": 1869,
+  "code": "TETCEPCEP",
+  "nomFrancais": "Tétrix des vasières",
+  "nomLatin": "Tetrix ceperoi ceperoi",
+  "classeId": 15
+}, {
+  "id": 1868,
+  "code": "TETDEP",
+  "nomFrancais": "Tétrix Déprimé",
+  "nomLatin": "Tetrix depressa",
+  "classeId": 15
+}, {
+  "id": 1881,
+  "code": "TETKRA",
+  "nomFrancais": "Tétrix à ailes courtes",
+  "nomLatin": "Tetrix kraussi",
+  "classeId": 15
+}, {
+  "id": 1634,
+  "code": "TETRAX",
+  "nomFrancais": "Outarde canepetière",
+  "nomLatin": "Tetrax tetrax",
+  "classeId": 14
+}, {
+  "id": 1871,
+  "code": "TETTEN",
+  "nomFrancais": "Tétrix longicorne",
+  "nomLatin": "Tetrix tenuicornis",
+  "classeId": 15
+}, {
+  "id": 1779,
+  "code": "TETTET",
+  "nomFrancais": "Tétras lyre",
+  "nomLatin": "Tetrao tetrix",
+  "classeId": 14
+}, {
+  "id": 1872,
+  "code": "TETUNDGAV",
+  "nomFrancais": "Tétrix de Gavoy",
+  "nomLatin": "Tetrix undulata gavoyi",
+  "classeId": 15
+}, {
+  "id": 1877,
+  "code": "TETUNDUND",
+  "nomFrancais": "Tétrix forestier",
+  "nomLatin": "Tetrix undulata undulata",
+  "classeId": 15
+}, {
+  "id": 1478,
+  "code": "TETURO",
+  "nomFrancais": "Grand Tétras",
+  "nomLatin": "Tetrao urogallus",
+  "classeId": 14
+}, {
+  "id": 1846,
+  "code": "TETVIR",
+  "nomFrancais": "Grande sauterelle verte",
+  "nomLatin": "Tettigonia viridissima",
+  "classeId": 15
+}, {
+  "id": 1539,
+  "code": "THRAET",
+  "nomFrancais": "Ibis sacré",
+  "nomLatin": "Threskiornis aethiopicus",
+  "classeId": 14
+}, {
+  "id": 1780,
+  "code": "TICMUR",
+  "nomFrancais": "Tichodrome échelette",
+  "nomLatin": "Tichodroma muraria",
+  "classeId": 14
+}, {
+  "id": 1803,
+  "code": "TORTRA",
+  "nomFrancais": "Vautour oricou",
+  "nomLatin": "Torgos tracheliotus",
+  "classeId": 14
+}, {
+  "id": 964,
+  "code": "TRIALP",
+  "nomFrancais": "Triton alpestre",
+  "nomLatin": "Triturus alpestris",
+  "classeId": 10
+}, {
+  "id": 1203,
+  "code": "TRIANN",
+  "nomFrancais": "Trithémis pourpré",
+  "nomLatin": "Trithemis annulata",
+  "classeId": 13
+}, {
+  "id": 1202,
+  "code": "TRIART",
+  "nomFrancais": "Trithémis écarlate",
+  "nomLatin": "Trithemis arteriosa",
+  "classeId": 13
+}, {
+  "id": 1333,
+  "code": "TRICIN",
+  "nomFrancais": "Chevalier bargette",
+  "nomLatin": "Tringa cinerea",
+  "classeId": 14
+}, {
+  "id": 965,
+  "code": "TRICRI",
+  "nomFrancais": "Triton crêté",
+  "nomLatin": "Triturus cristatus",
+  "classeId": 10
+}, {
+  "id": 1332,
+  "code": "TRIERY",
+  "nomFrancais": "Chevalier arlequin",
+  "nomLatin": "Tringa erythropus",
+  "classeId": 14
+}, {
+  "id": 1330,
+  "code": "TRIFLA",
+  "nomFrancais": "Chevalier à pattes jaunes (Petit Chevalier)",
+  "nomLatin": "Tringa flavipes",
+  "classeId": 14
+}, {
+  "id": 1343,
+  "code": "TRIGLA",
+  "nomFrancais": "Chevalier sylvain",
+  "nomLatin": "Tringa glareola",
+  "classeId": 14
+}, {
+  "id": 967,
+  "code": "TRIHEL",
+  "nomFrancais": "Triton palmé",
+  "nomLatin": "Triturus helveticus",
+  "classeId": 10
+}, {
+  "id": 1201,
+  "code": "TRIKIR",
+  "nomFrancais": "Trithémis à ailes ambrées",
+  "nomLatin": "Trithemis kirbyi",
+  "classeId": 13
+}, {
+  "id": 966,
+  "code": "TRIMAR",
+  "nomFrancais": "Triton marbré",
+  "nomLatin": "Triturus marmoratus",
+  "classeId": 10
+}, {
+  "id": 1331,
+  "code": "TRINEB",
+  "nomFrancais": "Chevalier aboyeur",
+  "nomLatin": "Tringa nebularia",
+  "classeId": 14
+}, {
+  "id": 1334,
+  "code": "TRIOCH",
+  "nomFrancais": "Chevalier culblanc",
+  "nomLatin": "Tringa ochropus",
+  "classeId": 14
+}, {
+  "id": 1341,
+  "code": "TRISOL",
+  "nomFrancais": "Chevalier solitaire",
+  "nomLatin": "Tringa solitaria",
+  "classeId": 14
+}, {
+  "id": 1342,
+  "code": "TRISTA   ",
+  "nomFrancais": "Chevalier stagnatile",
+  "nomLatin": "Tringa stagnatilis",
+  "classeId": 14
+}, {
+  "id": 1335,
+  "code": "TRITOT",
+  "nomFrancais": "Chevalier gambette",
+  "nomLatin": "Tringa totanus",
+  "classeId": 14
+}, {
+  "id": 1336,
+  "code": "TRITOTROB",
+  "nomFrancais": "Chevalier gambette robusta",
+  "nomLatin": "Tringa totanus robusta",
+  "classeId": 14
+}, {
+  "id": 1337,
+  "code": "TRITOTTOT",
+  "nomFrancais": "Chevalier gambette totanus",
+  "nomLatin": "Tringa totanus totanus",
+  "classeId": 14
+}, {
+  "id": 968,
+  "code": "TRIVUL",
+  "nomFrancais": "Triton ponctué",
+  "nomLatin": "Triturus vulgaris",
+  "classeId": 10
+}, {
+  "id": 1795,
+  "code": "TROTRO",
+  "nomFrancais": "Troglodyte mignon",
+  "nomLatin": "Troglodytes troglodytes",
+  "classeId": 14
+}, {
+  "id": 1247,
+  "code": "TRYSUB",
+  "nomFrancais": "Bécasseau rousset",
+  "nomLatin": "Tryngites subruficollis",
+  "classeId": 14
+}, {
+  "id": 1500,
+  "code": "TURILI",
+  "nomFrancais": "Grive mauvis",
+  "nomLatin": "Turdus iliacus",
+  "classeId": 14
+}, {
+  "id": 1573,
+  "code": "TURMER",
+  "nomFrancais": "Merle noir",
+  "nomLatin": "Turdus merula",
+  "classeId": 14
+}, {
+  "id": 1495,
+  "code": "TURNAU",
+  "nomFrancais": "Grive de Naumann",
+  "nomLatin": "Turdus naumanni",
+  "classeId": 14
+}, {
+  "id": 1501,
+  "code": "TURPHI",
+  "nomFrancais": "Grive musicienne",
+  "nomLatin": "Turdus philomelos",
+  "classeId": 14
+}, {
+  "id": 1499,
+  "code": "TURPIL",
+  "nomFrancais": "Grive litorne",
+  "nomLatin": "Turdus pilaris",
+  "classeId": 14
+}, {
+  "id": 1492,
+  "code": "TURRUF   ",
+  "nomFrancais": "Grive à gorge noire ou rousse",
+  "nomLatin": "Turdus ruficollis",
+  "classeId": 14
+}, {
+  "id": 1491,
+  "code": "TURRUFATR",
+  "nomFrancais": "Grive à gorge noire",
+  "nomLatin": "Turdus ruficollis atrogularis",
+  "classeId": 14
+}, {
+  "id": 1493,
+  "code": "TURRUFRUF",
+  "nomFrancais": "Grive à gorge rousse",
+  "nomLatin": "Turdus ruficollis ruficollis",
+  "classeId": 14
+}, {
+  "id": 1796,
+  "code": "TURSYL   ",
+  "nomFrancais": "Turnix d'Andalousie",
+  "nomLatin": "Turnix sylvatica",
+  "classeId": 14
+}, {
+  "id": 1571,
+  "code": "TURTOR",
+  "nomFrancais": "Merle à plastron",
+  "nomLatin": "Turdus torquatus",
+  "classeId": 14
+}, {
+  "id": 1572,
+  "code": "TURTORALP",
+  "nomFrancais": "Merle à plastron alpin",
+  "nomLatin": "Turdus torquatus alpestris",
+  "classeId": 14
+}, {
+  "id": 1498,
+  "code": "TURVIS",
+  "nomFrancais": "Grive draine",
+  "nomLatin": "Turdus viscivorus",
+  "classeId": 14
+}, {
+  "id": 1874,
+  "code": "TYLLIL",
+  "nomFrancais": "Phanéroptère liliacé",
+  "nomLatin": "Tylopsis lilifolia",
+  "classeId": 15
+}, {
+  "id": 1389,
+  "code": "TYTALB",
+  "nomFrancais": "Effraie des clochers",
+  "nomLatin": "Tyto alba",
+  "classeId": 14
+}, {
+  "id": 1532,
+  "code": "UPUEPO",
+  "nomFrancais": "Huppe fasciée",
+  "nomLatin": "Upupa epops",
+  "classeId": 14
+}, {
+  "id": 1511,
+  "code": "URIAAL   ",
+  "nomFrancais": "Guillemot de Troïl",
+  "nomLatin": "Uria aalge",
+  "classeId": 14
+}, {
+  "id": 1510,
+  "code": "URILOM   ",
+  "nomFrancais": "Guillemot de Brünnich",
+  "nomLatin": "Uria lomvia",
+  "classeId": 14
+}, {
+  "id": 1072,
+  "code": "URSARC",
+  "nomFrancais": "Ours brun",
+  "nomLatin": "Ursus arctos",
+  "classeId": 12
+}, {
+  "id": 1799,
+  "code": "VANVAN",
+  "nomFrancais": "Vanneau huppé",
+  "nomLatin": "Vanellus vanellus",
+  "classeId": 14
+}, {
+  "id": 1093,
+  "code": "VESMUR",
+  "nomFrancais": "Sérotine bicolore",
+  "nomLatin": "Vespertilio murinus",
+  "classeId": 12
+}, {
+  "id": 1916,
+  "code": "VIPASP",
+  "nomFrancais": "Vipère aspic",
+  "nomLatin": "Vipera aspis",
+  "classeId": 16
+}, {
+  "id": 1918,
+  "code": "VIPBER",
+  "nomFrancais": "Vipère péliade",
+  "nomLatin": "Vipera berus",
+  "classeId": 16
+}, {
+  "id": 1917,
+  "code": "VIPURS",
+  "nomFrancais": "Vipère d'Orsini",
+  "nomLatin": "Vipera ursinii",
+  "classeId": 16
+}, {
+  "id": 1807,
+  "code": "VIROLI",
+  "nomFrancais": "Viréo à oeil rouge",
+  "nomLatin": "Vireo olivaceus",
+  "classeId": 14
+}, {
+  "id": 1082,
+  "code": "VORPER",
+  "nomFrancais": "Putois marbré",
+  "nomLatin": "Vormela peregusna",
+  "classeId": 12
+}, {
+  "id": 1089,
+  "code": "VULVUL",
+  "nomFrancais": "Renard roux",
+  "nomLatin": "Vulpes vulpes",
+  "classeId": 12
+}, {
+  "id": 1233,
+  "code": "XENCIN   ",
+  "nomFrancais": "Bargette du Térek",
+  "nomLatin": "Xenus cinereus",
+  "classeId": 14
+}, {
+  "id": 1836,
+  "code": "YERRAY",
+  "nomFrancais": "Yersinelle frêle",
+  "nomLatin": "Yersinella raymondii",
+  "classeId": 15
+}, {
+  "id": 1497,
+  "code": "ZOODAU",
+  "nomFrancais": "Grive dorée",
+  "nomLatin": "Zoothera dauma",
+  "classeId": 14
+}, {
+  "id": 1496,
+  "code": "ZOOSIB",
+  "nomFrancais": "Grive de Sibérie",
+  "nomLatin": "Zoothera sibirica",
+  "classeId": 14
+}]
+

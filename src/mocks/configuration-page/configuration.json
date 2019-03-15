@@ -1,0 +1,162 @@
+{
+  "appConfiguration": {
+    "applicationName": "Base naturaliste",
+    "defaultObservateur": {
+      "id": 27,
+      "libelle": "CARRIER Laurent",
+      "nbDonnees": 1
+    },
+    "defaultDepartement": {
+      "id": 6,
+      "code": "26",
+      "nbLieuxdits": 4911,
+      "nbDonnees": 1,
+      "nbCommunes": 355
+    },
+    "defaultEstimationNombre": {
+      "id": 7,
+      "libelle": "Précis",
+      "nonCompte": false,
+      "nbDonnees": 1
+    },
+    "defaultNombre": 1,
+    "defaultSexe": { "id": 10, "libelle": "?", "nbDonnees": 1 },
+    "defaultAge": { "id": 30, "libelle": "?", "nbDonnees": 1 },
+    "areAssociesDisplayed": true,
+    "isMeteoDisplayed": true,
+    "isDistanceDisplayed": true,
+    "isRegroupementDisplayed": true,
+    "mySqlPath": "toto",
+    "mySqlDumpPath": "titi",
+    "importFolderPath": "/Users/camille/import/",
+    "exportFolderPath": "/Users/camille/export/"
+  },
+  "observateurs": [
+    { "id": 17, "libelle": "AROD François", "nbDonnees": 0 },
+    { "id": 18, "libelle": "BEAUVALLET Yves", "nbDonnees": 0 },
+    { "id": 19, "libelle": "BELIGNE Léa", "nbDonnees": 0 },
+    { "id": 20, "libelle": "BERTHALIN Hervé", "nbDonnees": 0 },
+    { "id": 21, "libelle": "BILLON Michel", "nbDonnees": 0 },
+    { "id": 22, "libelle": "BLACHE Sébastien", "nbDonnees": 0 },
+    { "id": 23, "libelle": "BOUTIN Bernard", "nbDonnees": 0 },
+    { "id": 24, "libelle": "CAILLETON Stéphane", "nbDonnees": 0 },
+    { "id": 25, "libelle": "CARRIER Antoine", "nbDonnees": 0 },
+    { "id": 26, "libelle": "CARRIER Camille", "nbDonnees": 0 },
+    { "id": 27, "libelle": "CARRIER Laurent", "nbDonnees": 1 },
+    { "id": 28, "libelle": "CARRIER Marie", "nbDonnees": 0 },
+    { "id": 29, "libelle": "CARTON Christophe", "nbDonnees": 0 },
+    { "id": 30, "libelle": "CHAMBON Myriam", "nbDonnees": 0 },
+    { "id": 31, "libelle": "CLAVEL Alain", "nbDonnees": 0 },
+    { "id": 33, "libelle": "Com Or", "nbDonnees": 0 },
+    { "id": 32, "libelle": "CREMILLIEUX Lionel", "nbDonnees": 0 },
+    { "id": 34, "libelle": "D'ADAMO Pauline", "nbDonnees": 0 },
+    { "id": 35, "libelle": "DAVID Gilbert", "nbDonnees": 0 },
+    { "id": 36, "libelle": "DIDIER Michel", "nbDonnees": 0 },
+    { "id": 37, "libelle": "DUCHAMP Jacques", "nbDonnees": 0 },
+    { "id": 38, "libelle": "FAYOLAS Didier", "nbDonnees": 0 },
+    { "id": 39, "libelle": "FERRIERE Gérard", "nbDonnees": 0 },
+    { "id": 40, "libelle": "GUYON Katell", "nbDonnees": 0 },
+    { "id": 41, "libelle": "LANDEAU Rémi", "nbDonnees": 0 },
+    { "id": 42, "libelle": "OBOUSSIER Francis", "nbDonnees": 0 },
+    { "id": 43, "libelle": "PEYRARD Jean-Jacques", "nbDonnees": 0 },
+    { "id": 44, "libelle": "ROSSET Marie-Hélène", "nbDonnees": 0 },
+    { "id": 45, "libelle": "ROTSAERT Philippe", "nbDonnees": 0 },
+    { "id": 46, "libelle": "ROUSSEAU Cathy", "nbDonnees": 0 },
+    { "id": 47, "libelle": "ROUSSEAU Jonathan", "nbDonnees": 0 },
+    { "id": 48, "libelle": "TRAVERSAZ Aimée", "nbDonnees": 0 }
+  ],
+  "departements": [
+    {
+      "id": 12,
+      "code": "01",
+      "nbLieuxdits": 5,
+      "nbDonnees": 0,
+      "nbCommunes": 1
+    },
+    {
+      "id": 13,
+      "code": "06",
+      "nbLieuxdits": 23,
+      "nbDonnees": 0,
+      "nbCommunes": 4
+    },
+    {
+      "id": 7,
+      "code": "07",
+      "nbLieuxdits": 41,
+      "nbDonnees": 0,
+      "nbCommunes": 17
+    },
+    {
+      "id": 10,
+      "code": "13",
+      "nbLieuxdits": 70,
+      "nbDonnees": 0,
+      "nbCommunes": 4
+    },
+    {
+      "id": 6,
+      "code": "26",
+      "nbLieuxdits": 4911,
+      "nbDonnees": 1,
+      "nbCommunes": 355
+    },
+    {
+      "id": 11,
+      "code": "30",
+      "nbLieuxdits": 15,
+      "nbDonnees": 0,
+      "nbCommunes": 2
+    },
+    {
+      "id": 8,
+      "code": "38",
+      "nbLieuxdits": 95,
+      "nbDonnees": 0,
+      "nbCommunes": 24
+    },
+    {
+      "id": 9,
+      "code": "69",
+      "nbLieuxdits": 13,
+      "nbDonnees": 0,
+      "nbCommunes": 3
+    }
+  ],
+  "ages": [
+    { "id": 22, "libelle": "+1A", "nbDonnees": 0 },
+    { "id": 23, "libelle": "+2A", "nbDonnees": 0 },
+    { "id": 24, "libelle": "+3A", "nbDonnees": 0 },
+    { "id": 25, "libelle": "+4A", "nbDonnees": 0 },
+    { "id": 26, "libelle": "1A", "nbDonnees": 0 },
+    { "id": 27, "libelle": "2A", "nbDonnees": 0 },
+    { "id": 28, "libelle": "3A", "nbDonnees": 0 },
+    { "id": 29, "libelle": "4A", "nbDonnees": 0 },
+    { "id": 30, "libelle": "?", "nbDonnees": 1 },
+    { "id": 31, "libelle": "Adulte", "nbDonnees": 0 },
+    { "id": 32, "libelle": "Adulte nuptial", "nbDonnees": 0 },
+    { "id": 33, "libelle": "Imago", "nbDonnees": 0 },
+    { "id": 34, "libelle": "Immature", "nbDonnees": 0 },
+    { "id": 35, "libelle": "Juvénile", "nbDonnees": 0 },
+    { "id": 36, "libelle": "Larve", "nbDonnees": 0 },
+    { "id": 37, "libelle": "Ponte", "nbDonnees": 0 },
+    { "id": 38, "libelle": "Pulli", "nbDonnees": 0 },
+    { "id": 39, "libelle": "Volant", "nbDonnees": 0 }
+  ],
+  "sexes": [
+    { "id": 10, "libelle": "?", "nbDonnees": 1 },
+    { "id": 11, "libelle": "Couple", "nbDonnees": 0 },
+    { "id": 12, "libelle": "F", "nbDonnees": 0 },
+    { "id": 13, "libelle": "F?", "nbDonnees": 0 },
+    { "id": 14, "libelle": "FI", "nbDonnees": 0 },
+    { "id": 15, "libelle": "M", "nbDonnees": 0 },
+    { "id": 16, "libelle": "M?", "nbDonnees": 0 },
+    { "id": 17, "libelle": "Nid", "nbDonnees": 0 }
+  ],
+  "estimationsNombre": [
+    { "id": 4, "libelle": "Environ", "nonCompte": false, "nbDonnees": 0 },
+    { "id": 5, "libelle": "Minimum", "nonCompte": false, "nbDonnees": 0 },
+    { "id": 6, "libelle": "Non compté", "nonCompte": true, "nbDonnees": 0 },
+    { "id": 7, "libelle": "Précis", "nonCompte": false, "nbDonnees": 1 }
+  ]
+}
