@@ -1,5 +1,3 @@
 import { EntiteAvecLibelle } from "./entite-avec-libelle.object";
 
-export interface Age extends EntiteAvecLibelle {
-  nbDonnees: number;
-}
+export interface Age extends EntiteAvecLibelle {}
