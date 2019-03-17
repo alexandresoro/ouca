@@ -27,6 +27,7 @@ import milieuxMock from "../mocks/gestion-base-pages/milieux.json";
 import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
 import { getAllFromTablesQuery, SqlConnection } from "../sql/sql-connection.js";
+import { getAllFromTableQuery } from "../sql/sql-queries-utils.js";
 
 export function getObservateurs(
   isMockDatabaseMode: boolean,
@@ -35,7 +36,16 @@ export function getObservateurs(
   if (isMockDatabaseMode) {
     callbackFn(null, observateursMock as Observateur[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("observateur", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Observateur[]);
+        }
+      }
+    );
   }
 }
 
@@ -46,7 +56,16 @@ export function getDepartements(
   if (isMockDatabaseMode) {
     callbackFn(null, departementsMock as Departement[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("departement", "code", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Departement[]);
+        }
+      }
+    );
   }
 }
 
@@ -57,7 +76,16 @@ export function getCommunes(
   if (isMockDatabaseMode) {
     callbackFn(null, communesMock as any[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("commune", "nom_commune", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Commune[]);
+        }
+      }
+    );
   }
 }
 
@@ -68,7 +96,16 @@ export function getLieuxDits(
   if (isMockDatabaseMode) {
     callbackFn(null, lieuxDitsMock as Lieudit[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("lieudit", "nom", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Lieudit[]);
+        }
+      }
+    );
   }
 }
 
@@ -79,7 +116,16 @@ export function getMeteos(
   if (isMockDatabaseMode) {
     callbackFn(null, meteosMock as Meteo[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("meteo", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Meteo[]);
+        }
+      }
+    );
   }
 }
 
@@ -90,7 +136,16 @@ export function getClasses(
   if (isMockDatabaseMode) {
     callbackFn(null, classesMock as Classe[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("classe", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Classe[]);
+        }
+      }
+    );
   }
 }
 
@@ -101,7 +156,16 @@ export function getEspeces(
   if (isMockDatabaseMode) {
     callbackFn(null, especesMock as Espece[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("espece", "code", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Espece[]);
+        }
+      }
+    );
   }
 }
 
@@ -112,7 +176,16 @@ export function getSexes(
   if (isMockDatabaseMode) {
     callbackFn(null, sexesMock as Sexe[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("sexe", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Sexe[]);
+        }
+      }
+    );
   }
 }
 
@@ -123,7 +196,16 @@ export function getAges(
   if (isMockDatabaseMode) {
     callbackFn(null, agesMock as Age[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("age", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Age[]);
+        }
+      }
+    );
   }
 }
 
@@ -134,7 +216,16 @@ export function getEstimationsNombre(
   if (isMockDatabaseMode) {
     callbackFn(null, estimationsNombreMock as EstimationNombre[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("estimation_nombre", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as EstimationNombre[]);
+        }
+      }
+    );
   }
 }
 
@@ -145,7 +236,16 @@ export function getEstimationsDistance(
   if (isMockDatabaseMode) {
     callbackFn(null, estimationsDistanceMock as EstimationDistance[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("estimation_distance", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as EstimationDistance[]);
+        }
+      }
+    );
   }
 }
 
@@ -156,7 +256,16 @@ export function getComportements(
   if (isMockDatabaseMode) {
     callbackFn(null, comportementsMock as Comportement[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("comportement", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Comportement[]);
+        }
+      }
+    );
   }
 }
 
@@ -167,6 +276,15 @@ export function getMilieux(
   if (isMockDatabaseMode) {
     callbackFn(null, milieuxMock as Milieu[]);
   } else {
-    // TODO
+    SqlConnection.query(
+      getAllFromTableQuery("milieu", "libelle", "ASC"),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results as Milieu[]);
+        }
+      }
+    );
   }
 }
