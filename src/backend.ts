@@ -1,6 +1,5 @@
 import * as http from "http";
 import * as _ from "lodash";
-import * as mysql from "mysql";
 import * as url from "url";
 import { REQUEST_MAPPING } from "./mapping";
 
@@ -22,26 +21,40 @@ const server = http.createServer(
   (req: http.IncomingMessage, res: http.ServerResponse) => {
     console.log(`Method ${req.method}, URL ${req.url}`);
 
-    const pathName = url.parse(req.url).pathname;
+    res.setHeader("Access-Control-Allow-Origin", "*");
 
-    if (!_.isFunction(REQUEST_MAPPING[pathName])) {
-      res.statusCode = 404;
-      res.end();
-      return;
-    }
+    if (req.method === "OPTIONS") {
+      // Because of CORS, when the UI is requesting a POST method with a JSON body, it will preflight an OPTIONS call
+      res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+      res.setHeader("Access-Control-Max-Age", "86400");
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
+      );
 
-    const responseCallback = (error, result) => {
-      if (error) {
-        console.error(error);
-        process.exit();
-      }
       res.statusCode = 200;
-      res.setHeader("Content-Type", jsonHttpHeader);
-      res.setHeader("Access-Control-Allow-Origin", "*");
-      res.end(JSON.stringify(result));
-    };
+      res.end();
+    } else {
+      const pathName = url.parse(req.url).pathname;
 
-    REQUEST_MAPPING[pathName](isMockDatabaseMode, responseCallback);
+      if (!_.isFunction(REQUEST_MAPPING[pathName])) {
+        res.statusCode = 404;
+        res.end();
+        return;
+      }
+
+      const responseCallback = (error, result) => {
+        if (error) {
+          console.error(error);
+          process.exit();
+        }
+        res.statusCode = 200;
+        res.setHeader("Content-Type", jsonHttpHeader);
+        res.end(JSON.stringify(result));
+      };
+
+      REQUEST_MAPPING[pathName](isMockDatabaseMode, responseCallback);
+    }
   }
 );
 

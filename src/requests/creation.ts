@@ -1,8 +1,12 @@
 import { CreationPage } from "basenaturaliste-model/creation-page.object";
+import { Donnee } from "basenaturaliste-model/donnee.object";
+import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
 import * as mysql from "mysql";
-import creationPageInitMock from "./mocks/creation-page/creation-page-init.json";
-import { getAllFromTablesQuery, SqlConnection } from "./sql/sql-connection.js";
+import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
+import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
+import creationPageInitMock from "../mocks/creation-page/creation-page-init.json";
+import { getAllFromTablesQuery, SqlConnection } from "../sql/sql-connection.js";
 
 const getDefaultValueForConfigurationField = (
   configuration: any[],
@@ -145,5 +149,71 @@ export function creationInit(
         }
       }
     );
+  }
+}
+
+export function creationInventaire(
+  isMockDatabaseMode: boolean,
+  callbackFn: (errors: mysql.MysqlError, result: Inventaire) => void
+) {
+  if (isMockDatabaseMode) {
+    callbackFn(null, creationPageCreateInventaireMock as any);
+  } else {
+    // TODO
+  }
+}
+
+export function creationDonnee(
+  isMockDatabaseMode: boolean,
+  callbackFn: (errors: mysql.MysqlError, result: Donnee) => void
+) {
+  if (isMockDatabaseMode) {
+    callbackFn(null, creationPageCreateDonneeMock as any);
+  } else {
+    // TODO
+  }
+}
+
+export function deleteDonnee(
+  isMockDatabaseMode: boolean,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    callbackFn(null, null);
+  } else {
+    // TODO
+  }
+}
+
+export function getNextDonnee(
+  isMockDatabaseMode: boolean,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    callbackFn(null, null);
+  } else {
+    // TODO
+  }
+}
+
+export function getPreviousDonnee(
+  isMockDatabaseMode: boolean,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    callbackFn(null, null);
+  } else {
+    // TODO
+  }
+}
+
+export function getNextRegroupement(
+  isMockDatabaseMode: boolean,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    callbackFn(null, null);
+  } else {
+    // TODO
   }
 }
