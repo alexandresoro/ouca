@@ -1,3 +1,4 @@
+import * as mysql from "mysql";
 import { configurationInit } from "./requests/configuration";
 import {
   creationDonnee,
@@ -27,7 +28,7 @@ import {
 export const REQUEST_MAPPING: {
   [path: string]: (
     isMockDatabaseMode: boolean,
-    callbackFn?: (errors, result) => void
+    callbackFn?: (errors: mysql.MysqlError, result) => void
   ) => void;
 } = {
   "/api/creation/init": creationInit,
