@@ -77,12 +77,19 @@ export function getCommunes(
     callbackFn(null, communesMock as any[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("commune", "nom_commune", "ASC"),
+      getAllFromTableQuery("commune", "nom", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as Commune[]);
+          const communes: Commune[] = _.map(results, (classeDb) => {
+            const { departement_id, ...otherParams } = classeDb;
+            return {
+              ...otherParams,
+              departementId: classeDb.departement_id
+            };
+          });
+          callbackFn(errors, communes);
         }
       }
     );
@@ -102,7 +109,14 @@ export function getLieuxDits(
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as Lieudit[]);
+          const lieuxdits: Lieudit[] = _.map(results, (lieuditDb) => {
+            const { commune_id, ...otherParams } = lieuditDb;
+            return {
+              ...otherParams,
+              communeId: lieuditDb.commune_id
+            };
+          });
+          callbackFn(errors, lieuxdits);
         }
       }
     );
@@ -162,7 +176,14 @@ export function getEspeces(
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as Espece[]);
+          const especes: Espece[] = _.map(results, (especeDb) => {
+            const { espece_id, ...otherParams } = especeDb;
+            return {
+              ...otherParams,
+              especeId: especeDb.espece_id
+            };
+          });
+          callbackFn(errors, especes);
         }
       }
     );
