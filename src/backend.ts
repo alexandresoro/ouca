@@ -1,5 +1,6 @@
 import * as http from "http";
 import * as _ from "lodash";
+import { MysqlError } from "mysql";
 import * as url from "url";
 import { REQUEST_MAPPING } from "./mapping";
 
@@ -43,9 +44,11 @@ const server = http.createServer(
         return;
       }
 
-      const responseCallback = (error, result) => {
+      const responseCallback = (error: MysqlError, result) => {
         if (error) {
           console.error(error);
+          res.statusCode = 500;
+          res.end(JSON.stringify(error));
           process.exit();
         }
         res.statusCode = 200;
