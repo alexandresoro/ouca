@@ -1,3 +1,53 @@
+import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
+import * as _ from "lodash";
+
+const createKeyValueMapWithSameName = (
+  names: string | string[]
+): { [key: string]: string } => {
+  const returnMap = {};
+  _.forEach(names, (name: string) => {
+    returnMap[name] = name;
+  });
+  return returnMap;
+};
+
+export const DB_MAPPING = {
+  observateur: createKeyValueMapWithSameName("libelle"),
+  departement: createKeyValueMapWithSameName("code"),
+  commune: {
+    ...createKeyValueMapWithSameName(["code", "nom"]),
+    departement_id: "departementId"
+  },
+  lieudit: {
+    ...createKeyValueMapWithSameName([
+      "nom",
+      "altitude",
+      "longitude",
+      "latitude"
+    ]),
+    commune_id: "communeId"
+  },
+  meteo: createKeyValueMapWithSameName("libelle"),
+  classe: createKeyValueMapWithSameName("libelle"),
+  espece: {
+    ...createKeyValueMapWithSameName("code"),
+    classe_id: "classeId",
+    nom_francais: "nomFrancais",
+    nom_latin: "nomLatin"
+  },
+  sexe: createKeyValueMapWithSameName("libelle"),
+  age: createKeyValueMapWithSameName("libelle"),
+  estimationNombre: {
+    ...createKeyValueMapWithSameName("libelle"),
+    nom_compte: "nonCompte"
+  },
+  estimationDistance: {
+    ...createKeyValueMapWithSameName("libelle")
+  },
+  comportement: createKeyValueMapWithSameName(["code", "libelle"]),
+  milieu: createKeyValueMapWithSameName(["code", "libelle"])
+};
+
 export function getAllFromTableQuery(
   tableName: string,
   attributeForOrdering?: string,
@@ -129,4 +179,53 @@ export function getNumberOfDonneesByInventaireEntityIdQuery(
     query = query + " GROUP BY i." + entityIdAttribute;
   }
   return query;
+}
+
+export function getSaveEntityQuery(
+  tableName: string,
+  entityToSave: EntiteSimple,
+  mapping: { [column: string]: string }
+): string {
+  let query: string;
+
+  if (!entityToSave.id) {
+    const columnNames = _.reduce(_.keys(mapping), (sum, b) => {
+      return sum + "," + b;
+    });
+
+    const values = _.reduce(_.values(mapping), (sum, b) => {
+      return sum + "," + entityToSave[b];
+    });
+
+    query =
+      "INSERT INTO " +
+      tableName +
+      "(" +
+      columnNames +
+      ")" +
+      "VALUES (" +
+      values +
+      ")";
+  } else {
+    const updates = _.reduce(_.keys(mapping), (sum, b) => {
+      return sum + "," + b + "=" + entityToSave[mapping[b]];
+    });
+
+    query =
+      "UDPATE " +
+      tableName +
+      " SET " +
+      updates +
+      " WHERE id=" +
+      entityToSave.id;
+  }
+
+  return query;
+}
+
+export function getDeleteEntityByIdQuery(
+  tableName: string,
+  id: number
+): string {
+  return "DELETE FROM " + tableName + " WHERE id=" + id;
 }
