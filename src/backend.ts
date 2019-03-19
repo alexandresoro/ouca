@@ -37,6 +37,7 @@ const server = http.createServer(
       res.end();
     } else {
       const pathName = url.parse(req.url).pathname;
+      const queryParameters = url.parse(req.url, true).query;
 
       if (!_.isFunction(REQUEST_MAPPING[pathName])) {
         res.statusCode = 404;
@@ -56,7 +57,11 @@ const server = http.createServer(
         res.end(JSON.stringify(result));
       };
 
-      REQUEST_MAPPING[pathName](isMockDatabaseMode, responseCallback);
+      REQUEST_MAPPING[pathName](
+        isMockDatabaseMode,
+        queryParameters,
+        responseCallback
+      );
     }
   }
 );

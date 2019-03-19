@@ -1,4 +1,5 @@
 import * as mysql from "mysql";
+import { ParsedUrlQuery } from "querystring";
 import { configurationInit } from "./requests/configuration";
 import {
   creationDonnee,
@@ -28,6 +29,7 @@ import {
 export const REQUEST_MAPPING: {
   [path: string]: (
     isMockDatabaseMode: boolean,
+    queryPameters: ParsedUrlQuery,
     callbackFn?: (errors: mysql.MysqlError, result) => void
   ) => void;
 } = {

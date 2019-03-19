@@ -3,15 +3,21 @@ import { Donnee } from "basenaturaliste-model/donnee.object";
 import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
 import * as mysql from "mysql";
+import { ParsedUrlQuery } from "querystring";
 import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
 import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
 import creationPageInitMock from "../mocks/creation-page/creation-page-init.json";
 import { SqlConnection } from "../sql/sql-connection.js";
 import {
+  DB_SAVE_MAPPING,
   getAllFromTablesQuery,
+  getDeleteEntityByIdQuery,
   getFindLastDonneeQuery,
   getFindLastRegroupementQuery,
-  getFindNumberOfDonneesQuery
+  getFindNextDonneeByCurrentDonneeIdQuery,
+  getFindNumberOfDonneesQuery,
+  getFindPreviousDonneeByCurrentDonneeIdQuery,
+  getSaveEntityQuery
 } from "../sql/sql-queries-utils.js";
 
 const getDefaultValueForConfigurationField = (
@@ -35,6 +41,7 @@ const getDefaultValueForConfigurationField = (
 
 export function creationInit(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: CreationPage) => void
 ) {
   if (isMockDatabaseMode) {
@@ -166,66 +173,129 @@ export function creationInit(
 
 export function creationInventaire(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Inventaire) => void
 ) {
   if (isMockDatabaseMode) {
     callbackFn(null, creationPageCreateInventaireMock as any);
   } else {
-    // TODO
+    SqlConnection.query(
+      getSaveEntityQuery("inventaire", null, DB_SAVE_MAPPING.inventaire),
+      (errors, results) => {
+        if (errors) {
+          console.log(errors);
+          callbackFn(errors, null);
+        } else {
+          console.log(results);
+          callbackFn(errors, results[0]);
+        }
+      }
+    );
   }
 }
 
 export function creationDonnee(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Donnee) => void
 ) {
   if (isMockDatabaseMode) {
     callbackFn(null, creationPageCreateDonneeMock as any);
   } else {
-    // TODO
+    SqlConnection.query(
+      getSaveEntityQuery("donnee", null, DB_SAVE_MAPPING.donnee),
+      (errors, results) => {
+        if (errors) {
+          console.log(errors);
+          callbackFn(errors, null);
+        } else {
+          console.log(results);
+          callbackFn(errors, results[0]);
+        }
+      }
+    );
   }
 }
 
 export function deleteDonnee(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
     callbackFn(null, null);
   } else {
-    // TODO
+    SqlConnection.query(
+      getDeleteEntityByIdQuery("donnee", 158181),
+      (errors, results) => {
+        if (errors) {
+          console.log(errors);
+          callbackFn(errors, null);
+        } else {
+          console.log(results);
+          callbackFn(errors, results[0]);
+        }
+      }
+    );
   }
 }
 
 export function getNextDonnee(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
     callbackFn(null, null);
   } else {
-    // TODO
+    SqlConnection.query(
+      getFindNextDonneeByCurrentDonneeIdQuery(158181),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results[0][0] as Donnee[]);
+        }
+      }
+    );
   }
 }
 
 export function getPreviousDonnee(
   isMockDatabaseMode: boolean,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: Donnee) => void
 ) {
   if (isMockDatabaseMode) {
     callbackFn(null, null);
   } else {
-    // TODO
+    SqlConnection.query(
+      getFindPreviousDonneeByCurrentDonneeIdQuery(+queryParameters.id),
+      (errors, results) => {
+        if (errors) {
+          callbackFn(errors, null);
+        } else {
+          callbackFn(errors, results[0] as Donnee);
+        }
+      }
+    );
   }
 }
 
 export function getNextRegroupement(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
     callbackFn(null, null);
   } else {
-    // TODO
+    SqlConnection.query(getFindLastRegroupementQuery(), (errors, results) => {
+      if (errors) {
+        callbackFn(errors, null);
+      } else {
+        callbackFn(errors, (results[0][0].regroupement as number) + 1);
+      }
+    });
   }
 }

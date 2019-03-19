@@ -13,6 +13,7 @@ import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
 import * as _ from "lodash";
 import * as mysql from "mysql";
+import { ParsedUrlQuery } from "querystring";
 import agesMock from "../mocks/gestion-base-pages/ages.json";
 import classesMock from "../mocks/gestion-base-pages/classes.json";
 import communesMock from "../mocks/gestion-base-pages/communes.json";
@@ -31,6 +32,7 @@ import { getFindAllQuery } from "../sql/sql-queries-utils.js";
 
 export function getObservateurs(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Observateur[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -51,6 +53,7 @@ export function getObservateurs(
 
 export function getDepartements(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Departement[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -71,6 +74,7 @@ export function getDepartements(
 
 export function getCommunes(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Commune[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -98,6 +102,7 @@ export function getCommunes(
 
 export function getLieuxDits(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Lieudit[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -125,6 +130,7 @@ export function getLieuxDits(
 
 export function getMeteos(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Meteo[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -145,6 +151,7 @@ export function getMeteos(
 
 export function getClasses(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Classe[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -165,6 +172,7 @@ export function getClasses(
 
 export function getEspeces(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Espece[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -192,6 +200,7 @@ export function getEspeces(
 
 export function getSexes(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Sexe[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -212,6 +221,7 @@ export function getSexes(
 
 export function getAges(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Age[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -232,6 +242,7 @@ export function getAges(
 
 export function getEstimationsNombre(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: EstimationNombre[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -252,6 +263,7 @@ export function getEstimationsNombre(
 
 export function getEstimationsDistance(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: EstimationDistance[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -272,6 +284,7 @@ export function getEstimationsDistance(
 
 export function getComportements(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Comportement[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -292,6 +305,7 @@ export function getComportements(
 
 export function getMilieux(
   isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Milieu[]) => void
 ) {
   if (isMockDatabaseMode) {

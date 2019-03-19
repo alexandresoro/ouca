@@ -302,7 +302,7 @@ export function getFindPreviousDonneeByCurrentDonneeIdQuery(
   currentDonneeId: number
 ): string {
   return getQuery(
-    "SELECT d.id FROM donnee d WHERE d.id<" +
+    "SELECT * FROM donnee d WHERE d.id<" +
       currentDonneeId +
       " ORDER BY d.id DESC LIMIT 0,1"
   );
@@ -312,7 +312,7 @@ export function getFindNextDonneeByCurrentDonneeIdQuery(
   currentDonneeId: number
 ): string {
   return getQuery(
-    "SELECT d.id FROM donnee d WHERE d.id>" +
+    "SELECT * FROM donnee d WHERE d.id>" +
       currentDonneeId +
       " ORDER BY id ASC LIMIT 0,1"
   );
