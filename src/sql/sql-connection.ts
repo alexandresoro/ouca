@@ -31,21 +31,6 @@ export class SqlConnection {
   }
 }
 
-export const getAllFromTableQuery = (tableName: string): string => {
-  return "SELECT * from " + tableName + ";";
-};
-
-export const getAllFromTablesQuery = (tableNames: string[]): string => {
-  return _.reduce(
-    _.map(tableNames, (tableName) => {
-      return getAllFromTableQuery(tableName);
-    }),
-    (first, second) => {
-      return first + second;
-    }
-  );
-};
-
 const DEFAULT_DB_HOST: string = "127.0.0.1";
 
 const DEFAULT_DB_PORT: number = 3306;

@@ -2,7 +2,6 @@ import { ConfigurationPage } from "basenaturaliste-model/configuration-page.obje
 import * as _ from "lodash";
 import * as mysql from "mysql";
 import configurationInitMock from "../mocks/configuration-page/configuration.json";
-import { getAllFromTablesQuery, SqlConnection } from "../sql/sql-connection.js";
 
 export function configurationInit(
   isMockDatabaseMode: boolean,

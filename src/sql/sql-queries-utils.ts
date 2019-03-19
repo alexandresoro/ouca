@@ -76,9 +76,20 @@ export const DB_SAVE_MAPPING = {
 };
 
 function getQuery(query: string): string {
-  console.log("---> " + query);
-  return query;
+  console.log("---> " + query + ";");
+  return query + ";";
 }
+
+export const getAllFromTablesQuery = (tableNames: string[]): string => {
+  return _.reduce(
+    _.map(tableNames, (tableName) => {
+      return getFindAllQuery(tableName);
+    }),
+    (first, second) => {
+      return first + second;
+    }
+  );
+};
 
 export function getFindAllQuery(
   tableName: string,
@@ -280,11 +291,11 @@ export function getDeleteEntityByIdQuery(
 }
 
 export function getFindLastRegroupementQuery(): string {
-  return getQuery("SELECT MAX(d.regroupement) FROM donnee d");
+  return getQuery("SELECT MAX(d.regroupement) as regroupement FROM donnee d");
 }
 
-export function getLastDonnee(): string {
-  return getQuery("SELECT d.id FROM donnee d ORDER BY id DESC LIMIT 0,1");
+export function getFindLastDonneeQuery(): string {
+  return getQuery("SELECT * FROM donnee d ORDER BY id DESC LIMIT 0,1");
 }
 
 export function getFindPreviousDonneeByCurrentDonneeIdQuery(
@@ -293,7 +304,7 @@ export function getFindPreviousDonneeByCurrentDonneeIdQuery(
   return getQuery(
     "SELECT d.id FROM donnee d WHERE d.id<" +
       currentDonneeId +
-      " ORDER BY id DESC LIMIT 0,1"
+      " ORDER BY d.id DESC LIMIT 0,1"
   );
 }
 
@@ -311,4 +322,8 @@ export function getFindConfigurationByLibelleQuery(libelle: string) {
   return getQuery(
     "SELECT * FROM configuration WHERE libelle='" + libelle + "'"
   );
+}
+
+export function getFindNumberOfDonneesQuery(): string {
+  return getQuery("SELECT COUNT(*) as nbDonnees FROM donnee");
 }

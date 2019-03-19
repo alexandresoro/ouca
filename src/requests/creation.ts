@@ -6,7 +6,13 @@ import * as mysql from "mysql";
 import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
 import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
 import creationPageInitMock from "../mocks/creation-page/creation-page-init.json";
-import { getAllFromTablesQuery, SqlConnection } from "../sql/sql-connection.js";
+import { SqlConnection } from "../sql/sql-connection.js";
+import {
+  getAllFromTablesQuery,
+  getFindLastDonneeQuery,
+  getFindLastRegroupementQuery,
+  getFindNumberOfDonneesQuery
+} from "../sql/sql-queries-utils.js";
 
 const getDefaultValueForConfigurationField = (
   configuration: any[],
@@ -35,114 +41,120 @@ export function creationInit(
     callbackFn(null, creationPageInitMock as any);
   } else {
     SqlConnection.query(
-      getAllFromTablesQuery([
-        "configuration",
-        "observateur",
-        "departement",
-        "commune",
-        "lieudit",
-        "meteo",
-        "classe",
-        "espece",
-        "age",
-        "sexe",
-        "estimation_nombre",
-        "estimation_distance",
-        "comportement",
-        "milieu"
-      ]),
+      getFindLastDonneeQuery() +
+        getFindNumberOfDonneesQuery() +
+        getFindLastRegroupementQuery() +
+        getAllFromTablesQuery([
+          "configuration",
+          "observateur",
+          "departement",
+          "commune",
+          "lieudit",
+          "meteo",
+          "classe",
+          "espece",
+          "age",
+          "sexe",
+          "estimation_nombre",
+          "estimation_distance",
+          "comportement",
+          "milieu"
+        ]),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          const creationPage: any = {
+          const creationPage: CreationPage = {
+            lastDonnee: results[0][0],
+            numberOfDonnees: results[1][0].nbDonnees,
+            nextRegroupement: results[2][0].regroupement,
             defaultObservateurId: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "observateur",
               false,
               true
             ),
             defaultDepartementId: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "departement",
               false,
               true
             ),
             defaultEstimationNombreId: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "estimation_nombre",
               false,
               true
             ),
             defaultNombre: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "nombre",
               false,
               true
             ),
             defaultSexeId: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "sexe",
               false,
               true
             ),
             defaultAgeId: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "age",
               false,
               true
             ),
             areAssociesDisplayed: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "are_associes_displayed",
               true
             ),
             isMeteoDisplayed: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "is_meteo_displayed",
               true
             ),
             isDistanceDisplayed: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "is_distance_displayed",
               true
             ),
             isRegroupementDisplayed: getDefaultValueForConfigurationField(
-              results[0],
+              results[3],
               "is_regroupement_displayed",
               true
             ),
-            observateurs: results[1],
-            departements: results[2],
-            communes: _.map(results[3], (communeDb) => {
+            observateurs: results[4],
+            departements: results[5],
+            communes: _.map(results[6], (communeDb) => {
               const { departement_id, ...otherParams } = communeDb;
               return {
                 ...otherParams,
                 departementId: communeDb.departement_id
               };
             }),
-            lieudits: _.map(results[4], (lieuDitDb) => {
+            lieudits: _.map(results[7], (lieuDitDb) => {
               const { commune_id, ...otherParams } = lieuDitDb;
               return {
                 ...otherParams,
                 communeId: lieuDitDb.commune_id
               };
             }),
-            meteos: results[5],
-            classes: results[6],
-            especes: _.map(results[7], (especeDb) => {
+            meteos: results[8],
+            classes: results[9],
+            especes: _.map(results[10], (especeDb) => {
               const { classe_id, ...otherParams } = especeDb;
               return {
                 ...otherParams,
                 classeId: especeDb.classe_id
               };
             }),
-            ages: results[8],
-            sexes: results[9],
-            estimationsNombre: results[10],
-            estimationsDistance: results[11],
-            comportements: results[12],
-            milieux: results[13]
+            ages: results[11],
+            sexes: results[12],
+            estimationsNombre: results[13],
+            estimationsDistance: results[14],
+            comportements: results[15],
+            milieux: results[16]
           };
 
           callbackFn(errors, creationPage);

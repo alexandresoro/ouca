@@ -26,7 +26,7 @@ import meteosMock from "../mocks/gestion-base-pages/meteos.json";
 import milieuxMock from "../mocks/gestion-base-pages/milieux.json";
 import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
-import { getAllFromTablesQuery, SqlConnection } from "../sql/sql-connection.js";
+import { SqlConnection } from "../sql/sql-connection.js";
 import { getFindAllQuery } from "../sql/sql-queries-utils.js";
 
 export function getObservateurs(
