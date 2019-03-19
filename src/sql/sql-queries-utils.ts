@@ -76,20 +76,27 @@ export function getAllFromTableQuery(
   return query;
 }
 
-export function getNumberOfDonneesByObservateurIdQuery(
+export function getFindOneByIdQuery(
+  tableName: string,
+  id: number
+) {
+  return "SELECT * FROM " + tableName + " WHERE id=" + id;
+}
+
+export function getFindNumberOfDonneesByObservateurIdQuery(
   observateurId?: number
 ): string {
-  return getNumberOfDonneesByInventaireEntityIdQuery(
+  return getFindNumberOfDonneesByInventaireEntityIdQuery(
     "observateur_id",
     observateurId
   );
 }
 
-export function getNumberOfDonneesByLieuditIdQuery(lieuditId?: number): string {
-  return getNumberOfDonneesByInventaireEntityIdQuery("lieudit_id", lieuditId);
+export function getFindNumberOfDonneesByLieuditIdQuery(lieuditId?: number): string {
+  return getFindNumberOfDonneesByInventaireEntityIdQuery("lieudit_id", lieuditId);
 }
 
-export function getNumberOfCommunesByDepartementIdQuery(
+export function getFindNumberOfCommunesByDepartementIdQuery(
   departementId?: number
 ): string {
   let query: string = "SELECT c.departement_id, count(*) FROM commune c";
@@ -101,7 +108,7 @@ export function getNumberOfCommunesByDepartementIdQuery(
   return query;
 }
 
-export function getNumberOfLieuxditsByDepartementIdQuery(
+export function getFindNumberOfLieuxditsByDepartementIdQuery(
   departementId?: number
 ): string {
   let query: string =
@@ -114,7 +121,7 @@ export function getNumberOfLieuxditsByDepartementIdQuery(
   return query;
 }
 
-export function getNumberOfLieuxditsByCommuneIdQuery(
+export function getFindNumberOfLieuxditsByCommuneIdQuery(
   communeId?: number
 ): string {
   let query: string = "SELECT c.commune_id, count(*) FROM lieudit l";
@@ -126,7 +133,7 @@ export function getNumberOfLieuxditsByCommuneIdQuery(
   return query;
 }
 
-export function getNumberOfEspecesByClasseIdQuery(classeId?: number): string {
+export function getFindNumberOfEspecesByClasseIdQuery(classeId?: number): string {
   if (!!classeId) {
     return "SELECT classe_id, count(*) FROM espece WHERE classe_id=" + classeId;
   } else {
@@ -134,7 +141,7 @@ export function getNumberOfEspecesByClasseIdQuery(classeId?: number): string {
   }
 }
 
-export function getNumberOfDonneesByClasseIdQuery(classeId?: number): string {
+export function getFindNumberOfDonneesByClasseIdQuery(classeId?: number): string {
   let query: string =
     "SELECT e.classe_id, count(*) FROM espece e, donnee d WHERE d.espece_id=e.id";
   if (!!classeId) {
@@ -145,28 +152,28 @@ export function getNumberOfDonneesByClasseIdQuery(classeId?: number): string {
   return query;
 }
 
-export function getNumberOfDonneesByEspeceIdQuery(especeId?: number): string {
-  return getNumberOfDonneesByDoneeeEntityIdQuery("espece_id", especeId);
+export function getFindNumberOfDonneesByEspeceIdQuery(especeId?: number): string {
+  return getFindNumberOfDonneesByDoneeeEntityIdQuery("espece_id", especeId);
 }
 
-export function getNumberOfDonneesByEstimationNombreIdQuery(
+export function getFindNumberOfDonneesByEstimationNombreIdQuery(
   estimationId?: number
 ): string {
-  return getNumberOfDonneesByDoneeeEntityIdQuery(
+  return getFindNumberOfDonneesByDoneeeEntityIdQuery(
     "estimation_nombre_id",
     estimationId
   );
 }
 
-export function getNumberOfDonneesBySexeIdQuery(sexeId?: number): string {
-  return getNumberOfDonneesByDoneeeEntityIdQuery("sexe_id", sexeId);
+export function getFindNumberOfDonneesBySexeIdQuery(sexeId?: number): string {
+  return getFindNumberOfDonneesByDoneeeEntityIdQuery("sexe_id", sexeId);
 }
 
-export function getNumberOfDonneesByAgeIdQuery(ageId?: number): string {
-  return getNumberOfDonneesByDoneeeEntityIdQuery("age_id", ageId);
+export function getFindNumberOfDonneesByAgeIdQuery(ageId?: number): string {
+  return getFindNumberOfDonneesByDoneeeEntityIdQuery("age_id", ageId);
 }
 
-export function getNumberOfDonneesByDoneeeEntityIdQuery(
+export function getFindNumberOfDonneesByDoneeeEntityIdQuery(
   entityIdAttribute: string,
   id?: number
 ): string {
@@ -179,7 +186,7 @@ export function getNumberOfDonneesByDoneeeEntityIdQuery(
   return query;
 }
 
-export function getNumberOfDonneesByInventaireEntityIdQuery(
+export function getFindNumberOfDonneesByInventaireEntityIdQuery(
   entityIdAttribute: string,
   id?: number
 ): string {
