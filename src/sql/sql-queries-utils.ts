@@ -45,7 +45,21 @@ export const DB_MAPPING = {
     ...createKeyValueMapWithSameName("libelle")
   },
   comportement: createKeyValueMapWithSameName(["code", "libelle"]),
-  milieu: createKeyValueMapWithSameName(["code", "libelle"])
+  milieu: createKeyValueMapWithSameName(["code", "libelle"]),
+  inventaire: {
+    ...createKeyValueMapWithSameName(["date", "heure", "duree", "altitude", "longitude", "latitude", "temperature"]),
+    observateur_id: "observateurId",
+    lieudit_id: "lieuditId"
+  }, 
+  donnee: {
+    ...createKeyValueMapWithSameName(["nombre", "distance", "regroupement", "commentaire"]),
+    espece_id: "especeId",
+    age_id: "ageId",
+    sexe_id: "sexeId",
+    estimation_nombre_id: "estimationNombreId",
+    estimation_distance_id: "estimationDistanceId"
+  },
+  configuration: createKeyValueMapWithSameName(["libelle", "value"])
 };
 
 export function getAllFromTableQuery(
@@ -228,4 +242,24 @@ export function getDeleteEntityByIdQuery(
   id: number
 ): string {
   return "DELETE FROM " + tableName + " WHERE id=" + id;
+}
+
+export function getFindLastRegroupementQuery(): string {
+  return "SELECT MAX(d.regroupement) FROM donnee d";
+}
+
+export function getLastDonnee(): string {
+  return "SELECT d.id FROM donnee d ORDER BY id DESC LIMIT 0,1";
+}
+
+export function getFindPreviousDonneeByCurrentDonneeIdQuery(currentDonneeId: number): string {
+  return "SELECT d.id FROM donnee d WHERE d.id<" + currentDonneeId + " ORDER BY id DESC LIMIT 0,1";
+}
+
+export function getFindNextDonneeByCurrentDonneeIdQuery(currentDonneeId: number): string {
+  return "SELECT d.id FROM donnee d WHERE d.id>" + currentDonneeId + " ORDER BY id ASC LIMIT 0,1";
+}
+
+export function getFindConfigurationByLibelleQuery(libelle: string) {
+  return "SELECT * FROM configuration WHERE libelle='" + libelle + "'";
 }
