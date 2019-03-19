@@ -37,7 +37,7 @@ export const getAllFromTableQuery = (tableName: string): string => {
 
 export const getAllFromTablesQuery = (tableNames: string[]): string => {
   return _.reduce(
-    _.map(tableNames, tableName => {
+    _.map(tableNames, (tableName) => {
       return getAllFromTableQuery(tableName);
     }),
     (first, second) => {
@@ -90,7 +90,7 @@ function getSqlConnectionConfiguration(): mysql.ConnectionConfig {
     ARG_KEY_VALUE_DELIMITER
   );
 
-  _.forEach(process.argv, argValue => {
+  _.forEach(process.argv, (argValue) => {
     const hostMatch = hostRegex.exec(argValue);
     const portMatch = portRegex.exec(argValue);
     const userMatch = userRegex.exec(argValue);

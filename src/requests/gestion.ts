@@ -27,7 +27,7 @@ import milieuxMock from "../mocks/gestion-base-pages/milieux.json";
 import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
 import { getAllFromTablesQuery, SqlConnection } from "../sql/sql-connection.js";
-import { getAllFromTableQuery } from "../sql/sql-queries-utils.js";
+import { getFindAllQuery } from "../sql/sql-queries-utils.js";
 
 export function getObservateurs(
   isMockDatabaseMode: boolean,
@@ -37,7 +37,7 @@ export function getObservateurs(
     callbackFn(null, observateursMock as Observateur[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("observateur", "libelle", "ASC"),
+      getFindAllQuery("observateur", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -57,7 +57,7 @@ export function getDepartements(
     callbackFn(null, departementsMock as Departement[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("departement", "code", "ASC"),
+      getFindAllQuery("departement", "code", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -77,7 +77,7 @@ export function getCommunes(
     callbackFn(null, communesMock as any[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("commune", "nom", "ASC"),
+      getFindAllQuery("commune", "nom", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -104,7 +104,7 @@ export function getLieuxDits(
     callbackFn(null, lieuxDitsMock as Lieudit[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("lieudit", "nom", "ASC"),
+      getFindAllQuery("lieudit", "nom", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -131,7 +131,7 @@ export function getMeteos(
     callbackFn(null, meteosMock as Meteo[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("meteo", "libelle", "ASC"),
+      getFindAllQuery("meteo", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -151,7 +151,7 @@ export function getClasses(
     callbackFn(null, classesMock as Classe[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("classe", "libelle", "ASC"),
+      getFindAllQuery("classe", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -171,7 +171,7 @@ export function getEspeces(
     callbackFn(null, especesMock as Espece[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("espece", "code", "ASC"),
+      getFindAllQuery("espece", "code", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -198,7 +198,7 @@ export function getSexes(
     callbackFn(null, sexesMock as Sexe[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("sexe", "libelle", "ASC"),
+      getFindAllQuery("sexe", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -218,7 +218,7 @@ export function getAges(
     callbackFn(null, agesMock as Age[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("age", "libelle", "ASC"),
+      getFindAllQuery("age", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -238,7 +238,7 @@ export function getEstimationsNombre(
     callbackFn(null, estimationsNombreMock as EstimationNombre[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("estimation_nombre", "libelle", "ASC"),
+      getFindAllQuery("estimation_nombre", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -258,7 +258,7 @@ export function getEstimationsDistance(
     callbackFn(null, estimationsDistanceMock as EstimationDistance[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("estimation_distance", "libelle", "ASC"),
+      getFindAllQuery("estimation_distance", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -278,7 +278,7 @@ export function getComportements(
     callbackFn(null, comportementsMock as Comportement[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("comportement", "libelle", "ASC"),
+      getFindAllQuery("comportement", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -298,7 +298,7 @@ export function getMilieux(
     callbackFn(null, milieuxMock as Milieu[]);
   } else {
     SqlConnection.query(
-      getAllFromTableQuery("milieu", "libelle", "ASC"),
+      getFindAllQuery("milieu", "libelle", "ASC"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);

@@ -11,7 +11,7 @@ const createKeyValueMapWithSameName = (
   return returnMap;
 };
 
-export const DB_MAPPING = {
+export const DB_SAVE_MAPPING = {
   observateur: createKeyValueMapWithSameName("libelle"),
   departement: createKeyValueMapWithSameName("code"),
   commune: {
@@ -47,12 +47,25 @@ export const DB_MAPPING = {
   comportement: createKeyValueMapWithSameName(["code", "libelle"]),
   milieu: createKeyValueMapWithSameName(["code", "libelle"]),
   inventaire: {
-    ...createKeyValueMapWithSameName(["date", "heure", "duree", "altitude", "longitude", "latitude", "temperature"]),
+    ...createKeyValueMapWithSameName([
+      "date",
+      "heure",
+      "duree",
+      "altitude",
+      "longitude",
+      "latitude",
+      "temperature"
+    ]),
     observateur_id: "observateurId",
     lieudit_id: "lieuditId"
-  }, 
+  },
   donnee: {
-    ...createKeyValueMapWithSameName(["nombre", "distance", "regroupement", "commentaire"]),
+    ...createKeyValueMapWithSameName([
+      "nombre",
+      "distance",
+      "regroupement",
+      "commentaire"
+    ]),
     espece_id: "especeId",
     age_id: "ageId",
     sexe_id: "sexeId",
@@ -63,11 +76,11 @@ export const DB_MAPPING = {
 };
 
 function getQuery(query: string): string {
-  console.log(query);
+  console.log("---> " + query);
   return query;
 }
 
-export function getAllFromTableQuery(
+export function getFindAllQuery(
   tableName: string,
   attributeForOrdering?: string,
   order?: string
@@ -81,10 +94,7 @@ export function getAllFromTableQuery(
   return getQuery(query);
 }
 
-export function getFindOneByIdQuery(
-  tableName: string,
-  id: number
-) {
+export function getFindOneByIdQuery(tableName: string, id: number) {
   return getQuery("SELECT * FROM " + tableName + " WHERE id=" + id);
 }
 
@@ -97,8 +107,13 @@ export function getFindNumberOfDonneesByObservateurIdQuery(
   );
 }
 
-export function getFindNumberOfDonneesByLieuditIdQuery(lieuditId?: number): string {
-  return getFindNumberOfDonneesByInventaireEntityIdQuery("lieudit_id", lieuditId);
+export function getFindNumberOfDonneesByLieuditIdQuery(
+  lieuditId?: number
+): string {
+  return getFindNumberOfDonneesByInventaireEntityIdQuery(
+    "lieudit_id",
+    lieuditId
+  );
 }
 
 export function getFindNumberOfCommunesByDepartementIdQuery(
@@ -138,7 +153,9 @@ export function getFindNumberOfLieuxditsByCommuneIdQuery(
   return getQuery(query);
 }
 
-export function getFindNumberOfEspecesByClasseIdQuery(classeId?: number): string {
+export function getFindNumberOfEspecesByClasseIdQuery(
+  classeId?: number
+): string {
   let query: string = "SELECT classe_id, count(*) FROM espece";
   if (!!classeId) {
     query = query + " WHERE classe_id=" + classeId;
@@ -148,7 +165,9 @@ export function getFindNumberOfEspecesByClasseIdQuery(classeId?: number): string
   return getQuery(query);
 }
 
-export function getFindNumberOfDonneesByClasseIdQuery(classeId?: number): string {
+export function getFindNumberOfDonneesByClasseIdQuery(
+  classeId?: number
+): string {
   let query: string =
     "SELECT e.classe_id, count(*) FROM espece e, donnee d WHERE d.espece_id=e.id";
   if (!!classeId) {
@@ -159,7 +178,9 @@ export function getFindNumberOfDonneesByClasseIdQuery(classeId?: number): string
   return getQuery(query);
 }
 
-export function getFindNumberOfDonneesByEspeceIdQuery(especeId?: number): string {
+export function getFindNumberOfDonneesByEspeceIdQuery(
+  especeId?: number
+): string {
   return getFindNumberOfDonneesByDoneeeEntityIdQuery("espece_id", especeId);
 }
 
@@ -266,15 +287,28 @@ export function getLastDonnee(): string {
   return getQuery("SELECT d.id FROM donnee d ORDER BY id DESC LIMIT 0,1");
 }
 
-export function getFindPreviousDonneeByCurrentDonneeIdQuery(currentDonneeId: number): string {
-  return getQuery("SELECT d.id FROM donnee d WHERE d.id<" + currentDonneeId + " ORDER BY id DESC LIMIT 0,1");
+export function getFindPreviousDonneeByCurrentDonneeIdQuery(
+  currentDonneeId: number
+): string {
+  return getQuery(
+    "SELECT d.id FROM donnee d WHERE d.id<" +
+      currentDonneeId +
+      " ORDER BY id DESC LIMIT 0,1"
+  );
 }
 
-export function getFindNextDonneeByCurrentDonneeIdQuery(currentDonneeId: number): string {
-  return getQuery("SELECT d.id FROM donnee d WHERE d.id>" + currentDonneeId + " ORDER BY id ASC LIMIT 0,1");
+export function getFindNextDonneeByCurrentDonneeIdQuery(
+  currentDonneeId: number
+): string {
+  return getQuery(
+    "SELECT d.id FROM donnee d WHERE d.id>" +
+      currentDonneeId +
+      " ORDER BY id ASC LIMIT 0,1"
+  );
 }
 
 export function getFindConfigurationByLibelleQuery(libelle: string) {
-  return getQuery("SELECT * FROM configuration WHERE libelle='" + libelle + "'");
+  return getQuery(
+    "SELECT * FROM configuration WHERE libelle='" + libelle + "'"
+  );
 }
-
