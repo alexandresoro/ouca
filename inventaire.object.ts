@@ -12,7 +12,9 @@ export interface Inventaire extends EntiteSimple {
 
   heure: string;
 
-  lieudit: Lieudit;
+  lieudit?: Lieudit;
+
+  lieuditId: number;
 
   altitude: number;
 
@@ -22,7 +24,9 @@ export interface Inventaire extends EntiteSimple {
 
   meteos: Meteo[];
 
-  observateur: Observateur;
+  observateur?: Observateur;
+
+  observateurId: number;
 
   temperature: number;
 }

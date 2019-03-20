@@ -15,17 +15,27 @@ export interface Donnee extends EntiteSimple {
 
   inventaireId: number;
 
-  espece: Espece;
+  espece?: Espece;
 
-  estimationNombre: EstimationNombre;
+  especeId: number;
+
+  estimationNombre?: EstimationNombre;
+
+  estimationNombreId: number;
 
   nombre: number;
 
-  age: Age;
+  age?: Age;
 
-  sexe: Sexe;
+  ageId?: number;
 
-  estimationDistance: EstimationDistance;
+  sexe?: Sexe;
+
+  sexeId: number;
+
+  estimationDistance?: EstimationDistance;
+
+  estimationDistanceId: number;
 
   distance: number;
 
