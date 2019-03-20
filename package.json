@@ -2,8 +2,14 @@
   "name": "basenaturaliste-model",
   "version": "1.0.0",
   "description": "Model for Base Naturaliste objects",
-  "main": "index.js",
-  "author": "Camille Carrier & Alexandre Soro",
-  "license": "none",
+  "contributors": [
+    {
+      "name": "Camille Carrier"
+    },
+    {
+      "name": "Alexandre Soro"
+    }
+  ],
+  "license": "UNLICENSED",
   "private": true
 }
