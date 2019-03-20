@@ -127,10 +127,40 @@ export function getFindNumberOfDonneesByLieuditIdQuery(
   );
 }
 
+export function getFindNumberOfDonneesByDepartementIdQuery(
+  departementId?: number
+): string {
+  let query: string =
+    "SELECT c.departement_id as id, count(*) as nbDonnees " +
+    "FROM donnee d, inventaire i, commune c, lieudit l " +
+    "WHERE d.inventaire_id=i.id AND i.lieudit_id=l.id AND c.id=l.commune_id";
+  if (!!departementId) {
+    query = query + " AND c.departement_id=" + departementId;
+  } else {
+    query = query + " GROUP BY c.departement_id";
+  }
+  return getQuery(query);
+}
+
+export function getFindNumberOfDonneesByCommuneIdQuery(
+  communeId?: number
+): string {
+  let query: string =
+    "SELECT l.commune_id as id, count(*) as nbDonnees " +
+    "FROM donnee d, inventaire i, lieudit l WHERE d.inventaire_id=i.id AND i.lieudit_id=l.id";
+  if (!!communeId) {
+    query = query + " AND l.commune_id=" + communeId;
+  } else {
+    query = query + " GROUP BY l.commune_id";
+  }
+  return getQuery(query);
+}
+
 export function getFindNumberOfCommunesByDepartementIdQuery(
   departementId?: number
 ): string {
-  let query: string = "SELECT c.departement_id, count(*) FROM commune c";
+  let query: string =
+    "SELECT c.departement_id as id, count(*) as nbCommunes FROM commune c";
   if (!!departementId) {
     query = query + " WHERE c.departement_id=" + departementId;
   } else {
@@ -143,7 +173,7 @@ export function getFindNumberOfLieuxditsByDepartementIdQuery(
   departementId?: number
 ): string {
   let query: string =
-    "SELECT c.departement_id, count(*) FROM commune c, lieudit l WHERE c.id=l.commune_id";
+    "SELECT c.departement_id as id, count(*) as nbLieuxdits FROM commune c, lieudit l WHERE c.id=l.commune_id";
   if (!!departementId) {
     query = query + " AND c.departement_id=" + departementId;
   } else {
@@ -155,7 +185,8 @@ export function getFindNumberOfLieuxditsByDepartementIdQuery(
 export function getFindNumberOfLieuxditsByCommuneIdQuery(
   communeId?: number
 ): string {
-  let query: string = "SELECT c.commune_id, count(*) FROM lieudit l";
+  let query: string =
+    "SELECT l.commune_id as id, count(*) as nbLieuxdits FROM lieudit l";
   if (!!communeId) {
     query = query + " WHERE l.commune_id=" + communeId;
   } else {
@@ -167,7 +198,8 @@ export function getFindNumberOfLieuxditsByCommuneIdQuery(
 export function getFindNumberOfEspecesByClasseIdQuery(
   classeId?: number
 ): string {
-  let query: string = "SELECT classe_id, count(*) FROM espece";
+  let query: string =
+    "SELECT classe_id as id, count(*) as nbEspeces FROM espece";
   if (!!classeId) {
     query = query + " WHERE classe_id=" + classeId;
   } else {
@@ -180,7 +212,7 @@ export function getFindNumberOfDonneesByClasseIdQuery(
   classeId?: number
 ): string {
   let query: string =
-    "SELECT e.classe_id, count(*) FROM espece e, donnee d WHERE d.espece_id=e.id";
+    "SELECT e.classe_id as id, count(*) as nbDonnees FROM espece e, donnee d WHERE d.espece_id=e.id";
   if (!!classeId) {
     query = query + " AND e.classe_id=" + classeId;
   } else {
@@ -216,7 +248,8 @@ export function getFindNumberOfDonneesByDoneeeEntityIdQuery(
   entityIdAttribute: string,
   id?: number
 ): string {
-  let query: string = "SELECT " + entityIdAttribute + ", count(*) FROM donnee";
+  let query: string =
+    "SELECT " + entityIdAttribute + " as id, count(*) as nbDonnees FROM donnee";
   if (!!id) {
     query = query + " AND " + entityIdAttribute + "=" + id;
   } else {
@@ -232,7 +265,7 @@ export function getFindNumberOfDonneesByInventaireEntityIdQuery(
   let query: string =
     "SELECT i." +
     entityIdAttribute +
-    ", count(*) FROM donnee d, inventaire i WHERE d.inventaire_id=i.id";
+    " as id, count(*) as nbDonnees FROM donnee d, inventaire i WHERE d.inventaire_id=i.id";
   if (!!id) {
     query = query + " AND i." + entityIdAttribute + "=" + id;
   } else {

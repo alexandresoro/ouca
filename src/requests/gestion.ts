@@ -32,6 +32,19 @@ import {
   DB_SAVE_MAPPING,
   getDeleteEntityByIdQuery,
   getFindAllQuery,
+  getFindNumberOfCommunesByDepartementIdQuery,
+  getFindNumberOfDonneesByAgeIdQuery,
+  getFindNumberOfDonneesByClasseIdQuery,
+  getFindNumberOfDonneesByCommuneIdQuery,
+  getFindNumberOfDonneesByDepartementIdQuery,
+  getFindNumberOfDonneesByDoneeeEntityIdQuery,
+  getFindNumberOfDonneesByEstimationNombreIdQuery,
+  getFindNumberOfDonneesByLieuditIdQuery,
+  getFindNumberOfDonneesByObservateurIdQuery,
+  getFindNumberOfDonneesBySexeIdQuery,
+  getFindNumberOfEspecesByClasseIdQuery,
+  getFindNumberOfLieuxditsByCommuneIdQuery,
+  getFindNumberOfLieuxditsByDepartementIdQuery,
   getSaveEntityQuery
 } from "../sql/sql-queries-utils.js";
 
@@ -44,12 +57,14 @@ export function getObservateurs(
     callbackFn(null, observateursMock as Observateur[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("observateur", "libelle", "ASC"),
+      getFindAllQuery("observateur", "libelle", "ASC") +
+        getFindNumberOfDonneesByObservateurIdQuery(),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as Observateur[]);
+          console.log(results);
+          callbackFn(errors, results[0] as Observateur[]);
         }
       }
     );
@@ -113,12 +128,15 @@ export function getDepartements(
     callbackFn(null, departementsMock as Departement[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("departement", "code", "ASC"),
+      getFindAllQuery("departement", "code", "ASC") +
+        getFindNumberOfCommunesByDepartementIdQuery() +
+        getFindNumberOfLieuxditsByDepartementIdQuery() +
+        getFindNumberOfDonneesByDepartementIdQuery(),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as Departement[]);
+          callbackFn(errors, results[0] as Departement[]);
         }
       }
     );
@@ -158,12 +176,14 @@ export function getCommunes(
     callbackFn(null, communesMock as any[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("commune", "nom", "ASC"),
+      getFindAllQuery("commune", "nom", "ASC") +
+        getFindNumberOfLieuxditsByCommuneIdQuery() +
+        getFindNumberOfDonneesByCommuneIdQuery(),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          const communes: Commune[] = _.map(results, (classeDb) => {
+          const communes: Commune[] = _.map(results[0], (classeDb) => {
             const { departement_id, ...otherParams } = classeDb;
             return {
               ...otherParams,
@@ -210,12 +230,13 @@ export function getLieuxdits(
     callbackFn(null, lieuxDitsMock as Lieudit[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("lieudit", "nom", "ASC"),
+      getFindAllQuery("lieudit", "nom", "ASC") +
+        getFindNumberOfDonneesByLieuditIdQuery(),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          const lieuxdits: Lieudit[] = _.map(results, (lieuditDb) => {
+          const lieuxdits: Lieudit[] = _.map(results[0], (lieuditDb) => {
             const { commune_id, ...otherParams } = lieuditDb;
             return {
               ...otherParams,
@@ -307,12 +328,14 @@ export function getClasses(
     callbackFn(null, classesMock as Classe[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("classe", "libelle", "ASC"),
+      getFindAllQuery("classe", "libelle", "ASC") +
+        getFindNumberOfEspecesByClasseIdQuery() +
+        getFindNumberOfDonneesByClasseIdQuery(),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as Classe[]);
+          callbackFn(errors, results[0] as Classe[]);
         }
       }
     );
@@ -352,12 +375,13 @@ export function getEspeces(
     callbackFn(null, especesMock as Espece[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("espece", "code", "ASC"),
+      getFindAllQuery("espece", "code", "ASC") +
+        getFindNumberOfDonneesByDoneeeEntityIdQuery("espece_id"),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          const especes: Espece[] = _.map(results, (especeDb) => {
+          const especes: Espece[] = _.map(results[0], (especeDb) => {
             const { espece_id, ...otherParams } = especeDb;
             return {
               ...otherParams,
@@ -404,12 +428,13 @@ export function getSexes(
     callbackFn(null, sexesMock as Sexe[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("sexe", "libelle", "ASC"),
+      getFindAllQuery("sexe", "libelle", "ASC") +
+        getFindNumberOfDonneesBySexeIdQuery(),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as Sexe[]);
+          callbackFn(errors, results[0] as Sexe[]);
         }
       }
     );
@@ -449,12 +474,13 @@ export function getAges(
     callbackFn(null, agesMock as Age[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("age", "libelle", "ASC"),
+      getFindAllQuery("age", "libelle", "ASC") +
+        getFindNumberOfDonneesByAgeIdQuery(),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as Age[]);
+          callbackFn(errors, results[0] as Age[]);
         }
       }
     );
@@ -494,12 +520,13 @@ export function getEstimationsNombre(
     callbackFn(null, estimationsNombreMock as EstimationNombre[]);
   } else {
     SqlConnection.query(
-      getFindAllQuery("estimation_nombre", "libelle", "ASC"),
+      getFindAllQuery("estimation_nombre", "libelle", "ASC") +
+        getFindNumberOfDonneesByEstimationNombreIdQuery(),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
         } else {
-          callbackFn(errors, results as EstimationNombre[]);
+          callbackFn(errors, results[0] as EstimationNombre[]);
         }
       }
     );
