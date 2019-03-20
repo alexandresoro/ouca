@@ -1,4 +1,17 @@
 {
+  "name": "basenaturaliste-backend",
+  "version": "1.0.0",
+  "description": "Backend for Base Naturaliste",
+  "contributors": [
+    {
+      "name": "Camille Carrier"
+    },
+    {
+      "name": "Alexandre Soro"
+    }
+  ],
+  "license": "UNLICENSED",
+  "private": true,
   "scripts": {
     "build": "tsc",
     "dev": "yarn build && yarn start",
