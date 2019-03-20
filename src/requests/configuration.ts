@@ -15,3 +15,16 @@ export function configurationInit(
     // TODO
   }
 }
+
+export function configurationUpdate(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: ConfigurationPage) => void
+) {
+  if (isMockDatabaseMode) {
+    // callbackFn(null, configurationInitMock as any);
+  } else {
+    // TODO
+  }
+}
+

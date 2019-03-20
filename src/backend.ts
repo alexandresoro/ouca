@@ -46,8 +46,9 @@ const server = http.createServer(
       }
 
       const responseCallback = (error: MysqlError, result) => {
+        console.log("Result:", result);
         if (error) {
-          console.error(error);
+          console.error("Error:", error);
           res.statusCode = 500;
           res.end(JSON.stringify(error));
           process.exit();

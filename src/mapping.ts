@@ -1,6 +1,6 @@
 import * as mysql from "mysql";
 import { ParsedUrlQuery } from "querystring";
-import { configurationInit } from "./requests/configuration";
+import { configurationInit, configurationUpdate } from "./requests/configuration";
 import {
   creationDonnee,
   creationInit,
@@ -11,6 +11,19 @@ import {
   getPreviousDonnee
 } from "./requests/creation";
 import {
+  deleteAge,
+  deleteClasse,
+  deleteCommune,
+  deleteComportement,
+  deleteDepartement,
+  deleteEspece,
+  deleteEstimationDistance,
+  deleteEstimationNombre,
+  deleteLieudit,
+  deleteMeteo,
+  deleteMilieu,
+  deleteObservateur,
+  deleteSexe,
   getAges,
   getClasses,
   getCommunes,
@@ -19,11 +32,24 @@ import {
   getEspeces,
   getEstimationsDistance,
   getEstimationsNombre,
-  getLieuxDits,
+  getLieuxdits,
   getMeteos,
   getMilieux,
   getObservateurs,
-  getSexes
+  getSexes,
+  saveAge,
+  saveClasse,
+  saveCommune,
+  saveComportement,
+  saveDepartement,
+  saveEspece,
+  saveEstimationDistance,
+  saveEstimationNombre,
+  saveLieudit,
+  saveMeteo,
+  saveMilieu,
+  saveObservateur,
+  saveSexe
 } from "./requests/gestion";
 
 export const REQUEST_MAPPING: {
@@ -41,17 +67,44 @@ export const REQUEST_MAPPING: {
   "/api/donnee/previous_donnee": getPreviousDonnee,
   "/api/donnee/next_regroupement": getNextRegroupement,
   "/api/observateur/all": getObservateurs,
+  "/api/observateur/save": saveObservateur,
+  "/api/observateur/delete": deleteObservateur,
   "/api/departement/all": getDepartements,
+  "/api/departement/save": saveDepartement,
+  "/api/departement/delete": deleteDepartement,
   "/api/commune/all": getCommunes,
-  "/api/lieudit/all": getLieuxDits,
+  "/api/commune/save": saveCommune,
+  "/api/commune/delete": deleteCommune,
+  "/api/lieudit/all": getLieuxdits,
+  "/api/lieudit/save": saveLieudit,
+  "/api/lieudit/delete": deleteLieudit,
   "/api/meteo/all": getMeteos,
+  "/api/meteo/save": saveMeteo,
+  "/api/meteo/delete": deleteMeteo,
   "/api/classe/all": getClasses,
+  "/api/classe/save": saveClasse,
+  "/api/classe/delete": deleteClasse,
   "/api/espece/all": getEspeces,
+  "/api/espece/save": saveEspece,
+  "/api/espece/delete": deleteEspece,
   "/api/sexe/all": getSexes,
+  "/api/sexe/save": saveSexe,
+  "/api/sexe/delete": deleteSexe,
   "/api/age/all": getAges,
+  "/api/age/save": saveAge,
+  "/api/age/delete": deleteAge,
   "/api/estimation-nombre/all": getEstimationsNombre,
+  "/api/estimation-nombre/save": saveEstimationNombre,
+  "/api/estimation-nombre/delete": deleteEstimationNombre,
   "/api/estimation-distance/all": getEstimationsDistance,
+  "/api/estimation-distance/save": saveEstimationDistance,
+  "/api/estimation-distance/delete": deleteEstimationDistance,
   "/api/comportement/all": getComportements,
+  "/api/comportement/save": saveComportement,
+  "/api/comportement/delete": deleteComportement,
   "/api/milieu/all": getMilieux,
-  "/api/configuration/init": configurationInit
+  "/api/milieu/save": saveMilieu,
+  "/api/milieu/delete": deleteMilieu,
+  "/api/configuration/init": configurationInit,
+  "/api/configuration/update": configurationUpdate
 };

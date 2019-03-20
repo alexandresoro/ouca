@@ -183,10 +183,9 @@ export function creationInventaire(
       getSaveEntityQuery("inventaire", null, DB_SAVE_MAPPING.inventaire),
       (errors, results) => {
         if (errors) {
-          console.log(errors);
           callbackFn(errors, null);
         } else {
-          console.log(results);
+          console.log("SQL Result:", results);
           callbackFn(errors, results[0]);
         }
       }
@@ -206,10 +205,9 @@ export function creationDonnee(
       getSaveEntityQuery("donnee", null, DB_SAVE_MAPPING.donnee),
       (errors, results) => {
         if (errors) {
-          console.log(errors);
           callbackFn(errors, null);
         } else {
-          console.log(results);
+          console.log("SQL Result:", results);
           callbackFn(errors, results[0]);
         }
       }
@@ -226,13 +224,12 @@ export function deleteDonnee(
     callbackFn(null, null);
   } else {
     SqlConnection.query(
-      getDeleteEntityByIdQuery("donnee", 158181),
+      getDeleteEntityByIdQuery("donnee", queryParameters.id),
       (errors, results) => {
         if (errors) {
-          console.log(errors);
           callbackFn(errors, null);
         } else {
-          console.log(results);
+          console.log("SQL Result:", results);
           callbackFn(errors, results[0]);
         }
       }
@@ -250,11 +247,12 @@ export function getNextDonnee(
   } else {
     SqlConnection.query(
       getFindNextDonneeByCurrentDonneeIdQuery(158181),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
+      (error, result) => {
+        if (error) {
+          callbackFn(error, null);
         } else {
-          callbackFn(errors, results[0][0] as Donnee[]);
+          console.log("SQL Result:", result);
+          callbackFn(error, result[0][0] as Donnee[]);
         }
       }
     );
@@ -275,6 +273,7 @@ export function getPreviousDonnee(
         if (errors) {
           callbackFn(errors, null);
         } else {
+          console.log("SQL Result:", results);
           callbackFn(errors, results[0] as Donnee);
         }
       }
@@ -294,6 +293,7 @@ export function getNextRegroupement(
       if (errors) {
         callbackFn(errors, null);
       } else {
+        console.log("SQL Result:", results);
         callbackFn(errors, (results[0][0].regroupement as number) + 1);
       }
     });

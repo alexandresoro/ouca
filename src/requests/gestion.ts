@@ -28,7 +28,12 @@ import milieuxMock from "../mocks/gestion-base-pages/milieux.json";
 import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
 import { SqlConnection } from "../sql/sql-connection.js";
-import { getFindAllQuery } from "../sql/sql-queries-utils.js";
+import {
+  DB_SAVE_MAPPING,
+  getDeleteEntityByIdQuery,
+  getFindAllQuery,
+  getSaveEntityQuery
+} from "../sql/sql-queries-utils.js";
 
 export function getObservateurs(
   isMockDatabaseMode: boolean,
@@ -45,6 +50,54 @@ export function getObservateurs(
           callbackFn(errors, null);
         } else {
           callbackFn(errors, results as Observateur[]);
+        }
+      }
+    );
+  }
+}
+
+export function saveObservateur(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, insertId: number) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+	  // callbackFn(null, observateursMock as Observateur[]);
+  } else {
+	  // TODO
+    SqlConnection.query(
+      getSaveEntityQuery("observateur", null, DB_SAVE_MAPPING.observateur),
+      (error, result) => {
+        if (error) {
+          callbackFn(error, null);
+        } else {
+          console.log("SQL Result:", result);
+          callbackFn(error, result.insertId);
+        }
+      }
+    );
+  }
+}
+
+export function deleteObservateur(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, numberOfDeletedRows: number) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+	  // callbackFn(null, observateursMock as Observateur[]);
+  } else {
+	  // TODO
+    SqlConnection.query(
+      getDeleteEntityByIdQuery("observateur", queryParameters.id),
+      (error, result) => {
+        if (error) {
+          callbackFn(error, null);
+        } else {
+          console.log("SQL Result:", result);
+          callbackFn(error, result.affectedRows);
         }
       }
     );
@@ -69,6 +122,30 @@ export function getDepartements(
         }
       }
     );
+  }
+}
+
+export function saveDepartement(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteDepartement(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
   }
 }
 
@@ -100,7 +177,31 @@ export function getCommunes(
   }
 }
 
-export function getLieuxDits(
+export function saveCommune(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteCommune(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function getLieuxdits(
   isMockDatabaseMode: boolean,
   queryParameters: ParsedUrlQuery,
   callbackFn: (errors: mysql.MysqlError, result: Lieudit[]) => void
@@ -128,6 +229,30 @@ export function getLieuxDits(
   }
 }
 
+export function saveLieudit(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteLieudit(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
 export function getMeteos(
   isMockDatabaseMode: boolean,
   queryParameters: ParsedUrlQuery,
@@ -149,6 +274,30 @@ export function getMeteos(
   }
 }
 
+export function saveMeteo(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteMeteo(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
 export function getClasses(
   isMockDatabaseMode: boolean,
   queryParameters: ParsedUrlQuery,
@@ -167,6 +316,30 @@ export function getClasses(
         }
       }
     );
+  }
+}
+
+export function saveClasse(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteClasse(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
   }
 }
 
@@ -198,6 +371,30 @@ export function getEspeces(
   }
 }
 
+export function saveEspece(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteEspece(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
 export function getSexes(
   isMockDatabaseMode: boolean,
   queryParameters: ParsedUrlQuery,
@@ -216,6 +413,30 @@ export function getSexes(
         }
       }
     );
+  }
+}
+
+export function saveSexe(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteSexe(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
   }
 }
 
@@ -240,6 +461,30 @@ export function getAges(
   }
 }
 
+export function saveAge(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteAge(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
 export function getEstimationsNombre(
   isMockDatabaseMode: boolean,
   queryParameters: ParsedUrlQuery,
@@ -258,6 +503,30 @@ export function getEstimationsNombre(
         }
       }
     );
+  }
+}
+
+export function saveEstimationNombre(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteEstimationNombre(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
   }
 }
 
@@ -282,6 +551,30 @@ export function getEstimationsDistance(
   }
 }
 
+export function saveEstimationDistance(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteEstimationDistance(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
 export function getComportements(
   isMockDatabaseMode: boolean,
   queryParameters: ParsedUrlQuery,
@@ -303,6 +596,30 @@ export function getComportements(
   }
 }
 
+export function saveComportement(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteComportement(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
 export function getMilieux(
   isMockDatabaseMode: boolean,
   queryParameters: ParsedUrlQuery,
@@ -321,5 +638,29 @@ export function getMilieux(
         }
       }
     );
+  }
+}
+
+export function saveMilieu(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
+  }
+}
+
+export function deleteMilieu(
+  isMockDatabaseMode: boolean,
+  queryParameters: ParsedUrlQuery,
+  callbackFn: (errors: mysql.MysqlError, result: any) => void
+) {
+  if (isMockDatabaseMode) {
+    // TODO
+  } else {
+    // TODO
   }
 }
