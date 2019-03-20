@@ -63,9 +63,9 @@ export function saveObservateur(
 ) {
   if (isMockDatabaseMode) {
     // TODO
-	  // callbackFn(null, observateursMock as Observateur[]);
+    // callbackFn(null, observateursMock as Observateur[]);
   } else {
-	  // TODO
+    // TODO
     SqlConnection.query(
       getSaveEntityQuery("observateur", null, DB_SAVE_MAPPING.observateur),
       (error, result) => {
@@ -87,11 +87,11 @@ export function deleteObservateur(
 ) {
   if (isMockDatabaseMode) {
     // TODO
-	  // callbackFn(null, observateursMock as Observateur[]);
+    // callbackFn(null, observateursMock as Observateur[]);
   } else {
-	  // TODO
+    // TODO
     SqlConnection.query(
-      getDeleteEntityByIdQuery("observateur", queryParameters.id),
+      getDeleteEntityByIdQuery("observateur", +queryParameters.id),
       (error, result) => {
         if (error) {
           callbackFn(error, null);

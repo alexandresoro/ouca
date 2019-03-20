@@ -12,8 +12,12 @@ import {
   DB_SAVE_MAPPING,
   getAllFromTablesQuery,
   getDeleteEntityByIdQuery,
+  getFindAssociesByInventaireIdQuery,
+  getFindComportementsByDonneeIdQuery,
   getFindLastDonneeQuery,
   getFindLastRegroupementQuery,
+  getFindMetosByInventaireIdQuery,
+  getFindMilieuxByDonneeIdQuery,
   getFindNextDonneeByCurrentDonneeIdQuery,
   getFindNumberOfDonneesQuery,
   getFindPreviousDonneeByCurrentDonneeIdQuery,
@@ -224,7 +228,7 @@ export function deleteDonnee(
     callbackFn(null, null);
   } else {
     SqlConnection.query(
-      getDeleteEntityByIdQuery("donnee", queryParameters.id),
+      getDeleteEntityByIdQuery("donnee", +queryParameters.id),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -269,12 +273,55 @@ export function getPreviousDonnee(
   } else {
     SqlConnection.query(
       getFindPreviousDonneeByCurrentDonneeIdQuery(+queryParameters.id),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
+      (error, result) => {
+        if (error) {
+          callbackFn(error, null);
         } else {
-          console.log("SQL Result:", results);
-          callbackFn(errors, results[0] as Donnee);
+          const flatDonnee = result[0];
+
+          SqlConnection.query(
+            getFindAssociesByInventaireIdQuery(flatDonnee.inventaireId) +
+              getFindMetosByInventaireIdQuery(flatDonnee.inventaireId) +
+              getFindComportementsByDonneeIdQuery(flatDonnee.id) +
+              getFindMilieuxByDonneeIdQuery(flatDonnee.id),
+            (errors, results) => {
+              if (error) {
+                callbackFn(errors, null);
+              } else {
+                const inventaire: Inventaire = {
+                  id: flatDonnee.inventaireId,
+                  observateurId: flatDonnee.observateurId,
+                  associes: results[0],
+                  date: flatDonnee.date,
+                  heure: flatDonnee.heure,
+                  duree: flatDonnee.duree,
+                  lieuditId: flatDonnee.lieuditId,
+                  altitude: flatDonnee.altitude,
+                  longitude: flatDonnee.longitude,
+                  latitude: flatDonnee.latitude,
+                  temperature: flatDonnee.temperature,
+                  meteos: results[1]
+                };
+                const donnee: Donnee = {
+                  id: flatDonnee.id,
+                  inventaireId: flatDonnee.inventaireId,
+                  inventaire,
+                  especeId: flatDonnee.especeId,
+                  sexeId: flatDonnee.sexeId,
+                  ageId: flatDonnee.ageId,
+                  estimationNombreId: flatDonnee.estimationNombreId,
+                  nombre: flatDonnee,
+                  estimationDistanceId: flatDonnee.estimationDistanceId,
+                  distance: flatDonnee.distance,
+                  regroupement: flatDonnee.regroupement,
+                  comportements: results[2],
+                  milieux: results[3],
+                  commentaire: flatDonnee.commentaire
+                };
+                callbackFn(error, donnee);
+              }
+            }
+          );
         }
       }
     );

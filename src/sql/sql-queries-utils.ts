@@ -301,8 +301,31 @@ export function getFindLastDonneeQuery(): string {
 export function getFindPreviousDonneeByCurrentDonneeIdQuery(
   currentDonneeId: number
 ): string {
+  const fields =
+    "d.id," +
+    "d.inventaire_id as inventaireId," +
+    "i.observateur_id as observateurId," +
+    "i.date," +
+    "i.heure," +
+    "i.duree," +
+    "i.lieudit_id as lieuditId," +
+    "i.altitude," +
+    "i.longitude," +
+    "i.latitude," +
+    "i.temperature," +
+    "d.espece_id as especeId," +
+    "d.sexe_id as sexeId," +
+    "d.age_id as ageId," +
+    "d.estimation_nombre_id as estimationNombreId," +
+    "d.nombre," +
+    "d.estimation_distance_id as estimationDistanceId," +
+    "d.distance," +
+    "d.commentaire," +
+    "d.regroupement";
   return getQuery(
-    "SELECT * FROM donnee d WHERE d.id<" +
+    "SELECT " +
+      fields +
+      " FROM donnee d, inventaire i WHERE d.inventaire_id=i.id AND d.id<" +
       currentDonneeId +
       " ORDER BY d.id DESC LIMIT 0,1"
   );
@@ -326,4 +349,34 @@ export function getFindConfigurationByLibelleQuery(libelle: string) {
 
 export function getFindNumberOfDonneesQuery(): string {
   return getQuery("SELECT COUNT(*) as nbDonnees FROM donnee");
+}
+
+export function getFindAssociesByInventaireIdQuery(
+  inventaireId: number
+): string {
+  return getQuery(
+    "SELECT distinct observateur_id as comportementId FROM inventaire_associe WHERE inventaire_id=" +
+      inventaireId
+  );
+}
+
+export function getFindMetosByInventaireIdQuery(inventaireId: number): string {
+  return getQuery(
+    "SELECT distinct meteo_id as meteoId FROM inventaire_meteo WHERE inventaire_id=" +
+      inventaireId
+  );
+}
+
+export function getFindComportementsByDonneeIdQuery(donneeId: number): string {
+  return getQuery(
+    "SELECT distinct comportement_id as comportementId FROM donnee_comportement WHERE donnee_id=" +
+      donneeId
+  );
+}
+
+export function getFindMilieuxByDonneeIdQuery(donneeId: number): string {
+  return getQuery(
+    "SELECT distinct milieu_id as milieuId FROM donnee_milieu WHERE donnee_id=" +
+      donneeId
+  );
 }
