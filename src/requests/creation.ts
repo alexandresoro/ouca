@@ -3,7 +3,7 @@ import { Donnee } from "basenaturaliste-model/donnee.object";
 import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
 import * as mysql from "mysql";
-import { ParsedUrlQuery } from "querystring";
+import { HttpParameters } from "../http/httpParameters.js";
 import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
 import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
 import creationPageInitMock from "../mocks/creation-page/creation-page-init.json";
@@ -45,7 +45,7 @@ const getDefaultValueForConfigurationField = (
 
 export function creationInit(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: CreationPage) => void
 ) {
   if (isMockDatabaseMode) {
@@ -177,7 +177,7 @@ export function creationInit(
 
 export function creationInventaire(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Inventaire) => void
 ) {
   if (isMockDatabaseMode) {
@@ -199,7 +199,7 @@ export function creationInventaire(
 
 export function creationDonnee(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Donnee) => void
 ) {
   if (isMockDatabaseMode) {
@@ -221,14 +221,14 @@ export function creationDonnee(
 
 export function deleteDonnee(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
     callbackFn(null, null);
   } else {
     SqlConnection.query(
-      getDeleteEntityByIdQuery("donnee", +queryParameters.id),
+      getDeleteEntityByIdQuery("donnee", +httpParameters.queryParameters.id),
       (errors, results) => {
         if (errors) {
           callbackFn(errors, null);
@@ -243,7 +243,7 @@ export function deleteDonnee(
 
 export function getNextDonnee(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -265,14 +265,16 @@ export function getNextDonnee(
 
 export function getPreviousDonnee(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Donnee) => void
 ) {
   if (isMockDatabaseMode) {
     callbackFn(null, null);
   } else {
     SqlConnection.query(
-      getFindPreviousDonneeByCurrentDonneeIdQuery(+queryParameters.id),
+      getFindPreviousDonneeByCurrentDonneeIdQuery(
+        +httpParameters.queryParameters.id
+      ),
       (error, result) => {
         if (error) {
           callbackFn(error, null);
@@ -330,7 +332,7 @@ export function getPreviousDonnee(
 
 export function getNextRegroupement(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {

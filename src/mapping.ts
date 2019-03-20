@@ -1,6 +1,9 @@
 import * as mysql from "mysql";
-import { ParsedUrlQuery } from "querystring";
-import { configurationInit, configurationUpdate } from "./requests/configuration";
+import { HttpParameters } from "./http/httpParameters";
+import {
+  configurationInit,
+  configurationUpdate
+} from "./requests/configuration";
 import {
   creationDonnee,
   creationInit,
@@ -55,7 +58,7 @@ import {
 export const REQUEST_MAPPING: {
   [path: string]: (
     isMockDatabaseMode: boolean,
-    queryPameters: ParsedUrlQuery,
+    httpParameters: HttpParameters,
     callbackFn?: (errors: mysql.MysqlError, result) => void
   ) => void;
 } = {

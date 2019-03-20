@@ -13,7 +13,7 @@ import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
 import * as _ from "lodash";
 import * as mysql from "mysql";
-import { ParsedUrlQuery } from "querystring";
+import { HttpParameters } from "../http/httpParameters.js";
 import agesMock from "../mocks/gestion-base-pages/ages.json";
 import classesMock from "../mocks/gestion-base-pages/classes.json";
 import communesMock from "../mocks/gestion-base-pages/communes.json";
@@ -50,7 +50,7 @@ import {
 
 export function getObservateurs(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Observateur[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -73,7 +73,7 @@ export function getObservateurs(
 
 export function saveObservateur(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, insertId: number) => void
 ) {
   if (isMockDatabaseMode) {
@@ -97,7 +97,7 @@ export function saveObservateur(
 
 export function deleteObservateur(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, numberOfDeletedRows: number) => void
 ) {
   if (isMockDatabaseMode) {
@@ -106,7 +106,10 @@ export function deleteObservateur(
   } else {
     // TODO
     SqlConnection.query(
-      getDeleteEntityByIdQuery("observateur", +queryParameters.id),
+      getDeleteEntityByIdQuery(
+        "observateur",
+        +httpParameters.queryParameters.id
+      ),
       (error, result) => {
         if (error) {
           callbackFn(error, null);
@@ -121,7 +124,7 @@ export function deleteObservateur(
 
 export function getDepartements(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Departement[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -145,7 +148,7 @@ export function getDepartements(
 
 export function saveDepartement(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -157,7 +160,7 @@ export function saveDepartement(
 
 export function deleteDepartement(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -169,7 +172,7 @@ export function deleteDepartement(
 
 export function getCommunes(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Commune[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -199,7 +202,7 @@ export function getCommunes(
 
 export function saveCommune(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -211,7 +214,7 @@ export function saveCommune(
 
 export function deleteCommune(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -223,7 +226,7 @@ export function deleteCommune(
 
 export function getLieuxdits(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Lieudit[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -252,7 +255,7 @@ export function getLieuxdits(
 
 export function saveLieudit(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -264,7 +267,7 @@ export function saveLieudit(
 
 export function deleteLieudit(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -276,7 +279,7 @@ export function deleteLieudit(
 
 export function getMeteos(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Meteo[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -297,7 +300,7 @@ export function getMeteos(
 
 export function saveMeteo(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -309,7 +312,7 @@ export function saveMeteo(
 
 export function deleteMeteo(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -321,7 +324,7 @@ export function deleteMeteo(
 
 export function getClasses(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Classe[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -344,7 +347,7 @@ export function getClasses(
 
 export function saveClasse(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -356,7 +359,7 @@ export function saveClasse(
 
 export function deleteClasse(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -368,7 +371,7 @@ export function deleteClasse(
 
 export function getEspeces(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Espece[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -397,7 +400,7 @@ export function getEspeces(
 
 export function saveEspece(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -409,7 +412,7 @@ export function saveEspece(
 
 export function deleteEspece(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -421,7 +424,7 @@ export function deleteEspece(
 
 export function getSexes(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Sexe[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -443,7 +446,7 @@ export function getSexes(
 
 export function saveSexe(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -455,7 +458,7 @@ export function saveSexe(
 
 export function deleteSexe(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -467,7 +470,7 @@ export function deleteSexe(
 
 export function getAges(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Age[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -489,7 +492,7 @@ export function getAges(
 
 export function saveAge(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -501,7 +504,7 @@ export function saveAge(
 
 export function deleteAge(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -513,7 +516,7 @@ export function deleteAge(
 
 export function getEstimationsNombre(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: EstimationNombre[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -535,7 +538,7 @@ export function getEstimationsNombre(
 
 export function saveEstimationNombre(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -547,7 +550,7 @@ export function saveEstimationNombre(
 
 export function deleteEstimationNombre(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -559,7 +562,7 @@ export function deleteEstimationNombre(
 
 export function getEstimationsDistance(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: EstimationDistance[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -580,7 +583,7 @@ export function getEstimationsDistance(
 
 export function saveEstimationDistance(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -592,7 +595,7 @@ export function saveEstimationDistance(
 
 export function deleteEstimationDistance(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -604,7 +607,7 @@ export function deleteEstimationDistance(
 
 export function getComportements(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Comportement[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -625,7 +628,7 @@ export function getComportements(
 
 export function saveComportement(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -637,7 +640,7 @@ export function saveComportement(
 
 export function deleteComportement(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -649,7 +652,7 @@ export function deleteComportement(
 
 export function getMilieux(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: Milieu[]) => void
 ) {
   if (isMockDatabaseMode) {
@@ -670,7 +673,7 @@ export function getMilieux(
 
 export function saveMilieu(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {
@@ -682,7 +685,7 @@ export function saveMilieu(
 
 export function deleteMilieu(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: any) => void
 ) {
   if (isMockDatabaseMode) {

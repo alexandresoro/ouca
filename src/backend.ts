@@ -1,17 +1,12 @@
 import * as http from "http";
-import * as _ from "lodash";
-import { MysqlError } from "mysql";
-import * as url from "url";
-import { REQUEST_MAPPING } from "./mapping";
+import { handleHttpRequest } from "./http/requestHandling";
 
 const MOCK_MODE_ARG = "-mocks";
 
 const hostname = "127.0.0.1";
 const port = 4000;
 
-const jsonHttpHeader = "application/json";
-
-const isMockDatabaseMode = _.includes(process.argv, MOCK_MODE_ARG);
+const isMockDatabaseMode = process.argv.includes(MOCK_MODE_ARG);
 
 if (isMockDatabaseMode) {
   console.log("Backend is working in mock mode");
@@ -19,12 +14,12 @@ if (isMockDatabaseMode) {
 
 // HTTP server
 const server = http.createServer(
-  (req: http.IncomingMessage, res: http.ServerResponse) => {
-    console.log(`Method ${req.method}, URL ${req.url}`);
+  (request: http.IncomingMessage, res: http.ServerResponse) => {
+    console.log(`Method ${request.method}, URL ${request.url}`);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
 
-    if (req.method === "OPTIONS") {
+    if (request.method === "OPTIONS") {
       // Because of CORS, when the UI is requesting a POST method with a JSON body, it will preflight an OPTIONS call
       res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
       res.setHeader("Access-Control-Max-Age", "86400");
@@ -35,34 +30,17 @@ const server = http.createServer(
 
       res.statusCode = 200;
       res.end();
+    } else if (request.method === "POST") {
+      const chunks = [];
+      request.on("data", (chunk) => {
+        chunks.push(chunk);
+      });
+      request.on("end", () => {
+        const postData = JSON.parse(Buffer.concat(chunks).toString());
+        handleHttpRequest(isMockDatabaseMode, request, res, postData);
+      });
     } else {
-      const pathName = url.parse(req.url).pathname;
-      const queryParameters = url.parse(req.url, true).query;
-
-      if (!_.isFunction(REQUEST_MAPPING[pathName])) {
-        res.statusCode = 404;
-        res.end();
-        return;
-      }
-
-      const responseCallback = (error: MysqlError, result) => {
-        console.log("Result:", result);
-        if (error) {
-          console.error("Error:", error);
-          res.statusCode = 500;
-          res.end(JSON.stringify(error));
-          process.exit();
-        }
-        res.statusCode = 200;
-        res.setHeader("Content-Type", jsonHttpHeader);
-        res.end(JSON.stringify(result));
-      };
-
-      REQUEST_MAPPING[pathName](
-        isMockDatabaseMode,
-        queryParameters,
-        responseCallback
-      );
+      handleHttpRequest(isMockDatabaseMode, request, res);
     }
   }
 );

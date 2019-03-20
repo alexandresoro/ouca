@@ -1,12 +1,12 @@
 import { ConfigurationPage } from "basenaturaliste-model/configuration-page.object";
 import * as _ from "lodash";
 import * as mysql from "mysql";
-import { ParsedUrlQuery } from "querystring";
+import { HttpParameters } from "../http/httpParameters.js";
 import configurationInitMock from "../mocks/configuration-page/configuration.json";
 
 export function configurationInit(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: ConfigurationPage) => void
 ) {
   if (isMockDatabaseMode) {
@@ -18,7 +18,7 @@ export function configurationInit(
 
 export function configurationUpdate(
   isMockDatabaseMode: boolean,
-  queryParameters: ParsedUrlQuery,
+  httpParameters: HttpParameters,
   callbackFn: (errors: mysql.MysqlError, result: ConfigurationPage) => void
 ) {
   if (isMockDatabaseMode) {
@@ -27,4 +27,3 @@ export function configurationUpdate(
     // TODO
   }
 }
-
