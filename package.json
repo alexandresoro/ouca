@@ -12,7 +12,7 @@
     "@types/lodash": "*",
     "@types/mysql": "*",
     "@types/node": "10",
-    "basenaturaliste-model": "file:./../basenaturaliste-model",
+    "basenaturaliste-model": "file:../basenaturaliste-model",
     "tslint": "*",
     "typescript": "*",
     "typescript-tslint-plugin": "*"
