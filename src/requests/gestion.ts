@@ -22,7 +22,6 @@ import especesMock from "../mocks/gestion-base-pages/especes.json";
 import estimationsDistanceMock from "../mocks/gestion-base-pages/estimations-distance.json";
 import estimationsNombreMock from "../mocks/gestion-base-pages/estimations-nombre.json";
 import lieuxDitsMock from "../mocks/gestion-base-pages/lieuxdits.json";
-import meteosMock from "../mocks/gestion-base-pages/meteos.json";
 import milieuxMock from "../mocks/gestion-base-pages/milieux.json";
 import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
@@ -550,7 +549,7 @@ const saveEntity = async (
   mapping: any
 ): Promise<any> => {
   if (isMockDatabaseMode) {
-    return { affectedRows: 1, insertId: 132, warningStatus: 0 };
+    return { affectedRows: 1, insertId: 1, warningStatus: 0 };
   } else {
     const saveResult = await SqlConnection.query(
       getSaveEntityQuery(tableName, entityToSave, mapping)
