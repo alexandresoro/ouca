@@ -5,7 +5,7 @@ const createKeyValueMapWithSameName = (
   names: string | string[]
 ): { [key: string]: string } => {
   const returnMap = {};
-  _.forEach(names, (name: string) => {
+  _.forEach(typeof names === "string" ? [names] : names, (name: string) => {
     returnMap[name] = name;
   });
   return returnMap;
@@ -282,20 +282,21 @@ export function getSaveEntityQuery(
   let query: string;
 
   if (!entityToSave.id) {
-    const columnNames = _.reduce(_.keys(mapping), (sum, b) => {
-      return sum + "," + b;
-    });
+    const keys: string[] = _.keys(mapping);
+    const columnNames = keys.join(",");
 
-    const values = _.reduce(_.values(mapping), (sum, b) => {
-      return sum + "," + entityToSave[b];
+    const valuesArray = [];
+    _.forEach(keys, (key: string) => {
+      valuesArray.push("'" + entityToSave[mapping[key]] + "'");
     });
+    const values = valuesArray.join(",");
 
     query =
       "INSERT INTO " +
       tableName +
       "(" +
       columnNames +
-      ")" +
+      ") " +
       "VALUES (" +
       values +
       ")";

@@ -72,10 +72,15 @@ export const saveObservateur = async (
     // callbackFn(null, observateursMock as Observateur[]);
   } else {
     // TODO
-    const results = await SqlConnection.query(
-      getSaveEntityQuery("observateur", null, DB_SAVE_MAPPING.observateur)
+    const result = await SqlConnection.query(
+      getSaveEntityQuery(
+        "observateur",
+        httpParameters.postData,
+        DB_SAVE_MAPPING.observateur
+      )
     );
-    return results[0].insertId;
+    console.log(result);
+    return (result as any).insertId;
   }
 };
 
@@ -89,13 +94,14 @@ export const deleteObservateur = async (
     return null;
   } else {
     // TODO
-    const results = await SqlConnection.query(
+    const result = await SqlConnection.query(
       getDeleteEntityByIdQuery(
         "observateur",
         +httpParameters.queryParameters.id
       )
     );
-    return results[0].affectedRows;
+    console.log(result);
+    return result as any;
   }
 };
 
@@ -106,13 +112,13 @@ export const getDepartements = async (
   if (isMockDatabaseMode) {
     return departementsMock;
   } else {
-    const results = await SqlConnection.query(
+    const result = await SqlConnection.query(
       getFindAllQuery("departement", "code", "ASC") +
         getFindNumberOfCommunesByDepartementIdQuery() +
         getFindNumberOfLieuxditsByDepartementIdQuery() +
         getFindNumberOfDonneesByDepartementIdQuery()
     );
-    return results[0];
+    return result[0];
   }
 };
 
@@ -339,10 +345,21 @@ export const saveEspece = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
   if (isMockDatabaseMode) {
-    // TODO
-    return null;
+    return { affectedRows: 1, insertId: 132, warningStatus: 0 };
   } else {
-    // TODO
+    const especeToSave: Espece = httpParameters.postData;
+    if (
+      !especeToSave.classeId &&
+      !!especeToSave.classe &&
+      !!especeToSave.classe.id
+    ) {
+      especeToSave.classeId = especeToSave.classe.id;
+    }
+
+    const saveResult = await SqlConnection.query(
+      getSaveEntityQuery("espece", especeToSave, DB_SAVE_MAPPING.espece)
+    );
+    return saveResult;
   }
 };
 
@@ -569,10 +586,16 @@ export const saveMilieu = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
   if (isMockDatabaseMode) {
-    // TODO
-    return null;
+    return { affectedRows: 1, insertId: 132, warningStatus: 0 };
   } else {
-    // TODO
+    const saveResult = await SqlConnection.query(
+      getSaveEntityQuery(
+        "milieu",
+        httpParameters.postData,
+        DB_SAVE_MAPPING.milieu
+      )
+    );
+    return saveResult;
   }
 };
 
@@ -581,9 +604,11 @@ export const deleteMilieu = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
   if (isMockDatabaseMode) {
-    // TODO
-    return null;
+    return { affectedRows: 1, insertId: 0, warningStatus: 0 };
   } else {
-    // TODO
+    const deleteResult = await SqlConnection.query(
+      getDeleteEntityByIdQuery("milieu", +httpParameters.queryParameters.id)
+    );
+    return deleteResult;
   }
 };
