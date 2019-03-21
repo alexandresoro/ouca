@@ -37,7 +37,6 @@ import {
   getFindNumberOfDonneesByCommuneIdQuery,
   getFindNumberOfDonneesByDepartementIdQuery,
   getFindNumberOfDonneesByDoneeeEntityIdQuery,
-  getFindNumberOfDonneesByEstimationNombreIdQuery,
   getFindNumberOfDonneesByLieuditIdQuery,
   getFindNumberOfDonneesByObservateurIdQuery,
   getFindNumberOfDonneesBySexeIdQuery,
@@ -65,44 +64,24 @@ export const getObservateurs = async (
 export const saveObservateur = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
-): Promise<number> => {
+): Promise<any> => {
   if (isMockDatabaseMode) {
-    // TODO
-    return null;
-    // callbackFn(null, observateursMock as Observateur[]);
+    return { affectedRows: 1, insertId: 132, warningStatus: 0 };
   } else {
-    // TODO
-    const result = await SqlConnection.query(
-      getSaveEntityQuery(
-        "observateur",
-        httpParameters.postData,
-        DB_SAVE_MAPPING.observateur
-      )
+    return saveEntity(
+      isMockDatabaseMode,
+      httpParameters.postData,
+      "observateur",
+      DB_SAVE_MAPPING.observateur
     );
-    console.log(result);
-    return (result as any).insertId;
   }
 };
 
 export const deleteObservateur = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
-): Promise<number> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    // callbackFn(null, observateursMock as Observateur[]);
-    return null;
-  } else {
-    // TODO
-    const result = await SqlConnection.query(
-      getDeleteEntityByIdQuery(
-        "observateur",
-        +httpParameters.queryParameters.id
-      )
-    );
-    console.log(result);
-    return result as any;
-  }
+): Promise<any> => {
+  return deleteEntity(isMockDatabaseMode, httpParameters, "observateur");
 };
 
 export const getDepartements = async (
@@ -126,24 +105,19 @@ export const saveDepartement = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "departement",
+    DB_SAVE_MAPPING.departement
+  );
 };
 
 export const deleteDepartement = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ) => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "departement");
 };
 
 export const getCommunes = async (
@@ -173,24 +147,27 @@ export const saveCommune = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
+  const communeToSave = httpParameters.postData;
+  if (
+    !communeToSave.departementId &&
+    !!communeToSave.departement &&
+    !!communeToSave.departement.id
+  ) {
+    communeToSave.departementId = communeToSave.departement.id;
   }
+  return saveEntity(
+    isMockDatabaseMode,
+    communeToSave,
+    "commune",
+    DB_SAVE_MAPPING.commune
+  );
 };
 
 export const deleteCommune = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "commune");
 };
 
 export const getLieuxdits = async (
@@ -220,38 +197,39 @@ export const saveLieudit = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
+  const lieuditToSave = httpParameters.postData;
+  if (
+    !lieuditToSave.communeId &&
+    !!lieuditToSave.commune &&
+    !!lieuditToSave.commune.id
+  ) {
+    lieuditToSave.departementId = lieuditToSave.commune.id;
   }
+  return saveEntity(
+    isMockDatabaseMode,
+    lieuditToSave,
+    "lieudit",
+    DB_SAVE_MAPPING.lieudit
+  );
 };
 
 export const deleteLieudit = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "lieudit");
 };
 
 export const getMeteos = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<Meteo[]> => {
-  if (isMockDatabaseMode) {
-    return Promise.resolve(meteosMock);
-  } else {
-    const results = await SqlConnection.query(
-      getFindAllQuery("meteo", "libelle", "ASC")
-    );
-    return results as any;
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "meteo",
+    DB_SAVE_MAPPING.meteo
+  );
 };
 
 export const saveMeteo = async (
@@ -270,12 +248,7 @@ export const deleteMeteo = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "meteo");
 };
 
 export const getClasses = async (
@@ -298,24 +271,19 @@ export const saveClasse = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "classe",
+    DB_SAVE_MAPPING.classe
+  );
 };
 
 export const deleteClasse = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "classe");
 };
 
 export const getEspeces = async (
@@ -355,11 +323,12 @@ export const saveEspece = async (
     ) {
       especeToSave.classeId = especeToSave.classe.id;
     }
-
-    const saveResult = await SqlConnection.query(
-      getSaveEntityQuery("espece", especeToSave, DB_SAVE_MAPPING.espece)
+    return saveEntity(
+      isMockDatabaseMode,
+      especeToSave,
+      "espece",
+      DB_SAVE_MAPPING.espece
     );
-    return saveResult;
   }
 };
 
@@ -367,12 +336,7 @@ export const deleteEspece = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "espece");
 };
 
 export const getSexes = async (
@@ -394,24 +358,19 @@ export const saveSexe = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "sexe",
+    DB_SAVE_MAPPING.sexe
+  );
 };
 
 export const deleteSexe = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "sexe");
 };
 
 export const getAges = async (
@@ -433,24 +392,19 @@ export const saveAge = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "age",
+    DB_SAVE_MAPPING.age
+  );
 };
 
 export const deleteAge = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "age");
 };
 
 export const getEstimationsNombre = async (
@@ -471,24 +425,19 @@ export const saveEstimationNombre = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "estimation_nombre",
+    DB_SAVE_MAPPING.estimationNombre
+  );
 };
 
 export const deleteEstimationNombre = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "estimation_nombre");
 };
 
 export const getEstimationsDistance = async (
@@ -509,24 +458,23 @@ export const saveEstimationDistance = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "estimation_distance",
+    DB_SAVE_MAPPING.estimationDistance
+  );
 };
 
 export const deleteEstimationDistance = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(
+    isMockDatabaseMode,
+    httpParameters,
+    "estimation_distance"
+  );
 };
 
 export const getComportements = async (
@@ -547,24 +495,19 @@ export const saveComportement = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "comportement",
+    DB_SAVE_MAPPING.comportement
+  );
 };
 
 export const deleteComportement = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  return deleteEntity(isMockDatabaseMode, httpParameters, "comportement");
 };
 
 export const getMilieux = async (
@@ -585,29 +528,47 @@ export const saveMilieu = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    return { affectedRows: 1, insertId: 132, warningStatus: 0 };
-  } else {
-    const saveResult = await SqlConnection.query(
-      getSaveEntityQuery(
-        "milieu",
-        httpParameters.postData,
-        DB_SAVE_MAPPING.milieu
-      )
-    );
-    return saveResult;
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    "milieu",
+    DB_SAVE_MAPPING.milieu
+  );
 };
 
 export const deleteMilieu = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
+  return deleteEntity(isMockDatabaseMode, httpParameters, "milieu");
+};
+
+export const saveEntity = async (
+  isMockDatabaseMode: boolean,
+  entityToSave: any,
+  tableName: string,
+  mapping: any
+): Promise<any> => {
+  if (isMockDatabaseMode) {
+    return { affectedRows: 1, insertId: 132, warningStatus: 0 };
+  } else {
+    const saveResult = await SqlConnection.query(
+      getSaveEntityQuery(tableName, entityToSave, mapping)
+    );
+    return saveResult;
+  }
+};
+
+const deleteEntity = async (
+  isMockDatabaseMode: boolean,
+  httpParameters: HttpParameters,
+  entityName: string
+): Promise<any> => {
   if (isMockDatabaseMode) {
     return { affectedRows: 1, insertId: 0, warningStatus: 0 };
   } else {
     const deleteResult = await SqlConnection.query(
-      getDeleteEntityByIdQuery("milieu", +httpParameters.queryParameters.id)
+      getDeleteEntityByIdQuery(entityName, +httpParameters.queryParameters.id)
     );
     return deleteResult;
   }
