@@ -543,7 +543,7 @@ export const deleteMilieu = async (
   return deleteEntity(isMockDatabaseMode, httpParameters, "milieu");
 };
 
-export const saveEntity = async (
+const saveEntity = async (
   isMockDatabaseMode: boolean,
   entityToSave: any,
   tableName: string,
