@@ -12,7 +12,6 @@ import { Milieu } from "basenaturaliste-model/milieu.object";
 import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
 import * as _ from "lodash";
-import * as mysql from "mysql";
 import { HttpParameters } from "../http/httpParameters.js";
 import agesMock from "../mocks/gestion-base-pages/ages.json";
 import classesMock from "../mocks/gestion-base-pages/classes.json";
@@ -48,649 +47,543 @@ import {
   getSaveEntityQuery
 } from "../sql/sql-queries-utils.js";
 
-export function getObservateurs(
+export const getObservateurs = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Observateur[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Observateur[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, observateursMock as Observateur[]);
+    return observateursMock;
   } else {
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getFindAllQuery("observateur", "libelle", "ASC") +
-        getFindNumberOfDonneesByObservateurIdQuery(),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          console.log(results);
-          callbackFn(errors, results[0] as Observateur[]);
-        }
-      }
+        getFindNumberOfDonneesByObservateurIdQuery()
     );
+    return results[0];
   }
-}
+};
 
-export function saveObservateur(
+export const saveObservateur = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, insertId: number) => void
-) {
+  httpParameters: HttpParameters
+): Promise<number> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
     // callbackFn(null, observateursMock as Observateur[]);
   } else {
     // TODO
-    SqlConnection.query(
-      getSaveEntityQuery("observateur", null, DB_SAVE_MAPPING.observateur),
-      (error, result) => {
-        if (error) {
-          callbackFn(error, null);
-        } else {
-          console.log("SQL Result:", result);
-          callbackFn(error, result.insertId);
-        }
-      }
+    const results = await SqlConnection.query(
+      getSaveEntityQuery("observateur", null, DB_SAVE_MAPPING.observateur)
     );
+    return results[0].insertId;
   }
-}
+};
 
-export function deleteObservateur(
+export const deleteObservateur = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, numberOfDeletedRows: number) => void
-) {
+  httpParameters: HttpParameters
+): Promise<number> => {
   if (isMockDatabaseMode) {
     // TODO
     // callbackFn(null, observateursMock as Observateur[]);
+    return null;
   } else {
     // TODO
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getDeleteEntityByIdQuery(
         "observateur",
         +httpParameters.queryParameters.id
-      ),
-      (error, result) => {
-        if (error) {
-          callbackFn(error, null);
-        } else {
-          console.log("SQL Result:", result);
-          callbackFn(error, result.affectedRows);
-        }
-      }
+      )
     );
+    return results[0].affectedRows;
   }
-}
+};
 
-export function getDepartements(
+export const getDepartements = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Departement[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Departement[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, departementsMock as Departement[]);
+    return departementsMock;
   } else {
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getFindAllQuery("departement", "code", "ASC") +
         getFindNumberOfCommunesByDepartementIdQuery() +
         getFindNumberOfLieuxditsByDepartementIdQuery() +
-        getFindNumberOfDonneesByDepartementIdQuery(),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results[0] as Departement[]);
-        }
-      }
+        getFindNumberOfDonneesByDepartementIdQuery()
     );
+    return results[0];
   }
-}
+};
 
-export function saveDepartement(
+export const saveDepartement = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteDepartement(
+export const deleteDepartement = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+) => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getCommunes(
+export const getCommunes = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Commune[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Commune[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, communesMock as any[]);
+    return communesMock as any[];
   } else {
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getFindAllQuery("commune", "nom", "ASC") +
         getFindNumberOfLieuxditsByCommuneIdQuery() +
-        getFindNumberOfDonneesByCommuneIdQuery(),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          const communes: Commune[] = _.map(results[0], (classeDb) => {
-            const { departement_id, ...otherParams } = classeDb;
-            return {
-              ...otherParams,
-              departementId: classeDb.departement_id
-            };
-          });
-          callbackFn(errors, communes);
-        }
-      }
+        getFindNumberOfDonneesByCommuneIdQuery()
     );
+    const communes: Commune[] = _.map(results[0], (classeDb) => {
+      const { departement_id, ...otherParams } = classeDb;
+      return {
+        ...otherParams,
+        departementId: classeDb.departement_id
+      };
+    });
+    return communes;
   }
-}
+};
 
-export function saveCommune(
+export const saveCommune = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteCommune(
+export const deleteCommune = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getLieuxdits(
+export const getLieuxdits = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Lieudit[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Lieudit[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, lieuxDitsMock as Lieudit[]);
+    return lieuxDitsMock as Lieudit[];
   } else {
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getFindAllQuery("lieudit", "nom", "ASC") +
-        getFindNumberOfDonneesByLieuditIdQuery(),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          const lieuxdits: Lieudit[] = _.map(results[0], (lieuditDb) => {
-            const { commune_id, ...otherParams } = lieuditDb;
-            return {
-              ...otherParams,
-              communeId: lieuditDb.commune_id
-            };
-          });
-          callbackFn(errors, lieuxdits);
-        }
-      }
+        getFindNumberOfDonneesByLieuditIdQuery()
     );
-  }
-}
+    const lieuxdits: Lieudit[] = _.map(results[0], (lieuditDb) => {
+      const { commune_id, ...otherParams } = lieuditDb;
+      return {
+        ...otherParams,
+        communeId: lieuditDb.commune_id
+      };
+    });
 
-export function saveLieudit(
+    return lieuxdits;
+  }
+};
+
+export const saveLieudit = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteLieudit(
+export const deleteLieudit = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getMeteos(
+export const getMeteos = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Meteo[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Meteo[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, meteosMock as Meteo[]);
+    return Promise.resolve(meteosMock);
   } else {
-    SqlConnection.query(
-      getFindAllQuery("meteo", "libelle", "ASC"),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results as Meteo[]);
-        }
-      }
+    const results = await SqlConnection.query(
+      getFindAllQuery("meteo", "libelle", "ASC")
     );
+    return results as any;
   }
-}
+};
 
-export function saveMeteo(
+export const saveMeteo = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteMeteo(
+export const deleteMeteo = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getClasses(
+export const getClasses = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Classe[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Classe[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, classesMock as Classe[]);
+    return Promise.resolve(classesMock);
   } else {
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getFindAllQuery("classe", "libelle", "ASC") +
         getFindNumberOfEspecesByClasseIdQuery() +
-        getFindNumberOfDonneesByClasseIdQuery(),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results[0] as Classe[]);
-        }
-      }
+        getFindNumberOfDonneesByClasseIdQuery()
     );
+    return results[0];
   }
-}
+};
 
-export function saveClasse(
+export const saveClasse = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteClasse(
+export const deleteClasse = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getEspeces(
+export const getEspeces = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Espece[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Espece[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, especesMock as Espece[]);
+    return especesMock as Espece[];
   } else {
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getFindAllQuery("espece", "code", "ASC") +
-        getFindNumberOfDonneesByDoneeeEntityIdQuery("espece_id"),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          const especes: Espece[] = _.map(results[0], (especeDb) => {
-            const { espece_id, ...otherParams } = especeDb;
-            return {
-              ...otherParams,
-              especeId: especeDb.espece_id
-            };
-          });
-          callbackFn(errors, especes);
-        }
-      }
+        getFindNumberOfDonneesByDoneeeEntityIdQuery("espece_id")
     );
+    const especes: Espece[] = _.map(results[0], (especeDb) => {
+      const { espece_id, ...otherParams } = especeDb;
+      return {
+        ...otherParams,
+        especeId: especeDb.espece_id
+      };
+    });
+    return especes;
   }
-}
+};
 
-export function saveEspece(
+export const saveEspece = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteEspece(
+export const deleteEspece = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getSexes(
+export const getSexes = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Sexe[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Sexe[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, sexesMock as Sexe[]);
+    return sexesMock;
   } else {
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getFindAllQuery("sexe", "libelle", "ASC") +
-        getFindNumberOfDonneesBySexeIdQuery(),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results[0] as Sexe[]);
-        }
-      }
+        getFindNumberOfDonneesBySexeIdQuery()
     );
+    return results[0];
   }
-}
+};
 
-export function saveSexe(
+export const saveSexe = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteSexe(
+export const deleteSexe = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getAges(
+export const getAges = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Age[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Age[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, agesMock as Age[]);
+    return agesMock;
   } else {
-    SqlConnection.query(
+    const results = await SqlConnection.query(
       getFindAllQuery("age", "libelle", "ASC") +
-        getFindNumberOfDonneesByAgeIdQuery(),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results[0] as Age[]);
-        }
-      }
+        getFindNumberOfDonneesByAgeIdQuery()
     );
+    return results[0];
   }
-}
+};
 
-export function saveAge(
+export const saveAge = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteAge(
+export const deleteAge = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getEstimationsNombre(
+export const getEstimationsNombre = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: EstimationNombre[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<EstimationNombre[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, estimationsNombreMock as EstimationNombre[]);
+    return estimationsNombreMock;
   } else {
-    SqlConnection.query(
-      getFindAllQuery("estimation_nombre", "libelle", "ASC") +
-        getFindNumberOfDonneesByEstimationNombreIdQuery(),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results[0] as EstimationNombre[]);
-        }
-      }
+    const results = await SqlConnection.query(
+      getFindAllQuery("estimation_nombre", "libelle", "ASC")
     );
+    return results[0];
   }
-}
+};
 
-export function saveEstimationNombre(
+export const saveEstimationNombre = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteEstimationNombre(
+export const deleteEstimationNombre = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getEstimationsDistance(
+export const getEstimationsDistance = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: EstimationDistance[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<EstimationDistance[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, estimationsDistanceMock as EstimationDistance[]);
+    return estimationsDistanceMock;
   } else {
-    SqlConnection.query(
-      getFindAllQuery("estimation_distance", "libelle", "ASC"),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results as EstimationDistance[]);
-        }
-      }
+    const results = await SqlConnection.query(
+      getFindAllQuery("estimation_distance", "libelle", "ASC")
     );
+    return results as any;
   }
-}
+};
 
-export function saveEstimationDistance(
+export const saveEstimationDistance = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteEstimationDistance(
+export const deleteEstimationDistance = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getComportements(
+export const getComportements = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Comportement[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Comportement[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, comportementsMock as Comportement[]);
+    return comportementsMock;
   } else {
-    SqlConnection.query(
-      getFindAllQuery("comportement", "libelle", "ASC"),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results as Comportement[]);
-        }
-      }
+    const results = await SqlConnection.query(
+      getFindAllQuery("comportement", "libelle", "ASC")
     );
+    return results as any;
   }
-}
+};
 
-export function saveComportement(
+export const saveComportement = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteComportement(
+export const deleteComportement = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function getMilieux(
+export const getMilieux = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: Milieu[]) => void
-) {
+  httpParameters: HttpParameters
+): Promise<Milieu[]> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, milieuxMock as Milieu[]);
+    return milieuxMock;
   } else {
-    SqlConnection.query(
-      getFindAllQuery("milieu", "libelle", "ASC"),
-      (errors, results) => {
-        if (errors) {
-          callbackFn(errors, null);
-        } else {
-          callbackFn(errors, results as Milieu[]);
-        }
-      }
+    const results = await SqlConnection.query(
+      getFindAllQuery("milieu", "libelle", "ASC")
     );
+    return results as any;
   }
-}
+};
 
-export function saveMilieu(
+export const saveMilieu = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};
 
-export function deleteMilieu(
+export const deleteMilieu = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: any) => void
-) {
+  httpParameters: HttpParameters
+): Promise<any> => {
   if (isMockDatabaseMode) {
     // TODO
+    return null;
   } else {
     // TODO
   }
-}
+};

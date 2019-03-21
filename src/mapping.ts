@@ -1,4 +1,3 @@
-import * as mysql from "mysql";
 import { HttpParameters } from "./http/httpParameters";
 import {
   configurationInit,
@@ -58,9 +57,8 @@ import {
 export const REQUEST_MAPPING: {
   [path: string]: (
     isMockDatabaseMode: boolean,
-    httpParameters: HttpParameters,
-    callbackFn?: (errors: mysql.MysqlError, result) => void
-  ) => void;
+    httpParameters: HttpParameters
+  ) => any;
 } = {
   "/api/creation/init": creationInit,
   "/api/inventaire/create": creationInventaire,

@@ -1,29 +1,27 @@
 import { ConfigurationPage } from "basenaturaliste-model/configuration-page.object";
 import * as _ from "lodash";
-import * as mysql from "mysql";
 import { HttpParameters } from "../http/httpParameters.js";
 import configurationInitMock from "../mocks/configuration-page/configuration.json";
 
-export function configurationInit(
+export const configurationInit = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: ConfigurationPage) => void
-) {
+  httpParameters: HttpParameters
+): Promise<ConfigurationPage> => {
   if (isMockDatabaseMode) {
-    callbackFn(null, configurationInitMock as any);
+    return configurationInitMock as any;
   } else {
     // TODO
   }
-}
+};
 
-export function configurationUpdate(
+export const configurationUpdate = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters,
-  callbackFn: (errors: mysql.MysqlError, result: ConfigurationPage) => void
-) {
+  httpParameters: HttpParameters
+): Promise<ConfigurationPage> => {
   if (isMockDatabaseMode) {
     // callbackFn(null, configurationInitMock as any);
+    return null;
   } else {
     // TODO
   }
-}
+};

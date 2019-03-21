@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "lodash": "*",
-    "mysql": "*"
+    "mariadb": "*"
   },
   "devDependencies": {
     "@types/lodash": "*",
@@ -29,5 +29,8 @@
     "tslint": "*",
     "typescript": "*",
     "typescript-tslint-plugin": "*"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   }
 }

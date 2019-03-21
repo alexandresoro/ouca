@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "module": "commonjs",
+    "lib": ["es2017"],
+    "target": "es2017",
     "esModuleInterop": true,
     "outDir": "dist",
     "resolveJsonModule": true,

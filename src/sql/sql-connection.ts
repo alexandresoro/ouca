@@ -1,33 +1,21 @@
 import * as _ from "lodash";
+import * as mariadb from "mariadb";
 import * as mysql from "mysql";
 import { buildArgRegexFromKey } from "../utils/utils";
 
 export class SqlConnection {
-  public static getInstance(): SqlConnection {
-    if (!SqlConnection.instance.connection) {
-      SqlConnection.instance.connection = createDatabaseConnection();
-    }
-    return SqlConnection.instance;
+  public static async query(query: string): Promise<mysql.Query> {
+    const connection = await this.getConnection();
+    return connection.query(query);
   }
 
-  public static query(
-    query: string,
-    callback?: mysql.queryCallback
-  ): mysql.Query {
-    return this.getInstance().connection.query(query, callback);
-  }
+  private static connection: Promise<mysql.Connection>;
 
-  private static instance: SqlConnection = new SqlConnection();
-
-  private connection: mysql.Connection;
-
-  private constructor() {
-    if (SqlConnection.instance) {
-      throw new Error(
-        "Error: Instantiation failed: Use SingletonClass.getInstance() instead of new."
-      );
+  private static async getConnection(): Promise<mysql.Connection> {
+    if (!this.connection) {
+      this.connection = createDatabaseConnection();
     }
-    SqlConnection.instance = this;
+    return this.connection;
   }
 }
 
@@ -59,7 +47,7 @@ const ARG_KEY_VALUE_DELIMITER: string = "=";
  * - dbUser
  * - dbPassword
  */
-function getSqlConnectionConfiguration(): mysql.ConnectionConfig {
+const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
   let host = DEFAULT_DB_HOST;
   let port = DEFAULT_DB_PORT;
   let user = DEFAULT_DB_USER;
@@ -114,8 +102,8 @@ function getSqlConnectionConfiguration(): mysql.ConnectionConfig {
   );
 
   return config;
-}
+};
 
-function createDatabaseConnection(): mysql.Connection {
-  return mysql.createConnection(getSqlConnectionConfiguration());
-}
+const createDatabaseConnection = async (): Promise<mysql.Connection> => {
+  return mariadb.createConnection(getSqlConnectionConfiguration());
+};

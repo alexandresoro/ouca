@@ -1,6 +1,5 @@
 import * as http from "http";
 import * as _ from "lodash";
-import { MysqlError } from "mysql";
 import * as url from "url";
 import { REQUEST_MAPPING } from "../mapping";
 
@@ -21,25 +20,19 @@ export const handleHttpRequest = (
     return;
   }
 
-  const responseCallback = (error: MysqlError, result) => {
-    console.log("Result:", result);
-    if (error) {
+  REQUEST_MAPPING[pathName](isMockDatabaseMode, {
+    queryParameters,
+    postData
+  })
+    .then((result) => {
+      res.statusCode = 200;
+      res.setHeader("Content-Type", jsonHttpHeader);
+      res.end(JSON.stringify(result));
+    })
+    .catch((error) => {
       console.error("Error:", error);
       res.statusCode = 500;
       res.end(JSON.stringify(error));
       process.exit();
-    }
-    res.statusCode = 200;
-    res.setHeader("Content-Type", jsonHttpHeader);
-    res.end(JSON.stringify(result));
-  };
-
-  REQUEST_MAPPING[pathName](
-    isMockDatabaseMode,
-    {
-      queryParameters,
-      postData
-    },
-    responseCallback
-  );
+    });
 };
