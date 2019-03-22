@@ -335,8 +335,9 @@ export function getSaveEntityQuery(
 ): string {
   let query: string;
 
+  const keys: string[] = _.keys(mapping);
+
   if (!entityToSave.id) {
-    const keys: string[] = _.keys(mapping);
     const columnNames = keys.join(",");
 
     const valuesArray = [];
@@ -355,12 +356,14 @@ export function getSaveEntityQuery(
       values +
       ")";
   } else {
-    const updates = _.reduce(_.keys(mapping), (sum, b) => {
-      return sum + "," + b + "=" + entityToSave[mapping[b]];
+    const updatesArray = [];
+    _.forEach(keys, (key: string) => {
+      updatesArray.push(key + "='" + entityToSave[mapping[key]] + "'");
     });
+    const updates = updatesArray.join(",");
 
     query =
-      "UDPATE " +
+      "UPDATE " +
       tableName +
       " SET " +
       updates +

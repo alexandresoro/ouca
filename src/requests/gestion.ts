@@ -168,9 +168,11 @@ export const getCommunes = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC) +
+        getFindAllQuery(TABLE_DEPARTEMENT) +
         getFindNumberOfLieuxditsByCommuneIdQuery() +
         getFindNumberOfDonneesByCommuneIdQuery()
     );
+
     const communes: Commune[] = _.map(results[0], (classeDb) => {
       const { departement_id, ...otherParams } = classeDb;
       return {
@@ -179,9 +181,14 @@ export const getCommunes = async (
       };
     });
 
-    const nbLieuxditsByCommune: any[] = results[1];
-    const nbDonneesByCommune: any[] = results[2];
+    const departements: Departement[] = results[1];
+    const nbLieuxditsByCommune: any[] = results[2];
+    const nbDonneesByCommune: any[] = results[3];
     _.forEach(communes, (commune: Commune) => {
+      commune.departement = _.find(departements, (departement: Departement) => {
+        return departement.id === commune.departementId;
+      });
+      commune.departementId = null;
       getNbByEntityId(commune, nbLieuxditsByCommune, NB_LIEUXDITS);
       getNbByEntityId(commune, nbDonneesByCommune, NB_DONNEES);
     });
@@ -226,6 +233,8 @@ export const getLieuxdits = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC) +
+        getFindAllQuery(TABLE_COMMUNE) +
+        getFindAllQuery(TABLE_DEPARTEMENT) +
         getFindNumberOfDonneesByLieuditIdQuery()
     );
     const lieuxdits: Lieudit[] = _.map(results[0], (lieuditDb) => {
@@ -236,8 +245,28 @@ export const getLieuxdits = async (
       };
     });
 
-    const nbDonneesByLieudit: any[] = results[1];
+    const communes: Commune[] = _.map(results[1], (communeId) => {
+      const { departement_id, ...otherParams } = communeId;
+      return {
+        ...otherParams,
+        departementId: communeId.departement_id
+      };
+    });
+    const departements: Departement[] = results[2];
+    const nbDonneesByLieudit: any[] = results[3];
+
     _.forEach(lieuxdits, (lieudit: Lieudit) => {
+      lieudit.commune = _.find(communes, (commune: Commune) => {
+        return commune.id === lieudit.communeId;
+      });
+      lieudit.commune.departement = _.find(
+        departements,
+        (departement: Departement) => {
+          return lieudit.commune.departementId === departement.id;
+        }
+      );
+      lieudit.communeId = null;
+
       getNbByEntityId(lieudit, nbDonneesByLieudit, NB_DONNEES);
     });
 
@@ -255,7 +284,7 @@ export const saveLieudit = async (
     !!lieuditToSave.commune &&
     !!lieuditToSave.commune.id
   ) {
-    lieuditToSave.departementId = lieuditToSave.commune.id;
+    lieuditToSave.communeId = lieuditToSave.commune.id;
   }
   return saveEntity(
     isMockDatabaseMode,
@@ -362,18 +391,26 @@ export const getEspeces = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC) +
+        getFindAllQuery(TABLE_CLASSE) +
         getFindNumberOfDonneesByEspeceIdQuery()
     );
     const especes: Espece[] = _.map(results[0], (especeDb) => {
-      const { espece_id, ...otherParams } = especeDb;
+      const { classe_id, nom_francais, nom_latin, ...otherParams } = especeDb;
       return {
         ...otherParams,
-        especeId: especeDb.espece_id
+        classeId: especeDb.classe_id,
+        nomFrancais: especeDb.nom_francais,
+        nomLatin: especeDb.nom_latin
       };
     });
 
-    const nbDonneesByEspece: any[] = results[1];
+    const classes: Classe[] = results[1];
+    const nbDonneesByEspece: any[] = results[2];
     _.forEach(especes, (espece: Espece) => {
+      espece.classe = _.find(classes, (classe: Classe) => {
+        return classe.id === espece.classeId;
+      });
+      espece.classeId = null;
       getNbByEntityId(espece, nbDonneesByEspece, NB_DONNEES);
     });
 
