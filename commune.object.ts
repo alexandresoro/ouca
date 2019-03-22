@@ -2,7 +2,7 @@ import { Departement } from "./departement.object";
 import { EntiteSimple } from "./entite-simple.object";
 
 export interface Commune extends EntiteSimple {
-  departement: Departement;
+  departement?: Departement;
 
   departementId: number;
 

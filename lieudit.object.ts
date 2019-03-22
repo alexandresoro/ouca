@@ -5,7 +5,7 @@ import { EntiteSimple } from "./entite-simple.object";
 export interface Lieudit extends EntiteSimple {
   communeId: number;
 
-  commune: Commune;
+  commune?: Commune;
 
   nom: string;
 

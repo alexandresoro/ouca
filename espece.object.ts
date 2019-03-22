@@ -2,7 +2,7 @@ import { Classe } from "./classe.object";
 import { EntiteAvecLibelle } from "./entite-avec-libelle.object";
 
 export interface Espece extends EntiteAvecLibelle {
-  classe: Classe;
+  classe?: Classe;
 
   classeId: number;
 
