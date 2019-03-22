@@ -270,7 +270,7 @@ export const getPreviousDonnee = async (
       sexeId: flatDonnee.sexeId,
       ageId: flatDonnee.ageId,
       estimationNombreId: flatDonnee.estimationNombreId,
-      nombre: flatDonnee,
+      nombre: flatDonnee.nombre,
       estimationDistanceId: flatDonnee.estimationDistanceId,
       distance: flatDonnee.distance,
       regroupement: flatDonnee.regroupement,
