@@ -3,6 +3,7 @@ import { Classe } from "basenaturaliste-model/classe.object";
 import { Commune } from "basenaturaliste-model/commune.object";
 import { Comportement } from "basenaturaliste-model/comportement.object";
 import { Departement } from "basenaturaliste-model/departement.object";
+import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
 import { Espece } from "basenaturaliste-model/espece.object";
 import { EstimationDistance } from "basenaturaliste-model/estimation-distance.object";
 import { EstimationNombre } from "basenaturaliste-model/estimation-nombre.object";
@@ -34,9 +35,14 @@ import {
   getFindNumberOfDonneesByAgeIdQuery,
   getFindNumberOfDonneesByClasseIdQuery,
   getFindNumberOfDonneesByCommuneIdQuery,
+  getFindNumberOfDonneesByComportementIdQuery,
   getFindNumberOfDonneesByDepartementIdQuery,
-  getFindNumberOfDonneesByDoneeeEntityIdQuery,
+  getFindNumberOfDonneesByEspeceIdQuery,
+  getFindNumberOfDonneesByEstimationDistanceIdQuery,
+  getFindNumberOfDonneesByEstimationNombreIdQuery,
   getFindNumberOfDonneesByLieuditIdQuery,
+  getFindNumberOfDonneesByMeteoIdQuery,
+  getFindNumberOfDonneesByMilieuIdQuery,
   getFindNumberOfDonneesByObservateurIdQuery,
   getFindNumberOfDonneesBySexeIdQuery,
   getFindNumberOfEspecesByClasseIdQuery,
@@ -44,6 +50,29 @@ import {
   getFindNumberOfLieuxditsByDepartementIdQuery,
   getSaveEntityQuery
 } from "../sql/sql-queries-utils.js";
+import {
+  COLUMN_CODE,
+  COLUMN_LIBELLE,
+  COLUMN_NOM,
+  NB_COMMUNES,
+  NB_DONNEES,
+  NB_ESPECES,
+  NB_LIEUXDITS,
+  ORDER_ASC,
+  TABLE_AGE,
+  TABLE_CLASSE,
+  TABLE_COMMUNE,
+  TABLE_COMPORTEMENT,
+  TABLE_DEPARTEMENT,
+  TABLE_ESPECE,
+  TABLE_ESTIMATION_DISTANCE,
+  TABLE_ESTIMATION_NOMBRE,
+  TABLE_LIEUDIT,
+  TABLE_METEO,
+  TABLE_MILIEU,
+  TABLE_OBSERVATEUR,
+  TABLE_SEXE
+} from "../utils/constants.js";
 
 export const getObservateurs = async (
   isMockDatabaseMode: boolean,
@@ -53,10 +82,15 @@ export const getObservateurs = async (
     return observateursMock;
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("observateur", "libelle", "ASC") +
+      getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
         getFindNumberOfDonneesByObservateurIdQuery()
     );
-    return results[0];
+    const observateurs: Observateur[] = results[0];
+    const nbDonneesByObservateur: any[] = results[1];
+    _.forEach(observateurs, (observateur: Observateur) => {
+      getNbByEntityId(observateur, nbDonneesByObservateur, NB_DONNEES);
+    });
+    return observateurs;
   }
 };
 
@@ -64,23 +98,19 @@ export const saveObservateur = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    return { affectedRows: 1, insertId: 132, warningStatus: 0 };
-  } else {
-    return saveEntity(
-      isMockDatabaseMode,
-      httpParameters.postData,
-      "observateur",
-      DB_SAVE_MAPPING.observateur
-    );
-  }
+  return saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    TABLE_OBSERVATEUR,
+    DB_SAVE_MAPPING.observateur
+  );
 };
 
 export const deleteObservateur = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "observateur");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_OBSERVATEUR);
 };
 
 export const getDepartements = async (
@@ -90,13 +120,23 @@ export const getDepartements = async (
   if (isMockDatabaseMode) {
     return departementsMock;
   } else {
-    const result = await SqlConnection.query(
-      getFindAllQuery("departement", "code", "ASC") +
+    const results = await SqlConnection.query(
+      getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
         getFindNumberOfCommunesByDepartementIdQuery() +
         getFindNumberOfLieuxditsByDepartementIdQuery() +
         getFindNumberOfDonneesByDepartementIdQuery()
     );
-    return result[0];
+
+    const departements: Departement[] = results[0];
+    const nbCommunesByDepartement: any[] = results[1];
+    const nbLieuxditsByDepartement: any[] = results[2];
+    const nbDonneesByDepartement: any[] = results[3];
+    _.forEach(departements, (departement: Departement) => {
+      getNbByEntityId(departement, nbCommunesByDepartement, NB_COMMUNES);
+      getNbByEntityId(departement, nbLieuxditsByDepartement, NB_LIEUXDITS);
+      getNbByEntityId(departement, nbDonneesByDepartement, NB_DONNEES);
+    });
+    return departements;
   }
 };
 
@@ -107,7 +147,7 @@ export const saveDepartement = async (
   return saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
-    "departement",
+    TABLE_DEPARTEMENT,
     DB_SAVE_MAPPING.departement
   );
 };
@@ -116,7 +156,7 @@ export const deleteDepartement = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ) => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "departement");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_DEPARTEMENT);
 };
 
 export const getCommunes = async (
@@ -127,7 +167,7 @@ export const getCommunes = async (
     return communesMock as any[];
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("commune", "nom", "ASC") +
+      getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC) +
         getFindNumberOfLieuxditsByCommuneIdQuery() +
         getFindNumberOfDonneesByCommuneIdQuery()
     );
@@ -138,6 +178,14 @@ export const getCommunes = async (
         departementId: classeDb.departement_id
       };
     });
+
+    const nbLieuxditsByCommune: any[] = results[1];
+    const nbDonneesByCommune: any[] = results[2];
+    _.forEach(communes, (commune: Commune) => {
+      getNbByEntityId(commune, nbLieuxditsByCommune, NB_LIEUXDITS);
+      getNbByEntityId(commune, nbDonneesByCommune, NB_DONNEES);
+    });
+
     return communes;
   }
 };
@@ -157,7 +205,7 @@ export const saveCommune = async (
   return saveEntity(
     isMockDatabaseMode,
     communeToSave,
-    "commune",
+    TABLE_COMMUNE,
     DB_SAVE_MAPPING.commune
   );
 };
@@ -166,7 +214,7 @@ export const deleteCommune = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "commune");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_COMMUNE);
 };
 
 export const getLieuxdits = async (
@@ -177,7 +225,7 @@ export const getLieuxdits = async (
     return lieuxDitsMock as Lieudit[];
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("lieudit", "nom", "ASC") +
+      getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC) +
         getFindNumberOfDonneesByLieuditIdQuery()
     );
     const lieuxdits: Lieudit[] = _.map(results[0], (lieuditDb) => {
@@ -186,6 +234,11 @@ export const getLieuxdits = async (
         ...otherParams,
         communeId: lieuditDb.commune_id
       };
+    });
+
+    const nbDonneesByLieudit: any[] = results[1];
+    _.forEach(lieuxdits, (lieudit: Lieudit) => {
+      getNbByEntityId(lieudit, nbDonneesByLieudit, NB_DONNEES);
     });
 
     return lieuxdits;
@@ -207,7 +260,7 @@ export const saveLieudit = async (
   return saveEntity(
     isMockDatabaseMode,
     lieuditToSave,
-    "lieudit",
+    TABLE_LIEUDIT,
     DB_SAVE_MAPPING.lieudit
   );
 };
@@ -216,38 +269,44 @@ export const deleteLieudit = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "lieudit");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_LIEUDIT);
 };
 
 export const getMeteos = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<Meteo[]> => {
-  return saveEntity(
-    isMockDatabaseMode,
-    httpParameters.postData,
-    "meteo",
-    DB_SAVE_MAPPING.meteo
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC) +
+      getFindNumberOfDonneesByMeteoIdQuery()
   );
+
+  const meteos: Meteo[] = results[0];
+  const nbDonneesByMeteo: any[] = results[1];
+  _.forEach(meteos, (meteo: Meteo) => {
+    getNbByEntityId(meteo, nbDonneesByMeteo, NB_DONNEES);
+  });
+
+  return meteos;
 };
 
 export const saveMeteo = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    // TODO
-    return null;
-  } else {
-    // TODO
-  }
+  this.saveEntity(
+    isMockDatabaseMode,
+    httpParameters.postData,
+    TABLE_METEO,
+    DB_SAVE_MAPPING.meteo
+  );
 };
 
 export const deleteMeteo = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "meteo");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_METEO);
 };
 
 export const getClasses = async (
@@ -258,11 +317,20 @@ export const getClasses = async (
     return Promise.resolve(classesMock);
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("classe", "libelle", "ASC") +
+      getFindAllQuery(TABLE_CLASSE, COLUMN_LIBELLE, ORDER_ASC) +
         getFindNumberOfEspecesByClasseIdQuery() +
         getFindNumberOfDonneesByClasseIdQuery()
     );
-    return results[0];
+
+    const classes: Classe[] = results[0];
+    const nbEspecesByClasse: any[] = results[1];
+    const nbDonneesByClasse: any[] = results[2];
+    _.forEach(classes, (classe: Classe) => {
+      getNbByEntityId(classe, nbEspecesByClasse, NB_ESPECES);
+      getNbByEntityId(classe, nbDonneesByClasse, NB_DONNEES);
+    });
+
+    return classes;
   }
 };
 
@@ -273,7 +341,7 @@ export const saveClasse = async (
   return saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
-    "classe",
+    TABLE_CLASSE,
     DB_SAVE_MAPPING.classe
   );
 };
@@ -282,7 +350,7 @@ export const deleteClasse = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "classe");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_CLASSE);
 };
 
 export const getEspeces = async (
@@ -293,8 +361,8 @@ export const getEspeces = async (
     return especesMock as Espece[];
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("espece", "code", "ASC") +
-        getFindNumberOfDonneesByDoneeeEntityIdQuery("espece_id")
+      getFindAllQuery(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC) +
+        getFindNumberOfDonneesByEspeceIdQuery()
     );
     const especes: Espece[] = _.map(results[0], (especeDb) => {
       const { espece_id, ...otherParams } = especeDb;
@@ -303,6 +371,12 @@ export const getEspeces = async (
         especeId: especeDb.espece_id
       };
     });
+
+    const nbDonneesByEspece: any[] = results[1];
+    _.forEach(especes, (espece: Espece) => {
+      getNbByEntityId(espece, nbDonneesByEspece, NB_DONNEES);
+    });
+
     return especes;
   }
 };
@@ -325,7 +399,7 @@ export const saveEspece = async (
     return saveEntity(
       isMockDatabaseMode,
       especeToSave,
-      "espece",
+      TABLE_ESPECE,
       DB_SAVE_MAPPING.espece
     );
   }
@@ -335,7 +409,7 @@ export const deleteEspece = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "espece");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_ESPECE);
 };
 
 export const getSexes = async (
@@ -346,10 +420,17 @@ export const getSexes = async (
     return sexesMock;
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("sexe", "libelle", "ASC") +
+      getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
         getFindNumberOfDonneesBySexeIdQuery()
     );
-    return results[0];
+
+    const sexes: Sexe[] = results[0];
+    const nbDonneesBySexe: any[] = results[1];
+    _.forEach(sexes, (sexe: Sexe) => {
+      getNbByEntityId(sexe, nbDonneesBySexe, NB_DONNEES);
+    });
+
+    return sexes;
   }
 };
 
@@ -360,7 +441,7 @@ export const saveSexe = async (
   return saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
-    "sexe",
+    TABLE_SEXE,
     DB_SAVE_MAPPING.sexe
   );
 };
@@ -369,7 +450,7 @@ export const deleteSexe = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "sexe");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_SEXE);
 };
 
 export const getAges = async (
@@ -380,10 +461,17 @@ export const getAges = async (
     return agesMock;
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("age", "libelle", "ASC") +
+      getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
         getFindNumberOfDonneesByAgeIdQuery()
     );
-    return results[0];
+
+    const ages: Age[] = results[0];
+    const nbDonneesByAge: any[] = results[1];
+    _.forEach(ages, (age: Age) => {
+      getNbByEntityId(age, nbDonneesByAge, NB_DONNEES);
+    });
+
+    return ages;
   }
 };
 
@@ -394,7 +482,7 @@ export const saveAge = async (
   return saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
-    "age",
+    TABLE_AGE,
     DB_SAVE_MAPPING.age
   );
 };
@@ -403,7 +491,7 @@ export const deleteAge = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "age");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_AGE);
 };
 
 export const getEstimationsNombre = async (
@@ -414,9 +502,17 @@ export const getEstimationsNombre = async (
     return estimationsNombreMock;
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("estimation_nombre", "libelle", "ASC")
+      getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC) +
+        getFindNumberOfDonneesByEstimationNombreIdQuery()
     );
-    return results[0];
+
+    const estimations: EstimationNombre[] = results[0];
+    const nbDonneesByEstimation: any[] = results[1];
+    _.forEach(estimations, (estimation: EstimationNombre) => {
+      getNbByEntityId(estimation, nbDonneesByEstimation, NB_DONNEES);
+    });
+
+    return estimations;
   }
 };
 
@@ -427,7 +523,7 @@ export const saveEstimationNombre = async (
   return saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
-    "estimation_nombre",
+    TABLE_ESTIMATION_NOMBRE,
     DB_SAVE_MAPPING.estimationNombre
   );
 };
@@ -436,7 +532,11 @@ export const deleteEstimationNombre = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "estimation_nombre");
+  return deleteEntity(
+    isMockDatabaseMode,
+    httpParameters,
+    TABLE_ESTIMATION_NOMBRE
+  );
 };
 
 export const getEstimationsDistance = async (
@@ -447,9 +547,17 @@ export const getEstimationsDistance = async (
     return estimationsDistanceMock;
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("estimation_distance", "libelle", "ASC")
+      getFindAllQuery(TABLE_ESTIMATION_DISTANCE, COLUMN_LIBELLE, ORDER_ASC) +
+        getFindNumberOfDonneesByEstimationDistanceIdQuery()
     );
-    return results as any;
+
+    const estimations: EstimationDistance[] = results[0];
+    const nbDonneesByEstimation: any[] = results[1];
+    _.forEach(estimations, (estimation: EstimationDistance) => {
+      getNbByEntityId(estimation, nbDonneesByEstimation, NB_DONNEES);
+    });
+
+    return estimations;
   }
 };
 
@@ -460,7 +568,7 @@ export const saveEstimationDistance = async (
   return saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
-    "estimation_distance",
+    TABLE_ESTIMATION_DISTANCE,
     DB_SAVE_MAPPING.estimationDistance
   );
 };
@@ -472,7 +580,7 @@ export const deleteEstimationDistance = async (
   return deleteEntity(
     isMockDatabaseMode,
     httpParameters,
-    "estimation_distance"
+    TABLE_ESTIMATION_DISTANCE
   );
 };
 
@@ -484,9 +592,17 @@ export const getComportements = async (
     return comportementsMock;
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("comportement", "libelle", "ASC")
+      getFindAllQuery(TABLE_COMPORTEMENT, COLUMN_LIBELLE, ORDER_ASC) +
+        getFindNumberOfDonneesByComportementIdQuery()
     );
-    return results as any;
+
+    const comportements: Comportement[] = results[0];
+    const nbDonneesByComportement: any[] = results[1];
+    _.forEach(comportements, (comportement: Comportement) => {
+      getNbByEntityId(comportement, nbDonneesByComportement, NB_DONNEES);
+    });
+
+    return comportements;
   }
 };
 
@@ -497,7 +613,7 @@ export const saveComportement = async (
   return saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
-    "comportement",
+    TABLE_COMPORTEMENT,
     DB_SAVE_MAPPING.comportement
   );
 };
@@ -506,7 +622,7 @@ export const deleteComportement = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "comportement");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_COMPORTEMENT);
 };
 
 export const getMilieux = async (
@@ -517,9 +633,17 @@ export const getMilieux = async (
     return milieuxMock;
   } else {
     const results = await SqlConnection.query(
-      getFindAllQuery("milieu", "libelle", "ASC")
+      getFindAllQuery(TABLE_MILIEU, COLUMN_LIBELLE, ORDER_ASC) +
+        getFindNumberOfDonneesByMilieuIdQuery()
     );
-    return results as any;
+
+    const milieux: Milieu[] = results[0];
+    const nbDonneesByMilieu: any[] = results[1];
+    _.forEach(milieux, (milieu: Milieu) => {
+      getNbByEntityId(milieu, nbDonneesByMilieu, NB_DONNEES);
+    });
+
+    return milieux;
   }
 };
 
@@ -530,7 +654,7 @@ export const saveMilieu = async (
   return saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
-    "milieu",
+    TABLE_MILIEU,
     DB_SAVE_MAPPING.milieu
   );
 };
@@ -539,7 +663,18 @@ export const deleteMilieu = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(isMockDatabaseMode, httpParameters, "milieu");
+  return deleteEntity(isMockDatabaseMode, httpParameters, TABLE_MILIEU);
+};
+
+const getNbByEntityId = (
+  object: EntiteSimple,
+  nbById: any[],
+  fieldName: string
+) => {
+  const foundValue = _.find(nbById, (element) => {
+    return element.id === object.id;
+  });
+  object[fieldName] = foundValue ? foundValue[fieldName] : 0;
 };
 
 const saveEntity = async (

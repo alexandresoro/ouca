@@ -1,5 +1,6 @@
 import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
 import * as _ from "lodash";
+import { COLUMN_ESPECE_ID } from "../utils/constants";
 
 const createKeyValueMapWithSameName = (
   names: string | string[]
@@ -195,6 +196,47 @@ export function getFindNumberOfLieuxditsByCommuneIdQuery(
   return getQuery(query);
 }
 
+export function getFindNumberOfDonneesByMeteoIdQuery(meteoId?: number): string {
+  let query: string =
+    "SELECT im.meteo_id as id, count(*) as nbDonnees " +
+    "FROM inventaire_meteo im, donnee d " +
+    "WHERE d.inventaire_id=im.inventaire_id";
+  if (!!meteoId) {
+    query = query + " AND im.meteo_id=" + meteoId;
+  } else {
+    query = query + " GROUP BY im.meteo_id";
+  }
+  return getQuery(query);
+}
+
+export function getFindNumberOfDonneesByComportementIdQuery(
+  comportementId?: number
+): string {
+  let query: string =
+    "SELECT dc.comportement_id as id, count(*) as nbDonnees " +
+    "FROM donnee_comportement dc ";
+  if (!!comportementId) {
+    query = query + " WHERE dc.comportement_id=" + comportementId;
+  } else {
+    query = query + " GROUP BY dc.comportement_id";
+  }
+  return getQuery(query);
+}
+
+export function getFindNumberOfDonneesByMilieuIdQuery(
+  milieuId?: number
+): string {
+  let query: string =
+    "SELECT dc.milieu_id as id, count(*) as nbDonnees " +
+    "FROM donnee_milieu dc ";
+  if (!!milieuId) {
+    query = query + " WHERE dc.milieu_id=" + milieuId;
+  } else {
+    query = query + " GROUP BY dc.milieu_id";
+  }
+  return getQuery(query);
+}
+
 export function getFindNumberOfEspecesByClasseIdQuery(
   classeId?: number
 ): string {
@@ -224,7 +266,10 @@ export function getFindNumberOfDonneesByClasseIdQuery(
 export function getFindNumberOfDonneesByEspeceIdQuery(
   especeId?: number
 ): string {
-  return getFindNumberOfDonneesByDoneeeEntityIdQuery("espece_id", especeId);
+  return getFindNumberOfDonneesByDoneeeEntityIdQuery(
+    COLUMN_ESPECE_ID,
+    especeId
+  );
 }
 
 export function getFindNumberOfDonneesByEstimationNombreIdQuery(
@@ -242,6 +287,15 @@ export function getFindNumberOfDonneesBySexeIdQuery(sexeId?: number): string {
 
 export function getFindNumberOfDonneesByAgeIdQuery(ageId?: number): string {
   return getFindNumberOfDonneesByDoneeeEntityIdQuery("age_id", ageId);
+}
+
+export function getFindNumberOfDonneesByEstimationDistanceIdQuery(
+  estimationDistanceId?: number
+): string {
+  return getFindNumberOfDonneesByDoneeeEntityIdQuery(
+    "estimation_distance_id",
+    estimationDistanceId
+  );
 }
 
 export function getFindNumberOfDonneesByDoneeeEntityIdQuery(
