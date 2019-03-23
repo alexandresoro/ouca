@@ -14,8 +14,11 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "build:debug": "tsc --sourceMap true",
+    "debug": "yarn build --sourceMap true && yarn start:debug",
     "dev": "yarn build && yarn start",
-    "start": "node dist/backend"
+    "start": "node dist/backend",
+    "start:debug": "node --inspect dist/backend"
   },
   "dependencies": {
     "lodash": "*",
