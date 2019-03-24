@@ -17,7 +17,11 @@ export const TABLE_ESTIMATION_DISTANCE: string = "estimation_distance";
 export const TABLE_COMPORTEMENT: string = "comportement";
 export const TABLE_MILIEU: string = "milieu";
 export const TABLE_INVENTAIRE: string = "inventaire";
+export const TABLE_INVENTAIRE_METEO: string = "inventaire_meteo";
+export const TABLE_INVENTAIRE_ASSOCIE: string = "inventaire_associe";
 export const TABLE_DONNEE: string = "donnee";
+export const TABLE_DONNEE_COMPORTEMENT: string = "donnee_comportement";
+export const TABLE_DONNEE_MILIEU: string = "donnee_milieu";
 
 export const TABLE_CONFIGURATION: string = "configuration";
 

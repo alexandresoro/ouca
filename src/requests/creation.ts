@@ -21,9 +21,17 @@ import {
   getFindNextDonneeByCurrentDonneeIdQuery,
   getFindNumberOfDonneesQuery,
   getFindPreviousDonneeByCurrentDonneeIdQuery,
-  getSaveEntityQuery
+  getSaveEntityQuery,
+  getSaveListOfEntitesQueries
 } from "../sql/sql-queries-utils.js";
-import { TABLE_DONNEE, TABLE_INVENTAIRE } from "../utils/constants.js";
+import {
+  TABLE_DONNEE,
+  TABLE_DONNEE_COMPORTEMENT,
+  TABLE_DONNEE_MILIEU,
+  TABLE_INVENTAIRE,
+  TABLE_INVENTAIRE_ASSOCIE,
+  TABLE_INVENTAIRE_METEO
+} from "../utils/constants.js";
 
 const getDefaultValueForConfigurationField = (
   configuration: any[],
@@ -179,7 +187,7 @@ export const saveInventaire = async (
   } else {
     const inventaireToSave: Inventaire = httpParameters.postData;
     const { date, ...otherParams } = inventaireToSave;
-    const result = await SqlConnection.query(
+    const inventaireResult = await SqlConnection.query(
       getSaveEntityQuery(
         TABLE_INVENTAIRE,
         {
@@ -190,8 +198,23 @@ export const saveInventaire = async (
         DB_SAVE_MAPPING.inventaire
       )
     );
-    console.log(result);
-    return result;
+
+    const inventaireId: number = (inventaireResult as any).insertId;
+
+    await SqlConnection.query(
+      getSaveListOfEntitesQueries(
+        TABLE_INVENTAIRE_ASSOCIE,
+        inventaireId,
+        inventaireToSave.associesIds
+      ) +
+        getSaveListOfEntitesQueries(
+          TABLE_INVENTAIRE_METEO,
+          inventaireId,
+          inventaireToSave.meteosIds
+        )
+    );
+
+    return inventaireResult;
   }
 };
 
@@ -202,15 +225,35 @@ export const saveDonnee = async (
   if (isMockDatabaseMode) {
     return creationPageCreateDonneeMock as any;
   } else {
-    const result = await SqlConnection.query(
+    const donneeToSave: Donnee = httpParameters.postData;
+
+    const donneeResult = await SqlConnection.query(
       getSaveEntityQuery(
         TABLE_DONNEE,
-        httpParameters.postData,
+        {
+          ...donneeToSave,
+          dateCreation: moment().format("YYYY-MM-DD HH:mm:ss")
+        },
         DB_SAVE_MAPPING.donnee
       )
     );
-    console.log(result);
-    return result;
+
+    const donneeId: number = (donneeResult as any).insertId;
+
+    await SqlConnection.query(
+      getSaveListOfEntitesQueries(
+        TABLE_DONNEE_COMPORTEMENT,
+        donneeId,
+        donneeToSave.comportementsIds
+      ) +
+        getSaveListOfEntitesQueries(
+          TABLE_DONNEE_MILIEU,
+          donneeId,
+          donneeToSave.milieuxIds
+        )
+    );
+
+    return donneeResult;
   }
 };
 
@@ -268,7 +311,7 @@ export const getPreviousDonnee = async (
     const inventaire: Inventaire = {
       id: flatDonnee.inventaireId,
       observateurId: flatDonnee.observateurId,
-      associes: results[0],
+      associesIds: results[0],
       date: flatDonnee.date,
       heure: flatDonnee.heure,
       duree: flatDonnee.duree,
@@ -277,7 +320,7 @@ export const getPreviousDonnee = async (
       longitude: flatDonnee.longitude,
       latitude: flatDonnee.latitude,
       temperature: flatDonnee.temperature,
-      meteos: results[1]
+      meteosIds: results[1]
     };
     const donnee: Donnee = {
       id: flatDonnee.id,
@@ -291,8 +334,8 @@ export const getPreviousDonnee = async (
       estimationDistanceId: flatDonnee.estimationDistanceId,
       distance: flatDonnee.distance,
       regroupement: flatDonnee.regroupement,
-      comportements: results[2],
-      milieux: results[3],
+      comportementsIds: results[2],
+      milieuxIds: results[3],
       commentaire: flatDonnee.commentaire
     };
     return donnee;
