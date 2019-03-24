@@ -77,6 +77,25 @@ export const DB_SAVE_MAPPING = {
   configuration: createKeyValueMapWithSameName(["libelle", "value"])
 };
 
+export const DB_SAVE_LISTS_MAPPING = {
+  inventaire_associe: {
+    mainId: "inventaire_id",
+    subId: "associe_id"
+  },
+  inventaire_meteo: {
+    mainId: "inventaire_id",
+    subId: "meteo_id"
+  },
+  donnee_comportement: {
+    mainId: "donnee_id",
+    subId: "comportement_id"
+  },
+  donnee_milieu: {
+    mainId: "donnee_id",
+    subId: "milieu_id"
+  }
+};
+
 function getQuery(query: string): string {
   console.log("---> " + query + ";");
   return query + ";";
@@ -378,6 +397,39 @@ export function getSaveEntityQuery(
       " WHERE id=" +
       entityToSave.id;
   }
+
+  return getQuery(query);
+}
+
+export function getSaveListOfEntitesQueries(
+  tableName: string,
+  mainId: number,
+  subIds: any[]
+): string {
+  let queries: string = "";
+  subIds.forEach((subId) => {
+    queries += getSaveManyToManyEntityQuery(tableName, mainId, subId);
+  });
+  return queries;
+}
+export function getSaveManyToManyEntityQuery(
+  tableName: string,
+  mainId: number,
+  subId: number
+): string {
+  const query: string =
+    "INSERT INTO " +
+    tableName +
+    "(" +
+    DB_SAVE_LISTS_MAPPING[tableName].mainId +
+    "," +
+    DB_SAVE_LISTS_MAPPING[tableName].subId +
+    ") " +
+    "VALUES (" +
+    mainId +
+    "," +
+    subId +
+    ")";
 
   return getQuery(query);
 }
