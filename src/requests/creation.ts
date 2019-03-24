@@ -2,6 +2,7 @@ import { CreationPage } from "basenaturaliste-model/creation-page.object";
 import { Donnee } from "basenaturaliste-model/donnee.object";
 import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
+import moment from "moment";
 import { HttpParameters } from "../http/httpParameters.js";
 import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
 import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
@@ -176,10 +177,16 @@ export const saveInventaire = async (
   if (isMockDatabaseMode) {
     return creationPageCreateInventaireMock as any;
   } else {
+    const inventaireToSave: Inventaire = httpParameters.postData;
+    const { date, ...otherParams } = inventaireToSave;
     const result = await SqlConnection.query(
       getSaveEntityQuery(
         TABLE_INVENTAIRE,
-        httpParameters.postData,
+        {
+          date: moment(date).format("YYYY-MM-DD"),
+          dateCreation: moment().format("YYYY-MM-DD HH:mm:ss"),
+          ...otherParams
+        },
         DB_SAVE_MAPPING.inventaire
       )
     );
