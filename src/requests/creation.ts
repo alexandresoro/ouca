@@ -178,7 +178,13 @@ export const creationInit = async (
       }),
       ages: results[11],
       sexes: results[12],
-      estimationsNombre: results[13],
+      estimationsNombre: _.map(results[13], (estimationDb) => {
+        const { non_compte, ...otherParams } = estimationDb;
+        return {
+          ...otherParams,
+          nonCompte: estimationDb.non_compte
+        };
+      }),
       estimationsDistance: results[14],
       comportements: results[15],
       milieux: results[16]
@@ -211,18 +217,25 @@ export const saveInventaire = async (
 
     const inventaireId: number = (inventaireResult as any).insertId;
 
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_INVENTAIRE_ASSOCIE,
-        inventaireId,
-        inventaireToSave.associesIds
-      ) +
+    if (inventaireToSave.associesIds.length > 0) {
+      await SqlConnection.query(
+        getSaveListOfEntitesQueries(
+          TABLE_INVENTAIRE_ASSOCIE,
+          inventaireId,
+          inventaireToSave.associesIds
+        )
+      );
+    }
+
+    if (inventaireToSave.meteosIds.length > 0) {
+      await SqlConnection.query(
         getSaveListOfEntitesQueries(
           TABLE_INVENTAIRE_METEO,
           inventaireId,
           inventaireToSave.meteosIds
         )
-    );
+      );
+    }
 
     return inventaireResult;
   }
@@ -250,18 +263,25 @@ export const saveDonnee = async (
 
     const donneeId: number = (donneeResult as any).insertId;
 
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_DONNEE_COMPORTEMENT,
-        donneeId,
-        donneeToSave.comportementsIds
-      ) +
+    if (donneeToSave.comportementsIds.length > 0) {
+      await SqlConnection.query(
+        getSaveListOfEntitesQueries(
+          TABLE_DONNEE_COMPORTEMENT,
+          donneeId,
+          donneeToSave.comportementsIds
+        )
+      );
+    }
+
+    if (donneeToSave.milieuxIds.length > 0) {
+      await SqlConnection.query(
         getSaveListOfEntitesQueries(
           TABLE_DONNEE_MILIEU,
           donneeId,
           donneeToSave.milieuxIds
         )
-    );
+      );
+    }
 
     return donneeResult;
   }

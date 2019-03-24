@@ -68,6 +68,7 @@ export const DB_SAVE_MAPPING = {
       "regroupement",
       "commentaire"
     ]),
+    inventaire_id: "inventaireId",
     espece_id: "especeId",
     age_id: "ageId",
     sexe_id: "sexeId",
