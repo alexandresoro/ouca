@@ -4,7 +4,9 @@ import { Meteo } from "./meteo.object";
 import { Observateur } from "./observateur.object";
 
 export interface Inventaire extends EntiteSimple {
-  associes: Observateur[];
+  associes?: Observateur[];
+
+  associesIds: number[];
 
   date: Date;
 
@@ -22,7 +24,9 @@ export interface Inventaire extends EntiteSimple {
 
   latitude: number;
 
-  meteos: Meteo[];
+  meteos?: Meteo[];
+
+  meteosIds: number[];
 
   observateur?: Observateur;
 

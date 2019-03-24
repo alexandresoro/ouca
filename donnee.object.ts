@@ -41,9 +41,13 @@ export interface Donnee extends EntiteSimple {
 
   regroupement: number;
 
-  comportements: Comportement[];
+  comportements?: Comportement[];
 
-  milieux: Milieu[];
+  comportementsIds: number[];
+
+  milieux?: Milieu[];
+
+  milieuxIds: number[];
 
   commentaire: string;
 }
