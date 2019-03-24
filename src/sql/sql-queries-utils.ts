@@ -81,7 +81,7 @@ export const DB_SAVE_MAPPING = {
 export const DB_SAVE_LISTS_MAPPING = {
   inventaire_associe: {
     mainId: "inventaire_id",
-    subId: "associe_id"
+    subId: "observateur_id"
   },
   inventaire_meteo: {
     mainId: "inventaire_id",
