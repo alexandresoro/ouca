@@ -91,8 +91,10 @@ export const creationInit = async (
         ])
     );
 
+    const lastDonnee: any = await buildDonneeFromFlatDonnee(results[0][0]);
+
     const creationPage: CreationPage = {
-      lastDonnee: results[0][0],
+      lastDonnee,
       numberOfDonnees: results[1][0].nbDonnees,
       nextRegroupement: results[2][0].regroupement,
       defaultObservateurId: getDefaultValueForConfigurationField(
@@ -309,12 +311,13 @@ export const getNextDonnee = async (
   if (isMockDatabaseMode) {
     return null;
   } else {
-    return SqlConnection.query(
-      getFindNextDonneeByCurrentDonneeIdQuery(158181)
-    ).then((results) => {
-      console.log("SQL Result:", results);
-      return Promise.resolve(results[0][0]);
-    });
+    const donneeResult = await SqlConnection.query(
+      getFindNextDonneeByCurrentDonneeIdQuery(
+        +httpParameters.queryParameters.id
+      )
+    );
+
+    return await buildDonneeFromFlatDonnee(donneeResult[0]);
   }
 };
 
@@ -325,51 +328,56 @@ export const getPreviousDonnee = async (
   if (isMockDatabaseMode) {
     return null;
   } else {
-    const result = await SqlConnection.query(
+    const donneeResult = await SqlConnection.query(
       getFindPreviousDonneeByCurrentDonneeIdQuery(
         +httpParameters.queryParameters.id
       )
     );
-    const flatDonnee = result[0];
 
-    const results = await SqlConnection.query(
-      getFindAssociesByInventaireIdQuery(flatDonnee.inventaireId) +
-        getFindMetosByInventaireIdQuery(flatDonnee.inventaireId) +
-        getFindComportementsByDonneeIdQuery(flatDonnee.id) +
-        getFindMilieuxByDonneeIdQuery(flatDonnee.id)
-    );
-    const inventaire: Inventaire = {
-      id: flatDonnee.inventaireId,
-      observateurId: flatDonnee.observateurId,
-      associesIds: results[0],
-      date: flatDonnee.date,
-      heure: flatDonnee.heure,
-      duree: flatDonnee.duree,
-      lieuditId: flatDonnee.lieuditId,
-      altitude: flatDonnee.altitude,
-      longitude: flatDonnee.longitude,
-      latitude: flatDonnee.latitude,
-      temperature: flatDonnee.temperature,
-      meteosIds: results[1]
-    };
-    const donnee: Donnee = {
-      id: flatDonnee.id,
-      inventaireId: flatDonnee.inventaireId,
-      inventaire,
-      especeId: flatDonnee.especeId,
-      sexeId: flatDonnee.sexeId,
-      ageId: flatDonnee.ageId,
-      estimationNombreId: flatDonnee.estimationNombreId,
-      nombre: flatDonnee.nombre,
-      estimationDistanceId: flatDonnee.estimationDistanceId,
-      distance: flatDonnee.distance,
-      regroupement: flatDonnee.regroupement,
-      comportementsIds: results[2],
-      milieuxIds: results[3],
-      commentaire: flatDonnee.commentaire
-    };
-    return donnee;
+    return await buildDonneeFromFlatDonnee(donneeResult[0]);
   }
+};
+
+const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
+  const listsResults = await SqlConnection.query(
+    getFindAssociesByInventaireIdQuery(flatDonnee.inventaireId) +
+      getFindMetosByInventaireIdQuery(flatDonnee.inventaireId) +
+      getFindComportementsByDonneeIdQuery(flatDonnee.id) +
+      getFindMilieuxByDonneeIdQuery(flatDonnee.id)
+  );
+
+  const inventaire: Inventaire = {
+    id: flatDonnee.inventaireId,
+    observateurId: flatDonnee.observateurId,
+    associesIds: listsResults[0],
+    date: flatDonnee.date,
+    heure: flatDonnee.heure,
+    duree: flatDonnee.duree,
+    lieuditId: flatDonnee.lieuditId,
+    altitude: flatDonnee.altitude,
+    longitude: flatDonnee.longitude,
+    latitude: flatDonnee.latitude,
+    temperature: flatDonnee.temperature,
+    meteosIds: listsResults[1]
+  };
+
+  const donnee: Donnee = {
+    id: flatDonnee.id,
+    inventaireId: flatDonnee.inventaireId,
+    inventaire,
+    especeId: flatDonnee.especeId,
+    sexeId: flatDonnee.sexeId,
+    ageId: flatDonnee.ageId,
+    estimationNombreId: flatDonnee.estimationNombreId,
+    nombre: flatDonnee.nombre,
+    estimationDistanceId: flatDonnee.estimationDistanceId,
+    distance: flatDonnee.distance,
+    regroupement: flatDonnee.regroupement,
+    comportementsIds: listsResults[2],
+    milieuxIds: listsResults[3],
+    commentaire: flatDonnee.commentaire
+  };
+  return donnee;
 };
 
 export const getNextRegroupement = async (

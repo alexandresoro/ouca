@@ -507,13 +507,23 @@ export function getFindLastRegroupementQuery(): string {
 }
 
 export function getFindLastDonneeQuery(): string {
-  return getQuery("SELECT * FROM donnee d ORDER BY id DESC LIMIT 0,1");
+  return getQuery(getFindDonneeBaseQuery() + " ORDER BY d.id DESC LIMIT 0,1");
 }
 
 export function getFindPreviousDonneeByCurrentDonneeIdQuery(
   currentDonneeId: number
 ): string {
-  const fields =
+  return getQuery(
+    getFindDonneeBaseQuery() +
+      " AND d.id<" +
+      currentDonneeId +
+      " ORDER BY d.id DESC LIMIT 0,1"
+  );
+}
+
+function getFindDonneeBaseQuery() {
+  return (
+    "SELECT " +
     "d.id," +
     "d.inventaire_id as inventaireId," +
     "i.observateur_id as observateurId," +
@@ -533,21 +543,17 @@ export function getFindPreviousDonneeByCurrentDonneeIdQuery(
     "d.estimation_distance_id as estimationDistanceId," +
     "d.distance," +
     "d.commentaire," +
-    "d.regroupement";
-  return getQuery(
-    "SELECT " +
-      fields +
-      " FROM donnee d, inventaire i WHERE d.inventaire_id=i.id AND d.id<" +
-      currentDonneeId +
-      " ORDER BY d.id DESC LIMIT 0,1"
+    "d.regroupement" +
+    " FROM donnee d, inventaire i" +
+    " WHERE d.inventaire_id=i.id"
   );
 }
-
 export function getFindNextDonneeByCurrentDonneeIdQuery(
   currentDonneeId: number
 ): string {
   return getQuery(
-    "SELECT * FROM donnee d WHERE d.id>" +
+    getFindDonneeBaseQuery() +
+      " AND d.id>" +
       currentDonneeId +
       " ORDER BY id ASC LIMIT 0,1"
   );
