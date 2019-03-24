@@ -22,10 +22,12 @@
   },
   "dependencies": {
     "lodash": "*",
-    "mariadb": "*"
+    "mariadb": "*",
+    "moment": "*"
   },
   "devDependencies": {
     "@types/lodash": "*",
+    "@types/moment": "*",
     "@types/mysql": "*",
     "@types/node": "10",
     "basenaturaliste-model": "file:../basenaturaliste-model",
