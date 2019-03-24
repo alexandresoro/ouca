@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import { COLUMN_ESPECE_ID } from "../utils/constants";
+import { toCamel } from "../utils/utils";
 
 const createKeyValueMapWithSameName = (
   names: string | string[]
@@ -94,6 +95,22 @@ export const DB_SAVE_LISTS_MAPPING = {
     mainId: "donnee_id",
     subId: "milieu_id"
   }
+};
+
+export const DB_CONFIGURATION_MAPPING = {
+  application_name: toCamel("application_name"),
+  observateur: "defaultObservateur",
+  departement: "defaultDepartement",
+  age: "defaultAge",
+  sexe: "defaultSexe",
+  estimation_nombre: "defaultEstimationNombre",
+  nombre: "defaultNombre",
+  are_associes_displayed: toCamel("are_associes_displayed"),
+  is_meteo_displayed: toCamel("is_meteo_displayed"),
+  is_distance_displayed: toCamel("is_distance_displayed"),
+  is_regroupement_displayed: toCamel("is_regroupement_displayed"),
+  mysql_path: "mySqlPath",
+  mysqldump_path: "mySqlDumpPath"
 };
 
 function getQuery(query: string): string {
@@ -433,6 +450,49 @@ export function getSaveManyToManyEntityQuery(
 
   return getQuery(query);
 }
+
+export const updateAllInTableQuery = (
+  tableName: string,
+  setColumn: string,
+  whereColumn: string,
+  whereSetMappingValues: { [key: string]: string | number }
+): string => {
+  const queries: string[] = [];
+  _.forEach(whereSetMappingValues, (setValue, whereValue) => {
+    queries.push(
+      updateInTableQuery(
+        tableName,
+        setColumn,
+        setValue,
+        whereColumn,
+        whereValue
+      )
+    );
+  });
+  return queries.join("");
+};
+
+export const updateInTableQuery = (
+  tableName: string,
+  setColumn: string,
+  setValue: string | number,
+  whereColumn: string,
+  whereValue: string
+): string => {
+  const query: string =
+    "UPDATE " +
+    tableName +
+    " SET " +
+    setColumn +
+    "='" +
+    setValue +
+    "' WHERE " +
+    whereColumn +
+    "='" +
+    whereValue +
+    "'";
+  return getQuery(query);
+};
 
 export function getDeleteEntityByIdQuery(
   tableName: string,
