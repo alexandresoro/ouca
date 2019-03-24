@@ -58,7 +58,8 @@ export const DB_SAVE_MAPPING = {
       "temperature"
     ]),
     observateur_id: "observateurId",
-    lieudit_id: "lieuditId"
+    lieudit_id: "lieuditId",
+    date_creation: "dateCreation"
   },
   donnee: {
     ...createKeyValueMapWithSameName([
@@ -71,7 +72,8 @@ export const DB_SAVE_MAPPING = {
     age_id: "ageId",
     sexe_id: "sexeId",
     estimation_nombre_id: "estimationNombreId",
-    estimation_distance_id: "estimationDistanceId"
+    estimation_distance_id: "estimationDistanceId",
+    date_creation: "dateCreation"
   },
   configuration: createKeyValueMapWithSameName(["libelle", "value"])
 };

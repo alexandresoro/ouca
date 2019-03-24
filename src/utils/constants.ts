@@ -16,6 +16,8 @@ export const TABLE_ESTIMATION_NOMBRE: string = "estimation_nombre";
 export const TABLE_ESTIMATION_DISTANCE: string = "estimation_distance";
 export const TABLE_COMPORTEMENT: string = "comportement";
 export const TABLE_MILIEU: string = "milieu";
+export const TABLE_INVENTAIRE: string = "inventaire";
+export const TABLE_DONNEE: string = "donnee";
 
 export const COLUMN_CODE: string = "code";
 export const COLUMN_ESPECE_ID: string = "espece_id";

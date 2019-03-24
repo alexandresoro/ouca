@@ -22,6 +22,7 @@ import {
   getFindPreviousDonneeByCurrentDonneeIdQuery,
   getSaveEntityQuery
 } from "../sql/sql-queries-utils.js";
+import { TABLE_DONNEE, TABLE_INVENTAIRE } from "../utils/constants.js";
 
 const getDefaultValueForConfigurationField = (
   configuration: any[],
@@ -168,32 +169,41 @@ export const creationInit = async (
   }
 };
 
-export const creationInventaire = async (
+export const saveInventaire = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
-): Promise<Inventaire> => {
+): Promise<any> => {
   if (isMockDatabaseMode) {
     return creationPageCreateInventaireMock as any;
   } else {
-    const results = await SqlConnection.query(
-      getSaveEntityQuery("inventaire", null, DB_SAVE_MAPPING.inventaire)
+    const result = await SqlConnection.query(
+      getSaveEntityQuery(
+        TABLE_INVENTAIRE,
+        httpParameters.postData,
+        DB_SAVE_MAPPING.inventaire
+      )
     );
-    console.log("SQL Result:", results);
-    return results[0];
+    console.log(result);
+    return result;
   }
 };
 
-export const creationDonnee = async (
+export const saveDonnee = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
-): Promise<Donnee> => {
+): Promise<any> => {
   if (isMockDatabaseMode) {
     return creationPageCreateDonneeMock as any;
   } else {
-    const results = await SqlConnection.query(
-      getSaveEntityQuery("donnee", null, DB_SAVE_MAPPING.donnee)
+    const result = await SqlConnection.query(
+      getSaveEntityQuery(
+        TABLE_DONNEE,
+        httpParameters.postData,
+        DB_SAVE_MAPPING.donnee
+      )
     );
-    return results[0];
+    console.log(result);
+    return result;
   }
 };
 

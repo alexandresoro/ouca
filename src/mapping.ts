@@ -4,13 +4,13 @@ import {
   configurationUpdate
 } from "./requests/configuration";
 import {
-  creationDonnee,
   creationInit,
-  creationInventaire,
   deleteDonnee,
   getNextDonnee,
   getNextRegroupement,
-  getPreviousDonnee
+  getPreviousDonnee,
+  saveDonnee,
+  saveInventaire
 } from "./requests/creation";
 import {
   deleteAge,
@@ -61,8 +61,8 @@ export const REQUEST_MAPPING: {
   ) => any;
 } = {
   "/api/creation/init": creationInit,
-  "/api/inventaire/create": creationInventaire,
-  "/api/donnee/create": creationDonnee,
+  "/api/inventaire/save": saveInventaire,
+  "/api/donnee/save": saveDonnee,
   "/api/donnee/delete": deleteDonnee,
   "/api/donnee/next_donnee": getNextDonnee,
   "/api/donnee/previous_donnee": getPreviousDonnee,
