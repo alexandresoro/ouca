@@ -99,12 +99,12 @@ export const DB_SAVE_LISTS_MAPPING = {
 
 export const DB_CONFIGURATION_MAPPING = {
   application_name: toCamel("application_name"),
-  observateur: "defaultObservateur",
-  departement: "defaultDepartement",
-  age: "defaultAge",
-  sexe: "defaultSexe",
-  estimation_nombre: "defaultEstimationNombre",
-  nombre: "defaultNombre",
+  default_observateur_id: "defaultObservateur",
+  default_departement_id: "defaultDepartement",
+  default_age_id: "defaultAge",
+  default_sexe_id: "defaultSexe",
+  default_estimation_nombre_id: "defaultEstimationNombre",
+  default_nombre: "defaultNombre",
   are_associes_displayed: toCamel("are_associes_displayed"),
   is_meteo_displayed: toCamel("is_meteo_displayed"),
   is_distance_displayed: toCamel("is_distance_displayed"),

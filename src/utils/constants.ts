@@ -32,3 +32,14 @@ export const COLUMN_NOM: string = "nom";
 
 export const ORDER_ASC: string = "ASC";
 export const ORDER_DESC: string = "DESC";
+
+export const KEY_DEFAULT_OBSERVATEUR_ID = "default_observateur_id";
+export const KEY_DEFAULT_DEPARTEMENT_ID = "default_departement_id";
+export const KEY_DEFAULT_AGE_ID = "default_age_id";
+export const KEY_DEFAULT_SEXE_ID = "default_sexe_id";
+export const KEY_DEFAULT_ESTIMATION_NOMBRE_ID = "default_estimation_nombre_id";
+export const KEY_DEFAULT_NOMBRE = "default_nombre";
+export const KEY_ARE_ASSOCIES_DISPLAYED = "are_associes_displayed";
+export const KEY_IS_METEO_DISPLAYED = "is_meteo_displayed";
+export const KEY_IS_DISTANCE_DISPLAYED = "is_distance_displayed";
+export const KEY_IS_REGROUPEMENT_DISPLAYED = "is_regroupement_displayed";

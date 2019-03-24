@@ -25,6 +25,16 @@ import {
   getSaveListOfEntitesQueries
 } from "../sql/sql-queries-utils.js";
 import {
+  KEY_ARE_ASSOCIES_DISPLAYED,
+  KEY_DEFAULT_AGE_ID,
+  KEY_DEFAULT_DEPARTEMENT_ID,
+  KEY_DEFAULT_ESTIMATION_NOMBRE_ID,
+  KEY_DEFAULT_NOMBRE,
+  KEY_DEFAULT_OBSERVATEUR_ID,
+  KEY_DEFAULT_SEXE_ID,
+  KEY_IS_DISTANCE_DISPLAYED,
+  KEY_IS_METEO_DISPLAYED,
+  KEY_IS_REGROUPEMENT_DISPLAYED,
   TABLE_DONNEE,
   TABLE_DONNEE_COMPORTEMENT,
   TABLE_DONNEE_MILIEU,
@@ -87,58 +97,58 @@ export const creationInit = async (
       nextRegroupement: results[2][0].regroupement,
       defaultObservateurId: getDefaultValueForConfigurationField(
         results[3],
-        "observateur",
+        KEY_DEFAULT_OBSERVATEUR_ID,
         false,
         true
       ),
       defaultDepartementId: getDefaultValueForConfigurationField(
         results[3],
-        "departement",
+        KEY_DEFAULT_DEPARTEMENT_ID,
         false,
         true
       ),
       defaultEstimationNombreId: getDefaultValueForConfigurationField(
         results[3],
-        "estimation_nombre",
+        KEY_DEFAULT_ESTIMATION_NOMBRE_ID,
         false,
         true
       ),
       defaultNombre: getDefaultValueForConfigurationField(
         results[3],
-        "nombre",
+        KEY_DEFAULT_NOMBRE,
         false,
         true
       ),
       defaultSexeId: getDefaultValueForConfigurationField(
         results[3],
-        "sexe",
+        KEY_DEFAULT_SEXE_ID,
         false,
         true
       ),
       defaultAgeId: getDefaultValueForConfigurationField(
         results[3],
-        "age",
+        KEY_DEFAULT_AGE_ID,
         false,
         true
       ),
       areAssociesDisplayed: getDefaultValueForConfigurationField(
         results[3],
-        "are_associes_displayed",
+        KEY_ARE_ASSOCIES_DISPLAYED,
         true
       ),
       isMeteoDisplayed: getDefaultValueForConfigurationField(
         results[3],
-        "is_meteo_displayed",
+        KEY_IS_METEO_DISPLAYED,
         true
       ),
       isDistanceDisplayed: getDefaultValueForConfigurationField(
         results[3],
-        "is_distance_displayed",
+        KEY_IS_DISTANCE_DISPLAYED,
         true
       ),
       isRegroupementDisplayed: getDefaultValueForConfigurationField(
         results[3],
-        "is_regroupement_displayed",
+        KEY_IS_REGROUPEMENT_DISPLAYED,
         true
       ),
       observateurs: results[4],
