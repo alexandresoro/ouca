@@ -19,6 +19,8 @@ export const TABLE_MILIEU: string = "milieu";
 export const TABLE_INVENTAIRE: string = "inventaire";
 export const TABLE_DONNEE: string = "donnee";
 
+export const TABLE_CONFIGURATION: string = "configuration";
+
 export const COLUMN_CODE: string = "code";
 export const COLUMN_ESPECE_ID: string = "espece_id";
 export const COLUMN_LIBELLE: string = "libelle";
