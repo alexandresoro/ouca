@@ -119,5 +119,12 @@ const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
 };
 
 const createDatabaseConnection = async (): Promise<mysql.Connection> => {
-  return mariadb.createConnection(getSqlConnectionConfiguration());
+  const connection: mysql.Connection = await mariadb.createConnection(
+    getSqlConnectionConfiguration()
+  );
+  console.log(
+    "Connected to the database: ",
+    (connection as any).serverVersion()
+  );
+  return connection;
 };
