@@ -543,7 +543,16 @@ export const getEstimationsNombre = async (
         getFindNumberOfDonneesByEstimationNombreIdQuery()
     );
 
-    const estimations: EstimationNombre[] = results[0];
+    const estimations: EstimationNombre[] = _.map(
+      results[0],
+      (estimationDb) => {
+        const { non_compte, ...otherParams } = estimationDb;
+        return {
+          nonCompte: non_compte,
+          ...otherParams
+        };
+      }
+    );
     const nbDonneesByEstimation: any[] = results[1];
     _.forEach(estimations, (estimation: EstimationNombre) => {
       getNbByEntityId(estimation, nbDonneesByEstimation, NB_DONNEES);

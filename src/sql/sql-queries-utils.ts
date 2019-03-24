@@ -1,4 +1,3 @@
-import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
 import * as _ from "lodash";
 import { COLUMN_ESPECE_ID } from "../utils/constants";
 
@@ -40,7 +39,7 @@ export const DB_SAVE_MAPPING = {
   age: createKeyValueMapWithSameName("libelle"),
   estimationNombre: {
     ...createKeyValueMapWithSameName("libelle"),
-    nom_compte: "nonCompte"
+    non_compte: "nonCompte"
   },
   estimationDistance: {
     ...createKeyValueMapWithSameName("libelle")
@@ -332,7 +331,7 @@ export function getFindNumberOfDonneesByInventaireEntityIdQuery(
 
 export function getSaveEntityQuery(
   tableName: string,
-  entityToSave: EntiteSimple,
+  entityToSave: any,
   mapping: { [column: string]: string }
 ): string {
   let query: string;
@@ -344,7 +343,14 @@ export function getSaveEntityQuery(
 
     const valuesArray = [];
     _.forEach(keys, (key: string) => {
-      valuesArray.push("'" + entityToSave[mapping[key]] + "'");
+      // If the value is 'null'
+      if (_.isNull(entityToSave[mapping[key]])) {
+        valuesArray.push("null");
+      } else if (_.isBoolean(entityToSave[mapping[key]])) {
+        valuesArray.push(entityToSave[mapping[key]]);
+      } else {
+        valuesArray.push("'" + entityToSave[mapping[key]] + "'");
+      }
     });
     const values = valuesArray.join(",");
 
