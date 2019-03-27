@@ -276,13 +276,12 @@ export const deleteDonnee = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
   if (isMockDatabaseMode) {
-    return null;
+    return { affectedRows: 1, insertId: 0, warningStatus: 0 };
   } else {
-    const results = await SqlConnection.query(
-      getDeleteEntityByIdQuery("donnee", +httpParameters.queryParameters.id)
+    const result = await SqlConnection.query(
+      getDeleteEntityByIdQuery(TABLE_DONNEE, +httpParameters.queryParameters.id)
     );
-    console.log("SQL Result:", results);
-    return results[0];
+    return result;
   }
 };
 
