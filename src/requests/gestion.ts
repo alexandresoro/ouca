@@ -73,6 +73,12 @@ import {
   TABLE_OBSERVATEUR,
   TABLE_SEXE
 } from "../utils/constants.js";
+import {
+  mapCommunes,
+  mapEspeces,
+  mapEstimationsNombre,
+  mapLieuxdits
+} from "../utils/mapping-utils.js";
 
 export const getObservateurs = async (
   isMockDatabaseMode: boolean,
@@ -173,13 +179,7 @@ export const getCommunes = async (
         getFindNumberOfDonneesByCommuneIdQuery()
     );
 
-    const communes: Commune[] = _.map(results[0], (classeDb) => {
-      const { departement_id, ...otherParams } = classeDb;
-      return {
-        ...otherParams,
-        departementId: classeDb.departement_id
-      };
-    });
+    const communes: Commune[] = mapCommunes(results[0]);
 
     const departements: Departement[] = results[1];
     const nbLieuxditsByCommune: any[] = results[2];
@@ -237,21 +237,9 @@ export const getLieuxdits = async (
         getFindAllQuery(TABLE_DEPARTEMENT) +
         getFindNumberOfDonneesByLieuditIdQuery()
     );
-    const lieuxdits: Lieudit[] = _.map(results[0], (lieuditDb) => {
-      const { commune_id, ...otherParams } = lieuditDb;
-      return {
-        ...otherParams,
-        communeId: lieuditDb.commune_id
-      };
-    });
+    const lieuxdits: Lieudit[] = mapLieuxdits(results[0]);
 
-    const communes: Commune[] = _.map(results[1], (communeId) => {
-      const { departement_id, ...otherParams } = communeId;
-      return {
-        ...otherParams,
-        departementId: communeId.departement_id
-      };
-    });
+    const communes: Commune[] = mapCommunes(results[1]);
     const departements: Departement[] = results[2];
     const nbDonneesByLieudit: any[] = results[3];
 
@@ -394,15 +382,7 @@ export const getEspeces = async (
         getFindAllQuery(TABLE_CLASSE) +
         getFindNumberOfDonneesByEspeceIdQuery()
     );
-    const especes: Espece[] = _.map(results[0], (especeDb) => {
-      const { classe_id, nom_francais, nom_latin, ...otherParams } = especeDb;
-      return {
-        ...otherParams,
-        classeId: especeDb.classe_id,
-        nomFrancais: especeDb.nom_francais,
-        nomLatin: especeDb.nom_latin
-      };
-    });
+    const especes: Espece[] = mapEspeces(results[0]);
 
     const classes: Classe[] = results[1];
     const nbDonneesByEspece: any[] = results[2];
@@ -543,16 +523,7 @@ export const getEstimationsNombre = async (
         getFindNumberOfDonneesByEstimationNombreIdQuery()
     );
 
-    const estimations: EstimationNombre[] = _.map(
-      results[0],
-      (estimationDb) => {
-        const { non_compte, ...otherParams } = estimationDb;
-        return {
-          nonCompte: non_compte,
-          ...otherParams
-        };
-      }
-    );
+    const estimations: EstimationNombre[] = mapEstimationsNombre(results[0]);
     const nbDonneesByEstimation: any[] = results[1];
     _.forEach(estimations, (estimation: EstimationNombre) => {
       getNbByEntityId(estimation, nbDonneesByEstimation, NB_DONNEES);

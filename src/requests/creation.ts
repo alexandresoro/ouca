@@ -42,6 +42,12 @@ import {
   TABLE_INVENTAIRE_ASSOCIE,
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants.js";
+import {
+  mapCommunes,
+  mapEspeces,
+  mapEstimationsNombre,
+  mapLieuxdits
+} from "../utils/mapping-utils.js";
 
 const getDefaultValueForConfigurationField = (
   configuration: any[],
@@ -155,38 +161,14 @@ export const creationInit = async (
       ),
       observateurs: results[4],
       departements: results[5],
-      communes: _.map(results[6], (communeDb) => {
-        const { departement_id, ...otherParams } = communeDb;
-        return {
-          ...otherParams,
-          departementId: communeDb.departement_id
-        };
-      }),
-      lieudits: _.map(results[7], (lieuDitDb) => {
-        const { commune_id, ...otherParams } = lieuDitDb;
-        return {
-          ...otherParams,
-          communeId: lieuDitDb.commune_id
-        };
-      }),
+      communes: mapCommunes(results[6]),
+      lieudits: mapLieuxdits(results[7]),
       meteos: results[8],
       classes: results[9],
-      especes: _.map(results[10], (especeDb) => {
-        const { classe_id, ...otherParams } = especeDb;
-        return {
-          ...otherParams,
-          classeId: especeDb.classe_id
-        };
-      }),
+      especes: mapEspeces(results[10]),
       ages: results[11],
       sexes: results[12],
-      estimationsNombre: _.map(results[13], (estimationDb) => {
-        const { non_compte, ...otherParams } = estimationDb;
-        return {
-          ...otherParams,
-          nonCompte: estimationDb.non_compte
-        };
-      }),
+      estimationsNombre: mapEstimationsNombre(results[13]),
       estimationsDistance: results[14],
       comportements: results[15],
       milieux: results[16]
