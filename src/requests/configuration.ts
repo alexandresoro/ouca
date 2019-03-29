@@ -155,7 +155,6 @@ export const configurationUpdate = async (
         whereSetValueMapping
       )
     );
-    console.log(result);
     return result as any;
   }
 };

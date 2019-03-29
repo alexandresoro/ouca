@@ -109,7 +109,7 @@ export const creationInit = async (
     const creationPage: CreationPage = {
       lastDonnee,
       numberOfDonnees: results[1][0].nbDonnees,
-      nextRegroupement: results[2][0].regroupement,
+      nextRegroupement: results[2][0].regroupement + 1,
       defaultObservateurId: getDefaultValueForConfigurationField(
         results[3],
         KEY_DEFAULT_OBSERVATEUR_ID,
