@@ -343,7 +343,7 @@ export function getFindNumberOfDonneesByDoneeeEntityIdQuery(
   let query: string =
     "SELECT " + entityIdAttribute + " as id, count(*) as nbDonnees FROM donnee";
   if (!!id) {
-    query = query + " AND " + entityIdAttribute + "=" + id;
+    query = query + " WHERE " + entityIdAttribute + "=" + id;
   } else {
     query = query + " GROUP BY " + entityIdAttribute;
   }
@@ -403,7 +403,14 @@ export function getSaveEntityQuery(
   } else {
     const updatesArray = [];
     _.forEach(keys, (key: string) => {
-      updatesArray.push(key + "='" + entityToSave[mapping[key]] + "'");
+      // If the value is 'null'
+      if (_.isNull(entityToSave[mapping[key]])) {
+        updatesArray.push(key + "=null");
+      } else if (_.isBoolean(entityToSave[mapping[key]])) {
+        updatesArray.push(key + "=" + entityToSave[mapping[key]]);
+      } else {
+        updatesArray.push(key + "='" + entityToSave[mapping[key]] + "'");
+      }
     });
     const updates = updatesArray.join(",");
 
@@ -573,7 +580,7 @@ export function getFindAssociesByInventaireIdQuery(
   inventaireId: number
 ): string {
   return getQuery(
-    "SELECT distinct observateur_id as comportementId FROM inventaire_associe WHERE inventaire_id=" +
+    "SELECT distinct observateur_id as associeId FROM inventaire_associe WHERE inventaire_id=" +
       inventaireId
   );
 }

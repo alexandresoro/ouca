@@ -19,6 +19,7 @@ import {
   getFindMetosByInventaireIdQuery,
   getFindMilieuxByDonneeIdQuery,
   getFindNextDonneeByCurrentDonneeIdQuery,
+  getFindNumberOfDonneesByDoneeeEntityIdQuery,
   getFindNumberOfDonneesQuery,
   getFindPreviousDonneeByCurrentDonneeIdQuery,
   getSaveEntityQuery,
@@ -43,10 +44,14 @@ import {
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants.js";
 import {
+  mapAssociesIds,
   mapCommunes,
+  mapComportementsIds,
   mapEspeces,
   mapEstimationsNombre,
-  mapLieuxdits
+  mapLieuxdits,
+  mapMeteosIds,
+  mapMilieuxIds
 } from "../utils/mapping-utils.js";
 
 const getDefaultValueForConfigurationField = (
@@ -324,13 +329,17 @@ const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
     getFindAssociesByInventaireIdQuery(flatDonnee.inventaireId) +
       getFindMetosByInventaireIdQuery(flatDonnee.inventaireId) +
       getFindComportementsByDonneeIdQuery(flatDonnee.id) +
-      getFindMilieuxByDonneeIdQuery(flatDonnee.id)
+      getFindMilieuxByDonneeIdQuery(flatDonnee.id) +
+      getFindNumberOfDonneesByDoneeeEntityIdQuery(
+        "inventaire_id",
+        flatDonnee.inventaireId
+      )
   );
 
   const inventaire: Inventaire = {
     id: flatDonnee.inventaireId,
     observateurId: flatDonnee.observateurId,
-    associesIds: listsResults[0],
+    associesIds: mapAssociesIds(listsResults[0]),
     date: flatDonnee.date,
     heure: flatDonnee.heure,
     duree: flatDonnee.duree,
@@ -339,7 +348,8 @@ const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
     longitude: flatDonnee.longitude,
     latitude: flatDonnee.latitude,
     temperature: flatDonnee.temperature,
-    meteosIds: listsResults[1]
+    meteosIds: mapMeteosIds(listsResults[1]),
+    nbDonnees: listsResults[4][0].nbDonnees
   };
 
   const donnee: Donnee = {
@@ -354,8 +364,8 @@ const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
     estimationDistanceId: flatDonnee.estimationDistanceId,
     distance: flatDonnee.distance,
     regroupement: flatDonnee.regroupement,
-    comportementsIds: listsResults[2],
-    milieuxIds: listsResults[3],
+    comportementsIds: mapComportementsIds(listsResults[2]),
+    milieuxIds: mapMilieuxIds(listsResults[3]),
     commentaire: flatDonnee.commentaire
   };
   return donnee;
