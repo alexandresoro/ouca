@@ -16,6 +16,7 @@ import {
   getFindAssociesByInventaireIdQuery,
   getFindComportementsByDonneeIdQuery,
   getFindDonneeByIdQuery,
+  getFindDonneeIndexByIdQuery,
   getFindLastDonneeQuery,
   getFindLastRegroupementQuery,
   getFindMetosByInventaireIdQuery,
@@ -372,51 +373,80 @@ export const getPreviousDonnee = async (
   }
 };
 
+export const getDonneeByIdWithContext = async (
+  isMockDatabaseMode: boolean,
+  httpParameters: HttpParameters
+): Promise<any> => {
+  if (isMockDatabaseMode) {
+    return null;
+  } else {
+    const id: number = +httpParameters.queryParameters.id;
+    const results = await SqlConnection.query(
+      getFindDonneeByIdQuery(id) +
+        getFindPreviousDonneeByCurrentDonneeIdQuery(id) +
+        getFindNextDonneeByCurrentDonneeIdQuery(id) +
+        getFindDonneeIndexByIdQuery(id)
+    );
+
+    return {
+      donnee: await buildDonneeFromFlatDonnee(results[0][0]),
+      previousDonnee: await buildDonneeFromFlatDonnee(results[1][0]),
+      nextDonnee: await buildDonneeFromFlatDonnee(results[2][0]),
+      indexDonnee:
+        !!results[3] && !!results[3][0] ? results[3][0].nbDonnees : null
+    };
+  }
+};
+
 const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
-  const listsResults = await SqlConnection.query(
-    getFindAssociesByInventaireIdQuery(flatDonnee.inventaireId) +
-      getFindMetosByInventaireIdQuery(flatDonnee.inventaireId) +
-      getFindComportementsByDonneeIdQuery(flatDonnee.id) +
-      getFindMilieuxByDonneeIdQuery(flatDonnee.id) +
-      getFindNumberOfDonneesByDoneeeEntityIdQuery(
-        "inventaire_id",
-        flatDonnee.inventaireId
-      )
-  );
+  if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
+    const listsResults = await SqlConnection.query(
+      getFindAssociesByInventaireIdQuery(flatDonnee.inventaireId) +
+        getFindMetosByInventaireIdQuery(flatDonnee.inventaireId) +
+        getFindComportementsByDonneeIdQuery(flatDonnee.id) +
+        getFindMilieuxByDonneeIdQuery(flatDonnee.id) +
+        getFindNumberOfDonneesByDoneeeEntityIdQuery(
+          "inventaire_id",
+          flatDonnee.inventaireId
+        )
+    );
 
-  const inventaire: Inventaire = {
-    id: flatDonnee.inventaireId,
-    observateurId: flatDonnee.observateurId,
-    associesIds: mapAssociesIds(listsResults[0]),
-    date: flatDonnee.date,
-    heure: flatDonnee.heure,
-    duree: flatDonnee.duree,
-    lieuditId: flatDonnee.lieuditId,
-    altitude: flatDonnee.altitude,
-    longitude: flatDonnee.longitude,
-    latitude: flatDonnee.latitude,
-    temperature: flatDonnee.temperature,
-    meteosIds: mapMeteosIds(listsResults[1]),
-    nbDonnees: listsResults[4][0].nbDonnees
-  };
+    const inventaire: Inventaire = {
+      id: flatDonnee.inventaireId,
+      observateurId: flatDonnee.observateurId,
+      associesIds: mapAssociesIds(listsResults[0]),
+      date: flatDonnee.date,
+      heure: flatDonnee.heure,
+      duree: flatDonnee.duree,
+      lieuditId: flatDonnee.lieuditId,
+      altitude: flatDonnee.altitude,
+      longitude: flatDonnee.longitude,
+      latitude: flatDonnee.latitude,
+      temperature: flatDonnee.temperature,
+      meteosIds: mapMeteosIds(listsResults[1]),
+      nbDonnees: listsResults[4][0].nbDonnees
+    };
 
-  const donnee: Donnee = {
-    id: flatDonnee.id,
-    inventaireId: flatDonnee.inventaireId,
-    inventaire,
-    especeId: flatDonnee.especeId,
-    sexeId: flatDonnee.sexeId,
-    ageId: flatDonnee.ageId,
-    estimationNombreId: flatDonnee.estimationNombreId,
-    nombre: flatDonnee.nombre,
-    estimationDistanceId: flatDonnee.estimationDistanceId,
-    distance: flatDonnee.distance,
-    regroupement: flatDonnee.regroupement,
-    comportementsIds: mapComportementsIds(listsResults[2]),
-    milieuxIds: mapMilieuxIds(listsResults[3]),
-    commentaire: flatDonnee.commentaire
-  };
-  return donnee;
+    const donnee: Donnee = {
+      id: flatDonnee.id,
+      inventaireId: flatDonnee.inventaireId,
+      inventaire,
+      especeId: flatDonnee.especeId,
+      sexeId: flatDonnee.sexeId,
+      ageId: flatDonnee.ageId,
+      estimationNombreId: flatDonnee.estimationNombreId,
+      nombre: flatDonnee.nombre,
+      estimationDistanceId: flatDonnee.estimationDistanceId,
+      distance: flatDonnee.distance,
+      regroupement: flatDonnee.regroupement,
+      comportementsIds: mapComportementsIds(listsResults[2]),
+      milieuxIds: mapMilieuxIds(listsResults[3]),
+      commentaire: flatDonnee.commentaire
+    };
+    return donnee;
+  } else {
+    return null;
+  }
 };
 
 export const getNextRegroupement = async (

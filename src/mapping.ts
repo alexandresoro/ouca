@@ -6,6 +6,7 @@ import {
 import {
   creationInit,
   deleteDonnee,
+  getDonneeByIdWithContext,
   getNextDonnee,
   getNextRegroupement,
   getPreviousDonnee,
@@ -67,6 +68,7 @@ export const REQUEST_MAPPING: {
   "/api/donnee/next_donnee": getNextDonnee,
   "/api/donnee/previous_donnee": getPreviousDonnee,
   "/api/donnee/next_regroupement": getNextRegroupement,
+  "/api/donnee/find_with_context": getDonneeByIdWithContext,
   "/api/observateur/all": getObservateurs,
   "/api/observateur/save": saveObservateur,
   "/api/observateur/delete": deleteObservateur,

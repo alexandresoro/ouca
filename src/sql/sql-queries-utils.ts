@@ -537,6 +537,10 @@ export function getFindDonneeByIdQuery(id: number): string {
   return getQuery(getFindDonneeBaseQuery() + " AND d.id=" + id);
 }
 
+export function getFindDonneeIndexByIdQuery(id: number): string {
+  return getQuery("SELECT count(*) as nbDonnees FROM donnee WHERE id<=" + id);
+}
+
 export function getFindPreviousDonneeByCurrentDonneeIdQuery(
   currentDonneeId: number
 ): string {
