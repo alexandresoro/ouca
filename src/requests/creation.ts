@@ -11,6 +11,7 @@ import { SqlConnection } from "../sql/sql-connection.js";
 import {
   DB_SAVE_MAPPING,
   getAllFromTablesQuery,
+  getDeleteEntityByAttributeQuery,
   getDeleteEntityByIdQuery,
   getFindAssociesByInventaireIdQuery,
   getFindComportementsByDonneeIdQuery,
@@ -192,6 +193,23 @@ export const saveInventaire = async (
   } else {
     const inventaireToSave: Inventaire = httpParameters.postData;
     const { date, ...otherParams } = inventaireToSave;
+
+    // It is an update we delete the current associes and meteos to insert later the updated ones
+    if (!!inventaireToSave.id) {
+      await SqlConnection.query(
+        getDeleteEntityByAttributeQuery(
+          TABLE_INVENTAIRE_ASSOCIE,
+          "inventaire_id",
+          inventaireToSave.id
+        ) +
+          getDeleteEntityByAttributeQuery(
+            TABLE_INVENTAIRE_METEO,
+            "inventaire_id",
+            inventaireToSave.id
+          )
+      );
+    }
+
     const inventaireResult = await SqlConnection.query(
       getSaveEntityQuery(
         TABLE_INVENTAIRE,
@@ -204,7 +222,10 @@ export const saveInventaire = async (
       )
     );
 
-    const inventaireId: number = (inventaireResult as any).insertId;
+    // If it is an update we take the existing ID else we take the inserted ID
+    const inventaireId: number = !!inventaireToSave.id
+      ? inventaireToSave.id
+      : (inventaireResult as any).insertId;
 
     if (inventaireToSave.associesIds.length > 0) {
       await SqlConnection.query(
@@ -239,6 +260,22 @@ export const saveDonnee = async (
   } else {
     const donneeToSave: Donnee = httpParameters.postData;
 
+    // It is an update we delete the current comportements and milieux to insert later the updated ones
+    if (!!donneeToSave.id) {
+      await SqlConnection.query(
+        getDeleteEntityByAttributeQuery(
+          TABLE_DONNEE_COMPORTEMENT,
+          "donnee_id",
+          donneeToSave.id
+        ) +
+          getDeleteEntityByAttributeQuery(
+            TABLE_DONNEE_MILIEU,
+            "donnee_id",
+            donneeToSave.id
+          )
+      );
+    }
+
     const donneeResult = await SqlConnection.query(
       getSaveEntityQuery(
         TABLE_DONNEE,
@@ -250,7 +287,10 @@ export const saveDonnee = async (
       )
     );
 
-    const donneeId: number = (donneeResult as any).insertId;
+    // If it is an update we take the existing ID else we take the inserted ID
+    const donneeId: number = !!donneeToSave.id
+      ? donneeToSave.id
+      : (donneeResult as any).insertId;
 
     if (donneeToSave.comportementsIds.length > 0) {
       await SqlConnection.query(

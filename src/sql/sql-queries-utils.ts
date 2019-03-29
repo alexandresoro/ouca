@@ -509,6 +509,22 @@ export function getDeleteEntityByIdQuery(
   return getQuery("DELETE FROM " + tableName + " WHERE id=" + id);
 }
 
+export function getDeleteEntityByAttributeQuery(
+  tableName: string,
+  attributeName: string,
+  attributeValue: any
+): string {
+  return getQuery(
+    "DELETE FROM " +
+      tableName +
+      " WHERE " +
+      attributeName +
+      "='" +
+      attributeValue +
+      "'"
+  );
+}
+
 export function getFindLastRegroupementQuery(): string {
   return getQuery("SELECT MAX(d.regroupement) as regroupement FROM donnee d");
 }
