@@ -369,6 +369,6 @@ export const getNextRegroupement = async (
     return null;
   } else {
     const results = await SqlConnection.query(getFindLastRegroupementQuery());
-    return (results[0][0].regroupement as number) + 1;
+    return (results[0].regroupement as number) + 1;
   }
 };
