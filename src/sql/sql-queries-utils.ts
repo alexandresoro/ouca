@@ -533,6 +533,10 @@ export function getFindLastDonneeQuery(): string {
   return getQuery(getFindDonneeBaseQuery() + " ORDER BY d.id DESC LIMIT 0,1");
 }
 
+export function getFindDonneeByIdQuery(id: number): string {
+  return getQuery(getFindDonneeBaseQuery() + " AND d.id=" + id);
+}
+
 export function getFindPreviousDonneeByCurrentDonneeIdQuery(
   currentDonneeId: number
 ): string {

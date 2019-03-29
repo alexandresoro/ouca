@@ -15,6 +15,7 @@ import {
   getDeleteEntityByIdQuery,
   getFindAssociesByInventaireIdQuery,
   getFindComportementsByDonneeIdQuery,
+  getFindDonneeByIdQuery,
   getFindLastDonneeQuery,
   getFindLastRegroupementQuery,
   getFindMetosByInventaireIdQuery,
@@ -312,7 +313,14 @@ export const saveDonnee = async (
       );
     }
 
-    return donneeResult;
+    const savedDonneeResults: any = await SqlConnection.query(
+      getFindDonneeByIdQuery(donneeId)
+    );
+    const savedDonnee: any = await buildDonneeFromFlatDonnee(
+      savedDonneeResults[0]
+    );
+
+    return savedDonnee;
   }
 };
 
