@@ -54,6 +54,7 @@ import {
   saveObservateur,
   saveSexe
 } from "./requests/gestion";
+import { getDonnees } from "./requests/view";
 
 export const REQUEST_MAPPING: {
   [path: string]: (
@@ -63,6 +64,7 @@ export const REQUEST_MAPPING: {
 } = {
   "/api/creation/init": creationInit,
   "/api/inventaire/save": saveInventaire,
+  "/api/donnee/all": getDonnees,
   "/api/donnee/save": saveDonnee,
   "/api/donnee/delete": deleteDonnee,
   "/api/donnee/next_donnee": getNextDonnee,

@@ -144,6 +144,92 @@ export function getFindAllQuery(
   return getQuery(query);
 }
 
+export function getFindAllDonneesQuery() {
+  const query: string =
+    "SELECT d.id," +
+    " i.id as inventaireId," +
+    " o.libelle as observateur," +
+    " i.date," +
+    " i.heure," +
+    " i.duree, " +
+    " dept.code as departement," +
+    " c.code as codeCommune," +
+    " c.nom as nomCommune," +
+    " l.nom as lieudit," +
+    " l.altitude," +
+    " l.longitude," +
+    " l.latitude," +
+    " i.altitude as customizedAltitude," +
+    " i.longitude as customizedLongitude," +
+    " i.latitude as customizedLatitude," +
+    " i.temperature, " +
+    " classe.libelle as classe," +
+    " e.code as codeEspece," +
+    " e.nom_francais as nomFrancais," +
+    " e.nom_latin as nomLatin, " +
+    " t_sexe.libelle as sexe," +
+    " t_age.libelle as age," +
+    " t_estim_nb.libelle as estimationNombre," +
+    " d.nombre," +
+    " t_estim_dist.libelle as estimationDistance," +
+    " d.distance," +
+    " d.regroupement," +
+    " d.commentaire" +
+    " FROM donnee d" +
+    " LEFT JOIN inventaire i ON d.inventaire_id = i.id" +
+    " LEFT JOIN observateur o ON i.observateur_id = o.id" +
+    " LEFT JOIN lieudit l ON i.lieudit_id = l.id" +
+    " LEFT JOIN commune c ON l.commune_id = c.id" +
+    " LEFT JOIN departement dept ON c.departement_id = dept.id" +
+    " LEFT JOIN espece e ON d.espece_id = e.id" +
+    " LEFT JOIN classe classe ON e.classe_id = classe.id" +
+    " LEFT JOIN sexe t_sexe ON d.sexe_id = t_sexe.id" +
+    " LEFT JOIN age t_age ON d.age_id = t_age.id" +
+    " LEFT JOIN estimation_nombre t_estim_nb ON d.estimation_nombre_id = t_estim_nb.id " +
+    " LEFT JOIN estimation_distance t_estim_dist ON d.estimation_distance_id = t_estim_dist.id" +
+    " ORDER BY d.id DESC";
+
+  return getQuery(query);
+}
+
+export function getFindAllAssociesQuery() {
+  const query: string =
+    "SELECT d.id as donneeId, o.libelle" +
+    " FROM inventaire_associe i" +
+    " INNER JOIN donnee d ON d.inventaire_id = i.inventaire_id" +
+    " LEFT JOIN observateur o ON i.observateur_id = o.id";
+
+  return getQuery(query);
+}
+
+export function getFindAllMeteosQuery() {
+  const query: string =
+    "SELECT d.id as donneeId, m.libelle" +
+    " FROM inventaire_meteo i" +
+    " INNER JOIN donnee d ON d.inventaire_id = i.inventaire_id" +
+    " LEFT JOIN meteo m ON i.meteo_id = m.id";
+
+  return getQuery(query);
+}
+
+export function getFindAllComportementsQuery() {
+  const query: string =
+    "SELECT d.donnee_id, c.code, c.libelle" +
+    " FROM donnee_comportement d" +
+    " INNER JOIN comportement c ON d.comportement_id = c.id";
+
+  return getQuery(query);
+}
+
+export function getFindAllMilieuxQuery() {
+  const query: string =
+    "SELECT d.donnee_id, m.code, m.libelle" +
+    " FROM donnee_milieu d" +
+    " INNER JOIN milieu m ON d.milieu_id = m.id";
+
+  return getQuery(query);
+}
+
 export function getFindOneByIdQuery(tableName: string, id: number) {
   return getQuery("SELECT * FROM " + tableName + " WHERE id=" + id);
 }
