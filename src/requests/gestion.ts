@@ -311,7 +311,7 @@ export const saveMeteo = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  this.saveEntity(
+  saveEntity(
     isMockDatabaseMode,
     httpParameters.postData,
     TABLE_METEO,
