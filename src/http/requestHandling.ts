@@ -1,6 +1,7 @@
 import * as http from "http";
 import * as _ from "lodash";
 import * as url from "url";
+import * as zlib from "zlib";
 import { REQUEST_MAPPING } from "../mapping";
 
 export const handleHttpRequest = (
@@ -27,7 +28,10 @@ export const handleHttpRequest = (
     .then((result) => {
       res.statusCode = 200;
       res.setHeader("Content-Type", jsonHttpHeader);
-      res.end(JSON.stringify(result));
+      res.setHeader("Content-Encoding", "gzip");
+      zlib.gzip(JSON.stringify(result), (err, response) => {
+        res.end(response);
+      });
     })
     .catch((error) => {
       console.error("Error:", error);
