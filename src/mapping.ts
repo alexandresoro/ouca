@@ -7,6 +7,7 @@ import {
   creationInit,
   deleteDonnee,
   getDonneeByIdWithContext,
+  getInventaireById,
   getNextDonnee,
   getNextRegroupement,
   getPreviousDonnee,
@@ -64,6 +65,7 @@ export const REQUEST_MAPPING: {
 } = {
   "/api/creation/init": creationInit,
   "/api/inventaire/save": saveInventaire,
+  "/api/inventaire/find": getInventaireById,
   "/api/donnee/all": getDonnees,
   "/api/donnee/save": saveDonnee,
   "/api/donnee/delete": deleteDonnee,

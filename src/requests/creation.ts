@@ -24,6 +24,7 @@ import {
   getFindNextDonneeByCurrentDonneeIdQuery,
   getFindNumberOfDonneesByDoneeeEntityIdQuery,
   getFindNumberOfDonneesQuery,
+  getFindOneByIdQuery,
   getFindPreviousDonneeByCurrentDonneeIdQuery,
   getSaveEntityQuery,
   getSaveListOfEntitesQueries
@@ -52,6 +53,7 @@ import {
   mapComportementsIds,
   mapEspeces,
   mapEstimationsNombre,
+  mapInventaire,
   mapLieuxdits,
   mapMeteosIds,
   mapMilieuxIds
@@ -458,5 +460,28 @@ export const getNextRegroupement = async (
   } else {
     const results = await SqlConnection.query(getFindLastRegroupementQuery());
     return (results[0].regroupement as number) + 1;
+  }
+};
+
+export const getInventaireById = async (
+  isMockDatabaseMode: boolean,
+  httpParameters: HttpParameters
+): Promise<any> => {
+  if (isMockDatabaseMode) {
+    return null;
+  } else {
+    const inventaireId: number = +httpParameters.queryParameters.id;
+
+    const results = await SqlConnection.query(
+      getFindOneByIdQuery(TABLE_INVENTAIRE, inventaireId) +
+        getFindAssociesByInventaireIdQuery(inventaireId) +
+        getFindMetosByInventaireIdQuery(inventaireId)
+    );
+
+    const inventaire: Inventaire = mapInventaire(results[0][0]);
+    inventaire.associesIds = mapAssociesIds(results[1]);
+    inventaire.meteosIds = mapMeteosIds(results[2]);
+
+    return inventaire;
   }
 };

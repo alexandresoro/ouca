@@ -1,6 +1,7 @@
 import { Commune } from "basenaturaliste-model/commune.object";
 import { Espece } from "basenaturaliste-model/espece.object";
 import { EstimationNombre } from "basenaturaliste-model/estimation-nombre.object";
+import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import { Lieudit } from "basenaturaliste-model/lieudit.object";
 import * as _ from "lodash";
 
@@ -85,5 +86,14 @@ export const mapEstimationNombre = (estimationDb: any): EstimationNombre => {
   return {
     ...otherParams,
     nonCompte: estimationDb.non_compte
+  };
+};
+
+export const mapInventaire = (inventaireDb: any): Inventaire => {
+  const { observateur_id, lieudit_id, ...otherParams } = inventaireDb;
+  return {
+    ...otherParams,
+    observateurId: inventaireDb.observateur_id,
+    lieuditId: inventaireDb.lieudit_id
   };
 };
