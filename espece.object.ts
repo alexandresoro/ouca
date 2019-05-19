@@ -1,7 +1,7 @@
 import { Classe } from "./classe.object";
-import { EntiteAvecLibelle } from "./entite-avec-libelle.object";
+import { EntiteSimple } from "./entite-simple.object";
 
-export interface Espece extends EntiteAvecLibelle {
+export interface Espece extends EntiteSimple {
   classe?: Classe;
 
   classeId: number;
