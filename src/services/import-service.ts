@@ -1,21 +1,11 @@
 export class ImportService {
   protected message: string;
 
-  importLine = (line: string): void => {
-    this.message = "";
+  private numberOfLines: number;
 
-    if (!!line) {
-      const objectTab: string[] = line.split(";");
-      if (
-        this.hasExpectedNumberOfColumns(objectTab) &&
-        this.isObjectValid(objectTab)
-      ) {
-        // Save object
-      } else {
-        // Display error message
-      }
-    }
-  }
+  private numberOfErrors: number;
+
+  private numberOfSuccess: number;
 
   protected getNumberOfColumns = () => {
     return -1;
@@ -23,6 +13,36 @@ export class ImportService {
 
   protected isObjectValid = (objectTab: string[]): boolean => {
     return false;
+  }
+
+  private importFile = (): void => {
+    this.numberOfLines = 0;
+    this.numberOfErrors = 0;
+    this.numberOfSuccess = 0;
+
+    // Loop on lines
+    this.importLine("test");
+  }
+
+  private importLine = (line: string): void => {
+    this.message = "";
+
+    if (!!line) {
+      this.numberOfLines++;
+
+      const objectTab: string[] = line.split(";");
+
+      if (
+        this.hasExpectedNumberOfColumns(objectTab) &&
+        this.isObjectValid(objectTab)
+      ) {
+        // Save object
+        this.numberOfSuccess++;
+      } else {
+        // Display error message
+        this.numberOfErrors++;
+      }
+    }
   }
 
   private hasExpectedNumberOfColumns = (objectTab: string[]): boolean => {
