@@ -1,6 +1,8 @@
 import fs from "fs";
 import readline from "readline";
 import { HttpParameters } from "../http/httpParameters.js";
+import { SqlConnection } from "../sql/sql-connection.js";
+import { getFindConfigurationByLibelleQuery } from "../sql/sql-queries-utils.js";
 export const importFile = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
@@ -22,6 +24,8 @@ export const importObservateurs = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
   // TODO
+  const exportFolderPath = await getExportFolderPath();
+  console.log(exportFolderPath);
 };
 
 export const importDepartements = async (
@@ -113,4 +117,11 @@ export const importDonnees = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
   // TODO
+};
+
+const getExportFolderPath = async (): Promise<string> => {
+  const exportFolderPathResult = await SqlConnection.query(
+    getFindConfigurationByLibelleQuery("export_folder_path")
+  );
+  return exportFolderPathResult[0].value;
 };
