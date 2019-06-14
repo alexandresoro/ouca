@@ -1,4 +1,6 @@
+import { ImportResponse } from "basenaturaliste-model/import-response.object";
 import { HttpParameters } from "../http/httpParameters.js";
+import { ImportLieuxditService } from "../services/import-lieuxdit-service.js";
 import { SqlConnection } from "../sql/sql-connection.js";
 import { getFindConfigurationByLibelleQuery } from "../sql/sql-queries-utils.js";
 
@@ -28,8 +30,17 @@ export const importCommunes = async (
 export const importLieuxdits = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
-): Promise<any> => {
-  // TODO
+): Promise<ImportResponse> => {
+  if (!httpParameters.postData) {
+    return {
+      isSuccessful: false,
+      reasonForFailure: "Le contenu du fichier n'a pas pu être lu"
+    };
+  }
+
+  const importService = new ImportLieuxditService();
+
+  return importService.importFile(httpParameters.postData);
 };
 
 export const importMeteos = async (

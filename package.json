@@ -24,7 +24,8 @@
     "lodash": "*",
     "mariadb": "*",
     "moment": "*",
-    "multiparty": "*"
+    "multiparty": "*",
+    "papaparse": "*"
   },
   "devDependencies": {
     "@types/lodash": "*",

@@ -1,3 +1,6 @@
+import { ImportResponse } from "basenaturaliste-model/import-response.object";
+import Papa from "papaparse";
+
 export abstract class ImportService {
   protected message: string;
   private ERROR_SUFFIX: string = "_erreurs.csv";
@@ -8,27 +11,28 @@ export abstract class ImportService {
 
   private numberOfErrors: number;
 
+  public importFile = (fileContent: string): ImportResponse => {
+    const content = Papa.parse(fileContent);
+
+    console.log(content);
+
+    return {
+      isSuccessful: true,
+      numberOfLinesExtracted: content.data.length
+    };
+
+    // this.numberOfLines = 0;
+    // this.numberOfErrors = 0;
+
+    // Loop on lines
+    // this.importLine("test");
+  }
+
   protected abstract getNumberOfColumns(): number;
 
   protected abstract isObjectValid(objectTab: string[]): boolean;
 
   protected abstract saveObject(objectTab: string[]): void;
-
-  private importFile = (): string => {
-    this.numberOfLines = 0;
-    this.numberOfErrors = 0;
-
-    // Loop on lines
-    this.importLine("test");
-
-    return (
-      "Import terminé: " +
-      this.numberOfLines +
-      " lignes à importer, " +
-      this.numberOfErrors +
-      " erreurs."
-    );
-  }
 
   private importLine = (line: string): void => {
     this.message = "";
