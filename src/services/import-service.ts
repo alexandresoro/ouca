@@ -1,4 +1,4 @@
-export class ImportService {
+export abstract class ImportService {
   protected message: string;
   private ERROR_SUFFIX: string = "_erreurs.csv";
   private DETAILS_SUFFIX: string = "_erreurs_explications.csv";
@@ -8,17 +8,11 @@ export class ImportService {
 
   private numberOfErrors: number;
 
-  protected getNumberOfColumns = () => {
-    return -1;
-  }
+  protected abstract getNumberOfColumns(): number;
 
-  protected isObjectValid = (objectTab: string[]): boolean => {
-    return false;
-  }
+  protected abstract isObjectValid(objectTab: string[]): boolean;
 
-  protected saveObject = (objectTab: string[]): void => {
-    // See children
-  }
+  protected abstract saveObject(objectTab: string[]): void;
 
   private importFile = (): string => {
     this.numberOfLines = 0;

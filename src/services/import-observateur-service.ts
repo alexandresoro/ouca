@@ -4,6 +4,10 @@ import { ImportService } from "./import-service";
 export class ImportObservateurService extends ImportService {
   private LIBELLE_INDEX: number = 0;
 
+  protected saveObject(objectTab: string[]): void {
+    // TODO
+  }
+
   protected getNumberOfColumns = () => {
     return 1;
   }
