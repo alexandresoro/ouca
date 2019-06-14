@@ -55,6 +55,7 @@ import {
   saveObservateur,
   saveSexe
 } from "./requests/gestion";
+import { importFile } from "./requests/import";
 import { getDonnees } from "./requests/view";
 
 export const REQUEST_MAPPING: {
@@ -113,5 +114,6 @@ export const REQUEST_MAPPING: {
   "/api/milieu/save": saveMilieu,
   "/api/milieu/delete": deleteMilieu,
   "/api/configuration/init": configurationInit,
-  "/api/configuration/update": configurationUpdate
+  "/api/configuration/update": configurationUpdate,
+  "/api/observateur/import": importFile
 };
