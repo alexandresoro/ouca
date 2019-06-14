@@ -1,5 +1,7 @@
 import * as http from "http";
-import { handleHttpRequest } from "./http/requestHandling";
+import * as _ from "lodash";
+import * as multiparty from "multiparty";
+import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
 
 const MOCK_MODE_ARG = "-mocks";
 
@@ -31,14 +33,46 @@ const server = http.createServer(
       res.statusCode = 200;
       res.end();
     } else if (request.method === "POST") {
-      const chunks = [];
-      request.on("data", (chunk) => {
-        chunks.push(chunk);
-      });
-      request.on("end", () => {
-        const postData = JSON.parse(Buffer.concat(chunks).toString());
-        handleHttpRequest(isMockDatabaseMode, request, res, postData);
-      });
+      // Check if the request is a multipart content
+      const isMultipartContentRequest: boolean = isMultipartContent(request);
+
+      if (isMultipartContentRequest) {
+        const form = new multiparty.Form();
+        const chunksPart = [];
+
+        form.on("part", (part) => {
+          if (part.filename) {
+            part.on("data", (chunk) => {
+              chunksPart.push(chunk);
+            });
+            part.on("end", () => {
+              const fileContent: string = Buffer.concat(chunksPart).toString();
+              handleHttpRequest(
+                isMockDatabaseMode,
+                request,
+                res,
+                fileContent,
+                part.filename
+              );
+            });
+          } else {
+            res.statusCode = 404;
+            res.end();
+            return;
+          }
+        });
+
+        form.parse(request);
+      } else {
+        const chunks = [];
+        request.on("data", (chunk) => {
+          chunks.push(chunk);
+        });
+        request.on("end", () => {
+          const postData = JSON.parse(Buffer.concat(chunks).toString());
+          handleHttpRequest(isMockDatabaseMode, request, res, postData);
+        });
+      }
     } else {
       handleHttpRequest(isMockDatabaseMode, request, res);
     }

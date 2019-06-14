@@ -8,7 +8,8 @@ export const handleHttpRequest = (
   isMockDatabaseMode: boolean,
   request: http.IncomingMessage,
   res: http.ServerResponse,
-  postData?: any
+  postData?: any,
+  inputFileName?: string
 ): void => {
   const jsonHttpHeader = "application/json";
 
@@ -23,7 +24,8 @@ export const handleHttpRequest = (
 
   REQUEST_MAPPING[pathName](isMockDatabaseMode, {
     queryParameters,
-    postData
+    postData,
+    inputFileName
   })
     .then((result) => {
       res.statusCode = 200;
@@ -39,4 +41,16 @@ export const handleHttpRequest = (
       res.end(JSON.stringify(error));
       // process.exit();
     });
+};
+
+export const isMultipartContent = (request: http.IncomingMessage): boolean => {
+  // In some calls, the data passed as POST parameters is not a pure JSON, but a form (e.g. import)
+  if (!!request.headers && !!request.headers["content-type"]) {
+    const contentType = request.headers["content-type"];
+    const contentTypeElements: string[] = _.map(contentType.split(";"), (elt) =>
+      elt.trim()
+    );
+    return _.includes(contentTypeElements, "multipart/form-data");
+  }
+  return false;
 };

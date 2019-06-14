@@ -23,10 +23,12 @@
   "dependencies": {
     "lodash": "*",
     "mariadb": "*",
-    "moment": "*"
+    "moment": "*",
+    "multiparty": "*"
   },
   "devDependencies": {
     "@types/lodash": "*",
+    "@types/multiparty": "*",
     "@types/mysql": "*",
     "@types/node": "10",
     "basenaturaliste-model": "file:../basenaturaliste-model",
