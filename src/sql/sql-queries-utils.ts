@@ -111,7 +111,8 @@ export const DB_CONFIGURATION_MAPPING = {
   is_distance_displayed: toCamel("is_distance_displayed"),
   is_regroupement_displayed: toCamel("is_regroupement_displayed"),
   mysql_path: "mySqlPath",
-  mysqldump_path: "mySqlDumpPath"
+  mysqldump_path: "mySqlDumpPath",
+  export_folder_path: "exportFolderPath"
 };
 
 function getQuery(query: string): string {
