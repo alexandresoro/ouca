@@ -1,11 +1,12 @@
 export class ImportService {
   protected message: string;
+  private ERROR_SUFFIX: string = "_erreurs.csv";
+  private DETAILS_SUFFIX: string = "_erreurs_explications.csv";
+  private END_OF_LINE: string = "\r\n";
 
   private numberOfLines: number;
 
   private numberOfErrors: number;
-
-  private numberOfSuccess: number;
 
   protected getNumberOfColumns = () => {
     return -1;
@@ -15,13 +16,24 @@ export class ImportService {
     return false;
   }
 
-  private importFile = (): void => {
+  protected saveObject = (objectTab: string[]): void => {
+    // See children
+  }
+
+  private importFile = (): string => {
     this.numberOfLines = 0;
     this.numberOfErrors = 0;
-    this.numberOfSuccess = 0;
 
     // Loop on lines
     this.importLine("test");
+
+    return (
+      "Import terminé: " +
+      this.numberOfLines +
+      " lignes à importer, " +
+      this.numberOfErrors +
+      " erreurs."
+    );
   }
 
   private importLine = (line: string): void => {
@@ -37,10 +49,11 @@ export class ImportService {
         this.isObjectValid(objectTab)
       ) {
         // Save object
-        this.numberOfSuccess++;
+        this.saveObject(objectTab);
       } else {
         // Display error message
         this.numberOfErrors++;
+        const errorLine: string = this.buildErrorLine(line);
       }
     }
   }
@@ -58,5 +71,9 @@ export class ImportService {
 
       return false;
     }
+  }
+
+  private buildErrorLine = (line: string): string => {
+    return this.message + ";" + line;
   }
 }
