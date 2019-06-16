@@ -1,4 +1,5 @@
 import { ImportResponse } from "basenaturaliste-model/import-response.object";
+import * as _ from "lodash";
 import Papa from "papaparse";
 
 export abstract class ImportService {
@@ -12,20 +13,21 @@ export abstract class ImportService {
   private numberOfErrors: number;
 
   public importFile = (fileContent: string): ImportResponse => {
+    this.numberOfLines = 0;
+    this.numberOfErrors = 0;
+
     const content = Papa.parse(fileContent);
 
-    console.log(content);
+    if (!!content.data) {
+      _.forEach(content.data, (lineTab: any[]) => {
+        this.importLine(lineTab);
+      });
+    }
 
     return {
       isSuccessful: true,
       numberOfLinesExtracted: content.data.length
     };
-
-    // this.numberOfLines = 0;
-    // this.numberOfErrors = 0;
-
-    // Loop on lines
-    // this.importLine("test");
   }
 
   protected abstract getNumberOfColumns(): number;
@@ -34,13 +36,11 @@ export abstract class ImportService {
 
   protected abstract saveObject(objectTab: string[]): void;
 
-  private importLine = (line: string): void => {
+  private importLine = (objectTab: string[]): void => {
     this.message = "";
 
-    if (!!line) {
+    if (!!objectTab) {
       this.numberOfLines++;
-
-      const objectTab: string[] = line.split(";");
 
       if (
         this.hasExpectedNumberOfColumns(objectTab) &&
@@ -51,7 +51,7 @@ export abstract class ImportService {
       } else {
         // Display error message
         this.numberOfErrors++;
-        const errorLine: string = this.buildErrorLine(line);
+        // const errorLine: string = this.buildErrorLine(line);
       }
     }
   }
