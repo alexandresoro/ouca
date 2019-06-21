@@ -1,8 +1,8 @@
 import { ImportResponse } from "basenaturaliste-model/import-response.object";
-import { HttpParameters } from "../http/httpParameters.js";
-import { ImportLieuxditService } from "../services/import-lieuxdit-service.js";
-import { SqlConnection } from "../sql/sql-connection.js";
-import { getFindConfigurationByLibelleQuery } from "../sql/sql-queries-utils.js";
+import { HttpParameters } from "../http/httpParameters";
+import { ImportLieuxditService } from "../services/import-lieuxdit-service";
+import { SqlConnection } from "../sql/sql-connection";
+import { getFindConfigurationByLibelleQuery } from "../sql/sql-queries-utils";
 
 export const importObservateurs = async (
   isMockDatabaseMode: boolean,

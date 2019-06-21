@@ -3,11 +3,11 @@ import { Donnee } from "basenaturaliste-model/donnee.object";
 import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
 import moment from "moment";
-import { HttpParameters } from "../http/httpParameters.js";
+import { HttpParameters } from "../http/httpParameters";
 import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
 import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
 import creationPageInitMock from "../mocks/creation-page/creation-page-init.json";
-import { SqlConnection } from "../sql/sql-connection.js";
+import { SqlConnection } from "../sql/sql-connection";
 import {
   DB_SAVE_MAPPING,
   getAllFromTablesQuery,
@@ -28,7 +28,7 @@ import {
   getFindPreviousDonneeByCurrentDonneeIdQuery,
   getSaveEntityQuery,
   getSaveListOfEntitesQueries
-} from "../sql/sql-queries-utils.js";
+} from "../sql/sql-queries-utils";
 import {
   KEY_ARE_ASSOCIES_DISPLAYED,
   KEY_DEFAULT_AGE_ID,
@@ -46,7 +46,7 @@ import {
   TABLE_INVENTAIRE,
   TABLE_INVENTAIRE_ASSOCIE,
   TABLE_INVENTAIRE_METEO
-} from "../utils/constants.js";
+} from "../utils/constants";
 import {
   mapAssociesIds,
   mapCommunes,
@@ -57,7 +57,7 @@ import {
   mapLieuxdits,
   mapMeteosIds,
   mapMilieuxIds
-} from "../utils/mapping-utils.js";
+} from "../utils/mapping-utils";
 
 const getDefaultValueForConfigurationField = (
   configuration: any[],

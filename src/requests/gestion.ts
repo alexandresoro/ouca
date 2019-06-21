@@ -13,7 +13,7 @@ import { Milieu } from "basenaturaliste-model/milieu.object";
 import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
 import * as _ from "lodash";
-import { HttpParameters } from "../http/httpParameters.js";
+import { HttpParameters } from "../http/httpParameters";
 import agesMock from "../mocks/gestion-base-pages/ages.json";
 import classesMock from "../mocks/gestion-base-pages/classes.json";
 import communesMock from "../mocks/gestion-base-pages/communes.json";
@@ -26,7 +26,7 @@ import lieuxDitsMock from "../mocks/gestion-base-pages/lieuxdits.json";
 import milieuxMock from "../mocks/gestion-base-pages/milieux.json";
 import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
-import { SqlConnection } from "../sql/sql-connection.js";
+import { SqlConnection } from "../sql/sql-connection";
 import {
   DB_SAVE_MAPPING,
   getDeleteEntityByIdQuery,
@@ -49,7 +49,7 @@ import {
   getFindNumberOfLieuxditsByCommuneIdQuery,
   getFindNumberOfLieuxditsByDepartementIdQuery,
   getSaveEntityQuery
-} from "../sql/sql-queries-utils.js";
+} from "../sql/sql-queries-utils";
 import {
   COLUMN_CODE,
   COLUMN_LIBELLE,
@@ -72,13 +72,13 @@ import {
   TABLE_MILIEU,
   TABLE_OBSERVATEUR,
   TABLE_SEXE
-} from "../utils/constants.js";
+} from "../utils/constants";
 import {
   mapCommunes,
   mapEspeces,
   mapEstimationsNombre,
   mapLieuxdits
-} from "../utils/mapping-utils.js";
+} from "../utils/mapping-utils";
 
 export const getObservateurs = async (
   isMockDatabaseMode: boolean,
