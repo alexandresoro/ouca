@@ -47,7 +47,7 @@ const ARG_KEY_VALUE_DELIMITER: string = "=";
  * - dbUser
  * - dbPassword
  */
-const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
+export const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
   let host = DEFAULT_DB_HOST;
   let port = DEFAULT_DB_PORT;
   let user = DEFAULT_DB_USER;

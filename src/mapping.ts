@@ -71,6 +71,7 @@ import {
   importObservateurs,
   importSexes
 } from "./requests/import";
+import { saveDatabase } from "./requests/save";
 import { getDonnees } from "./requests/view";
 
 export const REQUEST_MAPPING: {
@@ -143,5 +144,6 @@ export const REQUEST_MAPPING: {
   "/api/milieu/delete": deleteMilieu,
   "/api/milieu/import": importMilieux,
   "/api/configuration/init": configurationInit,
-  "/api/configuration/update": configurationUpdate
+  "/api/configuration/update": configurationUpdate,
+  "/api/database/save": saveDatabase
 };

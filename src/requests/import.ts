@@ -113,7 +113,7 @@ export const importDonnees = async (
   // TODO
 };
 
-const getExportFolderPath = async (): Promise<string> => {
+export const getExportFolderPath = async (): Promise<string> => {
   const exportFolderPathResult = await SqlConnection.query(
     getFindConfigurationByLibelleQuery("export_folder_path")
   );
