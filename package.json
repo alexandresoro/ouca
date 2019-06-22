@@ -25,7 +25,6 @@
     "mariadb": "*",
     "moment": "*",
     "multiparty": "*",
-    "mysqldump": "*",
     "papaparse": "*"
   },
   "devDependencies": {

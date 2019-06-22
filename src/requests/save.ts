@@ -1,41 +1,42 @@
 import moment from "moment";
-import mysqldump from "mysqldump";
 import { HttpParameters } from "../http/httpParameters";
-import { getSqlConnectionConfiguration } from "../sql/sql-connection";
 import { getExportFolderPath } from "./import";
+
+const DUMP_FOLDER_PATH: string = "/sauvegardes";
+const DUMP_FILE_NAME: string = "/sauvegarde_base_naturaliste_";
+const SQL_EXTENSION: string = ".sql";
+
 export const saveDatabase = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
-): Promise<any> => {
+): Promise<boolean> => {
   const exportFolderPath = await getExportFolderPath();
 
   const fs = require("fs");
-  const folder = exportFolderPath + "/sauvegardes";
-  const exportFile =
-    folder +
-    "/sauvegarde_basenaturaliste_" +
-    moment().format("YYYY-MM-DD") +
-    ".sql";
 
-  if (!fs.existsSync(folder)) {
-    fs.mkdirSync(folder);
+  const dumpFolder = exportFolderPath + DUMP_FOLDER_PATH;
+  const dumpFile =
+    dumpFolder + DUMP_FILE_NAME + moment().format("YYYY-MM-DD") + SQL_EXTENSION;
+
+  // Create dump folder if it does not exist
+  if (!fs.existsSync(dumpFolder)) {
+    fs.mkdirSync(dumpFolder);
   }
 
-  fs.unlink(exportFile, (err) => {
+  // Remove dump file if it exists
+  await fs.unlink(dumpFile, (err) => {
     if (err) {
-      console.error(err);
-    } 
-    const sqlConfiguration = getSqlConnectionConfiguration();
-    mysqldump({
-      connection: {
-        host: sqlConfiguration.host,
-        user: sqlConfiguration.user,
-        password: sqlConfiguration.password,
-        database: sqlConfiguration.database
-      },
-      dumpToFile: exportFile
-    });
+      if (err.code === "ENOENT") {
+        console.log("Le fichier " + err.path + " n'existe pas.");
+      } else {
+        console.error(err);
+        return false;
+      }
+    }
   });
 
-  
+  // Create a dump of the database
+  // TODO
+
+  return false;
 };
