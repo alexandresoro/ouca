@@ -110,6 +110,7 @@ export const configurationUpdate = async (
     return null;
   } else {
     const configurationToSave: AppConfiguration = httpParameters.postData;
+
     const {
       defaultAge,
       defaultDepartement,
@@ -120,6 +121,7 @@ export const configurationUpdate = async (
       isMeteoDisplayed,
       isDistanceDisplayed,
       isRegroupementDisplayed,
+      exportFolderPath,
       ...otherParams
     } = configurationToSave;
 
@@ -135,6 +137,7 @@ export const configurationUpdate = async (
       isMeteoDisplayed: isMeteoDisplayed ? "1" : "0",
       isDistanceDisplayed: isDistanceDisplayed ? "1" : "0",
       isRegroupementDisplayed: isRegroupementDisplayed ? "1" : "0",
+      exportFolderPath: exportFolderPath.replace("\\", "\\\\"),
       ...otherParams
     };
 
