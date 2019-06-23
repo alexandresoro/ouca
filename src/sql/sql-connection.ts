@@ -27,7 +27,7 @@ const DEFAULT_DB_USER: string = "basenaturaliste";
 
 const DEFAULT_DB_PASSWORD: string = "basenaturaliste";
 
-const DEFAULT_DATABASE_NAME = "basenaturaliste";
+export const DEFAULT_DATABASE_NAME = "basenaturaliste";
 
 const DB_HOST_ARG: string = "-dbHost";
 

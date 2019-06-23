@@ -137,9 +137,11 @@ export const configurationUpdate = async (
       isMeteoDisplayed: isMeteoDisplayed ? "1" : "0",
       isDistanceDisplayed: isDistanceDisplayed ? "1" : "0",
       isRegroupementDisplayed: isRegroupementDisplayed ? "1" : "0",
-      exportFolderPath: exportFolderPath.replace("\\", "\\\\"),
+      exportFolderPath: exportFolderPath.replace(/\\/g, "\\\\"),
       ...otherParams
     };
+
+    console.log(uiFlatMapping.exportFolderPath);
 
     // Here we create the mapping between the DB name and its DB value, that has been already transformed above
     const whereSetValueMapping: { [key: string]: string } = {};
