@@ -3,12 +3,17 @@ import * as _ from "lodash";
 import * as multiparty from "multiparty";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
 
-const MOCK_MODE_ARG = "-mocks";
+const MOCK_MODE_ARGS = ["-mocks=true", "-mocks"];
+const DOCKER_ARG = "-docker";
 
-const hostname = "127.0.0.1";
+const isDockerMode = process.argv.includes(DOCKER_ARG);
+
+const hostname = isDockerMode ? "0.0.0.0" : "127.0.0.1";
 const port = 4000;
 
-const isMockDatabaseMode = process.argv.includes(MOCK_MODE_ARG);
+const isMockDatabaseMode = !!process.argv.find((value) => {
+  return MOCK_MODE_ARGS.includes(value);
+});
 
 if (isMockDatabaseMode) {
   console.log("Backend is working in mock mode");
