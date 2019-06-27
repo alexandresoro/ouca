@@ -42,6 +42,8 @@ ENV DB_USER basenaturaliste
 ENV DB_PASSWORD basenaturaliste
 ENV MOCKS false
 
+RUN apk add mariadb-client
+
 CMD node index.js -mocks=${MOCKS} -dbHost=${DB_HOST} -dbPort=${DB_PORT} -dbUser=${DB_USER} -dbPassword=${DB_PASSWORD} -docker
 
 EXPOSE 4000/tcp

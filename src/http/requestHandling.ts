@@ -6,6 +6,7 @@ import { REQUEST_MAPPING } from "../mapping";
 
 export const handleHttpRequest = (
   isMockDatabaseMode: boolean,
+  isDockerMode: boolean,
   request: http.IncomingMessage,
   res: http.ServerResponse,
   postData?: any,
@@ -26,7 +27,7 @@ export const handleHttpRequest = (
     queryParameters,
     postData,
     inputFileName
-  })
+  }, isDockerMode)
     .then((result) => {
       res.statusCode = 200;
       res.setHeader("Content-Type", jsonHttpHeader);

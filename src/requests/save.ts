@@ -1,6 +1,7 @@
 import { ChildProcess, spawn } from "child_process";
 import * as fs from "fs";
 import { promises } from "fs";
+import * as _ from "lodash";
 import moment from "moment";
 import { HttpParameters } from "../http/httpParameters";
 import {
@@ -15,10 +16,17 @@ const SQL_EXTENSION: string = ".sql";
 
 export const saveDatabase = async (
   isMockDatabaseMode: boolean,
-  httpParameters: HttpParameters
+  httpParameters: HttpParameters,
+  isDockerMode: boolean
 ): Promise<{}> => {
-  const exportFolderPath = await getExportFolderPath();
-  const dumpFolder = exportFolderPath + DUMP_FOLDER_PATH;
+
+  let dumpFolder: string = DUMP_FOLDER_PATH;
+
+  if (!isDockerMode) {
+    const exportFolderPath = await getExportFolderPath();
+    dumpFolder = exportFolderPath + dumpFolder;
+  }
+
   const dumpFile =
     dumpFolder + DUMP_FILE_NAME + moment().format("YYYY-MM-DD") + SQL_EXTENSION;
 
@@ -27,7 +35,7 @@ export const saveDatabase = async (
     fs.mkdirSync(dumpFolder);
   }
 
-  const dumpResult: string = await executeSqlDump();
+  const dumpResult: string = await executeSqlDump(isDockerMode);
 
   try {
     await promises.writeFile(dumpFile, dumpResult);
@@ -39,20 +47,28 @@ export const saveDatabase = async (
   }
 };
 
-const executeSqlDump = async (): Promise<string> => {
+const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
   return new Promise((resolve, reject) => {
     let stdout = "";
     let stderr = "";
 
     const connectionConfig = getSqlConnectionConfiguration();
 
-    const dumpProcess: ChildProcess = spawn("mysqldump", [
+    let commonDumpParams: string[] = [
       "--user=" + connectionConfig.user,
       "--password=" + connectionConfig.password,
       "--default-character-set=utf8",
       "--skip-triggers",
       DEFAULT_DATABASE_NAME
-    ]);
+    ];
+
+    if (isRemoteDump) {
+      commonDumpParams = _.concat("--host=" + connectionConfig.host,
+        "--port=" + connectionConfig.port,
+        commonDumpParams);
+    }
+
+    const dumpProcess: ChildProcess = spawn("mysqldump", commonDumpParams);
 
     dumpProcess.stdout.on("data", (contents) => {
       stdout += contents;

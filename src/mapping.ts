@@ -77,7 +77,8 @@ import { getDonnees } from "./requests/view";
 export const REQUEST_MAPPING: {
   [path: string]: (
     isMockDatabaseMode: boolean,
-    httpParameters: HttpParameters
+    httpParameters: HttpParameters,
+    isDockerMode?: boolean
   ) => any;
 } = {
   "/api/creation/init": creationInit,

@@ -54,6 +54,7 @@ const server = http.createServer(
               const fileContent: string = Buffer.concat(chunksPart).toString();
               handleHttpRequest(
                 isMockDatabaseMode,
+                isDockerMode,
                 request,
                 res,
                 fileContent,
@@ -75,11 +76,11 @@ const server = http.createServer(
         });
         request.on("end", () => {
           const postData = JSON.parse(Buffer.concat(chunks).toString());
-          handleHttpRequest(isMockDatabaseMode, request, res, postData);
+          handleHttpRequest(isMockDatabaseMode, isDockerMode, request, res, postData);
         });
       }
     } else {
-      handleHttpRequest(isMockDatabaseMode, request, res);
+      handleHttpRequest(isMockDatabaseMode, isDockerMode, request, res);
     }
   }
 );
