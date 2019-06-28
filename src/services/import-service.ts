@@ -1,6 +1,6 @@
-import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
-import { ImportResponse } from "basenaturaliste-model/import-response.object";
 import Papa from "papaparse";
+import { EntiteSimple } from "../basenaturaliste-model/entite-simple.object";
+import { ImportResponse } from "../basenaturaliste-model/import-response.object";
 import { SqlConnection } from "../sql/sql-connection";
 import { DB_SAVE_MAPPING, getSaveEntityQuery } from "../sql/sql-queries-utils";
 import { TABLE_OBSERVATEUR } from "../utils/constants";

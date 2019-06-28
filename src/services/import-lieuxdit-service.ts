@@ -1,4 +1,4 @@
-import { Observateur } from "basenaturaliste-model/observateur.object";
+import { Observateur } from "../basenaturaliste-model/observateur.object";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService {

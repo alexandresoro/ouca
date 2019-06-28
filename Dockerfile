@@ -1,11 +1,10 @@
 # 1. Transpile the project
 FROM node:lts-alpine as build
 
-WORKDIR /app/basenaturaliste-backend
+WORKDIR /app/backend
 
-COPY basenaturaliste-model/ /app/basenaturaliste-model/
-COPY basenaturaliste-backend/package.json basenaturaliste-backend/tsconfig.json basenaturaliste-backend/yarn.lock /app/basenaturaliste-backend/
-COPY basenaturaliste-backend/src/ /app/basenaturaliste-backend/src
+COPY package.json tsconfig.json yarn.lock /app/backend/
+COPY src/ /app/backend/src
 
 RUN yarn install
 RUN yarn build
@@ -19,11 +18,10 @@ WORKDIR /app/backend
 
 RUN yarn global add @zeit/ncc@*
 
-COPY basenaturaliste-model/ /app/basenaturaliste-model/
-COPY basenaturaliste-backend/package.json basenaturaliste-backend/yarn.lock /app/backend/
+COPY package.json yarn.lock /app/backend/
 
 # Here we include the JS from the build step that was produced in dist/
-COPY --from=build /app/basenaturaliste-backend/dist /app/backend/
+COPY --from=build /app/backend/dist /app/backend/
 
 RUN yarn install
 

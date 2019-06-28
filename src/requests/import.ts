@@ -1,4 +1,4 @@
-import { ImportResponse } from "basenaturaliste-model/import-response.object";
+import { ImportResponse } from "../basenaturaliste-model/import-response.object";
 import { HttpParameters } from "../http/httpParameters";
 import { ImportObservateurService } from "../services/import-observateur-service";
 import { SqlConnection } from "../sql/sql-connection";

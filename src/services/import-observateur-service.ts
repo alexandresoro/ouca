@@ -1,4 +1,4 @@
-import { Observateur } from "basenaturaliste-model/observateur.object";
+import { Observateur } from "../basenaturaliste-model/observateur.object";
 import { SqlConnection } from "../sql/sql-connection";
 import { getEntiteAvecLibelleByLibelleQuery } from "../sql/sql-queries-utils";
 import { ImportService } from "./import-service";

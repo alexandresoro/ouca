@@ -1,9 +1,9 @@
-import { Commune } from "basenaturaliste-model/commune.object";
-import { Espece } from "basenaturaliste-model/espece.object";
-import { EstimationNombre } from "basenaturaliste-model/estimation-nombre.object";
-import { Inventaire } from "basenaturaliste-model/inventaire.object";
-import { Lieudit } from "basenaturaliste-model/lieudit.object";
 import * as _ from "lodash";
+import { Commune } from "../basenaturaliste-model/commune.object";
+import { Espece } from "../basenaturaliste-model/espece.object";
+import { EstimationNombre } from "../basenaturaliste-model/estimation-nombre.object";
+import { Inventaire } from "../basenaturaliste-model/inventaire.object";
+import { Lieudit } from "../basenaturaliste-model/lieudit.object";
 
 export const mapAssociesIds = (associesDb: any): number[] => {
   return _.map(associesDb, (associeDb) => {
