@@ -8,4 +8,6 @@ export interface ImportResponse {
   numberOfLinesFailedToImport?: number;
 
   errorFileName?: string;
+
+  errors?: string[][];
 }
