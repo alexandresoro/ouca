@@ -1,6 +1,6 @@
 import { ImportResponse } from "basenaturaliste-model/import-response.object";
 import { HttpParameters } from "../http/httpParameters";
-import { ImportLieuxditService } from "../services/import-lieuxdit-service";
+import { ImportObservateurService } from "../services/import-observateur-service";
 import { SqlConnection } from "../sql/sql-connection";
 import { getFindConfigurationByLibelleQuery } from "../sql/sql-queries-utils";
 
@@ -11,6 +11,17 @@ export const importObservateurs = async (
   // TODO
   const exportFolderPath = await getExportFolderPath();
   console.log(exportFolderPath);
+
+  if (!httpParameters.postData) {
+    return {
+      isSuccessful: false,
+      reasonForFailure: "Le contenu du fichier n'a pas pu être lu"
+    };
+  }
+
+  const importService = new ImportObservateurService();
+
+  return importService.importFile(httpParameters.postData);
 };
 
 export const importDepartements = async (
@@ -31,16 +42,7 @@ export const importLieuxdits = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<ImportResponse> => {
-  if (!httpParameters.postData) {
-    return {
-      isSuccessful: false,
-      reasonForFailure: "Le contenu du fichier n'a pas pu être lu"
-    };
-  }
-
-  const importService = new ImportLieuxditService();
-
-  return importService.importFile(httpParameters.postData);
+  return null;
 };
 
 export const importMeteos = async (

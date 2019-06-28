@@ -1,7 +1,7 @@
 import { Observateur } from "basenaturaliste-model/observateur.object";
 import { ImportService } from "./import-service";
 
-export class ImportLieuxditService extends ImportService {
+export class ImportLieuxditService {
   private DEPARTEMENT_INDEX: number = 0;
   private CODE_COMMUNE_INDEX: number = 1;
   private NOM_COMMUNE_INDEX: number = 2;
@@ -31,12 +31,12 @@ export class ImportLieuxditService extends ImportService {
 
   private isLibelleValid = (libelle: string): boolean => {
     if (!libelle) {
-      this.message = "Le libellé ne peut pas être vide";
+      // this.message = "Le libellé ne peut pas être vide";
       return false;
     }
 
     if (libelle.length > 100) {
-      this.message = "La longueur maximale du libellé est 100 caractères";
+      // this.message = "La longueur maximale du libellé est 100 caractères";
       return false;
     }
 

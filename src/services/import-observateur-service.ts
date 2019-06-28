@@ -1,36 +1,59 @@
 import { Observateur } from "basenaturaliste-model/observateur.object";
+import { SqlConnection } from "../sql/sql-connection";
+import { getEntiteAvecLibelleByLibelleQuery } from "../sql/sql-queries-utils";
 import { ImportService } from "./import-service";
 
 export class ImportObservateurService extends ImportService {
   private LIBELLE_INDEX: number = 0;
 
-  protected saveObject(objectTab: string[]): void {
-    // TODO
-  }
-
   protected getNumberOfColumns = () => {
     return 1;
   }
 
-  protected getObject = (objectTab: string[]): Observateur => {
+  protected getEntity = (entityTab: string[]): Observateur => {
     return {
       id: null,
-      libelle: objectTab[this.LIBELLE_INDEX]
+      libelle: entityTab[this.LIBELLE_INDEX].trim()
     };
   }
 
-  protected isObjectValid = (objectTab: string[]): boolean => {
-    return this.isLibelleValid(objectTab[this.LIBELLE_INDEX]);
+  protected isEntityValid = async (entityTab: string[]): Promise<boolean> => {
+    if (!this.isLibelleValid(entityTab[this.LIBELLE_INDEX])) {
+      return false;
+    }
+
+    return !(await this.isExistingEntity(entityTab));
+  }
+
+  protected isExistingEntity = async (
+    entityTab: string[]
+  ): Promise<boolean> => {
+    const results = await SqlConnection.query(
+      getEntiteAvecLibelleByLibelleQuery(
+        "observateur",
+        entityTab[this.LIBELLE_INDEX]
+      )
+    );
+
+    if (results && results[0] && results[0].id) {
+      // The entity already exists
+      this.message = "Il existe déjà un observateur avec ce libellé.";
+      return true;
+    }
+
+    return false;
   }
 
   private isLibelleValid = (libelle: string): boolean => {
+    libelle = libelle.trim();
+
     if (!libelle) {
       this.message = "Le libellé ne peut pas être vide";
       return false;
     }
 
     if (libelle.length > 100) {
-      this.message = "La longueur maximale du libellé est 100 caractères";
+      this.message = "La longueur maximale du libellé est de 100 caractères";
       return false;
     }
 

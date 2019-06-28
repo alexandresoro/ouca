@@ -716,3 +716,12 @@ export function getFindMilieuxByDonneeIdQuery(donneeId: number): string {
       donneeId
   );
 }
+
+export function getEntiteAvecLibelleByLibelleQuery(
+  entityName: string,
+  libelle: string
+) {
+  return getQuery(
+    "SELECT * FROM " + entityName + " WHERE libelle='" + libelle + "'"
+  );
+}

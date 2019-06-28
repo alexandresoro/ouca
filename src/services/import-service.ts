@@ -1,77 +1,103 @@
+import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
 import { ImportResponse } from "basenaturaliste-model/import-response.object";
-import * as _ from "lodash";
 import Papa from "papaparse";
+import { SqlConnection } from "../sql/sql-connection";
+import { DB_SAVE_MAPPING, getSaveEntityQuery } from "../sql/sql-queries-utils";
+import { TABLE_OBSERVATEUR } from "../utils/constants";
 
 export abstract class ImportService {
   protected message: string;
+
   private ERROR_SUFFIX: string = "_erreurs.csv";
-  private DETAILS_SUFFIX: string = "_erreurs_explications.csv";
-  private END_OF_LINE: string = "\r\n";
 
   private numberOfLines: number;
 
   private numberOfErrors: number;
 
-  public importFile = (fileContent: string): ImportResponse => {
+  private errors: string[][];
+
+  public importFile = async (fileContent: string): Promise<ImportResponse> => {
     this.numberOfLines = 0;
     this.numberOfErrors = 0;
+    this.errors = [];
 
     const content = Papa.parse(fileContent);
 
     if (!!content.data) {
-      _.forEach(content.data, (lineTab: any[]) => {
-        this.importLine(lineTab);
-      });
+      for (const lineTab of content.data) {
+        await this.importLine(lineTab);
+      }
     }
 
     return {
       isSuccessful: true,
-      numberOfLinesExtracted: content.data.length
+      numberOfLinesExtracted: this.numberOfLines,
+      numberOfLinesFailedToImport: this.numberOfErrors,
+      errors: this.errors
     };
   }
 
   protected abstract getNumberOfColumns(): number;
 
-  protected abstract isObjectValid(objectTab: string[]): boolean;
+  protected abstract isEntityValid(entityTab: string[]): Promise<boolean>;
 
-  protected abstract saveObject(objectTab: string[]): void;
+  protected abstract getEntity(entityTab: string[]): EntiteSimple;
 
-  private importLine = (objectTab: string[]): void => {
+  private importLine = async (entityTab: string[]): Promise<void> => {
+    console.log("### Line to import", entityTab);
     this.message = "";
 
-    if (!!objectTab) {
+    if (!!entityTab) {
       this.numberOfLines++;
 
-      if (
-        this.hasExpectedNumberOfColumns(objectTab) &&
-        this.isObjectValid(objectTab)
-      ) {
-        // Save object
-        this.saveObject(objectTab);
-      } else {
+      if (this.hasExpectedNumberOfColumns(entityTab)) {
+        const isEntityValid = await this.isEntityValid(entityTab);
+
+        if (isEntityValid) {
+          // Save object
+          await this.saveEntity(TABLE_OBSERVATEUR, entityTab);
+        }
+      }
+
+      if (this.message) {
         // Display error message
         this.numberOfErrors++;
-        // const errorLine: string = this.buildErrorLine(line);
+        this.errors.push(this.buildErrorObject(entityTab));
       }
     }
   }
 
-  private hasExpectedNumberOfColumns = (objectTab: string[]): boolean => {
-    if (!!objectTab && objectTab.length === this.getNumberOfColumns()) {
+  private hasExpectedNumberOfColumns = (entityTab: string[]): boolean => {
+    if (!!entityTab && entityTab.length === this.getNumberOfColumns()) {
       return true;
     } else {
       this.message =
         "Le nombre de colonnes de cette ligne est incorrect: " +
-        objectTab.length +
-        " colonnes au lieu de " +
+        entityTab.length +
+        " colonne(s) au lieu de " +
         this.getNumberOfColumns() +
-        " attendues";
+        " attendue(s)";
 
       return false;
     }
   }
 
-  private buildErrorLine = (line: string): string => {
-    return this.message + ";" + line;
+  private buildErrorObject = (entityTab: string[]): string[] => {
+    entityTab.push(this.message);
+    return entityTab;
+  }
+
+  private saveEntity = async (
+    tableName: string,
+    entityTab: string[]
+  ): Promise<any> => {
+    const saveResult = await SqlConnection.query(
+      getSaveEntityQuery(
+        tableName,
+        this.getEntity(entityTab),
+        DB_SAVE_MAPPING.observateur
+      )
+    );
+    return saveResult;
   }
 }
