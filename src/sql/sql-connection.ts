@@ -12,6 +12,14 @@ export class SqlConnection {
   private static connection: Promise<mysql.Connection>;
 
   private static async getConnection(): Promise<mysql.Connection> {
+    if (this.connection) {
+      const connection = await this.connection;
+      if (!(connection as any).isValid()) {
+        connection.destroy();
+        this.connection = null;
+      }
+    }
+
     if (!this.connection) {
       this.connection = createDatabaseConnection();
     }
@@ -118,13 +126,15 @@ export const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
   return config;
 };
 
-const createDatabaseConnection = async (): Promise<mysql.Connection> => {
-  const connection: mysql.Connection = await mariadb.createConnection(
-    getSqlConnectionConfiguration()
-  );
-  console.log(
-    "Connected to the database: ",
-    (connection as any).serverVersion()
-  );
+const createDatabaseConnection = (): Promise<mysql.Connection> => {
+  const connection: Promise<mysql.Connection> = mariadb
+    .createConnection(getSqlConnectionConfiguration())
+    .then((conn) => {
+      console.log("Connected to the database: ", (conn as any).serverVersion());
+      conn.on("error", (error) => {
+        console.log(error);
+      });
+      return conn;
+    });
   return connection;
 };
