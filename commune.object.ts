@@ -11,6 +11,4 @@ export interface Commune extends EntiteSimple {
   nom: string;
 
   nbLieuxdits?: number;
-
-  nbDonnees?: number;
 }

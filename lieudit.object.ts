@@ -1,5 +1,4 @@
 import { Commune } from "./commune.object";
-import { EntiteAvecLibelle } from "./entite-avec-libelle.object";
 import { EntiteSimple } from "./entite-simple.object";
 
 export interface Lieudit extends EntiteSimple {
@@ -14,6 +13,4 @@ export interface Lieudit extends EntiteSimple {
   latitude: number;
 
   longitude: number;
-
-  nbDonnees: number;
 }
