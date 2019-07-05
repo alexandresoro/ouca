@@ -87,7 +87,7 @@ export class ImportCommuneService extends ImportService {
     departement = departement.trim();
 
     if (!departement) {
-      this.message = "Le département du lieu-dit ne peut pas être vide";
+      this.message = "Le département de la commune ne peut pas être vide";
       return false;
     }
     return true;
