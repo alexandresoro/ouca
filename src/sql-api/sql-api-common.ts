@@ -7,9 +7,9 @@ export const saveEntity = async (
   entityToSave: EntiteSimple,
   mapping: { [column: string]: string }
 ): Promise<boolean> => {
-  const saveResult = await SqlConnection.query(
+  const saveResult: any = await SqlConnection.query(
     getSaveEntityQuery(tableName, entityToSave, mapping)
   );
-  console.log(saveResult);
-  return !!saveResult;
+
+  return !!saveResult && !!saveResult.insertId && saveResult.affectedRows === 1;
 };

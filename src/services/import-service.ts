@@ -1,14 +1,8 @@
 import Papa from "papaparse";
-import { EntiteSimple } from "../basenaturaliste-model/entite-simple.object";
 import { ImportResponse } from "../basenaturaliste-model/import-response.object";
-import { SqlConnection } from "../sql/sql-connection";
-import { DB_SAVE_MAPPING, getSaveEntityQuery } from "../sql/sql-queries-utils";
-import { TABLE_OBSERVATEUR } from "../utils/constants";
 
 export abstract class ImportService {
   protected message: string;
-
-  private ERROR_SUFFIX: string = "_erreurs.csv";
 
   private numberOfLines: number;
 
@@ -21,12 +15,24 @@ export abstract class ImportService {
     this.numberOfErrors = 0;
     this.errors = [];
 
+    if (!fileContent) {
+      return {
+        isSuccessful: false,
+        reasonForFailure: "Le contenu du fichier n'a pas pu être lu"
+      };
+    }
+
     const content = Papa.parse(fileContent);
 
     if (!!content.data) {
       for (const lineTab of content.data) {
         await this.importLine(lineTab);
       }
+    } else {
+      return {
+        isSuccessful: false,
+        reasonForFailure: "Le contenu du fichier n'a pas pu être parsé"
+      };
     }
 
     return {
@@ -42,7 +48,6 @@ export abstract class ImportService {
   protected abstract createEntity(entityTab: string[]): Promise<boolean>;
 
   private importLine = async (entityTab: string[]): Promise<void> => {
-    // console.log("### Line to import", entityTab);
     this.message = "";
 
     if (!!entityTab) {
@@ -56,7 +61,6 @@ export abstract class ImportService {
         // Display error message
         this.numberOfErrors++;
         this.errors.push(this.buildErrorObject(entityTab));
-        console.log("ERREUR", this.message);
       }
     }
   }
