@@ -1,10 +1,9 @@
-import { ImportService } from "./import-service";
+import { Lieudit } from "../basenaturaliste-model/lieudit.object";
 import { SqlConnection } from "../sql/sql-connection";
 import { getEntiteAvecLibelleByLibelleQuery } from "../sql/sql-queries-utils";
-import { Lieudit } from "../basenaturaliste-model/lieudit.object";
+import { ImportService } from "./import-service";
 
-export class ImportLieuxditService extends ImportService  {
-  
+export class ImportLieuxditService extends ImportService {
   private DEPARTEMENT_INDEX: number = 0;
   private CODE_COMMUNE_INDEX: number = 1;
   private NOM_COMMUNE_INDEX: number = 2;
@@ -19,7 +18,7 @@ export class ImportLieuxditService extends ImportService  {
 
   protected getEntity = (entityTab: string[]): Lieudit => {
     const communeId = 0; // TODO
-    
+
     return {
       id: null,
       communeId,
@@ -31,13 +30,15 @@ export class ImportLieuxditService extends ImportService  {
   }
 
   protected isEntityValid = async (entityTab: string[]): Promise<boolean> => {
-    if ( !this.isDepartementValid(entityTab[this.DEPARTEMENT_INDEX]) 
-        || !this.isCodeCommuneValid(entityTab[this.CODE_COMMUNE_INDEX]) 
-        || !this.isNomCommuneValid(entityTab[this.NOM_COMMUNE_INDEX]) 
-        || !this.isNomLieuditValid(entityTab[this.NOM_INDEX])
-        || !this.isAltitudeValid(entityTab[this.ALTITUDE_INDEX]) 
-        || !this.isLongitudeValid(entityTab[this.LONGITUDE_INDEX])
-        || !this.isLatitudeValid(entityTab[this.LATITUDE_INDEX])) {
+    if (
+      !this.isDepartementValid(entityTab[this.DEPARTEMENT_INDEX]) ||
+      !this.isCodeCommuneValid(entityTab[this.CODE_COMMUNE_INDEX]) ||
+      !this.isNomCommuneValid(entityTab[this.NOM_COMMUNE_INDEX]) ||
+      !this.isNomLieuditValid(entityTab[this.NOM_INDEX]) ||
+      !this.isAltitudeValid(entityTab[this.ALTITUDE_INDEX]) ||
+      !this.isLongitudeValid(entityTab[this.LONGITUDE_INDEX]) ||
+      !this.isLatitudeValid(entityTab[this.LATITUDE_INDEX])
+    ) {
       return false;
     }
 
@@ -85,8 +86,8 @@ export class ImportLieuxditService extends ImportService  {
       this.message = "Le code de la commune du lieu-dit ne peut pas être vide";
       return false;
     }
-    
-    if(!Number.isInteger(Number(code))) {
+
+    if (!Number.isInteger(Number(code))) {
       this.message = "Le code de la commune du lieu-dit doit être un entier";
       return false;
     }
@@ -114,7 +115,8 @@ export class ImportLieuxditService extends ImportService  {
     }
 
     if (nom.length > 150) {
-      this.message = "La longueur maximale du nom du lieu-dit est de 150 caractères";
+      this.message =
+        "La longueur maximale du nom du lieu-dit est de 150 caractères";
       return false;
     }
 
@@ -126,16 +128,17 @@ export class ImportLieuxditService extends ImportService  {
       this.message = "L'altitude du lieu-dit ne peut pas être vide";
       return false;
     }
-    
+
     const altitude: number = Number(altitudeStr);
 
-    if(!Number.isInteger(altitude)) {
+    if (!Number.isInteger(altitude)) {
       this.message = "L'altitude du lieu-dit doit être un entier";
       return false;
     }
 
-    if(altitude < 0 || altitude > 99999) {
-      this.message = "L'altitude du lieu-dit doit être un entier compris entre 0 et 99999";
+    if (altitude < 0 || altitude > 99999) {
+      this.message =
+        "L'altitude du lieu-dit doit être un entier compris entre 0 et 99999";
       return false;
     }
 
@@ -147,16 +150,17 @@ export class ImportLieuxditService extends ImportService  {
       this.message = "La longitude du lieu-dit ne peut pas être vide";
       return false;
     }
-    
+
     const longitude: number = Number(longitudeStr);
 
-    if(!Number.isInteger(longitude)) {
+    if (!Number.isInteger(longitude)) {
       this.message = "La longitude du lieu-dit doit être un entier";
       return false;
     }
 
-    if(longitude < 0 || longitude > 99999999) {
-      this.message = "La longitude du lieu-dit doit être un entier compris entre 0 et 99999999";
+    if (longitude < 0 || longitude > 99999999) {
+      this.message =
+        "La longitude du lieu-dit doit être un entier compris entre 0 et 99999999";
       return false;
     }
   }
@@ -166,18 +170,18 @@ export class ImportLieuxditService extends ImportService  {
       this.message = "La latitude du lieu-dit ne peut pas être vide";
       return false;
     }
-    
+
     const latitude: number = Number(latitudeStr);
 
-    if(!Number.isInteger(latitude)) {
+    if (!Number.isInteger(latitude)) {
       this.message = "La latitude du lieu-dit doit être un entier";
       return false;
     }
 
-    if(latitude < 0 || latitude > 99999999) {
-      this.message = "La latitude du lieu-dit doit être un entier compris entre 0 et 99999999";
+    if (latitude < 0 || latitude > 99999999) {
+      this.message =
+        "La latitude du lieu-dit doit être un entier compris entre 0 et 99999999";
       return false;
     }
   }
-  
 }
