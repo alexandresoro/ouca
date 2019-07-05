@@ -115,10 +115,10 @@ export const DB_CONFIGURATION_MAPPING = {
   export_folder_path: "exportFolderPath"
 };
 
-function getQuery(query: string): string {
+export const getQuery = (query: string): string => {
   console.log("---> " + query + ";");
   return query + ";";
-}
+};
 
 export const getAllFromTablesQuery = (tableNames: string[]): string => {
   return _.reduce(
@@ -242,83 +242,6 @@ export function getFindNumberOfDonneesByObservateurIdQuery(
     "observateur_id",
     observateurId
   );
-}
-
-export function getFindNumberOfDonneesByLieuditIdQuery(
-  lieuditId?: number
-): string {
-  return getFindNumberOfDonneesByInventaireEntityIdQuery(
-    "lieudit_id",
-    lieuditId
-  );
-}
-
-export function getFindNumberOfDonneesByDepartementIdQuery(
-  departementId?: number
-): string {
-  let query: string =
-    "SELECT c.departement_id as id, count(*) as nbDonnees " +
-    "FROM donnee d, inventaire i, commune c, lieudit l " +
-    "WHERE d.inventaire_id=i.id AND i.lieudit_id=l.id AND c.id=l.commune_id";
-  if (!!departementId) {
-    query = query + " AND c.departement_id=" + departementId;
-  } else {
-    query = query + " GROUP BY c.departement_id";
-  }
-  return getQuery(query);
-}
-
-export function getFindNumberOfDonneesByCommuneIdQuery(
-  communeId?: number
-): string {
-  let query: string =
-    "SELECT l.commune_id as id, count(*) as nbDonnees " +
-    "FROM donnee d, inventaire i, lieudit l WHERE d.inventaire_id=i.id AND i.lieudit_id=l.id";
-  if (!!communeId) {
-    query = query + " AND l.commune_id=" + communeId;
-  } else {
-    query = query + " GROUP BY l.commune_id";
-  }
-  return getQuery(query);
-}
-
-export function getFindNumberOfCommunesByDepartementIdQuery(
-  departementId?: number
-): string {
-  let query: string =
-    "SELECT c.departement_id as id, count(*) as nbCommunes FROM commune c";
-  if (!!departementId) {
-    query = query + " WHERE c.departement_id=" + departementId;
-  } else {
-    query = query + " GROUP BY c.departement_id";
-  }
-  return getQuery(query);
-}
-
-export function getFindNumberOfLieuxditsByDepartementIdQuery(
-  departementId?: number
-): string {
-  let query: string =
-    "SELECT c.departement_id as id, count(*) as nbLieuxdits FROM commune c, lieudit l WHERE c.id=l.commune_id";
-  if (!!departementId) {
-    query = query + " AND c.departement_id=" + departementId;
-  } else {
-    query = query + " GROUP BY c.departement_id";
-  }
-  return getQuery(query);
-}
-
-export function getFindNumberOfLieuxditsByCommuneIdQuery(
-  communeId?: number
-): string {
-  let query: string =
-    "SELECT l.commune_id as id, count(*) as nbLieuxdits FROM lieudit l";
-  if (!!communeId) {
-    query = query + " WHERE l.commune_id=" + communeId;
-  } else {
-    query = query + " GROUP BY l.commune_id";
-  }
-  return getQuery(query);
 }
 
 export function getFindNumberOfDonneesByMeteoIdQuery(meteoId?: number): string {
@@ -722,6 +645,6 @@ export function getEntiteAvecLibelleByLibelleQuery(
   libelle: string
 ) {
   return getQuery(
-    "SELECT * FROM " + entityName + " WHERE libelle='" + libelle + "'"
+    "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle + '"'
   );
 }

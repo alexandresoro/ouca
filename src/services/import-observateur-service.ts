@@ -5,6 +5,9 @@ import { ImportService } from "./import-service";
 
 export class ImportObservateurService extends ImportService {
   private LIBELLE_INDEX: number = 0;
+  protected createEntity(entityTab: string[]): Promise<boolean> {
+    throw new Error("Method not implemented.");
+  }
 
   protected getNumberOfColumns = () => {
     return 1;

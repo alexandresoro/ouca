@@ -1,6 +1,12 @@
+import { Commune } from "../basenaturaliste-model/commune.object";
+import { Departement } from "../basenaturaliste-model/departement.object";
 import { Lieudit } from "../basenaturaliste-model/lieudit.object";
-import { SqlConnection } from "../sql/sql-connection";
-import { getEntiteAvecLibelleByLibelleQuery } from "../sql/sql-queries-utils";
+import { saveEntity } from "../sql-api/sql-api-common";
+import { getCommuneByDepartementIdAndCodeAndNom } from "../sql-api/sql-api-commune";
+import { getDepartementByCode } from "../sql-api/sql-api-departement";
+import { getLieuditByCommuneIdAndNom } from "../sql-api/sql-api-lieudit";
+import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
+import { TABLE_LIEUDIT } from "../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
@@ -16,9 +22,7 @@ export class ImportLieuxditService extends ImportService {
     return 7;
   }
 
-  protected getEntity = (entityTab: string[]): Lieudit => {
-    const communeId = 0; // TODO
-
+  protected buildEntity = (entityTab: string[], communeId: number): Lieudit => {
     return {
       id: null,
       communeId,
@@ -29,7 +33,7 @@ export class ImportLieuxditService extends ImportService {
     };
   }
 
-  protected isEntityValid = async (entityTab: string[]): Promise<boolean> => {
+  protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (
       !this.isDepartementValid(entityTab[this.DEPARTEMENT_INDEX]) ||
       !this.isCodeCommuneValid(entityTab[this.CODE_COMMUNE_INDEX]) ||
@@ -42,31 +46,47 @@ export class ImportLieuxditService extends ImportService {
       return false;
     }
 
-    // TO DO check that the departement exists
-
-    // TO DO check that the commune exists
-
-    // Check that the lieu-dit does not exist yet
-    return !(await this.isExistingEntity(entityTab));
-  }
-
-  protected isExistingEntity = async (
-    entityTab: string[]
-  ): Promise<boolean> => {
-    const results = await SqlConnection.query(
-      getEntiteAvecLibelleByLibelleQuery(
-        "observateur",
-        entityTab[this.NOM_INDEX]
-      )
+    // Check that the departement exists
+    const departement: Departement = await getDepartementByCode(
+      entityTab[this.DEPARTEMENT_INDEX]
     );
 
-    if (results && results[0] && results[0].id) {
-      // The entity already exists
-      this.message = "Il existe déjà un observateur avec ce libellé.";
-      return true;
+    if (!departement) {
+      this.message = "Le département n'existe pas";
+      return false;
     }
 
-    return false;
+    // Check that the commune exists
+    const commune: Commune = await getCommuneByDepartementIdAndCodeAndNom(
+      departement.id,
+      +entityTab[this.CODE_COMMUNE_INDEX],
+      entityTab[this.NOM_COMMUNE_INDEX]
+    );
+
+    if (!commune) {
+      this.message = "La commune n'existe pas dans ce département";
+      return false;
+    }
+
+    // Check that the lieu-dit does not exist yet
+    const lieudit: Lieudit = await getLieuditByCommuneIdAndNom(
+      commune.id,
+      entityTab[this.NOM_INDEX]
+    );
+
+    if (lieudit && lieudit.id) {
+      this.message =
+        "Il existe déjà un lieu-dit avec ce nom dans cette commune";
+      return false;
+    }
+
+    const lieuditToSave = this.buildEntity(entityTab, commune.id);
+
+    return await saveEntity(
+      TABLE_LIEUDIT,
+      lieuditToSave,
+      DB_SAVE_MAPPING.lieudit
+    );
   }
 
   private isDepartementValid = (departement: string): boolean => {
@@ -163,6 +183,8 @@ export class ImportLieuxditService extends ImportService {
         "La longitude du lieu-dit doit être un entier compris entre 0 et 99999999";
       return false;
     }
+
+    return true;
   }
 
   private isLatitudeValid(latitudeStr: string) {
@@ -183,5 +205,7 @@ export class ImportLieuxditService extends ImportService {
         "La latitude du lieu-dit doit être un entier compris entre 0 et 99999999";
       return false;
     }
+
+    return true;
   }
 }

@@ -28,26 +28,30 @@ import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
 import { SqlConnection } from "../sql/sql-connection";
 import {
+  getQueryToFindNumberOfDonneesByCommuneId,
+  getQueryToFindNumberOfLieuxditsByCommuneId
+} from "../sql/sql-queries-commune";
+import {
+  getQueryToFindNumberOfCommunesByDepartementId,
+  getQueryToFindNumberOfDonneesByDepartementId,
+  getQueryToFindNumberOfLieuxditsByDepartementId
+} from "../sql/sql-queries-departement";
+import { getQueryToFindNumberOfDonneesByLieuditId } from "../sql/sql-queries-lieudit";
+import {
   DB_SAVE_MAPPING,
   getDeleteEntityByIdQuery,
   getFindAllQuery,
-  getFindNumberOfCommunesByDepartementIdQuery,
   getFindNumberOfDonneesByAgeIdQuery,
   getFindNumberOfDonneesByClasseIdQuery,
-  getFindNumberOfDonneesByCommuneIdQuery,
   getFindNumberOfDonneesByComportementIdQuery,
-  getFindNumberOfDonneesByDepartementIdQuery,
   getFindNumberOfDonneesByEspeceIdQuery,
   getFindNumberOfDonneesByEstimationDistanceIdQuery,
   getFindNumberOfDonneesByEstimationNombreIdQuery,
-  getFindNumberOfDonneesByLieuditIdQuery,
   getFindNumberOfDonneesByMeteoIdQuery,
   getFindNumberOfDonneesByMilieuIdQuery,
   getFindNumberOfDonneesByObservateurIdQuery,
   getFindNumberOfDonneesBySexeIdQuery,
   getFindNumberOfEspecesByClasseIdQuery,
-  getFindNumberOfLieuxditsByCommuneIdQuery,
-  getFindNumberOfLieuxditsByDepartementIdQuery,
   getSaveEntityQuery
 } from "../sql/sql-queries-utils";
 import {
@@ -128,9 +132,9 @@ export const getDepartements = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
-        getFindNumberOfCommunesByDepartementIdQuery() +
-        getFindNumberOfLieuxditsByDepartementIdQuery() +
-        getFindNumberOfDonneesByDepartementIdQuery()
+        getQueryToFindNumberOfCommunesByDepartementId() +
+        getQueryToFindNumberOfLieuxditsByDepartementId() +
+        getQueryToFindNumberOfDonneesByDepartementId()
     );
 
     const departements: Departement[] = results[0];
@@ -175,8 +179,8 @@ export const getCommunes = async (
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC) +
         getFindAllQuery(TABLE_DEPARTEMENT) +
-        getFindNumberOfLieuxditsByCommuneIdQuery() +
-        getFindNumberOfDonneesByCommuneIdQuery()
+        getQueryToFindNumberOfLieuxditsByCommuneId() +
+        getQueryToFindNumberOfDonneesByCommuneId()
     );
 
     const communes: Commune[] = mapCommunes(results[0]);
@@ -235,7 +239,7 @@ export const getLieuxdits = async (
       getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC) +
         getFindAllQuery(TABLE_COMMUNE) +
         getFindAllQuery(TABLE_DEPARTEMENT) +
-        getFindNumberOfDonneesByLieuditIdQuery()
+        getQueryToFindNumberOfDonneesByLieuditId()
     );
     const lieuxdits: Lieudit[] = mapLieuxdits(results[0]);
 

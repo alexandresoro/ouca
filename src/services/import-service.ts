@@ -39,30 +39,24 @@ export abstract class ImportService {
 
   protected abstract getNumberOfColumns(): number;
 
-  protected abstract isEntityValid(entityTab: string[]): Promise<boolean>;
-
-  protected abstract getEntity(entityTab: string[]): EntiteSimple;
+  protected abstract createEntity(entityTab: string[]): Promise<boolean>;
 
   private importLine = async (entityTab: string[]): Promise<void> => {
-    console.log("### Line to import", entityTab);
+    // console.log("### Line to import", entityTab);
     this.message = "";
 
     if (!!entityTab) {
       this.numberOfLines++;
 
       if (this.hasExpectedNumberOfColumns(entityTab)) {
-        const isEntityValid = await this.isEntityValid(entityTab);
-
-        if (isEntityValid) {
-          // Save object
-          await this.saveEntity(TABLE_OBSERVATEUR, entityTab);
-        }
+        await this.createEntity(entityTab);
       }
 
       if (this.message) {
         // Display error message
         this.numberOfErrors++;
         this.errors.push(this.buildErrorObject(entityTab));
+        console.log("ERREUR", this.message);
       }
     }
   }
@@ -85,19 +79,5 @@ export abstract class ImportService {
   private buildErrorObject = (entityTab: string[]): string[] => {
     entityTab.push(this.message);
     return entityTab;
-  }
-
-  private saveEntity = async (
-    tableName: string,
-    entityTab: string[]
-  ): Promise<any> => {
-    const saveResult = await SqlConnection.query(
-      getSaveEntityQuery(
-        tableName,
-        this.getEntity(entityTab),
-        DB_SAVE_MAPPING.observateur
-      )
-    );
-    return saveResult;
   }
 }
