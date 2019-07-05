@@ -1,5 +1,6 @@
 import { ImportResponse } from "../basenaturaliste-model/import-response.object";
 import { HttpParameters } from "../http/httpParameters";
+import { ImportCommuneService } from "../services/import-commune-service";
 import { ImportLieuxditService } from "../services/import-lieudit-service";
 import { ImportObservateurService } from "../services/import-observateur-service";
 import { SqlConnection } from "../sql/sql-connection";
@@ -24,7 +25,8 @@ export const importCommunes = async (
   isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  // TODO
+  const importService = new ImportCommuneService();
+  return importService.importFile(httpParameters.postData);
 };
 
 export const importLieuxdits = async (

@@ -18,6 +18,35 @@ export function getQueryToFindCommuneByDepartementIdAndCodeAndNom(
   return getQuery(query);
 }
 
+export function getQueryToFindCommuneByDepartementIdAndCode(
+  departementId: number,
+  code: number
+): string {
+  const query: string =
+    "SELECT * " +
+    " FROM commune " +
+    " WHERE departement_id=" +
+    departementId +
+    " AND code=" +
+    code;
+  return getQuery(query);
+}
+
+export function getQueryToFindCommuneByDepartementIdAndNom(
+  departementId: number,
+  nom: string
+): string {
+  const query: string =
+    "SELECT * " +
+    " FROM commune " +
+    " WHERE departement_id=" +
+    departementId +
+    ' AND nom="' +
+    nom +
+    '"';
+  return getQuery(query);
+}
+
 export function getQueryToFindNumberOfDonneesByCommuneId(
   communeId?: number
 ): string {
