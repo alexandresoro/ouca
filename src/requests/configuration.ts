@@ -4,7 +4,7 @@ import { ConfigurationPage } from "../basenaturaliste-model/configuration-page.o
 import { EntiteSimple } from "../basenaturaliste-model/entite-simple.object";
 import { HttpParameters } from "../http/httpParameters";
 import configurationInitMock from "../mocks/configuration-page/configuration.json";
-import { SqlConnection } from "../sql/sql-connection";
+import { SqlConnection } from "../sql-api/sql-connection";
 import { DB_CONFIGURATION_MAPPING, getFindAllQuery, updateAllInTableQuery } from "../sql/sql-queries-utils";
 import { COLUMN_CODE, COLUMN_LIBELLE, ORDER_ASC, TABLE_AGE, TABLE_CONFIGURATION, TABLE_DEPARTEMENT, TABLE_ESTIMATION_NOMBRE, TABLE_OBSERVATEUR, TABLE_SEXE } from "../utils/constants";
 

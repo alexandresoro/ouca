@@ -1,14 +1,14 @@
-import { Classe } from "../basenaturaliste-model/classe.object";
-import { Espece } from "../basenaturaliste-model/espece.object";
-import { getClasseByLibelle } from "../sql-api/sql-api-classe";
-import { saveEntity } from "../sql-api/sql-api-common";
+import { Classe } from "../../basenaturaliste-model/classe.object";
+import { Espece } from "../../basenaturaliste-model/espece.object";
+import { getClasseByLibelle } from "../../sql-api/sql-api-classe";
+import { saveEntity } from "../../sql-api/sql-api-common";
 import {
   getEspeceByCode,
   getEspeceByNomFrancais,
   getEspeceByNomLatin
-} from "../sql-api/sql-api-espece";
-import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
-import { TABLE_ESPECE } from "../utils/constants";
+} from "../../sql-api/sql-api-espece";
+import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
+import { TABLE_ESPECE } from "../../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {

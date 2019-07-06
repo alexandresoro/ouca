@@ -1,6 +1,6 @@
-import { Observateur } from "../basenaturaliste-model/observateur.object";
-import { SqlConnection } from "../sql/sql-connection";
-import { getQueryToFindEntityByLibelle } from "../sql/sql-queries-utils";
+import { Observateur } from "../../basenaturaliste-model/observateur.object";
+import { SqlConnection } from "../../sql-api/sql-connection";
+import { getQueryToFindEntityByLibelle } from "../../sql/sql-queries-utils";
 import { ImportService } from "./import-service";
 
 export class ImportObservateurService extends ImportService {

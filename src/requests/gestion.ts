@@ -26,7 +26,7 @@ import lieuxDitsMock from "../mocks/gestion-base-pages/lieuxdits.json";
 import milieuxMock from "../mocks/gestion-base-pages/milieux.json";
 import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
-import { SqlConnection } from "../sql/sql-connection";
+import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getQueryToFindNumberOfDonneesByCommuneId,
   getQueryToFindNumberOfLieuxditsByCommuneId

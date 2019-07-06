@@ -1,5 +1,5 @@
 import { Commune } from "../basenaturaliste-model/commune.object";
-import { SqlConnection } from "../sql/sql-connection";
+import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getQueryToFindCommuneByDepartementIdAndCode,
   getQueryToFindCommuneByDepartementIdAndCodeAndNom,

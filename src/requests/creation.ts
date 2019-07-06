@@ -7,7 +7,7 @@ import { HttpParameters } from "../http/httpParameters";
 import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
 import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
 import creationPageInitMock from "../mocks/creation-page/creation-page-init.json";
-import { SqlConnection } from "../sql/sql-connection";
+import { SqlConnection } from "../sql-api/sql-connection";
 import {
   DB_SAVE_MAPPING,
   getAllFromTablesQuery,

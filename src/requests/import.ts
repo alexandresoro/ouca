@@ -1,11 +1,11 @@
 import { ImportResponse } from "../basenaturaliste-model/import-response.object";
 import { HttpParameters } from "../http/httpParameters";
-import { ImportCommuneService } from "../services/import-commune-service";
-import { ImportDepartementService } from "../services/import-departement-service";
-import { ImportEspeceService } from "../services/import-espece-service";
-import { ImportLieuxditService } from "../services/import-lieudit-service";
-import { ImportObservateurService } from "../services/import-observateur-service";
-import { SqlConnection } from "../sql/sql-connection";
+import { ImportCommuneService } from "../services/import/import-commune-service";
+import { ImportDepartementService } from "../services/import/import-departement-service";
+import { ImportEspeceService } from "../services/import/import-espece-service";
+import { ImportLieuxditService } from "../services/import/import-lieudit-service";
+import { ImportObservateurService } from "../services/import/import-observateur-service";
+import { SqlConnection } from "../sql-api/sql-connection";
 import { getFindConfigurationByLibelleQuery } from "../sql/sql-queries-utils";
 
 export const importObservateurs = async (

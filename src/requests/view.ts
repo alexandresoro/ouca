@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
-import { SqlConnection } from "../sql/sql-connection";
+import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getFindAllAssociesQuery,
   getFindAllComportementsQuery,

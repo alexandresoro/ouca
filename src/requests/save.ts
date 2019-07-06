@@ -7,7 +7,7 @@ import { HttpParameters } from "../http/httpParameters";
 import {
   DEFAULT_DATABASE_NAME,
   getSqlConnectionConfiguration
-} from "../sql/sql-connection";
+} from "../sql-api/sql-connection";
 import { getExportFolderPath } from "./import";
 
 const DUMP_FOLDER_PATH: string = "/sauvegardes";

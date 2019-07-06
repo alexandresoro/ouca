@@ -1,5 +1,5 @@
 import { Espece } from "../basenaturaliste-model/espece.object";
-import { SqlConnection } from "../sql/sql-connection";
+import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getQueryToFindEspeceByCode,
   getQueryToFindEspeceByNomFrancais,

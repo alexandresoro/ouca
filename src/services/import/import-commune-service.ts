@@ -1,13 +1,13 @@
-import { Commune } from "../basenaturaliste-model/commune.object";
-import { Departement } from "../basenaturaliste-model/departement.object";
-import { saveEntity } from "../sql-api/sql-api-common";
+import { Commune } from "../../basenaturaliste-model/commune.object";
+import { Departement } from "../../basenaturaliste-model/departement.object";
+import { saveEntity } from "../../sql-api/sql-api-common";
 import {
   getCommuneByDepartementIdAndCode,
   getCommuneByDepartementIdAndNom
-} from "../sql-api/sql-api-commune";
-import { getDepartementByCode } from "../sql-api/sql-api-departement";
-import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
-import { TABLE_COMMUNE } from "../utils/constants";
+} from "../../sql-api/sql-api-commune";
+import { getDepartementByCode } from "../../sql-api/sql-api-departement";
+import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
+import { TABLE_COMMUNE } from "../../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportCommuneService extends ImportService {

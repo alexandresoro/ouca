@@ -1,5 +1,5 @@
 import Papa from "papaparse";
-import { ImportResponse } from "../basenaturaliste-model/import-response.object";
+import { ImportResponse } from "../../basenaturaliste-model/import-response.object";
 
 export abstract class ImportService {
   protected message: string;

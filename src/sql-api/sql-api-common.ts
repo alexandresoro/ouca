@@ -1,5 +1,5 @@
 import { EntiteSimple } from "../basenaturaliste-model/entite-simple.object";
-import { SqlConnection } from "../sql/sql-connection";
+import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getQueryToFindEntityByLibelle,
   getSaveEntityQuery

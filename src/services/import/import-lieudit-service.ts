@@ -1,12 +1,12 @@
-import { Commune } from "../basenaturaliste-model/commune.object";
-import { Departement } from "../basenaturaliste-model/departement.object";
-import { Lieudit } from "../basenaturaliste-model/lieudit.object";
-import { saveEntity } from "../sql-api/sql-api-common";
-import { getCommuneByDepartementIdAndCodeAndNom } from "../sql-api/sql-api-commune";
-import { getDepartementByCode } from "../sql-api/sql-api-departement";
-import { getLieuditByCommuneIdAndNom } from "../sql-api/sql-api-lieudit";
-import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
-import { TABLE_LIEUDIT } from "../utils/constants";
+import { Commune } from "../../basenaturaliste-model/commune.object";
+import { Departement } from "../../basenaturaliste-model/departement.object";
+import { Lieudit } from "../../basenaturaliste-model/lieudit.object";
+import { saveEntity } from "../../sql-api/sql-api-common";
+import { getCommuneByDepartementIdAndCodeAndNom } from "../../sql-api/sql-api-commune";
+import { getDepartementByCode } from "../../sql-api/sql-api-departement";
+import { getLieuditByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
+import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
+import { TABLE_LIEUDIT } from "../../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {

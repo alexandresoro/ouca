@@ -1,8 +1,8 @@
-import { Departement } from "../basenaturaliste-model/departement.object";
-import { saveEntity } from "../sql-api/sql-api-common";
-import { getDepartementByCode } from "../sql-api/sql-api-departement";
-import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
-import { TABLE_DEPARTEMENT } from "../utils/constants";
+import { Departement } from "../../basenaturaliste-model/departement.object";
+import { saveEntity } from "../../sql-api/sql-api-common";
+import { getDepartementByCode } from "../../sql-api/sql-api-departement";
+import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
+import { TABLE_DEPARTEMENT } from "../../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {

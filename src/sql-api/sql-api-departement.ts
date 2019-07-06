@@ -1,5 +1,5 @@
 import { Departement } from "../basenaturaliste-model/departement.object";
-import { SqlConnection } from "../sql/sql-connection";
+import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindDepartementByCode } from "../sql/sql-queries-departement";
 
 export const getDepartementByCode = async (
