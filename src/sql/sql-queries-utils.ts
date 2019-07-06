@@ -639,3 +639,23 @@ export function getQueryToFindEntityByLibelle(
     "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle + '"'
   );
 }
+
+export function getQueryToFindEntityByCode(entityName: string, code: string) {
+  return getQuery("SELECT * FROM " + entityName + ' WHERE code="' + code + '"');
+}
+
+export function getQueryToFindEntityByCodeAndLibelle(
+  entityName: string,
+  code: string,
+  libelle: string
+) {
+  return getQuery(
+    "SELECT * FROM " +
+      entityName +
+      ' WHERE code="' +
+      code +
+      '" AND libelle="' +
+      libelle +
+      '"'
+  );
+}

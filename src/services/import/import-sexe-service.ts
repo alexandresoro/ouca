@@ -1,15 +1,15 @@
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
-import { TABLE_OBSERVATEUR } from "../../utils/constants";
+import { TABLE_SEXE } from "../../utils/constants";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
-export class ImportObservateurService extends ImportEntiteAvecLibelleService {
+export class ImportSexeService extends ImportEntiteAvecLibelleService {
   protected getTableName(): string {
-    return TABLE_OBSERVATEUR;
+    return TABLE_SEXE;
   }
   protected getDbMapping(): { [column: string]: string } {
-    return DB_SAVE_MAPPING.observateur;
+    return DB_SAVE_MAPPING.sexe;
   }
   protected getThisEntityName(): string {
-    return "Cet observateur";
+    return "Ce sexe";
   }
 }

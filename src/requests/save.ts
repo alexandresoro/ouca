@@ -4,11 +4,11 @@ import { promises } from "fs";
 import * as _ from "lodash";
 import moment from "moment";
 import { HttpParameters } from "../http/httpParameters";
+import { getExportFolderPath } from "../sql-api/sql-api-common";
 import {
   DEFAULT_DATABASE_NAME,
   getSqlConnectionConfiguration
 } from "../sql-api/sql-connection";
-import { getExportFolderPath } from "./import";
 
 const DUMP_FOLDER_PATH: string = "/sauvegardes";
 const DUMP_FILE_NAME: string = "/sauvegarde_base_naturaliste_";
@@ -19,7 +19,6 @@ export const saveDatabase = async (
   httpParameters: HttpParameters,
   isDockerMode: boolean
 ): Promise<{}> => {
-
   let dumpFolder: string = DUMP_FOLDER_PATH;
 
   if (!isDockerMode) {
@@ -63,9 +62,11 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
     ];
 
     if (isRemoteDump) {
-      commonDumpParams = _.concat("--host=" + connectionConfig.host,
+      commonDumpParams = _.concat(
+        "--host=" + connectionConfig.host,
         "--port=" + connectionConfig.port,
-        commonDumpParams);
+        commonDumpParams
+      );
     }
 
     const dumpProcess: ChildProcess = spawn("mysqldump", commonDumpParams);

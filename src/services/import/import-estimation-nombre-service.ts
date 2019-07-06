@@ -1,15 +1,15 @@
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
-import { TABLE_OBSERVATEUR } from "../../utils/constants";
+import { TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
-export class ImportObservateurService extends ImportEntiteAvecLibelleService {
+export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {
   protected getTableName(): string {
-    return TABLE_OBSERVATEUR;
+    return TABLE_ESTIMATION_NOMBRE;
   }
   protected getDbMapping(): { [column: string]: string } {
-    return DB_SAVE_MAPPING.observateur;
+    return DB_SAVE_MAPPING.estimationNombre;
   }
   protected getThisEntityName(): string {
-    return "Cet observateur";
+    return "Cette estimation du nombre";
   }
 }
