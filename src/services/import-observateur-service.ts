@@ -1,6 +1,6 @@
 import { Observateur } from "../basenaturaliste-model/observateur.object";
 import { SqlConnection } from "../sql/sql-connection";
-import { getEntiteAvecLibelleByLibelleQuery } from "../sql/sql-queries-utils";
+import { getQueryToFindEntityByLibelle } from "../sql/sql-queries-utils";
 import { ImportService } from "./import-service";
 
 export class ImportObservateurService extends ImportService {
@@ -32,7 +32,7 @@ export class ImportObservateurService extends ImportService {
     entityTab: string[]
   ): Promise<boolean> => {
     const results = await SqlConnection.query(
-      getEntiteAvecLibelleByLibelleQuery(
+      getQueryToFindEntityByLibelle(
         "observateur",
         entityTab[this.LIBELLE_INDEX]
       )

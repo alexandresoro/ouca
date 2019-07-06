@@ -311,15 +311,6 @@ export function getFindNumberOfDonneesByClasseIdQuery(
   return getQuery(query);
 }
 
-export function getFindNumberOfDonneesByEspeceIdQuery(
-  especeId?: number
-): string {
-  return getFindNumberOfDonneesByDoneeeEntityIdQuery(
-    COLUMN_ESPECE_ID,
-    especeId
-  );
-}
-
 export function getFindNumberOfDonneesByEstimationNombreIdQuery(
   estimationId?: number
 ): string {
@@ -396,7 +387,7 @@ export function getSaveEntityQuery(
       } else if (_.isBoolean(entityToSave[mapping[key]])) {
         valuesArray.push(entityToSave[mapping[key]]);
       } else {
-        valuesArray.push("'" + entityToSave[mapping[key]] + "'");
+        valuesArray.push('"' + entityToSave[mapping[key]] + '"');
       }
     });
     const values = valuesArray.join(",");
@@ -419,7 +410,7 @@ export function getSaveEntityQuery(
       } else if (_.isBoolean(entityToSave[mapping[key]])) {
         updatesArray.push(key + "=" + entityToSave[mapping[key]]);
       } else {
-        updatesArray.push(key + "='" + entityToSave[mapping[key]] + "'");
+        updatesArray.push(key + '="' + entityToSave[mapping[key]] + '"');
       }
     });
     const updates = updatesArray.join(",");
@@ -502,13 +493,13 @@ export const updateInTableQuery = (
     tableName +
     " SET " +
     setColumn +
-    "='" +
+    '="' +
     setValue +
     "' WHERE " +
     whereColumn +
-    "='" +
+    '="' +
     whereValue +
-    "'";
+    '"';
   return getQuery(query);
 };
 
@@ -529,9 +520,9 @@ export function getDeleteEntityByAttributeQuery(
       tableName +
       " WHERE " +
       attributeName +
-      "='" +
+      '="' +
       attributeValue +
-      "'"
+      '"'
   );
 }
 
@@ -602,7 +593,7 @@ export function getFindNextDonneeByCurrentDonneeIdQuery(
 
 export function getFindConfigurationByLibelleQuery(libelle: string) {
   return getQuery(
-    "SELECT * FROM configuration WHERE libelle='" + libelle + "'"
+    'SELECT * FROM configuration WHERE libelle="' + libelle + '"'
   );
 }
 
@@ -640,7 +631,7 @@ export function getFindMilieuxByDonneeIdQuery(donneeId: number): string {
   );
 }
 
-export function getEntiteAvecLibelleByLibelleQuery(
+export function getQueryToFindEntityByLibelle(
   entityName: string,
   libelle: string
 ) {

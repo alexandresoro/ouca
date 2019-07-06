@@ -36,6 +36,7 @@ import {
   getQueryToFindNumberOfDonneesByDepartementId,
   getQueryToFindNumberOfLieuxditsByDepartementId
 } from "../sql/sql-queries-departement";
+import { getQueryToFindNumberOfDonneesByEspeceId } from "../sql/sql-queries-espece";
 import { getQueryToFindNumberOfDonneesByLieuditId } from "../sql/sql-queries-lieudit";
 import {
   DB_SAVE_MAPPING,
@@ -44,7 +45,6 @@ import {
   getFindNumberOfDonneesByAgeIdQuery,
   getFindNumberOfDonneesByClasseIdQuery,
   getFindNumberOfDonneesByComportementIdQuery,
-  getFindNumberOfDonneesByEspeceIdQuery,
   getFindNumberOfDonneesByEstimationDistanceIdQuery,
   getFindNumberOfDonneesByEstimationNombreIdQuery,
   getFindNumberOfDonneesByMeteoIdQuery,
@@ -384,7 +384,7 @@ export const getEspeces = async (
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC) +
         getFindAllQuery(TABLE_CLASSE) +
-        getFindNumberOfDonneesByEspeceIdQuery()
+        getQueryToFindNumberOfDonneesByEspeceId()
     );
     const especes: Espece[] = mapEspeces(results[0]);
 
