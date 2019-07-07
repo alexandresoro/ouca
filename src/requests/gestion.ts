@@ -27,31 +27,33 @@ import milieuxMock from "../mocks/gestion-base-pages/milieux.json";
 import observateursMock from "../mocks/gestion-base-pages/observateurs.json";
 import sexesMock from "../mocks/gestion-base-pages/sexes.json";
 import { SqlConnection } from "../sql-api/sql-connection";
+import { getQueryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
+import {
+  getQueryToFindNumberOfDonneesByClasseId,
+  getQueryToFindNumberOfEspecesByClasseId
+} from "../sql/sql-queries-classe";
 import {
   getQueryToFindNumberOfDonneesByCommuneId,
   getQueryToFindNumberOfLieuxditsByCommuneId
 } from "../sql/sql-queries-commune";
+import { getQueryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
 import {
   getQueryToFindNumberOfCommunesByDepartementId,
   getQueryToFindNumberOfDonneesByDepartementId,
   getQueryToFindNumberOfLieuxditsByDepartementId
 } from "../sql/sql-queries-departement";
 import { getQueryToFindNumberOfDonneesByEspeceId } from "../sql/sql-queries-espece";
+import { getQueryToFindNumberOfDonneesByEstimationDistanceId } from "../sql/sql-queries-estimation-distance";
+import { getQueryToFindNumberOfDonneesByEstimationNombreId } from "../sql/sql-queries-estimation-nombre";
 import { getQueryToFindNumberOfDonneesByLieuditId } from "../sql/sql-queries-lieudit";
+import { getQueryToFindNumberOfDonneesByMeteoId } from "../sql/sql-queries-meteo";
+import { getQueryToFindNumberOfDonneesByMilieuId } from "../sql/sql-queries-milieu";
+import { getQueryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";
+import { getQueryToFindNumberOfDonneesBySexeId } from "../sql/sql-queries-sexe";
 import {
   DB_SAVE_MAPPING,
   getDeleteEntityByIdQuery,
   getFindAllQuery,
-  getFindNumberOfDonneesByAgeIdQuery,
-  getFindNumberOfDonneesByClasseIdQuery,
-  getFindNumberOfDonneesByComportementIdQuery,
-  getFindNumberOfDonneesByEstimationDistanceIdQuery,
-  getFindNumberOfDonneesByEstimationNombreIdQuery,
-  getFindNumberOfDonneesByMeteoIdQuery,
-  getFindNumberOfDonneesByMilieuIdQuery,
-  getFindNumberOfDonneesByObservateurIdQuery,
-  getFindNumberOfDonneesBySexeIdQuery,
-  getFindNumberOfEspecesByClasseIdQuery,
   getSaveEntityQuery
 } from "../sql/sql-queries-utils";
 import {
@@ -93,7 +95,7 @@ export const getObservateurs = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
-        getFindNumberOfDonneesByObservateurIdQuery()
+        getQueryToFindNumberOfDonneesByObservateurId()
     );
     const observateurs: Observateur[] = results[0];
     const nbDonneesByObservateur: any[] = results[1];
@@ -299,7 +301,7 @@ export const getMeteos = async (
 ): Promise<Meteo[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC) +
-      getFindNumberOfDonneesByMeteoIdQuery()
+      getQueryToFindNumberOfDonneesByMeteoId()
   );
 
   const meteos: Meteo[] = results[0];
@@ -339,8 +341,8 @@ export const getClasses = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_CLASSE, COLUMN_LIBELLE, ORDER_ASC) +
-        getFindNumberOfEspecesByClasseIdQuery() +
-        getFindNumberOfDonneesByClasseIdQuery()
+        getQueryToFindNumberOfEspecesByClasseId() +
+        getQueryToFindNumberOfDonneesByClasseId()
     );
 
     const classes: Classe[] = results[0];
@@ -442,7 +444,7 @@ export const getSexes = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
-        getFindNumberOfDonneesBySexeIdQuery()
+        getQueryToFindNumberOfDonneesBySexeId()
     );
 
     const sexes: Sexe[] = results[0];
@@ -483,7 +485,7 @@ export const getAges = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
-        getFindNumberOfDonneesByAgeIdQuery()
+        getQueryToFindNumberOfDonneesByAgeId()
     );
 
     const ages: Age[] = results[0];
@@ -524,7 +526,7 @@ export const getEstimationsNombre = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC) +
-        getFindNumberOfDonneesByEstimationNombreIdQuery()
+        getQueryToFindNumberOfDonneesByEstimationNombreId()
     );
 
     const estimations: EstimationNombre[] = mapEstimationsNombre(results[0]);
@@ -569,7 +571,7 @@ export const getEstimationsDistance = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_ESTIMATION_DISTANCE, COLUMN_LIBELLE, ORDER_ASC) +
-        getFindNumberOfDonneesByEstimationDistanceIdQuery()
+        getQueryToFindNumberOfDonneesByEstimationDistanceId()
     );
 
     const estimations: EstimationDistance[] = results[0];
@@ -614,7 +616,7 @@ export const getComportements = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_COMPORTEMENT, COLUMN_LIBELLE, ORDER_ASC) +
-        getFindNumberOfDonneesByComportementIdQuery()
+        getQueryToFindNumberOfDonneesByComportementId()
     );
 
     const comportements: Comportement[] = results[0];
@@ -655,7 +657,7 @@ export const getMilieux = async (
   } else {
     const results = await SqlConnection.query(
       getFindAllQuery(TABLE_MILIEU, COLUMN_LIBELLE, ORDER_ASC) +
-        getFindNumberOfDonneesByMilieuIdQuery()
+        getQueryToFindNumberOfDonneesByMilieuId()
     );
 
     const milieux: Milieu[] = results[0];

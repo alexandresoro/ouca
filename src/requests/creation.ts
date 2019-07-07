@@ -8,24 +8,26 @@ import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-c
 import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
 import creationPageInitMock from "../mocks/creation-page/creation-page-init.json";
 import { SqlConnection } from "../sql-api/sql-connection";
+import { getQueryToFindComportementsByDonneeId } from "../sql/sql-queries-comportement";
+import {
+  getQueryToFindDonneeById,
+  getQueryToFindDonneeIndexById,
+  getQueryToFindLastDonnee,
+  getQueryToFindLastRegroupement,
+  getQueryToFindNextDonneeByCurrentDonneeId,
+  getQueryToFindNumberOfDonnees,
+  getQueryToFindNumberOfDonneesByDoneeeEntityId,
+  getQueryToFindPreviousDonneeByCurrentDonneeId
+} from "../sql/sql-queries-donnee";
+import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
+import { getQueryToFindMilieuxByDonneeId } from "../sql/sql-queries-milieu";
+import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
   getAllFromTablesQuery,
   getDeleteEntityByAttributeQuery,
   getDeleteEntityByIdQuery,
-  getFindAssociesByInventaireIdQuery,
-  getFindComportementsByDonneeIdQuery,
-  getFindDonneeByIdQuery,
-  getFindDonneeIndexByIdQuery,
-  getFindLastDonneeQuery,
-  getFindLastRegroupementQuery,
-  getFindMetosByInventaireIdQuery,
-  getFindMilieuxByDonneeIdQuery,
-  getFindNextDonneeByCurrentDonneeIdQuery,
-  getFindNumberOfDonneesByDoneeeEntityIdQuery,
-  getFindNumberOfDonneesQuery,
   getFindOneByIdQuery,
-  getFindPreviousDonneeByCurrentDonneeIdQuery,
   getSaveEntityQuery,
   getSaveListOfEntitesQueries
 } from "../sql/sql-queries-utils";
@@ -86,9 +88,9 @@ export const creationInit = async (
     return creationPageInitMock as any;
   } else {
     const results = await SqlConnection.query(
-      getFindLastDonneeQuery() +
-        getFindNumberOfDonneesQuery() +
-        getFindLastRegroupementQuery() +
+      getQueryToFindLastDonnee() +
+        getQueryToFindNumberOfDonnees() +
+        getQueryToFindLastRegroupement() +
         getAllFromTablesQuery([
           "configuration",
           "observateur",
@@ -317,7 +319,7 @@ export const saveDonnee = async (
     }
 
     const savedDonneeResults: any = await SqlConnection.query(
-      getFindDonneeByIdQuery(donneeId)
+      getQueryToFindDonneeById(donneeId)
     );
     const savedDonnee: any = await buildDonneeFromFlatDonnee(
       savedDonneeResults[0]
@@ -349,7 +351,7 @@ export const getNextDonnee = async (
     return null;
   } else {
     const donneeResult = await SqlConnection.query(
-      getFindNextDonneeByCurrentDonneeIdQuery(
+      getQueryToFindNextDonneeByCurrentDonneeId(
         +httpParameters.queryParameters.id
       )
     );
@@ -366,7 +368,7 @@ export const getPreviousDonnee = async (
     return null;
   } else {
     const donneeResult = await SqlConnection.query(
-      getFindPreviousDonneeByCurrentDonneeIdQuery(
+      getQueryToFindPreviousDonneeByCurrentDonneeId(
         +httpParameters.queryParameters.id
       )
     );
@@ -384,10 +386,10 @@ export const getDonneeByIdWithContext = async (
   } else {
     const id: number = +httpParameters.queryParameters.id;
     const results = await SqlConnection.query(
-      getFindDonneeByIdQuery(id) +
-        getFindPreviousDonneeByCurrentDonneeIdQuery(id) +
-        getFindNextDonneeByCurrentDonneeIdQuery(id) +
-        getFindDonneeIndexByIdQuery(id)
+      getQueryToFindDonneeById(id) +
+        getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
+        getQueryToFindNextDonneeByCurrentDonneeId(id) +
+        getQueryToFindDonneeIndexById(id)
     );
 
     return {
@@ -403,11 +405,11 @@ export const getDonneeByIdWithContext = async (
 const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
   if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
     const listsResults = await SqlConnection.query(
-      getFindAssociesByInventaireIdQuery(flatDonnee.inventaireId) +
-        getFindMetosByInventaireIdQuery(flatDonnee.inventaireId) +
-        getFindComportementsByDonneeIdQuery(flatDonnee.id) +
-        getFindMilieuxByDonneeIdQuery(flatDonnee.id) +
-        getFindNumberOfDonneesByDoneeeEntityIdQuery(
+      getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
+        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
+        getQueryToFindComportementsByDonneeId(flatDonnee.id) +
+        getQueryToFindMilieuxByDonneeId(flatDonnee.id) +
+        getQueryToFindNumberOfDonneesByDoneeeEntityId(
           "inventaire_id",
           flatDonnee.inventaireId
         )
@@ -458,7 +460,7 @@ export const getNextRegroupement = async (
   if (isMockDatabaseMode) {
     return null;
   } else {
-    const results = await SqlConnection.query(getFindLastRegroupementQuery());
+    const results = await SqlConnection.query(getQueryToFindLastRegroupement());
     return (results[0].regroupement as number) + 1;
   }
 };
@@ -474,8 +476,8 @@ export const getInventaireById = async (
 
     const results = await SqlConnection.query(
       getFindOneByIdQuery(TABLE_INVENTAIRE, inventaireId) +
-        getFindAssociesByInventaireIdQuery(inventaireId) +
-        getFindMetosByInventaireIdQuery(inventaireId)
+        getQueryToFindAssociesByInventaireId(inventaireId) +
+        getQueryToFindMetosByInventaireId(inventaireId)
     );
 
     const inventaire: Inventaire = mapInventaire(results[0][0]);

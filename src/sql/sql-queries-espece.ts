@@ -1,8 +1,6 @@
 import { COLUMN_ESPECE_ID } from "../utils/constants";
-import {
-  getFindNumberOfDonneesByDoneeeEntityIdQuery,
-  getQuery
-} from "./sql-queries-utils";
+import { getQueryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
+import { getQuery } from "./sql-queries-utils";
 
 export function getQueryToFindEspeceByCode(code: string): string {
   const query: string =
@@ -33,7 +31,7 @@ export function getQueryToFindEspeceByNomLatin(nomLatin: string): string {
 export function getQueryToFindNumberOfDonneesByEspeceId(
   especeId?: number
 ): string {
-  return getFindNumberOfDonneesByDoneeeEntityIdQuery(
+  return getQueryToFindNumberOfDonneesByDoneeeEntityId(
     COLUMN_ESPECE_ID,
     especeId
   );

@@ -1,13 +1,12 @@
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlConnection } from "../sql-api/sql-connection";
-import {
-  getFindAllAssociesQuery,
-  getFindAllComportementsQuery,
-  getFindAllDonneesQuery,
-  getFindAllMeteosQuery,
-  getFindAllMilieuxQuery
-} from "../sql/sql-queries-utils";
+import { getQueryToFindAllComportements } from "../sql/sql-queries-comportement";
+import { getQueryToFindAllDonnees } from "../sql/sql-queries-donnee";
+import { getQueryToFindAllMeteos } from "../sql/sql-queries-meteo";
+import { getQueryToFindAllMilieux } from "../sql/sql-queries-milieu";
+import { getQueryToFindAllAssocies } from "../sql/sql-queries-observateur";
+import {} from "../sql/sql-queries-utils";
 
 export const getDonnees = async (
   isMockDatabaseMode: boolean,
@@ -17,11 +16,11 @@ export const getDonnees = async (
     return null;
   } else {
     const results = await SqlConnection.query(
-      getFindAllDonneesQuery() +
-        getFindAllAssociesQuery() +
-        getFindAllMeteosQuery() +
-        getFindAllComportementsQuery() +
-        getFindAllMilieuxQuery()
+      getQueryToFindAllDonnees() +
+        getQueryToFindAllAssocies() +
+        getQueryToFindAllMeteos() +
+        getQueryToFindAllComportements() +
+        getQueryToFindAllMilieux()
     );
 
     const donnees: any[] = results[0];

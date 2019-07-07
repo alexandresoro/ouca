@@ -1,7 +1,5 @@
-import {
-  getFindNumberOfDonneesByInventaireEntityIdQuery,
-  getQuery
-} from "./sql-queries-utils";
+import { getQueryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
+import { getQuery } from "./sql-queries-utils";
 
 export function getQueryToFindLieuditByCommuneIdAndNom(
   communeId: number,
@@ -21,7 +19,7 @@ export function getQueryToFindLieuditByCommuneIdAndNom(
 export function getQueryToFindNumberOfDonneesByLieuditId(
   lieuditId?: number
 ): string {
-  return getFindNumberOfDonneesByInventaireEntityIdQuery(
+  return getQueryToFindNumberOfDonneesByInventaireEntityId(
     "lieudit_id",
     lieuditId
   );

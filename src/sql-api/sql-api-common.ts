@@ -1,7 +1,7 @@
 import { EntiteSimple } from "../basenaturaliste-model/entite-simple.object";
 import { SqlConnection } from "../sql-api/sql-connection";
+import { getQueryToFindConfigurationByLibelle } from "../sql/sql-queries-configuration";
 import {
-  getFindConfigurationByLibelleQuery,
   getQueryToFindEntityByCode,
   getQueryToFindEntityByCodeAndLibelle,
   getQueryToFindEntityByLibelle,
@@ -68,7 +68,7 @@ export const getEntityByCodeAndLibelle = async (
 
 export const getExportFolderPath = async (): Promise<string> => {
   const exportFolderPathResult = await SqlConnection.query(
-    getFindConfigurationByLibelleQuery("export_folder_path")
+    getQueryToFindConfigurationByLibelle("export_folder_path")
   );
   return exportFolderPathResult[0].value;
 };
