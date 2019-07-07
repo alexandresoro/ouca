@@ -167,6 +167,8 @@ export function getSaveEntityQuery(
         valuesArray.push("null");
       } else if (_.isBoolean(entityToSave[mapping[key]])) {
         valuesArray.push(entityToSave[mapping[key]]);
+      } else if (_.isString(entityToSave[mapping[key]])) {
+        valuesArray.push('"' + entityToSave[mapping[key]].trim() + '"');
       } else {
         valuesArray.push('"' + entityToSave[mapping[key]] + '"');
       }
@@ -190,6 +192,8 @@ export function getSaveEntityQuery(
         updatesArray.push(key + "=null");
       } else if (_.isBoolean(entityToSave[mapping[key]])) {
         updatesArray.push(key + "=" + entityToSave[mapping[key]]);
+      } else if (_.isString(entityToSave[mapping[key]])) {
+        updatesArray.push(key + '="' + entityToSave[mapping[key]].trim() + '"');
       } else {
         updatesArray.push(key + '="' + entityToSave[mapping[key]] + '"');
       }

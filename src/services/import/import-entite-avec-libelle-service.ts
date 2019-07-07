@@ -3,7 +3,7 @@ import { getEntityByLibelle, saveEntity } from "../../sql-api/sql-api-common";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleService extends ImportService {
-  private LIBELLE_INDEX: number = 0;
+  protected LIBELLE_INDEX: number = 0;
 
   protected getNumberOfColumns = () => {
     return 1;
