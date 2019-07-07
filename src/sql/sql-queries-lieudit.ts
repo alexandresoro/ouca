@@ -13,7 +13,7 @@ export function getQueryToFindLieuditByCommuneIdAndNom(
     " WHERE commune_id=" +
     communeId +
     ' AND nom="' +
-    nom +
+    nom.trim() +
     '"';
   return getQuery(query);
 }

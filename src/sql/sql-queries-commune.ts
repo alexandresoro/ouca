@@ -13,7 +13,7 @@ export function getQueryToFindCommuneByDepartementIdAndCodeAndNom(
     " AND code=" +
     code +
     ' AND nom="' +
-    nom +
+    nom.trim() +
     '"';
   return getQuery(query);
 }
@@ -42,7 +42,7 @@ export function getQueryToFindCommuneByDepartementIdAndNom(
     " WHERE departement_id=" +
     departementId +
     ' AND nom="' +
-    nom +
+    nom.trim() +
     '"';
   return getQuery(query);
 }

@@ -2,7 +2,7 @@ import { getQuery } from "./sql-queries-utils";
 
 export function getQueryToFindDepartementByCode(code: string): string {
   const query: string =
-    "SELECT * " + " FROM departement " + ' WHERE code="' + code + '"';
+    "SELECT * " + " FROM departement " + ' WHERE code="' + code.trim() + '"';
   return getQuery(query);
 }
 

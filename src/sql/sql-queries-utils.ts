@@ -636,12 +636,14 @@ export function getQueryToFindEntityByLibelle(
   libelle: string
 ) {
   return getQuery(
-    "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle + '"'
+    "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle.trim() + '"'
   );
 }
 
 export function getQueryToFindEntityByCode(entityName: string, code: string) {
-  return getQuery("SELECT * FROM " + entityName + ' WHERE code="' + code + '"');
+  return getQuery(
+    "SELECT * FROM " + entityName + ' WHERE code="' + code.trim() + '"'
+  );
 }
 
 export function getQueryToFindEntityByCodeAndLibelle(
@@ -653,9 +655,9 @@ export function getQueryToFindEntityByCodeAndLibelle(
     "SELECT * FROM " +
       entityName +
       ' WHERE code="' +
-      code +
+      code.trim() +
       '" AND libelle="' +
-      libelle +
+      libelle.trim() +
       '"'
   );
 }

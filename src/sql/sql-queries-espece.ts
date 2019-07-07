@@ -6,19 +6,27 @@ import {
 
 export function getQueryToFindEspeceByCode(code: string): string {
   const query: string =
-    "SELECT * " + " FROM espece " + ' WHERE code="' + code + '"';
+    "SELECT * " + " FROM espece " + ' WHERE code="' + code.trim() + '"';
   return getQuery(query);
 }
 
 export function getQueryToFindEspeceByNomFrancais(nomFrancais: string): string {
   const query: string =
-    "SELECT * " + " FROM espece " + ' WHERE nom_francais="' + nomFrancais + '"';
+    "SELECT * " +
+    " FROM espece " +
+    ' WHERE nom_francais="' +
+    nomFrancais.trim() +
+    '"';
   return getQuery(query);
 }
 
 export function getQueryToFindEspeceByNomLatin(nomLatin: string): string {
   const query: string =
-    "SELECT * " + " FROM espece " + ' WHERE nom_latin="' + nomLatin + '"';
+    "SELECT * " +
+    " FROM espece " +
+    ' WHERE nom_latin="' +
+    nomLatin.trim() +
+    '"';
   return getQuery(query);
 }
 
