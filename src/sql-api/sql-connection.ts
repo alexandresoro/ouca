@@ -9,19 +9,27 @@ export class SqlConnection {
     return connection.query(query);
   }
 
-  private static connection: Promise<mysql.Connection>;
+  // The current database connection
+  private static connection: mysql.Connection | null | undefined;
 
   private static async getConnection(): Promise<mysql.Connection> {
-    if (this.connection) {
-      const connection = await this.connection;
-      if (!(connection as any).isValid()) {
-        connection.destroy();
-        this.connection = null;
-      }
+
+    // If we already have an existing connection but, the connection is no more valid,
+    // we destroy it in order to recreate a new one
+    if (this.connection && !(this.connection as any).isValid()) {
+      this.connection.destroy();
+      this.connection = null;
     }
 
+    // If no valid connection exists, we create a new one
     if (!this.connection) {
-      this.connection = createDatabaseConnection();
+      try {
+        const connection = await createDatabaseConnection();
+        this.connection = connection;
+      } catch (error) {
+        // If something went wrong during the creation of the connection, we reject the promise
+        return Promise.reject(error);
+      }
     }
     return this.connection;
   }
@@ -119,22 +127,26 @@ export const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
 
   console.log(
     `Database configured with address ${config.host}:${config.port} and user ${
-      config.user
+    config.user
     } and password ${config.password} on database "${config.database}"`
   );
 
   return config;
 };
 
-const createDatabaseConnection = (): Promise<mysql.Connection> => {
-  const connection: Promise<mysql.Connection> = mariadb
-    .createConnection(getSqlConnectionConfiguration())
+const createDatabaseConnection = async (): Promise<any> => {
+  return (mariadb
+    .createConnection(getSqlConnectionConfiguration()) as Promise<any>)
     .then((conn) => {
       console.log("Connected to the database: ", (conn as any).serverVersion());
       conn.on("error", (error) => {
         console.log(error);
       });
       return conn;
+    })
+    .catch((error) => {
+      // General connection error
+      console.log("The connection to the database has failed with the following error:", error);
+      return Promise.reject(error);
     });
-  return connection;
 };
