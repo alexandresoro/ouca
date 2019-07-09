@@ -71,7 +71,7 @@ import {
   importObservateurs,
   importSexes
 } from "./requests/import";
-import { saveDatabase } from "./requests/save";
+import { saveDatabase, saveDatabaseFileName } from "./requests/save";
 import { getDonnees } from "./requests/view";
 
 export const REQUEST_MAPPING: {
@@ -79,7 +79,7 @@ export const REQUEST_MAPPING: {
     isMockDatabaseMode: boolean,
     httpParameters: HttpParameters,
     isDockerMode?: boolean
-  ) => any;
+  ) => Promise<any>;
 } = {
   "/api/creation/init": creationInit,
   "/api/inventaire/save": saveInventaire,
@@ -147,4 +147,17 @@ export const REQUEST_MAPPING: {
   "/api/configuration/init": configurationInit,
   "/api/configuration/update": configurationUpdate,
   "/api/database/save": saveDatabase
+};
+
+// Mapping between the api requested and the media type (MIME) of the response
+export const REQUEST_MEDIA_TYPE_RESPONSE_MAPPING = {
+  "/api/database/save": "application/sql"
+};
+
+// List of api requests that expect to return a response as file attachment
+// The value is actually a function that will return the file name to be used
+export const REQUESTS_WITH_ATTACHMENT_FILE_NAME_RESPONSES: {
+  [path: string]: () => string;
+} = {
+  "/api/database/save": saveDatabaseFileName
 };

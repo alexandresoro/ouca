@@ -25,6 +25,8 @@ const server = http.createServer(
     console.log(`Method ${request.method}, URL ${request.url}`);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
+    // This header is used on client side to extract the file name for the SQL extract for example
+    res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
 
     if (request.method === "OPTIONS") {
       // Because of CORS, when the UI is requesting a POST method with a JSON body, it will preflight an OPTIONS call
@@ -76,7 +78,13 @@ const server = http.createServer(
         });
         request.on("end", () => {
           const postData = JSON.parse(Buffer.concat(chunks).toString());
-          handleHttpRequest(isMockDatabaseMode, isDockerMode, request, res, postData);
+          handleHttpRequest(
+            isMockDatabaseMode,
+            isDockerMode,
+            request,
+            res,
+            postData
+          );
         });
       }
     } else {

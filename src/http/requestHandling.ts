@@ -2,7 +2,11 @@ import * as http from "http";
 import * as _ from "lodash";
 import * as url from "url";
 import * as zlib from "zlib";
-import { REQUEST_MAPPING } from "../mapping";
+import {
+  REQUEST_MAPPING,
+  REQUEST_MEDIA_TYPE_RESPONSE_MAPPING,
+  REQUESTS_WITH_ATTACHMENT_FILE_NAME_RESPONSES
+} from "../mapping";
 
 export const handleHttpRequest = (
   isMockDatabaseMode: boolean,
@@ -23,16 +27,45 @@ export const handleHttpRequest = (
     return;
   }
 
-  REQUEST_MAPPING[pathName](isMockDatabaseMode, {
-    queryParameters,
-    postData,
-    inputFileName
-  }, isDockerMode)
+  REQUEST_MAPPING[pathName](
+    isMockDatabaseMode,
+    {
+      queryParameters,
+      postData,
+      inputFileName
+    },
+    isDockerMode
+  )
     .then((result) => {
       res.statusCode = 200;
-      res.setHeader("Content-Type", jsonHttpHeader);
+      let mediaTypeResponse: string;
+
+      // Handle requests that will not return JSON
+      if (!!REQUEST_MEDIA_TYPE_RESPONSE_MAPPING[pathName]) {
+        mediaTypeResponse = REQUEST_MEDIA_TYPE_RESPONSE_MAPPING[pathName];
+      } else {
+        mediaTypeResponse = jsonHttpHeader;
+      }
+      res.setHeader("Content-Type", mediaTypeResponse);
+
+      // Handle requests that will not return JSON but a file in attachment
+      if (
+        !!REQUEST_MEDIA_TYPE_RESPONSE_MAPPING[pathName] &&
+        !!REQUESTS_WITH_ATTACHMENT_FILE_NAME_RESPONSES[pathName]
+      ) {
+        const fileName = REQUESTS_WITH_ATTACHMENT_FILE_NAME_RESPONSES[
+          pathName
+        ]();
+        res.setHeader(
+          "Content-Disposition",
+          'attachment; filename="' + fileName + '"'
+        );
+      }
+
       res.setHeader("Content-Encoding", "gzip");
-      zlib.gzip(JSON.stringify(result), (err, response) => {
+      const resultToSend =
+        mediaTypeResponse === jsonHttpHeader ? JSON.stringify(result) : result;
+      zlib.gzip(resultToSend, (err, response) => {
         res.end(response);
       });
     })
