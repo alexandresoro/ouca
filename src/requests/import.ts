@@ -1,4 +1,4 @@
-import { ImportResponse } from "../basenaturaliste-model/import-response.object";
+import { ImportResponse } from "basenaturaliste-model/import-response.object";
 import { HttpParameters } from "../http/httpParameters";
 import { ImportAgeService } from "../services/import/import-age-service";
 import { ImportClasseService } from "../services/import/import-classe-service";

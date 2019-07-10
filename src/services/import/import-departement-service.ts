@@ -1,4 +1,4 @@
-import { Departement } from "../../basenaturaliste-model/departement.object";
+import { Departement } from "basenaturaliste-model/departement.object";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";

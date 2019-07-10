@@ -1,5 +1,5 @@
-import { Classe } from "../../basenaturaliste-model/classe.object";
-import { Espece } from "../../basenaturaliste-model/espece.object";
+import { Classe } from "basenaturaliste-model/classe.object";
+import { Espece } from "basenaturaliste-model/espece.object";
 import { getClasseByLibelle } from "../../sql-api/sql-api-classe";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {

@@ -1,4 +1,4 @@
-import { Lieudit } from "../basenaturaliste-model/lieudit.object";
+import { Lieudit } from "basenaturaliste-model/lieudit.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindLieuditByCommuneIdAndNom } from "../sql/sql-queries-lieudit";
 import { mapLieudit } from "../utils/mapping-utils";

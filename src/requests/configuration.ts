@@ -1,7 +1,7 @@
+import { AppConfiguration } from "basenaturaliste-model/app-configuration.object";
+import { ConfigurationPage } from "basenaturaliste-model/configuration-page.object";
+import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
 import * as _ from "lodash";
-import { AppConfiguration } from "../basenaturaliste-model/app-configuration.object";
-import { ConfigurationPage } from "../basenaturaliste-model/configuration-page.object";
-import { EntiteSimple } from "../basenaturaliste-model/entite-simple.object";
 import { HttpParameters } from "../http/httpParameters";
 import configurationInitMock from "../mocks/configuration-page/configuration.json";
 import { SqlConnection } from "../sql-api/sql-connection";

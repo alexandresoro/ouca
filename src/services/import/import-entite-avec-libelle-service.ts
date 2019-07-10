@@ -1,4 +1,4 @@
-import { EntiteAvecLibelle } from "../../basenaturaliste-model/entite-avec-libelle.object";
+import { EntiteAvecLibelle } from "basenaturaliste-model/entite-avec-libelle.object";
 import { getEntityByLibelle, saveEntity } from "../../sql-api/sql-api-common";
 import { ImportService } from "./import-service";
 

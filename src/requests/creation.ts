@@ -1,8 +1,8 @@
+import { CreationPage } from "basenaturaliste-model/creation-page.object";
+import { Donnee } from "basenaturaliste-model/donnee.object";
+import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
 import moment from "moment";
-import { CreationPage } from "../basenaturaliste-model/creation-page.object";
-import { Donnee } from "../basenaturaliste-model/donnee.object";
-import { Inventaire } from "../basenaturaliste-model/inventaire.object";
 import { HttpParameters } from "../http/httpParameters";
 import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
 import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";

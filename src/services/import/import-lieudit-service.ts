@@ -1,6 +1,6 @@
-import { Commune } from "../../basenaturaliste-model/commune.object";
-import { Departement } from "../../basenaturaliste-model/departement.object";
-import { Lieudit } from "../../basenaturaliste-model/lieudit.object";
+import { Commune } from "basenaturaliste-model/commune.object";
+import { Departement } from "basenaturaliste-model/departement.object";
+import { Lieudit } from "basenaturaliste-model/lieudit.object";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import { getCommuneByDepartementIdAndCodeAndNom } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";

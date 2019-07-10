@@ -33,6 +33,7 @@
     "@types/multiparty": "*",
     "@types/mysql": "*",
     "@types/node": "10",
+    "basenaturaliste-model": "https://github.com/alexandresoro/basenaturaliste-model#master",
     "copyfiles": "*",
     "tslint": "*",
     "typescript": "*",

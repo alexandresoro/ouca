@@ -1,5 +1,5 @@
-import { Commune } from "../../basenaturaliste-model/commune.object";
-import { Departement } from "../../basenaturaliste-model/departement.object";
+import { Commune } from "basenaturaliste-model/commune.object";
+import { Departement } from "basenaturaliste-model/departement.object";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {
   getCommuneByDepartementIdAndCode,
