@@ -15,7 +15,6 @@
   "scripts": {
     "build": "tsc",
     "build:debug": "tsc --sourceMap true",
-    "copy:model": "copyfiles -u 1 ../basenaturaliste-model/*.ts src",
     "debug": "yarn build --sourceMap true && yarn start:debug",
     "dev": "yarn build && yarn start",
     "start": "node dist/backend",
@@ -34,7 +33,6 @@
     "@types/mysql": "*",
     "@types/node": "10",
     "basenaturaliste-model": "https://github.com/alexandresoro/basenaturaliste-model#master",
-    "copyfiles": "*",
     "tslint": "*",
     "typescript": "*",
     "typescript-tslint-plugin": "*"
