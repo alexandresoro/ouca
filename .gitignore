@@ -4,5 +4,3 @@ dist/
 yarn-error.log
 *.orig
 .DS_Store
-
-src/basenaturaliste-model
