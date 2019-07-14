@@ -1,5 +1,6 @@
+import * as _ from "lodash";
+import moment from "moment";
 import { getQuery } from "./sql-queries-utils";
-
 export function getQueryToFindNumberOfDonnees(): string {
   return getQuery("SELECT COUNT(*) as nbDonnees FROM donnee");
 }
@@ -60,6 +61,68 @@ export function getQueryToFindNumberOfDonneesByDoneeeEntityId(
 
 export function getQueryToFindAllDonnees() {
   const query: string =
+    getBaseQueryToFindDetailedDonnees() + " ORDER BY d.id DESC";
+
+  return getQuery(query);
+}
+
+export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
+  let query: string = getBaseQueryToFindDetailedDonnees();
+
+  const whereTab: string[] = [];
+
+  if (criterion.id) {
+    whereTab.push(" d.id=" + criterion.id);
+  }
+
+  if (criterion.especeGroup.classe && criterion.especeGroup.classe.id) {
+    whereTab.push(" classe.id=" + criterion.especeGroup.classe.id);
+  }
+
+  if (criterion.especeGroup.espece && criterion.especeGroup.espece.id) {
+    whereTab.push(" e.id=" + criterion.especeGroup.espece.id);
+  }
+
+  if (
+    criterion.lieuditGroup.departement &&
+    criterion.lieuditGroup.departement.id
+  ) {
+    whereTab.push(" dept.id=" + criterion.lieuditGroup.departement.id);
+  }
+
+  if (criterion.lieuditGroup.commune && criterion.lieuditGroup.commune.id) {
+    whereTab.push(" c.id=" + criterion.lieuditGroup.commune.id);
+  }
+
+  if (criterion.lieuditGroup.lieudit && criterion.lieuditGroup.lieudit.id) {
+    whereTab.push(" l.id=" + criterion.lieuditGroup.lieudit.id);
+  }
+
+  if (criterion.fromDate) {
+    whereTab.push(
+      " i.date>='" + moment(criterion.fromDate).format("YYYY-MM-DD") + "'"
+    );
+  }
+
+  if (criterion.toDate) {
+    whereTab.push(
+      " i.date<='" + moment(criterion.toDate).format("YYYY-MM-DD") + "'"
+    );
+  }
+
+  if (whereTab.length > 0) {
+    query += " WHERE";
+  }
+
+  query += whereTab.join(" AND");
+
+  query += " ORDER BY d.id DESC";
+
+  return getQuery(query);
+};
+
+const getBaseQueryToFindDetailedDonnees = (): string => {
+  return (
     "SELECT d.id," +
     " i.id as inventaireId," +
     " o.libelle as observateur," +
@@ -100,11 +163,9 @@ export function getQueryToFindAllDonnees() {
     " LEFT JOIN sexe t_sexe ON d.sexe_id = t_sexe.id" +
     " LEFT JOIN age t_age ON d.age_id = t_age.id" +
     " LEFT JOIN estimation_nombre t_estim_nb ON d.estimation_nombre_id = t_estim_nb.id " +
-    " LEFT JOIN estimation_distance t_estim_dist ON d.estimation_distance_id = t_estim_dist.id" +
-    " ORDER BY d.id DESC";
-
-  return getQuery(query);
-}
+    " LEFT JOIN estimation_distance t_estim_dist ON d.estimation_distance_id = t_estim_dist.id"
+  );
+};
 
 function getBaseQueryToFindDonnees() {
   return (

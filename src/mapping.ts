@@ -72,7 +72,7 @@ import {
   importSexes
 } from "./requests/import";
 import { saveDatabase, saveDatabaseFileName } from "./requests/save";
-import { getDonnees } from "./requests/view";
+import { getDonnees, getDonneesByCustomizedFilters } from "./requests/view";
 
 export const REQUEST_MAPPING: {
   [path: string]: (
@@ -85,6 +85,7 @@ export const REQUEST_MAPPING: {
   "/api/inventaire/save": saveInventaire,
   "/api/inventaire/find": getInventaireById,
   "/api/donnee/all": getDonnees,
+  "/api/donnee/search": getDonneesByCustomizedFilters,
   "/api/donnee/save": saveDonnee,
   "/api/donnee/delete": deleteDonnee,
   "/api/donnee/next_donnee": getNextDonnee,
