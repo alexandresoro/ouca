@@ -1,22 +1,21 @@
 import * as _ from "lodash";
 import * as mariadb from "mariadb";
-import * as mysql from "mysql";
 import { buildArgRegexFromKey } from "../utils/utils";
 
 export class SqlConnection {
-  public static async query(query: string): Promise<mysql.Query> {
+  public static async query(query: string): Promise<any> {
     const connection = await this.getConnection();
     return connection.query(query);
   }
 
   // The current database connection
-  private static connection: mysql.Connection | null | undefined;
+  private static connection: mariadb.Connection | null | undefined;
 
-  private static async getConnection(): Promise<mysql.Connection> {
+  private static async getConnection(): Promise<mariadb.Connection> {
 
     // If we already have an existing connection but, the connection is no more valid,
     // we destroy it in order to recreate a new one
-    if (this.connection && !(this.connection as any).isValid()) {
+    if (this.connection && !this.connection.isValid()) {
       this.connection.destroy();
       this.connection = null;
     }
@@ -63,7 +62,7 @@ const ARG_KEY_VALUE_DELIMITER: string = "=";
  * - dbUser
  * - dbPassword
  */
-export const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
+export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
   let host = DEFAULT_DB_HOST;
   let port = DEFAULT_DB_PORT;
   let user = DEFAULT_DB_USER;
@@ -102,7 +101,7 @@ export const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
     }
   });
 
-  const config: mysql.ConnectionConfig = {
+  const config: mariadb.ConnectionConfig = {
     host,
     port,
     user,
@@ -112,13 +111,8 @@ export const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
     typeCast: function castField(field, useDefaultTypeCasting) {
       // We only want to cast bit fields that have a single-bit in them. If the field
       // has more than one bit, then we cannot assume it is supposed to be a Boolean.
-      if (field.type === "BIT" && (field as any).columnLength === 1) {
-        const bytes = field.buffer();
-
-        // A Buffer in Node represents a collection of 8-bit unsigned integers.
-        // Therefore, our single "bit field" comes back as the bits '0000 0001',
-        // which is equivalent to the number 1.
-        return bytes[0] === 1;
+      if (field.type === mariadb.Types.BIT && field.columnLength === 1) {
+        return field.int() === 1;
       }
 
       return useDefaultTypeCasting();
@@ -134,11 +128,11 @@ export const getSqlConnectionConfiguration = (): mysql.ConnectionConfig => {
   return config;
 };
 
-const createDatabaseConnection = async (): Promise<any> => {
+const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
   return (mariadb
-    .createConnection(getSqlConnectionConfiguration()) as Promise<any>)
+    .createConnection(getSqlConnectionConfiguration()) as Promise<mariadb.Connection>)
     .then((conn) => {
-      console.log("Connected to the database: ", (conn as any).serverVersion());
+      console.log("Connected to the database: ", conn.serverVersion());
       conn.on("error", (error) => {
         console.log(error);
       });
