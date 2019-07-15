@@ -4,9 +4,6 @@ import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
 import moment from "moment";
 import { HttpParameters } from "../http/httpParameters";
-import creationPageCreateDonneeMock from "../mocks/creation-page/creation-page-create-donnee.json";
-import creationPageCreateInventaireMock from "../mocks/creation-page/creation-page-create-inventaire.json";
-import creationPageInitMock from "../mocks/creation-page/creation-page-init.json";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindComportementsByDonneeId } from "../sql/sql-queries-comportement";
 import {
@@ -81,338 +78,303 @@ const getDefaultValueForConfigurationField = (
 };
 
 export const creationInit = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<CreationPage> => {
-  if (isMockDatabaseMode) {
-    return creationPageInitMock as any;
-  } else {
-    const results = await SqlConnection.query(
-      getQueryToFindLastDonnee() +
-        getQueryToFindNumberOfDonnees() +
-        getQueryToFindLastRegroupement() +
-        getAllFromTablesQuery([
-          "configuration",
-          "observateur",
-          "departement",
-          "commune",
-          "lieudit",
-          "meteo",
-          "classe",
-          "espece",
-          "age",
-          "sexe",
-          "estimation_nombre",
-          "estimation_distance",
-          "comportement",
-          "milieu"
-        ])
-    );
+  const results = await SqlConnection.query(
+    getQueryToFindLastDonnee() +
+    getQueryToFindNumberOfDonnees() +
+    getQueryToFindLastRegroupement() +
+    getAllFromTablesQuery([
+      "configuration",
+      "observateur",
+      "departement",
+      "commune",
+      "lieudit",
+      "meteo",
+      "classe",
+      "espece",
+      "age",
+      "sexe",
+      "estimation_nombre",
+      "estimation_distance",
+      "comportement",
+      "milieu"
+    ])
+  );
 
-    const lastDonnee: any = await buildDonneeFromFlatDonnee(results[0][0]);
+  const lastDonnee: any = await buildDonneeFromFlatDonnee(results[0][0]);
 
-    const creationPage: CreationPage = {
-      lastDonnee,
-      numberOfDonnees: results[1][0].nbDonnees,
-      nextRegroupement: results[2][0].regroupement + 1,
-      defaultObservateurId: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_DEFAULT_OBSERVATEUR_ID,
-        false,
-        true
-      ),
-      defaultDepartementId: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_DEFAULT_DEPARTEMENT_ID,
-        false,
-        true
-      ),
-      defaultEstimationNombreId: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_DEFAULT_ESTIMATION_NOMBRE_ID,
-        false,
-        true
-      ),
-      defaultNombre: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_DEFAULT_NOMBRE,
-        false,
-        true
-      ),
-      defaultSexeId: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_DEFAULT_SEXE_ID,
-        false,
-        true
-      ),
-      defaultAgeId: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_DEFAULT_AGE_ID,
-        false,
-        true
-      ),
-      areAssociesDisplayed: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_ARE_ASSOCIES_DISPLAYED,
-        true
-      ),
-      isMeteoDisplayed: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_IS_METEO_DISPLAYED,
-        true
-      ),
-      isDistanceDisplayed: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_IS_DISTANCE_DISPLAYED,
-        true
-      ),
-      isRegroupementDisplayed: getDefaultValueForConfigurationField(
-        results[3],
-        KEY_IS_REGROUPEMENT_DISPLAYED,
-        true
-      ),
-      observateurs: results[4],
-      departements: results[5],
-      communes: mapCommunes(results[6]),
-      lieudits: mapLieuxdits(results[7]),
-      meteos: results[8],
-      classes: results[9],
-      especes: mapEspeces(results[10]),
-      ages: results[11],
-      sexes: results[12],
-      estimationsNombre: mapEstimationsNombre(results[13]),
-      estimationsDistance: results[14],
-      comportements: results[15],
-      milieux: results[16]
-    };
+  const creationPage: CreationPage = {
+    lastDonnee,
+    numberOfDonnees: results[1][0].nbDonnees,
+    nextRegroupement: results[2][0].regroupement + 1,
+    defaultObservateurId: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_DEFAULT_OBSERVATEUR_ID,
+      false,
+      true
+    ),
+    defaultDepartementId: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_DEFAULT_DEPARTEMENT_ID,
+      false,
+      true
+    ),
+    defaultEstimationNombreId: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_DEFAULT_ESTIMATION_NOMBRE_ID,
+      false,
+      true
+    ),
+    defaultNombre: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_DEFAULT_NOMBRE,
+      false,
+      true
+    ),
+    defaultSexeId: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_DEFAULT_SEXE_ID,
+      false,
+      true
+    ),
+    defaultAgeId: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_DEFAULT_AGE_ID,
+      false,
+      true
+    ),
+    areAssociesDisplayed: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_ARE_ASSOCIES_DISPLAYED,
+      true
+    ),
+    isMeteoDisplayed: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_IS_METEO_DISPLAYED,
+      true
+    ),
+    isDistanceDisplayed: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_IS_DISTANCE_DISPLAYED,
+      true
+    ),
+    isRegroupementDisplayed: getDefaultValueForConfigurationField(
+      results[3],
+      KEY_IS_REGROUPEMENT_DISPLAYED,
+      true
+    ),
+    observateurs: results[4],
+    departements: results[5],
+    communes: mapCommunes(results[6]),
+    lieudits: mapLieuxdits(results[7]),
+    meteos: results[8],
+    classes: results[9],
+    especes: mapEspeces(results[10]),
+    ages: results[11],
+    sexes: results[12],
+    estimationsNombre: mapEstimationsNombre(results[13]),
+    estimationsDistance: results[14],
+    comportements: results[15],
+    milieux: results[16]
+  };
 
-    return creationPage;
-  }
+  return creationPage;
 };
 
 export const saveInventaire = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    return creationPageCreateInventaireMock as any;
-  } else {
-    const inventaireToSave: Inventaire = httpParameters.postData;
-    const { date, ...otherParams } = inventaireToSave;
+  const inventaireToSave: Inventaire = httpParameters.postData;
+  const { date, ...otherParams } = inventaireToSave;
 
-    // It is an update we delete the current associes and meteos to insert later the updated ones
-    if (!!inventaireToSave.id) {
-      await SqlConnection.query(
-        getDeleteEntityByAttributeQuery(
-          TABLE_INVENTAIRE_ASSOCIE,
-          "inventaire_id",
-          inventaireToSave.id
-        ) +
-          getDeleteEntityByAttributeQuery(
-            TABLE_INVENTAIRE_METEO,
-            "inventaire_id",
-            inventaireToSave.id
-          )
-      );
-    }
-
-    const inventaireResult = await SqlConnection.query(
-      getSaveEntityQuery(
-        TABLE_INVENTAIRE,
-        {
-          date: moment(date).format("YYYY-MM-DD"),
-          dateCreation: moment().format("YYYY-MM-DD HH:mm:ss"),
-          ...otherParams
-        },
-        DB_SAVE_MAPPING.inventaire
+  // It is an update we delete the current associes and meteos to insert later the updated ones
+  if (!!inventaireToSave.id) {
+    await SqlConnection.query(
+      getDeleteEntityByAttributeQuery(
+        TABLE_INVENTAIRE_ASSOCIE,
+        "inventaire_id",
+        inventaireToSave.id
+      ) +
+      getDeleteEntityByAttributeQuery(
+        TABLE_INVENTAIRE_METEO,
+        "inventaire_id",
+        inventaireToSave.id
       )
     );
-
-    // If it is an update we take the existing ID else we take the inserted ID
-    const inventaireId: number = !!inventaireToSave.id
-      ? inventaireToSave.id
-      : (inventaireResult as any).insertId;
-
-    if (inventaireToSave.associesIds.length > 0) {
-      await SqlConnection.query(
-        getSaveListOfEntitesQueries(
-          TABLE_INVENTAIRE_ASSOCIE,
-          inventaireId,
-          inventaireToSave.associesIds
-        )
-      );
-    }
-
-    if (inventaireToSave.meteosIds.length > 0) {
-      await SqlConnection.query(
-        getSaveListOfEntitesQueries(
-          TABLE_INVENTAIRE_METEO,
-          inventaireId,
-          inventaireToSave.meteosIds
-        )
-      );
-    }
-
-    return inventaireResult;
   }
+
+  const inventaireResult = await SqlConnection.query(
+    getSaveEntityQuery(
+      TABLE_INVENTAIRE,
+      {
+        date: moment(date).format("YYYY-MM-DD"),
+        dateCreation: moment().format("YYYY-MM-DD HH:mm:ss"),
+        ...otherParams
+      },
+      DB_SAVE_MAPPING.inventaire
+    )
+  );
+
+  // If it is an update we take the existing ID else we take the inserted ID
+  const inventaireId: number = !!inventaireToSave.id
+    ? inventaireToSave.id
+    : (inventaireResult as any).insertId;
+
+  if (inventaireToSave.associesIds.length > 0) {
+    await SqlConnection.query(
+      getSaveListOfEntitesQueries(
+        TABLE_INVENTAIRE_ASSOCIE,
+        inventaireId,
+        inventaireToSave.associesIds
+      )
+    );
+  }
+
+  if (inventaireToSave.meteosIds.length > 0) {
+    await SqlConnection.query(
+      getSaveListOfEntitesQueries(
+        TABLE_INVENTAIRE_METEO,
+        inventaireId,
+        inventaireToSave.meteosIds
+      )
+    );
+  }
+
+  return inventaireResult;
 };
 
 export const saveDonnee = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    return creationPageCreateDonneeMock as any;
-  } else {
-    const donneeToSave: Donnee = httpParameters.postData;
+  const donneeToSave: Donnee = httpParameters.postData;
 
-    // It is an update we delete the current comportements and milieux to insert later the updated ones
-    if (!!donneeToSave.id) {
-      await SqlConnection.query(
-        getDeleteEntityByAttributeQuery(
-          TABLE_DONNEE_COMPORTEMENT,
-          "donnee_id",
-          donneeToSave.id
-        ) +
-          getDeleteEntityByAttributeQuery(
-            TABLE_DONNEE_MILIEU,
-            "donnee_id",
-            donneeToSave.id
-          )
-      );
-    }
-
-    const donneeResult = await SqlConnection.query(
-      getSaveEntityQuery(
-        TABLE_DONNEE,
-        {
-          ...donneeToSave,
-          dateCreation: moment().format("YYYY-MM-DD HH:mm:ss")
-        },
-        DB_SAVE_MAPPING.donnee
+  // It is an update we delete the current comportements and milieux to insert later the updated ones
+  if (!!donneeToSave.id) {
+    await SqlConnection.query(
+      getDeleteEntityByAttributeQuery(
+        TABLE_DONNEE_COMPORTEMENT,
+        "donnee_id",
+        donneeToSave.id
+      ) +
+      getDeleteEntityByAttributeQuery(
+        TABLE_DONNEE_MILIEU,
+        "donnee_id",
+        donneeToSave.id
       )
     );
-
-    // If it is an update we take the existing ID else we take the inserted ID
-    const donneeId: number = !!donneeToSave.id
-      ? donneeToSave.id
-      : (donneeResult as any).insertId;
-
-    if (donneeToSave.comportementsIds.length > 0) {
-      await SqlConnection.query(
-        getSaveListOfEntitesQueries(
-          TABLE_DONNEE_COMPORTEMENT,
-          donneeId,
-          donneeToSave.comportementsIds
-        )
-      );
-    }
-
-    if (donneeToSave.milieuxIds.length > 0) {
-      await SqlConnection.query(
-        getSaveListOfEntitesQueries(
-          TABLE_DONNEE_MILIEU,
-          donneeId,
-          donneeToSave.milieuxIds
-        )
-      );
-    }
-
-    const savedDonneeResults: any = await SqlConnection.query(
-      getQueryToFindDonneeById(donneeId)
-    );
-    const savedDonnee: any = await buildDonneeFromFlatDonnee(
-      savedDonneeResults[0]
-    );
-
-    return savedDonnee;
   }
+
+  const donneeResult = await SqlConnection.query(
+    getSaveEntityQuery(
+      TABLE_DONNEE,
+      {
+        ...donneeToSave,
+        dateCreation: moment().format("YYYY-MM-DD HH:mm:ss")
+      },
+      DB_SAVE_MAPPING.donnee
+    )
+  );
+
+  // If it is an update we take the existing ID else we take the inserted ID
+  const donneeId: number = !!donneeToSave.id
+    ? donneeToSave.id
+    : (donneeResult as any).insertId;
+
+  if (donneeToSave.comportementsIds.length > 0) {
+    await SqlConnection.query(
+      getSaveListOfEntitesQueries(
+        TABLE_DONNEE_COMPORTEMENT,
+        donneeId,
+        donneeToSave.comportementsIds
+      )
+    );
+  }
+
+  if (donneeToSave.milieuxIds.length > 0) {
+    await SqlConnection.query(
+      getSaveListOfEntitesQueries(
+        TABLE_DONNEE_MILIEU,
+        donneeId,
+        donneeToSave.milieuxIds
+      )
+    );
+  }
+
+  const savedDonneeResults: any = await SqlConnection.query(
+    getQueryToFindDonneeById(donneeId)
+  );
+  const savedDonnee: any = await buildDonneeFromFlatDonnee(
+    savedDonneeResults[0]
+  );
+
+  return savedDonnee;
 };
 
 export const deleteDonnee = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    return { affectedRows: 1, insertId: 0, warningStatus: 0 };
-  } else {
-    const result = await SqlConnection.query(
-      getDeleteEntityByIdQuery(TABLE_DONNEE, +httpParameters.queryParameters.id)
-    );
-    return result;
-  }
+  const result = await SqlConnection.query(
+    getDeleteEntityByIdQuery(TABLE_DONNEE, +httpParameters.queryParameters.id)
+  );
+  return result;
 };
 
 export const getNextDonnee = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<Donnee[]> => {
-  if (isMockDatabaseMode) {
-    return null;
-  } else {
-    const donneeResult = await SqlConnection.query(
-      getQueryToFindNextDonneeByCurrentDonneeId(
-        +httpParameters.queryParameters.id
-      )
-    );
+  const donneeResult = await SqlConnection.query(
+    getQueryToFindNextDonneeByCurrentDonneeId(
+      +httpParameters.queryParameters.id
+    )
+  );
 
-    return await buildDonneeFromFlatDonnee(donneeResult[0]);
-  }
+  return await buildDonneeFromFlatDonnee(donneeResult[0]);
 };
 
 export const getPreviousDonnee = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<Donnee> => {
-  if (isMockDatabaseMode) {
-    return null;
-  } else {
-    const donneeResult = await SqlConnection.query(
-      getQueryToFindPreviousDonneeByCurrentDonneeId(
-        +httpParameters.queryParameters.id
-      )
-    );
+  const donneeResult = await SqlConnection.query(
+    getQueryToFindPreviousDonneeByCurrentDonneeId(
+      +httpParameters.queryParameters.id
+    )
+  );
 
-    return await buildDonneeFromFlatDonnee(donneeResult[0]);
-  }
+  return await buildDonneeFromFlatDonnee(donneeResult[0]);
 };
 
 export const getDonneeByIdWithContext = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    return null;
-  } else {
-    const id: number = +httpParameters.queryParameters.id;
-    const results = await SqlConnection.query(
-      getQueryToFindDonneeById(id) +
-        getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
-        getQueryToFindNextDonneeByCurrentDonneeId(id) +
-        getQueryToFindDonneeIndexById(id)
-    );
+  const id: number = +httpParameters.queryParameters.id;
+  const results = await SqlConnection.query(
+    getQueryToFindDonneeById(id) +
+    getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
+    getQueryToFindNextDonneeByCurrentDonneeId(id) +
+    getQueryToFindDonneeIndexById(id)
+  );
 
-    return {
-      donnee: await buildDonneeFromFlatDonnee(results[0][0]),
-      previousDonnee: await buildDonneeFromFlatDonnee(results[1][0]),
-      nextDonnee: await buildDonneeFromFlatDonnee(results[2][0]),
-      indexDonnee:
-        !!results[3] && !!results[3][0] ? results[3][0].nbDonnees : null
-    };
-  }
+  return {
+    donnee: await buildDonneeFromFlatDonnee(results[0][0]),
+    previousDonnee: await buildDonneeFromFlatDonnee(results[1][0]),
+    nextDonnee: await buildDonneeFromFlatDonnee(results[2][0]),
+    indexDonnee:
+      !!results[3] && !!results[3][0] ? results[3][0].nbDonnees : null
+  };
 };
 
 const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
   if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
     const listsResults = await SqlConnection.query(
       getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindComportementsByDonneeId(flatDonnee.id) +
-        getQueryToFindMilieuxByDonneeId(flatDonnee.id) +
-        getQueryToFindNumberOfDonneesByDoneeeEntityId(
-          "inventaire_id",
-          flatDonnee.inventaireId
-        )
+      getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
+      getQueryToFindComportementsByDonneeId(flatDonnee.id) +
+      getQueryToFindMilieuxByDonneeId(flatDonnee.id) +
+      getQueryToFindNumberOfDonneesByDoneeeEntityId(
+        "inventaire_id",
+        flatDonnee.inventaireId
+      )
     );
 
     const inventaire: Inventaire = {
@@ -454,36 +416,26 @@ const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
 };
 
 export const getNextRegroupement = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<number> => {
-  if (isMockDatabaseMode) {
-    return null;
-  } else {
-    const results = await SqlConnection.query(getQueryToFindLastRegroupement());
-    return (results[0].regroupement as number) + 1;
-  }
+  const results = await SqlConnection.query(getQueryToFindLastRegroupement());
+  return (results[0].regroupement as number) + 1;
 };
 
 export const getInventaireById = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
-  if (isMockDatabaseMode) {
-    return null;
-  } else {
-    const inventaireId: number = +httpParameters.queryParameters.id;
+  const inventaireId: number = +httpParameters.queryParameters.id;
 
-    const results = await SqlConnection.query(
-      getFindOneByIdQuery(TABLE_INVENTAIRE, inventaireId) +
-        getQueryToFindAssociesByInventaireId(inventaireId) +
-        getQueryToFindMetosByInventaireId(inventaireId)
-    );
+  const results = await SqlConnection.query(
+    getFindOneByIdQuery(TABLE_INVENTAIRE, inventaireId) +
+    getQueryToFindAssociesByInventaireId(inventaireId) +
+    getQueryToFindMetosByInventaireId(inventaireId)
+  );
 
-    const inventaire: Inventaire = mapInventaire(results[0][0]);
-    inventaire.associesIds = mapAssociesIds(results[1]);
-    inventaire.meteosIds = mapMeteosIds(results[2]);
+  const inventaire: Inventaire = mapInventaire(results[0][0]);
+  inventaire.associesIds = mapAssociesIds(results[1]);
+  inventaire.meteosIds = mapMeteosIds(results[2]);
 
-    return inventaire;
-  }
+  return inventaire;
 };

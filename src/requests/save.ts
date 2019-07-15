@@ -11,7 +11,6 @@ const DUMP_FILE_NAME: string = "sauvegarde_base_naturaliste_";
 const SQL_EXTENSION: string = ".sql";
 
 export const saveDatabase = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters,
   isDockerMode: boolean
 ): Promise<string> => {

@@ -3,21 +3,12 @@ import * as _ from "lodash";
 import * as multiparty from "multiparty";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
 
-const MOCK_MODE_ARGS = ["-mocks=true", "-mocks"];
 const DOCKER_ARG = "-docker";
 
 const isDockerMode = process.argv.includes(DOCKER_ARG);
 
 const hostname = isDockerMode ? "0.0.0.0" : "127.0.0.1";
 const port = 4000;
-
-const isMockDatabaseMode = !!process.argv.find((value) => {
-  return MOCK_MODE_ARGS.includes(value);
-});
-
-if (isMockDatabaseMode) {
-  console.log("Backend is working in mock mode");
-}
 
 // HTTP server
 const server = http.createServer(
@@ -55,7 +46,6 @@ const server = http.createServer(
             part.on("end", () => {
               const fileContent: string = Buffer.concat(chunksPart).toString();
               handleHttpRequest(
-                isMockDatabaseMode,
                 isDockerMode,
                 request,
                 res,
@@ -79,7 +69,6 @@ const server = http.createServer(
         request.on("end", () => {
           const postData = JSON.parse(Buffer.concat(chunks).toString());
           handleHttpRequest(
-            isMockDatabaseMode,
             isDockerMode,
             request,
             res,
@@ -88,7 +77,7 @@ const server = http.createServer(
         });
       }
     } else {
-      handleHttpRequest(isMockDatabaseMode, isDockerMode, request, res);
+      handleHttpRequest(isDockerMode, request, res);
     }
   }
 );
