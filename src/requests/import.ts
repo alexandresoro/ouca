@@ -15,7 +15,6 @@ import { ImportObservateurService } from "../services/import/import-observateur-
 import { ImportSexeService } from "../services/import/import-sexe-service";
 
 export const importObservateurs = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportObservateurService();
@@ -23,7 +22,6 @@ export const importObservateurs = async (
 };
 
 export const importDepartements = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportDepartementService();
@@ -31,7 +29,6 @@ export const importDepartements = async (
 };
 
 export const importCommunes = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportCommuneService();
@@ -39,7 +36,6 @@ export const importCommunes = async (
 };
 
 export const importLieuxdits = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<ImportResponse> => {
   const importService = new ImportLieuxditService();
@@ -47,7 +43,6 @@ export const importLieuxdits = async (
 };
 
 export const importMeteos = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportMeteoService();
@@ -55,7 +50,6 @@ export const importMeteos = async (
 };
 
 export const importClasses = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportClasseService();
@@ -63,7 +57,6 @@ export const importClasses = async (
 };
 
 export const importEspeces = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportEspeceService();
@@ -71,7 +64,6 @@ export const importEspeces = async (
 };
 
 export const importAges = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportAgeService();
@@ -79,7 +71,6 @@ export const importAges = async (
 };
 
 export const importSexes = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportSexeService();
@@ -87,7 +78,6 @@ export const importSexes = async (
 };
 
 export const importEstimationsNombre = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportEstimationNombreService();
@@ -95,7 +85,6 @@ export const importEstimationsNombre = async (
 };
 
 export const importEstimationsDistance = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportEstimationDistanceService();
@@ -103,7 +92,6 @@ export const importEstimationsDistance = async (
 };
 
 export const importComportements = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportComportementService();
@@ -111,7 +99,6 @@ export const importComportements = async (
 };
 
 export const importMilieux = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   const importService = new ImportMilieuService();
@@ -119,7 +106,6 @@ export const importMilieux = async (
 };
 
 export const importDonnees = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   // TODO

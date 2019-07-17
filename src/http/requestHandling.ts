@@ -9,7 +9,6 @@ import {
 } from "../mapping";
 
 export const handleHttpRequest = (
-  isMockDatabaseMode: boolean,
   isDockerMode: boolean,
   request: http.IncomingMessage,
   res: http.ServerResponse,
@@ -28,7 +27,6 @@ export const handleHttpRequest = (
   }
 
   REQUEST_MAPPING[pathName](
-    isMockDatabaseMode,
     {
       queryParameters,
       postData,

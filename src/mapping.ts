@@ -76,7 +76,6 @@ import { getDonnees, getDonneesByCustomizedFilters } from "./requests/view";
 
 export const REQUEST_MAPPING: {
   [path: string]: (
-    isMockDatabaseMode: boolean,
     httpParameters: HttpParameters,
     isDockerMode?: boolean
   ) => Promise<any>;
