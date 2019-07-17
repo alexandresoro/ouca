@@ -71,7 +71,6 @@ export const getDonnees = async (
 };
 
 export const getDonneesByCustomizedFilters = async (
-  isMockDatabaseMode: boolean,
   httpParameters: HttpParameters
 ): Promise<any> => {
   console.log(httpParameters.postData);
