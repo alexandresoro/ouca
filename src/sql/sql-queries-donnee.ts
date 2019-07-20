@@ -166,6 +166,20 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
     whereTab.push(" t_donnee.regroupement=" + criterion.regroupement);
   }
 
+  if (criterion.heure) {
+    whereTab.push(' t_inventaire.heure="' + criterion.heure + '"');
+  }
+
+  if (criterion.duree) {
+    whereTab.push(' t_inventaire.duree="' + criterion.duree + '"');
+  }
+
+  if (criterion.commentaire) {
+    whereTab.push(
+      ' t_donnee.commentaire like "%' + criterion.commentaire + '%"'
+    );
+  }
+
   if (whereTab.length > 0) {
     query += " WHERE";
   }
