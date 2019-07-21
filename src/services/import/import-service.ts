@@ -1,5 +1,4 @@
 import Papa from "papaparse";
-import { ImportResponse } from "basenaturaliste-model/import-response.object";
 
 export abstract class ImportService {
   protected message: string;
@@ -10,16 +9,13 @@ export abstract class ImportService {
 
   private errors: string[][];
 
-  public importFile = async (fileContent: string): Promise<ImportResponse> => {
+  public importFile = async (fileContent: string): Promise<string> => {
     this.numberOfLines = 0;
     this.numberOfErrors = 0;
     this.errors = [];
 
     if (!fileContent) {
-      return {
-        isSuccessful: false,
-        reasonForFailure: "Le contenu du fichier n'a pas pu être lu"
-      };
+      return "Le contenu du fichier n'a pas pu être lu";
     }
 
     const content = Papa.parse(fileContent);
@@ -29,18 +25,14 @@ export abstract class ImportService {
         await this.importLine(lineTab);
       }
     } else {
-      return {
-        isSuccessful: false,
-        reasonForFailure: "Le contenu du fichier n'a pas pu être parsé"
-      };
+      return "Le contenu du fichier n'a pas pu être lu";
     }
 
-    return {
-      isSuccessful: true,
-      numberOfLinesExtracted: this.numberOfLines,
-      numberOfLinesFailedToImport: this.numberOfErrors,
-      errors: this.errors
-    };
+    if (this.errors.length > 0) {
+      return Papa.unparse(this.errors);
+    } else {
+      return "Aucune erreur pendant l'import";
+    }
   }
 
   protected abstract getNumberOfColumns(): number;

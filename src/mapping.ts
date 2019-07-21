@@ -151,7 +151,21 @@ export const REQUEST_MAPPING: {
 
 // Mapping between the api requested and the media type (MIME) of the response
 export const REQUEST_MEDIA_TYPE_RESPONSE_MAPPING = {
-  "/api/database/save": "application/sql"
+  "/api/database/save": "application/sql",
+  "/api/observateur/import": "text/csv",
+  "/api/departement/import": "text/csv",
+  "/api/commune/import": "text/csv",
+  "/api/lieudit/import": "text/csv",
+  "/api/meteo/import": "text/csv",
+  "/api/classe/import": "text/csv",
+  "/api/espece/import": "text/csv",
+  "/api/sexe/import": "text/csv",
+  "/api/age/import": "text/csv",
+  "/api/estimation-nombre/import": "text/csv",
+  "/api/estimation-distance/import": "text/csv",
+  "/api/milieu/import": "text/csv",
+  "/api/comportement/import": "text/csv",
+  "/api/donnee/import": "text/csv"
 };
 
 // List of api requests that expect to return a response as file attachment
