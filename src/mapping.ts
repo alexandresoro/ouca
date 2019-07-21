@@ -74,6 +74,10 @@ import {
 import { saveDatabase, saveDatabaseFileName } from "./requests/save";
 import { getDonnees, getDonneesByCustomizedFilters } from "./requests/view";
 
+const CSV_MIME_TYPE: string = "text/csv";
+const EXCEL_MIME_TYPE: string =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
 export const REQUEST_MAPPING: {
   [path: string]: (
     httpParameters: HttpParameters,
@@ -152,20 +156,34 @@ export const REQUEST_MAPPING: {
 // Mapping between the api requested and the media type (MIME) of the response
 export const REQUEST_MEDIA_TYPE_RESPONSE_MAPPING = {
   "/api/database/save": "application/sql",
-  "/api/observateur/import": "text/csv",
-  "/api/departement/import": "text/csv",
-  "/api/commune/import": "text/csv",
-  "/api/lieudit/import": "text/csv",
-  "/api/meteo/import": "text/csv",
-  "/api/classe/import": "text/csv",
-  "/api/espece/import": "text/csv",
-  "/api/sexe/import": "text/csv",
-  "/api/age/import": "text/csv",
-  "/api/estimation-nombre/import": "text/csv",
-  "/api/estimation-distance/import": "text/csv",
-  "/api/milieu/import": "text/csv",
-  "/api/comportement/import": "text/csv",
-  "/api/donnee/import": "text/csv"
+  "/api/observateur/import": CSV_MIME_TYPE,
+  "/api/departement/import": CSV_MIME_TYPE,
+  "/api/commune/import": CSV_MIME_TYPE,
+  "/api/lieudit/import": CSV_MIME_TYPE,
+  "/api/meteo/import": CSV_MIME_TYPE,
+  "/api/classe/import": CSV_MIME_TYPE,
+  "/api/espece/import": CSV_MIME_TYPE,
+  "/api/sexe/import": CSV_MIME_TYPE,
+  "/api/age/import": CSV_MIME_TYPE,
+  "/api/estimation-nombre/import": CSV_MIME_TYPE,
+  "/api/estimation-distance/import": CSV_MIME_TYPE,
+  "/api/milieu/import": CSV_MIME_TYPE,
+  "/api/comportement/import": CSV_MIME_TYPE,
+  "/api/donnee/import": CSV_MIME_TYPE,
+  "/api/observateur/export": EXCEL_MIME_TYPE,
+  "/api/departement/export": EXCEL_MIME_TYPE,
+  "/api/commune/export": EXCEL_MIME_TYPE,
+  "/api/lieudit/export": EXCEL_MIME_TYPE,
+  "/api/meteo/export": EXCEL_MIME_TYPE,
+  "/api/classe/export": EXCEL_MIME_TYPE,
+  "/api/espece/export": EXCEL_MIME_TYPE,
+  "/api/sexe/export": EXCEL_MIME_TYPE,
+  "/api/age/export": EXCEL_MIME_TYPE,
+  "/api/estimation-nombre/export": EXCEL_MIME_TYPE,
+  "/api/estimation-distance/export": EXCEL_MIME_TYPE,
+  "/api/comportement/export": EXCEL_MIME_TYPE,
+  "/api/milieu/export": EXCEL_MIME_TYPE,
+  "/api/donnee/export": EXCEL_MIME_TYPE
 };
 
 // List of api requests that expect to return a response as file attachment
