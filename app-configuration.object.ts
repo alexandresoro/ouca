@@ -5,8 +5,6 @@ import { Observateur } from "./observateur.object";
 import { Sexe } from "./sexe.object";
 
 export interface AppConfiguration {
-  applicationName: string;
-
   defaultObservateur: Observateur;
 
   defaultDepartement: Departement;
@@ -26,14 +24,4 @@ export interface AppConfiguration {
   isDistanceDisplayed: boolean;
 
   isRegroupementDisplayed: boolean;
-
-  displayedColumns: string;
-
-  mySqlPath: string;
-
-  mySqlDumpPath: string;
-
-  importFolderPath: string;
-
-  exportFolderPath: string;
 }
