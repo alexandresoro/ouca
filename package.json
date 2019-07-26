@@ -25,7 +25,8 @@
     "mariadb": "*",
     "moment": "*",
     "multiparty": "*",
-    "papaparse": "*"
+    "papaparse": "*",
+    "xlsx": "*"
   },
   "devDependencies": {
     "@types/lodash": "*",

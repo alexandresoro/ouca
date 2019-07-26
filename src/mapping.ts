@@ -28,6 +28,7 @@ import {
   deleteMilieu,
   deleteObservateur,
   deleteSexe,
+  exportAges,
   getAges,
   getClasses,
   getCommunes,
@@ -75,8 +76,7 @@ import { saveDatabase, saveDatabaseFileName } from "./requests/save";
 import { getDonnees, getDonneesByCustomizedFilters } from "./requests/view";
 
 const CSV_MIME_TYPE: string = "text/csv";
-const EXCEL_MIME_TYPE: string =
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+const EXCEL_MIME_TYPE: string = "application/octet-stream";
 
 export const REQUEST_MAPPING: {
   [path: string]: (
@@ -132,6 +132,7 @@ export const REQUEST_MAPPING: {
   "/api/age/save": saveAge,
   "/api/age/delete": deleteAge,
   "/api/age/import": importAges,
+  "/api/age/export": exportAges,
   "/api/estimation-nombre/all": getEstimationsNombre,
   "/api/estimation-nombre/save": saveEstimationNombre,
   "/api/estimation-nombre/delete": deleteEstimationNombre,

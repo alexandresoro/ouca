@@ -14,6 +14,7 @@ import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
+import { ExportService } from "../services/export/export-service";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
 import {
@@ -79,7 +80,7 @@ export const getObservateurs = async (
 ): Promise<Observateur[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfDonneesByObservateurId()
+      getQueryToFindNumberOfDonneesByObservateurId()
   );
   const observateurs: Observateur[] = results[0];
   const nbDonneesByObservateur: any[] = results[1];
@@ -110,9 +111,9 @@ export const getDepartements = async (
 ): Promise<Departement[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
-    getQueryToFindNumberOfCommunesByDepartementId() +
-    getQueryToFindNumberOfLieuxditsByDepartementId() +
-    getQueryToFindNumberOfDonneesByDepartementId()
+      getQueryToFindNumberOfCommunesByDepartementId() +
+      getQueryToFindNumberOfLieuxditsByDepartementId() +
+      getQueryToFindNumberOfDonneesByDepartementId()
   );
 
   const departements: Departement[] = results[0];
@@ -137,9 +138,7 @@ export const saveDepartement = async (
   );
 };
 
-export const deleteDepartement = async (
-  httpParameters: HttpParameters
-) => {
+export const deleteDepartement = async (httpParameters: HttpParameters) => {
   return deleteEntity(httpParameters, TABLE_DEPARTEMENT);
 };
 
@@ -148,9 +147,9 @@ export const getCommunes = async (
 ): Promise<Commune[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC) +
-    getFindAllQuery(TABLE_DEPARTEMENT) +
-    getQueryToFindNumberOfLieuxditsByCommuneId() +
-    getQueryToFindNumberOfDonneesByCommuneId()
+      getFindAllQuery(TABLE_DEPARTEMENT) +
+      getQueryToFindNumberOfLieuxditsByCommuneId() +
+      getQueryToFindNumberOfDonneesByCommuneId()
   );
 
   const communes: Commune[] = mapCommunes(results[0]);
@@ -181,11 +180,7 @@ export const saveCommune = async (
   ) {
     communeToSave.departementId = communeToSave.departement.id;
   }
-  return saveEntity(
-    communeToSave,
-    TABLE_COMMUNE,
-    DB_SAVE_MAPPING.commune
-  );
+  return saveEntity(communeToSave, TABLE_COMMUNE, DB_SAVE_MAPPING.commune);
 };
 
 export const deleteCommune = async (
@@ -199,9 +194,9 @@ export const getLieuxdits = async (
 ): Promise<Lieudit[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC) +
-    getFindAllQuery(TABLE_COMMUNE) +
-    getFindAllQuery(TABLE_DEPARTEMENT) +
-    getQueryToFindNumberOfDonneesByLieuditId()
+      getFindAllQuery(TABLE_COMMUNE) +
+      getFindAllQuery(TABLE_DEPARTEMENT) +
+      getQueryToFindNumberOfDonneesByLieuditId()
   );
   const lieuxdits: Lieudit[] = mapLieuxdits(results[0]);
 
@@ -238,11 +233,7 @@ export const saveLieudit = async (
   ) {
     lieuditToSave.communeId = lieuditToSave.commune.id;
   }
-  return saveEntity(
-    lieuditToSave,
-    TABLE_LIEUDIT,
-    DB_SAVE_MAPPING.lieudit
-  );
+  return saveEntity(lieuditToSave, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
 };
 
 export const deleteLieudit = async (
@@ -256,7 +247,7 @@ export const getMeteos = async (
 ): Promise<Meteo[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfDonneesByMeteoId()
+      getQueryToFindNumberOfDonneesByMeteoId()
   );
 
   const meteos: Meteo[] = results[0];
@@ -289,8 +280,8 @@ export const getClasses = async (
 ): Promise<Classe[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_CLASSE, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfEspecesByClasseId() +
-    getQueryToFindNumberOfDonneesByClasseId()
+      getQueryToFindNumberOfEspecesByClasseId() +
+      getQueryToFindNumberOfDonneesByClasseId()
   );
 
   const classes: Classe[] = results[0];
@@ -325,8 +316,8 @@ export const getEspeces = async (
 ): Promise<Espece[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC) +
-    getFindAllQuery(TABLE_CLASSE) +
-    getQueryToFindNumberOfDonneesByEspeceId()
+      getFindAllQuery(TABLE_CLASSE) +
+      getQueryToFindNumberOfDonneesByEspeceId()
   );
   const especes: Espece[] = mapEspeces(results[0]);
 
@@ -354,11 +345,7 @@ export const saveEspece = async (
   ) {
     especeToSave.classeId = especeToSave.classe.id;
   }
-  return saveEntity(
-    especeToSave,
-    TABLE_ESPECE,
-    DB_SAVE_MAPPING.espece
-  );
+  return saveEntity(especeToSave, TABLE_ESPECE, DB_SAVE_MAPPING.espece);
 };
 
 export const deleteEspece = async (
@@ -372,7 +359,7 @@ export const getSexes = async (
 ): Promise<Sexe[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfDonneesBySexeId()
+      getQueryToFindNumberOfDonneesBySexeId()
   );
 
   const sexes: Sexe[] = results[0];
@@ -387,11 +374,7 @@ export const getSexes = async (
 export const saveSexe = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_SEXE,
-    DB_SAVE_MAPPING.sexe
-  );
+  return saveEntity(httpParameters.postData, TABLE_SEXE, DB_SAVE_MAPPING.sexe);
 };
 
 export const deleteSexe = async (
@@ -405,7 +388,7 @@ export const getAges = async (
 ): Promise<Age[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfDonneesByAgeId()
+      getQueryToFindNumberOfDonneesByAgeId()
   );
 
   const ages: Age[] = results[0];
@@ -417,14 +400,8 @@ export const getAges = async (
   return ages;
 };
 
-export const saveAge = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_AGE,
-    DB_SAVE_MAPPING.age
-  );
+export const saveAge = async (httpParameters: HttpParameters): Promise<any> => {
+  return saveEntity(httpParameters.postData, TABLE_AGE, DB_SAVE_MAPPING.age);
 };
 
 export const deleteAge = async (
@@ -438,7 +415,7 @@ export const getEstimationsNombre = async (
 ): Promise<EstimationNombre[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfDonneesByEstimationNombreId()
+      getQueryToFindNumberOfDonneesByEstimationNombreId()
   );
 
   const estimations: EstimationNombre[] = mapEstimationsNombre(results[0]);
@@ -463,10 +440,7 @@ export const saveEstimationNombre = async (
 export const deleteEstimationNombre = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(
-    httpParameters,
-    TABLE_ESTIMATION_NOMBRE
-  );
+  return deleteEntity(httpParameters, TABLE_ESTIMATION_NOMBRE);
 };
 
 export const getEstimationsDistance = async (
@@ -474,7 +448,7 @@ export const getEstimationsDistance = async (
 ): Promise<EstimationDistance[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_ESTIMATION_DISTANCE, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfDonneesByEstimationDistanceId()
+      getQueryToFindNumberOfDonneesByEstimationDistanceId()
   );
 
   const estimations: EstimationDistance[] = results[0];
@@ -499,10 +473,7 @@ export const saveEstimationDistance = async (
 export const deleteEstimationDistance = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
-  return deleteEntity(
-    httpParameters,
-    TABLE_ESTIMATION_DISTANCE
-  );
+  return deleteEntity(httpParameters, TABLE_ESTIMATION_DISTANCE);
 };
 
 export const getComportements = async (
@@ -510,7 +481,7 @@ export const getComportements = async (
 ): Promise<Comportement[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_COMPORTEMENT, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfDonneesByComportementId()
+      getQueryToFindNumberOfDonneesByComportementId()
   );
 
   const comportements: Comportement[] = results[0];
@@ -543,7 +514,7 @@ export const getMilieux = async (
 ): Promise<Milieu[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_MILIEU, COLUMN_LIBELLE, ORDER_ASC) +
-    getQueryToFindNumberOfDonneesByMilieuId()
+      getQueryToFindNumberOfDonneesByMilieuId()
   );
 
   const milieux: Milieu[] = results[0];
@@ -601,4 +572,15 @@ const deleteEntity = async (
     getDeleteEntityByIdQuery(entityName, +httpParameters.queryParameters.id)
   );
   return deleteResult;
+};
+
+export const exportAges = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const exportService = new ExportService();
+  return exportService.writeToExcel(
+    [{ libelle: "test" }, { libelle: "test 2" }],
+    [{ key: "libelle", columnName: "Âge", dataType: "s" }],
+    "ages"
+  );
 };
