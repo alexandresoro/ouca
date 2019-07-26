@@ -14,7 +14,6 @@ import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
-import { ExportService } from "../services/export/export-service";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
 import {
@@ -68,6 +67,7 @@ import {
   TABLE_OBSERVATEUR,
   TABLE_SEXE
 } from "../utils/constants";
+import { writeToExcel } from "../utils/export-excel-utils";
 import {
   mapCommunes,
   mapEspeces,
@@ -574,13 +574,205 @@ const deleteEntity = async (
   return deleteResult;
 };
 
+export const exportObservateurs = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const observateurs: Observateur[] = await getObservateurs(null);
+
+  const objectsToExport = _.map(observateurs, (object) => {
+    return {
+      Observateur: object.libelle
+    };
+  });
+
+  return writeToExcel(objectsToExport, ["Observateur"], "observateurs");
+};
+
+export const exportMeteos = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const meteos: Meteo[] = await getMeteos(null);
+
+  const objectsToExport = _.map(meteos, (object) => {
+    return {
+      Meteo: object.libelle
+    };
+  });
+
+  return writeToExcel(objectsToExport, ["Meteo"], "meteos");
+};
+
+export const exportDepartements = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const departementsDb: Departement[] = await getDepartements(null);
+
+  const objectsToExport = _.map(departementsDb, (object) => {
+    return {
+      Departement: object.code
+    };
+  });
+
+  return writeToExcel(objectsToExport, ["Departement"], "departements");
+};
+
+export const exportCommunes = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const communesDb: Commune[] = await getCommunes(null);
+
+  const objectsToExport = _.map(communesDb, (object) => {
+    return {
+      Departement: object.departement.code,
+      Code: object.code,
+      Nom: object.nom
+    };
+  });
+
+  return writeToExcel(
+    objectsToExport,
+    ["Departement", "Code", "Nom"],
+    "communes"
+  );
+};
+
+export const exportLieuxdits = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const lieuxditsDb: Lieudit[] = await getLieuxdits(null);
+
+  const objectsToExport = _.map(lieuxditsDb, (object) => {
+    return {
+      Departement: object.commune.departement.code,
+      CodeCommune: object.commune.code,
+      NomCommune: object.commune.nom,
+      Lieudit: object.nom,
+      Altitude: object.altitude,
+      Longitude: object.longitude,
+      Latitude: object.latitude
+    };
+  });
+
+  return writeToExcel(
+    objectsToExport,
+    [
+      "Departement",
+      "CodeCommune",
+      "NomCommune",
+      "Lieudit",
+      "Altitude",
+      "Longitude",
+      "Latitude"
+    ],
+    "lieuxdits"
+  );
+};
+
+export const exportClasses = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const classes: Classe[] = await getClasses(null);
+
+  const objectsToExport = _.map(classes, (object) => {
+    return { Classe: object.libelle };
+  });
+
+  return writeToExcel(objectsToExport, ["Classe"], "classes");
+};
+
+export const exportEspeces = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const especes: Espece[] = await getEspeces(null);
+
+  const objectsToExport = _.map(especes, (object) => {
+    return {
+      Classe: object.classe.libelle,
+      Code: object.code,
+      NomFrancais: object.nomFrancais,
+      NomLatin: object.nomLatin
+    };
+  });
+
+  return writeToExcel(
+    objectsToExport,
+    ["Classe", "Code", "NomFrancais", "NomLatin"],
+    "especes"
+  );
+};
+
 export const exportAges = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
-  const exportService = new ExportService();
-  return exportService.writeToExcel(
-    [{ libelle: "test" }, { libelle: "test 2" }],
-    [{ key: "libelle", columnName: "Âge", dataType: "s" }],
-    "ages"
+  const agesDb: Age[] = await getAges(null);
+
+  const agesToExport = _.map(agesDb, (ageDb) => {
+    return { Age: ageDb.libelle };
+  });
+
+  return writeToExcel(agesToExport, ["Age"], "ages");
+};
+
+export const exportSexes = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const sexes: Sexe[] = await getSexes(null);
+
+  const objectsToExport = _.map(sexes, (object) => {
+    return { Sexe: object.libelle };
+  });
+
+  return writeToExcel(objectsToExport, ["Sexe"], "sexes");
+};
+
+export const exportEstimationsNombre = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const estimations: EstimationNombre[] = await getEstimationsNombre(null);
+
+  const objectsToExport = _.map(estimations, (object) => {
+    return { Estimation: object.libelle };
+  });
+
+  return writeToExcel(objectsToExport, ["Estimation"], "estimations-nombre");
+};
+
+export const exportEstimationsDistance = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const estimations: EstimationDistance[] = await getEstimationsDistance(null);
+
+  const objectsToExport = _.map(estimations, (object) => {
+    return { Estimation: object.libelle };
+  });
+
+  return writeToExcel(objectsToExport, ["Estimation"], "estimations-distance");
+};
+
+export const exportComportements = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const comportementsDb: Comportement[] = await getComportements(null);
+
+  const comportementsToExport = _.map(comportementsDb, (object) => {
+    return { Code: object.code, Libelle: object.libelle };
+  });
+
+  return writeToExcel(
+    comportementsToExport,
+    ["Code", "Libelle"],
+    "comportements"
   );
+};
+
+export const exportMilieux = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const milieuxDb: Milieu[] = await getMilieux(null);
+
+  const milieuxToExport = _.map(milieuxDb, (object) => {
+    return { Code: object.code, Libelle: object.libelle };
+  });
+
+  return writeToExcel(milieuxToExport, ["Code", "Libelle"], "milieux");
 };
