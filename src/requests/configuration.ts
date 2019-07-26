@@ -4,19 +4,33 @@ import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlConnection } from "../sql-api/sql-connection";
-import { DB_CONFIGURATION_MAPPING, getFindAllQuery, updateAllInTableQuery } from "../sql/sql-queries-utils";
-import { COLUMN_CODE, COLUMN_LIBELLE, ORDER_ASC, TABLE_AGE, TABLE_CONFIGURATION, TABLE_DEPARTEMENT, TABLE_ESTIMATION_NOMBRE, TABLE_OBSERVATEUR, TABLE_SEXE } from "../utils/constants";
+import {
+  DB_CONFIGURATION_MAPPING,
+  getFindAllQuery,
+  updateAllInTableQuery
+} from "../sql/sql-queries-utils";
+import {
+  COLUMN_CODE,
+  COLUMN_LIBELLE,
+  ORDER_ASC,
+  TABLE_AGE,
+  TABLE_CONFIGURATION,
+  TABLE_DEPARTEMENT,
+  TABLE_ESTIMATION_NOMBRE,
+  TABLE_OBSERVATEUR,
+  TABLE_SEXE
+} from "../utils/constants";
 
 export const configurationInit = async (
   httpParameters: HttpParameters
 ): Promise<ConfigurationPage> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_CONFIGURATION) +
-    getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
-    getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
-    getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
-    getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
-    getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC)
+      getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
+      getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
+      getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
+      getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
+      getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC)
   );
 
   // Mapping between the UI field and itd corresponding list queried
@@ -79,13 +93,11 @@ export const configurationInit = async (
     sexes: results[4],
     estimationsNombre: results[5]
   };
-
 };
 
 export const configurationUpdate = async (
   httpParameters: HttpParameters
 ): Promise<ConfigurationPage> => {
-
   const configurationToSave: AppConfiguration = httpParameters.postData;
 
   const {
@@ -98,7 +110,6 @@ export const configurationUpdate = async (
     isMeteoDisplayed,
     isDistanceDisplayed,
     isRegroupementDisplayed,
-    exportFolderPath,
     ...otherParams
   } = configurationToSave;
 
@@ -114,11 +125,8 @@ export const configurationUpdate = async (
     isMeteoDisplayed: isMeteoDisplayed ? "1" : "0",
     isDistanceDisplayed: isDistanceDisplayed ? "1" : "0",
     isRegroupementDisplayed: isRegroupementDisplayed ? "1" : "0",
-    exportFolderPath: exportFolderPath.replace(/\\/g, "\\\\"),
     ...otherParams
   };
-
-  console.log(uiFlatMapping.exportFolderPath);
 
   // Here we create the mapping between the DB name and its DB value, that has been already transformed above
   const whereSetValueMapping: { [key: string]: string } = {};

@@ -65,10 +65,3 @@ export const getEntityByCodeAndLibelle = async (
 
   return null;
 };
-
-export const getExportFolderPath = async (): Promise<string> => {
-  const exportFolderPathResult = await SqlConnection.query(
-    getQueryToFindConfigurationByLibelle("export_folder_path")
-  );
-  return exportFolderPathResult[0].value;
-};

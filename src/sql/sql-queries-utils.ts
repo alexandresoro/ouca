@@ -98,7 +98,6 @@ export const DB_SAVE_LISTS_MAPPING = {
 };
 
 export const DB_CONFIGURATION_MAPPING = {
-  application_name: toCamel("application_name"),
   default_observateur_id: "defaultObservateur",
   default_departement_id: "defaultDepartement",
   default_age_id: "defaultAge",
@@ -108,10 +107,7 @@ export const DB_CONFIGURATION_MAPPING = {
   are_associes_displayed: toCamel("are_associes_displayed"),
   is_meteo_displayed: toCamel("is_meteo_displayed"),
   is_distance_displayed: toCamel("is_distance_displayed"),
-  is_regroupement_displayed: toCamel("is_regroupement_displayed"),
-  mysql_path: "mySqlPath",
-  mysqldump_path: "mySqlDumpPath",
-  export_folder_path: "exportFolderPath"
+  is_regroupement_displayed: toCamel("is_regroupement_displayed")
 };
 
 export const getQuery = (query: string): string => {
@@ -280,7 +276,7 @@ export const updateInTableQuery = (
     setColumn +
     '="' +
     setValue +
-    "' WHERE " +
+    '" WHERE ' +
     whereColumn +
     '="' +
     whereValue +
