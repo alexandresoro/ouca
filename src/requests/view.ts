@@ -9,17 +9,17 @@ import {
 import { getQueryToFindAllMeteos } from "../sql/sql-queries-meteo";
 import { getQueryToFindAllMilieux } from "../sql/sql-queries-milieu";
 import { getQueryToFindAllAssocies } from "../sql/sql-queries-observateur";
-import { } from "../sql/sql-queries-utils";
+import {} from "../sql/sql-queries-utils";
 
 export const getDonnees = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
   const results = await SqlConnection.query(
     getQueryToFindAllDonnees() +
-    getQueryToFindAllAssocies() +
-    getQueryToFindAllMeteos() +
-    getQueryToFindAllComportements() +
-    getQueryToFindAllMilieux()
+      getQueryToFindAllAssocies() +
+      getQueryToFindAllMeteos() +
+      getQueryToFindAllComportements() +
+      getQueryToFindAllMilieux()
   );
 
   const donnees: any[] = results[0];
@@ -54,14 +54,14 @@ export const getDonnees = async (
   });
 
   _.forEach(comportementsByDonnee, (comportement: any) => {
-    mapDonnees[comportement.donnee_id].comportements.push({
+    mapDonnees[comportement.donneeId].comportements.push({
       code: comportement.code,
       libelle: comportement.libelle
     });
   });
 
   _.forEach(milieuxByDonnee, (milieu: any) => {
-    mapDonnees[milieu.donnee_id].milieux.push({
+    mapDonnees[milieu.donneeId].milieux.push({
       code: milieu.code,
       libelle: milieu.libelle
     });
@@ -119,7 +119,7 @@ export const getDonneesByCustomizedFilters = async (
 
   _.forEach(comportementsByDonnee, (comportement: any) => {
     if (mapDonnees[comportement.donneeId]) {
-      mapDonnees[comportement.donnee_id].comportements.push({
+      mapDonnees[comportement.donneeId].comportements.push({
         code: comportement.code,
         libelle: comportement.libelle
       });
@@ -128,7 +128,7 @@ export const getDonneesByCustomizedFilters = async (
 
   _.forEach(milieuxByDonnee, (milieu: any) => {
     if (mapDonnees[milieu.donneeId]) {
-      mapDonnees[milieu.donnee_id].milieux.push({
+      mapDonnees[milieu.donneeId].milieux.push({
         code: milieu.code,
         libelle: milieu.libelle
       });

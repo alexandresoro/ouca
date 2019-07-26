@@ -2,7 +2,7 @@ import { getQuery } from "./sql-queries-utils";
 
 export function getQueryToFindAllMilieux() {
   const query: string =
-    "SELECT d.donnee_id, m.code, m.libelle" +
+    "SELECT d.donnee_id as donneeId, m.code, m.libelle" +
     " FROM donnee_milieu d" +
     " INNER JOIN milieu m ON d.milieu_id = m.id";
 

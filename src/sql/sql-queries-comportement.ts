@@ -2,7 +2,7 @@ import { getQuery } from "./sql-queries-utils";
 
 export function getQueryToFindAllComportements() {
   const query: string =
-    "SELECT d.donnee_id, c.code, c.libelle" +
+    "SELECT d.donnee_id as donneeId, c.code, c.libelle" +
     " FROM donnee_comportement d" +
     " INNER JOIN comportement c ON d.comportement_id = c.id";
 
