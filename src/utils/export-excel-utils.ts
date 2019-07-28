@@ -7,7 +7,10 @@ export const writeToExcel = (
 ): any => {
   const workbook = XLSX.utils.book_new();
 
-  const worksheet = XLSX.utils.json_to_sheet(objects, { header: headers });
+  const worksheet = XLSX.utils.json_to_sheet(objects, {
+    header: headers,
+    dateNF: "dd/mm/yyyy"
+  });
 
   XLSX.utils.book_append_sheet(workbook, worksheet, worksheetName);
 

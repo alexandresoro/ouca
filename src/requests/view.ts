@@ -1,139 +1,93 @@
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
-import { SqlConnection } from "../sql-api/sql-connection";
-import { getQueryToFindAllComportements } from "../sql/sql-queries-comportement";
-import {
-  getQueryToFindAllDonnees,
-  getQueryToFindDonneesByCriterion
-} from "../sql/sql-queries-donnee";
-import { getQueryToFindAllMeteos } from "../sql/sql-queries-meteo";
-import { getQueryToFindAllMilieux } from "../sql/sql-queries-milieu";
-import { getQueryToFindAllAssocies } from "../sql/sql-queries-observateur";
+import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
 import {} from "../sql/sql-queries-utils";
-
-export const getDonnees = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const results = await SqlConnection.query(
-    getQueryToFindAllDonnees() +
-      getQueryToFindAllAssocies() +
-      getQueryToFindAllMeteos() +
-      getQueryToFindAllComportements() +
-      getQueryToFindAllMilieux()
-  );
-
-  const donnees: any[] = results[0];
-  const associesByDonnee: any[] = results[1];
-  const meteosByDonnee: any[] = results[2];
-  const comportementsByDonnee: any[] = results[3];
-  const milieuxByDonnee: any[] = results[4];
-
-  const mapDonnees: { [key: number]: any } = {};
-  _.forEach(donnees, (donnee: any) => {
-    donnee.associes = "";
-    donnee.meteos = "";
-    donnee.comportements = [];
-    donnee.milieux = [];
-    mapDonnees[donnee.id] = donnee;
-  });
-
-  _.forEach(associesByDonnee, (associe: any) => {
-    if (mapDonnees[associe.donneeId].associes === "") {
-      mapDonnees[associe.donneeId].associes = associe.libelle;
-    } else {
-      mapDonnees[associe.donneeId].associes += ", " + associe.libelle;
-    }
-  });
-
-  _.forEach(meteosByDonnee, (meteo: any) => {
-    if (mapDonnees[meteo.donneeId].meteos === "") {
-      mapDonnees[meteo.donneeId].meteos = meteo.libelle;
-    } else {
-      mapDonnees[meteo.donneeId].meteos += ", " + meteo.libelle;
-    }
-  });
-
-  _.forEach(comportementsByDonnee, (comportement: any) => {
-    mapDonnees[comportement.donneeId].comportements.push({
-      code: comportement.code,
-      libelle: comportement.libelle
-    });
-  });
-
-  _.forEach(milieuxByDonnee, (milieu: any) => {
-    mapDonnees[milieu.donneeId].milieux.push({
-      code: milieu.code,
-      libelle: milieu.libelle
-    });
-  });
-
-  return donnees;
-};
+import { writeToExcel } from "../utils/export-excel-utils";
 
 export const getDonneesByCustomizedFilters = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
-  console.log(httpParameters.postData);
-  const results = await SqlConnection.query(
-    getQueryToFindDonneesByCriterion(httpParameters.postData) +
-      getQueryToFindAllAssocies() +
-      getQueryToFindAllMeteos() +
-      getQueryToFindAllComportements() +
-      getQueryToFindAllMilieux()
-  );
+  return await findDonneesByCustomizedFilters(httpParameters.postData);
+};
 
-  const donnees: any[] = results[0];
-  const associesByDonnee: any[] = results[1];
-  const meteosByDonnee: any[] = results[2];
-  const comportementsByDonnee: any[] = results[3];
-  const milieuxByDonnee: any[] = results[4];
+export const exportDonneesByCustomizedFilters = async (
+  httpParameters: HttpParameters
+): Promise<any> => {
+  const donnees = await findDonneesByCustomizedFilters(httpParameters.postData);
 
-  const mapDonnees: { [key: number]: any } = {};
-  _.forEach(donnees, (donnee: any) => {
-    donnee.associes = "";
-    donnee.meteos = "";
-    donnee.comportements = [];
-    donnee.milieux = [];
-    mapDonnees[donnee.id] = donnee;
+  const objectsToExport = _.map(donnees, (object) => {
+    return {
+      ID: object.id,
+      Observateur: object.observateur,
+      Observateurs_Associes: object.associes,
+      Date: object.date,
+      Heure: object.heure,
+      Duree: object.duree,
+      Departement: object.departement,
+      Code_Commune: object.codeCommune,
+      Nom_Commune: object.nomCommune,
+      Lieudit: object.lieudit,
+      Altitude: object.altitude,
+      Longitude: object.longitude,
+      Latitude: object.latitude,
+      Temperature: object.temperature,
+      Meteo: object.meteos,
+      Classe: object.classe,
+      Code_Espece: object.codeEspece,
+      Nom_Francais: object.nomFrancais,
+      Nom_Latin: object.nomLatin,
+      Sexe: object.sexe,
+      Age: object.age,
+      Nombre: object.nombre,
+      Estimation_Nombre: object.estimationNombre,
+      Distance: object.distance,
+      Estimation_Distance: object.estimationDistance,
+      Regroupement: object.regroupement,
+      Code_Comportement_1: getCodeComportement(object, 1),
+      Libelle_Comportement_1: getLibelleComportement(object, 1),
+      Code_Comportement_2: getCodeComportement(object, 2),
+      Libelle_Comportement_2: getLibelleComportement(object, 2),
+      Code_Comportement_3: getCodeComportement(object, 3),
+      Libelle_Comportement_3: getLibelleComportement(object, 3),
+      Code_Comportement_4: getCodeComportement(object, 4),
+      Libelle_Comportement_4: getLibelleComportement(object, 4),
+      Code_Comportement_5: getCodeComportement(object, 5),
+      Libelle_Comportement_5: getLibelleComportement(object, 5),
+      Code_Comportement_6: getCodeComportement(object, 6),
+      Libelle_Comportement_6: getLibelleComportement(object, 6),
+      Code_Milieu_1: getCodeMilieu(object, 1),
+      Libelle_Milieu_1: getLibelleMilieu(object, 1),
+      Code_Milieu_2: getCodeMilieu(object, 2),
+      Libelle_Milieu_2: getLibelleMilieu(object, 2),
+      Code_Milieu_3: getCodeMilieu(object, 3),
+      Libelle_Milieu_3: getLibelleMilieu(object, 3),
+      Code_Milieu_4: getCodeMilieu(object, 4),
+      Libelle_Milieu_4: getLibelleMilieu(object, 4),
+      Commentaire: object.commentaire
+    };
   });
 
-  _.forEach(associesByDonnee, (associe: any) => {
-    if (mapDonnees[associe.donneeId]) {
-      if (mapDonnees[associe.donneeId].associes === "") {
-        mapDonnees[associe.donneeId].associes = associe.libelle;
-      } else {
-        mapDonnees[associe.donneeId].associes += ", " + associe.libelle;
-      }
-    }
-  });
+  return writeToExcel(objectsToExport, [], "donnees");
+};
 
-  _.forEach(meteosByDonnee, (meteo: any) => {
-    if (mapDonnees[meteo.donneeId]) {
-      if (mapDonnees[meteo.donneeId].meteos === "") {
-        mapDonnees[meteo.donneeId].meteos = meteo.libelle;
-      } else {
-        mapDonnees[meteo.donneeId].meteos += ", " + meteo.libelle;
-      }
-    }
-  });
+const getCodeComportement = (donnee: any, index: number): string => {
+  return donnee.comportements.length >= index
+    ? donnee.comportements[index - 1].code
+    : "";
+};
 
-  _.forEach(comportementsByDonnee, (comportement: any) => {
-    if (mapDonnees[comportement.donneeId]) {
-      mapDonnees[comportement.donneeId].comportements.push({
-        code: comportement.code,
-        libelle: comportement.libelle
-      });
-    }
-  });
+const getLibelleComportement = (donnee: any, index: number): string => {
+  return donnee.comportements.length >= index
+    ? donnee.comportements[index - 1].libelle
+    : "";
+};
 
-  _.forEach(milieuxByDonnee, (milieu: any) => {
-    if (mapDonnees[milieu.donneeId]) {
-      mapDonnees[milieu.donneeId].milieux.push({
-        code: milieu.code,
-        libelle: milieu.libelle
-      });
-    }
-  });
+const getCodeMilieu = (donnee: any, index: number): string => {
+  return donnee.milieux.length >= index ? donnee.milieux[index - 1].code : "";
+};
 
-  return donnees;
+const getLibelleMilieu = (donnee: any, index: number): string => {
+  return donnee.milieux.length >= index
+    ? donnee.milieux[index - 1].libelle
+    : "";
 };

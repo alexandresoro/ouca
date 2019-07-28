@@ -85,7 +85,10 @@ import {
   importSexes
 } from "./requests/import";
 import { saveDatabase, saveDatabaseFileName } from "./requests/save";
-import { getDonnees, getDonneesByCustomizedFilters } from "./requests/view";
+import {
+  exportDonneesByCustomizedFilters,
+  getDonneesByCustomizedFilters
+} from "./requests/view";
 
 const CSV_MIME_TYPE: string = "text/csv";
 const EXCEL_MIME_TYPE: string =
@@ -100,8 +103,8 @@ export const REQUEST_MAPPING: {
   "/api/creation/init": creationInit,
   "/api/inventaire/save": saveInventaire,
   "/api/inventaire/find": getInventaireById,
-  "/api/donnee/all": getDonnees,
   "/api/donnee/search": getDonneesByCustomizedFilters,
+  "/api/donnee/export": exportDonneesByCustomizedFilters,
   "/api/donnee/save": saveDonnee,
   "/api/donnee/delete": deleteDonnee,
   "/api/donnee/next_donnee": getNextDonnee,
