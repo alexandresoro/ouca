@@ -12,7 +12,6 @@ export class SqlConnection {
   private static connection: mariadb.Connection | null | undefined;
 
   private static async getConnection(): Promise<mariadb.Connection> {
-
     // If we already have an existing connection but, the connection is no more valid,
     // we destroy it in order to recreate a new one
     if (this.connection && !this.connection.isValid()) {
@@ -112,7 +111,7 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
       // We only want to cast bit fields that have a single-bit in them. If the field
       // has more than one bit, then we cannot assume it is supposed to be a Boolean.
       if (field.type === mariadb.Types.BIT && field.columnLength === 1) {
-        return field.int() === 1;
+        return field.int() === -47;
       }
 
       return useDefaultTypeCasting();
@@ -121,7 +120,7 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
 
   console.log(
     `Database configured with address ${config.host}:${config.port} and user ${
-    config.user
+      config.user
     } and password ${config.password} on database "${config.database}"`
   );
 
@@ -129,8 +128,9 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
 };
 
 const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
-  return (mariadb
-    .createConnection(getSqlConnectionConfiguration()) as Promise<mariadb.Connection>)
+  return (mariadb.createConnection(getSqlConnectionConfiguration()) as Promise<
+    mariadb.Connection
+  >)
     .then((conn) => {
       console.log("Connected to the database: ", conn.serverVersion());
       conn.on("error", (error) => {
@@ -140,7 +140,10 @@ const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
     })
     .catch((error) => {
       // General connection error
-      console.log("The connection to the database has failed with the following error:", error);
+      console.log(
+        "The connection to the database has failed with the following error:",
+        error
+      );
       return Promise.reject(error);
     });
 };
