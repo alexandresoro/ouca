@@ -1,5 +1,11 @@
 import * as _ from "lodash";
 import moment from "moment";
+import {
+  TABLE_DONNEE_COMPORTEMENT,
+  TABLE_DONNEE_MILIEU,
+  TABLE_INVENTAIRE_ASSOCIE,
+  TABLE_INVENTAIRE_METEO
+} from "../utils/constants";
 import { getQuery } from "./sql-queries-utils";
 export function getQueryToFindNumberOfDonnees(): string {
   return getQuery("SELECT COUNT(*) as nbDonnees FROM donnee");
@@ -177,6 +183,58 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
   if (criterion.commentaire) {
     whereTab.push(
       ' t_donnee.commentaire like "%' + criterion.commentaire + '%"'
+    );
+  }
+
+  if (criterion.associe && criterion.associe.id) {
+    whereTab.push(
+      " t_inventaire.id IN" +
+        " (SELECT distinct t_inventaire_associe.inventaire_id" +
+        " FROM " +
+        TABLE_INVENTAIRE_ASSOCIE +
+        " t_inventaire_associe" +
+        " WHERE t_inventaire_associe.observateur_id=" +
+        criterion.associe.id +
+        ")"
+    );
+  }
+
+  if (criterion.meteo && criterion.meteo.id) {
+    whereTab.push(
+      " t_inventaire.id IN" +
+        " (SELECT distinct t_inventaire_meteo.inventaire_id" +
+        " FROM " +
+        TABLE_INVENTAIRE_METEO +
+        " t_inventaire_meteo" +
+        " WHERE t_inventaire_meteo.meteo_id=" +
+        criterion.meteo.id +
+        ")"
+    );
+  }
+
+  if (criterion.comportement && criterion.comportement.id) {
+    whereTab.push(
+      " t_donnee.id IN" +
+        " (SELECT distinct t_donnee_comportement.donnee_id" +
+        " FROM " +
+        TABLE_DONNEE_COMPORTEMENT +
+        " t_donnee_comportement" +
+        " WHERE t_donnee_comportement.comportement_id=" +
+        criterion.comportement.id +
+        ")"
+    );
+  }
+
+  if (criterion.milieu && criterion.milieu.id) {
+    whereTab.push(
+      " t_donnee.id IN" +
+        " (SELECT distinct t_donnee_milieu.donnee_id" +
+        " FROM " +
+        TABLE_DONNEE_MILIEU +
+        " t_donnee_milieu" +
+        " WHERE t_donnee_milieu.milieu_id=" +
+        criterion.milieu.id +
+        ")"
     );
   }
 
