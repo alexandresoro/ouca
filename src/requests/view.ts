@@ -27,9 +27,15 @@ export const exportDonneesByCustomizedFilters = async (
       Code_Commune: object.codeCommune,
       Nom_Commune: object.nomCommune,
       Lieudit: object.lieudit,
-      Altitude: object.altitude,
-      Longitude: object.longitude,
-      Latitude: object.latitude,
+      Altitude: object.customizedAltitude
+        ? object.customizedAltitude
+        : object.altitude,
+      Longitude: object.customizedLongitude
+        ? object.customizedLongitude
+        : object.longitude,
+      Latitude: object.customizedLatitude
+        ? object.customizedLatitude
+        : object.latitude,
       Temperature: object.temperature,
       Meteo: object.meteos,
       Classe: object.classe,
