@@ -43,26 +43,16 @@ export const exportDonneesByCustomizedFilters = async (
       Estimation_Distance: object.estimationDistance,
       Distance: object.distance,
       Regroupement: object.regroupement,
-      Code_Comportement_1: getCodeComportement(object, 1),
-      Libelle_Comportement_1: getLibelleComportement(object, 1),
-      Code_Comportement_2: getCodeComportement(object, 2),
-      Libelle_Comportement_2: getLibelleComportement(object, 2),
-      Code_Comportement_3: getCodeComportement(object, 3),
-      Libelle_Comportement_3: getLibelleComportement(object, 3),
-      Code_Comportement_4: getCodeComportement(object, 4),
-      Libelle_Comportement_4: getLibelleComportement(object, 4),
-      Code_Comportement_5: getCodeComportement(object, 5),
-      Libelle_Comportement_5: getLibelleComportement(object, 5),
-      Code_Comportement_6: getCodeComportement(object, 6),
-      Libelle_Comportement_6: getLibelleComportement(object, 6),
-      Code_Milieu_1: getCodeMilieu(object, 1),
-      Libelle_Milieu_1: getLibelleMilieu(object, 1),
-      Code_Milieu_2: getCodeMilieu(object, 2),
-      Libelle_Milieu_2: getLibelleMilieu(object, 2),
-      Code_Milieu_3: getCodeMilieu(object, 3),
-      Libelle_Milieu_3: getLibelleMilieu(object, 3),
-      Code_Milieu_4: getCodeMilieu(object, 4),
-      Libelle_Milieu_4: getLibelleMilieu(object, 4),
+      Comportement_1: getComportement(object, 1),
+      Comportement_2: getComportement(object, 2),
+      Comportement_3: getComportement(object, 3),
+      Comportement_4: getComportement(object, 4),
+      Comportement_5: getComportement(object, 5),
+      Comportement_6: getComportement(object, 6),
+      Milieu_1: getMilieu(object, 1),
+      Milieu_2: getMilieu(object, 2),
+      Milieu_3: getMilieu(object, 3),
+      Milieu_4: getMilieu(object, 4),
       Commentaire: object.commentaire
     };
   });
@@ -70,24 +60,16 @@ export const exportDonneesByCustomizedFilters = async (
   return writeToExcel(objectsToExport, [], "donnees");
 };
 
-const getCodeComportement = (donnee: any, index: number): string => {
+const getComportement = (donnee: any, index: number): string => {
   return donnee.comportements.length >= index
-    ? donnee.comportements[index - 1].code
+    ? donnee.comportements[index - 1].code +
+        " - " +
+        donnee.comportements[index - 1].libelle
     : "";
 };
 
-const getLibelleComportement = (donnee: any, index: number): string => {
-  return donnee.comportements.length >= index
-    ? donnee.comportements[index - 1].libelle
-    : "";
-};
-
-const getCodeMilieu = (donnee: any, index: number): string => {
-  return donnee.milieux.length >= index ? donnee.milieux[index - 1].code : "";
-};
-
-const getLibelleMilieu = (donnee: any, index: number): string => {
+const getMilieu = (donnee: any, index: number): string => {
   return donnee.milieux.length >= index
-    ? donnee.milieux[index - 1].libelle
+    ? donnee.milieux[index - 1].code + " - " + donnee.milieux[index - 1].libelle
     : "";
 };
