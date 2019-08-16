@@ -104,12 +104,12 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
     whereTab.push(" t_lieudit.id=" + criterion.lieuditGroup.lieudit.id);
   }
 
-  if (criterion.sexe && criterion.sexe.id) {
-    whereTab.push(" t_sexe.id=" + criterion.sexe.id);
+  if (criterion.sexes && criterion.sexes.length > 0) {
+    whereTab.push(" t_sexe.id IN (" + criterion.sexes.join(",") + ")");
   }
 
-  if (criterion.age && criterion.age.id) {
-    whereTab.push(" t_age.id=" + criterion.age.id);
+  if (criterion.ages && criterion.ages.length > 0) {
+    whereTab.push(" t_age.id IN (" + criterion.ages.join(",") + ")");
   }
 
   if (
@@ -130,8 +130,10 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
     );
   }
 
-  if (criterion.observateur && criterion.observateur.id) {
-    whereTab.push(" t_observateur.id=" + criterion.observateur.id);
+  if (criterion.observateurs && criterion.observateurs.length > 0) {
+    whereTab.push(
+      " t_observateur.id IN (" + criterion.observateurs.join(",") + ")"
+    );
   }
 
   if (criterion.fromDate) {
@@ -186,55 +188,55 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
     );
   }
 
-  if (criterion.associe && criterion.associe.id) {
+  if (criterion.associes && criterion.associes.length > 0) {
     whereTab.push(
       " t_inventaire.id IN" +
         " (SELECT distinct t_inventaire_associe.inventaire_id" +
         " FROM " +
         TABLE_INVENTAIRE_ASSOCIE +
         " t_inventaire_associe" +
-        " WHERE t_inventaire_associe.observateur_id=" +
-        criterion.associe.id +
-        ")"
+        " WHERE t_inventaire_associe.observateur_id IN (" +
+        criterion.associes.join(",") +
+        "))"
     );
   }
 
-  if (criterion.meteo && criterion.meteo.id) {
+  if (criterion.meteos && criterion.meteos.length > 0) {
     whereTab.push(
       " t_inventaire.id IN" +
         " (SELECT distinct t_inventaire_meteo.inventaire_id" +
         " FROM " +
         TABLE_INVENTAIRE_METEO +
         " t_inventaire_meteo" +
-        " WHERE t_inventaire_meteo.meteo_id=" +
-        criterion.meteo.id +
-        ")"
+        " WHERE t_inventaire_meteo.meteo_id IN (" +
+        criterion.meteos.join(",") +
+        "))"
     );
   }
 
-  if (criterion.comportement && criterion.comportement.id) {
+  if (criterion.comportements && criterion.comportements.length > 0) {
     whereTab.push(
       " t_donnee.id IN" +
         " (SELECT distinct t_donnee_comportement.donnee_id" +
         " FROM " +
         TABLE_DONNEE_COMPORTEMENT +
         " t_donnee_comportement" +
-        " WHERE t_donnee_comportement.comportement_id=" +
-        criterion.comportement.id +
-        ")"
+        " WHERE t_donnee_comportement.comportement_id IN (" +
+        criterion.comportements.join(",") +
+        "))"
     );
   }
 
-  if (criterion.milieu && criterion.milieu.id) {
+  if (criterion.milieux && criterion.milieux.length > 0) {
     whereTab.push(
       " t_donnee.id IN" +
         " (SELECT distinct t_donnee_milieu.donnee_id" +
         " FROM " +
         TABLE_DONNEE_MILIEU +
         " t_donnee_milieu" +
-        " WHERE t_donnee_milieu.milieu_id=" +
-        criterion.milieu.id +
-        ")"
+        " WHERE t_donnee_milieu.milieu_id IN (" +
+        criterion.milieux.join(",") +
+        "))"
     );
   }
 

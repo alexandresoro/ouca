@@ -480,7 +480,7 @@ export const getComportements = async (
   httpParameters: HttpParameters
 ): Promise<Comportement[]> => {
   const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_COMPORTEMENT, COLUMN_LIBELLE, ORDER_ASC) +
+    getFindAllQuery(TABLE_COMPORTEMENT, COLUMN_CODE, ORDER_ASC) +
       getQueryToFindNumberOfDonneesByComportementId()
   );
 
@@ -513,7 +513,7 @@ export const getMilieux = async (
   httpParameters: HttpParameters
 ): Promise<Milieu[]> => {
   const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_MILIEU, COLUMN_LIBELLE, ORDER_ASC) +
+    getFindAllQuery(TABLE_MILIEU, COLUMN_CODE, ORDER_ASC) +
       getQueryToFindNumberOfDonneesByMilieuId()
   );
 
