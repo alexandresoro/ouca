@@ -81,8 +81,13 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
     whereTab.push(" t_donnee.id=" + criterion.id);
   }
 
-  if (criterion.especeGroup.classe && criterion.especeGroup.classe.id) {
-    whereTab.push(" t_classe.id=" + criterion.especeGroup.classe.id);
+  if (
+    criterion.especeGroup.classes &&
+    criterion.especeGroup.classes.length > 0
+  ) {
+    whereTab.push(
+      " t_classe.id IN (" + criterion.especeGroup.classes.join(",") + ")"
+    );
   }
 
   if (
