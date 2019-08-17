@@ -85,8 +85,13 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
     whereTab.push(" t_classe.id=" + criterion.especeGroup.classe.id);
   }
 
-  if (criterion.especeGroup.espece && criterion.especeGroup.espece.id) {
-    whereTab.push(" t_espece.id=" + criterion.especeGroup.espece.id);
+  if (
+    criterion.especeGroup.especes &&
+    criterion.especeGroup.especes.length > 0
+  ) {
+    whereTab.push(
+      " t_espece.id IN (" + criterion.especeGroup.especes.join(",") + ")"
+    );
   }
 
   if (
@@ -100,8 +105,13 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
     whereTab.push(" t_commune.id=" + criterion.lieuditGroup.commune.id);
   }
 
-  if (criterion.lieuditGroup.lieudit && criterion.lieuditGroup.lieudit.id) {
-    whereTab.push(" t_lieudit.id=" + criterion.lieuditGroup.lieudit.id);
+  if (
+    criterion.lieuditGroup.lieuxdits &&
+    criterion.lieuditGroup.lieuxdits.length > 0
+  ) {
+    whereTab.push(
+      " t_lieudit.id IN (" + criterion.lieuditGroup.lieuxdits.join(",") + ")"
+    );
   }
 
   if (criterion.sexes && criterion.sexes.length > 0) {
@@ -113,20 +123,24 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
   }
 
   if (
-    criterion.nombreGroup.estimationNombre &&
-    criterion.nombreGroup.estimationNombre.id
+    criterion.nombreGroup.estimationsNombre &&
+    criterion.nombreGroup.estimationsNombre.length > 0
   ) {
     whereTab.push(
-      " t_estim_nb.id=" + criterion.nombreGroup.estimationNombre.id
+      " t_estim_nb.id IN (" +
+        criterion.nombreGroup.estimationsNombre.join(",") +
+        ")"
     );
   }
 
   if (
-    criterion.distanceGroup.estimationDistance &&
-    criterion.distanceGroup.estimationDistance.id
+    criterion.distanceGroup.estimationsDistance &&
+    criterion.distanceGroup.estimationsDistance.length > 0
   ) {
     whereTab.push(
-      " t_estim_dist.id=" + criterion.distanceGroup.estimationDistance.id
+      " t_estim_dist.id IN (" +
+        criterion.distanceGroup.estimationsDistance.join(",") +
+        ")"
     );
   }
 
