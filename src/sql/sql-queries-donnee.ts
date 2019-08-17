@@ -100,14 +100,23 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
   }
 
   if (
-    criterion.lieuditGroup.departement &&
-    criterion.lieuditGroup.departement.id
+    criterion.lieuditGroup.departements &&
+    criterion.lieuditGroup.departements.length > 0
   ) {
-    whereTab.push(" t_departement.id=" + criterion.lieuditGroup.departement.id);
+    whereTab.push(
+      " t_departement.id IN (" +
+        criterion.lieuditGroup.departements.join(",") +
+        ")"
+    );
   }
 
-  if (criterion.lieuditGroup.commune && criterion.lieuditGroup.commune.id) {
-    whereTab.push(" t_commune.id=" + criterion.lieuditGroup.commune.id);
+  if (
+    criterion.lieuditGroup.communes &&
+    criterion.lieuditGroup.communes.length > 0
+  ) {
+    whereTab.push(
+      " t_commune.id IN (" + criterion.lieuditGroup.communes.join(",") + ")"
+    );
   }
 
   if (
