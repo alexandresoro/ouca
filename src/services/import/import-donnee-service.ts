@@ -1,5 +1,6 @@
 import { Age } from "basenaturaliste-model/age.object";
 import { Commune } from "basenaturaliste-model/commune.object";
+import { Comportement } from "basenaturaliste-model/comportement.object";
 import { Departement } from "basenaturaliste-model/departement.object";
 import { Donnee } from "basenaturaliste-model/donnee.object";
 import { Espece } from "basenaturaliste-model/espece.object";
@@ -8,19 +9,27 @@ import { EstimationNombre } from "basenaturaliste-model/estimation-nombre.object
 import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import { Lieudit } from "basenaturaliste-model/lieudit.object";
 import { Meteo } from "basenaturaliste-model/meteo.object";
+import { Milieu } from "basenaturaliste-model/milieu.object";
 import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
-import { getEntityByLibelle, saveEntity } from "../../sql-api/sql-api-common";
+import {
+  getEntityByCode,
+  getEntityByLibelle,
+  saveEntity
+} from "../../sql-api/sql-api-common";
 import { getCommuneByDepartementIdAndCode } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { getLieuditByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
 import {
   TABLE_AGE,
+  TABLE_COMPORTEMENT,
   TABLE_DONNEE,
   TABLE_ESTIMATION_DISTANCE,
   TABLE_ESTIMATION_NOMBRE,
   TABLE_INVENTAIRE,
+  TABLE_METEO,
+  TABLE_MILIEU,
   TABLE_OBSERVATEUR,
   TABLE_SEXE
 } from "../../utils/constants";
@@ -49,16 +58,12 @@ export class ImportDoneeeService extends ImportService {
   private DISTANCE_INDEX: number = 19;
   private REGROUPEMENT_INDEX: number = 20;
   private CODE_COMP_1_INDEX: number = 21;
-  private CODE_COMP_2_INDEX: number = 22;
-  private CODE_COMP_3_INDEX: number = 23;
-  private CODE_COMP_4_INDEX: number = 24;
-  private CODE_COMP_5_INDEX: number = 25;
   private CODE_COMP_6_INDEX: number = 26;
   private CODE_MILIEU_1_INDEX: number = 27;
-  private CODE_MILIEU_2_INDEX: number = 28;
-  private CODE_MILIEU_3_INDEX: number = 29;
   private CODE_MILIEU_4_INDEX: number = 30;
   private COMMENTAIRE_INDEX: number = 31;
+
+  private LIST_SEPARATOR: string = ",";
 
   protected getNumberOfColumns = () => {
     return 32;
@@ -88,13 +93,18 @@ export class ImportDoneeeService extends ImportService {
       regroupement: +entityTab[this.REGROUPEMENT_INDEX],
       comportementsIds,
       milieuxIds,
-      commentaire: entityTab[this.COMMENTAIRE_INDEX]
+      commentaire: !!entityTab[this.COMMENTAIRE_INDEX]
+        ? entityTab[this.COMMENTAIRE_INDEX].replace(";", ",")
+        : null
     };
   }
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (
       !this.isObservateurValid(entityTab[this.OBSERVATEUR_INDEX]) ||
+      !this.isDateValid(entityTab[this.DATE_INDEX]) ||
+      !this.isHeureValid(entityTab[this.HEURE_INDEX]) ||
+      !this.isDureeValid(entityTab[this.DUREE_INDEX]) ||
       !this.isDepartementValid(entityTab[this.DEPARTEMENT_INDEX]) ||
       !this.isCodeCommuneValid(entityTab[this.CODE_COMMUNE_INDEX]) ||
       !this.isLieuditValid(entityTab[this.LIEUDIT_INDEX]) ||
@@ -131,8 +141,34 @@ export class ImportDoneeeService extends ImportService {
     )) as Observateur;
 
     if (!observateur) {
-      this.message = "L'observateur n'existe pas";
+      this.message =
+        "L'observateur " + entityTab[this.OBSERVATEUR_INDEX] + " n'existe pas";
       return false;
+    }
+
+    // Check that the associes exist
+    const associesIds: number[] = [];
+    const associesTab: string[] = entityTab[this.ASSOCIES_INDEX].split(
+      this.LIST_SEPARATOR
+    );
+    for (const associeStr of associesTab) {
+      const associe: Observateur = (await getEntityByLibelle(
+        associeStr,
+        TABLE_OBSERVATEUR
+      )) as Observateur;
+
+      if (!associe) {
+        this.message = "L'observateur associé " + associeStr + " n'existe pas";
+        return false;
+      }
+
+      if (
+        !associesIds.find((id) => {
+          return id === associe.id;
+        })
+      ) {
+        associesIds.push(associe.id);
+      }
     }
 
     // Check that the departement exists
@@ -141,7 +177,8 @@ export class ImportDoneeeService extends ImportService {
     );
 
     if (!departement) {
-      this.message = "Le département n'existe pas";
+      this.message =
+        "Le département " + entityTab[this.DEPARTEMENT_INDEX] + " n'existe pas";
       return false;
     }
 
@@ -152,7 +189,11 @@ export class ImportDoneeeService extends ImportService {
     );
 
     if (!commune) {
-      this.message = "La commune n'existe pas dans ce département";
+      this.message =
+        "La commune avec pour code " +
+        entityTab[this.CODE_COMMUNE_INDEX] +
+        " n'existe pas dans le département " +
+        departement.code;
       return false;
     }
 
@@ -163,18 +204,50 @@ export class ImportDoneeeService extends ImportService {
     );
 
     if (!lieudit) {
-      this.message = "Le lieu-dit n'existe pas dans cette commune";
+      this.message =
+        "Le lieu-dit " +
+        entityTab[this.LIEUDIT_INDEX] +
+        " n'existe pas dans la commune " +
+        commune.code +
+        " - " +
+        commune.nom +
+        " du département " +
+        departement.code;
       return false;
     }
 
     // Check if the coordinates are updated
-    const areCoordinatesCustomized: boolean = false;
-
-    // Check that the associes exist
-    const associesIds: number[] = [];
+    const areCoordinatesCustomized: boolean = this.areCoordinatesCustomized(
+      lieudit,
+      +entityTab[this.ALTITUDE_INDEX],
+      +entityTab[this.LONGITUDE_INDEX],
+      +entityTab[this.LATITUDE_INDEX]
+    );
 
     // Check that the meteos exist
     const meteosIds: number[] = [];
+    const meteosTab: string[] = entityTab[this.METEOS_INDEX].split(
+      this.LIST_SEPARATOR
+    );
+    for (const meteoStr of meteosTab) {
+      const meteo: Meteo = (await getEntityByLibelle(
+        meteoStr,
+        TABLE_METEO
+      )) as Meteo;
+
+      if (!meteo) {
+        this.message = "La météo " + meteoStr + " n'existe pas";
+        return false;
+      }
+
+      if (
+        !meteosIds.find((id) => {
+          return id === meteo.id;
+        })
+      ) {
+        meteosIds.push(meteo.id);
+      }
+    }
 
     // Check that the espece exixts
     const espece: Espece = null;
@@ -186,7 +259,7 @@ export class ImportDoneeeService extends ImportService {
     )) as Sexe;
 
     if (!sexe) {
-      this.message = "Le sexe n'existe pas";
+      this.message = "Le sexe " + entityTab[this.SEXE_INDEX] + " n'existe pas";
       return false;
     }
 
@@ -197,7 +270,7 @@ export class ImportDoneeeService extends ImportService {
     )) as Age;
 
     if (!age) {
-      this.message = "L'âge n'existe pas";
+      this.message = "L'âge " + entityTab[this.AGE_INDEX] + " n'existe pas";
       return false;
     }
 
@@ -208,11 +281,21 @@ export class ImportDoneeeService extends ImportService {
     )) as EstimationNombre;
 
     if (!estimationNombre) {
-      this.message = "L'estimation du nombre n'existe pas";
+      this.message =
+        "L'estimation du nombre " +
+        entityTab[this.ESTIMATION_NOMBRE_INDEX] +
+        " n'existe pas";
       return false;
     }
 
     // Check that if 'Non-compte' then the nombre is empty
+    if (estimationNombre.nonCompte && !!entityTab[this.NOMBRE_INDEX]) {
+      this.message =
+        "L'estimation du nombre " +
+        estimationNombre.libelle +
+        " est de type non-compté donc le nombre devrait être vide";
+      return false;
+    }
 
     // Check that the estimation distance exists
     const estimationDistance: EstimationDistance = (await getEntityByLibelle(
@@ -221,19 +304,72 @@ export class ImportDoneeeService extends ImportService {
     )) as EstimationDistance;
 
     if (!estimationDistance) {
-      this.message = "L'estimation de la distance n'existe pas";
+      this.message =
+        "L'estimation de la distance " +
+        entityTab[this.ESTIMATION_DISTANCE_INDEX] +
+        " n'existe pas";
       return false;
     }
 
     // Check that the comportements exist
     const comportementsIds: number[] = [];
+    for (
+      let compIndex = this.CODE_COMP_1_INDEX;
+      compIndex < this.CODE_COMP_6_INDEX;
+      compIndex++
+    ) {
+      const comportement: Comportement = (await getEntityByCode(
+        entityTab[compIndex],
+        TABLE_COMPORTEMENT
+      )) as Comportement;
+
+      if (!comportement) {
+        this.message =
+          "Le comportement avec pour code " +
+          entityTab[compIndex] +
+          " n'existe pas";
+        return false;
+      }
+
+      if (
+        !comportementsIds.find((id) => {
+          return id === comportement.id;
+        })
+      ) {
+        comportementsIds.push(comportement.id);
+      }
+    }
 
     // Check that the milieux exist
     const milieuxIds: number[] = [];
+    for (
+      let milieuIndex = this.CODE_MILIEU_1_INDEX;
+      milieuIndex < this.CODE_MILIEU_4_INDEX;
+      milieuIndex++
+    ) {
+      const milieu: Milieu = (await getEntityByCode(
+        entityTab[milieuIndex],
+        TABLE_MILIEU
+      )) as Milieu;
 
-    // Remove ; into commentaire
+      if (!milieu) {
+        this.message =
+          "Le milieu avec pour code " +
+          entityTab[milieuIndex] +
+          " n'existe pas";
+        return false;
+      }
 
-    // Create and save the inventaire
+      if (
+        !milieuxIds.find((id) => {
+          return id === milieu.id;
+        })
+      ) {
+        milieuxIds.push(milieu.id);
+      }
+    }
+
+    // Create the inventaire to save
     const inventaireToSave: Inventaire = this.buildInventaire(
       entityTab,
       observateur.id,
@@ -243,7 +379,21 @@ export class ImportDoneeeService extends ImportService {
       areCoordinatesCustomized
     );
 
-    // Create and save the donnee
+    // Save the inventaire if it does not exists or get the existing ID otherwise
+    let inventaire: Inventaire = null; // TO DO
+    if (!inventaire) {
+      // Save the inventaire
+      await saveEntity(
+        TABLE_INVENTAIRE,
+        inventaireToSave,
+        DB_SAVE_MAPPING.inventaire
+      );
+      inventaire = null; // TO DO
+    }
+
+    inventaireToSave.id = inventaire.id;
+
+    // Create the donnee to save
     const donneeToSave: Donnee = this.buildEntity(
       entityTab,
       inventaireToSave.id,
@@ -256,11 +406,32 @@ export class ImportDoneeeService extends ImportService {
       milieuxIds
     );
 
-    /*return await saveEntity(
-      TABLE_DONNEE,
-      donneeToSave,
-      DB_SAVE_MAPPING.donnee
-    );*/
+    // Save the donnee if it does not exists already
+    const donnee: Donnee = null; // TO DO
+    if (!donnee) {
+      return await saveEntity(
+        TABLE_DONNEE,
+        donneeToSave,
+        DB_SAVE_MAPPING.donnee
+      );
+    } else {
+      this.message = "Une donnée similaire existe déjà avec l'ID " + donnee.id;
+      return false;
+    }
+  }
+
+  private areCoordinatesCustomized = (
+    lieudit: Lieudit,
+    altitude: number,
+    longitude: number,
+    latitude: number
+  ): boolean => {
+    return (
+      !!lieudit &&
+      (altitude !== lieudit.altitude ||
+        longitude !== lieudit.longitude ||
+        latitude !== lieudit.latitude)
+    );
   }
 
   private buildInventaire = (
@@ -299,6 +470,18 @@ export class ImportDoneeeService extends ImportService {
 
   private isObservateurValid = (observateur: string): boolean => {
     return this.isNotEmptyString(observateur, "L'observateur");
+  }
+
+  private isDateValid = (dateStr: string): boolean => {
+    return true; // TO DO
+  }
+
+  private isHeureValid = (heure: string): boolean => {
+    return true; // TO DO
+  }
+
+  private isDureeValid = (duree: string): boolean => {
+    return true; // TO DO
   }
 
   private isDepartementValid = (departement: string): boolean => {
@@ -392,6 +575,20 @@ export class ImportDoneeeService extends ImportService {
   }
 
   private isTemperatureValid = (temperatureStr: string): boolean => {
+    if (temperatureStr) {
+      const temperature: number = Number(temperatureStr);
+
+      if (!Number.isInteger(temperature)) {
+        this.message = "La température doit être un entier";
+        return false;
+      }
+
+      if (temperature < -128 || temperature > 127) {
+        this.message =
+          "La temperature doit être un entier compris entre -128 et 127";
+        return false;
+      }
+    }
     return true;
   }
 
@@ -412,6 +609,20 @@ export class ImportDoneeeService extends ImportService {
   }
 
   private isNombreValid = (nombreStr: string): boolean => {
+    if (nombreStr) {
+      const nombre: number = Number(nombreStr);
+
+      if (!Number.isInteger(nombre)) {
+        this.message = "Le nombre d'individus doit être un entier";
+        return false;
+      }
+
+      if (nombre < 1 || nombre > 99999) {
+        this.message =
+          "Le nombre d'individus doit être un entier compris entre 1 et 99999";
+        return false;
+      }
+    }
     return true;
   }
 
@@ -420,10 +631,38 @@ export class ImportDoneeeService extends ImportService {
   }
 
   private isDistanceValid = (distanceStr: string): boolean => {
+    if (distanceStr) {
+      const distance: number = Number(distanceStr);
+
+      if (!Number.isInteger(distance)) {
+        this.message = "La distance de contact doit être un entier";
+        return false;
+      }
+
+      if (distance < 0 || distance > 99999) {
+        this.message =
+          "La distance de contact doit être un entier compris entre 0 et 99999";
+        return false;
+      }
+    }
     return true;
   }
 
   private isRegroupementValid = (regroupementStr: string): boolean => {
+    if (regroupementStr) {
+      const regroupement: number = Number(regroupementStr);
+
+      if (!Number.isInteger(regroupement)) {
+        this.message = "La numéro de regroupement doit être un entier";
+        return false;
+      }
+
+      if (regroupement < 1 || regroupement > 99999) {
+        this.message =
+          "Le numéro de regroupement doit être un entier compris entre 1 et 99999";
+        return false;
+      }
+    }
     return true;
   }
 
