@@ -6,17 +6,17 @@ This is the Node.js backend for Base Naturaliste application.
 
 The aim of the Base Naturaliste project is to provide naturalists a software where they can record and visualize their wildlife observations.
 
+For more details about the application itself, please refer to the documentation of the frontend project.
+
 ## Getting Started
 
 This project is a Node.js webserver that connects to an instance of a MariaDB database where the Base Naturaliste data is stored.
-
-It uses the MariaDB JavaScript driver to connect to the database.
 
 ### Dependencies and related projects
 
 #### Dependencies
 
-The project requires Node.js v10 or later.
+The project requires Node.js v10 or later. The project has been developed using Yarn as package manager, and is therefore recommended.
 
 The objects exchanged between the backend and the frontend are defined in a common model:
 
@@ -28,9 +28,9 @@ The frontend for Base Naturaliste application which uses this backend:
 
 - [Base Naturaliste (frontend)](https://github.com/alexandresoro/basenaturaliste-frontend)
 
-### Run the project
+## Run the project
 
-The following options are available through yarn:
+The following options are available:
 
 - **build** : Transpiles the TypeScript project to the _dist/_ output folder.
 - **build:debug** : Same as **build** but with the TypeScript source maps.
@@ -44,7 +44,7 @@ Example:
 yarn dev
 ```
 
-### Deployment
+## Deployment
 
 1. Build the project:
 
@@ -69,10 +69,10 @@ This will start a local webserver on port 4000.
 
 When starting the webserver, it is possible to override the default configuration with the following options:
 
-- dbHost : the IP address or server name where the database is located (e.g. 10.0.0.77, basenaturaliste.com). _Default is 127.0.0.1_.
-- dbPort : the port where the database is located. _Default is 3306_.
-- dbUser : the user of the database. _Default is "basenaturaliste"_.
-- dbPassword : the password to connect to the database. _Default is "basenaturaliste"_.
+- **dbHost** : the IP address or server name where the database is located (e.g. 10.0.0.77, basenaturaliste.com). _Default is 127.0.0.1_.
+- **dbPort** : the port where the database is located. _Default is 3306_.
+- **dbUser** : the user of the database. _Default is "basenaturaliste"_.
+- **dbPassword** : the password to connect to the database. _Default is "basenaturaliste"_.
 
 Example:
 
@@ -80,13 +80,20 @@ Example:
 node $path_to_project$/dist/backend -dbHost=basenaturaliste.com -dbPassword=dbpwd
 ```
 
-For implementation purpose, it is possible to start the webserver with mocked data through the _mocks_ option. With this option no call is done to the database.
+## Docker
 
-Example:
+This project can be run as a Docker container.
 
-```
-node $path_to_project$/dist/backend -mocks
-```
+A Dockerfile is provided, and will expose the backend on port 4000.
+
+The database settings can be overridden with the following variables:
+
+| Option     | Docker ENV variable |
+| ---------- | :-----------------: |
+| dbHost     |       DB_HOST       |
+| dbPort     |       DB_PORT       |
+| dbUser     |       DB_USER       |
+| dbPassword |     DB_PASSWORD     |
 
 ## Authors
 
