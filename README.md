@@ -1,10 +1,8 @@
-# Base Naturaliste (frontend)
+# Base Naturaliste (model)
 
 This is the model for Base Naturaliste application.
 
-## Getting Started
-
-### Dependencies
+## Related projects
 
 The backend for Base Naturaliste application:
 
@@ -13,14 +11,6 @@ The backend for Base Naturaliste application:
 The frontend for Base Naturaliste application:
 
 - [Base Naturaliste (frontend)](https://github.com/alexandresoro/basenaturaliste-frontend)
-
-### Run the project
-
-On-going...
-
-### Deployment
-
-On-going...
 
 ## Authors
 
