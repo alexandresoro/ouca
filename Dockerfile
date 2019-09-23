@@ -12,7 +12,7 @@ COPY package.json tsconfig.json yarn.lock /app/backend/
 COPY src/ /app/backend/src
 
 RUN yarn install --frozen-lockfile
-RUN yarn build
+RUN yarn build:prod
 
 # 2. Use ncc to produce one single output file that includes the node_module deps
 # Yes we could use ncc to directly work with the .ts files, however ncc uses an outdated tsc version, 

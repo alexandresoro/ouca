@@ -5,8 +5,7 @@
     "target": "es2017",
     "esModuleInterop": true,
     "outDir": "dist",
-    "resolveJsonModule": true,
-    "plugins": [{ "name": "typescript-tslint-plugin" }]
+    "resolveJsonModule": true
   },
   "include": ["src/**/*"]
 }

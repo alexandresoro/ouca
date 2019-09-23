@@ -13,10 +13,12 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "tsc",
+    "build": "yarn lint && tsc",
     "build:debug": "tsc --sourceMap true",
+    "build:prod": "tsc",
     "debug": "yarn build --sourceMap true && yarn start:debug",
     "dev": "yarn build && yarn start",
+    "lint": "node ./node_modules/eslint/bin/eslint './src/**'",
     "start": "node dist/backend",
     "start:debug": "node --inspect dist/backend"
   },
@@ -32,10 +34,11 @@
     "@types/lodash": "*",
     "@types/multiparty": "*",
     "@types/node": "10",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
     "basenaturaliste-model": "https://github.com/alexandresoro/basenaturaliste-model#master",
-    "tslint": "*",
-    "typescript": "*",
-    "typescript-tslint-plugin": "*"
+    "eslint": "*",
+    "typescript": "*"
   },
   "engines": {
     "node": ">=10.0.0"

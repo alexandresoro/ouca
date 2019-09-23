@@ -1,3 +1,5 @@
 {
-  "prettier.tslintIntegration": true
+  "eslint.autoFixOnSave": true,
+  "eslint.validate": ["typescript", "javascript"],
+  "eslint.packageManager": "yarn"
 }
