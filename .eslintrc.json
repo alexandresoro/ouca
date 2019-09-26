@@ -12,7 +12,7 @@
   ],
   "rules": {
     "@typescript-eslint/camelcase": "warn",
-    "@typescript-eslint/no-inferrable-types": "warn",
+    "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-unnecessary-type-assertion": "warn",
     "@typescript-eslint/no-use-before-define": "warn",
     "no-extra-boolean-cast": "warn"
