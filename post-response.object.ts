@@ -6,5 +6,5 @@ export enum PostResponseStatus {
 export interface PostResponse {
   status: PostResponseStatus;
   message: string;
-  insertId: number;
+  insertId?: number;
 }
