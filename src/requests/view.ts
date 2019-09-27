@@ -1,8 +1,10 @@
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
-import {} from "../sql/sql-queries-utils";
+import { } from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
+
+const MAXIMUM_EXCEL_DATA_SUPPORTED = 50000;
 
 export const getDonneesByCustomizedFilters = async (
   httpParameters: HttpParameters
@@ -14,6 +16,13 @@ export const exportDonneesByCustomizedFilters = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
   const donnees = await findDonneesByCustomizedFilters(httpParameters.postData);
+
+  if (donnees.length > MAXIMUM_EXCEL_DATA_SUPPORTED) {
+    return Promise.reject({
+      reason: "Votre recherche comporte plus de " + MAXIMUM_EXCEL_DATA_SUPPORTED + " données. Merci d'affiner votre recherche.",
+      nonFatal: true
+    });
+  }
 
   const objectsToExport = _.map(donnees, (object) => {
     return {
@@ -69,8 +78,8 @@ export const exportDonneesByCustomizedFilters = async (
 const getComportement = (donnee: any, index: number): string => {
   return donnee.comportements.length >= index
     ? donnee.comportements[index - 1].code +
-        " - " +
-        donnee.comportements[index - 1].libelle
+    " - " +
+    donnee.comportements[index - 1].libelle
     : "";
 };
 
