@@ -1,10 +1,5 @@
-export enum PostResponseStatus {
-  SUCCESS,
-  ERROR
-}
-
 export interface PostResponse {
-  status: PostResponseStatus;
+  isSuccess: boolean;
   message: string;
   insertId?: number;
 }
