@@ -69,7 +69,7 @@ export const handleHttpRequest = (
     })
     .catch((error) => {
       console.error("Error:", error);
-      res.statusCode = 500;
+      res.statusCode = error.nonFatal ? 200 : 500;
       res.end(JSON.stringify(error));
       // process.exit();
     });
