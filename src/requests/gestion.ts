@@ -12,6 +12,7 @@ import { Meteo } from "basenaturaliste-model/meteo.object";
 import { Milieu } from "basenaturaliste-model/milieu.object";
 import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
+import { PostResponse } from "basenaturaliste-model/post-response.object";
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlConnection } from "../sql-api/sql-connection";
@@ -74,6 +75,8 @@ import {
   mapEstimationsNombre,
   mapLieuxdits
 } from "../utils/mapping-utils";
+import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 
 export const getObservateurs = async (
   httpParameters: HttpParameters
@@ -546,7 +549,7 @@ const getNbByEntityId = (
   object: EntiteSimple,
   nbById: any[],
   fieldName: string
-) => {
+): void => {
   const foundValue = _.find(nbById, (element) => {
     return element.id === object.id;
   });
@@ -554,24 +557,24 @@ const getNbByEntityId = (
 };
 
 const saveEntity = async (
-  entityToSave: any,
+  entityToSave: EntiteSimple,
   tableName: string,
   mapping: any
-): Promise<any> => {
-  const saveResult = await SqlConnection.query(
+): Promise<PostResponse> => {
+  const sqlResponse: SqlSaveResponse = await SqlConnection.query(
     getSaveEntityQuery(tableName, entityToSave, mapping)
   );
-  return saveResult;
+  return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
 const deleteEntity = async (
   httpParameters: HttpParameters,
   entityName: string
-): Promise<any> => {
-  const deleteResult = await SqlConnection.query(
+): Promise<PostResponse> => {
+  const sqlResponse: SqlSaveResponse = await SqlConnection.query(
     getDeleteEntityByIdQuery(entityName, +httpParameters.queryParameters.id)
   );
-  return deleteResult;
+  return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
 export const exportObservateurs = async (
