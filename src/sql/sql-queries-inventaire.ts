@@ -8,10 +8,14 @@ export function getQueryToFindNumberOfDonneesByInventaireEntityId(
     "SELECT i." +
     entityIdAttribute +
     " as id, count(*) as nbDonnees FROM donnee d, inventaire i WHERE d.inventaire_id=i.id";
-  if (!!id) {
+  if (id) {
     query = query + " AND i." + entityIdAttribute + "=" + id;
   } else {
     query = query + " GROUP BY i." + entityIdAttribute;
   }
   return getQuery(query);
 }
+
+export const getQueryToFindInventaireIdById = (id: number): string => {
+  return getQuery("SELECT id FROM inventaire WHERE id=" + id);
+};

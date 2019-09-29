@@ -140,9 +140,9 @@ export function getFindAllQuery(
   return getQuery(query);
 }
 
-export function getFindOneByIdQuery(tableName: string, id: number) {
+export const getFindOneByIdQuery = (tableName: string, id: number): string => {
   return getQuery("SELECT * FROM " + tableName + " WHERE id=" + id);
-}
+};
 
 export function getSaveEntityQuery(
   tableName: string,

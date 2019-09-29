@@ -14,7 +14,8 @@ import {
   getQueryToFindNextDonneeByCurrentDonneeId,
   getQueryToFindNumberOfDonnees,
   getQueryToFindNumberOfDonneesByDoneeeEntityId,
-  getQueryToFindPreviousDonneeByCurrentDonneeId
+  getQueryToFindPreviousDonneeByCurrentDonneeId,
+  getQueryToCountDonneesByInventaireId
 } from "../sql/sql-queries-donnee";
 import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
 import { getQueryToFindMilieuxByDonneeId } from "../sql/sql-queries-milieu";
@@ -57,6 +58,10 @@ import {
   mapMeteosIds,
   mapMilieuxIds
 } from "../utils/mapping-utils";
+import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
+import { PostResponse } from "basenaturaliste-model/post-response.object";
+import { getQueryToFindInventaireIdById } from "../sql/sql-queries-inventaire";
 
 const getDefaultValueForConfigurationField = (
   configuration: any[],
@@ -77,29 +82,27 @@ const getDefaultValueForConfigurationField = (
   }
 };
 
-export const creationInit = async (
-  httpParameters: HttpParameters
-): Promise<CreationPage> => {
+export const creationInit = async (): Promise<CreationPage> => {
   const results = await SqlConnection.query(
     getQueryToFindLastDonnee() +
-    getQueryToFindNumberOfDonnees() +
-    getQueryToFindLastRegroupement() +
-    getAllFromTablesQuery([
-      "configuration",
-      "observateur",
-      "departement",
-      "commune",
-      "lieudit",
-      "meteo",
-      "classe",
-      "espece",
-      "age",
-      "sexe",
-      "estimation_nombre",
-      "estimation_distance",
-      "comportement",
-      "milieu"
-    ])
+      getQueryToFindNumberOfDonnees() +
+      getQueryToFindLastRegroupement() +
+      getAllFromTablesQuery([
+        "configuration",
+        "observateur",
+        "departement",
+        "commune",
+        "lieudit",
+        "meteo",
+        "classe",
+        "espece",
+        "age",
+        "sexe",
+        "estimation_nombre",
+        "estimation_distance",
+        "comportement",
+        "milieu"
+      ])
   );
 
   const lastDonnee: any = await buildDonneeFromFlatDonnee(results[0][0]);
@@ -189,18 +192,18 @@ export const saveInventaire = async (
   const { date, ...otherParams } = inventaireToSave;
 
   // It is an update we delete the current associes and meteos to insert later the updated ones
-  if (!!inventaireToSave.id) {
+  if (inventaireToSave.id) {
     await SqlConnection.query(
       getDeleteEntityByAttributeQuery(
         TABLE_INVENTAIRE_ASSOCIE,
         "inventaire_id",
         inventaireToSave.id
       ) +
-      getDeleteEntityByAttributeQuery(
-        TABLE_INVENTAIRE_METEO,
-        "inventaire_id",
-        inventaireToSave.id
-      )
+        getDeleteEntityByAttributeQuery(
+          TABLE_INVENTAIRE_METEO,
+          "inventaire_id",
+          inventaireToSave.id
+        )
     );
   }
 
@@ -217,7 +220,7 @@ export const saveInventaire = async (
   );
 
   // If it is an update we take the existing ID else we take the inserted ID
-  const inventaireId: number = !!inventaireToSave.id
+  const inventaireId: number = inventaireToSave.id
     ? inventaireToSave.id
     : (inventaireResult as any).insertId;
 
@@ -250,18 +253,18 @@ export const saveDonnee = async (
   const donneeToSave: Donnee = httpParameters.postData;
 
   // It is an update we delete the current comportements and milieux to insert later the updated ones
-  if (!!donneeToSave.id) {
+  if (donneeToSave.id) {
     await SqlConnection.query(
       getDeleteEntityByAttributeQuery(
         TABLE_DONNEE_COMPORTEMENT,
         "donnee_id",
         donneeToSave.id
       ) +
-      getDeleteEntityByAttributeQuery(
-        TABLE_DONNEE_MILIEU,
-        "donnee_id",
-        donneeToSave.id
-      )
+        getDeleteEntityByAttributeQuery(
+          TABLE_DONNEE_MILIEU,
+          "donnee_id",
+          donneeToSave.id
+        )
     );
   }
 
@@ -277,7 +280,7 @@ export const saveDonnee = async (
   );
 
   // If it is an update we take the existing ID else we take the inserted ID
-  const donneeId: number = !!donneeToSave.id
+  const donneeId: number = donneeToSave.id
     ? donneeToSave.id
     : (donneeResult as any).insertId;
 
@@ -313,11 +316,30 @@ export const saveDonnee = async (
 
 export const deleteDonnee = async (
   httpParameters: HttpParameters
-): Promise<any> => {
-  const result = await SqlConnection.query(
-    getDeleteEntityByIdQuery(TABLE_DONNEE, +httpParameters.queryParameters.id)
+): Promise<PostResponse> => {
+  // First delete the donnee
+  const sqlResponse: SqlSaveResponse = await SqlConnection.query(
+    getDeleteEntityByIdQuery(
+      TABLE_DONNEE,
+      +httpParameters.queryParameters.donneeId
+    )
   );
-  return result;
+
+  const inventaireId: number = +httpParameters.queryParameters.inventaireId;
+
+  // Check how many donnees the inventaire has after the deletion
+  const nbDonneesResponse = await SqlConnection.query(
+    getQueryToCountDonneesByInventaireId(inventaireId)
+  );
+
+  if (nbDonneesResponse[0].nbDonnees === 0) {
+    // If the inventaire has no more donnees then we remove the inventaire
+    await SqlConnection.query(
+      getDeleteEntityByIdQuery(TABLE_INVENTAIRE, inventaireId)
+    );
+  }
+
+  return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
 export const getNextDonnee = async (
@@ -350,9 +372,9 @@ export const getDonneeByIdWithContext = async (
   const id: number = +httpParameters.queryParameters.id;
   const results = await SqlConnection.query(
     getQueryToFindDonneeById(id) +
-    getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
-    getQueryToFindNextDonneeByCurrentDonneeId(id) +
-    getQueryToFindDonneeIndexById(id)
+      getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
+      getQueryToFindNextDonneeByCurrentDonneeId(id) +
+      getQueryToFindDonneeIndexById(id)
   );
 
   return {
@@ -368,13 +390,13 @@ const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
   if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
     const listsResults = await SqlConnection.query(
       getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
-      getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
-      getQueryToFindComportementsByDonneeId(flatDonnee.id) +
-      getQueryToFindMilieuxByDonneeId(flatDonnee.id) +
-      getQueryToFindNumberOfDonneesByDoneeeEntityId(
-        "inventaire_id",
-        flatDonnee.inventaireId
-      )
+        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
+        getQueryToFindComportementsByDonneeId(flatDonnee.id) +
+        getQueryToFindMilieuxByDonneeId(flatDonnee.id) +
+        getQueryToFindNumberOfDonneesByDoneeeEntityId(
+          "inventaire_id",
+          flatDonnee.inventaireId
+        )
     );
 
     const inventaire: Inventaire = {
@@ -415,22 +437,20 @@ const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
   }
 };
 
-export const getNextRegroupement = async (
-  httpParameters: HttpParameters
-): Promise<number> => {
+export const getNextRegroupement = async (): Promise<number> => {
   const results = await SqlConnection.query(getQueryToFindLastRegroupement());
   return (results[0].regroupement as number) + 1;
 };
 
 export const getInventaireById = async (
   httpParameters: HttpParameters
-): Promise<any> => {
+): Promise<Inventaire> => {
   const inventaireId: number = +httpParameters.queryParameters.id;
 
   const results = await SqlConnection.query(
     getFindOneByIdQuery(TABLE_INVENTAIRE, inventaireId) +
-    getQueryToFindAssociesByInventaireId(inventaireId) +
-    getQueryToFindMetosByInventaireId(inventaireId)
+      getQueryToFindAssociesByInventaireId(inventaireId) +
+      getQueryToFindMetosByInventaireId(inventaireId)
   );
 
   const inventaire: Inventaire = mapInventaire(results[0][0]);
@@ -438,4 +458,13 @@ export const getInventaireById = async (
   inventaire.meteosIds = mapMeteosIds(results[2]);
 
   return inventaire;
+};
+
+export const getInventaireIdById = async (
+  httpParameters: HttpParameters
+): Promise<number> => {
+  const response = await SqlConnection.query(
+    getQueryToFindInventaireIdById(+httpParameters.queryParameters.id)
+  );
+  return response[0] ? response[0].id : null;
 };

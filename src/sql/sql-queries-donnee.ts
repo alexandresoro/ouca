@@ -7,6 +7,16 @@ import {
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { getQuery } from "./sql-queries-utils";
+
+export const getQueryToCountDonneesByInventaireId = (
+  inventaireId: number
+): string => {
+  return getQuery(
+    "SELECT COUNT(*) as nbDonnees FROM donnee WHERE inventaire_id=" +
+      inventaireId
+  );
+};
+
 export function getQueryToFindNumberOfDonnees(): string {
   return getQuery("SELECT COUNT(*) as nbDonnees FROM donnee");
 }

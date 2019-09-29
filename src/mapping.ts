@@ -12,7 +12,8 @@ import {
   getNextRegroupement,
   getPreviousDonnee,
   saveDonnee,
-  saveInventaire
+  saveInventaire,
+  getInventaireIdById
 } from "./requests/creation";
 import {
   deleteAge,
@@ -96,13 +97,14 @@ const EXCEL_MIME_TYPE: string =
 
 export const REQUEST_MAPPING: {
   [path: string]: (
-    httpParameters: HttpParameters,
+    httpParameters?: HttpParameters,
     isDockerMode?: boolean
   ) => Promise<any>;
 } = {
   "/api/creation/init": creationInit,
   "/api/inventaire/save": saveInventaire,
   "/api/inventaire/find": getInventaireById,
+  "/api/inventaire/find_id": getInventaireIdById,
   "/api/donnee/search": getDonneesByCustomizedFilters,
   "/api/donnee/export": exportDonneesByCustomizedFilters,
   "/api/donnee/save": saveDonnee,
