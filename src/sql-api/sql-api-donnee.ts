@@ -5,10 +5,15 @@ import { getQueryToFindAllMeteos } from "../sql/sql-queries-meteo";
 import { getQueryToFindAllMilieux } from "../sql/sql-queries-milieu";
 import { getQueryToFindAllAssocies } from "../sql/sql-queries-observateur";
 import { SqlConnection } from "./sql-connection";
+import { DonneeFlat } from "basenaturaliste-model/donnee-flat.object";
+import { AssocieByDonnee } from "../objects/associe-by-donnee.object";
+import { MilieuByDonnee } from "../objects/milieu-by-donnee.object";
+import { ComportementByDonnee } from "../objects/comportement-by-donnee.object";
+import { MeteoByDonnee } from "../objects/meteo-by-donnee.object";
 
 export const findDonneesByCustomizedFilters = async (
   filters: any
-): Promise<any[]> => {
+): Promise<DonneeFlat[]> => {
   const results = await SqlConnection.query(
     getQueryToFindDonneesByCriterion(filters) +
       getQueryToFindAllAssocies() +
@@ -17,14 +22,14 @@ export const findDonneesByCustomizedFilters = async (
       getQueryToFindAllMilieux()
   );
 
-  const donnees: any[] = results[0];
-  const associesByDonnee: any[] = results[1];
-  const meteosByDonnee: any[] = results[2];
-  const comportementsByDonnee: any[] = results[3];
-  const milieuxByDonnee: any[] = results[4];
+  const donnees: DonneeFlat[] = results[0];
+  const associesByDonnee: AssocieByDonnee[] = results[1];
+  const meteosByDonnee: MeteoByDonnee[] = results[2];
+  const comportementsByDonnee: ComportementByDonnee[] = results[3];
+  const milieuxByDonnee: MilieuByDonnee[] = results[4];
 
-  const mapDonnees: { [key: number]: any } = {};
-  _.forEach(donnees, (donnee: any) => {
+  const mapDonnees: { [key: number]: DonneeFlat } = {};
+  _.forEach(donnees, (donnee: DonneeFlat) => {
     donnee.associes = "";
     donnee.meteos = "";
     donnee.comportements = [];
@@ -32,7 +37,7 @@ export const findDonneesByCustomizedFilters = async (
     mapDonnees[donnee.id] = donnee;
   });
 
-  _.forEach(associesByDonnee, (associe: any) => {
+  _.forEach(associesByDonnee, (associe: AssocieByDonnee) => {
     if (mapDonnees[associe.donneeId]) {
       if (mapDonnees[associe.donneeId].associes === "") {
         mapDonnees[associe.donneeId].associes = associe.libelle;
@@ -42,7 +47,7 @@ export const findDonneesByCustomizedFilters = async (
     }
   });
 
-  _.forEach(meteosByDonnee, (meteo: any) => {
+  _.forEach(meteosByDonnee, (meteo: MeteoByDonnee) => {
     if (mapDonnees[meteo.donneeId]) {
       if (mapDonnees[meteo.donneeId].meteos === "") {
         mapDonnees[meteo.donneeId].meteos = meteo.libelle;
@@ -52,7 +57,7 @@ export const findDonneesByCustomizedFilters = async (
     }
   });
 
-  _.forEach(comportementsByDonnee, (comportement: any) => {
+  _.forEach(comportementsByDonnee, (comportement: ComportementByDonnee) => {
     if (mapDonnees[comportement.donneeId]) {
       mapDonnees[comportement.donneeId].comportements.push({
         code: comportement.code,
@@ -61,7 +66,7 @@ export const findDonneesByCustomizedFilters = async (
     }
   });
 
-  _.forEach(milieuxByDonnee, (milieu: any) => {
+  _.forEach(milieuxByDonnee, (milieu: MilieuByDonnee) => {
     if (mapDonnees[milieu.donneeId]) {
       mapDonnees[milieu.donneeId].milieux.push({
         code: milieu.code,
