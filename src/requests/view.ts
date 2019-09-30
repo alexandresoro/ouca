@@ -1,25 +1,45 @@
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
-import { } from "../sql/sql-queries-utils";
+import {} from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
+import { FlatDonnee } from "basenaturaliste-model/flat-donnee.object";
 
 const MAXIMUM_EXCEL_DATA_SUPPORTED = 50000;
 
+const getComportement = (donnee: FlatDonnee, index: number): string => {
+  return donnee.comportements.length >= index
+    ? donnee.comportements[index - 1].code +
+        " - " +
+        donnee.comportements[index - 1].libelle
+    : "";
+};
+
+const getMilieu = (donnee: FlatDonnee, index: number): string => {
+  return donnee.milieux.length >= index
+    ? donnee.milieux[index - 1].code + " - " + donnee.milieux[index - 1].libelle
+    : "";
+};
+
 export const getDonneesByCustomizedFilters = async (
   httpParameters: HttpParameters
-): Promise<any> => {
+): Promise<FlatDonnee[]> => {
   return await findDonneesByCustomizedFilters(httpParameters.postData);
 };
 
 export const exportDonneesByCustomizedFilters = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
-  const donnees = await findDonneesByCustomizedFilters(httpParameters.postData);
+  const donnees: FlatDonnee[] = await findDonneesByCustomizedFilters(
+    httpParameters.postData
+  );
 
   if (donnees.length > MAXIMUM_EXCEL_DATA_SUPPORTED) {
     return Promise.reject({
-      reason: "Votre recherche comporte plus de " + MAXIMUM_EXCEL_DATA_SUPPORTED + " données. Merci d'affiner votre recherche.",
+      reason:
+        "Votre recherche comporte plus de " +
+        MAXIMUM_EXCEL_DATA_SUPPORTED +
+        " données. Merci d'affiner votre recherche.",
       nonFatal: true
     });
   }
@@ -73,18 +93,4 @@ export const exportDonneesByCustomizedFilters = async (
   });
 
   return writeToExcel(objectsToExport, [], "donnees");
-};
-
-const getComportement = (donnee: any, index: number): string => {
-  return donnee.comportements.length >= index
-    ? donnee.comportements[index - 1].code +
-    " - " +
-    donnee.comportements[index - 1].libelle
-    : "";
-};
-
-const getMilieu = (donnee: any, index: number): string => {
-  return donnee.milieux.length >= index
-    ? donnee.milieux[index - 1].code + " - " + donnee.milieux[index - 1].libelle
-    : "";
 };

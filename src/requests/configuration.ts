@@ -21,9 +21,7 @@ import {
   TABLE_SEXE
 } from "../utils/constants";
 
-export const configurationInit = async (
-  httpParameters: HttpParameters
-): Promise<ConfigurationPage> => {
+export const configurationInit = async (): Promise<ConfigurationPage> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_CONFIGURATION) +
       getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
@@ -145,5 +143,5 @@ export const configurationUpdate = async (
       whereSetValueMapping
     )
   );
-  return result as any;
+  return result;
 };

@@ -10,27 +10,8 @@ import {
 const DUMP_FILE_NAME: string = "sauvegarde_base_naturaliste_";
 const SQL_EXTENSION: string = ".sql";
 
-export const saveDatabase = async (
-  httpParameters: HttpParameters,
-  isDockerMode: boolean
-): Promise<string> => {
-  try {
-    return await executeSqlDump(isDockerMode);
-  } catch (error) {
-    console.error(
-      "L'extraction de la base de données n'a pas pu être effectuée",
-      error
-    );
-    return Promise.reject(error);
-  }
-};
-
-export const saveDatabaseFileName = (): string => {
-  return DUMP_FILE_NAME + moment().format("YYYY-MM-DD") + SQL_EXTENSION;
-};
-
 const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject): void => {
     let stdout = "";
     let stderr = "";
 
@@ -68,4 +49,23 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
       }
     });
   });
+};
+
+export const saveDatabase = async (
+  httpParameters: HttpParameters,
+  isDockerMode: boolean
+): Promise<string> => {
+  try {
+    return await executeSqlDump(isDockerMode);
+  } catch (error) {
+    console.error(
+      "L'extraction de la base de données n'a pas pu être effectuée",
+      error
+    );
+    return Promise.reject(error);
+  }
+};
+
+export const saveDatabaseFileName = (): string => {
+  return DUMP_FILE_NAME + moment().format("YYYY-MM-DD") + SQL_EXTENSION;
 };
