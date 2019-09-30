@@ -63,6 +63,7 @@ import {
   buildErrorPostResponse
 } from "../utils/post-response-utils";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
+import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { PostResponse } from "basenaturaliste-model/post-response.object";
 import { getQueryToFindInventaireIdById } from "../sql/sql-queries-inventaire";
 
@@ -108,7 +109,9 @@ export const creationInit = async (): Promise<CreationPage> => {
       ])
   );
 
-  const lastDonnee: any = await buildDonneeFromFlatDonnee(results[0][0]);
+  const lastDonnee: Donnee = await buildDonneeFromFlatDonneeWithMinimalData(
+    results[0][0]
+  );
 
   const creationPage: CreationPage = {
     lastDonnee,
@@ -190,7 +193,7 @@ export const creationInit = async (): Promise<CreationPage> => {
 
 export const saveInventaire = async (
   httpParameters: HttpParameters
-): Promise<any> => {
+): Promise<SqlSaveResponse> => {
   const inventaireToSave: Inventaire = httpParameters.postData;
   const { date, ...otherParams } = inventaireToSave;
 
@@ -225,7 +228,7 @@ export const saveInventaire = async (
   // If it is an update we take the existing ID else we take the inserted ID
   const inventaireId: number = inventaireToSave.id
     ? inventaireToSave.id
-    : (inventaireResult as any).insertId;
+    : inventaireResult.insertId;
 
   if (inventaireToSave.associesIds.length > 0) {
     await SqlConnection.query(
@@ -355,14 +358,14 @@ export const deleteDonnee = async (
 
 export const getNextDonnee = async (
   httpParameters: HttpParameters
-): Promise<Donnee[]> => {
+): Promise<Donnee> => {
   const donneeResult = await SqlConnection.query(
     getQueryToFindNextDonneeByCurrentDonneeId(
       +httpParameters.queryParameters.id
     )
   );
 
-  return await buildDonneeFromFlatDonnee(donneeResult[0]);
+  return await buildDonneeFromFlatDonneeWithMinimalData(donneeResult[0]);
 };
 
 export const getPreviousDonnee = async (
@@ -374,7 +377,7 @@ export const getPreviousDonnee = async (
     )
   );
 
-  return await buildDonneeFromFlatDonnee(donneeResult[0]);
+  return await buildDonneeFromFlatDonneeWithMinimalData(donneeResult[0]);
 };
 
 export const getDonneeByIdWithContext = async (
@@ -389,15 +392,19 @@ export const getDonneeByIdWithContext = async (
   );
 
   return {
-    donnee: await buildDonneeFromFlatDonnee(results[0][0]),
-    previousDonnee: await buildDonneeFromFlatDonnee(results[1][0]),
-    nextDonnee: await buildDonneeFromFlatDonnee(results[2][0]),
+    donnee: await buildDonneeFromFlatDonneeWithMinimalData(results[0][0]),
+    previousDonnee: await buildDonneeFromFlatDonneeWithMinimalData(
+      results[1][0]
+    ),
+    nextDonnee: await buildDonneeFromFlatDonneeWithMinimalData(results[2][0]),
     indexDonnee:
       !!results[3] && !!results[3][0] ? results[3][0].nbDonnees : null
   };
 };
 
-const buildDonneeFromFlatDonnee = async (flatDonnee: any): Promise<any> => {
+const buildDonneeFromFlatDonneeWithMinimalData = async (
+  flatDonnee: FlatDonneeWithMinimalData
+): Promise<Donnee> => {
   if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
     const listsResults = await SqlConnection.query(
       getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +

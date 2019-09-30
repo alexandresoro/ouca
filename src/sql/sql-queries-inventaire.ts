@@ -7,7 +7,7 @@ export function getQueryToFindNumberOfDonneesByInventaireEntityId(
   let query: string =
     "SELECT i." +
     entityIdAttribute +
-    " as id, count(*) as nbDonnees FROM donnee d, inventaire i WHERE d.inventaire_id=i.id";
+    " as id, count(*) as nb FROM donnee d, inventaire i WHERE d.inventaire_id=i.id";
   if (id) {
     query = query + " AND i." + entityIdAttribute + "=" + id;
   } else {

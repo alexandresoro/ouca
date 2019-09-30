@@ -49,10 +49,6 @@ import {
   COLUMN_CODE,
   COLUMN_LIBELLE,
   COLUMN_NOM,
-  NB_COMMUNES,
-  NB_DONNEES,
-  NB_ESPECES,
-  NB_LIEUXDITS,
   ORDER_ASC,
   TABLE_AGE,
   TABLE_CLASSE,
@@ -77,483 +73,16 @@ import {
 } from "../utils/mapping-utils";
 import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-
-export const getObservateurs = async (
-  httpParameters: HttpParameters
-): Promise<Observateur[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByObservateurId()
-  );
-  const observateurs: Observateur[] = results[0];
-  const nbDonneesByObservateur: any[] = results[1];
-  _.forEach(observateurs, (observateur: Observateur) => {
-    getNbByEntityId(observateur, nbDonneesByObservateur, NB_DONNEES);
-  });
-  return observateurs;
-};
-
-export const saveObservateur = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_OBSERVATEUR,
-    DB_SAVE_MAPPING.observateur
-  );
-};
-
-export const deleteObservateur = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_OBSERVATEUR);
-};
-
-export const getDepartements = async (
-  httpParameters: HttpParameters
-): Promise<Departement[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
-      getQueryToFindNumberOfCommunesByDepartementId() +
-      getQueryToFindNumberOfLieuxditsByDepartementId() +
-      getQueryToFindNumberOfDonneesByDepartementId()
-  );
-
-  const departements: Departement[] = results[0];
-  const nbCommunesByDepartement: any[] = results[1];
-  const nbLieuxditsByDepartement: any[] = results[2];
-  const nbDonneesByDepartement: any[] = results[3];
-  _.forEach(departements, (departement: Departement) => {
-    getNbByEntityId(departement, nbCommunesByDepartement, NB_COMMUNES);
-    getNbByEntityId(departement, nbLieuxditsByDepartement, NB_LIEUXDITS);
-    getNbByEntityId(departement, nbDonneesByDepartement, NB_DONNEES);
-  });
-  return departements;
-};
-
-export const saveDepartement = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_DEPARTEMENT,
-    DB_SAVE_MAPPING.departement
-  );
-};
-
-export const deleteDepartement = async (httpParameters: HttpParameters) => {
-  return deleteEntity(httpParameters, TABLE_DEPARTEMENT);
-};
-
-export const getCommunes = async (
-  httpParameters: HttpParameters
-): Promise<Commune[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC) +
-      getFindAllQuery(TABLE_DEPARTEMENT) +
-      getQueryToFindNumberOfLieuxditsByCommuneId() +
-      getQueryToFindNumberOfDonneesByCommuneId()
-  );
-
-  const communes: Commune[] = mapCommunes(results[0]);
-
-  const departements: Departement[] = results[1];
-  const nbLieuxditsByCommune: any[] = results[2];
-  const nbDonneesByCommune: any[] = results[3];
-  _.forEach(communes, (commune: Commune) => {
-    commune.departement = _.find(departements, (departement: Departement) => {
-      return departement.id === commune.departementId;
-    });
-    commune.departementId = null;
-    getNbByEntityId(commune, nbLieuxditsByCommune, NB_LIEUXDITS);
-    getNbByEntityId(commune, nbDonneesByCommune, NB_DONNEES);
-  });
-
-  return communes;
-};
-
-export const saveCommune = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const communeToSave = httpParameters.postData;
-  if (
-    !communeToSave.departementId &&
-    !!communeToSave.departement &&
-    !!communeToSave.departement.id
-  ) {
-    communeToSave.departementId = communeToSave.departement.id;
-  }
-  return saveEntity(communeToSave, TABLE_COMMUNE, DB_SAVE_MAPPING.commune);
-};
-
-export const deleteCommune = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_COMMUNE);
-};
-
-export const getLieuxdits = async (
-  httpParameters: HttpParameters
-): Promise<Lieudit[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC) +
-      getFindAllQuery(TABLE_COMMUNE) +
-      getFindAllQuery(TABLE_DEPARTEMENT) +
-      getQueryToFindNumberOfDonneesByLieuditId()
-  );
-  const lieuxdits: Lieudit[] = mapLieuxdits(results[0]);
-
-  const communes: Commune[] = mapCommunes(results[1]);
-  const departements: Departement[] = results[2];
-  const nbDonneesByLieudit: any[] = results[3];
-
-  _.forEach(lieuxdits, (lieudit: Lieudit) => {
-    lieudit.commune = _.find(communes, (commune: Commune) => {
-      return commune.id === lieudit.communeId;
-    });
-    lieudit.commune.departement = _.find(
-      departements,
-      (departement: Departement) => {
-        return lieudit.commune.departementId === departement.id;
-      }
-    );
-    lieudit.communeId = null;
-
-    getNbByEntityId(lieudit, nbDonneesByLieudit, NB_DONNEES);
-  });
-
-  return lieuxdits;
-};
-
-export const saveLieudit = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const lieuditToSave = httpParameters.postData;
-  if (
-    !lieuditToSave.communeId &&
-    !!lieuditToSave.commune &&
-    !!lieuditToSave.commune.id
-  ) {
-    lieuditToSave.communeId = lieuditToSave.commune.id;
-  }
-  return saveEntity(lieuditToSave, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
-};
-
-export const deleteLieudit = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_LIEUDIT);
-};
-
-export const getMeteos = async (
-  httpParameters: HttpParameters
-): Promise<Meteo[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByMeteoId()
-  );
-
-  const meteos: Meteo[] = results[0];
-  const nbDonneesByMeteo: any[] = results[1];
-  _.forEach(meteos, (meteo: Meteo) => {
-    getNbByEntityId(meteo, nbDonneesByMeteo, NB_DONNEES);
-  });
-
-  return meteos;
-};
-
-export const saveMeteo = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_METEO,
-    DB_SAVE_MAPPING.meteo
-  );
-};
-
-export const deleteMeteo = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_METEO);
-};
-
-export const getClasses = async (
-  httpParameters: HttpParameters
-): Promise<Classe[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_CLASSE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfEspecesByClasseId() +
-      getQueryToFindNumberOfDonneesByClasseId()
-  );
-
-  const classes: Classe[] = results[0];
-  const nbEspecesByClasse: any[] = results[1];
-  const nbDonneesByClasse: any[] = results[2];
-  _.forEach(classes, (classe: Classe) => {
-    getNbByEntityId(classe, nbEspecesByClasse, NB_ESPECES);
-    getNbByEntityId(classe, nbDonneesByClasse, NB_DONNEES);
-  });
-
-  return classes;
-};
-
-export const saveClasse = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_CLASSE,
-    DB_SAVE_MAPPING.classe
-  );
-};
-
-export const deleteClasse = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_CLASSE);
-};
-
-export const getEspeces = async (
-  httpParameters: HttpParameters
-): Promise<Espece[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC) +
-      getFindAllQuery(TABLE_CLASSE) +
-      getQueryToFindNumberOfDonneesByEspeceId()
-  );
-  const especes: Espece[] = mapEspeces(results[0]);
-
-  const classes: Classe[] = results[1];
-  const nbDonneesByEspece: any[] = results[2];
-  _.forEach(especes, (espece: Espece) => {
-    espece.classe = _.find(classes, (classe: Classe) => {
-      return classe.id === espece.classeId;
-    });
-    espece.classeId = null;
-    getNbByEntityId(espece, nbDonneesByEspece, NB_DONNEES);
-  });
-
-  return especes;
-};
-
-export const saveEspece = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const especeToSave: Espece = httpParameters.postData;
-  if (
-    !especeToSave.classeId &&
-    !!especeToSave.classe &&
-    !!especeToSave.classe.id
-  ) {
-    especeToSave.classeId = especeToSave.classe.id;
-  }
-  return saveEntity(especeToSave, TABLE_ESPECE, DB_SAVE_MAPPING.espece);
-};
-
-export const deleteEspece = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_ESPECE);
-};
-
-export const getSexes = async (
-  httpParameters: HttpParameters
-): Promise<Sexe[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesBySexeId()
-  );
-
-  const sexes: Sexe[] = results[0];
-  const nbDonneesBySexe: any[] = results[1];
-  _.forEach(sexes, (sexe: Sexe) => {
-    getNbByEntityId(sexe, nbDonneesBySexe, NB_DONNEES);
-  });
-
-  return sexes;
-};
-
-export const saveSexe = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(httpParameters.postData, TABLE_SEXE, DB_SAVE_MAPPING.sexe);
-};
-
-export const deleteSexe = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_SEXE);
-};
-
-export const getAges = async (
-  httpParameters: HttpParameters
-): Promise<Age[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByAgeId()
-  );
-
-  const ages: Age[] = results[0];
-  const nbDonneesByAge: any[] = results[1];
-  _.forEach(ages, (age: Age) => {
-    getNbByEntityId(age, nbDonneesByAge, NB_DONNEES);
-  });
-
-  return ages;
-};
-
-export const saveAge = async (httpParameters: HttpParameters): Promise<any> => {
-  return saveEntity(httpParameters.postData, TABLE_AGE, DB_SAVE_MAPPING.age);
-};
-
-export const deleteAge = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_AGE);
-};
-
-export const getEstimationsNombre = async (
-  httpParameters: HttpParameters
-): Promise<EstimationNombre[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByEstimationNombreId()
-  );
-
-  const estimations: EstimationNombre[] = mapEstimationsNombre(results[0]);
-  const nbDonneesByEstimation: any[] = results[1];
-  _.forEach(estimations, (estimation: EstimationNombre) => {
-    getNbByEntityId(estimation, nbDonneesByEstimation, NB_DONNEES);
-  });
-
-  return estimations;
-};
-
-export const saveEstimationNombre = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_ESTIMATION_NOMBRE,
-    DB_SAVE_MAPPING.estimationNombre
-  );
-};
-
-export const deleteEstimationNombre = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_ESTIMATION_NOMBRE);
-};
-
-export const getEstimationsDistance = async (
-  httpParameters: HttpParameters
-): Promise<EstimationDistance[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_ESTIMATION_DISTANCE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByEstimationDistanceId()
-  );
-
-  const estimations: EstimationDistance[] = results[0];
-  const nbDonneesByEstimation: any[] = results[1];
-  _.forEach(estimations, (estimation: EstimationDistance) => {
-    getNbByEntityId(estimation, nbDonneesByEstimation, NB_DONNEES);
-  });
-
-  return estimations;
-};
-
-export const saveEstimationDistance = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_ESTIMATION_DISTANCE,
-    DB_SAVE_MAPPING.estimationDistance
-  );
-};
-
-export const deleteEstimationDistance = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_ESTIMATION_DISTANCE);
-};
-
-export const getComportements = async (
-  httpParameters: HttpParameters
-): Promise<Comportement[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_COMPORTEMENT, COLUMN_CODE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByComportementId()
-  );
-
-  const comportements: Comportement[] = results[0];
-  const nbDonneesByComportement: any[] = results[1];
-  _.forEach(comportements, (comportement: Comportement) => {
-    getNbByEntityId(comportement, nbDonneesByComportement, NB_DONNEES);
-  });
-
-  return comportements;
-};
-
-export const saveComportement = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_COMPORTEMENT,
-    DB_SAVE_MAPPING.comportement
-  );
-};
-
-export const deleteComportement = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_COMPORTEMENT);
-};
-
-export const getMilieux = async (
-  httpParameters: HttpParameters
-): Promise<Milieu[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_MILIEU, COLUMN_CODE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByMilieuId()
-  );
-
-  const milieux: Milieu[] = results[0];
-  const nbDonneesByMilieu: any[] = results[1];
-  _.forEach(milieux, (milieu: Milieu) => {
-    getNbByEntityId(milieu, nbDonneesByMilieu, NB_DONNEES);
-  });
-
-  return milieux;
-};
-
-export const saveMilieu = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_MILIEU,
-    DB_SAVE_MAPPING.milieu
-  );
-};
-
-export const deleteMilieu = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  return deleteEntity(httpParameters, TABLE_MILIEU);
-};
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 
 const getNbByEntityId = (
   object: EntiteSimple,
-  nbById: any[],
-  fieldName: string
-): void => {
-  const foundValue = _.find(nbById, (element) => {
+  nbById: NumberOfObjectsById[]
+): number => {
+  const foundValue: NumberOfObjectsById = _.find(nbById, (element) => {
     return element.id === object.id;
   });
-  object[fieldName] = foundValue ? foundValue[fieldName] : 0;
+  return foundValue ? foundValue.nb : 0;
 };
 
 const saveEntity = async (
@@ -577,10 +106,470 @@ const deleteEntity = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const exportObservateurs = async (
+export const getObservateurs = async (): Promise<Observateur[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
+      getQueryToFindNumberOfDonneesByObservateurId()
+  );
+  const observateurs: Observateur[] = results[0];
+  const nbDonneesByObservateur: any[] = results[1];
+  _.forEach(observateurs, (observateur: Observateur) => {
+    observateur.nbDonnees = getNbByEntityId(
+      observateur,
+      nbDonneesByObservateur
+    );
+  });
+  return observateurs;
+};
+
+export const saveObservateur = async (
   httpParameters: HttpParameters
-): Promise<any> => {
-  const observateurs: Observateur[] = await getObservateurs(null);
+): Promise<PostResponse> => {
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_OBSERVATEUR,
+    DB_SAVE_MAPPING.observateur
+  );
+};
+
+export const deleteObservateur = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_OBSERVATEUR);
+};
+
+export const getDepartements = async (): Promise<Departement[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
+      getQueryToFindNumberOfCommunesByDepartementId() +
+      getQueryToFindNumberOfLieuxditsByDepartementId() +
+      getQueryToFindNumberOfDonneesByDepartementId()
+  );
+
+  const departements: Departement[] = results[0];
+  const nbCommunesByDepartement: NumberOfObjectsById[] = results[1];
+  const nbLieuxditsByDepartement: NumberOfObjectsById[] = results[2];
+  const nbDonneesByDepartement: NumberOfObjectsById[] = results[3];
+  _.forEach(departements, (departement: Departement) => {
+    departement.nbCommunes = getNbByEntityId(
+      departement,
+      nbCommunesByDepartement
+    );
+    departement.nbLieuxdits = getNbByEntityId(
+      departement,
+      nbLieuxditsByDepartement
+    );
+    departement.nbDonnees = getNbByEntityId(
+      departement,
+      nbDonneesByDepartement
+    );
+  });
+  return departements;
+};
+
+export const saveDepartement = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_DEPARTEMENT,
+    DB_SAVE_MAPPING.departement
+  );
+};
+
+export const deleteDepartement = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_DEPARTEMENT);
+};
+
+export const getCommunes = async (): Promise<Commune[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC) +
+      getFindAllQuery(TABLE_DEPARTEMENT) +
+      getQueryToFindNumberOfLieuxditsByCommuneId() +
+      getQueryToFindNumberOfDonneesByCommuneId()
+  );
+
+  const communes: Commune[] = mapCommunes(results[0]);
+
+  const departements: Departement[] = results[1];
+  const nbLieuxditsByCommune: NumberOfObjectsById[] = results[2];
+  const nbDonneesByCommune: NumberOfObjectsById[] = results[3];
+  _.forEach(communes, (commune: Commune) => {
+    commune.departement = _.find(departements, (departement: Departement) => {
+      return departement.id === commune.departementId;
+    });
+    commune.departementId = null;
+    commune.nbLieuxdits = getNbByEntityId(commune, nbLieuxditsByCommune);
+    commune.nbDonnees = getNbByEntityId(commune, nbDonneesByCommune);
+  });
+
+  return communes;
+};
+
+export const saveCommune = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  const communeToSave = httpParameters.postData;
+  if (
+    !communeToSave.departementId &&
+    !!communeToSave.departement &&
+    !!communeToSave.departement.id
+  ) {
+    communeToSave.departementId = communeToSave.departement.id;
+  }
+  return saveEntity(communeToSave, TABLE_COMMUNE, DB_SAVE_MAPPING.commune);
+};
+
+export const deleteCommune = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_COMMUNE);
+};
+
+export const getLieuxdits = async (): Promise<Lieudit[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC) +
+      getFindAllQuery(TABLE_COMMUNE) +
+      getFindAllQuery(TABLE_DEPARTEMENT) +
+      getQueryToFindNumberOfDonneesByLieuditId()
+  );
+  const lieuxdits: Lieudit[] = mapLieuxdits(results[0]);
+
+  const communes: Commune[] = mapCommunes(results[1]);
+  const departements: Departement[] = results[2];
+  const nbDonneesByLieudit: NumberOfObjectsById[] = results[3];
+
+  _.forEach(lieuxdits, (lieudit: Lieudit) => {
+    lieudit.commune = _.find(communes, (commune: Commune) => {
+      return commune.id === lieudit.communeId;
+    });
+    lieudit.commune.departement = _.find(
+      departements,
+      (departement: Departement) => {
+        return lieudit.commune.departementId === departement.id;
+      }
+    );
+    lieudit.communeId = null;
+
+    lieudit.nbDonnees = getNbByEntityId(lieudit, nbDonneesByLieudit);
+  });
+
+  return lieuxdits;
+};
+
+export const saveLieudit = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  const lieuditToSave = httpParameters.postData;
+  if (
+    !lieuditToSave.communeId &&
+    !!lieuditToSave.commune &&
+    !!lieuditToSave.commune.id
+  ) {
+    lieuditToSave.communeId = lieuditToSave.commune.id;
+  }
+  return saveEntity(lieuditToSave, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
+};
+
+export const deleteLieudit = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_LIEUDIT);
+};
+
+export const getMeteos = async (): Promise<Meteo[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC) +
+      getQueryToFindNumberOfDonneesByMeteoId()
+  );
+
+  const meteos: Meteo[] = results[0];
+  const nbDonneesByMeteo: NumberOfObjectsById[] = results[1];
+  _.forEach(meteos, (meteo: Meteo) => {
+    meteo.nbDonnees = getNbByEntityId(meteo, nbDonneesByMeteo);
+  });
+
+  return meteos;
+};
+
+export const saveMeteo = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_METEO,
+    DB_SAVE_MAPPING.meteo
+  );
+};
+
+export const deleteMeteo = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_METEO);
+};
+
+export const getClasses = async (): Promise<Classe[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_CLASSE, COLUMN_LIBELLE, ORDER_ASC) +
+      getQueryToFindNumberOfEspecesByClasseId() +
+      getQueryToFindNumberOfDonneesByClasseId()
+  );
+
+  const classes: Classe[] = results[0];
+  const nbEspecesByClasse: NumberOfObjectsById[] = results[1];
+  const nbDonneesByClasse: NumberOfObjectsById[] = results[2];
+  _.forEach(classes, (classe: Classe) => {
+    classe.nbEspeces = getNbByEntityId(classe, nbEspecesByClasse);
+    classe.nbDonnees = getNbByEntityId(classe, nbDonneesByClasse);
+  });
+
+  return classes;
+};
+
+export const saveClasse = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_CLASSE,
+    DB_SAVE_MAPPING.classe
+  );
+};
+
+export const deleteClasse = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_CLASSE);
+};
+
+export const getEspeces = async (): Promise<Espece[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC) +
+      getFindAllQuery(TABLE_CLASSE) +
+      getQueryToFindNumberOfDonneesByEspeceId()
+  );
+  const especes: Espece[] = mapEspeces(results[0]);
+
+  const classes: Classe[] = results[1];
+  const nbDonneesByEspece: NumberOfObjectsById[] = results[2];
+  _.forEach(especes, (espece: Espece) => {
+    espece.classe = _.find(classes, (classe: Classe) => {
+      return classe.id === espece.classeId;
+    });
+    espece.classeId = null;
+    espece.nbDonnees = getNbByEntityId(espece, nbDonneesByEspece);
+  });
+
+  return especes;
+};
+
+export const saveEspece = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  const especeToSave: Espece = httpParameters.postData;
+  if (
+    !especeToSave.classeId &&
+    !!especeToSave.classe &&
+    !!especeToSave.classe.id
+  ) {
+    especeToSave.classeId = especeToSave.classe.id;
+  }
+  return saveEntity(especeToSave, TABLE_ESPECE, DB_SAVE_MAPPING.espece);
+};
+
+export const deleteEspece = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_ESPECE);
+};
+
+export const getSexes = async (): Promise<Sexe[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
+      getQueryToFindNumberOfDonneesBySexeId()
+  );
+
+  const sexes: Sexe[] = results[0];
+  const nbDonneesBySexe: NumberOfObjectsById[] = results[1];
+  _.forEach(sexes, (sexe: Sexe) => {
+    sexe.nbDonnees = getNbByEntityId(sexe, nbDonneesBySexe);
+  });
+
+  return sexes;
+};
+
+export const saveSexe = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(httpParameters.postData, TABLE_SEXE, DB_SAVE_MAPPING.sexe);
+};
+
+export const deleteSexe = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_SEXE);
+};
+
+export const getAges = async (): Promise<Age[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
+      getQueryToFindNumberOfDonneesByAgeId()
+  );
+
+  const ages: Age[] = results[0];
+  const nbDonneesByAge: NumberOfObjectsById[] = results[1];
+  _.forEach(ages, (age: Age) => {
+    age.nbDonnees = getNbByEntityId(age, nbDonneesByAge);
+  });
+
+  return ages;
+};
+
+export const saveAge = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(httpParameters.postData, TABLE_AGE, DB_SAVE_MAPPING.age);
+};
+
+export const deleteAge = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_AGE);
+};
+
+export const getEstimationsNombre = async (): Promise<EstimationNombre[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC) +
+      getQueryToFindNumberOfDonneesByEstimationNombreId()
+  );
+
+  const estimations: EstimationNombre[] = mapEstimationsNombre(results[0]);
+  const nbDonneesByEstimation: NumberOfObjectsById[] = results[1];
+  _.forEach(estimations, (estimation: EstimationNombre) => {
+    estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
+  });
+
+  return estimations;
+};
+
+export const saveEstimationNombre = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_ESTIMATION_NOMBRE,
+    DB_SAVE_MAPPING.estimationNombre
+  );
+};
+
+export const deleteEstimationNombre = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_ESTIMATION_NOMBRE);
+};
+
+export const getEstimationsDistance = async (): Promise<
+  EstimationDistance[]
+> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_ESTIMATION_DISTANCE, COLUMN_LIBELLE, ORDER_ASC) +
+      getQueryToFindNumberOfDonneesByEstimationDistanceId()
+  );
+
+  const estimations: EstimationDistance[] = results[0];
+  const nbDonneesByEstimation: NumberOfObjectsById[] = results[1];
+  _.forEach(estimations, (estimation: EstimationDistance) => {
+    estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
+  });
+
+  return estimations;
+};
+
+export const saveEstimationDistance = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_ESTIMATION_DISTANCE,
+    DB_SAVE_MAPPING.estimationDistance
+  );
+};
+
+export const deleteEstimationDistance = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_ESTIMATION_DISTANCE);
+};
+
+export const getComportements = async (): Promise<Comportement[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_COMPORTEMENT, COLUMN_CODE, ORDER_ASC) +
+      getQueryToFindNumberOfDonneesByComportementId()
+  );
+
+  const comportements: Comportement[] = results[0];
+  const nbDonneesByComportement: NumberOfObjectsById[] = results[1];
+  _.forEach(comportements, (comportement: Comportement) => {
+    comportement.nbDonnees = getNbByEntityId(
+      comportement,
+      nbDonneesByComportement
+    );
+  });
+
+  return comportements;
+};
+
+export const saveComportement = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_COMPORTEMENT,
+    DB_SAVE_MAPPING.comportement
+  );
+};
+
+export const deleteComportement = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_COMPORTEMENT);
+};
+
+export const getMilieux = async (): Promise<Milieu[]> => {
+  const results = await SqlConnection.query(
+    getFindAllQuery(TABLE_MILIEU, COLUMN_CODE, ORDER_ASC) +
+      getQueryToFindNumberOfDonneesByMilieuId()
+  );
+
+  const milieux: Milieu[] = results[0];
+  const nbDonneesByMilieu: NumberOfObjectsById[] = results[1];
+  _.forEach(milieux, (milieu: Milieu) => {
+    milieu.nbDonnees = getNbByEntityId(milieu, nbDonneesByMilieu);
+  });
+
+  return milieux;
+};
+
+export const saveMilieu = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_MILIEU,
+    DB_SAVE_MAPPING.milieu
+  );
+};
+
+export const deleteMilieu = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  return deleteEntity(httpParameters, TABLE_MILIEU);
+};
+
+export const exportObservateurs = async (): Promise<any> => {
+  const observateurs: Observateur[] = await getObservateurs();
 
   const objectsToExport = _.map(observateurs, (object) => {
     return {
@@ -591,10 +580,8 @@ export const exportObservateurs = async (
   return writeToExcel(objectsToExport, ["Observateur"], "observateurs");
 };
 
-export const exportMeteos = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const meteos: Meteo[] = await getMeteos(null);
+export const exportMeteos = async (): Promise<any> => {
+  const meteos: Meteo[] = await getMeteos();
 
   const objectsToExport = _.map(meteos, (object) => {
     return {
@@ -605,10 +592,8 @@ export const exportMeteos = async (
   return writeToExcel(objectsToExport, ["Meteo"], "meteos");
 };
 
-export const exportDepartements = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const departementsDb: Departement[] = await getDepartements(null);
+export const exportDepartements = async (): Promise<any> => {
+  const departementsDb: Departement[] = await getDepartements();
 
   const objectsToExport = _.map(departementsDb, (object) => {
     return {
@@ -619,10 +604,8 @@ export const exportDepartements = async (
   return writeToExcel(objectsToExport, ["Departement"], "departements");
 };
 
-export const exportCommunes = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const communesDb: Commune[] = await getCommunes(null);
+export const exportCommunes = async (): Promise<any> => {
+  const communesDb: Commune[] = await getCommunes();
 
   const objectsToExport = _.map(communesDb, (object) => {
     return {
@@ -639,10 +622,8 @@ export const exportCommunes = async (
   );
 };
 
-export const exportLieuxdits = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const lieuxditsDb: Lieudit[] = await getLieuxdits(null);
+export const exportLieuxdits = async (): Promise<any> => {
+  const lieuxditsDb: Lieudit[] = await getLieuxdits();
 
   const objectsToExport = _.map(lieuxditsDb, (object) => {
     return {
@@ -671,10 +652,8 @@ export const exportLieuxdits = async (
   );
 };
 
-export const exportClasses = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const classes: Classe[] = await getClasses(null);
+export const exportClasses = async (): Promise<any> => {
+  const classes: Classe[] = await getClasses();
 
   const objectsToExport = _.map(classes, (object) => {
     return { Classe: object.libelle };
@@ -683,10 +662,8 @@ export const exportClasses = async (
   return writeToExcel(objectsToExport, ["Classe"], "classes");
 };
 
-export const exportEspeces = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const especes: Espece[] = await getEspeces(null);
+export const exportEspeces = async (): Promise<any> => {
+  const especes: Espece[] = await getEspeces();
 
   const objectsToExport = _.map(especes, (object) => {
     return {
@@ -704,10 +681,8 @@ export const exportEspeces = async (
   );
 };
 
-export const exportAges = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const agesDb: Age[] = await getAges(null);
+export const exportAges = async (): Promise<any> => {
+  const agesDb: Age[] = await getAges();
 
   const agesToExport = _.map(agesDb, (ageDb) => {
     return { Age: ageDb.libelle };
@@ -716,10 +691,8 @@ export const exportAges = async (
   return writeToExcel(agesToExport, ["Age"], "ages");
 };
 
-export const exportSexes = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const sexes: Sexe[] = await getSexes(null);
+export const exportSexes = async (): Promise<any> => {
+  const sexes: Sexe[] = await getSexes();
 
   const objectsToExport = _.map(sexes, (object) => {
     return { Sexe: object.libelle };
@@ -728,10 +701,8 @@ export const exportSexes = async (
   return writeToExcel(objectsToExport, ["Sexe"], "sexes");
 };
 
-export const exportEstimationsNombre = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const estimations: EstimationNombre[] = await getEstimationsNombre(null);
+export const exportEstimationsNombre = async (): Promise<any> => {
+  const estimations: EstimationNombre[] = await getEstimationsNombre();
 
   const objectsToExport = _.map(estimations, (object) => {
     return { Estimation: object.libelle };
@@ -740,10 +711,8 @@ export const exportEstimationsNombre = async (
   return writeToExcel(objectsToExport, ["Estimation"], "estimations-nombre");
 };
 
-export const exportEstimationsDistance = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const estimations: EstimationDistance[] = await getEstimationsDistance(null);
+export const exportEstimationsDistance = async (): Promise<any> => {
+  const estimations: EstimationDistance[] = await getEstimationsDistance();
 
   const objectsToExport = _.map(estimations, (object) => {
     return { Estimation: object.libelle };
@@ -752,10 +721,8 @@ export const exportEstimationsDistance = async (
   return writeToExcel(objectsToExport, ["Estimation"], "estimations-distance");
 };
 
-export const exportComportements = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const comportementsDb: Comportement[] = await getComportements(null);
+export const exportComportements = async (): Promise<any> => {
+  const comportementsDb: Comportement[] = await getComportements();
 
   const comportementsToExport = _.map(comportementsDb, (object) => {
     return { Code: object.code, Libelle: object.libelle };
@@ -768,10 +735,8 @@ export const exportComportements = async (
   );
 };
 
-export const exportMilieux = async (
-  httpParameters: HttpParameters
-): Promise<any> => {
-  const milieuxDb: Milieu[] = await getMilieux(null);
+export const exportMilieux = async (): Promise<any> => {
+  const milieuxDb: Milieu[] = await getMilieux();
 
   const milieuxToExport = _.map(milieuxDb, (object) => {
     return { Code: object.code, Libelle: object.libelle };

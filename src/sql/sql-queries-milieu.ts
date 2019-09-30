@@ -20,9 +20,8 @@ export function getQueryToFindNumberOfDonneesByMilieuId(
   milieuId?: number
 ): string {
   let query: string =
-    "SELECT dc.milieu_id as id, count(*) as nbDonnees " +
-    "FROM donnee_milieu dc ";
-  if (!!milieuId) {
+    "SELECT dc.milieu_id as id, count(*) as nb " + "FROM donnee_milieu dc ";
+  if (milieuId) {
     query = query + " WHERE dc.milieu_id=" + milieuId;
   } else {
     query = query + " GROUP BY dc.milieu_id";

@@ -1,6 +1,6 @@
 import { getQuery } from "./sql-queries-utils";
 
-export function getQueryToFindAllMeteos() {
+export function getQueryToFindAllMeteos(): string {
   const query: string =
     "SELECT d.id as donneeId, m.libelle" +
     " FROM inventaire_meteo i" +
@@ -23,10 +23,10 @@ export function getQueryToFindNumberOfDonneesByMeteoId(
   meteoId?: number
 ): string {
   let query: string =
-    "SELECT im.meteo_id as id, count(*) as nbDonnees " +
+    "SELECT im.meteo_id as id, count(*) as nb " +
     "FROM inventaire_meteo im, donnee d " +
     "WHERE d.inventaire_id=im.inventaire_id";
-  if (!!meteoId) {
+  if (meteoId) {
     query = query + " AND im.meteo_id=" + meteoId;
   } else {
     query = query + " GROUP BY im.meteo_id";

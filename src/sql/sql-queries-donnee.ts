@@ -66,8 +66,8 @@ export function getQueryToFindNumberOfDonneesByDoneeeEntityId(
   id?: number
 ): string {
   let query: string =
-    "SELECT " + entityIdAttribute + " as id, count(*) as nbDonnees FROM donnee";
-  if (!!id) {
+    "SELECT " + entityIdAttribute + " as id, count(*) as nb FROM donnee";
+  if (id) {
     query = query + " WHERE " + entityIdAttribute + "=" + id;
   } else {
     query = query + " GROUP BY " + entityIdAttribute;
