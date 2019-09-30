@@ -5,7 +5,7 @@ import { getQueryToFindAllMeteos } from "../sql/sql-queries-meteo";
 import { getQueryToFindAllMilieux } from "../sql/sql-queries-milieu";
 import { getQueryToFindAllAssocies } from "../sql/sql-queries-observateur";
 import { SqlConnection } from "./sql-connection";
-import { DonneeFlat } from "basenaturaliste-model/donnee-flat.object";
+import { FlatDonnee } from "basenaturaliste-model/flat-donnee.object";
 import { AssocieByDonnee } from "../objects/associe-by-donnee.object";
 import { MilieuByDonnee } from "../objects/milieu-by-donnee.object";
 import { ComportementByDonnee } from "../objects/comportement-by-donnee.object";
@@ -13,7 +13,7 @@ import { MeteoByDonnee } from "../objects/meteo-by-donnee.object";
 
 export const findDonneesByCustomizedFilters = async (
   filters: any
-): Promise<DonneeFlat[]> => {
+): Promise<FlatDonnee[]> => {
   const results = await SqlConnection.query(
     getQueryToFindDonneesByCriterion(filters) +
       getQueryToFindAllAssocies() +
@@ -22,14 +22,14 @@ export const findDonneesByCustomizedFilters = async (
       getQueryToFindAllMilieux()
   );
 
-  const donnees: DonneeFlat[] = results[0];
+  const donnees: FlatDonnee[] = results[0];
   const associesByDonnee: AssocieByDonnee[] = results[1];
   const meteosByDonnee: MeteoByDonnee[] = results[2];
   const comportementsByDonnee: ComportementByDonnee[] = results[3];
   const milieuxByDonnee: MilieuByDonnee[] = results[4];
 
-  const mapDonnees: { [key: number]: DonneeFlat } = {};
-  _.forEach(donnees, (donnee: DonneeFlat) => {
+  const mapDonnees: { [key: number]: FlatDonnee } = {};
+  _.forEach(donnees, (donnee: FlatDonnee) => {
     donnee.associes = "";
     donnee.meteos = "";
     donnee.comportements = [];
