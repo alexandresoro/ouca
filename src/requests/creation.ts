@@ -63,27 +63,87 @@ import {
   buildErrorPostResponse
 } from "../utils/post-response-utils";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
+import { DonneeWithNavigationData } from "basenaturaliste-model/donnee-with-navigation-data.object";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { PostResponse } from "basenaturaliste-model/post-response.object";
 import { getQueryToFindInventaireIdById } from "../sql/sql-queries-inventaire";
+import { Configuration } from "../objects/configuration.object";
 
-const getDefaultValueForConfigurationField = (
-  configuration: any[],
-  libelle: string,
-  isBoolean?: boolean,
-  isNumber?: boolean
-): any | number | boolean => {
-  const retrievedValue = _.find(
-    configuration,
-    (value) => value.libelle === libelle
-  ).value;
-  if (isBoolean) {
-    return +retrievedValue === 1;
-  } else if (isNumber) {
-    return +retrievedValue;
+const buildDonneeFromFlatDonneeWithMinimalData = async (
+  flatDonnee: FlatDonneeWithMinimalData
+): Promise<Donnee> => {
+  if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
+    const listsResults = await SqlConnection.query(
+      getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
+        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
+        getQueryToFindComportementsByDonneeId(flatDonnee.id) +
+        getQueryToFindMilieuxByDonneeId(flatDonnee.id) +
+        getQueryToFindNumberOfDonneesByDoneeeEntityId(
+          "inventaire_id",
+          flatDonnee.inventaireId
+        )
+    );
+
+    const inventaire: Inventaire = {
+      id: flatDonnee.inventaireId,
+      observateurId: flatDonnee.observateurId,
+      associesIds: mapAssociesIds(listsResults[0]),
+      date: flatDonnee.date,
+      heure: flatDonnee.heure,
+      duree: flatDonnee.duree,
+      lieuditId: flatDonnee.lieuditId,
+      altitude: flatDonnee.altitude,
+      longitude: flatDonnee.longitude,
+      latitude: flatDonnee.latitude,
+      temperature: flatDonnee.temperature,
+      meteosIds: mapMeteosIds(listsResults[1]),
+      nbDonnees: listsResults[4][0].nbDonnees
+    };
+
+    const donnee: Donnee = {
+      id: flatDonnee.id,
+      inventaireId: flatDonnee.inventaireId,
+      inventaire,
+      especeId: flatDonnee.especeId,
+      sexeId: flatDonnee.sexeId,
+      ageId: flatDonnee.ageId,
+      estimationNombreId: flatDonnee.estimationNombreId,
+      nombre: flatDonnee.nombre,
+      estimationDistanceId: flatDonnee.estimationDistanceId,
+      distance: flatDonnee.distance,
+      regroupement: flatDonnee.regroupement,
+      comportementsIds: mapComportementsIds(listsResults[2]),
+      milieuxIds: mapMilieuxIds(listsResults[3]),
+      commentaire: flatDonnee.commentaire
+    };
+    return donnee;
   } else {
-    return retrievedValue;
+    return null;
   }
+};
+
+const getConfigurationValueAsString = (
+  configurations: Configuration[],
+  libelle: string
+): string => {
+  return _.find(
+    configurations,
+    (configuration) => configuration.libelle === libelle
+  ).value;
+};
+
+const getConfigurationValueAsNumber = (
+  configurations: Configuration[],
+  libelle: string
+): number => {
+  return +getConfigurationValueAsString(configurations, libelle);
+};
+
+const getConfigurationValueAsBoolean = (
+  configurations: Configuration[],
+  libelle: string
+): boolean => {
+  return getConfigurationValueAsNumber(configurations, libelle) === 1;
 };
 
 export const creationInit = async (): Promise<CreationPage> => {
@@ -113,65 +173,51 @@ export const creationInit = async (): Promise<CreationPage> => {
     results[0][0]
   );
 
+  const configurations: Configuration[] = results[3];
+
   const creationPage: CreationPage = {
     lastDonnee,
     numberOfDonnees: results[1][0].nbDonnees,
     nextRegroupement: results[2][0].regroupement + 1,
-    defaultObservateurId: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_DEFAULT_OBSERVATEUR_ID,
-      false,
-      true
+    defaultObservateurId: getConfigurationValueAsNumber(
+      configurations,
+      KEY_DEFAULT_OBSERVATEUR_ID
     ),
-    defaultDepartementId: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_DEFAULT_DEPARTEMENT_ID,
-      false,
-      true
+    defaultDepartementId: getConfigurationValueAsNumber(
+      configurations,
+      KEY_DEFAULT_DEPARTEMENT_ID
     ),
-    defaultEstimationNombreId: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_DEFAULT_ESTIMATION_NOMBRE_ID,
-      false,
-      true
+    defaultEstimationNombreId: getConfigurationValueAsNumber(
+      configurations,
+      KEY_DEFAULT_ESTIMATION_NOMBRE_ID
     ),
-    defaultNombre: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_DEFAULT_NOMBRE,
-      false,
-      true
+    defaultNombre: getConfigurationValueAsNumber(
+      configurations,
+      KEY_DEFAULT_NOMBRE
     ),
-    defaultSexeId: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_DEFAULT_SEXE_ID,
-      false,
-      true
+    defaultSexeId: getConfigurationValueAsNumber(
+      configurations,
+      KEY_DEFAULT_SEXE_ID
     ),
-    defaultAgeId: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_DEFAULT_AGE_ID,
-      false,
-      true
+    defaultAgeId: getConfigurationValueAsNumber(
+      configurations,
+      KEY_DEFAULT_AGE_ID
     ),
-    areAssociesDisplayed: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_ARE_ASSOCIES_DISPLAYED,
-      true
+    areAssociesDisplayed: getConfigurationValueAsBoolean(
+      configurations,
+      KEY_ARE_ASSOCIES_DISPLAYED
     ),
-    isMeteoDisplayed: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_IS_METEO_DISPLAYED,
-      true
+    isMeteoDisplayed: getConfigurationValueAsBoolean(
+      configurations,
+      KEY_IS_METEO_DISPLAYED
     ),
-    isDistanceDisplayed: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_IS_DISTANCE_DISPLAYED,
-      true
+    isDistanceDisplayed: getConfigurationValueAsBoolean(
+      configurations,
+      KEY_IS_DISTANCE_DISPLAYED
     ),
-    isRegroupementDisplayed: getDefaultValueForConfigurationField(
-      results[3],
-      KEY_IS_REGROUPEMENT_DISPLAYED,
-      true
+    isRegroupementDisplayed: getConfigurationValueAsBoolean(
+      configurations,
+      KEY_IS_REGROUPEMENT_DISPLAYED
     ),
     observateurs: results[4],
     departements: results[5],
@@ -382,7 +428,7 @@ export const getPreviousDonnee = async (
 
 export const getDonneeByIdWithContext = async (
   httpParameters: HttpParameters
-): Promise<any> => {
+): Promise<DonneeWithNavigationData> => {
   const id: number = +httpParameters.queryParameters.id;
   const results = await SqlConnection.query(
     getQueryToFindDonneeById(id) +
@@ -400,59 +446,6 @@ export const getDonneeByIdWithContext = async (
     indexDonnee:
       !!results[3] && !!results[3][0] ? results[3][0].nbDonnees : null
   };
-};
-
-const buildDonneeFromFlatDonneeWithMinimalData = async (
-  flatDonnee: FlatDonneeWithMinimalData
-): Promise<Donnee> => {
-  if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
-    const listsResults = await SqlConnection.query(
-      getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindComportementsByDonneeId(flatDonnee.id) +
-        getQueryToFindMilieuxByDonneeId(flatDonnee.id) +
-        getQueryToFindNumberOfDonneesByDoneeeEntityId(
-          "inventaire_id",
-          flatDonnee.inventaireId
-        )
-    );
-
-    const inventaire: Inventaire = {
-      id: flatDonnee.inventaireId,
-      observateurId: flatDonnee.observateurId,
-      associesIds: mapAssociesIds(listsResults[0]),
-      date: flatDonnee.date,
-      heure: flatDonnee.heure,
-      duree: flatDonnee.duree,
-      lieuditId: flatDonnee.lieuditId,
-      altitude: flatDonnee.altitude,
-      longitude: flatDonnee.longitude,
-      latitude: flatDonnee.latitude,
-      temperature: flatDonnee.temperature,
-      meteosIds: mapMeteosIds(listsResults[1]),
-      nbDonnees: listsResults[4][0].nbDonnees
-    };
-
-    const donnee: Donnee = {
-      id: flatDonnee.id,
-      inventaireId: flatDonnee.inventaireId,
-      inventaire,
-      especeId: flatDonnee.especeId,
-      sexeId: flatDonnee.sexeId,
-      ageId: flatDonnee.ageId,
-      estimationNombreId: flatDonnee.estimationNombreId,
-      nombre: flatDonnee.nombre,
-      estimationDistanceId: flatDonnee.estimationDistanceId,
-      distance: flatDonnee.distance,
-      regroupement: flatDonnee.regroupement,
-      comportementsIds: mapComportementsIds(listsResults[2]),
-      milieuxIds: mapMilieuxIds(listsResults[3]),
-      commentaire: flatDonnee.commentaire
-    };
-    return donnee;
-  } else {
-    return null;
-  }
 };
 
 export const getNextRegroupement = async (): Promise<number> => {
