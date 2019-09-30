@@ -58,7 +58,10 @@ import {
   mapMeteosIds,
   mapMilieuxIds
 } from "../utils/mapping-utils";
-import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
+import {
+  buildPostResponseFromSqlResponse,
+  buildErrorPostResponse
+} from "../utils/post-response-utils";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { PostResponse } from "basenaturaliste-model/post-response.object";
 import { getQueryToFindInventaireIdById } from "../sql/sql-queries-inventaire";
@@ -249,69 +252,77 @@ export const saveInventaire = async (
 
 export const saveDonnee = async (
   httpParameters: HttpParameters
-): Promise<any> => {
+): Promise<PostResponse> => {
   const donneeToSave: Donnee = httpParameters.postData;
 
-  // It is an update we delete the current comportements and milieux to insert later the updated ones
-  if (donneeToSave.id) {
-    await SqlConnection.query(
-      getDeleteEntityByAttributeQuery(
-        TABLE_DONNEE_COMPORTEMENT,
-        "donnee_id",
-        donneeToSave.id
-      ) +
+  // Check if the donnee already exists or not
+  const existingDonneeId: number = null; // TO DO
+
+  if (existingDonneeId && existingDonneeId !== donneeToSave.id) {
+    // The donnee already exists so we return an error
+    return buildErrorPostResponse(
+      "Cette donnée existe déjà (ID = " + existingDonneeId + ")."
+    );
+  } else {
+    // The donnee does not exists yet, we save it
+
+    if (donneeToSave.id) {
+      // It is an update: we delete the current comportements
+      // and milieux to insert later the updated ones
+      await SqlConnection.query(
         getDeleteEntityByAttributeQuery(
-          TABLE_DONNEE_MILIEU,
+          TABLE_DONNEE_COMPORTEMENT,
           "donnee_id",
           donneeToSave.id
+        ) +
+          getDeleteEntityByAttributeQuery(
+            TABLE_DONNEE_MILIEU,
+            "donnee_id",
+            donneeToSave.id
+          )
+      );
+    }
+
+    const saveDonneeResponse: SqlSaveResponse = await SqlConnection.query(
+      getSaveEntityQuery(
+        TABLE_DONNEE,
+        {
+          ...donneeToSave,
+          dateCreation: moment().format("YYYY-MM-DD HH:mm:ss")
+        },
+        DB_SAVE_MAPPING.donnee
+      )
+    );
+
+    // If it is an update we take the existing ID else we take the inserted ID
+    const savedDonneeId: number = donneeToSave.id
+      ? donneeToSave.id
+      : saveDonneeResponse.insertId;
+
+    // Save the comportements
+    if (donneeToSave.comportementsIds.length > 0) {
+      await SqlConnection.query(
+        getSaveListOfEntitesQueries(
+          TABLE_DONNEE_COMPORTEMENT,
+          savedDonneeId,
+          donneeToSave.comportementsIds
         )
-    );
+      );
+    }
+
+    // Save the milieux
+    if (donneeToSave.milieuxIds.length > 0) {
+      await SqlConnection.query(
+        getSaveListOfEntitesQueries(
+          TABLE_DONNEE_MILIEU,
+          savedDonneeId,
+          donneeToSave.milieuxIds
+        )
+      );
+    }
+
+    return buildPostResponseFromSqlResponse(saveDonneeResponse);
   }
-
-  const donneeResult = await SqlConnection.query(
-    getSaveEntityQuery(
-      TABLE_DONNEE,
-      {
-        ...donneeToSave,
-        dateCreation: moment().format("YYYY-MM-DD HH:mm:ss")
-      },
-      DB_SAVE_MAPPING.donnee
-    )
-  );
-
-  // If it is an update we take the existing ID else we take the inserted ID
-  const donneeId: number = donneeToSave.id
-    ? donneeToSave.id
-    : (donneeResult as any).insertId;
-
-  if (donneeToSave.comportementsIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_DONNEE_COMPORTEMENT,
-        donneeId,
-        donneeToSave.comportementsIds
-      )
-    );
-  }
-
-  if (donneeToSave.milieuxIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_DONNEE_MILIEU,
-        donneeId,
-        donneeToSave.milieuxIds
-      )
-    );
-  }
-
-  const savedDonneeResults: any = await SqlConnection.query(
-    getQueryToFindDonneeById(donneeId)
-  );
-  const savedDonnee: any = await buildDonneeFromFlatDonnee(
-    savedDonneeResults[0]
-  );
-
-  return savedDonnee;
 };
 
 export const deleteDonnee = async (
