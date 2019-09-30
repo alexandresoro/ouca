@@ -18,9 +18,9 @@ export class ImportLieuxditService extends ImportService {
   private LONGITUDE_INDEX: number = 5;
   private LATITUDE_INDEX: number = 6;
 
-  protected getNumberOfColumns = () => {
+  protected getNumberOfColumns = (): number => {
     return 7;
-  }
+  };
 
   protected buildEntity = (entityTab: string[], communeId: number): Lieudit => {
     return {
@@ -31,7 +31,7 @@ export class ImportLieuxditService extends ImportService {
       longitude: +entityTab[this.LONGITUDE_INDEX].trim(),
       latitude: +entityTab[this.LATITUDE_INDEX].trim()
     };
-  }
+  };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (
@@ -87,7 +87,7 @@ export class ImportLieuxditService extends ImportService {
       lieuditToSave,
       DB_SAVE_MAPPING.lieudit
     );
-  }
+  };
 
   private isDepartementValid = (departement: string): boolean => {
     departement = departement.trim();
@@ -97,7 +97,7 @@ export class ImportLieuxditService extends ImportService {
       return false;
     }
     return true;
-  }
+  };
 
   private isCodeCommuneValid = (code: string): boolean => {
     code = code.trim();
@@ -113,7 +113,7 @@ export class ImportLieuxditService extends ImportService {
     }
 
     return true;
-  }
+  };
 
   private isNomCommuneValid = (nom: string): boolean => {
     nom = nom.trim();
@@ -124,7 +124,7 @@ export class ImportLieuxditService extends ImportService {
     }
 
     return true;
-  }
+  };
 
   private isNomLieuditValid = (nom: string): boolean => {
     nom = nom.trim();
@@ -141,7 +141,7 @@ export class ImportLieuxditService extends ImportService {
     }
 
     return true;
-  }
+  };
 
   private isAltitudeValid(altitudeStr: string) {
     if (!altitudeStr) {

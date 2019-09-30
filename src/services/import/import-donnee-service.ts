@@ -65,9 +65,9 @@ export class ImportDoneeeService extends ImportService {
 
   private LIST_SEPARATOR: string = ",";
 
-  protected getNumberOfColumns = () => {
+  protected getNumberOfColumns = (): number => {
     return 32;
-  }
+  };
 
   protected buildEntity = (
     entityTab: string[],
@@ -93,11 +93,11 @@ export class ImportDoneeeService extends ImportService {
       regroupement: +entityTab[this.REGROUPEMENT_INDEX],
       comportementsIds,
       milieuxIds,
-      commentaire: !!entityTab[this.COMMENTAIRE_INDEX]
+      commentaire: entityTab[this.COMMENTAIRE_INDEX]
         ? entityTab[this.COMMENTAIRE_INDEX].replace(";", ",")
         : null
     };
-  }
+  };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (
@@ -418,7 +418,7 @@ export class ImportDoneeeService extends ImportService {
       this.message = "Une donnée similaire existe déjà avec l'ID " + donnee.id;
       return false;
     }
-  }
+  };
 
   private areCoordinatesCustomized = (
     lieudit: Lieudit,
@@ -432,7 +432,7 @@ export class ImportDoneeeService extends ImportService {
         longitude !== lieudit.longitude ||
         latitude !== lieudit.latitude)
     );
-  }
+  };
 
   private buildInventaire = (
     entityTab: string[],
@@ -453,7 +453,7 @@ export class ImportDoneeeService extends ImportService {
       altitude: null,
       longitude: null,
       latitude: null,
-      temperature: !!entityTab[this.TEMPERATURE_INDEX]
+      temperature: entityTab[this.TEMPERATURE_INDEX]
         ? +entityTab[this.TEMPERATURE_INDEX]
         : null,
       meteosIds
@@ -466,27 +466,27 @@ export class ImportDoneeeService extends ImportService {
     }
 
     return inventaire;
-  }
+  };
 
   private isObservateurValid = (observateur: string): boolean => {
     return this.isNotEmptyString(observateur, "L'observateur");
-  }
+  };
 
   private isDateValid = (dateStr: string): boolean => {
     return true; // TO DO
-  }
+  };
 
   private isHeureValid = (heure: string): boolean => {
     return true; // TO DO
-  }
+  };
 
   private isDureeValid = (duree: string): boolean => {
     return true; // TO DO
-  }
+  };
 
   private isDepartementValid = (departement: string): boolean => {
     return this.isNotEmptyString(departement, "Le département");
-  }
+  };
 
   private isCodeCommuneValid = (code: string): boolean => {
     code = code.trim();
@@ -502,11 +502,11 @@ export class ImportDoneeeService extends ImportService {
     }
 
     return true;
-  }
+  };
 
   private isLieuditValid = (lieudit: string): boolean => {
     return this.isNotEmptyString(lieudit, "Le lieu-dit");
-  }
+  };
 
   private isAltitudeValid(altitudeStr: string) {
     if (!altitudeStr) {
@@ -590,23 +590,23 @@ export class ImportDoneeeService extends ImportService {
       }
     }
     return true;
-  }
+  };
 
   private isCodeEspeceValid = (code: string): boolean => {
     return this.isNotEmptyString(code, "Le code de l'espèce");
-  }
+  };
 
   private isSexeValid = (sexe: string): boolean => {
     return this.isNotEmptyString(sexe, "Le sexe");
-  }
+  };
 
   private isAgeValid = (age: string): boolean => {
     return this.isNotEmptyString(age, "L'âge");
-  }
+  };
 
   private isEstimationNombreValid = (estimation: string): boolean => {
     return this.isNotEmptyString(estimation, "L'estimation du nombre");
-  }
+  };
 
   private isNombreValid = (nombreStr: string): boolean => {
     if (nombreStr) {
@@ -624,11 +624,11 @@ export class ImportDoneeeService extends ImportService {
       }
     }
     return true;
-  }
+  };
 
   private isEstimationDistanceValid = (estimation: string): boolean => {
     return true;
-  }
+  };
 
   private isDistanceValid = (distanceStr: string): boolean => {
     if (distanceStr) {
@@ -646,7 +646,7 @@ export class ImportDoneeeService extends ImportService {
       }
     }
     return true;
-  }
+  };
 
   private isRegroupementValid = (regroupementStr: string): boolean => {
     if (regroupementStr) {
@@ -664,19 +664,19 @@ export class ImportDoneeeService extends ImportService {
       }
     }
     return true;
-  }
+  };
 
   private areComportementsValid = (entityTab: string[]): boolean => {
     return true;
-  }
+  };
 
   private areMilieuxValid = (entityTab: string[]): boolean => {
     return true;
-  }
+  };
 
   private isCommentaireValid = (commentaire: string): boolean => {
     return true;
-  }
+  };
 
   private isNotEmptyString = (str: string, attributeType: string): boolean => {
     str = str.trim();
@@ -687,5 +687,5 @@ export class ImportDoneeeService extends ImportService {
     }
 
     return true;
-  }
+  };
 }

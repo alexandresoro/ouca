@@ -20,7 +20,7 @@ export abstract class ImportService {
 
     const content = Papa.parse(fileContent);
 
-    if (!!content.data) {
+    if (content.data) {
       for (const lineTab of content.data) {
         await this.importLine(lineTab);
       }
@@ -33,7 +33,7 @@ export abstract class ImportService {
     } else {
       return "Aucune erreur pendant l'import";
     }
-  }
+  };
 
   protected abstract getNumberOfColumns(): number;
 
@@ -42,7 +42,7 @@ export abstract class ImportService {
   private importLine = async (entityTab: string[]): Promise<void> => {
     this.message = "";
 
-    if (!!entityTab) {
+    if (entityTab) {
       this.numberOfLines++;
 
       if (this.hasExpectedNumberOfColumns(entityTab)) {
@@ -55,7 +55,7 @@ export abstract class ImportService {
         this.errors.push(this.buildErrorObject(entityTab));
       }
     }
-  }
+  };
 
   private hasExpectedNumberOfColumns = (entityTab: string[]): boolean => {
     if (!!entityTab && entityTab.length === this.getNumberOfColumns()) {
@@ -70,10 +70,10 @@ export abstract class ImportService {
 
       return false;
     }
-  }
+  };
 
   private buildErrorObject = (entityTab: string[]): string[] => {
     entityTab.push(this.message);
     return entityTab;
-  }
+  };
 }

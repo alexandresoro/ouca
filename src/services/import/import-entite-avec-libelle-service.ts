@@ -5,16 +5,16 @@ import { ImportService } from "./import-service";
 export abstract class ImportEntiteAvecLibelleService extends ImportService {
   protected LIBELLE_INDEX: number = 0;
 
-  protected getNumberOfColumns = () => {
+  protected getNumberOfColumns = (): number => {
     return 1;
-  }
+  };
 
   protected buildEntity = (entityTab: string[]): EntiteAvecLibelle => {
     return {
       id: null,
       libelle: entityTab[this.LIBELLE_INDEX].trim()
     };
-  }
+  };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (!this.isLibelleValid(entityTab[this.LIBELLE_INDEX])) {
@@ -40,7 +40,7 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
       entityToSave,
       this.getDbMapping()
     );
-  }
+  };
 
   protected abstract getTableName(): string;
 
@@ -62,5 +62,5 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
     }
 
     return true;
-  }
+  };
 }

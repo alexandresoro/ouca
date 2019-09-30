@@ -68,12 +68,7 @@ const server = http.createServer(
         });
         request.on("end", () => {
           const postData = JSON.parse(Buffer.concat(chunks).toString());
-          handleHttpRequest(
-            isDockerMode,
-            request,
-            res,
-            postData
-          );
+          handleHttpRequest(isDockerMode, request, res, postData);
         });
       }
     } else {

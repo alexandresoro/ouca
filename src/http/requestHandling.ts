@@ -39,7 +39,7 @@ export const handleHttpRequest = (
       let mediaTypeResponse: string;
 
       // Handle requests that will not return JSON
-      if (!!REQUEST_MEDIA_TYPE_RESPONSE_MAPPING[pathName]) {
+      if (REQUEST_MEDIA_TYPE_RESPONSE_MAPPING[pathName]) {
         mediaTypeResponse = REQUEST_MEDIA_TYPE_RESPONSE_MAPPING[pathName];
       } else {
         mediaTypeResponse = jsonHttpHeader;

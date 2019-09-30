@@ -15,9 +15,9 @@ export class ImportCommuneService extends ImportService {
   private CODE_INDEX: number = 1;
   private NOM_INDEX: number = 2;
 
-  protected getNumberOfColumns = () => {
+  protected getNumberOfColumns = (): number => {
     return 3;
-  }
+  };
 
   protected buildEntity = (
     entityTab: string[],
@@ -29,7 +29,7 @@ export class ImportCommuneService extends ImportService {
       code: entityTab[this.CODE_INDEX].trim(),
       nom: entityTab[this.NOM_INDEX].trim()
     };
-  }
+  };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (
@@ -81,7 +81,7 @@ export class ImportCommuneService extends ImportService {
       communeToSave,
       DB_SAVE_MAPPING.commune
     );
-  }
+  };
 
   private isDepartementValid = (departement: string): boolean => {
     departement = departement.trim();
@@ -91,7 +91,7 @@ export class ImportCommuneService extends ImportService {
       return false;
     }
     return true;
-  }
+  };
 
   private isCodeCommuneValid = (codeStr: string): boolean => {
     codeStr = codeStr.trim();
@@ -115,7 +115,7 @@ export class ImportCommuneService extends ImportService {
     }
 
     return true;
-  }
+  };
 
   private isNomCommuneValid = (nom: string): boolean => {
     nom = nom.trim();
@@ -132,5 +132,5 @@ export class ImportCommuneService extends ImportService {
     }
 
     return true;
-  }
+  };
 }

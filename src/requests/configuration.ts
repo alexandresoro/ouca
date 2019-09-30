@@ -48,7 +48,7 @@ export const configurationInit = async (): Promise<ConfigurationPage> => {
     "isRegroupementDisplayed"
   ];
 
-  const dbConfiguration: any = {};
+  const dbConfiguration = {};
   _.forEach(results[0], (field) => {
     // First try to find if the column name returned from the DB has a UI name that overrides it
     const overridenName: string = _.find(
@@ -84,7 +84,7 @@ export const configurationInit = async (): Promise<ConfigurationPage> => {
   });
 
   return {
-    appConfiguration: dbConfiguration,
+    appConfiguration: dbConfiguration as AppConfiguration,
     observateurs: results[1],
     departements: results[2],
     ages: results[3],
@@ -127,8 +127,8 @@ export const configurationUpdate = async (
   };
 
   // Here we create the mapping between the DB name and its DB value, that has been already transformed above
-  const whereSetValueMapping: { [key: string]: string } = {};
-  _.forEach(uiFlatMapping, (value: any, key: string) => {
+  const whereSetValueMapping: { [key: string]: string | number } = {};
+  _.forEach(uiFlatMapping, (value: number | string, key: string) => {
     const dbKeyWhere = _.findKey(DB_CONFIGURATION_MAPPING, (valueUi) => {
       return valueUi === key;
     });

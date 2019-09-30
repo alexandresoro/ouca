@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import { toCamel } from "../utils/utils";
+import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
 
 const createKeyValueMapWithSameName = (
   names: string | string[]
@@ -115,6 +116,20 @@ export const getQuery = (query: string): string => {
   return query + ";";
 };
 
+export function getFindAllQuery(
+  tableName: string,
+  attributeForOrdering?: string,
+  order?: string
+): string {
+  let query: string = "SELECT * FROM " + tableName;
+
+  if (!!attributeForOrdering && !!order) {
+    query = query + " ORDER BY " + attributeForOrdering + " " + order;
+  }
+
+  return getQuery(query);
+}
+
 export const getAllFromTablesQuery = (tableNames: string[]): string => {
   return _.reduce(
     _.map(tableNames, (tableName) => {
@@ -126,27 +141,13 @@ export const getAllFromTablesQuery = (tableNames: string[]): string => {
   );
 };
 
-export function getFindAllQuery(
-  tableName: string,
-  attributeForOrdering?: string,
-  order?: string
-) {
-  let query: string = "SELECT * FROM " + tableName;
-
-  if (!!attributeForOrdering && !!order) {
-    query = query + " ORDER BY " + attributeForOrdering + " " + order;
-  }
-
-  return getQuery(query);
-}
-
 export const getFindOneByIdQuery = (tableName: string, id: number): string => {
   return getQuery("SELECT * FROM " + tableName + " WHERE id=" + id);
 };
 
-export function getSaveEntityQuery(
+export function getSaveEntityQuery<T extends EntiteSimple>(
   tableName: string,
-  entityToSave: any,
+  entityToSave: T,
   mapping: { [column: string]: string }
 ): string {
   let query: string;
@@ -208,17 +209,6 @@ export function getSaveEntityQuery(
   return getQuery(query);
 }
 
-export function getSaveListOfEntitesQueries(
-  tableName: string,
-  mainId: number,
-  subIds: any[]
-): string {
-  let queries: string = "";
-  subIds.forEach((subId) => {
-    queries += getSaveManyToManyEntityQuery(tableName, mainId, subId);
-  });
-  return queries;
-}
 export function getSaveManyToManyEntityQuery(
   tableName: string,
   mainId: number,
@@ -241,26 +231,17 @@ export function getSaveManyToManyEntityQuery(
   return getQuery(query);
 }
 
-export const updateAllInTableQuery = (
+export function getSaveListOfEntitesQueries(
   tableName: string,
-  setColumn: string,
-  whereColumn: string,
-  whereSetMappingValues: { [key: string]: string | number }
-): string => {
-  const queries: string[] = [];
-  _.forEach(whereSetMappingValues, (setValue, whereValue) => {
-    queries.push(
-      updateInTableQuery(
-        tableName,
-        setColumn,
-        setValue,
-        whereColumn,
-        whereValue
-      )
-    );
+  mainId: number,
+  subIds: number[]
+): string {
+  let queries: string = "";
+  subIds.forEach((subId) => {
+    queries += getSaveManyToManyEntityQuery(tableName, mainId, subId);
   });
-  return queries.join("");
-};
+  return queries;
+}
 
 export const updateInTableQuery = (
   tableName: string,
@@ -284,6 +265,27 @@ export const updateInTableQuery = (
   return getQuery(query);
 };
 
+export const updateAllInTableQuery = (
+  tableName: string,
+  setColumn: string,
+  whereColumn: string,
+  whereSetMappingValues: { [key: string]: string | number }
+): string => {
+  const queries: string[] = [];
+  _.forEach(whereSetMappingValues, (setValue, whereValue) => {
+    queries.push(
+      updateInTableQuery(
+        tableName,
+        setColumn,
+        setValue,
+        whereColumn,
+        whereValue
+      )
+    );
+  });
+  return queries.join("");
+};
+
 export function getDeleteEntityByIdQuery(
   tableName: string,
   id: number
@@ -294,7 +296,7 @@ export function getDeleteEntityByIdQuery(
 export function getDeleteEntityByAttributeQuery(
   tableName: string,
   attributeName: string,
-  attributeValue: any
+  attributeValue: string | number
 ): string {
   return getQuery(
     "DELETE FROM " +
@@ -310,13 +312,16 @@ export function getDeleteEntityByAttributeQuery(
 export function getQueryToFindEntityByLibelle(
   entityName: string,
   libelle: string
-) {
+): string {
   return getQuery(
     "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle.trim() + '"'
   );
 }
 
-export function getQueryToFindEntityByCode(entityName: string, code: string) {
+export function getQueryToFindEntityByCode(
+  entityName: string,
+  code: string
+): string {
   return getQuery(
     "SELECT * FROM " + entityName + ' WHERE code="' + code.trim() + '"'
   );
@@ -326,7 +331,7 @@ export function getQueryToFindEntityByCodeAndLibelle(
   entityName: string,
   code: string,
   libelle: string
-) {
+): string {
   return getQuery(
     "SELECT * FROM " +
       entityName +

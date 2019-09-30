@@ -19,7 +19,7 @@ export function getQueryToFindNumberOfDonneesByObservateurId(
   );
 }
 
-export function getQueryToFindAllAssocies() {
+export function getQueryToFindAllAssocies(): string {
   const query: string =
     "SELECT d.id as donneeId, o.libelle" +
     " FROM inventaire_associe i" +

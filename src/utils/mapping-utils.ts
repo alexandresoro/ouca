@@ -29,12 +29,6 @@ export const mapMilieuxIds = (milieuxDds: any): number[] => {
   });
 };
 
-export const mapCommunes = (communesDb: any): Commune[] => {
-  return _.map(communesDb, (communeDb) => {
-    return mapCommune(communeDb);
-  });
-};
-
 export const mapCommune = (communeDb: any): Commune => {
   const { departement_id, ...otherParams } = communeDb;
   return {
@@ -43,9 +37,9 @@ export const mapCommune = (communeDb: any): Commune => {
   };
 };
 
-export const mapLieuxdits = (lieuxditsDb: any): Lieudit[] => {
-  return _.map(lieuxditsDb, (lieuditDb) => {
-    return mapLieudit(lieuditDb);
+export const mapCommunes = (communesDb: any): Commune[] => {
+  return _.map(communesDb, (communeDb) => {
+    return mapCommune(communeDb);
   });
 };
 
@@ -57,9 +51,9 @@ export const mapLieudit = (lieuditDb: any): Lieudit => {
   };
 };
 
-export const mapEspeces = (especesDb: any): Espece[] => {
-  return _.map(especesDb, (especeDb) => {
-    return mapEspece(especeDb);
+export const mapLieuxdits = (lieuxditsDb: any): Lieudit[] => {
+  return _.map(lieuxditsDb, (lieuditDb) => {
+    return mapLieudit(lieuditDb);
   });
 };
 
@@ -73,11 +67,9 @@ export const mapEspece = (especeDb: any): Espece => {
   };
 };
 
-export const mapEstimationsNombre = (
-  estimationsDb: any
-): EstimationNombre[] => {
-  return _.map(estimationsDb, (estimationDb) => {
-    return mapEstimationNombre(estimationDb);
+export const mapEspeces = (especesDb: any): Espece[] => {
+  return _.map(especesDb, (especeDb) => {
+    return mapEspece(especeDb);
   });
 };
 
@@ -87,6 +79,14 @@ export const mapEstimationNombre = (estimationDb: any): EstimationNombre => {
     ...otherParams,
     nonCompte: estimationDb.non_compte
   };
+};
+
+export const mapEstimationsNombre = (
+  estimationsDb: any
+): EstimationNombre[] => {
+  return _.map(estimationsDb, (estimationDb) => {
+    return mapEstimationNombre(estimationDb);
+  });
 };
 
 export const mapInventaire = (inventaireDb: any): Inventaire => {

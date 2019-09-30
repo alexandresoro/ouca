@@ -10,9 +10,9 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
   private CODE_INDEX: number = 0;
   private LIBELLE_INDEX: number = 1;
 
-  protected getNumberOfColumns = () => {
+  protected getNumberOfColumns = (): number => {
     return 2;
-  }
+  };
 
   protected buildEntity = (entityTab: string[]): EntiteAvecLibelleEtCode => {
     return {
@@ -20,7 +20,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
       code: entityTab[this.CODE_INDEX].trim(),
       libelle: entityTab[this.LIBELLE_INDEX].trim()
     };
-  }
+  };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (
@@ -61,7 +61,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
       entityToSave,
       this.getDbMapping()
     );
-  }
+  };
 
   protected abstract getTableName(): string;
 
@@ -83,7 +83,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
     }
 
     return true;
-  }
+  };
 
   private isLibelleValid = (libelle: string): boolean => {
     libelle = libelle.trim();
@@ -99,5 +99,5 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
     }
 
     return true;
-  }
+  };
 }

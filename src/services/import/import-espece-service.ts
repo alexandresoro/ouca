@@ -17,9 +17,9 @@ export class ImportEspeceService extends ImportService {
   private NOM_FRANCAIS_INDEX: number = 2;
   private NOM_LATIN_INDEX: number = 3;
 
-  protected getNumberOfColumns = () => {
+  protected getNumberOfColumns = (): number => {
     return 4;
-  }
+  };
 
   protected buildEntity = (entityTab: string[], classeId: number): Espece => {
     return {
@@ -29,7 +29,7 @@ export class ImportEspeceService extends ImportService {
       nomFrancais: entityTab[this.NOM_FRANCAIS_INDEX].trim(),
       nomLatin: entityTab[this.NOM_LATIN_INDEX].trim()
     };
-  }
+  };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (
@@ -83,7 +83,7 @@ export class ImportEspeceService extends ImportService {
     const especeToSave: Espece = this.buildEntity(entityTab, classe.id);
 
     return await saveEntity(TABLE_ESPECE, especeToSave, DB_SAVE_MAPPING.espece);
-  }
+  };
 
   private isClasseValid = (classe: string): boolean => {
     classe = classe.trim();
@@ -93,7 +93,7 @@ export class ImportEspeceService extends ImportService {
       return false;
     }
     return true;
-  }
+  };
 
   private isCodeValid = (code: string): boolean => {
     code = code.trim();
@@ -110,7 +110,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     return true;
-  }
+  };
 
   private isNomFrancaisValid = (code: string): boolean => {
     code = code.trim();
@@ -127,7 +127,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     return true;
-  }
+  };
 
   private isNomLatinValid = (code: string): boolean => {
     code = code.trim();
@@ -143,5 +143,5 @@ export class ImportEspeceService extends ImportService {
     }
 
     return true;
-  }
+  };
 }

@@ -88,7 +88,7 @@ const getNbByEntityId = (
 const saveEntity = async (
   entityToSave: EntiteSimple,
   tableName: string,
-  mapping: any
+  mapping: { [column: string]: string }
 ): Promise<PostResponse> => {
   const sqlResponse: SqlSaveResponse = await SqlConnection.query(
     getSaveEntityQuery(tableName, entityToSave, mapping)
@@ -112,7 +112,7 @@ export const getObservateurs = async (): Promise<Observateur[]> => {
       getQueryToFindNumberOfDonneesByObservateurId()
   );
   const observateurs: Observateur[] = results[0];
-  const nbDonneesByObservateur: any[] = results[1];
+  const nbDonneesByObservateur: NumberOfObjectsById[] = results[1];
   _.forEach(observateurs, (observateur: Observateur) => {
     observateur.nbDonnees = getNbByEntityId(
       observateur,

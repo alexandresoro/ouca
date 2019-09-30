@@ -1,19 +1,19 @@
 import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
 import { SqlConnection } from "../sql-api/sql-connection";
-import { getQueryToFindConfigurationByLibelle } from "../sql/sql-queries-configuration";
 import {
   getQueryToFindEntityByCode,
   getQueryToFindEntityByCodeAndLibelle,
   getQueryToFindEntityByLibelle,
   getSaveEntityQuery
 } from "../sql/sql-queries-utils";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 
 export const saveEntity = async (
   tableName: string,
   entityToSave: EntiteSimple,
   mapping: { [column: string]: string }
 ): Promise<boolean> => {
-  const saveResult: any = await SqlConnection.query(
+  const saveResult: SqlSaveResponse = await SqlConnection.query(
     getSaveEntityQuery(tableName, entityToSave, mapping)
   );
 

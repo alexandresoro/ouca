@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import moment from "moment";
 import {
   TABLE_DONNEE_COMPORTEMENT,
@@ -7,6 +6,80 @@ import {
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { getQuery } from "./sql-queries-utils";
+
+const getBaseQueryToFindDonnees = (): string => {
+  return (
+    "SELECT " +
+    "d.id," +
+    "d.inventaire_id as inventaireId," +
+    "i.observateur_id as observateurId," +
+    "i.date," +
+    "i.heure," +
+    "i.duree," +
+    "i.lieudit_id as lieuditId," +
+    "i.altitude," +
+    "i.longitude," +
+    "i.latitude," +
+    "i.temperature," +
+    "d.espece_id as especeId," +
+    "d.sexe_id as sexeId," +
+    "d.age_id as ageId," +
+    "d.estimation_nombre_id as estimationNombreId," +
+    "d.nombre," +
+    "d.estimation_distance_id as estimationDistanceId," +
+    "d.distance," +
+    "d.commentaire," +
+    "d.regroupement" +
+    " FROM donnee d, inventaire i" +
+    " WHERE d.inventaire_id=i.id"
+  );
+};
+
+const getBaseQueryToFindDetailedDonnees = (): string => {
+  return (
+    "SELECT t_donnee.id," +
+    " t_inventaire.id as inventaireId," +
+    " t_observateur.libelle as observateur," +
+    " t_inventaire.date," +
+    " t_inventaire.heure," +
+    " t_inventaire.duree, " +
+    " t_departement.code as departement," +
+    " t_commune.code as codeCommune," +
+    " t_commune.nom as nomCommune," +
+    " t_lieudit.nom as lieudit," +
+    " t_lieudit.altitude," +
+    " t_lieudit.longitude," +
+    " t_lieudit.latitude," +
+    " t_inventaire.altitude as customizedAltitude," +
+    " t_inventaire.longitude as customizedLongitude," +
+    " t_inventaire.latitude as customizedLatitude," +
+    " t_inventaire.temperature, " +
+    " t_classe.libelle as classe," +
+    " t_espece.code as codeEspece," +
+    " t_espece.nom_francais as nomFrancais," +
+    " t_espece.nom_latin as nomLatin, " +
+    " t_sexe.libelle as sexe," +
+    " t_age.libelle as age," +
+    " t_estim_nb.libelle as estimationNombre," +
+    " t_donnee.nombre," +
+    " t_estim_dist.libelle as estimationDistance," +
+    " t_donnee.distance," +
+    " t_donnee.regroupement," +
+    " t_donnee.commentaire" +
+    " FROM donnee t_donnee" +
+    " LEFT JOIN inventaire t_inventaire ON t_donnee.inventaire_id = t_inventaire.id" +
+    " LEFT JOIN observateur t_observateur ON t_inventaire.observateur_id = t_observateur.id" +
+    " LEFT JOIN lieudit t_lieudit ON t_inventaire.lieudit_id = t_lieudit.id" +
+    " LEFT JOIN commune t_commune ON t_lieudit.commune_id = t_commune.id" +
+    " LEFT JOIN departement t_departement ON t_commune.departement_id = t_departement.id" +
+    " LEFT JOIN espece t_espece ON t_donnee.espece_id = t_espece.id" +
+    " LEFT JOIN classe t_classe ON t_espece.classe_id = t_classe.id" +
+    " LEFT JOIN sexe t_sexe ON t_donnee.sexe_id = t_sexe.id" +
+    " LEFT JOIN age t_age ON t_donnee.age_id = t_age.id" +
+    " LEFT JOIN estimation_nombre t_estim_nb ON t_donnee.estimation_nombre_id = t_estim_nb.id " +
+    " LEFT JOIN estimation_distance t_estim_dist ON t_donnee.estimation_distance_id = t_estim_dist.id"
+  );
+};
 
 export const getQueryToCountDonneesByInventaireId = (
   inventaireId: number
@@ -75,7 +148,7 @@ export function getQueryToFindNumberOfDonneesByDoneeeEntityId(
   return getQuery(query);
 }
 
-export function getQueryToFindAllDonnees() {
+export function getQueryToFindAllDonnees(): string {
   const query: string =
     getBaseQueryToFindDetailedDonnees() + " ORDER BY d.id DESC";
 
@@ -288,77 +361,3 @@ export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
 
   return getQuery(query);
 };
-
-const getBaseQueryToFindDetailedDonnees = (): string => {
-  return (
-    "SELECT t_donnee.id," +
-    " t_inventaire.id as inventaireId," +
-    " t_observateur.libelle as observateur," +
-    " t_inventaire.date," +
-    " t_inventaire.heure," +
-    " t_inventaire.duree, " +
-    " t_departement.code as departement," +
-    " t_commune.code as codeCommune," +
-    " t_commune.nom as nomCommune," +
-    " t_lieudit.nom as lieudit," +
-    " t_lieudit.altitude," +
-    " t_lieudit.longitude," +
-    " t_lieudit.latitude," +
-    " t_inventaire.altitude as customizedAltitude," +
-    " t_inventaire.longitude as customizedLongitude," +
-    " t_inventaire.latitude as customizedLatitude," +
-    " t_inventaire.temperature, " +
-    " t_classe.libelle as classe," +
-    " t_espece.code as codeEspece," +
-    " t_espece.nom_francais as nomFrancais," +
-    " t_espece.nom_latin as nomLatin, " +
-    " t_sexe.libelle as sexe," +
-    " t_age.libelle as age," +
-    " t_estim_nb.libelle as estimationNombre," +
-    " t_donnee.nombre," +
-    " t_estim_dist.libelle as estimationDistance," +
-    " t_donnee.distance," +
-    " t_donnee.regroupement," +
-    " t_donnee.commentaire" +
-    " FROM donnee t_donnee" +
-    " LEFT JOIN inventaire t_inventaire ON t_donnee.inventaire_id = t_inventaire.id" +
-    " LEFT JOIN observateur t_observateur ON t_inventaire.observateur_id = t_observateur.id" +
-    " LEFT JOIN lieudit t_lieudit ON t_inventaire.lieudit_id = t_lieudit.id" +
-    " LEFT JOIN commune t_commune ON t_lieudit.commune_id = t_commune.id" +
-    " LEFT JOIN departement t_departement ON t_commune.departement_id = t_departement.id" +
-    " LEFT JOIN espece t_espece ON t_donnee.espece_id = t_espece.id" +
-    " LEFT JOIN classe t_classe ON t_espece.classe_id = t_classe.id" +
-    " LEFT JOIN sexe t_sexe ON t_donnee.sexe_id = t_sexe.id" +
-    " LEFT JOIN age t_age ON t_donnee.age_id = t_age.id" +
-    " LEFT JOIN estimation_nombre t_estim_nb ON t_donnee.estimation_nombre_id = t_estim_nb.id " +
-    " LEFT JOIN estimation_distance t_estim_dist ON t_donnee.estimation_distance_id = t_estim_dist.id"
-  );
-};
-
-function getBaseQueryToFindDonnees() {
-  return (
-    "SELECT " +
-    "d.id," +
-    "d.inventaire_id as inventaireId," +
-    "i.observateur_id as observateurId," +
-    "i.date," +
-    "i.heure," +
-    "i.duree," +
-    "i.lieudit_id as lieuditId," +
-    "i.altitude," +
-    "i.longitude," +
-    "i.latitude," +
-    "i.temperature," +
-    "d.espece_id as especeId," +
-    "d.sexe_id as sexeId," +
-    "d.age_id as ageId," +
-    "d.estimation_nombre_id as estimationNombreId," +
-    "d.nombre," +
-    "d.estimation_distance_id as estimationDistanceId," +
-    "d.distance," +
-    "d.commentaire," +
-    "d.regroupement" +
-    " FROM donnee d, inventaire i" +
-    " WHERE d.inventaire_id=i.id"
-  );
-}

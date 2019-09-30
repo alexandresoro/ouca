@@ -1,5 +1,8 @@
 {
   "eslint.autoFixOnSave": true,
   "eslint.validate": ["typescript", "javascript"],
-  "eslint.packageManager": "yarn"
+  "eslint.packageManager": "yarn",
+  "files.exclude": {
+    "dist/": true
+  }
 }
