@@ -1,4 +1,4 @@
-export interface DonneeFlat {
+export interface FlatDonnee {
   id: number;
   inventaireId: number;
   observateur: string;
@@ -29,17 +29,17 @@ export interface DonneeFlat {
   estimationDistance: string;
   distance: number | null;
   regroupement: number | null;
-  comportements: DonneeFlatComportement[];
-  milieux: DonneeFlatMilieu[];
+  comportements: FlatDonneeComportement[];
+  milieux: FlatDonneeMilieu[];
   commentaire: string;
 }
 
-export interface DonneeFlatComportement {
+export interface FlatDonneeComportement {
   code: string;
   libelle: string;
 }
 
-export interface DonneeFlatMilieu {
+export interface FlatDonneeMilieu {
   code: string;
   libelle: string;
 }
