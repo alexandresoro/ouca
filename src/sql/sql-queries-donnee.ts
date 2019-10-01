@@ -6,6 +6,7 @@ import {
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { getQuery } from "./sql-queries-utils";
+import { DonneesFilter } from "basenaturaliste-model/donnees-filter.object";
 
 const getBaseQueryToFindDonnees = (): string => {
   return (
@@ -155,7 +156,9 @@ export function getQueryToFindAllDonnees(): string {
   return getQuery(query);
 }
 
-export const getQueryToFindDonneesByCriterion = (criterion: any): string => {
+export const getQueryToFindDonneesByCriterion = (
+  criterion: DonneesFilter
+): string => {
   let query: string = getBaseQueryToFindDetailedDonnees();
 
   const whereTab: string[] = [];

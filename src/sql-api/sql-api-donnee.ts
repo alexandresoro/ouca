@@ -10,12 +10,13 @@ import { AssocieByDonnee } from "../objects/associe-by-donnee.object";
 import { MilieuByDonnee } from "../objects/milieu-by-donnee.object";
 import { ComportementByDonnee } from "../objects/comportement-by-donnee.object";
 import { MeteoByDonnee } from "../objects/meteo-by-donnee.object";
+import { DonneesFilter } from "basenaturaliste-model/donnees-filter.object";
 
 export const findDonneesByCustomizedFilters = async (
-  filters: any
+  filter: DonneesFilter
 ): Promise<FlatDonnee[]> => {
   const results = await SqlConnection.query(
-    getQueryToFindDonneesByCriterion(filters) +
+    getQueryToFindDonneesByCriterion(filter) +
       getQueryToFindAllAssocies() +
       getQueryToFindAllMeteos() +
       getQueryToFindAllComportements() +

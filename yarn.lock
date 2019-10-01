@@ -169,7 +169,7 @@ balanced-match@^1.0.0:
 
 "basenaturaliste-model@https://github.com/alexandresoro/basenaturaliste-model#master":
   version "1.0.0"
-  resolved "https://github.com/alexandresoro/basenaturaliste-model#7f6f27ec24266ba3f97f3cb342db7b72b1b1b562"
+  resolved "https://github.com/alexandresoro/basenaturaliste-model#aa0088dc2dee9072d9ec59c5f355632b3927e9e7"
 
 brace-expansion@^1.1.7:
   version "1.1.11"
