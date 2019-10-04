@@ -25,3 +25,12 @@ export const areArraysContainingSameValues = <T>(
     _.union(firstArray, secondArray).length
   );
 };
+
+export const getArrayFromObjects = <T>(
+  objects: T[],
+  attributeName: string
+): number[] => {
+  return _.map(objects, (object) => {
+    return object[attributeName];
+  });
+};

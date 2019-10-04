@@ -9,7 +9,7 @@ export function getQueryToFindAllComportements(): string {
   return getQuery(query);
 }
 
-export function getQueryToFindComportementsByDonneeId(
+export function getQueryToFindComportementsIdsByDonneeId(
   donneeId: number
 ): string {
   return getQuery(

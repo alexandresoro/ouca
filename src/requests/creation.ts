@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import moment from "moment";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlConnection } from "../sql-api/sql-connection";
-import { getQueryToFindComportementsByDonneeId } from "../sql/sql-queries-comportement";
+import { getQueryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";
 import {
   getQueryToFindDonneeById,
   getQueryToFindDonneeIndexById,
@@ -15,10 +15,11 @@ import {
   getQueryToFindNumberOfDonnees,
   getQueryToFindNumberOfDonneesByDoneeeEntityId,
   getQueryToFindPreviousDonneeByCurrentDonneeId,
-  getQueryToCountDonneesByInventaireId
+  getQueryToCountDonneesByInventaireId,
+  getQueryToFindDonneeIdsByAllAttributes
 } from "../sql/sql-queries-donnee";
 import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
-import { getQueryToFindMilieuxByDonneeId } from "../sql/sql-queries-milieu";
+import { getQueryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
 import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
@@ -66,8 +67,17 @@ import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { DonneeWithNavigationData } from "basenaturaliste-model/donnee-with-navigation-data.object";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { PostResponse } from "basenaturaliste-model/post-response.object";
-import { getQueryToFindInventaireIdById } from "../sql/sql-queries-inventaire";
+import {
+  getQueryToFindInventaireIdById,
+  getQueryToFindInventaireIdByAllAttributes,
+  getQueryToFindAssociesIdsByInventaireId,
+  getQueryToFindMeteosIdsByInventaireId
+} from "../sql/sql-queries-inventaire";
 import { Configuration } from "../objects/configuration.object";
+import {
+  getArrayFromObjects,
+  areArraysContainingSameValues
+} from "../utils/utils";
 
 const buildDonneeFromFlatDonneeWithMinimalData = async (
   flatDonnee: FlatDonneeWithMinimalData
@@ -76,8 +86,8 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
     const listsResults = await SqlConnection.query(
       getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
         getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindComportementsByDonneeId(flatDonnee.id) +
-        getQueryToFindMilieuxByDonneeId(flatDonnee.id) +
+        getQueryToFindComportementsIdsByDonneeId(flatDonnee.id) +
+        getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id) +
         getQueryToFindNumberOfDonneesByDoneeeEntityId(
           "inventaire_id",
           flatDonnee.inventaireId
@@ -237,10 +247,73 @@ export const creationInit = async (): Promise<CreationPage> => {
   return creationPage;
 };
 
-const getExistingInventaireId = (
+const getExistingInventaireId = async (
   inventaire: Inventaire
 ): Promise<number | null> => {
-  return null; // TO DO
+  const response = await SqlConnection.query(
+    getQueryToFindInventaireIdByAllAttributes(inventaire)
+  );
+
+  const eligibleInventaireIds: number[] = getArrayFromObjects(response, "id");
+
+  for (const id of eligibleInventaireIds) {
+    // Compare the observateurs associes and the meteos
+    const response = await SqlConnection.query(
+      getQueryToFindAssociesIdsByInventaireId(id) +
+        getQueryToFindMeteosIdsByInventaireId(id)
+    );
+
+    const associesIds: number[] = getArrayFromObjects(
+      response[0],
+      "observateur_id"
+    );
+    const meteosIds: number[] = getArrayFromObjects(response[1], "meteo_id");
+
+    if (
+      id !== inventaire.id &&
+      areArraysContainingSameValues(associesIds, inventaire.associesIds) &&
+      areArraysContainingSameValues(meteosIds, inventaire.meteosIds)
+    ) {
+      return id;
+    }
+  }
+
+  return null;
+};
+
+const getExistingDonneeId = async (donnee: Donnee): Promise<number | null> => {
+  const response = await SqlConnection.query(
+    getQueryToFindDonneeIdsByAllAttributes(donnee)
+  );
+
+  const eligibleDonneeIds: number[] = getArrayFromObjects(response, "id");
+
+  for (const id of eligibleDonneeIds) {
+    // Compare the comportements and the milieux
+    const response = await SqlConnection.query(
+      getQueryToFindComportementsIdsByDonneeId(id) +
+        getQueryToFindMilieuxIdsByDonneeId(id)
+    );
+
+    const comportementsIds: number[] = getArrayFromObjects(
+      response[0],
+      "comportementId"
+    );
+    const milieuxIds: number[] = getArrayFromObjects(response[1], "meteoId");
+
+    if (
+      id !== donnee.id &&
+      areArraysContainingSameValues(
+        comportementsIds,
+        donnee.comportementsIds
+      ) &&
+      areArraysContainingSameValues(milieuxIds, donnee.milieuxIds)
+    ) {
+      return id;
+    }
+  }
+
+  return null;
 };
 
 const updateInventaire = async (
@@ -318,11 +391,7 @@ export const saveInventaire = async (
 
   const existingId: number = await getExistingInventaireId(inventaireToSave);
 
-  if (
-    existingId &&
-    (!inventaireToSave.id ||
-      (inventaireToSave.id && existingId !== inventaireToSave.id))
-  ) {
+  if (existingId) {
     if (inventaireToSave.id) {
       await SqlConnection.query(
         getDeleteEntityByIdQuery(TABLE_INVENTAIRE, inventaireToSave.id)
@@ -340,10 +409,6 @@ export const saveInventaire = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-const getExistingDonneeId = (donnee: Donnee): Promise<number | null> => {
-  return null; // TO DO
-};
-
 export const saveDonnee = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
@@ -352,7 +417,7 @@ export const saveDonnee = async (
   // Check if the donnee already exists or not
   const existingDonneeId: number = await getExistingDonneeId(donneeToSave);
 
-  if (existingDonneeId && existingDonneeId !== donneeToSave.id) {
+  if (existingDonneeId) {
     // The donnee already exists so we return an error
     return buildErrorPostResponse(
       "Cette donnée existe déjà (ID = " + existingDonneeId + ")."

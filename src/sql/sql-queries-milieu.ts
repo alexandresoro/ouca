@@ -1,6 +1,6 @@
 import { getQuery } from "./sql-queries-utils";
 
-export function getQueryToFindAllMilieux() {
+export function getQueryToFindAllMilieux(): string {
   const query: string =
     "SELECT d.donnee_id as donneeId, m.code, m.libelle" +
     " FROM donnee_milieu d" +
@@ -9,7 +9,7 @@ export function getQueryToFindAllMilieux() {
   return getQuery(query);
 }
 
-export function getQueryToFindMilieuxByDonneeId(donneeId: number): string {
+export function getQueryToFindMilieuxIdsByDonneeId(donneeId: number): string {
   return getQuery(
     "SELECT distinct milieu_id as milieuId FROM donnee_milieu WHERE donnee_id=" +
       donneeId

@@ -22,7 +22,7 @@ export const getQueryToFindInventaireIdById = (id: number): string => {
   return getQuery("SELECT id FROM inventaire WHERE id=" + id);
 };
 
-export const getQueryToFindInventaireByAllAttributes = (
+export const getQueryToFindInventaireIdByAllAttributes = (
   inventaire: Inventaire
 ): string => {
   let query: string =
@@ -30,40 +30,65 @@ export const getQueryToFindInventaireByAllAttributes = (
     " FROM inventaire i" +
     " WHERE i.observateur_id=" +
     inventaire.observateurId +
-    " AND i.date=" +
+    " AND i.date=STR_TO_DATE('" +
     moment(inventaire.date).format("YYYY-MM-DD") +
+    "', '%Y-%m-%d')" +
     " AND i.lieudit_id=" +
     inventaire.lieuditId;
 
   query =
-    query + "AND i.heure" + !inventaire.heure
-      ? " is null"
-      : '="' + inventaire.heure + '"';
+    query +
+    " AND i.heure" +
+    (!inventaire.heure ? " is null" : '="' + inventaire.heure + '"');
 
   query =
-    query + "AND i.duree" + !inventaire.duree
-      ? " is null"
-      : '="' + inventaire.duree + '"';
+    query +
+    " AND i.duree" +
+    (!inventaire.duree ? " is null" : '="' + inventaire.duree + '"');
 
   query =
-    query + "AND i.altitude" + !inventaire.altitude
-      ? " is null"
-      : "=" + inventaire.altitude;
+    query +
+    " AND i.altitude" +
+    (!inventaire.altitude ? " is null" : "=" + inventaire.altitude);
 
   query =
-    query + "AND i.longitude" + !inventaire.longitude
-      ? " is null"
-      : "=" + inventaire.longitude;
+    query +
+    " AND i.longitude" +
+    (!inventaire.longitude ? " is null" : "=" + inventaire.longitude);
 
   query =
-    query + "AND i.latitude" + !inventaire.latitude
-      ? " is null"
-      : "=" + inventaire.latitude;
+    query +
+    " AND i.latitude" +
+    (!inventaire.latitude ? " is null" : "=" + inventaire.latitude);
 
   query =
-    query + "AND i.temperature" + !inventaire.temperature
-      ? " is null"
-      : "=" + inventaire.temperature;
+    query +
+    " AND i.temperature" +
+    (!inventaire.temperature ? " is null" : "=" + inventaire.temperature);
+
+  return getQuery(query);
+};
+
+export const getQueryToFindAssociesIdsByInventaireId = (
+  inventaireId: number
+): string => {
+  const query: string =
+    "SELECT observateur_id" +
+    " FROM inventaire_associe" +
+    " WHERE inventaire_id=" +
+    inventaireId;
+
+  return getQuery(query);
+};
+
+export const getQueryToFindMeteosIdsByInventaireId = (
+  inventaireId: number
+): string => {
+  const query: string =
+    "SELECT meteo_id" +
+    " FROM inventaire_meteo" +
+    " WHERE inventaire_id=" +
+    inventaireId;
 
   return getQuery(query);
 };

@@ -366,7 +366,9 @@ export const getQueryToFindDonneesByCriterion = (
   return getQuery(query);
 };
 
-export const getQueryToFindDonneeByAllAttributes = (donnee: Donnee): string => {
+export const getQueryToFindDonneeIdsByAllAttributes = (
+  donnee: Donnee
+): string => {
   let query: string =
     "SELECT d.id" +
     " FROM donnee d" +
@@ -382,27 +384,31 @@ export const getQueryToFindDonneeByAllAttributes = (donnee: Donnee): string => {
     donnee.estimationNombreId;
 
   query =
-    query + "AND d.nombre" + !donnee.nombre ? " is null" : "=" + donnee.nombre;
+    query +
+    " AND d.nombre" +
+    (!donnee.nombre ? " is null" : "=" + donnee.nombre);
 
   query =
-    query + " AND d.estimation_distance_id" + !donnee.estimationDistanceId
+    query +
+    " AND d.estimation_distance_id" +
+    (!donnee.estimationDistanceId
       ? " is null"
-      : "=" + donnee.estimationDistanceId;
+      : "=" + donnee.estimationDistanceId);
 
   query =
-    query + " AND d.distance" + !donnee.distance
-      ? " is null"
-      : "=" + donnee.distance;
+    query +
+    " AND d.distance" +
+    (!donnee.distance ? " is null" : "=" + donnee.distance);
 
   query =
-    query + " AND d.regroupement" + !donnee.regroupement
-      ? " is null"
-      : "=" + donnee.regroupement;
+    query +
+    " AND d.regroupement" +
+    (!donnee.regroupement ? " is null" : "=" + donnee.regroupement);
 
   query =
-    query + " AND d.commentaire" + !donnee.commentaire
-      ? " is null"
-      : '="' + donnee.commentaire + '"';
+    query +
+    " AND d.commentaire" +
+    (!donnee.commentaire ? " is null" : '="' + donnee.commentaire + '"');
 
   return getQuery(query);
 };
