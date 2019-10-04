@@ -237,29 +237,36 @@ export const creationInit = async (): Promise<CreationPage> => {
   return creationPage;
 };
 
-export const saveInventaire = async (
-  httpParameters: HttpParameters
-): Promise<SqlSaveResponse> => {
-  const inventaireToSave: Inventaire = httpParameters.postData;
-  const { date, ...otherParams } = inventaireToSave;
+const getExistingInventaireId = (
+  inventaire: Inventaire
+): Promise<number | null> => {
+  return null; // TO DO
+};
 
-  // It is an update we delete the current associes and meteos to insert later the updated ones
-  if (inventaireToSave.id) {
+const updateInventaire = async (
+  inventaire: Inventaire
+): Promise<SqlSaveResponse> => {
+  const { date, ...otherParams } = inventaire;
+
+  if (inventaire.id) {
+    // It is an update
+    // We delete the current associes and meteos to insert later the updated ones
     await SqlConnection.query(
       getDeleteEntityByAttributeQuery(
         TABLE_INVENTAIRE_ASSOCIE,
         "inventaire_id",
-        inventaireToSave.id
+        inventaire.id
       ) +
         getDeleteEntityByAttributeQuery(
           TABLE_INVENTAIRE_METEO,
           "inventaire_id",
-          inventaireToSave.id
+          inventaire.id
         )
     );
   }
 
-  const inventaireResult = await SqlConnection.query(
+  // Save the inventaire
+  const inventaireResult: SqlSaveResponse = await SqlConnection.query(
     getSaveEntityQuery(
       TABLE_INVENTAIRE,
       {
@@ -271,32 +278,70 @@ export const saveInventaire = async (
     )
   );
 
+  // Get the inventaire ID
   // If it is an update we take the existing ID else we take the inserted ID
-  const inventaireId: number = inventaireToSave.id
-    ? inventaireToSave.id
+  const inventaireId: number = inventaire.id
+    ? inventaire.id
     : inventaireResult.insertId;
 
-  if (inventaireToSave.associesIds.length > 0) {
+  // Save the observateurs associes
+  if (inventaire.associesIds.length > 0) {
     await SqlConnection.query(
       getSaveListOfEntitesQueries(
         TABLE_INVENTAIRE_ASSOCIE,
         inventaireId,
-        inventaireToSave.associesIds
+        inventaire.associesIds
       )
     );
   }
 
-  if (inventaireToSave.meteosIds.length > 0) {
+  // Save the meteos
+  if (inventaire.meteosIds.length > 0) {
     await SqlConnection.query(
       getSaveListOfEntitesQueries(
         TABLE_INVENTAIRE_METEO,
         inventaireId,
-        inventaireToSave.meteosIds
+        inventaire.meteosIds
       )
     );
   }
 
   return inventaireResult;
+};
+
+export const saveInventaire = async (
+  httpParameters: HttpParameters
+): Promise<PostResponse> => {
+  const inventaireToSave: Inventaire = httpParameters.postData;
+
+  let sqlResponse: SqlSaveResponse;
+
+  const existingId: number = await getExistingInventaireId(inventaireToSave);
+
+  if (
+    existingId &&
+    (!inventaireToSave.id ||
+      (inventaireToSave.id && existingId !== inventaireToSave.id))
+  ) {
+    if (inventaireToSave.id) {
+      await SqlConnection.query(
+        getDeleteEntityByIdQuery(TABLE_INVENTAIRE, inventaireToSave.id)
+      );
+    }
+    sqlResponse = {
+      insertId: existingId,
+      warningStatus: null,
+      affectedRows: 0
+    };
+  } else {
+    sqlResponse = await updateInventaire(inventaireToSave);
+  }
+
+  return buildPostResponseFromSqlResponse(sqlResponse);
+};
+
+const getExistingDonneeId = (donnee: Donnee): Promise<number | null> => {
+  return null; // TO DO
 };
 
 export const saveDonnee = async (
@@ -305,7 +350,7 @@ export const saveDonnee = async (
   const donneeToSave: Donnee = httpParameters.postData;
 
   // Check if the donnee already exists or not
-  const existingDonneeId: number = null; // TO DO
+  const existingDonneeId: number = await getExistingDonneeId(donneeToSave);
 
   if (existingDonneeId && existingDonneeId !== donneeToSave.id) {
     // The donnee already exists so we return an error

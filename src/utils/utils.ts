@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 export function buildArgRegexFromKey(
   argKey: string,
   delimiter: string
@@ -12,4 +14,14 @@ export const toCamel = (s: string): string => {
       .replace("-", "")
       .replace("_", "");
   });
+};
+
+export const areArraysContainingSameValues = <T>(
+  firstArray: T[],
+  secondArray: T[]
+): boolean => {
+  return (
+    _.intersection(firstArray, secondArray).length ===
+    _.union(firstArray, secondArray).length
+  );
 };

@@ -7,6 +7,7 @@ import {
 } from "../utils/constants";
 import { getQuery } from "./sql-queries-utils";
 import { DonneesFilter } from "basenaturaliste-model/donnees-filter.object";
+import { Donnee } from "basenaturaliste-model/donnee.object";
 
 const getBaseQueryToFindDonnees = (): string => {
   return (
@@ -361,6 +362,47 @@ export const getQueryToFindDonneesByCriterion = (
   query += whereTab.join(" AND");
 
   query += " ORDER BY t_donnee.id DESC";
+
+  return getQuery(query);
+};
+
+export const getQueryToFindDonneeByAllAttributes = (donnee: Donnee): string => {
+  let query: string =
+    "SELECT d.id" +
+    " FROM donnee d" +
+    " WHERE d.inventaire_id=" +
+    donnee.inventaireId +
+    " AND d.espece_id=" +
+    donnee.especeId +
+    " AND d.sexe_id=" +
+    donnee.sexeId +
+    " AND d.age_id=" +
+    donnee.ageId +
+    " AND d.estimation_nombre_id=" +
+    donnee.estimationNombreId;
+
+  query =
+    query + "AND d.nombre" + !donnee.nombre ? " is null" : "=" + donnee.nombre;
+
+  query =
+    query + " AND d.estimation_distance_id" + !donnee.estimationDistanceId
+      ? " is null"
+      : "=" + donnee.estimationDistanceId;
+
+  query =
+    query + " AND d.distance" + !donnee.distance
+      ? " is null"
+      : "=" + donnee.distance;
+
+  query =
+    query + " AND d.regroupement" + !donnee.regroupement
+      ? " is null"
+      : "=" + donnee.regroupement;
+
+  query =
+    query + " AND d.commentaire" + !donnee.commentaire
+      ? " is null"
+      : '="' + donnee.commentaire + '"';
 
   return getQuery(query);
 };

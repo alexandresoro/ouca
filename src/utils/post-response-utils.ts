@@ -30,3 +30,13 @@ export const buildErrorPostResponse = (message: string): PostResponse => {
     message: message
   };
 };
+
+export const buildSuccessPostResponse = (
+  insertId: number = null
+): PostResponse => {
+  return {
+    isSuccess: true,
+    message: "",
+    insertId: insertId
+  };
+};
