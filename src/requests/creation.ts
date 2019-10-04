@@ -16,7 +16,8 @@ import {
   getQueryToFindNumberOfDonneesByDoneeeEntityId,
   getQueryToFindPreviousDonneeByCurrentDonneeId,
   getQueryToCountDonneesByInventaireId,
-  getQueryToFindDonneeIdsByAllAttributes
+  getQueryToFindDonneeIdsByAllAttributes,
+  getQueryToUpdateDonneesInventaireId
 } from "../sql/sql-queries-donnee";
 import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
 import { getQueryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
@@ -393,6 +394,9 @@ export const saveInventaire = async (
 
   if (existingId) {
     if (inventaireToSave.id) {
+      await SqlConnection.query(
+        getQueryToUpdateDonneesInventaireId(inventaireToSave.id, existingId)
+      );
       await SqlConnection.query(
         getDeleteEntityByIdQuery(TABLE_INVENTAIRE, inventaireToSave.id)
       );

@@ -92,6 +92,18 @@ export const getQueryToCountDonneesByInventaireId = (
   );
 };
 
+export const getQueryToUpdateDonneesInventaireId = (
+  oldInventaireId: number,
+  newInventaireId: number
+): string => {
+  return getQuery(
+    "UPDATE donnee SET inventaire_id=" +
+      newInventaireId +
+      " WHERE inventaire_id=" +
+      oldInventaireId
+  );
+};
+
 export function getQueryToFindNumberOfDonnees(): string {
   return getQuery("SELECT COUNT(*) as nbDonnees FROM donnee");
 }
