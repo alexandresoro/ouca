@@ -52,7 +52,7 @@ export const persistInventaire = async (
     getSaveEntityQuery(
       TABLE_INVENTAIRE,
       {
-        date: moment(date).format("YYYY-MM-DD"),
+        date: moment.utc(date).format("YYYY-MM-DD"),
         dateCreation: moment().format("YYYY-MM-DD HH:mm:ss"),
         ...otherParams
       },
