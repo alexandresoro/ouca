@@ -1,8 +1,7 @@
 import { Donnee } from "./donnee.object";
 
-export interface DonneeWithNavigationData {
-  donnee: Donnee;
-  previousDonnee: Donnee | null;
-  nextDonnee: Donnee | null;
+export interface DonneeWithNavigationData extends Donnee {
+  previousDonneeId: number | null;
+  nextDonneeId: number | null;
   indexDonnee: number;
 }
