@@ -136,6 +136,10 @@ export function getQueryToFindLastDonnee(): string {
   );
 }
 
+export function getQueryToFindLastDonneeId(): string {
+  return getQuery("SELECT id FROM donnee ORDER BY id DESC LIMIT 0,1");
+}
+
 export function getQueryToFindDonneeById(id: number): string {
   return getQuery(getBaseQueryToFindDonnees() + " AND d.id=" + id);
 }

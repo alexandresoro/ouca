@@ -61,7 +61,8 @@ import { Configuration } from "../objects/configuration.object";
 import {
   persistDonnee,
   getExistingDonneeId,
-  updateInventaireIdForDonnees
+  updateInventaireIdForDonnees,
+  findLastDonneeId
 } from "../sql-api/sql-api-donnee";
 import {
   persistInventaire,
@@ -355,12 +356,12 @@ export const getDonneeByIdWithContext = async (
       getQueryToFindDonneeIndexById(id)
   );
 
+  const donnee = await buildDonneeFromFlatDonneeWithMinimalData(results[0][0]);
+
   return {
-    donnee: await buildDonneeFromFlatDonneeWithMinimalData(results[0][0]),
-    previousDonnee: await buildDonneeFromFlatDonneeWithMinimalData(
-      results[1][0]
-    ),
-    nextDonnee: await buildDonneeFromFlatDonneeWithMinimalData(results[2][0]),
+    ...donnee,
+    previousDonneeId: results[1][0] ? results[1][0].id : null,
+    nextDonneeId: results[2][0] ? results[2][0].id : null,
     indexDonnee:
       !!results[3] && !!results[3][0] ? results[3][0].nbDonnees : null
   };
@@ -393,4 +394,8 @@ export const getInventaireIdById = async (
   httpParameters: HttpParameters
 ): Promise<number> => {
   return findInventaireIdById(+httpParameters.queryParameters.id);
+};
+
+export const getLastDonneeId = async (): Promise<number> => {
+  return findLastDonneeId();
 };

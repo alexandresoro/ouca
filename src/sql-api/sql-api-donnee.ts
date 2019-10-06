@@ -7,7 +7,9 @@ import {
 import {
   getQueryToFindDonneesByCriterion,
   getQueryToFindDonneeIdsByAllAttributes,
-  getQueryToUpdateDonneesInventaireId
+  getQueryToUpdateDonneesInventaireId,
+  getQueryToFindLastDonnee,
+  getQueryToFindLastDonneeId
 } from "../sql/sql-queries-donnee";
 import { getQueryToFindAllMeteos } from "../sql/sql-queries-meteo";
 import {
@@ -136,6 +138,11 @@ export const getExistingDonneeId = async (
   }
 
   return null;
+};
+
+export const findLastDonneeId = async (): Promise<number> => {
+  const result = await SqlConnection.query(getQueryToFindLastDonneeId());
+  return result && result[0] ? result[0].id : null;
 };
 
 export const updateInventaireIdForDonnees = async (

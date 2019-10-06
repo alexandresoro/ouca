@@ -13,7 +13,8 @@ import {
   getPreviousDonnee,
   saveDonnee,
   saveInventaire,
-  getInventaireIdById
+  getInventaireIdById,
+  getLastDonneeId
 } from "./requests/creation";
 import {
   deleteAge,
@@ -109,6 +110,7 @@ export const REQUEST_MAPPING: {
   "/api/donnee/export": exportDonneesByCustomizedFilters,
   "/api/donnee/save": saveDonnee,
   "/api/donnee/delete": deleteDonnee,
+  "/api/donnee/last": getLastDonneeId,
   "/api/donnee/next_donnee": getNextDonnee,
   "/api/donnee/previous_donnee": getPreviousDonnee,
   "/api/donnee/next_regroupement": getNextRegroupement,
