@@ -2,7 +2,6 @@ import { CreationPage } from "basenaturaliste-model/creation-page.object";
 import { Donnee } from "basenaturaliste-model/donnee.object";
 import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
-import moment from "moment";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";
@@ -15,21 +14,15 @@ import {
   getQueryToFindNumberOfDonnees,
   getQueryToFindNumberOfDonneesByDoneeeEntityId,
   getQueryToFindPreviousDonneeByCurrentDonneeId,
-  getQueryToCountDonneesByInventaireId,
-  getQueryToFindDonneeIdsByAllAttributes,
-  getQueryToUpdateDonneesInventaireId
+  getQueryToCountDonneesByInventaireId
 } from "../sql/sql-queries-donnee";
 import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
 import { getQueryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
 import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import {
-  DB_SAVE_MAPPING,
   getAllFromTablesQuery,
-  getDeleteEntityByAttributeQuery,
   getDeleteEntityByIdQuery,
-  getFindOneByIdQuery,
-  getSaveEntityQuery,
-  getSaveListOfEntitesQueries
+  getFindOneByIdQuery
 } from "../sql/sql-queries-utils";
 import {
   KEY_ARE_ASSOCIES_DISPLAYED,
@@ -43,11 +36,7 @@ import {
   KEY_IS_METEO_DISPLAYED,
   KEY_IS_REGROUPEMENT_DISPLAYED,
   TABLE_DONNEE,
-  TABLE_DONNEE_COMPORTEMENT,
-  TABLE_DONNEE_MILIEU,
-  TABLE_INVENTAIRE,
-  TABLE_INVENTAIRE_ASSOCIE,
-  TABLE_INVENTAIRE_METEO
+  TABLE_INVENTAIRE
 } from "../utils/constants";
 import {
   mapAssociesIds,
@@ -68,17 +57,18 @@ import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { DonneeWithNavigationData } from "basenaturaliste-model/donnee-with-navigation-data.object";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { PostResponse } from "basenaturaliste-model/post-response.object";
-import {
-  getQueryToFindInventaireIdById,
-  getQueryToFindInventaireIdByAllAttributes,
-  getQueryToFindAssociesIdsByInventaireId,
-  getQueryToFindMeteosIdsByInventaireId
-} from "../sql/sql-queries-inventaire";
 import { Configuration } from "../objects/configuration.object";
 import {
-  getArrayFromObjects,
-  areArraysContainingSameValues
-} from "../utils/utils";
+  persistDonnee,
+  getExistingDonneeId,
+  updateInventaireIdForDonnees
+} from "../sql-api/sql-api-donnee";
+import {
+  persistInventaire,
+  getExistingInventaireId,
+  deleteInventaireById,
+  findInventaireIdById
+} from "../sql-api/sql-api-inventaire";
 
 const buildDonneeFromFlatDonneeWithMinimalData = async (
   flatDonnee: FlatDonneeWithMinimalData
@@ -248,141 +238,6 @@ export const creationInit = async (): Promise<CreationPage> => {
   return creationPage;
 };
 
-const getExistingInventaireId = async (
-  inventaire: Inventaire
-): Promise<number | null> => {
-  const response = await SqlConnection.query(
-    getQueryToFindInventaireIdByAllAttributes(inventaire)
-  );
-
-  const eligibleInventaireIds: number[] = getArrayFromObjects(response, "id");
-
-  for (const id of eligibleInventaireIds) {
-    // Compare the observateurs associes and the meteos
-    const response = await SqlConnection.query(
-      getQueryToFindAssociesIdsByInventaireId(id) +
-        getQueryToFindMeteosIdsByInventaireId(id)
-    );
-
-    const associesIds: number[] = getArrayFromObjects(
-      response[0],
-      "observateur_id"
-    );
-    const meteosIds: number[] = getArrayFromObjects(response[1], "meteo_id");
-
-    if (
-      id !== inventaire.id &&
-      areArraysContainingSameValues(associesIds, inventaire.associesIds) &&
-      areArraysContainingSameValues(meteosIds, inventaire.meteosIds)
-    ) {
-      return id;
-    }
-  }
-
-  return null;
-};
-
-const getExistingDonneeId = async (donnee: Donnee): Promise<number | null> => {
-  const response = await SqlConnection.query(
-    getQueryToFindDonneeIdsByAllAttributes(donnee)
-  );
-
-  const eligibleDonneeIds: number[] = getArrayFromObjects(response, "id");
-
-  for (const id of eligibleDonneeIds) {
-    // Compare the comportements and the milieux
-    const response = await SqlConnection.query(
-      getQueryToFindComportementsIdsByDonneeId(id) +
-        getQueryToFindMilieuxIdsByDonneeId(id)
-    );
-
-    const comportementsIds: number[] = getArrayFromObjects(
-      response[0],
-      "comportementId"
-    );
-    const milieuxIds: number[] = getArrayFromObjects(response[1], "meteoId");
-
-    if (
-      id !== donnee.id &&
-      areArraysContainingSameValues(
-        comportementsIds,
-        donnee.comportementsIds
-      ) &&
-      areArraysContainingSameValues(milieuxIds, donnee.milieuxIds)
-    ) {
-      return id;
-    }
-  }
-
-  return null;
-};
-
-const updateInventaire = async (
-  inventaire: Inventaire
-): Promise<SqlSaveResponse> => {
-  const { date, ...otherParams } = inventaire;
-
-  if (inventaire.id) {
-    // It is an update
-    // We delete the current associes and meteos to insert later the updated ones
-    await SqlConnection.query(
-      getDeleteEntityByAttributeQuery(
-        TABLE_INVENTAIRE_ASSOCIE,
-        "inventaire_id",
-        inventaire.id
-      ) +
-        getDeleteEntityByAttributeQuery(
-          TABLE_INVENTAIRE_METEO,
-          "inventaire_id",
-          inventaire.id
-        )
-    );
-  }
-
-  // Save the inventaire
-  const inventaireResult: SqlSaveResponse = await SqlConnection.query(
-    getSaveEntityQuery(
-      TABLE_INVENTAIRE,
-      {
-        date: moment(date).format("YYYY-MM-DD"),
-        dateCreation: moment().format("YYYY-MM-DD HH:mm:ss"),
-        ...otherParams
-      },
-      DB_SAVE_MAPPING.inventaire
-    )
-  );
-
-  // Get the inventaire ID
-  // If it is an update we take the existing ID else we take the inserted ID
-  const inventaireId: number = inventaire.id
-    ? inventaire.id
-    : inventaireResult.insertId;
-
-  // Save the observateurs associes
-  if (inventaire.associesIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_INVENTAIRE_ASSOCIE,
-        inventaireId,
-        inventaire.associesIds
-      )
-    );
-  }
-
-  // Save the meteos
-  if (inventaire.meteosIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_INVENTAIRE_METEO,
-        inventaireId,
-        inventaire.meteosIds
-      )
-    );
-  }
-
-  return inventaireResult;
-};
-
 export const saveInventaire = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
@@ -393,21 +248,23 @@ export const saveInventaire = async (
   const existingId: number = await getExistingInventaireId(inventaireToSave);
 
   if (existingId) {
+    // A similar inventaire already exists
+    // We use it instead of creating a duplicated inventaire
+
     if (inventaireToSave.id) {
-      await SqlConnection.query(
-        getQueryToUpdateDonneesInventaireId(inventaireToSave.id, existingId)
-      );
-      await SqlConnection.query(
-        getDeleteEntityByIdQuery(TABLE_INVENTAIRE, inventaireToSave.id)
-      );
+      // We update the inventaire ID for the donnees and we delete the duplicated inventaire
+      await updateInventaireIdForDonnees(inventaireToSave.id, existingId);
+      await deleteInventaireById(inventaireToSave.id);
     }
+
     sqlResponse = {
       insertId: existingId,
       warningStatus: null,
       affectedRows: 0
     };
   } else {
-    sqlResponse = await updateInventaire(inventaireToSave);
+    // Save the inventaire
+    sqlResponse = await persistInventaire(inventaireToSave);
   }
 
   return buildPostResponseFromSqlResponse(sqlResponse);
@@ -427,62 +284,9 @@ export const saveDonnee = async (
       "Cette donnée existe déjà (ID = " + existingDonneeId + ")."
     );
   } else {
-    // The donnee does not exists yet, we save it
-
-    if (donneeToSave.id) {
-      // It is an update: we delete the current comportements
-      // and milieux to insert later the updated ones
-      await SqlConnection.query(
-        getDeleteEntityByAttributeQuery(
-          TABLE_DONNEE_COMPORTEMENT,
-          "donnee_id",
-          donneeToSave.id
-        ) +
-          getDeleteEntityByAttributeQuery(
-            TABLE_DONNEE_MILIEU,
-            "donnee_id",
-            donneeToSave.id
-          )
-      );
-    }
-
-    const saveDonneeResponse: SqlSaveResponse = await SqlConnection.query(
-      getSaveEntityQuery(
-        TABLE_DONNEE,
-        {
-          ...donneeToSave,
-          dateCreation: moment().format("YYYY-MM-DD HH:mm:ss")
-        },
-        DB_SAVE_MAPPING.donnee
-      )
+    const saveDonneeResponse: SqlSaveResponse = await persistDonnee(
+      donneeToSave
     );
-
-    // If it is an update we take the existing ID else we take the inserted ID
-    const savedDonneeId: number = donneeToSave.id
-      ? donneeToSave.id
-      : saveDonneeResponse.insertId;
-
-    // Save the comportements
-    if (donneeToSave.comportementsIds.length > 0) {
-      await SqlConnection.query(
-        getSaveListOfEntitesQueries(
-          TABLE_DONNEE_COMPORTEMENT,
-          savedDonneeId,
-          donneeToSave.comportementsIds
-        )
-      );
-    }
-
-    // Save the milieux
-    if (donneeToSave.milieuxIds.length > 0) {
-      await SqlConnection.query(
-        getSaveListOfEntitesQueries(
-          TABLE_DONNEE_MILIEU,
-          savedDonneeId,
-          donneeToSave.milieuxIds
-        )
-      );
-    }
 
     return buildPostResponseFromSqlResponse(saveDonneeResponse);
   }
@@ -588,8 +392,5 @@ export const getInventaireById = async (
 export const getInventaireIdById = async (
   httpParameters: HttpParameters
 ): Promise<number> => {
-  const response = await SqlConnection.query(
-    getQueryToFindInventaireIdById(+httpParameters.queryParameters.id)
-  );
-  return response[0] ? response[0].id : null;
+  return findInventaireIdById(+httpParameters.queryParameters.id);
 };
