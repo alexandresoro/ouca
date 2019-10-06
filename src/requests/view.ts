@@ -39,7 +39,7 @@ export const exportDonneesByCustomizedFilters = async (
       reason:
         "Votre recherche comporte plus de " +
         MAXIMUM_EXCEL_DATA_SUPPORTED +
-        " données. Merci d'affiner votre recherche.",
+        " données. Merci d'affiner votre recherche (par date...).",
       nonFatal: true
     });
   }
