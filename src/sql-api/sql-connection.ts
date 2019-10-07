@@ -2,37 +2,6 @@ import * as _ from "lodash";
 import * as mariadb from "mariadb";
 import { buildArgRegexFromKey } from "../utils/utils";
 
-export class SqlConnection {
-  public static async query(query: string): Promise<any> {
-    const connection = await this.getConnection();
-    return connection.query(query);
-  }
-
-  // The current database connection
-  private static connection: mariadb.Connection | null | undefined;
-
-  private static async getConnection(): Promise<mariadb.Connection> {
-    // If we already have an existing connection but, the connection is no more valid,
-    // we destroy it in order to recreate a new one
-    if (this.connection && !this.connection.isValid()) {
-      this.connection.destroy();
-      this.connection = null;
-    }
-
-    // If no valid connection exists, we create a new one
-    if (!this.connection) {
-      try {
-        const connection = await createDatabaseConnection();
-        this.connection = connection;
-      } catch (error) {
-        // If something went wrong during the creation of the connection, we reject the promise
-        return Promise.reject(error);
-      }
-    }
-    return this.connection;
-  }
-}
-
 const DEFAULT_DB_HOST: string = "127.0.0.1";
 
 const DEFAULT_DB_PORT: number = 3306;
@@ -125,7 +94,7 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
 
   console.log(
     `Database configured with address ${config.host}:${config.port} and user ${
-      config.user
+    config.user
     } and password ${config.password} on database "${config.database}"`
   );
 
@@ -133,9 +102,7 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
 };
 
 const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
-  return (mariadb.createConnection(getSqlConnectionConfiguration()) as Promise<
-    mariadb.Connection
-  >)
+  return (mariadb.createConnection(getSqlConnectionConfiguration()))
     .then((conn) => {
       console.log("Connected to the database: ", conn.serverVersion());
       conn.on("error", (error) => {
@@ -152,3 +119,34 @@ const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
       return Promise.reject(error);
     });
 };
+
+export class SqlConnection {
+  public static async query(query: string): Promise<any> {
+    const connection = await this.getConnection();
+    return connection.query(query);
+  }
+
+  // The current database connection
+  private static connection: mariadb.Connection | null | undefined;
+
+  private static async getConnection(): Promise<mariadb.Connection> {
+    // If we already have an existing connection but, the connection is no more valid,
+    // we destroy it in order to recreate a new one
+    if (this.connection && !this.connection.isValid()) {
+      this.connection.destroy();
+      this.connection = null;
+    }
+
+    // If no valid connection exists, we create a new one
+    if (!this.connection) {
+      try {
+        const connection = await createDatabaseConnection();
+        this.connection = connection;
+      } catch (error) {
+        // If something went wrong during the creation of the connection, we reject the promise
+        return Promise.reject(error);
+      }
+    }
+    return this.connection;
+  }
+}
