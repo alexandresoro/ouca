@@ -270,7 +270,7 @@ export const getQueryToFindDonneesByCriterion = (
   if (criterion.fromDate) {
     whereTab.push(
       " t_inventaire.date>='" +
-        moment(criterion.fromDate).format("YYYY-MM-DD") +
+        moment.utc(criterion.fromDate).format("YYYY-MM-DD") +
         "'"
     );
   }
@@ -278,7 +278,7 @@ export const getQueryToFindDonneesByCriterion = (
   if (criterion.toDate) {
     whereTab.push(
       " t_inventaire.date<='" +
-        moment(criterion.toDate).format("YYYY-MM-DD") +
+        moment.utc(criterion.toDate).format("YYYY-MM-DD") +
         "'"
     );
   }
