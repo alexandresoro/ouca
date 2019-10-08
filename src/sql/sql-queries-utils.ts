@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 import { toCamel } from "../utils/utils";
 import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
+import { SqlConnection } from "../sql-api/sql-connection";
 
 const createKeyValueMapWithSameName = (
   names: string | string[]
@@ -130,6 +131,12 @@ export function getFindAllQuery(
   return getQuery(query);
 }
 
+export const getFindAllSqlQuery = (tableName: string): Promise<any> => {
+  return SqlConnection.query(
+    getFindAllQuery(tableName)
+  )
+}
+
 export const getAllFromTablesQuery = (tableNames: string[]): string => {
   return _.reduce(
     _.map(tableNames, (tableName) => {
@@ -140,6 +147,12 @@ export const getAllFromTablesQuery = (tableNames: string[]): string => {
     }
   );
 };
+
+export const getAllFromTablesSqlQuery = (tableNames: string[]): Promise<any>[] => {
+  return _.map(tableNames, (tableName) => {
+    return getFindAllSqlQuery(tableName);
+  });
+}
 
 export const getFindOneByIdQuery = (tableName: string, id: number): string => {
   return getQuery("SELECT * FROM " + tableName + " WHERE id=" + id);
@@ -300,12 +313,12 @@ export function getDeleteEntityByAttributeQuery(
 ): string {
   return getQuery(
     "DELETE FROM " +
-      tableName +
-      " WHERE " +
-      attributeName +
-      '="' +
-      attributeValue +
-      '"'
+    tableName +
+    " WHERE " +
+    attributeName +
+    '="' +
+    attributeValue +
+    '"'
   );
 }
 
@@ -334,11 +347,11 @@ export function getQueryToFindEntityByCodeAndLibelle(
 ): string {
   return getQuery(
     "SELECT * FROM " +
-      entityName +
-      ' WHERE code="' +
-      code.trim() +
-      '" AND libelle="' +
-      libelle.trim() +
-      '"'
+    entityName +
+    ' WHERE code="' +
+    code.trim() +
+    '" AND libelle="' +
+    libelle.trim() +
+    '"'
   );
 }

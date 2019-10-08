@@ -20,9 +20,9 @@ import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
 import { getQueryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
 import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import {
-  getAllFromTablesQuery,
   getDeleteEntityByIdQuery,
-  getFindOneByIdQuery
+  getFindOneByIdQuery,
+  getAllFromTablesSqlQuery
 } from "../sql/sql-queries-utils";
 import {
   KEY_ARE_ASSOCIES_DISPLAYED,
@@ -77,13 +77,13 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
   if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
     const listsResults = await SqlConnection.query(
       getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindComportementsIdsByDonneeId(flatDonnee.id) +
-        getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id) +
-        getQueryToFindNumberOfDonneesByDoneeeEntityId(
-          "inventaire_id",
-          flatDonnee.inventaireId
-        )
+      getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
+      getQueryToFindComportementsIdsByDonneeId(flatDonnee.id) +
+      getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id) +
+      getQueryToFindNumberOfDonneesByDoneeeEntityId(
+        "inventaire_id",
+        flatDonnee.inventaireId
+      )
     );
 
     const inventaire: Inventaire = {
@@ -149,11 +149,28 @@ const getConfigurationValueAsBoolean = (
 };
 
 export const creationInit = async (): Promise<CreationPage> => {
-  const results = await SqlConnection.query(
-    getQueryToFindLastDonnee() +
-      getQueryToFindNumberOfDonnees() +
-      getQueryToFindLastRegroupement() +
-      getAllFromTablesQuery([
+
+  const [lastDonneeInfo,
+    numberOfDonnees,
+    lastRegroupement,
+    configuration,
+    observateurs,
+    departements,
+    communes,
+    lieudits,
+    meteos,
+    classes,
+    especes,
+    ages,
+    sexes,
+    estimationsNombre,
+    estimationsDistance,
+    comportements,
+    milieux] = await Promise.all(_.flatten([
+      SqlConnection.query(getQueryToFindLastDonnee()),
+      SqlConnection.query(getQueryToFindNumberOfDonnees()),
+      SqlConnection.query(getQueryToFindLastRegroupement()),
+      getAllFromTablesSqlQuery([
         "configuration",
         "observateur",
         "departement",
@@ -169,18 +186,19 @@ export const creationInit = async (): Promise<CreationPage> => {
         "comportement",
         "milieu"
       ])
-  );
+    ]));
+
 
   const lastDonnee: Donnee = await buildDonneeFromFlatDonneeWithMinimalData(
-    results[0][0]
+    lastDonneeInfo[0]
   );
 
-  const configurations: Configuration[] = results[3];
+  const configurations: Configuration[] = configuration;
 
   const creationPage: CreationPage = {
     lastDonnee,
-    numberOfDonnees: results[1][0].nbDonnees,
-    nextRegroupement: results[2][0].regroupement + 1,
+    numberOfDonnees: numberOfDonnees[0].nbDonnees,
+    nextRegroupement: lastRegroupement[0].regroupement + 1,
     defaultObservateurId: getConfigurationValueAsNumber(
       configurations,
       KEY_DEFAULT_OBSERVATEUR_ID
@@ -221,19 +239,19 @@ export const creationInit = async (): Promise<CreationPage> => {
       configurations,
       KEY_IS_REGROUPEMENT_DISPLAYED
     ),
-    observateurs: results[4],
-    departements: results[5],
-    communes: mapCommunes(results[6]),
-    lieudits: mapLieuxdits(results[7]),
-    meteos: results[8],
-    classes: results[9],
-    especes: mapEspeces(results[10]),
-    ages: results[11],
-    sexes: results[12],
-    estimationsNombre: mapEstimationsNombre(results[13]),
-    estimationsDistance: results[14],
-    comportements: results[15],
-    milieux: results[16]
+    observateurs: observateurs,
+    departements: departements,
+    communes: mapCommunes(communes),
+    lieudits: mapLieuxdits(lieudits),
+    meteos: meteos,
+    classes: classes,
+    especes: mapEspeces(especes),
+    ages: ages,
+    sexes: sexes,
+    estimationsNombre: mapEstimationsNombre(estimationsNombre),
+    estimationsDistance: estimationsDistance,
+    comportements: comportements,
+    milieux: milieux
   };
 
   return creationPage;
@@ -351,9 +369,9 @@ export const getDonneeByIdWithContext = async (
   const id: number = +httpParameters.queryParameters.id;
   const results = await SqlConnection.query(
     getQueryToFindDonneeById(id) +
-      getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
-      getQueryToFindNextDonneeByCurrentDonneeId(id) +
-      getQueryToFindDonneeIndexById(id)
+    getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
+    getQueryToFindNextDonneeByCurrentDonneeId(id) +
+    getQueryToFindDonneeIndexById(id)
   );
 
   const donnee = await buildDonneeFromFlatDonneeWithMinimalData(results[0][0]);
@@ -379,8 +397,8 @@ export const getInventaireById = async (
 
   const results = await SqlConnection.query(
     getFindOneByIdQuery(TABLE_INVENTAIRE, inventaireId) +
-      getQueryToFindAssociesByInventaireId(inventaireId) +
-      getQueryToFindMetosByInventaireId(inventaireId)
+    getQueryToFindAssociesByInventaireId(inventaireId) +
+    getQueryToFindMetosByInventaireId(inventaireId)
   );
 
   const inventaire: Inventaire = mapInventaire(results[0][0]);
