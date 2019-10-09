@@ -54,11 +54,11 @@ export const persistDonnee = async (
         "donnee_id",
         donneeToSave.id
       ) +
-        getDeleteEntityByAttributeQuery(
-          TABLE_DONNEE_MILIEU,
-          "donnee_id",
-          donneeToSave.id
-        )
+      getDeleteEntityByAttributeQuery(
+        TABLE_DONNEE_MILIEU,
+        "donnee_id",
+        donneeToSave.id
+      )
     );
   }
 
@@ -116,7 +116,7 @@ export const getExistingDonneeId = async (
     // Compare the comportements and the milieux
     const response = await SqlConnection.query(
       getQueryToFindComportementsIdsByDonneeId(id) +
-        getQueryToFindMilieuxIdsByDonneeId(id)
+      getQueryToFindMilieuxIdsByDonneeId(id)
     );
 
     const comportementsIds: number[] = getArrayFromObjects(
@@ -156,19 +156,14 @@ export const updateInventaireIdForDonnees = async (
 export const findDonneesByCustomizedFilters = async (
   filter: DonneesFilter
 ): Promise<FlatDonnee[]> => {
-  const results = await SqlConnection.query(
-    getQueryToFindDonneesByCriterion(filter) +
-      getQueryToFindAllAssocies() +
-      getQueryToFindAllMeteos() +
-      getQueryToFindAllComportements() +
-      getQueryToFindAllMilieux()
-  );
 
-  const donnees: FlatDonnee[] = results[0];
-  const associesByDonnee: AssocieByDonnee[] = results[1];
-  const meteosByDonnee: MeteoByDonnee[] = results[2];
-  const comportementsByDonnee: ComportementByDonnee[] = results[3];
-  const milieuxByDonnee: MilieuByDonnee[] = results[4];
+  const [donnees, associesByDonnee, meteosByDonnee, comportementsByDonnee, milieuxByDonnee] = await Promise.all([
+    SqlConnection.query(getQueryToFindDonneesByCriterion(filter)),
+    SqlConnection.query(getQueryToFindAllAssocies()),
+    SqlConnection.query(getQueryToFindAllMeteos()),
+    SqlConnection.query(getQueryToFindAllComportements()),
+    SqlConnection.query(getQueryToFindAllMilieux())
+  ]);
 
   const mapDonnees: { [key: number]: FlatDonnee } = {};
   _.forEach(donnees, (donnee: FlatDonnee) => {
