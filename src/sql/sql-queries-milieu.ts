@@ -1,10 +1,14 @@
 import { getQuery } from "./sql-queries-utils";
 
-export function getQueryToFindAllMilieux(): string {
-  const query: string =
+export function getQueryToFindAllMilieux(donneesIds?: number[]): string {
+  let query: string =
     "SELECT d.donnee_id as donneeId, m.code, m.libelle" +
     " FROM donnee_milieu d" +
     " INNER JOIN milieu m ON d.milieu_id = m.id";
+
+  if (donneesIds && donneesIds.length) {
+    query = query + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
+  }
 
   return getQuery(query);
 }

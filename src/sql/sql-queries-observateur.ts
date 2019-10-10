@@ -19,12 +19,16 @@ export function getQueryToFindNumberOfDonneesByObservateurId(
   );
 }
 
-export function getQueryToFindAllAssocies(): string {
-  const query: string =
+export function getQueryToFindAllAssocies(donneesIds?: number[]): string {
+  let query: string =
     "SELECT d.id as donneeId, o.libelle" +
     " FROM inventaire_associe i" +
     " INNER JOIN donnee d ON d.inventaire_id = i.inventaire_id" +
     " LEFT JOIN observateur o ON i.observateur_id = o.id";
+
+  if (donneesIds && donneesIds.length) {
+    query = query + " WHERE d.id IN (" + donneesIds.join(",") + ")";
+  }
 
   return getQuery(query);
 }

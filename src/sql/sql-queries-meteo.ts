@@ -1,11 +1,15 @@
 import { getQuery } from "./sql-queries-utils";
 
-export function getQueryToFindAllMeteos(): string {
-  const query: string =
+export function getQueryToFindAllMeteos(donneesIds?: number[]): string {
+  let query: string =
     "SELECT d.id as donneeId, m.libelle" +
     " FROM inventaire_meteo i" +
     " INNER JOIN donnee d ON d.inventaire_id = i.inventaire_id" +
     " LEFT JOIN meteo m ON i.meteo_id = m.id";
+
+  if (donneesIds && donneesIds.length) {
+    query = query + " WHERE d.id IN (" + donneesIds.join(",") + ")";
+  }
 
   return getQuery(query);
 }

@@ -1,10 +1,14 @@
 import { getQuery } from "./sql-queries-utils";
 
-export function getQueryToFindAllComportements(): string {
-  const query: string =
+export function getQueryToFindAllComportements(donneesIds?: number[]): string {
+  let query: string =
     "SELECT d.donnee_id as donneeId, c.code, c.libelle" +
     " FROM donnee_comportement d" +
     " INNER JOIN comportement c ON d.comportement_id = c.id";
+
+  if (donneesIds && donneesIds.length) {
+    query = query + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
+  }
 
   return getQuery(query);
 }

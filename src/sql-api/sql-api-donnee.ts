@@ -54,11 +54,11 @@ export const persistDonnee = async (
         "donnee_id",
         donneeToSave.id
       ) +
-      getDeleteEntityByAttributeQuery(
-        TABLE_DONNEE_MILIEU,
-        "donnee_id",
-        donneeToSave.id
-      )
+        getDeleteEntityByAttributeQuery(
+          TABLE_DONNEE_MILIEU,
+          "donnee_id",
+          donneeToSave.id
+        )
     );
   }
 
@@ -116,7 +116,7 @@ export const getExistingDonneeId = async (
     // Compare the comportements and the milieux
     const response = await SqlConnection.query(
       getQueryToFindComportementsIdsByDonneeId(id) +
-      getQueryToFindMilieuxIdsByDonneeId(id)
+        getQueryToFindMilieuxIdsByDonneeId(id)
     );
 
     const comportementsIds: number[] = getArrayFromObjects(
@@ -156,60 +156,69 @@ export const updateInventaireIdForDonnees = async (
 export const findDonneesByCustomizedFilters = async (
   filter: DonneesFilter
 ): Promise<FlatDonnee[]> => {
+  const donnees: any[] = await SqlConnection.query(
+    getQueryToFindDonneesByCriterion(filter)
+  );
 
-  const [donnees, associesByDonnee, meteosByDonnee, comportementsByDonnee, milieuxByDonnee] = await Promise.all([
-    SqlConnection.query(getQueryToFindDonneesByCriterion(filter)),
-    SqlConnection.query(getQueryToFindAllAssocies()),
-    SqlConnection.query(getQueryToFindAllMeteos()),
-    SqlConnection.query(getQueryToFindAllComportements()),
-    SqlConnection.query(getQueryToFindAllMilieux())
-  ]);
-
-  const mapDonnees: { [key: number]: FlatDonnee } = {};
-  _.forEach(donnees, (donnee: FlatDonnee) => {
-    donnee.associes = "";
-    donnee.meteos = "";
-    donnee.comportements = [];
-    donnee.milieux = [];
-    mapDonnees[donnee.id] = donnee;
+  const donneesIds: number[] = _.map(donnees, (donnee) => {
+    return donnee.id;
   });
 
-  _.forEach(associesByDonnee, (associe: AssocieByDonnee) => {
-    if (mapDonnees[associe.donneeId]) {
-      if (mapDonnees[associe.donneeId].associes === "") {
-        mapDonnees[associe.donneeId].associes = associe.libelle;
-      } else {
-        mapDonnees[associe.donneeId].associes += ", " + associe.libelle;
-      }
-    }
-  });
+  const [associes, meteos, comportements, milieux]: any[][] = await Promise.all(
+    [
+      donnees.length
+        ? SqlConnection.query(getQueryToFindAllAssocies(donneesIds))
+        : [],
+      donnees.length
+        ? SqlConnection.query(getQueryToFindAllMeteos(donneesIds))
+        : [],
+      donnees.length
+        ? SqlConnection.query(getQueryToFindAllComportements(donneesIds))
+        : [],
+      donnees.length
+        ? SqlConnection.query(getQueryToFindAllMilieux(donneesIds))
+        : []
+    ]
+  );
 
-  _.forEach(meteosByDonnee, (meteo: MeteoByDonnee) => {
-    if (mapDonnees[meteo.donneeId]) {
-      if (mapDonnees[meteo.donneeId].meteos === "") {
-        mapDonnees[meteo.donneeId].meteos = meteo.libelle;
-      } else {
-        mapDonnees[meteo.donneeId].meteos += ", " + meteo.libelle;
-      }
-    }
-  });
-
-  _.forEach(comportementsByDonnee, (comportement: ComportementByDonnee) => {
-    if (mapDonnees[comportement.donneeId]) {
-      mapDonnees[comportement.donneeId].comportements.push({
-        code: comportement.code,
-        libelle: comportement.libelle
+  const [
+    associesByDonnee,
+    meteosByDonnee,
+    comportementsByDonnee,
+    milieuxByDonnee
+  ]: { [key: number]: any }[] = _.map(
+    [associes, meteos, comportements, milieux],
+    (table) => {
+      return _.groupBy(table, (tableElement) => {
+        return tableElement.donneeId;
       });
     }
-  });
+  );
 
-  _.forEach(milieuxByDonnee, (milieu: MilieuByDonnee) => {
-    if (mapDonnees[milieu.donneeId]) {
-      mapDonnees[milieu.donneeId].milieux.push({
+  _.forEach(donnees, (donnee: FlatDonnee) => {
+    donnee.associes = _.map(
+      associesByDonnee[donnee.id],
+      (associe) => associe.libelle
+    ).join(", ");
+    donnee.meteos = _.map(
+      meteosByDonnee[donnee.id],
+      (meteo) => meteo.libelle
+    ).join(", ");
+    donnee.comportements = _.map(
+      comportementsByDonnee[donnee.id],
+      (comportement) => {
+        return {
+          code: comportement.code,
+          libelle: comportement.libelle
+        };
+      }
+    );
+    donnee.milieux = _.map(milieuxByDonnee[donnee.id], (milieu) => {
+      return {
         code: milieu.code,
         libelle: milieu.libelle
-      });
-    }
+      };
+    });
   });
 
   return donnees;
