@@ -7,7 +7,7 @@ import {
 } from "../sql/sql-queries-espece";
 import { mapEspece } from "../utils/mapping-utils";
 
-export const getEspeceByCode = async (code: string): Promise<Espece> => {
+export const findEspeceByCode = async (code: string): Promise<Espece> => {
   const results = await SqlConnection.query(getQueryToFindEspeceByCode(code));
 
   if (results && results[0] && results[0].id) {

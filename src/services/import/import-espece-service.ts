@@ -3,9 +3,9 @@ import { Espece } from "basenaturaliste-model/espece.object";
 import { getClasseByLibelle } from "../../sql-api/sql-api-classe";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {
-  getEspeceByCode,
   getEspeceByNomFrancais,
-  getEspeceByNomLatin
+  getEspeceByNomLatin,
+  findEspeceByCode
 } from "../../sql-api/sql-api-espece";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
 import { TABLE_ESPECE } from "../../utils/constants";
@@ -52,7 +52,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Check that the espece does not exists
-    const especeByCode: Espece = await getEspeceByCode(
+    const especeByCode: Espece = await findEspeceByCode(
       entityTab[this.CODE_INDEX]
     );
 

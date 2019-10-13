@@ -28,12 +28,18 @@ import {
   TABLE_ESTIMATION_DISTANCE,
   TABLE_ESTIMATION_NOMBRE,
   TABLE_INVENTAIRE,
-  TABLE_METEO,
   TABLE_MILIEU,
-  TABLE_OBSERVATEUR,
   TABLE_SEXE
 } from "../../utils/constants";
 import { ImportService } from "./import-service";
+import {
+  isIdInListIds,
+  isTimeValid,
+  getFormattedTime
+} from "../../utils/utils";
+import { findObservateurByLibelle } from "../../sql-api/sql-api-observateur";
+import { findMeteoByLibelle } from "../../sql-api/sql-api-meteo";
+import { findEspeceByCode } from "../../sql-api/sql-api-espece";
 
 export class ImportDoneeeService extends ImportService {
   private OBSERVATEUR_INDEX: number = 0;
@@ -70,15 +76,18 @@ export class ImportDoneeeService extends ImportService {
   };
 
   protected buildEntity = (
-    entityTab: string[],
     inventaireId: number,
     especeId: number,
     sexeId: number,
     ageId: number,
     estimationNombreId: number,
-    estimationDistanceId: number,
+    nombre: number | null,
+    estimationDistanceId: number | null,
+    distance: number | null,
+    regroupement: number | null,
     comportementsIds: number[],
-    milieuxIds: number[]
+    milieuxIds: number[],
+    commentaire: string | null
   ): Donnee => {
     return {
       id: null,
@@ -87,15 +96,13 @@ export class ImportDoneeeService extends ImportService {
       sexeId,
       ageId,
       estimationNombreId,
-      nombre: +entityTab[this.NOMBRE_INDEX],
+      nombre,
       estimationDistanceId,
-      distance: +entityTab[this.DISTANCE_INDEX],
-      regroupement: +entityTab[this.REGROUPEMENT_INDEX],
+      distance,
+      regroupement,
       comportementsIds,
       milieuxIds,
-      commentaire: entityTab[this.COMMENTAIRE_INDEX]
-        ? entityTab[this.COMMENTAIRE_INDEX].replace(";", ",")
-        : null
+      commentaire
     };
   };
 
@@ -135,14 +142,12 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Check that the observateur exists
-    const observateur: Observateur = (await getEntityByLibelle(
-      entityTab[this.OBSERVATEUR_INDEX],
-      TABLE_OBSERVATEUR
-    )) as Observateur;
-
+    const observateurLibelle = entityTab[this.OBSERVATEUR_INDEX];
+    const observateur: Observateur = await findObservateurByLibelle(
+      observateurLibelle
+    );
     if (!observateur) {
-      this.message =
-        "L'observateur " + entityTab[this.OBSERVATEUR_INDEX] + " n'existe pas";
+      this.message = "L'observateur " + observateurLibelle + " n'existe pas";
       return false;
     }
 
@@ -151,62 +156,69 @@ export class ImportDoneeeService extends ImportService {
     const associesTab: string[] = entityTab[this.ASSOCIES_INDEX].split(
       this.LIST_SEPARATOR
     );
-    for (const associeStr of associesTab) {
-      const associe: Observateur = (await getEntityByLibelle(
-        associeStr,
-        TABLE_OBSERVATEUR
-      )) as Observateur;
+    for (const associeLibelle of associesTab) {
+      const associe: Observateur = await findObservateurByLibelle(
+        associeLibelle
+      );
 
       if (!associe) {
-        this.message = "L'observateur associé " + associeStr + " n'existe pas";
+        this.message =
+          "L'observateur associé " + associeLibelle + " n'existe pas";
         return false;
       }
 
-      if (
-        !associesIds.find((id) => {
-          return id === associe.id;
-        })
-      ) {
+      if (!isIdInListIds(associesIds, associe.id)) {
         associesIds.push(associe.id);
       }
     }
 
     // Check that the departement exists
+    const departementCode: string = entityTab[this.DEPARTEMENT_INDEX];
     const departement: Departement = await getDepartementByCode(
-      entityTab[this.DEPARTEMENT_INDEX]
+      departementCode
     );
 
     if (!departement) {
-      this.message =
-        "Le département " + entityTab[this.DEPARTEMENT_INDEX] + " n'existe pas";
+      this.message = "Le département " + departementCode + " n'existe pas";
       return false;
     }
 
+    // Date
+    const date: any = entityTab[this.DATE_INDEX];
+
+    // Heure
+    const heure: string = getFormattedTime(entityTab[this.HEURE_INDEX]);
+
+    // Durée
+    const duree: string = getFormattedTime(entityTab[this.DUREE_INDEX]);
+
     // Check that the commune exists
+    const communeCode: number = +entityTab[this.CODE_COMMUNE_INDEX];
     const commune: Commune = await getCommuneByDepartementIdAndCode(
       departement.id,
-      +entityTab[this.CODE_COMMUNE_INDEX]
+      communeCode
     );
 
     if (!commune) {
       this.message =
         "La commune avec pour code " +
-        entityTab[this.CODE_COMMUNE_INDEX] +
+        communeCode +
         " n'existe pas dans le département " +
         departement.code;
       return false;
     }
 
     // Check that the lieu-dit exists
+    const lieuditNom: string = entityTab[this.LIEUDIT_INDEX];
     const lieudit: Lieudit = await getLieuditByCommuneIdAndNom(
       commune.id,
-      entityTab[this.LIEUDIT_INDEX]
+      lieuditNom
     );
 
     if (!lieudit) {
       this.message =
         "Le lieu-dit " +
-        entityTab[this.LIEUDIT_INDEX] +
+        lieuditNom +
         " n'existe pas dans la commune " +
         commune.code +
         " - " +
@@ -217,79 +229,96 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Check if the coordinates are updated
-    const areCoordinatesCustomized: boolean = this.areCoordinatesCustomized(
-      lieudit,
-      +entityTab[this.ALTITUDE_INDEX],
-      +entityTab[this.LONGITUDE_INDEX],
-      +entityTab[this.LATITUDE_INDEX]
-    );
+    let altitude: number = null;
+    let longitude: number = null;
+    let latitude: number = null;
+    if (
+      this.areCoordinatesCustomized(
+        lieudit,
+        +entityTab[this.ALTITUDE_INDEX],
+        +entityTab[this.LONGITUDE_INDEX],
+        +entityTab[this.LATITUDE_INDEX]
+      )
+    ) {
+      altitude = +entityTab[this.ALTITUDE_INDEX];
+      longitude = +entityTab[this.LONGITUDE_INDEX];
+      latitude = +entityTab[this.LATITUDE_INDEX];
+    }
+
+    // Temperature
+    const temperature: number =
+      entityTab[this.TEMPERATURE_INDEX] != null
+        ? +entityTab[this.ALTITUDE_INDEX]
+        : null;
 
     // Check that the meteos exist
     const meteosIds: number[] = [];
     const meteosTab: string[] = entityTab[this.METEOS_INDEX].split(
       this.LIST_SEPARATOR
     );
-    for (const meteoStr of meteosTab) {
-      const meteo: Meteo = (await getEntityByLibelle(
-        meteoStr,
-        TABLE_METEO
-      )) as Meteo;
+    for (const meteoLibelle of meteosTab) {
+      const meteo: Meteo = await findMeteoByLibelle(meteoLibelle);
 
       if (!meteo) {
-        this.message = "La météo " + meteoStr + " n'existe pas";
+        this.message = "La météo " + meteoLibelle + " n'existe pas";
         return false;
       }
 
-      if (
-        !meteosIds.find((id) => {
-          return id === meteo.id;
-        })
-      ) {
+      if (!isIdInListIds(meteosIds, meteo.id)) {
         meteosIds.push(meteo.id);
       }
     }
 
     // Check that the espece exixts
-    const espece: Espece = null;
+    const especeCode: string = entityTab[this.CODE_ESPECE_INDEX];
+    const espece: Espece = await findEspeceByCode(especeCode);
+    if (!espece) {
+      this.message = "L'espèce avec pour code " + especeCode + " n'existe pas";
+      return false;
+    }
 
     // Check that the sexe exists
+    const sexeLibelle: string = entityTab[this.SEXE_INDEX];
     const sexe: Sexe = (await getEntityByLibelle(
-      entityTab[this.SEXE_INDEX],
+      sexeLibelle,
       TABLE_SEXE
     )) as Sexe;
 
     if (!sexe) {
-      this.message = "Le sexe " + entityTab[this.SEXE_INDEX] + " n'existe pas";
+      this.message = "Le sexe " + sexeLibelle + " n'existe pas";
       return false;
     }
 
     // Check that the age exists
-    const age: Age = (await getEntityByLibelle(
-      entityTab[this.AGE_INDEX],
-      TABLE_AGE
-    )) as Age;
+    const ageLibelle: string = entityTab[this.AGE_INDEX];
+    const age: Age = (await getEntityByLibelle(ageLibelle, TABLE_AGE)) as Age;
 
     if (!age) {
-      this.message = "L'âge " + entityTab[this.AGE_INDEX] + " n'existe pas";
+      this.message = "L'âge " + ageLibelle + " n'existe pas";
       return false;
     }
 
     // Check that the estimation nombre exists
+    const estimationNombreLibelle: string =
+      entityTab[this.ESTIMATION_NOMBRE_INDEX];
     const estimationNombre: EstimationNombre = (await getEntityByLibelle(
-      entityTab[this.ESTIMATION_NOMBRE_INDEX],
+      estimationNombreLibelle,
       TABLE_ESTIMATION_NOMBRE
     )) as EstimationNombre;
 
     if (!estimationNombre) {
       this.message =
-        "L'estimation du nombre " +
-        entityTab[this.ESTIMATION_NOMBRE_INDEX] +
-        " n'existe pas";
+        "L'estimation du nombre " + estimationNombreLibelle + " n'existe pas";
       return false;
     }
 
+    // Nombre
+    const nombre: number = entityTab[this.NOMBRE_INDEX]
+      ? +entityTab[this.NOMBRE_INDEX]
+      : null;
+
     // Check that if 'Non-compte' then the nombre is empty
-    if (estimationNombre.nonCompte && !!entityTab[this.NOMBRE_INDEX]) {
+    if (estimationNombre.nonCompte && !!nombre) {
       this.message =
         "L'estimation du nombre " +
         estimationNombre.libelle +
@@ -298,44 +327,54 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Check that the estimation distance exists
+    const estimationDistanceLibelle: string =
+      entityTab[this.ESTIMATION_DISTANCE_INDEX];
     const estimationDistance: EstimationDistance = (await getEntityByLibelle(
-      entityTab[this.ESTIMATION_DISTANCE_INDEX],
+      estimationDistanceLibelle,
       TABLE_ESTIMATION_DISTANCE
     )) as EstimationDistance;
 
     if (!estimationDistance) {
       this.message =
         "L'estimation de la distance " +
-        entityTab[this.ESTIMATION_DISTANCE_INDEX] +
+        estimationDistanceLibelle +
         " n'existe pas";
       return false;
     }
+
+    // Distance
+    const distance: number =
+      entityTab[this.DISTANCE_INDEX] != null
+        ? +entityTab[this.DISTANCE_INDEX]
+        : null;
+
+    // Regroupement
+    const regroupement: number = entityTab[this.REGROUPEMENT_INDEX]
+      ? +entityTab[this.REGROUPEMENT_INDEX]
+      : null;
 
     // Check that the comportements exist
     const comportementsIds: number[] = [];
     for (
       let compIndex = this.CODE_COMP_1_INDEX;
-      compIndex < this.CODE_COMP_6_INDEX;
+      compIndex <= this.CODE_COMP_6_INDEX;
       compIndex++
     ) {
+      const comportementCode: string = entityTab[compIndex];
       const comportement: Comportement = (await getEntityByCode(
-        entityTab[compIndex],
+        comportementCode,
         TABLE_COMPORTEMENT
       )) as Comportement;
 
       if (!comportement) {
         this.message =
           "Le comportement avec pour code " +
-          entityTab[compIndex] +
+          comportementCode +
           " n'existe pas";
         return false;
       }
 
-      if (
-        !comportementsIds.find((id) => {
-          return id === comportement.id;
-        })
-      ) {
+      if (!isIdInListIds(comportementsIds, comportement.id)) {
         comportementsIds.push(comportement.id);
       }
     }
@@ -347,36 +386,40 @@ export class ImportDoneeeService extends ImportService {
       milieuIndex < this.CODE_MILIEU_4_INDEX;
       milieuIndex++
     ) {
+      const milieuCode: string = entityTab[milieuIndex];
       const milieu: Milieu = (await getEntityByCode(
-        entityTab[milieuIndex],
+        milieuCode,
         TABLE_MILIEU
       )) as Milieu;
 
       if (!milieu) {
         this.message =
-          "Le milieu avec pour code " +
-          entityTab[milieuIndex] +
-          " n'existe pas";
+          "Le milieu avec pour code " + milieuCode + " n'existe pas";
         return false;
       }
 
-      if (
-        !milieuxIds.find((id) => {
-          return id === milieu.id;
-        })
-      ) {
+      if (!isIdInListIds(milieuxIds, milieu.id)) {
         milieuxIds.push(milieu.id);
       }
     }
 
+    const commentaire: string = entityTab[this.COMMENTAIRE_INDEX]
+      ? entityTab[this.COMMENTAIRE_INDEX].replace(";", ",")
+      : null;
+
     // Create the inventaire to save
     const inventaireToSave: Inventaire = this.buildInventaire(
-      entityTab,
       observateur.id,
       associesIds,
+      date,
+      heure,
+      duree,
       lieudit.id,
+      temperature,
       meteosIds,
-      areCoordinatesCustomized
+      altitude,
+      longitude,
+      latitude
     );
 
     // Save the inventaire if it does not exists or get the existing ID otherwise
@@ -395,15 +438,18 @@ export class ImportDoneeeService extends ImportService {
 
     // Create the donnee to save
     const donneeToSave: Donnee = this.buildEntity(
-      entityTab,
       inventaireToSave.id,
       espece.id,
       sexe.id,
       age.id,
       estimationNombre.id,
+      nombre,
       estimationDistance ? estimationDistance.id : null,
+      distance,
+      regroupement,
       comportementsIds,
-      milieuxIds
+      milieuxIds,
+      commentaire
     );
 
     // Save the donnee if it does not exists already
@@ -435,35 +481,32 @@ export class ImportDoneeeService extends ImportService {
   };
 
   private buildInventaire = (
-    entityTab: string[],
     observateurId: number,
     associesIds: number[],
+    date: Date,
+    heure: string | null,
+    duree: string | null,
     lieuditId: number,
+    temperature: number | null,
     meteosIds: number[],
-    areCoordinatesCustomized: boolean
+    altitude: number | null,
+    longitude: number | null,
+    latitude: number | null
   ): Inventaire => {
     const inventaire: Inventaire = {
       id: null,
       observateurId,
       associesIds,
-      date: entityTab[this.DATE_INDEX] as any,
-      heure: entityTab[this.HEURE_INDEX],
-      duree: entityTab[this.DUREE_INDEX],
+      date: date,
+      heure: heure,
+      duree: duree,
       lieuditId,
-      altitude: null,
-      longitude: null,
-      latitude: null,
-      temperature: entityTab[this.TEMPERATURE_INDEX]
-        ? +entityTab[this.TEMPERATURE_INDEX]
-        : null,
+      altitude: altitude,
+      longitude: longitude,
+      latitude: latitude,
+      temperature: temperature,
       meteosIds
     };
-
-    if (areCoordinatesCustomized) {
-      inventaire.altitude = +entityTab[this.ALTITUDE_INDEX];
-      inventaire.longitude = +entityTab[this.LONGITUDE_INDEX];
-      inventaire.latitude = +entityTab[this.LATITUDE_INDEX];
-    }
 
     return inventaire;
   };
@@ -477,11 +520,19 @@ export class ImportDoneeeService extends ImportService {
   };
 
   private isHeureValid = (heure: string): boolean => {
-    return true; // TO DO
+    if (!!heure && !isTimeValid(heure)) {
+      this.message = "L'heure ne respecte pas le format demandé: hh:ss";
+      return false;
+    }
+    return true;
   };
 
   private isDureeValid = (duree: string): boolean => {
-    return true; // TO DO
+    if (!!duree && !isTimeValid(duree)) {
+      this.message = "La durée ne respecte pas le format demandé: hh:ss";
+      return false;
+    }
+    return true;
   };
 
   private isDepartementValid = (departement: string): boolean => {
@@ -508,13 +559,13 @@ export class ImportDoneeeService extends ImportService {
     return this.isNotEmptyString(lieudit, "Le lieu-dit");
   };
 
-  private isAltitudeValid(altitudeStr: string) {
+  private isAltitudeValid(altitudeStr: string): boolean {
     if (!altitudeStr) {
       this.message = "L'altitude du lieu-dit ne peut pas être vide";
       return false;
     }
 
-    const altitude: number = Number(altitudeStr);
+    const altitude = Number(altitudeStr);
 
     if (!Number.isInteger(altitude)) {
       this.message = "L'altitude du lieu-dit doit être un entier";
@@ -530,13 +581,13 @@ export class ImportDoneeeService extends ImportService {
     return true;
   }
 
-  private isLongitudeValid(longitudeStr: string) {
+  private isLongitudeValid(longitudeStr: string): boolean {
     if (!longitudeStr) {
       this.message = "La longitude du lieu-dit ne peut pas être vide";
       return false;
     }
 
-    const longitude: number = Number(longitudeStr);
+    const longitude = Number(longitudeStr);
 
     if (!Number.isInteger(longitude)) {
       this.message = "La longitude du lieu-dit doit être un entier";
@@ -552,13 +603,13 @@ export class ImportDoneeeService extends ImportService {
     return true;
   }
 
-  private isLatitudeValid(latitudeStr: string) {
+  private isLatitudeValid(latitudeStr: string): boolean {
     if (!latitudeStr) {
       this.message = "La latitude du lieu-dit ne peut pas être vide";
       return false;
     }
 
-    const latitude: number = Number(latitudeStr);
+    const latitude = Number(latitudeStr);
 
     if (!Number.isInteger(latitude)) {
       this.message = "La latitude du lieu-dit doit être un entier";
@@ -576,7 +627,7 @@ export class ImportDoneeeService extends ImportService {
 
   private isTemperatureValid = (temperatureStr: string): boolean => {
     if (temperatureStr) {
-      const temperature: number = Number(temperatureStr);
+      const temperature = Number(temperatureStr);
 
       if (!Number.isInteger(temperature)) {
         this.message = "La température doit être un entier";
@@ -610,7 +661,7 @@ export class ImportDoneeeService extends ImportService {
 
   private isNombreValid = (nombreStr: string): boolean => {
     if (nombreStr) {
-      const nombre: number = Number(nombreStr);
+      const nombre = Number(nombreStr);
 
       if (!Number.isInteger(nombre)) {
         this.message = "Le nombre d'individus doit être un entier";
@@ -632,7 +683,7 @@ export class ImportDoneeeService extends ImportService {
 
   private isDistanceValid = (distanceStr: string): boolean => {
     if (distanceStr) {
-      const distance: number = Number(distanceStr);
+      const distance = Number(distanceStr);
 
       if (!Number.isInteger(distance)) {
         this.message = "La distance de contact doit être un entier";
@@ -650,7 +701,7 @@ export class ImportDoneeeService extends ImportService {
 
   private isRegroupementValid = (regroupementStr: string): boolean => {
     if (regroupementStr) {
-      const regroupement: number = Number(regroupementStr);
+      const regroupement = Number(regroupementStr);
 
       if (!Number.isInteger(regroupement)) {
         this.message = "La numéro de regroupement doit être un entier";
