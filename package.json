@@ -11,5 +11,8 @@
     }
   ],
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@types/bson": "*"
+  }
 }
