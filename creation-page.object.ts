@@ -12,6 +12,7 @@ import { Meteo } from "./meteo.object";
 import { Milieu } from "./milieu.object";
 import { Observateur } from "./observateur.object";
 import { Sexe } from "./sexe.object";
+import { ObjectId } from "bson";
 
 export interface CreationPage {
   defaultDepartementId: number;
@@ -26,7 +27,8 @@ export interface CreationPage {
   isDistanceDisplayed: boolean;
   isRegroupementDisplayed: boolean;
 
-  lastDonnee: Donnee;
+  lastDonnee?: Donnee;
+  lastDonneeId?: ObjectId;
   numberOfDonnees: number;
 
   nextRegroupement: number;
