@@ -1,5 +1,6 @@
 import { Commune } from "./commune.object";
 import { EntiteSimple } from "./entite-simple.object";
+import { Coordinates } from "./coordinates.object";
 
 export interface Lieudit extends EntiteSimple {
   communeId: number;
