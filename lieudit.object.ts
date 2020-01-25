@@ -13,4 +13,13 @@ export interface Lieudit extends EntiteSimple {
   latitude: number;
 
   longitude: number;
+
+  // Lambert II étendu
+  coordinatesL2E?: Coordinates;
+
+  // Lambert 93
+  coordinatesL93?: Coordinates;
+
+  // GPS
+  coordinatesGPS?: Coordinates;
 }
