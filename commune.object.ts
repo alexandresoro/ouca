@@ -6,7 +6,7 @@ export interface Commune extends EntiteSimple {
 
   departementId: number;
 
-  code: string;
+  code: number;
 
   nom: string;
 
