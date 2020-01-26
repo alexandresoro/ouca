@@ -4,6 +4,7 @@ import { Departement } from "./departement.object";
 import { EstimationNombre } from "./estimation-nombre.object";
 import { Observateur } from "./observateur.object";
 import { Sexe } from "./sexe.object";
+import { CoordinatesSystem } from "./coordinates-system.object";
 
 export interface ConfigurationPage {
   appConfiguration: AppConfiguration;
@@ -11,6 +12,8 @@ export interface ConfigurationPage {
   observateurs: Observateur[];
 
   departements: Departement[];
+
+  coordinatesSystems: CoordinatesSystem[];
 
   estimationsNombre: EstimationNombre[];
 
