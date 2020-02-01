@@ -14,20 +14,16 @@ import { Observateur } from "basenaturaliste-model/observateur.object";
 import { Sexe } from "basenaturaliste-model/sexe.object";
 import {
   getEntityByCode,
-  getEntityByLibelle,
-  saveEntity
+  getEntityByLibelle
 } from "../../sql-api/sql-api-common";
 import { getCommuneByDepartementIdAndCode } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { getLieuditByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
-import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
 import {
   TABLE_AGE,
   TABLE_COMPORTEMENT,
-  TABLE_DONNEE,
   TABLE_ESTIMATION_DISTANCE,
   TABLE_ESTIMATION_NOMBRE,
-  TABLE_INVENTAIRE,
   TABLE_MILIEU,
   TABLE_SEXE
 } from "../../utils/constants";
@@ -482,7 +478,7 @@ export class ImportDoneeeService extends ImportService {
   ): boolean => {
     return (
       !!lieudit &&
-      (altitude !== lieudit.coordinatesL2E.altitude ||
+      (altitude !== lieudit.altitude ||
         longitude !== lieudit.coordinatesL2E.longitude ||
         latitude !== lieudit.coordinatesL2E.latitude)
     );
@@ -509,17 +505,13 @@ export class ImportDoneeeService extends ImportService {
       heure: heure,
       duree: duree,
       lieuditId,
-      altitude,
-      longitude,
-      latitude,
-      customizedCoordinatesL2E: { altitude, longitude, latitude },
+      customizedAltitude: altitude,
+      customizedCoordinatesL2E: { longitude, latitude },
       customizedCoordinatesL93: {
-        altitude: null,
         longitude: null,
         latitude: null
       },
       customizedCoordinatesGPS: {
-        altitude: null,
         longitude: null,
         latitude: null
       },

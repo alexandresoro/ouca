@@ -28,7 +28,12 @@ import {
 export const persistInventaire = async (
   inventaire: Inventaire
 ): Promise<SqlSaveResponse> => {
-  const { date, customizedCoordinatesL2E, ...otherParams } = inventaire;
+  const {
+    date,
+    customizedAltitude,
+    customizedCoordinatesL2E,
+    ...otherParams
+  } = inventaire;
 
   if (inventaire.id) {
     // It is an update
@@ -54,7 +59,7 @@ export const persistInventaire = async (
       {
         date: moment.utc(date).format("YYYY-MM-DD"),
         dateCreation: moment().format("YYYY-MM-DD HH:mm:ss"),
-        altitude: customizedCoordinatesL2E.altitude,
+        altitude: customizedAltitude,
         longitude: customizedCoordinatesL2E.longitude,
         latitude: customizedCoordinatesL2E.latitude,
         ...otherParams

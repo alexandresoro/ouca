@@ -54,20 +54,15 @@ export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
     communeId: lieuditDb.commune_id,
     nom: lieuditDb.nom,
     altitude: lieuditDb.altitude,
-    longitude: lieuditDb.longitude,
-    latitude: lieuditDb.latitude,
     coordinatesL2E: {
-      altitude: lieuditDb.altitude,
       longitude: lieuditDb.longitude,
       latitude: lieuditDb.latitude
     },
     coordinatesL93: {
-      altitude: null,
       longitude: null,
       latitude: null
     },
     coordinatesGPS: {
-      altitude: null,
       longitude: null,
       latitude: null
     }
@@ -118,7 +113,7 @@ export const mapInventaire = (inventaireDb: any): Inventaire => {
   const { observateur_id, lieudit_id, ...otherParams } = inventaireDb;
   return {
     ...otherParams,
-    observateurId: inventaireDb.observateur_id,
-    lieuditId: inventaireDb.lieudit_id
+    observateurId: observateur_id,
+    lieuditId: lieudit_id
   };
 };

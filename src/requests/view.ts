@@ -56,9 +56,9 @@ export const exportDonneesByCustomizedFilters = async (
       "Code commune": object.codeCommune,
       "Nom commune": object.nomCommune,
       "Lieu-dit": object.lieudit,
-      "Altitude (Lambert II étendu)": object.customizedAltitudeL2E
-        ? object.customizedAltitudeL2E
-        : object.altitudeL2E,
+      "Altitude (Lambert II étendu)": object.customizedAltitude
+        ? object.customizedAltitude
+        : object.altitude,
       "Longitude (Lambert II étendu)": object.customizedLongitudeL2E
         ? object.customizedLongitudeL2E
         : object.longitudeL2E,

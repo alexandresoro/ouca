@@ -176,7 +176,7 @@ balanced-match@^1.0.0:
 
 "basenaturaliste-model@https://github.com/alexandresoro/basenaturaliste-model#master":
   version "1.0.0"
-  resolved "https://github.com/alexandresoro/basenaturaliste-model#c246a9831ce40d865cfb4469e60a99f87d9f30c3"
+  resolved "https://github.com/alexandresoro/basenaturaliste-model#d0a82c7ba0b0a0dd56946a0c57393abf53de0bd4"
   dependencies:
     "@types/bson" "*"
 

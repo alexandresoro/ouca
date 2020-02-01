@@ -49,10 +49,9 @@ export const getQueryToFindInventaireIdByAllAttributes = (
   query =
     query +
     " AND i.altitude" +
-    (!inventaire.customizedCoordinatesL2E ||
-    !inventaire.customizedCoordinatesL2E.altitude
+    (!inventaire.customizedCoordinatesL2E || !inventaire.customizedAltitude
       ? " is null"
-      : "=" + inventaire.customizedCoordinatesL2E.altitude);
+      : "=" + inventaire.customizedAltitude);
 
   query =
     query +

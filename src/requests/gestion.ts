@@ -245,9 +245,8 @@ export const saveLieudit = async (
     lieuditToSave.communeId = lieuditToSave.commune.id;
   }
   // TO DO
-  lieuditToSave.altitude = lieuditToSave.coordinatesL2E.altitude;
-  lieuditToSave.longitude = lieuditToSave.coordinatesL2E.longitude;
-  lieuditToSave.latitude = lieuditToSave.coordinatesL2E.latitude;
+  lieuditToSave["longitude"] = lieuditToSave.coordinatesL2E.longitude;
+  lieuditToSave["latitude"] = lieuditToSave.coordinatesL2E.latitude;
   return saveEntity(lieuditToSave, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
 };
 
@@ -607,7 +606,7 @@ export const exportLieuxdits = async (): Promise<any> => {
       CodeCommune: object.commune.code,
       NomCommune: object.commune.nom,
       Lieudit: object.nom,
-      AltitudeLambertIIEtendu: object.coordinatesL2E.altitude,
+      AltitudeLambertIIEtendu: object.altitude,
       LongitudeLambertIIEtendu: object.coordinatesL2E.longitude,
       LatitudeLambertIIEtendu: object.coordinatesL2E.latitude
     };

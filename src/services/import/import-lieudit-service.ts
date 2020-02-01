@@ -28,8 +28,18 @@ export class ImportLieuxditService extends ImportService {
       communeId,
       nom: entityTab[this.NOM_INDEX].trim(),
       altitude: +entityTab[this.ALTITUDE_INDEX].trim(),
-      longitude: +entityTab[this.LONGITUDE_INDEX].trim(),
-      latitude: +entityTab[this.LATITUDE_INDEX].trim()
+      coordinatesL2E: {
+        longitude: +entityTab[this.LONGITUDE_INDEX].trim(),
+        latitude: +entityTab[this.LATITUDE_INDEX].trim()
+      },
+      coordinatesL93: {
+        longitude: null,
+        latitude: null
+      },
+      coordinatesGPS: {
+        longitude: null,
+        latitude: null
+      }
     };
   };
 
@@ -143,13 +153,13 @@ export class ImportLieuxditService extends ImportService {
     return true;
   };
 
-  private isAltitudeValid(altitudeStr: string) {
+  private isAltitudeValid(altitudeStr: string): boolean {
     if (!altitudeStr) {
       this.message = "L'altitude du lieu-dit ne peut pas être vide";
       return false;
     }
 
-    const altitude: number = Number(altitudeStr);
+    const altitude = Number(altitudeStr);
 
     if (!Number.isInteger(altitude)) {
       this.message = "L'altitude du lieu-dit doit être un entier";
@@ -165,13 +175,13 @@ export class ImportLieuxditService extends ImportService {
     return true;
   }
 
-  private isLongitudeValid(longitudeStr: string) {
+  private isLongitudeValid(longitudeStr: string): boolean {
     if (!longitudeStr) {
       this.message = "La longitude du lieu-dit ne peut pas être vide";
       return false;
     }
 
-    const longitude: number = Number(longitudeStr);
+    const longitude = Number(longitudeStr);
 
     if (!Number.isInteger(longitude)) {
       this.message = "La longitude du lieu-dit doit être un entier";
@@ -187,13 +197,13 @@ export class ImportLieuxditService extends ImportService {
     return true;
   }
 
-  private isLatitudeValid(latitudeStr: string) {
+  private isLatitudeValid(latitudeStr: string): boolean {
     if (!latitudeStr) {
       this.message = "La latitude du lieu-dit ne peut pas être vide";
       return false;
     }
 
-    const latitude: number = Number(latitudeStr);
+    const latitude = Number(latitudeStr);
 
     if (!Number.isInteger(latitude)) {
       this.message = "La latitude du lieu-dit doit être un entier";

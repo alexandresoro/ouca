@@ -6,7 +6,7 @@ export interface FlatDonneeWithMinimalData {
   heure: string | null;
   duree: string | null;
   lieuditId: number;
-  altitudeL2E: number | null;
+  altitude: number | null;
   longitudeL2E: number | null;
   latitudeL2E: number | null;
   temperature: number | null;

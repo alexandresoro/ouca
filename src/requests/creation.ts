@@ -94,21 +94,16 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
       heure: flatDonnee.heure,
       duree: flatDonnee.duree,
       lieuditId: flatDonnee.lieuditId,
-      altitude: flatDonnee.altitudeL2E,
-      longitude: flatDonnee.longitudeL2E,
-      latitude: flatDonnee.latitudeL2E,
+      customizedAltitude: flatDonnee.altitude,
       customizedCoordinatesL2E: {
-        altitude: flatDonnee.altitudeL2E,
         longitude: flatDonnee.longitudeL2E,
         latitude: flatDonnee.latitudeL2E
       },
       customizedCoordinatesL93: {
-        altitude: null,
         longitude: null,
         latitude: null
       },
       customizedCoordinatesGPS: {
-        altitude: null,
         longitude: null,
         latitude: null
       },
