@@ -20,7 +20,22 @@ import {
   TABLE_OBSERVATEUR,
   TABLE_SEXE
 } from "../utils/constants";
+import { CoordinatesSystem } from "basenaturaliste-model/coordinates-system.object";
 
+const COORDINATES_SYSTEMS: CoordinatesSystem[] = [
+  {
+    code: "lambert_II_etendu",
+    libelle: "Lambert II étendu"
+  } /*,
+  {
+    code: "lambert_93",
+    libelle: "Lambert 93"
+  },
+  {
+    code: "gps",
+    libelle: "GPS (WSG84)"
+  }*/
+];
 export const configurationInit = async (): Promise<ConfigurationPage> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_CONFIGURATION) +
@@ -83,10 +98,19 @@ export const configurationInit = async (): Promise<ConfigurationPage> => {
     dbConfiguration[key] = value;
   });
 
+  // TO DO get from DB
+  dbConfiguration["coordinatesSystem"] = _.find(
+    COORDINATES_SYSTEMS,
+    (system) => {
+      return system.code === "lambert_II_etendu";
+    }
+  );
+
   return {
     appConfiguration: dbConfiguration as AppConfiguration,
     observateurs: results[1],
     departements: results[2],
+    coordinatesSystems: COORDINATES_SYSTEMS,
     ages: results[3],
     sexes: results[4],
     estimationsNombre: results[5]

@@ -49,17 +49,26 @@ export const getQueryToFindInventaireIdByAllAttributes = (
   query =
     query +
     " AND i.altitude" +
-    (!inventaire.altitude ? " is null" : "=" + inventaire.altitude);
+    (!inventaire.customizedCoordinatesL2E ||
+    !inventaire.customizedCoordinatesL2E.altitude
+      ? " is null"
+      : "=" + inventaire.customizedCoordinatesL2E.altitude);
 
   query =
     query +
     " AND i.longitude" +
-    (!inventaire.longitude ? " is null" : "=" + inventaire.longitude);
+    (!inventaire.customizedCoordinatesL2E ||
+    !inventaire.customizedCoordinatesL2E.longitude
+      ? " is null"
+      : "=" + inventaire.customizedCoordinatesL2E.longitude);
 
   query =
     query +
     " AND i.latitude" +
-    (!inventaire.latitude ? " is null" : "=" + inventaire.latitude);
+    (!inventaire.customizedCoordinatesL2E ||
+    !inventaire.customizedCoordinatesL2E.latitude
+      ? " is null"
+      : "=" + inventaire.customizedCoordinatesL2E.latitude);
 
   query =
     query +

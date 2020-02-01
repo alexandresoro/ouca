@@ -4,6 +4,8 @@ import { EstimationNombre } from "basenaturaliste-model/estimation-nombre.object
 import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import { Lieudit } from "basenaturaliste-model/lieudit.object";
 import * as _ from "lodash";
+import { LieuditDb } from "../objects/db/lieudit-db.object";
+import { CommuneDb } from "../objects/db/commune-db.object";
 
 export const mapAssociesIds = (associesDb: any): number[] => {
   return _.map(associesDb, (associeDb) => {
@@ -29,31 +31,54 @@ export const mapMilieuxIds = (milieuxDds: any): number[] => {
   });
 };
 
-export const mapCommune = (communeDb: any): Commune => {
-  const { departement_id, ...otherParams } = communeDb;
+export const buildCommuneFromCommuneDb = (communeDb: CommuneDb): Commune => {
   return {
-    ...otherParams,
-    departementId: communeDb.departement_id
+    id: communeDb.id,
+    departementId: communeDb.departement_id,
+    code: communeDb.code,
+    nom: communeDb.nom
   };
 };
 
-export const mapCommunes = (communesDb: any): Commune[] => {
+export const buildCommunesFromCommunesDb = (
+  communesDb: CommuneDb[]
+): Commune[] => {
   return _.map(communesDb, (communeDb) => {
-    return mapCommune(communeDb);
+    return buildCommuneFromCommuneDb(communeDb);
   });
 };
 
-export const mapLieudit = (lieuditDb: any): Lieudit => {
-  const { commune_id, ...otherParams } = lieuditDb;
+export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
   return {
-    ...otherParams,
-    communeId: lieuditDb.commune_id
+    id: lieuditDb.id,
+    communeId: lieuditDb.commune_id,
+    nom: lieuditDb.nom,
+    altitude: lieuditDb.altitude,
+    longitude: lieuditDb.longitude,
+    latitude: lieuditDb.latitude,
+    coordinatesL2E: {
+      altitude: lieuditDb.altitude,
+      longitude: lieuditDb.longitude,
+      latitude: lieuditDb.latitude
+    },
+    coordinatesL93: {
+      altitude: null,
+      longitude: null,
+      latitude: null
+    },
+    coordinatesGPS: {
+      altitude: null,
+      longitude: null,
+      latitude: null
+    }
   };
 };
 
-export const mapLieuxdits = (lieuxditsDb: any): Lieudit[] => {
+export const buildLieuxditsFromLieuxditsDb = (
+  lieuxditsDb: LieuditDb[]
+): Lieudit[] => {
   return _.map(lieuxditsDb, (lieuditDb) => {
-    return mapLieudit(lieuditDb);
+    return buildLieuditFromLieuditDb(lieuditDb);
   });
 };
 

@@ -40,14 +40,14 @@ import {
 } from "../utils/constants";
 import {
   mapAssociesIds,
-  mapCommunes,
   mapComportementsIds,
   mapEspeces,
   mapEstimationsNombre,
   mapInventaire,
-  mapLieuxdits,
   mapMeteosIds,
-  mapMilieuxIds
+  mapMilieuxIds,
+  buildLieuxditsFromLieuxditsDb,
+  buildCommunesFromCommunesDb
 } from "../utils/mapping-utils";
 import {
   buildPostResponseFromSqlResponse,
@@ -77,13 +77,13 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
   if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
     const listsResults = await SqlConnection.query(
       getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
-      getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
-      getQueryToFindComportementsIdsByDonneeId(flatDonnee.id) +
-      getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id) +
-      getQueryToFindNumberOfDonneesByDoneeeEntityId(
-        "inventaire_id",
-        flatDonnee.inventaireId
-      )
+        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
+        getQueryToFindComportementsIdsByDonneeId(flatDonnee.id) +
+        getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id) +
+        getQueryToFindNumberOfDonneesByDoneeeEntityId(
+          "inventaire_id",
+          flatDonnee.inventaireId
+        )
     );
 
     const inventaire: Inventaire = {
@@ -94,9 +94,24 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
       heure: flatDonnee.heure,
       duree: flatDonnee.duree,
       lieuditId: flatDonnee.lieuditId,
-      altitude: flatDonnee.altitude,
-      longitude: flatDonnee.longitude,
-      latitude: flatDonnee.latitude,
+      altitude: flatDonnee.altitudeL2E,
+      longitude: flatDonnee.longitudeL2E,
+      latitude: flatDonnee.latitudeL2E,
+      customizedCoordinatesL2E: {
+        altitude: flatDonnee.altitudeL2E,
+        longitude: flatDonnee.longitudeL2E,
+        latitude: flatDonnee.latitudeL2E
+      },
+      customizedCoordinatesL93: {
+        altitude: null,
+        longitude: null,
+        latitude: null
+      },
+      customizedCoordinatesGPS: {
+        altitude: null,
+        longitude: null,
+        latitude: null
+      },
       temperature: flatDonnee.temperature,
       meteosIds: mapMeteosIds(listsResults[1]),
       nbDonnees: listsResults[4][0].nbDonnees
@@ -149,15 +164,15 @@ const getConfigurationValueAsBoolean = (
 };
 
 export const creationInit = async (): Promise<CreationPage> => {
-
-  const [lastDonneeInfo,
+  const [
+    lastDonneeInfo,
     numberOfDonnees,
     lastRegroupement,
     configuration,
     observateurs,
     departements,
     communes,
-    lieudits,
+    lieuxditsDb,
     meteos,
     classes,
     especes,
@@ -166,7 +181,9 @@ export const creationInit = async (): Promise<CreationPage> => {
     estimationsNombre,
     estimationsDistance,
     comportements,
-    milieux] = await Promise.all(_.flatten([
+    milieux
+  ] = await Promise.all(
+    _.flatten([
       SqlConnection.query(getQueryToFindLastDonnee()),
       SqlConnection.query(getQueryToFindNumberOfDonnees()),
       SqlConnection.query(getQueryToFindLastRegroupement()),
@@ -186,8 +203,8 @@ export const creationInit = async (): Promise<CreationPage> => {
         "comportement",
         "milieu"
       ])
-    ]));
-
+    ])
+  );
 
   const lastDonnee: Donnee = await buildDonneeFromFlatDonneeWithMinimalData(
     lastDonneeInfo[0]
@@ -241,8 +258,8 @@ export const creationInit = async (): Promise<CreationPage> => {
     ),
     observateurs: observateurs,
     departements: departements,
-    communes: mapCommunes(communes),
-    lieudits: mapLieuxdits(lieudits),
+    communes: buildCommunesFromCommunesDb(communes),
+    lieudits: buildLieuxditsFromLieuxditsDb(lieuxditsDb),
     meteos: meteos,
     classes: classes,
     especes: mapEspeces(especes),
@@ -369,9 +386,9 @@ export const getDonneeByIdWithContext = async (
   const id: number = +httpParameters.queryParameters.id;
   const results = await SqlConnection.query(
     getQueryToFindDonneeById(id) +
-    getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
-    getQueryToFindNextDonneeByCurrentDonneeId(id) +
-    getQueryToFindDonneeIndexById(id)
+      getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
+      getQueryToFindNextDonneeByCurrentDonneeId(id) +
+      getQueryToFindDonneeIndexById(id)
   );
 
   const donnee = await buildDonneeFromFlatDonneeWithMinimalData(results[0][0]);
@@ -397,8 +414,8 @@ export const getInventaireById = async (
 
   const results = await SqlConnection.query(
     getFindOneByIdQuery(TABLE_INVENTAIRE, inventaireId) +
-    getQueryToFindAssociesByInventaireId(inventaireId) +
-    getQueryToFindMetosByInventaireId(inventaireId)
+      getQueryToFindAssociesByInventaireId(inventaireId) +
+      getQueryToFindMetosByInventaireId(inventaireId)
   );
 
   const inventaire: Inventaire = mapInventaire(results[0][0]);

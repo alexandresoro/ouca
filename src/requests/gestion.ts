@@ -21,10 +21,6 @@ import {
   getQueryToFindNumberOfDonneesByClasseId,
   getQueryToFindNumberOfEspecesByClasseId
 } from "../sql/sql-queries-classe";
-import {
-  getQueryToFindNumberOfDonneesByCommuneId,
-  getQueryToFindNumberOfLieuxditsByCommuneId
-} from "../sql/sql-queries-commune";
 import { getQueryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
 import {
   getQueryToFindNumberOfCommunesByDepartementId,
@@ -66,24 +62,16 @@ import {
 } from "../utils/constants";
 import { writeToExcel } from "../utils/export-excel-utils";
 import {
-  mapCommunes,
   mapEspeces,
   mapEstimationsNombre,
-  mapLieuxdits
+  buildLieuxditsFromLieuxditsDb,
+  buildCommunesFromCommunesDb
 } from "../utils/mapping-utils";
 import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-
-const getNbByEntityId = (
-  object: EntiteSimple,
-  nbById: NumberOfObjectsById[]
-): number => {
-  const foundValue: NumberOfObjectsById = _.find(nbById, (element) => {
-    return element.id === object.id;
-  });
-  return foundValue ? foundValue.nb : 0;
-};
+import { findAllCommunes } from "../sql-api/sql-api-commune";
+import { getNbByEntityId } from "../utils/utils";
 
 const saveEntity = async (
   entityToSave: EntiteSimple,
@@ -184,28 +172,7 @@ export const deleteDepartement = async (
 };
 
 export const getCommunes = async (): Promise<Commune[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC) +
-      getFindAllQuery(TABLE_DEPARTEMENT) +
-      getQueryToFindNumberOfLieuxditsByCommuneId() +
-      getQueryToFindNumberOfDonneesByCommuneId()
-  );
-
-  const communes: Commune[] = mapCommunes(results[0]);
-
-  const departements: Departement[] = results[1];
-  const nbLieuxditsByCommune: NumberOfObjectsById[] = results[2];
-  const nbDonneesByCommune: NumberOfObjectsById[] = results[3];
-  _.forEach(communes, (commune: Commune) => {
-    commune.departement = _.find(departements, (departement: Departement) => {
-      return departement.id === commune.departementId;
-    });
-    commune.departementId = null;
-    commune.nbLieuxdits = getNbByEntityId(commune, nbLieuxditsByCommune);
-    commune.nbDonnees = getNbByEntityId(commune, nbDonneesByCommune);
-  });
-
-  return communes;
+  return await findAllCommunes();
 };
 
 export const saveCommune = async (
@@ -229,17 +196,24 @@ export const deleteCommune = async (
 };
 
 export const getLieuxdits = async (): Promise<Lieudit[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC) +
-      getFindAllQuery(TABLE_COMMUNE) +
-      getFindAllQuery(TABLE_DEPARTEMENT) +
-      getQueryToFindNumberOfDonneesByLieuditId()
+  const [
+    lieuxditsDb,
+    communesDb,
+    departements,
+    nbDonneesByLieudit
+  ] = await Promise.all(
+    _.flatten([
+      SqlConnection.query(
+        getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC)
+      ),
+      SqlConnection.query(getFindAllQuery(TABLE_COMMUNE)),
+      SqlConnection.query(getFindAllQuery(TABLE_DEPARTEMENT)),
+      SqlConnection.query(getQueryToFindNumberOfDonneesByLieuditId())
+    ])
   );
-  const lieuxdits: Lieudit[] = mapLieuxdits(results[0]);
 
-  const communes: Commune[] = mapCommunes(results[1]);
-  const departements: Departement[] = results[2];
-  const nbDonneesByLieudit: NumberOfObjectsById[] = results[3];
+  const lieuxdits: Lieudit[] = buildLieuxditsFromLieuxditsDb(lieuxditsDb);
+  const communes: Commune[] = buildCommunesFromCommunesDb(communesDb);
 
   _.forEach(lieuxdits, (lieudit: Lieudit) => {
     lieudit.commune = _.find(communes, (commune: Commune) => {
@@ -262,7 +236,7 @@ export const getLieuxdits = async (): Promise<Lieudit[]> => {
 export const saveLieudit = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
-  const lieuditToSave = httpParameters.postData;
+  const lieuditToSave: Lieudit = httpParameters.postData;
   if (
     !lieuditToSave.communeId &&
     !!lieuditToSave.commune &&
@@ -270,6 +244,10 @@ export const saveLieudit = async (
   ) {
     lieuditToSave.communeId = lieuditToSave.commune.id;
   }
+  // TO DO
+  lieuditToSave.altitude = lieuditToSave.coordinatesL2E.altitude;
+  lieuditToSave.longitude = lieuditToSave.coordinatesL2E.longitude;
+  lieuditToSave.latitude = lieuditToSave.coordinatesL2E.latitude;
   return saveEntity(lieuditToSave, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
 };
 
@@ -470,9 +448,7 @@ export const deleteEstimationNombre = async (
   return deleteEntity(httpParameters, TABLE_ESTIMATION_NOMBRE);
 };
 
-export const getEstimationsDistance = async (): Promise<
-  EstimationDistance[]
-> => {
+export const getEstimationsDistance = async (): Promise<EstimationDistance[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_ESTIMATION_DISTANCE, COLUMN_LIBELLE, ORDER_ASC) +
       getQueryToFindNumberOfDonneesByEstimationDistanceId()
@@ -631,9 +607,9 @@ export const exportLieuxdits = async (): Promise<any> => {
       CodeCommune: object.commune.code,
       NomCommune: object.commune.nom,
       Lieudit: object.nom,
-      Altitude: object.altitude,
-      Longitude: object.longitude,
-      Latitude: object.latitude
+      AltitudeLambertIIEtendu: object.coordinatesL2E.altitude,
+      LongitudeLambertIIEtendu: object.coordinatesL2E.longitude,
+      LatitudeLambertIIEtendu: object.coordinatesL2E.latitude
     };
   });
 
@@ -644,9 +620,9 @@ export const exportLieuxdits = async (): Promise<any> => {
       "CodeCommune",
       "NomCommune",
       "Lieudit",
-      "Altitude",
-      "Longitude",
-      "Latitude"
+      "AltitudeLambertIIEtendu",
+      "LongitudeLambertIIEtendu",
+      "LatitudeLambertIIEtendu"
     ],
     "lieuxdits"
   );

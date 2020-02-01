@@ -8,16 +8,16 @@ import { ImportService } from "./import-service";
 export class ImportDepartementService extends ImportService {
   private CODE_INDEX: number = 0;
 
-  protected getNumberOfColumns = () => {
+  protected getNumberOfColumns = (): number => {
     return 1;
-  }
+  };
 
   protected buildEntity = (entityTab: string[]): Departement => {
     return {
       id: null,
       code: entityTab[this.CODE_INDEX].trim()
     };
-  }
+  };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     if (!this.isCodeValid(entityTab[this.CODE_INDEX])) {
@@ -42,7 +42,7 @@ export class ImportDepartementService extends ImportService {
       departementToSave,
       DB_SAVE_MAPPING.departement
     );
-  }
+  };
 
   private isCodeValid = (code: string): boolean => {
     code = code.trim();
@@ -59,5 +59,5 @@ export class ImportDepartementService extends ImportService {
     }
 
     return true;
-  }
+  };
 }

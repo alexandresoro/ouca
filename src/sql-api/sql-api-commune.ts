@@ -3,9 +3,59 @@ import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getQueryToFindCommuneByDepartementIdAndCode,
   getQueryToFindCommuneByDepartementIdAndCodeAndNom,
-  getQueryToFindCommuneByDepartementIdAndNom
+  getQueryToFindCommuneByDepartementIdAndNom,
+  getQueryToFindNumberOfLieuxditsByCommuneId,
+  getQueryToFindNumberOfDonneesByCommuneId
 } from "../sql/sql-queries-commune";
-import { mapCommune } from "../utils/mapping-utils";
+import {
+  buildCommunesFromCommunesDb,
+  buildCommuneFromCommuneDb
+} from "../utils/mapping-utils";
+import { getFindAllQuery } from "../sql/sql-queries-utils";
+import {
+  TABLE_DEPARTEMENT,
+  ORDER_ASC,
+  COLUMN_NOM,
+  TABLE_COMMUNE
+} from "../utils/constants";
+import { Departement } from "basenaturaliste-model/departement.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import * as _ from "lodash";
+import { getNbByEntityId } from "../utils/utils";
+
+export const findAllCommunes = async (): Promise<Commune[]> => {
+  const [
+    communesDb,
+    departementsDb,
+    nbLieuxditsByCommuneDb,
+    nbDonneesByCommuneDb
+  ] = await Promise.all(
+    _.flatten([
+      SqlConnection.query(
+        getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC)
+      ),
+      SqlConnection.query(getFindAllQuery(TABLE_DEPARTEMENT)),
+      SqlConnection.query(getQueryToFindNumberOfLieuxditsByCommuneId()),
+      SqlConnection.query(getQueryToFindNumberOfDonneesByCommuneId())
+    ])
+  );
+
+  const communes: Commune[] = buildCommunesFromCommunesDb(communesDb);
+  const departements: Departement[] = departementsDb;
+  const nbLieuxditsByCommune: NumberOfObjectsById[] = nbLieuxditsByCommuneDb;
+  const nbDonneesByCommune: NumberOfObjectsById[] = nbDonneesByCommuneDb;
+
+  _.forEach(communes, (commune: Commune) => {
+    commune.departement = _.find(departements, (departement: Departement) => {
+      return departement.id === commune.departementId;
+    });
+    commune.departementId = null;
+    commune.nbLieuxdits = getNbByEntityId(commune, nbLieuxditsByCommune);
+    commune.nbDonnees = getNbByEntityId(commune, nbDonneesByCommune);
+  });
+
+  return communes;
+};
 
 export const getCommuneByDepartementIdAndCodeAndNom = async (
   departementId: number,
@@ -19,7 +69,7 @@ export const getCommuneByDepartementIdAndCodeAndNom = async (
   let commune: Commune = null;
 
   if (results && results[0] && results[0].id) {
-    commune = mapCommune(results[0]);
+    commune = buildCommuneFromCommuneDb(results[0]);
   }
 
   return commune;
@@ -36,7 +86,7 @@ export const getCommuneByDepartementIdAndCode = async (
   let commune: Commune = null;
 
   if (results && results[0] && results[0].id) {
-    commune = mapCommune(results[0]);
+    commune = buildCommuneFromCommuneDb(results[0]);
   }
 
   return commune;
@@ -53,7 +103,7 @@ export const getCommuneByDepartementIdAndNom = async (
   let commune: Commune = null;
 
   if (results && results[0] && results[0].id) {
-    commune = mapCommune(results[0]);
+    commune = buildCommuneFromCommuneDb(results[0]);
   }
 
   return commune;

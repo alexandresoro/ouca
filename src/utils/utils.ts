@@ -1,4 +1,6 @@
 import * as _ from "lodash";
+import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 
 export function buildArgRegexFromKey(
   argKey: string,
@@ -73,4 +75,14 @@ export const isTimeValid = (timeStr: string): boolean => {
 
   const finalDateRegExp = new RegExp("^[0-9][0-9][:][0-9][0-9]$");
   return !!value && !!finalDateRegExp.test(value);
+};
+
+export const getNbByEntityId = (
+  object: EntiteSimple,
+  nbById: NumberOfObjectsById[]
+): number => {
+  const foundValue: NumberOfObjectsById = _.find(nbById, (element) => {
+    return element.id === object.id;
+  });
+  return foundValue ? foundValue.nb : 0;
 };

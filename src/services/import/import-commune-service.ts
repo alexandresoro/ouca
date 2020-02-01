@@ -26,7 +26,7 @@ export class ImportCommuneService extends ImportService {
     return {
       id: null,
       departementId,
-      code: entityTab[this.CODE_INDEX].trim(),
+      code: +entityTab[this.CODE_INDEX].trim(),
       nom: entityTab[this.NOM_INDEX].trim()
     };
   };
