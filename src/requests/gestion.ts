@@ -602,26 +602,26 @@ export const exportLieuxdits = async (): Promise<any> => {
 
   const objectsToExport = _.map(lieuxditsDb, (object) => {
     return {
-      Departement: object.commune.departement.code,
-      CodeCommune: object.commune.code,
-      NomCommune: object.commune.nom,
-      Lieudit: object.nom,
-      AltitudeLambertIIEtendu: object.altitude,
-      LongitudeLambertIIEtendu: object.coordinatesL2E.longitude,
-      LatitudeLambertIIEtendu: object.coordinatesL2E.latitude
+      Département: object.commune.departement.code,
+      "Code commune": object.commune.code,
+      "Nom commune": object.commune.nom,
+      "Lieu-dit": object.nom,
+      Altitude: object.altitude,
+      "Longitude (Lambert II étendu)": object.coordinatesL2E.longitude,
+      "Latitude (Lambert II étendu)": object.coordinatesL2E.latitude
     };
   });
 
   return writeToExcel(
     objectsToExport,
     [
-      "Departement",
-      "CodeCommune",
-      "NomCommune",
-      "Lieudit",
-      "AltitudeLambertIIEtendu",
-      "LongitudeLambertIIEtendu",
-      "LatitudeLambertIIEtendu"
+      "Département",
+      "Code commune",
+      "Nom commune",
+      "Lieu-dit",
+      "Altitude",
+      "Longitude (Lambert II étendu)",
+      "Latitude (Lambert II étendu)"
     ],
     "lieuxdits"
   );

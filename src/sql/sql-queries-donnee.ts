@@ -49,10 +49,10 @@ const getBaseQueryToFindDetailedDonnees = (): string => {
     " t_commune.code as codeCommune," +
     " t_commune.nom as nomCommune," +
     " t_lieudit.nom as lieudit," +
-    " t_lieudit.altitude as altitudeL2E," +
+    " t_lieudit.altitude as altitude," +
     " t_lieudit.longitude as longitudeL2E," +
     " t_lieudit.latitude as latitudeL2E," +
-    " t_inventaire.altitude as customizedAltitudeL2E," +
+    " t_inventaire.altitude as customizedAltitude," +
     " t_inventaire.longitude as customizedLongitudeL2E," +
     " t_inventaire.latitude as customizedLatitudeL2E," +
     " t_inventaire.temperature, " +
