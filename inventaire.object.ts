@@ -19,17 +19,13 @@ export interface Inventaire extends EntiteSimple {
 
   lieuditId: number;
 
-  customizedCoordinatesL2E?: Coordinates;
+  customizedAltitude: number | null;
+
+  customizedCoordinatesL2E: Coordinates;
 
   customizedCoordinatesL93?: Coordinates;
 
   customizedCoordinatesGPS?: Coordinates;
-
-  altitude: number | null;
-
-  longitude: number | null;
-
-  latitude: number | null;
 
   meteos?: Meteo[];
 
