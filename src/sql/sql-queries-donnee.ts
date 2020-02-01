@@ -19,7 +19,7 @@ const getBaseQueryToFindDonnees = (): string => {
     "i.heure," +
     "i.duree," +
     "i.lieudit_id as lieuditId," +
-    "i.altitude as altitudeL2E," +
+    "i.altitude as altitude," +
     "i.longitude as longitudeL2E," +
     "i.latitude as latitudeL2E," +
     "i.temperature," +
