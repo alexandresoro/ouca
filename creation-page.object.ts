@@ -13,6 +13,7 @@ import { Milieu } from "./milieu.object";
 import { Observateur } from "./observateur.object";
 import { Sexe } from "./sexe.object";
 import { ObjectId } from "bson";
+import { CoordinatesSystem } from "./coordinates-system/coordinates-system.object";
 
 export interface CreationPage {
   defaultDepartementId: number;
@@ -26,6 +27,8 @@ export interface CreationPage {
   isMeteoDisplayed: boolean;
   isDistanceDisplayed: boolean;
   isRegroupementDisplayed: boolean;
+
+  coordinatesSystem: CoordinatesSystem;
 
   lastDonnee?: Donnee;
   lastDonneeId?: ObjectId;

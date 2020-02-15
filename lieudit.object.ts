@@ -1,8 +1,9 @@
 import { Commune } from "./commune.object";
 import { EntiteSimple } from "./entite-simple.object";
-import { Coordinates } from "./coordinates.object";
+import { EntityWithCoordinates } from "./entity-with-coordinates.object";
+import { CoordinatesSystem } from "./coordinates-system/coordinates-system.object";
 
-export interface Lieudit extends EntiteSimple {
+export interface Lieudit extends EntiteSimple, EntityWithCoordinates {
   communeId: number;
 
   commune?: Commune;
@@ -10,13 +11,4 @@ export interface Lieudit extends EntiteSimple {
   nom: string;
 
   altitude: number;
-
-  // Lambert II étendu
-  coordinatesL2E: Coordinates;
-
-  // Lambert 93
-  coordinatesL93?: Coordinates;
-
-  // GPS
-  coordinatesGPS?: Coordinates;
 }

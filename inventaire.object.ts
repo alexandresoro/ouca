@@ -2,9 +2,9 @@ import { EntiteSimple } from "./entite-simple.object";
 import { Lieudit } from "./lieudit.object";
 import { Meteo } from "./meteo.object";
 import { Observateur } from "./observateur.object";
-import { Coordinates } from "./coordinates.object";
+import { EntityWithCoordinates } from "./entity-with-coordinates.object";
 
-export interface Inventaire extends EntiteSimple {
+export interface Inventaire extends EntiteSimple, EntityWithCoordinates {
   associes?: Observateur[];
 
   associesIds: number[];
@@ -20,12 +20,6 @@ export interface Inventaire extends EntiteSimple {
   lieuditId: number;
 
   customizedAltitude: number | null;
-
-  customizedCoordinatesL2E: Coordinates;
-
-  customizedCoordinatesL93?: Coordinates;
-
-  customizedCoordinatesGPS?: Coordinates;
 
   meteos?: Meteo[];
 
