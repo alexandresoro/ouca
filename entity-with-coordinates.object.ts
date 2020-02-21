@@ -2,5 +2,5 @@ import { CoordinatesSystemType } from "./coordinates-system/coordinates-system.o
 import { Coordinates } from "./coordinates.object";
 
 export interface EntityWithCoordinates {
-  coordinates: Record<Partial<CoordinatesSystemType>, Coordinates>;
+  coordinates: Partial<Record<CoordinatesSystemType, Coordinates>>;
 }

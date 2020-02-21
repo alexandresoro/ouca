@@ -1,11 +1,11 @@
-import { LAMBERT_93_COORDINATES } from "./lambert-93.object";
-import { GPS_COORDINATES } from "./gps.object";
 import {
-  CoordinatesSystemType,
-  CoordinatesSystem
+  CoordinatesSystem,
+  CoordinatesSystemType
 } from "./coordinates-system.object";
+import { GPS_COORDINATES } from "./gps.object";
+import { LAMBERT_93_COORDINATES } from "./lambert-93.object";
 
-export const COORDINATES_SYSTEMS: Record<
+export const COORDINATES_SYSTEMS_CONFIG: Record<
   CoordinatesSystemType,
   CoordinatesSystem
 > = {
