@@ -9,7 +9,7 @@ export interface Inventaire extends EntiteSimple, EntityWithCoordinates {
 
   associesIds: number[];
 
-  date: Date;
+  date: string;
 
   duree: string | null;
 
