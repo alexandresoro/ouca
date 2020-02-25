@@ -33,14 +33,14 @@
   "devDependencies": {
     "@types/lodash": "*",
     "@types/multiparty": "*",
-    "@types/node": "10",
+    "@types/node": "12",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
     "basenaturaliste-model": "https://github.com/alexandresoro/basenaturaliste-model#master",
     "eslint": "*",
-    "typescript": "*"
+    "typescript": "3.7"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12"
   }
 }
