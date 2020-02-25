@@ -140,7 +140,7 @@ const getConfigurationValueAsString = (
 ): string => {
   return _.find(
     configurations,
-    (configuration) => configuration.libelle === libelle
+    configuration => configuration.libelle === libelle
   ).value;
 };
 

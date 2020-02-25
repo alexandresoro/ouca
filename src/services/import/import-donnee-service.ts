@@ -148,7 +148,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Date"
-    const date: any = rawDonnee.date; // TO DO
+    const date = rawDonnee.date; // TO DO
 
     // Get the "Heure"
     const heure: string = getFormattedTime(rawDonnee.heure);
@@ -487,7 +487,7 @@ export class ImportDoneeeService extends ImportService {
   private buildInventaire = (
     observateurId: number,
     associesIds: number[],
-    date: Date,
+    date: string,
     heure: string | null,
     duree: string | null,
     lieuditId: number,

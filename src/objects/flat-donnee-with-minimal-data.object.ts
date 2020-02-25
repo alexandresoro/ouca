@@ -2,7 +2,7 @@ export interface FlatDonneeWithMinimalData {
   id: number;
   inventaireId: number;
   observateurId: number;
-  date: Date;
+  date: string;
   heure: string | null;
   duree: string | null;
   lieuditId: number;

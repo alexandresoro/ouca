@@ -46,7 +46,7 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
     ARG_KEY_VALUE_DELIMITER
   );
 
-  _.forEach(process.argv, (argValue) => {
+  _.forEach(process.argv, argValue => {
     const hostMatch = hostRegex.exec(argValue);
     const portMatch = portRegex.exec(argValue);
     const userMatch = userRegex.exec(argValue);
@@ -76,6 +76,7 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
     password,
     database: DEFAULT_DATABASE_NAME,
     multipleStatements: true,
+    dateStrings: true,
     typeCast: function castField(field, useDefaultTypeCasting) {
       // We only want to cast bit fields that have a single-bit in them. If the field
       // has more than one bit, then we cannot assume it is supposed to be a Boolean.
@@ -93,24 +94,23 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
   };
 
   console.log(
-    `Database configured with address ${config.host}:${config.port} and user ${
-    config.user
-    } and password ${config.password} on database "${config.database}"`
+    `Database configured with address ${config.host}:${config.port} and user ${config.user} and password ${config.password} on database "${config.database}"`
   );
 
   return config;
 };
 
 const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
-  return (mariadb.createConnection(getSqlConnectionConfiguration()))
-    .then((conn) => {
+  return mariadb
+    .createConnection(getSqlConnectionConfiguration())
+    .then(conn => {
       console.log("Connected to the database: ", conn.serverVersion());
-      conn.on("error", (error) => {
+      conn.on("error", error => {
         console.log(error);
       });
       return conn;
     })
-    .catch((error) => {
+    .catch(error => {
       // General connection error
       console.log(
         "The connection to the database has failed with the following error:",
