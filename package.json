@@ -1,7 +1,13 @@
 {
-  "name": "basenaturaliste-model",
-  "version": "1.0.0",
-  "description": "Model for Base Naturaliste objects",
+  "name": "ouca-common",
+  "description": "Common elements for Base Naturaliste project",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "yarn run clean && yarn run build:indexes && tsc",
+    "build:indexes": "node indexes",
+    "clean": "node clean",
+    "deploy": "yarn run build && node deploy && yarn publish dist"
+  },
   "contributors": [
     {
       "name": "Camille Carrier"
@@ -11,8 +17,10 @@
     }
   ],
   "license": "UNLICENSED",
-  "private": true,
   "dependencies": {
     "@types/bson": "*"
+  },
+  "devDependencies": {
+    "typescript": "*"
   }
 }
