@@ -1,4 +1,4 @@
-import { Departement } from "basenaturaliste-model/departement.object";
+import { Departement } from "ouca-common/departement.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindDepartementByCode } from "../sql/sql-queries-departement";
 

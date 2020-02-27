@@ -1,24 +1,29 @@
-import { Age } from "basenaturaliste-model/age.object";
-import { Commune } from "basenaturaliste-model/commune.object";
-import { Comportement } from "basenaturaliste-model/comportement.object";
-import { Departement } from "basenaturaliste-model/departement.object";
-import { Donnee } from "basenaturaliste-model/donnee.object";
-import { Espece } from "basenaturaliste-model/espece.object";
-import { EstimationDistance } from "basenaturaliste-model/estimation-distance.object";
-import { EstimationNombre } from "basenaturaliste-model/estimation-nombre.object";
-import { Inventaire } from "basenaturaliste-model/inventaire.object";
-import { Lieudit } from "basenaturaliste-model/lieudit.object";
-import { Meteo } from "basenaturaliste-model/meteo.object";
-import { Milieu } from "basenaturaliste-model/milieu.object";
-import { Observateur } from "basenaturaliste-model/observateur.object";
-import { Sexe } from "basenaturaliste-model/sexe.object";
+import * as _ from "lodash";
+import { Age } from "ouca-common/age.object";
+import { Commune } from "ouca-common/commune.object";
+import { Comportement } from "ouca-common/comportement.object";
+import { Departement } from "ouca-common/departement.object";
+import { Donnee } from "ouca-common/donnee.object";
+import { Espece } from "ouca-common/espece.object";
+import { EstimationDistance } from "ouca-common/estimation-distance.object";
+import { EstimationNombre } from "ouca-common/estimation-nombre.object";
+import { Inventaire } from "ouca-common/inventaire.object";
+import { Lieudit } from "ouca-common/lieudit.object";
+import { Meteo } from "ouca-common/meteo.object";
+import { Milieu } from "ouca-common/milieu.object";
+import { Observateur } from "ouca-common/observateur.object";
+import { Sexe } from "ouca-common/sexe.object";
+import { ImportedDonnee } from "../../objects/imported-donnee.object";
 import {
   getEntityByCode,
   getEntityByLibelle
 } from "../../sql-api/sql-api-common";
 import { getCommuneByDepartementIdAndCode } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
+import { findEspeceByCode } from "../../sql-api/sql-api-espece";
 import { getLieuditByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
+import { findMeteoByLibelle } from "../../sql-api/sql-api-meteo";
+import { findObservateurByLibelle } from "../../sql-api/sql-api-observateur";
 import {
   TABLE_AGE,
   TABLE_COMPORTEMENT,
@@ -27,17 +32,12 @@ import {
   TABLE_MILIEU,
   TABLE_SEXE
 } from "../../utils/constants";
-import { ImportService } from "./import-service";
 import {
+  getFormattedTime,
   isIdInListIds,
-  isTimeValid,
-  getFormattedTime
+  isTimeValid
 } from "../../utils/utils";
-import { findObservateurByLibelle } from "../../sql-api/sql-api-observateur";
-import { findMeteoByLibelle } from "../../sql-api/sql-api-meteo";
-import { findEspeceByCode } from "../../sql-api/sql-api-espece";
-import { ImportedDonnee } from "../../objects/imported-donnee.object";
-import * as _ from "lodash";
+import { ImportService } from "./import-service";
 
 export class ImportDoneeeService extends ImportService {
   private OBSERVATEUR_INDEX: number = 0;

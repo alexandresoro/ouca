@@ -1,11 +1,11 @@
-import { Classe } from "basenaturaliste-model/classe.object";
-import { Espece } from "basenaturaliste-model/espece.object";
+import { Classe } from "ouca-common/classe.object";
+import { Espece } from "ouca-common/espece.object";
 import { getClasseByLibelle } from "../../sql-api/sql-api-classe";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {
+  findEspeceByCode,
   getEspeceByNomFrancais,
-  getEspeceByNomLatin,
-  findEspeceByCode
+  getEspeceByNomLatin
 } from "../../sql-api/sql-api-espece";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
 import { TABLE_ESPECE } from "../../utils/constants";

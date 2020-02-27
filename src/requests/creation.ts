@@ -1,11 +1,29 @@
-import { CreationPage } from "basenaturaliste-model/creation-page.object";
-import { Donnee } from "basenaturaliste-model/donnee.object";
-import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import * as _ from "lodash";
+import { CreationPage } from "ouca-common/creation-page.object";
+import { DonneeWithNavigationData } from "ouca-common/donnee-with-navigation-data.object";
+import { Donnee } from "ouca-common/donnee.object";
+import { Inventaire } from "ouca-common/inventaire.object";
+import { PostResponse } from "ouca-common/post-response.object";
 import { HttpParameters } from "../http/httpParameters";
+import { Configuration } from "../objects/configuration.object";
+import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
+import {
+  findLastDonneeId,
+  getExistingDonneeId,
+  persistDonnee,
+  updateInventaireIdForDonnees
+} from "../sql-api/sql-api-donnee";
+import {
+  deleteInventaireById,
+  findInventaireIdById,
+  getExistingInventaireId,
+  persistInventaire
+} from "../sql-api/sql-api-inventaire";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";
 import {
+  getQueryToCountDonneesByInventaireId,
   getQueryToFindDonneeById,
   getQueryToFindDonneeIndexById,
   getQueryToFindLastDonnee,
@@ -13,16 +31,15 @@ import {
   getQueryToFindNextDonneeByCurrentDonneeId,
   getQueryToFindNumberOfDonnees,
   getQueryToFindNumberOfDonneesByDoneeeEntityId,
-  getQueryToFindPreviousDonneeByCurrentDonneeId,
-  getQueryToCountDonneesByInventaireId
+  getQueryToFindPreviousDonneeByCurrentDonneeId
 } from "../sql/sql-queries-donnee";
 import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
 import { getQueryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
 import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import {
+  getAllFromTablesSqlQuery,
   getDeleteEntityByIdQuery,
-  getFindOneByIdQuery,
-  getAllFromTablesSqlQuery
+  getFindOneByIdQuery
 } from "../sql/sql-queries-utils";
 import {
   KEY_ARE_ASSOCIES_DISPLAYED,
@@ -39,37 +56,20 @@ import {
   TABLE_INVENTAIRE
 } from "../utils/constants";
 import {
+  buildCommunesFromCommunesDb,
+  buildLieuxditsFromLieuxditsDb,
   mapAssociesIds,
   mapComportementsIds,
   mapEspeces,
   mapEstimationsNombre,
   mapInventaire,
   mapMeteosIds,
-  mapMilieuxIds,
-  buildLieuxditsFromLieuxditsDb,
-  buildCommunesFromCommunesDb
+  mapMilieuxIds
 } from "../utils/mapping-utils";
 import {
-  buildPostResponseFromSqlResponse,
-  buildErrorPostResponse
+  buildErrorPostResponse,
+  buildPostResponseFromSqlResponse
 } from "../utils/post-response-utils";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { DonneeWithNavigationData } from "basenaturaliste-model/donnee-with-navigation-data.object";
-import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
-import { PostResponse } from "basenaturaliste-model/post-response.object";
-import { Configuration } from "../objects/configuration.object";
-import {
-  persistDonnee,
-  getExistingDonneeId,
-  updateInventaireIdForDonnees,
-  findLastDonneeId
-} from "../sql-api/sql-api-donnee";
-import {
-  persistInventaire,
-  getExistingInventaireId,
-  deleteInventaireById,
-  findInventaireIdById
-} from "../sql-api/sql-api-inventaire";
 
 const buildDonneeFromFlatDonneeWithMinimalData = async (
   flatDonnee: FlatDonneeWithMinimalData

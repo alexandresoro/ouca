@@ -1,5 +1,5 @@
-import { Commune } from "basenaturaliste-model/commune.object";
-import { Departement } from "basenaturaliste-model/departement.object";
+import { Commune } from "ouca-common/commune.object";
+import { Departement } from "ouca-common/departement.object";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {
   getCommuneByDepartementIdAndCode,
@@ -101,7 +101,7 @@ export class ImportCommuneService extends ImportService {
       return false;
     }
 
-    const codeCommune: number = Number(codeStr);
+    const codeCommune = Number(codeStr);
 
     if (!Number.isInteger(codeCommune)) {
       this.message = "Le code de la commune doit être un entier";

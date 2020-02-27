@@ -1,4 +1,6 @@
 import moment from "moment";
+import { Donnee } from "ouca-common/donnee.object";
+import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import {
   TABLE_DONNEE_COMPORTEMENT,
   TABLE_DONNEE_MILIEU,
@@ -6,8 +8,6 @@ import {
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { getQuery } from "./sql-queries-utils";
-import { DonneesFilter } from "basenaturaliste-model/donnees-filter.object";
-import { Donnee } from "basenaturaliste-model/donnee.object";
 
 const getBaseQueryToFindDonnees = (): string => {
   return (

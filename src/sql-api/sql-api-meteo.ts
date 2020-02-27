@@ -1,6 +1,6 @@
-import { getEntityByLibelle } from "./sql-api-common";
+import { Meteo } from "ouca-common/meteo.object";
 import { TABLE_METEO } from "../utils/constants";
-import { Meteo } from "basenaturaliste-model/meteo.object";
+import { getEntityByLibelle } from "./sql-api-common";
 
 export const findMeteoByLibelle = async (
   observateurLibelle: string

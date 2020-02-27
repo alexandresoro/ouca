@@ -179,12 +179,6 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
-"basenaturaliste-model@https://github.com/alexandresoro/basenaturaliste-model#master":
-  version "1.0.0"
-  resolved "https://github.com/alexandresoro/basenaturaliste-model#d0a82c7ba0b0a0dd56946a0c57393abf53de0bd4"
-  dependencies:
-    "@types/bson" "*"
-
 brace-expansion@^1.1.7:
   version "1.1.11"
   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.11.tgz#3c7fcbf529d87226f3d2f52b966ff5271eb441dd"
@@ -809,6 +803,13 @@ os-tmpdir@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
   integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
+
+ouca-common@*:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.3.tgz#06d735d6fbb8e036df850671fda198d4a00b097a"
+  integrity sha512-4wq7fcKFdC5oBkMzZqZe3ExAUqE168yZ9JNds+5ZwYPGIen6KFuabXM4NdGSKTMW1qjZHyK4y8umUSAazM1kwQ==
+  dependencies:
+    "@types/bson" "*"
 
 papaparse@*:
   version "5.0.2"

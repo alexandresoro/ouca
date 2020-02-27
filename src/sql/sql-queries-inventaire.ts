@@ -1,6 +1,6 @@
-import { getQuery } from "./sql-queries-utils";
-import { Inventaire } from "basenaturaliste-model/inventaire.object";
 import moment from "moment";
+import { Inventaire } from "ouca-common/inventaire.object";
+import { getQuery } from "./sql-queries-utils";
 
 export function getQueryToFindNumberOfDonneesByInventaireEntityId(
   entityIdAttribute: string,

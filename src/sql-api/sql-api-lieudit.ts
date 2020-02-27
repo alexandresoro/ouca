@@ -1,7 +1,7 @@
-import { Lieudit } from "basenaturaliste-model/lieudit.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindLieuditByCommuneIdAndNom } from "../sql/sql-queries-lieudit";
 import { buildLieuditFromLieuditDb } from "../utils/mapping-utils";
+import { Lieudit } from "ouca-common/lieudit.object";
 
 export const getLieuditByCommuneIdAndNom = async (
   communeId: number,

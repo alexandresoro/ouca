@@ -1,4 +1,5 @@
-import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
+import { EntiteSimple } from "ouca-common/entite-simple.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getQueryToFindEntityByCode,
@@ -6,7 +7,6 @@ import {
   getQueryToFindEntityByLibelle,
   getSaveEntityQuery
 } from "../sql/sql-queries-utils";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
 
 export const saveEntity = async (
   tableName: string,

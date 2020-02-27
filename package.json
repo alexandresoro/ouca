@@ -27,6 +27,7 @@
     "mariadb": "*",
     "moment": "*",
     "multiparty": "*",
+    "ouca-common": "*",
     "papaparse": "*",
     "xlsx": "*"
   },
@@ -36,7 +37,6 @@
     "@types/node": "12",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
-    "basenaturaliste-model": "https://github.com/alexandresoro/basenaturaliste-model#master",
     "eslint": "*",
     "typescript": "3.7"
   },

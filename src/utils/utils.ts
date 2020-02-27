@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import { EntiteSimple } from "basenaturaliste-model/entite-simple.object";
+import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 
 export function buildArgRegexFromKey(
@@ -10,7 +10,7 @@ export function buildArgRegexFromKey(
 }
 
 export const toCamel = (s: string): string => {
-  return s.replace(/([-_][a-z])/gi, ($1) => {
+  return s.replace(/([-_][a-z])/gi, $1 => {
     return $1
       .toUpperCase()
       .replace("-", "")
@@ -32,13 +32,13 @@ export const getArrayFromObjects = <T>(
   objects: T[],
   attributeName: string
 ): number[] => {
-  return _.map(objects, (object) => {
+  return _.map(objects, object => {
     return object[attributeName];
   });
 };
 
 export const isIdInListIds = (ids: number[], idToFind: number): boolean => {
-  return !!ids.find((id) => {
+  return !!ids.find(id => {
     return id === idToFind;
   });
 };
@@ -81,7 +81,7 @@ export const getNbByEntityId = (
   object: EntiteSimple,
   nbById: NumberOfObjectsById[]
 ): number => {
-  const foundValue: NumberOfObjectsById = _.find(nbById, (element) => {
+  const foundValue: NumberOfObjectsById = _.find(nbById, element => {
     return element.id === object.id;
   });
   return foundValue ? foundValue.nb : 0;

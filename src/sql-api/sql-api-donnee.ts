@@ -1,15 +1,18 @@
 import * as _ from "lodash";
 import moment from "moment";
+import { Donnee } from "ouca-common/donnee.object";
+import { DonneesFilter } from "ouca-common/donnees-filter.object";
+import { FlatDonnee } from "ouca-common/flat-donnee.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   getQueryToFindAllComportements,
   getQueryToFindComportementsIdsByDonneeId
 } from "../sql/sql-queries-comportement";
 import {
-  getQueryToFindDonneesByCriterion,
   getQueryToFindDonneeIdsByAllAttributes,
-  getQueryToUpdateDonneesInventaireId,
-  getQueryToFindLastDonnee,
-  getQueryToFindLastDonneeId
+  getQueryToFindDonneesByCriterion,
+  getQueryToFindLastDonneeId,
+  getQueryToUpdateDonneesInventaireId
 } from "../sql/sql-queries-donnee";
 import { getQueryToFindAllMeteos } from "../sql/sql-queries-meteo";
 import {
@@ -17,30 +20,22 @@ import {
   getQueryToFindMilieuxIdsByDonneeId
 } from "../sql/sql-queries-milieu";
 import { getQueryToFindAllAssocies } from "../sql/sql-queries-observateur";
-import { SqlConnection } from "./sql-connection";
-import { FlatDonnee } from "basenaturaliste-model/flat-donnee.object";
-import { AssocieByDonnee } from "../objects/associe-by-donnee.object";
-import { MilieuByDonnee } from "../objects/milieu-by-donnee.object";
-import { ComportementByDonnee } from "../objects/comportement-by-donnee.object";
-import { MeteoByDonnee } from "../objects/meteo-by-donnee.object";
-import { DonneesFilter } from "basenaturaliste-model/donnees-filter.object";
-import { Donnee } from "basenaturaliste-model/donnee.object";
 import {
+  DB_SAVE_MAPPING,
   getDeleteEntityByAttributeQuery,
   getSaveEntityQuery,
-  DB_SAVE_MAPPING,
   getSaveListOfEntitesQueries
 } from "../sql/sql-queries-utils";
 import {
+  TABLE_DONNEE,
   TABLE_DONNEE_COMPORTEMENT,
-  TABLE_DONNEE_MILIEU,
-  TABLE_DONNEE
+  TABLE_DONNEE_MILIEU
 } from "../utils/constants";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   areArraysContainingSameValues,
   getArrayFromObjects
 } from "../utils/utils";
+import { SqlConnection } from "./sql-connection";
 
 export const persistDonnee = async (
   donneeToSave: Donnee
@@ -160,26 +155,29 @@ export const findDonneesByCustomizedFilters = async (
     getQueryToFindDonneesByCriterion(filter)
   );
 
-  const donneesIds: number[] = _.map(donnees, (donnee) => {
+  const donneesIds: number[] = _.map(donnees, donnee => {
     return donnee.id;
   });
 
-  const [associes, meteos, comportements, milieux]: any[][] = await Promise.all(
-    [
-      donnees.length
-        ? SqlConnection.query(getQueryToFindAllAssocies(donneesIds))
-        : [],
-      donnees.length
-        ? SqlConnection.query(getQueryToFindAllMeteos(donneesIds))
-        : [],
-      donnees.length
-        ? SqlConnection.query(getQueryToFindAllComportements(donneesIds))
-        : [],
-      donnees.length
-        ? SqlConnection.query(getQueryToFindAllMilieux(donneesIds))
-        : []
-    ]
-  );
+  const [
+    associes,
+    meteos,
+    comportements,
+    milieux
+  ]: any[][] = await Promise.all([
+    donnees.length
+      ? SqlConnection.query(getQueryToFindAllAssocies(donneesIds))
+      : [],
+    donnees.length
+      ? SqlConnection.query(getQueryToFindAllMeteos(donneesIds))
+      : [],
+    donnees.length
+      ? SqlConnection.query(getQueryToFindAllComportements(donneesIds))
+      : [],
+    donnees.length
+      ? SqlConnection.query(getQueryToFindAllMilieux(donneesIds))
+      : []
+  ]);
 
   const [
     associesByDonnee,
@@ -188,8 +186,8 @@ export const findDonneesByCustomizedFilters = async (
     milieuxByDonnee
   ]: { [key: number]: any }[] = _.map(
     [associes, meteos, comportements, milieux],
-    (table) => {
-      return _.groupBy(table, (tableElement) => {
+    table => {
+      return _.groupBy(table, tableElement => {
         return tableElement.donneeId;
       });
     }
@@ -198,22 +196,22 @@ export const findDonneesByCustomizedFilters = async (
   _.forEach(donnees, (donnee: FlatDonnee) => {
     donnee.associes = _.map(
       associesByDonnee[donnee.id],
-      (associe) => associe.libelle
+      associe => associe.libelle
     ).join(", ");
     donnee.meteos = _.map(
       meteosByDonnee[donnee.id],
-      (meteo) => meteo.libelle
+      meteo => meteo.libelle
     ).join(", ");
     donnee.comportements = _.map(
       comportementsByDonnee[donnee.id],
-      (comportement) => {
+      comportement => {
         return {
           code: comportement.code,
           libelle: comportement.libelle
         };
       }
     );
-    donnee.milieux = _.map(milieuxByDonnee[donnee.id], (milieu) => {
+    donnee.milieux = _.map(milieuxByDonnee[donnee.id], milieu => {
       return {
         code: milieu.code,
         libelle: milieu.libelle

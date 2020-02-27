@@ -1,4 +1,4 @@
-import { EstimationNombre } from "basenaturaliste-model/estimation-nombre.object";
+import { EstimationNombre } from "ouca-common/estimation-nombre.object";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
 import { TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
@@ -20,5 +20,5 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
       libelle: entityTab[this.LIBELLE_INDEX].trim(),
       nonCompte: false
     };
-  }
+  };
 }

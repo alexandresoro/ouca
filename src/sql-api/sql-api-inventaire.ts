@@ -1,29 +1,29 @@
-import { Inventaire } from "basenaturaliste-model/inventaire.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { SqlConnection } from "./sql-connection";
-import {
-  getDeleteEntityByAttributeQuery,
-  getSaveEntityQuery,
-  DB_SAVE_MAPPING,
-  getSaveListOfEntitesQueries,
-  getDeleteEntityByIdQuery
-} from "../sql/sql-queries-utils";
-import {
-  TABLE_INVENTAIRE_ASSOCIE,
-  TABLE_INVENTAIRE_METEO,
-  TABLE_INVENTAIRE
-} from "../utils/constants";
 import moment from "moment";
+import { Inventaire } from "ouca-common/inventaire.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
-  getQueryToFindInventaireIdByAllAttributes,
   getQueryToFindAssociesIdsByInventaireId,
-  getQueryToFindMeteosIdsByInventaireId,
-  getQueryToFindInventaireIdById
+  getQueryToFindInventaireIdByAllAttributes,
+  getQueryToFindInventaireIdById,
+  getQueryToFindMeteosIdsByInventaireId
 } from "../sql/sql-queries-inventaire";
 import {
-  getArrayFromObjects,
-  areArraysContainingSameValues
+  DB_SAVE_MAPPING,
+  getDeleteEntityByAttributeQuery,
+  getDeleteEntityByIdQuery,
+  getSaveEntityQuery,
+  getSaveListOfEntitesQueries
+} from "../sql/sql-queries-utils";
+import {
+  TABLE_INVENTAIRE,
+  TABLE_INVENTAIRE_ASSOCIE,
+  TABLE_INVENTAIRE_METEO
+} from "../utils/constants";
+import {
+  areArraysContainingSameValues,
+  getArrayFromObjects
 } from "../utils/utils";
+import { SqlConnection } from "./sql-connection";
 
 export const persistInventaire = async (
   inventaire: Inventaire

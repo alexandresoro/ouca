@@ -1,4 +1,4 @@
-import { Classe } from "basenaturaliste-model/classe.object";
+import { Classe } from "ouca-common/classe.object";
 import { TABLE_CLASSE } from "../utils/constants";
 import { getEntityByLibelle } from "./sql-api-common";
 

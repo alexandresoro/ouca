@@ -1,4 +1,4 @@
-import { PostResponse } from "basenaturaliste-model/post-response.object";
+import { PostResponse } from "ouca-common/post-response.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 
 export const buildPostResponseFromSqlResponse = (

@@ -1,9 +1,9 @@
 import * as _ from "lodash";
+import { FlatDonnee } from "ouca-common/flat-donnee.object";
 import { HttpParameters } from "../http/httpParameters";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
 import {} from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
-import { FlatDonnee } from "basenaturaliste-model/flat-donnee.object";
 
 const MAXIMUM_EXCEL_DATA_SUPPORTED = 50000;
 
@@ -44,7 +44,7 @@ export const exportDonneesByCustomizedFilters = async (
     });
   }
 
-  const objectsToExport = _.map(donnees, (object) => {
+  const objectsToExport = _.map(donnees, object => {
     return {
       ID: object.id,
       Observateur: object.observateur,

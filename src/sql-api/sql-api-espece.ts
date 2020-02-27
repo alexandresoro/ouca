@@ -1,4 +1,4 @@
-import { Espece } from "basenaturaliste-model/espece.object";
+import { Espece } from "ouca-common/espece.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getQueryToFindEspeceByCode,

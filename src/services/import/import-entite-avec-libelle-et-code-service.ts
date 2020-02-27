@@ -1,4 +1,4 @@
-import { EntiteAvecLibelleEtCode } from "basenaturaliste-model/entite-avec-libelle-et-code.object";
+import { EntiteAvecLibelleEtCode } from "ouca-common/entite-avec-libelle-et-code.object";
 import {
   getEntityByCode,
   getEntityByLibelle,
