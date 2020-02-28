@@ -83,16 +83,6 @@ export const configurationInit = async (): Promise<ConfigurationPage> => {
     dbConfiguration[key] = value;
   });
 
-  // TO DO get from DB
-  /*
-  dbConfiguration["coordinatesSystem"] = _.find(
-    COORDINATES_SYSTEMS,
-    (system) => {
-      return system.code === "lambert_II_etendu";
-    }
-  );
-  */
-
   return {
     appConfiguration: dbConfiguration as AppConfiguration,
     observateurs: results[1],
