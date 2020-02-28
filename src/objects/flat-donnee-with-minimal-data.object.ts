@@ -1,3 +1,5 @@
+import { CoordinatesSystemType } from "ouca-common/coordinates-system/coordinates-system.object";
+
 export interface FlatDonneeWithMinimalData {
   id: number;
   inventaireId: number;
@@ -7,8 +9,9 @@ export interface FlatDonneeWithMinimalData {
   duree: string | null;
   lieuditId: number;
   altitude: number | null;
-  longitudeL2E: number | null;
-  latitudeL2E: number | null;
+  longitude: number | null;
+  latitude: number | null;
+  coordinatesSystem: CoordinatesSystemType | null;
   temperature: number | null;
   especeId: number;
   sexeId: number;

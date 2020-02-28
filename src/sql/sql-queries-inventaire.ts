@@ -1,5 +1,7 @@
 import moment from "moment";
+import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
+import { getOriginCoordinates } from "../utils/coordinates-utils";
 import { getQuery } from "./sql-queries-utils";
 
 export function getQueryToFindNumberOfDonneesByInventaireEntityId(
@@ -49,25 +51,23 @@ export const getQueryToFindInventaireIdByAllAttributes = (
   query =
     query +
     " AND i.altitude" +
-    (!inventaire.customizedCoordinatesL2E || !inventaire.customizedAltitude
+    (!inventaire.customizedAltitude
       ? " is null"
       : "=" + inventaire.customizedAltitude);
+
+  const coordinates: Coordinates = getOriginCoordinates(inventaire);
 
   query =
     query +
     " AND i.longitude" +
-    (!inventaire.customizedCoordinatesL2E ||
-    !inventaire.customizedCoordinatesL2E.longitude
+    (!getOriginCoordinates(inventaire).longitude || !coordinates.longitude
       ? " is null"
-      : "=" + inventaire.customizedCoordinatesL2E.longitude);
+      : "=" + coordinates.longitude);
 
   query =
     query +
     " AND i.latitude" +
-    (!inventaire.customizedCoordinatesL2E ||
-    !inventaire.customizedCoordinatesL2E.latitude
-      ? " is null"
-      : "=" + inventaire.customizedCoordinatesL2E.latitude);
+    (!coordinates.latitude ? " is null" : "=" + coordinates.latitude);
 
   query =
     query +

@@ -1,10 +1,17 @@
 import * as _ from "lodash";
+import {
+  CoordinatesSystemType,
+  COORDINATES_SYSTEMS,
+  LAMBERT_93
+} from "ouca-common/coordinates-system/coordinates-system.object";
+import { Coordinates } from "ouca-common/coordinates.object";
 import { CreationPage } from "ouca-common/creation-page.object";
 import { DonneeWithNavigationData } from "ouca-common/donnee-with-navigation-data.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { PostResponse } from "ouca-common/post-response.object";
 import { HttpParameters } from "../http/httpParameters";
+import { buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
 import { Configuration } from "../objects/configuration.object";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -57,7 +64,6 @@ import {
 } from "../utils/constants";
 import {
   buildCommunesFromCommunesDb,
-  buildLieuxditsFromLieuxditsDb,
   mapAssociesIds,
   mapComportementsIds,
   mapEspeces,
@@ -86,6 +92,16 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
         )
     );
 
+    const coordinatesSystem = flatDonnee.coordinatesSystem
+      ? flatDonnee.coordinatesSystem
+      : LAMBERT_93;
+    const coordinates: Partial<Record<CoordinatesSystemType, Coordinates>> = {};
+    coordinates[coordinatesSystem] = {
+      system: coordinatesSystem,
+      longitude: flatDonnee.longitude,
+      latitude: flatDonnee.latitude
+    };
+
     const inventaire: Inventaire = {
       id: flatDonnee.inventaireId,
       observateurId: flatDonnee.observateurId,
@@ -95,18 +111,7 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
       duree: flatDonnee.duree,
       lieuditId: flatDonnee.lieuditId,
       customizedAltitude: flatDonnee.altitude,
-      customizedCoordinatesL2E: {
-        longitude: flatDonnee.longitudeL2E,
-        latitude: flatDonnee.latitudeL2E
-      },
-      customizedCoordinatesL93: {
-        longitude: null,
-        latitude: null
-      },
-      customizedCoordinatesGPS: {
-        longitude: null,
-        latitude: null
-      },
+      coordinates,
       temperature: flatDonnee.temperature,
       meteosIds: mapMeteosIds(listsResults[1]),
       nbDonnees: listsResults[4][0].nbDonnees
@@ -140,7 +145,7 @@ const getConfigurationValueAsString = (
 ): string => {
   return _.find(
     configurations,
-    configuration => configuration.libelle === libelle
+    (configuration) => configuration.libelle === libelle
   ).value;
 };
 
@@ -251,6 +256,7 @@ export const creationInit = async (): Promise<CreationPage> => {
       configurations,
       KEY_IS_REGROUPEMENT_DISPLAYED
     ),
+    coordinatesSystem: COORDINATES_SYSTEMS[LAMBERT_93],
     observateurs: observateurs,
     departements: departements,
     communes: buildCommunesFromCommunesDb(communes),

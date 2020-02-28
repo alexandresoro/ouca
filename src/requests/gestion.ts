@@ -3,6 +3,7 @@ import { Age } from "ouca-common/age.object";
 import { Classe } from "ouca-common/classe.object";
 import { Commune } from "ouca-common/commune.object";
 import { Comportement } from "ouca-common/comportement.object";
+import { CoordinatesSystemType } from "ouca-common/coordinates-system/coordinates-system.object";
 import { Departement } from "ouca-common/departement.object";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { Espece } from "ouca-common/espece.object";
@@ -15,6 +16,7 @@ import { Observateur } from "ouca-common/observateur.object";
 import { PostResponse } from "ouca-common/post-response.object";
 import { Sexe } from "ouca-common/sexe.object";
 import { HttpParameters } from "../http/httpParameters";
+import { buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
@@ -63,10 +65,10 @@ import {
   TABLE_OBSERVATEUR,
   TABLE_SEXE
 } from "../utils/constants";
+import { getOriginCoordinates } from "../utils/coordinates-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
 import {
   buildCommunesFromCommunesDb,
-  buildLieuxditsFromLieuxditsDb,
   mapEspeces,
   mapEstimationsNombre
 } from "../utils/mapping-utils";
@@ -245,8 +247,13 @@ export const saveLieudit = async (
     lieuditToSave.communeId = lieuditToSave.commune.id;
   }
   // TO DO
-  lieuditToSave["longitude"] = lieuditToSave.coordinatesL2E.longitude;
-  lieuditToSave["latitude"] = lieuditToSave.coordinatesL2E.latitude;
+  const coordinates =
+    lieuditToSave.coordinates[
+      _.first(_.keys(lieuditToSave.coordinates) as CoordinatesSystemType[])
+    ];
+  lieuditToSave["longitude"] = coordinates.longitude;
+  lieuditToSave["latitude"] = coordinates.latitude;
+  lieuditToSave["coordinates_system"] = coordinates.system;
   return saveEntity(lieuditToSave, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
 };
 
@@ -546,7 +553,7 @@ export const deleteMilieu = async (
 export const exportObservateurs = async (): Promise<any> => {
   const observateurs: Observateur[] = await getObservateurs();
 
-  const objectsToExport = _.map(observateurs, object => {
+  const objectsToExport = _.map(observateurs, (object) => {
     return {
       Observateur: object.libelle
     };
@@ -558,7 +565,7 @@ export const exportObservateurs = async (): Promise<any> => {
 export const exportMeteos = async (): Promise<any> => {
   const meteos: Meteo[] = await getMeteos();
 
-  const objectsToExport = _.map(meteos, object => {
+  const objectsToExport = _.map(meteos, (object) => {
     return {
       Meteo: object.libelle
     };
@@ -570,7 +577,7 @@ export const exportMeteos = async (): Promise<any> => {
 export const exportDepartements = async (): Promise<any> => {
   const departementsDb: Departement[] = await getDepartements();
 
-  const objectsToExport = _.map(departementsDb, object => {
+  const objectsToExport = _.map(departementsDb, (object) => {
     return {
       Departement: object.code
     };
@@ -582,7 +589,7 @@ export const exportDepartements = async (): Promise<any> => {
 export const exportCommunes = async (): Promise<any> => {
   const communesDb: Commune[] = await getCommunes();
 
-  const objectsToExport = _.map(communesDb, object => {
+  const objectsToExport = _.map(communesDb, (object) => {
     return {
       Departement: object.departement.code,
       Code: object.code,
@@ -598,17 +605,17 @@ export const exportCommunes = async (): Promise<any> => {
 };
 
 export const exportLieuxdits = async (): Promise<any> => {
-  const lieuxditsDb: Lieudit[] = await getLieuxdits();
+  const lieuxdits: Lieudit[] = await getLieuxdits();
 
-  const objectsToExport = _.map(lieuxditsDb, object => {
+  const objectsToExport = _.map(lieuxdits, (lieudit) => {
     return {
-      Département: object.commune.departement.code,
-      "Code commune": object.commune.code,
-      "Nom commune": object.commune.nom,
-      "Lieu-dit": object.nom,
-      Altitude: object.altitude,
-      "Longitude (Lambert II étendu)": object.coordinatesL2E.longitude,
-      "Latitude (Lambert II étendu)": object.coordinatesL2E.latitude
+      Département: lieudit.commune.departement.code,
+      "Code commune": lieudit.commune.code,
+      "Nom commune": lieudit.commune.nom,
+      "Lieu-dit": lieudit.nom,
+      Altitude: lieudit.altitude,
+      Longitude: getOriginCoordinates(lieudit).longitude,
+      Latitude: getOriginCoordinates(lieudit).latitude
     };
   });
 
@@ -620,8 +627,8 @@ export const exportLieuxdits = async (): Promise<any> => {
       "Nom commune",
       "Lieu-dit",
       "Altitude",
-      "Longitude (Lambert II étendu)",
-      "Latitude (Lambert II étendu)"
+      "Longitude",
+      "Latitude"
     ],
     "lieuxdits"
   );
@@ -630,7 +637,7 @@ export const exportLieuxdits = async (): Promise<any> => {
 export const exportClasses = async (): Promise<any> => {
   const classes: Classe[] = await getClasses();
 
-  const objectsToExport = _.map(classes, object => {
+  const objectsToExport = _.map(classes, (object) => {
     return { Classe: object.libelle };
   });
 
@@ -640,7 +647,7 @@ export const exportClasses = async (): Promise<any> => {
 export const exportEspeces = async (): Promise<any> => {
   const especes: Espece[] = await getEspeces();
 
-  const objectsToExport = _.map(especes, object => {
+  const objectsToExport = _.map(especes, (object) => {
     return {
       Classe: object.classe.libelle,
       Code: object.code,
@@ -659,7 +666,7 @@ export const exportEspeces = async (): Promise<any> => {
 export const exportAges = async (): Promise<any> => {
   const agesDb: Age[] = await getAges();
 
-  const agesToExport = _.map(agesDb, ageDb => {
+  const agesToExport = _.map(agesDb, (ageDb) => {
     return { Age: ageDb.libelle };
   });
 
@@ -669,7 +676,7 @@ export const exportAges = async (): Promise<any> => {
 export const exportSexes = async (): Promise<any> => {
   const sexes: Sexe[] = await getSexes();
 
-  const objectsToExport = _.map(sexes, object => {
+  const objectsToExport = _.map(sexes, (object) => {
     return { Sexe: object.libelle };
   });
 
@@ -679,7 +686,7 @@ export const exportSexes = async (): Promise<any> => {
 export const exportEstimationsNombre = async (): Promise<any> => {
   const estimations: EstimationNombre[] = await getEstimationsNombre();
 
-  const objectsToExport = _.map(estimations, object => {
+  const objectsToExport = _.map(estimations, (object) => {
     return { Estimation: object.libelle };
   });
 
@@ -689,7 +696,7 @@ export const exportEstimationsNombre = async (): Promise<any> => {
 export const exportEstimationsDistance = async (): Promise<any> => {
   const estimations: EstimationDistance[] = await getEstimationsDistance();
 
-  const objectsToExport = _.map(estimations, object => {
+  const objectsToExport = _.map(estimations, (object) => {
     return { Estimation: object.libelle };
   });
 
@@ -699,7 +706,7 @@ export const exportEstimationsDistance = async (): Promise<any> => {
 export const exportComportements = async (): Promise<any> => {
   const comportementsDb: Comportement[] = await getComportements();
 
-  const comportementsToExport = _.map(comportementsDb, object => {
+  const comportementsToExport = _.map(comportementsDb, (object) => {
     return { Code: object.code, Libelle: object.libelle };
   });
 
@@ -713,7 +720,7 @@ export const exportComportements = async (): Promise<any> => {
 export const exportMilieux = async (): Promise<any> => {
   const milieuxDb: Milieu[] = await getMilieux();
 
-  const milieuxToExport = _.map(milieuxDb, object => {
+  const milieuxToExport = _.map(milieuxDb, (object) => {
     return { Code: object.code, Libelle: object.libelle };
   });
 

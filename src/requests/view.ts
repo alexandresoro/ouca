@@ -30,11 +30,11 @@ export const getDonneesByCustomizedFilters = async (
 export const exportDonneesByCustomizedFilters = async (
   httpParameters: HttpParameters
 ): Promise<any> => {
-  const donnees: FlatDonnee[] = await findDonneesByCustomizedFilters(
+  const flatDonnees: FlatDonnee[] = await findDonneesByCustomizedFilters(
     httpParameters.postData
   );
 
-  if (donnees.length > MAXIMUM_EXCEL_DATA_SUPPORTED) {
+  if (flatDonnees.length > MAXIMUM_EXCEL_DATA_SUPPORTED) {
     return Promise.reject({
       reason:
         "Votre recherche comporte plus de " +
@@ -44,7 +44,7 @@ export const exportDonneesByCustomizedFilters = async (
     });
   }
 
-  const objectsToExport = _.map(donnees, object => {
+  const objectsToExport = _.map(flatDonnees, (object) => {
     return {
       ID: object.id,
       Observateur: object.observateur,
@@ -59,12 +59,12 @@ export const exportDonneesByCustomizedFilters = async (
       Altitude: object.customizedAltitude
         ? object.customizedAltitude
         : object.altitude,
-      "Longitude (Lambert II étendu)": object.customizedLongitudeL2E
-        ? object.customizedLongitudeL2E
-        : object.longitudeL2E,
-      "Latitude (Lambert II étendu)": object.customizedLatitudeL2E
-        ? object.customizedLatitudeL2E
-        : object.latitudeL2E,
+      Longitude: object.customizedLongitude
+        ? object.customizedLongitude
+        : object.longitude,
+      Latitude: object.customizedLatitude
+        ? object.customizedLatitude
+        : object.latitude,
       Température: object.temperature,
       Météo: object.meteos,
       Classe: object.classe,

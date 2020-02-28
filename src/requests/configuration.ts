@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 import { AppConfiguration } from "ouca-common/app-configuration.object";
 import { ConfigurationPage } from "ouca-common/configuration-page.object";
-import { CoordinatesSystem } from "ouca-common/coordinates-system";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlConnection } from "../sql-api/sql-connection";
@@ -22,20 +21,6 @@ import {
   TABLE_SEXE
 } from "../utils/constants";
 
-const COORDINATES_SYSTEMS: CoordinatesSystem[] = [
-  {
-    code: "lambert_II_etendu",
-    libelle: "Lambert II étendu"
-  } /*,
-  {
-    code: "lambert_93",
-    libelle: "Lambert 93"
-  },
-  {
-    code: "gps",
-    libelle: "GPS (WSG84)"
-  }*/
-];
 export const configurationInit = async (): Promise<ConfigurationPage> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_CONFIGURATION) +
@@ -64,7 +49,7 @@ export const configurationInit = async (): Promise<ConfigurationPage> => {
   ];
 
   const dbConfiguration = {};
-  _.forEach(results[0], field => {
+  _.forEach(results[0], (field) => {
     // First try to find if the column name returned from the DB has a UI name that overrides it
     const overridenName: string = _.find(
       DB_CONFIGURATION_MAPPING,
@@ -88,7 +73,7 @@ export const configurationInit = async (): Promise<ConfigurationPage> => {
       mappingDefaultWithList,
       (valueDefaultList: EntiteSimple[], keyDefaultList: string) => {
         if (key === keyDefaultList) {
-          value = _.find(valueDefaultList, fieldInList => {
+          value = _.find(valueDefaultList, (fieldInList) => {
             return fieldInList.id === +field.value;
           });
         }
@@ -99,15 +84,19 @@ export const configurationInit = async (): Promise<ConfigurationPage> => {
   });
 
   // TO DO get from DB
-  dbConfiguration["coordinatesSystem"] = _.find(COORDINATES_SYSTEMS, system => {
-    return system.code === "lambert_II_etendu";
-  });
+  /*
+  dbConfiguration["coordinatesSystem"] = _.find(
+    COORDINATES_SYSTEMS,
+    (system) => {
+      return system.code === "lambert_II_etendu";
+    }
+  );
+  */
 
   return {
     appConfiguration: dbConfiguration as AppConfiguration,
     observateurs: results[1],
     departements: results[2],
-    coordinatesSystems: COORDINATES_SYSTEMS,
     ages: results[3],
     sexes: results[4],
     estimationsNombre: results[5]
@@ -150,7 +139,7 @@ export const configurationUpdate = async (
   // Here we create the mapping between the DB name and its DB value, that has been already transformed above
   const whereSetValueMapping: { [key: string]: string | number } = {};
   _.forEach(uiFlatMapping, (value: number | string, key: string) => {
-    const dbKeyWhere = _.findKey(DB_CONFIGURATION_MAPPING, valueUi => {
+    const dbKeyWhere = _.findKey(DB_CONFIGURATION_MAPPING, (valueUi) => {
       return valueUi === key;
     });
     whereSetValueMapping[dbKeyWhere] = value;

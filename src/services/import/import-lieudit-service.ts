@@ -28,18 +28,7 @@ export class ImportLieuxditService extends ImportService {
       communeId,
       nom: entityTab[this.NOM_INDEX].trim(),
       altitude: +entityTab[this.ALTITUDE_INDEX].trim(),
-      coordinatesL2E: {
-        longitude: +entityTab[this.LONGITUDE_INDEX].trim(),
-        latitude: +entityTab[this.LATITUDE_INDEX].trim()
-      },
-      coordinatesL93: {
-        longitude: null,
-        latitude: null
-      },
-      coordinatesGPS: {
-        longitude: null,
-        latitude: null
-      }
+      coordinates: null
     };
   };
 

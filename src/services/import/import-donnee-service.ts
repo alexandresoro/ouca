@@ -2,6 +2,7 @@ import * as _ from "lodash";
 import { Age } from "ouca-common/age.object";
 import { Commune } from "ouca-common/commune.object";
 import { Comportement } from "ouca-common/comportement.object";
+import { LAMBERT_93 } from "ouca-common/coordinates-system/coordinates-system.object";
 import { Departement } from "ouca-common/departement.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { Espece } from "ouca-common/espece.object";
@@ -32,6 +33,7 @@ import {
   TABLE_MILIEU,
   TABLE_SEXE
 } from "../../utils/constants";
+import { getOriginCoordinates } from "../../utils/coordinates-utils";
 import {
   getFormattedTime,
   isIdInListIds,
@@ -479,8 +481,8 @@ export class ImportDoneeeService extends ImportService {
     return (
       !!lieudit &&
       (altitude !== lieudit.altitude ||
-        longitude !== lieudit.coordinatesL2E.longitude ||
-        latitude !== lieudit.coordinatesL2E.latitude)
+        longitude !== getOriginCoordinates(lieudit).longitude ||
+        latitude !== getOriginCoordinates(lieudit).latitude)
     );
   };
 
@@ -506,14 +508,12 @@ export class ImportDoneeeService extends ImportService {
       duree: duree,
       lieuditId,
       customizedAltitude: altitude,
-      customizedCoordinatesL2E: { longitude, latitude },
-      customizedCoordinatesL93: {
-        longitude: null,
-        latitude: null
-      },
-      customizedCoordinatesGPS: {
-        longitude: null,
-        latitude: null
+      coordinates: {
+        lambert93: {
+          longitude,
+          latitude,
+          system: LAMBERT_93
+        }
       },
       temperature: temperature,
       meteosIds

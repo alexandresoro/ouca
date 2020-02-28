@@ -60,7 +60,8 @@ export const DB_SAVE_MAPPING = {
     ]),
     observateur_id: "observateurId",
     lieudit_id: "lieuditId",
-    date_creation: "dateCreation"
+    date_creation: "dateCreation",
+    coordinates_system: "coordinatesSystem"
   },
   donnee: {
     ...createKeyValueMapWithSameName([
@@ -109,7 +110,8 @@ export const DB_CONFIGURATION_MAPPING = {
   are_associes_displayed: toCamel("are_associes_displayed"),
   is_meteo_displayed: toCamel("is_meteo_displayed"),
   is_distance_displayed: toCamel("is_distance_displayed"),
-  is_regroupement_displayed: toCamel("is_regroupement_displayed")
+  is_regroupement_displayed: toCamel("is_regroupement_displayed"),
+  coordinates_system: toCamel("coordinates_system")
 };
 
 export const getQuery = (query: string): string => {
@@ -137,7 +139,7 @@ export const getFindAllSqlQuery = (tableName: string): Promise<any> => {
 
 export const getAllFromTablesQuery = (tableNames: string[]): string => {
   return _.reduce(
-    _.map(tableNames, tableName => {
+    _.map(tableNames, (tableName) => {
       return getFindAllQuery(tableName);
     }),
     (first, second) => {
@@ -149,7 +151,7 @@ export const getAllFromTablesQuery = (tableNames: string[]): string => {
 export const getAllFromTablesSqlQuery = (
   tableNames: string[]
 ): Promise<any>[] => {
-  return _.map(tableNames, tableName => {
+  return _.map(tableNames, (tableName) => {
     return getFindAllSqlQuery(tableName);
   });
 };
@@ -250,7 +252,7 @@ export function getSaveListOfEntitesQueries(
   subIds: number[]
 ): string {
   let queries = "";
-  subIds.forEach(subId => {
+  subIds.forEach((subId) => {
     queries += getSaveManyToManyEntityQuery(tableName, mainId, subId);
   });
   return queries;

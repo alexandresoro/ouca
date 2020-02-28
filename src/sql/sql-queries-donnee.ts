@@ -19,9 +19,10 @@ const getBaseQueryToFindDonnees = (): string => {
     "i.heure," +
     "i.duree," +
     "i.lieudit_id as lieuditId," +
-    "i.altitude as altitude," +
-    "i.longitude as longitudeL2E," +
-    "i.latitude as latitudeL2E," +
+    "i.altitude," +
+    "i.longitude," +
+    "i.latitude," +
+    "i.coordinates_system as coordinatesSystem," +
     "i.temperature," +
     "d.espece_id as especeId," +
     "d.sexe_id as sexeId," +
@@ -50,11 +51,13 @@ const getBaseQueryToFindDetailedDonnees = (): string => {
     " t_commune.nom as nomCommune," +
     " t_lieudit.nom as lieudit," +
     " t_lieudit.altitude as altitude," +
-    " t_lieudit.longitude as longitudeL2E," +
-    " t_lieudit.latitude as latitudeL2E," +
+    " t_lieudit.longitude as longitude," +
+    " t_lieudit.latitude as latitude," +
+    " t_lieudit.coordinates_system as coordinatesSystem," +
     " t_inventaire.altitude as customizedAltitude," +
-    " t_inventaire.longitude as customizedLongitudeL2E," +
-    " t_inventaire.latitude as customizedLatitudeL2E," +
+    " t_inventaire.longitude as customizedLongitude," +
+    " t_inventaire.latitude as customizedLatitude," +
+    " t_inventaire.coordinates_system as customizedCoordinatesSystem," +
     " t_inventaire.temperature, " +
     " t_classe.libelle as classe," +
     " t_espece.code as codeEspece," +

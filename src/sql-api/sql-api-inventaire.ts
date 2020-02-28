@@ -1,4 +1,6 @@
+import * as _ from "lodash";
 import moment from "moment";
+import { CoordinatesSystemType } from "ouca-common/coordinates-system/coordinates-system.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
@@ -24,16 +26,10 @@ import {
   getArrayFromObjects
 } from "../utils/utils";
 import { SqlConnection } from "./sql-connection";
-
 export const persistInventaire = async (
   inventaire: Inventaire
 ): Promise<SqlSaveResponse> => {
-  const {
-    date,
-    customizedAltitude,
-    customizedCoordinatesL2E,
-    ...otherParams
-  } = inventaire;
+  const { date, customizedAltitude, ...otherParams } = inventaire;
 
   if (inventaire.id) {
     // It is an update
@@ -52,6 +48,11 @@ export const persistInventaire = async (
     );
   }
 
+  const coordinates =
+    inventaire.coordinates[
+      _.first(_.keys(inventaire.coordinates) as CoordinatesSystemType[])
+    ];
+
   // Save the inventaire
   const inventaireResult: SqlSaveResponse = await SqlConnection.query(
     getSaveEntityQuery(
@@ -60,8 +61,9 @@ export const persistInventaire = async (
         date: moment.utc(date).format("YYYY-MM-DD"),
         dateCreation: moment().format("YYYY-MM-DD HH:mm:ss"),
         altitude: customizedAltitude,
-        longitude: customizedCoordinatesL2E.longitude,
-        latitude: customizedCoordinatesL2E.latitude,
+        longitude: coordinates.longitude,
+        latitude: coordinates.latitude,
+        coordinatesSystem: coordinates.system,
         ...otherParams
       },
       DB_SAVE_MAPPING.inventaire

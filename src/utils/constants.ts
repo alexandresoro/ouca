@@ -43,3 +43,4 @@ export const KEY_ARE_ASSOCIES_DISPLAYED = "are_associes_displayed";
 export const KEY_IS_METEO_DISPLAYED = "is_meteo_displayed";
 export const KEY_IS_DISTANCE_DISPLAYED = "is_distance_displayed";
 export const KEY_IS_REGROUPEMENT_DISPLAYED = "is_regroupement_displayed";
+export const KEY_COORDINATES_SYSTEM = "coordinates_system";

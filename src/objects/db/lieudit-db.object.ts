@@ -5,4 +5,5 @@ export interface LieuditDb {
   altitude: number;
   longitude: number;
   latitude: number;
+  coordinates_system: string;
 }
