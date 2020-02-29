@@ -50,6 +50,7 @@ import {
 } from "../sql/sql-queries-utils";
 import {
   KEY_ARE_ASSOCIES_DISPLAYED,
+  KEY_COORDINATES_SYSTEM,
   KEY_DEFAULT_AGE_ID,
   KEY_DEFAULT_DEPARTEMENT_ID,
   KEY_DEFAULT_ESTIMATION_NOMBRE_ID,
@@ -256,7 +257,17 @@ export const creationInit = async (): Promise<CreationPage> => {
       configurations,
       KEY_IS_REGROUPEMENT_DISPLAYED
     ),
-    coordinatesSystem: COORDINATES_SYSTEMS[LAMBERT_93],
+    coordinatesSystem: _.find(
+      COORDINATES_SYSTEMS,
+      (system: CoordinatesSystemType) => {
+        return (
+          getConfigurationValueAsString(
+            configurations,
+            KEY_COORDINATES_SYSTEM
+          ) === system
+        );
+      }
+    ),
     observateurs: observateurs,
     departements: departements,
     communes: buildCommunesFromCommunesDb(communes),
