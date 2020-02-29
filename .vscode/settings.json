@@ -1,9 +1,6 @@
 {
   "eslint.validate": ["typescript", "javascript"],
   "eslint.packageManager": "yarn",
-  "files.exclude": {
-    "dist/": true
-  },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
     "source.organizeImports": true
