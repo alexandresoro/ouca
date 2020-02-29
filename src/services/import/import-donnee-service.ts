@@ -252,10 +252,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Sexe" or return an error if it doesn't exist
-    const sexe: Sexe = (await getEntityByLibelle(
-      rawDonnee.sexe,
-      TABLE_SEXE
-    )) as Sexe;
+    const sexe = await getEntityByLibelle<Sexe>(rawDonnee.sexe, TABLE_SEXE);
 
     if (!sexe) {
       this.message = 'Le sexe "' + rawDonnee.sexe + "\" n'existe pas";
@@ -263,10 +260,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Age" or return an error if it doesn't exist
-    const age: Age = (await getEntityByLibelle(
-      rawDonnee.age,
-      TABLE_AGE
-    )) as Age;
+    const age = await getEntityByLibelle<Age>(rawDonnee.age, TABLE_AGE);
 
     if (!age) {
       this.message = "L'âge \"" + rawDonnee.age + "\" n'existe pas";
@@ -274,10 +268,10 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Estimation du nombre" or return an error if it doesn't exist
-    const estimationNombre: EstimationNombre = (await getEntityByLibelle(
+    const estimationNombre = await getEntityByLibelle<EstimationNombre>(
       rawDonnee.estimationNombre,
       TABLE_ESTIMATION_NOMBRE
-    )) as EstimationNombre;
+    );
 
     if (!estimationNombre) {
       this.message =
@@ -303,10 +297,10 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Estimation de la distance" or return an error if it doesn't exist
     let estimationDistance: EstimationDistance = null;
     if (rawDonnee.estimationDistance) {
-      estimationDistance = (await getEntityByLibelle(
+      estimationDistance = await getEntityByLibelle<EstimationDistance>(
         rawDonnee.estimationDistance,
         TABLE_ESTIMATION_DISTANCE
-      )) as EstimationDistance;
+      );
 
       if (!estimationDistance) {
         this.message =

@@ -22,10 +22,10 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
     }
 
     // Check that the entity does not exist
-    const entity: EntiteAvecLibelle = (await getEntityByLibelle(
+    const entity = await getEntityByLibelle<EntiteAvecLibelle>(
       entityTab[this.LIBELLE_INDEX],
       this.getTableName()
-    )) as EntiteAvecLibelle;
+    );
 
     if (entity) {
       this.message = this.getThisEntityName() + " existe déjà";

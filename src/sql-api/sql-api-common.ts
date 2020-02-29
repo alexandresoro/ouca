@@ -20,10 +20,10 @@ export const saveEntity = async (
   return !!saveResult && !!saveResult.insertId && saveResult.affectedRows === 1;
 };
 
-export const getEntityByLibelle = async (
+export const getEntityByLibelle = async <T extends EntiteSimple>(
   libelle: string,
   tableName: string
-): Promise<EntiteSimple> => {
+): Promise<T> => {
   const results = await SqlConnection.query(
     getQueryToFindEntityByLibelle(tableName, libelle)
   );

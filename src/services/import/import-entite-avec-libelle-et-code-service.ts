@@ -42,10 +42,10 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
       return false;
     }
 
-    const entityByLibelle: EntiteAvecLibelleEtCode = (await getEntityByLibelle(
+    const entityByLibelle = await getEntityByLibelle<EntiteAvecLibelleEtCode>(
       entityTab[this.LIBELLE_INDEX],
       this.getTableName()
-    )) as EntiteAvecLibelleEtCode;
+    );
 
     if (entityByLibelle) {
       this.message =

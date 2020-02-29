@@ -5,5 +5,5 @@ import { getEntityByLibelle } from "./sql-api-common";
 export const findMeteoByLibelle = async (
   observateurLibelle: string
 ): Promise<Meteo | null> => {
-  return (await getEntityByLibelle(observateurLibelle, TABLE_METEO)) as Meteo;
+  return await getEntityByLibelle<Meteo>(observateurLibelle, TABLE_METEO);
 };

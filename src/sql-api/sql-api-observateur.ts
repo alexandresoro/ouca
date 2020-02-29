@@ -5,8 +5,8 @@ import { getEntityByLibelle } from "./sql-api-common";
 export const findObservateurByLibelle = async (
   observateurLibelle: string
 ): Promise<Observateur | null> => {
-  return (await getEntityByLibelle(
+  return await getEntityByLibelle<Observateur>(
     observateurLibelle,
     TABLE_OBSERVATEUR
-  )) as Observateur;
+  );
 };
