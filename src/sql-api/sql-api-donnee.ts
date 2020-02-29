@@ -1,5 +1,5 @@
+import { format } from "date-fns";
 import * as _ from "lodash";
-import moment from "moment";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
@@ -62,7 +62,7 @@ export const persistDonnee = async (
       TABLE_DONNEE,
       {
         ...donneeToSave,
-        dateCreation: moment().format("YYYY-MM-DD HH:mm:ss")
+        dateCreation: format(new Date(), "yyyy-MM-dd HH:mm:ss")
       },
       DB_SAVE_MAPPING.donnee
     )

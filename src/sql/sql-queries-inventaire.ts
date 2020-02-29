@@ -1,4 +1,3 @@
-import moment from "moment";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { getOriginCoordinates } from "../utils/coordinates-utils";
@@ -33,7 +32,7 @@ export const getQueryToFindInventaireIdByAllAttributes = (
     " WHERE i.observateur_id=" +
     inventaire.observateurId +
     " AND i.date=STR_TO_DATE('" +
-    moment(inventaire.date).format("YYYY-MM-DD") +
+    inventaire.date +
     "', '%Y-%m-%d')" +
     " AND i.lieudit_id=" +
     inventaire.lieuditId;

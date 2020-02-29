@@ -1,14 +1,14 @@
 import { ChildProcess, spawn } from "child_process";
+import { format } from "date-fns";
 import * as _ from "lodash";
-import moment from "moment";
 import { HttpParameters } from "../http/httpParameters";
 import {
   DEFAULT_DATABASE_NAME,
   getSqlConnectionConfiguration
 } from "../sql-api/sql-connection";
 
-const DUMP_FILE_NAME: string = "sauvegarde_base_naturaliste_";
-const SQL_EXTENSION: string = ".sql";
+const DUMP_FILE_NAME = "sauvegarde_base_naturaliste_";
+const SQL_EXTENSION = ".sql";
 
 const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
   return new Promise((resolve, reject): void => {
@@ -35,13 +35,13 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
 
     const dumpProcess: ChildProcess = spawn("mysqldump", commonDumpParams);
 
-    dumpProcess.stdout.on("data", (contents) => {
+    dumpProcess.stdout.on("data", contents => {
       stdout += contents;
     });
-    dumpProcess.stderr.on("data", (contents) => {
+    dumpProcess.stderr.on("data", contents => {
       stderr += contents;
     });
-    dumpProcess.on("error", reject).on("close", (code) => {
+    dumpProcess.on("error", reject).on("close", code => {
       if (code === 0) {
         resolve(stdout);
       } else {
@@ -67,5 +67,5 @@ export const saveDatabase = async (
 };
 
 export const saveDatabaseFileName = (): string => {
-  return DUMP_FILE_NAME + moment().format("YYYY-MM-DD") + SQL_EXTENSION;
+  return DUMP_FILE_NAME + format(new Date(), "yyyy-MM-dd") + SQL_EXTENSION;
 };

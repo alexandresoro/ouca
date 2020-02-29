@@ -1,4 +1,4 @@
-import moment from "moment";
+import { format } from "date-fns";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import {
@@ -7,6 +7,7 @@ import {
   TABLE_INVENTAIRE_ASSOCIE,
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
+import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
 import { getQuery } from "./sql-queries-utils";
 
 const getBaseQueryToFindDonnees = (): string => {
@@ -273,7 +274,10 @@ export const getQueryToFindDonneesByCriterion = (
   if (criterion.fromDate) {
     whereTab.push(
       " t_inventaire.date>='" +
-        moment.utc(criterion.fromDate).format("YYYY-MM-DD") +
+        format(
+          interpretDateTimestampAsLocalTimeZoneDate(criterion.fromDate),
+          "yyyy-MM-dd"
+        ) +
         "'"
     );
   }
@@ -281,7 +285,10 @@ export const getQueryToFindDonneesByCriterion = (
   if (criterion.toDate) {
     whereTab.push(
       " t_inventaire.date<='" +
-        moment.utc(criterion.toDate).format("YYYY-MM-DD") +
+        format(
+          interpretDateTimestampAsLocalTimeZoneDate(criterion.toDate),
+          "yyyy-MM-dd"
+        ) +
         "'"
     );
   }

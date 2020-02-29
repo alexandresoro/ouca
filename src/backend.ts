@@ -1,5 +1,4 @@
 import * as http from "http";
-import * as _ from "lodash";
 import * as multiparty from "multiparty";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
 
@@ -38,9 +37,9 @@ const server = http.createServer(
         const form = new multiparty.Form();
         const chunksPart = [];
 
-        form.on("part", (part) => {
+        form.on("part", part => {
           if (part.filename) {
-            part.on("data", (chunk) => {
+            part.on("data", chunk => {
               chunksPart.push(chunk);
             });
             part.on("end", () => {
@@ -63,7 +62,7 @@ const server = http.createServer(
         form.parse(request);
       } else {
         const chunks = [];
-        request.on("data", (chunk) => {
+        request.on("data", chunk => {
           chunks.push(chunk);
         });
         request.on("end", () => {

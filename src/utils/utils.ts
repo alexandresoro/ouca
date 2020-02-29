@@ -2,13 +2,6 @@ import * as _ from "lodash";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 
-export function buildArgRegexFromKey(
-  argKey: string,
-  delimiter: string
-): RegExp {
-  return new RegExp("(" + argKey + ")" + delimiter + "(.*)$");
-}
-
 export const toCamel = (s: string): string => {
   return s.replace(/([-_][a-z])/gi, $1 => {
     return $1

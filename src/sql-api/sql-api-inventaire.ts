@@ -1,5 +1,5 @@
+import { format } from "date-fns";
 import * as _ from "lodash";
-import moment from "moment";
 import { CoordinatesSystemType } from "ouca-common/coordinates-system/coordinates-system.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -21,6 +21,7 @@ import {
   TABLE_INVENTAIRE_ASSOCIE,
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
+import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
 import {
   areArraysContainingSameValues,
   getArrayFromObjects
@@ -58,8 +59,11 @@ export const persistInventaire = async (
     getSaveEntityQuery(
       TABLE_INVENTAIRE,
       {
-        date: moment.utc(date).format("YYYY-MM-DD"),
-        dateCreation: moment().format("YYYY-MM-DD HH:mm:ss"),
+        date: format(
+          interpretDateTimestampAsLocalTimeZoneDate(date),
+          "yyyy-MM-dd"
+        ),
+        dateCreation: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
         altitude: customizedAltitude,
         longitude: coordinates.longitude,
         latitude: coordinates.latitude,

@@ -18,27 +18,30 @@
     "build:prod": "tsc",
     "debug": "yarn build --sourceMap true && yarn start:debug",
     "dev": "yarn build && yarn start",
-    "lint": "node ./node_modules/eslint/bin/eslint './src/**'",
+    "lint": "yarn eslint './src/**'",
     "start": "node dist/backend",
     "start:debug": "node --inspect dist/backend"
   },
   "dependencies": {
+    "date-fns": "*",
+    "date-fns-tz": "*",
     "lodash": "*",
     "mariadb": "*",
-    "moment": "*",
     "multiparty": "*",
     "ouca-common": "*",
     "papaparse": "*",
-    "xlsx": "*"
+    "xlsx": "*",
+    "yargs": "*"
   },
   "devDependencies": {
     "@types/lodash": "*",
     "@types/multiparty": "*",
     "@types/node": "12",
+    "@types/yargs": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",
     "eslint": "*",
-    "typescript": "3.7"
+    "typescript": "*"
   },
   "engines": {
     "node": ">=12"

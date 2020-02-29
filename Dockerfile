@@ -1,9 +1,6 @@
 # 1. Transpile the project
 FROM node:lts-alpine as build
 
-# Add git as we need it to retrieve the model
-RUN apk add git
-
 WORKDIR /app/backend
 
 RUN yarn global add @zeit/ncc@*
@@ -35,6 +32,6 @@ WORKDIR /app/backend
 
 COPY --from=build /app/backend/dist/build/index.js /app/backend/
 
-CMD node index.js -dbHost=${DB_HOST} -dbPort=${DB_PORT} -dbUser=${DB_USER} -dbPassword=${DB_PASSWORD} -docker
+CMD node index.js --dbHost ${DB_HOST} --dbPort ${DB_PORT} --dbUser ${DB_USER} --dbPassword ${DB_PASSWORD} -docker
 
 EXPOSE 4000/tcp
