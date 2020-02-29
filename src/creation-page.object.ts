@@ -1,7 +1,9 @@
+import { ObjectId } from "bson";
 import { Age } from "./age.object";
 import { Classe } from "./classe.object";
 import { Commune } from "./commune.object";
 import { Comportement } from "./comportement.object";
+import { CoordinatesSystemType } from "./coordinates-system";
 import { Departement } from "./departement.object";
 import { Donnee } from "./donnee.object";
 import { Espece } from "./espece.object";
@@ -12,8 +14,6 @@ import { Meteo } from "./meteo.object";
 import { Milieu } from "./milieu.object";
 import { Observateur } from "./observateur.object";
 import { Sexe } from "./sexe.object";
-import { ObjectId } from "bson";
-import { CoordinatesSystem } from "./coordinates-system/coordinates-system.object";
 
 export interface CreationPage {
   defaultDepartementId: number;
@@ -28,7 +28,7 @@ export interface CreationPage {
   isDistanceDisplayed: boolean;
   isRegroupementDisplayed: boolean;
 
-  coordinatesSystem: CoordinatesSystem;
+  coordinatesSystem: CoordinatesSystemType;
 
   lastDonnee?: Donnee;
   lastDonneeId?: ObjectId;
