@@ -1,9 +1,12 @@
 import * as _ from "lodash";
 import { AppConfiguration } from "ouca-common/app-configuration.object";
 import { ConfigurationPage } from "ouca-common/configuration-page.object";
+import { CoordinatesSystemType } from "ouca-common/coordinates-system";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { HttpParameters } from "../http/httpParameters";
+import { Configuration } from "../objects/configuration.object";
 import { SqlConnection } from "../sql-api/sql-connection";
+import { getQueryToFindConfigurationByLibelle } from "../sql/sql-queries-configuration";
 import {
   DB_CONFIGURATION_MAPPING,
   getFindAllQuery,
@@ -12,6 +15,7 @@ import {
 import {
   COLUMN_CODE,
   COLUMN_LIBELLE,
+  KEY_COORDINATES_SYSTEM,
   ORDER_ASC,
   TABLE_AGE,
   TABLE_CONFIGURATION,
@@ -144,4 +148,11 @@ export const configurationUpdate = async (
     )
   );
   return result;
+};
+
+export const getAppCoordinatesSystem = async (): Promise<CoordinatesSystemType> => {
+  const configurations: Configuration[] = await SqlConnection.query(
+    getQueryToFindConfigurationByLibelle(KEY_COORDINATES_SYSTEM)
+  );
+  return configurations[0].value as CoordinatesSystemType;
 };

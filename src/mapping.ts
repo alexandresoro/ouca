@@ -1,20 +1,21 @@
 import { HttpParameters } from "./http/httpParameters";
 import {
   configurationInit,
-  configurationUpdate
+  configurationUpdate,
+  getAppCoordinatesSystem
 } from "./requests/configuration";
 import {
   creationInit,
   deleteDonnee,
   getDonneeByIdWithContext,
   getInventaireById,
+  getInventaireIdById,
+  getLastDonneeId,
   getNextDonnee,
   getNextRegroupement,
   getPreviousDonnee,
   saveDonnee,
-  saveInventaire,
-  getInventaireIdById,
-  getLastDonneeId
+  saveInventaire
 } from "./requests/creation";
 import {
   deleteAge,
@@ -92,8 +93,8 @@ import {
   getDonneesByCustomizedFilters
 } from "./requests/view";
 
-const CSV_MIME_TYPE: string = "text/csv";
-const EXCEL_MIME_TYPE: string =
+const CSV_MIME_TYPE = "text/csv";
+const EXCEL_MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 export const REQUEST_MAPPING: {
@@ -183,6 +184,7 @@ export const REQUEST_MAPPING: {
   "/api/milieu/export": exportMilieux,
   "/api/configuration/init": configurationInit,
   "/api/configuration/update": configurationUpdate,
+  "/api/configuration/coordinates_system": getAppCoordinatesSystem,
   "/api/database/save": saveDatabase
 };
 
