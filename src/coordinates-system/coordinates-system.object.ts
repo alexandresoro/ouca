@@ -8,6 +8,9 @@ export type CoordinatesSystemType = typeof COORDINATES_SYSTEMS[number];
 
 export interface CoordinatesSystem {
   code: CoordinatesSystemType;
+
+  epsgCode: string;
+
   name: string;
 
   decimalPlaces: number;
@@ -17,4 +20,6 @@ export interface CoordinatesSystem {
   longitudeRange: { min: number; max: number };
 
   latitudeRange: { min: number; max: number };
+
+  proj4Formula?: string;
 }

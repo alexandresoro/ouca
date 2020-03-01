@@ -1,15 +1,15 @@
-const { readdirSync, writeFileSync } = require("fs");
+import { readdirSync, writeFileSync, PathLike } from "fs";
 
 const rootPath = "./src";
 const tsFileExtension = ".ts";
 const indexFile = "index" + tsFileExtension;
 
-const getDirectories = source =>
+const getDirectories = (source: PathLike) =>
   readdirSync(source, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name);
 
-const getSourceFiles = source =>
+const getSourceFiles = (source: PathLike) =>
   readdirSync(source, { withFileTypes: true })
     .filter(dirent => dirent.isFile())
     .filter(dirent => dirent.name.endsWith(tsFileExtension))

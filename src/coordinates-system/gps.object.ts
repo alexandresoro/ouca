@@ -2,6 +2,7 @@ import { CoordinatesSystem, GPS } from "./coordinates-system.object";
 
 export const GPS_COORDINATES: CoordinatesSystem = {
   code: GPS,
+  epsgCode: "WGS84",
   name: "GPS",
   decimalPlaces: 5,
   unitName: "degrés",
