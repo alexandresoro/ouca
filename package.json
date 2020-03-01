@@ -18,9 +18,11 @@
   ],
   "license": "UNLICENSED",
   "dependencies": {
-    "@types/bson": "*"
+    "@types/bson": "*",
+    "lodash": "*"
   },
   "devDependencies": {
+    "@types/lodash": "*",
     "typescript": "*"
   }
 }

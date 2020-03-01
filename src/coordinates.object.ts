@@ -6,4 +6,6 @@ export interface Coordinates {
   longitude: number;
 
   latitude: number;
+
+  isTransformed: boolean;
 }
