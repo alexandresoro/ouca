@@ -1,7 +1,7 @@
 {
   "name": "ouca-common",
   "description": "Common elements for Base Naturaliste project",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "scripts": {
     "build": "yarn run clean && yarn run build:indexes && tsc",
     "build:indexes": "ts-node indexes",
@@ -19,11 +19,9 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@types/bson": "*",
-    "lodash": "*",
     "proj4": "*"
   },
   "devDependencies": {
-    "@types/lodash": "*",
     "@types/node": "12",
     "@types/proj4": "*",
     "ts-node": "*",
