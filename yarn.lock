@@ -886,11 +886,12 @@ os-tmpdir@~1.0.2:
   integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
 
 ouca-common@*:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.4.tgz#b103831217587a4ea93b7012b2943b296cc88d82"
-  integrity sha512-HJ5e0Yc7XFKphlyrucJwXE2DKq0ImHhgIT4QHVmYB+HpqosXBUUyKUMT1PDNeIVACzg4vN6OUlj4hkp8Xuk6WA==
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.5.tgz#4e0118026530caec36b80e3972e8e5eebb047e0e"
+  integrity sha512-Rk/RCAj9g2nFHAZErjNqEtJw1aq53+Fstv/OwbPkQL3Iibk6pNYlBPzNm4NYZpFnjnQJNNvWfQzHAONaPMvdVg==
   dependencies:
     "@types/bson" "*"
+    lodash "*"
 
 p-limit@^2.2.0:
   version "2.2.2"

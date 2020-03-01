@@ -10,7 +10,8 @@ export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
   coordinates[lieuditDb.coordinates_system] = {
     longitude: lieuditDb.longitude,
     latitude: lieuditDb.latitude,
-    system: lieuditDb.coordinates_system
+    system: lieuditDb.coordinates_system,
+    isTransformed: false
   };
 
   return {

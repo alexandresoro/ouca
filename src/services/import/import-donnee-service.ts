@@ -506,7 +506,8 @@ export class ImportDoneeeService extends ImportService {
         lambert93: {
           longitude,
           latitude,
-          system: LAMBERT_93
+          system: LAMBERT_93,
+          isTransformed: false
         }
       },
       temperature: temperature,

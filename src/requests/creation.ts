@@ -100,7 +100,8 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
     coordinates[coordinatesSystem] = {
       system: coordinatesSystem,
       longitude: flatDonnee.longitude,
-      latitude: flatDonnee.latitude
+      latitude: flatDonnee.latitude,
+      isTransformed: false
     };
 
     const inventaire: Inventaire = {
