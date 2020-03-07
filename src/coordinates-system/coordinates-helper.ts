@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import { Coordinates } from "../coordinates.object";
 import { Inventaire } from "../inventaire.object";
 import { Lieudit } from "../lieudit.object";
@@ -25,7 +24,7 @@ export const getOriginCoordinates = (
   object: Lieudit | Inventaire
 ): Coordinates => {
   if (object && object.id) {
-    return _.find(object.coordinates, (coordinate) => {
+    return Object.values(object.coordinates).find(coordinate => {
       return coordinate.isTransformed === false;
     });
   } else {
