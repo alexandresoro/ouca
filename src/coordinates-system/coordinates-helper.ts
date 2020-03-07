@@ -5,6 +5,22 @@ import { Lieudit } from "../lieudit.object";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
+export const buildCoordinates = (
+  system: CoordinatesSystemType,
+  longitude: number,
+  latitude: number,
+  isTransformed: boolean = false
+): Partial<Record<CoordinatesSystemType, Coordinates>> => {
+  const coordinates: Partial<Record<CoordinatesSystemType, Coordinates>> = {};
+  coordinates[system] = {
+    longitude,
+    latitude,
+    system,
+    isTransformed
+  };
+  return coordinates;
+};
+
 export const getOriginCoordinates = (
   object: Lieudit | Inventaire
 ): Coordinates => {
