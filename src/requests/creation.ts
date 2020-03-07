@@ -1,10 +1,9 @@
 import * as _ from "lodash";
+import { buildCoordinates } from "ouca-common/coordinates-system";
 import {
   CoordinatesSystemType,
-  COORDINATES_SYSTEMS,
-  LAMBERT_93
+  COORDINATES_SYSTEMS
 } from "ouca-common/coordinates-system/coordinates-system.object";
-import { Coordinates } from "ouca-common/coordinates.object";
 import { CreationPage } from "ouca-common/creation-page.object";
 import { DonneeWithNavigationData } from "ouca-common/donnee-with-navigation-data.object";
 import { Donnee } from "ouca-common/donnee.object";
@@ -93,17 +92,6 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
         )
     );
 
-    const coordinatesSystem = flatDonnee.coordinatesSystem
-      ? flatDonnee.coordinatesSystem
-      : LAMBERT_93;
-    const coordinates: Partial<Record<CoordinatesSystemType, Coordinates>> = {};
-    coordinates[coordinatesSystem] = {
-      system: coordinatesSystem,
-      longitude: flatDonnee.longitude,
-      latitude: flatDonnee.latitude,
-      isTransformed: false
-    };
-
     const inventaire: Inventaire = {
       id: flatDonnee.inventaireId,
       observateurId: flatDonnee.observateurId,
@@ -113,7 +101,11 @@ const buildDonneeFromFlatDonneeWithMinimalData = async (
       duree: flatDonnee.duree,
       lieuditId: flatDonnee.lieuditId,
       customizedAltitude: flatDonnee.altitude,
-      coordinates,
+      coordinates: buildCoordinates(
+        flatDonnee.coordinatesSystem,
+        flatDonnee.longitude,
+        flatDonnee.latitude
+      ),
       temperature: flatDonnee.temperature,
       meteosIds: mapMeteosIds(listsResults[1]),
       nbDonnees: listsResults[4][0].nbDonnees
