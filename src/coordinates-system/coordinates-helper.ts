@@ -23,8 +23,8 @@ export const buildCoordinates = (
 export const getOriginCoordinates = (
   object: Lieudit | Inventaire
 ): Coordinates => {
-  if (object && object.id) {
-    return Object.values(object.coordinates).find(coordinate => {
+  if (object?.coordinates) {
+    return Object.values(object.coordinates).find((coordinate) => {
       return coordinate.isTransformed === false;
     });
   } else {
