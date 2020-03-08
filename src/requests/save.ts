@@ -6,6 +6,7 @@ import {
   DEFAULT_DATABASE_NAME,
   getSqlConnectionConfiguration
 } from "../sql-api/sql-connection";
+import { DATE_PATTERN } from "../utils/constants";
 
 const DUMP_FILE_NAME = "sauvegarde_base_naturaliste_";
 const SQL_EXTENSION = ".sql";
@@ -35,13 +36,13 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
 
     const dumpProcess: ChildProcess = spawn("mysqldump", commonDumpParams);
 
-    dumpProcess.stdout.on("data", contents => {
+    dumpProcess.stdout.on("data", (contents) => {
       stdout += contents;
     });
-    dumpProcess.stderr.on("data", contents => {
+    dumpProcess.stderr.on("data", (contents) => {
       stderr += contents;
     });
-    dumpProcess.on("error", reject).on("close", code => {
+    dumpProcess.on("error", reject).on("close", (code) => {
       if (code === 0) {
         resolve(stdout);
       } else {
@@ -67,5 +68,5 @@ export const saveDatabase = async (
 };
 
 export const saveDatabaseFileName = (): string => {
-  return DUMP_FILE_NAME + format(new Date(), "yyyy-MM-dd") + SQL_EXTENSION;
+  return DUMP_FILE_NAME + format(new Date(), DATE_PATTERN) + SQL_EXTENSION;
 };

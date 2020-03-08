@@ -1,6 +1,12 @@
 import * as _ from "lodash";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { SqlConnection } from "../sql-api/sql-connection";
+import {
+  DONNEE_ID,
+  INVENTAIRE_ID,
+  METEO_ID,
+  OBSERVATEUR_ID
+} from "../utils/constants";
 import { toCamel } from "../utils/utils";
 
 const createKeyValueMapWithSameName = (
@@ -83,19 +89,19 @@ export const DB_SAVE_MAPPING = {
 
 export const DB_SAVE_LISTS_MAPPING = {
   inventaire_associe: {
-    mainId: "inventaire_id",
-    subId: "observateur_id"
+    mainId: INVENTAIRE_ID,
+    subId: OBSERVATEUR_ID
   },
   inventaire_meteo: {
-    mainId: "inventaire_id",
-    subId: "meteo_id"
+    mainId: INVENTAIRE_ID,
+    subId: METEO_ID
   },
   donnee_comportement: {
-    mainId: "donnee_id",
+    mainId: DONNEE_ID,
     subId: "comportement_id"
   },
   donnee_milieu: {
-    mainId: "donnee_id",
+    mainId: DONNEE_ID,
     subId: "milieu_id"
   }
 };

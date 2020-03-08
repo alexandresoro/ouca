@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import {
+  DATE_PATTERN,
   TABLE_DONNEE_COMPORTEMENT,
   TABLE_DONNEE_MILIEU,
   TABLE_INVENTAIRE_ASSOCIE,
@@ -276,7 +277,7 @@ export const getQueryToFindDonneesByCriterion = (
       " t_inventaire.date>='" +
         format(
           interpretDateTimestampAsLocalTimeZoneDate(criterion.fromDate),
-          "yyyy-MM-dd"
+          DATE_PATTERN
         ) +
         "'"
     );
@@ -287,7 +288,7 @@ export const getQueryToFindDonneesByCriterion = (
       " t_inventaire.date<='" +
         format(
           interpretDateTimestampAsLocalTimeZoneDate(criterion.toDate),
-          "yyyy-MM-dd"
+          DATE_PATTERN
         ) +
         "'"
     );

@@ -1,3 +1,4 @@
+import { OBSERVATEUR_ID } from "../utils/constants";
 import { getQueryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
 import { getQuery } from "./sql-queries-utils";
 
@@ -14,7 +15,7 @@ export function getQueryToFindNumberOfDonneesByObservateurId(
   observateurId?: number
 ): string {
   return getQueryToFindNumberOfDonneesByInventaireEntityId(
-    "observateur_id",
+    OBSERVATEUR_ID,
     observateurId
   );
 }
