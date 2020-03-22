@@ -20,6 +20,16 @@ export const saveEntity = async (
   return !!saveResult && !!saveResult.insertId && saveResult.affectedRows === 1;
 };
 
+export const saveDbEntity = async (
+  entityToSave: EntiteSimple,
+  tableName: string,
+  mapping: { [column: string]: string }
+): Promise<SqlSaveResponse> => {
+  return await SqlConnection.query(
+    getSaveEntityQuery(tableName, entityToSave, mapping)
+  );
+};
+
 export const getEntityByLibelle = async <T extends EntiteSimple>(
   libelle: string,
   tableName: string

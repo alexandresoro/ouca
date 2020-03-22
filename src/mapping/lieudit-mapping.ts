@@ -31,8 +31,11 @@ export const buildLieuxditsFromLieuxditsDb = (
   });
 };
 
-export const buildLieuditDbFromLieudit = (lieudit: Lieudit): LieuditDb => {
-  const coordinates = getOriginCoordinates(lieudit);
+export const buildLieuditDbFromLieudit = (
+  lieudit: Lieudit,
+  coordinates?: Coordinates
+): LieuditDb => {
+  coordinates = coordinates ? coordinates : getOriginCoordinates(lieudit);
 
   return {
     id: lieudit.id,

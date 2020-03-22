@@ -28,12 +28,13 @@ export const DB_SAVE_MAPPING = {
   },
   lieudit: {
     ...createKeyValueMapWithSameName([
+      "commune_id",
       "nom",
       "altitude",
       "longitude",
-      "latitude"
-    ]),
-    commune_id: "communeId"
+      "latitude",
+      "coordinates_system"
+    ])
   },
   meteo: createKeyValueMapWithSameName("libelle"),
   classe: createKeyValueMapWithSameName("libelle"),
@@ -162,7 +163,10 @@ export const getAllFromTablesSqlQuery = (
   });
 };
 
-export const getFindOneByIdQuery = (tableName: string, id: number): string => {
+export const getQueryToFindOneById = (
+  tableName: string,
+  id: number
+): string => {
   return getQuery("SELECT * FROM " + tableName + " WHERE id=" + id);
 };
 

@@ -3,7 +3,6 @@ import { Age } from "ouca-common/age.object";
 import { Classe } from "ouca-common/classe.object";
 import { Commune } from "ouca-common/commune.object";
 import { Comportement } from "ouca-common/comportement.object";
-import { CoordinatesSystemType } from "ouca-common/coordinates-system/coordinates-system.object";
 import { Departement } from "ouca-common/departement.object";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { Espece } from "ouca-common/espece.object";
@@ -20,6 +19,7 @@ import { buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
+import { persistLieudit } from "../sql-api/sql-api-lieudit";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
 import {
@@ -239,22 +239,8 @@ export const saveLieudit = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   const lieuditToSave: Lieudit = httpParameters.postData;
-  if (
-    !lieuditToSave.communeId &&
-    !!lieuditToSave.commune &&
-    !!lieuditToSave.commune.id
-  ) {
-    lieuditToSave.communeId = lieuditToSave.commune.id;
-  }
-  // TO DO
-  const coordinates =
-    lieuditToSave.coordinates[
-      _.first(_.keys(lieuditToSave.coordinates) as CoordinatesSystemType[])
-    ];
-  lieuditToSave["longitude"] = coordinates.longitude;
-  lieuditToSave["latitude"] = coordinates.latitude;
-  lieuditToSave["coordinates_system"] = coordinates.system;
-  return saveEntity(lieuditToSave, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
+  const sqlResponse = await persistLieudit(lieuditToSave);
+  return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
 export const deleteLieudit = async (
