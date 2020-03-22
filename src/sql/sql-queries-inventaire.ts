@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { getOriginCoordinates } from "../utils/coordinates-utils";
@@ -54,19 +55,26 @@ export const getQueryToFindInventaireIdByAllAttributes = (
       ? " is null"
       : "=" + inventaire.customizedAltitude);
 
-  const coordinates: Coordinates = getOriginCoordinates(inventaire);
+  let coordinates: Coordinates = {
+    system: null,
+    longitude: null,
+    latitude: null,
+    isTransformed: null
+  };
+
+  if (inventaire.coordinates) {
+    coordinates = getOriginCoordinates(inventaire);
+  }
 
   query =
     query +
     " AND i.longitude" +
-    (!getOriginCoordinates(inventaire).longitude || !coordinates.longitude
-      ? " is null"
-      : "=" + coordinates.longitude);
+    (_.isNil(coordinates.longitude) ? " is null" : "=" + coordinates.longitude);
 
   query =
     query +
     " AND i.latitude" +
-    (!coordinates.latitude ? " is null" : "=" + coordinates.latitude);
+    (_.isNil(coordinates.latitude) ? " is null" : "=" + coordinates.latitude);
 
   query =
     query +

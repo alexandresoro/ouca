@@ -1,6 +1,5 @@
 import { format } from "date-fns";
-import * as _ from "lodash";
-import { CoordinatesSystemType } from "ouca-common/coordinates-system/coordinates-system.object";
+import { getOriginCoordinates } from "ouca-common/coordinates-system";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
@@ -9,50 +8,118 @@ import {
   getQueryToFindInventaireIdById,
   getQueryToFindMeteosIdsByInventaireId
 } from "../sql/sql-queries-inventaire";
+import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
+import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
   getDeleteEntityByAttributeQuery,
   getDeleteEntityByIdQuery,
+  getQueryToFindOneById,
   getSaveEntityQuery,
   getSaveListOfEntitesQueries
 } from "../sql/sql-queries-utils";
 import {
+  DATE_PATTERN,
+  DATE_WITH_TIME_PATTERN,
+  ID,
+  INVENTAIRE_ID,
+  METEO_ID,
+  OBSERVATEUR_ID,
   TABLE_INVENTAIRE,
   TABLE_INVENTAIRE_ASSOCIE,
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
 import {
+  mapAssociesIds,
+  mapInventaire,
+  mapMeteosIds
+} from "../utils/mapping-utils";
+import {
   areArraysContainingSameValues,
   getArrayFromObjects
 } from "../utils/utils";
 import { SqlConnection } from "./sql-connection";
-export const persistInventaire = async (
-  inventaire: Inventaire
-): Promise<SqlSaveResponse> => {
-  const { date, customizedAltitude, ...otherParams } = inventaire;
 
-  if (inventaire.id) {
-    // It is an update
-    // We delete the current associes and meteos to insert later the updated ones
+const deleteAssociesAndMeteosByInventaireId = async (
+  inventaireId: number
+): Promise<void> => {
+  if (inventaireId) {
     await SqlConnection.query(
       getDeleteEntityByAttributeQuery(
         TABLE_INVENTAIRE_ASSOCIE,
-        "inventaire_id",
-        inventaire.id
+        INVENTAIRE_ID,
+        inventaireId
       ) +
         getDeleteEntityByAttributeQuery(
           TABLE_INVENTAIRE_METEO,
-          "inventaire_id",
-          inventaire.id
+          INVENTAIRE_ID,
+          inventaireId
         )
     );
   }
+};
 
-  const coordinates =
-    inventaire.coordinates[
-      _.first(_.keys(inventaire.coordinates) as CoordinatesSystemType[])
-    ];
+const saveInventaireMeteos = async (
+  inventaireId: number,
+  meteosIds: number[]
+): Promise<void> => {
+  if (meteosIds.length > 0) {
+    await SqlConnection.query(
+      getSaveListOfEntitesQueries(
+        TABLE_INVENTAIRE_METEO,
+        inventaireId,
+        meteosIds
+      )
+    );
+  }
+};
+
+const saveInventaireAssocies = async (
+  inventaireId: number,
+  associesIds: number[]
+): Promise<void> => {
+  if (associesIds.length > 0) {
+    await SqlConnection.query(
+      getSaveListOfEntitesQueries(
+        TABLE_INVENTAIRE_ASSOCIE,
+        inventaireId,
+        associesIds
+      )
+    );
+  }
+};
+
+export const persistInventaire = async (
+  inventaire: Inventaire
+): Promise<SqlSaveResponse> => {
+  const { date, customizedAltitude, ...otherInventaireAttributes } = inventaire;
+
+  // Delete the current associes and meteos to insert later the updated ones
+  await deleteAssociesAndMeteosByInventaireId(inventaire.id);
+
+  // Get the customized coordinates if any
+  // By default we consider that coordinates are not customized
+  let altitude: number = null;
+  let longitude: number = null;
+  let latitude: number = null;
+  let coordinatesSystem = null;
+
+  // Then we check if coordinates were customized
+  if (inventaire.coordinates) {
+    // Coordinates are customized
+    const coordinates = getOriginCoordinates(inventaire); // TO DO
+
+    if (coordinates) {
+      altitude = customizedAltitude;
+      longitude = coordinates.longitude;
+      latitude = coordinates.latitude;
+      coordinatesSystem = coordinates.system;
+    } else {
+      console.error("Cannot get coordinates of inventaire", inventaire);
+      return null;
+    }
+  }
 
   // Save the inventaire
   const inventaireResult: SqlSaveResponse = await SqlConnection.query(
@@ -61,14 +128,14 @@ export const persistInventaire = async (
       {
         date: format(
           interpretDateTimestampAsLocalTimeZoneDate(date),
-          "yyyy-MM-dd"
+          DATE_PATTERN
         ),
-        dateCreation: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-        altitude: customizedAltitude,
-        longitude: coordinates.longitude,
-        latitude: coordinates.latitude,
-        coordinatesSystem: coordinates.system,
-        ...otherParams
+        dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN),
+        altitude,
+        longitude,
+        latitude,
+        coordinatesSystem,
+        ...otherInventaireAttributes
       },
       DB_SAVE_MAPPING.inventaire
     )
@@ -80,27 +147,9 @@ export const persistInventaire = async (
     ? inventaire.id
     : inventaireResult.insertId;
 
-  // Save the observateurs associes
-  if (inventaire.associesIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_INVENTAIRE_ASSOCIE,
-        inventaireId,
-        inventaire.associesIds
-      )
-    );
-  }
-
-  // Save the meteos
-  if (inventaire.meteosIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_INVENTAIRE_METEO,
-        inventaireId,
-        inventaire.meteosIds
-      )
-    );
-  }
+  // Save the observateurs associes and the meteos
+  await saveInventaireAssocies(inventaireId, inventaire.associesIds);
+  await saveInventaireMeteos(inventaireId, inventaire.meteosIds);
 
   return inventaireResult;
 };
@@ -112,7 +161,7 @@ export const getExistingInventaireId = async (
     getQueryToFindInventaireIdByAllAttributes(inventaire)
   );
 
-  const eligibleInventaireIds: number[] = getArrayFromObjects(response, "id");
+  const eligibleInventaireIds: number[] = getArrayFromObjects(response, ID);
 
   for (const id of eligibleInventaireIds) {
     // Compare the observateurs associes and the meteos
@@ -123,9 +172,9 @@ export const getExistingInventaireId = async (
 
     const associesIds: number[] = getArrayFromObjects(
       response[0],
-      "observateur_id"
+      OBSERVATEUR_ID
     );
-    const meteosIds: number[] = getArrayFromObjects(response[1], "meteo_id");
+    const meteosIds: number[] = getArrayFromObjects(response[1], METEO_ID);
 
     if (
       id !== inventaire.id &&
@@ -152,4 +201,20 @@ export const findInventaireIdById = async (id: number): Promise<number> => {
     getQueryToFindInventaireIdById(id)
   );
   return response[0] ? response[0].id : null;
+};
+
+export const findInventaireById = async (
+  inventaireId: number
+): Promise<Inventaire> => {
+  const results = await SqlConnection.query(
+    getQueryToFindOneById(TABLE_INVENTAIRE, inventaireId) +
+      getQueryToFindAssociesByInventaireId(inventaireId) +
+      getQueryToFindMetosByInventaireId(inventaireId)
+  );
+
+  const inventaire: Inventaire = mapInventaire(results[0][0]);
+  inventaire.associesIds = mapAssociesIds(results[1]);
+  inventaire.meteosIds = mapMeteosIds(results[2]);
+
+  return inventaire;
 };

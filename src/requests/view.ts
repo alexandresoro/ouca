@@ -1,4 +1,8 @@
 import * as _ from "lodash";
+import {
+  CoordinatesSystem,
+  COORDINATES_SYSTEMS_CONFIG
+} from "ouca-common/coordinates-system";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
 import { HttpParameters } from "../http/httpParameters";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
@@ -44,52 +48,74 @@ export const exportDonneesByCustomizedFilters = async (
     });
   }
 
-  const objectsToExport = _.map(flatDonnees, (object) => {
-    return {
-      ID: object.id,
-      Observateur: object.observateur,
-      "Observateurs associés": object.associes,
-      Date: object.date,
-      Heure: object.heure,
-      Durée: object.duree,
-      Département: object.departement,
-      "Code commune": object.codeCommune,
-      "Nom commune": object.nomCommune,
-      "Lieu-dit": object.lieudit,
-      Altitude: object.customizedAltitude
-        ? object.customizedAltitude
-        : object.altitude,
-      Longitude: object.customizedLongitude
-        ? object.customizedLongitude
-        : object.longitude,
-      Latitude: object.customizedLatitude
-        ? object.customizedLatitude
-        : object.latitude,
-      Température: object.temperature,
-      Météo: object.meteos,
-      Classe: object.classe,
-      "Code espèce": object.codeEspece,
-      "Nom francais": object.nomFrancais,
-      "Nom latin": object.nomLatin,
-      Sexe: object.sexe,
-      Age: object.age,
-      Nombre: object.nombre,
-      "Estimation du nombre": object.estimationNombre,
-      "Estimation de la distance": object.estimationDistance,
-      "Distance (mètres)": object.distance,
-      Regroupement: object.regroupement,
-      "Comportement 1": getComportement(object, 1),
-      "Comportement 2": getComportement(object, 2),
-      "Comportement 3": getComportement(object, 3),
-      "Comportement 4": getComportement(object, 4),
-      "Comportement 5": getComportement(object, 5),
-      "Comportement 6": getComportement(object, 6),
-      "Milieu 1": getMilieu(object, 1),
-      "Milieu 2": getMilieu(object, 2),
-      "Milieu 3": getMilieu(object, 3),
-      "Milieu 4": getMilieu(object, 4),
-      Commentaire: object.commentaire
+  const objectsToExport = _.map(flatDonnees, (donnee) => {
+    const donneeToExportPart1 = {
+      ID: donnee.id,
+      Observateur: donnee.observateur,
+      "Observateurs associés": donnee.associes,
+      Date: donnee.date,
+      Heure: donnee.heure,
+      Durée: donnee.duree,
+      Département: donnee.departement,
+      "Code commune": donnee.codeCommune,
+      "Nom commune": donnee.nomCommune,
+      "Lieu-dit": donnee.lieudit,
+      "Altitude en mètres": _.isNil(donnee.customizedAltitude)
+        ? donnee.altitude
+        : donnee.customizedAltitude
     };
+
+    const coordinatesSystem: CoordinatesSystem =
+      COORDINATES_SYSTEMS_CONFIG[
+        donnee.customizedCoordinatesSystem
+          ? donnee.customizedCoordinatesSystem
+          : donnee.coordinatesSystem
+      ];
+
+    const coordinatesSuffix =
+      " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
+    donneeToExportPart1["Longitude" + coordinatesSuffix] = _.isNil(
+      donnee.customizedLongitude
+    )
+      ? donnee.longitude
+      : donnee.customizedLongitude;
+    donneeToExportPart1["Latitude" + coordinatesSuffix] = _.isNil(
+      donnee.customizedLatitude
+    )
+      ? donnee.latitude
+      : donnee.customizedLatitude;
+
+    const { ...firstAttributes } = donneeToExportPart1;
+
+    const donneeToExport = {
+      ...firstAttributes,
+      "Température en °C": donnee.temperature,
+      Météo: donnee.meteos,
+      Classe: donnee.classe,
+      "Code espèce": donnee.codeEspece,
+      "Nom francais": donnee.nomFrancais,
+      "Nom latin": donnee.nomLatin,
+      Sexe: donnee.sexe,
+      Âge: donnee.age,
+      "Nombre d'individus": donnee.nombre,
+      "Estimation du nombre": donnee.estimationNombre,
+      "Estimation de la distance": donnee.estimationDistance,
+      "Distance en mètres": donnee.distance,
+      "Numéro de regroupement": donnee.regroupement,
+      "Comportement 1": getComportement(donnee, 1),
+      "Comportement 2": getComportement(donnee, 2),
+      "Comportement 3": getComportement(donnee, 3),
+      "Comportement 4": getComportement(donnee, 4),
+      "Comportement 5": getComportement(donnee, 5),
+      "Comportement 6": getComportement(donnee, 6),
+      "Milieu 1": getMilieu(donnee, 1),
+      "Milieu 2": getMilieu(donnee, 2),
+      "Milieu 3": getMilieu(donnee, 3),
+      "Milieu 4": getMilieu(donnee, 4),
+      Commentaires: donnee.commentaire
+    };
+
+    return donneeToExport;
   });
 
   return writeToExcel(objectsToExport, [], "donnees");

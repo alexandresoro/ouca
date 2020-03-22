@@ -1,5 +1,4 @@
 import * as _ from "lodash";
-import { buildCoordinates } from "ouca-common/coordinates-system";
 import {
   CoordinatesSystemType,
   COORDINATES_SYSTEMS
@@ -12,41 +11,35 @@ import { PostResponse } from "ouca-common/post-response.object";
 import { HttpParameters } from "../http/httpParameters";
 import { buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
 import { Configuration } from "../objects/configuration.object";
-import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
+  buildDonneeFromFlatDonneeWithMinimalData,
+  deleteDonneeById,
   findLastDonneeId,
+  findNextDonneeByCurrentDonneeId,
+  findPreviousDonneeByCurrentDonneeId,
   getExistingDonneeId,
   persistDonnee,
   updateInventaireIdForDonnees
 } from "../sql-api/sql-api-donnee";
 import {
   deleteInventaireById,
+  findInventaireById,
   findInventaireIdById,
   getExistingInventaireId,
   persistInventaire
 } from "../sql-api/sql-api-inventaire";
 import { SqlConnection } from "../sql-api/sql-connection";
-import { getQueryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";
 import {
-  getQueryToCountDonneesByInventaireId,
   getQueryToFindDonneeById,
   getQueryToFindDonneeIndexById,
   getQueryToFindLastDonnee,
   getQueryToFindLastRegroupement,
   getQueryToFindNextDonneeByCurrentDonneeId,
   getQueryToFindNumberOfDonnees,
-  getQueryToFindNumberOfDonneesByDoneeeEntityId,
   getQueryToFindPreviousDonneeByCurrentDonneeId
 } from "../sql/sql-queries-donnee";
-import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
-import { getQueryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
-import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
-import {
-  getAllFromTablesSqlQuery,
-  getDeleteEntityByIdQuery,
-  getFindOneByIdQuery
-} from "../sql/sql-queries-utils";
+import { getAllFromTablesSqlQuery } from "../sql/sql-queries-utils";
 import {
   KEY_ARE_ASSOCIES_DISPLAYED,
   KEY_COORDINATES_SYSTEM,
@@ -59,79 +52,30 @@ import {
   KEY_IS_DISTANCE_DISPLAYED,
   KEY_IS_METEO_DISPLAYED,
   KEY_IS_REGROUPEMENT_DISPLAYED,
-  TABLE_DONNEE,
-  TABLE_INVENTAIRE
+  TABLE_AGE,
+  TABLE_CLASSE,
+  TABLE_COMMUNE,
+  TABLE_COMPORTEMENT,
+  TABLE_CONFIGURATION,
+  TABLE_DEPARTEMENT,
+  TABLE_ESPECE,
+  TABLE_ESTIMATION_DISTANCE,
+  TABLE_ESTIMATION_NOMBRE,
+  TABLE_LIEUDIT,
+  TABLE_METEO,
+  TABLE_MILIEU,
+  TABLE_OBSERVATEUR,
+  TABLE_SEXE
 } from "../utils/constants";
 import {
   buildCommunesFromCommunesDb,
-  mapAssociesIds,
-  mapComportementsIds,
   mapEspeces,
-  mapEstimationsNombre,
-  mapInventaire,
-  mapMeteosIds,
-  mapMilieuxIds
+  mapEstimationsNombre
 } from "../utils/mapping-utils";
 import {
   buildErrorPostResponse,
   buildPostResponseFromSqlResponse
 } from "../utils/post-response-utils";
-
-const buildDonneeFromFlatDonneeWithMinimalData = async (
-  flatDonnee: FlatDonneeWithMinimalData
-): Promise<Donnee> => {
-  if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
-    const listsResults = await SqlConnection.query(
-      getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindComportementsIdsByDonneeId(flatDonnee.id) +
-        getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id) +
-        getQueryToFindNumberOfDonneesByDoneeeEntityId(
-          "inventaire_id",
-          flatDonnee.inventaireId
-        )
-    );
-
-    const inventaire: Inventaire = {
-      id: flatDonnee.inventaireId,
-      observateurId: flatDonnee.observateurId,
-      associesIds: mapAssociesIds(listsResults[0]),
-      date: flatDonnee.date,
-      heure: flatDonnee.heure,
-      duree: flatDonnee.duree,
-      lieuditId: flatDonnee.lieuditId,
-      customizedAltitude: flatDonnee.altitude,
-      coordinates: buildCoordinates(
-        flatDonnee.coordinatesSystem,
-        flatDonnee.longitude,
-        flatDonnee.latitude
-      ),
-      temperature: flatDonnee.temperature,
-      meteosIds: mapMeteosIds(listsResults[1]),
-      nbDonnees: listsResults[4][0].nbDonnees
-    };
-
-    const donnee: Donnee = {
-      id: flatDonnee.id,
-      inventaireId: flatDonnee.inventaireId,
-      inventaire,
-      especeId: flatDonnee.especeId,
-      sexeId: flatDonnee.sexeId,
-      ageId: flatDonnee.ageId,
-      estimationNombreId: flatDonnee.estimationNombreId,
-      nombre: flatDonnee.nombre,
-      estimationDistanceId: flatDonnee.estimationDistanceId,
-      distance: flatDonnee.distance,
-      regroupement: flatDonnee.regroupement,
-      comportementsIds: mapComportementsIds(listsResults[2]),
-      milieuxIds: mapMilieuxIds(listsResults[3]),
-      commentaire: flatDonnee.commentaire
-    };
-    return donnee;
-  } else {
-    return null;
-  }
-};
 
 const getConfigurationValueAsString = (
   configurations: Configuration[],
@@ -182,20 +126,20 @@ export const creationInit = async (): Promise<CreationPage> => {
       SqlConnection.query(getQueryToFindNumberOfDonnees()),
       SqlConnection.query(getQueryToFindLastRegroupement()),
       getAllFromTablesSqlQuery([
-        "configuration",
-        "observateur",
-        "departement",
-        "commune",
-        "lieudit",
-        "meteo",
-        "classe",
-        "espece",
-        "age",
-        "sexe",
-        "estimation_nombre",
-        "estimation_distance",
-        "comportement",
-        "milieu"
+        TABLE_CONFIGURATION,
+        TABLE_OBSERVATEUR,
+        TABLE_DEPARTEMENT,
+        TABLE_COMMUNE,
+        TABLE_LIEUDIT,
+        TABLE_METEO,
+        TABLE_CLASSE,
+        TABLE_ESPECE,
+        TABLE_AGE,
+        TABLE_SEXE,
+        TABLE_ESTIMATION_NOMBRE,
+        TABLE_ESTIMATION_DISTANCE,
+        TABLE_COMPORTEMENT,
+        TABLE_MILIEU
       ])
     ])
   );
@@ -336,27 +280,13 @@ export const saveDonnee = async (
 export const deleteDonnee = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
-  // First delete the donnee
-  const sqlResponse: SqlSaveResponse = await SqlConnection.query(
-    getDeleteEntityByIdQuery(
-      TABLE_DONNEE,
-      +httpParameters.queryParameters.donneeId
-    )
-  );
-
+  const donneeId: number = +httpParameters.queryParameters.donneeId;
   const inventaireId: number = +httpParameters.queryParameters.inventaireId;
 
-  // Check how many donnees the inventaire has after the deletion
-  const nbDonneesResponse = await SqlConnection.query(
-    getQueryToCountDonneesByInventaireId(inventaireId)
+  const sqlResponse: SqlSaveResponse = await deleteDonneeById(
+    donneeId,
+    inventaireId
   );
-
-  if (nbDonneesResponse[0].nbDonnees === 0) {
-    // If the inventaire has no more donnees then we remove the inventaire
-    await SqlConnection.query(
-      getDeleteEntityByIdQuery(TABLE_INVENTAIRE, inventaireId)
-    );
-  }
 
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
@@ -364,25 +294,15 @@ export const deleteDonnee = async (
 export const getNextDonnee = async (
   httpParameters: HttpParameters
 ): Promise<Donnee> => {
-  const donneeResult = await SqlConnection.query(
-    getQueryToFindNextDonneeByCurrentDonneeId(
-      +httpParameters.queryParameters.id
-    )
-  );
-
-  return await buildDonneeFromFlatDonneeWithMinimalData(donneeResult[0]);
+  const donneeId: number = +httpParameters.queryParameters.id;
+  return findNextDonneeByCurrentDonneeId(donneeId);
 };
 
 export const getPreviousDonnee = async (
   httpParameters: HttpParameters
 ): Promise<Donnee> => {
-  const donneeResult = await SqlConnection.query(
-    getQueryToFindPreviousDonneeByCurrentDonneeId(
-      +httpParameters.queryParameters.id
-    )
-  );
-
-  return await buildDonneeFromFlatDonneeWithMinimalData(donneeResult[0]);
+  const donneeId: number = +httpParameters.queryParameters.id;
+  return findPreviousDonneeByCurrentDonneeId(donneeId);
 };
 
 export const getDonneeByIdWithContext = async (
@@ -416,18 +336,7 @@ export const getInventaireById = async (
   httpParameters: HttpParameters
 ): Promise<Inventaire> => {
   const inventaireId: number = +httpParameters.queryParameters.id;
-
-  const results = await SqlConnection.query(
-    getFindOneByIdQuery(TABLE_INVENTAIRE, inventaireId) +
-      getQueryToFindAssociesByInventaireId(inventaireId) +
-      getQueryToFindMetosByInventaireId(inventaireId)
-  );
-
-  const inventaire: Inventaire = mapInventaire(results[0][0]);
-  inventaire.associesIds = mapAssociesIds(results[1]);
-  inventaire.meteosIds = mapMeteosIds(results[2]);
-
-  return inventaire;
+  return findInventaireById(inventaireId);
 };
 
 export const getInventaireIdById = async (
