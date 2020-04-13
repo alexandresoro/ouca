@@ -87,11 +87,13 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
       duree: flatDonnee.duree,
       lieuditId: flatDonnee.lieuditId,
       customizedAltitude: flatDonnee.altitude,
-      coordinates: buildCoordinates(
-        flatDonnee.coordinatesSystem,
-        flatDonnee.longitude,
-        flatDonnee.latitude
-      ),
+      coordinates: !_.isNil(flatDonnee.longitude)
+        ? buildCoordinates(
+            flatDonnee.coordinatesSystem,
+            flatDonnee.longitude,
+            flatDonnee.latitude
+          )
+        : null,
       temperature: flatDonnee.temperature,
       meteosIds: mapMeteosIds(listsResults[1]),
       nbDonnees: listsResults[4][0].nbDonnees
