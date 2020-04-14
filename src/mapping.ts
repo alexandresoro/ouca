@@ -1,8 +1,7 @@
 import { HttpParameters } from "./http/httpParameters";
 import {
-  configurationInit,
   configurationUpdate,
-  getAppCoordinatesSystem
+  getAppConfiguration
 } from "./requests/configuration";
 import {
   creationInit,
@@ -182,9 +181,8 @@ export const REQUEST_MAPPING: {
   "/api/milieu/delete": deleteMilieu,
   "/api/milieu/import": importMilieux,
   "/api/milieu/export": exportMilieux,
-  "/api/configuration/init": configurationInit,
+  "/api/configuration/all": getAppConfiguration,
   "/api/configuration/update": configurationUpdate,
-  "/api/configuration/coordinates_system": getAppCoordinatesSystem,
   "/api/database/save": saveDatabase
 };
 

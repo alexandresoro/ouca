@@ -7,7 +7,6 @@ import {
   METEO_ID,
   OBSERVATEUR_ID
 } from "../utils/constants";
-import { toCamel } from "../utils/utils";
 
 const createKeyValueMapWithSameName = (
   names: string | string[]
@@ -107,19 +106,19 @@ export const DB_SAVE_LISTS_MAPPING = {
   }
 };
 
-export const DB_CONFIGURATION_MAPPING = {
-  default_observateur_id: "defaultObservateur",
-  default_departement_id: "defaultDepartement",
-  default_age_id: "defaultAge",
-  default_sexe_id: "defaultSexe",
-  default_estimation_nombre_id: "defaultEstimationNombre",
-  default_nombre: "defaultNombre",
-  are_associes_displayed: toCamel("are_associes_displayed"),
-  is_meteo_displayed: toCamel("is_meteo_displayed"),
-  is_distance_displayed: toCamel("is_distance_displayed"),
-  is_regroupement_displayed: toCamel("is_regroupement_displayed"),
-  coordinates_system: toCamel("coordinates_system")
-};
+export const DB_CONFIGURATION_MAPPING = createKeyValueMapWithSameName([
+  "default_observateur_id",
+  "default_departement_id",
+  "default_age_id",
+  "default_sexe_id",
+  "default_estimation_nombre_id",
+  "default_nombre",
+  "are_associes_displayed",
+  "is_meteo_displayed",
+  "is_distance_displayed",
+  "is_regroupement_displayed",
+  "coordinates_system"
+]);
 
 export const getQuery = (query: string): string => {
   console.log("---> " + query + ";");

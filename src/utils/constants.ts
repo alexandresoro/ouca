@@ -29,6 +29,7 @@ export const TABLE_DONNEE_COMPORTEMENT = "donnee_comportement";
 export const TABLE_DONNEE_MILIEU = "donnee_milieu";
 
 export const TABLE_CONFIGURATION = "configuration";
+export const TABLE_SETTINGS = "settings";
 
 export const COLUMN_CODE = "code";
 export const COLUMN_ESPECE_ID = "espece_id";
