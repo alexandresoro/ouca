@@ -4,7 +4,6 @@ import {
   getAppConfiguration
 } from "./requests/configuration";
 import {
-  creationInit,
   deleteDonnee,
   getDonneeByIdWithContext,
   getInventaireById,
@@ -102,7 +101,6 @@ export const REQUEST_MAPPING: {
     isDockerMode?: boolean
   ) => Promise<any>;
 } = {
-  "/api/creation/init": creationInit,
   "/api/inventaire/save": saveInventaire,
   "/api/inventaire/find": getInventaireById,
   "/api/inventaire/find_id": getInventaireIdById,

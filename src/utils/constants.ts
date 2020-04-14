@@ -27,8 +27,6 @@ export const TABLE_INVENTAIRE_ASSOCIE = "inventaire_associe";
 export const TABLE_DONNEE = "donnee";
 export const TABLE_DONNEE_COMPORTEMENT = "donnee_comportement";
 export const TABLE_DONNEE_MILIEU = "donnee_milieu";
-
-export const TABLE_CONFIGURATION = "configuration";
 export const TABLE_SETTINGS = "settings";
 
 export const COLUMN_CODE = "code";

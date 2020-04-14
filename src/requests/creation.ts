@@ -1,16 +1,8 @@
-import * as _ from "lodash";
-import {
-  CoordinatesSystemType,
-  COORDINATES_SYSTEMS
-} from "ouca-common/coordinates-system/coordinates-system.object";
-import { CreationPage } from "ouca-common/creation-page.object";
 import { DonneeWithNavigationData } from "ouca-common/donnee-with-navigation-data.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { PostResponse } from "ouca-common/post-response.object";
 import { HttpParameters } from "../http/httpParameters";
-import { buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
-import { Configuration } from "../objects/configuration.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   buildDonneeFromFlatDonneeWithMinimalData,
@@ -33,195 +25,14 @@ import { SqlConnection } from "../sql-api/sql-connection";
 import {
   getQueryToFindDonneeById,
   getQueryToFindDonneeIndexById,
-  getQueryToFindLastDonnee,
   getQueryToFindLastRegroupement,
   getQueryToFindNextDonneeByCurrentDonneeId,
-  getQueryToFindNumberOfDonnees,
   getQueryToFindPreviousDonneeByCurrentDonneeId
 } from "../sql/sql-queries-donnee";
-import { getAllFromTablesSqlQuery } from "../sql/sql-queries-utils";
-import {
-  KEY_ARE_ASSOCIES_DISPLAYED,
-  KEY_COORDINATES_SYSTEM,
-  KEY_DEFAULT_AGE_ID,
-  KEY_DEFAULT_DEPARTEMENT_ID,
-  KEY_DEFAULT_ESTIMATION_NOMBRE_ID,
-  KEY_DEFAULT_NOMBRE,
-  KEY_DEFAULT_OBSERVATEUR_ID,
-  KEY_DEFAULT_SEXE_ID,
-  KEY_IS_DISTANCE_DISPLAYED,
-  KEY_IS_METEO_DISPLAYED,
-  KEY_IS_REGROUPEMENT_DISPLAYED,
-  TABLE_AGE,
-  TABLE_CLASSE,
-  TABLE_COMMUNE,
-  TABLE_COMPORTEMENT,
-  TABLE_CONFIGURATION,
-  TABLE_DEPARTEMENT,
-  TABLE_ESPECE,
-  TABLE_ESTIMATION_DISTANCE,
-  TABLE_ESTIMATION_NOMBRE,
-  TABLE_LIEUDIT,
-  TABLE_METEO,
-  TABLE_MILIEU,
-  TABLE_OBSERVATEUR,
-  TABLE_SEXE
-} from "../utils/constants";
-import {
-  buildCommunesFromCommunesDb,
-  mapEspeces,
-  mapEstimationsNombre
-} from "../utils/mapping-utils";
 import {
   buildErrorPostResponse,
   buildPostResponseFromSqlResponse
 } from "../utils/post-response-utils";
-
-const getConfigurationValueAsString = (
-  configurations: Configuration[],
-  libelle: string
-): string => {
-  return _.find(
-    configurations,
-    (configuration) => configuration.libelle === libelle
-  ).value;
-};
-
-const getConfigurationValueAsNumber = (
-  configurations: Configuration[],
-  libelle: string
-): number => {
-  return +getConfigurationValueAsString(configurations, libelle);
-};
-
-const getConfigurationValueAsBoolean = (
-  configurations: Configuration[],
-  libelle: string
-): boolean => {
-  return getConfigurationValueAsNumber(configurations, libelle) === 1;
-};
-
-export const creationInit = async (): Promise<CreationPage> => {
-  const [
-    lastDonneeInfo,
-    numberOfDonnees,
-    lastRegroupement,
-    configuration,
-    observateurs,
-    departements,
-    communes,
-    lieuxditsDb,
-    meteos,
-    classes,
-    especes,
-    ages,
-    sexes,
-    estimationsNombre,
-    estimationsDistance,
-    comportements,
-    milieux
-  ] = await Promise.all(
-    _.flatten([
-      SqlConnection.query(getQueryToFindLastDonnee()),
-      SqlConnection.query(getQueryToFindNumberOfDonnees()),
-      SqlConnection.query(getQueryToFindLastRegroupement()),
-      getAllFromTablesSqlQuery([
-        TABLE_CONFIGURATION,
-        TABLE_OBSERVATEUR,
-        TABLE_DEPARTEMENT,
-        TABLE_COMMUNE,
-        TABLE_LIEUDIT,
-        TABLE_METEO,
-        TABLE_CLASSE,
-        TABLE_ESPECE,
-        TABLE_AGE,
-        TABLE_SEXE,
-        TABLE_ESTIMATION_NOMBRE,
-        TABLE_ESTIMATION_DISTANCE,
-        TABLE_COMPORTEMENT,
-        TABLE_MILIEU
-      ])
-    ])
-  );
-
-  const lastDonnee: Donnee = await buildDonneeFromFlatDonneeWithMinimalData(
-    lastDonneeInfo[0]
-  );
-
-  const configurations: Configuration[] = configuration;
-
-  const creationPage: CreationPage = {
-    lastDonnee,
-    numberOfDonnees: numberOfDonnees[0].nbDonnees,
-    nextRegroupement: lastRegroupement[0].regroupement + 1,
-    defaultObservateurId: getConfigurationValueAsNumber(
-      configurations,
-      KEY_DEFAULT_OBSERVATEUR_ID
-    ),
-    defaultDepartementId: getConfigurationValueAsNumber(
-      configurations,
-      KEY_DEFAULT_DEPARTEMENT_ID
-    ),
-    defaultEstimationNombreId: getConfigurationValueAsNumber(
-      configurations,
-      KEY_DEFAULT_ESTIMATION_NOMBRE_ID
-    ),
-    defaultNombre: getConfigurationValueAsNumber(
-      configurations,
-      KEY_DEFAULT_NOMBRE
-    ),
-    defaultSexeId: getConfigurationValueAsNumber(
-      configurations,
-      KEY_DEFAULT_SEXE_ID
-    ),
-    defaultAgeId: getConfigurationValueAsNumber(
-      configurations,
-      KEY_DEFAULT_AGE_ID
-    ),
-    areAssociesDisplayed: getConfigurationValueAsBoolean(
-      configurations,
-      KEY_ARE_ASSOCIES_DISPLAYED
-    ),
-    isMeteoDisplayed: getConfigurationValueAsBoolean(
-      configurations,
-      KEY_IS_METEO_DISPLAYED
-    ),
-    isDistanceDisplayed: getConfigurationValueAsBoolean(
-      configurations,
-      KEY_IS_DISTANCE_DISPLAYED
-    ),
-    isRegroupementDisplayed: getConfigurationValueAsBoolean(
-      configurations,
-      KEY_IS_REGROUPEMENT_DISPLAYED
-    ),
-    coordinatesSystem: _.find(
-      COORDINATES_SYSTEMS,
-      (system: CoordinatesSystemType) => {
-        return (
-          getConfigurationValueAsString(
-            configurations,
-            KEY_COORDINATES_SYSTEM
-          ) === system
-        );
-      }
-    ),
-    observateurs: observateurs,
-    departements: departements,
-    communes: buildCommunesFromCommunesDb(communes),
-    lieudits: buildLieuxditsFromLieuxditsDb(lieuxditsDb),
-    meteos: meteos,
-    classes: classes,
-    especes: mapEspeces(especes),
-    ages: ages,
-    sexes: sexes,
-    estimationsNombre: mapEstimationsNombre(estimationsNombre),
-    estimationsDistance: estimationsDistance,
-    comportements: comportements,
-    milieux: milieux
-  };
-
-  return creationPage;
-};
 
 export const saveInventaire = async (
   httpParameters: HttpParameters
