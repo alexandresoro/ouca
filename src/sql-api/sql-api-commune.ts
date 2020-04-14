@@ -1,6 +1,10 @@
 import * as _ from "lodash";
 import { Commune } from "ouca-common/commune.object";
 import { Departement } from "ouca-common/departement.object";
+import {
+  buildCommuneFromCommuneDb,
+  buildCommunesFromCommunesDb
+} from "../mapping/commune-mapping";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import {
@@ -17,10 +21,6 @@ import {
   TABLE_COMMUNE,
   TABLE_DEPARTEMENT
 } from "../utils/constants";
-import {
-  buildCommuneFromCommuneDb,
-  buildCommunesFromCommunesDb
-} from "../utils/mapping-utils";
 import { getNbByEntityId } from "../utils/utils";
 
 export const findAllCommunes = async (): Promise<Commune[]> => {

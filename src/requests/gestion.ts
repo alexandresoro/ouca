@@ -15,7 +15,12 @@ import { Observateur } from "ouca-common/observateur.object";
 import { PostResponse } from "ouca-common/post-response.object";
 import { Sexe } from "ouca-common/sexe.object";
 import { HttpParameters } from "../http/httpParameters";
+import { buildCommunesFromCommunesDb } from "../mapping/commune-mapping";
+import { buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
+import { buildEstimationsNombreFromEstimationsNombreDb } from "../mapping/estimation-nombre-mapping";
 import { buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
+import { EspeceDb } from "../objects/db/espece-db.object";
+import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
@@ -67,11 +72,6 @@ import {
 } from "../utils/constants";
 import { getOriginCoordinates } from "../utils/coordinates-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
-import {
-  buildCommunesFromCommunesDb,
-  mapEspeces,
-  mapEstimationsNombre
-} from "../utils/mapping-utils";
 import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 import { getNbByEntityId } from "../utils/utils";
 
@@ -320,10 +320,12 @@ export const getEspeces = async (): Promise<Espece[]> => {
       getFindAllQuery(TABLE_CLASSE) +
       getQueryToFindNumberOfDonneesByEspeceId()
   );
-  const especes: Espece[] = mapEspeces(results[0]);
 
+  const especesDb: EspeceDb[] = results[0];
   const classes: Classe[] = results[1];
   const nbDonneesByEspece: NumberOfObjectsById[] = results[2];
+
+  const especes: Espece[] = buildEspecesFromEspecesDb(especesDb);
   _.forEach(especes, (espece: Espece) => {
     espece.classe = _.find(classes, (classe: Classe) => {
       return classe.id === espece.classeId;
@@ -415,8 +417,12 @@ export const getEstimationsNombre = async (): Promise<EstimationNombre[]> => {
       getQueryToFindNumberOfDonneesByEstimationNombreId()
   );
 
-  const estimations: EstimationNombre[] = mapEstimationsNombre(results[0]);
+  const estimationsDb: EstimationNombreDb[] = results[0];
   const nbDonneesByEstimation: NumberOfObjectsById[] = results[1];
+
+  const estimations: EstimationNombre[] = buildEstimationsNombreFromEstimationsNombreDb(
+    estimationsDb
+  );
   _.forEach(estimations, (estimation: EstimationNombre) => {
     estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
   });
@@ -440,7 +446,9 @@ export const deleteEstimationNombre = async (
   return deleteEntity(httpParameters, TABLE_ESTIMATION_NOMBRE);
 };
 
-export const getEstimationsDistance = async (): Promise<EstimationDistance[]> => {
+export const getEstimationsDistance = async (): Promise<
+  EstimationDistance[]
+> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_ESTIMATION_DISTANCE, COLUMN_LIBELLE, ORDER_ASC) +
       getQueryToFindNumberOfDonneesByEstimationDistanceId()

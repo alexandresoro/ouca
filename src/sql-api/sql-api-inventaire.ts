@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import { getOriginCoordinates } from "ouca-common/coordinates-system";
 import { Inventaire } from "ouca-common/inventaire.object";
+import { buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
+import { InventaireDb } from "../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   getQueryToFindAssociesIdsByInventaireId,
@@ -30,11 +32,7 @@ import {
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
-import {
-  mapAssociesIds,
-  mapInventaire,
-  mapMeteosIds
-} from "../utils/mapping-utils";
+import { mapAssociesIds, mapMeteosIds } from "../utils/mapping-utils";
 import {
   areArraysContainingSameValues,
   getArrayFromObjects
@@ -212,9 +210,13 @@ export const findInventaireById = async (
       getQueryToFindMetosByInventaireId(inventaireId)
   );
 
-  const inventaire: Inventaire = mapInventaire(results[0][0]);
-  inventaire.associesIds = mapAssociesIds(results[1]);
-  inventaire.meteosIds = mapMeteosIds(results[2]);
+  const inventaireDb: InventaireDb = results[0][0];
+  const associesDb = results[1];
+  const meteosDb = results[2];
+
+  const inventaire: Inventaire = buildInventaireFromInventaireDb(inventaireDb);
+  inventaire.associesIds = mapAssociesIds(associesDb);
+  inventaire.meteosIds = mapMeteosIds(meteosDb);
 
   return inventaire;
 };
