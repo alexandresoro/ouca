@@ -1,6 +1,5 @@
 import { format } from "date-fns";
 import * as _ from "lodash";
-import { buildCoordinates } from "ouca-common/coordinates-system";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
@@ -88,11 +87,12 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
       lieuditId: flatDonnee.lieuditId,
       customizedAltitude: flatDonnee.altitude,
       coordinates: !_.isNil(flatDonnee.longitude)
-        ? buildCoordinates(
-            flatDonnee.coordinatesSystem,
-            flatDonnee.longitude,
-            flatDonnee.latitude
-          )
+        ? {
+            longitude: flatDonnee.longitude,
+            latitude: flatDonnee.latitude,
+            system: flatDonnee.coordinatesSystem,
+            isTransformed: false
+          }
         : null,
       temperature: flatDonnee.temperature,
       meteosIds: mapMeteosIds(listsResults[1]),

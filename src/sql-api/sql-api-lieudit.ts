@@ -3,7 +3,7 @@ import {
   getOriginCoordinates
 } from "ouca-common/coordinates-system";
 import { Coordinates } from "ouca-common/coordinates.object";
-import { Lieudit } from "ouca-common/lieudit.object";
+import { Lieudit } from "ouca-common/lieudit.model";
 import {
   buildLieuditDbFromLieudit,
   buildLieuditFromLieuditDb
@@ -50,11 +50,7 @@ export const getLieuditByCommuneIdAndNom = async (
 };
 
 const getLieuditCommuneId = (lieudit: Lieudit): number => {
-  if (!lieudit.communeId && !!lieudit.commune && !!lieudit.commune.id) {
-    return lieudit.commune.id;
-  }
-
-  return lieudit.communeId;
+  return lieudit?.communeId ? lieudit.communeId : null;
 };
 
 const getCoordinatesToPersist = async (

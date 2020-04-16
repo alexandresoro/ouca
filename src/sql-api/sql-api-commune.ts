@@ -1,6 +1,5 @@
 import * as _ from "lodash";
-import { Commune } from "ouca-common/commune.object";
-import { Departement } from "ouca-common/departement.object";
+import { Commune } from "ouca-common/commune.model";
 import {
   buildCommuneFromCommuneDb,
   buildCommunesFromCommunesDb
@@ -15,18 +14,12 @@ import {
   getQueryToFindNumberOfLieuxditsByCommuneId
 } from "../sql/sql-queries-commune";
 import { getFindAllQuery } from "../sql/sql-queries-utils";
-import {
-  COLUMN_NOM,
-  ORDER_ASC,
-  TABLE_COMMUNE,
-  TABLE_DEPARTEMENT
-} from "../utils/constants";
+import { COLUMN_NOM, ORDER_ASC, TABLE_COMMUNE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 
 export const findAllCommunes = async (): Promise<Commune[]> => {
   const [
     communesDb,
-    departementsDb,
     nbLieuxditsByCommuneDb,
     nbDonneesByCommuneDb
   ] = await Promise.all(
@@ -34,22 +27,16 @@ export const findAllCommunes = async (): Promise<Commune[]> => {
       SqlConnection.query(
         getFindAllQuery(TABLE_COMMUNE, COLUMN_NOM, ORDER_ASC)
       ),
-      SqlConnection.query(getFindAllQuery(TABLE_DEPARTEMENT)),
       SqlConnection.query(getQueryToFindNumberOfLieuxditsByCommuneId()),
       SqlConnection.query(getQueryToFindNumberOfDonneesByCommuneId())
     ])
   );
 
   const communes: Commune[] = buildCommunesFromCommunesDb(communesDb);
-  const departements: Departement[] = departementsDb;
   const nbLieuxditsByCommune: NumberOfObjectsById[] = nbLieuxditsByCommuneDb;
   const nbDonneesByCommune: NumberOfObjectsById[] = nbDonneesByCommuneDb;
 
   _.forEach(communes, (commune: Commune) => {
-    commune.departement = _.find(departements, (departement: Departement) => {
-      return departement.id === commune.departementId;
-    });
-    commune.departementId = null;
     commune.nbLieuxdits = getNbByEntityId(commune, nbLieuxditsByCommune);
     commune.nbDonnees = getNbByEntityId(commune, nbDonneesByCommune);
   });

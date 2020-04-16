@@ -1,6 +1,6 @@
-import { Commune } from "ouca-common/commune.object";
+import { Commune } from "ouca-common/commune.model";
 import { Departement } from "ouca-common/departement.object";
-import { Lieudit } from "ouca-common/lieudit.object";
+import { Lieudit } from "ouca-common/lieudit.model";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import { getCommuneByDepartementIdAndCodeAndNom } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";

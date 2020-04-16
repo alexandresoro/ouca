@@ -1,3 +1,5 @@
+import { CoordinatesSystemType } from "ouca-common/coordinates-system";
+
 export interface LieuditDb {
   id: number;
   commune_id: number;
@@ -5,5 +7,5 @@ export interface LieuditDb {
   altitude: number;
   longitude: number;
   latitude: number;
-  coordinates_system: string;
+  coordinates_system: CoordinatesSystemType;
 }

@@ -1,5 +1,5 @@
 import { Classe } from "ouca-common/classe.object";
-import { Espece } from "ouca-common/espece.object";
+import { Espece } from "ouca-common/espece.model";
 import { getClasseByLibelle } from "../../sql-api/sql-api-classe";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {

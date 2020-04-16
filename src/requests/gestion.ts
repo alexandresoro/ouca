@@ -1,21 +1,23 @@
 import * as _ from "lodash";
 import { Age } from "ouca-common/age.object";
 import { Classe } from "ouca-common/classe.object";
-import { Commune } from "ouca-common/commune.object";
+import { Commune } from "ouca-common/commune.model";
 import { Comportement } from "ouca-common/comportement.object";
 import { Departement } from "ouca-common/departement.object";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
-import { Espece } from "ouca-common/espece.object";
+import { Espece } from "ouca-common/espece.model";
 import { EstimationDistance } from "ouca-common/estimation-distance.object";
 import { EstimationNombre } from "ouca-common/estimation-nombre.object";
-import { Lieudit } from "ouca-common/lieudit.object";
+import { findClasseById } from "ouca-common/helpers/classe.helper";
+import { findCommuneById } from "ouca-common/helpers/commune.helper";
+import { findDepartementById } from "ouca-common/helpers/departement.helper";
+import { Lieudit } from "ouca-common/lieudit.model";
 import { Meteo } from "ouca-common/meteo.object";
 import { Milieu } from "ouca-common/milieu.object";
 import { Observateur } from "ouca-common/observateur.object";
 import { PostResponse } from "ouca-common/post-response.object";
 import { Sexe } from "ouca-common/sexe.object";
 import { HttpParameters } from "../http/httpParameters";
-import { buildCommunesFromCommunesDb } from "../mapping/commune-mapping";
 import { buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
 import { buildEstimationsNombreFromEstimationsNombreDb } from "../mapping/estimation-nombre-mapping";
 import { buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
@@ -198,37 +200,18 @@ export const deleteCommune = async (
 };
 
 export const getLieuxdits = async (): Promise<Lieudit[]> => {
-  const [
-    lieuxditsDb,
-    communesDb,
-    departements,
-    nbDonneesByLieudit
-  ] = await Promise.all(
+  const [lieuxditsDb, nbDonneesByLieudit] = await Promise.all(
     _.flatten([
       SqlConnection.query(
         getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC)
       ),
-      SqlConnection.query(getFindAllQuery(TABLE_COMMUNE)),
-      SqlConnection.query(getFindAllQuery(TABLE_DEPARTEMENT)),
       SqlConnection.query(getQueryToFindNumberOfDonneesByLieuditId())
     ])
   );
 
   const lieuxdits: Lieudit[] = buildLieuxditsFromLieuxditsDb(lieuxditsDb);
-  const communes: Commune[] = buildCommunesFromCommunesDb(communesDb);
 
   _.forEach(lieuxdits, (lieudit: Lieudit) => {
-    lieudit.commune = _.find(communes, (commune: Commune) => {
-      return commune.id === lieudit.communeId;
-    });
-    lieudit.commune.departement = _.find(
-      departements,
-      (departement: Departement) => {
-        return lieudit.commune.departementId === departement.id;
-      }
-    );
-    lieudit.communeId = null;
-
     lieudit.nbDonnees = getNbByEntityId(lieudit, nbDonneesByLieudit);
   });
 
@@ -317,20 +300,14 @@ export const deleteClasse = async (
 export const getEspeces = async (): Promise<Espece[]> => {
   const results = await SqlConnection.query(
     getFindAllQuery(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC) +
-      getFindAllQuery(TABLE_CLASSE) +
       getQueryToFindNumberOfDonneesByEspeceId()
   );
 
   const especesDb: EspeceDb[] = results[0];
-  const classes: Classe[] = results[1];
   const nbDonneesByEspece: NumberOfObjectsById[] = results[2];
 
   const especes: Espece[] = buildEspecesFromEspecesDb(especesDb);
   _.forEach(especes, (espece: Espece) => {
-    espece.classe = _.find(classes, (classe: Classe) => {
-      return classe.id === espece.classeId;
-    });
-    espece.classeId = null;
     espece.nbDonnees = getNbByEntityId(espece, nbDonneesByEspece);
   });
 
@@ -341,13 +318,6 @@ export const saveEspece = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   const especeToSave: Espece = httpParameters.postData;
-  if (
-    !especeToSave.classeId &&
-    !!especeToSave.classe &&
-    !!especeToSave.classe.id
-  ) {
-    especeToSave.classeId = especeToSave.classe.id;
-  }
   return saveEntity(especeToSave, TABLE_ESPECE, DB_SAVE_MAPPING.espece);
 };
 
@@ -582,12 +552,13 @@ export const exportDepartements = async (): Promise<any> => {
 
 export const exportCommunes = async (): Promise<any> => {
   const communesDb: Commune[] = await getCommunes();
+  const departements: Departement[] = await getDepartements();
 
-  const objectsToExport = _.map(communesDb, (object) => {
+  const objectsToExport = _.map(communesDb, (communeDb) => {
     return {
-      Departement: object.departement.code,
-      Code: object.code,
-      Nom: object.nom
+      Departement: findDepartementById(departements, communeDb.departementId),
+      Code: communeDb.code,
+      Nom: communeDb.nom
     };
   });
 
@@ -600,12 +571,15 @@ export const exportCommunes = async (): Promise<any> => {
 
 export const exportLieuxdits = async (): Promise<any> => {
   const lieuxdits: Lieudit[] = await getLieuxdits();
+  const communes: Commune[] = await getCommunes();
+  const departements: Departement[] = await getDepartements();
 
   const objectsToExport = _.map(lieuxdits, (lieudit) => {
+    const commune = findCommuneById(communes, lieudit.communeId);
     return {
-      Département: lieudit.commune.departement.code,
-      "Code commune": lieudit.commune.code,
-      "Nom commune": lieudit.commune.nom,
+      Département: findDepartementById(departements, commune.id),
+      "Code commune": commune.code,
+      "Nom commune": commune.nom,
       "Lieu-dit": lieudit.nom,
       Altitude: lieudit.altitude,
       Longitude: getOriginCoordinates(lieudit).longitude,
@@ -640,13 +614,14 @@ export const exportClasses = async (): Promise<any> => {
 
 export const exportEspeces = async (): Promise<any> => {
   const especes: Espece[] = await getEspeces();
+  const classes: Classe[] = await getClasses();
 
-  const objectsToExport = _.map(especes, (object) => {
+  const objectsToExport = _.map(especes, (espece) => {
     return {
-      Classe: object.classe.libelle,
-      Code: object.code,
-      NomFrancais: object.nomFrancais,
-      NomLatin: object.nomLatin
+      Classe: findClasseById(classes, espece.id),
+      Code: espece.code,
+      NomFrancais: espece.nomFrancais,
+      NomLatin: espece.nomLatin
     };
   });
 

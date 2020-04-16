@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/camelcase */
+import { Age } from "ouca-common/age.object";
 import { AppConfiguration } from "ouca-common/app-configuration.object";
+import { Departement } from "ouca-common/departement.object";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
+import { EstimationNombre } from "ouca-common/estimation-nombre.object";
+import { Observateur } from "ouca-common/observateur.object";
+import { Sexe } from "ouca-common/sexe.object";
 import { SettingsDb } from "../objects/db/settings-db.object";
 
 const getSettingAsEntity = <T extends EntiteSimple>(
   entityId: number,
-  entities: any[]
+  entities: T[]
 ): T => {
   if (!entityId || !entities) {
     return null;
@@ -16,13 +21,14 @@ const getSettingAsEntity = <T extends EntiteSimple>(
 
 export const buildAppConfigurationFromSettingsDb = (
   settings: SettingsDb,
-  observateurs: any[],
-  departements: any[],
-  ages: any[],
-  sexes: any[],
-  estimationsNombre: any[]
+  observateurs: Observateur[],
+  departements: Departement[],
+  ages: Age[],
+  sexes: Sexe[],
+  estimationsNombre: EstimationNombre[]
 ): AppConfiguration => {
   const appConfiguration: AppConfiguration = {
+    id: settings.id,
     defaultObservateur: getSettingAsEntity(
       settings.default_observateur_id,
       observateurs
@@ -42,7 +48,7 @@ export const buildAppConfigurationFromSettingsDb = (
     isMeteoDisplayed: settings.is_meteo_displayed,
     isDistanceDisplayed: settings.is_distance_displayed,
     isRegroupementDisplayed: settings.is_regroupement_displayed,
-    coordinatesSystem: settings.coordinates_system,
+    coordinatesSystem: settings.coordinates_system
   };
 
   return appConfiguration;
@@ -63,6 +69,6 @@ export const buildSettingsDbFromAppConfiguration = (
     is_meteo_displayed: appConfiguration.isMeteoDisplayed,
     is_distance_displayed: appConfiguration.isDistanceDisplayed,
     is_regroupement_displayed: appConfiguration.isRegroupementDisplayed,
-    coordinates_system: appConfiguration.coordinatesSystem,
+    coordinates_system: appConfiguration.coordinatesSystem
   };
 };

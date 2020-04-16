@@ -1,15 +1,15 @@
 import * as _ from "lodash";
 import { Age } from "ouca-common/age.object";
-import { Commune } from "ouca-common/commune.object";
+import { Commune } from "ouca-common/commune.model";
 import { Comportement } from "ouca-common/comportement.object";
 import { LAMBERT_93 } from "ouca-common/coordinates-system/coordinates-system.object";
 import { Departement } from "ouca-common/departement.object";
 import { Donnee } from "ouca-common/donnee.object";
-import { Espece } from "ouca-common/espece.object";
+import { Espece } from "ouca-common/espece.model";
 import { EstimationDistance } from "ouca-common/estimation-distance.object";
 import { EstimationNombre } from "ouca-common/estimation-nombre.object";
 import { Inventaire } from "ouca-common/inventaire.object";
-import { Lieudit } from "ouca-common/lieudit.object";
+import { Lieudit } from "ouca-common/lieudit.model";
 import { Meteo } from "ouca-common/meteo.object";
 import { Milieu } from "ouca-common/milieu.object";
 import { Observateur } from "ouca-common/observateur.object";
@@ -503,12 +503,10 @@ export class ImportDoneeeService extends ImportService {
       lieuditId,
       customizedAltitude: altitude,
       coordinates: {
-        lambert93: {
-          longitude,
-          latitude,
-          system: LAMBERT_93,
-          isTransformed: false
-        }
+        longitude,
+        latitude,
+        system: LAMBERT_93,
+        isTransformed: false
       },
       temperature: temperature,
       meteosIds

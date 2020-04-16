@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import { Espece } from "ouca-common/espece.object";
+import { Espece } from "ouca-common/espece.model";
 import { EspeceDb } from "../objects/db/espece-db.object";
 
 export const buildEspeceFromEspeceDb = (especeDb: EspeceDb): Espece => {

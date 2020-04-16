@@ -1,4 +1,4 @@
-import { Espece } from "ouca-common/espece.object";
+import { Espece } from "ouca-common/espece.model";
 import { buildEspeceFromEspeceDb } from "../mapping/espece-mapping";
 import { SqlConnection } from "../sql-api/sql-connection";
 import {

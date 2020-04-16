@@ -1,25 +1,21 @@
 import * as _ from "lodash";
-import { CoordinatesSystemType } from "ouca-common/coordinates-system/coordinates-system.object";
 import { Coordinates } from "ouca-common/coordinates.object";
-import { Lieudit } from "ouca-common/lieudit.object";
+import { Lieudit } from "ouca-common/lieudit.model";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 import { getOriginCoordinates } from "../utils/coordinates-utils";
 
 export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
-  const coordinates: Partial<Record<CoordinatesSystemType, Coordinates>> = {};
-  coordinates[lieuditDb.coordinates_system] = {
-    longitude: lieuditDb.longitude,
-    latitude: lieuditDb.latitude,
-    system: lieuditDb.coordinates_system,
-    isTransformed: false
-  };
-
   return {
     id: lieuditDb.id,
     communeId: lieuditDb.commune_id,
     nom: lieuditDb.nom,
     altitude: lieuditDb.altitude,
-    coordinates
+    coordinates: {
+      longitude: lieuditDb.longitude,
+      latitude: lieuditDb.latitude,
+      system: lieuditDb.coordinates_system,
+      isTransformed: false
+    }
   };
 };
 
