@@ -1,7 +1,7 @@
 import { Age } from "./age.object";
 import { Comportement } from "./comportement.object";
 import { EntiteSimple } from "./entite-simple.object";
-import { Espece } from "./espece.object";
+import { Espece } from "./espece.model";
 import { EstimationDistance } from "./estimation-distance.object";
 import { EstimationNombre } from "./estimation-nombre.object";
 import { Inventaire } from "./inventaire.object";

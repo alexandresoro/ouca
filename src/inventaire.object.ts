@@ -1,8 +1,8 @@
 import { EntiteSimple } from "./entite-simple.object";
-import { Lieudit } from "./lieudit.object";
+import { EntityWithCoordinates } from "./entity-with-coordinates.model";
+import { Lieudit } from "./lieudit.model";
 import { Meteo } from "./meteo.object";
 import { Observateur } from "./observateur.object";
-import { EntityWithCoordinates } from "./entity-with-coordinates.object";
 
 export interface Inventaire extends EntiteSimple, EntityWithCoordinates {
   associes?: Observateur[];

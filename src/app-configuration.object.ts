@@ -6,6 +6,8 @@ import { Observateur } from "./observateur.object";
 import { Sexe } from "./sexe.object";
 
 export interface AppConfiguration {
+  id: number;
+
   defaultObservateur: Observateur;
 
   defaultDepartement: Departement;

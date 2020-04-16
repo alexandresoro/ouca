@@ -1,6 +1,6 @@
 import { Coordinates } from "../coordinates.object";
 import { Inventaire } from "../inventaire.object";
-import { Lieudit } from "../lieudit.object";
+import { Lieudit } from "../lieudit.model";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
