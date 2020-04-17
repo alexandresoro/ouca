@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
-import { getOriginCoordinates } from "../utils/coordinates-utils";
 import { getQuery } from "./sql-queries-utils";
 
 export function getQueryToFindNumberOfDonneesByInventaireEntityId(
@@ -63,7 +62,7 @@ export const getQueryToFindInventaireIdByAllAttributes = (
   };
 
   if (inventaire.coordinates) {
-    coordinates = getOriginCoordinates(inventaire);
+    coordinates = inventaire.coordinates;
   }
 
   query =

@@ -72,7 +72,6 @@ import {
   TABLE_OBSERVATEUR,
   TABLE_SEXE
 } from "../utils/constants";
-import { getOriginCoordinates } from "../utils/coordinates-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
 import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 import { getNbByEntityId } from "../utils/utils";
@@ -582,8 +581,8 @@ export const exportLieuxdits = async (): Promise<any> => {
       "Nom commune": commune.nom,
       "Lieu-dit": lieudit.nom,
       Altitude: lieudit.altitude,
-      Longitude: getOriginCoordinates(lieudit).longitude,
-      Latitude: getOriginCoordinates(lieudit).latitude
+      Longitude: lieudit.coordinates.longitude,
+      Latitude: lieudit.coordinates.latitude
     };
   });
 

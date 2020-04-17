@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { getOriginCoordinates } from "ouca-common/coordinates-system";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
@@ -105,18 +104,10 @@ export const persistInventaire = async (
 
   // Then we check if coordinates were customized
   if (inventaire.coordinates) {
-    // Coordinates are customized
-    const coordinates = getOriginCoordinates(inventaire); // TO DO
-
-    if (coordinates) {
-      altitude = customizedAltitude;
-      longitude = coordinates.longitude;
-      latitude = coordinates.latitude;
-      coordinatesSystem = coordinates.system;
-    } else {
-      console.error("Cannot get coordinates of inventaire", inventaire);
-      return null;
-    }
+    altitude = customizedAltitude;
+    longitude = inventaire.coordinates.longitude;
+    latitude = inventaire.coordinates.latitude;
+    coordinatesSystem = inventaire.coordinates.system;
   }
 
   // Save the inventaire

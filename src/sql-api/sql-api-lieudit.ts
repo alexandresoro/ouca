@@ -1,7 +1,4 @@
-import {
-  getCoordinates,
-  getOriginCoordinates
-} from "ouca-common/coordinates-system";
+import { getCoordinates } from "ouca-common/coordinates-system";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Lieudit } from "ouca-common/lieudit.model";
 import {
@@ -56,7 +53,7 @@ const getLieuditCommuneId = (lieudit: Lieudit): number => {
 const getCoordinatesToPersist = async (
   lieudit: Lieudit
 ): Promise<Coordinates> => {
-  const newCoordinates = getOriginCoordinates(lieudit);
+  const newCoordinates = lieudit.coordinates;
 
   let coordinatesToPersist = newCoordinates;
 
@@ -69,7 +66,7 @@ const getCoordinatesToPersist = async (
       newCoordinates.longitude === oldCoordinates.longitude &&
       newCoordinates.latitude === oldCoordinates.latitude
     ) {
-      coordinatesToPersist = getOriginCoordinates(oldLieudit);
+      coordinatesToPersist = oldLieudit.coordinates;
     }
   }
 
@@ -80,9 +77,9 @@ export const persistLieudit = async (
   lieudit: Lieudit
 ): Promise<SqlSaveResponse> => {
   lieudit.communeId = getLieuditCommuneId(lieudit);
-  const coordinates = await getCoordinatesToPersist(lieudit);
+  lieudit.coordinates = await getCoordinatesToPersist(lieudit);
 
-  const lieuditDb = buildLieuditDbFromLieudit(lieudit, coordinates);
+  const lieuditDb = buildLieuditDbFromLieudit(lieudit);
 
   return saveDbEntity(lieuditDb, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
 };

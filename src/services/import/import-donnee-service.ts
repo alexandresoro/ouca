@@ -33,7 +33,6 @@ import {
   TABLE_MILIEU,
   TABLE_SEXE
 } from "../../utils/constants";
-import { getOriginCoordinates } from "../../utils/coordinates-utils";
 import {
   getFormattedTime,
   isIdInListIds,
@@ -475,8 +474,8 @@ export class ImportDoneeeService extends ImportService {
     return (
       !!lieudit &&
       (altitude !== lieudit.altitude ||
-        longitude !== getOriginCoordinates(lieudit).longitude ||
-        latitude !== getOriginCoordinates(lieudit).latitude)
+        longitude !== lieudit.coordinates.longitude ||
+        latitude !== lieudit.coordinates.latitude)
     );
   };
 

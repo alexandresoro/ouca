@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import * as _ from "lodash";
-import { Coordinates } from "ouca-common/coordinates.object";
 import { Lieudit } from "ouca-common/lieudit.model";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
-import { getOriginCoordinates } from "../utils/coordinates-utils";
 
 export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
   return {
@@ -27,19 +26,14 @@ export const buildLieuxditsFromLieuxditsDb = (
   });
 };
 
-export const buildLieuditDbFromLieudit = (
-  lieudit: Lieudit,
-  coordinates?: Coordinates
-): LieuditDb => {
-  coordinates = coordinates ? coordinates : getOriginCoordinates(lieudit);
-
+export const buildLieuditDbFromLieudit = (lieudit: Lieudit): LieuditDb => {
   return {
     id: lieudit.id,
     commune_id: lieudit.communeId,
     nom: lieudit.nom,
     altitude: lieudit.altitude,
-    longitude: coordinates.longitude,
-    latitude: coordinates.latitude,
-    coordinates_system: coordinates.system
+    longitude: lieudit.coordinates.longitude,
+    latitude: lieudit.coordinates.latitude,
+    coordinates_system: lieudit.coordinates.system
   };
 };
