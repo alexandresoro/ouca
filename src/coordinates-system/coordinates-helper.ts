@@ -1,39 +1,16 @@
 import { Coordinates } from "../coordinates.object";
-import { Inventaire } from "../inventaire.object";
-import { Lieudit } from "../lieudit.model";
+import { EntityWithCoordinates } from "../entity-with-coordinates.model";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
-export const buildCoordinates = (
-  system: CoordinatesSystemType,
-  longitude: number,
-  latitude: number,
-  isTransformed: boolean = false
-): Partial<Record<CoordinatesSystemType, Coordinates>> => {
-  const coordinates: Partial<Record<CoordinatesSystemType, Coordinates>> = {};
-  coordinates[system] = {
-    longitude,
-    latitude,
-    system,
-    isTransformed
-  };
-  return coordinates;
-};
-
 export const getOriginCoordinates = (
-  object: Lieudit | Inventaire
+  object: EntityWithCoordinates
 ): Coordinates => {
-  if (object?.coordinates) {
-    return Object.values(object.coordinates).find((coordinate) => {
-      return coordinate.isTransformed === false;
-    });
-  } else {
-    return null;
-  }
+  return object?.coordinates ? object.coordinates : null;
 };
 
 export const getCoordinates = (
-  object: Lieudit | Inventaire,
+  object: EntityWithCoordinates,
   coordinatesSystem: CoordinatesSystemType
 ): Coordinates => {
   const originCoordinates: Coordinates = getOriginCoordinates(object);
