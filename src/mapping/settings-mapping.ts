@@ -58,7 +58,7 @@ export const buildSettingsDbFromAppConfiguration = (
   appConfiguration: AppConfiguration
 ): SettingsDb => {
   return {
-    id: 1, // TODO
+    id: appConfiguration.id,
     default_observateur_id: appConfiguration.defaultObservateur?.id,
     default_departement_id: appConfiguration.defaultDepartement?.id,
     default_age_id: appConfiguration.defaultAge?.id,
