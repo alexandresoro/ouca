@@ -120,11 +120,32 @@ export const DB_CONFIGURATION_MAPPING = createKeyValueMapWithSameName([
   "coordinates_system"
 ]);
 
+export function query<T>(query: string): Promise<T> {
+  console.log("---> " + query + ";");
+  return SqlConnection.query(query + ";");
+}
+
+/** Deprecated: replaced by query() */
 export const getQuery = (query: string): string => {
   console.log("---> " + query + ";");
   return query + ";";
 };
 
+export const queryToFindAllEntities = async <T>(
+  tableName: string,
+  attributeForOrdering?: string,
+  order?: string
+): Promise<T[]> => {
+  let queryStr: string = "SELECT * FROM " + tableName;
+
+  if (!!attributeForOrdering && !!order) {
+    queryStr = queryStr + " ORDER BY " + attributeForOrdering + " " + order;
+  }
+
+  return query<T[]>(queryStr);
+};
+
+/** Deprecated: replaced by queryToFindAllEntities */
 export function getFindAllQuery(
   tableName: string,
   attributeForOrdering?: string,

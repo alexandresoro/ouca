@@ -1,48 +1,60 @@
-import { getQuery } from "./sql-queries-utils";
+import { Departement } from "ouca-common/departement.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import { COLUMN_CODE, ORDER_ASC, TABLE_DEPARTEMENT } from "../utils/constants";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
-export function getQueryToFindDepartementByCode(code: string): string {
-  const query: string =
+export const queryToFindAllDepartements = async (): Promise<Departement[]> => {
+  return queryToFindAllEntities<Departement>(
+    TABLE_DEPARTEMENT,
+    COLUMN_CODE,
+    ORDER_ASC
+  );
+};
+
+export const queryToFindDepartementByCode = async (
+  code: string
+): Promise<Departement[]> => {
+  const queryStr: string =
     "SELECT * " + " FROM departement " + ' WHERE code="' + code.trim() + '"';
-  return getQuery(query);
-}
+  return query<Departement[]>(queryStr);
+};
 
-export function getQueryToFindNumberOfDonneesByDepartementId(
+export const queryToFindNumberOfDonneesByDepartementId = async (
   departementId?: number
-): string {
-  let query: string =
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr: string =
     "SELECT c.departement_id as id, count(*) as nb " +
     "FROM donnee d, inventaire i, commune c, lieudit l " +
     "WHERE d.inventaire_id=i.id AND i.lieudit_id=l.id AND c.id=l.commune_id";
   if (departementId) {
-    query = query + " AND c.departement_id=" + departementId;
+    queryStr = queryStr + " AND c.departement_id=" + departementId;
   } else {
-    query = query + " GROUP BY c.departement_id";
+    queryStr = queryStr + " GROUP BY c.departement_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};
 
-export function getQueryToFindNumberOfCommunesByDepartementId(
+export const queryToFindNumberOfCommunesByDepartementId = async (
   departementId?: number
-): string {
-  let query: string =
-    "SELECT c.departement_id as id, count(*) as nb FROM commune c";
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr = "SELECT c.departement_id as id, count(*) as nb FROM commune c";
   if (departementId) {
-    query = query + " WHERE c.departement_id=" + departementId;
+    queryStr = queryStr + " WHERE c.departement_id=" + departementId;
   } else {
-    query = query + " GROUP BY c.departement_id";
+    queryStr = queryStr + " GROUP BY c.departement_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};
 
-export function getQueryToFindNumberOfLieuxditsByDepartementId(
+export const queryToFindNumberOfLieuxDitsByDepartementId = async (
   departementId?: number
-): string {
-  let query: string =
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr =
     "SELECT c.departement_id as id, count(*) as nb FROM commune c, lieudit l WHERE c.id=l.commune_id";
   if (departementId) {
-    query = query + " AND c.departement_id=" + departementId;
+    queryStr = queryStr + " AND c.departement_id=" + departementId;
   } else {
-    query = query + " GROUP BY c.departement_id";
+    queryStr = queryStr + " GROUP BY c.departement_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};

@@ -20,13 +20,13 @@ import { Sexe } from "ouca-common/sexe.object";
 import { HttpParameters } from "../http/httpParameters";
 import { buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
 import { buildEstimationsNombreFromEstimationsNombreDb } from "../mapping/estimation-nombre-mapping";
-import { buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
 import { EspeceDb } from "../objects/db/espece-db.object";
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
-import { persistLieudit } from "../sql-api/sql-api-lieudit";
+import { findAllDepartements } from "../sql-api/sql-api-departement";
+import { findAllLieuxDits, persistLieudit } from "../sql-api/sql-api-lieudit";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
 import {
@@ -34,15 +34,9 @@ import {
   getQueryToFindNumberOfEspecesByClasseId
 } from "../sql/sql-queries-classe";
 import { getQueryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
-import {
-  getQueryToFindNumberOfCommunesByDepartementId,
-  getQueryToFindNumberOfDonneesByDepartementId,
-  getQueryToFindNumberOfLieuxditsByDepartementId
-} from "../sql/sql-queries-departement";
 import { getQueryToFindNumberOfDonneesByEspeceId } from "../sql/sql-queries-espece";
 import { getQueryToFindNumberOfDonneesByEstimationDistanceId } from "../sql/sql-queries-estimation-distance";
 import { getQueryToFindNumberOfDonneesByEstimationNombreId } from "../sql/sql-queries-estimation-nombre";
-import { getQueryToFindNumberOfDonneesByLieuditId } from "../sql/sql-queries-lieudit";
 import { getQueryToFindNumberOfDonneesByMeteoId } from "../sql/sql-queries-meteo";
 import { getQueryToFindNumberOfDonneesByMilieuId } from "../sql/sql-queries-milieu";
 import { getQueryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";
@@ -56,7 +50,6 @@ import {
 import {
   COLUMN_CODE,
   COLUMN_LIBELLE,
-  COLUMN_NOM,
   ORDER_ASC,
   TABLE_AGE,
   TABLE_CLASSE,
@@ -130,32 +123,7 @@ export const deleteObservateur = async (
 };
 
 export const getDepartements = async (): Promise<Departement[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
-      getQueryToFindNumberOfCommunesByDepartementId() +
-      getQueryToFindNumberOfLieuxditsByDepartementId() +
-      getQueryToFindNumberOfDonneesByDepartementId()
-  );
-
-  const departements: Departement[] = results[0];
-  const nbCommunesByDepartement: NumberOfObjectsById[] = results[1];
-  const nbLieuxditsByDepartement: NumberOfObjectsById[] = results[2];
-  const nbDonneesByDepartement: NumberOfObjectsById[] = results[3];
-  _.forEach(departements, (departement: Departement) => {
-    departement.nbCommunes = getNbByEntityId(
-      departement,
-      nbCommunesByDepartement
-    );
-    departement.nbLieuxdits = getNbByEntityId(
-      departement,
-      nbLieuxditsByDepartement
-    );
-    departement.nbDonnees = getNbByEntityId(
-      departement,
-      nbDonneesByDepartement
-    );
-  });
-  return departements;
+  return await findAllDepartements();
 };
 
 export const saveDepartement = async (
@@ -199,22 +167,7 @@ export const deleteCommune = async (
 };
 
 export const getLieuxdits = async (): Promise<Lieudit[]> => {
-  const [lieuxditsDb, nbDonneesByLieudit] = await Promise.all(
-    _.flatten([
-      SqlConnection.query(
-        getFindAllQuery(TABLE_LIEUDIT, COLUMN_NOM, ORDER_ASC)
-      ),
-      SqlConnection.query(getQueryToFindNumberOfDonneesByLieuditId())
-    ])
-  );
-
-  const lieuxdits: Lieudit[] = buildLieuxditsFromLieuxditsDb(lieuxditsDb);
-
-  _.forEach(lieuxdits, (lieudit: Lieudit) => {
-    lieudit.nbDonnees = getNbByEntityId(lieudit, nbDonneesByLieudit);
-  });
-
-  return lieuxdits;
+  return findAllLieuxDits();
 };
 
 export const saveLieudit = async (
@@ -569,14 +522,16 @@ export const exportCommunes = async (): Promise<any> => {
 };
 
 export const exportLieuxdits = async (): Promise<any> => {
-  const lieuxdits: Lieudit[] = await getLieuxdits();
-  const communes: Commune[] = await getCommunes();
-  const departements: Departement[] = await getDepartements();
+  const [lieuxdits, communes, departements] = await Promise.all([
+    findAllLieuxDits(),
+    findAllCommunes(),
+    findAllDepartements()
+  ]);
 
   const objectsToExport = _.map(lieuxdits, (lieudit) => {
     const commune = findCommuneById(communes, lieudit.communeId);
     return {
-      Département: findDepartementById(departements, commune.id),
+      Département: findDepartementById(departements, commune.departementId),
       "Code commune": commune.code,
       "Nom commune": commune.nom,
       "Lieu-dit": lieudit.nom,
@@ -586,19 +541,7 @@ export const exportLieuxdits = async (): Promise<any> => {
     };
   });
 
-  return writeToExcel(
-    objectsToExport,
-    [
-      "Département",
-      "Code commune",
-      "Nom commune",
-      "Lieu-dit",
-      "Altitude",
-      "Longitude",
-      "Latitude"
-    ],
-    "lieuxdits"
-  );
+  return writeToExcel(objectsToExport, [], "Lieux-dits");
 };
 
 export const exportClasses = async (): Promise<any> => {

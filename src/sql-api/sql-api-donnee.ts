@@ -185,7 +185,7 @@ export const persistDonnee = async (
 export const getExistingDonneeId = async (
   donnee: Donnee
 ): Promise<number | null> => {
-  const response = await SqlConnection.query(
+  const response = await SqlConnection.query<number[]>(
     getQueryToFindDonneeIdsByAllAttributes(donnee)
   );
 

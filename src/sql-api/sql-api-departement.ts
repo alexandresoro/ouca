@@ -1,17 +1,53 @@
+import * as _ from "lodash";
 import { Departement } from "ouca-common/departement.object";
-import { SqlConnection } from "../sql-api/sql-connection";
-import { getQueryToFindDepartementByCode } from "../sql/sql-queries-departement";
+import {
+  queryToFindAllDepartements,
+  queryToFindDepartementByCode,
+  queryToFindNumberOfCommunesByDepartementId,
+  queryToFindNumberOfDonneesByDepartementId,
+  queryToFindNumberOfLieuxDitsByDepartementId
+} from "../sql/sql-queries-departement";
+import { getNbByEntityId } from "../utils/utils";
+
+export const findAllDepartements = async (): Promise<Departement[]> => {
+  const [
+    departements,
+    nbCommunesByDepartement,
+    nbLieuxditsByDepartement,
+    nbDonneesByDepartement
+  ] = await Promise.all([
+    queryToFindAllDepartements(),
+    queryToFindNumberOfCommunesByDepartementId(),
+    queryToFindNumberOfLieuxDitsByDepartementId(),
+    queryToFindNumberOfDonneesByDepartementId()
+  ]);
+
+  _.forEach(departements, (departement: Departement) => {
+    departement.nbCommunes = getNbByEntityId(
+      departement,
+      nbCommunesByDepartement
+    );
+    departement.nbLieuxdits = getNbByEntityId(
+      departement,
+      nbLieuxditsByDepartement
+    );
+    departement.nbDonnees = getNbByEntityId(
+      departement,
+      nbDonneesByDepartement
+    );
+  });
+
+  return departements;
+};
 
 export const getDepartementByCode = async (
   code: string
 ): Promise<Departement> => {
-  const results = await SqlConnection.query(
-    getQueryToFindDepartementByCode(code)
-  );
+  const departements = await queryToFindDepartementByCode(code);
 
   let departement: Departement = null;
-  if (results && results[0] && results[0].id) {
-    departement = results[0];
+  if (departements && departements[0]?.id) {
+    departement = departements[0];
   }
 
   return departement;

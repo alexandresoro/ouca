@@ -1,19 +1,41 @@
+import * as _ from "lodash";
 import { getCoordinates } from "ouca-common/coordinates-system";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Lieudit } from "ouca-common/lieudit.model";
 import {
   buildLieuditDbFromLieudit,
-  buildLieuditFromLieuditDb
+  buildLieuditFromLieuditDb,
+  buildLieuxditsFromLieuxditsDb
 } from "../mapping/lieudit-mapping";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { SqlConnection } from "../sql-api/sql-connection";
-import { getQueryToFindLieuditByCommuneIdAndNom } from "../sql/sql-queries-lieudit";
+import {
+  queryToFindAllLieuxDits,
+  queryToFindLieuditByCommuneIdAndNom,
+  queryToFindNumberOfDonneesByLieuDitId
+} from "../sql/sql-queries-lieudit";
 import {
   DB_SAVE_MAPPING,
   getQueryToFindOneById
 } from "../sql/sql-queries-utils";
 import { TABLE_LIEUDIT } from "../utils/constants";
+import { getNbByEntityId } from "../utils/utils";
 import { saveDbEntity } from "./sql-api-common";
+
+export const findAllLieuxDits = async (): Promise<Lieudit[]> => {
+  const [lieuxditsDb, nbDonneesByLieudit] = await Promise.all([
+    queryToFindAllLieuxDits(),
+    queryToFindNumberOfDonneesByLieuDitId()
+  ]);
+
+  const lieuxdits: Lieudit[] = buildLieuxditsFromLieuxditsDb(lieuxditsDb);
+
+  _.forEach(lieuxdits, (lieudit: Lieudit) => {
+    lieudit.nbDonnees = getNbByEntityId(lieudit, nbDonneesByLieudit);
+  });
+
+  return lieuxdits;
+};
 
 export const findLieuditById = async (lieuditId: number): Promise<Lieudit> => {
   const results = await SqlConnection.query(
@@ -33,14 +55,12 @@ export const getLieuditByCommuneIdAndNom = async (
   communeId: number,
   nom: string
 ): Promise<Lieudit> => {
-  const results = await SqlConnection.query(
-    getQueryToFindLieuditByCommuneIdAndNom(communeId, nom)
-  );
+  const lieuxDitsDb = await queryToFindLieuditByCommuneIdAndNom(communeId, nom);
 
   let lieudit: Lieudit = null;
 
-  if (results && results[0] && results[0].id) {
-    lieudit = buildLieuditFromLieuditDb(results[0]);
+  if (lieuxDitsDb && lieuxDitsDb[0]?.id) {
+    lieudit = buildLieuditFromLieuditDb(lieuxDitsDb[0]);
   }
 
   return lieudit;

@@ -1,11 +1,22 @@
-import { getQuery } from "./sql-queries-utils";
+import { CommuneDb } from "../objects/db/commune-db.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import { COLUMN_NOM, ORDER_ASC, TABLE_COMMUNE } from "../utils/constants";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
-export function getQueryToFindCommuneByDepartementIdAndCodeAndNom(
+export const queryToFindAllCommunes = async (): Promise<CommuneDb[]> => {
+  return queryToFindAllEntities<CommuneDb>(
+    TABLE_COMMUNE,
+    COLUMN_NOM,
+    ORDER_ASC
+  );
+};
+
+export const queryToFindCommuneByDepartementIdAndCodeAndNom = async (
   departementId: number,
   code: number,
   nom: string
-): string {
-  const query: string =
+): Promise<CommuneDb[]> => {
+  const queryStr: string =
     "SELECT * " +
     " FROM commune " +
     " WHERE departement_id=" +
@@ -15,28 +26,28 @@ export function getQueryToFindCommuneByDepartementIdAndCodeAndNom(
     ' AND nom="' +
     nom.trim() +
     '"';
-  return getQuery(query);
-}
+  return query<CommuneDb[]>(queryStr);
+};
 
-export function getQueryToFindCommuneByDepartementIdAndCode(
+export const queryToFindCommuneByDepartementIdAndCode = async (
   departementId: number,
   code: number
-): string {
-  const query: string =
+): Promise<CommuneDb[]> => {
+  const queryStr: string =
     "SELECT * " +
     " FROM commune " +
     " WHERE departement_id=" +
     departementId +
     " AND code=" +
     code;
-  return getQuery(query);
-}
+  return query<CommuneDb[]>(queryStr);
+};
 
-export function getQueryToFindCommuneByDepartementIdAndNom(
+export const queryToFindCommuneByDepartementIdAndNom = async (
   departementId: number,
   nom: string
-): string {
-  const query: string =
+): Promise<CommuneDb[]> => {
+  const queryStr: string =
     "SELECT * " +
     " FROM commune " +
     " WHERE departement_id=" +
@@ -44,32 +55,31 @@ export function getQueryToFindCommuneByDepartementIdAndNom(
     ' AND nom="' +
     nom.trim() +
     '"';
-  return getQuery(query);
-}
+  return query<CommuneDb[]>(queryStr);
+};
 
-export function getQueryToFindNumberOfDonneesByCommuneId(
+export const queryToFindNumberOfDonneesByCommuneId = async (
   communeId?: number
-): string {
-  let query: string =
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr: string =
     "SELECT l.commune_id as id, count(*) as nb " +
     "FROM donnee d, inventaire i, lieudit l WHERE d.inventaire_id=i.id AND i.lieudit_id=l.id";
   if (communeId) {
-    query = query + " AND l.commune_id=" + communeId;
+    queryStr = queryStr + " AND l.commune_id=" + communeId;
   } else {
-    query = query + " GROUP BY l.commune_id";
+    queryStr = queryStr + " GROUP BY l.commune_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};
 
-export function getQueryToFindNumberOfLieuxditsByCommuneId(
+export const queryToFindNumberOfLieuxDitsByCommuneId = async (
   communeId?: number
-): string {
-  let query: string =
-    "SELECT l.commune_id as id, count(*) as nb FROM lieudit l";
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr = "SELECT l.commune_id as id, count(*) as nb FROM lieudit l";
   if (communeId) {
-    query = query + " WHERE l.commune_id=" + communeId;
+    queryStr = queryStr + " WHERE l.commune_id=" + communeId;
   } else {
-    query = query + " GROUP BY l.commune_id";
+    queryStr = queryStr + " GROUP BY l.commune_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};

@@ -53,14 +53,14 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
 const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
   return mariadb
     .createConnection(getSqlConnectionConfiguration())
-    .then(conn => {
+    .then((conn) => {
       console.log("Connected to the database: ", conn.serverVersion());
-      conn.on("error", error => {
+      conn.on("error", (error) => {
         console.log(error);
       });
       return conn;
     })
-    .catch(error => {
+    .catch((error) => {
       // General connection error
       console.log(
         "The connection to the database has failed with the following error:",
@@ -71,7 +71,7 @@ const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
 };
 
 export class SqlConnection {
-  public static async query(query: string): Promise<any> {
+  public static async query<T>(query: string): Promise<T> {
     const connection = await this.getConnection();
     return connection.query(query);
   }

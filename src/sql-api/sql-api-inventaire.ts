@@ -146,7 +146,7 @@ export const persistInventaire = async (
 export const getExistingInventaireId = async (
   inventaire: Inventaire
 ): Promise<number | null> => {
-  const response = await SqlConnection.query(
+  const response = await SqlConnection.query<number[]>(
     getQueryToFindInventaireIdByAllAttributes(inventaire)
   );
 
