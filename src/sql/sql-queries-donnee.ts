@@ -425,7 +425,7 @@ export const queryToFindDonneeIdsByAllAttributes = async (
       : "=" + donnee.estimationDistanceId);
 
   queryStr =
-    query +
+    queryStr +
     " AND d.distance" +
     (!donnee.distance ? " is null" : "=" + donnee.distance);
 
