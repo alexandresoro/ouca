@@ -4,8 +4,8 @@ import { getClasseByLibelle } from "../../sql-api/sql-api-classe";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {
   findEspeceByCode,
-  getEspeceByNomFrancais,
-  getEspeceByNomLatin
+  findEspeceByNomFrancais,
+  findEspeceByNomLatin
 } from "../../sql-api/sql-api-espece";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
 import { TABLE_ESPECE } from "../../utils/constants";
@@ -61,7 +61,7 @@ export class ImportEspeceService extends ImportService {
       return false;
     }
 
-    const especeByNomFrancais: Espece = await getEspeceByNomFrancais(
+    const especeByNomFrancais: Espece = await findEspeceByNomFrancais(
       entityTab[this.NOM_FRANCAIS_INDEX]
     );
 
@@ -70,7 +70,7 @@ export class ImportEspeceService extends ImportService {
       return false;
     }
 
-    const especeByNomLatin: Espece = await getEspeceByNomLatin(
+    const especeByNomLatin: Espece = await findEspeceByNomLatin(
       entityTab[this.NOM_LATIN_INDEX]
     );
 

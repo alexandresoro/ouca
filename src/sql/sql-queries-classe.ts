@@ -1,26 +1,37 @@
-import { getQuery } from "./sql-queries-utils";
+import { Classe } from "ouca-common/classe.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import { COLUMN_LIBELLE, ORDER_ASC, TABLE_CLASSE } from "../utils/constants";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
-export function getQueryToFindNumberOfEspecesByClasseId(
+export const queryToFindAllClasses = async (): Promise<Classe[]> => {
+  return queryToFindAllEntities<Classe>(
+    TABLE_CLASSE,
+    COLUMN_LIBELLE,
+    ORDER_ASC
+  );
+};
+
+export const queryToFindNumberOfEspecesByClasseId = async (
   classeId?: number
-): string {
-  let query: string = "SELECT classe_id as id, count(*) as nb FROM espece";
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr = "SELECT classe_id as id, count(*) as nb FROM espece";
   if (classeId) {
-    query = query + " WHERE classe_id=" + classeId;
+    queryStr = queryStr + " WHERE classe_id=" + classeId;
   } else {
-    query = query + " GROUP BY classe_id";
+    queryStr = queryStr + " GROUP BY classe_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};
 
-export function getQueryToFindNumberOfDonneesByClasseId(
+export const queryToFindNumberOfDonneesByClasseId = async (
   classeId?: number
-): string {
-  let query: string =
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr =
     "SELECT e.classe_id as id, count(*) as nb FROM espece e, donnee d WHERE d.espece_id=e.id";
   if (classeId) {
-    query = query + " AND e.classe_id=" + classeId;
+    queryStr = queryStr + " AND e.classe_id=" + classeId;
   } else {
-    query = query + " GROUP BY classe_id";
+    queryStr = queryStr + " GROUP BY classe_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};

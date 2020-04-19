@@ -1,4 +1,11 @@
-import { getQuery } from "./sql-queries-utils";
+import { Meteo } from "ouca-common/meteo.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import { COLUMN_LIBELLE, ORDER_ASC, TABLE_METEO } from "../utils/constants";
+import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+
+export const queryToFindAllMeteos = async (): Promise<Meteo[]> => {
+  return queryToFindAllEntities<Meteo>(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC);
+};
 
 export function getQueryToFindAllMeteos(donneesIds?: number[]): string {
   let query: string =
@@ -23,17 +30,17 @@ export function getQueryToFindMetosByInventaireId(
   );
 }
 
-export function getQueryToFindNumberOfDonneesByMeteoId(
+export const queryToFindNumberOfDonneesByMeteoId = async (
   meteoId?: number
-): string {
-  let query: string =
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr: string =
     "SELECT im.meteo_id as id, count(*) as nb " +
     "FROM inventaire_meteo im, donnee d " +
     "WHERE d.inventaire_id=im.inventaire_id";
   if (meteoId) {
-    query = query + " AND im.meteo_id=" + meteoId;
+    queryStr = queryStr + " AND im.meteo_id=" + meteoId;
   } else {
-    query = query + " GROUP BY im.meteo_id";
+    queryStr = queryStr + " GROUP BY im.meteo_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};

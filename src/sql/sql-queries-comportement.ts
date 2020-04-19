@@ -1,4 +1,21 @@
-import { getQuery } from "./sql-queries-utils";
+import { Comportement } from "ouca-common/comportement.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import {
+  COLUMN_LIBELLE,
+  ORDER_ASC,
+  TABLE_COMPORTEMENT
+} from "../utils/constants";
+import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+
+export const queryToFindAllComportements = async (): Promise<
+  Comportement[]
+> => {
+  return queryToFindAllEntities<Comportement>(
+    TABLE_COMPORTEMENT,
+    COLUMN_LIBELLE,
+    ORDER_ASC
+  );
+};
 
 export function getQueryToFindAllComportements(donneesIds?: number[]): string {
   let query: string =
@@ -22,16 +39,16 @@ export function getQueryToFindComportementsIdsByDonneeId(
   );
 }
 
-export function getQueryToFindNumberOfDonneesByComportementId(
+export const getQueryToFindNumberOfDonneesByComportementId = async (
   comportementId?: number
-): string {
-  let query: string =
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr: string =
     "SELECT dc.comportement_id as id, count(*) as nb " +
     "FROM donnee_comportement dc ";
   if (comportementId) {
-    query = query + " WHERE dc.comportement_id=" + comportementId;
+    queryStr = queryStr + " WHERE dc.comportement_id=" + comportementId;
   } else {
-    query = query + " GROUP BY dc.comportement_id";
+    queryStr = queryStr + " GROUP BY dc.comportement_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};

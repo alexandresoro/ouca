@@ -1,38 +1,51 @@
-import { COLUMN_ESPECE_ID } from "../utils/constants";
-import { getQueryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
-import { getQuery } from "./sql-queries-utils";
+import { EspeceDb } from "../objects/db/espece-db.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import {
+  COLUMN_CODE,
+  COLUMN_ESPECE_ID,
+  ORDER_ASC,
+  TABLE_ESPECE
+} from "../utils/constants";
+import { queryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
+export const queryToFindAllEspeces = async (): Promise<EspeceDb[]> => {
+  return queryToFindAllEntities<EspeceDb>(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC);
+};
 
-export function getQueryToFindEspeceByCode(code: string): string {
-  const query: string =
+export const queryToFindEspeceByCode = async (
+  code: string
+): Promise<EspeceDb[]> => {
+  const queryStr: string =
     "SELECT * " + " FROM espece " + ' WHERE code="' + code.trim() + '"';
-  return getQuery(query);
-}
+  return query(queryStr);
+};
 
-export function getQueryToFindEspeceByNomFrancais(nomFrancais: string): string {
-  const query: string =
+export const queryToFindEspeceByNomFrancais = async (
+  nomFrancais: string
+): Promise<EspeceDb[]> => {
+  const queryStr: string =
     "SELECT * " +
     " FROM espece " +
     ' WHERE nom_francais="' +
     nomFrancais.trim() +
     '"';
-  return getQuery(query);
-}
+  return query(queryStr);
+};
 
-export function getQueryToFindEspeceByNomLatin(nomLatin: string): string {
-  const query: string =
+export const queryToFindEspeceByNomLatin = async (
+  nomLatin: string
+): Promise<EspeceDb[]> => {
+  const queryStr: string =
     "SELECT * " +
     " FROM espece " +
     ' WHERE nom_latin="' +
     nomLatin.trim() +
     '"';
-  return getQuery(query);
-}
+  return query(queryStr);
+};
 
-export function getQueryToFindNumberOfDonneesByEspeceId(
+export const queryToFindNumberOfDonneesByEspeceId = async (
   especeId?: number
-): string {
-  return getQueryToFindNumberOfDonneesByDoneeeEntityId(
-    COLUMN_ESPECE_ID,
-    especeId
-  );
-}
+): Promise<NumberOfObjectsById[]> => {
+  return queryToFindNumberOfDonneesByDoneeeEntityId(COLUMN_ESPECE_ID, especeId);
+};

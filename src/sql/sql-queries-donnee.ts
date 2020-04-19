@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import {
   DATE_PATTERN,
   TABLE_DONNEE_COMPORTEMENT,
@@ -9,7 +10,7 @@ import {
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
-import { getQuery } from "./sql-queries-utils";
+import { getQuery, query } from "./sql-queries-utils";
 
 const getBaseQueryToFindDonnees = (): string => {
   return (
@@ -156,6 +157,20 @@ export function getQueryToFindDonneeIndexById(id: number): string {
 export function getQueryToFindLastRegroupement(): string {
   return getQuery("SELECT MAX(d.regroupement) as regroupement FROM donnee d");
 }
+
+export const queryToFindNumberOfDonneesByDoneeeEntityId = async (
+  entityIdAttribute: string,
+  id?: number
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr: string =
+    "SELECT " + entityIdAttribute + " as id, count(*) as nb FROM donnee";
+  if (id) {
+    queryStr = queryStr + " WHERE " + entityIdAttribute + "=" + id;
+  } else {
+    queryStr = queryStr + " GROUP BY " + entityIdAttribute;
+  }
+  return query(queryStr);
+};
 
 export function getQueryToFindNumberOfDonneesByDoneeeEntityId(
   entityIdAttribute: string,

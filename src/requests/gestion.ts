@@ -18,39 +18,27 @@ import { Observateur } from "ouca-common/observateur.object";
 import { PostResponse } from "ouca-common/post-response.object";
 import { Sexe } from "ouca-common/sexe.object";
 import { HttpParameters } from "../http/httpParameters";
-import { buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
-import { buildEstimationsNombreFromEstimationsNombreDb } from "../mapping/estimation-nombre-mapping";
-import { EspeceDb } from "../objects/db/espece-db.object";
-import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
+import { findAllAges } from "../sql-api/sql-api-age";
+import { findAllClasses } from "../sql-api/sql-api-classe";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
+import { findAllComportements } from "../sql-api/sql-api-comportement";
 import { findAllDepartements } from "../sql-api/sql-api-departement";
+import { findAllEspeces } from "../sql-api/sql-api-espece";
+import { findAllEstimationsDistance } from "../sql-api/sql-api-estimation-distance";
+import { findAllEstimationsNombre } from "../sql-api/sql-api-estimation-nombre";
 import { findAllLieuxDits, persistLieudit } from "../sql-api/sql-api-lieudit";
+import { findAllMeteos } from "../sql-api/sql-api-meteo";
+import { findAllMilieux } from "../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../sql-api/sql-api-observateur";
+import { findAllSexes } from "../sql-api/sql-api-sexe";
 import { SqlConnection } from "../sql-api/sql-connection";
-import { getQueryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
-import {
-  getQueryToFindNumberOfDonneesByClasseId,
-  getQueryToFindNumberOfEspecesByClasseId
-} from "../sql/sql-queries-classe";
-import { getQueryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
-import { getQueryToFindNumberOfDonneesByEspeceId } from "../sql/sql-queries-espece";
-import { getQueryToFindNumberOfDonneesByEstimationDistanceId } from "../sql/sql-queries-estimation-distance";
-import { getQueryToFindNumberOfDonneesByEstimationNombreId } from "../sql/sql-queries-estimation-nombre";
-import { getQueryToFindNumberOfDonneesByMeteoId } from "../sql/sql-queries-meteo";
-import { getQueryToFindNumberOfDonneesByMilieuId } from "../sql/sql-queries-milieu";
-import { getQueryToFindNumberOfDonneesBySexeId } from "../sql/sql-queries-sexe";
 import {
   DB_SAVE_MAPPING,
   getDeleteEntityByIdQuery,
-  getFindAllQuery,
   getSaveEntityQuery
 } from "../sql/sql-queries-utils";
 import {
-  COLUMN_CODE,
-  COLUMN_LIBELLE,
-  ORDER_ASC,
   TABLE_AGE,
   TABLE_CLASSE,
   TABLE_COMMUNE,
@@ -67,7 +55,6 @@ import {
 } from "../utils/constants";
 import { writeToExcel } from "../utils/export-excel-utils";
 import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
-import { getNbByEntityId } from "../utils/utils";
 
 const saveEntity = async (
   entityToSave: EntiteSimple,
@@ -173,18 +160,7 @@ export const deleteLieudit = async (
 };
 
 export const getMeteos = async (): Promise<Meteo[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByMeteoId()
-  );
-
-  const meteos: Meteo[] = results[0];
-  const nbDonneesByMeteo: NumberOfObjectsById[] = results[1];
-  _.forEach(meteos, (meteo: Meteo) => {
-    meteo.nbDonnees = getNbByEntityId(meteo, nbDonneesByMeteo);
-  });
-
-  return meteos;
+  return await findAllMeteos();
 };
 
 export const saveMeteo = async (
@@ -204,21 +180,7 @@ export const deleteMeteo = async (
 };
 
 export const getClasses = async (): Promise<Classe[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_CLASSE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfEspecesByClasseId() +
-      getQueryToFindNumberOfDonneesByClasseId()
-  );
-
-  const classes: Classe[] = results[0];
-  const nbEspecesByClasse: NumberOfObjectsById[] = results[1];
-  const nbDonneesByClasse: NumberOfObjectsById[] = results[2];
-  _.forEach(classes, (classe: Classe) => {
-    classe.nbEspeces = getNbByEntityId(classe, nbEspecesByClasse);
-    classe.nbDonnees = getNbByEntityId(classe, nbDonneesByClasse);
-  });
-
-  return classes;
+  return await findAllClasses();
 };
 
 export const saveClasse = async (
@@ -238,20 +200,7 @@ export const deleteClasse = async (
 };
 
 export const getEspeces = async (): Promise<Espece[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByEspeceId()
-  );
-
-  const especesDb: EspeceDb[] = results[0];
-  const nbDonneesByEspece: NumberOfObjectsById[] = results[2];
-
-  const especes: Espece[] = buildEspecesFromEspecesDb(especesDb);
-  _.forEach(especes, (espece: Espece) => {
-    espece.nbDonnees = getNbByEntityId(espece, nbDonneesByEspece);
-  });
-
-  return especes;
+  return await findAllEspeces();
 };
 
 export const saveEspece = async (
@@ -268,18 +217,7 @@ export const deleteEspece = async (
 };
 
 export const getSexes = async (): Promise<Sexe[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesBySexeId()
-  );
-
-  const sexes: Sexe[] = results[0];
-  const nbDonneesBySexe: NumberOfObjectsById[] = results[1];
-  _.forEach(sexes, (sexe: Sexe) => {
-    sexe.nbDonnees = getNbByEntityId(sexe, nbDonneesBySexe);
-  });
-
-  return sexes;
+  return await findAllSexes();
 };
 
 export const saveSexe = async (
@@ -295,18 +233,7 @@ export const deleteSexe = async (
 };
 
 export const getAges = async (): Promise<Age[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByAgeId()
-  );
-
-  const ages: Age[] = results[0];
-  const nbDonneesByAge: NumberOfObjectsById[] = results[1];
-  _.forEach(ages, (age: Age) => {
-    age.nbDonnees = getNbByEntityId(age, nbDonneesByAge);
-  });
-
-  return ages;
+  return await findAllAges();
 };
 
 export const saveAge = async (
@@ -322,22 +249,7 @@ export const deleteAge = async (
 };
 
 export const getEstimationsNombre = async (): Promise<EstimationNombre[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByEstimationNombreId()
-  );
-
-  const estimationsDb: EstimationNombreDb[] = results[0];
-  const nbDonneesByEstimation: NumberOfObjectsById[] = results[1];
-
-  const estimations: EstimationNombre[] = buildEstimationsNombreFromEstimationsNombreDb(
-    estimationsDb
-  );
-  _.forEach(estimations, (estimation: EstimationNombre) => {
-    estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
-  });
-
-  return estimations;
+  return await findAllEstimationsNombre();
 };
 
 export const saveEstimationNombre = async (
@@ -359,18 +271,7 @@ export const deleteEstimationNombre = async (
 export const getEstimationsDistance = async (): Promise<
   EstimationDistance[]
 > => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_ESTIMATION_DISTANCE, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByEstimationDistanceId()
-  );
-
-  const estimations: EstimationDistance[] = results[0];
-  const nbDonneesByEstimation: NumberOfObjectsById[] = results[1];
-  _.forEach(estimations, (estimation: EstimationDistance) => {
-    estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
-  });
-
-  return estimations;
+  return await findAllEstimationsDistance();
 };
 
 export const saveEstimationDistance = async (
@@ -390,21 +291,7 @@ export const deleteEstimationDistance = async (
 };
 
 export const getComportements = async (): Promise<Comportement[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_COMPORTEMENT, COLUMN_CODE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByComportementId()
-  );
-
-  const comportements: Comportement[] = results[0];
-  const nbDonneesByComportement: NumberOfObjectsById[] = results[1];
-  _.forEach(comportements, (comportement: Comportement) => {
-    comportement.nbDonnees = getNbByEntityId(
-      comportement,
-      nbDonneesByComportement
-    );
-  });
-
-  return comportements;
+  return await findAllComportements();
 };
 
 export const saveComportement = async (
@@ -424,18 +311,7 @@ export const deleteComportement = async (
 };
 
 export const getMilieux = async (): Promise<Milieu[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_MILIEU, COLUMN_CODE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByMilieuId()
-  );
-
-  const milieux: Milieu[] = results[0];
-  const nbDonneesByMilieu: NumberOfObjectsById[] = results[1];
-  _.forEach(milieux, (milieu: Milieu) => {
-    milieu.nbDonnees = getNbByEntityId(milieu, nbDonneesByMilieu);
-  });
-
-  return milieux;
+  return await findAllMilieux();
 };
 
 export const saveMilieu = async (

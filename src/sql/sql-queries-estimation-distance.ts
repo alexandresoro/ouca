@@ -1,10 +1,28 @@
-import { getQueryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
+import { EstimationDistance } from "ouca-common/estimation-distance.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import {
+  COLUMN_LIBELLE,
+  ORDER_ASC,
+  TABLE_ESTIMATION_DISTANCE
+} from "../utils/constants";
+import { queryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
+import { queryToFindAllEntities } from "./sql-queries-utils";
 
-export function getQueryToFindNumberOfDonneesByEstimationDistanceId(
+export const queryToFindAllEstimationsDistance = async (): Promise<
+  EstimationDistance[]
+> => {
+  return queryToFindAllEntities<EstimationDistance>(
+    TABLE_ESTIMATION_DISTANCE,
+    COLUMN_LIBELLE,
+    ORDER_ASC
+  );
+};
+
+export const getQueryToFindNumberOfDonneesByEstimationDistanceId = async (
   estimationDistanceId?: number
-): string {
-  return getQueryToFindNumberOfDonneesByDoneeeEntityId(
+): Promise<NumberOfObjectsById[]> => {
+  return queryToFindNumberOfDonneesByDoneeeEntityId(
     "estimation_distance_id",
     estimationDistanceId
   );
-}
+};

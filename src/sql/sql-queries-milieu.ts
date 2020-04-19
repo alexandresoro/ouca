@@ -1,4 +1,15 @@
-import { getQuery } from "./sql-queries-utils";
+import { Milieu } from "ouca-common/milieu.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import { COLUMN_LIBELLE, ORDER_ASC, TABLE_MILIEU } from "../utils/constants";
+import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+
+export const queryToFindAllMilieux = async (): Promise<Milieu[]> => {
+  return queryToFindAllEntities<Milieu>(
+    TABLE_MILIEU,
+    COLUMN_LIBELLE,
+    ORDER_ASC
+  );
+};
 
 export function getQueryToFindAllMilieux(donneesIds?: number[]): string {
   let query: string =
@@ -20,15 +31,15 @@ export function getQueryToFindMilieuxIdsByDonneeId(donneeId: number): string {
   );
 }
 
-export function getQueryToFindNumberOfDonneesByMilieuId(
+export const queryToFindNumberOfDonneesByMilieuId = async (
   milieuId?: number
-): string {
-  let query: string =
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr: string =
     "SELECT dc.milieu_id as id, count(*) as nb " + "FROM donnee_milieu dc ";
   if (milieuId) {
-    query = query + " WHERE dc.milieu_id=" + milieuId;
+    queryStr = queryStr + " WHERE dc.milieu_id=" + milieuId;
   } else {
-    query = query + " GROUP BY dc.milieu_id";
+    queryStr = queryStr + " GROUP BY dc.milieu_id";
   }
-  return getQuery(query);
-}
+  return query<NumberOfObjectsById[]>(queryStr);
+};
