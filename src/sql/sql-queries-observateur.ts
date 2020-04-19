@@ -1,6 +1,21 @@
-import { OBSERVATEUR_ID } from "../utils/constants";
+import { Observateur } from "ouca-common/observateur.object";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import {
+  COLUMN_LIBELLE,
+  OBSERVATEUR_ID,
+  ORDER_ASC,
+  TABLE_OBSERVATEUR
+} from "../utils/constants";
 import { getQueryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
-import { getQuery } from "./sql-queries-utils";
+import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+
+export const queryToFindAllObservateurs = async (): Promise<Observateur[]> => {
+  return queryToFindAllEntities<Observateur>(
+    TABLE_OBSERVATEUR,
+    COLUMN_LIBELLE,
+    ORDER_ASC
+  );
+};
 
 export function getQueryToFindAssociesByInventaireId(
   inventaireId: number
@@ -11,14 +26,16 @@ export function getQueryToFindAssociesByInventaireId(
   );
 }
 
-export function getQueryToFindNumberOfDonneesByObservateurId(
+export const queryToFindNumberOfDonneesByObservateurId = async (
   observateurId?: number
-): string {
-  return getQueryToFindNumberOfDonneesByInventaireEntityId(
-    OBSERVATEUR_ID,
-    observateurId
+): Promise<NumberOfObjectsById[]> => {
+  return query<NumberOfObjectsById[]>(
+    getQueryToFindNumberOfDonneesByInventaireEntityId(
+      OBSERVATEUR_ID,
+      observateurId
+    )
   );
-}
+};
 
 export function getQueryToFindAllAssocies(donneesIds?: number[]): string {
   let query: string =

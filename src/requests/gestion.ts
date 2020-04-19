@@ -27,6 +27,7 @@ import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
 import { findAllDepartements } from "../sql-api/sql-api-departement";
 import { findAllLieuxDits, persistLieudit } from "../sql-api/sql-api-lieudit";
+import { findAllObservateurs } from "../sql-api/sql-api-observateur";
 import { SqlConnection } from "../sql-api/sql-connection";
 import { getQueryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
 import {
@@ -39,7 +40,6 @@ import { getQueryToFindNumberOfDonneesByEstimationDistanceId } from "../sql/sql-
 import { getQueryToFindNumberOfDonneesByEstimationNombreId } from "../sql/sql-queries-estimation-nombre";
 import { getQueryToFindNumberOfDonneesByMeteoId } from "../sql/sql-queries-meteo";
 import { getQueryToFindNumberOfDonneesByMilieuId } from "../sql/sql-queries-milieu";
-import { getQueryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";
 import { getQueryToFindNumberOfDonneesBySexeId } from "../sql/sql-queries-sexe";
 import {
   DB_SAVE_MAPPING,
@@ -91,19 +91,7 @@ const deleteEntity = async (
 };
 
 export const getObservateurs = async (): Promise<Observateur[]> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
-      getQueryToFindNumberOfDonneesByObservateurId()
-  );
-  const observateurs: Observateur[] = results[0];
-  const nbDonneesByObservateur: NumberOfObjectsById[] = results[1];
-  _.forEach(observateurs, (observateur: Observateur) => {
-    observateur.nbDonnees = getNbByEntityId(
-      observateur,
-      nbDonneesByObservateur
-    );
-  });
-  return observateurs;
+  return await findAllObservateurs();
 };
 
 export const saveObservateur = async (
