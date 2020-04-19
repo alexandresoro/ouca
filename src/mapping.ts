@@ -1,3 +1,4 @@
+import { HttpMethod } from "./http/httpMethod";
 import { HttpParameters } from "./http/httpParameters";
 import {
   configurationUpdate,
@@ -178,6 +179,11 @@ export const REQUEST_MAPPING: {
   "/api/configuration/all": getAppConfiguration,
   "/api/configuration/update": configurationUpdate,
   "/api/database/save": saveDatabase
+};
+
+export const REQUEST_METHODS: { [key: string]: HttpMethod[] } = {
+  "/api/configuration/all": ["GET"],
+  "/api/configuration/update": ["POST"]
 };
 
 // Mapping between the api requested and the media type (MIME) of the response

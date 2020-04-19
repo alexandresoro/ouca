@@ -22,6 +22,7 @@ import {
   TABLE_SETTINGS,
   TABLE_SEXE,
 } from "../utils/constants";
+import { sendAppConfigurationToAll } from "../ws/ws-messages";
 
 export const getAppConfiguration = async (): Promise<AppConfiguration> => {
   const results = await SqlConnection.query(
@@ -65,5 +66,12 @@ export const configurationUpdate = async (
     DB_CONFIGURATION_MAPPING
   );
 
-  return sqlSaveResponse.affectedRows === 1;
+  const isDbUpdateOK = sqlSaveResponse.affectedRows === 1;
+
+  // Notify the ws listeners of the new configuration
+  if (isDbUpdateOK) {
+    await sendAppConfigurationToAll();
+  }
+
+  return isDbUpdateOK;
 };
