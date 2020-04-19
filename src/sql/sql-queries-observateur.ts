@@ -7,7 +7,7 @@ import {
   TABLE_OBSERVATEUR
 } from "../utils/constants";
 import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
-import { getQuery, queryToFindAllEntities } from "./sql-queries-utils";
+import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllObservateurs = async (): Promise<Observateur[]> => {
   return queryToFindAllEntities<Observateur>(
@@ -35,16 +35,18 @@ export const queryToFindNumberOfDonneesByObservateurId = async (
   );
 };
 
-export function getQueryToFindAllAssocies(donneesIds?: number[]): string {
-  let query: string =
+export const queryToFindAllAssociesByDonneeId = async (
+  donneesIds?: number[]
+): Promise<{ donneeId: number; libelle: string }[]> => {
+  let queryStr: string =
     "SELECT d.id as donneeId, o.libelle" +
     " FROM inventaire_associe i" +
     " INNER JOIN donnee d ON d.inventaire_id = i.inventaire_id" +
     " LEFT JOIN observateur o ON i.observateur_id = o.id";
 
   if (donneesIds && donneesIds.length) {
-    query = query + " WHERE d.id IN (" + donneesIds.join(",") + ")";
+    queryStr = queryStr + " WHERE d.id IN (" + donneesIds.join(",") + ")";
   }
 
-  return getQuery(query);
-}
+  return query<{ donneeId: number; libelle: string }[]>(queryStr);
+};

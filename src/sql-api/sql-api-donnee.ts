@@ -8,8 +8,8 @@ import { Inventaire } from "ouca-common/inventaire.object";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
-  getQueryToFindAllComportements,
-  getQueryToFindComportementsIdsByDonneeId
+  getQueryToFindComportementsIdsByDonneeId,
+  queryToFindAllComportementsByDonneeId
 } from "../sql/sql-queries-comportement";
 import {
   getQueryToFindDonneesByCriterion,
@@ -25,16 +25,16 @@ import {
   queryToUpdateDonneesInventaireId
 } from "../sql/sql-queries-donnee";
 import {
-  getQueryToFindAllMeteos,
-  getQueryToFindMetosByInventaireId
+  getQueryToFindMetosByInventaireId,
+  queryToFindAllMeteosByDonneeId
 } from "../sql/sql-queries-meteo";
 import {
-  getQueryToFindAllMilieux,
-  getQueryToFindMilieuxIdsByDonneeId
+  getQueryToFindMilieuxIdsByDonneeId,
+  queryToFindAllMilieuxByDonneeId
 } from "../sql/sql-queries-milieu";
 import {
-  getQueryToFindAllAssocies,
-  getQueryToFindAssociesByInventaireId
+  getQueryToFindAssociesByInventaireId,
+  queryToFindAllAssociesByDonneeId
 } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
@@ -262,25 +262,14 @@ export const findDonneesByCustomizedFilters = async (
     return donnee.id;
   });
 
-  const [
-    associes,
-    meteos,
-    comportements,
-    milieux
-  ]: any[][] = await Promise.all([
-    donnees.length
-      ? SqlConnection.query(getQueryToFindAllAssocies(donneesIds))
-      : [],
-    donnees.length
-      ? SqlConnection.query(getQueryToFindAllMeteos(donneesIds))
-      : [],
-    donnees.length
-      ? SqlConnection.query(getQueryToFindAllComportements(donneesIds))
-      : [],
-    donnees.length
-      ? SqlConnection.query(getQueryToFindAllMilieux(donneesIds))
-      : []
-  ]);
+  const [associes, meteos, comportements, milieux] = donneesIds.length
+    ? await Promise.all([
+        queryToFindAllAssociesByDonneeId(donneesIds),
+        queryToFindAllMeteosByDonneeId(donneesIds),
+        queryToFindAllComportementsByDonneeId(donneesIds),
+        queryToFindAllMilieuxByDonneeId(donneesIds)
+      ])
+    : [[], [], [], []];
 
   const [
     associesByDonnee,

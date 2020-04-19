@@ -11,18 +11,21 @@ export const queryToFindAllMilieux = async (): Promise<Milieu[]> => {
   );
 };
 
-export function getQueryToFindAllMilieux(donneesIds?: number[]): string {
-  let query: string =
+export const queryToFindAllMilieuxByDonneeId = async (
+  donneesIds?: number[]
+): Promise<{ donneeId: number; code: string; libelle: string }[]> => {
+  let queryStr: string =
     "SELECT d.donnee_id as donneeId, m.code, m.libelle" +
     " FROM donnee_milieu d" +
     " INNER JOIN milieu m ON d.milieu_id = m.id";
 
   if (donneesIds && donneesIds.length) {
-    query = query + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
+    queryStr =
+      queryStr + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
   }
 
-  return getQuery(query);
-}
+  return query<{ donneeId: number; code: string; libelle: string }[]>(queryStr);
+};
 
 export function getQueryToFindMilieuxIdsByDonneeId(donneeId: number): string {
   return getQuery(

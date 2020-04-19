@@ -17,18 +17,21 @@ export const queryToFindAllComportements = async (): Promise<
   );
 };
 
-export function getQueryToFindAllComportements(donneesIds?: number[]): string {
-  let query: string =
+export const queryToFindAllComportementsByDonneeId = async (
+  donneesIds?: number[]
+): Promise<{ donneeId: number; code: string; libelle: string }[]> => {
+  let queryStr: string =
     "SELECT d.donnee_id as donneeId, c.code, c.libelle" +
     " FROM donnee_comportement d" +
     " INNER JOIN comportement c ON d.comportement_id = c.id";
 
   if (donneesIds && donneesIds.length) {
-    query = query + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
+    queryStr =
+      queryStr + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
   }
 
-  return getQuery(query);
-}
+  return query<{ donneeId: number; code: string; libelle: string }[]>(queryStr);
+};
 
 export function getQueryToFindComportementsIdsByDonneeId(
   donneeId: number
