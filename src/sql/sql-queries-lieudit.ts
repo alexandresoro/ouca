@@ -1,7 +1,7 @@
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_NOM, ORDER_ASC, TABLE_LIEUDIT } from "../utils/constants";
-import { getQueryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
+import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllLieuxDits = async (): Promise<LieuditDb[]> => {
@@ -30,7 +30,8 @@ export const queryToFindLieuditByCommuneIdAndNom = async (
 export const queryToFindNumberOfDonneesByLieuDitId = async (
   lieuditId?: number
 ): Promise<NumberOfObjectsById[]> => {
-  return query<NumberOfObjectsById[]>(
-    getQueryToFindNumberOfDonneesByInventaireEntityId("lieudit_id", lieuditId)
+  return queryToFindNumberOfDonneesByInventaireEntityId(
+    "lieudit_id",
+    lieuditId
   );
 };

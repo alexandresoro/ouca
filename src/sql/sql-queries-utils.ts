@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import {
   DONNEE_ID,
@@ -160,29 +161,6 @@ export function getFindAllQuery(
   return getQuery(query);
 }
 
-export const getFindAllSqlQuery = (tableName: string): Promise<any> => {
-  return SqlConnection.query(getFindAllQuery(tableName));
-};
-
-export const getAllFromTablesQuery = (tableNames: string[]): string => {
-  return _.reduce(
-    _.map(tableNames, (tableName) => {
-      return getFindAllQuery(tableName);
-    }),
-    (first, second) => {
-      return first + second;
-    }
-  );
-};
-
-export const getAllFromTablesSqlQuery = (
-  tableNames: string[]
-): Promise<any>[] => {
-  return _.map(tableNames, (tableName) => {
-    return getFindAllSqlQuery(tableName);
-  });
-};
-
 export const getQueryToFindOneById = (
   tableName: string,
   id: number
@@ -331,19 +309,19 @@ export const updateAllInTableQuery = (
   return queries.join("");
 };
 
-export function getDeleteEntityByIdQuery(
+export const queryToDeleteAnEntityById = async (
   tableName: string,
   id: number
-): string {
-  return getQuery("DELETE FROM " + tableName + " WHERE id=" + id);
-}
+): Promise<SqlSaveResponse> => {
+  return query<SqlSaveResponse>("DELETE FROM " + tableName + " WHERE id=" + id);
+};
 
-export function getDeleteEntityByAttributeQuery(
+export const queryToDeleteAnEntityByAttribute = async (
   tableName: string,
   attributeName: string,
   attributeValue: string | number
-): string {
-  return getQuery(
+): Promise<SqlSaveResponse> => {
+  return query<SqlSaveResponse>(
     "DELETE FROM " +
       tableName +
       " WHERE " +
@@ -352,32 +330,32 @@ export function getDeleteEntityByAttributeQuery(
       attributeValue +
       '"'
   );
-}
+};
 
-export function getQueryToFindEntityByLibelle(
+export const queryToFindEntityByLibelle = async <T>(
   entityName: string,
   libelle: string
-): string {
-  return getQuery(
+): Promise<T> => {
+  return query<T>(
     "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle.trim() + '"'
   );
-}
+};
 
-export function getQueryToFindEntityByCode(
+export const queryToFindEntityByCode = async <T>(
   entityName: string,
   code: string
-): string {
-  return getQuery(
+): Promise<T> => {
+  return query<T>(
     "SELECT * FROM " + entityName + ' WHERE code="' + code.trim() + '"'
   );
-}
+};
 
-export function getQueryToFindEntityByCodeAndLibelle(
+export const queryToFindEntityByCodeAndLibelle = async <T>(
   entityName: string,
   code: string,
   libelle: string
-): string {
-  return getQuery(
+): Promise<T> => {
+  return query<T>(
     "SELECT * FROM " +
       entityName +
       ' WHERE code="' +
@@ -386,4 +364,4 @@ export function getQueryToFindEntityByCodeAndLibelle(
       libelle.trim() +
       '"'
   );
-}
+};

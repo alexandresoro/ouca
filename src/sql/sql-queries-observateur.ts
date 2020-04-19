@@ -6,8 +6,8 @@ import {
   ORDER_ASC,
   TABLE_OBSERVATEUR
 } from "../utils/constants";
-import { getQueryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
-import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
+import { getQuery, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllObservateurs = async (): Promise<Observateur[]> => {
   return queryToFindAllEntities<Observateur>(
@@ -29,11 +29,9 @@ export function getQueryToFindAssociesByInventaireId(
 export const queryToFindNumberOfDonneesByObservateurId = async (
   observateurId?: number
 ): Promise<NumberOfObjectsById[]> => {
-  return query<NumberOfObjectsById[]>(
-    getQueryToFindNumberOfDonneesByInventaireEntityId(
-      OBSERVATEUR_ID,
-      observateurId
-    )
+  return await queryToFindNumberOfDonneesByInventaireEntityId(
+    OBSERVATEUR_ID,
+    observateurId
   );
 };
 

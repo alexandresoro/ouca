@@ -1,7 +1,9 @@
 import { format } from "date-fns";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
+import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   DATE_PATTERN,
   TABLE_DONNEE_COMPORTEMENT,
@@ -89,20 +91,20 @@ const getBaseQueryToFindDetailedDonnees = (): string => {
   );
 };
 
-export const getQueryToCountDonneesByInventaireId = (
+export const queryToCountDonneesByInventaireId = async (
   inventaireId: number
-): string => {
-  return getQuery(
+): Promise<{ nbDonnees: number }[]> => {
+  return query<{ nbDonnees: number }[]>(
     "SELECT COUNT(*) as nbDonnees FROM donnee WHERE inventaire_id=" +
       inventaireId
   );
 };
 
-export const getQueryToUpdateDonneesInventaireId = (
+export const queryToUpdateDonneesInventaireId = async (
   oldInventaireId: number,
   newInventaireId: number
-): string => {
-  return getQuery(
+): Promise<SqlSaveResponse> => {
+  return query<SqlSaveResponse>(
     "UPDATE donnee SET inventaire_id=" +
       newInventaireId +
       " WHERE inventaire_id=" +
@@ -110,53 +112,59 @@ export const getQueryToUpdateDonneesInventaireId = (
   );
 };
 
-export function getQueryToFindNumberOfDonnees(): string {
-  return getQuery("SELECT COUNT(*) as nbDonnees FROM donnee");
-}
-
-export function getQueryToFindNextDonneeByCurrentDonneeId(
+export const queryToFindNextDonneeIdByCurrentDonneeId = async (
   currentDonneeId: number
-): string {
-  return getQuery(
-    getBaseQueryToFindDonnees() +
-      " AND d.id>" +
+): Promise<{ id: number }[]> => {
+  return query<{ id: number }[]>(
+    "SELECT d.id" +
+      " FROM donnee d" +
+      " WHERE d.id>" +
       currentDonneeId +
       " ORDER BY id ASC LIMIT 0,1"
   );
-}
+};
 
-export function getQueryToFindPreviousDonneeByCurrentDonneeId(
+export const queryToFindPreviousDonneeIdByCurrentDonneeId = async (
   currentDonneeId: number
-): string {
-  return getQuery(
-    getBaseQueryToFindDonnees() +
-      " AND d.id<" +
+): Promise<{ id: number }[]> => {
+  return query<{ id: number }[]>(
+    "SELECT d.id" +
+      " FROM donnee d" +
+      " WHERE d.id<" +
       currentDonneeId +
       " ORDER BY d.id DESC LIMIT 0,1"
   );
-}
+};
 
-export function getQueryToFindLastDonnee(): string {
-  return getQuery(
-    getBaseQueryToFindDonnees() + " ORDER BY d.id DESC LIMIT 0,1"
+export const queryToFindLastDonneeId = async (): Promise<{ id: number }[]> => {
+  return query<{ id: number }[]>(
+    "SELECT id FROM donnee ORDER BY id DESC LIMIT 0,1"
   );
-}
+};
 
-export function getQueryToFindLastDonneeId(): string {
-  return getQuery("SELECT id FROM donnee ORDER BY id DESC LIMIT 0,1");
-}
+export const queryToFindDonneeById = async (
+  id: number
+): Promise<FlatDonneeWithMinimalData[]> => {
+  return query<FlatDonneeWithMinimalData[]>(
+    getBaseQueryToFindDonnees() + " AND d.id=" + id
+  );
+};
 
-export function getQueryToFindDonneeById(id: number): string {
-  return getQuery(getBaseQueryToFindDonnees() + " AND d.id=" + id);
-}
+export const queryToFindDonneeIndexById = async (
+  id: number
+): Promise<{ nbDonnees: number }[]> => {
+  return query<{ nbDonnees: number }[]>(
+    "SELECT count(*) as nbDonnees FROM donnee WHERE id<=" + id
+  );
+};
 
-export function getQueryToFindDonneeIndexById(id: number): string {
-  return getQuery("SELECT count(*) as nbDonnees FROM donnee WHERE id<=" + id);
-}
-
-export function getQueryToFindLastRegroupement(): string {
-  return getQuery("SELECT MAX(d.regroupement) as regroupement FROM donnee d");
-}
+export const queryToFindLastRegroupement = async (): Promise<
+  { regroupement: number }[]
+> => {
+  return query<{ regroupement: number }[]>(
+    "SELECT MAX(d.regroupement) as regroupement FROM donnee d"
+  );
+};
 
 export const queryToFindNumberOfDonneesByDoneeeEntityId = async (
   entityIdAttribute: string,
@@ -169,29 +177,8 @@ export const queryToFindNumberOfDonneesByDoneeeEntityId = async (
   } else {
     queryStr = queryStr + " GROUP BY " + entityIdAttribute;
   }
-  return query(queryStr);
+  return query<NumberOfObjectsById[]>(queryStr);
 };
-
-export function getQueryToFindNumberOfDonneesByDoneeeEntityId(
-  entityIdAttribute: string,
-  id?: number
-): string {
-  let query: string =
-    "SELECT " + entityIdAttribute + " as id, count(*) as nb FROM donnee";
-  if (id) {
-    query = query + " WHERE " + entityIdAttribute + "=" + id;
-  } else {
-    query = query + " GROUP BY " + entityIdAttribute;
-  }
-  return getQuery(query);
-}
-
-export function getQueryToFindAllDonnees(): string {
-  const query: string =
-    getBaseQueryToFindDetailedDonnees() + " ORDER BY d.id DESC";
-
-  return getQuery(query);
-}
 
 export const getQueryToFindDonneesByCriterion = (
   criterion: DonneesFilter
@@ -408,11 +395,11 @@ export const getQueryToFindDonneesByCriterion = (
   return getQuery(query);
 };
 
-export const getQueryToFindDonneeIdsByAllAttributes = (
+export const queryToFindDonneeIdsByAllAttributes = async (
   donnee: Donnee
-): string => {
-  let query: string =
-    "SELECT d.id" +
+): Promise<{ id: number }[]> => {
+  let queryStr: string =
+    "SELECT d.id as id" +
     " FROM donnee d" +
     " WHERE d.inventaire_id=" +
     donnee.inventaireId +
@@ -425,32 +412,32 @@ export const getQueryToFindDonneeIdsByAllAttributes = (
     " AND d.estimation_nombre_id=" +
     donnee.estimationNombreId;
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND d.nombre" +
     (!donnee.nombre ? " is null" : "=" + donnee.nombre);
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND d.estimation_distance_id" +
     (!donnee.estimationDistanceId
       ? " is null"
       : "=" + donnee.estimationDistanceId);
 
-  query =
+  queryStr =
     query +
     " AND d.distance" +
     (!donnee.distance ? " is null" : "=" + donnee.distance);
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND d.regroupement" +
     (!donnee.regroupement ? " is null" : "=" + donnee.regroupement);
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND d.commentaire" +
     (!donnee.commentaire ? " is null" : '="' + donnee.commentaire + '"');
 
-  return getQuery(query);
+  return query<{ id: number }[]>(queryStr);
 };

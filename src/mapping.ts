@@ -9,9 +9,7 @@ import {
   getInventaireById,
   getInventaireIdById,
   getLastDonneeId,
-  getNextDonnee,
   getNextRegroupement,
-  getPreviousDonnee,
   saveDonnee,
   saveInventaire
 } from "./requests/creation";
@@ -109,8 +107,6 @@ export const REQUEST_MAPPING: {
   "/api/donnee/save": saveDonnee,
   "/api/donnee/delete": deleteDonnee,
   "/api/donnee/last": getLastDonneeId,
-  "/api/donnee/next_donnee": getNextDonnee,
-  "/api/donnee/previous_donnee": getPreviousDonnee,
   "/api/donnee/next_regroupement": getNextRegroupement,
   "/api/donnee/find_with_context": getDonneeByIdWithContext,
   "/api/donnee/import": importDonnees,

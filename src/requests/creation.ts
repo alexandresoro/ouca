@@ -5,11 +5,10 @@ import { PostResponse } from "ouca-common/post-response.object";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
-  buildDonneeFromFlatDonneeWithMinimalData,
   deleteDonneeById,
+  findDonneeByIdWithContext,
   findLastDonneeId,
-  findNextDonneeByCurrentDonneeId,
-  findPreviousDonneeByCurrentDonneeId,
+  findNextRegroupement,
   getExistingDonneeId,
   persistDonnee,
   updateInventaireIdForDonnees
@@ -21,14 +20,6 @@ import {
   getExistingInventaireId,
   persistInventaire
 } from "../sql-api/sql-api-inventaire";
-import { SqlConnection } from "../sql-api/sql-connection";
-import {
-  getQueryToFindDonneeById,
-  getQueryToFindDonneeIndexById,
-  getQueryToFindLastRegroupement,
-  getQueryToFindNextDonneeByCurrentDonneeId,
-  getQueryToFindPreviousDonneeByCurrentDonneeId
-} from "../sql/sql-queries-donnee";
 import {
   buildErrorPostResponse,
   buildPostResponseFromSqlResponse
@@ -102,45 +93,15 @@ export const deleteDonnee = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const getNextDonnee = async (
-  httpParameters: HttpParameters
-): Promise<Donnee> => {
-  const donneeId: number = +httpParameters.queryParameters.id;
-  return findNextDonneeByCurrentDonneeId(donneeId);
-};
-
-export const getPreviousDonnee = async (
-  httpParameters: HttpParameters
-): Promise<Donnee> => {
-  const donneeId: number = +httpParameters.queryParameters.id;
-  return findPreviousDonneeByCurrentDonneeId(donneeId);
-};
-
 export const getDonneeByIdWithContext = async (
   httpParameters: HttpParameters
 ): Promise<DonneeWithNavigationData> => {
   const id: number = +httpParameters.queryParameters.id;
-  const results = await SqlConnection.query(
-    getQueryToFindDonneeById(id) +
-      getQueryToFindPreviousDonneeByCurrentDonneeId(id) +
-      getQueryToFindNextDonneeByCurrentDonneeId(id) +
-      getQueryToFindDonneeIndexById(id)
-  );
-
-  const donnee = await buildDonneeFromFlatDonneeWithMinimalData(results[0][0]);
-
-  return {
-    ...donnee,
-    previousDonneeId: results[1][0] ? results[1][0].id : null,
-    nextDonneeId: results[2][0] ? results[2][0].id : null,
-    indexDonnee:
-      !!results[3] && !!results[3][0] ? results[3][0].nbDonnees : null
-  };
+  return await findDonneeByIdWithContext(id);
 };
 
 export const getNextRegroupement = async (): Promise<number> => {
-  const results = await SqlConnection.query(getQueryToFindLastRegroupement());
-  return (results[0].regroupement as number) + 1;
+  return await findNextRegroupement();
 };
 
 export const getInventaireById = async (

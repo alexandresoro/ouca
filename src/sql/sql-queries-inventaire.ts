@@ -1,33 +1,36 @@
 import * as _ from "lodash";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
-import { getQuery } from "./sql-queries-utils";
+import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
+import { query } from "./sql-queries-utils";
 
-export function getQueryToFindNumberOfDonneesByInventaireEntityId(
+export const queryToFindNumberOfDonneesByInventaireEntityId = async (
   entityIdAttribute: string,
   id?: number
-): string {
-  let query: string =
+): Promise<NumberOfObjectsById[]> => {
+  let queryStr: string =
     "SELECT i." +
     entityIdAttribute +
     " as id, count(*) as nb FROM donnee d, inventaire i WHERE d.inventaire_id=i.id";
   if (id) {
-    query = query + " AND i." + entityIdAttribute + "=" + id;
+    queryStr = queryStr + " AND i." + entityIdAttribute + "=" + id;
   } else {
-    query = query + " GROUP BY i." + entityIdAttribute;
+    queryStr = queryStr + " GROUP BY i." + entityIdAttribute;
   }
-  return getQuery(query);
-}
-
-export const getQueryToFindInventaireIdById = (id: number): string => {
-  return getQuery("SELECT id FROM inventaire WHERE id=" + id);
+  return query<NumberOfObjectsById[]>(queryStr);
 };
 
-export const getQueryToFindInventaireIdByAllAttributes = (
+export const queryToFindInventaireIdById = async (
+  id: number
+): Promise<{ id: number }[]> => {
+  return query<{ id: number }[]>("SELECT id FROM inventaire WHERE id=" + id);
+};
+
+export const queryToFindInventaireIdByAllAttributes = async (
   inventaire: Inventaire
-): string => {
-  let query: string =
-    "SELECT i.id" +
+): Promise<{ id: number }[]> => {
+  let queryStr: string =
+    "SELECT i.id as id" +
     " FROM inventaire i" +
     " WHERE i.observateur_id=" +
     inventaire.observateurId +
@@ -37,18 +40,18 @@ export const getQueryToFindInventaireIdByAllAttributes = (
     " AND i.lieudit_id=" +
     inventaire.lieuditId;
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND i.heure" +
     (!inventaire.heure ? " is null" : '="' + inventaire.heure + '"');
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND i.duree" +
     (!inventaire.duree ? " is null" : '="' + inventaire.duree + '"');
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND i.altitude" +
     (!inventaire.customizedAltitude
       ? " is null"
@@ -65,44 +68,44 @@ export const getQueryToFindInventaireIdByAllAttributes = (
     coordinates = inventaire.coordinates;
   }
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND i.longitude" +
     (_.isNil(coordinates.longitude) ? " is null" : "=" + coordinates.longitude);
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND i.latitude" +
     (_.isNil(coordinates.latitude) ? " is null" : "=" + coordinates.latitude);
 
-  query =
-    query +
+  queryStr =
+    queryStr +
     " AND i.temperature" +
     (!inventaire.temperature ? " is null" : "=" + inventaire.temperature);
 
-  return getQuery(query);
+  return query<{ id: number }[]>(queryStr);
 };
 
-export const getQueryToFindAssociesIdsByInventaireId = (
+export const queryToFindAssociesIdsByInventaireId = async (
   inventaireId: number
-): string => {
-  const query: string =
+): Promise<{ observateur_id: number }[]> => {
+  const queryStr: string =
     "SELECT observateur_id" +
     " FROM inventaire_associe" +
     " WHERE inventaire_id=" +
     inventaireId;
 
-  return getQuery(query);
+  return query<{ observateur_id: number }[]>(queryStr);
 };
 
-export const getQueryToFindMeteosIdsByInventaireId = (
+export const queryToFindMeteosIdsByInventaireId = async (
   inventaireId: number
-): string => {
-  const query: string =
+): Promise<{ meteo_id: number }[]> => {
+  const queryStr: string =
     "SELECT meteo_id" +
     " FROM inventaire_meteo" +
     " WHERE inventaire_id=" +
     inventaireId;
 
-  return getQuery(query);
+  return query<{ meteo_id: number }[]>(queryStr);
 };

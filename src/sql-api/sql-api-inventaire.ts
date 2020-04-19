@@ -4,20 +4,19 @@ import { buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
-  getQueryToFindAssociesIdsByInventaireId,
-  getQueryToFindInventaireIdByAllAttributes,
-  getQueryToFindInventaireIdById,
-  getQueryToFindMeteosIdsByInventaireId
+  queryToFindAssociesIdsByInventaireId,
+  queryToFindInventaireIdByAllAttributes,
+  queryToFindInventaireIdById,
+  queryToFindMeteosIdsByInventaireId
 } from "../sql/sql-queries-inventaire";
 import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
 import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
-  getDeleteEntityByAttributeQuery,
-  getDeleteEntityByIdQuery,
   getQueryToFindOneById,
   getSaveEntityQuery,
-  getSaveListOfEntitesQueries
+  getSaveListOfEntitesQueries,
+  queryToDeleteAnEntityByAttribute
 } from "../sql/sql-queries-utils";
 import {
   DATE_PATTERN,
@@ -36,24 +35,25 @@ import {
   areArraysContainingSameValues,
   getArrayFromObjects
 } from "../utils/utils";
+import { deleteEntityById } from "./sql-api-common";
 import { SqlConnection } from "./sql-connection";
 
 const deleteAssociesAndMeteosByInventaireId = async (
   inventaireId: number
 ): Promise<void> => {
   if (inventaireId) {
-    await SqlConnection.query(
-      getDeleteEntityByAttributeQuery(
+    await Promise.all([
+      queryToDeleteAnEntityByAttribute(
         TABLE_INVENTAIRE_ASSOCIE,
         INVENTAIRE_ID,
         inventaireId
-      ) +
-        getDeleteEntityByAttributeQuery(
-          TABLE_INVENTAIRE_METEO,
-          INVENTAIRE_ID,
-          inventaireId
-        )
-    );
+      ),
+      queryToDeleteAnEntityByAttribute(
+        TABLE_INVENTAIRE_METEO,
+        INVENTAIRE_ID,
+        inventaireId
+      )
+    ]);
   }
 };
 
@@ -146,24 +146,26 @@ export const persistInventaire = async (
 export const getExistingInventaireId = async (
   inventaire: Inventaire
 ): Promise<number | null> => {
-  const response = await SqlConnection.query<number[]>(
-    getQueryToFindInventaireIdByAllAttributes(inventaire)
+  const inventaireIds = await queryToFindInventaireIdByAllAttributes(
+    inventaire
   );
-
-  const eligibleInventaireIds: number[] = getArrayFromObjects(response, ID);
+  const eligibleInventaireIds: number[] = getArrayFromObjects(
+    inventaireIds,
+    ID
+  );
 
   for (const id of eligibleInventaireIds) {
     // Compare the observateurs associes and the meteos
-    const response = await SqlConnection.query(
-      getQueryToFindAssociesIdsByInventaireId(id) +
-        getQueryToFindMeteosIdsByInventaireId(id)
-    );
+    const [associesIdsDb, meteosIdsDb] = await Promise.all([
+      queryToFindAssociesIdsByInventaireId(id),
+      queryToFindMeteosIdsByInventaireId(id)
+    ]);
 
     const associesIds: number[] = getArrayFromObjects(
-      response[0],
+      associesIdsDb,
       OBSERVATEUR_ID
     );
-    const meteosIds: number[] = getArrayFromObjects(response[1], METEO_ID);
+    const meteosIds: number[] = getArrayFromObjects(meteosIdsDb, METEO_ID);
 
     if (
       id !== inventaire.id &&
@@ -180,30 +182,24 @@ export const getExistingInventaireId = async (
 export const deleteInventaireById = async (
   id: number
 ): Promise<SqlSaveResponse> => {
-  return await SqlConnection.query(
-    getDeleteEntityByIdQuery(TABLE_INVENTAIRE, id)
-  );
+  return await deleteEntityById(TABLE_INVENTAIRE, id);
 };
 
 export const findInventaireIdById = async (id: number): Promise<number> => {
-  const response = await SqlConnection.query(
-    getQueryToFindInventaireIdById(id)
-  );
-  return response[0] ? response[0].id : null;
+  const ids = await queryToFindInventaireIdById(id);
+  return ids[0]?.id ? ids[0].id : null;
 };
 
 export const findInventaireById = async (
   inventaireId: number
 ): Promise<Inventaire> => {
-  const results = await SqlConnection.query(
-    getQueryToFindOneById(TABLE_INVENTAIRE, inventaireId) +
-      getQueryToFindAssociesByInventaireId(inventaireId) +
-      getQueryToFindMetosByInventaireId(inventaireId)
-  );
+  const [inventairesDb, associesDb, meteosDb] = await Promise.all([
+    SqlConnection.query(getQueryToFindOneById(TABLE_INVENTAIRE, inventaireId)),
+    SqlConnection.query(getQueryToFindAssociesByInventaireId(inventaireId)),
+    SqlConnection.query(getQueryToFindMetosByInventaireId(inventaireId))
+  ]);
 
-  const inventaireDb: InventaireDb = results[0][0];
-  const associesDb = results[1];
-  const meteosDb = results[2];
+  const inventaireDb: InventaireDb = inventairesDb[0];
 
   const inventaire: Inventaire = buildInventaireFromInventaireDb(inventaireDb);
   inventaire.associesIds = mapAssociesIds(associesDb);

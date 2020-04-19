@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import * as _ from "lodash";
+import { DonneeWithNavigationData } from "ouca-common/donnee-with-navigation-data.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
@@ -11,14 +12,17 @@ import {
   getQueryToFindComportementsIdsByDonneeId
 } from "../sql/sql-queries-comportement";
 import {
-  getQueryToCountDonneesByInventaireId,
-  getQueryToFindDonneeIdsByAllAttributes,
   getQueryToFindDonneesByCriterion,
-  getQueryToFindLastDonneeId,
-  getQueryToFindNextDonneeByCurrentDonneeId,
-  getQueryToFindNumberOfDonneesByDoneeeEntityId,
-  getQueryToFindPreviousDonneeByCurrentDonneeId,
-  getQueryToUpdateDonneesInventaireId
+  queryToCountDonneesByInventaireId,
+  queryToFindDonneeById,
+  queryToFindDonneeIdsByAllAttributes,
+  queryToFindDonneeIndexById,
+  queryToFindLastDonneeId,
+  queryToFindLastRegroupement,
+  queryToFindNextDonneeIdByCurrentDonneeId,
+  queryToFindNumberOfDonneesByDoneeeEntityId,
+  queryToFindPreviousDonneeIdByCurrentDonneeId,
+  queryToUpdateDonneesInventaireId
 } from "../sql/sql-queries-donnee";
 import {
   getQueryToFindAllMeteos,
@@ -34,10 +38,9 @@ import {
 } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
-  getDeleteEntityByAttributeQuery,
-  getDeleteEntityByIdQuery,
   getSaveEntityQuery,
-  getSaveListOfEntitesQueries
+  getSaveListOfEntitesQueries,
+  queryToDeleteAnEntityByAttribute
 } from "../sql/sql-queries-utils";
 import {
   DATE_WITH_TIME_PATTERN,
@@ -59,6 +62,7 @@ import {
   areArraysContainingSameValues,
   getArrayFromObjects
 } from "../utils/utils";
+import { deleteEntityById } from "./sql-api-common";
 import { deleteInventaireById } from "./sql-api-inventaire";
 import { SqlConnection } from "./sql-connection";
 
@@ -66,21 +70,33 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
   flatDonnee: FlatDonneeWithMinimalData
 ): Promise<Donnee> => {
   if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
-    const listsResults = await SqlConnection.query(
-      getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId) +
-        getQueryToFindComportementsIdsByDonneeId(flatDonnee.id) +
-        getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id) +
-        getQueryToFindNumberOfDonneesByDoneeeEntityId(
-          INVENTAIRE_ID,
-          flatDonnee.inventaireId
-        )
-    );
+    const [
+      associes,
+      meteos,
+      comportements,
+      milieux,
+      nbDonnees
+    ] = await Promise.all([
+      SqlConnection.query(
+        getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId)
+      ),
+      SqlConnection.query(
+        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId)
+      ),
+      SqlConnection.query(
+        getQueryToFindComportementsIdsByDonneeId(flatDonnee.id)
+      ),
+      SqlConnection.query(getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id)),
+      queryToFindNumberOfDonneesByDoneeeEntityId(
+        INVENTAIRE_ID,
+        flatDonnee.inventaireId
+      )
+    ]);
 
     const inventaire: Inventaire = {
       id: flatDonnee.inventaireId,
       observateurId: flatDonnee.observateurId,
-      associesIds: mapAssociesIds(listsResults[0]),
+      associesIds: mapAssociesIds(associes),
       date: flatDonnee.date,
       heure: flatDonnee.heure,
       duree: flatDonnee.duree,
@@ -95,8 +111,8 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
           }
         : null,
       temperature: flatDonnee.temperature,
-      meteosIds: mapMeteosIds(listsResults[1]),
-      nbDonnees: listsResults[4][0].nbDonnees
+      meteosIds: mapMeteosIds(meteos),
+      nbDonnees: nbDonnees[0].nbDonnees
     };
 
     const donnee: Donnee = {
@@ -111,8 +127,8 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
       estimationDistanceId: flatDonnee.estimationDistanceId,
       distance: flatDonnee.distance,
       regroupement: flatDonnee.regroupement,
-      comportementsIds: mapComportementsIds(listsResults[2]),
-      milieuxIds: mapMilieuxIds(listsResults[3]),
+      comportementsIds: mapComportementsIds(comportements),
+      milieuxIds: mapMilieuxIds(milieux),
       commentaire: flatDonnee.commentaire
     };
     return donnee;
@@ -127,18 +143,18 @@ export const persistDonnee = async (
   if (donneeToSave.id) {
     // It is an update: we delete the current comportements
     // and milieux to insert later the updated ones
-    await SqlConnection.query(
-      getDeleteEntityByAttributeQuery(
+    await Promise.all([
+      queryToDeleteAnEntityByAttribute(
         TABLE_DONNEE_COMPORTEMENT,
         DONNEE_ID,
         donneeToSave.id
-      ) +
-        getDeleteEntityByAttributeQuery(
-          TABLE_DONNEE_MILIEU,
-          DONNEE_ID,
-          donneeToSave.id
-        )
-    );
+      ),
+      queryToDeleteAnEntityByAttribute(
+        TABLE_DONNEE_MILIEU,
+        DONNEE_ID,
+        donneeToSave.id
+      )
+    ]);
   }
 
   const saveDonneeResponse: SqlSaveResponse = await SqlConnection.query(
@@ -185,11 +201,12 @@ export const persistDonnee = async (
 export const getExistingDonneeId = async (
   donnee: Donnee
 ): Promise<number | null> => {
-  const response = await SqlConnection.query<number[]>(
-    getQueryToFindDonneeIdsByAllAttributes(donnee)
-  );
+  const response = await queryToFindDonneeIdsByAllAttributes(donnee);
 
-  const eligibleDonneeIds: number[] = getArrayFromObjects(response, ID);
+  const eligibleDonneeIds: number[] = getArrayFromObjects<{ id: number }>(
+    response,
+    ID
+  );
 
   for (const id of eligibleDonneeIds) {
     // Compare the comportements and the milieux
@@ -220,7 +237,7 @@ export const getExistingDonneeId = async (
 };
 
 export const findLastDonneeId = async (): Promise<number> => {
-  const result = await SqlConnection.query(getQueryToFindLastDonneeId());
+  const result = await queryToFindLastDonneeId();
   return result && result[0] ? result[0].id : null;
 };
 
@@ -228,10 +245,12 @@ export const updateInventaireIdForDonnees = async (
   oldInventaireId: number,
   newInventaireId: number
 ): Promise<SqlSaveResponse> => {
-  return await SqlConnection.query(
-    getQueryToUpdateDonneesInventaireId(oldInventaireId, newInventaireId)
+  return await queryToUpdateDonneesInventaireId(
+    oldInventaireId,
+    newInventaireId
   );
 };
+
 export const findDonneesByCustomizedFilters = async (
   filter: DonneesFilter
 ): Promise<FlatDonnee[]> => {
@@ -309,9 +328,7 @@ export const findDonneesByCustomizedFilters = async (
 const countDonneesByInventaireId = async (
   inventaireId: number
 ): Promise<number> => {
-  const result = await SqlConnection.query(
-    getQueryToCountDonneesByInventaireId(inventaireId)
-  );
+  const result = await queryToCountDonneesByInventaireId(inventaireId);
   return result[0].nbDonnees;
 };
 
@@ -321,8 +338,9 @@ export const deleteDonneeById = async (
 ): Promise<SqlSaveResponse> => {
   if (donneeId) {
     // First delete the donnee
-    const sqlResponse: SqlSaveResponse = await SqlConnection.query(
-      getDeleteEntityByIdQuery(TABLE_DONNEE, donneeId)
+    const sqlResponse: SqlSaveResponse = await deleteEntityById(
+      TABLE_DONNEE,
+      donneeId
     );
 
     // Check how many donnees the inventaire has after the deletion
@@ -337,22 +355,62 @@ export const deleteDonneeById = async (
   }
 };
 
-export const findNextDonneeByCurrentDonneeId = async (
+const findNextDonneeIdByCurrentDonneeId = async (
   currentDonneeId: number
-): Promise<Donnee> => {
-  const donneeResult = await SqlConnection.query(
-    getQueryToFindNextDonneeByCurrentDonneeId(currentDonneeId)
-  );
+): Promise<number> => {
+  const ids = await queryToFindNextDonneeIdByCurrentDonneeId(currentDonneeId);
 
-  return buildDonneeFromFlatDonneeWithMinimalData(donneeResult[0]);
+  return ids[0]?.id ? ids[0].id : null;
 };
 
-export const findPreviousDonneeByCurrentDonneeId = async (
+const findPreviousDonneeIdByCurrentDonneeId = async (
   currentDonneeId: number
-): Promise<Donnee> => {
-  const donneeResult = await SqlConnection.query(
-    getQueryToFindPreviousDonneeByCurrentDonneeId(currentDonneeId)
+): Promise<number> => {
+  const ids = await queryToFindPreviousDonneeIdByCurrentDonneeId(
+    currentDonneeId
   );
 
-  return buildDonneeFromFlatDonneeWithMinimalData(donneeResult[0]);
+  return ids[0]?.id ? ids[0].id : null;
+};
+
+const findDonneeIndexById = async (id: number): Promise<number> => {
+  const ids = await queryToFindDonneeIndexById(id);
+
+  return ids[0]?.nbDonnees ? ids[0].nbDonnees : null;
+};
+
+const findDonneeById = async (id: number): Promise<Donnee> => {
+  const flatDonnees = await queryToFindDonneeById(id);
+  if (!flatDonnees || !flatDonnees[0]?.id) {
+    return null;
+  }
+  return await buildDonneeFromFlatDonneeWithMinimalData(flatDonnees[0]);
+};
+
+export const findDonneeByIdWithContext = async (
+  donneeId: number
+): Promise<DonneeWithNavigationData> => {
+  const [
+    donnee,
+    previousDonneeId,
+    nextDonneeId,
+    donneeIndex
+  ] = await Promise.all([
+    findDonneeById(donneeId),
+    findPreviousDonneeIdByCurrentDonneeId(donneeId),
+    findNextDonneeIdByCurrentDonneeId(donneeId),
+    findDonneeIndexById(donneeId)
+  ]);
+
+  return {
+    ...donnee,
+    previousDonneeId: previousDonneeId,
+    nextDonneeId: nextDonneeId,
+    indexDonnee: donneeIndex
+  };
+};
+
+export const findNextRegroupement = async (): Promise<number> => {
+  const results = await queryToFindLastRegroupement();
+  return results[0]?.regroupement ? results[0]?.regroupement + 1 : 1;
 };

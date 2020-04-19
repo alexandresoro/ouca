@@ -2,10 +2,11 @@ import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import {
-  getQueryToFindEntityByCode,
-  getQueryToFindEntityByCodeAndLibelle,
-  getQueryToFindEntityByLibelle,
-  getSaveEntityQuery
+  getSaveEntityQuery,
+  queryToDeleteAnEntityById,
+  queryToFindEntityByCode,
+  queryToFindEntityByCodeAndLibelle,
+  queryToFindEntityByLibelle
 } from "../sql/sql-queries-utils";
 
 export const saveEntity = async (
@@ -34,12 +35,10 @@ export const getEntityByLibelle = async <T extends EntiteSimple>(
   libelle: string,
   tableName: string
 ): Promise<T> => {
-  const results = await SqlConnection.query(
-    getQueryToFindEntityByLibelle(tableName, libelle)
-  );
+  const entities = await queryToFindEntityByLibelle<T>(tableName, libelle);
 
-  if (results && results[0] && results[0].id) {
-    return results[0];
+  if (entities && entities[0]?.id) {
+    return entities[0];
   }
 
   return null;
@@ -49,12 +48,10 @@ export const getEntityByCode = async (
   code: string,
   tableName: string
 ): Promise<EntiteSimple> => {
-  const results = await SqlConnection.query(
-    getQueryToFindEntityByCode(tableName, code)
-  );
+  const entities = await queryToFindEntityByCode(tableName, code);
 
-  if (results && results[0] && results[0].id) {
-    return results[0];
+  if (entities && entities[0]?.id) {
+    return entities[0];
   }
 
   return null;
@@ -65,13 +62,22 @@ export const getEntityByCodeAndLibelle = async (
   libelle: string,
   tableName: string
 ): Promise<EntiteSimple> => {
-  const results = await SqlConnection.query(
-    getQueryToFindEntityByCodeAndLibelle(tableName, code, libelle)
+  const entities = await queryToFindEntityByCodeAndLibelle(
+    tableName,
+    code,
+    libelle
   );
 
-  if (results && results[0] && results[0].id) {
-    return results[0];
+  if (entities && entities[0]?.id) {
+    return entities[0];
   }
 
   return null;
+};
+
+export const deleteEntityById = async (
+  entityName: string,
+  id: number
+): Promise<SqlSaveResponse> => {
+  return await queryToDeleteAnEntityById(entityName, id);
 };

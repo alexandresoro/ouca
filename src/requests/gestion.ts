@@ -21,6 +21,7 @@ import { HttpParameters } from "../http/httpParameters";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllAges } from "../sql-api/sql-api-age";
 import { findAllClasses } from "../sql-api/sql-api-classe";
+import { deleteEntityById } from "../sql-api/sql-api-common";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
 import { findAllComportements } from "../sql-api/sql-api-comportement";
 import { findAllDepartements } from "../sql-api/sql-api-departement";
@@ -33,11 +34,7 @@ import { findAllMilieux } from "../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../sql-api/sql-api-observateur";
 import { findAllSexes } from "../sql-api/sql-api-sexe";
 import { SqlConnection } from "../sql-api/sql-connection";
-import {
-  DB_SAVE_MAPPING,
-  getDeleteEntityByIdQuery,
-  getSaveEntityQuery
-} from "../sql/sql-queries-utils";
+import { DB_SAVE_MAPPING, getSaveEntityQuery } from "../sql/sql-queries-utils";
 import {
   TABLE_AGE,
   TABLE_CLASSE,
@@ -71,9 +68,8 @@ const deleteEntity = async (
   httpParameters: HttpParameters,
   entityName: string
 ): Promise<PostResponse> => {
-  const sqlResponse: SqlSaveResponse = await SqlConnection.query(
-    getDeleteEntityByIdQuery(entityName, +httpParameters.queryParameters.id)
-  );
+  const id: number = +httpParameters.queryParameters.id;
+  const sqlResponse: SqlSaveResponse = await deleteEntityById(entityName, id);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
