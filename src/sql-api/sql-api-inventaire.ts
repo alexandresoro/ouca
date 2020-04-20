@@ -9,14 +9,14 @@ import {
   queryToFindInventaireIdById,
   queryToFindMeteosIdsByInventaireId
 } from "../sql/sql-queries-inventaire";
-import { getQueryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
-import { getQueryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
+import { queryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
+import { queryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
-  getQueryToFindOneById,
-  getSaveEntityQuery,
-  getSaveListOfEntitesQueries,
-  queryToDeleteAnEntityByAttribute
+  queriesToSaveListOfEntities,
+  queryToDeleteAnEntityByAttribute,
+  queryToFindOneById,
+  queryToSaveEntity
 } from "../sql/sql-queries-utils";
 import {
   DATE_PATTERN,
@@ -36,7 +36,6 @@ import {
   getArrayFromObjects
 } from "../utils/utils";
 import { deleteEntityById } from "./sql-api-common";
-import { SqlConnection } from "./sql-connection";
 
 const deleteAssociesAndMeteosByInventaireId = async (
   inventaireId: number
@@ -62,12 +61,10 @@ const saveInventaireMeteos = async (
   meteosIds: number[]
 ): Promise<void> => {
   if (meteosIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_INVENTAIRE_METEO,
-        inventaireId,
-        meteosIds
-      )
+    await queriesToSaveListOfEntities(
+      TABLE_INVENTAIRE_METEO,
+      inventaireId,
+      meteosIds
     );
   }
 };
@@ -77,12 +74,10 @@ const saveInventaireAssocies = async (
   associesIds: number[]
 ): Promise<void> => {
   if (associesIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_INVENTAIRE_ASSOCIE,
-        inventaireId,
-        associesIds
-      )
+    await queriesToSaveListOfEntities(
+      TABLE_INVENTAIRE_ASSOCIE,
+      inventaireId,
+      associesIds
     );
   }
 };
@@ -111,23 +106,21 @@ export const persistInventaire = async (
   }
 
   // Save the inventaire
-  const inventaireResult: SqlSaveResponse = await SqlConnection.query(
-    getSaveEntityQuery(
-      TABLE_INVENTAIRE,
-      {
-        date: format(
-          interpretDateTimestampAsLocalTimeZoneDate(date),
-          DATE_PATTERN
-        ),
-        dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN),
-        altitude,
-        longitude,
-        latitude,
-        coordinatesSystem,
-        ...otherInventaireAttributes
-      },
-      DB_SAVE_MAPPING.inventaire
-    )
+  const inventaireResult = await queryToSaveEntity(
+    TABLE_INVENTAIRE,
+    {
+      date: format(
+        interpretDateTimestampAsLocalTimeZoneDate(date),
+        DATE_PATTERN
+      ),
+      dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN),
+      altitude,
+      longitude,
+      latitude,
+      coordinatesSystem,
+      ...otherInventaireAttributes
+    },
+    DB_SAVE_MAPPING.inventaire
   );
 
   // Get the inventaire ID
@@ -194,12 +187,13 @@ export const findInventaireById = async (
   inventaireId: number
 ): Promise<Inventaire> => {
   const [inventairesDb, associesDb, meteosDb] = await Promise.all([
-    SqlConnection.query(getQueryToFindOneById(TABLE_INVENTAIRE, inventaireId)),
-    SqlConnection.query(getQueryToFindAssociesByInventaireId(inventaireId)),
-    SqlConnection.query(getQueryToFindMetosByInventaireId(inventaireId))
+    queryToFindOneById<InventaireDb>(TABLE_INVENTAIRE, inventaireId),
+    queryToFindAssociesByInventaireId(inventaireId),
+    queryToFindMetosByInventaireId(inventaireId)
   ]);
 
-  const inventaireDb: InventaireDb = inventairesDb[0];
+  const inventaireDb: InventaireDb =
+    inventairesDb && inventairesDb[0]?.id ? inventairesDb[0] : null;
 
   const inventaire: Inventaire = buildInventaireFromInventaireDb(inventaireDb);
   inventaire.associesIds = mapAssociesIds(associesDb);

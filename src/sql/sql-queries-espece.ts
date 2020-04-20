@@ -6,7 +6,7 @@ import {
   ORDER_ASC,
   TABLE_ESPECE
 } from "../utils/constants";
-import { queryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
+import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";
 export const queryToFindAllEspeces = async (): Promise<EspeceDb[]> => {
   return queryToFindAllEntities<EspeceDb>(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC);
@@ -47,5 +47,5 @@ export const queryToFindEspeceByNomLatin = async (
 export const queryToFindNumberOfDonneesByEspeceId = async (
   especeId?: number
 ): Promise<NumberOfObjectsById[]> => {
-  return queryToFindNumberOfDonneesByDoneeeEntityId(COLUMN_ESPECE_ID, especeId);
+  return queryToFindNumberOfDonneesByDonneeEntityId(COLUMN_ESPECE_ID, especeId);
 };

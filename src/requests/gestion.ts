@@ -33,8 +33,7 @@ import { findAllMeteos } from "../sql-api/sql-api-meteo";
 import { findAllMilieux } from "../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../sql-api/sql-api-observateur";
 import { findAllSexes } from "../sql-api/sql-api-sexe";
-import { SqlConnection } from "../sql-api/sql-connection";
-import { DB_SAVE_MAPPING, getSaveEntityQuery } from "../sql/sql-queries-utils";
+import { DB_SAVE_MAPPING, queryToSaveEntity } from "../sql/sql-queries-utils";
 import {
   TABLE_AGE,
   TABLE_CLASSE,
@@ -58,9 +57,7 @@ const saveEntity = async (
   tableName: string,
   mapping: { [column: string]: string }
 ): Promise<PostResponse> => {
-  const sqlResponse: SqlSaveResponse = await SqlConnection.query(
-    getSaveEntityQuery(tableName, entityToSave, mapping)
-  );
+  const sqlResponse = await queryToSaveEntity(tableName, entityToSave, mapping);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 

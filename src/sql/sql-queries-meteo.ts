@@ -1,7 +1,7 @@
 import { Meteo } from "ouca-common/meteo.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_METEO } from "../utils/constants";
-import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllMeteos = async (): Promise<Meteo[]> => {
   return queryToFindAllEntities<Meteo>(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC);
@@ -23,14 +23,16 @@ export const queryToFindAllMeteosByDonneeId = async (
   return query<{ donneeId: number; libelle: string }[]>(queryStr);
 };
 
-export function getQueryToFindMetosByInventaireId(
+export const queryToFindMetosByInventaireId = async (
   inventaireId: number
-): string {
-  return getQuery(
-    "SELECT distinct meteo_id as meteoId FROM inventaire_meteo WHERE inventaire_id=" +
+): Promise<{ meteoId: number }[]> => {
+  return query<{ meteoId: number }[]>(
+    "SELECT distinct meteo_id as meteoId" +
+      " FROM inventaire_meteo" +
+      " WHERE inventaire_id=" +
       inventaireId
   );
-}
+};
 
 export const queryToFindNumberOfDonneesByMeteoId = async (
   meteoId?: number

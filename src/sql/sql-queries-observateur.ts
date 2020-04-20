@@ -7,7 +7,7 @@ import {
   TABLE_OBSERVATEUR
 } from "../utils/constants";
 import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
-import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllObservateurs = async (): Promise<Observateur[]> => {
   return queryToFindAllEntities<Observateur>(
@@ -17,14 +17,16 @@ export const queryToFindAllObservateurs = async (): Promise<Observateur[]> => {
   );
 };
 
-export function getQueryToFindAssociesByInventaireId(
+export const queryToFindAssociesByInventaireId = async (
   inventaireId: number
-): string {
-  return getQuery(
-    "SELECT distinct observateur_id as associeId FROM inventaire_associe WHERE inventaire_id=" +
+): Promise<{ associeId: number }[]> => {
+  return query<{ associeId: number }[]>(
+    "SELECT distinct observateur_id as associeId" +
+      " FROM inventaire_associe" +
+      " WHERE inventaire_id=" +
       inventaireId
   );
-}
+};
 
 export const queryToFindNumberOfDonneesByObservateurId = async (
   observateurId?: number

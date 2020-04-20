@@ -1,12 +1,11 @@
 import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { SqlConnection } from "../sql-api/sql-connection";
 import {
-  getSaveEntityQuery,
   queryToDeleteAnEntityById,
   queryToFindEntityByCode,
   queryToFindEntityByCodeAndLibelle,
-  queryToFindEntityByLibelle
+  queryToFindEntityByLibelle,
+  queryToSaveEntity
 } from "../sql/sql-queries-utils";
 
 export const saveEntity = async (
@@ -14,10 +13,7 @@ export const saveEntity = async (
   entityToSave: EntiteSimple,
   mapping: { [column: string]: string }
 ): Promise<boolean> => {
-  const saveResult: SqlSaveResponse = await SqlConnection.query(
-    getSaveEntityQuery(tableName, entityToSave, mapping)
-  );
-
+  const saveResult = await queryToSaveEntity(tableName, entityToSave, mapping);
   return !!saveResult && !!saveResult.insertId && saveResult.affectedRows === 1;
 };
 
@@ -26,9 +22,7 @@ export const saveDbEntity = async (
   tableName: string,
   mapping: { [column: string]: string }
 ): Promise<SqlSaveResponse> => {
-  return await SqlConnection.query(
-    getSaveEntityQuery(tableName, entityToSave, mapping)
-  );
+  return await queryToSaveEntity(tableName, entityToSave, mapping);
 };
 
 export const getEntityByLibelle = async <T extends EntiteSimple>(

@@ -5,7 +5,7 @@ import {
   ORDER_ASC,
   TABLE_COMPORTEMENT
 } from "../utils/constants";
-import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllComportements = async (): Promise<
   Comportement[]
@@ -33,16 +33,18 @@ export const queryToFindAllComportementsByDonneeId = async (
   return query<{ donneeId: number; code: string; libelle: string }[]>(queryStr);
 };
 
-export function getQueryToFindComportementsIdsByDonneeId(
+export const queryToFindComportementsIdsByDonneeId = async (
   donneeId: number
-): string {
-  return getQuery(
-    "SELECT distinct comportement_id as comportementId FROM donnee_comportement WHERE donnee_id=" +
+): Promise<{ comportementId: number }[]> => {
+  return query<{ comportementId: number }[]>(
+    "SELECT distinct comportement_id as comportementId" +
+      " FROM donnee_comportement" +
+      " WHERE donnee_id=" +
       donneeId
   );
-}
+};
 
-export const getQueryToFindNumberOfDonneesByComportementId = async (
+export const queryToFindNumberOfDonneesByComportementId = async (
   comportementId?: number
 ): Promise<NumberOfObjectsById[]> => {
   let queryStr: string =

@@ -1,15 +1,20 @@
+import { Age } from "ouca-common/age.object";
 import { AppConfiguration } from "ouca-common/app-configuration.object";
+import { Departement } from "ouca-common/departement.object";
+import { Observateur } from "ouca-common/observateur.object";
+import { Sexe } from "ouca-common/sexe.object";
 import { HttpParameters } from "../http/httpParameters";
+import { buildEstimationsNombreFromEstimationsNombreDb } from "../mapping/estimation-nombre-mapping";
 import {
   buildAppConfigurationFromSettingsDb,
-  buildSettingsDbFromAppConfiguration,
+  buildSettingsDbFromAppConfiguration
 } from "../mapping/settings-mapping";
+import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 import { SettingsDb } from "../objects/db/settings-db.object";
 import { saveDbEntity } from "../sql-api/sql-api-common";
-import { SqlConnection } from "../sql-api/sql-connection";
 import {
   DB_CONFIGURATION_MAPPING,
-  getFindAllQuery,
+  queryToFindAllEntities
 } from "../sql/sql-queries-utils";
 import {
   COLUMN_CODE,
@@ -20,25 +25,42 @@ import {
   TABLE_ESTIMATION_NOMBRE,
   TABLE_OBSERVATEUR,
   TABLE_SETTINGS,
-  TABLE_SEXE,
+  TABLE_SEXE
 } from "../utils/constants";
 
 export const getAppConfiguration = async (): Promise<AppConfiguration> => {
-  const results = await SqlConnection.query(
-    getFindAllQuery(TABLE_SETTINGS) +
-      getFindAllQuery(TABLE_OBSERVATEUR, COLUMN_LIBELLE, ORDER_ASC) +
-      getFindAllQuery(TABLE_DEPARTEMENT, COLUMN_CODE, ORDER_ASC) +
-      getFindAllQuery(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC) +
-      getFindAllQuery(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC) +
-      getFindAllQuery(TABLE_ESTIMATION_NOMBRE, COLUMN_LIBELLE, ORDER_ASC)
-  );
+  const [
+    settingsDb,
+    observateurs,
+    departements,
+    ages,
+    sexes,
+    estimationsNombreDb
+  ] = await Promise.all([
+    queryToFindAllEntities<SettingsDb>(TABLE_SETTINGS),
+    queryToFindAllEntities<Observateur>(
+      TABLE_OBSERVATEUR,
+      COLUMN_LIBELLE,
+      ORDER_ASC
+    ),
+    queryToFindAllEntities<Departement>(
+      TABLE_DEPARTEMENT,
+      COLUMN_CODE,
+      ORDER_ASC
+    ),
+    queryToFindAllEntities<Age>(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC),
+    queryToFindAllEntities<Sexe>(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC),
+    queryToFindAllEntities<EstimationNombreDb>(
+      TABLE_ESTIMATION_NOMBRE,
+      COLUMN_LIBELLE,
+      ORDER_ASC
+    )
+  ]);
 
-  const settings: SettingsDb = results[0][0];
-  const observateurs = results[1];
-  const departements = results[2];
-  const ages = results[3];
-  const sexes = results[4];
-  const estimationsNombre = results[5];
+  const settings: SettingsDb = settingsDb[0];
+  const estimationsNombre = buildEstimationsNombreFromEstimationsNombreDb(
+    estimationsNombreDb
+  );
 
   return buildAppConfigurationFromSettingsDb(
     settings,

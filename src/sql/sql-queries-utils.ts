@@ -126,12 +126,6 @@ export function query<T>(query: string): Promise<T> {
   return SqlConnection.query(query + ";");
 }
 
-/** Deprecated: replaced by query() */
-export const getQuery = (query: string): string => {
-  console.log("---> " + query + ";");
-  return query + ";";
-};
-
 export const queryToFindAllEntities = async <T>(
   tableName: string,
   attributeForOrdering?: string,
@@ -146,34 +140,19 @@ export const queryToFindAllEntities = async <T>(
   return query<T[]>(queryStr);
 };
 
-/** Deprecated: replaced by queryToFindAllEntities */
-export function getFindAllQuery(
-  tableName: string,
-  attributeForOrdering?: string,
-  order?: string
-): string {
-  let query: string = "SELECT * FROM " + tableName;
-
-  if (!!attributeForOrdering && !!order) {
-    query = query + " ORDER BY " + attributeForOrdering + " " + order;
-  }
-
-  return getQuery(query);
-}
-
-export const getQueryToFindOneById = (
+export const queryToFindOneById = async <T>(
   tableName: string,
   id: number
-): string => {
-  return getQuery("SELECT * FROM " + tableName + " WHERE id=" + id);
+): Promise<T[]> => {
+  return query<T[]>("SELECT * FROM " + tableName + " WHERE id=" + id);
 };
 
-export function getSaveEntityQuery<T extends EntiteSimple>(
+export const queryToSaveEntity = async <T extends EntiteSimple>(
   tableName: string,
   entityToSave: T,
   mapping: { [column: string]: string }
-): string {
-  let query: string;
+): Promise<SqlSaveResponse> => {
+  let queryStr: string;
 
   const keys: string[] = _.keys(mapping);
 
@@ -195,7 +174,7 @@ export function getSaveEntityQuery<T extends EntiteSimple>(
     });
     const values = valuesArray.join(",");
 
-    query =
+    queryStr =
       "INSERT INTO " +
       tableName +
       "(" +
@@ -220,7 +199,7 @@ export function getSaveEntityQuery<T extends EntiteSimple>(
     });
     const updates = updatesArray.join(",");
 
-    query =
+    queryStr =
       "UPDATE " +
       tableName +
       " SET " +
@@ -229,15 +208,15 @@ export function getSaveEntityQuery<T extends EntiteSimple>(
       entityToSave.id;
   }
 
-  return getQuery(query);
-}
+  return query<SqlSaveResponse>(queryStr);
+};
 
-export function getSaveManyToManyEntityQuery(
+export const queryToSaveManyToManyEntity = async (
   tableName: string,
   mainId: number,
   subId: number
-): string {
-  const query: string =
+): Promise<SqlSaveResponse> => {
+  const queryStr: string =
     "INSERT INTO " +
     tableName +
     "(" +
@@ -251,62 +230,20 @@ export function getSaveManyToManyEntityQuery(
     subId +
     ")";
 
-  return getQuery(query);
-}
+  return query<SqlSaveResponse>(queryStr);
+};
 
-export function getSaveListOfEntitesQueries(
+export const queriesToSaveListOfEntities = async (
   tableName: string,
   mainId: number,
   subIds: number[]
-): string {
-  let queries = "";
+): Promise<SqlSaveResponse[]> => {
+  const queries = [];
   subIds.forEach((subId) => {
-    queries += getSaveManyToManyEntityQuery(tableName, mainId, subId);
+    queries.push(queryToSaveManyToManyEntity(tableName, mainId, subId));
   });
-  return queries;
-}
-
-export const updateInTableQuery = (
-  tableName: string,
-  setColumn: string,
-  setValue: string | number,
-  whereColumn: string,
-  whereValue: string
-): string => {
-  const query: string =
-    "UPDATE " +
-    tableName +
-    " SET " +
-    setColumn +
-    '="' +
-    setValue +
-    '" WHERE ' +
-    whereColumn +
-    '="' +
-    whereValue +
-    '"';
-  return getQuery(query);
-};
-
-export const updateAllInTableQuery = (
-  tableName: string,
-  setColumn: string,
-  whereColumn: string,
-  whereSetMappingValues: { [key: string]: string | number }
-): string => {
-  const queries: string[] = [];
-  _.forEach(whereSetMappingValues, (setValue, whereValue) => {
-    queries.push(
-      updateInTableQuery(
-        tableName,
-        setColumn,
-        setValue,
-        whereColumn,
-        whereValue
-      )
-    );
-  });
-  return queries.join("");
+  //return queries;
+  return Promise.all(queries);
 };
 
 export const queryToDeleteAnEntityById = async (

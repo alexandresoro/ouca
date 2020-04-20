@@ -1,7 +1,7 @@
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_AGE } from "../utils/constants";
-import { queryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
+import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
 import { queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllEstimationsNombre = async (): Promise<
@@ -17,7 +17,7 @@ export const queryToFindAllEstimationsNombre = async (): Promise<
 export const queryToFindNumberOfDonneesByEstimationNombreId = async (
   estimationId?: number
 ): Promise<NumberOfObjectsById[]> => {
-  return queryToFindNumberOfDonneesByDoneeeEntityId(
+  return queryToFindNumberOfDonneesByDonneeEntityId(
     "estimation_nombre_id",
     estimationId
   );

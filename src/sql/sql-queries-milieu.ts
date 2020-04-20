@@ -1,7 +1,7 @@
 import { Milieu } from "ouca-common/milieu.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_MILIEU } from "../utils/constants";
-import { getQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllMilieux = async (): Promise<Milieu[]> => {
   return queryToFindAllEntities<Milieu>(
@@ -27,12 +27,16 @@ export const queryToFindAllMilieuxByDonneeId = async (
   return query<{ donneeId: number; code: string; libelle: string }[]>(queryStr);
 };
 
-export function getQueryToFindMilieuxIdsByDonneeId(donneeId: number): string {
-  return getQuery(
-    "SELECT distinct milieu_id as milieuId FROM donnee_milieu WHERE donnee_id=" +
+export const queryToFindMilieuxIdsByDonneeId = async (
+  donneeId: number
+): Promise<{ milieuId: number }[]> => {
+  return query<{ milieuId: number }[]>(
+    "SELECT distinct milieu_id as milieuId" +
+      " FROM donnee_milieu" +
+      " WHERE donnee_id=" +
       donneeId
   );
-}
+};
 
 export const queryToFindNumberOfDonneesByMilieuId = async (
   milieuId?: number

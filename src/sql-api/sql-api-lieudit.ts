@@ -7,17 +7,14 @@ import {
   buildLieuditFromLieuditDb,
   buildLieuxditsFromLieuxditsDb
 } from "../mapping/lieudit-mapping";
+import { LieuditDb } from "../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { SqlConnection } from "../sql-api/sql-connection";
 import {
   queryToFindAllLieuxDits,
   queryToFindLieuditByCommuneIdAndNom,
   queryToFindNumberOfDonneesByLieuDitId
 } from "../sql/sql-queries-lieudit";
-import {
-  DB_SAVE_MAPPING,
-  getQueryToFindOneById
-} from "../sql/sql-queries-utils";
+import { DB_SAVE_MAPPING, queryToFindOneById } from "../sql/sql-queries-utils";
 import { TABLE_LIEUDIT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { saveDbEntity } from "./sql-api-common";
@@ -38,17 +35,18 @@ export const findAllLieuxDits = async (): Promise<Lieudit[]> => {
 };
 
 export const findLieuditById = async (lieuditId: number): Promise<Lieudit> => {
-  const results = await SqlConnection.query(
-    getQueryToFindOneById(TABLE_LIEUDIT, lieuditId)
+  const lieuxDitsDb = await queryToFindOneById<LieuditDb>(
+    TABLE_LIEUDIT,
+    lieuditId
   );
 
-  let lieudit: Lieudit = null;
+  let lieuDit: Lieudit = null;
 
-  if (results && results[0] && results[0].id) {
-    lieudit = buildLieuditFromLieuditDb(results[0]);
+  if (lieuxDitsDb && lieuxDitsDb[0]?.id) {
+    lieuDit = buildLieuditFromLieuditDb(lieuxDitsDb[0]);
   }
 
-  return lieudit;
+  return lieuDit;
 };
 
 export const getLieuditByCommuneIdAndNom = async (

@@ -5,7 +5,7 @@ import {
   ORDER_ASC,
   TABLE_ESTIMATION_DISTANCE
 } from "../utils/constants";
-import { queryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
+import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
 import { queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllEstimationsDistance = async (): Promise<
@@ -21,7 +21,7 @@ export const queryToFindAllEstimationsDistance = async (): Promise<
 export const getQueryToFindNumberOfDonneesByEstimationDistanceId = async (
   estimationDistanceId?: number
 ): Promise<NumberOfObjectsById[]> => {
-  return queryToFindNumberOfDonneesByDoneeeEntityId(
+  return queryToFindNumberOfDonneesByDonneeEntityId(
     "estimation_distance_id",
     estimationDistanceId
   );

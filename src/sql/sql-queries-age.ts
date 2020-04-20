@@ -1,7 +1,7 @@
 import { Age } from "ouca-common/age.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_AGE } from "../utils/constants";
-import { queryToFindNumberOfDonneesByDoneeeEntityId } from "./sql-queries-donnee";
+import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
 import { queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllAges = async (): Promise<Age[]> => {
@@ -11,5 +11,5 @@ export const queryToFindAllAges = async (): Promise<Age[]> => {
 export const queryToFindNumberOfDonneesByAgeId = async (
   ageId?: number
 ): Promise<NumberOfObjectsById[]> => {
-  return queryToFindNumberOfDonneesByDoneeeEntityId("age_id", ageId);
+  return queryToFindNumberOfDonneesByDonneeEntityId("age_id", ageId);
 };

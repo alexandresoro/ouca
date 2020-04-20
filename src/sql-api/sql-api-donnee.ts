@@ -8,39 +8,39 @@ import { Inventaire } from "ouca-common/inventaire.object";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
-  getQueryToFindComportementsIdsByDonneeId,
-  queryToFindAllComportementsByDonneeId
+  queryToFindAllComportementsByDonneeId,
+  queryToFindComportementsIdsByDonneeId
 } from "../sql/sql-queries-comportement";
 import {
-  getQueryToFindDonneesByCriterion,
   queryToCountDonneesByInventaireId,
   queryToFindDonneeById,
   queryToFindDonneeIdsByAllAttributes,
   queryToFindDonneeIndexById,
+  queryToFindDonneesByCriterion,
   queryToFindLastDonneeId,
   queryToFindLastRegroupement,
   queryToFindNextDonneeIdByCurrentDonneeId,
-  queryToFindNumberOfDonneesByDoneeeEntityId,
+  queryToFindNumberOfDonneesByDonneeEntityId,
   queryToFindPreviousDonneeIdByCurrentDonneeId,
   queryToUpdateDonneesInventaireId
 } from "../sql/sql-queries-donnee";
 import {
-  getQueryToFindMetosByInventaireId,
-  queryToFindAllMeteosByDonneeId
+  queryToFindAllMeteosByDonneeId,
+  queryToFindMetosByInventaireId
 } from "../sql/sql-queries-meteo";
 import {
-  getQueryToFindMilieuxIdsByDonneeId,
-  queryToFindAllMilieuxByDonneeId
+  queryToFindAllMilieuxByDonneeId,
+  queryToFindMilieuxIdsByDonneeId
 } from "../sql/sql-queries-milieu";
 import {
-  getQueryToFindAssociesByInventaireId,
-  queryToFindAllAssociesByDonneeId
+  queryToFindAllAssociesByDonneeId,
+  queryToFindAssociesByInventaireId
 } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
-  getSaveEntityQuery,
-  getSaveListOfEntitesQueries,
-  queryToDeleteAnEntityByAttribute
+  queriesToSaveListOfEntities,
+  queryToDeleteAnEntityByAttribute,
+  queryToSaveEntity
 } from "../sql/sql-queries-utils";
 import {
   DATE_WITH_TIME_PATTERN,
@@ -64,30 +64,23 @@ import {
 } from "../utils/utils";
 import { deleteEntityById } from "./sql-api-common";
 import { deleteInventaireById } from "./sql-api-inventaire";
-import { SqlConnection } from "./sql-connection";
 
 export const buildDonneeFromFlatDonneeWithMinimalData = async (
   flatDonnee: FlatDonneeWithMinimalData
 ): Promise<Donnee> => {
   if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
     const [
-      associes,
-      meteos,
-      comportements,
-      milieux,
-      nbDonnees
+      associesIdsByInventaireId,
+      meteosIdsByInventaireId,
+      comportementsIdsByDonneeId,
+      milieuxIdsByDonneeId,
+      nbDonneesByInventaireId
     ] = await Promise.all([
-      SqlConnection.query(
-        getQueryToFindAssociesByInventaireId(flatDonnee.inventaireId)
-      ),
-      SqlConnection.query(
-        getQueryToFindMetosByInventaireId(flatDonnee.inventaireId)
-      ),
-      SqlConnection.query(
-        getQueryToFindComportementsIdsByDonneeId(flatDonnee.id)
-      ),
-      SqlConnection.query(getQueryToFindMilieuxIdsByDonneeId(flatDonnee.id)),
-      queryToFindNumberOfDonneesByDoneeeEntityId(
+      queryToFindAssociesByInventaireId(flatDonnee.inventaireId),
+      queryToFindMetosByInventaireId(flatDonnee.inventaireId),
+      queryToFindComportementsIdsByDonneeId(flatDonnee.id),
+      queryToFindMilieuxIdsByDonneeId(flatDonnee.id),
+      queryToFindNumberOfDonneesByDonneeEntityId(
         INVENTAIRE_ID,
         flatDonnee.inventaireId
       )
@@ -96,7 +89,7 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
     const inventaire: Inventaire = {
       id: flatDonnee.inventaireId,
       observateurId: flatDonnee.observateurId,
-      associesIds: mapAssociesIds(associes),
+      associesIds: mapAssociesIds(associesIdsByInventaireId),
       date: flatDonnee.date,
       heure: flatDonnee.heure,
       duree: flatDonnee.duree,
@@ -111,8 +104,8 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
           }
         : null,
       temperature: flatDonnee.temperature,
-      meteosIds: mapMeteosIds(meteos),
-      nbDonnees: nbDonnees[0].nbDonnees
+      meteosIds: mapMeteosIds(meteosIdsByInventaireId),
+      nbDonnees: nbDonneesByInventaireId[0].nb
     };
 
     const donnee: Donnee = {
@@ -127,8 +120,8 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
       estimationDistanceId: flatDonnee.estimationDistanceId,
       distance: flatDonnee.distance,
       regroupement: flatDonnee.regroupement,
-      comportementsIds: mapComportementsIds(comportements),
-      milieuxIds: mapMilieuxIds(milieux),
+      comportementsIds: mapComportementsIds(comportementsIdsByDonneeId),
+      milieuxIds: mapMilieuxIds(milieuxIdsByDonneeId),
       commentaire: flatDonnee.commentaire
     };
     return donnee;
@@ -157,15 +150,13 @@ export const persistDonnee = async (
     ]);
   }
 
-  const saveDonneeResponse: SqlSaveResponse = await SqlConnection.query(
-    getSaveEntityQuery(
-      TABLE_DONNEE,
-      {
-        ...donneeToSave,
-        dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN)
-      },
-      DB_SAVE_MAPPING.donnee
-    )
+  const saveDonneeResponse: SqlSaveResponse = await queryToSaveEntity(
+    TABLE_DONNEE,
+    {
+      ...donneeToSave,
+      dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN)
+    },
+    DB_SAVE_MAPPING.donnee
   );
 
   // If it is an update we take the existing ID else we take the inserted ID
@@ -175,23 +166,19 @@ export const persistDonnee = async (
 
   // Save the comportements
   if (donneeToSave.comportementsIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_DONNEE_COMPORTEMENT,
-        savedDonneeId,
-        donneeToSave.comportementsIds
-      )
+    await queriesToSaveListOfEntities(
+      TABLE_DONNEE_COMPORTEMENT,
+      savedDonneeId,
+      donneeToSave.comportementsIds
     );
   }
 
   // Save the milieux
   if (donneeToSave.milieuxIds.length > 0) {
-    await SqlConnection.query(
-      getSaveListOfEntitesQueries(
-        TABLE_DONNEE_MILIEU,
-        savedDonneeId,
-        donneeToSave.milieuxIds
-      )
+    await queriesToSaveListOfEntities(
+      TABLE_DONNEE_MILIEU,
+      savedDonneeId,
+      donneeToSave.milieuxIds
     );
   }
 
@@ -210,16 +197,16 @@ export const getExistingDonneeId = async (
 
   for (const id of eligibleDonneeIds) {
     // Compare the comportements and the milieux
-    const response = await SqlConnection.query(
-      getQueryToFindComportementsIdsByDonneeId(id) +
-        getQueryToFindMilieuxIdsByDonneeId(id)
-    );
+    const [comportements, milieux] = await Promise.all([
+      queryToFindComportementsIdsByDonneeId(id),
+      queryToFindMilieuxIdsByDonneeId(id)
+    ]);
 
     const comportementsIds: number[] = getArrayFromObjects(
-      response[0],
+      comportements,
       "comportementId"
     );
-    const milieuxIds: number[] = getArrayFromObjects(response[1], "milieuId");
+    const milieuxIds: number[] = getArrayFromObjects(milieux, "milieuId");
 
     if (
       id !== donnee.id &&
@@ -254,9 +241,7 @@ export const updateInventaireIdForDonnees = async (
 export const findDonneesByCustomizedFilters = async (
   filter: DonneesFilter
 ): Promise<FlatDonnee[]> => {
-  const donnees: any[] = await SqlConnection.query(
-    getQueryToFindDonneesByCriterion(filter)
-  );
+  const donnees: any[] = await queryToFindDonneesByCriterion(filter);
 
   const donneesIds: number[] = _.map(donnees, (donnee) => {
     return donnee.id;

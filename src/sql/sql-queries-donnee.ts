@@ -12,7 +12,7 @@ import {
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
-import { getQuery, query } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 const getBaseQueryToFindDonnees = (): string => {
   return (
@@ -166,7 +166,7 @@ export const queryToFindLastRegroupement = async (): Promise<
   );
 };
 
-export const queryToFindNumberOfDonneesByDoneeeEntityId = async (
+export const queryToFindNumberOfDonneesByDonneeEntityId = async (
   entityIdAttribute: string,
   id?: number
 ): Promise<NumberOfObjectsById[]> => {
@@ -180,10 +180,10 @@ export const queryToFindNumberOfDonneesByDoneeeEntityId = async (
   return query<NumberOfObjectsById[]>(queryStr);
 };
 
-export const getQueryToFindDonneesByCriterion = (
+export const queryToFindDonneesByCriterion = async (
   criterion: DonneesFilter
-): string => {
-  let query: string = getBaseQueryToFindDetailedDonnees();
+): Promise<any[]> => {
+  let queryStr: string = getBaseQueryToFindDetailedDonnees();
 
   const whereTab: string[] = [];
 
@@ -385,14 +385,14 @@ export const getQueryToFindDonneesByCriterion = (
   }
 
   if (whereTab.length > 0) {
-    query += " WHERE";
+    queryStr += " WHERE";
   }
 
-  query += whereTab.join(" AND");
+  queryStr += whereTab.join(" AND");
 
-  query += " ORDER BY t_donnee.id DESC";
+  queryStr += " ORDER BY t_donnee.id DESC";
 
-  return getQuery(query);
+  return query<any[]>(queryStr);
 };
 
 export const queryToFindDonneeIdsByAllAttributes = async (
