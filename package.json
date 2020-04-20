@@ -30,6 +30,7 @@
     "multiparty": "*",
     "ouca-common": "*",
     "papaparse": "*",
+    "ws": "*",
     "xlsx": "*",
     "yargs": "*"
   },
@@ -37,6 +38,7 @@
     "@types/lodash": "*",
     "@types/multiparty": "*",
     "@types/node": "12",
+    "@types/ws": "*",
     "@types/yargs": "*",
     "@typescript-eslint/eslint-plugin": "*",
     "@typescript-eslint/parser": "*",

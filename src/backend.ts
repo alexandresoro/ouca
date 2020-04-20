@@ -1,6 +1,9 @@
 import * as http from "http";
 import * as multiparty from "multiparty";
+import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
+import { WebsocketServer } from "./ws/websocket-server";
+import { sendAppConfiguration } from "./ws/ws-messages";
 
 const DOCKER_ARG = "-docker";
 
@@ -18,7 +21,15 @@ const server = http.createServer(
     // This header is used on client side to extract the file name for the SQL extract for example
     res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
 
-    if (request.method === "OPTIONS") {
+    // Check if the method is allowed
+    const isMethodValid = checkMethodValidity(request);
+    if (!isMethodValid) {
+      res.statusCode = 405;
+      res.end();
+      return;
+    }
+
+    if (request.method === OPTIONS) {
       // Because of CORS, when the UI is requesting a POST method with a JSON body, it will preflight an OPTIONS call
       res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
       res.setHeader("Access-Control-Max-Age", "86400");
@@ -29,7 +40,7 @@ const server = http.createServer(
 
       res.statusCode = 200;
       res.end();
-    } else if (request.method === "POST") {
+    } else if (request.method === POST) {
       // Check if the request is a multipart content
       const isMultipartContentRequest: boolean = isMultipartContent(request);
 
@@ -37,9 +48,9 @@ const server = http.createServer(
         const form = new multiparty.Form();
         const chunksPart = [];
 
-        form.on("part", part => {
+        form.on("part", (part) => {
           if (part.filename) {
-            part.on("data", chunk => {
+            part.on("data", (chunk) => {
               chunksPart.push(chunk);
             });
             part.on("end", () => {
@@ -62,11 +73,18 @@ const server = http.createServer(
         form.parse(request);
       } else {
         const chunks = [];
-        request.on("data", chunk => {
+        request.on("data", (chunk) => {
           chunks.push(chunk);
         });
         request.on("end", () => {
-          const postData = JSON.parse(Buffer.concat(chunks).toString());
+          const postDataStr = Buffer.concat(chunks).toString();
+          if (!postDataStr) {
+            // If the request is a post without content, return a 400 error
+            res.statusCode = 400;
+            res.end();
+            return;
+          }
+          const postData = JSON.parse(postDataStr);
           handleHttpRequest(isDockerMode, request, res, postData);
         });
       }
@@ -75,6 +93,12 @@ const server = http.createServer(
     }
   }
 );
+
+const wss = WebsocketServer.createServer(server);
+
+wss.on("connection", (client) => {
+  sendAppConfiguration(client);
+});
 
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
