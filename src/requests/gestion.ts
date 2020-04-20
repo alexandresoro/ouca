@@ -117,15 +117,11 @@ export const getCommunes = async (): Promise<Commune[]> => {
 export const saveCommune = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
-  const communeToSave = httpParameters.postData;
-  if (
-    !communeToSave.departementId &&
-    !!communeToSave.departement &&
-    !!communeToSave.departement.id
-  ) {
-    communeToSave.departementId = communeToSave.departement.id;
-  }
-  return saveEntity(communeToSave, TABLE_COMMUNE, DB_SAVE_MAPPING.commune);
+  return saveEntity(
+    httpParameters.postData,
+    TABLE_COMMUNE,
+    DB_SAVE_MAPPING.commune
+  );
 };
 
 export const deleteCommune = async (
