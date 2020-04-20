@@ -18,6 +18,7 @@ export const findAllEstimationsNombre = async (): Promise<
   const estimations: EstimationNombre[] = buildEstimationsNombreFromEstimationsNombreDb(
     estimationsDb
   );
+
   _.forEach(estimations, (estimation: EstimationNombre) => {
     estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
   });

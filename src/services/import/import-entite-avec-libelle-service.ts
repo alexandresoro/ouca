@@ -1,5 +1,5 @@
 import { EntiteAvecLibelle } from "ouca-common/entite-avec-libelle.object";
-import { getEntityByLibelle, saveEntity } from "../../sql-api/sql-api-common";
+import { findEntityByLibelle, saveEntity } from "../../sql-api/sql-api-common";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleService extends ImportService {
@@ -22,7 +22,7 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
     }
 
     // Check that the entity does not exist
-    const entity = await getEntityByLibelle<EntiteAvecLibelle>(
+    const entity = await findEntityByLibelle<EntiteAvecLibelle>(
       entityTab[this.LIBELLE_INDEX],
       this.getTableName()
     );

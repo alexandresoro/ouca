@@ -4,6 +4,7 @@ import {
   buildCommuneFromCommuneDb,
   buildCommunesFromCommunesDb
 } from "../mapping/commune-mapping";
+import { CommuneDb } from "../objects/db/commune-db.object";
 import {
   queryToFindAllCommunes,
   queryToFindCommuneByDepartementIdAndCode,
@@ -13,6 +14,14 @@ import {
   queryToFindNumberOfLieuxDitsByCommuneId
 } from "../sql/sql-queries-commune";
 import { getNbByEntityId } from "../utils/utils";
+
+const getFirstCommune = (communesDb: CommuneDb[]): Commune => {
+  let commune: Commune = null;
+  if (communesDb && communesDb[0]?.id) {
+    commune = buildCommuneFromCommuneDb(communesDb[0]);
+  }
+  return commune;
+};
 
 export const findAllCommunes = async (): Promise<Commune[]> => {
   const [
@@ -35,7 +44,7 @@ export const findAllCommunes = async (): Promise<Commune[]> => {
   return communes;
 };
 
-export const getCommuneByDepartementIdAndCodeAndNom = async (
+export const findCommuneByDepartementIdAndCodeAndNom = async (
   departementId: number,
   code: number,
   nom: string
@@ -45,16 +54,11 @@ export const getCommuneByDepartementIdAndCodeAndNom = async (
     code,
     nom
   );
-  let commune: Commune = null;
 
-  if (communesDb && communesDb[0]?.id) {
-    commune = buildCommuneFromCommuneDb(communesDb[0]);
-  }
-
-  return commune;
+  return getFirstCommune(communesDb);
 };
 
-export const getCommuneByDepartementIdAndCode = async (
+export const findCommuneByDepartementIdAndCode = async (
   departementId: number,
   code: number
 ): Promise<Commune> => {
@@ -63,16 +67,10 @@ export const getCommuneByDepartementIdAndCode = async (
     code
   );
 
-  let commune: Commune = null;
-
-  if (communesDb && communesDb[0]?.id) {
-    commune = buildCommuneFromCommuneDb(communesDb[0]);
-  }
-
-  return commune;
+  return getFirstCommune(communesDb);
 };
 
-export const getCommuneByDepartementIdAndNom = async (
+export const findCommuneByDepartementIdAndNom = async (
   departementId: number,
   nom: string
 ): Promise<Commune> => {
@@ -81,11 +79,5 @@ export const getCommuneByDepartementIdAndNom = async (
     nom
   );
 
-  let commune: Commune = null;
-
-  if (communesDb && communesDb[0]?.id) {
-    commune = buildCommuneFromCommuneDb(communesDb[0]);
-  }
-
-  return commune;
+  return getFirstCommune(communesDb);
 };

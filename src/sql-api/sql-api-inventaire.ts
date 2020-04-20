@@ -60,7 +60,7 @@ const saveInventaireMeteos = async (
   inventaireId: number,
   meteosIds: number[]
 ): Promise<void> => {
-  if (meteosIds.length > 0) {
+  if (meteosIds.length > 0 && inventaireId) {
     await queriesToSaveListOfEntities(
       TABLE_INVENTAIRE_METEO,
       inventaireId,
@@ -73,7 +73,7 @@ const saveInventaireAssocies = async (
   inventaireId: number,
   associesIds: number[]
 ): Promise<void> => {
-  if (associesIds.length > 0) {
+  if (associesIds.length > 0 && inventaireId) {
     await queriesToSaveListOfEntities(
       TABLE_INVENTAIRE_ASSOCIE,
       inventaireId,
@@ -136,9 +136,9 @@ export const persistInventaire = async (
   return inventaireResult;
 };
 
-export const getExistingInventaireId = async (
+export const findExistingInventaireId = async (
   inventaire: Inventaire
-): Promise<number | null> => {
+): Promise<number> => {
   const inventaireIds = await queryToFindInventaireIdByAllAttributes(
     inventaire
   );
@@ -180,7 +180,7 @@ export const deleteInventaireById = async (
 
 export const findInventaireIdById = async (id: number): Promise<number> => {
   const ids = await queryToFindInventaireIdById(id);
-  return ids[0]?.id ? ids[0].id : null;
+  return ids && ids[0]?.id ? ids[0].id : null;
 };
 
 export const findInventaireById = async (

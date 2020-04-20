@@ -7,7 +7,7 @@ import {
 } from "../sql/sql-queries-classe";
 import { TABLE_CLASSE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { getEntityByLibelle } from "./sql-api-common";
+import { findEntityByLibelle } from "./sql-api-common";
 
 export const findAllClasses = async (): Promise<Classe[]> => {
   const [classes, nbEspecesByClasse, nbDonneesByClasse] = await Promise.all([
@@ -24,6 +24,6 @@ export const findAllClasses = async (): Promise<Classe[]> => {
   return classes;
 };
 
-export const getClasseByLibelle = async (libelle: string): Promise<Classe> => {
-  return await getEntityByLibelle<Classe>(libelle, TABLE_CLASSE);
+export const findClasseByLibelle = async (libelle: string): Promise<Classe> => {
+  return await findEntityByLibelle<Classe>(libelle, TABLE_CLASSE);
 };

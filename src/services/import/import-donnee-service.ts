@@ -16,13 +16,13 @@ import { Observateur } from "ouca-common/observateur.object";
 import { Sexe } from "ouca-common/sexe.object";
 import { ImportedDonnee } from "../../objects/imported-donnee.object";
 import {
-  getEntityByCode,
-  getEntityByLibelle
+  findEntityByCode,
+  findEntityByLibelle
 } from "../../sql-api/sql-api-common";
-import { getCommuneByDepartementIdAndCode } from "../../sql-api/sql-api-commune";
+import { findCommuneByDepartementIdAndCode } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { findEspeceByCode } from "../../sql-api/sql-api-espece";
-import { getLieuditByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
+import { findLieuDitByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
 import { findMeteoByLibelle } from "../../sql-api/sql-api-meteo";
 import { findObservateurByLibelle } from "../../sql-api/sql-api-observateur";
 import {
@@ -168,7 +168,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Commune" or return an error if it does not exist
-    const commune: Commune = await getCommuneByDepartementIdAndCode(
+    const commune: Commune = await findCommuneByDepartementIdAndCode(
       departement.id,
       +rawDonnee.codeCommune
     );
@@ -184,7 +184,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Lieu-dit" or return an error if it does not exist
-    const lieudit: Lieudit = await getLieuditByCommuneIdAndNom(
+    const lieudit: Lieudit = await findLieuDitByCommuneIdAndNom(
       commune.id,
       rawDonnee.lieudit
     );
@@ -251,7 +251,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Sexe" or return an error if it doesn't exist
-    const sexe = await getEntityByLibelle<Sexe>(rawDonnee.sexe, TABLE_SEXE);
+    const sexe = await findEntityByLibelle<Sexe>(rawDonnee.sexe, TABLE_SEXE);
 
     if (!sexe) {
       this.message = 'Le sexe "' + rawDonnee.sexe + "\" n'existe pas";
@@ -259,7 +259,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Age" or return an error if it doesn't exist
-    const age = await getEntityByLibelle<Age>(rawDonnee.age, TABLE_AGE);
+    const age = await findEntityByLibelle<Age>(rawDonnee.age, TABLE_AGE);
 
     if (!age) {
       this.message = "L'âge \"" + rawDonnee.age + "\" n'existe pas";
@@ -267,7 +267,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Estimation du nombre" or return an error if it doesn't exist
-    const estimationNombre = await getEntityByLibelle<EstimationNombre>(
+    const estimationNombre = await findEntityByLibelle<EstimationNombre>(
       rawDonnee.estimationNombre,
       TABLE_ESTIMATION_NOMBRE
     );
@@ -296,7 +296,7 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Estimation de la distance" or return an error if it doesn't exist
     let estimationDistance: EstimationDistance = null;
     if (rawDonnee.estimationDistance) {
-      estimationDistance = await getEntityByLibelle<EstimationDistance>(
+      estimationDistance = await findEntityByLibelle<EstimationDistance>(
         rawDonnee.estimationDistance,
         TABLE_ESTIMATION_DISTANCE
       );
@@ -322,7 +322,7 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Comportements" or return an error if some of them does not exist
     const comportementsIds: number[] = [];
     for (const codeComportement of rawDonnee.comportements) {
-      const comportement: Comportement = (await getEntityByCode(
+      const comportement: Comportement = (await findEntityByCode(
         codeComportement,
         TABLE_COMPORTEMENT
       )) as Comportement;
@@ -343,7 +343,7 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Milieux" or return an error if some of them does not exist
     const milieuxIds: number[] = [];
     for (const codeMilieu of rawDonnee.milieux) {
-      const milieu: Milieu = (await getEntityByCode(
+      const milieu: Milieu = (await findEntityByCode(
         codeMilieu,
         TABLE_MILIEU
       )) as Milieu;

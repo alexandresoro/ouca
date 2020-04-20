@@ -12,7 +12,7 @@ export const queryToFindAllLieuxDits = async (): Promise<LieuditDb[]> => {
   );
 };
 
-export const queryToFindLieuditByCommuneIdAndNom = async (
+export const queryToFindLieuDitByCommuneIdAndNom = async (
   communeId: number,
   nom: string
 ): Promise<LieuditDb[]> => {

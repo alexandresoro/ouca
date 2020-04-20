@@ -6,7 +6,7 @@ import {
 } from "../sql/sql-queries-observateur";
 import { TABLE_OBSERVATEUR } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { getEntityByLibelle } from "./sql-api-common";
+import { findEntityByLibelle } from "./sql-api-common";
 
 export const findAllObservateurs = async (): Promise<Observateur[]> => {
   const [observateurs, nbDonneesByObservateur] = await Promise.all([
@@ -27,7 +27,7 @@ export const findAllObservateurs = async (): Promise<Observateur[]> => {
 export const findObservateurByLibelle = async (
   observateurLibelle: string
 ): Promise<Observateur | null> => {
-  return await getEntityByLibelle<Observateur>(
+  return await findEntityByLibelle<Observateur>(
     observateurLibelle,
     TABLE_OBSERVATEUR
   );

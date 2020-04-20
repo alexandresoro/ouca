@@ -2,8 +2,8 @@ import { Commune } from "ouca-common/commune.model";
 import { Departement } from "ouca-common/departement.object";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {
-  getCommuneByDepartementIdAndCode,
-  getCommuneByDepartementIdAndNom
+  findCommuneByDepartementIdAndCode,
+  findCommuneByDepartementIdAndNom
 } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
@@ -51,7 +51,7 @@ export class ImportCommuneService extends ImportService {
     }
 
     // Check that the commune does not exists
-    const communeByCode: Commune = await getCommuneByDepartementIdAndCode(
+    const communeByCode: Commune = await findCommuneByDepartementIdAndCode(
       departement.id,
       +entityTab[this.CODE_INDEX]
     );
@@ -62,7 +62,7 @@ export class ImportCommuneService extends ImportService {
       return false;
     }
 
-    const communeByNom: Commune = await getCommuneByDepartementIdAndNom(
+    const communeByNom: Commune = await findCommuneByDepartementIdAndNom(
       departement.id,
       entityTab[this.NOM_INDEX]
     );

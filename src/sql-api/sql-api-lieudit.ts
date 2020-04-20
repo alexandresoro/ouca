@@ -11,7 +11,7 @@ import { LieuditDb } from "../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   queryToFindAllLieuxDits,
-  queryToFindLieuditByCommuneIdAndNom,
+  queryToFindLieuDitByCommuneIdAndNom,
   queryToFindNumberOfDonneesByLieuDitId
 } from "../sql/sql-queries-lieudit";
 import { DB_SAVE_MAPPING, queryToFindOneById } from "../sql/sql-queries-utils";
@@ -19,85 +19,79 @@ import { TABLE_LIEUDIT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { saveDbEntity } from "./sql-api-common";
 
+const getFirstLieuDit = (lieuxDitsDb: LieuditDb[]): Lieudit => {
+  let lieuDit: Lieudit = null;
+  if (lieuxDitsDb && lieuxDitsDb[0]?.id) {
+    lieuDit = buildLieuditFromLieuditDb(lieuxDitsDb[0]);
+  }
+  return lieuDit;
+};
+
 export const findAllLieuxDits = async (): Promise<Lieudit[]> => {
-  const [lieuxditsDb, nbDonneesByLieudit] = await Promise.all([
+  const [lieuxDitsDb, nbDonneesByLieuDit] = await Promise.all([
     queryToFindAllLieuxDits(),
     queryToFindNumberOfDonneesByLieuDitId()
   ]);
 
-  const lieuxdits: Lieudit[] = buildLieuxditsFromLieuxditsDb(lieuxditsDb);
+  const lieuxDits: Lieudit[] = buildLieuxditsFromLieuxditsDb(lieuxDitsDb);
 
-  _.forEach(lieuxdits, (lieudit: Lieudit) => {
-    lieudit.nbDonnees = getNbByEntityId(lieudit, nbDonneesByLieudit);
+  _.forEach(lieuxDits, (lieuDit: Lieudit) => {
+    lieuDit.nbDonnees = getNbByEntityId(lieuDit, nbDonneesByLieuDit);
   });
 
-  return lieuxdits;
+  return lieuxDits;
 };
 
-export const findLieuditById = async (lieuditId: number): Promise<Lieudit> => {
+export const findLieuDitById = async (lieuditId: number): Promise<Lieudit> => {
   const lieuxDitsDb = await queryToFindOneById<LieuditDb>(
     TABLE_LIEUDIT,
     lieuditId
   );
-
-  let lieuDit: Lieudit = null;
-
-  if (lieuxDitsDb && lieuxDitsDb[0]?.id) {
-    lieuDit = buildLieuditFromLieuditDb(lieuxDitsDb[0]);
-  }
-
-  return lieuDit;
+  return getFirstLieuDit(lieuxDitsDb);
 };
 
-export const getLieuditByCommuneIdAndNom = async (
+export const findLieuDitByCommuneIdAndNom = async (
   communeId: number,
   nom: string
 ): Promise<Lieudit> => {
-  const lieuxDitsDb = await queryToFindLieuditByCommuneIdAndNom(communeId, nom);
-
-  let lieudit: Lieudit = null;
-
-  if (lieuxDitsDb && lieuxDitsDb[0]?.id) {
-    lieudit = buildLieuditFromLieuditDb(lieuxDitsDb[0]);
-  }
-
-  return lieudit;
+  const lieuxDitsDb = await queryToFindLieuDitByCommuneIdAndNom(communeId, nom);
+  return getFirstLieuDit(lieuxDitsDb);
 };
 
-const getLieuditCommuneId = (lieudit: Lieudit): number => {
-  return lieudit?.communeId ? lieudit.communeId : null;
+const getLieuDitCommuneId = (lieuDit: Lieudit): number => {
+  return lieuDit?.communeId ? lieuDit.communeId : null;
 };
 
 const getCoordinatesToPersist = async (
-  lieudit: Lieudit
+  lieuDit: Lieudit
 ): Promise<Coordinates> => {
-  const newCoordinates = lieudit.coordinates;
+  const newCoordinates = lieuDit.coordinates;
 
   let coordinatesToPersist = newCoordinates;
 
-  if (lieudit.id) {
+  if (lieuDit.id) {
     // We check if the coordinates of the lieudit are the same as the one stored in database
-    const oldLieudit = await findLieuditById(lieudit.id);
-    const oldCoordinates = getCoordinates(oldLieudit, newCoordinates.system);
+    const oldLieuDit = await findLieuDitById(lieuDit.id);
+    const oldCoordinates = getCoordinates(oldLieuDit, newCoordinates.system);
 
     if (
       newCoordinates.longitude === oldCoordinates.longitude &&
       newCoordinates.latitude === oldCoordinates.latitude
     ) {
-      coordinatesToPersist = oldLieudit.coordinates;
+      coordinatesToPersist = oldLieuDit.coordinates;
     }
   }
 
   return coordinatesToPersist;
 };
 
-export const persistLieudit = async (
-  lieudit: Lieudit
+export const persistLieuDit = async (
+  lieuDit: Lieudit
 ): Promise<SqlSaveResponse> => {
-  lieudit.communeId = getLieuditCommuneId(lieudit);
-  lieudit.coordinates = await getCoordinatesToPersist(lieudit);
+  lieuDit.communeId = getLieuDitCommuneId(lieuDit);
+  lieuDit.coordinates = await getCoordinatesToPersist(lieuDit);
 
-  const lieuditDb = buildLieuditDbFromLieudit(lieudit);
+  const lieuditDb = buildLieuditDbFromLieudit(lieuDit);
 
   return saveDbEntity(lieuditDb, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
 };

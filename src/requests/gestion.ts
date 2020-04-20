@@ -28,7 +28,7 @@ import { findAllDepartements } from "../sql-api/sql-api-departement";
 import { findAllEspeces } from "../sql-api/sql-api-espece";
 import { findAllEstimationsDistance } from "../sql-api/sql-api-estimation-distance";
 import { findAllEstimationsNombre } from "../sql-api/sql-api-estimation-nombre";
-import { findAllLieuxDits, persistLieudit } from "../sql-api/sql-api-lieudit";
+import { findAllLieuxDits, persistLieuDit } from "../sql-api/sql-api-lieudit";
 import { findAllMeteos } from "../sql-api/sql-api-meteo";
 import { findAllMilieux } from "../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../sql-api/sql-api-observateur";
@@ -142,7 +142,7 @@ export const saveLieudit = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   const lieuditToSave: Lieudit = httpParameters.postData;
-  const sqlResponse = await persistLieudit(lieuditToSave);
+  const sqlResponse = await persistLieuDit(lieuditToSave);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 

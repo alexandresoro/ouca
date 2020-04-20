@@ -9,6 +9,14 @@ import {
 } from "../sql/sql-queries-departement";
 import { getNbByEntityId } from "../utils/utils";
 
+const getFirstDepartement = (departements: Departement[]): Departement => {
+  let departement: Departement = null;
+  if (departements && departements[0]?.id) {
+    departement = departements[0];
+  }
+  return departement;
+};
+
 export const findAllDepartements = async (): Promise<Departement[]> => {
   const [
     departements,
@@ -45,10 +53,5 @@ export const getDepartementByCode = async (
 ): Promise<Departement> => {
   const departements = await queryToFindDepartementByCode(code);
 
-  let departement: Departement = null;
-  if (departements && departements[0]?.id) {
-    departement = departements[0];
-  }
-
-  return departement;
+  return getFirstDepartement(departements);
 };

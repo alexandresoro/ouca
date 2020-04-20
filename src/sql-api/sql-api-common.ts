@@ -25,7 +25,7 @@ export const saveDbEntity = async (
   return await queryToSaveEntity(tableName, entityToSave, mapping);
 };
 
-export const getEntityByLibelle = async <T extends EntiteSimple>(
+export const findEntityByLibelle = async <T extends EntiteSimple>(
   libelle: string,
   tableName: string
 ): Promise<T> => {
@@ -38,7 +38,7 @@ export const getEntityByLibelle = async <T extends EntiteSimple>(
   return null;
 };
 
-export const getEntityByCode = async (
+export const findEntityByCode = async (
   code: string,
   tableName: string
 ): Promise<EntiteSimple> => {
@@ -51,7 +51,7 @@ export const getEntityByCode = async (
   return null;
 };
 
-export const getEntityByCodeAndLibelle = async (
+export const findEntityByCodeAndLibelle = async (
   code: string,
   libelle: string,
   tableName: string

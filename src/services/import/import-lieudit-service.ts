@@ -2,9 +2,9 @@ import { Commune } from "ouca-common/commune.model";
 import { Departement } from "ouca-common/departement.object";
 import { Lieudit } from "ouca-common/lieudit.model";
 import { saveEntity } from "../../sql-api/sql-api-common";
-import { getCommuneByDepartementIdAndCodeAndNom } from "../../sql-api/sql-api-commune";
+import { findCommuneByDepartementIdAndCodeAndNom } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
-import { getLieuditByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
+import { findLieuDitByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
 import { TABLE_LIEUDIT } from "../../utils/constants";
 import { ImportService } from "./import-service";
@@ -56,7 +56,7 @@ export class ImportLieuxditService extends ImportService {
     }
 
     // Check that the commune exists
-    const commune: Commune = await getCommuneByDepartementIdAndCodeAndNom(
+    const commune: Commune = await findCommuneByDepartementIdAndCodeAndNom(
       departement.id,
       +entityTab[this.CODE_COMMUNE_INDEX],
       entityTab[this.NOM_COMMUNE_INDEX]
@@ -68,7 +68,7 @@ export class ImportLieuxditService extends ImportService {
     }
 
     // Check that the lieu-dit does not exist yet
-    const lieudit: Lieudit = await getLieuditByCommuneIdAndNom(
+    const lieudit: Lieudit = await findLieuDitByCommuneIdAndNom(
       commune.id,
       entityTab[this.NOM_INDEX]
     );

@@ -1,6 +1,6 @@
 import { Classe } from "ouca-common/classe.object";
 import { Espece } from "ouca-common/espece.model";
-import { getClasseByLibelle } from "../../sql-api/sql-api-classe";
+import { findClasseByLibelle } from "../../sql-api/sql-api-classe";
 import { saveEntity } from "../../sql-api/sql-api-common";
 import {
   findEspeceByCode,
@@ -42,7 +42,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Check that the classe exists
-    const classe: Classe = await getClasseByLibelle(
+    const classe: Classe = await findClasseByLibelle(
       entityTab[this.CLASSE_INDEX]
     );
 

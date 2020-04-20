@@ -185,9 +185,17 @@ export const persistDonnee = async (
   return saveDonneeResponse;
 };
 
-export const getExistingDonneeId = async (
-  donnee: Donnee
-): Promise<number | null> => {
+export const updateInventaireIdForDonnees = async (
+  oldInventaireId: number,
+  newInventaireId: number
+): Promise<SqlSaveResponse> => {
+  return await queryToUpdateDonneesInventaireId(
+    oldInventaireId,
+    newInventaireId
+  );
+};
+
+export const findExistingDonneeId = async (donnee: Donnee): Promise<number> => {
   const response = await queryToFindDonneeIdsByAllAttributes(donnee);
 
   const eligibleDonneeIds: number[] = getArrayFromObjects<{ id: number }>(
@@ -224,24 +232,14 @@ export const getExistingDonneeId = async (
 };
 
 export const findLastDonneeId = async (): Promise<number> => {
-  const result = await queryToFindLastDonneeId();
-  return result && result[0] ? result[0].id : null;
-};
-
-export const updateInventaireIdForDonnees = async (
-  oldInventaireId: number,
-  newInventaireId: number
-): Promise<SqlSaveResponse> => {
-  return await queryToUpdateDonneesInventaireId(
-    oldInventaireId,
-    newInventaireId
-  );
+  const ids = await queryToFindLastDonneeId();
+  return ids && ids[0]?.id ? ids[0].id : null;
 };
 
 export const findDonneesByCustomizedFilters = async (
   filter: DonneesFilter
 ): Promise<FlatDonnee[]> => {
-  const donnees: any[] = await queryToFindDonneesByCriterion(filter);
+  const donnees: FlatDonnee[] = await queryToFindDonneesByCriterion(filter);
 
   const donneesIds: number[] = _.map(donnees, (donnee) => {
     return donnee.id;
@@ -302,8 +300,8 @@ export const findDonneesByCustomizedFilters = async (
 const countDonneesByInventaireId = async (
   inventaireId: number
 ): Promise<number> => {
-  const result = await queryToCountDonneesByInventaireId(inventaireId);
-  return result[0].nbDonnees;
+  const numbers = await queryToCountDonneesByInventaireId(inventaireId);
+  return numbers && numbers[0]?.nbDonnees ? numbers[0].nbDonnees : 0;
 };
 
 export const deleteDonneeById = async (
@@ -333,8 +331,7 @@ const findNextDonneeIdByCurrentDonneeId = async (
   currentDonneeId: number
 ): Promise<number> => {
   const ids = await queryToFindNextDonneeIdByCurrentDonneeId(currentDonneeId);
-
-  return ids[0]?.id ? ids[0].id : null;
+  return ids && ids[0]?.id ? ids[0].id : null;
 };
 
 const findPreviousDonneeIdByCurrentDonneeId = async (
@@ -343,14 +340,13 @@ const findPreviousDonneeIdByCurrentDonneeId = async (
   const ids = await queryToFindPreviousDonneeIdByCurrentDonneeId(
     currentDonneeId
   );
-
-  return ids[0]?.id ? ids[0].id : null;
+  return ids && ids[0]?.id ? ids[0].id : null;
 };
 
 const findDonneeIndexById = async (id: number): Promise<number> => {
   const ids = await queryToFindDonneeIndexById(id);
 
-  return ids[0]?.nbDonnees ? ids[0].nbDonnees : null;
+  return ids && ids[0]?.nbDonnees ? ids[0].nbDonnees : null;
 };
 
 const findDonneeById = async (id: number): Promise<Donnee> => {
@@ -385,6 +381,8 @@ export const findDonneeByIdWithContext = async (
 };
 
 export const findNextRegroupement = async (): Promise<number> => {
-  const results = await queryToFindLastRegroupement();
-  return results[0]?.regroupement ? results[0]?.regroupement + 1 : 1;
+  const regroupements = await queryToFindLastRegroupement();
+  return regroupements && regroupements[0]?.regroupement
+    ? regroupements[0]?.regroupement + 1
+    : 1;
 };

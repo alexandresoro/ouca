@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
+import { FlatDonnee } from "ouca-common/flat-donnee.object";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -182,7 +183,7 @@ export const queryToFindNumberOfDonneesByDonneeEntityId = async (
 
 export const queryToFindDonneesByCriterion = async (
   criterion: DonneesFilter
-): Promise<any[]> => {
+): Promise<FlatDonnee[]> => {
   let queryStr: string = getBaseQueryToFindDetailedDonnees();
 
   const whereTab: string[] = [];
@@ -392,7 +393,7 @@ export const queryToFindDonneesByCriterion = async (
 
   queryStr += " ORDER BY t_donnee.id DESC";
 
-  return query<any[]>(queryStr);
+  return query<FlatDonnee[]>(queryStr);
 };
 
 export const queryToFindDonneeIdsByAllAttributes = async (

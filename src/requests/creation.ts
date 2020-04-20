@@ -7,17 +7,17 @@ import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   deleteDonneeById,
   findDonneeByIdWithContext,
+  findExistingDonneeId,
   findLastDonneeId,
   findNextRegroupement,
-  getExistingDonneeId,
   persistDonnee,
   updateInventaireIdForDonnees
 } from "../sql-api/sql-api-donnee";
 import {
   deleteInventaireById,
+  findExistingInventaireId,
   findInventaireById,
   findInventaireIdById,
-  getExistingInventaireId,
   persistInventaire
 } from "../sql-api/sql-api-inventaire";
 import {
@@ -32,7 +32,7 @@ export const saveInventaire = async (
 
   let sqlResponse: SqlSaveResponse;
 
-  const existingId: number = await getExistingInventaireId(inventaireToSave);
+  const existingId: number = await findExistingInventaireId(inventaireToSave);
 
   if (existingId) {
     // A similar inventaire already exists
@@ -63,7 +63,7 @@ export const saveDonnee = async (
   const donneeToSave: Donnee = httpParameters.postData;
 
   // Check if the donnee already exists or not
-  const existingDonneeId: number = await getExistingDonneeId(donneeToSave);
+  const existingDonneeId: number = await findExistingDonneeId(donneeToSave);
 
   if (existingDonneeId) {
     // The donnee already exists so we return an error
