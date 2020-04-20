@@ -15,23 +15,21 @@ export class WebsocketServer {
   }
 
   public static sendMessageToClients(
-    clients: WebSocket | WebSocket[],
-    message: any
+    message: string,
+    clients?: WebSocket | WebSocket[]
   ): void {
-    const clientsArray = _.isArray(clients) ? clients : [clients];
+    const clientsToTarget = clients
+      ? _.isArray(clients)
+        ? clients
+        : [clients]
+      : this.wss.clients;
 
-    const messageStr = JSON.stringify(message);
-
-    clientsArray.forEach((client) => {
-      client.send(messageStr);
+    clientsToTarget.forEach((client) => {
+      client.send(message);
     });
   }
 
-  public static sendMessageToAllClients(message: any): void {
-    const messageStr = JSON.stringify(message);
-
-    this.wss.clients.forEach((client) => {
-      client.send(messageStr);
-    });
+  public static sendMessageToAllClients(message: string): void {
+    this.sendMessageToClients(message);
   }
 }

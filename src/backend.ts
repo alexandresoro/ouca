@@ -1,5 +1,6 @@
 import * as http from "http";
 import * as multiparty from "multiparty";
+import { INIT } from "ouca-common/websocket/websocket-request-message.model";
 import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
 import { WebsocketServer } from "./ws/websocket-server";
@@ -97,7 +98,11 @@ const server = http.createServer(
 const wss = WebsocketServer.createServer(server);
 
 wss.on("connection", (client) => {
-  sendAppConfiguration(client);
+  client.on("message", (message) => {
+    if (message === INIT) {
+      sendAppConfiguration(client);
+    }
+  });
 });
 
 server.listen(port, hostname, () => {
