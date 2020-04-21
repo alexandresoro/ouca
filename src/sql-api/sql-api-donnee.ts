@@ -20,22 +20,15 @@ import {
   queryToFindLastDonneeId,
   queryToFindLastRegroupement,
   queryToFindNextDonneeIdByCurrentDonneeId,
-  queryToFindNumberOfDonneesByDonneeEntityId,
   queryToFindPreviousDonneeIdByCurrentDonneeId,
   queryToUpdateDonneesInventaireId
 } from "../sql/sql-queries-donnee";
-import {
-  queryToFindAllMeteosByDonneeId,
-  queryToFindMetosByInventaireId
-} from "../sql/sql-queries-meteo";
+import { queryToFindAllMeteosByDonneeId } from "../sql/sql-queries-meteo";
 import {
   queryToFindAllMilieuxByDonneeId,
   queryToFindMilieuxIdsByDonneeId
 } from "../sql/sql-queries-milieu";
-import {
-  queryToFindAllAssociesByDonneeId,
-  queryToFindAssociesByInventaireId
-} from "../sql/sql-queries-observateur";
+import { queryToFindAllAssociesByDonneeId } from "../sql/sql-queries-observateur";
 import {
   DB_SAVE_MAPPING,
   queriesToSaveListOfEntities,
@@ -46,50 +39,66 @@ import {
   DATE_WITH_TIME_PATTERN,
   DONNEE_ID,
   ID,
-  INVENTAIRE_ID,
   SEPARATOR_COMMA,
   TABLE_DONNEE,
   TABLE_DONNEE_COMPORTEMENT,
   TABLE_DONNEE_MILIEU
 } from "../utils/constants";
-import {
-  mapAssociesIds,
-  mapComportementsIds,
-  mapMeteosIds,
-  mapMilieuxIds
-} from "../utils/mapping-utils";
+import { mapComportementsIds, mapMilieuxIds } from "../utils/mapping-utils";
 import {
   areArraysContainingSameValues,
   getArrayFromObjects
 } from "../utils/utils";
 import { deleteEntityById } from "./sql-api-common";
-import { deleteInventaireById } from "./sql-api-inventaire";
+import {
+  deleteInventaireById,
+  findAssociesIdsByInventaireId,
+  findMeteosIdsByInventaireId
+} from "./sql-api-inventaire";
+
+const findComportementsIdsByDonneeId = async (
+  donneeId: number
+): Promise<number[]> => {
+  const comportementsDb = await queryToFindComportementsIdsByDonneeId(donneeId);
+  return mapComportementsIds(comportementsDb);
+};
+
+const findMilieuxIdsByDonneeId = async (
+  donneeId: number
+): Promise<number[]> => {
+  const milieuxDb = await queryToFindMilieuxIdsByDonneeId(donneeId);
+  return mapMilieuxIds(milieuxDb);
+};
+
+const countDonneesByInventaireId = async (
+  inventaireId: number
+): Promise<number> => {
+  const numbers = await queryToCountDonneesByInventaireId(inventaireId);
+  return numbers && numbers[0]?.nbDonnees ? numbers[0].nbDonnees : 0;
+};
 
 export const buildDonneeFromFlatDonneeWithMinimalData = async (
   flatDonnee: FlatDonneeWithMinimalData
 ): Promise<Donnee> => {
-  if (!!flatDonnee && !!flatDonnee.id && !!flatDonnee.inventaireId) {
+  if (flatDonnee?.id && flatDonnee?.inventaireId) {
     const [
-      associesIdsByInventaireId,
-      meteosIdsByInventaireId,
-      comportementsIdsByDonneeId,
-      milieuxIdsByDonneeId,
-      nbDonneesByInventaireId
+      associesIds,
+      meteosIds,
+      comportementsIds,
+      milieuxIds,
+      nbDonnees
     ] = await Promise.all([
-      queryToFindAssociesByInventaireId(flatDonnee.inventaireId),
-      queryToFindMetosByInventaireId(flatDonnee.inventaireId),
-      queryToFindComportementsIdsByDonneeId(flatDonnee.id),
-      queryToFindMilieuxIdsByDonneeId(flatDonnee.id),
-      queryToFindNumberOfDonneesByDonneeEntityId(
-        INVENTAIRE_ID,
-        flatDonnee.inventaireId
-      )
+      findAssociesIdsByInventaireId(flatDonnee.inventaireId),
+      findMeteosIdsByInventaireId(flatDonnee.inventaireId),
+      findComportementsIdsByDonneeId(flatDonnee.id),
+      findMilieuxIdsByDonneeId(flatDonnee.id),
+      countDonneesByInventaireId(flatDonnee.inventaireId)
     ]);
 
     const inventaire: Inventaire = {
       id: flatDonnee.inventaireId,
       observateurId: flatDonnee.observateurId,
-      associesIds: mapAssociesIds(associesIdsByInventaireId),
+      associesIds,
       date: flatDonnee.date,
       heure: flatDonnee.heure,
       duree: flatDonnee.duree,
@@ -104,8 +113,8 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
           }
         : null,
       temperature: flatDonnee.temperature,
-      meteosIds: mapMeteosIds(meteosIdsByInventaireId),
-      nbDonnees: nbDonneesByInventaireId[0].nb
+      meteosIds,
+      nbDonnees
     };
 
     const donnee: Donnee = {
@@ -120,8 +129,8 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
       estimationDistanceId: flatDonnee.estimationDistanceId,
       distance: flatDonnee.distance,
       regroupement: flatDonnee.regroupement,
-      comportementsIds: mapComportementsIds(comportementsIdsByDonneeId),
-      milieuxIds: mapMilieuxIds(milieuxIdsByDonneeId),
+      comportementsIds,
+      milieuxIds,
       commentaire: flatDonnee.commentaire
     };
     return donnee;
@@ -295,13 +304,6 @@ export const findDonneesByCustomizedFilters = async (
   });
 
   return donnees;
-};
-
-const countDonneesByInventaireId = async (
-  inventaireId: number
-): Promise<number> => {
-  const numbers = await queryToCountDonneesByInventaireId(inventaireId);
-  return numbers && numbers[0]?.nbDonnees ? numbers[0].nbDonnees : 0;
 };
 
 export const deleteDonneeById = async (

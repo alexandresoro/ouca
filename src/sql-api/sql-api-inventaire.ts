@@ -183,21 +183,36 @@ export const findInventaireIdById = async (id: number): Promise<number> => {
   return ids && ids[0]?.id ? ids[0].id : null;
 };
 
+export const findAssociesIdsByInventaireId = async (
+  inventaireId: number
+): Promise<number[]> => {
+  const associesDb = await queryToFindAssociesByInventaireId(inventaireId);
+  return mapAssociesIds(associesDb);
+};
+
+export const findMeteosIdsByInventaireId = async (
+  inventaireId: number
+): Promise<number[]> => {
+  const meteosDb = await queryToFindMetosByInventaireId(inventaireId);
+  return mapMeteosIds(meteosDb);
+};
+
 export const findInventaireById = async (
   inventaireId: number
 ): Promise<Inventaire> => {
-  const [inventairesDb, associesDb, meteosDb] = await Promise.all([
+  const [inventairesDb, associesIds, meteosIds] = await Promise.all([
     queryToFindOneById<InventaireDb>(TABLE_INVENTAIRE, inventaireId),
-    queryToFindAssociesByInventaireId(inventaireId),
-    queryToFindMetosByInventaireId(inventaireId)
+    findAssociesIdsByInventaireId(inventaireId),
+    findMeteosIdsByInventaireId(inventaireId)
   ]);
 
-  const inventaireDb: InventaireDb =
-    inventairesDb && inventairesDb[0]?.id ? inventairesDb[0] : null;
+  if (!inventairesDb && !inventairesDb[0]?.id) {
+    return null;
+  }
 
-  const inventaire: Inventaire = buildInventaireFromInventaireDb(inventaireDb);
-  inventaire.associesIds = mapAssociesIds(associesDb);
-  inventaire.meteosIds = mapMeteosIds(meteosDb);
-
-  return inventaire;
+  return buildInventaireFromInventaireDb(
+    inventairesDb[0],
+    associesIds,
+    meteosIds
+  );
 };

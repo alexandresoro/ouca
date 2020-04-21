@@ -2,12 +2,14 @@ import { Inventaire } from "ouca-common/inventaire.object";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 
 export const buildInventaireFromInventaireDb = (
-  inventaireDb: InventaireDb
+  inventaireDb: InventaireDb,
+  associesIds: number[],
+  meteosIds: number[]
 ): Inventaire => {
   return {
     id: inventaireDb.id,
     observateurId: inventaireDb.observateur_id,
-    associesIds: [],
+    associesIds,
     date: inventaireDb.date,
     heure: inventaireDb.heure,
     duree: inventaireDb.duree,
@@ -20,6 +22,6 @@ export const buildInventaireFromInventaireDb = (
       isTransformed: false
     },
     temperature: inventaireDb.temperature,
-    meteosIds: []
+    meteosIds
   };
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import * as _ from "lodash";
 import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
