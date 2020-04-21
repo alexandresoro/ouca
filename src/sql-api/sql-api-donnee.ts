@@ -13,6 +13,8 @@ import {
 } from "../sql/sql-queries-comportement";
 import {
   queryToCountDonneesByInventaireId,
+  queryToCountSpecimensByAgeForAnEspeceId,
+  queryToCountSpecimensBySexeForAnEspeceId,
   queryToFindDonneeById,
   queryToFindDonneeIdsByAllAttributes,
   queryToFindDonneeIndexById,
@@ -387,4 +389,16 @@ export const findNextRegroupement = async (): Promise<number> => {
   return regroupements && regroupements[0]?.regroupement
     ? regroupements[0]?.regroupement + 1
     : 1;
+};
+
+export const countSpecimensByAgeForEspeceId = async (
+  id: number
+): Promise<{ name: string; value: number }[]> => {
+  return await queryToCountSpecimensByAgeForAnEspeceId(id);
+};
+
+export const countSpecimensBySexeForEspeceId = async (
+  id: number
+): Promise<{ name: string; value: number }[]> => {
+  return await queryToCountSpecimensBySexeForAnEspeceId(id);
 };

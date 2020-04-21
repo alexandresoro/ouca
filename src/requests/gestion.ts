@@ -25,6 +25,10 @@ import { deleteEntityById } from "../sql-api/sql-api-common";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
 import { findAllComportements } from "../sql-api/sql-api-comportement";
 import { findAllDepartements } from "../sql-api/sql-api-departement";
+import {
+  countSpecimensByAgeForEspeceId,
+  countSpecimensBySexeForEspeceId
+} from "../sql-api/sql-api-donnee";
 import { findAllEspeces } from "../sql-api/sql-api-espece";
 import { findAllEstimationsDistance } from "../sql-api/sql-api-estimation-distance";
 import { findAllEstimationsNombre } from "../sql-api/sql-api-estimation-nombre";
@@ -489,4 +493,18 @@ export const exportMilieux = async (): Promise<any> => {
   });
 
   return writeToExcel(milieuxToExport, ["Code", "Libelle"], "milieux");
+};
+
+export const getEspeceDetailsByAge = (
+  httpParameters: HttpParameters
+): Promise<{ name: string; value: number }[]> => {
+  const especeId: number = +httpParameters.queryParameters.id;
+  return countSpecimensByAgeForEspeceId(especeId);
+};
+
+export const getEspeceDetailsBySexe = (
+  httpParameters: HttpParameters
+): Promise<{ name: string; value: number }[]> => {
+  const especeId: number = +httpParameters.queryParameters.id;
+  return countSpecimensBySexeForEspeceId(especeId);
 };
