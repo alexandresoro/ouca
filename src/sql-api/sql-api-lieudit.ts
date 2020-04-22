@@ -14,7 +14,7 @@ import {
   queryToFindLieuDitByCommuneIdAndNom,
   queryToFindNumberOfDonneesByLieuDitId
 } from "../sql/sql-queries-lieudit";
-import { DB_SAVE_MAPPING, queryToFindOneById } from "../sql/sql-queries-utils";
+import { queryToFindOneById } from "../sql/sql-queries-utils";
 import { TABLE_LIEUDIT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { saveDbEntity } from "./sql-api-common";
@@ -93,5 +93,5 @@ export const persistLieuDit = async (
 
   const lieuditDb = buildLieuditDbFromLieudit(lieuDit);
 
-  return saveDbEntity(lieuditDb, TABLE_LIEUDIT, DB_SAVE_MAPPING.lieudit);
+  return saveDbEntity(lieuditDb, TABLE_LIEUDIT);
 };

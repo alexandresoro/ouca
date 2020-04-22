@@ -8,10 +8,7 @@ import {
   buildSettingsDbFromAppConfiguration
 } from "../mapping/settings-mapping";
 import { SettingsDb } from "../objects/db/settings-db.object";
-import {
-  DB_CONFIGURATION_MAPPING,
-  queryToFindAllEntities
-} from "../sql/sql-queries-utils";
+import { queryToFindAllEntities } from "../sql/sql-queries-utils";
 import { TABLE_SETTINGS } from "../utils/constants";
 import { sendAppConfiguration } from "../ws/ws-messages";
 import { findAllAges } from "./sql-api-age";
@@ -60,11 +57,7 @@ export const persistUserSettings = async (
     appConfiguration
   );
 
-  const sqlSaveResponse = await saveDbEntity(
-    settingsDb,
-    TABLE_SETTINGS,
-    DB_CONFIGURATION_MAPPING
-  );
+  const sqlSaveResponse = await saveDbEntity(settingsDb, TABLE_SETTINGS);
 
   const isDbUpdateOK = sqlSaveResponse.affectedRows === 1;
 

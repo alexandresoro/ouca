@@ -19,10 +19,9 @@ export const saveEntity = async (
 
 export const saveDbEntity = async (
   entityToSave: EntiteSimple,
-  tableName: string,
-  mapping: { [column: string]: string }
+  tableName: string
 ): Promise<SqlSaveResponse> => {
-  return await queryToSaveEntity(tableName, entityToSave, mapping);
+  return await queryToSaveEntity(tableName, entityToSave);
 };
 
 export const findEntityByLibelle = async <T extends EntiteSimple>(

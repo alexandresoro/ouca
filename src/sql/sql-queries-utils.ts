@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import * as _ from "lodash";
-import { EntiteSimple } from "ouca-common/entite-simple.object";
+import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { SqlConnection } from "../sql-api/sql-connection";
 import {
@@ -26,16 +26,6 @@ export const DB_SAVE_MAPPING = {
   commune: {
     ...createKeyValueMapWithSameName(["code", "nom"]),
     departement_id: "departementId"
-  },
-  lieudit: {
-    ...createKeyValueMapWithSameName([
-      "commune_id",
-      "nom",
-      "altitude",
-      "longitude",
-      "latitude",
-      "coordinates_system"
-    ])
   },
   meteo: createKeyValueMapWithSameName("libelle"),
   classe: createKeyValueMapWithSameName("libelle"),
@@ -108,20 +98,6 @@ export const DB_SAVE_LISTS_MAPPING = {
   }
 };
 
-export const DB_CONFIGURATION_MAPPING = createKeyValueMapWithSameName([
-  "default_observateur_id",
-  "default_departement_id",
-  "default_age_id",
-  "default_sexe_id",
-  "default_estimation_nombre_id",
-  "default_nombre",
-  "are_associes_displayed",
-  "is_meteo_displayed",
-  "is_distance_displayed",
-  "is_regroupement_displayed",
-  "coordinates_system"
-]);
-
 export function query<T>(query: string): Promise<T> {
   console.log("---> " + query + ";");
   return SqlConnection.query(query + ";");
@@ -148,32 +124,47 @@ export const queryToFindOneById = async <T>(
   return query<T[]>("SELECT * FROM " + tableName + " WHERE id=" + id);
 };
 
-export const queryToSaveEntity = async <T extends EntiteSimple>(
+export const queryToSaveEntity = async <T extends EntityDb>(
   tableName: string,
   entityToSave: T,
-  mapping: { [column: string]: string }
+  mapping?: { [column: string]: string }
 ): Promise<SqlSaveResponse> => {
   let queryStr: string;
 
-  const keys: string[] = _.keys(mapping);
+  const dbEntityToSaveAsArray = _.chain(entityToSave)
+    .omit("id")
+    .omitBy((value, entityKey) => {
+      return !!mapping && !_.includes(_.values(mapping), entityKey);
+    })
+    .mapKeys((value, entityKey) => {
+      return (
+        _.findKey(mapping, (value) => {
+          return value === entityKey;
+        }) ?? entityKey
+      );
+    })
+    .mapValues((entityValue) => {
+      if (_.isNil(entityValue)) {
+        return "null";
+      } else if (_.isBoolean(entityValue)) {
+        return entityValue ? "TRUE" : "FALSE";
+      } else if (_.isString(entityValue)) {
+        return '"' + entityValue.trim() + '"';
+      } else {
+        return '"' + entityValue + '"';
+      }
+    })
+    .toPairs()
+    .value();
 
   if (!entityToSave.id) {
-    const columnNames = keys.join(",");
+    const columnNames = _.map(dbEntityToSaveAsArray, (elt) => {
+      return elt[0];
+    }).join(",");
 
-    const valuesArray = [];
-    _.forEach(keys, (key: string) => {
-      // If the value is 'null'
-      if (_.isNull(entityToSave[mapping[key]])) {
-        valuesArray.push("null");
-      } else if (_.isBoolean(entityToSave[mapping[key]])) {
-        valuesArray.push(entityToSave[mapping[key]]);
-      } else if (_.isString(entityToSave[mapping[key]])) {
-        valuesArray.push('"' + entityToSave[mapping[key]].trim() + '"');
-      } else {
-        valuesArray.push('"' + entityToSave[mapping[key]] + '"');
-      }
-    });
-    const values = valuesArray.join(",");
+    const values = _.map(dbEntityToSaveAsArray, (elt) => {
+      return elt[1];
+    }).join(",");
 
     queryStr =
       "INSERT INTO " +
@@ -185,20 +176,9 @@ export const queryToSaveEntity = async <T extends EntiteSimple>(
       values +
       ")";
   } else {
-    const updatesArray = [];
-    _.forEach(keys, (key: string) => {
-      // If the value is 'null'
-      if (_.isNull(entityToSave[mapping[key]])) {
-        updatesArray.push(key + "=null");
-      } else if (_.isBoolean(entityToSave[mapping[key]])) {
-        updatesArray.push(key + "=" + entityToSave[mapping[key]]);
-      } else if (_.isString(entityToSave[mapping[key]])) {
-        updatesArray.push(key + '="' + entityToSave[mapping[key]].trim() + '"');
-      } else {
-        updatesArray.push(key + '="' + entityToSave[mapping[key]] + '"');
-      }
-    });
-    const updates = updatesArray.join(",");
+    const updates = _.map(dbEntityToSaveAsArray, (elt) => {
+      return elt[0] + "=" + elt[1];
+    }).join(",");
 
     queryStr =
       "UPDATE " +
