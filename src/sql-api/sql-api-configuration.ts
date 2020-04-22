@@ -10,7 +10,6 @@ import {
 import { SettingsDb } from "../objects/db/settings-db.object";
 import { queryToFindAllEntities } from "../sql/sql-queries-utils";
 import { TABLE_SETTINGS } from "../utils/constants";
-import { sendAppConfiguration } from "../ws/ws-messages";
 import { findAllAges } from "./sql-api-age";
 import { saveDbEntity } from "./sql-api-common";
 import { findAllDepartements } from "./sql-api-departement";
@@ -60,11 +59,6 @@ export const persistUserSettings = async (
   const sqlSaveResponse = await saveDbEntity(settingsDb, TABLE_SETTINGS);
 
   const isDbUpdateOK = sqlSaveResponse.affectedRows === 1;
-
-  // Notify the ws listeners of the new configuration
-  if (isDbUpdateOK) {
-    await sendAppConfiguration();
-  }
 
   return isDbUpdateOK;
 };

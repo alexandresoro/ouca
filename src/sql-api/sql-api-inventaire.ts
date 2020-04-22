@@ -15,8 +15,7 @@ import {
   DB_SAVE_MAPPING,
   queriesToSaveListOfEntities,
   queryToDeleteAnEntityByAttribute,
-  queryToFindOneById,
-  queryToSaveEntity
+  queryToFindOneById
 } from "../sql/sql-queries-utils";
 import {
   DATE_PATTERN,
@@ -35,7 +34,7 @@ import {
   areArraysContainingSameValues,
   getArrayFromObjects
 } from "../utils/utils";
-import { deleteEntityById } from "./sql-api-common";
+import { deleteEntityById, persistEntity } from "./sql-api-common";
 
 const deleteAssociesAndMeteosByInventaireId = async (
   inventaireId: number
@@ -106,7 +105,7 @@ export const persistInventaire = async (
   }
 
   // Save the inventaire
-  const inventaireResult = await queryToSaveEntity(
+  const inventaireResult = await persistEntity(
     TABLE_INVENTAIRE,
     {
       date: format(

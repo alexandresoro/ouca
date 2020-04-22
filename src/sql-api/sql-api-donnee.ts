@@ -34,8 +34,7 @@ import { queryToFindAllAssociesByDonneeId } from "../sql/sql-queries-observateur
 import {
   DB_SAVE_MAPPING,
   queriesToSaveListOfEntities,
-  queryToDeleteAnEntityByAttribute,
-  queryToSaveEntity
+  queryToDeleteAnEntityByAttribute
 } from "../sql/sql-queries-utils";
 import {
   DATE_WITH_TIME_PATTERN,
@@ -51,7 +50,7 @@ import {
   areArraysContainingSameValues,
   getArrayFromObjects
 } from "../utils/utils";
-import { deleteEntityById } from "./sql-api-common";
+import { deleteEntityById, persistEntity } from "./sql-api-common";
 import {
   deleteInventaireById,
   findAssociesIdsByInventaireId,
@@ -161,7 +160,7 @@ export const persistDonnee = async (
     ]);
   }
 
-  const saveDonneeResponse: SqlSaveResponse = await queryToSaveEntity(
+  const saveDonneeResponse: SqlSaveResponse = await persistEntity(
     TABLE_DONNEE,
     {
       ...donneeToSave,

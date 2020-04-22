@@ -2,6 +2,7 @@ import { WebsocketUpdateMessage } from "ouca-common/websocket/websocket-update-m
 import WebSocket from "ws";
 import { getAppConfiguration } from "../requests/configuration";
 import { findAllObservateurs } from "../sql-api/sql-api-observateur";
+import { TABLE_OBSERVATEUR, TABLE_SETTINGS } from "../utils/constants";
 import { WebsocketServer } from "./websocket-server";
 import { wrapObject } from "./ws-wrapper";
 
@@ -17,6 +18,19 @@ const createUpdateMessage = <T extends unknown>(
   };
 
   return JSON.stringify(updateObj);
+};
+
+export const onTableUpdate = (tableName: string): void => {
+  switch (tableName) {
+    case TABLE_SETTINGS:
+      this.sendAppConfiguration();
+      break;
+    case TABLE_OBSERVATEUR:
+      this.sendObservateurs();
+      break;
+    default:
+      break;
+  }
 };
 
 export const sendAppConfiguration = async (
