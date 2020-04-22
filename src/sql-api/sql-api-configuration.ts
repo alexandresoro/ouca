@@ -13,7 +13,7 @@ import {
   queryToFindAllEntities
 } from "../sql/sql-queries-utils";
 import { TABLE_SETTINGS } from "../utils/constants";
-import { sendAppConfigurationToAll } from "../ws/ws-messages";
+import { sendAppConfiguration } from "../ws/ws-messages";
 import { findAllAges } from "./sql-api-age";
 import { saveDbEntity } from "./sql-api-common";
 import { findAllDepartements } from "./sql-api-departement";
@@ -70,7 +70,7 @@ export const persistUserSettings = async (
 
   // Notify the ws listeners of the new configuration
   if (isDbUpdateOK) {
-    await sendAppConfigurationToAll();
+    await sendAppConfiguration();
   }
 
   return isDbUpdateOK;

@@ -28,8 +28,4 @@ export class WebsocketServer {
       client.send(message);
     });
   }
-
-  public static sendMessageToAllClients(message: string): void {
-    this.sendMessageToClients(message);
-  }
 }

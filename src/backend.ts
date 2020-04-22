@@ -1,9 +1,10 @@
 import * as http from "http";
 import * as multiparty from "multiparty";
+import { WebsocketMessage } from "ouca-common/websocket/websocket-message.model";
 import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
 import { WebsocketServer } from "./ws/websocket-server";
-import { sendAppConfiguration } from "./ws/ws-messages";
+import { sendInitialData } from "./ws/ws-messages";
 
 const DOCKER_ARG = "-docker";
 
@@ -97,7 +98,14 @@ const server = http.createServer(
 const wss = WebsocketServer.createServer(server);
 
 wss.on("connection", (client) => {
-  sendAppConfiguration(client);
+  client.on("message", (data): void => {
+    const message: WebsocketMessage = JSON.parse(data.toString());
+    console.log("Message received from websocket: ", message);
+    if (message.content === "init") {
+      console.log("Sending initial data to client");
+      sendInitialData(client);
+    }
+  });
 });
 
 server.listen(port, hostname, () => {
