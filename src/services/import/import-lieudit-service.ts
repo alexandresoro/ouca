@@ -1,7 +1,7 @@
 import { Commune } from "ouca-common/commune.model";
 import { Departement } from "ouca-common/departement.object";
 import { Lieudit } from "ouca-common/lieudit.model";
-import { saveEntity } from "../../sql-api/sql-api-common";
+import { persistEntity } from "../../sql-api/sql-api-common";
 import { findCommuneByDepartementIdAndCodeAndNom } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { findLieuDitByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
@@ -80,12 +80,12 @@ export class ImportLieuxditService extends ImportService {
 
     const lieuditToSave = this.buildEntity(entityTab, commune.id);
 
-    return await saveEntity(
+    const saveResult = await persistEntity(
       TABLE_LIEUDIT,
-      lieuditToSave,
-      null
+      lieuditToSave
       //DB_SAVE_MAPPING.lieudit
     );
+    return !!saveResult?.insertId;
   };
 
   private isDepartementValid = (departement: string): boolean => {

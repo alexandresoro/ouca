@@ -1,12 +1,18 @@
 import * as _ from "lodash";
 import { Observateur } from "ouca-common/observateur.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   queryToFindAllObservateurs,
   queryToFindNumberOfDonneesByObservateurId
 } from "../sql/sql-queries-observateur";
+import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_OBSERVATEUR } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { findEntityByLibelle } from "./sql-api-common";
+import {
+  deleteEntityById,
+  findEntityByLibelle,
+  persistEntity
+} from "./sql-api-common";
 
 export const findAllObservateurs = async (): Promise<Observateur[]> => {
   const [observateurs, nbDonneesByObservateur] = await Promise.all([
@@ -27,8 +33,24 @@ export const findAllObservateurs = async (): Promise<Observateur[]> => {
 export const findObservateurByLibelle = async (
   observateurLibelle: string
 ): Promise<Observateur | null> => {
-  return await findEntityByLibelle<Observateur>(
+  return findEntityByLibelle<Observateur>(
     observateurLibelle,
     TABLE_OBSERVATEUR
   );
+};
+
+export const persistObservateur = async (
+  observateur: Observateur
+): Promise<SqlSaveResponse> => {
+  return persistEntity(
+    TABLE_OBSERVATEUR,
+    observateur,
+    DB_SAVE_MAPPING.observateur
+  );
+};
+
+export const deleteObservateur = async (
+  id: number
+): Promise<SqlSaveResponse> => {
+  return deleteEntityById(TABLE_OBSERVATEUR, id);
 };

@@ -223,7 +223,6 @@ export const queriesToSaveListOfEntities = async (
   subIds.forEach((subId) => {
     queries.push(queryToSaveManyToManyEntity(tableName, mainId, subId));
   });
-  //return queries;
   return Promise.all(queries);
 };
 

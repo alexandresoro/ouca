@@ -11,7 +11,7 @@ import { SettingsDb } from "../objects/db/settings-db.object";
 import { queryToFindAllEntities } from "../sql/sql-queries-utils";
 import { TABLE_SETTINGS } from "../utils/constants";
 import { findAllAges } from "./sql-api-age";
-import { saveDbEntity } from "./sql-api-common";
+import { persistEntity } from "./sql-api-common";
 import { findAllDepartements } from "./sql-api-departement";
 import { findAllEstimationsNombre } from "./sql-api-estimation-nombre";
 import { findAllObservateurs } from "./sql-api-observateur";
@@ -56,7 +56,7 @@ export const persistUserSettings = async (
     appConfiguration
   );
 
-  const sqlSaveResponse = await saveDbEntity(settingsDb, TABLE_SETTINGS);
+  const sqlSaveResponse = await persistEntity(TABLE_SETTINGS, settingsDb);
 
   const isDbUpdateOK = sqlSaveResponse.affectedRows === 1;
 

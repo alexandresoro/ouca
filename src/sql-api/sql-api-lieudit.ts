@@ -17,7 +17,7 @@ import {
 import { queryToFindOneById } from "../sql/sql-queries-utils";
 import { TABLE_LIEUDIT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { saveDbEntity } from "./sql-api-common";
+import { persistEntity } from "./sql-api-common";
 
 const getFirstLieuDit = (lieuxDitsDb: LieuditDb[]): Lieudit => {
   let lieuDit: Lieudit = null;
@@ -93,5 +93,5 @@ export const persistLieuDit = async (
 
   const lieuditDb = buildLieuditDbFromLieudit(lieuDit);
 
-  return saveDbEntity(lieuditDb, TABLE_LIEUDIT);
+  return persistEntity(TABLE_LIEUDIT, lieuditDb);
 };

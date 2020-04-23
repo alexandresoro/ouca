@@ -35,7 +35,11 @@ import { findAllEstimationsNombre } from "../sql-api/sql-api-estimation-nombre";
 import { findAllLieuxDits, persistLieuDit } from "../sql-api/sql-api-lieudit";
 import { findAllMeteos } from "../sql-api/sql-api-meteo";
 import { findAllMilieux } from "../sql-api/sql-api-milieu";
-import { findAllObservateurs } from "../sql-api/sql-api-observateur";
+import {
+  deleteObservateur,
+  findAllObservateurs,
+  persistObservateur
+} from "../sql-api/sql-api-observateur";
 import { findAllSexes } from "../sql-api/sql-api-sexe";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import {
@@ -50,7 +54,6 @@ import {
   TABLE_LIEUDIT,
   TABLE_METEO,
   TABLE_MILIEU,
-  TABLE_OBSERVATEUR,
   TABLE_SEXE
 } from "../utils/constants";
 import { writeToExcel } from "../utils/export-excel-utils";
@@ -81,17 +84,16 @@ export const getObservateurs = async (): Promise<Observateur[]> => {
 export const saveObservateur = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
-  return saveEntity(
-    httpParameters.postData,
-    TABLE_OBSERVATEUR,
-    DB_SAVE_MAPPING.observateur
-  );
+  const sqlResponse = await persistObservateur(httpParameters.postData);
+  return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteObservateur = async (
+export const removeObservateur = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_OBSERVATEUR);
+  const id: number = +httpParameters.queryParameters.id;
+  const sqlResponse: SqlSaveResponse = await deleteObservateur(id);
+  return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
 export const getDepartements = async (): Promise<Departement[]> => {

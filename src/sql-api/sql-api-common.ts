@@ -4,38 +4,22 @@ import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   queryToDeleteAnEntityById,
   queryToFindEntityByCode,
-  queryToFindEntityByCodeAndLibelle,
   queryToFindEntityByLibelle,
   queryToSaveEntity
 } from "../sql/sql-queries-utils";
 import { onTableUpdate } from "../ws/ws-messages";
 
-export const persistEntity = async <T extends EntityDb>(
-  tableName: string,
-  entityToSave: EntiteSimple | T,
-  mapping?: { [column: string]: string }
-): Promise<SqlSaveResponse> => {
-  const sqlResponse = await queryToSaveEntity(tableName, entityToSave, mapping);
-
-  onTableUpdate(tableName);
-  return sqlResponse;
-};
-
-// TODO use the same method for gestion and import
-export const saveEntity = async (
-  tableName: string,
-  entityToSave: EntiteSimple,
-  mapping: { [column: string]: string }
-): Promise<boolean> => {
-  const saveResult = await persistEntity(tableName, entityToSave, mapping);
-  return !!saveResult && !!saveResult.insertId && saveResult.affectedRows === 1;
-};
-
-export const saveDbEntity = async (
-  entityToSave: EntiteSimple,
+export const findEntityByCode = async (
+  code: string,
   tableName: string
-): Promise<SqlSaveResponse> => {
-  return await persistEntity(tableName, entityToSave);
+): Promise<EntiteSimple> => {
+  const entities = await queryToFindEntityByCode(tableName, code);
+
+  if (entities && entities[0]?.id) {
+    return entities[0];
+  }
+
+  return null;
 };
 
 export const findEntityByLibelle = async <T extends EntiteSimple>(
@@ -51,35 +35,16 @@ export const findEntityByLibelle = async <T extends EntiteSimple>(
   return null;
 };
 
-export const findEntityByCode = async (
-  code: string,
-  tableName: string
-): Promise<EntiteSimple> => {
-  const entities = await queryToFindEntityByCode(tableName, code);
+export const persistEntity = async <T extends EntityDb>(
+  tableName: string,
+  entityToSave: EntiteSimple | T,
+  mapping?: { [column: string]: string }
+): Promise<SqlSaveResponse> => {
+  const sqlResponse = await queryToSaveEntity(tableName, entityToSave, mapping);
 
-  if (entities && entities[0]?.id) {
-    return entities[0];
-  }
+  onTableUpdate(tableName);
 
-  return null;
-};
-
-export const findEntityByCodeAndLibelle = async (
-  code: string,
-  libelle: string,
-  tableName: string
-): Promise<EntiteSimple> => {
-  const entities = await queryToFindEntityByCodeAndLibelle(
-    tableName,
-    code,
-    libelle
-  );
-
-  if (entities && entities[0]?.id) {
-    return entities[0];
-  }
-
-  return null;
+  return sqlResponse;
 };
 
 export const deleteEntityById = async (

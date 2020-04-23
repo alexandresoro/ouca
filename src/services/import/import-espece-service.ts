@@ -1,7 +1,7 @@
 import { Classe } from "ouca-common/classe.object";
 import { Espece } from "ouca-common/espece.model";
 import { findClasseByLibelle } from "../../sql-api/sql-api-classe";
-import { saveEntity } from "../../sql-api/sql-api-common";
+import { persistEntity } from "../../sql-api/sql-api-common";
 import {
   findEspeceByCode,
   findEspeceByNomFrancais,
@@ -82,7 +82,12 @@ export class ImportEspeceService extends ImportService {
     // Create and save the espece
     const especeToSave: Espece = this.buildEntity(entityTab, classe.id);
 
-    return await saveEntity(TABLE_ESPECE, especeToSave, DB_SAVE_MAPPING.espece);
+    const saveResult = await persistEntity(
+      TABLE_ESPECE,
+      especeToSave,
+      DB_SAVE_MAPPING.espece
+    );
+    return !!saveResult?.insertId;
   };
 
   private isClasseValid = (classe: string): boolean => {

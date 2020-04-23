@@ -1,5 +1,5 @@
 import { Departement } from "ouca-common/departement.object";
-import { saveEntity } from "../../sql-api/sql-api-common";
+import { persistEntity } from "../../sql-api/sql-api-common";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
 import { TABLE_DEPARTEMENT } from "../../utils/constants";
@@ -37,11 +37,12 @@ export class ImportDepartementService extends ImportService {
     // Create and save the commune
     const departementToSave: Departement = this.buildEntity(entityTab);
 
-    return await saveEntity(
+    const saveResult = await persistEntity(
       TABLE_DEPARTEMENT,
       departementToSave,
       DB_SAVE_MAPPING.departement
     );
+    return !!saveResult?.insertId;
   };
 
   private isCodeValid = (code: string): boolean => {
