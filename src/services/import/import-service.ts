@@ -18,7 +18,9 @@ export abstract class ImportService {
       return "Le contenu du fichier n'a pas pu être lu";
     }
 
-    const content = Papa.parse(fileContent);
+    const content = Papa.parse(fileContent, {
+      delimiter: ";"
+    });
 
     if (content.data) {
       for (const lineTab of content.data) {
@@ -48,6 +50,7 @@ export abstract class ImportService {
       if (this.hasExpectedNumberOfColumns(entityTab)) {
         await this.createEntity(entityTab);
       }
+      console.log(entityTab, entityTab.length, this.message);
 
       if (this.message) {
         // Display error message

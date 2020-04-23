@@ -109,9 +109,9 @@ export class ImportCommuneService extends ImportService {
       return false;
     }
 
-    if (codeCommune < 0 || codeCommune > 99999) {
+    if (codeCommune < 0 || codeCommune > 65535) {
       this.message =
-        "Le code de la commune doit être un entier compris entre 0 et 99999";
+        "Le code de la commune doit être un entier compris entre 0 et 65535";
       return false;
     }
 
