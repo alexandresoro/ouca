@@ -1,0 +1,4 @@
+departement;Cas d'erreur: Trop de colonnes;Le nombre de colonnes de cette ligne est incorrect: 2 colonne(s) au lieu de 1 attendue(s)
+Cas d'erreur: departement trop longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggue;La longueur maximale du département est de 100 caractères
+;Le département ne peut pas être vide
+38;Ce département existe déjà

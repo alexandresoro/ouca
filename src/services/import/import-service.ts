@@ -24,7 +24,9 @@ export abstract class ImportService {
 
     if (content.data) {
       for (const lineTab of content.data) {
-        await this.importLine(lineTab);
+        if (lineTab.length > 0 && !lineTab[0].startsWith("###")) {
+          await this.importLine(lineTab);
+        }
       }
     } else {
       return "Le contenu du fichier n'a pas pu être lu";
@@ -44,19 +46,16 @@ export abstract class ImportService {
   private importLine = async (entityTab: string[]): Promise<void> => {
     this.message = "";
 
-    if (entityTab) {
-      this.numberOfLines++;
+    this.numberOfLines++;
 
-      if (this.hasExpectedNumberOfColumns(entityTab)) {
-        await this.createEntity(entityTab);
-      }
-      console.log(entityTab, entityTab.length, this.message);
+    if (this.hasExpectedNumberOfColumns(entityTab)) {
+      await this.createEntity(entityTab);
+    }
 
-      if (this.message) {
-        // Display error message
-        this.numberOfErrors++;
-        this.errors.push(this.buildErrorObject(entityTab));
-      }
+    if (this.message) {
+      // Display error message
+      this.numberOfErrors++;
+      this.errors.push(this.buildErrorObject(entityTab));
     }
   };
 

@@ -1,0 +1,18 @@
+### Cas d'erreur 1: trop de colonnes
+age;age
+### Cas d'erreur 2: libellé trop long (>100 caractères)
+Age trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+### Cas d'erreur 3: libellé vide
+
+### Cas nominal: libellé très long (=100 caractères)
+Age très longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+### Cas nominal
+?
+### Cas nominal
+1A
+### Cas nominal
+2A
+### Cas nominal
+3A
+### Cas d'erreur 4: Il existe déjà un âge avec ce libellé
+3A

@@ -1,0 +1,4 @@
+estimation distance;Cas d'erreur: Trop de colonnes;Le nombre de colonnes de cette ligne est incorrect: 2 colonne(s) au lieu de 1 attendue(s)
+Cas d'erreur: estimation distance trop longggggggggggggggggggggggggggggggggggggggggggggggggggggggggue;La longueur maximale du libellé est de 100 caractères
+;Le libellé ne peut pas être vide
+Inférieure à;Cette estimation de la distance existe déjà

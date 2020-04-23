@@ -1,0 +1,4 @@
+age;Cas d'erreur: Trop de colonnes;Le nombre de colonnes de cette ligne est incorrect: 2 colonne(s) au lieu de 1 attendue(s)
+Cas d'erreur: Age trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;La longueur maximale du libellé est de 100 caractères
+;Le libellé ne peut pas être vide
+3A;Cet âge existe déjà

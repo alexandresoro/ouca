@@ -1,0 +1,4 @@
+meteo;Cas d'erreur: Trop de colonnes;Le nombre de colonnes de cette ligne est incorrect: 2 colonne(s) au lieu de 1 attendue(s)
+Cas d'erreur: meteo trop longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggue;La longueur maximale du libellé est de 100 caractères
+;Le libellé ne peut pas être vide
+Neige;Cette météo existe déjà

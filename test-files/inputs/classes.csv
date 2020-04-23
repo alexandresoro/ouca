@@ -1,0 +1,16 @@
+### Cas d'erreur 1: trop de colonnes
+classe;classe
+### Cas d'erreur 2: libellé trop long (>100 caractères)
+Classe trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggue
+### Cas d'erreur 3: libellé vide
+
+### Cas nominal: libellé très long (=100 caractères)
+Classe très longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggue
+### Cas nominal
+Oiseaux
+### Cas nominal
+Reptiles
+### Cas nominal
+Batraciens
+### Cas d'erreur 4: Il existe déjà une classe avec ce libellé
+Batraciens

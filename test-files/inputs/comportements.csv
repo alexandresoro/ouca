@@ -1,0 +1,12 @@
+Cas d'erreur: pas assez de colonnes
+0000;meteo;Cas d'erreur: Trop de colonnes
+;Cas d'erreur:code vide
+0000000;Cas d'erreur: code trop long
+0000;
+0000;Cas d'erreur: libelle trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+000000;Cas nominal: libelle très longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+0001;En vol
+0002;Posé
+0003;Couve
+0003;Se pose
+0004;Couve

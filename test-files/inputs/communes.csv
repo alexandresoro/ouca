@@ -1,0 +1,19 @@
+Cas d'erreur: Pas accès de colonnes
+departement;code;nom;Cas d'erreur: Trop de colonnes
+33;1;Cas d'erreur: departement inexistant
+;1;Cas d'erreur: departement vide
+26;;Cas d'erreur: code vide
+26;code;Cas d'erreur: code pas un entier
+26;-1;Cas d'erreur: code commune trop petit
+26;65536;Cas d'erreur: code commune trop grand
+26;1;
+26;1;Cas d'erreur: nom trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+26;0;Cas nominal: nom très longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+26;1;ROMANS
+26;2;MARGES
+26;65535;CHARMES
+13;1;MARSEILLE
+13;2;ROMANS
+38;1;ROYBON
+38;1;MIRIBEL
+38;2;ROYBON

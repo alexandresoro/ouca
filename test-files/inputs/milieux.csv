@@ -1,0 +1,12 @@
+Cas d'erreur: Pas assez de colonnes
+0000;milieu;Cas d'erreur: Trop de colonnes
+;Cas d'erreur:code vide
+0000000;Cas d'erreur: code trop long
+0000;Cas d'erreur: libelle trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+0000;
+000000;Cas nominal: libelle très longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+0001;Arbre
+0002;Prairie
+0003;Mer
+0003;Océan
+0004;Mer
