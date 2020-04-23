@@ -1,0 +1,38 @@
+### Cas d'erreur 1: pas assez de colonnes
+
+### Cas d'erreur 2: trop de colonnes
+espece;espece;espece;espece;espece
+### Cas d'errreur 3: classe espèce vide
+;PRUCOL;Accenteur alpin;Prunella collaris
+### Cas d'erreur 4: classe espèce inexistante
+classe;PRUCOL;Accenteur alpin;Prunella collaris
+### Cas d'erreur 5: code vide
+Oiseaux;;Accenteur alpin;Prunella collaris
+### Cas d'erreur 6: code trop long (>20 caractères)
+Oiseaux;trop longgggggggggggg;Accenteur alpin;Prunella collaris
+### Cas d'erreur 7: nom francais vide
+Oiseaux;PRUCOL;;Prunella collaris
+### Cas d'erreur 8: nom francais trop long (>100 caractères)
+Oiseaux;PRUCOL;trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;Prunella collaris
+### Cas d'erreur 9: nom latin vide
+Oiseaux;PRUCOL;Accenteur alpin;
+### Cas d'erreur 10: nom latin trop long (>100 caractères)
+Oiseaux;PRUCOL;Accenteur alpin;trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+### Cas nominal: code très long (=20 caractères)
+Reptiles;très longggggggggggg;Algyroides fitzingeri;Algyroides fitzingeri
+### Cas nominal: nom francais très long (=100 caractères)
+Reptiles;EMYORB;très longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;Emys orbicularis
+### Cas nominal: nom latin très long (=100 caractères)
+Oiseaux;PRUMOD;Accenteur mouchet;très longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+### Cas nominal
+Oiseaux;PRUCOL;Accenteur alpin;Prunella collaris
+### Cas nominal
+Oiseaux;CERGAL   ;Agrobate roux;Cercotrichas galactotes
+### Cas nominal
+Reptiles;CORGIR;Coronelle girondine;Coronella girondica
+### Cas d'erreur 11: code espèce existe déjà
+Oiseaux;CERGAL;nom francais;nom latin
+### Cas d'erreur 12: nom francais existe déjà
+Oiseaux;code;Agrobate roux;nom latin
+### Cas d'erreur 13: nom latin existe déjà
+Reptiles;code;nom francais;Cercotrichas galactotes

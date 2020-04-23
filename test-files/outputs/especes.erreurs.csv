@@ -1,0 +1,13 @@
+;Le nombre de colonnes de cette ligne est incorrect: 1 colonne(s) au lieu de 4 attendue(s)
+espece;espece;espece;espece;espece;Le nombre de colonnes de cette ligne est incorrect: 5 colonne(s) au lieu de 4 attendue(s)
+;PRUCOL;Accenteur alpin;Prunella collaris;La classe de l'espèce ne peut pas être vide
+classe;PRUCOL;Accenteur alpin;Prunella collaris;La classe de cette espèce n'existe pas
+Oiseaux;;Accenteur alpin;Prunella collaris;Le code de l'espèce ne peut pas être vide
+Oiseaux;trop longgggggggggggg;Accenteur alpin;Prunella collaris;La longueur maximale du code de l'espèce est de 20 caractères
+Oiseaux;PRUCOL;;Prunella collaris;Le nom français ne peut pas être vide
+Oiseaux;PRUCOL;trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;Prunella collaris;La longueur maximale du nom français est de 100 caractères
+Oiseaux;PRUCOL;Accenteur alpin;;Le nom latin ne peut pas être vide
+Oiseaux;PRUCOL;Accenteur alpin;trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;La longueur maximale du nom latin est de 100 caractères
+Oiseaux;CERGAL;nom francais;nom latin;Il existe déjà une espèce avec ce code
+Oiseaux;code;Agrobate roux;nom latin;Il existe déjà une espèce avec ce nom français
+Reptiles;code;nom francais;Cercotrichas galactotes;Il existe déjà une espèce avec ce nom latin
