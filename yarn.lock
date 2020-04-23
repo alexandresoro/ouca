@@ -58,14 +58,14 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "13.13.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.0.tgz#30d2d09f623fe32cde9cb582c7a6eda2788ce4a8"
-  integrity sha512-WE4IOAC6r/yBZss1oQGM5zs2D7RuKR6Q+w+X2SouPofnWn+LbCqClRyhO3ZE7Ix8nmFgo/oVuuE01cJT2XB13A==
+  version "13.13.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.2.tgz#160d82623610db590a64e8ca81784e11117e5a54"
+  integrity sha512-LB2R1Oyhpg8gu4SON/mfforE525+Hi/M1ineICEDftqNVTyFg1aRIeGuTvXAoWHc4nbrFncWtJgMmoyRvuGh7A==
 
 "@types/node@12":
-  version "12.12.36"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.36.tgz#162c8c2a2e659da480049df0e19ae128ad3a1527"
-  integrity sha512-hmmypvyO/uTLFYCYu6Hlb3ydeJ11vXRxg8/WJ0E3wvwmPO0y47VqnfmXFVuWlysO0Zyj+je1Y33rQeuYkZ51GQ==
+  version "12.12.37"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.37.tgz#cb4782d847f801fa58316da5b4801ca3a59ae790"
+  integrity sha512-4mXKoDptrXAwZErQHrLzpe0FN/0Wmf5JRniSVIdwUrtDf9wnmEV1teCNLBo/TwuXhkK/bVegoEn/wmb+x0AuPg==
 
 "@types/node@>=8.0.0":
   version "13.7.7"
@@ -903,9 +903,9 @@ os-tmpdir@~1.0.2:
   integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
 
 ouca-common@*:
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.14.tgz#dabcfb785ee04946ad17a0c5b1371bda8c89d953"
-  integrity sha512-e8HJyrrbgNrW7p6Rm89VIGng+ySaKxAaRejKnq70+poPI5POdU5f9Fg440goaRJ8YdwpDcqQULVQ3SGo+fOKew==
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.15.tgz#43f913c98398b8fd8b24baa3f908325d6f5c06c7"
+  integrity sha512-BkDpsBnF8k85PcFXm8zwByFB/rZT0PyJ0qb+WVCJT9GM0IO8/PuW1giD0Z2llYOTXbiEavDhN/gvUQyqWs8MJw==
   dependencies:
     "@types/bson" "*"
     proj4 "*"
