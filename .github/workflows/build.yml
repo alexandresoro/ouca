@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  IMAGE_NAME: basenaturaliste/backend
+
 jobs:
   build:
 
@@ -25,3 +28,14 @@ jobs:
       run: yarn install --frozen-lockfile
     - name: Build
       run: yarn build
+      
+  docker:
+    needs: build
+    
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build image
+        run: docker build . --file Dockerfile --tag basenaturaliste/backend
