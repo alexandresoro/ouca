@@ -7,8 +7,11 @@ import {
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {
-  private CODE_INDEX: number = 0;
-  private LIBELLE_INDEX: number = 1;
+  private readonly CODE_INDEX = 0;
+  private readonly LIBELLE_INDEX = 1;
+
+  private readonly CODE_MAX_LENGTH = 6;
+  private readonly LIBELLE_MAX_LENGTH = 100;
 
   protected getNumberOfColumns = (): number => {
     return 2;
@@ -31,10 +34,10 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
     }
 
     // Check that the entity does not exist
-    const entityByCode: EntiteAvecLibelleEtCode = (await findEntityByCode(
+    const entityByCode = await findEntityByCode<EntiteAvecLibelleEtCode>(
       entityTab[this.CODE_INDEX],
       this.getTableName()
-    )) as EntiteAvecLibelleEtCode;
+    );
 
     if (entityByCode) {
       this.message =
@@ -54,7 +57,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
     }
 
     // Create and save the entity
-    const entityToSave: EntiteAvecLibelleEtCode = this.buildEntity(entityTab);
+    const entityToSave = this.buildEntity(entityTab);
 
     const saveResult = await persistEntity(
       this.getTableName(),
@@ -78,8 +81,11 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
       return false;
     }
 
-    if (code.length > 6) {
-      this.message = "La longueur maximale du code est de 6 caractères";
+    if (code.length > this.CODE_MAX_LENGTH) {
+      this.message =
+        "La longueur maximale du code est de " +
+        this.CODE_MAX_LENGTH +
+        " caractères";
       return false;
     }
 
@@ -94,8 +100,11 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
       return false;
     }
 
-    if (libelle.length > 100) {
-      this.message = "La longueur maximale du libellé est de 100 caractères";
+    if (libelle.length > this.LIBELLE_MAX_LENGTH) {
+      this.message =
+        "La longueur maximale du libellé est de " +
+        this.LIBELLE_MAX_LENGTH +
+        " caractères";
       return false;
     }
 

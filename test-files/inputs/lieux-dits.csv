@@ -1,0 +1,58 @@
+### Cas d'erreur 1: pas assez de colonnes
+
+### Cas d'erreur 2: trop de colonnes
+departement;code commune;nom commune;altitude;longitude;latitude;Cas d'erreur: Trop de colonnes
+### Cas d'erreur 3: département vide
+;1;ROMANS;Place de la mairie;1;2;3
+### Cas d'erreur 4: département inexistant
+33;1;ROMANS;Place de la mairie;1;2;3
+### Cas d'erreur 5: Code commune vide
+26;;ROMANS;Place de la mairie;1;2;3
+### Cas d'erreur 6: Code commune pas un entier
+26;code;ROMANS;Place de la mairie;1;2;3
+### Cas d'erreur 7: Nom commune vide
+26;1;;Place de la mairie;1;2;3
+### Cas d'erreur 8: Commune inexistante
+26;0;commune;Place de la mairie;1;2;3
+### Cas d'erreur 9: Nom lieu-dit vide
+26;1;ROMANS;;1;2;3
+### Cas d'erreur 10: Nom lieu-dit trop long
+26;1;ROMANS;Nom trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;1;2;3
+### Cas d'erreur 11: Altitude vide
+26;1;ROMANS;Prairie;;2;3
+### Cas d'erreur 12: Altitude pas un nombre
+26;1;ROMANS;Prairie;altitude;2;3
+### Cas d'erreur 13: Altitude pas un entier
+26;1;ROMANS;Prairie;10.2;2;3
+### Cas d'erreur 14: Altitude trop petite
+26;1;ROMANS;Prairie;-1;2;3
+### Cas d'erreur 15: Altitude trop grande
+26;1;ROMANS;Prairie;65536;2;3
+### Cas d'erreur 16: Longitude vide
+26;1;ROMANS;Prairie;1;;3
+### Cas d'erreur 17: Longitude pas un nombre
+26;1;ROMANS;Prairie;1;longitude;3
+### Cas d'erreur 18: Longitude trop petite
+26;1;ROMANS;Prairie;1;-181;3
+### Cas d'erreur 19: Longitude trop grande
+26;1;ROMANS;Prairie;1;1300001;3
+### Cas d'erreur 20: Latitude vide
+26;1;ROMANS;Prairie;1;2;-180;
+### Cas d'erreur 21: Latitude pas un nombre
+26;1;ROMANS;Prairie;1;2;latitude
+### Cas d'erreur 22: Latitude trop petite
+26;1;ROMANS;Prairie;1;2;-91
+### Cas d'erreur 23: Latitude trop grande
+26;1;ROMANS;Prairie;1;2;latitude
+### Cas nominal
+26;1;ROMANS;Prarie;0;-180;-90
+### Cas nominal
+26;1;ROMANS;Nom très longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;65535;1300000;7200000
+### Cas nominal
+26;1;ROMANS;Mairie;1;2.99999;3.11111
+### Cas nominal
+26;2;MARGES;Prarie;10;11;12
+### Cas nominal
+26;2;MARGES;Mairie;10;11;12
+### Cas d'erreur 24: Lieu-dit déjà existant avec ce nom dans cette commune
+26;1;ROMANS;Mairie;11;12;13

@@ -6,7 +6,9 @@ import { TABLE_DEPARTEMENT } from "../../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {
-  private CODE_INDEX: number = 0;
+  private readonly CODE_INDEX = 0;
+
+  private readonly CODE_MAX_LENGTH = 100;
 
   protected getNumberOfColumns = (): number => {
     return 1;
@@ -25,9 +27,7 @@ export class ImportDepartementService extends ImportService {
     }
 
     // Check that the departement does not exist
-    const departement: Departement = await getDepartementByCode(
-      entityTab[this.CODE_INDEX]
-    );
+    const departement = await getDepartementByCode(entityTab[this.CODE_INDEX]);
 
     if (departement) {
       this.message = "Ce département existe déjà";
@@ -35,7 +35,7 @@ export class ImportDepartementService extends ImportService {
     }
 
     // Create and save the commune
-    const departementToSave: Departement = this.buildEntity(entityTab);
+    const departementToSave = this.buildEntity(entityTab);
 
     const saveResult = await persistEntity(
       TABLE_DEPARTEMENT,
@@ -53,9 +53,11 @@ export class ImportDepartementService extends ImportService {
       return false;
     }
 
-    if (code.length > 100) {
+    if (code.length > this.CODE_MAX_LENGTH) {
       this.message =
-        "La longueur maximale du département est de 100 caractères";
+        "La longueur maximale du département est de " +
+        this.CODE_MAX_LENGTH +
+        " caractères";
       return false;
     }
 

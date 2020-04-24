@@ -6,7 +6,9 @@ import {
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleService extends ImportService {
-  protected LIBELLE_INDEX: number = 0;
+  protected readonly LIBELLE_INDEX = 0;
+
+  private readonly LIBELLE_MAX_LENGTH = 100;
 
   protected getNumberOfColumns = (): number => {
     return 1;
@@ -36,7 +38,7 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
     }
 
     // Create and save the entity
-    const entityToSave: EntiteAvecLibelle = this.buildEntity(entityTab);
+    const entityToSave = this.buildEntity(entityTab);
 
     const saveResult = await persistEntity(
       this.getTableName(),
@@ -60,8 +62,11 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
       return false;
     }
 
-    if (libelle.length > 100) {
-      this.message = "La longueur maximale du libellé est de 100 caractères";
+    if (libelle.length > this.LIBELLE_MAX_LENGTH) {
+      this.message =
+        "La longueur maximale du libellé est de " +
+        this.LIBELLE_MAX_LENGTH +
+        " caractères";
       return false;
     }
 
