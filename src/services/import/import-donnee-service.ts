@@ -322,10 +322,10 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Comportements" or return an error if some of them does not exist
     const comportementsIds: number[] = [];
     for (const codeComportement of rawDonnee.comportements) {
-      const comportement: Comportement = (await findEntityByCode(
+      const comportement = await findEntityByCode<Comportement>(
         codeComportement,
         TABLE_COMPORTEMENT
-      )) as Comportement;
+      );
 
       if (!comportement) {
         this.message =
@@ -343,10 +343,7 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Milieux" or return an error if some of them does not exist
     const milieuxIds: number[] = [];
     for (const codeMilieu of rawDonnee.milieux) {
-      const milieu: Milieu = (await findEntityByCode(
-        codeMilieu,
-        TABLE_MILIEU
-      )) as Milieu;
+      const milieu: Milieu = await findEntityByCode(codeMilieu, TABLE_MILIEU);
 
       if (!milieu) {
         this.message =

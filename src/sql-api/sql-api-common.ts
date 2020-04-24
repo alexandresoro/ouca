@@ -9,10 +9,10 @@ import {
 } from "../sql/sql-queries-utils";
 import { onTableUpdate } from "../ws/ws-messages";
 
-export const findEntityByCode = async (
+export const findEntityByCode = async <T extends EntiteSimple>(
   code: string,
   tableName: string
-): Promise<EntiteSimple> => {
+): Promise<T> => {
   const entities = await queryToFindEntityByCode(tableName, code);
 
   if (entities && entities[0]?.id) {

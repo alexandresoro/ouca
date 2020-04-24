@@ -1,4 +1,3 @@
-import { Classe } from "ouca-common/classe.object";
 import { Espece } from "ouca-common/espece.model";
 import { findClasseByLibelle } from "../../sql-api/sql-api-classe";
 import { persistEntity } from "../../sql-api/sql-api-common";
@@ -12,10 +11,14 @@ import { TABLE_ESPECE } from "../../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {
-  private CLASSE_INDEX: number = 0;
-  private CODE_INDEX: number = 1;
-  private NOM_FRANCAIS_INDEX: number = 2;
-  private NOM_LATIN_INDEX: number = 3;
+  private readonly CLASSE_INDEX = 0;
+  private readonly CODE_INDEX = 1;
+  private readonly NOM_FRANCAIS_INDEX = 2;
+  private readonly NOM_LATIN_INDEX = 3;
+
+  private readonly CODE_MAX_LENGTH = 20;
+  private readonly NOM_FRANCAIS_MAX_LENGTH = 100;
+  private readonly NOM_LATIN_MAX_LENGTH = 100;
 
   protected getNumberOfColumns = (): number => {
     return 4;
@@ -42,9 +45,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Check that the classe exists
-    const classe: Classe = await findClasseByLibelle(
-      entityTab[this.CLASSE_INDEX]
-    );
+    const classe = await findClasseByLibelle(entityTab[this.CLASSE_INDEX]);
 
     if (!classe) {
       this.message = "La classe de cette espèce n'existe pas";
@@ -52,16 +53,14 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Check that the espece does not exists
-    const especeByCode: Espece = await findEspeceByCode(
-      entityTab[this.CODE_INDEX]
-    );
+    const especeByCode = await findEspeceByCode(entityTab[this.CODE_INDEX]);
 
     if (especeByCode) {
       this.message = "Il existe déjà une espèce avec ce code";
       return false;
     }
 
-    const especeByNomFrancais: Espece = await findEspeceByNomFrancais(
+    const especeByNomFrancais = await findEspeceByNomFrancais(
       entityTab[this.NOM_FRANCAIS_INDEX]
     );
 
@@ -70,7 +69,7 @@ export class ImportEspeceService extends ImportService {
       return false;
     }
 
-    const especeByNomLatin: Espece = await findEspeceByNomLatin(
+    const especeByNomLatin = await findEspeceByNomLatin(
       entityTab[this.NOM_LATIN_INDEX]
     );
 
@@ -80,7 +79,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Create and save the espece
-    const especeToSave: Espece = this.buildEntity(entityTab, classe.id);
+    const especeToSave = this.buildEntity(entityTab, classe.id);
 
     const saveResult = await persistEntity(
       TABLE_ESPECE,
@@ -108,42 +107,49 @@ export class ImportEspeceService extends ImportService {
       return false;
     }
 
-    if (code.length > 20) {
+    if (code.length > this.CODE_MAX_LENGTH) {
       this.message =
-        "La longueur maximale du code de l'espèce est de 20 caractères";
+        "La longueur maximale du code de l'espèce est de " +
+        this.CODE_MAX_LENGTH +
+        " caractères";
       return false;
     }
 
     return true;
   };
 
-  private isNomFrancaisValid = (code: string): boolean => {
-    code = code.trim();
+  private isNomFrancaisValid = (nom: string): boolean => {
+    nom = nom.trim();
 
-    if (!code) {
+    if (!nom) {
       this.message = "Le nom français ne peut pas être vide";
       return false;
     }
 
-    if (code.length > 100) {
+    if (nom.length > this.NOM_FRANCAIS_MAX_LENGTH) {
       this.message =
-        "La longueur maximale du nom français est de 100 caractères";
+        "La longueur maximale du nom français est de " +
+        this.NOM_FRANCAIS_MAX_LENGTH +
+        " caractères";
       return false;
     }
 
     return true;
   };
 
-  private isNomLatinValid = (code: string): boolean => {
-    code = code.trim();
+  private isNomLatinValid = (nom: string): boolean => {
+    nom = nom.trim();
 
-    if (!code) {
+    if (!nom) {
       this.message = "Le nom latin ne peut pas être vide";
       return false;
     }
 
-    if (code.length > 100) {
-      this.message = "La longueur maximale du nom latin est de 100 caractères";
+    if (nom.length > this.NOM_LATIN_MAX_LENGTH) {
+      this.message =
+        "La longueur maximale du nom latin est de " +
+        this.NOM_LATIN_MAX_LENGTH +
+        " caractères";
       return false;
     }
 

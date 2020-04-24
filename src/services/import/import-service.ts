@@ -32,6 +32,16 @@ export abstract class ImportService {
       return "Le contenu du fichier n'a pas pu être lu";
     }
 
+    console.log(
+      "Résultats de l'import : " +
+        (this.numberOfLines - this.numberOfErrors) +
+        "/" +
+        this.numberOfLines +
+        " importées avec succès --> " +
+        this.numberOfErrors +
+        " lignes en erreur"
+    );
+
     if (this.errors.length > 0) {
       return Papa.unparse(this.errors);
     } else {

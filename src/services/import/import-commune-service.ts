@@ -1,5 +1,4 @@
 import { Commune } from "ouca-common/commune.model";
-import { Departement } from "ouca-common/departement.object";
 import { persistEntity } from "../../sql-api/sql-api-common";
 import {
   findCommuneByDepartementIdAndCode,
@@ -11,9 +10,13 @@ import { TABLE_COMMUNE } from "../../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportCommuneService extends ImportService {
-  private DEPARTEMENT_INDEX: number = 0;
-  private CODE_INDEX: number = 1;
-  private NOM_INDEX: number = 2;
+  private readonly DEPARTEMENT_INDEX = 0;
+  private readonly CODE_INDEX = 1;
+  private readonly NOM_INDEX = 2;
+
+  private readonly CODE_MIN_VALUE = 0;
+  private readonly CODE_MAX_VALUE = 65535;
+  private readonly NOM_MAX_LENGTH = 100;
 
   protected getNumberOfColumns = (): number => {
     return 3;
@@ -41,7 +44,7 @@ export class ImportCommuneService extends ImportService {
     }
 
     // Check that the departement exists
-    const departement: Departement = await getDepartementByCode(
+    const departement = await getDepartementByCode(
       entityTab[this.DEPARTEMENT_INDEX]
     );
 
@@ -51,30 +54,30 @@ export class ImportCommuneService extends ImportService {
     }
 
     // Check that the commune does not exists
-    const communeByCode: Commune = await findCommuneByDepartementIdAndCode(
+    const communeByCode = await findCommuneByDepartementIdAndCode(
       departement.id,
       +entityTab[this.CODE_INDEX]
     );
 
-    if (communeByCode && communeByCode.id) {
+    if (communeByCode?.id) {
       this.message =
         "Il existe déjà une commune avec ce code dans ce département";
       return false;
     }
 
-    const communeByNom: Commune = await findCommuneByDepartementIdAndNom(
+    const communeByNom = await findCommuneByDepartementIdAndNom(
       departement.id,
       entityTab[this.NOM_INDEX]
     );
 
-    if (communeByNom && communeByNom.id) {
+    if (communeByNom?.id) {
       this.message =
         "Il existe déjà une commune avec ce nom dans ce département";
       return false;
     }
 
     // Create and save the commune
-    const communeToSave: Commune = this.buildEntity(entityTab, departement.id);
+    const communeToSave = this.buildEntity(entityTab, departement.id);
 
     const saveResult = await persistEntity(
       TABLE_COMMUNE,
@@ -109,9 +112,15 @@ export class ImportCommuneService extends ImportService {
       return false;
     }
 
-    if (codeCommune < 0 || codeCommune > 65535) {
+    if (
+      codeCommune < this.CODE_MIN_VALUE ||
+      codeCommune > this.CODE_MAX_VALUE
+    ) {
       this.message =
-        "Le code de la commune doit être un entier compris entre 0 et 65535";
+        "Le code de la commune doit être un entier compris entre " +
+        this.CODE_MIN_VALUE +
+        " et " +
+        this.CODE_MAX_VALUE;
       return false;
     }
 
@@ -126,9 +135,11 @@ export class ImportCommuneService extends ImportService {
       return false;
     }
 
-    if (nom.length > 100) {
+    if (nom.length > this.NOM_MAX_LENGTH) {
       this.message =
-        "La longueur maximale du nom de la commune est de 100 caractères";
+        "La longueur maximale du nom de la commune est de " +
+        this.NOM_MAX_LENGTH +
+        " caractères";
       return false;
     }
 
