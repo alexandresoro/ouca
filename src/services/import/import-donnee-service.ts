@@ -2,7 +2,12 @@ import * as _ from "lodash";
 import { Age } from "ouca-common/age.object";
 import { Commune } from "ouca-common/commune.model";
 import { Comportement } from "ouca-common/comportement.object";
-import { LAMBERT_93 } from "ouca-common/coordinates-system/coordinates-system.object";
+import {
+  areCoordinatesCustomized,
+  CoordinatesSystem,
+  CoordinatesSystemType,
+  COORDINATES_SYSTEMS_CONFIG
+} from "ouca-common/coordinates-system";
 import { Departement } from "ouca-common/departement.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { Espece } from "ouca-common/espece.model";
@@ -20,6 +25,7 @@ import {
   findEntityByLibelle
 } from "../../sql-api/sql-api-common";
 import { findCommuneByDepartementIdAndCode } from "../../sql-api/sql-api-commune";
+import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { findEspeceByCode } from "../../sql-api/sql-api-espece";
 import { findLieuDitByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
@@ -34,6 +40,7 @@ import {
   TABLE_SEXE
 } from "../../utils/constants";
 import {
+  getFormattedDate,
   getFormattedTime,
   isIdInListIds,
   isTimeValid
@@ -41,34 +48,45 @@ import {
 import { ImportService } from "./import-service";
 
 export class ImportDoneeeService extends ImportService {
-  private OBSERVATEUR_INDEX: number = 0;
-  private ASSOCIES_INDEX: number = 1;
-  private DATE_INDEX: number = 2;
-  private HEURE_INDEX: number = 3;
-  private DUREE_INDEX: number = 4;
-  private DEPARTEMENT_INDEX: number = 5;
-  private CODE_COMMUNE_INDEX: number = 6;
-  private LIEUDIT_INDEX: number = 7;
-  private ALTITUDE_INDEX: number = 8;
-  private LONGITUDE_INDEX: number = 9;
-  private LATITUDE_INDEX: number = 10;
-  private TEMPERATURE_INDEX: number = 11;
-  private METEOS_INDEX: number = 12;
-  private CODE_ESPECE_INDEX: number = 13;
-  private ESTIMATION_NOMBRE_INDEX: number = 14;
-  private NOMBRE_INDEX: number = 15;
-  private SEXE_INDEX: number = 16;
-  private AGE_INDEX: number = 17;
-  private ESTIMATION_DISTANCE_INDEX: number = 18;
-  private DISTANCE_INDEX: number = 19;
-  private REGROUPEMENT_INDEX: number = 20;
-  private CODE_COMP_1_INDEX: number = 21;
-  private CODE_COMP_6_INDEX: number = 26;
-  private CODE_MILIEU_1_INDEX: number = 27;
-  private CODE_MILIEU_4_INDEX: number = 30;
-  private COMMENTAIRE_INDEX: number = 31;
+  private readonly OBSERVATEUR_INDEX = 0;
+  private readonly ASSOCIES_INDEX = 1;
+  private readonly DATE_INDEX = 2;
+  private readonly HEURE_INDEX = 3;
+  private readonly DUREE_INDEX = 4;
+  private readonly DEPARTEMENT_INDEX = 5;
+  private readonly CODE_COMMUNE_INDEX = 6;
+  private readonly LIEUDIT_INDEX = 7;
+  private readonly ALTITUDE_INDEX = 8;
+  private readonly LONGITUDE_INDEX = 9;
+  private readonly LATITUDE_INDEX = 10;
+  private readonly TEMPERATURE_INDEX = 11;
+  private readonly METEOS_INDEX = 12;
+  private readonly CODE_ESPECE_INDEX = 13;
+  private readonly ESTIMATION_NOMBRE_INDEX = 14;
+  private readonly NOMBRE_INDEX = 15;
+  private readonly SEXE_INDEX = 16;
+  private readonly AGE_INDEX = 17;
+  private readonly ESTIMATION_DISTANCE_INDEX = 18;
+  private readonly DISTANCE_INDEX = 19;
+  private readonly REGROUPEMENT_INDEX = 20;
+  private readonly CODE_COMP_1_INDEX = 21;
+  private readonly CODE_COMP_6_INDEX = 26;
+  private readonly CODE_MILIEU_1_INDEX = 27;
+  private readonly CODE_MILIEU_4_INDEX = 30;
+  private readonly COMMENTAIRE_INDEX = 31;
 
-  private LIST_SEPARATOR: string = ",";
+  private readonly LIST_SEPARATOR = ",";
+
+  private readonly ALTITUDE_MIN_VALUE = 0;
+  private readonly ALTITUDE_MAX_VALUE = 65535;
+  private readonly TEMPERATURE_MIN_VALUE = -128;
+  private readonly TEMPERATURE_MAX_VALUE = 127;
+  private readonly NOMBRE_MIN_VALUE = 0;
+  private readonly NOMBRE_MAX_VALUE = 65535;
+  private readonly DISTANCE_MIN_VALUE = 0;
+  private readonly DISTANCE_MAX_VALUE = 65535;
+  private readonly REGROUPEMENT_MIN_VALUE = 1;
+  private readonly REGROUPEMENT_MAX_VALUE = 65535;
 
   protected getNumberOfColumns = (): number => {
     return 32;
@@ -106,12 +124,15 @@ export class ImportDoneeeService extends ImportService {
   };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
-    const rawDonnee: ImportedDonnee = this.getrawDonnee(entityTab);
+    const rawDonnee: ImportedDonnee = this.getRawDonnee(entityTab);
+
+    const coordinatesSystemType = await findCoordinatesSystem();
+    const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
 
     // First check the format of the fields
     // Return an error if some of the attributes are missing wrongly formatted
     if (
-      !this.areInventaireAttributesValid(rawDonnee) ||
+      !this.areInventaireAttributesValid(rawDonnee, coordinatesSystem) ||
       !this.areDonneeAttributesValid(rawDonnee)
     ) {
       return false;
@@ -149,13 +170,13 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Date"
-    const date = rawDonnee.date; // TO DO
+    const date = getFormattedDate(rawDonnee.date.trim()).toJSON();
 
     // Get the "Heure"
-    const heure: string = getFormattedTime(rawDonnee.heure);
+    const heure: string = getFormattedTime(rawDonnee.heure.trim());
 
     // Get the "Duree"
-    const duree: string = getFormattedTime(rawDonnee.duree);
+    const duree: string = getFormattedTime(rawDonnee.duree.trim());
 
     // Get the "Departement" or return an error if it doesn't exist
     const departement: Departement = await getDepartementByCode(
@@ -208,11 +229,12 @@ export class ImportDoneeeService extends ImportService {
     let longitude: number = null;
     let latitude: number = null;
     if (
-      this.areCoordinatesCustomized(
+      areCoordinatesCustomized(
         lieudit,
         +rawDonnee.altitude,
         +rawDonnee.longitude,
-        +rawDonnee.latitude
+        +rawDonnee.latitude,
+        coordinatesSystemType
       )
     ) {
       altitude = +rawDonnee.altitude;
@@ -221,7 +243,6 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Temperature"
-    // TO DO check that 0 is accepted
     // TO DO bug quand la temperature n'est pas renseignée ça met 0
     const temperature: number | null = _.isNil(rawDonnee.temperature)
       ? null
@@ -252,7 +273,6 @@ export class ImportDoneeeService extends ImportService {
 
     // Get the "Sexe" or return an error if it doesn't exist
     const sexe = await findEntityByLibelle<Sexe>(rawDonnee.sexe, TABLE_SEXE);
-
     if (!sexe) {
       this.message = 'Le sexe "' + rawDonnee.sexe + "\" n'existe pas";
       return false;
@@ -260,7 +280,6 @@ export class ImportDoneeeService extends ImportService {
 
     // Get the "Age" or return an error if it doesn't exist
     const age = await findEntityByLibelle<Age>(rawDonnee.age, TABLE_AGE);
-
     if (!age) {
       this.message = "L'âge \"" + rawDonnee.age + "\" n'existe pas";
       return false;
@@ -271,7 +290,6 @@ export class ImportDoneeeService extends ImportService {
       rawDonnee.estimationNombre,
       TABLE_ESTIMATION_NOMBRE
     );
-
     if (!estimationNombre) {
       this.message =
         "L'estimation du nombre \"" +
@@ -285,7 +303,7 @@ export class ImportDoneeeService extends ImportService {
     const nombre: number = rawDonnee.nombre ? +rawDonnee.nombre : null;
 
     // If "Estimation du nombre" is of type "Non-compte" then "Nombre" should be empty
-    if (estimationNombre.nonCompte && !!nombre) {
+    if (estimationNombre.nonCompte && nombre) {
       this.message =
         "L'estimation du nombre \"" +
         estimationNombre.libelle +
@@ -300,7 +318,6 @@ export class ImportDoneeeService extends ImportService {
         rawDonnee.estimationDistance,
         TABLE_ESTIMATION_DISTANCE
       );
-
       if (!estimationDistance) {
         this.message =
           "L'estimation de la distance \"" +
@@ -311,8 +328,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Distance"
-    const distance: number =
-      rawDonnee.distance != null ? +rawDonnee.distance : null;
+    const distance: number = rawDonnee.distance ? +rawDonnee.distance : null;
 
     // Get the "Regroupement"
     const regroupement: number = rawDonnee.regroupement
@@ -373,7 +389,8 @@ export class ImportDoneeeService extends ImportService {
       meteosIds,
       altitude,
       longitude,
-      latitude
+      latitude,
+      _.isNil(altitude) ? null : coordinatesSystemType
     );
 
     console.log(inventaireToSave);
@@ -425,7 +442,8 @@ export class ImportDoneeeService extends ImportService {
   };
 
   private areInventaireAttributesValid = (
-    donneeToImport: ImportedDonnee
+    donneeToImport: ImportedDonnee,
+    coordinatesSystem: CoordinatesSystem
   ): boolean => {
     if (
       !this.isObservateurValid(donneeToImport.observateur) ||
@@ -436,8 +454,8 @@ export class ImportDoneeeService extends ImportService {
       !this.isCodeCommuneValid(donneeToImport.codeCommune) ||
       !this.isLieuditValid(donneeToImport.lieudit) ||
       !this.isAltitudeValid(donneeToImport.altitude) ||
-      !this.isLongitudeValid(donneeToImport.longitude) ||
-      !this.isLatitudeValid(donneeToImport.latitude) ||
+      !this.isLongitudeValid(donneeToImport.longitude, coordinatesSystem) ||
+      !this.isLatitudeValid(donneeToImport.latitude, coordinatesSystem) ||
       !this.isTemperatureValid(donneeToImport.temperature)
     ) {
       return false;
@@ -462,20 +480,6 @@ export class ImportDoneeeService extends ImportService {
     return true;
   };
 
-  private areCoordinatesCustomized = (
-    lieudit: Lieudit,
-    altitude: number,
-    longitude: number,
-    latitude: number
-  ): boolean => {
-    return (
-      !!lieudit &&
-      (altitude !== lieudit.altitude ||
-        longitude !== lieudit.coordinates.longitude ||
-        latitude !== lieudit.coordinates.latitude)
-    );
-  };
-
   private buildInventaire = (
     observateurId: number,
     associesIds: number[],
@@ -487,7 +491,8 @@ export class ImportDoneeeService extends ImportService {
     meteosIds: number[],
     altitude: number | null,
     longitude: number | null,
-    latitude: number | null
+    latitude: number | null,
+    coordinatesSystemType: CoordinatesSystemType | null
   ): Inventaire => {
     const inventaire: Inventaire = {
       id: null,
@@ -501,7 +506,7 @@ export class ImportDoneeeService extends ImportService {
       coordinates: {
         longitude,
         latitude,
-        system: LAMBERT_93,
+        system: coordinatesSystemType,
         isTransformed: false
       },
       temperature: temperature,
@@ -516,11 +521,23 @@ export class ImportDoneeeService extends ImportService {
   };
 
   private isDateValid = (dateStr: string): boolean => {
-    return true; // TO DO
+    if (!dateStr) {
+      this.message = "La date ne peut pas être vide";
+      return false;
+    }
+
+    const date = getFormattedDate(dateStr.trim());
+
+    if (!date) {
+      this.message = "La date ne respecte pas le format demandé: jj/mm/aaaa";
+      return false;
+    }
+
+    return true;
   };
 
   private isHeureValid = (heure: string): boolean => {
-    if (!!heure && !isTimeValid(heure)) {
+    if (heure && !isTimeValid(heure)) {
       this.message = "L'heure ne respecte pas le format demandé: hh:ss";
       return false;
     }
@@ -528,7 +545,7 @@ export class ImportDoneeeService extends ImportService {
   };
 
   private isDureeValid = (duree: string): boolean => {
-    if (!!duree && !isTimeValid(duree)) {
+    if (duree && !isTimeValid(duree)) {
       this.message = "La durée ne respecte pas le format demandé: hh:ss";
       return false;
     }
@@ -541,8 +558,6 @@ export class ImportDoneeeService extends ImportService {
 
   private isCodeCommuneValid = (code: string): boolean => {
     code = code.trim();
-
-    console.log(code);
 
     if (!code) {
       this.message = "Le code de la commune du lieu-dit ne peut pas être vide";
@@ -574,16 +589,25 @@ export class ImportDoneeeService extends ImportService {
       return false;
     }
 
-    if (altitude < 0 || altitude > 99999) {
+    if (
+      altitude < this.ALTITUDE_MIN_VALUE ||
+      altitude > this.ALTITUDE_MAX_VALUE
+    ) {
       this.message =
-        "L'altitude du lieu-dit doit être un entier compris entre 0 et 99999";
+        "L'altitude du lieu-dit doit être un entier compris entre " +
+        this.ALTITUDE_MIN_VALUE +
+        " et " +
+        this.ALTITUDE_MAX_VALUE;
       return false;
     }
 
     return true;
   }
 
-  private isLongitudeValid(longitudeStr: string): boolean {
+  private isLongitudeValid(
+    longitudeStr: string,
+    coordinatesSystem: CoordinatesSystem
+  ): boolean {
     if (!longitudeStr) {
       this.message = "La longitude du lieu-dit ne peut pas être vide";
       return false;
@@ -596,16 +620,25 @@ export class ImportDoneeeService extends ImportService {
       return false;
     }
 
-    if (longitude < 0 || longitude > 99999999) {
+    if (
+      longitude < coordinatesSystem.longitudeRange.min ||
+      longitude > coordinatesSystem.longitudeRange.max
+    ) {
       this.message =
-        "La longitude du lieu-dit doit être un entier compris entre 0 et 99999999";
+        "La longitude du lieu-dit doit être un entier compris entre " +
+        coordinatesSystem.longitudeRange.min +
+        " et " +
+        coordinatesSystem.longitudeRange.max;
       return false;
     }
 
     return true;
   }
 
-  private isLatitudeValid(latitudeStr: string): boolean {
+  private isLatitudeValid(
+    latitudeStr: string,
+    coordinatesSystem: CoordinatesSystem
+  ): boolean {
     if (!latitudeStr) {
       this.message = "La latitude du lieu-dit ne peut pas être vide";
       return false;
@@ -618,9 +651,15 @@ export class ImportDoneeeService extends ImportService {
       return false;
     }
 
-    if (latitude < 0 || latitude > 99999999) {
+    if (
+      latitude < coordinatesSystem.latitudeRange.min ||
+      latitude > coordinatesSystem.latitudeRange.max
+    ) {
       this.message =
-        "La latitude du lieu-dit doit être un entier compris entre 0 et 99999999";
+        "La latitude du lieu-dit doit être un entier compris entre " +
+        coordinatesSystem.latitudeRange.min +
+        " et " +
+        coordinatesSystem.latitudeRange.max;
       return false;
     }
 
@@ -636,9 +675,15 @@ export class ImportDoneeeService extends ImportService {
         return false;
       }
 
-      if (temperature < -128 || temperature > 127) {
+      if (
+        temperature < this.TEMPERATURE_MIN_VALUE ||
+        temperature > this.TEMPERATURE_MAX_VALUE
+      ) {
         this.message =
-          "La temperature doit être un entier compris entre -128 et 127";
+          "La temperature doit être un entier compris entre " +
+          this.TEMPERATURE_MIN_VALUE +
+          " et " +
+          this.TEMPERATURE_MAX_VALUE;
         return false;
       }
     }
@@ -670,9 +715,12 @@ export class ImportDoneeeService extends ImportService {
         return false;
       }
 
-      if (nombre < 1 || nombre > 99999) {
+      if (nombre < this.NOMBRE_MIN_VALUE || nombre > this.NOMBRE_MAX_VALUE) {
         this.message =
-          "Le nombre d'individus doit être un entier compris entre 1 et 99999";
+          "Le nombre d'individus doit être un entier compris entre " +
+          this.NOMBRE_MIN_VALUE +
+          " et " +
+          this.NOMBRE_MAX_VALUE;
         return false;
       }
     }
@@ -688,9 +736,15 @@ export class ImportDoneeeService extends ImportService {
         return false;
       }
 
-      if (distance < 0 || distance > 99999) {
+      if (
+        distance < this.DISTANCE_MIN_VALUE ||
+        distance > this.DISTANCE_MAX_VALUE
+      ) {
         this.message =
-          "La distance de contact doit être un entier compris entre 0 et 99999";
+          "La distance de contact doit être un entier compris entre " +
+          this.DISTANCE_MIN_VALUE +
+          " et " +
+          this.DISTANCE_MAX_VALUE;
         return false;
       }
     }
@@ -706,9 +760,15 @@ export class ImportDoneeeService extends ImportService {
         return false;
       }
 
-      if (regroupement < 1 || regroupement > 99999) {
+      if (
+        regroupement < this.REGROUPEMENT_MIN_VALUE ||
+        regroupement > this.REGROUPEMENT_MAX_VALUE
+      ) {
         this.message =
-          "Le numéro de regroupement doit être un entier compris entre 1 et 99999";
+          "Le numéro de regroupement doit être un entier compris entre " +
+          this.REGROUPEMENT_MIN_VALUE +
+          " et " +
+          this.REGROUPEMENT_MAX_VALUE;
         return false;
       }
     }
@@ -726,7 +786,7 @@ export class ImportDoneeeService extends ImportService {
     return true;
   };
 
-  private getrawDonnee = (attributes: string[]): ImportedDonnee => {
+  private getRawDonnee = (attributes: string[]): ImportedDonnee => {
     const comportements: string[] = [];
     for (
       let comportementIndex = this.CODE_COMP_1_INDEX;
