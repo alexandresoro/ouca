@@ -239,18 +239,42 @@ export const sendMeteos = async (
 export const sendInitialData = async (
   client: WebSocket | WebSocket[]
 ): Promise<void> => {
-  await this.sendAppConfiguration(client);
-  await this.sendObservateurs(client);
-  await this.sendLieuxdits(client);
-  await this.sendCommunes(client);
-  await this.sendDepartements(client);
-  await this.sendClasses(client);
-  await this.sendEspeces(client);
-  await this.sendSexes(client);
-  await this.sendAges(client);
-  await this.sendEstimationsDistance(client);
-  await this.sendEstimationsNombre(client);
-  await this.sendComportements(client);
-  await this.sendMilieux(client);
-  await this.sendMeteos(client);
+  const appConfiguration = await getAppConfiguration();
+  const observateurs = await findAllObservateurs();
+  const lieuxdits = await findAllLieuxDits();
+  const communes = await findAllCommunes();
+  const departements = await findAllDepartements();
+  const classes = await findAllClasses();
+  const especes = await findAllEspeces();
+  const sexes = await findAllSexes();
+  const ages = await findAllAges();
+  const estimationsDistance = await findAllEstimationsDistance();
+  const estimationsNombre = await findAllEstimationsNombre();
+  const comportements = await findAllComportements();
+  const milieux = await findAllMilieux();
+  const meteos = await findAllMeteos();
+
+  const initialDataContent = {
+    configuration: appConfiguration,
+    observateurs,
+    lieuxdits,
+    communes,
+    departements,
+    classes,
+    especes,
+    sexes,
+    ages,
+    estimationsDistance,
+    estimationsNombre,
+    comportements,
+    milieux,
+    meteos
+  };
+
+  const initialData: WebsocketUpdateMessage = {
+    type: "update",
+    content: initialDataContent
+  };
+
+  WebsocketServer.sendMessageToClients(JSON.stringify(initialData), client);
 };
