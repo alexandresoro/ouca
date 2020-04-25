@@ -5,7 +5,7 @@
   "scripts": {
     "build": "yarn run clean && yarn run build:indexes && tsc",
     "build:indexes": "ts-node indexes",
-    "clean": "yarn ts-node clean",
+    "clean": "ts-node clean",
     "deploy": "yarn run build && yarn run publish",
     "publish": "yarn version --patch && ts-node deploy && yarn publish --non-interactive dist"
   },
