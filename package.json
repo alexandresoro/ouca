@@ -6,7 +6,8 @@
     "build": "yarn run clean && yarn run build:indexes && tsc",
     "build:indexes": "ts-node indexes",
     "clean": "ts-node clean",
-    "deploy": "yarn run build && yarn version --patch && ts-node deploy && yarn publish --non-interactive dist"
+    "deploy": "yarn run build && yarn run publish",
+    "publish": "yarn version --patch && ts-node deploy && yarn publish --non-interactive dist"
   },
   "contributors": [
     {
