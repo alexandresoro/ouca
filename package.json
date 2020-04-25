@@ -1,12 +1,12 @@
 {
   "name": "ouca-common",
   "description": "Common elements for Base Naturaliste project",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "scripts": {
     "build": "yarn run clean && yarn run build:indexes && tsc",
     "build:indexes": "ts-node indexes",
     "clean": "ts-node clean",
-    "deploy": "yarn run build && ts-node deploy && yarn publish dist"
+    "deploy": "yarn run build && yarn version --patch && ts-node deploy && yarn publish --non-interactive dist"
   },
   "contributors": [
     {
