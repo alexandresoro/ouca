@@ -37,9 +37,9 @@ jobs:
       - run: git config user.name "Github CI"
       - name: Bump version
         run: npm version patch
+      - name: Update project version
+        run: git push
       - name: Publish to npm.js 
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-      - name: Update project version
-        run: git push
