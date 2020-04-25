@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  validate-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
         run: yarn build
 
   publish-npm:
-    needs: build
+    needs: validate-build
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -33,6 +33,8 @@ jobs:
       - run: git config user.name "Github CI"
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
       - name: Publish to npm.js 
         run: yarn run publish
         env:
