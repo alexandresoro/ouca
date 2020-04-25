@@ -33,6 +33,8 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build
         run: yarn build
+      - run: git config user.email "ci@github.com"
+      - run: git config user.name "Github CI"
       - name: Bump version
         run: npm version patch
       - name: Publish to npm.js 
