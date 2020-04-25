@@ -243,7 +243,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Temperature"
-    // TO DO bug quand la temperature n'est pas renseignée ça met 0
+    // TODO bug quand la temperature n'est pas renseignée ça met 0
     const temperature: number | null = _.isNil(rawDonnee.temperature)
       ? null
       : +rawDonnee.temperature;
@@ -299,7 +299,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Nombre"
-    // TO DO check that 0 is OK
+    // TODO check that 0 is OK
     const nombre: number = rawDonnee.nombre ? +rawDonnee.nombre : null;
 
     // If "Estimation du nombre" is of type "Non-compte" then "Nombre" should be empty
@@ -396,7 +396,7 @@ export class ImportDoneeeService extends ImportService {
     console.log(inventaireToSave);
 
     // Save the "Inventaire" if it doesn't exist or get the existing ID otherwise
-    let inventaire: Inventaire = null; // TO DO
+    let inventaire: Inventaire = null; // TODO
     if (!inventaire) {
       // Save the inventaire
       /*await saveEntity(
@@ -404,7 +404,7 @@ export class ImportDoneeeService extends ImportService {
         inventaireToSave,
         DB_SAVE_MAPPING.inventaire
       );*/
-      inventaire = null; // TO DO
+      inventaire = null; // TODO
     }
 
     inventaireToSave.id = inventaire ? inventaire.id : null;
@@ -428,7 +428,7 @@ export class ImportDoneeeService extends ImportService {
     console.log(donneeToSave);
 
     // Save the "Donnee" or return an error if it does not exist
-    const donnee: Donnee = null; // TO DO
+    const donnee: Donnee = null; // TODO
     if (!donnee) {
       /*return await saveEntity(
         TABLE_DONNEE,
