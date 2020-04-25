@@ -40,6 +40,6 @@ jobs:
       - name: Update project version
         run: git push --follow-tags
       - name: Publish to npm.js 
-        run: npm publish
+        run: yarn run publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
