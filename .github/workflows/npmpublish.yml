@@ -39,7 +39,9 @@ jobs:
         run: npm version patch
       - name: Update project version
         run: git push --follow-tags
+      - name: Copy updated package.json
+        run: yarn run deployPrePublish
       - name: Publish to npm.js 
-        run: yarn run publish
+        run: yarn publish --non-interactive dist
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
