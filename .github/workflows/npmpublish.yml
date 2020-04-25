@@ -33,19 +33,11 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build
         run: yarn build
+      - name: Bump version
+        run: npm version patch
       - name: Publish to npm.js 
-        run: yarn run publish
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-
-  bump-version:
-    needs: publish-npm
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - run: git config user.email "ci@github.com"
-      - run: git config user.name "Github CI"
+      - name: Update project version
+        run: git push
