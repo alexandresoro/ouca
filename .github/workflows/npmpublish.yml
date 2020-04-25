@@ -31,6 +31,9 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: git config user.email "ci@github.com"
       - run: git config user.name "Github CI"
-      - run: yarn run publish
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Publish to npm.js 
+        run: yarn run publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
