@@ -61,7 +61,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
       - name: Tag release
-        run: docker tag ou-ca/backend:latest
+        run: docker tag image ou-ca/backend:latest
       
       - name: Push image to Github packages
         run: docker push ou-ca/backend:latest
