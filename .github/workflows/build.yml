@@ -2,16 +2,16 @@ name: CI/CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
-  IMAGE_NAME: basenaturaliste/backend
+  IMAGE_NAME_DOCKER_HUB: basenaturaliste/backend
+  IMAGE_NAME_GITHUB_PACKAGES: backend
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -28,37 +28,44 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build
         run: yarn build
-      
+
   docker:
     needs: build
-    
+
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
       - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME:stable
-      - name: Log into registry 
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME_DOCKER_HUB:stable
+      - name: Log into registry
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       - name: Push image to Docker Hub
         run: |
-          docker push $IMAGE_NAME:stable
-  
+          docker push $IMAGE_NAME_DOCKER_HUB:stable
+
   docker-github:
     needs: build
     if: github.event_name == 'push'
-   
+
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
-        
+
       - name: Build image
-        run: docker build . --file Dockerfile --tag docker.pkg.github.com/ou-ca/ouca-backend/backend:latest
-        
+        run: docker build . --file Dockerfile --tag backend
+
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-      
+
       - name: Push image to Github packages
-        run: docker push docker.pkg.github.com/ou-ca/ouca-backend/backend:latest
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          # Change all uppercase to lowercase
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          docker tag image $IMAGE_ID:latest
+          docker push $IMAGE_ID:latest
