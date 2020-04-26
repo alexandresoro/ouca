@@ -13,13 +13,11 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "yarn lint && tsc",
     "build:debug": "tsc --sourceMap true",
     "build:prod": "tsc",
-    "debug": "yarn build --sourceMap true && yarn start:debug",
-    "dev": "yarn build && yarn start",
+    "debug": "yarn build:debug --sourceMap true && yarn start:debug",
     "lint": "yarn eslint './src/**'",
-    "start": "node dist/backend",
+    "start": "tsc && node dist/backend",
     "start:debug": "node --inspect dist/backend"
   },
   "dependencies": {
