@@ -58,10 +58,6 @@ export const findLieuDitByCommuneIdAndNom = async (
   return getFirstLieuDit(lieuxDitsDb);
 };
 
-const getLieuDitCommuneId = (lieuDit: Lieudit): number => {
-  return lieuDit?.communeId ? lieuDit.communeId : null;
-};
-
 const getCoordinatesToPersist = async (
   lieuDit: Lieudit
 ): Promise<Coordinates> => {
@@ -88,7 +84,6 @@ const getCoordinatesToPersist = async (
 export const persistLieuDit = async (
   lieuDit: Lieudit
 ): Promise<SqlSaveResponse> => {
-  lieuDit.communeId = getLieuDitCommuneId(lieuDit);
   lieuDit.coordinates = await getCoordinatesToPersist(lieuDit);
 
   const lieuditDb = buildLieuditDbFromLieudit(lieuDit);

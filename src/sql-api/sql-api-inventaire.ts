@@ -1,4 +1,6 @@
 import { format } from "date-fns";
+import { getCoordinates } from "ouca-common/coordinates-system";
+import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
@@ -81,60 +83,6 @@ const saveInventaireAssocies = async (
   }
 };
 
-export const persistInventaire = async (
-  inventaire: Inventaire
-): Promise<SqlSaveResponse> => {
-  const { date, customizedAltitude, ...otherInventaireAttributes } = inventaire;
-
-  // Delete the current associes and meteos to insert later the updated ones
-  await deleteAssociesAndMeteosByInventaireId(inventaire.id);
-
-  // Get the customized coordinates if any
-  // By default we consider that coordinates are not customized
-  let altitude: number = null;
-  let longitude: number = null;
-  let latitude: number = null;
-  let coordinatesSystem = null;
-
-  // Then we check if coordinates were customized
-  if (inventaire.coordinates) {
-    altitude = customizedAltitude;
-    longitude = inventaire.coordinates.longitude;
-    latitude = inventaire.coordinates.latitude;
-    coordinatesSystem = inventaire.coordinates.system;
-  }
-
-  // Save the inventaire
-  const inventaireResult = await persistEntity(
-    TABLE_INVENTAIRE,
-    {
-      date: format(
-        interpretDateTimestampAsLocalTimeZoneDate(date),
-        DATE_PATTERN
-      ),
-      dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN),
-      altitude,
-      longitude,
-      latitude,
-      coordinatesSystem,
-      ...otherInventaireAttributes
-    },
-    DB_SAVE_MAPPING.inventaire
-  );
-
-  // Get the inventaire ID
-  // If it is an update we take the existing ID else we take the inserted ID
-  const inventaireId: number = inventaire.id
-    ? inventaire.id
-    : inventaireResult.insertId;
-
-  // Save the observateurs associes and the meteos
-  await saveInventaireAssocies(inventaireId, inventaire.associesIds);
-  await saveInventaireMeteos(inventaireId, inventaire.meteosIds);
-
-  return inventaireResult;
-};
-
 export const findExistingInventaireId = async (
   inventaire: Inventaire
 ): Promise<number> => {
@@ -214,4 +162,82 @@ export const findInventaireById = async (
     associesIds,
     meteosIds
   );
+};
+
+const getCoordinatesToPersist = async (
+  inventaire: Inventaire
+): Promise<Coordinates> => {
+  const newCoordinates = inventaire.coordinates;
+
+  let coordinatesToPersist = newCoordinates;
+
+  if (inventaire.id) {
+    // We check if the coordinates of the lieudit are the same as the one stored in database
+    const oldInventaire = await findInventaireById(inventaire.id);
+    const oldCoordinates = getCoordinates(oldInventaire, newCoordinates.system);
+
+    if (
+      newCoordinates.longitude === oldCoordinates.longitude &&
+      newCoordinates.latitude === oldCoordinates.latitude
+    ) {
+      coordinatesToPersist = oldInventaire.coordinates;
+    }
+  }
+
+  return coordinatesToPersist;
+};
+
+export const persistInventaire = async (
+  inventaire: Inventaire
+): Promise<SqlSaveResponse> => {
+  const { date, customizedAltitude, ...otherInventaireAttributes } = inventaire;
+
+  // Delete the current associes and meteos to insert later the updated ones
+  await deleteAssociesAndMeteosByInventaireId(inventaire.id);
+
+  // Get the customized coordinates if any
+  // By default we consider that coordinates are not customized
+  let altitude: number = null;
+  let longitude: number = null;
+  let latitude: number = null;
+  let coordinatesSystem = null;
+
+  // Then we check if coordinates were customized
+  if (inventaire.coordinates) {
+    altitude = customizedAltitude;
+    const coordinates = await getCoordinatesToPersist(inventaire);
+    longitude = coordinates.longitude;
+    latitude = coordinates.latitude;
+    coordinatesSystem = coordinates.system;
+  }
+
+  // Save the inventaire
+  const inventaireResult = await persistEntity(
+    TABLE_INVENTAIRE,
+    {
+      date: format(
+        interpretDateTimestampAsLocalTimeZoneDate(date),
+        DATE_PATTERN
+      ),
+      dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN),
+      altitude,
+      longitude,
+      latitude,
+      coordinatesSystem,
+      ...otherInventaireAttributes
+    },
+    DB_SAVE_MAPPING.inventaire
+  );
+
+  // Get the inventaire ID
+  // If it is an update we take the existing ID else we take the inserted ID
+  const inventaireId: number = inventaire.id
+    ? inventaire.id
+    : inventaireResult.insertId;
+
+  // Save the observateurs associes and the meteos
+  await saveInventaireAssocies(inventaireId, inventaire.associesIds);
+  await saveInventaireMeteos(inventaireId, inventaire.meteosIds);
+
+  return inventaireResult;
 };
