@@ -1,15 +1,18 @@
 import { format } from "date-fns";
-import { getCoordinates } from "ouca-common/coordinates-system";
+import * as _ from "lodash";
+import {
+  areSameCoordinates,
+  getCoordinates
+} from "ouca-common/coordinates-system";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
-  queryToFindAssociesIdsByInventaireId,
+  queryToFindCoordinatesByInventaireId,
   queryToFindInventaireIdByAllAttributes,
-  queryToFindInventaireIdById,
-  queryToFindMeteosIdsByInventaireId
+  queryToFindInventaireIdById
 } from "../sql/sql-queries-inventaire";
 import { queryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
 import { queryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
@@ -22,20 +25,14 @@ import {
 import {
   DATE_PATTERN,
   DATE_WITH_TIME_PATTERN,
-  ID,
   INVENTAIRE_ID,
-  METEO_ID,
-  OBSERVATEUR_ID,
   TABLE_INVENTAIRE,
   TABLE_INVENTAIRE_ASSOCIE,
   TABLE_INVENTAIRE_METEO
 } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
 import { mapAssociesIds, mapMeteosIds } from "../utils/mapping-utils";
-import {
-  areArraysContainingSameValues,
-  getArrayFromObjects
-} from "../utils/utils";
+import { areArraysContainingSameValues } from "../utils/utils";
 import { deleteEntityById, persistEntity } from "./sql-api-common";
 
 const deleteAssociesAndMeteosByInventaireId = async (
@@ -83,32 +80,53 @@ const saveInventaireAssocies = async (
   }
 };
 
+const findCoordinatesByInventaireId = async (
+  id: number
+): Promise<Coordinates> => {
+  const coordinatesDb = await queryToFindCoordinatesByInventaireId(id);
+  return coordinatesDb &&
+    coordinatesDb[0] &&
+    !_.isNil(coordinatesDb[0].longitude)
+    ? {
+        ...coordinatesDb[0],
+        isTransformed: false
+      }
+    : null;
+};
+
+export const findAssociesIdsByInventaireId = async (
+  inventaireId: number
+): Promise<number[]> => {
+  const associesDb = await queryToFindAssociesByInventaireId(inventaireId);
+  return mapAssociesIds(associesDb);
+};
+
+export const findMeteosIdsByInventaireId = async (
+  inventaireId: number
+): Promise<number[]> => {
+  const meteosDb = await queryToFindMetosByInventaireId(inventaireId);
+  return mapMeteosIds(meteosDb);
+};
+
 export const findExistingInventaireId = async (
   inventaire: Inventaire
 ): Promise<number> => {
   const inventaireIds = await queryToFindInventaireIdByAllAttributes(
     inventaire
   );
-  const eligibleInventaireIds: number[] = getArrayFromObjects(
-    inventaireIds,
-    ID
-  );
 
-  for (const id of eligibleInventaireIds) {
-    // Compare the observateurs associes and the meteos
-    const [associesIdsDb, meteosIdsDb] = await Promise.all([
-      queryToFindAssociesIdsByInventaireId(id),
-      queryToFindMeteosIdsByInventaireId(id)
+  for (const inventaireId of inventaireIds) {
+    const id = inventaireId.id;
+    // Compare the observateurs associes, the meteos and the coordinates
+    const [associesIds, meteosIds, coordinates] = await Promise.all([
+      findAssociesIdsByInventaireId(id),
+      findMeteosIdsByInventaireId(id),
+      findCoordinatesByInventaireId(id)
     ]);
-
-    const associesIds: number[] = getArrayFromObjects(
-      associesIdsDb,
-      OBSERVATEUR_ID
-    );
-    const meteosIds: number[] = getArrayFromObjects(meteosIdsDb, METEO_ID);
 
     if (
       id !== inventaire.id &&
+      areSameCoordinates(coordinates, inventaire.coordinates) &&
       areArraysContainingSameValues(associesIds, inventaire.associesIds) &&
       areArraysContainingSameValues(meteosIds, inventaire.meteosIds)
     ) {
@@ -128,20 +146,6 @@ export const deleteInventaireById = async (
 export const findInventaireIdById = async (id: number): Promise<number> => {
   const ids = await queryToFindInventaireIdById(id);
   return ids && ids[0]?.id ? ids[0].id : null;
-};
-
-export const findAssociesIdsByInventaireId = async (
-  inventaireId: number
-): Promise<number[]> => {
-  const associesDb = await queryToFindAssociesByInventaireId(inventaireId);
-  return mapAssociesIds(associesDb);
-};
-
-export const findMeteosIdsByInventaireId = async (
-  inventaireId: number
-): Promise<number[]> => {
-  const meteosDb = await queryToFindMetosByInventaireId(inventaireId);
-  return mapMeteosIds(meteosDb);
 };
 
 export const findInventaireById = async (

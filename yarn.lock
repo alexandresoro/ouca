@@ -905,9 +905,9 @@ os-tmpdir@~1.0.2:
   integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
 
 ouca-common@*:
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.22.tgz#f09123f6313a2a8a690fba9335ddcbc4e4341c7a"
-  integrity sha512-mF5eQzHG8sfsNB4uHqIK6p66JmTUfqUmi8QRQkUJGJHm7AP1BWVGfo/unHdtNERdlI3fv8WLlrc/fNb/wuuuMg==
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.23.tgz#118d9285a4ad9e1686c4b9801cc1de754be00478"
+  integrity sha512-DNo61JLg7ct5VuoLlnCEN4u5URn6+D91rDvToGXsUHwaitbcGAO6kBgKU+k9Wq0seJYehJVvfe4BPSS/KC1cQA==
   dependencies:
     "@types/bson" "*"
     proj4 "*"

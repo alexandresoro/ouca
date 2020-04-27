@@ -1,5 +1,4 @@
-import * as _ from "lodash";
-import { Coordinates } from "ouca-common/coordinates.object";
+import { CoordinatesSystemType } from "ouca-common/coordinates-system";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { query } from "./sql-queries-utils";
@@ -26,6 +25,10 @@ export const queryToFindInventaireIdById = async (
   return query<{ id: number }[]>("SELECT id FROM inventaire WHERE id=" + id);
 };
 
+/**
+ * Note: Coordinates longitude and latitude are excluded from this search
+ * because they can be in different coordinates systems
+ */
 export const queryToFindInventaireIdByAllAttributes = async (
   inventaire: Inventaire
 ): Promise<{ id: number }[]> => {
@@ -57,27 +60,6 @@ export const queryToFindInventaireIdByAllAttributes = async (
       ? " is null"
       : "=" + inventaire.customizedAltitude);
 
-  let coordinates: Coordinates = {
-    system: null,
-    longitude: null,
-    latitude: null,
-    isTransformed: null
-  };
-
-  if (inventaire.coordinates) {
-    coordinates = inventaire.coordinates;
-  }
-
-  queryStr =
-    queryStr +
-    " AND i.longitude" +
-    (_.isNil(coordinates.longitude) ? " is null" : "=" + coordinates.longitude);
-
-  queryStr =
-    queryStr +
-    " AND i.latitude" +
-    (_.isNil(coordinates.latitude) ? " is null" : "=" + coordinates.latitude);
-
   queryStr =
     queryStr +
     " AND i.temperature" +
@@ -86,26 +68,18 @@ export const queryToFindInventaireIdByAllAttributes = async (
   return query<{ id: number }[]>(queryStr);
 };
 
-export const queryToFindAssociesIdsByInventaireId = async (
+export const queryToFindCoordinatesByInventaireId = async (
   inventaireId: number
-): Promise<{ observateur_id: number }[]> => {
+): Promise<
+  { longitude: number; latitude: number; system: CoordinatesSystemType }[]
+> => {
   const queryStr: string =
-    "SELECT observateur_id" +
-    " FROM inventaire_associe" +
-    " WHERE inventaire_id=" +
+    "SELECT longitude, latitude, coordinates_system as system" +
+    " FROM inventaire" +
+    " WHERE id=" +
     inventaireId;
 
-  return query<{ observateur_id: number }[]>(queryStr);
-};
-
-export const queryToFindMeteosIdsByInventaireId = async (
-  inventaireId: number
-): Promise<{ meteo_id: number }[]> => {
-  const queryStr: string =
-    "SELECT meteo_id" +
-    " FROM inventaire_meteo" +
-    " WHERE inventaire_id=" +
-    inventaireId;
-
-  return query<{ meteo_id: number }[]>(queryStr);
+  return query<
+    { longitude: number; latitude: number; system: CoordinatesSystemType }[]
+  >(queryStr);
 };
