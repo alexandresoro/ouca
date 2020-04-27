@@ -1,3 +1,4 @@
+import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 
@@ -6,6 +7,15 @@ export const buildInventaireFromInventaireDb = (
   associesIds: number[],
   meteosIds: number[]
 ): Inventaire => {
+  const coordinates: Coordinates = inventaireDb?.longitude
+    ? {
+        longitude: inventaireDb.longitude,
+        latitude: inventaireDb.latitude,
+        system: inventaireDb.coordinates_system,
+        isTransformed: false
+      }
+    : null;
+
   return {
     id: inventaireDb.id,
     observateurId: inventaireDb.observateur_id,
@@ -15,12 +25,7 @@ export const buildInventaireFromInventaireDb = (
     duree: inventaireDb.duree,
     lieuditId: inventaireDb.lieudit_id,
     customizedAltitude: inventaireDb.altitude,
-    coordinates: {
-      longitude: inventaireDb.longitude,
-      latitude: inventaireDb.latitude,
-      system: inventaireDb.coordinates_system,
-      isTransformed: false
-    },
+    coordinates,
     temperature: inventaireDb.temperature,
     meteosIds
   };
