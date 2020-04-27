@@ -1,9 +1,6 @@
 import { format } from "date-fns";
 import * as _ from "lodash";
-import {
-  areSameCoordinates,
-  getCoordinates
-} from "ouca-common/coordinates-system";
+import { areSameCoordinates } from "ouca-common/coordinates-system";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
@@ -179,18 +176,8 @@ const getCoordinatesToPersist = async (
     // We check if the coordinates of the lieudit are the same as the one stored in database
     const oldInventaire = await findInventaireById(inventaire.id);
 
-    if (oldInventaire?.coordinates) {
-      const oldCoordinates = getCoordinates(
-        oldInventaire,
-        newCoordinates.system
-      );
-
-      if (
-        newCoordinates.longitude === oldCoordinates.longitude &&
-        newCoordinates.latitude === oldCoordinates.latitude
-      ) {
-        coordinatesToPersist = oldInventaire.coordinates;
-      }
+    if (areSameCoordinates(oldInventaire?.coordinates, newCoordinates)) {
+      coordinatesToPersist = oldInventaire.coordinates;
     }
   }
 

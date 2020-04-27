@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import { getCoordinates } from "ouca-common/coordinates-system";
+import { areSameCoordinates } from "ouca-common/coordinates-system/coordinates-helper";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Lieudit } from "ouca-common/lieudit.model";
 import {
@@ -68,12 +68,8 @@ const getCoordinatesToPersist = async (
   if (lieuDit.id) {
     // We check if the coordinates of the lieudit are the same as the one stored in database
     const oldLieuDit = await findLieuDitById(lieuDit.id);
-    const oldCoordinates = getCoordinates(oldLieuDit, newCoordinates.system);
 
-    if (
-      newCoordinates.longitude === oldCoordinates.longitude &&
-      newCoordinates.latitude === oldCoordinates.latitude
-    ) {
+    if (areSameCoordinates(oldLieuDit?.coordinates, newCoordinates)) {
       coordinatesToPersist = oldLieuDit.coordinates;
     }
   }
