@@ -174,13 +174,19 @@ const getCoordinatesToPersist = async (
   if (inventaire.id) {
     // We check if the coordinates of the lieudit are the same as the one stored in database
     const oldInventaire = await findInventaireById(inventaire.id);
-    const oldCoordinates = getCoordinates(oldInventaire, newCoordinates.system);
 
-    if (
-      newCoordinates.longitude === oldCoordinates.longitude &&
-      newCoordinates.latitude === oldCoordinates.latitude
-    ) {
-      coordinatesToPersist = oldInventaire.coordinates;
+    if (oldInventaire?.coordinates) {
+      const oldCoordinates = getCoordinates(
+        oldInventaire,
+        newCoordinates.system
+      );
+
+      if (
+        newCoordinates.longitude === oldCoordinates.longitude &&
+        newCoordinates.latitude === oldCoordinates.latitude
+      ) {
+        coordinatesToPersist = oldInventaire.coordinates;
+      }
     }
   }
 
