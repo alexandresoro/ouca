@@ -1,7 +1,21 @@
-import { Coordinates } from "../coordinates.object";
-import { CoordinatesSystemType } from "./coordinates-system.object";
-import { COORDINATES_SYSTEMS_CONFIG } from "./coordinates-system-list.object";
 import proj4 from "proj4";
+import { Coordinates } from "../coordinates.object";
+import { COORDINATES_SYSTEMS_CONFIG } from "./coordinates-system-list.object";
+import { CoordinatesSystemType } from "./coordinates-system.object";
+
+const areCoordinatesInvalid = (
+  longitude: number,
+  latitude: number,
+  system: CoordinatesSystemType
+): boolean => {
+  const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[system];
+  return (
+    longitude < coordinatesSystem.longitudeRange.min ||
+    longitude > coordinatesSystem.longitudeRange.max ||
+    latitude < coordinatesSystem.latitudeRange.min ||
+    latitude > coordinatesSystem.latitudeRange.max
+  );
+};
 
 export const transformCoordinates = (
   inputCoordinates: Coordinates,
@@ -26,16 +40,31 @@ export const transformCoordinates = (
     proj4.defs(outputSystem.epsgCode, outputSystem.proj4Formula);
   }
 
-  const [outputLongitude, outputLatitude] = proj4(
-    inputSystem.epsgCode,
-    outputSystem.epsgCode,
-    [inputCoordinates.longitude, inputCoordinates.latitude]
+  const [
+    transformedLongitude,
+    transformedLatitude
+  ] = proj4(inputSystem.epsgCode, outputSystem.epsgCode, [
+    inputCoordinates.longitude,
+    inputCoordinates.latitude
+  ]);
+
+  const outputLongitude = +transformedLongitude.toFixed(
+    outputSystem.decimalPlaces
+  );
+  const outputLatitude = +transformedLatitude.toFixed(
+    outputSystem.decimalPlaces
   );
 
   return {
     system: outputSystemType,
-    longitude: +outputLongitude.toFixed(outputSystem.decimalPlaces),
-    latitude: +outputLatitude.toFixed(outputSystem.decimalPlaces),
-    isTransformed: true
+    longitude: outputLongitude,
+    latitude: outputLatitude,
+    isTransformed: true,
+    areTransformed: true,
+    areInvalid: areCoordinatesInvalid(
+      outputLongitude,
+      outputLatitude,
+      outputSystemType
+    )
   };
 };
