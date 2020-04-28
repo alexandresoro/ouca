@@ -85,8 +85,7 @@ const findCoordinatesByInventaireId = async (
     coordinatesDb[0] &&
     !_.isNil(coordinatesDb[0].longitude)
     ? {
-        ...coordinatesDb[0],
-        isTransformed: false
+        ...coordinatesDb[0]
       }
     : null;
 };

@@ -11,8 +11,7 @@ export const buildInventaireFromInventaireDb = (
     ? {
         longitude: inventaireDb.longitude,
         latitude: inventaireDb.latitude,
-        system: inventaireDb.coordinates_system,
-        isTransformed: false
+        system: inventaireDb.coordinates_system
       }
     : null;
 

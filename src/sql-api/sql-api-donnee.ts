@@ -109,8 +109,7 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
         ? {
             longitude: flatDonnee.longitude,
             latitude: flatDonnee.latitude,
-            system: flatDonnee.coordinatesSystem,
-            isTransformed: false
+            system: flatDonnee.coordinatesSystem
           }
         : null,
       temperature: flatDonnee.temperature,

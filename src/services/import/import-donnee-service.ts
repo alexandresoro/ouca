@@ -506,8 +506,7 @@ export class ImportDoneeeService extends ImportService {
       coordinates: {
         longitude,
         latitude,
-        system: coordinatesSystemType,
-        isTransformed: false
+        system: coordinatesSystemType
       },
       temperature: temperature,
       meteosIds
