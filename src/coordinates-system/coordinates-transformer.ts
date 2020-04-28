@@ -59,7 +59,6 @@ export const transformCoordinates = (
     system: outputSystemType,
     longitude: outputLongitude,
     latitude: outputLatitude,
-    isTransformed: true,
     areTransformed: true,
     areInvalid: areCoordinatesInvalid(
       outputLongitude,

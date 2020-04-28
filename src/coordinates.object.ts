@@ -7,8 +7,6 @@ export interface Coordinates {
 
   latitude: number;
 
-  isTransformed?: boolean;
-
   areTransformed?: boolean;
 
   areInvalid?: boolean;
