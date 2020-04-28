@@ -191,7 +191,11 @@ export const persistDonnee = async (
     );
   }
 
-  return saveDonneeResponse;
+  return {
+    affectedRows: saveDonneeResponse.affectedRows,
+    insertId: savedDonneeId,
+    warningStatus: saveDonneeResponse.warningStatus
+  };
 };
 
 export const updateInventaireIdForDonnees = async (
