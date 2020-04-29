@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import { Comportement } from "ouca-common/comportement.object";
+import { buildComportementsFromComportementsDb } from "../mapping/comportement-mapping";
 import {
   queryToFindAllComportements,
   queryToFindNumberOfDonneesByComportementId
@@ -7,10 +8,12 @@ import {
 import { getNbByEntityId } from "../utils/utils";
 
 export const findAllComportements = async (): Promise<Comportement[]> => {
-  const [comportements, nbDonneesByComportement] = await Promise.all([
+  const [comportementsDb, nbDonneesByComportement] = await Promise.all([
     queryToFindAllComportements(),
     queryToFindNumberOfDonneesByComportementId()
   ]);
+
+  const comportements = buildComportementsFromComportementsDb(comportementsDb);
 
   _.forEach(comportements, (comportement: Comportement) => {
     comportement.nbDonnees = getNbByEntityId(

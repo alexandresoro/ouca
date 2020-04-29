@@ -44,7 +44,10 @@ export const DB_SAVE_MAPPING = {
   estimationDistance: {
     ...createKeyValueMapWithSameName("libelle")
   },
-  comportement: createKeyValueMapWithSameName(["code", "libelle"]),
+  comportement: {
+    ...createKeyValueMapWithSameName(["code", "libelle"]),
+    nicheur: "isNicheur"
+  },
   milieu: createKeyValueMapWithSameName(["code", "libelle"]),
   donnee: {
     ...createKeyValueMapWithSameName([

@@ -1,4 +1,4 @@
-import { Comportement } from "ouca-common/comportement.object";
+import { ComportementDb } from "../objects/db/comportement-db.model";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import {
   COLUMN_LIBELLE,
@@ -8,9 +8,9 @@ import {
 import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllComportements = async (): Promise<
-  Comportement[]
+  ComportementDb[]
 > => {
-  return queryToFindAllEntities<Comportement>(
+  return queryToFindAllEntities<ComportementDb>(
     TABLE_COMPORTEMENT,
     COLUMN_LIBELLE,
     ORDER_ASC
