@@ -11,15 +11,15 @@ export interface Inventaire extends EntiteSimple, EntityWithCoordinates {
 
   date: string;
 
-  duree: string | null;
+  duree: string;
 
-  heure: string | null;
+  heure: string;
 
   lieudit?: Lieudit;
 
   lieuditId: number;
 
-  customizedAltitude: number | null;
+  customizedAltitude?: number;
 
   meteos?: Meteo[];
 
@@ -29,5 +29,5 @@ export interface Inventaire extends EntiteSimple, EntityWithCoordinates {
 
   observateurId: number;
 
-  temperature: number | null;
+  temperature: number;
 }
