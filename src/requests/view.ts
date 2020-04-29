@@ -5,7 +5,6 @@ import {
 } from "ouca-common/coordinates-system";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
 import { HttpParameters } from "../http/httpParameters";
-import { findCoordinatesSystem } from "../sql-api/sql-api-configuration";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
 import {} from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
@@ -49,7 +48,7 @@ export const exportDonneesByCustomizedFilters = async (
     });
   }
 
-  const coordinatesSystemType = await findCoordinatesSystem();
+  const coordinatesSystemType = httpParameters.postData.coordinatesSystemType;
   const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
   const coordinatesSuffix =
     " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
