@@ -46,21 +46,6 @@ export const DB_SAVE_MAPPING = {
   },
   comportement: createKeyValueMapWithSameName(["code", "libelle"]),
   milieu: createKeyValueMapWithSameName(["code", "libelle"]),
-  inventaire: {
-    ...createKeyValueMapWithSameName([
-      "date",
-      "heure",
-      "duree",
-      "altitude",
-      "longitude",
-      "latitude",
-      "temperature"
-    ]),
-    observateur_id: "observateurId",
-    lieudit_id: "lieuditId",
-    date_creation: "dateCreation",
-    coordinates_system: "coordinatesSystem"
-  },
   donnee: {
     ...createKeyValueMapWithSameName([
       "nombre",

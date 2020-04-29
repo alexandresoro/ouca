@@ -1,6 +1,11 @@
+/* eslint-disable @typescript-eslint/camelcase */
+import { format } from "date-fns";
+import _ from "lodash";
 import { Coordinates } from "ouca-common/coordinates.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
+import { DATE_PATTERN, DATE_WITH_TIME_PATTERN } from "../utils/constants";
+import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
 
 export const buildInventaireFromInventaireDb = (
   inventaireDb: InventaireDb,
@@ -28,4 +33,47 @@ export const buildInventaireFromInventaireDb = (
     temperature: inventaireDb.temperature,
     meteosIds
   };
+};
+
+export const buildInventaireDbFromInventaire = (
+  inventaire: Inventaire,
+  coordinates: Coordinates | null
+): InventaireDb => {
+  const inventaireDb: InventaireDb = {
+    id: inventaire.id,
+    observateur_id: inventaire.observateurId,
+    date: format(
+      interpretDateTimestampAsLocalTimeZoneDate(inventaire.date),
+      DATE_PATTERN
+    ),
+    heure: inventaire.heure,
+    duree: inventaire.duree,
+    lieudit_id: inventaire.lieuditId,
+    temperature: inventaire.temperature,
+    date_creation: format(new Date(), DATE_WITH_TIME_PATTERN)
+  };
+
+  if (_.has(inventaire, "customizedAltitude")) {
+    // Get the customized coordinates if any
+    // By default we consider that coordinates are not customized
+    let altitude: number = null;
+    let longitude: number = null;
+    let latitude: number = null;
+    let coordinatesSystem = null;
+
+    // Then we check if coordinates were customized
+    if (inventaire.coordinates) {
+      altitude = inventaire.customizedAltitude;
+      longitude = coordinates.longitude;
+      latitude = coordinates.latitude;
+      coordinatesSystem = coordinates.system;
+    }
+
+    inventaireDb.altitude = altitude;
+    inventaireDb.longitude = longitude;
+    inventaireDb.latitude = latitude;
+    inventaireDb.coordinates_system = coordinatesSystem;
+  }
+
+  return inventaireDb;
 };
