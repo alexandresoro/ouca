@@ -1,10 +1,11 @@
 import * as _ from "lodash";
 import {
-  CoordinatesSystem,
-  COORDINATES_SYSTEMS_CONFIG
+  COORDINATES_SYSTEMS_CONFIG,
+  getCoordinates
 } from "ouca-common/coordinates-system";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
 import { HttpParameters } from "../http/httpParameters";
+import { findCoordinatesSystem } from "../sql-api/sql-api-configuration";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
 import {} from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
@@ -48,6 +49,11 @@ export const exportDonneesByCustomizedFilters = async (
     });
   }
 
+  const coordinatesSystemType = await findCoordinatesSystem();
+  const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
+  const coordinatesSuffix =
+    " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
+
   const objectsToExport = _.map(flatDonnees, (donnee) => {
     const donneeToExportPart1 = {
       ID: donnee.id,
@@ -65,25 +71,30 @@ export const exportDonneesByCustomizedFilters = async (
         : donnee.customizedAltitude
     };
 
-    const coordinatesSystem: CoordinatesSystem =
-      COORDINATES_SYSTEMS_CONFIG[
-        donnee.customizedCoordinatesSystem
-          ? donnee.customizedCoordinatesSystem
-          : donnee.coordinatesSystem
-      ];
+    const coordinates = getCoordinates(
+      {
+        coordinates: {
+          longitude: _.isNil(donnee.customizedLongitude)
+            ? donnee.longitude
+            : donnee.customizedLongitude,
+          latitude: _.isNil(donnee.customizedLatitude)
+            ? donnee.latitude
+            : donnee.customizedLatitude,
+          system: _.isNil(donnee.customizedCoordinatesSystem)
+            ? donnee.coordinatesSystem
+            : donnee.customizedCoordinatesSystem
+        }
+      },
+      coordinatesSystemType
+    );
 
-    const coordinatesSuffix =
-      " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
-    donneeToExportPart1["Longitude" + coordinatesSuffix] = _.isNil(
-      donnee.customizedLongitude
-    )
-      ? donnee.longitude
-      : donnee.customizedLongitude;
-    donneeToExportPart1["Latitude" + coordinatesSuffix] = _.isNil(
-      donnee.customizedLatitude
-    )
-      ? donnee.latitude
-      : donnee.customizedLatitude;
+    donneeToExportPart1[
+      "Longitude" + coordinatesSuffix
+    ] = coordinates.areInvalid ? "Non supporté" : coordinates.longitude;
+
+    donneeToExportPart1["Latitude" + coordinatesSuffix] = coordinates.areInvalid
+      ? "Non supporté"
+      : coordinates.latitude;
 
     const { ...firstAttributes } = donneeToExportPart1;
 
