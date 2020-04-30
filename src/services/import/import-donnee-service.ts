@@ -789,7 +789,7 @@ export class ImportDoneeeService extends ImportService {
     const comportements: string[] = [];
     for (
       let comportementIndex = this.CODE_COMP_1_INDEX;
-      comportementIndex < this.CODE_COMP_6_INDEX;
+      comportementIndex <= this.CODE_COMP_6_INDEX;
       comportementIndex++
     ) {
       const comportement: string = attributes[comportementIndex];
@@ -801,7 +801,7 @@ export class ImportDoneeeService extends ImportService {
     const milieux: string[] = [];
     for (
       let milieuIndex = this.CODE_MILIEU_1_INDEX;
-      milieuIndex < this.CODE_MILIEU_4_INDEX;
+      milieuIndex <= this.CODE_MILIEU_4_INDEX;
       milieuIndex++
     ) {
       const milieu: string = attributes[milieuIndex];

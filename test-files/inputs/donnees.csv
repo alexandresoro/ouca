@@ -194,12 +194,28 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;65
 ###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;99999;;;;;;;;;;;Cas d'erreur: Le regroupement est égal à la limite supérieure
 ###
 ### ASSOCIES ########################################################################
+### Cas d'erreur 62: l'associé n'existe pas
+CARRIER Laurent;observateur;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;
+### Cas d'erreur 63: l'associé n'existe pas
+CARRIER Laurent;CARRIER Camille,observateur;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;
 ###
 ### METEOS ########################################################################
+### Cas d'erreur 64: la météo n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;météo;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;
+### Cas d'erreur 65: la météo n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,météo;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;
 ###
 ### COMPORTEMENTS ########################################################################
+### Cas d'erreur 66: le comportement n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;
+### Cas d'erreur 67: le comportement n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;comp;;;;;
 ###
 ### MILIEU ########################################################################
+### Cas d'erreur 68: le comportement n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;milieu;;;;
+### Cas d'erreur 69: le comportement n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;milieu;
 ###
 ### DIVERS ########################################################################
 ### Cas d'erreur: la donnée existe déjà
