@@ -5,6 +5,7 @@ import {
   buildEspecesFromEspecesDb
 } from "../mapping/espece-mapping";
 import { EspeceDb } from "../objects/db/espece-db.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   queryToFindAllEspeces,
   queryToFindEspeceByCode,
@@ -12,7 +13,10 @@ import {
   queryToFindEspeceByNomLatin,
   queryToFindNumberOfDonneesByEspeceId
 } from "../sql/sql-queries-espece";
+import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
+import { TABLE_ESPECE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
+import { persistEntity } from "./sql-api-common";
 
 const getFirstEspece = (especesDb: EspeceDb[]): Espece => {
   let espece: Espece = null;
@@ -53,4 +57,10 @@ export const findEspeceByNomLatin = async (
 ): Promise<Espece> => {
   const especesDb = await queryToFindEspeceByNomLatin(nomLatin);
   return getFirstEspece(especesDb);
+};
+
+export const persistEspece = async (
+  espece: Espece
+): Promise<SqlSaveResponse> => {
+  return persistEntity(TABLE_ESPECE, espece, DB_SAVE_MAPPING.espece);
 };

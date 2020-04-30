@@ -5,6 +5,7 @@ import {
   buildCommunesFromCommunesDb
 } from "../mapping/commune-mapping";
 import { CommuneDb } from "../objects/db/commune-db.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   queryToFindAllCommunes,
   queryToFindCommuneByDepartementIdAndCode,
@@ -13,7 +14,10 @@ import {
   queryToFindNumberOfDonneesByCommuneId,
   queryToFindNumberOfLieuxDitsByCommuneId
 } from "../sql/sql-queries-commune";
+import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
+import { TABLE_COMMUNE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
+import { persistEntity } from "./sql-api-common";
 
 const getFirstCommune = (communesDb: CommuneDb[]): Commune => {
   let commune: Commune = null;
@@ -80,4 +84,10 @@ export const findCommuneByDepartementIdAndNom = async (
   );
 
   return getFirstCommune(communesDb);
+};
+
+export const persistCommune = async (
+  commune: Commune
+): Promise<SqlSaveResponse> => {
+  return persistEntity(TABLE_COMMUNE, commune, DB_SAVE_MAPPING.commune);
 };

@@ -1,13 +1,15 @@
 import * as _ from "lodash";
 import { Classe } from "ouca-common/classe.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   queryToFindAllClasses,
   queryToFindNumberOfDonneesByClasseId,
   queryToFindNumberOfEspecesByClasseId
 } from "../sql/sql-queries-classe";
+import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_CLASSE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { findEntityByLibelle } from "./sql-api-common";
+import { findEntityByLibelle, persistEntity } from "./sql-api-common";
 
 export const findAllClasses = async (): Promise<Classe[]> => {
   const [classes, nbEspecesByClasse, nbDonneesByClasse] = await Promise.all([
@@ -26,4 +28,10 @@ export const findAllClasses = async (): Promise<Classe[]> => {
 
 export const findClasseByLibelle = async (libelle: string): Promise<Classe> => {
   return await findEntityByLibelle<Classe>(libelle, TABLE_CLASSE);
+};
+
+export const persistClasse = async (
+  classe: Classe
+): Promise<SqlSaveResponse> => {
+  return persistEntity(TABLE_CLASSE, classe, DB_SAVE_MAPPING.classe);
 };

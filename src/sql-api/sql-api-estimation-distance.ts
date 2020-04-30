@@ -1,10 +1,14 @@
 import * as _ from "lodash";
 import { EstimationDistance } from "ouca-common/estimation-distance.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   getQueryToFindNumberOfDonneesByEstimationDistanceId,
   queryToFindAllEstimationsDistance
 } from "../sql/sql-queries-estimation-distance";
+import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
+import { TABLE_ESTIMATION_DISTANCE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
+import { persistEntity } from "./sql-api-common";
 
 export const findAllEstimationsDistance = async (): Promise<
   EstimationDistance[]
@@ -19,4 +23,14 @@ export const findAllEstimationsDistance = async (): Promise<
   });
 
   return estimations;
+};
+
+export const persistEstimationDistance = async (
+  estimation: EstimationDistance
+): Promise<SqlSaveResponse> => {
+  return persistEntity(
+    TABLE_ESTIMATION_DISTANCE,
+    estimation,
+    DB_SAVE_MAPPING.estimationDistance
+  );
 };

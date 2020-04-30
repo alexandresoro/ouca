@@ -1,12 +1,14 @@
 import * as _ from "lodash";
 import { Meteo } from "ouca-common/meteo.object";
+import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   queryToFindAllMeteos,
   queryToFindNumberOfDonneesByMeteoId
 } from "../sql/sql-queries-meteo";
+import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_METEO } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { findEntityByLibelle } from "./sql-api-common";
+import { findEntityByLibelle, persistEntity } from "./sql-api-common";
 
 export const findAllMeteos = async (): Promise<Meteo[]> => {
   const [meteos, nbDonneesByMeteo] = await Promise.all([
@@ -24,5 +26,9 @@ export const findAllMeteos = async (): Promise<Meteo[]> => {
 export const findMeteoByLibelle = async (
   observateurLibelle: string
 ): Promise<Meteo> => {
-  return await findEntityByLibelle<Meteo>(observateurLibelle, TABLE_METEO);
+  return findEntityByLibelle<Meteo>(observateurLibelle, TABLE_METEO);
+};
+
+export const persistMeteo = async (meteo: Meteo): Promise<SqlSaveResponse> => {
+  return persistEntity(TABLE_METEO, meteo, DB_SAVE_MAPPING.meteo);
 };
