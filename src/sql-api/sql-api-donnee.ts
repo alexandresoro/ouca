@@ -1,5 +1,9 @@
 import { format } from "date-fns";
 import * as _ from "lodash";
+import {
+  CoordinatesSystemType,
+  getCoordinates
+} from "ouca-common/coordinates-system";
 import { DonneeWithNavigationData } from "ouca-common/donnee-with-navigation-data.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
@@ -249,6 +253,42 @@ export const findLastDonneeId = async (): Promise<number> => {
   return ids && ids[0]?.id ? ids[0].id : null;
 };
 
+const updateCoordinates = (
+  donnee: FlatDonnee,
+  coordinatesSystemType: CoordinatesSystemType
+): void => {
+  const coordinates = getCoordinates(
+    {
+      coordinates: {
+        longitude: _.isNil(donnee.customizedLongitude)
+          ? donnee.longitude
+          : donnee.customizedLongitude,
+        latitude: _.isNil(donnee.customizedLatitude)
+          ? donnee.latitude
+          : donnee.customizedLatitude,
+        system: _.isNil(donnee.customizedCoordinatesSystem)
+          ? donnee.coordinatesSystem
+          : donnee.customizedCoordinatesSystem
+      }
+    },
+    coordinatesSystemType
+  );
+
+  donnee.altitude = _.isNil(donnee.customizedAltitude)
+    ? donnee.altitude
+    : donnee.customizedAltitude;
+  donnee.customizedAltitude = null;
+
+  donnee.longitude = coordinates.areInvalid ? null : coordinates.longitude;
+  donnee.customizedLongitude = null;
+
+  donnee.latitude = coordinates.areInvalid ? null : coordinates.latitude;
+  donnee.customizedLatitude = null;
+
+  donnee.coordinatesSystem = coordinates.system;
+  donnee.customizedCoordinatesSystem = null;
+};
+
 export const findDonneesByCustomizedFilters = async (
   filter: DonneesFilter
 ): Promise<FlatDonnee[]> => {
@@ -282,6 +322,9 @@ export const findDonneesByCustomizedFilters = async (
   );
 
   _.forEach(donnees, (donnee: FlatDonnee) => {
+    // Transform the coordinates into the expected system
+    updateCoordinates(donnee, filter.coordinatesSystemType);
+
     donnee.associes = _.map(
       associesByDonnee[donnee.id],
       (associe) => associe.libelle

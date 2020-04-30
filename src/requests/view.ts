@@ -1,8 +1,5 @@
 import * as _ from "lodash";
-import {
-  COORDINATES_SYSTEMS_CONFIG,
-  getCoordinates
-} from "ouca-common/coordinates-system";
+import { COORDINATES_SYSTEMS_CONFIG } from "ouca-common/coordinates-system";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
 import { HttpParameters } from "../http/httpParameters";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
@@ -33,7 +30,7 @@ export const getDonneesByCustomizedFilters = async (
 
 export const exportDonneesByCustomizedFilters = async (
   httpParameters: HttpParameters
-): Promise<any> => {
+): Promise<unknown> => {
   const flatDonnees: FlatDonnee[] = await findDonneesByCustomizedFilters(
     httpParameters.postData
   );
@@ -65,35 +62,14 @@ export const exportDonneesByCustomizedFilters = async (
       "Code commune": donnee.codeCommune,
       "Nom commune": donnee.nomCommune,
       "Lieu-dit": donnee.lieudit,
-      "Altitude en mètres": _.isNil(donnee.customizedAltitude)
-        ? donnee.altitude
-        : donnee.customizedAltitude
+      "Altitude en mètres": donnee.altitude
     };
 
-    const coordinates = getCoordinates(
-      {
-        coordinates: {
-          longitude: _.isNil(donnee.customizedLongitude)
-            ? donnee.longitude
-            : donnee.customizedLongitude,
-          latitude: _.isNil(donnee.customizedLatitude)
-            ? donnee.latitude
-            : donnee.customizedLatitude,
-          system: _.isNil(donnee.customizedCoordinatesSystem)
-            ? donnee.coordinatesSystem
-            : donnee.customizedCoordinatesSystem
-        }
-      },
-      coordinatesSystemType
-    );
+    donneeToExportPart1["Longitude" + coordinatesSuffix] =
+      donnee.longitude ?? "Non supporté";
 
-    donneeToExportPart1[
-      "Longitude" + coordinatesSuffix
-    ] = coordinates.areInvalid ? "Non supporté" : coordinates.longitude;
-
-    donneeToExportPart1["Latitude" + coordinatesSuffix] = coordinates.areInvalid
-      ? "Non supporté"
-      : coordinates.latitude;
+    donneeToExportPart1["Latitude" + coordinatesSuffix] =
+      donnee.latitude ?? "Non supporté";
 
     const { ...firstAttributes } = donneeToExportPart1;
 
