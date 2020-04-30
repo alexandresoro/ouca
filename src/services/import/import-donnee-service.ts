@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import * as _ from "lodash";
 import { Age } from "ouca-common/age.object";
 import { Commune } from "ouca-common/commune.model";
@@ -5,9 +6,9 @@ import { Comportement } from "ouca-common/comportement.object";
 import {
   areCoordinatesCustomized,
   CoordinatesSystem,
-  CoordinatesSystemType,
   COORDINATES_SYSTEMS_CONFIG
 } from "ouca-common/coordinates-system";
+import { Coordinates } from "ouca-common/coordinates.object";
 import { Departement } from "ouca-common/departement.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { Espece } from "ouca-common/espece.model";
@@ -26,18 +27,28 @@ import {
 import { findCommuneByDepartementIdAndCode } from "../../sql-api/sql-api-commune";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
+import {
+  findExistingDonneeId,
+  persistDonnee
+} from "../../sql-api/sql-api-donnee";
 import { findEspeceByCode } from "../../sql-api/sql-api-espece";
 import { findEstimationNombreByLibelle } from "../../sql-api/sql-api-estimation-nombre";
+import {
+  findExistingInventaireId,
+  persistInventaire
+} from "../../sql-api/sql-api-inventaire";
 import { findLieuDitByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
 import { findMeteoByLibelle } from "../../sql-api/sql-api-meteo";
 import { findObservateurByLibelle } from "../../sql-api/sql-api-observateur";
 import {
+  DATE_PATTERN,
   TABLE_AGE,
   TABLE_COMPORTEMENT,
   TABLE_ESTIMATION_DISTANCE,
   TABLE_MILIEU,
   TABLE_SEXE
 } from "../../utils/constants";
+import { interpretDateTimestampAsLocalTimeZoneDate } from "../../utils/date";
 import {
   getFormattedDate,
   getFormattedTime,
@@ -174,7 +185,13 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Date"
-    const date = getFormattedDate(rawDonnee.date.trim()).toJSON();
+    // TODO for 01/01/2020 it returns 31/12/2020
+    const date = format(
+      interpretDateTimestampAsLocalTimeZoneDate(
+        getFormattedDate(rawDonnee.date.trim()).toJSON()
+      ),
+      DATE_PATTERN
+    );
 
     // Get the "Heure"
     const heure: string = getFormattedTime(rawDonnee.heure.trim());
@@ -229,30 +246,30 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the customized coordinates
-    let altitude: number = null;
-    let longitude: number = null;
-    let latitude: number = null;
+    let altitude: number = +rawDonnee.altitude;
+    let coordinates: Coordinates = {
+      longitude: +rawDonnee.longitude,
+      latitude: +rawDonnee.latitude,
+      system: coordinatesSystemType
+    };
     if (
-      areCoordinatesCustomized(
+      !areCoordinatesCustomized(
         lieudit,
-        +rawDonnee.altitude,
-        +rawDonnee.longitude,
-        +rawDonnee.latitude,
+        altitude,
+        coordinates.longitude,
+        coordinates.latitude,
         coordinatesSystemType
       )
     ) {
-      altitude = +rawDonnee.altitude;
-      longitude = +rawDonnee.longitude;
-      latitude = +rawDonnee.latitude;
+      altitude = null;
+      coordinates = null;
     }
 
     // Get the "Temperature"
-    // TODO bug quand la temperature n'est pas renseignée ça met 0
-    const temperature: number | null = _.isNil(rawDonnee.temperature)
-      ? null
-      : +rawDonnee.temperature;
-
-    console.log("Temperature", rawDonnee.temperature, temperature);
+    const temperature: number =
+      _.isNil(rawDonnee.temperature) || rawDonnee.temperature === ""
+        ? null
+        : +rawDonnee.temperature;
 
     // Get the "Meteos" or return an error if some of them doesn't exist
     const meteosIds: number[] = [];
@@ -396,26 +413,21 @@ export class ImportDoneeeService extends ImportService {
       temperature,
       meteosIds,
       altitude,
-      longitude,
-      latitude,
-      _.isNil(altitude) ? null : coordinatesSystemType
+      coordinates
     );
 
-    console.log(inventaireToSave);
+    console.log("Inventaire: ", inventaireToSave);
 
-    // Save the "Inventaire" if it doesn't exist or get the existing ID otherwise
-    let inventaire: Inventaire = null; // TODO
-    if (!inventaire) {
-      // Save the inventaire
-      /*await saveEntity(
-        TABLE_INVENTAIRE,
-        inventaireToSave,
-        DB_SAVE_MAPPING.inventaire
-      );*/
-      inventaire = null; // TODO
+    // Save the inventaire
+    const existingInventaireId: number = await findExistingInventaireId(
+      inventaireToSave
+    );
+    if (!existingInventaireId) {
+      const inventaireSaveResponse = await persistInventaire(inventaireToSave);
+      inventaireToSave.id = inventaireSaveResponse.insertId;
+    } else {
+      inventaireToSave.id = existingInventaireId;
     }
-
-    inventaireToSave.id = inventaire ? inventaire.id : null;
 
     // Create the "Donnee" to save
     const donneeToSave: Donnee = this.buildEntity(
@@ -433,18 +445,16 @@ export class ImportDoneeeService extends ImportService {
       commentaire
     );
 
-    console.log(donneeToSave);
+    console.log("Donnée ", donneeToSave);
 
     // Save the "Donnee" or return an error if it does not exist
-    const donnee: Donnee = null; // TODO
-    if (!donnee) {
-      /*return await saveEntity(
-        TABLE_DONNEE,
-        donneeToSave,
-        DB_SAVE_MAPPING.donnee
-      );*/
+    const existingDonneeId: number = await findExistingDonneeId(donneeToSave);
+    if (!existingDonneeId) {
+      const saveDonneeResponse = await persistDonnee(donneeToSave);
+      return !!saveDonneeResponse?.insertId;
     } else {
-      this.message = "Une donnée similaire existe déjà avec l'ID " + donnee.id;
+      this.message =
+        "Une donnée similaire existe déjà avec l'ID " + existingDonneeId;
       return false;
     }
   };
@@ -498,9 +508,7 @@ export class ImportDoneeeService extends ImportService {
     temperature: number | null,
     meteosIds: number[],
     altitude: number | null,
-    longitude: number | null,
-    latitude: number | null,
-    coordinatesSystemType: CoordinatesSystemType | null
+    coordinates: Coordinates
   ): Inventaire => {
     const inventaire: Inventaire = {
       id: null,
@@ -511,12 +519,8 @@ export class ImportDoneeeService extends ImportService {
       duree: duree,
       lieuditId,
       customizedAltitude: altitude,
-      coordinates: {
-        longitude,
-        latitude,
-        system: coordinatesSystemType
-      },
-      temperature: temperature,
+      coordinates,
+      temperature,
       meteosIds
     };
 

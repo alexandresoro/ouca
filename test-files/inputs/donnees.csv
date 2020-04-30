@@ -3,10 +3,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ### Cas d'erreur 2: trop de colonnes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-### 
-### CHAMPS OBLIGATOIRES ########################################################################
-### Cas nominal: uniquement les champs obligatoire
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### OBSERVATEUR ########################################################################
 ### Cas d'erreur 3: l'observateur est vide
@@ -221,3 +217,64 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;
 ### Cas d'erreur: la donnée existe déjà
 ### CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
+### 
+### CAS NOMINAUX ########################################################################
+### Cas nominal 1: uniquement les champs obligatoire
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###
+### Cas nominal 2: ASSOCIES
+CARRIER Laurent;CARRIER Camille,CARRIER Laurent;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;CARRIER Camille,CARRIER Laurent;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###
+### Cas nominal 3: HEURE
+CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###
+### Cas nominal 4: DUREE
+CARRIER Laurent;;01/01/2020;;00:30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur: doublons TODO semble ne pas fonctionner
+CARRIER Laurent;;01/01/2020;;00:30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###
+### Cas nominal 5: TEMPERATURE
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;0;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;0;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###
+### Cas nominal 6: METEO
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,Nuages,Vent;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,Nuages,Vent;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###
+### Cas nominal 7: ESTIMATION DISTANCE
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Supérieure à;;;;;;;;;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Supérieure à;;;;;;;;;;;;;
+###
+### Cas nominal 8: DISTANCE
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;22;;;;;;;;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;22;;;;;;;;;;;;
+###
+### Cas nominal 9: REGROUPEMENT
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10;;;;;;;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10;;;;;;;;;;;
+###
+### Cas nominal 10: COMPORTEMENTS
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;000000;0002;0003;000000;000000;0001;;;;;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;000000;0002;0003;000000;000000;0001;;;;;
+###
+### Cas nominal 11: MILIEUX
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;000000;0001;0002;0003;
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;000000;0001;0002;0003;
+###
+### Cas nominal 12: COMMENTAIRE
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;test de commentaire
+### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;test de commentaire
