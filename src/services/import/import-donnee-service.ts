@@ -12,7 +12,6 @@ import { Departement } from "ouca-common/departement.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { Espece } from "ouca-common/espece.model";
 import { EstimationDistance } from "ouca-common/estimation-distance.object";
-import { EstimationNombre } from "ouca-common/estimation-nombre.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { Lieudit } from "ouca-common/lieudit.model";
 import { Meteo } from "ouca-common/meteo.object";
@@ -28,6 +27,7 @@ import { findCommuneByDepartementIdAndCode } from "../../sql-api/sql-api-commune
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { findEspeceByCode } from "../../sql-api/sql-api-espece";
+import { findEstimationNombreByLibelle } from "../../sql-api/sql-api-estimation-nombre";
 import { findLieuDitByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
 import { findMeteoByLibelle } from "../../sql-api/sql-api-meteo";
 import { findObservateurByLibelle } from "../../sql-api/sql-api-observateur";
@@ -35,7 +35,6 @@ import {
   TABLE_AGE,
   TABLE_COMPORTEMENT,
   TABLE_ESTIMATION_DISTANCE,
-  TABLE_ESTIMATION_NOMBRE,
   TABLE_MILIEU,
   TABLE_SEXE
 } from "../../utils/constants";
@@ -81,7 +80,7 @@ export class ImportDoneeeService extends ImportService {
   private readonly ALTITUDE_MAX_VALUE = 65535;
   private readonly TEMPERATURE_MIN_VALUE = -128;
   private readonly TEMPERATURE_MAX_VALUE = 127;
-  private readonly NOMBRE_MIN_VALUE = 0;
+  private readonly NOMBRE_MIN_VALUE = 1;
   private readonly NOMBRE_MAX_VALUE = 65535;
   private readonly DISTANCE_MIN_VALUE = 0;
   private readonly DISTANCE_MAX_VALUE = 65535;
@@ -124,10 +123,15 @@ export class ImportDoneeeService extends ImportService {
   };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
-    const rawDonnee: ImportedDonnee = this.getRawDonnee(entityTab);
-
     const coordinatesSystemType = await findCoordinatesSystem();
+    if (!coordinatesSystemType) {
+      this.message =
+        "Veuillez choisir le système de coordonnées de l'application dans la page de configuration";
+      return false;
+    }
     const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
+
+    const rawDonnee: ImportedDonnee = this.getRawDonnee(entityTab);
 
     // First check the format of the fields
     // Return an error if some of the attributes are missing wrongly formatted
@@ -286,9 +290,8 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Estimation du nombre" or return an error if it doesn't exist
-    const estimationNombre = await findEntityByLibelle<EstimationNombre>(
-      rawDonnee.estimationNombre,
-      TABLE_ESTIMATION_NOMBRE
+    const estimationNombre = await findEstimationNombreByLibelle(
+      rawDonnee.estimationNombre
     );
     if (!estimationNombre) {
       this.message =
@@ -302,8 +305,13 @@ export class ImportDoneeeService extends ImportService {
     // TODO check that 0 is OK
     const nombre: number = rawDonnee.nombre ? +rawDonnee.nombre : null;
 
-    // If "Estimation du nombre" is of type "Non-compte" then "Nombre" should be empty
-    if (estimationNombre.nonCompte && nombre) {
+    if (!estimationNombre.nonCompte && !nombre) {
+      // If "Estimation du nombre" is of type "Compté" then "Nombre" should not be empty
+      this.message =
+        'Le nombre ne doit pas être vide quand l\'estimation du nombre est de type "compté"';
+      return false;
+    } else if (!!estimationNombre.nonCompte && !!nombre) {
+      // If "Estimation du nombre" is of type "Non-compté" then "Nombre" should be empty
       this.message =
         "L'estimation du nombre \"" +
         estimationNombre.libelle +
@@ -614,12 +622,8 @@ export class ImportDoneeeService extends ImportService {
 
     const longitude = Number(longitudeStr);
 
-    if (!Number.isInteger(longitude)) {
-      this.message = "La longitude du lieu-dit doit être un entier";
-      return false;
-    }
-
     if (
+      isNaN(longitude) ||
       longitude < coordinatesSystem.longitudeRange.min ||
       longitude > coordinatesSystem.longitudeRange.max
     ) {
@@ -645,12 +649,8 @@ export class ImportDoneeeService extends ImportService {
 
     const latitude = Number(latitudeStr);
 
-    if (!Number.isInteger(latitude)) {
-      this.message = "La latitude du lieu-dit doit être un entier";
-      return false;
-    }
-
     if (
+      isNaN(latitude) ||
       latitude < coordinatesSystem.latitudeRange.min ||
       latitude > coordinatesSystem.latitudeRange.max
     ) {

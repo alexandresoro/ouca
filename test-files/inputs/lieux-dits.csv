@@ -47,13 +47,13 @@ departement;code commune;nom commune;lieudit;altitude;longitude;latitude;Cas d'e
 ### Cas d'erreur 24: Latitude trop grande
 26;1;ROMANS;Prairie;1;2;91
 ### Cas nominal
-26;1;ROMANS;Prarie;0;-180;-90
+26;1;ROMANS;Prairie;0;-180;-90
 ### Cas nominal
 26;1;ROMANS;Nom très longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;65535;180;90
 ### Cas nominal
 26;1;ROMANS;Mairie;1;2.99999;3.11111
 ### Cas nominal
-26;2;MARGES;Prarie;10;11;12
+26;2;MARGES;Prairie;10;11;12
 ### Cas nominal
 26;2;MARGES;Mairie;10;11;12
 ### Cas d'erreur 25: Lieu-dit déjà existant avec ce nom dans cette commune

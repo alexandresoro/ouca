@@ -4,137 +4,204 @@
 ### Cas d'erreur 2: trop de colonnes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ### 
+### CHAMPS OBLIGATOIRES ########################################################################
 ### Cas nominal: uniquement les champs obligatoire
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### OBSERVATEUR ########################################################################
 ### Cas d'erreur 3: l'observateur est vide
-;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 4: l'observateur n'existe pas
-observateur;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+observateur;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### DATE ########################################################################
 ### Cas d'erreur 5: la date est vide
-CARRIER Laurent;;;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 6: mauvais format de date
-CARRIER Laurent;;1/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 7: date invalide
-CARRIER Laurent;;31/02/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;31/02/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### DEPARTEMENT ########################################################################
-### Cas d'erreur: le département est vide
-CARRIER Laurent;;01/01/2020;;;;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le département est vide
-### Cas d'erreur: le département n'existe pas
-CARRIER Laurent;;01/01/2020;;;33;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le département n'existe pas
+### Cas d'erreur 8: le département est vide
+CARRIER Laurent;;01/01/2020;;;;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 9: le département n'existe pas
+CARRIER Laurent;;01/01/2020;;;33;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### COMMUNE ########################################################################
-### Cas d'erreur: le code commune est vide
-CARRIER Laurent;;01/01/2020;;;26;;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le code commune est vide
-### Cas d'erreur: le code commune n'est pas un entier
-CARRIER Laurent;;01/01/2020;;;26;commune;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le code commune n'est pas un entier
-### Cas nominal: le code commune est égale à la valeur minimale 
-### CARRIER Laurent;;01/01/2020;;;26;1;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: Le code commune est égal à la limite inférieure
-### Cas d'erreur: le code commune est inférieur à la valeur maximale
-### CARRIER Laurent;;01/01/2020;;;26;0;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le code commune est inférieur à la limite inférieure
-### CARRIER Laurent;;01/01/2020;;;26;99999999;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: Le code commune est égal à la limite supérieur
-### CARRIER Laurent;;01/01/2020;;;26;99999999;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le code commune est supérieur à la limite supérieur
-### Cas d'erreur: La commune n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;174000;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La commune n'existe pas
+### Cas d'erreur 10: le code commune est vide
+CARRIER Laurent;;01/01/2020;;;26;;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 11: le code commune n'est pas un nombre
+CARRIER Laurent;;01/01/2020;;;26;commune;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 12: le code commune n'est pas un entier
+CARRIER Laurent;;01/01/2020;;;26;22.2;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 13: La commune n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;174000;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas d'erreur: La lieu-dit est vide
-CARRIER Laurent;;01/01/2020;;;26;1;;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le lieu-dit est vide
-### Cas d'erreur: La lieu-dit n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;1;lieudit inconnu;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le lieu-dit n'existe pas
+### LIEUDIT ########################################################################
+### Cas d'erreur 14: Le lieu-dit est vide
+CARRIER Laurent;;01/01/2020;;;26;1;;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 15: La lieu-dit n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;1;lieudit inconnu;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;811741;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'alitude est personnalisée
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;;811741;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'altitude est vide
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;0;811741;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'altiude est égale à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;-1;811741;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'altiude est inférieure à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;99999;811741;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'altiude est égale à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;100000;811741;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'altiude est supérieure à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;altitude;811741;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'altiude n'est pas un nombre
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250.1;811741;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'altiude n'est pas un entier
+### ALTITUDE ########################################################################
+### Cas d'erreur 16: l'altitude est vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 17: l'altitude n'est pas un nombre
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;altitude;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 18: l'altitude n'est pas un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10.2;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 19: l'altitude est trop petite
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;-1;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 20: l'altitude est trop grande
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;65536;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'alitude est personnalisée
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'altiude est égale à la limite inférieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'altiude est égale à la limite supérieure
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;1;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est personnalisée
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La longitude est vide
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;0;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est égale à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;-1;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La longitude est inférieure à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;99999999;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est égale à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;100000000;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La longitude est supérieure à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;longitude;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La longitude n'est pas un nombre
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741.1;2016638;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La longitude n'est pas un entier
+### LONGITUDE ########################################################################
+### Cas d'erreur 21: la longitude est vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 22: la longitude n'est pas un nombre
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;longitude;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 23: la longitude est trop petite
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;181;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 24: la longitude est trop grande
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;-181;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est personnalisée
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est égale à la limite inférieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est égale à la limite supérieure
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741;1;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est personnalisée
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741;;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La latitude est vide
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741;0;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est égale à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741;-1;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La latitude est inférieure à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741;99999999;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est égale à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741;100000000;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La latitude est supérieure à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741;latitude;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La latitude n'est pas un nombre
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;250;811741;2016638.1;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La latitude n'est pas un entier
+### LATITUDE ########################################################################
+### Cas d'erreur 25: la latitude est vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 26: la latitude n'est pas un nombre
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;latitude;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 27: la latitude est trop petite
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;-91;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 28: la latitude est trop grande
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;91;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est personnalisée
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est égale à la limite inférieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est égale à la limite supérieure
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le code espèce est vide
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;espece;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'espèce n'existe pas
+### ESPECE ########################################################################
+### Cas d'erreur 29: l'espèce est vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 30: l'espèce n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;espece;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;;1A;;;;;;;;;;;;;;Cas d'erreur: Le sexe est vide
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;sexe;1A;;;;;;;;;;;;;;Cas d'erreur: Le sexe n'existe pas
+### SEXE ########################################################################
+### Cas d'erreur 31: le sexe est vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;;1A;;;;;;;;;;;;;;
+### Cas d'erreur 32: le sexe n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;sexe;1A;;;;;;;;;;;;;;
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;;;;;;;;;;;;;;;Cas d'erreur: L'âge est vide
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;age;;;;;;;;;;;;;;Cas d'erreur: L'âge n'existe pas
+### AGE ########################################################################
+### Cas d'erreur 33: l'age est vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;;;;;;;;;;;;;;;
+### Cas d'erreur 34: l'age n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;age;;;;;;;;;;;;;;
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'estimation nombre est vide
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;estimation;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'estimation nombre n'existe pas
+### ESTIMATION NOMBRE ########################################################################
+### Cas d'erreur 35: l'estimation du nombre est vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 36: l'estimation du nombre n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;estimation;1;M;1A;;;;;;;;;;;;;;
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;nombre;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le nombre n'est pas un nombre
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1.1;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le nombre n'est pas un entier
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est égal à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;0;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le nombre est inférieur à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;99999;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est égal à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;100000;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le nombre est supérieur à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Non compté;;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est vide avec une estimation nombre "Non compté"
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;;M;1A;;;;;;;;;;;;;;Cas d'erreur: Le nombre est vide avec une estimation nombre "Compté"
+### NOMBRE ########################################################################
+### Cas d'erreur 37: le nombre n'est pas un nombre
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;nombre;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 38: le nombre n'est pas un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1.1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 39: le nombre est trop petit
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;0;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 40: le nombre est trop grand
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;65536;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 41: le nombre n'est pas vide et l'estimation est non compté
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 42: le nombre est vide et l'estimation n'est pas non compté
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;;M;1A;;;;;;;;;;;;;;
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est égal à la limite inférieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;99999;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est égal à la limite supérieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est vide avec une estimation nombre "Non compté"
 ###
-CARRIER Laurent;;01/01/2020;09:00;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
-CARRIER Laurent;;01/01/2020;10h00;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
-CARRIER Laurent;;01/01/2020;11H00;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
-CARRIER Laurent;;01/01/2020;1200;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
-CARRIER Laurent;;01/01/2020;09:0;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'heure est mal formattée
-CARRIER Laurent;;01/01/2020;9:00;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'heure est mal formattée
-CARRIER Laurent;;01/01/2020;9:0;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: L'heure est mal formattée
+### HEURE ########################################################################
+### Cas d'erreur 43: l'heure est mal formattée
+CARRIER Laurent;;01/01/2020;09:0;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 44: l'heure est mal formattée
+CARRIER Laurent;;01/01/2020;9:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 45: l'heure est mal formattée
+CARRIER Laurent;;01/01/2020;9:0;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
+###CARRIER Laurent;;01/01/2020;10h00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
+###CARRIER Laurent;;01/01/2020;11H00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
+###CARRIER Laurent;;01/01/2020;1200;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
 ###
-CARRIER Laurent;;01/01/2020;;00:15;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
-CARRIER Laurent;;01/01/2020;;00h25;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
-CARRIER Laurent;;01/01/2020;;00H35;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
-CARRIER Laurent;;01/01/2020;;0045;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
-CARRIER Laurent;;01/01/2020;;15;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La durée est mal formattée
-CARRIER Laurent;;01/01/2020;;0:15;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La durée est mal formattée
-CARRIER Laurent;;01/01/2020;;0:5;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La durée est mal formattée
+### DUREE ########################################################################
+### Cas d'erreur 46: la durée est mal formattée
+CARRIER Laurent;;01/01/2020;;15;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 47: la durée est mal formattée
+CARRIER Laurent;;01/01/2020;;0:15;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 48: la durée est mal formattée
+CARRIER Laurent;;01/01/2020;;0:5;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###CARRIER Laurent;;01/01/2020;;00:15;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
+###CARRIER Laurent;;01/01/2020;;00h25;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
+###CARRIER Laurent;;01/01/2020;;00H35;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
+###CARRIER Laurent;;01/01/2020;;0045;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;18;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La température est OK
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;temperature;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température n'est pas un nombre
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;18.1;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température n'est pas un entier
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;-128;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est égale à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;-129;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est inférieure à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;127;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est égale à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;128;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est supérieure à la limite supérieure
+### TEMPERATURE ########################################################################
+### Cas d'erreur 49: la température n'est pas un nombre
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;temperature;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température n'est pas un nombre
+### Cas d'erreur 50: la température n'est pas un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;18.1;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température n'est pas un entier
+### Cas d'erreur 51: la température est trop petite
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;-129;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est inférieure à la limite inférieure
+### Cas d'erreur 52: la température est trop grande
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;128;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est supérieure à la limite supérieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;18;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La température est OK
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;-128;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est égale à la limite inférieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;127;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est égale à la limite supérieure
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;Environ;;;;;;;;;;;;;Cas nominal: L'estimation distance existe
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;estimation;;;;;;;;;;;;;Cas d'erreur: L'estimation distance n'existe pas
+### ESTIMATION DISTANCE ########################################################################
+### Cas d'erreur 53: l'estimation de la distance n'existe pas 
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;estimation;;;;;;;;;;;;;Cas d'erreur: L'estimation distance n'existe pas
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Environ;;;;;;;;;;;;;Cas nominal: L'estimation distance existe
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;10;;;;;;;;;;;;Cas nominal: La distance est OK
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;distance;;;;;;;;;;;;Cas d'erreur: La distance n'est pas un nombre
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;10.1;;;;;;;;;;;;Cas d'erreur: La distance n'est pas un entier
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;0;;;;;;;;;;;;Cas d'erreur: La distance est égale à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;-1;;;;;;;;;;;;Cas d'erreur: La distance est inférieure à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;99999;;;;;;;;;;;;Cas d'erreur: La distance est égale à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;100000;;;;;;;;;;;;Cas d'erreur: La distance est supérieure à la limite supérieure
+### DISTANCE ########################################################################
+### Cas d'erreur 54: la distance n'est pas un nombre
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;distance;;;;;;;;;;;;Cas d'erreur: La distance n'est pas un nombre
+### Cas d'erreur 55: la distance n'est pas un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;10.1;;;;;;;;;;;;Cas d'erreur: La distance n'est pas un entier
+### Cas d'erreur 56: la distance est trop petite
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;-1;;;;;;;;;;;;Cas d'erreur: La distance est inférieure à la limite inférieure
+### Cas d'erreur 57: la distance est trop grande
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;65536;;;;;;;;;;;;Cas d'erreur: La distance est supérieure à la limite supérieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;10;;;;;;;;;;;;Cas nominal: La distance est OK
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;0;;;;;;;;;;;;Cas d'erreur: La distance est égale à la limite inférieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;99999;;;;;;;;;;;;Cas d'erreur: La distance est égale à la limite supérieure
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;10;;;;;;;;;;;Cas nominal: Uniquement les champs obligatoires
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;regroupement;;;;;;;;;;;Cas d'erreur: Le regroupement n'est pas un nombre
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;10.1;;;;;;;;;;;Cas d'erreur: Le regroupement n'est pas un entier
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;1;;;;;;;;;;;Cas d'erreur: Le regroupement est égal à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;0;;;;;;;;;;;Cas d'erreur: Le regroupement est inférieur à la limite inférieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;99999;;;;;;;;;;;Cas d'erreur: Le regroupement est égal à la limite supérieure
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;100000;;;;;;;;;;;Cas d'erreur: Le regroupement est supérieur à la limite supérieure
+### REGROUPEMENT ########################################################################
+### Cas d'erreur 58: le regroupement n'est pas un nombre
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;regroupement;;;;;;;;;;;Cas d'erreur: Le regroupement n'est pas un nombre
+### Cas d'erreur 59: le regroupement n'est pas un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10.1;;;;;;;;;;;Cas d'erreur: Le regroupement n'est pas un entier
+### Cas d'erreur 60: le regroupement est trop petit
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;0;;;;;;;;;;;Cas d'erreur: Le regroupement est inférieur à la limite inférieure
+### Cas d'erreur 61: le regroupement est trop grand
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;65536;;;;;;;;;;;Cas d'erreur: Le regroupement est supérieur à la limite supérieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;1;;;;;;;;;;;Cas d'erreur: Le regroupement est égal à la limite inférieure
+###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;99999;;;;;;;;;;;Cas d'erreur: Le regroupement est égal à la limite supérieure
 ###
-CARRIER Laurent;;01/01/2020;;;26;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: Uniquement les champs obligatoires
+### ASSOCIES ########################################################################
+###
+### METEOS ########################################################################
+###
+### COMPORTEMENTS ########################################################################
+###
+### MILIEU ########################################################################
+###
+### DIVERS ########################################################################
+### Cas d'erreur: la donnée existe déjà
+### CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+###
