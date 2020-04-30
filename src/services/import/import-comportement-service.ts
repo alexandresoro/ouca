@@ -1,4 +1,6 @@
-import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
+import { Comportement } from "ouca-common/comportement.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { persistComportement } from "../../sql-api/sql-api-comportement";
 import { TABLE_COMPORTEMENT } from "../../utils/constants";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
 
@@ -6,10 +8,14 @@ export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeServ
   protected getTableName(): string {
     return TABLE_COMPORTEMENT;
   }
-  protected getDbMapping(): { [column: string]: string } {
-    return DB_SAVE_MAPPING.comportement;
-  }
+
   protected getAnEntityName(): string {
     return "un comportement";
   }
+
+  protected saveEntity = async (
+    comportement: Comportement
+  ): Promise<SqlSaveResponse> => {
+    return persistComportement(comportement);
+  };
 }

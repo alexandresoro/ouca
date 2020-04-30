@@ -1,13 +1,11 @@
 import { Espece } from "ouca-common/espece.model";
 import { findClasseByLibelle } from "../../sql-api/sql-api-classe";
-import { persistEntity } from "../../sql-api/sql-api-common";
 import {
   findEspeceByCode,
   findEspeceByNomFrancais,
-  findEspeceByNomLatin
+  findEspeceByNomLatin,
+  persistEspece
 } from "../../sql-api/sql-api-espece";
-import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
-import { TABLE_ESPECE } from "../../utils/constants";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {
@@ -81,11 +79,7 @@ export class ImportEspeceService extends ImportService {
     // Create and save the espece
     const especeToSave = this.buildEntity(entityTab, classe.id);
 
-    const saveResult = await persistEntity(
-      TABLE_ESPECE,
-      especeToSave,
-      DB_SAVE_MAPPING.espece
-    );
+    const saveResult = await persistEspece(especeToSave);
     return !!saveResult?.insertId;
   };
 

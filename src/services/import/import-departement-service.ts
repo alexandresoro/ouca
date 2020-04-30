@@ -1,8 +1,8 @@
 import { Departement } from "ouca-common/departement.object";
-import { persistEntity } from "../../sql-api/sql-api-common";
-import { getDepartementByCode } from "../../sql-api/sql-api-departement";
-import { DB_SAVE_MAPPING } from "../../sql/sql-queries-utils";
-import { TABLE_DEPARTEMENT } from "../../utils/constants";
+import {
+  getDepartementByCode,
+  persistDepartement
+} from "../../sql-api/sql-api-departement";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {
@@ -37,11 +37,7 @@ export class ImportDepartementService extends ImportService {
     // Create and save the commune
     const departementToSave = this.buildEntity(entityTab);
 
-    const saveResult = await persistEntity(
-      TABLE_DEPARTEMENT,
-      departementToSave,
-      DB_SAVE_MAPPING.departement
-    );
+    const saveResult = await persistDepartement(departementToSave);
     return !!saveResult?.insertId;
   };
 

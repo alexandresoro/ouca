@@ -1,8 +1,6 @@
 import { EntiteAvecLibelle } from "ouca-common/entite-avec-libelle.object";
-import {
-  findEntityByLibelle,
-  persistEntity
-} from "../../sql-api/sql-api-common";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { findEntityByLibelle } from "../../sql-api/sql-api-common";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleService extends ImportService {
@@ -40,17 +38,13 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
     // Create and save the entity
     const entityToSave = this.buildEntity(entityTab);
 
-    const saveResult = await persistEntity(
-      this.getTableName(),
-      entityToSave,
-      this.getDbMapping()
-    );
+    const saveResult = await this.saveEntity(entityToSave);
     return !!saveResult?.insertId;
   };
 
-  protected abstract getTableName(): string;
+  protected abstract saveEntity(entity: unknown): Promise<SqlSaveResponse>;
 
-  protected abstract getDbMapping(): { [column: string]: string };
+  protected abstract getTableName(): string;
 
   protected abstract getThisEntityName(): string;
 
