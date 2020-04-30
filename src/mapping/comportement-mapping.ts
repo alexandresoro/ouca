@@ -9,7 +9,7 @@ export const buildComportementFromComportementDb = (
     id: comportementDb.id,
     code: comportementDb.code,
     libelle: comportementDb.libelle,
-    isNicheur: comportementDb.nicheur
+    isNicheur: !!comportementDb.nicheur
   };
 };
 
@@ -28,6 +28,6 @@ export const buildComportementDbFromComportement = (
     id: comportement.id,
     code: comportement.code,
     libelle: comportement.libelle,
-    nicheur: comportement.isNicheur
+    nicheur: !!comportement.isNicheur
   };
 };
