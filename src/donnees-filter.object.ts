@@ -1,3 +1,5 @@
+import { CoordinatesSystemType } from "./coordinates-system";
+
 export interface DonneesFilter {
   id: number | null;
   observateurs: number[] | null;
@@ -19,6 +21,7 @@ export interface DonneesFilter {
   comportements: number[] | null;
   milieux: number[] | null;
   excelMode: boolean;
+  coordinatesSystemType: CoordinatesSystemType;
 }
 
 export interface DonneesFilterEspece {
