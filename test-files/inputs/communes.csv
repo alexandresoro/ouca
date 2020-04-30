@@ -3,7 +3,8 @@ departement;code;nom;Cas d'erreur: Trop de colonnes
 33;1;Cas d'erreur: departement inexistant
 ;1;Cas d'erreur: departement vide
 26;;Cas d'erreur: code vide
-26;code;Cas d'erreur: code pas un entier
+26;code;Cas d'erreur: code pas un nombre
+26;22.2;Cas d'erreur: code pas un entier
 26;-1;Cas d'erreur: code commune trop petit
 26;65536;Cas d'erreur: code commune trop grand
 26;1;
