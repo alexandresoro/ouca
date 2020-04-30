@@ -1,7 +1,13 @@
 import { Commune } from "ouca-common/commune.model";
+import {
+  CoordinatesSystem,
+  CoordinatesSystemType,
+  COORDINATES_SYSTEMS_CONFIG
+} from "ouca-common/coordinates-system";
 import { Departement } from "ouca-common/departement.object";
 import { Lieudit } from "ouca-common/lieudit.model";
 import { findCommuneByDepartementIdAndCodeAndNom } from "../../sql-api/sql-api-commune";
+import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import {
   findLieuDitByCommuneIdAndNom,
@@ -10,37 +16,42 @@ import {
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
-  private DEPARTEMENT_INDEX: number = 0;
-  private CODE_COMMUNE_INDEX: number = 1;
-  private NOM_COMMUNE_INDEX: number = 2;
-  private NOM_INDEX: number = 3;
-  private ALTITUDE_INDEX: number = 4;
-  private LONGITUDE_INDEX: number = 5;
-  private LATITUDE_INDEX: number = 6;
+  private readonly DEPARTEMENT_INDEX = 0;
+  private readonly CODE_COMMUNE_INDEX = 1;
+  private readonly NOM_COMMUNE_INDEX = 2;
+  private readonly NOM_INDEX = 3;
+  private readonly ALTITUDE_INDEX = 4;
+  private readonly LONGITUDE_INDEX = 5;
+  private readonly LATITUDE_INDEX = 6;
+
+  private readonly LIEUDIT_MAX_LENGTH = 150;
+  private readonly ALTITUDE_MIN_VALUE = 0;
+  private readonly ALTITUDE_MAX_VALUE = 65535;
 
   protected getNumberOfColumns = (): number => {
     return 7;
   };
 
-  protected buildEntity = (entityTab: string[], communeId: number): Lieudit => {
-    return {
-      id: null,
-      communeId,
-      nom: entityTab[this.NOM_INDEX].trim(),
-      altitude: +entityTab[this.ALTITUDE_INDEX].trim(),
-      coordinates: null
-    };
-  };
-
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
+    const coordinatesSystemType = await findCoordinatesSystem();
+    if (!coordinatesSystemType) {
+      this.message =
+        "Veuillez choisir le système de coordonnées de l'application dans la page de configuration";
+      return false;
+    }
+    const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
+
     if (
       !this.isDepartementValid(entityTab[this.DEPARTEMENT_INDEX]) ||
       !this.isCodeCommuneValid(entityTab[this.CODE_COMMUNE_INDEX]) ||
       !this.isNomCommuneValid(entityTab[this.NOM_COMMUNE_INDEX]) ||
       !this.isNomLieuditValid(entityTab[this.NOM_INDEX]) ||
       !this.isAltitudeValid(entityTab[this.ALTITUDE_INDEX]) ||
-      !this.isLongitudeValid(entityTab[this.LONGITUDE_INDEX]) ||
-      !this.isLatitudeValid(entityTab[this.LATITUDE_INDEX])
+      !this.isLongitudeValid(
+        entityTab[this.LONGITUDE_INDEX],
+        coordinatesSystem
+      ) ||
+      !this.isLatitudeValid(entityTab[this.LATITUDE_INDEX], coordinatesSystem)
     ) {
       return false;
     }
@@ -79,10 +90,32 @@ export class ImportLieuxditService extends ImportService {
       return false;
     }
 
-    const lieuditToSave = this.buildEntity(entityTab, commune.id);
+    const lieuditToSave = this.buildEntity(
+      entityTab,
+      commune.id,
+      coordinatesSystemType
+    );
 
     const saveResult = await persistLieuDit(lieuditToSave);
     return !!saveResult?.insertId;
+  };
+
+  protected buildEntity = (
+    entityTab: string[],
+    communeId: number,
+    coordinatesSystemType: CoordinatesSystemType
+  ): Lieudit => {
+    return {
+      id: null,
+      communeId,
+      nom: entityTab[this.NOM_INDEX].trim(),
+      altitude: +entityTab[this.ALTITUDE_INDEX].trim(),
+      coordinates: {
+        longitude: +entityTab[this.LONGITUDE_INDEX].trim(),
+        latitude: +entityTab[this.LATITUDE_INDEX].trim(),
+        system: coordinatesSystemType
+      }
+    };
   };
 
   private isDepartementValid = (departement: string): boolean => {
@@ -130,9 +163,11 @@ export class ImportLieuxditService extends ImportService {
       return false;
     }
 
-    if (nom.length > 150) {
+    if (nom.length > this.LIEUDIT_MAX_LENGTH) {
       this.message =
-        "La longueur maximale du nom du lieu-dit est de 150 caractères";
+        "La longueur maximale du nom du lieu-dit est de " +
+        this.LIEUDIT_MAX_LENGTH +
+        " caractères";
       return false;
     }
 
@@ -152,16 +187,25 @@ export class ImportLieuxditService extends ImportService {
       return false;
     }
 
-    if (altitude < 0 || altitude > 99999) {
+    if (
+      altitude < this.ALTITUDE_MIN_VALUE ||
+      altitude > this.ALTITUDE_MAX_VALUE
+    ) {
       this.message =
-        "L'altitude du lieu-dit doit être un entier compris entre 0 et 99999";
+        "L'altitude du lieu-dit doit être un entier compris entre " +
+        this.ALTITUDE_MIN_VALUE +
+        " et " +
+        this.ALTITUDE_MAX_VALUE;
       return false;
     }
 
     return true;
   }
 
-  private isLongitudeValid(longitudeStr: string): boolean {
+  private isLongitudeValid(
+    longitudeStr: string,
+    coordinatesSystem: CoordinatesSystem
+  ): boolean {
     if (!longitudeStr) {
       this.message = "La longitude du lieu-dit ne peut pas être vide";
       return false;
@@ -169,21 +213,26 @@ export class ImportLieuxditService extends ImportService {
 
     const longitude = Number(longitudeStr);
 
-    if (!Number.isInteger(longitude)) {
-      this.message = "La longitude du lieu-dit doit être un entier";
-      return false;
-    }
-
-    if (longitude < 0 || longitude > 99999999) {
+    if (
+      isNaN(longitude) ||
+      longitude < coordinatesSystem.longitudeRange.min ||
+      longitude > coordinatesSystem.longitudeRange.max
+    ) {
       this.message =
-        "La longitude du lieu-dit doit être un entier compris entre 0 et 99999999";
+        "La longitude du lieu-dit doit être un nombre compris entre " +
+        coordinatesSystem.longitudeRange.min +
+        " et " +
+        coordinatesSystem.longitudeRange.max;
       return false;
     }
 
     return true;
   }
 
-  private isLatitudeValid(latitudeStr: string): boolean {
+  private isLatitudeValid(
+    latitudeStr: string,
+    coordinatesSystem: CoordinatesSystem
+  ): boolean {
     if (!latitudeStr) {
       this.message = "La latitude du lieu-dit ne peut pas être vide";
       return false;
@@ -191,14 +240,16 @@ export class ImportLieuxditService extends ImportService {
 
     const latitude = Number(latitudeStr);
 
-    if (!Number.isInteger(latitude)) {
-      this.message = "La latitude du lieu-dit doit être un entier";
-      return false;
-    }
-
-    if (latitude < 0 || latitude > 99999999) {
+    if (
+      isNaN(latitude) ||
+      latitude < coordinatesSystem.latitudeRange.min ||
+      latitude > coordinatesSystem.latitudeRange.max
+    ) {
       this.message =
-        "La latitude du lieu-dit doit être un entier compris entre 0 et 99999999";
+        "La latitude du lieu-dit doit être un entier compris entre " +
+        coordinatesSystem.latitudeRange.min +
+        " et " +
+        coordinatesSystem.latitudeRange.max;
       return false;
     }
 
