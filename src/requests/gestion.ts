@@ -346,7 +346,8 @@ export const exportCommunes = async (): Promise<unknown> => {
 
   const objectsToExport = _.map(communesDb, (communeDb) => {
     return {
-      Département: findDepartementById(departements, communeDb.departementId),
+      Département: findDepartementById(departements, communeDb.departementId)
+        .code,
       Code: communeDb.code,
       Nom: communeDb.nom
     };
@@ -365,7 +366,8 @@ export const exportLieuxdits = async (): Promise<unknown> => {
   const objectsToExport = _.map(lieuxdits, (lieudit) => {
     const commune = findCommuneById(communes, lieudit.communeId);
     return {
-      Département: findDepartementById(departements, commune.departementId),
+      Département: findDepartementById(departements, commune.departementId)
+        .code,
       "Code commune": commune.code,
       "Nom commune": commune.nom,
       "Lieu-dit": lieudit.nom,
@@ -394,7 +396,7 @@ export const exportEspeces = async (): Promise<unknown> => {
 
   const objectsToExport = _.map(especes, (espece) => {
     return {
-      Classe: findClasseById(classes, espece.id),
+      Classe: findClasseById(classes, espece.classeId).libelle,
       Code: espece.code,
       "Nom français": espece.nomFrancais,
       "Nom latin": espece.nomLatin
