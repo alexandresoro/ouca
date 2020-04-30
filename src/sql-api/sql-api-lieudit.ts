@@ -80,7 +80,9 @@ const getCoordinatesToPersist = async (
 export const persistLieuDit = async (
   lieuDit: Lieudit
 ): Promise<SqlSaveResponse> => {
-  lieuDit.coordinates = await getCoordinatesToPersist(lieuDit);
+  if (_.has(lieuDit, "coordinates")) {
+    lieuDit.coordinates = await getCoordinatesToPersist(lieuDit);
+  }
 
   const lieuditDb = buildLieuditDbFromLieudit(lieuDit);
 

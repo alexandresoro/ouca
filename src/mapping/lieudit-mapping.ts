@@ -26,13 +26,18 @@ export const buildLieuxditsFromLieuxditsDb = (
 };
 
 export const buildLieuditDbFromLieudit = (lieudit: Lieudit): LieuditDb => {
-  return {
+  const lieuditDb: LieuditDb = {
     id: lieudit.id,
     commune_id: lieudit.communeId,
     nom: lieudit.nom,
-    altitude: lieudit.altitude,
-    longitude: lieudit.coordinates.longitude,
-    latitude: lieudit.coordinates.latitude,
-    coordinates_system: lieudit.coordinates.system
+    altitude: lieudit.altitude
   };
+
+  if (_.has(lieudit, "coordinates")) {
+    lieuditDb.longitude = lieudit.coordinates.longitude;
+    lieuditDb.latitude = lieudit.coordinates.latitude;
+    lieuditDb.coordinates_system = lieudit.coordinates.system;
+  }
+
+  return lieuditDb;
 };
