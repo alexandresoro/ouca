@@ -416,8 +416,6 @@ export class ImportDoneeeService extends ImportService {
       coordinates
     );
 
-    console.log("Inventaire: ", inventaireToSave);
-
     // Save the inventaire
     const existingInventaireId: number = await findExistingInventaireId(
       inventaireToSave
@@ -444,8 +442,6 @@ export class ImportDoneeeService extends ImportService {
       milieuxIds,
       commentaire
     );
-
-    console.log("Donnée ", donneeToSave);
 
     // Save the "Donnee" or return an error if it does not exist
     const existingDonneeId: number = await findExistingDonneeId(donneeToSave);
