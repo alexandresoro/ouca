@@ -48,7 +48,6 @@ import {
   TABLE_MILIEU,
   TABLE_SEXE
 } from "../../utils/constants";
-import { interpretDateTimestampAsLocalTimeZoneDate } from "../../utils/date";
 import {
   getFormattedDate,
   getFormattedTime,
@@ -186,12 +185,7 @@ export class ImportDoneeeService extends ImportService {
 
     // Get the "Date"
     // TODO for 01/01/2020 it returns 31/12/2020
-    const date = format(
-      interpretDateTimestampAsLocalTimeZoneDate(
-        getFormattedDate(rawDonnee.date.trim()).toJSON()
-      ),
-      DATE_PATTERN
-    );
+    const date = format(getFormattedDate(rawDonnee.date.trim()), DATE_PATTERN);
 
     // Get the "Heure"
     const heure: string = getFormattedTime(rawDonnee.heure.trim());
