@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import { CoordinatesSystemType } from "ouca-common/coordinates-system";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
@@ -56,14 +57,16 @@ export const queryToFindInventaireIdByAllAttributes = async (
   queryStr =
     queryStr +
     " AND i.altitude" +
-    (!inventaire.customizedAltitude
+    (_.isNil(inventaire.customizedAltitude)
       ? " is null"
       : "=" + inventaire.customizedAltitude);
 
   queryStr =
     queryStr +
     " AND i.temperature" +
-    (!inventaire.temperature ? " is null" : "=" + inventaire.temperature);
+    (_.isNil(inventaire.temperature)
+      ? " is null"
+      : "=" + inventaire.temperature);
 
   return query<{ id: number }[]>(queryStr);
 };

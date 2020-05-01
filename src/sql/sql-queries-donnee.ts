@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import * as _ from "lodash";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
@@ -428,7 +429,7 @@ export const queryToFindDonneeIdsByAllAttributes = async (
   queryStr =
     queryStr +
     " AND d.distance" +
-    (!donnee.distance ? " is null" : "=" + donnee.distance);
+    (_.isNil(donnee.distance) ? " is null" : "=" + donnee.distance);
 
   queryStr =
     queryStr +
