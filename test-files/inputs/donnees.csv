@@ -51,9 +51,6 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10.2;11;12;;;PRUCOL;Précis;1;M;1A;;;
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;-1;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 20: l'altitude est trop grande
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;65536;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'alitude est personnalisée
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'altiude est égale à la limite inférieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'altiude est égale à la limite supérieure
 ###
 ### LONGITUDE ########################################################################
 ### Cas d'erreur 21: la longitude est vide
@@ -64,9 +61,6 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;longitude;12;;;PRUCOL;Précis;1;M;
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;181;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 24: la longitude est trop grande
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;-181;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est personnalisée
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est égale à la limite inférieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La longitude est égale à la limite supérieure
 ###
 ### LATITUDE ########################################################################
 ### Cas d'erreur 25: la latitude est vide
@@ -77,9 +71,6 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;latitude;;;PRUCOL;Précis;1;M;1
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;-91;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 28: la latitude est trop grande
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;91;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est personnalisée
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est égale à la limite inférieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La latitude est égale à la limite supérieure
 ###
 ### ESPECE ########################################################################
 ### Cas d'erreur 29: l'espèce est vide
@@ -118,9 +109,6 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;65536;M;1A;
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 42: le nombre est vide et l'estimation n'est pas non compté
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;;M;1A;;;;;;;;;;;;;;
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est égal à la limite inférieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;99999;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est égal à la limite supérieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;;M;1A;;;;;;;;;;;;;;Cas nominal: Le nombre est vide avec une estimation nombre "Non compté"
 ###
 ### HEURE ########################################################################
 ### Cas d'erreur 43: l'heure est mal formattée
@@ -129,10 +117,6 @@ CARRIER Laurent;;01/01/2020;09:0;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;
 CARRIER Laurent;;01/01/2020;9:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 45: l'heure est mal formattée
 CARRIER Laurent;;01/01/2020;9:0;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-###CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
-###CARRIER Laurent;;01/01/2020;10h00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
-###CARRIER Laurent;;01/01/2020;11H00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
-###CARRIER Laurent;;01/01/2020;1200;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: L'heure est bien formattée
 ###
 ### DUREE ########################################################################
 ### Cas d'erreur 46: la durée est mal formattée
@@ -141,10 +125,6 @@ CARRIER Laurent;;01/01/2020;;15;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;
 CARRIER Laurent;;01/01/2020;;0:15;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 48: la durée est mal formattée
 CARRIER Laurent;;01/01/2020;;0:5;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-###CARRIER Laurent;;01/01/2020;;00:15;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
-###CARRIER Laurent;;01/01/2020;;00h25;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
-###CARRIER Laurent;;01/01/2020;;00H35;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
-###CARRIER Laurent;;01/01/2020;;0045;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La durée est bien formattée
 ###
 ### TEMPERATURE ########################################################################
 ### Cas d'erreur 49: la température n'est pas un nombre
@@ -155,14 +135,10 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;18.1;;PRUCOL;Précis;1;M;1A;
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;-129;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est inférieure à la limite inférieure
 ### Cas d'erreur 52: la température est trop grande
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;128;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est supérieure à la limite supérieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;18;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas nominal: La température est OK
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;-128;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est égale à la limite inférieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;127;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est égale à la limite supérieure
 ###
 ### ESTIMATION DISTANCE ########################################################################
 ### Cas d'erreur 53: l'estimation de la distance n'existe pas 
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;estimation;;;;;;;;;;;;;Cas d'erreur: L'estimation distance n'existe pas
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Environ;;;;;;;;;;;;;Cas nominal: L'estimation distance existe
 ###
 ### DISTANCE ########################################################################
 ### Cas d'erreur 54: la distance n'est pas un nombre
@@ -173,9 +149,6 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;10.
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;-1;;;;;;;;;;;;Cas d'erreur: La distance est inférieure à la limite inférieure
 ### Cas d'erreur 57: la distance est trop grande
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;65536;;;;;;;;;;;;Cas d'erreur: La distance est supérieure à la limite supérieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;10;;;;;;;;;;;;Cas nominal: La distance est OK
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;0;;;;;;;;;;;;Cas d'erreur: La distance est égale à la limite inférieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;99999;;;;;;;;;;;;Cas d'erreur: La distance est égale à la limite supérieure
 ###
 ### REGROUPEMENT ########################################################################
 ### Cas d'erreur 58: le regroupement n'est pas un nombre
@@ -186,8 +159,6 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;0;;;;;;;;;;;Cas d'erreur: Le regroupement est inférieur à la limite inférieure
 ### Cas d'erreur 61: le regroupement est trop grand
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;65536;;;;;;;;;;;Cas d'erreur: Le regroupement est supérieur à la limite supérieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;1;;;;;;;;;;;Cas d'erreur: Le regroupement est égal à la limite inférieure
-###CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;99999;;;;;;;;;;;Cas d'erreur: Le regroupement est égal à la limite supérieure
 ###
 ### ASSOCIES ########################################################################
 ### Cas d'erreur 62: l'associé n'existe pas
@@ -213,68 +184,92 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;
 ### Cas d'erreur 69: le comportement n'existe pas
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;milieu;
 ###
-### DIVERS ########################################################################
-### Cas d'erreur: la donnée existe déjà
-### CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### 
 ### CAS NOMINAUX ########################################################################
 ### Cas nominal 1: uniquement les champs obligatoire
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur: doublons
+### Cas d'erreur 70: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### Cas nominal 2: ASSOCIES
 CARRIER Laurent;CARRIER Camille,CARRIER Laurent;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur: doublons
+### Cas d'erreur 71: doublons
 CARRIER Laurent;CARRIER Camille,CARRIER Laurent;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 3: HEURE
+### Cas nominaux 3, 4, 5, 6: HEURE
 CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur: doublons
+CARRIER Laurent;;01/01/2020;10h00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;11H00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;1200;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 72, 73, 74, 75: doublons
 CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;10h00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;11H00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;1200;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 4: DUREE
+### Cas nominaux 7, 8, 9, 10: DUREE
 CARRIER Laurent;;01/01/2020;;00:30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur: doublons TODO semble ne pas fonctionner
+CARRIER Laurent;;01/01/2020;;01h30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;;02H30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;;0330;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 76, 77, 78, 79: doublons
 CARRIER Laurent;;01/01/2020;;00:30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;;01h30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;;02H30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;;0330;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 5: TEMPERATURE
+### Cas nominal 11: TEMPERATURE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;0;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur: doublons
+### Cas d'erreur 80: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;0;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 6: METEO
+### Cas nominal 12: METEO
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,Nuages,Vent;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur: doublons
+### Cas d'erreur 81: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,Nuages,Vent;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 7: ESTIMATION DISTANCE
+### Cas nominal 13: NOMBRE VIDE
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 82: doublons
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;;M;1A;;;;;;;;;;;;;;
+###
+### Cas nominal 14: ESTIMATION DISTANCE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Supérieure à;;;;;;;;;;;;;
-### Cas d'erreur: doublons
+### Cas d'erreur 83: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Supérieure à;;;;;;;;;;;;;
 ###
-### Cas nominal 8: DISTANCE
+### Cas nominal 15: DISTANCE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;22;;;;;;;;;;;;
-### Cas d'erreur: doublons
+### Cas d'erreur 84: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;22;;;;;;;;;;;;
 ###
-### Cas nominal 9: REGROUPEMENT
+### Cas nominal 16: REGROUPEMENT
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10;;;;;;;;;;;
-### Cas d'erreur: doublons
+### Cas d'erreur 85: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10;;;;;;;;;;;
 ###
-### Cas nominal 10: COMPORTEMENTS
+### Cas nominal 17: COMPORTEMENTS
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;000000;0002;0003;000000;000000;0001;;;;;
-### Cas d'erreur: doublons
+### Cas d'erreur 86: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;000000;0002;0003;000000;000000;0001;;;;;
 ###
-### Cas nominal 11: MILIEUX
+### Cas nominal 18: MILIEUX
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;000000;0001;0002;0003;
-### Cas d'erreur: doublons
+### Cas d'erreur 87: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;000000;0001;0002;0003;
 ###
-### Cas nominal 12: COMMENTAIRE
+### Cas nominal 19: COMMENTAIRE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;test de commentaire
-### Cas d'erreur: doublons
+### Cas d'erreur 88: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;test de commentaire
+###
+### Cas nominal 20: tous les champs au min
+CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;0;-180;-90;-128;Soleil,Vent;PRUCOL;Précis;1;M;1A;Supérieure à;0;1;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire
+### Cas d'erreur 89: doublons
+CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;0;-180;-90;-128;Soleil,Vent;PRUCOL;Précis;1;M;1A;Supérieure à;0;1;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire
+###
+### Cas nominal 21: tous les champs au max
+CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;65535;180;90;127;Soleil,Vent;PRUCOL;Précis;65535;M;1A;Supérieure à;65535;65535;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire
+### Cas d'erreur 90: doublons
+CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;65535;180;90;127;Soleil,Vent;PRUCOL;Précis;65535;M;1A;Supérieure à;65535;65535;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire
