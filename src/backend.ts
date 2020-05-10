@@ -104,6 +104,14 @@ wss.on("connection", (client) => {
     if (message.content === "init") {
       console.log("Sending initial data to client");
       sendInitialData(client);
+    } else if (message.content === "ping") {
+      WebsocketServer.sendMessageToClients(
+        JSON.stringify({
+          type: "other",
+          content: "pong"
+        }),
+        client
+      );
     }
   });
 });
