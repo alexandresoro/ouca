@@ -1,6 +1,7 @@
 import * as http from "http";
 import * as multiparty from "multiparty";
 import { WebsocketMessage } from "ouca-common/websocket/websocket-message.model";
+import { createLogger, format, transports } from "winston";
 import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
 import { WebsocketServer } from "./ws/websocket-server";
@@ -13,10 +14,19 @@ const isDockerMode = process.argv.includes(DOCKER_ARG);
 const hostname = isDockerMode ? "0.0.0.0" : "127.0.0.1";
 const port = 4000;
 
+const loggerFormat = format.printf(({ level, message, timestamp }) => {
+  return `${timestamp} ${level}: ${message}`;
+});
+
+const logger = createLogger({
+  format: format.combine(format.timestamp(), loggerFormat),
+  transports: [new transports.Console()]
+});
+
 // HTTP server
 const server = http.createServer(
   (request: http.IncomingMessage, res: http.ServerResponse) => {
-    console.log(`Method ${request.method}, URL ${request.url}`);
+    logger.info(`Method ${request.method}, URL ${request.url}`);
 
     res.setHeader("Access-Control-Allow-Origin", "*");
     // This header is used on client side to extract the file name for the SQL extract for example
@@ -100,9 +110,9 @@ const wss = WebsocketServer.createServer(server);
 wss.on("connection", (client) => {
   client.on("message", (data): void => {
     const message: WebsocketMessage = JSON.parse(data.toString());
-    console.log("Message received from websocket: ", message);
+    logger.info("Message received from websocket: " + JSON.stringify(message));
     if (message.content === "init") {
-      console.log("Sending initial data to client");
+      logger.info("Sending initial data to client");
       sendInitialData(client);
     } else if (message.content === "ping") {
       WebsocketServer.sendMessageToClients(
@@ -117,5 +127,5 @@ wss.on("connection", (client) => {
 });
 
 server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+  logger.info(`Server running at http://${hostname}:${port}/`);
 });

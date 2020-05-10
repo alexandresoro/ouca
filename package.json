@@ -28,6 +28,7 @@
     "multiparty": "*",
     "ouca-common": "*",
     "papaparse": "*",
+    "winston": "*",
     "ws": "*",
     "xlsx": "*",
     "yargs": "*"
