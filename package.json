@@ -10,7 +10,7 @@
       "name": "Alexandre Soro"
     }
   ],
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "build:debug": "tsc --sourceMap true",
