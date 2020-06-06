@@ -1,10 +1,6 @@
 import { ComportementDb } from "../objects/db/comportement-db.model";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import {
-  COLUMN_LIBELLE,
-  ORDER_ASC,
-  TABLE_COMPORTEMENT
-} from "../utils/constants";
+import { COLUMN_CODE, ORDER_ASC, TABLE_COMPORTEMENT } from "../utils/constants";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllComportements = async (): Promise<
@@ -12,7 +8,7 @@ export const queryToFindAllComportements = async (): Promise<
 > => {
   return queryToFindAllEntities<ComportementDb>(
     TABLE_COMPORTEMENT,
-    COLUMN_LIBELLE,
+    COLUMN_CODE,
     ORDER_ASC
   );
 };
