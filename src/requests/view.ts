@@ -61,20 +61,20 @@ export const exportDonneesByCustomizedFilters = async (
       Département: donnee.departement,
       "Code commune": donnee.codeCommune,
       "Nom commune": donnee.nomCommune,
-      "Lieu-dit": donnee.lieudit,
-      "Altitude en mètres": donnee.altitude
+      "Lieu-dit": donnee.lieudit
     };
-
-    donneeToExportPart1["Longitude" + coordinatesSuffix] =
-      donnee.longitude ?? "Non supporté";
 
     donneeToExportPart1["Latitude" + coordinatesSuffix] =
       donnee.latitude ?? "Non supporté";
+
+    donneeToExportPart1["Longitude" + coordinatesSuffix] =
+      donnee.longitude ?? "Non supporté";
 
     const { ...firstAttributes } = donneeToExportPart1;
 
     const donneeToExport = {
       ...firstAttributes,
+      "Altitude en mètres": donnee.altitude,
       "Température en °C": donnee.temperature,
       Météo: donnee.meteos,
       Classe: donnee.classe,
