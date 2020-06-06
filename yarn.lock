@@ -57,15 +57,20 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@>=8.0.0":
-  version "13.13.4"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.4.tgz#1581d6c16e3d4803eb079c87d4ac893ee7501c2c"
-  integrity sha512-x26ur3dSXgv5AwKS0lNfbjpCakGIduWU1DU91Zz58ONRWrIKGunmZBNv4P7N+e27sJkiGDsw/3fT4AtsqQBrBA==
+"@types/node@*":
+  version "14.0.11"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.11.tgz#61d4886e2424da73b7b25547f59fdcb534c165a3"
+  integrity sha512-lCvvI24L21ZVeIiyIUHZ5Oflv1hhHQ5E1S25IRlKIXaRkVgmXpJMI3wUJkmym2bTbCe+WoIibQnMVAU3FguaOg==
 
 "@types/node@12":
   version "12.12.38"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.38.tgz#58841a382f231ad005dbb935c36d44aa1118a26b"
   integrity sha512-75eLjX0pFuTcUXnnWmALMzzkYorjND0ezNEycaKesbUBg9eGZp4GHPuDmkRc4mQQvIpe29zrzATNRA6hkYqwmA==
+
+"@types/node@>=8.0.0":
+  version "13.13.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.4.tgz#1581d6c16e3d4803eb079c87d4ac893ee7501c2c"
+  integrity sha512-x26ur3dSXgv5AwKS0lNfbjpCakGIduWU1DU91Zz58ONRWrIKGunmZBNv4P7N+e27sJkiGDsw/3fT4AtsqQBrBA==
 
 "@types/ws@*":
   version "7.2.4"
@@ -1020,9 +1025,9 @@ os-tmpdir@~1.0.2:
   integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
 
 ouca-common@*:
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.29.tgz#5b0b8a7af0fe804265b5fe65ba7496dc983ab38a"
-  integrity sha512-y8C3XYCVhJRP25BVBKnzs67h85xKhoONAUvpRUfmsvo0Bsu6B93T9LWIBLGNkNSOgYmrda8v6RlPkvBEkZxXIQ==
+  version "0.0.31"
+  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.31.tgz#2d944863ece103c65612191896a5d5025c9b11e5"
+  integrity sha512-htaxFNkRMg7m/E/BmTurkl6LSbF5r7r85rCqMXTSRx6IFMPPGj0y0HMtm2BHj3Q5HVaBoWDhJM0QMe6QE89Esg==
   dependencies:
     "@types/bson" "*"
     proj4 "*"
@@ -1099,9 +1104,9 @@ progress@^2.0.0:
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
 proj4@*:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/proj4/-/proj4-2.6.1.tgz#c07a32cd4a38a82515aae3b54363669896641dd6"
-  integrity sha512-RP5EcrfrLcARy+Zjjz1wIeqZzZdPtQNl685asHcwdU/MQ/dvydmf1XWM4mgok6wPaNsXZ8IFrM4qadO3g46PiQ==
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/proj4/-/proj4-2.6.2.tgz#4665d7cbc30fd356375007c2fed53b07dbda1d67"
+  integrity sha512-Pn0+HZtXb4JzuN8RR0VM7yyseegiYHbXkF+2FOdGpzRojcZ1BTjWxOh7qfp2vH0EyLu8pvcrhLxidwzgyUy/Gw==
   dependencies:
     mgrs "1.0.0"
     wkt-parser "^1.2.4"
