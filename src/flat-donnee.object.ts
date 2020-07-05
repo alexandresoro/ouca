@@ -65,6 +65,8 @@ export interface FlatDonnee {
 
   regroupement: number | null;
 
+  nicheur: string | null;
+
   comportements: FlatDonneeComportement[];
 
   milieux: FlatDonneeMilieu[];
