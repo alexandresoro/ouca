@@ -17,7 +17,7 @@ export const queryToFindAllComportementsByDonneeId = async (
   donneesIds?: number[]
 ): Promise<{ donneeId: number; code: string; libelle: string }[]> => {
   let queryStr: string =
-    "SELECT d.donnee_id as donneeId, c.code, c.libelle" +
+    "SELECT d.donnee_id as donneeId, c.code, c.libelle, c.nicheur" +
     " FROM donnee_comportement d" +
     " INNER JOIN comportement c ON d.comportement_id = c.id";
 
@@ -26,7 +26,9 @@ export const queryToFindAllComportementsByDonneeId = async (
       queryStr + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
   }
 
-  return query<{ donneeId: number; code: string; libelle: string }[]>(queryStr);
+  return query<
+    { donneeId: number; code: string; libelle: string; nicheur: string }[]
+  >(queryStr);
 };
 
 export const queryToFindComportementsIdsByDonneeId = async (

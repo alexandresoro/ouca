@@ -88,6 +88,7 @@ export const exportDonneesByCustomizedFilters = async (
       "Estimation de la distance": donnee.estimationDistance,
       "Distance en mètres": donnee.distance,
       "Numéro de regroupement": donnee.regroupement,
+      Nicheur: !donnee.nicheur ? "" : donnee.nicheur,
       "Comportement 1": getComportement(donnee, 1),
       "Comportement 2": getComportement(donnee, 2),
       "Comportement 3": getComportement(donnee, 3),

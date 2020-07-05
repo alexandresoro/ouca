@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import * as _ from "lodash";
+import { Comportement } from "ouca-common/comportement.object";
 import {
   CoordinatesSystemType,
   getCoordinates
@@ -9,6 +10,7 @@ import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
 import { Inventaire } from "ouca-common/inventaire.object";
+import { NicheurCode, NICHEUR_VALUES } from "ouca-common/nicheur.model";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
@@ -329,10 +331,12 @@ export const findDonneesByCustomizedFilters = async (
       associesByDonnee[donnee.id],
       (associe) => associe.libelle
     ).join(SEPARATOR_COMMA);
+
     donnee.meteos = _.map(
       meteosByDonnee[donnee.id],
       (meteo) => meteo.libelle
     ).join(SEPARATOR_COMMA);
+
     donnee.comportements = _.map(
       comportementsByDonnee[donnee.id],
       (comportement) => {
@@ -342,12 +346,36 @@ export const findDonneesByCustomizedFilters = async (
         };
       }
     );
+
     donnee.milieux = _.map(milieuxByDonnee[donnee.id], (milieu) => {
       return {
         code: milieu.code,
         libelle: milieu.libelle
       };
     });
+
+    // Compute nicheur status for the Donnée (i.e. highest nicheur status of the comportements)
+    // First we keep only the comportements having a nicheur status
+    const nicheurStatuses: NicheurCode[] = _.map(
+      _.filter(
+        comportementsByDonnee[donnee.id],
+        (comportement: Comportement) => {
+          return !!comportement.nicheur;
+        }
+      ),
+      (comportement: Comportement) => {
+        return comportement.nicheur;
+      }
+    );
+
+    // Then we keep the highest nicheur status
+    const nicheurStatusCode = _.maxBy(nicheurStatuses, (nicheurStatus) => {
+      return NICHEUR_VALUES[nicheurStatus].weight;
+    });
+
+    donnee.nicheur = nicheurStatusCode
+      ? NICHEUR_VALUES[nicheurStatusCode].name
+      : null;
   });
 
   return donnees;
