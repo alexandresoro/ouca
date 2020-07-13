@@ -1,4 +1,5 @@
 import { CoordinatesSystemType } from "./coordinates-system";
+import { NicheurCode } from "./nicheur.model";
 
 export interface DonneesFilter {
   id: number | null;
@@ -18,6 +19,7 @@ export interface DonneesFilter {
   fromDate: Date | null;
   toDate: Date | null;
   commentaire: string | null;
+  nicheurs: NicheurCode[];
   comportements: number[] | null;
   milieux: number[] | null;
   excelMode: boolean;
