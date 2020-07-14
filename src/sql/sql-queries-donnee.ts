@@ -3,11 +3,13 @@ import * as _ from "lodash";
 import { Donnee } from "ouca-common/donnee.object";
 import { DonneesFilter } from "ouca-common/donnees-filter.object";
 import { FlatDonnee } from "ouca-common/flat-donnee.object";
+import { NicheurCode } from "ouca-common/nicheur.model";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
   DATE_PATTERN,
+  TABLE_COMPORTEMENT,
   TABLE_DONNEE_COMPORTEMENT,
   TABLE_DONNEE_MILIEU,
   TABLE_INVENTAIRE_ASSOCIE,
@@ -180,6 +182,54 @@ export const queryToFindNumberOfDonneesByDonneeEntityId = async (
     queryStr = queryStr + " GROUP BY " + entityIdAttribute;
   }
   return query<NumberOfObjectsById[]>(queryStr);
+};
+
+const getQueryToFindDonneesIdsByNicheursCodes = (
+  nicheurCodes: NicheurCode[]
+): string => {
+  const codesStr = _.map(nicheurCodes, (code) => {
+    return '"' + code + '"';
+  }).join(",");
+
+  const queryStr =
+    " SELECT distinct t_donnee_comportement.donnee_id" +
+    " FROM " +
+    TABLE_DONNEE_COMPORTEMENT +
+    " t_donnee_comportement" +
+    " JOIN " +
+    TABLE_COMPORTEMENT +
+    " t_comportement" +
+    " ON t_comportement.id = t_donnee_comportement.comportement_id" +
+    " WHERE t_comportement.nicheur IN (" +
+    codesStr +
+    ")";
+  return queryStr;
+};
+
+const getQueryToFindDonneesIdsByComportementsIds = (
+  comportementsIds: number[]
+): string => {
+  const queryStr =
+    " SELECT distinct t_donnee_comportement.donnee_id" +
+    " FROM " +
+    TABLE_DONNEE_COMPORTEMENT +
+    " t_donnee_comportement" +
+    " WHERE t_donnee_comportement.comportement_id IN (" +
+    comportementsIds.join(",") +
+    ")";
+  return queryStr;
+};
+
+const getQueryToFindDonneesIdsByMilieuxIds = (milieuxIds: number[]): string => {
+  const queryStr =
+    " SELECT distinct t_donnee_milieu.donnee_id" +
+    " FROM " +
+    TABLE_DONNEE_MILIEU +
+    " t_donnee_milieu" +
+    " WHERE t_donnee_milieu.milieu_id IN (" +
+    milieuxIds.join(",") +
+    ")";
+  return queryStr;
 };
 
 export const queryToFindDonneesByCriterion = async (
@@ -360,29 +410,30 @@ export const queryToFindDonneesByCriterion = async (
     );
   }
 
-  if (criterion.comportements && criterion.comportements.length > 0) {
+  // Filter by Nicheurs
+  if (criterion.nicheurs && criterion.nicheurs.length > 0) {
     whereTab.push(
-      " t_donnee.id IN" +
-        " (SELECT distinct t_donnee_comportement.donnee_id" +
-        " FROM " +
-        TABLE_DONNEE_COMPORTEMENT +
-        " t_donnee_comportement" +
-        " WHERE t_donnee_comportement.comportement_id IN (" +
-        criterion.comportements.join(",") +
-        "))"
+      " t_donnee.id IN (" +
+        getQueryToFindDonneesIdsByNicheursCodes(criterion.nicheurs) +
+        ")"
     );
   }
 
+  // Filter by Comportements
+  if (criterion.comportements && criterion.comportements.length > 0) {
+    whereTab.push(
+      " t_donnee.id IN (" +
+        getQueryToFindDonneesIdsByComportementsIds(criterion.comportements) +
+        ")"
+    );
+  }
+
+  // Filter by Milieux
   if (criterion.milieux && criterion.milieux.length > 0) {
     whereTab.push(
-      " t_donnee.id IN" +
-        " (SELECT distinct t_donnee_milieu.donnee_id" +
-        " FROM " +
-        TABLE_DONNEE_MILIEU +
-        " t_donnee_milieu" +
-        " WHERE t_donnee_milieu.milieu_id IN (" +
-        criterion.milieux.join(",") +
-        "))"
+      " t_donnee.id IN (" +
+        getQueryToFindDonneesIdsByMilieuxIds(criterion.milieux) +
+        ")"
     );
   }
 
@@ -390,7 +441,7 @@ export const queryToFindDonneesByCriterion = async (
     queryStr += " WHERE";
   }
 
-  queryStr += whereTab.join(" AND");
+  queryStr += whereTab.join(" AND ");
 
   queryStr += " ORDER BY t_donnee.id DESC";
 
