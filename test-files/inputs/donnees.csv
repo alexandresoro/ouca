@@ -1,7 +1,7 @@
 ### FORMAT DU FICHIER ########################################################################
-### Cas d'erreur 1: pas assez de colonnes
+### Cas d'erreur 1: pas assez de colonnes (31/32)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-### Cas d'erreur 2: trop de colonnes
+### Cas d'erreur 2: trop de colonnes (33/32)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ###
 ### OBSERVATEUR ########################################################################
@@ -25,14 +25,12 @@ CARRIER Laurent;;01/01/2020;;;;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;
 CARRIER Laurent;;01/01/2020;;;33;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### COMMUNE ########################################################################
-### Cas d'erreur 10: le code commune est vide
+### Cas d'erreur 10: la commune est vide
 CARRIER Laurent;;01/01/2020;;;26;;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur 11: le code commune n'est pas un nombre
-CARRIER Laurent;;01/01/2020;;;26;commune;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur 12: le code commune n'est pas un entier
-CARRIER Laurent;;01/01/2020;;;26;22.2;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur 13: La commune n'existe pas
+### Cas d'erreur 11: La commune n'existe pas (code)
 CARRIER Laurent;;01/01/2020;;;26;174000;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 12: La commune n'existe pas (nom)
+CARRIER Laurent;;01/01/2020;;;26;Nom commune;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### LIEUDIT ########################################################################
 ### Cas d'erreur 14: Le lieu-dit est vide
@@ -46,7 +44,7 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;
 ### Cas d'erreur 17: l'altitude n'est pas un nombre
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;altitude;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 18: l'altitude n'est pas un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10.2;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10,2;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 19: l'altitude est trop petite
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;-1;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 20: l'altitude est trop grande
@@ -69,8 +67,8 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;;;;PRUCOL;Précis;1;M;1A;;;;;;;
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;latitude;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 27: la latitude est trop petite
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;-91;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
-### Cas d'erreur 28: la latitude est trop grande
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;91;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas d'erreur 28: la latitude est trop grande et séparateur de décimal = ,
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;91,2;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
 ### ESPECE ########################################################################
 ### Cas d'erreur 29: l'espèce est vide
@@ -179,25 +177,29 @@ CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;c
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;comp;;;;;
 ###
 ### MILIEU ########################################################################
-### Cas d'erreur 68: le comportement n'existe pas
+### Cas d'erreur 68: le milieu n'existe pas
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;milieu;;;;
-### Cas d'erreur 69: le comportement n'existe pas
+### Cas d'erreur 69: le milieu n'existe pas
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;milieu;
 ###
 ###
 ### 
 ### CAS NOMINAUX ########################################################################
-### Cas nominal 1: uniquement les champs obligatoire
+### Cas nominal 1: uniquement les champs obligatoire, code commune, code espèce
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas nominal 2: uniquement les champs obligatoire, nom commune, nom français espèce
+CARRIER Laurent;;01/01/2020;;;26;MARGES;Prairie;10;11;12;;;Accenteur mouchet;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas nominal 3: uniquement les champs obligatoire, code commune, nom latin espèce
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;Cercotrichas galactotes;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 70: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 2: ASSOCIES
+### Cas nominal 4: ASSOCIES
 CARRIER Laurent;CARRIER Camille,CARRIER Laurent;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 71: doublons
 CARRIER Laurent;CARRIER Camille,CARRIER Laurent;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominaux 3, 4, 5, 6: HEURE
+### Cas nominaux 5, 6, 7, 8: HEURE
 CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 CARRIER Laurent;;01/01/2020;10h00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 CARRIER Laurent;;01/01/2020;11H00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
@@ -208,7 +210,7 @@ CARRIER Laurent;;01/01/2020;10h00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A
 CARRIER Laurent;;01/01/2020;11H00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 CARRIER Laurent;;01/01/2020;1200;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominaux 7, 8, 9, 10: DUREE
+### Cas nominaux 9, 10, 11, 12: DUREE
 CARRIER Laurent;;01/01/2020;;00:30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 CARRIER Laurent;;01/01/2020;;01h30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 CARRIER Laurent;;01/01/2020;;02H30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
@@ -219,97 +221,97 @@ CARRIER Laurent;;01/01/2020;;01h30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A
 CARRIER Laurent;;01/01/2020;;02H30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 CARRIER Laurent;;01/01/2020;;0330;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 11: TEMPERATURE
+### Cas nominal 13: TEMPERATURE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;0;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 80: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;0;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 12: METEO
+### Cas nominal 14: METEO
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,Nuages,Vent;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 81: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,Nuages,Vent;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 13: NOMBRE VIDE
+### Cas nominal 15: NOMBRE VIDE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 82: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 14: ESTIMATION DISTANCE
+### Cas nominal 16: ESTIMATION DISTANCE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Supérieure à;;;;;;;;;;;;;
 ### Cas d'erreur 83: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Supérieure à;;;;;;;;;;;;;
 ###
-### Cas nominal 15: DISTANCE
+### Cas nominal 17: DISTANCE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;22;;;;;;;;;;;;
 ### Cas d'erreur 84: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;22;;;;;;;;;;;;
 ###
-### Cas nominal 16: REGROUPEMENT
+### Cas nominal 18: REGROUPEMENT
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10;;;;;;;;;;;
 ### Cas d'erreur 85: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10;;;;;;;;;;;
 ###
-### Cas nominal 17: COMPORTEMENTS
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;000000;0002;0003;000000;000000;0001;;;;;
+### Cas nominal 19: COMPORTEMENTS
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;000000;0002;0003;000000;000000;En vol;;;;;
 ### Cas d'erreur 86: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;000000;0002;0003;000000;000000;0001;;;;;
 ###
-### Cas nominal 18: MILIEUX
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;000000;0001;0002;0003;
+### Cas nominal 20: MILIEUX
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;000000;0001;Prairie;0003;
 ### Cas d'erreur 87: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;000000;0001;0002;0003;
 ###
-### Cas nominal 19: COMMENTAIRE
+### Cas nominal 21: COMMENTAIRE
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;test de commentaire
 ### Cas d'erreur 88: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;test de commentaire
 ###
-### Cas nominal 20: tous les champs au min
+### Cas nominal 22: tous les champs au min
 CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;0;-180;-90;-128;Soleil,Vent;PRUCOL;Précis;1;M;1A;Supérieure à;0;1;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire
 ### Cas d'erreur 89: doublons
 CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;0;-180;-90;-128;Soleil,Vent;PRUCOL;Précis;1;M;1A;Supérieure à;0;1;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire
 ###
-### Cas nominal 21: tous les champs au max
+### Cas nominal 23: tous les champs au max
 CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;65535;180;90;127;Soleil,Vent;PRUCOL;Précis;65535;M;1A;Supérieure à;65535;65535;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire
 ### Cas d'erreur 90: doublons
 CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;65535;180;90;127;Soleil,Vent;PRUCOL;Précis;65535;M;1A;Supérieure à;65535;65535;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire
 ###
-### Cas nominal 22: uniquement les champs obligatoire : observateur
+### Cas nominal 24: uniquement les champs obligatoire : observateur
 CARRIER Camille;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 91: doublons
 CARRIER Camille;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 23: uniquement les champs obligatoire : date
+### Cas nominal 25: uniquement les champs obligatoire : date
 CARRIER Laurent;;02/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 92: doublons
 CARRIER Laurent;;02/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 24: uniquement les champs obligatoire : lieudit
-CARRIER Laurent;;01/01/2020;;;26;1;Mairie;1;2.99999;3.11111;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas nominal 26: uniquement les champs obligatoire : lieudit + séparateur de décimal = ,
+CARRIER Laurent;;01/01/2020;;;26;1;Mairie;1;2,99999;3,11111;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 93: doublons
 CARRIER Laurent;;01/01/2020;;;26;1;Mairie;1;2.99999;3.11111;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 25: uniquement les champs obligatoire : espece
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;CERGAL;Précis;1;M;1A;;;;;;;;;;;;;;
+### Cas nominal 27: uniquement les champs obligatoire : espece
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;CORGIR;Précis;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 94: doublons
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;CERGAL;Précis;1;M;1A;;;;;;;;;;;;;;
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;CORGIR;Précis;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 26: uniquement les champs obligatoire : estimation nombre
+### Cas nominal 28: uniquement les champs obligatoire : estimation nombre
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Environ;1;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 95: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Environ;1;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 27: uniquement les champs obligatoire : nombre
+### Cas nominal 29: uniquement les champs obligatoire : nombre
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;10;M;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 96: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;10;M;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 28: uniquement les champs obligatoire : sexe
+### Cas nominal 30: uniquement les champs obligatoire : sexe
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;F;1A;;;;;;;;;;;;;;
 ### Cas d'erreur 97: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;F;1A;;;;;;;;;;;;;;
 ###
-### Cas nominal 29: uniquement les champs obligatoire : age
+### Cas nominal 31: uniquement les champs obligatoire : age
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;?;;;;;;;;;;;;;;
 ### Cas d'erreur 98: doublons
 CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;?;;;;;;;;;;;;;;

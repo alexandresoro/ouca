@@ -5,14 +5,14 @@ export interface ImportedDonnee {
   heure: string;
   duree: string;
   departement: string;
-  codeCommune: string;
+  commune: string;
   lieudit: string;
   altitude: string;
   longitude: string;
   latitude: string;
   meteos: string[];
   temperature: string;
-  codeEspece: string;
+  espece: string;
   age: string;
   sexe: string;
   estimationNombre: string;

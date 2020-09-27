@@ -399,7 +399,7 @@ export const exportEspeces = async (): Promise<unknown> => {
       Classe: findClasseById(classes, espece.classeId).libelle,
       Code: espece.code,
       "Nom français": espece.nomFrancais,
-      "Nom latin": espece.nomLatin
+      "Nom scientifique": espece.nomLatin
     };
   });
 

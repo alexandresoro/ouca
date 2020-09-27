@@ -72,7 +72,7 @@ export class ImportEspeceService extends ImportService {
     );
 
     if (especeByNomLatin) {
-      this.message = "Il existe déjà une espèce avec ce nom latin";
+      this.message = "Il existe déjà une espèce avec ce nom scientifique";
       return false;
     }
 
@@ -135,13 +135,13 @@ export class ImportEspeceService extends ImportService {
     nom = nom.trim();
 
     if (!nom) {
-      this.message = "Le nom latin ne peut pas être vide";
+      this.message = "Le nom scientifique ne peut pas être vide";
       return false;
     }
 
     if (nom.length > this.NOM_LATIN_MAX_LENGTH) {
       this.message =
-        "La longueur maximale du nom latin est de " +
+        "La longueur maximale du nom scientifique est de " +
         this.NOM_LATIN_MAX_LENGTH +
         " caractères";
       return false;

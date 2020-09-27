@@ -1,25 +1,23 @@
-;Le nombre de colonnes de cette ligne est incorrect: 1 colonne(s) au lieu de 7 attendue(s)
-departement;code commune;nom commune;lieudit;altitude;longitude;latitude;Cas d'erreur: Trop de colonnes;Le nombre de colonnes de cette ligne est incorrect: 8 colonne(s) au lieu de 7 attendue(s)
-;1;ROMANS;Place de la mairie;1;2;3;Le département du lieu-dit ne peut pas être vide
-33;1;ROMANS;Place de la mairie;1;2;3;Le département n'existe pas
-26;;ROMANS;Place de la mairie;1;2;3;Le code de la commune du lieu-dit ne peut pas être vide
-26;code;ROMANS;Place de la mairie;1;2;3;Le code de la commune du lieu-dit doit être un entier
-26;33.3;ROMANS;Place de la mairie;1;2;3;Le code de la commune du lieu-dit doit être un entier
-26;1;;Place de la mairie;1;2;3;Le nom de la commune du lieu-dit ne peut pas être vide
-26;0;commune;Place de la mairie;1;2;3;La commune n'existe pas dans ce département
-26;1;ROMANS;;1;2;3;Le nom du lieu-dit ne peut pas être vide
-26;1;ROMANS;Nom trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;1;2;3;La longueur maximale du nom du lieu-dit est de 150 caractères
-26;1;ROMANS;Prairie;;2;3;L'altitude du lieu-dit ne peut pas être vide
-26;1;ROMANS;Prairie;altitude;2;3;L'altitude du lieu-dit doit être un entier
-26;1;ROMANS;Prairie;10.2;2;3;L'altitude du lieu-dit doit être un entier
-26;1;ROMANS;Prairie;-1;2;3;L'altitude du lieu-dit doit être un entier compris entre 0 et 65535
-26;1;ROMANS;Prairie;65536;2;3;L'altitude du lieu-dit doit être un entier compris entre 0 et 65535
-26;1;ROMANS;Prairie;1;;3;La longitude du lieu-dit ne peut pas être vide
-26;1;ROMANS;Prairie;1;longitude;3;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
-26;1;ROMANS;Prairie;1;-181;3;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
-26;1;ROMANS;Prairie;1;181;3;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
-26;1;ROMANS;Prairie;1;2;;La latitude du lieu-dit ne peut pas être vide
-26;1;ROMANS;Prairie;1;2;latitude;La latitude du lieu-dit doit être un entier compris entre -90 et 90
-26;1;ROMANS;Prairie;1;2;-91;La latitude du lieu-dit doit être un entier compris entre -90 et 90
-26;1;ROMANS;Prairie;1;2;91;La latitude du lieu-dit doit être un entier compris entre -90 et 90
-26;1;ROMANS;Mairie;11;12;13;Il existe déjà un lieu-dit avec ce nom dans cette commune
+;Le nombre de colonnes de cette ligne est incorrect: 1 colonne(s) au lieu de 6 attendue(s)
+departement;commune;lieudit;altitude;longitude;latitude;Cas d'erreur: Trop de colonnes;Le nombre de colonnes de cette ligne est incorrect: 7 colonne(s) au lieu de 6 attendue(s)
+;1;Place de la mairie;1;2;3;Le département du lieu-dit ne peut pas être vide
+33;1;Place de la mairie;1;2;3;Le département n'existe pas
+26;;Place de la mairie;1;2;3;La commune du lieu-dit ne peut pas être vide
+26;999;Place de la mairie;1;2;3;La commune n'existe pas dans ce département
+26;commune;Place de la mairie;1;2;3;La commune n'existe pas dans ce département
+26;1;;1;2;3;Le nom du lieu-dit ne peut pas être vide
+26;1;Nom trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;1;2;3;La longueur maximale du nom du lieu-dit est de 150 caractères
+26;1;Prairie;;2;3;L'altitude du lieu-dit ne peut pas être vide
+26;1;Prairie;altitude;2;3;L'altitude du lieu-dit doit être un entier
+26;1;Prairie;10.2;2;3;L'altitude du lieu-dit doit être un entier
+26;1;Prairie;-1;2;3;L'altitude du lieu-dit doit être un entier compris entre 0 et 65535
+26;1;Prairie;65536;2;3;L'altitude du lieu-dit doit être un entier compris entre 0 et 65535
+26;1;Prairie;1;;3;La longitude du lieu-dit ne peut pas être vide
+26;1;Prairie;1;longitude;3;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
+26;1;Prairie;1;-181;3;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
+26;1;Prairie;1;181;3;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
+26;1;Prairie;1;2;;La latitude du lieu-dit ne peut pas être vide
+26;1;Prairie;1;2;latitude;La latitude du lieu-dit doit être un entier compris entre -90 et 90
+26;1;Prairie;1;2;-91;La latitude du lieu-dit doit être un entier compris entre -90 et 90
+26;1;Prairie;1;2;91;La latitude du lieu-dit doit être un entier compris entre -90 et 90
+26;1;Mairie;11;12;13;Il existe déjà un lieu-dit avec ce nom dans cette commune

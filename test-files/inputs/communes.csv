@@ -1,4 +1,4 @@
-Cas d'erreur: Pas accès de colonnes
+Cas d'erreur: Pas assez de colonnes
 departement;code;nom;Cas d'erreur: Trop de colonnes
 33;1;Cas d'erreur: departement inexistant
 ;1;Cas d'erreur: departement vide

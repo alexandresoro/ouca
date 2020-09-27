@@ -43,7 +43,7 @@ export abstract class ImportService {
     );
 
     if (this.errors.length > 0) {
-      return Papa.unparse(this.errors);
+      return Papa.unparse(this.errors, { delimiter: ";" });
     } else {
       return "Aucune erreur pendant l'import";
     }

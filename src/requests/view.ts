@@ -80,7 +80,7 @@ export const exportDonneesByCustomizedFilters = async (
       Classe: donnee.classe,
       "Code espèce": donnee.codeEspece,
       "Nom francais": donnee.nomFrancais,
-      "Nom latin": donnee.nomLatin,
+      "Nom scientifique": donnee.nomLatin,
       Sexe: donnee.sexe,
       Âge: donnee.age,
       "Nombre d'individus": donnee.nombre,

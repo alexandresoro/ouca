@@ -6,7 +6,10 @@ import {
 } from "ouca-common/coordinates-system";
 import { Departement } from "ouca-common/departement.object";
 import { Lieudit } from "ouca-common/lieudit.model";
-import { findCommuneByDepartementIdAndCodeAndNom } from "../../sql-api/sql-api-commune";
+import {
+  findCommuneByDepartementIdAndCode,
+  findCommuneByDepartementIdAndNom
+} from "../../sql-api/sql-api-commune";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import {
@@ -17,19 +20,18 @@ import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
   private readonly DEPARTEMENT_INDEX = 0;
-  private readonly CODE_COMMUNE_INDEX = 1;
-  private readonly NOM_COMMUNE_INDEX = 2;
-  private readonly NOM_INDEX = 3;
-  private readonly ALTITUDE_INDEX = 4;
-  private readonly LONGITUDE_INDEX = 5;
-  private readonly LATITUDE_INDEX = 6;
+  private readonly COMMUNE_INDEX = 1;
+  private readonly NOM_INDEX = 2;
+  private readonly LATITUDE_INDEX = 3;
+  private readonly LONGITUDE_INDEX = 4;
+  private readonly ALTITUDE_INDEX = 5;
 
   private readonly LIEUDIT_MAX_LENGTH = 150;
   private readonly ALTITUDE_MIN_VALUE = 0;
   private readonly ALTITUDE_MAX_VALUE = 65535;
 
   protected getNumberOfColumns = (): number => {
-    return 7;
+    return 6;
   };
 
   protected createEntity = async (entityTab: string[]): Promise<boolean> => {
@@ -43,15 +45,17 @@ export class ImportLieuxditService extends ImportService {
 
     if (
       !this.isDepartementValid(entityTab[this.DEPARTEMENT_INDEX]) ||
-      !this.isCodeCommuneValid(entityTab[this.CODE_COMMUNE_INDEX]) ||
-      !this.isNomCommuneValid(entityTab[this.NOM_COMMUNE_INDEX]) ||
+      !this.isCommuneValid(entityTab[this.COMMUNE_INDEX]) ||
       !this.isNomLieuditValid(entityTab[this.NOM_INDEX]) ||
-      !this.isAltitudeValid(entityTab[this.ALTITUDE_INDEX]) ||
+      !this.isAltitudeValid(entityTab[this.ALTITUDE_INDEX].replace(",", ".")) ||
       !this.isLongitudeValid(
-        entityTab[this.LONGITUDE_INDEX],
+        entityTab[this.LONGITUDE_INDEX].replace(",", "."),
         coordinatesSystem
       ) ||
-      !this.isLatitudeValid(entityTab[this.LATITUDE_INDEX], coordinatesSystem)
+      !this.isLatitudeValid(
+        entityTab[this.LATITUDE_INDEX].replace(",", "."),
+        coordinatesSystem
+      )
     ) {
       return false;
     }
@@ -67,11 +71,18 @@ export class ImportLieuxditService extends ImportService {
     }
 
     // Check that the commune exists
-    const commune: Commune = await findCommuneByDepartementIdAndCodeAndNom(
+    const communeStr = entityTab[this.COMMUNE_INDEX];
+    let commune: Commune = await findCommuneByDepartementIdAndNom(
       departement.id,
-      +entityTab[this.CODE_COMMUNE_INDEX],
-      entityTab[this.NOM_COMMUNE_INDEX]
+      communeStr
     );
+
+    if (!commune && Number.isInteger(Number(communeStr))) {
+      commune = await findCommuneByDepartementIdAndCode(
+        departement.id,
+        +communeStr
+      );
+    }
 
     if (!commune) {
       this.message = "La commune n'existe pas dans ce département";
@@ -109,10 +120,10 @@ export class ImportLieuxditService extends ImportService {
       id: null,
       communeId,
       nom: entityTab[this.NOM_INDEX].trim(),
-      altitude: +entityTab[this.ALTITUDE_INDEX].trim(),
+      altitude: +entityTab[this.ALTITUDE_INDEX].replace(",", ".").trim(),
       coordinates: {
-        longitude: +entityTab[this.LONGITUDE_INDEX].trim(),
-        latitude: +entityTab[this.LATITUDE_INDEX].trim(),
+        longitude: +entityTab[this.LONGITUDE_INDEX].replace(",", ".").trim(),
+        latitude: +entityTab[this.LATITUDE_INDEX].replace(",", ".").trim(),
         system: coordinatesSystemType
       }
     };
@@ -128,27 +139,11 @@ export class ImportLieuxditService extends ImportService {
     return true;
   };
 
-  private isCodeCommuneValid = (code: string): boolean => {
+  private isCommuneValid = (code: string): boolean => {
     code = code.trim();
 
     if (!code) {
-      this.message = "Le code de la commune du lieu-dit ne peut pas être vide";
-      return false;
-    }
-
-    if (!Number.isInteger(Number(code))) {
-      this.message = "Le code de la commune du lieu-dit doit être un entier";
-      return false;
-    }
-
-    return true;
-  };
-
-  private isNomCommuneValid = (nom: string): boolean => {
-    nom = nom.trim();
-
-    if (!nom) {
-      this.message = "Le nom de la commune du lieu-dit ne peut pas être vide";
+      this.message = "La commune du lieu-dit ne peut pas être vide";
       return false;
     }
 

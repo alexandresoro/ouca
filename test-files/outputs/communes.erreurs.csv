@@ -1,4 +1,4 @@
-Cas d'erreur: Pas accès de colonnes;Le nombre de colonnes de cette ligne est incorrect: 1 colonne(s) au lieu de 3 attendue(s)
+Cas d'erreur: Pas assez de colonnes;Le nombre de colonnes de cette ligne est incorrect: 1 colonne(s) au lieu de 3 attendue(s)
 departement;code;nom;Cas d'erreur: Trop de colonnes;Le nombre de colonnes de cette ligne est incorrect: 4 colonne(s) au lieu de 3 attendue(s)
 33;1;Cas d'erreur: departement inexistant;Le département n'existe pas
 ;1;Cas d'erreur: departement vide;Le département de la commune ne peut pas être vide
