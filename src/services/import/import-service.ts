@@ -23,6 +23,7 @@ export abstract class ImportService {
     });
 
     if (content.data) {
+      await this.init();
       for (const lineTab of content.data) {
         if (lineTab.length > 0 && !lineTab[0].startsWith("###")) {
           await this.importLine(lineTab);
@@ -52,6 +53,10 @@ export abstract class ImportService {
   protected abstract getNumberOfColumns(): number;
 
   protected abstract createEntity(entityTab: string[]): Promise<boolean>;
+
+  protected init = async (): Promise<void> => {
+    //TODO
+  };
 
   private importLine = async (entityTab: string[]): Promise<void> => {
     this.message = "";

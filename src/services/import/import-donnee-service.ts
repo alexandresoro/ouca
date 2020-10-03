@@ -1,11 +1,13 @@
 import { format } from "date-fns";
 import * as _ from "lodash";
 import { Age } from "ouca-common/age.object";
+import { Classe } from "ouca-common/classe.object";
 import { Commune } from "ouca-common/commune.model";
 import { Comportement } from "ouca-common/comportement.object";
 import {
   areCoordinatesCustomized,
   CoordinatesSystem,
+  CoordinatesSystemType,
   COORDINATES_SYSTEMS_CONFIG
 } from "ouca-common/coordinates-system";
 import { Coordinates } from "ouca-common/coordinates.object";
@@ -13,6 +15,7 @@ import { Departement } from "ouca-common/departement.object";
 import { Donnee } from "ouca-common/donnee.object";
 import { Espece } from "ouca-common/espece.model";
 import { EstimationDistance } from "ouca-common/estimation-distance.object";
+import { EstimationNombre } from "ouca-common/estimation-nombre.object";
 import { Inventaire } from "ouca-common/inventaire.object";
 import { Lieudit } from "ouca-common/lieudit.model";
 import { Meteo } from "ouca-common/meteo.object";
@@ -20,41 +23,29 @@ import { Milieu } from "ouca-common/milieu.object";
 import { Observateur } from "ouca-common/observateur.object";
 import { Sexe } from "ouca-common/sexe.object";
 import { ImportedDonnee } from "../../objects/imported-donnee.object";
-import {
-  findEntityByCode,
-  findEntityByLibelle
-} from "../../sql-api/sql-api-common";
-import {
-  findCommuneByDepartementIdAndCode,
-  findCommuneByDepartementIdAndNom
-} from "../../sql-api/sql-api-commune";
+import { findAllAges } from "../../sql-api/sql-api-age";
+import { findAllClasses } from "../../sql-api/sql-api-classe";
+import { findAllCommunes } from "../../sql-api/sql-api-commune";
+import { findAllComportements } from "../../sql-api/sql-api-comportement";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
-import { getDepartementByCode } from "../../sql-api/sql-api-departement";
+import { findAllDepartements } from "../../sql-api/sql-api-departement";
 import {
   findExistingDonneeId,
   persistDonnee
 } from "../../sql-api/sql-api-donnee";
-import {
-  findEspeceByCode,
-  findEspeceByNomFrancais,
-  findEspeceByNomLatin
-} from "../../sql-api/sql-api-espece";
-import { findEstimationNombreByLibelle } from "../../sql-api/sql-api-estimation-nombre";
+import { findAllEspeces } from "../../sql-api/sql-api-espece";
+import { findAllEstimationsDistance } from "../../sql-api/sql-api-estimation-distance";
+import { findAllEstimationsNombre } from "../../sql-api/sql-api-estimation-nombre";
 import {
   findExistingInventaireId,
   persistInventaire
 } from "../../sql-api/sql-api-inventaire";
-import { findLieuDitByCommuneIdAndNom } from "../../sql-api/sql-api-lieudit";
-import { findMeteoByLibelle } from "../../sql-api/sql-api-meteo";
-import { findObservateurByLibelle } from "../../sql-api/sql-api-observateur";
-import {
-  DATE_PATTERN,
-  TABLE_AGE,
-  TABLE_COMPORTEMENT,
-  TABLE_ESTIMATION_DISTANCE,
-  TABLE_MILIEU,
-  TABLE_SEXE
-} from "../../utils/constants";
+import { findAllLieuxDits } from "../../sql-api/sql-api-lieudit";
+import { findAllMeteos } from "../../sql-api/sql-api-meteo";
+import { findAllMilieux } from "../../sql-api/sql-api-milieu";
+import { findAllObservateurs } from "../../sql-api/sql-api-observateur";
+import { findAllSexes } from "../../sql-api/sql-api-sexe";
+import { DATE_PATTERN } from "../../utils/constants";
 import {
   getFormattedDate,
   getFormattedTime,
@@ -104,6 +95,21 @@ export class ImportDoneeeService extends ImportService {
   private readonly REGROUPEMENT_MIN_VALUE = 1;
   private readonly REGROUPEMENT_MAX_VALUE = 65535;
 
+  private coordinatesSystemType: CoordinatesSystemType;
+  private coordinatesSystem: CoordinatesSystem;
+  private observateurs: Observateur[];
+  private departements: Departement[];
+  private communes: Commune[];
+  private lieuxDits: Lieudit[];
+  private classes: Classe[];
+  private especes: Espece[];
+  private ages: Age[];
+  private sexes: Sexe[];
+  private estimationsNombre: EstimationNombre[];
+  private estimationsDistance: EstimationDistance[];
+  private comportements: Comportement[];
+  private milieux: Milieu[];
+  private meteos: Meteo[];
   protected getNumberOfColumns = (): number => {
     return 32;
   };
@@ -139,21 +145,38 @@ export class ImportDoneeeService extends ImportService {
     };
   };
 
-  protected createEntity = async (entityTab: string[]): Promise<boolean> => {
-    const coordinatesSystemType = await findCoordinatesSystem();
-    if (!coordinatesSystemType) {
+  protected init = async (): Promise<void> => {
+    this.coordinatesSystemType = await findCoordinatesSystem();
+    if (!this.coordinatesSystemType) {
       this.message =
         "Veuillez choisir le système de coordonnées de l'application dans la page de configuration";
-      return false;
+      // return false;
     }
-    const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
+    this.coordinatesSystem =
+      COORDINATES_SYSTEMS_CONFIG[this.coordinatesSystemType];
 
+    this.observateurs = await findAllObservateurs();
+    this.departements = await findAllDepartements();
+    this.communes = await findAllCommunes();
+    this.lieuxDits = await findAllLieuxDits();
+    this.meteos = await findAllMeteos();
+    this.classes = await findAllClasses();
+    this.especes = await findAllEspeces();
+    this.sexes = await findAllSexes();
+    this.ages = await findAllAges();
+    this.estimationsNombre = await findAllEstimationsNombre();
+    this.estimationsDistance = await findAllEstimationsDistance();
+    this.comportements = await findAllComportements();
+    this.milieux = await findAllMilieux();
+  };
+
+  protected createEntity = async (entityTab: string[]): Promise<boolean> => {
     const rawDonnee: ImportedDonnee = this.getRawDonnee(entityTab);
 
     // First check the format of the fields
     // Return an error if some of the attributes are missing wrongly formatted
     if (
-      !this.areInventaireAttributesValid(rawDonnee, coordinatesSystem) ||
+      !this.areInventaireAttributesValid(rawDonnee, this.coordinatesSystem) ||
       !this.areDonneeAttributesValid(rawDonnee)
     ) {
       return false;
@@ -162,9 +185,9 @@ export class ImportDoneeeService extends ImportService {
     // Then start getting the requested sub-objects to create the new "Donnee"
 
     // Get the "Observateur" or return an error if it doesn't exist
-    const observateur: Observateur = await findObservateurByLibelle(
-      rawDonnee.observateur
-    );
+    const observateur: Observateur = this.observateurs.find((obs) => {
+      return obs.libelle === rawDonnee.observateur;
+    });
 
     if (!observateur) {
       this.message =
@@ -175,9 +198,9 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Observateurs associes" or return an error if some of them doesn't exist
     const associesIds: number[] = [];
     for (const associeLibelle of rawDonnee.associes) {
-      const associe: Observateur = await findObservateurByLibelle(
-        associeLibelle
-      );
+      const associe: Observateur = this.observateurs.find((a) => {
+        return a.libelle === associeLibelle;
+      });
 
       if (!associe) {
         this.message =
@@ -201,9 +224,9 @@ export class ImportDoneeeService extends ImportService {
     const duree: string = getFormattedTime(rawDonnee.duree.trim());
 
     // Get the "Departement" or return an error if it doesn't exist
-    const departement: Departement = await getDepartementByCode(
-      rawDonnee.departement
-    );
+    const departement: Departement = this.departements.find((dept) => {
+      return dept.code === rawDonnee.departement;
+    });
     if (!departement) {
       this.message =
         "Le département " + rawDonnee.departement + " n'existe pas";
@@ -211,20 +234,12 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Commune" or return an error if it does not exist
-    let commune: Commune = await findCommuneByDepartementIdAndNom(
-      departement.id,
-      rawDonnee.commune
-    );
-
-    if (
-      !commune &&
-      Number.isInteger(Number(rawDonnee.commune.replace(",", ".")))
-    ) {
-      commune = await findCommuneByDepartementIdAndCode(
-        departement.id,
-        +rawDonnee.commune
+    let commune: Commune = this.communes.find((com) => {
+      return (
+        com.departementId === departement.id &&
+        ("" + com.code === rawDonnee.commune || com.nom === rawDonnee.commune)
       );
-    }
+    });
 
     if (!commune) {
       this.message =
@@ -236,10 +251,9 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Lieu-dit" or return an error if it does not exist
-    const lieudit: Lieudit = await findLieuDitByCommuneIdAndNom(
-      commune.id,
-      rawDonnee.lieudit
-    );
+    const lieudit = this.lieuxDits.find((lieu) => {
+      return lieu.communeId === commune.id && lieu.nom === rawDonnee.lieudit;
+    });
 
     if (!lieudit) {
       this.message =
@@ -259,7 +273,7 @@ export class ImportDoneeeService extends ImportService {
     let coordinates: Coordinates = {
       longitude: +rawDonnee.longitude,
       latitude: +rawDonnee.latitude,
-      system: coordinatesSystemType
+      system: this.coordinatesSystemType
     };
     if (
       !areCoordinatesCustomized(
@@ -267,7 +281,7 @@ export class ImportDoneeeService extends ImportService {
         altitude,
         coordinates.longitude,
         coordinates.latitude,
-        coordinatesSystemType
+        this.coordinatesSystemType
       )
     ) {
       altitude = null;
@@ -283,7 +297,9 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Meteos" or return an error if some of them doesn't exist
     const meteosIds: number[] = [];
     for (const meteoLibelle of rawDonnee.meteos) {
-      const meteo: Meteo = await findMeteoByLibelle(meteoLibelle);
+      const meteo: Meteo = this.meteos.find((m) => {
+        return m.libelle === meteoLibelle;
+      });
       if (!meteo) {
         this.message = "La météo " + meteoLibelle + " n'existe pas";
         return false;
@@ -294,15 +310,13 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Espece" or return an error if it doesn't exist
-    let espece: Espece = await findEspeceByCode(rawDonnee.espece);
-
-    if (!espece) {
-      espece = await findEspeceByNomFrancais(rawDonnee.espece);
-    }
-
-    if (!espece) {
-      espece = await findEspeceByNomLatin(rawDonnee.espece);
-    }
+    let espece: Espece = this.especes.find((e) => {
+      return (
+        e.code === rawDonnee.espece ||
+        e.nomFrancais === rawDonnee.espece ||
+        e.nomLatin === rawDonnee.espece
+      );
+    });
 
     if (!espece) {
       this.message =
@@ -313,23 +327,27 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Sexe" or return an error if it doesn't exist
-    const sexe = await findEntityByLibelle<Sexe>(rawDonnee.sexe, TABLE_SEXE);
+    const sexe = this.sexes.find((s) => {
+      return s.libelle === rawDonnee.sexe;
+    });
     if (!sexe) {
       this.message = "Le sexe " + rawDonnee.sexe + " n'existe pas";
       return false;
     }
 
     // Get the "Age" or return an error if it doesn't exist
-    const age = await findEntityByLibelle<Age>(rawDonnee.age, TABLE_AGE);
+    const age = this.ages.find((a) => {
+      return a.libelle === rawDonnee.age;
+    });
     if (!age) {
       this.message = "L'âge " + rawDonnee.age + " n'existe pas";
       return false;
     }
 
     // Get the "Estimation du nombre" or return an error if it doesn't exist
-    const estimationNombre = await findEstimationNombreByLibelle(
-      rawDonnee.estimationNombre
-    );
+    const estimationNombre = this.estimationsNombre.find((e) => {
+      return e.libelle === rawDonnee.estimationNombre;
+    });
     if (!estimationNombre) {
       this.message =
         "L'estimation du nombre " +
@@ -359,10 +377,9 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Estimation de la distance" or return an error if it doesn't exist
     let estimationDistance: EstimationDistance = null;
     if (rawDonnee.estimationDistance) {
-      estimationDistance = await findEntityByLibelle<EstimationDistance>(
-        rawDonnee.estimationDistance,
-        TABLE_ESTIMATION_DISTANCE
-      );
+      estimationDistance = this.estimationsDistance.find((e) => {
+        return e.libelle === rawDonnee.estimationDistance;
+      });
       if (!estimationDistance) {
         this.message =
           "L'estimation de la distance " +
@@ -383,17 +400,9 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Comportements" or return an error if some of them does not exist
     const comportementsIds: number[] = [];
     for (const comportementStr of rawDonnee.comportements) {
-      let comportement = await findEntityByCode<Comportement>(
-        comportementStr,
-        TABLE_COMPORTEMENT
-      );
-
-      if (!comportement) {
-        comportement = await findEntityByLibelle<Comportement>(
-          comportementStr,
-          TABLE_COMPORTEMENT
-        );
-      }
+      let comportement = this.comportements.find((c) => {
+        return c.code === comportementStr || c.libelle === comportementStr;
+      });
 
       if (!comportement) {
         this.message =
@@ -411,11 +420,9 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Milieux" or return an error if some of them does not exist
     const milieuxIds: number[] = [];
     for (const milieuStr of rawDonnee.milieux) {
-      let milieu: Milieu = await findEntityByCode(milieuStr, TABLE_MILIEU);
-
-      if (!milieu) {
-        milieu = await findEntityByLibelle(milieuStr, TABLE_MILIEU);
-      }
+      let milieu: Milieu = this.milieux.find((m) => {
+        return m.code === milieuStr || m.libelle === milieuStr;
+      });
 
       if (!milieu) {
         this.message =
@@ -820,7 +827,7 @@ export class ImportDoneeeService extends ImportService {
       comportementIndex <= this.COMP_6_INDEX;
       comportementIndex++
     ) {
-      const comportement: string = attributes[comportementIndex];
+      const comportement: string = attributes[comportementIndex].trim();
       if (comportement) {
         comportements.push(comportement);
       }
@@ -832,41 +839,41 @@ export class ImportDoneeeService extends ImportService {
       milieuIndex <= this.MILIEU_4_INDEX;
       milieuIndex++
     ) {
-      const milieu: string = attributes[milieuIndex];
+      const milieu: string = attributes[milieuIndex].trim();
       if (milieu) {
         milieux.push(milieu);
       }
     }
 
     return {
-      observateur: attributes[this.OBSERVATEUR_INDEX],
+      observateur: attributes[this.OBSERVATEUR_INDEX].trim(),
       associes: attributes[this.ASSOCIES_INDEX]
-        ? attributes[this.ASSOCIES_INDEX].split(this.LIST_SEPARATOR)
+        ? attributes[this.ASSOCIES_INDEX].trim().split(this.LIST_SEPARATOR)
         : [],
-      date: attributes[this.DATE_INDEX],
-      heure: attributes[this.HEURE_INDEX],
-      duree: attributes[this.DUREE_INDEX],
-      departement: attributes[this.DEPARTEMENT_INDEX],
-      commune: attributes[this.COMMUNE_INDEX],
-      lieudit: attributes[this.LIEUDIT_INDEX],
-      altitude: attributes[this.ALTITUDE_INDEX].replace(",", "."),
-      longitude: attributes[this.LONGITUDE_INDEX].replace(",", "."),
-      latitude: attributes[this.LATITUDE_INDEX].replace(",", "."),
-      temperature: attributes[this.TEMPERATURE_INDEX].replace(",", "."),
+      date: attributes[this.DATE_INDEX].trim(),
+      heure: attributes[this.HEURE_INDEX].trim(),
+      duree: attributes[this.DUREE_INDEX].trim(),
+      departement: attributes[this.DEPARTEMENT_INDEX].trim(),
+      commune: attributes[this.COMMUNE_INDEX].trim(),
+      lieudit: attributes[this.LIEUDIT_INDEX].trim(),
+      altitude: attributes[this.ALTITUDE_INDEX].trim().replace(",", "."),
+      longitude: attributes[this.LONGITUDE_INDEX].trim().replace(",", "."),
+      latitude: attributes[this.LATITUDE_INDEX].trim().replace(",", "."),
+      temperature: attributes[this.TEMPERATURE_INDEX].trim().replace(",", "."),
       meteos: attributes[this.METEOS_INDEX]
-        ? attributes[this.METEOS_INDEX].split(this.LIST_SEPARATOR)
+        ? attributes[this.METEOS_INDEX].trim().split(this.LIST_SEPARATOR)
         : [],
-      espece: attributes[this.ESPECE_INDEX],
-      age: attributes[this.AGE_INDEX],
-      sexe: attributes[this.SEXE_INDEX],
-      nombre: attributes[this.NOMBRE_INDEX].replace(",", "."),
-      estimationNombre: attributes[this.ESTIMATION_NOMBRE_INDEX],
-      distance: attributes[this.DISTANCE_INDEX].replace(",", "."),
-      estimationDistance: attributes[this.ESTIMATION_DISTANCE_INDEX],
-      regroupement: attributes[this.REGROUPEMENT_INDEX],
+      espece: attributes[this.ESPECE_INDEX].trim(),
+      age: attributes[this.AGE_INDEX].trim(),
+      sexe: attributes[this.SEXE_INDEX].trim(),
+      nombre: attributes[this.NOMBRE_INDEX].trim().replace(",", "."),
+      estimationNombre: attributes[this.ESTIMATION_NOMBRE_INDEX].trim(),
+      distance: attributes[this.DISTANCE_INDEX].trim().replace(",", "."),
+      estimationDistance: attributes[this.ESTIMATION_DISTANCE_INDEX].trim(),
+      regroupement: attributes[this.REGROUPEMENT_INDEX].trim(),
       comportements,
       milieux,
-      commentaire: attributes[this.COMMENTAIRE_INDEX]
+      commentaire: attributes[this.COMMENTAIRE_INDEX].trim()
     };
   };
 }

@@ -1,97 +1,97 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Le nombre de colonnes de cette ligne est incorrect: 31 colonne(s) au lieu de 32 attendue(s)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Le nombre de colonnes de cette ligne est incorrect: 33 colonne(s) au lieu de 32 attendue(s)
-;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'observateur ne peut pas être vide
-observateur;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'observateur observateur n'existe pas
-CARRIER Laurent;;;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La date ne peut pas être vide
-CARRIER Laurent;;/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La date ne respecte pas le format demandé: JJ/MM/AAAA
-CARRIER Laurent;;31/02/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La date ne respecte pas le format demandé: JJ/MM/AAAA
-CARRIER Laurent;;01/01/2020;;;;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Le département ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;33;174;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Le département 33 n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La commune du lieu-dit ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;174000;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La commune avec pour code ou nom 174000 n'existe pas dans le département 26
-CARRIER Laurent;;01/01/2020;;;26;Nom commune;le Chalon;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La commune avec pour code ou nom Nom commune n'existe pas dans le département 26
-CARRIER Laurent;;01/01/2020;;;26;1;;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Le lieu-dit ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;1;lieudit inconnu;1;2;3;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Le lieu-dit lieudit inconnu n'existe pas dans la commune 1 - ROMANS du département 26
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;altitude;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10.2;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;-1;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit doit être un entier compris entre 0 et 65535
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;65536;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit doit être un entier compris entre 0 et 65535
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La longitude du lieu-dit ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;longitude;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;181;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;-181;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La latitude du lieu-dit ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;latitude;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La latitude du lieu-dit doit être un nombre compris entre -90 et 90
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;-91;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La latitude du lieu-dit doit être un nombre compris entre -90 et 90
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;91;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La latitude du lieu-dit doit être un nombre compris entre -90 et 90
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;;Précis;1;M;1A;;;;;;;;;;;;;;;L'espèce ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;espece;Précis;1;M;1A;;;;;;;;;;;;;;;L'espèce avec pour code, nom français ou nom latin espece n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;;1A;;;;;;;;;;;;;;;Le sexe ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;sexe;1A;;;;;;;;;;;;;;;Le sexe sexe n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;;;;;;;;;;;;;;;;L'âge ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;age;;;;;;;;;;;;;;;L'âge age n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;;1;M;1A;;;;;;;;;;;;;;;L'estimation du nombre ne peut pas être vide
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;estimation;1;M;1A;;;;;;;;;;;;;;;L'estimation du nombre estimation n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;nombre;M;1A;;;;;;;;;;;;;;;Le nombre d'individus doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1.1;M;1A;;;;;;;;;;;;;;;Le nombre d'individus doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;0;M;1A;;;;;;;;;;;;;;;Le nombre d'individus doit être un entier compris entre 1 et 65535
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;65536;M;1A;;;;;;;;;;;;;;;Le nombre d'individus doit être un entier compris entre 1 et 65535
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;1;M;1A;;;;;;;;;;;;;;L'estimation du nombre Non compté est de type Non-compté donc le nombre devrait être vide
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;;M;1A;;;;;;;;;;;;;;;Le nombre ne doit pas être vide quand l'estimation du nombre est de type Compté
-CARRIER Laurent;;01/01/2020;09:0;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'heure ne respecte pas le format demandé: HH:MM
-CARRIER Laurent;;01/01/2020;9:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'heure ne respecte pas le format demandé: HH:MM
-CARRIER Laurent;;01/01/2020;9:0;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;L'heure ne respecte pas le format demandé: HH:MM
-CARRIER Laurent;;01/01/2020;;15;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La durée ne respecte pas le format demandé: HH:MM
-CARRIER Laurent;;01/01/2020;;0:15;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La durée ne respecte pas le format demandé: HH:MM
-CARRIER Laurent;;01/01/2020;;0:5;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;La durée ne respecte pas le format demandé: HH:MM
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;temperature;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température n'est pas un nombre;La température doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;18.1;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température n'est pas un entier;La température doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;-129;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est inférieure à la limite inférieure;La temperature doit être un entier compris entre -128 et 127
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;128;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est supérieure à la limite supérieure;La temperature doit être un entier compris entre -128 et 127
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;estimation;;;;;;;;;;;;;Cas d'erreur: L'estimation distance n'existe pas;L'estimation de la distance estimation n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;distance;;;;;;;;;;;;Cas d'erreur: La distance n'est pas un nombre;La distance de contact doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;10.1;;;;;;;;;;;;Cas d'erreur: La distance n'est pas un entier;La distance de contact doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;-1;;;;;;;;;;;;Cas d'erreur: La distance est inférieure à la limite inférieure;La distance de contact doit être un entier compris entre 0 et 65535
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;65536;;;;;;;;;;;;Cas d'erreur: La distance est supérieure à la limite supérieure;La distance de contact doit être un entier compris entre 0 et 65535
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;regroupement;;;;;;;;;;;Cas d'erreur: Le regroupement n'est pas un nombre;La numéro de regroupement doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10.1;;;;;;;;;;;Cas d'erreur: Le regroupement n'est pas un entier;La numéro de regroupement doit être un entier
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;0;;;;;;;;;;;Cas d'erreur: Le regroupement est inférieur à la limite inférieure;Le numéro de regroupement doit être un entier compris entre 1 et 65535
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;65536;;;;;;;;;;;Cas d'erreur: Le regroupement est supérieur à la limite supérieure;Le numéro de regroupement doit être un entier compris entre 1 et 65535
-CARRIER Laurent;observateur;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;;L'observateur associé observateur n'existe pas
-CARRIER Laurent;CARRIER Camille,observateur;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;;L'observateur associé observateur n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;météo;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;;La météo météo n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,météo;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;;La météo météo n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;comp;;;;;;;;;;;Le comportement avec pour code ou libellé comp n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;comp;;;;;;Le comportement avec pour code ou libellé comp n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;milieu;;;;;Le milieu avec pour code ou libellé milieu n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;milieu;;Le milieu avec pour code ou libellé milieu n'existe pas
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=1)
-CARRIER Laurent;CARRIER Camille,CARRIER Laurent;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=4)
-CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=5)
-CARRIER Laurent;;01/01/2020;10h00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=6)
-CARRIER Laurent;;01/01/2020;11H00;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=7)
-CARRIER Laurent;;01/01/2020;1200;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=8)
-CARRIER Laurent;;01/01/2020;;00:30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=9)
-CARRIER Laurent;;01/01/2020;;01h30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=10)
-CARRIER Laurent;;01/01/2020;;02H30;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=11)
-CARRIER Laurent;;01/01/2020;;0330;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=12)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;0;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=13)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,Nuages,Vent;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=14)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Non compté;;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=15)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;Supérieure à;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=16)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;22;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=17)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;10;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=18)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;000000;0002;0003;000000;000000;0001;;;;;;Une donnée similaire existe déjà (voir ID=19)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;000000;0001;0002;0003;;Une donnée similaire existe déjà (voir ID=20)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;test de commentaire;Une donnée similaire existe déjà (voir ID=21)
-CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;0;-180;-90;-128;Soleil,Vent;PRUCOL;Précis;1;M;1A;Supérieure à;0;1;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire;Une donnée similaire existe déjà (voir ID=22)
+;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'observateur ne peut pas être vide
+observateur;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'observateur observateur n'existe pas
+CARRIER Laurent;;;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La date ne peut pas être vide
+CARRIER Laurent;;/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La date ne respecte pas le format demandé: JJ/MM/AAAA
+CARRIER Laurent;;31/02/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La date ne respecte pas le format demandé: JJ/MM/AAAA
+CARRIER Laurent;;01/01/2020;;;;174;le Chalon;1;2;3;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Le département ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;33;174;le Chalon;1;2;3;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Le département 33 n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;;le Chalon;1;2;3;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La commune du lieu-dit ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;174000;le Chalon;1;2;3;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La commune avec pour code ou nom 174000 n'existe pas dans le département 26
+CARRIER Laurent;;01/01/2020;;;26;Nom commune;le Chalon;1;2;3;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La commune avec pour code ou nom Nom commune n'existe pas dans le département 26
+CARRIER Laurent;;01/01/2020;;;26;1;;1;2;3;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Le lieu-dit ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;1;lieudit inconnu;1;2;3;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Le lieu-dit lieudit inconnu n'existe pas dans la commune 1 - ROMANS du département 26
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La latitude du lieu-dit ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;latitude;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La latitude du lieu-dit doit être un nombre compris entre -90 et 90
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;-91;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La latitude du lieu-dit doit être un nombre compris entre -90 et 90
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;91;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La latitude du lieu-dit doit être un nombre compris entre -90 et 90
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La longitude du lieu-dit ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;longitude;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;181;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;-181;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La longitude du lieu-dit doit être un nombre compris entre -180 et 180
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;altitude;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12,2;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;-1;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit doit être un entier compris entre 0 et 65535
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;65536;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'altitude du lieu-dit doit être un entier compris entre 0 et 65535
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;;1;Précis;M;1A;;;;;;;;;;;;;;;L'espèce ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;espece;1;Précis;M;1A;;;;;;;;;;;;;;;L'espèce avec pour code, nom français ou nom latin espece n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;;1A;;;;;;;;;;;;;;;Le sexe ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;sexe;1A;;;;;;;;;;;;;;;Le sexe sexe n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;;;;;;;;;;;;;;;;L'âge ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;age;;;;;;;;;;;;;;;L'âge age n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;;M;1A;;;;;;;;;;;;;;;L'estimation du nombre ne peut pas être vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;estimation;M;1A;;;;;;;;;;;;;;;L'estimation du nombre estimation n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;nombre;Précis;M;1A;;;;;;;;;;;;;;;Le nombre d'individus doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis.1;M;1A;;;;;;;;;;;;;;;Le nombre d'individus doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;0;Précis;M;1A;;;;;;;;;;;;;;;Le nombre d'individus doit être un entier compris entre 1 et 65535
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;65536;Précis;M;1A;;;;;;;;;;;;;;;Le nombre d'individus doit être un entier compris entre 1 et 65535
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Non compté;M;1A;;;;;;;;;;;;;;L'estimation du nombre Non compté est de type Non-compté donc le nombre devrait être vide
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;;Précis;M;1A;;;;;;;;;;;;;;;Le nombre ne doit pas être vide quand l'estimation du nombre est de type Compté
+CARRIER Laurent;;01/01/2020;09:0;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'heure ne respecte pas le format demandé: HH:MM
+CARRIER Laurent;;01/01/2020;9:00;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'heure ne respecte pas le format demandé: HH:MM
+CARRIER Laurent;;01/01/2020;9:0;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;L'heure ne respecte pas le format demandé: HH:MM
+CARRIER Laurent;;01/01/2020;;15;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La durée ne respecte pas le format demandé: HH:MM
+CARRIER Laurent;;01/01/2020;;0:15;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La durée ne respecte pas le format demandé: HH:MM
+CARRIER Laurent;;01/01/2020;;0:5;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;La durée ne respecte pas le format demandé: HH:MM
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;temperature;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température n'est pas un nombre;La température doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;18.1;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température n'est pas un entier;La température doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;-129;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est inférieure à la limite inférieure;La temperature doit être un entier compris entre -128 et 127
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;128;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;Cas d'erreur: La température est supérieure à la limite supérieure;La temperature doit être un entier compris entre -128 et 127
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;estimation;;;;;;;;;;;;;Cas d'erreur: L'estimation distance n'existe pas;L'estimation de la distance estimation n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;distance;;;;;;;;;;;;Cas d'erreur: La distance n'est pas un nombre;La distance de contact doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;10.1;;;;;;;;;;;;Cas d'erreur: La distance n'est pas un entier;La distance de contact doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;-1;;;;;;;;;;;;Cas d'erreur: La distance est inférieure à la limite inférieure;La distance de contact doit être un entier compris entre 0 et 65535
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;65536;;;;;;;;;;;;Cas d'erreur: La distance est supérieure à la limite supérieure;La distance de contact doit être un entier compris entre 0 et 65535
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;regroupement;;;;;;;;;;;Cas d'erreur: Le regroupement n'est pas un nombre;La numéro de regroupement doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;10.1;;;;;;;;;;;Cas d'erreur: Le regroupement n'est pas un entier;La numéro de regroupement doit être un entier
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;0;;;;;;;;;;;Cas d'erreur: Le regroupement est inférieur à la limite inférieure;Le numéro de regroupement doit être un entier compris entre 1 et 65535
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;65536;;;;;;;;;;;Cas d'erreur: Le regroupement est supérieur à la limite supérieure;Le numéro de regroupement doit être un entier compris entre 1 et 65535
+CARRIER Laurent;observateur;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;comp;;;;;;;;;;;L'observateur associé observateur n'existe pas
+CARRIER Laurent;CARRIER Camille,observateur;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;comp;;;;;;;;;;;L'observateur associé observateur n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;météo;PRUCOL;1;Précis;M;1A;;;;comp;;;;;;;;;;;La météo météo n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,météo;PRUCOL;1;Précis;M;1A;;;;comp;;;;;;;;;;;La météo météo n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;comp;;;;;;;;;;;Le comportement avec pour code ou libellé comp n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;comp;;;;;;Le comportement avec pour code ou libellé comp n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;milieu;;;;;Le milieu avec pour code ou libellé milieu n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;milieu;;Le milieu avec pour code ou libellé milieu n'existe pas
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=1)
+CARRIER Laurent;CARRIER Camille,CARRIER Laurent;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=4)
+CARRIER Laurent;;01/01/2020;09:00;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=5)
+CARRIER Laurent;;01/01/2020;10h00;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=6)
+CARRIER Laurent;;01/01/2020;11H00;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=7)
+CARRIER Laurent;;01/01/2020;1200;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=8)
+CARRIER Laurent;;01/01/2020;;00:30;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=9)
+CARRIER Laurent;;01/01/2020;;01h30;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=10)
+CARRIER Laurent;;01/01/2020;;02H30;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=11)
+CARRIER Laurent;;01/01/2020;;0330;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=12)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;0;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=13)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;Soleil,Nuages,Vent;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=14)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;;Non compté;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=15)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;Supérieure à;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=16)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;22;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=17)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;10;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=18)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;000000;0002;0003;000000;000000;0001;;;;;;Une donnée similaire existe déjà (voir ID=19)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;000000;0001;0002;0003;;Une donnée similaire existe déjà (voir ID=20)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;test de commentaire;Une donnée similaire existe déjà (voir ID=21)
+CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;0;-180;-90;-128;Soleil,Vent;PRUCOL;1;Précis;M;1A;Supérieure à;0;1;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire;Une donnée similaire existe déjà (voir ID=22)
 CARRIER Laurent;CARRIER Camille;01/01/2020;08:40;00:45;26;2;Prairie;65535;180;90;127;Soleil,Vent;PRUCOL;Précis;65535;M;1A;Supérieure à;65535;65535;0001;0001;0001;0002;0002;0003;0001;0001;0002;0003;Commentaire;Une donnée similaire existe déjà (voir ID=23)
-CARRIER Camille;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=24)
-CARRIER Laurent;;02/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=25)
-CARRIER Laurent;;01/01/2020;;;26;1;Mairie;1;2.99999;3.11111;;;PRUCOL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=26)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;CERGAL;Précis;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=27)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Environ;1;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=28)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;10;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=29)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;F;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=30)
-CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;Précis;1;M;?;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=31)
+CARRIER Camille;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=24)
+CARRIER Laurent;;02/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=25)
+CARRIER Laurent;;01/01/2020;;;26;1;Mairie;1;2.99999;3.11111;;;PRUCOL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=26)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;CERGAL;1;Précis;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=27)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Environ;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=28)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis0;M;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=29)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;F;1A;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=30)
+CARRIER Laurent;;01/01/2020;;;26;2;Prairie;10;11;12;;;PRUCOL;1;Précis;M;?;;;;;;;;;;;;;;;Une donnée similaire existe déjà (voir ID=31)
