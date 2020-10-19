@@ -57,25 +57,18 @@ jobs:
 
   docker-github:
     needs: build
-    if: github.event_name == 'push'
 
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Build image
-        run: docker build . --file Dockerfile --tag image
+        run: docker build . --tag ghcr.io/github/${{ github.repository }}:latest
 
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
-      - name: Push image to Github packages
-        run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME_GITHUB_PACKAGES
-
-          # Change all uppercase to lowercase
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          docker tag image $IMAGE_ID:latest
-          docker push $IMAGE_ID:latest
+      - name: Push image to GitHub Container Registry
+        run: docker push ghcr.io/github/${{ github.repository }}:latest
