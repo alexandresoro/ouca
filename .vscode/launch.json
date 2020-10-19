@@ -11,16 +11,6 @@
       "runtimeExecutable": "yarn",
       "runtimeArgs": ["debug"],
       "port": 9229,
-      "useWSL": true
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug NAS",
-      "runtimeExecutable": "yarn",
-      "runtimeArgs": ["debug", "-dbHost=10.0.0.77"],
-      "port": 9229,
-      "useWSL": true
     }
   ]
 }
