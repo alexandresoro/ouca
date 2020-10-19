@@ -99,4 +99,4 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest
-            $IMAGE_NAME_DOCKER_HUB:stable
+            ${{ env.IMAGE_NAME_DOCKER_HUB }}:stable
