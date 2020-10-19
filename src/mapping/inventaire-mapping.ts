@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { format } from "date-fns";
 import _ from "lodash";
 import { Coordinates } from "ouca-common/coordinates.object";
@@ -14,10 +13,10 @@ export const buildInventaireFromInventaireDb = (
 ): Inventaire => {
   const coordinates: Coordinates = inventaireDb?.longitude
     ? {
-        longitude: inventaireDb.longitude,
-        latitude: inventaireDb.latitude,
-        system: inventaireDb.coordinates_system
-      }
+      longitude: inventaireDb.longitude,
+      latitude: inventaireDb.latitude,
+      system: inventaireDb.coordinates_system
+    }
     : null;
 
   return {

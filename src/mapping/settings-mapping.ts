@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { Age } from "ouca-common/age.object";
 import { AppConfiguration } from "ouca-common/app-configuration.object";
 import { Departement } from "ouca-common/departement.object";

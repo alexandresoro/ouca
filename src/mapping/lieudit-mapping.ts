@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import * as _ from "lodash";
 import { Lieudit } from "ouca-common/lieudit.model";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
