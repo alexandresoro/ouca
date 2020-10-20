@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   validate-build:
@@ -41,7 +41,29 @@ jobs:
         run: git push --follow-tags
       - name: Copy updated package.json
         run: yarn run deployPrePublish
-      - name: Publish to npm.js 
+      - name: Publish to npm.js
         run: yarn publish --non-interactive dist
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
+  publish-github:
+    needs: validate-build
+
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Login to GitHub Packages
+        run: npm login --registry=https://npm.pkg.github.com --scope=@ou-ca
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
