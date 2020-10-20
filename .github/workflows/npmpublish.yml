@@ -37,14 +37,14 @@ jobs:
       - run: git config user.name "Github CI"
       - name: Bump version
         run: npm version patch
-      - name: Update project version
-        run: git push --follow-tags
+      #      - name: Update project version
+      #        run: git push --follow-tags
       - name: Copy updated package.json
         run: yarn run deployPrePublish
-      - name: Publish to npm.js
-        run: yarn publish --non-interactive dist
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+  #      - name: Publish to npm.js
+  #        run: yarn publish --non-interactive dist
+  #        env:
+  #          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
   publish-github:
     needs: validate-build
@@ -61,6 +61,9 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           scope: "@ou-ca"
 
+      - name: Bump version
+        run: yarn version --patch
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -69,3 +72,6 @@ jobs:
 
       - name: Set git config
         run: git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com" && git config --global user.name "$GITHUB_ACTOR"
+
+      - name: Copy updated package.json
+        run: yarn run deployPrePublish
