@@ -60,7 +60,7 @@ jobs:
           node-version: 12
 
       - name: Login to GitHub Packages
-        run: npm login --registry=https://npm.pkg.github.com --scope=@ou-ca
+        run: npm login --registry=https://npm.pkg.github.com/:_authToken=$GITHUB_TOKEN --scope=@ou-ca
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
