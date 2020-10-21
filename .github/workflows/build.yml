@@ -23,6 +23,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - run: export NPM_GITHUB_TOKEN="test"
+      - run: echo ${NPM_GITHUB_TOKEN}
+      - run: echo {{secrets.NPM_DOCKERFILE_TOKEN}}
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Lint
