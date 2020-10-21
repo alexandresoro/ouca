@@ -8,7 +8,7 @@ on:
 
 env:
   IMAGE_NAME_DOCKER_HUB: basenaturaliste/backend
-  NPM_GITHUB_TOKEN: test
+  NPM_GITHUB_TOKEN: ${{secrets.NPM_DOCKERFILE_TOKEN}}
 
 jobs:
   build:
