@@ -74,4 +74,15 @@ jobs:
         run: yarn build
 
       - name: Copy updated package.json
+        if: github.event_name == 'push'
         run: yarn run deployPrePublish
+
+      - name: Update project version
+        if: github.event_name == 'push'
+        run: git push --follow-tags
+
+      - name: Publish
+        if: github.event_name == 'push'
+        run: yarn publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
