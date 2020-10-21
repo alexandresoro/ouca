@@ -46,10 +46,7 @@ jobs:
   #        env:
   #          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
-  publish:
-    needs: validate-build
-
-    if: github.event_name == 'push'
+  build-and-publish:
     runs-on: ubuntu-latest
 
     steps:
