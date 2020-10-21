@@ -1,5 +1,5 @@
 {
-  "name": "@ou-ca/ouca-common",
+  "name": "@ou-ca/ouca-model",
   "description": "Common elements for Base Naturaliste project",
   "version": "0.0.46",
   "scripts": {
