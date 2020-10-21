@@ -83,6 +83,6 @@ jobs:
 
       - name: Publish
         if: github.event_name == 'push'
-        run: yarn publish
+        run: yarn publish --non-interactive dist
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
