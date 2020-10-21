@@ -20,16 +20,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: echo $NPM_GITHUB_TOKEN
-      - run: echo ${{secrets.NPM_DOCKERFILE_TOKEN}}
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
       - name: Lint
         run: yarn lint
+
       - name: Check build
         run: yarn build:prod
 
@@ -73,3 +75,4 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ${{ env.IMAGE_NAME_DOCKER_HUB }}:stable
+          build-args: NPM_GITHUB_TOKEN=value1
