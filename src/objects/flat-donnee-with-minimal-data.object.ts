@@ -1,4 +1,4 @@
-import { CoordinatesSystemType } from "ouca-common/coordinates-system/coordinates-system.object";
+import { CoordinatesSystemType } from "@ou-ca/ouca-model/coordinates-system/coordinates-system.object";
 
 export interface FlatDonneeWithMinimalData {
   id: number;

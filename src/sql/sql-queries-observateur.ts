@@ -1,11 +1,6 @@
-import { Observateur } from "ouca-common/observateur.object";
+import { Observateur } from "@ou-ca/ouca-model/observateur.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import {
-  COLUMN_LIBELLE,
-  OBSERVATEUR_ID,
-  ORDER_ASC,
-  TABLE_OBSERVATEUR
-} from "../utils/constants";
+import { COLUMN_LIBELLE, OBSERVATEUR_ID, ORDER_ASC, TABLE_OBSERVATEUR } from "../utils/constants";
 import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
@@ -22,9 +17,9 @@ export const queryToFindAssociesByInventaireId = async (
 ): Promise<{ associeId: number }[]> => {
   return query<{ associeId: number }[]>(
     "SELECT distinct observateur_id as associeId" +
-      " FROM inventaire_associe" +
-      " WHERE inventaire_id=" +
-      inventaireId
+    " FROM inventaire_associe" +
+    " WHERE inventaire_id=" +
+    inventaireId
   );
 };
 

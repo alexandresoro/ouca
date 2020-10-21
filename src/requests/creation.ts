@@ -1,29 +1,12 @@
-import { DonneeWithNavigationData } from "ouca-common/donnee-with-navigation-data.object";
-import { Donnee } from "ouca-common/donnee.object";
-import { Inventaire } from "ouca-common/inventaire.object";
-import { PostResponse } from "ouca-common/post-response.object";
+import { DonneeWithNavigationData } from "@ou-ca/ouca-model/donnee-with-navigation-data.object";
+import { Donnee } from "@ou-ca/ouca-model/donnee.object";
+import { Inventaire } from "@ou-ca/ouca-model/inventaire.object";
+import { PostResponse } from "@ou-ca/ouca-model/post-response.object";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  deleteDonneeById,
-  findDonneeByIdWithContext,
-  findExistingDonneeId,
-  findLastDonneeId,
-  findNextRegroupement,
-  persistDonnee,
-  updateInventaireIdForDonnees
-} from "../sql-api/sql-api-donnee";
-import {
-  deleteInventaireById,
-  findExistingInventaireId,
-  findInventaireById,
-  findInventaireIdById,
-  persistInventaire
-} from "../sql-api/sql-api-inventaire";
-import {
-  buildErrorPostResponse,
-  buildPostResponseFromSqlResponse
-} from "../utils/post-response-utils";
+import { deleteDonneeById, findDonneeByIdWithContext, findExistingDonneeId, findLastDonneeId, findNextRegroupement, persistDonnee, updateInventaireIdForDonnees } from "../sql-api/sql-api-donnee";
+import { deleteInventaireById, findExistingInventaireId, findInventaireById, findInventaireIdById, persistInventaire } from "../sql-api/sql-api-inventaire";
+import { buildErrorPostResponse, buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 
 export const saveInventaire = async (
   httpParameters: HttpParameters

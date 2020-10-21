@@ -69,6 +69,14 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
+"@ou-ca/ouca-model@*":
+  version "0.0.53"
+  resolved "https://npm.pkg.github.com/download/@ou-ca/ouca-model/0.0.53/513cdcb60918ae15068ac5abde9185f0d77b14db213601ba4d35a5f6632e806a#c90a2af928dd91c7f7f70bbc982c5f12c3e93a66"
+  integrity sha512-b41Ll9zHEAxV5R/9u3xw1Ocu1f/4DOwahz5sQsl7XT/5HR9m2u1TFo/+KovegiAD9rn92IC7lZo6Rn8cobWLrg==
+  dependencies:
+    "@types/bson" "*"
+    proj4 "*"
+
 "@types/bson@*":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@types/bson/-/bson-4.0.2.tgz#7accb85942fc39bbdb7515d4de437c04f698115f"
@@ -1037,14 +1045,6 @@ optionator@^0.9.1:
     prelude-ls "^1.2.1"
     type-check "^0.4.0"
     word-wrap "^1.2.3"
-
-ouca-common@*:
-  version "0.0.33"
-  resolved "https://registry.yarnpkg.com/ouca-common/-/ouca-common-0.0.33.tgz#af470b52844a45bfebaf3dbef3008d45a8eb66b1"
-  integrity sha512-Ya0jH8GG23ix9mPxGOyymhVHQm9iPLBJa/REQou1atL1c2LehH3BXRGn1BJW9Vm/GGf2z5V7P4SooFuMcom5RQ==
-  dependencies:
-    "@types/bson" "*"
-    proj4 "*"
 
 papaparse@*:
   version "5.3.0"

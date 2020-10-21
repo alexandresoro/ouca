@@ -1,67 +1,26 @@
+import { Comportement } from "@ou-ca/ouca-model/comportement.object";
+import { CoordinatesSystemType, getCoordinates } from "@ou-ca/ouca-model/coordinates-system";
+import { DonneeWithNavigationData } from "@ou-ca/ouca-model/donnee-with-navigation-data.object";
+import { Donnee } from "@ou-ca/ouca-model/donnee.object";
+import { DonneesFilter } from "@ou-ca/ouca-model/donnees-filter.object";
+import { FlatDonnee } from "@ou-ca/ouca-model/flat-donnee.object";
+import { Inventaire } from "@ou-ca/ouca-model/inventaire.object";
+import { NicheurCode, NICHEUR_VALUES } from "@ou-ca/ouca-model/nicheur.model";
 import { format } from "date-fns";
 import * as _ from "lodash";
-import { Comportement } from "ouca-common/comportement.object";
-import {
-  CoordinatesSystemType,
-  getCoordinates
-} from "ouca-common/coordinates-system";
-import { DonneeWithNavigationData } from "ouca-common/donnee-with-navigation-data.object";
-import { Donnee } from "ouca-common/donnee.object";
-import { DonneesFilter } from "ouca-common/donnees-filter.object";
-import { FlatDonnee } from "ouca-common/flat-donnee.object";
-import { Inventaire } from "ouca-common/inventaire.object";
-import { NicheurCode, NICHEUR_VALUES } from "ouca-common/nicheur.model";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllComportementsByDonneeId,
-  queryToFindComportementsIdsByDonneeId
-} from "../sql/sql-queries-comportement";
-import {
-  queryToCountDonneesByInventaireId,
-  queryToCountSpecimensByAgeForAnEspeceId,
-  queryToCountSpecimensBySexeForAnEspeceId,
-  queryToFindDonneeById,
-  queryToFindDonneeIdsByAllAttributes,
-  queryToFindDonneeIndexById,
-  queryToFindDonneesByCriterion,
-  queryToFindLastDonneeId,
-  queryToFindLastRegroupement,
-  queryToFindNextDonneeIdByCurrentDonneeId,
-  queryToFindPreviousDonneeIdByCurrentDonneeId,
-  queryToUpdateDonneesInventaireId
-} from "../sql/sql-queries-donnee";
+import { queryToFindAllComportementsByDonneeId, queryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";
+import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindLastDonneeId, queryToFindLastRegroupement, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToUpdateDonneesInventaireId } from "../sql/sql-queries-donnee";
 import { queryToFindAllMeteosByDonneeId } from "../sql/sql-queries-meteo";
-import {
-  queryToFindAllMilieuxByDonneeId,
-  queryToFindMilieuxIdsByDonneeId
-} from "../sql/sql-queries-milieu";
+import { queryToFindAllMilieuxByDonneeId, queryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
 import { queryToFindAllAssociesByDonneeId } from "../sql/sql-queries-observateur";
-import {
-  DB_SAVE_MAPPING,
-  queriesToSaveListOfEntities,
-  queryToDeleteAnEntityByAttribute
-} from "../sql/sql-queries-utils";
-import {
-  DATE_WITH_TIME_PATTERN,
-  DONNEE_ID,
-  ID,
-  SEPARATOR_COMMA,
-  TABLE_DONNEE,
-  TABLE_DONNEE_COMPORTEMENT,
-  TABLE_DONNEE_MILIEU
-} from "../utils/constants";
+import { DB_SAVE_MAPPING, queriesToSaveListOfEntities, queryToDeleteAnEntityByAttribute } from "../sql/sql-queries-utils";
+import { DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, SEPARATOR_COMMA, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../utils/constants";
 import { mapComportementsIds, mapMilieuxIds } from "../utils/mapping-utils";
-import {
-  areArraysContainingSameValues,
-  getArrayFromObjects
-} from "../utils/utils";
+import { areArraysContainingSameValues, getArrayFromObjects } from "../utils/utils";
 import { deleteEntityById, persistEntity } from "./sql-api-common";
-import {
-  deleteInventaireById,
-  findAssociesIdsByInventaireId,
-  findMeteosIdsByInventaireId
-} from "./sql-api-inventaire";
+import { deleteInventaireById, findAssociesIdsByInventaireId, findMeteosIdsByInventaireId } from "./sql-api-inventaire";
 
 const findComportementsIdsByDonneeId = async (
   donneeId: number
@@ -113,10 +72,10 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
       customizedAltitude: flatDonnee.altitude,
       coordinates: !_.isNil(flatDonnee.longitude)
         ? {
-            longitude: flatDonnee.longitude,
-            latitude: flatDonnee.latitude,
-            system: flatDonnee.coordinatesSystem
-          }
+          longitude: flatDonnee.longitude,
+          latitude: flatDonnee.latitude,
+          system: flatDonnee.coordinatesSystem
+        }
         : null,
       temperature: flatDonnee.temperature,
       meteosIds,
@@ -302,11 +261,11 @@ export const findDonneesByCustomizedFilters = async (
 
   const [associes, meteos, comportements, milieux] = donneesIds.length
     ? await Promise.all([
-        queryToFindAllAssociesByDonneeId(donneesIds),
-        queryToFindAllMeteosByDonneeId(donneesIds),
-        queryToFindAllComportementsByDonneeId(donneesIds),
-        queryToFindAllMilieuxByDonneeId(donneesIds)
-      ])
+      queryToFindAllAssociesByDonneeId(donneesIds),
+      queryToFindAllMeteosByDonneeId(donneesIds),
+      queryToFindAllComportementsByDonneeId(donneesIds),
+      queryToFindAllMilieuxByDonneeId(donneesIds)
+    ])
     : [[], [], [], []];
 
   const [

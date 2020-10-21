@@ -1,11 +1,6 @@
-import { Espece } from "ouca-common/espece.model";
+import { Espece } from "@ou-ca/ouca-model/espece.model";
 import { findClasseByLibelle } from "../../sql-api/sql-api-classe";
-import {
-  findEspeceByCode,
-  findEspeceByNomFrancais,
-  findEspeceByNomLatin,
-  persistEspece
-} from "../../sql-api/sql-api-espece";
+import { findEspeceByCode, findEspeceByNomFrancais, findEspeceByNomLatin, persistEspece } from "../../sql-api/sql-api-espece";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {

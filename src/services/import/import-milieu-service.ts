@@ -1,4 +1,4 @@
-import { Milieu } from "ouca-common/milieu.object";
+import { Milieu } from "@ou-ca/ouca-model/milieu.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistMilieu } from "../../sql-api/sql-api-milieu";
 import { TABLE_MILIEU } from "../../utils/constants";

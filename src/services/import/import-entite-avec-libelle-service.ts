@@ -1,4 +1,4 @@
-import { EntiteAvecLibelle } from "ouca-common/entite-avec-libelle.object";
+import { EntiteAvecLibelle } from "@ou-ca/ouca-model/entite-avec-libelle.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { findEntityByLibelle } from "../../sql-api/sql-api-common";
 import { ImportService } from "./import-service";

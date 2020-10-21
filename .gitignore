@@ -4,3 +4,4 @@ dist/
 yarn-error.log
 *.orig
 .DS_Store
+github-token.env

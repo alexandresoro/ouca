@@ -1,5 +1,5 @@
+import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
 import * as _ from "lodash";
-import { EstimationNombre } from "ouca-common/estimation-nombre.object";
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 
 export const buildEstimationNombreFromEstimationNombreDb = (

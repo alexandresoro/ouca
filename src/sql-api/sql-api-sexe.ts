@@ -1,10 +1,7 @@
+import { Sexe } from "@ou-ca/ouca-model/sexe.object";
 import * as _ from "lodash";
-import { Sexe } from "ouca-common/sexe.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllSexes,
-  queryToFindNumberOfDonneesBySexeId
-} from "../sql/sql-queries-sexe";
+import { queryToFindAllSexes, queryToFindNumberOfDonneesBySexeId } from "../sql/sql-queries-sexe";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_SEXE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

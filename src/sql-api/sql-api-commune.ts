@@ -1,19 +1,9 @@
+import { Commune } from "@ou-ca/ouca-model/commune.model";
 import * as _ from "lodash";
-import { Commune } from "ouca-common/commune.model";
-import {
-  buildCommuneFromCommuneDb,
-  buildCommunesFromCommunesDb
-} from "../mapping/commune-mapping";
+import { buildCommuneFromCommuneDb, buildCommunesFromCommunesDb } from "../mapping/commune-mapping";
 import { CommuneDb } from "../objects/db/commune-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllCommunes,
-  queryToFindCommuneByDepartementIdAndCode,
-  queryToFindCommuneByDepartementIdAndCodeAndNom,
-  queryToFindCommuneByDepartementIdAndNom,
-  queryToFindNumberOfDonneesByCommuneId,
-  queryToFindNumberOfLieuxDitsByCommuneId
-} from "../sql/sql-queries-commune";
+import { queryToFindAllCommunes, queryToFindCommuneByDepartementIdAndCode, queryToFindCommuneByDepartementIdAndCodeAndNom, queryToFindCommuneByDepartementIdAndNom, queryToFindNumberOfDonneesByCommuneId, queryToFindNumberOfLieuxDitsByCommuneId } from "../sql/sql-queries-commune";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_COMMUNE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

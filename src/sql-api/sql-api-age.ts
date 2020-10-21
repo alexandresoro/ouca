@@ -1,10 +1,7 @@
+import { Age } from "@ou-ca/ouca-model/age.object";
 import * as _ from "lodash";
-import { Age } from "ouca-common/age.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllAges,
-  queryToFindNumberOfDonneesByAgeId
-} from "../sql/sql-queries-age";
+import { queryToFindAllAges, queryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_AGE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

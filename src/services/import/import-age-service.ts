@@ -1,4 +1,4 @@
-import { Age } from "ouca-common/age.object";
+import { Age } from "@ou-ca/ouca-model/age.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistAge } from "../../sql-api/sql-api-age";
 import { TABLE_AGE } from "../../utils/constants";

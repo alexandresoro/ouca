@@ -1,6 +1,6 @@
+import { WebsocketMessage } from "@ou-ca/ouca-model/websocket/websocket-message.model";
 import * as http from "http";
 import * as multiparty from "multiparty";
-import { WebsocketMessage } from "ouca-common/websocket/websocket-message.model";
 import { createLogger, format, transports } from "winston";
 import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";

@@ -1,4 +1,4 @@
-import { Age } from "ouca-common/age.object";
+import { Age } from "@ou-ca/ouca-model/age.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_AGE } from "../utils/constants";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";

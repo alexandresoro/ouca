@@ -1,21 +1,11 @@
-import { Commune } from "ouca-common/commune.model";
-import {
-  CoordinatesSystem,
-  CoordinatesSystemType,
-  COORDINATES_SYSTEMS_CONFIG
-} from "ouca-common/coordinates-system";
-import { Departement } from "ouca-common/departement.object";
-import { Lieudit } from "ouca-common/lieudit.model";
-import {
-  findCommuneByDepartementIdAndCode,
-  findCommuneByDepartementIdAndNom
-} from "../../sql-api/sql-api-commune";
+import { Commune } from "@ou-ca/ouca-model/commune.model";
+import { CoordinatesSystem, CoordinatesSystemType, COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/ouca-model/coordinates-system";
+import { Departement } from "@ou-ca/ouca-model/departement.object";
+import { Lieudit } from "@ou-ca/ouca-model/lieudit.model";
+import { findCommuneByDepartementIdAndCode, findCommuneByDepartementIdAndNom } from "../../sql-api/sql-api-commune";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
-import {
-  findLieuDitByCommuneIdAndNom,
-  persistLieuDit
-} from "../../sql-api/sql-api-lieudit";
+import { findLieuDitByCommuneIdAndNom, persistLieuDit } from "../../sql-api/sql-api-lieudit";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {

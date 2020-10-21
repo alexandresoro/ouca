@@ -1,9 +1,9 @@
+import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/ouca-model/coordinates-system";
+import { FlatDonnee } from "@ou-ca/ouca-model/flat-donnee.object";
 import * as _ from "lodash";
-import { COORDINATES_SYSTEMS_CONFIG } from "ouca-common/coordinates-system";
-import { FlatDonnee } from "ouca-common/flat-donnee.object";
 import { HttpParameters } from "../http/httpParameters";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
-import {} from "../sql/sql-queries-utils";
+import { } from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
 
 const MAXIMUM_EXCEL_DATA_SUPPORTED = 50000;
@@ -11,8 +11,8 @@ const MAXIMUM_EXCEL_DATA_SUPPORTED = 50000;
 const getComportement = (donnee: FlatDonnee, index: number): string => {
   return donnee.comportements.length >= index
     ? donnee.comportements[index - 1].code +
-        " - " +
-        donnee.comportements[index - 1].libelle
+    " - " +
+    donnee.comportements[index - 1].libelle
     : "";
 };
 

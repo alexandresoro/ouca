@@ -1,20 +1,13 @@
+import { Donnee } from "@ou-ca/ouca-model/donnee.object";
+import { DonneesFilter } from "@ou-ca/ouca-model/donnees-filter.object";
+import { FlatDonnee } from "@ou-ca/ouca-model/flat-donnee.object";
+import { NicheurCode } from "@ou-ca/ouca-model/nicheur.model";
 import { format } from "date-fns";
 import * as _ from "lodash";
-import { Donnee } from "ouca-common/donnee.object";
-import { DonneesFilter } from "ouca-common/donnees-filter.object";
-import { FlatDonnee } from "ouca-common/flat-donnee.object";
-import { NicheurCode } from "ouca-common/nicheur.model";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  DATE_PATTERN,
-  TABLE_COMPORTEMENT,
-  TABLE_DONNEE_COMPORTEMENT,
-  TABLE_DONNEE_MILIEU,
-  TABLE_INVENTAIRE_ASSOCIE,
-  TABLE_INVENTAIRE_METEO
-} from "../utils/constants";
+import { DATE_PATTERN, TABLE_COMPORTEMENT, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
 import { query } from "./sql-queries-utils";
 
@@ -100,7 +93,7 @@ export const queryToCountDonneesByInventaireId = async (
 ): Promise<{ nbDonnees: number }[]> => {
   return query<{ nbDonnees: number }[]>(
     "SELECT COUNT(*) as nbDonnees FROM donnee WHERE inventaire_id=" +
-      inventaireId
+    inventaireId
   );
 };
 
@@ -110,9 +103,9 @@ export const queryToUpdateDonneesInventaireId = async (
 ): Promise<SqlSaveResponse> => {
   return query<SqlSaveResponse>(
     "UPDATE donnee SET inventaire_id=" +
-      newInventaireId +
-      " WHERE inventaire_id=" +
-      oldInventaireId
+    newInventaireId +
+    " WHERE inventaire_id=" +
+    oldInventaireId
   );
 };
 
@@ -121,10 +114,10 @@ export const queryToFindNextDonneeIdByCurrentDonneeId = async (
 ): Promise<{ id: number }[]> => {
   return query<{ id: number }[]>(
     "SELECT d.id" +
-      " FROM donnee d" +
-      " WHERE d.id>" +
-      currentDonneeId +
-      " ORDER BY id ASC LIMIT 0,1"
+    " FROM donnee d" +
+    " WHERE d.id>" +
+    currentDonneeId +
+    " ORDER BY id ASC LIMIT 0,1"
   );
 };
 
@@ -133,10 +126,10 @@ export const queryToFindPreviousDonneeIdByCurrentDonneeId = async (
 ): Promise<{ id: number }[]> => {
   return query<{ id: number }[]>(
     "SELECT d.id" +
-      " FROM donnee d" +
-      " WHERE d.id<" +
-      currentDonneeId +
-      " ORDER BY d.id DESC LIMIT 0,1"
+    " FROM donnee d" +
+    " WHERE d.id<" +
+    currentDonneeId +
+    " ORDER BY d.id DESC LIMIT 0,1"
   );
 };
 
@@ -267,8 +260,8 @@ export const queryToFindDonneesByCriterion = async (
   ) {
     whereTab.push(
       " t_departement.id IN (" +
-        criterion.lieuditGroup.departements.join(",") +
-        ")"
+      criterion.lieuditGroup.departements.join(",") +
+      ")"
     );
   }
 
@@ -304,8 +297,8 @@ export const queryToFindDonneesByCriterion = async (
   ) {
     whereTab.push(
       " t_estim_nb.id IN (" +
-        criterion.nombreGroup.estimationsNombre.join(",") +
-        ")"
+      criterion.nombreGroup.estimationsNombre.join(",") +
+      ")"
     );
   }
 
@@ -315,8 +308,8 @@ export const queryToFindDonneesByCriterion = async (
   ) {
     whereTab.push(
       " t_estim_dist.id IN (" +
-        criterion.distanceGroup.estimationsDistance.join(",") +
-        ")"
+      criterion.distanceGroup.estimationsDistance.join(",") +
+      ")"
     );
   }
 
@@ -329,22 +322,22 @@ export const queryToFindDonneesByCriterion = async (
   if (criterion.fromDate) {
     whereTab.push(
       " t_inventaire.date>='" +
-        format(
-          interpretDateTimestampAsLocalTimeZoneDate(criterion.fromDate),
-          DATE_PATTERN
-        ) +
-        "'"
+      format(
+        interpretDateTimestampAsLocalTimeZoneDate(criterion.fromDate),
+        DATE_PATTERN
+      ) +
+      "'"
     );
   }
 
   if (criterion.toDate) {
     whereTab.push(
       " t_inventaire.date<='" +
-        format(
-          interpretDateTimestampAsLocalTimeZoneDate(criterion.toDate),
-          DATE_PATTERN
-        ) +
-        "'"
+      format(
+        interpretDateTimestampAsLocalTimeZoneDate(criterion.toDate),
+        DATE_PATTERN
+      ) +
+      "'"
     );
   }
 
@@ -387,26 +380,26 @@ export const queryToFindDonneesByCriterion = async (
   if (criterion.associes && criterion.associes.length > 0) {
     whereTab.push(
       " t_inventaire.id IN" +
-        " (SELECT distinct t_inventaire_associe.inventaire_id" +
-        " FROM " +
-        TABLE_INVENTAIRE_ASSOCIE +
-        " t_inventaire_associe" +
-        " WHERE t_inventaire_associe.observateur_id IN (" +
-        criterion.associes.join(",") +
-        "))"
+      " (SELECT distinct t_inventaire_associe.inventaire_id" +
+      " FROM " +
+      TABLE_INVENTAIRE_ASSOCIE +
+      " t_inventaire_associe" +
+      " WHERE t_inventaire_associe.observateur_id IN (" +
+      criterion.associes.join(",") +
+      "))"
     );
   }
 
   if (criterion.meteos && criterion.meteos.length > 0) {
     whereTab.push(
       " t_inventaire.id IN" +
-        " (SELECT distinct t_inventaire_meteo.inventaire_id" +
-        " FROM " +
-        TABLE_INVENTAIRE_METEO +
-        " t_inventaire_meteo" +
-        " WHERE t_inventaire_meteo.meteo_id IN (" +
-        criterion.meteos.join(",") +
-        "))"
+      " (SELECT distinct t_inventaire_meteo.inventaire_id" +
+      " FROM " +
+      TABLE_INVENTAIRE_METEO +
+      " t_inventaire_meteo" +
+      " WHERE t_inventaire_meteo.meteo_id IN (" +
+      criterion.meteos.join(",") +
+      "))"
     );
   }
 
@@ -414,8 +407,8 @@ export const queryToFindDonneesByCriterion = async (
   if (criterion.nicheurs && criterion.nicheurs.length > 0) {
     whereTab.push(
       " t_donnee.id IN (" +
-        getQueryToFindDonneesIdsByNicheursCodes(criterion.nicheurs) +
-        ")"
+      getQueryToFindDonneesIdsByNicheursCodes(criterion.nicheurs) +
+      ")"
     );
   }
 
@@ -423,8 +416,8 @@ export const queryToFindDonneesByCriterion = async (
   if (criterion.comportements && criterion.comportements.length > 0) {
     whereTab.push(
       " t_donnee.id IN (" +
-        getQueryToFindDonneesIdsByComportementsIds(criterion.comportements) +
-        ")"
+      getQueryToFindDonneesIdsByComportementsIds(criterion.comportements) +
+      ")"
     );
   }
 
@@ -432,8 +425,8 @@ export const queryToFindDonneesByCriterion = async (
   if (criterion.milieux && criterion.milieux.length > 0) {
     whereTab.push(
       " t_donnee.id IN (" +
-        getQueryToFindDonneesIdsByMilieuxIds(criterion.milieux) +
-        ")"
+      getQueryToFindDonneesIdsByMilieuxIds(criterion.milieux) +
+      ")"
     );
   }
 
@@ -500,12 +493,12 @@ export const queryToCountSpecimensBySexeForAnEspeceId = async (
 ): Promise<{ name: string; value: number }[]> => {
   return query<{ name: string; value: number }[]>(
     "SELECT s.libelle as name, sum(nombre) as value" +
-      " FROM donnee d " +
-      " LEFT JOIN sexe s on s.id = d.sexe_id " +
-      " WHERE espece_id = " +
-      id +
-      " GROUP BY sexe_id" +
-      " ORDER BY s.libelle ASC"
+    " FROM donnee d " +
+    " LEFT JOIN sexe s on s.id = d.sexe_id " +
+    " WHERE espece_id = " +
+    id +
+    " GROUP BY sexe_id" +
+    " ORDER BY s.libelle ASC"
   );
 };
 
@@ -514,11 +507,11 @@ export const queryToCountSpecimensByAgeForAnEspeceId = async (
 ): Promise<{ name: string; value: number }[]> => {
   return query<{ name: string; value: number }[]>(
     "SELECT a.libelle as name, sum(nombre) as value" +
-      " FROM donnee d" +
-      " LEFT JOIN age a on a.id = d.age_id" +
-      " WHERE espece_id=" +
-      id +
-      " GROUP BY age_id" +
-      " ORDER BY a.libelle ASC"
+    " FROM donnee d" +
+    " LEFT JOIN age a on a.id = d.age_id" +
+    " WHERE espece_id=" +
+    id +
+    " GROUP BY age_id" +
+    " ORDER BY a.libelle ASC"
   );
 };

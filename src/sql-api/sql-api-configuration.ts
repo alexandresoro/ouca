@@ -1,13 +1,10 @@
-import { Age } from "ouca-common/age.object";
-import { AppConfiguration } from "ouca-common/app-configuration.object";
-import { CoordinatesSystemType } from "ouca-common/coordinates-system";
-import { EstimationNombre } from "ouca-common/estimation-nombre.object";
-import { Observateur } from "ouca-common/observateur.object";
-import { Sexe } from "ouca-common/sexe.object";
-import {
-  buildAppConfigurationFromSettingsDb,
-  buildSettingsDbFromAppConfiguration
-} from "../mapping/settings-mapping";
+import { Age } from "@ou-ca/ouca-model/age.object";
+import { AppConfiguration } from "@ou-ca/ouca-model/app-configuration.object";
+import { CoordinatesSystemType } from "@ou-ca/ouca-model/coordinates-system";
+import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
+import { Observateur } from "@ou-ca/ouca-model/observateur.object";
+import { Sexe } from "@ou-ca/ouca-model/sexe.object";
+import { buildAppConfigurationFromSettingsDb, buildSettingsDbFromAppConfiguration } from "../mapping/settings-mapping";
 import { SettingsDb } from "../objects/db/settings-db.object";
 import { queryToFindCoordinatesSystem } from "../sql/sql-queries-settings";
 import { queryToFindAllEntities } from "../sql/sql-queries-utils";

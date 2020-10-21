@@ -1,4 +1,4 @@
-import { Comportement } from "ouca-common/comportement.object";
+import { Comportement } from "@ou-ca/ouca-model/comportement.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistComportement } from "../../sql-api/sql-api-comportement";
 import { TABLE_COMPORTEMENT } from "../../utils/constants";
