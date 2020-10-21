@@ -63,6 +63,7 @@ jobs:
           node-version: 12
           registry-url: "https://npm.pkg.github.com"
           scope: "@ou-ca"
+          always-auth: true
 
       - name: Bump version
         run: yarn version --patch
@@ -83,6 +84,6 @@ jobs:
 
       - name: Publish
         if: github.event_name == 'push'
-        run: yarn publish --non-interactive dist
+        run: yarn publish dist
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
