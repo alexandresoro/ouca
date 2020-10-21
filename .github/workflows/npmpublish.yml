@@ -63,7 +63,7 @@ jobs:
           node-version: 12
           registry-url: "https://npm.pkg.github.com"
 
-      - run: echo ~/.npmrc
+      - run: cat ~/.npmrc
 
       - name: Bump version
         run: yarn version --patch
@@ -82,7 +82,7 @@ jobs:
         if: github.event_name == 'push'
         run: git push --follow-tags
 
-      - run: echo ~/.npmrc
+      - run: cat ~/.npmrc
 
       - name: Publish
         if: github.event_name == 'push'
