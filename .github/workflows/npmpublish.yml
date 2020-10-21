@@ -64,8 +64,6 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           scope: "@ou-ca"
 
-      #      - run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GPR_TOKEN }}" >> ~/.npmrc
-
       - name: Bump version
         run: yarn version --patch
 
@@ -82,8 +80,6 @@ jobs:
       - name: Update project version
         if: github.event_name == 'push'
         run: git push --follow-tags
-
-      #      - run: cat ~/.npmrc
 
       - name: Publish
         if: github.event_name == 'push'
