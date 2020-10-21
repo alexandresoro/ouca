@@ -1,7 +1,7 @@
 {
   "name": "@ou-ca/ouca-common",
   "description": "Common elements for Base Naturaliste project",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "scripts": {
     "build": "yarn run clean && yarn run build:indexes && tsc",
     "build:indexes": "ts-node indexes",
@@ -28,6 +28,6 @@
     "typescript": "*"
   },
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com"
   }
 }
