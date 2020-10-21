@@ -62,8 +62,9 @@ jobs:
         with:
           node-version: 12
           registry-url: "https://npm.pkg.github.com"
+          scope: "@ou-ca"
 
-      - run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+      - run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GPR_TOKEN }}" >> ~/.npmrc
 
       - run: cat ~/.npmrc
 
@@ -90,4 +91,4 @@ jobs:
         if: github.event_name == 'push'
         run: yarn publish dist
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.GPR_TOKEN}}
