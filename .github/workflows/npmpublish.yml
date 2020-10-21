@@ -7,45 +7,6 @@ on:
     branches: [master]
 
 jobs:
-  validate-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Build
-        run: yarn build
-
-  publish-npm:
-    needs: validate-build
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://registry.npmjs.org/
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Build
-        run: yarn build
-      - run: git config user.email "ci@github.com"
-      - run: git config user.name "Github CI"
-      - name: Bump version
-        run: npm version patch
-      #      - name: Update project version
-      #        run: git push --follow-tags
-      - name: Copy updated package.json
-        run: yarn run deployPrePublish
-  #      - name: Publish to npm.js
-  #        run: yarn publish --non-interactive dist
-  #        env:
-  #          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-
   build-and-publish:
     runs-on: ubuntu-latest
 
