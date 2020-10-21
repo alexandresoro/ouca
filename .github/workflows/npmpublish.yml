@@ -62,7 +62,8 @@ jobs:
         with:
           node-version: 12
           registry-url: "https://npm.pkg.github.com"
-          always-auth: true
+
+      - run: echo ~/.npmrc
 
       - name: Bump version
         run: yarn version --patch
@@ -80,6 +81,8 @@ jobs:
       - name: Update project version
         if: github.event_name == 'push'
         run: git push --follow-tags
+
+      - run: echo ~/.npmrc
 
       - name: Publish
         if: github.event_name == 'push'
