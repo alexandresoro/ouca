@@ -8,6 +8,7 @@ on:
 
 env:
   IMAGE_NAME_DOCKER_HUB: basenaturaliste/backend
+  NPM_GITHUB_TOKEN: test
 
 jobs:
   build:
@@ -23,7 +24,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: export NPM_GITHUB_TOKEN="test"
       - run: echo $NPM_GITHUB_TOKEN
       - run: echo ${{secrets.NPM_DOCKERFILE_TOKEN}}
       - name: Install dependencies
