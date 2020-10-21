@@ -1,7 +1,7 @@
 {
   "name": "ouca-model",
   "description": "Common elements for Base Naturaliste project",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "scripts": {
     "build": "yarn run clean && yarn run build:indexes && tsc",
     "build:indexes": "ts-node indexes",
