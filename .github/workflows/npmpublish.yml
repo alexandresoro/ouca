@@ -83,7 +83,7 @@ jobs:
         if: github.event_name == 'push'
         run: git push --follow-tags
 
-      - run: cat ~/.npmrc
+      #      - run: cat ~/.npmrc
 
       - name: Publish
         if: github.event_name == 'push'
