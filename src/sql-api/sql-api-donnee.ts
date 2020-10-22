@@ -356,7 +356,7 @@ export const deleteDonneeById = async (
 
     if (nbDonnees === 0) {
       // If the inventaire has no more donnees then we remove the inventaire
-      deleteInventaireById(inventaireId);
+      await deleteInventaireById(inventaireId);
     }
 
     return sqlResponse;
