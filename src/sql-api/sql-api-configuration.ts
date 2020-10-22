@@ -1,9 +1,5 @@
-import { Age } from "@ou-ca/ouca-model/age.object";
 import { AppConfiguration } from "@ou-ca/ouca-model/app-configuration.object";
 import { CoordinatesSystemType } from "@ou-ca/ouca-model/coordinates-system";
-import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
-import { Observateur } from "@ou-ca/ouca-model/observateur.object";
-import { Sexe } from "@ou-ca/ouca-model/sexe.object";
 import { buildAppConfigurationFromSettingsDb, buildSettingsDbFromAppConfiguration } from "../mapping/settings-mapping";
 import { SettingsDb } from "../objects/db/settings-db.object";
 import { queryToFindCoordinatesSystem } from "../sql/sql-queries-settings";
@@ -28,7 +24,7 @@ export const findAppConfiguration = async (): Promise<AppConfiguration> => {
     departements,
     ages,
     sexes,
-    estimationsNombre
+    estimationsNombre,
   ] = await Promise.all([
     findUserSettings(),
     findAllObservateurs(),
@@ -40,11 +36,11 @@ export const findAppConfiguration = async (): Promise<AppConfiguration> => {
 
   return buildAppConfigurationFromSettingsDb(
     settings,
-    observateurs as Observateur[],
+    observateurs,
     departements,
-    ages as Age[],
-    sexes as Sexe[],
-    estimationsNombre as EstimationNombre[]
+    ages,
+    sexes,
+    estimationsNombre as any[] // TypeScript is crazy
   );
 };
 

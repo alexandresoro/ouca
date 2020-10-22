@@ -35,46 +35,46 @@ const createUpdateMessage = <T extends unknown>(
 export const onTableUpdate = (tableName: string): void => {
   switch (tableName) {
     case TABLE_SETTINGS:
-      this.sendAppConfiguration();
+      void sendAppConfiguration();
       break;
     case TABLE_OBSERVATEUR:
-      this.sendObservateurs();
+      void sendObservateurs();
       break;
     case TABLE_DEPARTEMENT:
-      this.sendDepartements();
+      void sendDepartements();
       break;
     case TABLE_COMMUNE:
-      this.sendCommunes();
+      void sendCommunes();
       break;
     case TABLE_LIEUDIT:
-      this.sendLieuxdits();
+      void sendLieuxdits();
       break;
     case TABLE_CLASSE:
-      this.sendClasses();
+      void sendClasses();
       break;
     case TABLE_ESPECE:
-      this.sendEspeces();
+      void sendEspeces();
       break;
     case TABLE_SEXE:
-      this.sendSexes();
+      void sendSexes();
       break;
     case TABLE_AGE:
-      this.sendAges();
+      void sendAges();
       break;
     case TABLE_ESTIMATION_DISTANCE:
-      this.sendEstimationsDistance();
+      void sendEstimationsDistance();
       break;
     case TABLE_ESTIMATION_NOMBRE:
-      this.sendEstimationsNombre();
+      void sendEstimationsNombre();
       break;
     case TABLE_COMPORTEMENT:
-      this.sendComportements();
+      void sendComportements();
       break;
     case TABLE_MILIEU:
-      this.sendMilieux();
+      void sendMilieux();
       break;
     case TABLE_METEO:
-      this.sendMeteos();
+      void sendMeteos();
       break;
     default:
       break;
