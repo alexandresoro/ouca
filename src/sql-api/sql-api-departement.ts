@@ -1,13 +1,7 @@
+import { Departement } from "@ou-ca/ouca-model/departement.object";
 import * as _ from "lodash";
-import { Departement } from "ouca-common/departement.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllDepartements,
-  queryToFindDepartementByCode,
-  queryToFindNumberOfCommunesByDepartementId,
-  queryToFindNumberOfDonneesByDepartementId,
-  queryToFindNumberOfLieuxDitsByDepartementId
-} from "../sql/sql-queries-departement";
+import { queryToFindAllDepartements, queryToFindDepartementByCode, queryToFindNumberOfCommunesByDepartementId, queryToFindNumberOfDonneesByDepartementId, queryToFindNumberOfLieuxDitsByDepartementId } from "../sql/sql-queries-departement";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_DEPARTEMENT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

@@ -1,27 +1,22 @@
+import { Age } from "@ou-ca/ouca-model/age.object";
+import { Classe } from "@ou-ca/ouca-model/classe.object";
+import { Commune } from "@ou-ca/ouca-model/commune.model";
+import { Comportement } from "@ou-ca/ouca-model/comportement.object";
+import { areCoordinatesCustomized, CoordinatesSystem, CoordinatesSystemType, COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/ouca-model/coordinates-system";
+import { Coordinates } from "@ou-ca/ouca-model/coordinates.object";
+import { Departement } from "@ou-ca/ouca-model/departement.object";
+import { Donnee } from "@ou-ca/ouca-model/donnee.object";
+import { Espece } from "@ou-ca/ouca-model/espece.model";
+import { EstimationDistance } from "@ou-ca/ouca-model/estimation-distance.object";
+import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
+import { Inventaire } from "@ou-ca/ouca-model/inventaire.object";
+import { Lieudit } from "@ou-ca/ouca-model/lieudit.model";
+import { Meteo } from "@ou-ca/ouca-model/meteo.object";
+import { Milieu } from "@ou-ca/ouca-model/milieu.object";
+import { Observateur } from "@ou-ca/ouca-model/observateur.object";
+import { Sexe } from "@ou-ca/ouca-model/sexe.object";
 import { format } from "date-fns";
 import * as _ from "lodash";
-import { Age } from "ouca-common/age.object";
-import { Classe } from "ouca-common/classe.object";
-import { Commune } from "ouca-common/commune.model";
-import { Comportement } from "ouca-common/comportement.object";
-import {
-  areCoordinatesCustomized,
-  CoordinatesSystem,
-  CoordinatesSystemType,
-  COORDINATES_SYSTEMS_CONFIG
-} from "ouca-common/coordinates-system";
-import { Coordinates } from "ouca-common/coordinates.object";
-import { Departement } from "ouca-common/departement.object";
-import { Donnee } from "ouca-common/donnee.object";
-import { Espece } from "ouca-common/espece.model";
-import { EstimationDistance } from "ouca-common/estimation-distance.object";
-import { EstimationNombre } from "ouca-common/estimation-nombre.object";
-import { Inventaire } from "ouca-common/inventaire.object";
-import { Lieudit } from "ouca-common/lieudit.model";
-import { Meteo } from "ouca-common/meteo.object";
-import { Milieu } from "ouca-common/milieu.object";
-import { Observateur } from "ouca-common/observateur.object";
-import { Sexe } from "ouca-common/sexe.object";
 import { ImportedDonnee } from "../../objects/imported-donnee.object";
 import { findAllAges } from "../../sql-api/sql-api-age";
 import { findAllClasses } from "../../sql-api/sql-api-classe";
@@ -29,29 +24,18 @@ import { findAllCommunes } from "../../sql-api/sql-api-commune";
 import { findAllComportements } from "../../sql-api/sql-api-comportement";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";
-import {
-  findExistingDonneeId,
-  persistDonnee
-} from "../../sql-api/sql-api-donnee";
+import { findExistingDonneeId, persistDonnee } from "../../sql-api/sql-api-donnee";
 import { findAllEspeces } from "../../sql-api/sql-api-espece";
 import { findAllEstimationsDistance } from "../../sql-api/sql-api-estimation-distance";
 import { findAllEstimationsNombre } from "../../sql-api/sql-api-estimation-nombre";
-import {
-  findExistingInventaireId,
-  persistInventaire
-} from "../../sql-api/sql-api-inventaire";
+import { findExistingInventaireId, persistInventaire } from "../../sql-api/sql-api-inventaire";
 import { findAllLieuxDits } from "../../sql-api/sql-api-lieudit";
 import { findAllMeteos } from "../../sql-api/sql-api-meteo";
 import { findAllMilieux } from "../../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../../sql-api/sql-api-observateur";
 import { findAllSexes } from "../../sql-api/sql-api-sexe";
 import { DATE_PATTERN } from "../../utils/constants";
-import {
-  getFormattedDate,
-  getFormattedTime,
-  isIdInListIds,
-  isTimeValid
-} from "../../utils/utils";
+import { getFormattedDate, getFormattedTime, isIdInListIds, isTimeValid } from "../../utils/utils";
 import { ImportService } from "./import-service";
 
 export class ImportDoneeeService extends ImportService {
@@ -234,7 +218,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Commune" or return an error if it does not exist
-    let commune: Commune = this.communes.find((com) => {
+    const commune: Commune = this.communes.find((com) => {
       return (
         com.departementId === departement.id &&
         ("" + com.code === rawDonnee.commune || com.nom === rawDonnee.commune)
@@ -310,7 +294,7 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Espece" or return an error if it doesn't exist
-    let espece: Espece = this.especes.find((e) => {
+    const espece: Espece = this.especes.find((e) => {
       return (
         e.code === rawDonnee.espece ||
         e.nomFrancais === rawDonnee.espece ||
@@ -400,7 +384,7 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Comportements" or return an error if some of them does not exist
     const comportementsIds: number[] = [];
     for (const comportementStr of rawDonnee.comportements) {
-      let comportement = this.comportements.find((c) => {
+      const comportement = this.comportements.find((c) => {
         return c.code === comportementStr || c.libelle === comportementStr;
       });
 
@@ -420,7 +404,7 @@ export class ImportDoneeeService extends ImportService {
     // Get the "Milieux" or return an error if some of them does not exist
     const milieuxIds: number[] = [];
     for (const milieuStr of rawDonnee.milieux) {
-      let milieu: Milieu = this.milieux.find((m) => {
+      const milieu: Milieu = this.milieux.find((m) => {
         return m.code === milieuStr || m.libelle === milieuStr;
       });
 

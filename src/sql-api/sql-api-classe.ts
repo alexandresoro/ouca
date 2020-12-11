@@ -1,11 +1,7 @@
+import { Classe } from "@ou-ca/ouca-model/classe.object";
 import * as _ from "lodash";
-import { Classe } from "ouca-common/classe.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllClasses,
-  queryToFindNumberOfDonneesByClasseId,
-  queryToFindNumberOfEspecesByClasseId
-} from "../sql/sql-queries-classe";
+import { queryToFindAllClasses, queryToFindNumberOfDonneesByClasseId, queryToFindNumberOfEspecesByClasseId } from "../sql/sql-queries-classe";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_CLASSE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

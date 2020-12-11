@@ -1,18 +1,11 @@
+import { Observateur } from "@ou-ca/ouca-model/observateur.object";
 import * as _ from "lodash";
-import { Observateur } from "ouca-common/observateur.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllObservateurs,
-  queryToFindNumberOfDonneesByObservateurId
-} from "../sql/sql-queries-observateur";
+import { queryToFindAllObservateurs, queryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_OBSERVATEUR } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import {
-  deleteEntityById,
-  findEntityByLibelle,
-  persistEntity
-} from "./sql-api-common";
+import { deleteEntityById, findEntityByLibelle, persistEntity } from "./sql-api-common";
 
 export const findAllObservateurs = async (): Promise<Observateur[]> => {
   const [observateurs, nbDonneesByObservateur] = await Promise.all([

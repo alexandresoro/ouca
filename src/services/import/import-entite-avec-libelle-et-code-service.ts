@@ -1,9 +1,6 @@
-import { EntiteAvecLibelleEtCode } from "ouca-common/entite-avec-libelle-et-code.object";
+import { EntiteAvecLibelleEtCode } from "@ou-ca/ouca-model/entite-avec-libelle-et-code.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import {
-  findEntityByCode,
-  findEntityByLibelle
-} from "../../sql-api/sql-api-common";
+import { findEntityByCode, findEntityByLibelle } from "../../sql-api/sql-api-common";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {

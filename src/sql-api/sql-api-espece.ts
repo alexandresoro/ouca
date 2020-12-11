@@ -1,18 +1,9 @@
+import { Espece } from "@ou-ca/ouca-model/espece.model";
 import * as _ from "lodash";
-import { Espece } from "ouca-common/espece.model";
-import {
-  buildEspeceFromEspeceDb,
-  buildEspecesFromEspecesDb
-} from "../mapping/espece-mapping";
+import { buildEspeceFromEspeceDb, buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
 import { EspeceDb } from "../objects/db/espece-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllEspeces,
-  queryToFindEspeceByCode,
-  queryToFindEspeceByNomFrancais,
-  queryToFindEspeceByNomLatin,
-  queryToFindNumberOfDonneesByEspeceId
-} from "../sql/sql-queries-espece";
+import { queryToFindAllEspeces, queryToFindEspeceByCode, queryToFindEspeceByNomFrancais, queryToFindEspeceByNomLatin, queryToFindNumberOfDonneesByEspeceId } from "../sql/sql-queries-espece";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_ESPECE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

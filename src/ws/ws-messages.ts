@@ -1,4 +1,4 @@
-import { WebsocketUpdateMessage } from "ouca-common/websocket/websocket-update-message";
+import { WebsocketUpdateMessage } from "@ou-ca/ouca-model/websocket/websocket-update-message";
 import WebSocket from "ws";
 import { getAppConfiguration } from "../requests/configuration";
 import { findAllAges } from "../sql-api/sql-api-age";
@@ -14,22 +14,7 @@ import { findAllMeteos } from "../sql-api/sql-api-meteo";
 import { findAllMilieux } from "../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../sql-api/sql-api-observateur";
 import { findAllSexes } from "../sql-api/sql-api-sexe";
-import {
-  TABLE_AGE,
-  TABLE_CLASSE,
-  TABLE_COMMUNE,
-  TABLE_COMPORTEMENT,
-  TABLE_DEPARTEMENT,
-  TABLE_ESPECE,
-  TABLE_ESTIMATION_DISTANCE,
-  TABLE_ESTIMATION_NOMBRE,
-  TABLE_LIEUDIT,
-  TABLE_METEO,
-  TABLE_MILIEU,
-  TABLE_OBSERVATEUR,
-  TABLE_SETTINGS,
-  TABLE_SEXE
-} from "../utils/constants";
+import { TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_OBSERVATEUR, TABLE_SETTINGS, TABLE_SEXE } from "../utils/constants";
 import { WebsocketServer } from "./websocket-server";
 import { wrapObject } from "./ws-wrapper";
 
@@ -50,46 +35,46 @@ const createUpdateMessage = <T extends unknown>(
 export const onTableUpdate = (tableName: string): void => {
   switch (tableName) {
     case TABLE_SETTINGS:
-      this.sendAppConfiguration();
+      void sendAppConfiguration();
       break;
     case TABLE_OBSERVATEUR:
-      this.sendObservateurs();
+      void sendObservateurs();
       break;
     case TABLE_DEPARTEMENT:
-      this.sendDepartements();
+      void sendDepartements();
       break;
     case TABLE_COMMUNE:
-      this.sendCommunes();
+      void sendCommunes();
       break;
     case TABLE_LIEUDIT:
-      this.sendLieuxdits();
+      void sendLieuxdits();
       break;
     case TABLE_CLASSE:
-      this.sendClasses();
+      void sendClasses();
       break;
     case TABLE_ESPECE:
-      this.sendEspeces();
+      void sendEspeces();
       break;
     case TABLE_SEXE:
-      this.sendSexes();
+      void sendSexes();
       break;
     case TABLE_AGE:
-      this.sendAges();
+      void sendAges();
       break;
     case TABLE_ESTIMATION_DISTANCE:
-      this.sendEstimationsDistance();
+      void sendEstimationsDistance();
       break;
     case TABLE_ESTIMATION_NOMBRE:
-      this.sendEstimationsNombre();
+      void sendEstimationsNombre();
       break;
     case TABLE_COMPORTEMENT:
-      this.sendComportements();
+      void sendComportements();
       break;
     case TABLE_MILIEU:
-      this.sendMilieux();
+      void sendMilieux();
       break;
     case TABLE_METEO:
-      this.sendMeteos();
+      void sendMeteos();
       break;
     default:
       break;

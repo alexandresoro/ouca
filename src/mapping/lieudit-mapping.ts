@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/camelcase */
+import { Lieudit } from "@ou-ca/ouca-model/lieudit.model";
 import * as _ from "lodash";
-import { Lieudit } from "ouca-common/lieudit.model";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 
 export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {

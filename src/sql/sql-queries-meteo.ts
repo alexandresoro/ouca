@@ -1,4 +1,4 @@
-import { Meteo } from "ouca-common/meteo.object";
+import { Meteo } from "@ou-ca/ouca-model/meteo.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_METEO } from "../utils/constants";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";
@@ -28,9 +28,9 @@ export const queryToFindMetosByInventaireId = async (
 ): Promise<{ meteoId: number }[]> => {
   return query<{ meteoId: number }[]>(
     "SELECT distinct meteo_id as meteoId" +
-      " FROM inventaire_meteo" +
-      " WHERE inventaire_id=" +
-      inventaireId
+    " FROM inventaire_meteo" +
+    " WHERE inventaire_id=" +
+    inventaireId
   );
 };
 

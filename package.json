@@ -21,12 +21,12 @@
     "start:debug": "node --inspect dist/backend"
   },
   "dependencies": {
+    "@ou-ca/ouca-model": "*",
     "date-fns": "*",
     "date-fns-tz": "*",
     "lodash": "*",
     "mariadb": "*",
     "multiparty": "*",
-    "ouca-common": "*",
     "papaparse": "*",
     "winston": "*",
     "ws": "*",

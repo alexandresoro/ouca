@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import { Age } from "ouca-common/age.object";
-import { AppConfiguration } from "ouca-common/app-configuration.object";
-import { Departement } from "ouca-common/departement.object";
-import { EntiteSimple } from "ouca-common/entite-simple.object";
-import { EstimationNombre } from "ouca-common/estimation-nombre.object";
-import { Observateur } from "ouca-common/observateur.object";
-import { Sexe } from "ouca-common/sexe.object";
+import { Age } from "@ou-ca/ouca-model/age.object";
+import { AppConfiguration } from "@ou-ca/ouca-model/app-configuration.object";
+import { Departement } from "@ou-ca/ouca-model/departement.object";
+import { EntiteSimple } from "@ou-ca/ouca-model/entite-simple.object";
+import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
+import { Observateur } from "@ou-ca/ouca-model/observateur.object";
+import { Sexe } from "@ou-ca/ouca-model/sexe.object";
 import { SettingsDb } from "../objects/db/settings-db.object";
 
 const getSettingAsEntity = <T extends EntiteSimple>(

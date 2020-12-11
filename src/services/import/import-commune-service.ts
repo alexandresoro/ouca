@@ -1,9 +1,5 @@
-import { Commune } from "ouca-common/commune.model";
-import {
-  findCommuneByDepartementIdAndCode,
-  findCommuneByDepartementIdAndNom,
-  persistCommune
-} from "../../sql-api/sql-api-commune";
+import { Commune } from "@ou-ca/ouca-model/commune.model";
+import { findCommuneByDepartementIdAndCode, findCommuneByDepartementIdAndNom, persistCommune } from "../../sql-api/sql-api-commune";
 import { getDepartementByCode } from "../../sql-api/sql-api-departement";
 import { ImportService } from "./import-service";
 

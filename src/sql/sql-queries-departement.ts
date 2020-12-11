@@ -1,4 +1,4 @@
-import { Departement } from "ouca-common/departement.object";
+import { Departement } from "@ou-ca/ouca-model/departement.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_CODE, ORDER_ASC, TABLE_DEPARTEMENT } from "../utils/constants";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";

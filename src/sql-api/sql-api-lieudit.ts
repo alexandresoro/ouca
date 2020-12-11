@@ -1,19 +1,11 @@
+import { areSameCoordinates } from "@ou-ca/ouca-model/coordinates-system/coordinates-helper";
+import { Coordinates } from "@ou-ca/ouca-model/coordinates.object";
+import { Lieudit } from "@ou-ca/ouca-model/lieudit.model";
 import * as _ from "lodash";
-import { areSameCoordinates } from "ouca-common/coordinates-system/coordinates-helper";
-import { Coordinates } from "ouca-common/coordinates.object";
-import { Lieudit } from "ouca-common/lieudit.model";
-import {
-  buildLieuditDbFromLieudit,
-  buildLieuditFromLieuditDb,
-  buildLieuxditsFromLieuxditsDb
-} from "../mapping/lieudit-mapping";
+import { buildLieuditDbFromLieudit, buildLieuditFromLieuditDb, buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllLieuxDits,
-  queryToFindLieuDitByCommuneIdAndNom,
-  queryToFindNumberOfDonneesByLieuDitId
-} from "../sql/sql-queries-lieudit";
+import { queryToFindAllLieuxDits, queryToFindLieuDitByCommuneIdAndNom, queryToFindNumberOfDonneesByLieuDitId } from "../sql/sql-queries-lieudit";
 import { queryToFindOneById } from "../sql/sql-queries-utils";
 import { TABLE_LIEUDIT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

@@ -1,5 +1,5 @@
+import { Comportement } from "@ou-ca/ouca-model/comportement.object";
 import * as _ from "lodash";
-import { Comportement } from "ouca-common/comportement.object";
 import { ComportementDb } from "../objects/db/comportement-db.model";
 
 export const buildComportementFromComportementDb = (

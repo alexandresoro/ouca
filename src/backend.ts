@@ -1,6 +1,6 @@
+import { WebsocketMessage } from "@ou-ca/ouca-model/websocket/websocket-message.model";
 import * as http from "http";
 import * as multiparty from "multiparty";
-import { WebsocketMessage } from "ouca-common/websocket/websocket-message.model";
 import { createLogger, format, transports } from "winston";
 import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
@@ -15,6 +15,7 @@ const hostname = isDockerMode ? "0.0.0.0" : "127.0.0.1";
 const port = 4000;
 
 const loggerFormat = format.printf(({ level, message, timestamp }) => {
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   return `${timestamp} ${level}: ${message}`;
 });
 
@@ -109,11 +110,11 @@ const wss = WebsocketServer.createServer(server);
 
 wss.on("connection", (client) => {
   client.on("message", (data): void => {
-    const message: WebsocketMessage = JSON.parse(data.toString());
+    const message = JSON.parse(data.toString()) as WebsocketMessage;
     logger.info("Message received from websocket: " + JSON.stringify(message));
     if (message.content === "init") {
       logger.info("Sending initial data to client");
-      sendInitialData(client);
+      void sendInitialData(client);
     } else if (message.content === "ping") {
       WebsocketServer.sendMessageToClients(
         JSON.stringify({

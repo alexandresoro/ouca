@@ -1,71 +1,39 @@
+import { Age } from "@ou-ca/ouca-model/age.object";
+import { Classe } from "@ou-ca/ouca-model/classe.object";
+import { Commune } from "@ou-ca/ouca-model/commune.model";
+import { Comportement } from "@ou-ca/ouca-model/comportement.object";
+import { Departement } from "@ou-ca/ouca-model/departement.object";
+import { Espece } from "@ou-ca/ouca-model/espece.model";
+import { EstimationDistance } from "@ou-ca/ouca-model/estimation-distance.object";
+import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
+import { findClasseById } from "@ou-ca/ouca-model/helpers/classe.helper";
+import { findCommuneById } from "@ou-ca/ouca-model/helpers/commune.helper";
+import { findDepartementById } from "@ou-ca/ouca-model/helpers/departement.helper";
+import { Lieudit } from "@ou-ca/ouca-model/lieudit.model";
+import { Meteo } from "@ou-ca/ouca-model/meteo.object";
+import { Milieu } from "@ou-ca/ouca-model/milieu.object";
+import { Observateur } from "@ou-ca/ouca-model/observateur.object";
+import { PostResponse } from "@ou-ca/ouca-model/post-response.object";
+import { Sexe } from "@ou-ca/ouca-model/sexe.object";
 import * as _ from "lodash";
-import { Age } from "ouca-common/age.object";
-import { Classe } from "ouca-common/classe.object";
-import { Commune } from "ouca-common/commune.model";
-import { Comportement } from "ouca-common/comportement.object";
-import { Departement } from "ouca-common/departement.object";
-import { Espece } from "ouca-common/espece.model";
-import { EstimationDistance } from "ouca-common/estimation-distance.object";
-import { EstimationNombre } from "ouca-common/estimation-nombre.object";
-import { findClasseById } from "ouca-common/helpers/classe.helper";
-import { findCommuneById } from "ouca-common/helpers/commune.helper";
-import { findDepartementById } from "ouca-common/helpers/departement.helper";
-import { Lieudit } from "ouca-common/lieudit.model";
-import { Meteo } from "ouca-common/meteo.object";
-import { Milieu } from "ouca-common/milieu.object";
-import { Observateur } from "ouca-common/observateur.object";
-import { PostResponse } from "ouca-common/post-response.object";
-import { Sexe } from "ouca-common/sexe.object";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllAges, persistAge } from "../sql-api/sql-api-age";
 import { findAllClasses, persistClasse } from "../sql-api/sql-api-classe";
 import { deleteEntityById } from "../sql-api/sql-api-common";
 import { findAllCommunes, persistCommune } from "../sql-api/sql-api-commune";
-import {
-  findAllComportements,
-  persistComportement
-} from "../sql-api/sql-api-comportement";
-import {
-  findAllDepartements,
-  persistDepartement
-} from "../sql-api/sql-api-departement";
-import {
-  countSpecimensByAgeForEspeceId,
-  countSpecimensBySexeForEspeceId
-} from "../sql-api/sql-api-donnee";
+import { findAllComportements, persistComportement } from "../sql-api/sql-api-comportement";
+import { findAllDepartements, persistDepartement } from "../sql-api/sql-api-departement";
+import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId } from "../sql-api/sql-api-donnee";
 import { findAllEspeces, persistEspece } from "../sql-api/sql-api-espece";
-import {
-  findAllEstimationsDistance,
-  persistEstimationDistance
-} from "../sql-api/sql-api-estimation-distance";
-import {
-  findAllEstimationsNombre,
-  persistEstimationNombre
-} from "../sql-api/sql-api-estimation-nombre";
+import { findAllEstimationsDistance, persistEstimationDistance } from "../sql-api/sql-api-estimation-distance";
+import { findAllEstimationsNombre, persistEstimationNombre } from "../sql-api/sql-api-estimation-nombre";
 import { findAllLieuxDits, persistLieuDit } from "../sql-api/sql-api-lieudit";
 import { findAllMeteos, persistMeteo } from "../sql-api/sql-api-meteo";
 import { findAllMilieux, persistMilieu } from "../sql-api/sql-api-milieu";
-import {
-  deleteObservateur,
-  findAllObservateurs,
-  persistObservateur
-} from "../sql-api/sql-api-observateur";
+import { deleteObservateur, findAllObservateurs, persistObservateur } from "../sql-api/sql-api-observateur";
 import { findAllSexes, persistSexe } from "../sql-api/sql-api-sexe";
-import {
-  TABLE_AGE,
-  TABLE_CLASSE,
-  TABLE_COMMUNE,
-  TABLE_COMPORTEMENT,
-  TABLE_DEPARTEMENT,
-  TABLE_ESPECE,
-  TABLE_ESTIMATION_DISTANCE,
-  TABLE_ESTIMATION_NOMBRE,
-  TABLE_LIEUDIT,
-  TABLE_METEO,
-  TABLE_MILIEU,
-  TABLE_SEXE
-} from "../utils/constants";
+import { TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_SEXE } from "../utils/constants";
 import { writeToExcel } from "../utils/export-excel-utils";
 import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 

@@ -1,7 +1,7 @@
+import { EntiteSimple } from "@ou-ca/ouca-model/entite-simple.object";
 import { parse } from "date-fns";
 import { fr as locale } from "date-fns/locale";
 import * as _ from "lodash";
-import { EntiteSimple } from "ouca-common/entite-simple.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 
 export const toCamel = (s: string): string => {

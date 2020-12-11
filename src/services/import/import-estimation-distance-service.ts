@@ -1,4 +1,4 @@
-import { EstimationDistance } from "ouca-common/estimation-distance.object";
+import { EstimationDistance } from "@ou-ca/ouca-model/estimation-distance.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistEstimationDistance } from "../../sql-api/sql-api-estimation-distance";
 import { TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";

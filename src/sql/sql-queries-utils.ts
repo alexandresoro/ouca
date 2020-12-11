@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import * as _ from "lodash";
 import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -224,12 +223,12 @@ export const queryToDeleteAnEntityByAttribute = async (
 ): Promise<SqlSaveResponse> => {
   return query<SqlSaveResponse>(
     "DELETE FROM " +
-      tableName +
-      " WHERE " +
-      attributeName +
-      '="' +
-      attributeValue +
-      '"'
+    tableName +
+    " WHERE " +
+    attributeName +
+    '="' +
+    attributeValue +
+    '"'
   );
 };
 
@@ -258,11 +257,11 @@ export const queryToFindEntityByCodeAndLibelle = async <T>(
 ): Promise<T> => {
   return query<T>(
     "SELECT * FROM " +
-      entityName +
-      ' WHERE code="' +
-      code.trim() +
-      '" AND libelle="' +
-      libelle.trim() +
-      '"'
+    entityName +
+    ' WHERE code="' +
+    code.trim() +
+    '" AND libelle="' +
+    libelle.trim() +
+    '"'
   );
 };

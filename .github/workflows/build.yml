@@ -8,7 +8,7 @@ on:
 
 env:
   IMAGE_NAME_DOCKER_HUB: basenaturaliste/backend
-  IMAGE_NAME_GITHUB_PACKAGES: backend
+  NPM_GITHUB_TOKEN: ${{secrets.NPM_DOCKERFILE_TOKEN}}
 
 jobs:
   build:
@@ -20,14 +20,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
       - name: Lint
         run: yarn lint
+
       - name: Check build
         run: yarn build:prod
 
@@ -39,43 +43,36 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
       - name: Set up Docker Buildx
         id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v3
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
-          buildx-version: latest
-          qemu-version: latest
-      - name: Log into registry
-        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-      - name: Build an push multi-arch image
-        run: |
-          docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            --output "type=image,push=true" \
-            --file Dockerfile \
-            --tag $IMAGE_NAME_DOCKER_HUB:stable .
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-  docker-github:
-    needs: build
-    if: github.event_name == 'push'
+      - name: Log into GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
 
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build image
-        run: docker build . --file Dockerfile --tag image
-
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
-      - name: Push image to Github packages
-        run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME_GITHUB_PACKAGES
-
-          # Change all uppercase to lowercase
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          docker tag image $IMAGE_ID:latest
-          docker push $IMAGE_ID:latest
+      - name: Build and push to GitHub Container Registry
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ${{ env.IMAGE_NAME_DOCKER_HUB }}:stable
+          build-args: NPM_GITHUB_TOKEN=${{ env.NPM_GITHUB_TOKEN }}

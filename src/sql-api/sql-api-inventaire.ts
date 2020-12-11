@@ -1,31 +1,15 @@
+import { areSameCoordinates } from "@ou-ca/ouca-model/coordinates-system";
+import { Coordinates } from "@ou-ca/ouca-model/coordinates.object";
+import { Inventaire } from "@ou-ca/ouca-model/inventaire.object";
 import * as _ from "lodash";
-import { areSameCoordinates } from "ouca-common/coordinates-system";
-import { Coordinates } from "ouca-common/coordinates.object";
-import { Inventaire } from "ouca-common/inventaire.object";
-import {
-  buildInventaireDbFromInventaire,
-  buildInventaireFromInventaireDb
-} from "../mapping/inventaire-mapping";
+import { buildInventaireDbFromInventaire, buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindCoordinatesByInventaireId,
-  queryToFindInventaireIdByAllAttributes,
-  queryToFindInventaireIdById
-} from "../sql/sql-queries-inventaire";
+import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdByAllAttributes, queryToFindInventaireIdById } from "../sql/sql-queries-inventaire";
 import { queryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
 import { queryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
-import {
-  queriesToSaveListOfEntities,
-  queryToDeleteAnEntityByAttribute,
-  queryToFindOneById
-} from "../sql/sql-queries-utils";
-import {
-  INVENTAIRE_ID,
-  TABLE_INVENTAIRE,
-  TABLE_INVENTAIRE_ASSOCIE,
-  TABLE_INVENTAIRE_METEO
-} from "../utils/constants";
+import { queriesToSaveListOfEntities, queryToDeleteAnEntityByAttribute, queryToFindOneById } from "../sql/sql-queries-utils";
+import { INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../utils/constants";
 import { mapAssociesIds, mapMeteosIds } from "../utils/mapping-utils";
 import { areArraysContainingSameValues } from "../utils/utils";
 import { deleteEntityById, persistEntity } from "./sql-api-common";
@@ -83,8 +67,8 @@ const findCoordinatesByInventaireId = async (
     coordinatesDb[0] &&
     !_.isNil(coordinatesDb[0].longitude)
     ? {
-        ...coordinatesDb[0]
-      }
+      ...coordinatesDb[0]
+    }
     : null;
 };
 

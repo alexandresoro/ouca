@@ -1,10 +1,7 @@
+import { Milieu } from "@ou-ca/ouca-model/milieu.object";
 import * as _ from "lodash";
-import { Milieu } from "ouca-common/milieu.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllMilieux,
-  queryToFindNumberOfDonneesByMilieuId
-} from "../sql/sql-queries-milieu";
+import { queryToFindAllMilieux, queryToFindNumberOfDonneesByMilieuId } from "../sql/sql-queries-milieu";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_MILIEU } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

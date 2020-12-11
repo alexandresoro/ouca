@@ -1,4 +1,4 @@
-import { Sexe } from "ouca-common/sexe.object";
+import { Sexe } from "@ou-ca/ouca-model/sexe.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_SEXE } from "../utils/constants";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";

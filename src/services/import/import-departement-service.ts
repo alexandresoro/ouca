@@ -1,8 +1,5 @@
-import { Departement } from "ouca-common/departement.object";
-import {
-  getDepartementByCode,
-  persistDepartement
-} from "../../sql-api/sql-api-departement";
+import { Departement } from "@ou-ca/ouca-model/departement.object";
+import { getDepartementByCode, persistDepartement } from "../../sql-api/sql-api-departement";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {

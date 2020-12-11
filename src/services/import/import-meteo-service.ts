@@ -1,4 +1,4 @@
-import { Meteo } from "ouca-common/meteo.object";
+import { Meteo } from "@ou-ca/ouca-model/meteo.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistMeteo } from "../../sql-api/sql-api-meteo";
 import { TABLE_METEO } from "../../utils/constants";

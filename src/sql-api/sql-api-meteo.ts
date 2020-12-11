@@ -1,10 +1,7 @@
+import { Meteo } from "@ou-ca/ouca-model/meteo.object";
 import * as _ from "lodash";
-import { Meteo } from "ouca-common/meteo.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllMeteos,
-  queryToFindNumberOfDonneesByMeteoId
-} from "../sql/sql-queries-meteo";
+import { queryToFindAllMeteos, queryToFindNumberOfDonneesByMeteoId } from "../sql/sql-queries-meteo";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_METEO } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";

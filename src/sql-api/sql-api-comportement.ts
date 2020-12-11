@@ -1,14 +1,8 @@
+import { Comportement } from "@ou-ca/ouca-model/comportement.object";
 import * as _ from "lodash";
-import { Comportement } from "ouca-common/comportement.object";
-import {
-  buildComportementDbFromComportement,
-  buildComportementsFromComportementsDb
-} from "../mapping/comportement-mapping";
+import { buildComportementDbFromComportement, buildComportementsFromComportementsDb } from "../mapping/comportement-mapping";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import {
-  queryToFindAllComportements,
-  queryToFindNumberOfDonneesByComportementId
-} from "../sql/sql-queries-comportement";
+import { queryToFindAllComportements, queryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
 import { TABLE_COMPORTEMENT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { persistEntity } from "./sql-api-common";
