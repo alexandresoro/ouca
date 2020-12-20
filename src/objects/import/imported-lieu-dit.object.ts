@@ -1,5 +1,6 @@
 import { CoordinatesSystem } from "@ou-ca/ouca-model/coordinates-system";
 import { Lieudit } from "@ou-ca/ouca-model/lieudit.model";
+import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";
 
 const DEPARTEMENT_INDEX = 0;
 const COMMUNE_INDEX = 1;
@@ -9,8 +10,6 @@ const LONGITUDE_INDEX = 4;
 const ALTITUDE_INDEX = 5;
 
 const LIEUDIT_MAX_LENGTH = 150;
-const ALTITUDE_MIN_VALUE = 0;
-const ALTITUDE_MAX_VALUE = 65535;
 
 export class ImportedLieuDit {
 
@@ -50,35 +49,33 @@ export class ImportedLieuDit {
 
   checkValidity = (): string => {
     const departementError = this.checkDepartementValidity();
-    if(departementError){
+    if (departementError) {
       return departementError;
     }
 
     const communeError = this.checkCommuneValidity();
-    if(communeError){
+    if (communeError) {
       return communeError;
     }
 
     const nomLieuditError = this.checkNomValidity();
-    if(nomLieuditError){
+    if (nomLieuditError) {
       return nomLieuditError;
     }
 
-    const altitudeError = this.checkAltitudeValidity();
-    if(altitudeError){
-      return altitudeError;
+    const latitudeError = CoordinatesValidatorHelper.checkLatitudeValidity(this.latitude, this.coordinatesSystem);
+    if (latitudeError) {
+      return latitudeError;
     }
 
-    const longitudeError =this.checkLongitudeValidity(
-    );
-    if(longitudeError){
+    const longitudeError = CoordinatesValidatorHelper.checkLongitudeValidity(this.longitude, this.coordinatesSystem);
+    if (longitudeError) {
       return longitudeError;
     }
 
-    const latitudeError =  this.checkLatitudeValidity(
-    );
-    if(latitudeError){
-      return latitudeError;
+    const altitudeError = CoordinatesValidatorHelper.checkAltitudeValidity(this.altitude);
+    if (altitudeError) {
+      return altitudeError;
     }
   }
 
@@ -88,7 +85,7 @@ export class ImportedLieuDit {
   };
 
   private checkCommuneValidity = (): string => {
-      return this.commune ? null :  "La commune du lieu-dit ne peut pas être vide";   
+    return this.commune ? null : "La commune du lieu-dit ne peut pas être vide";
   };
 
   private checkNomValidity = (): string => {
@@ -103,57 +100,5 @@ export class ImportedLieuDit {
     return null;
   };
 
-  private checkAltitudeValidity(): string {
-    if (!this.altitude) {
-      return "L'altitude du lieu-dit ne peut pas être vide";
-    }
 
-    const altitude = Number(this.altitude);
-
-    if (!Number.isInteger(altitude)) {
-      return "L'altitude du lieu-dit doit être un entier";
-    }
-
-    if (
-      altitude < ALTITUDE_MIN_VALUE ||
-      altitude > ALTITUDE_MAX_VALUE
-    ) {
-    return `L'altitude du lieu-dit doit être un entier compris entre ${ALTITUDE_MIN_VALUE} et ${ALTITUDE_MAX_VALUE}`;
-    }
-
-    return null;
-  }
-
-  private checkLongitudeValidity(
-  ): string {
-    if (!this.longitude) {
-    return "La longitude du lieu-dit ne peut pas être vide";
-    }
-
-    const longitude = Number(this.longitude);
-
-    if (
-      isNaN(longitude) ||
-      longitude < this.coordinatesSystem.longitudeRange.min ||
-      longitude > this.coordinatesSystem.longitudeRange.max
-    ) {
-      return `La longitude du lieu-dit doit être un nombre compris entre ${this.coordinatesSystem.longitudeRange.min} et ${this.coordinatesSystem.longitudeRange.max}`;
-    }
-  }
-
-  private checkLatitudeValidity(): string {
-    if (!this.latitude) {
-      return "La latitude du lieu-dit ne peut pas être vide";
-    }
-
-    const latitude = Number(this.latitude);
-
-    if (
-      isNaN(latitude) ||
-      latitude < this.coordinatesSystem.latitudeRange.min ||
-      latitude > this.coordinatesSystem.latitudeRange.max
-    ) {
-      return `La latitude du lieu-dit doit être un entier compris entre " ${this.coordinatesSystem.latitudeRange.min} et ${this.coordinatesSystem.latitudeRange.max}`;
-    }
-  }
 }
