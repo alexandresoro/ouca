@@ -37,6 +37,7 @@
     "@types/lodash": "*",
     "@types/multiparty": "*",
     "@types/node": "12",
+    "@types/papaparse": "*",
     "@types/ws": "*",
     "@types/yargs": "*",
     "@typescript-eslint/eslint-plugin": "*",
