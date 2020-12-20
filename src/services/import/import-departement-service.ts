@@ -1,59 +1,47 @@
 import { Departement } from "@ou-ca/ouca-model/departement.object";
-import { getDepartementByCode, persistDepartement } from "../../sql-api/sql-api-departement";
+import { ImportedDepartement } from "../../objects/import/imported-departement.object";
+import { findAllDepartements, persistDepartement } from "../../sql-api/sql-api-departement";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {
-  private readonly CODE_INDEX = 0;
-
-  private readonly CODE_MAX_LENGTH = 100;
+  private departements: Departement[];
 
   protected getNumberOfColumns = (): number => {
     return 1;
   };
 
-  protected buildEntity = (entityTab: string[]): Departement => {
-    return {
-      id: null,
-      code: entityTab[this.CODE_INDEX].trim()
-    };
+
+  protected init = async (): Promise<void> => {
+    this.departements = await findAllDepartements();
   };
 
-  protected createEntity = async (entityTab: string[]): Promise<boolean> => {
-    if (!this.isCodeValid(entityTab[this.CODE_INDEX])) {
-      return false;
+  protected importEntity = async (departementTab: string[]): Promise<string> => {
+    const importedDepartement = new ImportedDepartement(departementTab);
+
+    const dataValidity = importedDepartement.checkValidity();
+    if (dataValidity) {
+      return dataValidity;
     }
 
     // Check that the departement does not exist
-    const departement = await getDepartementByCode(entityTab[this.CODE_INDEX]);
-
-    if (departement) {
-      this.message = "Ce département existe déjà";
-      return false;
+    const existingDepartement = this.departements.find((d) => {
+      return d.code === importedDepartement.code;
+    });
+    if (existingDepartement) {
+      return "Ce département existe déjà";
     }
 
     // Create and save the commune
-    const departementToSave = this.buildEntity(entityTab);
+    const departementToSave = importedDepartement.buildDepartement();
 
     const saveResult = await persistDepartement(departementToSave);
-    return !!saveResult?.insertId;
-  };
-
-  private isCodeValid = (code: string): boolean => {
-    code = code.trim();
-
-    if (!code) {
-      this.message = "Le département ne peut pas être vide";
-      return false;
+    if (!saveResult?.insertId) {
+      return "Une erreur est survenue pendant l'import";
     }
 
-    if (code.length > this.CODE_MAX_LENGTH) {
-      this.message =
-        "La longueur maximale du département est de " +
-        this.CODE_MAX_LENGTH +
-        " caractères";
-      return false;
-    }
-
-    return true;
+    this.departements.push(departementToSave);
+    return null;
   };
+
+
 }

@@ -1,50 +1,50 @@
 import Papa from "papaparse";
 
+const COMMENT_PREFIX = "###";
+
 export abstract class ImportService {
-  protected message: string;
 
-  private numberOfLines: number;
-
-  private numberOfErrors: number;
-
-  private errors: string[][];
+  message: string;
 
   public importFile = async (fileContent: string): Promise<string> => {
-    this.numberOfLines = 0;
-    this.numberOfErrors = 0;
-    this.errors = [];
-
     if (!fileContent) {
       return "Le contenu du fichier n'a pas pu être lu";
     }
 
-    const content = Papa.parse(fileContent, {
-      delimiter: ";"
+    const content = Papa.parse<string[]>(fileContent, {
+      delimiter: ";",
+      encoding: "UTF-8"
     });
 
-    if (content.data) {
-      await this.init();
-      for (const lineTab of content.data) {
-        if (lineTab.length > 0 && !lineTab[0].startsWith("###")) {
-          await this.importLine(lineTab);
-        }
-      }
-    } else {
+    if (!content.data) {
       return "Le contenu du fichier n'a pas pu être lu";
     }
 
+    const numberOfLines = 0;
+    let numberOfErrors = 0;
+    const errors = [];
+
+    await this.init();
+
+    for (const lineTab of content.data) {
+      if (lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX)) {
+        const errorMessage = await this.importLine(lineTab);
+
+        if (errorMessage) {
+          numberOfErrors++;
+          errors.push(this.buildErrorObject(lineTab, errorMessage));
+        }
+      }
+    }
+
     console.log(
-      "Résultats de l'import : " +
-        (this.numberOfLines - this.numberOfErrors) +
-        "/" +
-        this.numberOfLines +
-        " importées avec succès --> " +
-        this.numberOfErrors +
-        " lignes en erreur"
+      `Résultat de l'import : ${(numberOfLines - numberOfErrors)}/${numberOfLines} importées avec succès --> ${numberOfErrors} lignes en erreur`
     );
 
-    if (this.errors.length > 0) {
-      return Papa.unparse(this.errors, { delimiter: ";" });
+    if (errors.length > 0) {
+      return Papa.unparse(errors, {
+        delimiter: ";"
+      });
     } else {
       return "Aucune erreur pendant l'import";
     }
@@ -52,45 +52,28 @@ export abstract class ImportService {
 
   protected abstract getNumberOfColumns(): number;
 
-  protected abstract createEntity(entityTab: string[]): Promise<boolean>;
+  protected createEntity = (entityTab: string[]): Promise<boolean> => {
+    return null;
+  };
 
   protected init = async (): Promise<void> => {
-    //TODO
+    // TO DO catch errors
   };
 
-  private importLine = async (entityTab: string[]): Promise<void> => {
-    this.message = "";
-
-    this.numberOfLines++;
-
-    if (this.hasExpectedNumberOfColumns(entityTab)) {
+  private importLine = async (entityTab: string[]): Promise<string> => {
+    if (entityTab?.length === this.getNumberOfColumns()) {
       await this.createEntity(entityTab);
-    }
-
-    if (this.message) {
-      // Display error message
-      this.numberOfErrors++;
-      this.errors.push(this.buildErrorObject(entityTab));
-    }
-  };
-
-  private hasExpectedNumberOfColumns = (entityTab: string[]): boolean => {
-    if (!!entityTab && entityTab.length === this.getNumberOfColumns()) {
-      return true;
+      return "toto";
     } else {
-      this.message =
-        "Le nombre de colonnes de cette ligne est incorrect: " +
-        entityTab.length +
-        " colonne(s) au lieu de " +
-        this.getNumberOfColumns() +
-        " attendue(s)";
-
-      return false;
+      return `Le nombre de colonnes de cette ligne est incorrect: ${entityTab.length} colonne(s) au lieu de ${this.getNumberOfColumns()} attendue(s)`;
     }
   };
 
-  private buildErrorObject = (entityTab: string[]): string[] => {
-    entityTab.push(this.message);
+  private buildErrorObject = (
+    entityTab: string[],
+    errorMessage: string
+  ): string[] => {
+    entityTab.push(errorMessage);
     return entityTab;
   };
 }
