@@ -139,6 +139,12 @@ export const queryToFindLastDonneeId = async (): Promise<{ id: number }[]> => {
   );
 };
 
+export const queryToFindAllDonnees = async (): Promise<
+  FlatDonneeWithMinimalData[]
+> => {
+  return query<FlatDonneeWithMinimalData[]>(getBaseQueryToFindDonnees());
+};
+
 export const queryToFindDonneeById = async (
   id: number
 ): Promise<FlatDonneeWithMinimalData[]> => {
@@ -226,215 +232,217 @@ const getQueryToFindDonneesIdsByMilieuxIds = (milieuxIds: number[]): string => {
 };
 
 export const queryToFindDonneesByCriterion = async (
-  criterion: DonneesFilter
+  criterion?: DonneesFilter
 ): Promise<FlatDonnee[]> => {
   let queryStr: string = getBaseQueryToFindDetailedDonnees();
 
   const whereTab: string[] = [];
 
-  if (criterion.id) {
-    whereTab.push(" t_donnee.id=" + criterion.id);
-  }
+  if (criterion) {
+    if (criterion.id) {
+      whereTab.push(" t_donnee.id=" + criterion.id);
+    }
 
-  if (
-    criterion.especeGroup.classes &&
-    criterion.especeGroup.classes.length > 0
-  ) {
-    whereTab.push(
-      " t_classe.id IN (" + criterion.especeGroup.classes.join(",") + ")"
-    );
-  }
+    if (
+      criterion.especeGroup.classes &&
+      criterion.especeGroup.classes.length > 0
+    ) {
+      whereTab.push(
+        " t_classe.id IN (" + criterion.especeGroup.classes.join(",") + ")"
+      );
+    }
 
-  if (
-    criterion.especeGroup.especes &&
-    criterion.especeGroup.especes.length > 0
-  ) {
-    whereTab.push(
-      " t_espece.id IN (" + criterion.especeGroup.especes.join(",") + ")"
-    );
-  }
+    if (
+      criterion.especeGroup.especes &&
+      criterion.especeGroup.especes.length > 0
+    ) {
+      whereTab.push(
+        " t_espece.id IN (" + criterion.especeGroup.especes.join(",") + ")"
+      );
+    }
 
-  if (
-    criterion.lieuditGroup.departements &&
-    criterion.lieuditGroup.departements.length > 0
-  ) {
-    whereTab.push(
-      " t_departement.id IN (" +
-      criterion.lieuditGroup.departements.join(",") +
-      ")"
-    );
-  }
+    if (
+      criterion.lieuditGroup.departements &&
+      criterion.lieuditGroup.departements.length > 0
+    ) {
+      whereTab.push(
+        " t_departement.id IN (" +
+          criterion.lieuditGroup.departements.join(",") +
+          ")"
+      );
+    }
 
-  if (
-    criterion.lieuditGroup.communes &&
-    criterion.lieuditGroup.communes.length > 0
-  ) {
-    whereTab.push(
-      " t_commune.id IN (" + criterion.lieuditGroup.communes.join(",") + ")"
-    );
-  }
+    if (
+      criterion.lieuditGroup.communes &&
+      criterion.lieuditGroup.communes.length > 0
+    ) {
+      whereTab.push(
+        " t_commune.id IN (" + criterion.lieuditGroup.communes.join(",") + ")"
+      );
+    }
 
-  if (
-    criterion.lieuditGroup.lieuxdits &&
-    criterion.lieuditGroup.lieuxdits.length > 0
-  ) {
-    whereTab.push(
-      " t_lieudit.id IN (" + criterion.lieuditGroup.lieuxdits.join(",") + ")"
-    );
-  }
+    if (
+      criterion.lieuditGroup.lieuxdits &&
+      criterion.lieuditGroup.lieuxdits.length > 0
+    ) {
+      whereTab.push(
+        " t_lieudit.id IN (" + criterion.lieuditGroup.lieuxdits.join(",") + ")"
+      );
+    }
 
-  if (criterion.sexes && criterion.sexes.length > 0) {
-    whereTab.push(" t_sexe.id IN (" + criterion.sexes.join(",") + ")");
-  }
+    if (criterion.sexes && criterion.sexes.length > 0) {
+      whereTab.push(" t_sexe.id IN (" + criterion.sexes.join(",") + ")");
+    }
 
-  if (criterion.ages && criterion.ages.length > 0) {
-    whereTab.push(" t_age.id IN (" + criterion.ages.join(",") + ")");
-  }
+    if (criterion.ages && criterion.ages.length > 0) {
+      whereTab.push(" t_age.id IN (" + criterion.ages.join(",") + ")");
+    }
 
-  if (
-    criterion.nombreGroup.estimationsNombre &&
-    criterion.nombreGroup.estimationsNombre.length > 0
-  ) {
-    whereTab.push(
-      " t_estim_nb.id IN (" +
-      criterion.nombreGroup.estimationsNombre.join(",") +
-      ")"
-    );
-  }
+    if (
+      criterion.nombreGroup.estimationsNombre &&
+      criterion.nombreGroup.estimationsNombre.length > 0
+    ) {
+      whereTab.push(
+        " t_estim_nb.id IN (" +
+          criterion.nombreGroup.estimationsNombre.join(",") +
+          ")"
+      );
+    }
 
-  if (
-    criterion.distanceGroup.estimationsDistance &&
-    criterion.distanceGroup.estimationsDistance.length > 0
-  ) {
-    whereTab.push(
-      " t_estim_dist.id IN (" +
-      criterion.distanceGroup.estimationsDistance.join(",") +
-      ")"
-    );
-  }
+    if (
+      criterion.distanceGroup.estimationsDistance &&
+      criterion.distanceGroup.estimationsDistance.length > 0
+    ) {
+      whereTab.push(
+        " t_estim_dist.id IN (" +
+          criterion.distanceGroup.estimationsDistance.join(",") +
+          ")"
+      );
+    }
 
-  if (criterion.observateurs && criterion.observateurs.length > 0) {
-    whereTab.push(
-      " t_observateur.id IN (" + criterion.observateurs.join(",") + ")"
-    );
-  }
+    if (criterion.observateurs && criterion.observateurs.length > 0) {
+      whereTab.push(
+        " t_observateur.id IN (" + criterion.observateurs.join(",") + ")"
+      );
+    }
 
-  if (criterion.fromDate) {
-    whereTab.push(
-      " t_inventaire.date>='" +
-      format(
-        interpretDateTimestampAsLocalTimeZoneDate(criterion.fromDate),
-        DATE_PATTERN
-      ) +
-      "'"
-    );
-  }
+    if (criterion.fromDate) {
+      whereTab.push(
+        " t_inventaire.date>='" +
+          format(
+            interpretDateTimestampAsLocalTimeZoneDate(criterion.fromDate),
+            DATE_PATTERN
+          ) +
+          "'"
+      );
+    }
 
-  if (criterion.toDate) {
-    whereTab.push(
-      " t_inventaire.date<='" +
-      format(
-        interpretDateTimestampAsLocalTimeZoneDate(criterion.toDate),
-        DATE_PATTERN
-      ) +
-      "'"
-    );
-  }
+    if (criterion.toDate) {
+      whereTab.push(
+        " t_inventaire.date<='" +
+          format(
+            interpretDateTimestampAsLocalTimeZoneDate(criterion.toDate),
+            DATE_PATTERN
+          ) +
+          "'"
+      );
+    }
 
-  if (criterion.temperature && Number.isInteger(criterion.temperature)) {
-    whereTab.push(" t_inventaire.temperature=" + criterion.temperature);
-  }
+    if (criterion.temperature && Number.isInteger(criterion.temperature)) {
+      whereTab.push(" t_inventaire.temperature=" + criterion.temperature);
+    }
 
-  if (
-    criterion.nombreGroup.nombre &&
-    Number.isInteger(criterion.nombreGroup.nombre)
-  ) {
-    whereTab.push(" t_donnee.nombre=" + criterion.nombreGroup.nombre);
-  }
+    if (
+      criterion.nombreGroup.nombre &&
+      Number.isInteger(criterion.nombreGroup.nombre)
+    ) {
+      whereTab.push(" t_donnee.nombre=" + criterion.nombreGroup.nombre);
+    }
 
-  if (
-    criterion.distanceGroup.distance &&
-    Number.isInteger(criterion.distanceGroup.distance)
-  ) {
-    whereTab.push(" t_donnee.distance=" + criterion.distanceGroup.distance);
-  }
+    if (
+      criterion.distanceGroup.distance &&
+      Number.isInteger(criterion.distanceGroup.distance)
+    ) {
+      whereTab.push(" t_donnee.distance=" + criterion.distanceGroup.distance);
+    }
 
-  if (criterion.regroupement && Number.isInteger(criterion.regroupement)) {
-    whereTab.push(" t_donnee.regroupement=" + criterion.regroupement);
-  }
+    if (criterion.regroupement && Number.isInteger(criterion.regroupement)) {
+      whereTab.push(" t_donnee.regroupement=" + criterion.regroupement);
+    }
 
-  if (criterion.heure) {
-    whereTab.push(' t_inventaire.heure="' + criterion.heure + '"');
-  }
+    if (criterion.heure) {
+      whereTab.push(' t_inventaire.heure="' + criterion.heure + '"');
+    }
 
-  if (criterion.duree) {
-    whereTab.push(' t_inventaire.duree="' + criterion.duree + '"');
-  }
+    if (criterion.duree) {
+      whereTab.push(' t_inventaire.duree="' + criterion.duree + '"');
+    }
 
-  if (criterion.commentaire) {
-    whereTab.push(
-      ' t_donnee.commentaire like "%' + criterion.commentaire + '%"'
-    );
-  }
+    if (criterion.commentaire) {
+      whereTab.push(
+        ' t_donnee.commentaire like "%' + criterion.commentaire + '%"'
+      );
+    }
 
-  if (criterion.associes && criterion.associes.length > 0) {
-    whereTab.push(
-      " t_inventaire.id IN" +
-      " (SELECT distinct t_inventaire_associe.inventaire_id" +
-      " FROM " +
-      TABLE_INVENTAIRE_ASSOCIE +
-      " t_inventaire_associe" +
-      " WHERE t_inventaire_associe.observateur_id IN (" +
-      criterion.associes.join(",") +
-      "))"
-    );
-  }
+    if (criterion.associes && criterion.associes.length > 0) {
+      whereTab.push(
+        " t_inventaire.id IN" +
+          " (SELECT distinct t_inventaire_associe.inventaire_id" +
+          " FROM " +
+          TABLE_INVENTAIRE_ASSOCIE +
+          " t_inventaire_associe" +
+          " WHERE t_inventaire_associe.observateur_id IN (" +
+          criterion.associes.join(",") +
+          "))"
+      );
+    }
 
-  if (criterion.meteos && criterion.meteos.length > 0) {
-    whereTab.push(
-      " t_inventaire.id IN" +
-      " (SELECT distinct t_inventaire_meteo.inventaire_id" +
-      " FROM " +
-      TABLE_INVENTAIRE_METEO +
-      " t_inventaire_meteo" +
-      " WHERE t_inventaire_meteo.meteo_id IN (" +
-      criterion.meteos.join(",") +
-      "))"
-    );
-  }
+    if (criterion.meteos && criterion.meteos.length > 0) {
+      whereTab.push(
+        " t_inventaire.id IN" +
+          " (SELECT distinct t_inventaire_meteo.inventaire_id" +
+          " FROM " +
+          TABLE_INVENTAIRE_METEO +
+          " t_inventaire_meteo" +
+          " WHERE t_inventaire_meteo.meteo_id IN (" +
+          criterion.meteos.join(",") +
+          "))"
+      );
+    }
 
-  // Filter by Nicheurs
-  if (criterion.nicheurs && criterion.nicheurs.length > 0) {
-    whereTab.push(
-      " t_donnee.id IN (" +
-      getQueryToFindDonneesIdsByNicheursCodes(criterion.nicheurs) +
-      ")"
-    );
-  }
+    // Filter by Nicheurs
+    if (criterion.nicheurs && criterion.nicheurs.length > 0) {
+      whereTab.push(
+        " t_donnee.id IN (" +
+          getQueryToFindDonneesIdsByNicheursCodes(criterion.nicheurs) +
+          ")"
+      );
+    }
 
-  // Filter by Comportements
-  if (criterion.comportements && criterion.comportements.length > 0) {
-    whereTab.push(
-      " t_donnee.id IN (" +
-      getQueryToFindDonneesIdsByComportementsIds(criterion.comportements) +
-      ")"
-    );
-  }
+    // Filter by Comportements
+    if (criterion.comportements && criterion.comportements.length > 0) {
+      whereTab.push(
+        " t_donnee.id IN (" +
+          getQueryToFindDonneesIdsByComportementsIds(criterion.comportements) +
+          ")"
+      );
+    }
 
-  // Filter by Milieux
-  if (criterion.milieux && criterion.milieux.length > 0) {
-    whereTab.push(
-      " t_donnee.id IN (" +
-      getQueryToFindDonneesIdsByMilieuxIds(criterion.milieux) +
-      ")"
-    );
-  }
+    // Filter by Milieux
+    if (criterion.milieux && criterion.milieux.length > 0) {
+      whereTab.push(
+        " t_donnee.id IN (" +
+          getQueryToFindDonneesIdsByMilieuxIds(criterion.milieux) +
+          ")"
+      );
+    }
 
-  if (whereTab.length > 0) {
-    queryStr += " WHERE";
-  }
+    if (whereTab.length > 0) {
+      queryStr += " WHERE";
+    }
 
-  queryStr += whereTab.join(" AND ");
+    queryStr += whereTab.join(" AND ");
+  }
 
   queryStr += " ORDER BY t_donnee.id DESC";
 

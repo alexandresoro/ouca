@@ -11,7 +11,7 @@ import * as _ from "lodash";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllComportementsByDonneeId, queryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";
-import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindLastDonneeId, queryToFindLastRegroupement, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToUpdateDonneesInventaireId } from "../sql/sql-queries-donnee";
+import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindAllDonnees, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindLastDonneeId, queryToFindLastRegroupement, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToUpdateDonneesInventaireId } from "../sql/sql-queries-donnee";
 import { queryToFindAllMeteosByDonneeId } from "../sql/sql-queries-meteo";
 import { queryToFindAllMilieuxByDonneeId, queryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
 import { queryToFindAllAssociesByDonneeId } from "../sql/sql-queries-observateur";
@@ -391,6 +391,12 @@ const findDonneeById = async (id: number): Promise<Donnee> => {
     return null;
   }
   return await buildDonneeFromFlatDonneeWithMinimalData(flatDonnees[0]);
+};
+
+export const findAllFlatDonneesWithMinimalData = async (): Promise<
+  FlatDonneeWithMinimalData[]
+> => {
+  return await queryToFindAllDonnees();
 };
 
 export const findDonneeByIdWithContext = async (

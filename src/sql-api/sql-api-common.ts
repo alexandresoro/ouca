@@ -1,8 +1,14 @@
 import { EntiteSimple } from "@ou-ca/ouca-model/entite-simple.object";
 import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToDeleteAnEntityById, queryToFindEntityByCode, queryToFindEntityByLibelle, queryToSaveEntity } from "../sql/sql-queries-utils";
+import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToFindEntityByCode, queryToFindEntityByLibelle, queryToSaveEntity } from "../sql/sql-queries-utils";
 import { onTableUpdate } from "../ws/ws-messages";
+
+export const findAllEntities = async <T extends EntiteSimple>(
+  tableName: string
+): Promise<T[]> => {
+  return queryToFindAllEntities<T>(tableName);
+};
 
 export const findEntityByCode = async <T extends EntiteSimple>(
   code: string,
