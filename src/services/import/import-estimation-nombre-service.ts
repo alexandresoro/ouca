@@ -1,4 +1,5 @@
 import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
+import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistEstimationNombre } from "../../sql-api/sql-api-estimation-nombre";
 import { TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
@@ -13,13 +14,9 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
     return "Cette estimation du nombre";
   }
 
-  protected buildEntity = (entityTab: string[]): EstimationNombre => {
-    return {
-      id: null,
-      libelle: entityTab[this.LIBELLE_INDEX].trim(),
-      nonCompte: false
-    };
-  };
+  protected getImportedEntity = (entityTab: string[]): ImportedEstimationNombre => {
+    return new ImportedEstimationNombre(entityTab);
+  }
 
   protected saveEntity = async (
     estimation: EstimationNombre

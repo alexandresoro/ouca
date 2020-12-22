@@ -4,14 +4,12 @@ const COMMENT_PREFIX = "###";
 
 export abstract class ImportService {
 
-  message: string;
-
   public importFile = async (fileContent: string): Promise<string> => {
     if (!fileContent) {
       return "Le contenu du fichier n'a pas pu être lu";
     }
 
-    const content = Papa.parse<string[]>(fileContent, {
+    const content: { data: string[][] } = Papa.parse<string[]>(fileContent, {
       delimiter: ";",
       encoding: "UTF-8"
     });
@@ -43,7 +41,8 @@ export abstract class ImportService {
 
     if (errors.length > 0) {
       return Papa.unparse(errors, {
-        delimiter: ";"
+        delimiter: ";",
+        encoding: "UTF-8"
       });
     } else {
       return "Aucune erreur pendant l'import";
@@ -52,20 +51,15 @@ export abstract class ImportService {
 
   protected abstract getNumberOfColumns(): number;
 
-  protected createEntity = (entityTab: string[]): Promise<boolean> => {
-    return null;
-  };
+  protected abstract async init(): Promise<void>;
 
-  protected init = async (): Promise<void> => {
-    // TO DO catch errors
-  };
+  protected abstract async importEntity(entityTab: string[]): Promise<string>;
 
   private importLine = async (entityTab: string[]): Promise<string> => {
-    if (entityTab?.length === this.getNumberOfColumns()) {
-      await this.createEntity(entityTab);
-      return "toto";
-    } else {
+    if (entityTab?.length !== this.getNumberOfColumns()) {
       return `Le nombre de colonnes de cette ligne est incorrect: ${entityTab.length} colonne(s) au lieu de ${this.getNumberOfColumns()} attendue(s)`;
+    } else {
+      return await this.importEntity(entityTab);
     }
   };
 
