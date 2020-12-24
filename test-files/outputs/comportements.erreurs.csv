@@ -4,5 +4,5 @@ Cas d'erreur: pas assez de colonnes;Le nombre de colonnes de cette ligne est inc
 0000000;Cas d'erreur: code trop long;La longueur maximale du code est de 6 caractères
 0000;;Le libellé ne peut pas être vide
 0000;Cas d'erreur: libelle trop longgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;La longueur maximale du libellé est de 100 caractères
-0003;Se pose;Il existe déjà un comportement avec ce code
-0004;Couve;Il existe déjà un comportement avec ce libellé
+0003;Se pose;Il existe déjà un comportement avec ce code ou ce libellé
+0004;Couve;Il existe déjà un comportement avec ce code ou ce libellé

@@ -19,13 +19,13 @@ departement;commune;lieudit;altitude;longitude;latitude;Cas d'erreur: Trop de co
 ### Cas d'erreur 10: Altitude vide
 26;1;Prairie;;2;3
 ### Cas d'erreur 11: Altitude pas un nombre
-26;1;Prairie;altitude;2;3
+26;1;Prairie;1;2;altitude
 ### Cas d'erreur 12: Altitude pas un entier
-26;1;Prairie;10.2;2;3
+26;1;Prairie;1;2;10.2
 ### Cas d'erreur 13: Altitude trop petite
-26;1;Prairie;-1;2;3
+26;1;Prairie;1;2;-1
 ### Cas d'erreur 14: Altitude trop grande
-26;1;Prairie;65536;2;3
+26;1;Prairie;1;2;65536
 ### Cas d'erreur 15: Longitude vide
 26;1;Prairie;1;;3
 ### Cas d'erreur 16: Longitude pas un nombre
@@ -35,19 +35,19 @@ departement;commune;lieudit;altitude;longitude;latitude;Cas d'erreur: Trop de co
 ### Cas d'erreur 18: Longitude trop grande
 26;1;Prairie;1;181;3
 ### Cas d'erreur 19: Latitude vide
-26;1;Prairie;1;2;
+26;1;Prairie;;1;2
 ### Cas d'erreur 20: Latitude pas un nombre
-26;1;Prairie;1;2;latitude
+26;1;Prairie;latitude;2;3
 ### Cas d'erreur 21: Latitude trop petite
-26;1;Prairie;1;2;-91
+26;1;Prairie;-91;2;3
 ### Cas d'erreur 22: Latitude trop grande
-26;1;Prairie;1;2;91
+26;1;Prairie;91;2;3
 ### Cas nominal 1
-26;1;Prairie;0;-180;-90
+26;1;Prairie;-90;-180;0
 ### Cas nominal 2
-26;1;Nom très longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;65535;180;90
+26;1;Nom très longggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg;90;180;65535
 ### Cas nominal 3
-26;ROMANS;Mairie;1;2.99999;3.11111
+26;ROMANS;Mairie;3,11111;2,99999;1,0
 ### Cas nominal 4
 26;2;Prairie;10;11;12
 ### Cas nominal 5

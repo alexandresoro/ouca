@@ -54,7 +54,7 @@ export class CoordinatesValidatorHelper {
       latitude < coordinatesSystem.latitudeRange.min ||
       latitude > coordinatesSystem.latitudeRange.max
     ) {
-      return `La latitude du lieu-dit doit être un entier compris entre " ${coordinatesSystem.latitudeRange.min} et ${coordinatesSystem.latitudeRange.max}`;
+      return `La latitude du lieu-dit doit être un entier compris entre ${coordinatesSystem.latitudeRange.min} et ${coordinatesSystem.latitudeRange.max}`;
     }
   }
 }
