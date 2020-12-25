@@ -28,7 +28,7 @@ export class ImportCommuneService extends ImportService {
 
     // Check that the departement exists
     const departement = this.departements.find((departement) => {
-      return departement.code === importedCommune.departement;
+      return this.compareStrings(departement.code, importedCommune.departement);
     });
     if (!departement) {
       return "Le département n'existe pas";
@@ -39,7 +39,7 @@ export class ImportCommuneService extends ImportService {
       return (
         commune.departementId === departement.id &&
         (commune.code === +importedCommune.code ||
-          commune.nom === importedCommune.nom)
+          this.compareStrings(commune.nom, importedCommune.nom))
       );
     });
     if (commune) {

@@ -331,7 +331,7 @@ export class ImportedDonnee {
         temperature < TEMPERATURE_MIN_VALUE ||
         temperature > TEMPERATURE_MAX_VALUE
       ) {
-        return `La temperature doit être un entier compris entre " ${TEMPERATURE_MIN_VALUE} et ${TEMPERATURE_MAX_VALUE}`;
+        return `La temperature doit être un entier compris entre ${TEMPERATURE_MIN_VALUE} et ${TEMPERATURE_MAX_VALUE}`;
       }
     }
 
@@ -363,7 +363,7 @@ export class ImportedDonnee {
       }
 
       if (nombre < NOMBRE_MIN_VALUE || nombre > NOMBRE_MAX_VALUE) {
-        return `Le nombre d'individus doit être un entier compris entre ${NOMBRE_MIN_VALUE} et " ${NOMBRE_MAX_VALUE}`;
+        return `Le nombre d'individus doit être un entier compris entre ${NOMBRE_MIN_VALUE} et ${NOMBRE_MAX_VALUE}`;
       }
     }
 

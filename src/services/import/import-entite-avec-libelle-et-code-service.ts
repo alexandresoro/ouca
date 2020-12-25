@@ -27,8 +27,8 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
     // Check that the entity does not exist
     const existingEntity = this.entities.find((e) => {
       return (
-        e.code === importedEntity.code ||
-        e.libelle === importedEntity.libelle
+        this.compareStrings(e.code, importedEntity.code) ||
+        this.compareStrings(e.libelle, importedEntity.libelle)
       );
     });
     if (existingEntity) {

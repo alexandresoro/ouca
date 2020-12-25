@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import Papa from "papaparse";
 
 const COMMENT_PREFIX = "###";
@@ -18,7 +19,7 @@ export abstract class ImportService {
       return "Le contenu du fichier n'a pas pu être lu";
     }
 
-    const numberOfLines = 0;
+    let numberOfLines = 0;
     let numberOfErrors = 0;
     const errors = [];
 
@@ -26,6 +27,8 @@ export abstract class ImportService {
 
     for (const lineTab of content.data) {
       if (lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX)) {
+        numberOfLines++;
+
         const errorMessage = await this.importLine(lineTab);
 
         if (errorMessage) {
@@ -70,4 +73,16 @@ export abstract class ImportService {
     entityTab.push(errorMessage);
     return entityTab;
   };
+
+  protected compareStrings = (string1: string, string2: string): boolean => {
+    if (!string1 && !string2) {
+      return true;
+    }
+
+    if (!string1 || !string2) {
+      return false;
+    }
+
+    return _.deburr(string1.trim()).toLowerCase() === _.deburr(string2.trim()).toLowerCase();
+  }
 }

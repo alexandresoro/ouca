@@ -42,7 +42,7 @@ export class ImportLieuxditService extends ImportService {
 
     // Check that the departement exists
     const departement = this.departements.find((departement) => {
-      return departement.code === importedLieuDit.departement;
+      return this.compareStrings(departement.code, importedLieuDit.departement);
     });
     if (!departement) {
       return "Le département n'existe pas";
@@ -52,8 +52,8 @@ export class ImportLieuxditService extends ImportService {
     const commune = this.communes.find((commune) => {
       return (
         commune.departementId === departement.id &&
-        (`${commune.code}` === importedLieuDit.commune ||
-          commune.nom === importedLieuDit.commune)
+        (this.compareStrings(`${commune.code}`, importedLieuDit.commune) ||
+          this.compareStrings(commune.nom, importedLieuDit.commune))
       );
     });
     if (!commune) {
@@ -63,7 +63,7 @@ export class ImportLieuxditService extends ImportService {
     // Check that the lieu-dit does not exist yet
     const lieudit: Lieudit = this.lieuxDits.find((lieuDit) => {
       return (
-        lieuDit.communeId === commune.id && lieuDit.nom === importedLieuDit.nom
+        lieuDit.communeId === commune.id && this.compareStrings(lieuDit.nom, importedLieuDit.nom)
       );
     });
     if (lieudit) {

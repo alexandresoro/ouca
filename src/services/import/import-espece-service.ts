@@ -29,7 +29,7 @@ export class ImportEspeceService extends ImportService {
 
     // Check that the classe exists
     const classe = this.classes.find((classe) => {
-      return classe.libelle === importedEspece.classe;
+      return this.compareStrings(classe.libelle, importedEspece.classe);
     });
 
     if (!classe) {
@@ -38,21 +38,21 @@ export class ImportEspeceService extends ImportService {
 
     // Check that the espece does not exists
     const especeByCode = this.especes.find((espece) => {
-      return espece.code === importedEspece.code;
+      return this.compareStrings(espece.code, importedEspece.code);
     });
     if (especeByCode) {
       return "Il existe déjà une espèce avec ce code";
     }
 
     const especeByNomFrancais = this.especes.find((espece) => {
-      return espece.nomFrancais === importedEspece.nomFrancais;
+      return this.compareStrings(espece.nomFrancais, importedEspece.nomFrancais);
     });
     if (especeByNomFrancais) {
       return "Il existe déjà une espèce avec ce nom français";
     }
 
     const especeByNomLatin = this.especes.find((espece) => {
-      return espece.nomLatin === importedEspece.nomLatin;
+      return this.compareStrings(espece.nomLatin, importedEspece.nomLatin);
     });
 
     if (especeByNomLatin) {

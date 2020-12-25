@@ -31,7 +31,7 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
 
     // Check that the entity does not exist
     const existingEntity = this.entities.find((e) => {
-      return e.libelle === importedEntity.libelle;
+      return this.compareStrings(e.libelle, importedEntity.libelle);
     });
     if (existingEntity) {
       return `${this.getThisEntityName()} existe déjà`;

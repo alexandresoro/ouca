@@ -15,6 +15,7 @@ import { Meteo } from "@ou-ca/ouca-model/meteo.object";
 import { Milieu } from "@ou-ca/ouca-model/milieu.object";
 import { Observateur } from "@ou-ca/ouca-model/observateur.object";
 import { Sexe } from "@ou-ca/ouca-model/sexe.object";
+import { FlatDonneeWithMinimalData } from "../../objects/flat-donnee-with-minimal-data.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
 import { findAllAges } from "../../sql-api/sql-api-age";
 import { findAllClasses } from "../../sql-api/sql-api-classe";
@@ -22,17 +23,17 @@ import { findAllCommunes } from "../../sql-api/sql-api-commune";
 import { findAllComportements } from "../../sql-api/sql-api-comportement";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";
-import { findExistingDonneeId, persistDonnee } from "../../sql-api/sql-api-donnee";
+import { buildDonneeFromFlatDonneeWithMinimalData, findAllFlatDonneesWithMinimalData, persistDonnee } from "../../sql-api/sql-api-donnee";
 import { findAllEspeces } from "../../sql-api/sql-api-espece";
 import { findAllEstimationsDistance } from "../../sql-api/sql-api-estimation-distance";
 import { findAllEstimationsNombre } from "../../sql-api/sql-api-estimation-nombre";
-import { findExistingInventaireId, persistInventaire } from "../../sql-api/sql-api-inventaire";
+import { persistInventaire } from "../../sql-api/sql-api-inventaire";
 import { findAllLieuxDits } from "../../sql-api/sql-api-lieudit";
 import { findAllMeteos } from "../../sql-api/sql-api-meteo";
 import { findAllMilieux } from "../../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../../sql-api/sql-api-observateur";
 import { findAllSexes } from "../../sql-api/sql-api-sexe";
-import { isIdInListIds } from "../../utils/utils";
+import { areArraysContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { ImportService } from "./import-service";
 
 export class ImportDoneeeService extends ImportService {
@@ -50,7 +51,7 @@ export class ImportDoneeeService extends ImportService {
   private comportements: Comportement[];
   private milieux: Milieu[];
   private meteos: Meteo[];
-  private donnees: Donnee[];
+  private donnees: FlatDonneeWithMinimalData[];
 
   protected getNumberOfColumns = (): number => {
     return 32;
@@ -78,13 +79,13 @@ export class ImportDoneeeService extends ImportService {
     this.estimationsDistance = await findAllEstimationsDistance();
     this.comportements = await findAllComportements();
     this.milieux = await findAllMilieux();
-    this.donnees = []; // TODO
+    this.donnees = await findAllFlatDonneesWithMinimalData();
   };
 
   protected importEntity = async (donneeTab: string[]): Promise<string> => {
-    const rawDonnee: ImportedDonnee = new ImportedDonnee(donneeTab, this.coordinatesSystem);
+    const importedDonnee: ImportedDonnee = new ImportedDonnee(donneeTab, this.coordinatesSystem);
 
-    const dataValidity = rawDonnee.checkValidity();
+    const dataValidity = importedDonnee.checkValidity();
     if (dataValidity) {
       return dataValidity;
     }
@@ -92,21 +93,15 @@ export class ImportDoneeeService extends ImportService {
     // Then start getting the requested sub-objects to create the new "Donnee"
 
     // Get the "Observateur" or return an error if it doesn't exist
-    const observateur: Observateur = this.observateurs.find((obs) => {
-      return obs.libelle === rawDonnee.observateur;
-    });
-
+    const observateur = this.findObservateur(importedDonnee.observateur);
     if (!observateur) {
-      return `L'observateur ${rawDonnee.observateur} n'existe pas`;
+      return `L'observateur ${importedDonnee.observateur} n'existe pas`;
     }
 
     // Get the "Observateurs associes" or return an error if some of them doesn't exist
     const associesIds: number[] = [];
-    for (const associeLibelle of rawDonnee.associes) {
-      const associe: Observateur = this.observateurs.find((a) => {
-        return a.libelle === associeLibelle;
-      });
-
+    for (const associeLibelle of importedDonnee.associes) {
+      const associe: Observateur = this.findObservateur(associeLibelle);
       if (!associe) {
         return `L'observateur associé ${associeLibelle} n'existe pas`;
       }
@@ -117,48 +112,46 @@ export class ImportDoneeeService extends ImportService {
     }
 
     // Get the "Departement" or return an error if it doesn't exist
-    const departement: Departement = this.departements.find((dept) => {
-      return dept.code === rawDonnee.departement;
-    });
+    const departement: Departement = this.findDepartement(importedDonnee.departement);
     if (!departement) {
-      return `Le département ${rawDonnee.departement} n'existe pas`;
+      return `Le département ${importedDonnee.departement} n'existe pas`;
     }
 
     // Get the "Commune" or return an error if it does not exist
-    const commune: Commune = this.communes.find((com) => {
-      return (
-        com.departementId === departement.id &&
-        (`${com.code}` === rawDonnee.commune || com.nom === rawDonnee.commune)
-      );
-    });
-
+    const commune: Commune = this.findCommune(departement.id, importedDonnee.commune);
     if (!commune) {
-      return `La commune avec pour code ou nom ${rawDonnee.commune} n'existe pas dans le département ${departement.code}`;
+      return `La commune avec pour code ou nom ${importedDonnee.commune} n'existe pas dans le département ${departement.code}`;
     }
 
     // Get the "Lieu-dit" or return an error if it does not exist
-    const lieudit = this.lieuxDits.find((lieu) => {
-      return lieu.communeId === commune.id && lieu.nom === rawDonnee.lieuDit;
-    });
-
+    const lieudit = this.findLieuDit(commune.id, importedDonnee.lieuDit);
     if (!lieudit) {
-      return `Le lieu-dit ${rawDonnee.lieuDit} n'existe pas dans la commune ${commune.code} - ${commune.nom} du département ${departement.code}`;
+      return `Le lieu-dit ${importedDonnee.lieuDit} n'existe pas dans la commune ${commune.code} - ${commune.nom} du département ${departement.code}`;
     }
 
     // Get the customized coordinates
-    let altitude: number = +rawDonnee.altitude;
+    let altitude: number = +importedDonnee.altitude;
     let coordinates: Coordinates = {
-      longitude: +rawDonnee.longitude,
-      latitude: +rawDonnee.latitude,
-      system: rawDonnee.coordinatesSystem.code
+      longitude: +importedDonnee.longitude,
+      latitude: +importedDonnee.latitude,
+      system: importedDonnee.coordinatesSystem.code
     };
+
+    // Round the coordinates
+    coordinates.longitude = +coordinates.longitude.toFixed(
+      COORDINATES_SYSTEMS_CONFIG[importedDonnee.coordinatesSystem.code].decimalPlaces
+    );
+    coordinates.latitude = +coordinates.latitude.toFixed(
+      COORDINATES_SYSTEMS_CONFIG[importedDonnee.coordinatesSystem.code].decimalPlaces
+    );
+
     if (
       !areCoordinatesCustomized(
         lieudit,
         altitude,
         coordinates.longitude,
         coordinates.latitude,
-        rawDonnee.coordinatesSystem.code
+        importedDonnee.coordinatesSystem.code
       )
     ) {
       altitude = null;
@@ -167,57 +160,43 @@ export class ImportDoneeeService extends ImportService {
 
     // Get the "Meteos" or return an error if some of them doesn't exist
     const meteosIds: number[] = [];
-    for (const meteoLibelle of rawDonnee.meteos) {
-      const meteo: Meteo = this.meteos.find((m) => {
-        return m.libelle === meteoLibelle;
-      });
+    for (const libelleMeteo of importedDonnee.meteos) {
+      const meteo: Meteo = this.findMeteo(libelleMeteo);
       if (!meteo) {
-        return `La météo " ${meteoLibelle} n'existe pas`;
+        return `La météo ${libelleMeteo} n'existe pas`;
       }
+
       if (!isIdInListIds(meteosIds, meteo.id)) {
         meteosIds.push(meteo.id);
       }
     }
 
     // Get the "Espece" or return an error if it doesn't exist
-    const espece: Espece = this.especes.find((e) => {
-      return (
-        e.code === rawDonnee.espece ||
-        e.nomFrancais === rawDonnee.espece ||
-        e.nomLatin === rawDonnee.espece
-      );
-    });
-
+    const espece: Espece = this.findEspece(importedDonnee.espece);
     if (!espece) {
-      return `L'espèce avec pour code, nom français ou nom scientifique ${rawDonnee.espece} n'existe pas`;
+      return `L'espèce avec pour code, nom français ou nom scientifique ${importedDonnee.espece} n'existe pas`;
     }
 
     // Get the "Sexe" or return an error if it doesn't exist
-    const sexe = this.sexes.find((s) => {
-      return s.libelle === rawDonnee.sexe;
-    });
+    const sexe = this.findSexe(importedDonnee.sexe);
     if (!sexe) {
-      return `Le sexe ${rawDonnee.sexe} n'existe pas`;
+      return `Le sexe ${importedDonnee.sexe} n'existe pas`;
     }
 
     // Get the "Age" or return an error if it doesn't exist
-    const age = this.ages.find((a) => {
-      return a.libelle === rawDonnee.age;
-    });
+    const age = this.findAge(importedDonnee.age);
     if (!age) {
-      return `L'âge ${rawDonnee.age} n'existe pas`;
+      return `L'âge ${importedDonnee.age} n'existe pas`;
     }
 
     // Get the "Estimation du nombre" or return an error if it doesn't exist
-    const estimationNombre = this.estimationsNombre.find((e) => {
-      return e.libelle === rawDonnee.estimationNombre;
-    });
+    const estimationNombre = this.findEstimationNombre(importedDonnee.estimationNombre);
     if (!estimationNombre) {
-      return `L'estimation du nombre ${rawDonnee.estimationNombre} n'existe pas`;
+      return `L'estimation du nombre ${importedDonnee.estimationNombre} n'existe pas`;
     }
 
     // Get the "Nombre"
-    const nombre: number = rawDonnee.nombre ? +rawDonnee.nombre : null;
+    const nombre: number = importedDonnee.nombre ? +importedDonnee.nombre : null;
 
     if (!estimationNombre.nonCompte && !nombre) {
       // If "Estimation du nombre" is of type "Compté" then "Nombre" should not be empty
@@ -229,22 +208,17 @@ export class ImportDoneeeService extends ImportService {
 
     // Get the "Estimation de la distance" or return an error if it doesn't exist
     let estimationDistance: EstimationDistance = null;
-    if (rawDonnee.estimationDistance) {
-      estimationDistance = this.estimationsDistance.find((e) => {
-        return e.libelle === rawDonnee.estimationDistance;
-      });
+    if (importedDonnee.estimationDistance) {
+      estimationDistance = this.findEstimationDistance(importedDonnee.estimationDistance)
       if (!estimationDistance) {
-        return `L'estimation de la distance ${rawDonnee.estimationDistance} n'existe pas`;
+        return `L'estimation de la distance ${importedDonnee.estimationDistance} n'existe pas`;
       }
     }
 
     // Get the "Comportements" or return an error if some of them does not exist
     const comportementsIds: number[] = [];
-    for (const comportementStr of rawDonnee.comportements) {
-      const comportement = this.comportements.find((c) => {
-        return c.code === comportementStr || c.libelle === comportementStr;
-      });
-
+    for (const comportementStr of importedDonnee.comportements) {
+      const comportement = this.findComportement(comportementStr);
       if (!comportement) {
         return `Le comportement avec pour code ou libellé ${comportementStr} n'existe pas`;
       }
@@ -256,11 +230,8 @@ export class ImportDoneeeService extends ImportService {
 
     // Get the "Milieux" or return an error if some of them does not exist
     const milieuxIds: number[] = [];
-    for (const milieuStr of rawDonnee.milieux) {
-      const milieu: Milieu = this.milieux.find((m) => {
-        return m.code === milieuStr || m.libelle === milieuStr;
-      });
-
+    for (const milieuStr of importedDonnee.milieux) {
+      const milieu: Milieu = this.findMilieu(milieuStr);
       if (!milieu) {
         return `Le milieu avec pour code ou libellé ${milieuStr} n'existe pas`;
       }
@@ -270,8 +241,10 @@ export class ImportDoneeeService extends ImportService {
       }
     }
 
+    // OK 68 premières lignes
+
     // Create the "Inventaire" to save
-    const inventaireToSave: Inventaire = rawDonnee.buildInventaire(
+    const inventaireToSave: Inventaire = importedDonnee.buildInventaire(
       observateur.id,
       associesIds,
       lieudit.id,
@@ -280,32 +253,44 @@ export class ImportDoneeeService extends ImportService {
       coordinates
     );
 
-    // TODO
-    const existingDonneeByInventaire = this.donnees.find((d) => {
-      const i = d.inventaire;
+    const existingDonneesByInventaire = this.donnees.filter((donnee) => {
       return (
-        i.date === rawDonnee.date &&
-        i.heure === rawDonnee.heure &&
-        i.duree === rawDonnee.duree &&
-        i.lieuditId === lieudit.id &&
-        i.temperature === (rawDonnee.temperature ? +rawDonnee.temperature : null) &&
-        i.observateurId === observateur.id
+        donnee.date === inventaireToSave.date &&
+        donnee.heure === inventaireToSave.heure &&
+        donnee.duree === inventaireToSave.duree &&
+        donnee.lieuditId === inventaireToSave.lieuditId &&
+        donnee.altitude === inventaireToSave.customizedAltitude &&
+        donnee.longitude === (inventaireToSave.coordinates ? inventaireToSave.coordinates.longitude : null) &&
+        donnee.latitude === (inventaireToSave.coordinates ? inventaireToSave.coordinates.latitude : null) &&
+        donnee.temperature === inventaireToSave.temperature &&
+        donnee.observateurId === inventaireToSave.observateurId
       );
     });
 
+    let existingDonneeByInventaire: FlatDonneeWithMinimalData = null;
+    if (existingDonneesByInventaire?.length > 0) {
+      let index = 0;
+      while (!existingDonneeByInventaire && index < existingDonneesByInventaire.length) {
+        const donnee = await buildDonneeFromFlatDonneeWithMinimalData(existingDonneesByInventaire[index]);
+        if (areArraysContainingSameValues(inventaireToSave.associesIds, donnee.inventaire.associesIds) &&
+          areArraysContainingSameValues(inventaireToSave.meteosIds, donnee.inventaire.meteosIds)) {
+          existingDonneeByInventaire = existingDonneesByInventaire[index];
+        }
+
+        index++;
+      }
+    }
+
     // Save the inventaire
-    const existingInventaireId: number = await findExistingInventaireId(
-      inventaireToSave
-    );
-    if (!existingInventaireId) {
+    if (!existingDonneeByInventaire) {
       const inventaireSaveResponse = await persistInventaire(inventaireToSave);
       inventaireToSave.id = inventaireSaveResponse.insertId;
     } else {
-      inventaireToSave.id = existingInventaireId;
+      inventaireToSave.id = existingDonneeByInventaire.inventaireId;
     }
 
     // Create the "Donnee" to save
-    const donneeToSave: Donnee = rawDonnee.buildDonnee(
+    const donneeToSave: Donnee = importedDonnee.buildDonnee(
       inventaireToSave.id,
       espece.id,
       sexe.id,
@@ -316,17 +301,149 @@ export class ImportDoneeeService extends ImportService {
       milieuxIds
     );
 
-    // Save the "Donnee" or return an error if it does not exist
-    const existingDonneeId: number = await findExistingDonneeId(donneeToSave);
-    if (!existingDonneeId) {
+    const existingDonneesByDonnee = this.donnees.filter((donnee) => {
+      return (
+        donnee.inventaireId === donneeToSave.inventaireId &&
+        donnee.especeId === donneeToSave.especeId &&
+        donnee.sexeId === donneeToSave.sexeId &&
+        donnee.ageId === donneeToSave.ageId &&
+        donnee.nombre === donneeToSave.nombre &&
+        donnee.estimationNombreId === donneeToSave.estimationNombreId &&
+        donnee.distance === donneeToSave.distance &&
+        donnee.estimationDistanceId === donneeToSave.estimationDistanceId &&
+        donnee.regroupement === donneeToSave.regroupement &&
+        this.compareStrings(donnee.commentaire, donneeToSave.commentaire)
+      );
+    });
+
+    let existingDonnee: FlatDonneeWithMinimalData = null;
+    if (existingDonneesByDonnee?.length > 0) {
+      let index = 0;
+      while (!existingDonnee && index < existingDonneesByDonnee.length) {
+        const donnee = await buildDonneeFromFlatDonneeWithMinimalData(existingDonneesByDonnee[index]);
+        if (areArraysContainingSameValues(donneeToSave.comportementsIds, donnee.comportementsIds) &&
+          areArraysContainingSameValues(donneeToSave.milieuxIds, donnee.milieuxIds)) {
+          existingDonnee = existingDonneesByDonnee[index];
+        }
+
+        index++;
+      }
+    }
+
+    if (existingDonnee) {
+      return `Une donnée similaire existe déjà (voir ID=${existingDonnee.id})`;
+    } else {
       const saveDonneeResponse = await persistDonnee(donneeToSave);
       if (!saveDonneeResponse?.insertId) {
         return "Une erreur est survenue pendant l'import";
       }
-    } else {
-      return `Une donnée similaire existe déjà (voir ID=" + ${existingDonneeId} + ")`;
+      donneeToSave.id = saveDonneeResponse.insertId;
     }
 
+    const flatDonnee: FlatDonneeWithMinimalData = {
+      id: donneeToSave.id,
+      inventaireId: inventaireToSave.id,
+      observateurId: observateur.id,
+      date: inventaireToSave.date,
+      heure: inventaireToSave.heure,
+      duree: inventaireToSave.duree,
+      lieuditId: inventaireToSave.lieuditId,
+      latitude: inventaireToSave.coordinates?.latitude,
+      longitude: inventaireToSave.coordinates?.longitude,
+      altitude: inventaireToSave.customizedAltitude,
+      coordinatesSystem: inventaireToSave.coordinates?.system,
+      temperature: inventaireToSave.temperature,
+      especeId: espece.id,
+      sexeId: sexe.id,
+      ageId: age.id,
+      nombre: donneeToSave.nombre,
+      estimationNombreId: donneeToSave.estimationNombreId,
+      estimationDistanceId: donneeToSave.estimationDistanceId,
+      distance: donneeToSave.distance,
+      regroupement: donneeToSave.regroupement,
+      commentaire: donneeToSave.commentaire
+    }
+
+    this.donnees.push(flatDonnee);
     return null;
   };
+
+  private findObservateur = (libelleObservateur: string): Observateur => {
+    return this.observateurs.find((observateur) => {
+      return this.compareStrings(observateur.libelle, libelleObservateur);
+    });
+  }
+
+  private findDepartement = (codeDepartement: string): Departement => {
+    return this.departements.find((departement) => {
+      return this.compareStrings(departement.code, codeDepartement);
+    });
+  }
+
+  private findCommune = (departementId: number, nomOrCodeCommune: string): Commune => {
+    return this.communes.find((commune) => {
+      return (
+        commune.departementId === departementId &&
+        (this.compareStrings(`${commune.code}`, nomOrCodeCommune) || this.compareStrings(commune.nom, nomOrCodeCommune))
+      );
+    });
+  }
+
+  private findLieuDit = (communeId: number, nomLieuDit: string): Lieudit => {
+    return this.lieuxDits.find((lieuDit) => {
+      return lieuDit.communeId === communeId && this.compareStrings(lieuDit.nom, nomLieuDit);
+    });
+  }
+
+  private findMeteo = (libelleMeteo: string): Meteo => {
+    return this.meteos.find((meteo) => {
+      return this.compareStrings(meteo.libelle, libelleMeteo);
+    });
+  }
+
+  private findEspece = (codeOrNomEspece: string): Espece => {
+    return this.especes.find((espece) => {
+      return (
+        this.compareStrings(espece.code, codeOrNomEspece) ||
+        this.compareStrings(espece.nomFrancais, codeOrNomEspece) ||
+        this.compareStrings(espece.nomLatin, codeOrNomEspece)
+      );
+    });
+  }
+
+  private findSexe = (libelleSexe: string): Sexe => {
+    return this.sexes.find((sexe) => {
+      return this.compareStrings(sexe.libelle, libelleSexe);
+    });
+  }
+
+  private findAge = (libelleMeteo: string): Age => {
+    return this.ages.find((age) => {
+      return this.compareStrings(age.libelle, libelleMeteo);
+    });
+  }
+
+  private findEstimationNombre = (libelleEstimation: string): EstimationNombre => {
+    return this.estimationsNombre.find((estimation) => {
+      return this.compareStrings(estimation.libelle, libelleEstimation);
+    });
+  }
+
+  private findEstimationDistance = (libelleEstimation: string): EstimationDistance => {
+    return this.estimationsDistance.find((estimation) => {
+      return this.compareStrings(estimation.libelle, libelleEstimation);
+    });
+  }
+
+  private findComportement = (codeOrLibelleComportement: string): Comportement => {
+    return this.comportements.find((comportement) => {
+      return this.compareStrings(comportement.code, codeOrLibelleComportement) || this.compareStrings(comportement.libelle, codeOrLibelleComportement);
+    });
+  }
+
+  private findMilieu = (codeOrLibelleMilieu: string): Milieu => {
+    return this.milieux.find((milieu) => {
+      return this.compareStrings(milieu.code, codeOrLibelleMilieu) || this.compareStrings(milieu.libelle, codeOrLibelleMilieu);
+    });
+  }
 }

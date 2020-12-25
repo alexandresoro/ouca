@@ -25,7 +25,7 @@ export class ImportDepartementService extends ImportService {
 
     // Check that the departement does not exist
     const existingDepartement = this.departements.find((d) => {
-      return d.code === importedDepartement.code;
+      return this.compareStrings(d.code, importedDepartement.code);
     });
     if (existingDepartement) {
       return "Ce département existe déjà";
