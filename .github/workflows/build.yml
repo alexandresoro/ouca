@@ -68,5 +68,4 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest
-            ${{ env.IMAGE_NAME_DOCKER_HUB }}:stable
           build-args: NPM_GITHUB_TOKEN=${{ env.NPM_GITHUB_TOKEN }}
