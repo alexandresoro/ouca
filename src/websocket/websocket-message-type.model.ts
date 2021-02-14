@@ -6,6 +6,8 @@ export const OTHER = "other";
 
 export const TEXT = "text";
 
-const WEBSOCKET_MESSAGE_TYPE = [UPDATE, IMPORT, OTHER, TEXT] as const;
+export const HEARTBEAT = "heartbeat"; // Channel used for ping/pong messages
+
+const WEBSOCKET_MESSAGE_TYPE = [UPDATE, IMPORT, OTHER, TEXT, HEARTBEAT] as const;
 
 export type WebSocketMessageType = typeof WEBSOCKET_MESSAGE_TYPE[number];
