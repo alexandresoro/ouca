@@ -16,13 +16,12 @@
       "name": "Alexandre Soro"
     }
   ],
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
-    "@types/bson": "*",
     "proj4": "*"
   },
   "devDependencies": {
-    "@types/node": "12",
+    "@types/node": "14",
     "@types/proj4": "*",
     "ts-node": "*",
     "typescript": "*"
