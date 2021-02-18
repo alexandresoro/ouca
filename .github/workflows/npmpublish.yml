@@ -28,8 +28,6 @@ jobs:
       - name: Bump version
         run: yarn version patch
 
-      - run: yarn npm login
-
       - name: Install dependencies
         run: yarn install --immutable
 
@@ -42,6 +40,6 @@ jobs:
 
       - name: Publish
         if: github.event_name == 'push'
-        run: yarn npm publish
+        run: yarn npm login --publish && yarn npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GPR_TOKEN}}

@@ -28,5 +28,8 @@
     "@types/proj4": "*",
     "ts-node": "*",
     "typescript": "*"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
