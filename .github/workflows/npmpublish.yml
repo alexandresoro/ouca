@@ -26,7 +26,7 @@ jobs:
         run: npm install -g yarn
 
       - name: Bump version
-        run: yarn version --patch
+        run: yarn version patch
 
       - name: Install dependencies
         run: yarn install --immutable
