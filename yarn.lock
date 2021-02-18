@@ -9,22 +9,22 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ou-ca/ouca-model@workspace:."
   dependencies:
-    "@types/node": 14
-    "@types/proj4": "*"
-    proj4: "*"
-    ts-node: "*"
-    typescript: "*"
+    "@types/node": 14.14.29
+    "@types/proj4": ^2.5.0
+    proj4: ^2.7.0
+    ts-node: ^9.1.1
+    typescript: ^4.1.5
   languageName: unknown
   linkType: soft
 
-"@types/node@npm:14":
-  version: 14.14.28
-  resolution: "@types/node@npm:14.14.28"
-  checksum: e750df4d5e93c639d04100e7d54d9e416ecc649d4d7951ac1d5b82d092c556f6e7775a191995e06d6def65ae7bc25533d188fe122dc660724d119ce3ddae2cea
+"@types/node@npm:14.14.29":
+  version: 14.14.29
+  resolution: "@types/node@npm:14.14.29"
+  checksum: 65511c999404471686233ecedbc1faa8a31c4b6f551fdb2da92321364d54cc6b7d93f456efc110f003eb23d24ee3d0f03d59ba0d17d0d5e4781293bd77e0f9ff
   languageName: node
   linkType: hard
 
-"@types/proj4@npm:*":
+"@types/proj4@npm:^2.5.0":
   version: 2.5.0
   resolution: "@types/proj4@npm:2.5.0"
   checksum: 743741f98f8358fd4c303f831fdfcd42c880b5b79517de53ff698d89225afabb68495bdcfa38ab6bdab2aca7bbc500f7c105e2600ed6225651503d74e7f2c02d
@@ -73,7 +73,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proj4@npm:*":
+"proj4@npm:^2.7.0":
   version: 2.7.0
   resolution: "proj4@npm:2.7.0"
   dependencies:
@@ -100,7 +100,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:*":
+"ts-node@npm:^9.1.1":
   version: 9.1.1
   resolution: "ts-node@npm:9.1.1"
   dependencies:
@@ -121,7 +121,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-typescript@*:
+typescript@^4.1.5:
   version: 4.1.5
   resolution: "typescript@npm:4.1.5"
   bin:
@@ -131,7 +131,7 @@ typescript@*:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@*#builtin<compat/typescript>":
+"typescript@patch:typescript@^4.1.5#builtin<compat/typescript>":
   version: 4.1.5
   resolution: "typescript@patch:typescript@npm%3A4.1.5#builtin<compat/typescript>::version=4.1.5&hash=cc6730"
   bin:

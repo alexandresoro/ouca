@@ -3,7 +3,7 @@
   "description": "Common elements for Base Naturaliste project",
   "version": "0.0.59",
   "scripts": {
-    "build": "yarn run clean && yarn run build:indexes && tsc",
+    "build": "npm run clean && npm run build:indexes && tsc",
     "build:indexes": "ts-node indexes",
     "clean": "ts-node clean",
     "deployPrePublish": "ts-node deploy"
@@ -22,13 +22,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "proj4": "*"
+    "proj4": "^2.7.0"
   },
   "devDependencies": {
-    "@types/node": "14",
-    "@types/proj4": "*",
-    "ts-node": "*",
-    "typescript": "*"
+    "@types/node": "14.14.29",
+    "@types/proj4": "^2.5.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.5"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
