@@ -22,11 +22,17 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           scope: "@ou-ca"
 
+      - name: Install Yarn globally
+        run: npm install -g yarn
+
+      - name: Set Yarn v2
+        run: yarn set version berry
+
       - name: Bump version
         run: yarn version --patch
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build
         run: yarn build
@@ -41,6 +47,6 @@ jobs:
 
       - name: Publish
         if: github.event_name == 'push'
-        run: yarn publish dist
+        run: yarn npm publish dist
         env:
           NODE_AUTH_TOKEN: ${{secrets.GPR_TOKEN}}
