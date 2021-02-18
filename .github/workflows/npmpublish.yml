@@ -44,6 +44,6 @@ jobs:
 
       - name: Publish
         if: github.event_name == 'push'
-        run: yarn npm publish dist
+        run: cd dist && yarn npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GPR_TOKEN}}
