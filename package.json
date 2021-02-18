@@ -8,6 +8,9 @@
     "clean": "ts-node clean",
     "deployPrePublish": "ts-node deploy"
   },
+  "files": [
+    "dist"
+  ],
   "contributors": [
     {
       "name": "Camille Carrier"
