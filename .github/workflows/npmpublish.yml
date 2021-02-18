@@ -25,9 +25,6 @@ jobs:
       - name: Install Yarn globally
         run: npm install -g yarn
 
-      - name: Set Yarn v2
-        run: yarn set version berry
-
       - name: Bump version
         run: yarn version --patch
 
