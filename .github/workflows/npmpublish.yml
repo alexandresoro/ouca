@@ -32,7 +32,7 @@ jobs:
         run: yarn build
 
       - name: Bump version
-        run: yarn version patch
+        run: npm version patch
 
       - name: Update project version
         if: github.event_name == 'push'
