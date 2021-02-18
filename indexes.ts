@@ -13,22 +13,29 @@ const getSourceFiles = (source: PathLike) =>
   readdirSync(source, { withFileTypes: true })
     .filter(dirent => dirent.isFile())
     .filter(dirent => dirent.name.endsWith(tsFileExtension))
+    .filter(dirent => dirent.name !== indexFile)
     .map(dirent => dirent.name);
 
-const buildIndexes = () => {
-  const directories = getDirectories(rootPath);
-  directories.forEach(directory => {
-    let indexContent = "";
-    const path = rootPath + "/" + directory;
-    const sourceFilesWithoutExtension = getSourceFiles(path).map(sourceFile =>
-      sourceFile.substring(0, sourceFile.length - tsFileExtension.length)
-    );
-    for (const sourceFile of sourceFilesWithoutExtension) {
-      const exportFileStr = 'export * from "./' + sourceFile + '";\n';
-      indexContent = indexContent + exportFileStr;
-    }
-    writeFileSync(path + "/" + indexFile, indexContent);
-  });
-};
+const buildIndexesForDirectory = (directoryPath: string) => {
 
-buildIndexes();
+  const subDirectories = getDirectories(directoryPath);
+  subDirectories.map(directoryPath => rootPath + "/" + directoryPath).forEach(buildIndexesForDirectory);
+
+  let indexContent = "";
+
+  for (const subDirectory of subDirectories) {
+    const exportDirectoryStr = 'export * from "./' + subDirectory + '";\n';
+    indexContent = indexContent + exportDirectoryStr;
+  }
+
+  const sourceFilesWithoutExtension = getSourceFiles(directoryPath).map(sourceFile =>
+    sourceFile.substring(0, sourceFile.length - tsFileExtension.length)
+  );
+  for (const sourceFile of sourceFilesWithoutExtension) {
+    const exportFileStr = 'export * from "./' + sourceFile + '";\n';
+    indexContent = indexContent + exportFileStr;
+  }
+  writeFileSync(directoryPath + "/" + indexFile, indexContent);
+}
+
+buildIndexesForDirectory(rootPath);
