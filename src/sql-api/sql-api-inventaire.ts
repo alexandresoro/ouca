@@ -1,6 +1,4 @@
-import { areSameCoordinates } from "@ou-ca/ouca-model/coordinates-system";
-import { Coordinates } from "@ou-ca/ouca-model/coordinates.object";
-import { Inventaire } from "@ou-ca/ouca-model/inventaire.object";
+import { areSameCoordinates, Coordinates, Inventaire } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { buildInventaireDbFromInventaire, buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
 import { InventaireDb } from "../objects/db/inventaire-db.object";

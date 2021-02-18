@@ -1,4 +1,4 @@
-import { Meteo } from "@ou-ca/ouca-model/meteo.object";
+import { Meteo } from "@ou-ca/ouca-model";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_METEO } from "../utils/constants";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";

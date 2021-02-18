@@ -1,4 +1,4 @@
-import { Departement } from "@ou-ca/ouca-model/departement.object";
+import { Departement } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllDepartements, queryToFindDepartementByCode, queryToFindNumberOfCommunesByDepartementId, queryToFindNumberOfDonneesByDepartementId, queryToFindNumberOfLieuxDitsByDepartementId } from "../sql/sql-queries-departement";

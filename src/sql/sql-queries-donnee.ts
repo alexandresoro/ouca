@@ -1,7 +1,4 @@
-import { Donnee } from "@ou-ca/ouca-model/donnee.object";
-import { DonneesFilter } from "@ou-ca/ouca-model/donnees-filter.object";
-import { FlatDonnee } from "@ou-ca/ouca-model/flat-donnee.object";
-import { NicheurCode } from "@ou-ca/ouca-model/nicheur.model";
+import { Donnee, DonneesFilter, FlatDonnee, NicheurCode } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
 import * as _ from "lodash";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";

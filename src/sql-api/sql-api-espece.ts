@@ -1,4 +1,4 @@
-import { Espece } from "@ou-ca/ouca-model/espece.model";
+import { Espece } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { buildEspeceFromEspeceDb, buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
 import { EspeceDb } from "../objects/db/espece-db.object";

@@ -1,5 +1,4 @@
-import { AppConfiguration } from "@ou-ca/ouca-model/app-configuration.object";
-import { CoordinatesSystemType } from "@ou-ca/ouca-model/coordinates-system";
+import { AppConfiguration, CoordinatesSystemType } from "@ou-ca/ouca-model";
 import { buildAppConfigurationFromSettingsDb, buildSettingsDbFromAppConfiguration } from "../mapping/settings-mapping";
 import { SettingsDb } from "../objects/db/settings-db.object";
 import { queryToFindCoordinatesSystem } from "../sql/sql-queries-settings";

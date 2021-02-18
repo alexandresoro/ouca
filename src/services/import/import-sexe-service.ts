@@ -1,4 +1,4 @@
-import { Sexe } from "@ou-ca/ouca-model/sexe.object";
+import { Sexe } from "@ou-ca/ouca-model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistSexe } from "../../sql-api/sql-api-sexe";
 import { TABLE_SEXE } from "../../utils/constants";

@@ -1,4 +1,4 @@
-import { Observateur } from "@ou-ca/ouca-model/observateur.object";
+import { Observateur } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllObservateurs, queryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";

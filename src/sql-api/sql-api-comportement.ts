@@ -1,4 +1,4 @@
-import { Comportement } from "@ou-ca/ouca-model/comportement.object";
+import { Comportement } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { buildComportementDbFromComportement, buildComportementsFromComportementsDb } from "../mapping/comportement-mapping";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";

@@ -1,4 +1,4 @@
-import { Meteo } from "@ou-ca/ouca-model/meteo.object";
+import { Meteo } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllMeteos, queryToFindNumberOfDonneesByMeteoId } from "../sql/sql-queries-meteo";

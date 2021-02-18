@@ -1,4 +1,4 @@
-import { Age } from "@ou-ca/ouca-model/age.object";
+import { Age } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllAges, queryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";

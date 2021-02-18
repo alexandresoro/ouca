@@ -1,4 +1,4 @@
-import { EntiteSimple } from "@ou-ca/ouca-model/entite-simple.object";
+import { EntiteSimple } from "@ou-ca/ouca-model";
 import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToFindEntityByCode, queryToFindEntityByLibelle, queryToSaveEntity } from "../sql/sql-queries-utils";

@@ -1,4 +1,4 @@
-import { NicheurCode } from "@ou-ca/ouca-model/nicheur.model";
+import { NicheurCode } from "@ou-ca/ouca-model";
 
 export interface ComportementDb {
   id: number;

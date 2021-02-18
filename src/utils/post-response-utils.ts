@@ -1,4 +1,4 @@
-import { PostResponse } from "@ou-ca/ouca-model/post-response.object";
+import { PostResponse } from "@ou-ca/ouca-model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 
 export const buildPostResponseFromSqlResponse = (

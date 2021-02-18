@@ -1,4 +1,4 @@
-import { Commune } from "@ou-ca/ouca-model/commune.model";
+import { Commune } from "@ou-ca/ouca-model";
 
 const DEPARTEMENT_INDEX = 0;
 const CODE_INDEX = 1;

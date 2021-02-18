@@ -1,4 +1,8 @@
-import { WebsocketMessage } from "@ou-ca/ouca-model/websocket/websocket-message.model";
+import {
+  HEARTBEAT,
+  IMPORT,
+  TEXT, WebsocketMessage
+} from "@ou-ca/ouca-model";
 import * as http from "http";
 import * as multiparty from "multiparty";
 import { createLogger, format, transports } from "winston";
@@ -112,10 +116,8 @@ wss.on("connection", (client) => {
   client.on("message", (data): void => {
     const message = JSON.parse(data.toString()) as WebsocketMessage;
     logger.info("Message received from websocket: " + JSON.stringify(message));
-    if (message.content === "init") {
-      logger.info("Sending initial data to client");
-      void sendInitialData(client);
-    } else if (message.content === "ping") {
+    if (message.type === HEARTBEAT) {
+      // Ping message received
       WebsocketServer.sendMessageToClients(
         JSON.stringify({
           type: "other",
@@ -123,6 +125,14 @@ wss.on("connection", (client) => {
         }),
         client
       );
+    } else if (message.type === TEXT && message.content === "init") {
+      // Client requests the initial configuration
+      logger.info("Sending initial data to client");
+      void sendInitialData(client);
+    } else if (message.type === IMPORT) {
+      // Import message received
+      logger.info("Import requested by the client");
+      // TODO
     }
   });
 });

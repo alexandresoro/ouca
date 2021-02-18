@@ -1,5 +1,4 @@
-import { Commune } from "@ou-ca/ouca-model/commune.model";
-import { Departement } from "@ou-ca/ouca-model/departement.object";
+import { Commune, Departement } from "@ou-ca/ouca-model";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
 import { findAllCommunes, persistCommune } from "../../sql-api/sql-api-commune";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";

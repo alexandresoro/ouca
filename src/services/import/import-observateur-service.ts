@@ -1,4 +1,4 @@
-import { Observateur } from "@ou-ca/ouca-model/observateur.object";
+import { Observateur } from "@ou-ca/ouca-model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistObservateur } from "../../sql-api/sql-api-observateur";
 import { TABLE_OBSERVATEUR } from "../../utils/constants";

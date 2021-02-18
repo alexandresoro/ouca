@@ -1,4 +1,4 @@
-import { Comportement } from "@ou-ca/ouca-model/comportement.object";
+import { Comportement } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { ComportementDb } from "../objects/db/comportement-db.model";
 

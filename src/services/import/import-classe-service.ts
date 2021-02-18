@@ -1,4 +1,4 @@
-import { Classe } from "@ou-ca/ouca-model/classe.object";
+import { Classe } from "@ou-ca/ouca-model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistClasse } from "../../sql-api/sql-api-classe";
 import { TABLE_CLASSE } from "../../utils/constants";

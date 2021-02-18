@@ -1,4 +1,4 @@
-import { Commune } from "@ou-ca/ouca-model/commune.model";
+import { Commune } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { buildCommuneFromCommuneDb, buildCommunesFromCommunesDb } from "../mapping/commune-mapping";
 import { CommuneDb } from "../objects/db/commune-db.object";

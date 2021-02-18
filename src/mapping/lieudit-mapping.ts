@@ -1,4 +1,4 @@
-import { Lieudit } from "@ou-ca/ouca-model/lieudit.model";
+import { Lieudit } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 

@@ -1,4 +1,4 @@
-import { Observateur } from "@ou-ca/ouca-model/observateur.object";
+import { Observateur } from "@ou-ca/ouca-model";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, OBSERVATEUR_ID, ORDER_ASC, TABLE_OBSERVATEUR } from "../utils/constants";
 import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";

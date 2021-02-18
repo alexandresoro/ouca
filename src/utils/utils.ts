@@ -1,4 +1,4 @@
-import { EntiteSimple } from "@ou-ca/ouca-model/entite-simple.object";
+import { EntiteSimple } from "@ou-ca/ouca-model";
 import { parse } from "date-fns";
 import { fr as locale } from "date-fns/locale";
 import * as _ from "lodash";

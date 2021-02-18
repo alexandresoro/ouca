@@ -1,4 +1,4 @@
-import { WebsocketUpdateMessage } from "@ou-ca/ouca-model/websocket/websocket-update-message";
+import { WebsocketUpdateMessage } from "@ou-ca/ouca-model";
 import WebSocket from "ws";
 import { getAppConfiguration } from "../requests/configuration";
 import { findAllAges } from "../sql-api/sql-api-age";

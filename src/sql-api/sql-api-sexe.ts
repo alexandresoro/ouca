@@ -1,4 +1,4 @@
-import { Sexe } from "@ou-ca/ouca-model/sexe.object";
+import { Sexe } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllSexes, queryToFindNumberOfDonneesBySexeId } from "../sql/sql-queries-sexe";

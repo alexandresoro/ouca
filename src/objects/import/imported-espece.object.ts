@@ -1,4 +1,4 @@
-import { Espece } from "@ou-ca/ouca-model/espece.model";
+import { Espece } from "@ou-ca/ouca-model";
 
 const CLASSE_INDEX = 0;
 const CODE_INDEX = 1;

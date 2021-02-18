@@ -1,4 +1,4 @@
-import { EntiteAvecLibelle } from "@ou-ca/ouca-model/entite-avec-libelle.object";
+import { EntiteAvecLibelle } from "@ou-ca/ouca-model";
 
 const LIBELLE_INDEX = 0;
 

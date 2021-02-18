@@ -1,5 +1,4 @@
-import { Classe } from "@ou-ca/ouca-model/classe.object";
-import { Espece } from "@ou-ca/ouca-model/espece.model";
+import { Classe, Espece } from "@ou-ca/ouca-model";
 import { ImportedEspece } from "../../objects/import/imported-espece.object";
 import { findAllClasses } from "../../sql-api/sql-api-classe";
 import { findAllEspeces, persistEspece } from "../../sql-api/sql-api-espece";

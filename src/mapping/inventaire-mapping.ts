@@ -1,5 +1,4 @@
-import { Coordinates } from "@ou-ca/ouca-model/coordinates.object";
-import { Inventaire } from "@ou-ca/ouca-model/inventaire.object";
+import { Coordinates, Inventaire } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
 import _ from "lodash";
 import { InventaireDb } from "../objects/db/inventaire-db.object";

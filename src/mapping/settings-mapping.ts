@@ -1,10 +1,4 @@
-import { Age } from "@ou-ca/ouca-model/age.object";
-import { AppConfiguration } from "@ou-ca/ouca-model/app-configuration.object";
-import { Departement } from "@ou-ca/ouca-model/departement.object";
-import { EntiteSimple } from "@ou-ca/ouca-model/entite-simple.object";
-import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
-import { Observateur } from "@ou-ca/ouca-model/observateur.object";
-import { Sexe } from "@ou-ca/ouca-model/sexe.object";
+import { Age, AppConfiguration, Departement, EntiteSimple, EstimationNombre, Observateur, Sexe } from "@ou-ca/ouca-model";
 import { SettingsDb } from "../objects/db/settings-db.object";
 
 const getSettingAsEntity = <T extends EntiteSimple>(

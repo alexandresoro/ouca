@@ -1,6 +1,4 @@
-import { areSameCoordinates } from "@ou-ca/ouca-model/coordinates-system/coordinates-helper";
-import { Coordinates } from "@ou-ca/ouca-model/coordinates.object";
-import { Lieudit } from "@ou-ca/ouca-model/lieudit.model";
+import { areSameCoordinates, Coordinates, Lieudit } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { buildLieuditDbFromLieudit, buildLieuditFromLieuditDb, buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
 import { LieuditDb } from "../objects/db/lieudit-db.object";

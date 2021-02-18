@@ -1,4 +1,4 @@
-import { AppConfiguration } from "@ou-ca/ouca-model/app-configuration.object";
+import { AppConfiguration } from "@ou-ca/ouca-model";
 import { HttpParameters } from "../http/httpParameters";
 import { findAppConfiguration, persistUserSettings } from "../sql-api/sql-api-configuration";
 

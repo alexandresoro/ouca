@@ -1,4 +1,4 @@
-import { CoordinatesSystemType } from "@ou-ca/ouca-model/coordinates-system";
+import { CoordinatesSystemType } from "@ou-ca/ouca-model";
 import { TABLE_SETTINGS } from "../utils/constants";
 import { query } from "./sql-queries-utils";
 

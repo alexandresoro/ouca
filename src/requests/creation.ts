@@ -1,7 +1,4 @@
-import { DonneeWithNavigationData } from "@ou-ca/ouca-model/donnee-with-navigation-data.object";
-import { Donnee } from "@ou-ca/ouca-model/donnee.object";
-import { Inventaire } from "@ou-ca/ouca-model/inventaire.object";
-import { PostResponse } from "@ou-ca/ouca-model/post-response.object";
+import { Donnee, DonneeWithNavigationData, Inventaire, PostResponse } from "@ou-ca/ouca-model";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { deleteDonneeById, findDonneeByIdWithContext, findExistingDonneeId, findLastDonneeId, findNextRegroupement, persistDonnee, updateInventaireIdForDonnees } from "../sql-api/sql-api-donnee";

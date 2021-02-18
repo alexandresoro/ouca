@@ -1,4 +1,4 @@
-import { EstimationDistance } from "@ou-ca/ouca-model/estimation-distance.object";
+import { EstimationDistance } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { getQueryToFindNumberOfDonneesByEstimationDistanceId, queryToFindAllEstimationsDistance } from "../sql/sql-queries-estimation-distance";

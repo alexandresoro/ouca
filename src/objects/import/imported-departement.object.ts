@@ -1,4 +1,4 @@
-import { Departement } from "@ou-ca/ouca-model/departement.object";
+import { Departement } from "@ou-ca/ouca-model";
 
 const CODE_INDEX = 0;
 const CODE_MAX_LENGTH = 100;

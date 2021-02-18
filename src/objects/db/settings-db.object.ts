@@ -1,4 +1,4 @@
-import { CoordinatesSystemType } from "@ou-ca/ouca-model/coordinates-system";
+import { CoordinatesSystemType } from "@ou-ca/ouca-model";
 
 export interface SettingsDb {
   id: number;

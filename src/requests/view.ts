@@ -1,5 +1,4 @@
-import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/ouca-model/coordinates-system";
-import { FlatDonnee } from "@ou-ca/ouca-model/flat-donnee.object";
+import { COORDINATES_SYSTEMS_CONFIG, FlatDonnee } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";

@@ -1,4 +1,4 @@
-import { EstimationNombre } from "@ou-ca/ouca-model/estimation-nombre.object";
+import { EstimationNombre } from "@ou-ca/ouca-model";
 import * as _ from "lodash";
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 

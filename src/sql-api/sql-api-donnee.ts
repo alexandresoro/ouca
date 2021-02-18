@@ -1,11 +1,4 @@
-import { Comportement } from "@ou-ca/ouca-model/comportement.object";
-import { CoordinatesSystemType, getCoordinates } from "@ou-ca/ouca-model/coordinates-system";
-import { DonneeWithNavigationData } from "@ou-ca/ouca-model/donnee-with-navigation-data.object";
-import { Donnee } from "@ou-ca/ouca-model/donnee.object";
-import { DonneesFilter } from "@ou-ca/ouca-model/donnees-filter.object";
-import { FlatDonnee } from "@ou-ca/ouca-model/flat-donnee.object";
-import { Inventaire } from "@ou-ca/ouca-model/inventaire.object";
-import { NicheurCode, NICHEUR_VALUES } from "@ou-ca/ouca-model/nicheur.model";
+import { Comportement, CoordinatesSystemType, Donnee, DonneesFilter, DonneeWithNavigationData, FlatDonnee, getCoordinates, Inventaire, NicheurCode, NICHEUR_VALUES } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
 import * as _ from "lodash";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
