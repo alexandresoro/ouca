@@ -1,7 +1,7 @@
 {
   "name": "@ou-ca/ouca-model",
   "description": "Common elements for Base Naturaliste project",
-  "version": "0.0.61",
+  "version": "0.0.62",
   "scripts": {
     "build": "npm run clean && npm run build:indexes && tsc",
     "build:indexes": "ts-node indexes",
