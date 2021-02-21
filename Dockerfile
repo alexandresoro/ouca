@@ -3,11 +3,13 @@ FROM node:lts-alpine as build
 
 WORKDIR /app/backend
 
-COPY package.json tsconfig.json yarn.lock .npmrc /app/backend/
+COPY package.json tsconfig.json yarn.lock .yarnrc.yml /app/backend/
+COPY .yarn/ /app/backend/.yarn
 COPY src/ /app/backend/src
 
 ARG NPM_GITHUB_TOKEN
-RUN yarn install --frozen-lockfile
+RUN npm install -g yarn
+RUN yarn install --immutable
 RUN yarn build:prod
 
 # 2. Run the NodeJS backend
@@ -16,10 +18,11 @@ FROM node:lts-alpine
 # Install only the dependencies that are required at runtime
 WORKDIR /app
 
-COPY package.json yarn.lock .npmrc /app/
+COPY package.json yarn.lock .yarnrc.yml /app/
 ARG NPM_GITHUB_TOKEN
-RUN yarn install --production
-RUN rm -f package.json yarn.lock .npmrc
+RUN npm install -g yarn
+RUN yarn workspaces focus --production 
+RUN rm -f package.json yarn.lock .yarnrc.yml
 
 ENV DB_HOST 127.0.0.1
 ENV DB_PORT 3306
