@@ -1,48 +1,22 @@
-# Base Naturaliste (backend)
+# Où ça ? - Base Naturaliste (backend)
 
-This is the Node.js backend for Base Naturaliste application.
+This is the Node.js backend for _Où ça ?_ application.
 
 ## About the project
 
-The aim of the Base Naturaliste project is to provide naturalists a software where they can record and visualize their wildlife observations.
+The aim of the _Où ça ?_ project is to provide naturalists an application where they can record and visualize their wildlife observations.
 
 For more details about the application itself, please refer to the documentation of the frontend project.
 
 ## Getting Started
 
-This project is a Node.js webserver that connects to an instance of a MariaDB database where the Base Naturaliste data is stored.
+This project is a Node.js webserver that connects to an instance of a MariaDB database where the application data is stored.
 
-### Dependencies and related projects
+### Related project
 
-#### Dependencies
+The frontend for _Où ça ?_ application which uses this backend:
 
-The project requires Node.js v10 or later. The project has been developed using Yarn as package manager, and is therefore recommended.
-
-The objects exchanged between the backend and the frontend are defined in a common model:
-
-- [Base Naturaliste (model)](https://github.com/alexandresoro/basenaturaliste-model)
-
-#### Related projects
-
-The frontend for Base Naturaliste application which uses this backend:
-
-- [Base Naturaliste (frontend)](https://github.com/alexandresoro/basenaturaliste-frontend)
-
-## Run the project
-
-The following options are available:
-
-- **build** : Transpiles the TypeScript project to the _dist/_ output folder.
-- **build:debug** : Same as **build** but with the TypeScript source maps.
-- **start** : Starts the Node.js instance. Same as _node dist/backend_.
-- **dev** : Builds the project and starts the Node.js instance.
-- **debug** : Builds the project with the source maps and start the Node.js instance with debug activated. Same as **dev** with the debug.
-
-Example:
-
-```
-yarn dev
-```
+- [Où ça ? (frontend)](https://github.com/ou-ca/ouca-frontend)
 
 ## Deployment
 
@@ -77,7 +51,7 @@ When starting the webserver, it is possible to override the default configuratio
 Example:
 
 ```
-node $path_to_project$/dist/backend -dbHost=basenaturaliste.com -dbPassword=dbpwd
+node $path_to_project$/dist/backend --dbHost=basenaturaliste.com --dbPassword=dbpwd
 ```
 
 ## Docker
