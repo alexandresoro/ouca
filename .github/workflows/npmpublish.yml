@@ -18,29 +18,29 @@ jobs:
 
       - uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 14
           registry-url: "https://npm.pkg.github.com"
           scope: "@ou-ca"
 
-      - name: Bump version
-        run: yarn version --patch
+      - name: Install Yarn globally
+        run: npm install -g yarn
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Build
         run: yarn build
 
-      - name: Copy updated package.json
-        if: github.event_name == 'push'
-        run: yarn run deployPrePublish
+      - name: Bump version
+        run: npm version patch
 
       - name: Update project version
         if: github.event_name == 'push'
         run: git push --follow-tags
 
+      - name: Set publish token
+        run: yarn config set 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' ${{secrets.GPR_TOKEN}}
+
       - name: Publish
         if: github.event_name == 'push'
-        run: yarn publish dist
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GPR_TOKEN}}
+        run: yarn npm publish
