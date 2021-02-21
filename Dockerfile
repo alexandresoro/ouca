@@ -18,6 +18,8 @@ FROM node:lts-alpine
 WORKDIR /app
 
 COPY package.json yarn.lock .yarnrc.yml /app/
+COPY .yarn/ /app/backend/.yarn
+
 ARG NPM_GITHUB_TOKEN
 RUN yarn workspaces focus --production 
 RUN rm -f package.json yarn.lock .yarnrc.yml
