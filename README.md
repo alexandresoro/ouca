@@ -1,16 +1,16 @@
-# Base Naturaliste (model)
+# Où ça ? - Base Naturaliste (model)
 
-This is the model for Base Naturaliste application.
+This is the model for _Où ça ?_ application.
 
 ## Related projects
 
-The backend for Base Naturaliste application:
+The backend for _Où ça ?_ application:
 
-- [Base Naturaliste (backend)](https://github.com/alexandresoro/basenaturaliste-backend)
+- [Où ça ? (backend)](https://github.com/ou-ca/ouca-backend)
 
-The frontend for Base Naturaliste application:
+The frontend for _Où ça ?_ application:
 
-- [Base Naturaliste (frontend)](https://github.com/alexandresoro/basenaturaliste-frontend)
+- [Où ça ? (frontend)](https://github.com/ou-ca/ouca-frontend)
 
 ## Authors
 
