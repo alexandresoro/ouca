@@ -8,7 +8,6 @@ COPY .yarn/ /app/backend/.yarn
 COPY src/ /app/backend/src
 
 ARG NPM_GITHUB_TOKEN
-RUN npm install -g yarn
 RUN yarn install --immutable
 RUN yarn build:prod
 
@@ -20,7 +19,6 @@ WORKDIR /app
 
 COPY package.json yarn.lock .yarnrc.yml /app/
 ARG NPM_GITHUB_TOKEN
-RUN npm install -g yarn
 RUN yarn workspaces focus --production 
 RUN rm -f package.json yarn.lock .yarnrc.yml
 
