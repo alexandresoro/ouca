@@ -54,9 +54,9 @@ export abstract class ImportService {
 
   protected abstract getNumberOfColumns(): number;
 
-  protected abstract async init(): Promise<void>;
+  protected abstract init(): Promise<void>;
 
-  protected abstract async importEntity(entityTab: string[]): Promise<string>;
+  protected abstract importEntity(entityTab: string[]): Promise<string>;
 
   private importLine = async (entityTab: string[]): Promise<string> => {
     if (entityTab?.length !== this.getNumberOfColumns()) {
