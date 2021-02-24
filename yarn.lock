@@ -407,35 +407,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"basenaturaliste-backend@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "basenaturaliste-backend@workspace:."
-  dependencies:
-    "@ou-ca/ouca-model": ^0.0.62
-    "@types/lodash.deburr": ^4.1.6
-    "@types/lodash.groupby": ^4.6.6
-    "@types/multiparty": ^0.0.32
-    "@types/node": ^14.14.31
-    "@types/ws": ^7.4.0
-    "@types/yargs": ^16.0.0
-    "@typescript-eslint/eslint-plugin": ^4.15.2
-    "@typescript-eslint/parser": ^4.15.2
-    date-fns: ^2.17.0
-    date-fns-tz: ^1.1.2
-    eslint: ^7.20.0
-    lodash.deburr: ^4.1.0
-    lodash.groupby: ^4.6.0
-    mariadb: ^2.5.3
-    multiparty: ^4.2.2
-    papaparse: ^5.3.0
-    typescript: ^4.1.5
-    winston: ^3.3.3
-    ws: ^7.4.3
-    xlsx: ^0.16.9
-    yargs: ^16.2.0
-  languageName: unknown
-  linkType: soft
-
 "brace-expansion@npm:^1.1.7":
   version: 1.1.11
   resolution: "brace-expansion@npm:1.1.11"
@@ -1447,6 +1418,35 @@ __metadata:
   checksum: bdf5683f986d00e173e6034837b7b6a9e68c7e1a37d7684b240adf1758db9076cfb04c9f64be29327881bb06c5017afb8b65012c5f02d07b180e9f6f42595ffd
   languageName: node
   linkType: hard
+
+"ouca-backend@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "ouca-backend@workspace:."
+  dependencies:
+    "@ou-ca/ouca-model": ^0.0.62
+    "@types/lodash.deburr": ^4.1.6
+    "@types/lodash.groupby": ^4.6.6
+    "@types/multiparty": ^0.0.32
+    "@types/node": ^14.14.31
+    "@types/ws": ^7.4.0
+    "@types/yargs": ^16.0.0
+    "@typescript-eslint/eslint-plugin": ^4.15.2
+    "@typescript-eslint/parser": ^4.15.2
+    date-fns: ^2.17.0
+    date-fns-tz: ^1.1.2
+    eslint: ^7.20.0
+    lodash.deburr: ^4.1.0
+    lodash.groupby: ^4.6.0
+    mariadb: ^2.5.3
+    multiparty: ^4.2.2
+    papaparse: ^5.3.0
+    typescript: ^4.1.5
+    winston: ^3.3.3
+    ws: ^7.4.3
+    xlsx: ^0.16.9
+    yargs: ^16.2.0
+  languageName: unknown
+  linkType: soft
 
 "papaparse@npm:^5.3.0":
   version: 5.3.0

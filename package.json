@@ -1,7 +1,7 @@
 {
-  "name": "basenaturaliste-backend",
+  "name": "ouca-backend",
   "version": "1.0.0",
-  "description": "Backend for Base Naturaliste",
+  "description": "Backend for Où-ça",
   "contributors": [
     {
       "name": "Camille Carrier"
