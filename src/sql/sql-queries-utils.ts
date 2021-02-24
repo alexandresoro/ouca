@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { SqlConnection } from "../sql-api/sql-connection";
@@ -11,15 +10,11 @@ import {
 
 const createKeyValueMapWithSameName = (
   names: string | string[]
-): { [key: string]: string } => {
-  const returnMap = {};
-  _.forEach(typeof names === "string" ? [names] : names, (name: string) => {
-    returnMap[name] = name;
-  });
-  return returnMap;
+): Map<string, string> => {
+  return new Map(([] as string[]).concat(names).map(name => [name, name]));
 };
 
-export const DB_SAVE_MAPPING = {
+export const DB_SAVE_MAPPING = new Map(Object.entries({
   observateur: createKeyValueMapWithSameName("libelle"),
   departement: createKeyValueMapWithSameName("code"),
   commune: {
@@ -60,7 +55,7 @@ export const DB_SAVE_MAPPING = {
     date_creation: "dateCreation"
   },
   configuration: createKeyValueMapWithSameName(["libelle", "value"])
-};
+}));
 
 export const DB_SAVE_LISTS_MAPPING = {
   inventaire_associe: {
@@ -104,48 +99,53 @@ export const queryToFindOneById = async <T>(
   tableName: string,
   id: number
 ): Promise<T[]> => {
-  return query<T[]>("SELECT * FROM " + tableName + " WHERE id=" + id);
+  return query<T[]>(`SELECT * FROM ${tableName} WHERE id=${id}`);
 };
 
 export const queryToSaveEntity = async <T extends EntityDb>(
   tableName: string,
   entityToSave: T,
-  mapping?: { [column: string]: string }
+  mapping?: Map<string, string>
 ): Promise<SqlSaveResponse> => {
+
   let queryStr: string;
 
-  const dbEntityToSaveAsArray = _.chain(entityToSave)
-    .omit("id")
-    .omitBy((value, entityKey) => {
-      return !!mapping && !_.includes(_.values(mapping), entityKey);
+  const { id, ...entityToSaveWithoutId } = entityToSave;
+
+  const dbEntityToSaveAsArray = Object.entries(entityToSaveWithoutId)
+    .filter(([entityKey, entityValue]) => {
+      // Filter the entries to the ones defined in the mapping
+      // Otherwise, keep them all
+      // This is to avoid to store invalid columns in the DB
+      return !mapping || mapping.has(entityKey);
     })
-    .mapKeys((value, entityKey) => {
-      return (
-        _.findKey(mapping, (value) => {
-          return value === entityKey;
-        }) ?? entityKey
-      );
-    })
-    .mapValues((entityValue) => {
-      if (_.isNil(entityValue)) {
-        return "null";
-      } else if (_.isBoolean(entityValue)) {
-        return entityValue ? "TRUE" : "FALSE";
-      } else if (_.isString(entityValue)) {
-        return '"' + entityValue.trim() + '"';
+    .map(([key, value]) => {
+
+      const columnDb = [...mapping].find(([mappingKey, mappingValue]) => {
+        return mappingValue === key
+      })?.[0] ?? key;
+
+      // Set the proper value in DB format
+      let valueDb: string;
+      if (value == null) {
+        valueDb = "null";
+      } else if (typeof value === 'boolean') {
+        valueDb = (value ? "TRUE" : "FALSE");
+      } else if (typeof value === 'string') {
+        valueDb = '"' + value.trim() + '"';
       } else {
-        return '"' + entityValue + '"';
+        valueDb = '"' + value + '"';
       }
-    })
-    .toPairs()
-    .value();
+
+      return [columnDb, valueDb];
+    });
 
   if (!entityToSave.id) {
-    const columnNames = _.map(dbEntityToSaveAsArray, (elt) => {
+    const columnNames = dbEntityToSaveAsArray.map((elt) => {
       return elt[0];
     }).join(",");
 
-    const values = _.map(dbEntityToSaveAsArray, (elt) => {
+    const values = dbEntityToSaveAsArray.map((elt) => {
       return elt[1];
     }).join(",");
 
@@ -159,7 +159,7 @@ export const queryToSaveEntity = async <T extends EntityDb>(
       values +
       ")";
   } else {
-    const updates = _.map(dbEntityToSaveAsArray, (elt) => {
+    const updates = dbEntityToSaveAsArray.map((elt) => {
       return elt[0] + "=" + elt[1];
     }).join(",");
 

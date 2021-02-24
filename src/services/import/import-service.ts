@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import deburr from "lodash.deburr";
 import Papa from "papaparse";
 
 const COMMENT_PREFIX = "###";
@@ -83,6 +83,6 @@ export abstract class ImportService {
       return false;
     }
 
-    return _.deburr(string1.trim()).toLowerCase() === _.deburr(string2.trim()).toLowerCase();
+    return deburr(string1.trim()).toLowerCase() === deburr(string2.trim()).toLowerCase();
   }
 }

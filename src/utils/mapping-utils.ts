@@ -1,15 +1,13 @@
-import * as _ from "lodash";
-
 export const mapAssociesIds = (
   associesDb: { associeId: number }[]
 ): number[] => {
-  return _.map(associesDb, (associeDb) => {
+  return associesDb.map((associeDb) => {
     return associeDb.associeId;
   });
 };
 
 export const mapMeteosIds = (meteosDb: { meteoId: number }[]): number[] => {
-  return _.map(meteosDb, (meteoDb) => {
+  return meteosDb.map((meteoDb) => {
     return meteoDb.meteoId;
   });
 };
@@ -17,13 +15,13 @@ export const mapMeteosIds = (meteosDb: { meteoId: number }[]): number[] => {
 export const mapComportementsIds = (
   comportementsDb: { comportementId: number }[]
 ): number[] => {
-  return _.map(comportementsDb, (comportementDb) => {
+  return comportementsDb.map((comportementDb) => {
     return comportementDb.comportementId;
   });
 };
 
 export const mapMilieuxIds = (milieuxDds: { milieuId: number }[]): number[] => {
-  return _.map(milieuxDds, (milieuDb) => {
+  return milieuxDds.map((milieuDb) => {
     return milieuDb.milieuId;
   });
 };

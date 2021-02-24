@@ -1,5 +1,4 @@
 import { Sexe } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllSexes, queryToFindNumberOfDonneesBySexeId } from "../sql/sql-queries-sexe";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -13,7 +12,7 @@ export const findAllSexes = async (): Promise<Sexe[]> => {
     queryToFindNumberOfDonneesBySexeId()
   ]);
 
-  _.forEach(sexes, (sexe: Sexe) => {
+  sexes.forEach((sexe: Sexe) => {
     sexe.nbDonnees = getNbByEntityId(sexe, nbDonneesBySexe);
   });
 
@@ -21,5 +20,5 @@ export const findAllSexes = async (): Promise<Sexe[]> => {
 };
 
 export const persistSexe = async (sexe: Sexe): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_SEXE, sexe, DB_SAVE_MAPPING.sexe);
+  return persistEntity(TABLE_SEXE, sexe, DB_SAVE_MAPPING.get("sexe"));
 };

@@ -1,5 +1,4 @@
 import { Meteo } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllMeteos, queryToFindNumberOfDonneesByMeteoId } from "../sql/sql-queries-meteo";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -13,7 +12,7 @@ export const findAllMeteos = async (): Promise<Meteo[]> => {
     queryToFindNumberOfDonneesByMeteoId()
   ]);
 
-  _.forEach(meteos, (meteo: Meteo) => {
+  meteos.forEach((meteo: Meteo) => {
     meteo.nbDonnees = getNbByEntityId(meteo, nbDonneesByMeteo);
   });
 
@@ -27,5 +26,5 @@ export const findMeteoByLibelle = async (
 };
 
 export const persistMeteo = async (meteo: Meteo): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_METEO, meteo, DB_SAVE_MAPPING.meteo);
+  return persistEntity(TABLE_METEO, meteo, DB_SAVE_MAPPING.get("meteo"));
 };

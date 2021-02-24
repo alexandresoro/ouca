@@ -1,5 +1,4 @@
 import { Espece } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { buildEspeceFromEspeceDb, buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
 import { EspeceDb } from "../objects/db/espece-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -24,7 +23,7 @@ export const findAllEspeces = async (): Promise<Espece[]> => {
   ]);
 
   const especes: Espece[] = buildEspecesFromEspecesDb(especesDb);
-  _.forEach(especes, (espece: Espece) => {
+  especes.forEach((espece: Espece) => {
     espece.nbDonnees = getNbByEntityId(espece, nbDonneesByEspece);
   });
 
@@ -53,5 +52,5 @@ export const findEspeceByNomLatin = async (
 export const persistEspece = async (
   espece: Espece
 ): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_ESPECE, espece, DB_SAVE_MAPPING.espece);
+  return persistEntity(TABLE_ESPECE, espece, DB_SAVE_MAPPING.get("espece"));
 };

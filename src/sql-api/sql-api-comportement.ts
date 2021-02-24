@@ -1,5 +1,4 @@
 import { Comportement } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { buildComportementDbFromComportement, buildComportementsFromComportementsDb } from "../mapping/comportement-mapping";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllComportements, queryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
@@ -15,7 +14,7 @@ export const findAllComportements = async (): Promise<Comportement[]> => {
 
   const comportements = buildComportementsFromComportementsDb(comportementsDb);
 
-  _.forEach(comportements, (comportement: Comportement) => {
+  comportements.forEach((comportement: Comportement) => {
     comportement.nbDonnees = getNbByEntityId(
       comportement,
       nbDonneesByComportement

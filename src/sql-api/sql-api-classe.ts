@@ -1,5 +1,4 @@
 import { Classe } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllClasses, queryToFindNumberOfDonneesByClasseId, queryToFindNumberOfEspecesByClasseId } from "../sql/sql-queries-classe";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -14,7 +13,7 @@ export const findAllClasses = async (): Promise<Classe[]> => {
     queryToFindNumberOfDonneesByClasseId()
   ]);
 
-  _.forEach(classes, (classe: Classe) => {
+  classes.forEach((classe: Classe) => {
     classe.nbEspeces = getNbByEntityId(classe, nbEspecesByClasse);
     classe.nbDonnees = getNbByEntityId(classe, nbDonneesByClasse);
   });
@@ -29,5 +28,5 @@ export const findClasseByLibelle = async (libelle: string): Promise<Classe> => {
 export const persistClasse = async (
   classe: Classe
 ): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_CLASSE, classe, DB_SAVE_MAPPING.classe);
+  return persistEntity(TABLE_CLASSE, classe, DB_SAVE_MAPPING.get("classe"));
 };

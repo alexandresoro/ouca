@@ -1,5 +1,4 @@
 import * as http from "http";
-import * as _ from "lodash";
 import * as url from "url";
 import { REQUEST_METHODS } from "../mapping";
 
@@ -25,5 +24,5 @@ export const checkMethodValidity = (request: http.IncomingMessage): boolean => {
     return true;
   }
 
-  return _.includes(validMethods, request.method);
+  return validMethods.includes(request.method as HttpMethod);
 };

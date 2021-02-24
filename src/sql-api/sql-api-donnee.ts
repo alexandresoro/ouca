@@ -1,6 +1,6 @@
 import { Comportement, CoordinatesSystemType, Donnee, DonneesFilter, DonneeWithNavigationData, FlatDonnee, getCoordinates, Inventaire, NicheurCode, NICHEUR_VALUES } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
-import * as _ from "lodash";
+import groupBy from "lodash.groupby";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllComportementsByDonneeId, queryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";
@@ -63,7 +63,7 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
       duree: flatDonnee.duree,
       lieuditId: flatDonnee.lieuditId,
       customizedAltitude: flatDonnee.altitude,
-      coordinates: !_.isNil(flatDonnee.longitude)
+      coordinates: !(flatDonnee.longitude == null)
         ? {
           longitude: flatDonnee.longitude,
           latitude: flatDonnee.latitude,
@@ -123,7 +123,7 @@ export const persistDonnee = async (
       ...donneeToSave,
       dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN)
     },
-    DB_SAVE_MAPPING.donnee
+    DB_SAVE_MAPPING.get("donnee")
   );
 
   // If it is an update we take the existing ID else we take the inserted ID
@@ -214,13 +214,13 @@ const updateCoordinates = (
   const coordinates = getCoordinates(
     {
       coordinates: {
-        longitude: _.isNil(donnee.customizedLongitude)
+        longitude: (donnee.customizedLongitude == null)
           ? donnee.longitude
           : donnee.customizedLongitude,
-        latitude: _.isNil(donnee.customizedLatitude)
+        latitude: (donnee.customizedLatitude == null)
           ? donnee.latitude
           : donnee.customizedLatitude,
-        system: _.isNil(donnee.customizedCoordinatesSystem)
+        system: (donnee.customizedCoordinatesSystem == null)
           ? donnee.coordinatesSystem
           : donnee.customizedCoordinatesSystem
       }
@@ -228,7 +228,7 @@ const updateCoordinates = (
     coordinatesSystemType
   );
 
-  donnee.altitude = _.isNil(donnee.customizedAltitude)
+  donnee.altitude = (donnee.customizedAltitude == null)
     ? donnee.altitude
     : donnee.customizedAltitude;
   donnee.customizedAltitude = null;
@@ -248,7 +248,7 @@ export const findDonneesByCustomizedFilters = async (
 ): Promise<FlatDonnee[]> => {
   const donnees: FlatDonnee[] = await queryToFindDonneesByCriterion(filter);
 
-  const donneesIds: number[] = _.map(donnees, (donnee) => {
+  const donneesIds: number[] = donnees.map((donnee) => {
     return donnee.id;
   });
 
@@ -266,31 +266,27 @@ export const findDonneesByCustomizedFilters = async (
     meteosByDonnee,
     comportementsByDonnee,
     milieuxByDonnee
-  ]: { [key: number]: any }[] = _.map(
-    [associes, meteos, comportements, milieux],
+  ]: { [key: number]: any }[] = [associes, meteos, comportements, milieux].map(
     (table) => {
-      return _.groupBy(table, (tableElement) => {
+      return groupBy(table, (tableElement) => {
         return tableElement.donneeId;
       });
     }
   );
 
-  _.forEach(donnees, (donnee: FlatDonnee) => {
+  donnees.forEach((donnee: FlatDonnee) => {
     // Transform the coordinates into the expected system
     updateCoordinates(donnee, filter.coordinatesSystemType);
 
-    donnee.associes = _.map(
-      associesByDonnee[donnee.id],
+    donnee.associes = associesByDonnee[donnee.id].map(
       (associe) => associe.libelle
     ).join(SEPARATOR_COMMA);
 
-    donnee.meteos = _.map(
-      meteosByDonnee[donnee.id],
+    donnee.meteos = meteosByDonnee[donnee.id].map(
       (meteo) => meteo.libelle
     ).join(SEPARATOR_COMMA);
 
-    donnee.comportements = _.map(
-      comportementsByDonnee[donnee.id],
+    donnee.comportements = comportementsByDonnee[donnee.id].map(
       (comportement) => {
         return {
           code: comportement.code,
@@ -299,7 +295,7 @@ export const findDonneesByCustomizedFilters = async (
       }
     );
 
-    donnee.milieux = _.map(milieuxByDonnee[donnee.id], (milieu) => {
+    donnee.milieux = milieuxByDonnee[donnee.id].map((milieu) => {
       return {
         code: milieu.code,
         libelle: milieu.libelle
@@ -308,22 +304,22 @@ export const findDonneesByCustomizedFilters = async (
 
     // Compute nicheur status for the Donnée (i.e. highest nicheur status of the comportements)
     // First we keep only the comportements having a nicheur status
-    const nicheurStatuses: NicheurCode[] = _.map(
-      _.filter(
-        comportementsByDonnee[donnee.id],
-        (comportement: Comportement) => {
-          return !!comportement.nicheur;
-        }
-      ),
+    const nicheurStatuses: NicheurCode[] = comportementsByDonnee[donnee.id].filter(
+      (comportement: Comportement) => {
+        return !!comportement.nicheur;
+      }
+    ).map(
       (comportement: Comportement) => {
         return comportement.nicheur;
       }
     );
 
     // Then we keep the highest nicheur status
-    const nicheurStatusCode = _.maxBy(nicheurStatuses, (nicheurStatus) => {
-      return NICHEUR_VALUES[nicheurStatus].weight;
-    });
+    const nicheurStatusCode = nicheurStatuses && nicheurStatuses.reduce(
+      (nicheurStatusOne, nicheurStatusTwo) => {
+        return NICHEUR_VALUES[nicheurStatusOne].weight >= NICHEUR_VALUES[nicheurStatusTwo].weight ? nicheurStatusOne : nicheurStatusTwo
+      }
+    );
 
     donnee.nicheur = nicheurStatusCode
       ? NICHEUR_VALUES[nicheurStatusCode].name

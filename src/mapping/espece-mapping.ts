@@ -1,5 +1,4 @@
 import { Espece } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { EspeceDb } from "../objects/db/espece-db.object";
 
 export const buildEspeceFromEspeceDb = (especeDb: EspeceDb): Espece => {
@@ -13,7 +12,7 @@ export const buildEspeceFromEspeceDb = (especeDb: EspeceDb): Espece => {
 };
 
 export const buildEspecesFromEspecesDb = (especesDb: EspeceDb[]): Espece[] => {
-  return _.map(especesDb, (especeDb) => {
+  return especesDb.map((especeDb) => {
     return buildEspeceFromEspeceDb(especeDb);
   });
 };

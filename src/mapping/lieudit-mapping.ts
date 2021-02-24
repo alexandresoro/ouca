@@ -1,5 +1,4 @@
 import { Lieudit } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 
 export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
@@ -19,7 +18,7 @@ export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
 export const buildLieuxditsFromLieuxditsDb = (
   lieuxditsDb: LieuditDb[]
 ): Lieudit[] => {
-  return _.map(lieuxditsDb, (lieuditDb) => {
+  return lieuxditsDb.map((lieuditDb) => {
     return buildLieuditFromLieuditDb(lieuditDb);
   });
 };
@@ -32,7 +31,7 @@ export const buildLieuditDbFromLieudit = (lieudit: Lieudit): LieuditDb => {
     altitude: lieudit.altitude
   };
 
-  if (_.has(lieudit, "coordinates")) {
+  if (Object.prototype.hasOwnProperty.call(lieudit, "coordinates")) {
     lieuditDb.longitude = lieudit.coordinates.longitude;
     lieuditDb.latitude = lieudit.coordinates.latitude;
     lieuditDb.coordinates_system = lieudit.coordinates.system;

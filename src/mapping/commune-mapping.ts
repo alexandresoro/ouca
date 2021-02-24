@@ -1,5 +1,4 @@
 import { Commune } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { CommuneDb } from "../objects/db/commune-db.object";
 
 export const buildCommuneFromCommuneDb = (communeDb: CommuneDb): Commune => {
@@ -14,7 +13,7 @@ export const buildCommuneFromCommuneDb = (communeDb: CommuneDb): Commune => {
 export const buildCommunesFromCommunesDb = (
   communesDb: CommuneDb[]
 ): Commune[] => {
-  return _.map(communesDb, (communeDb) => {
+  return communesDb.map((communeDb) => {
     return buildCommuneFromCommuneDb(communeDb);
   });
 };

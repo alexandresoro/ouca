@@ -1,11 +1,9 @@
 import * as http from "http";
-import * as _ from "lodash";
 import * as url from "url";
 import * as zlib from "zlib";
 import {
-  REQUEST_MAPPING,
-  REQUEST_MEDIA_TYPE_RESPONSE_MAPPING,
-  REQUESTS_WITH_ATTACHMENT_FILE_NAME_RESPONSES
+  REQUESTS_WITH_ATTACHMENT_FILE_NAME_RESPONSES, REQUEST_MAPPING,
+  REQUEST_MEDIA_TYPE_RESPONSE_MAPPING
 } from "../mapping";
 
 export const handleHttpRequest = (
@@ -20,7 +18,7 @@ export const handleHttpRequest = (
   const pathName = url.parse(request.url).pathname;
   const queryParameters = url.parse(request.url, true).query;
 
-  if (!_.isFunction(REQUEST_MAPPING[pathName])) {
+  if (!(typeof REQUEST_MAPPING[pathName] === 'function')) {
     res.statusCode = 404;
     res.end();
     return;
@@ -79,10 +77,10 @@ export const isMultipartContent = (request: http.IncomingMessage): boolean => {
   // In some calls, the data passed as POST parameters is not a pure JSON, but a form (e.g. import)
   if (!!request.headers && !!request.headers["content-type"]) {
     const contentType = request.headers["content-type"];
-    const contentTypeElements: string[] = _.map(contentType.split(";"), (elt) =>
+    const contentTypeElements: string[] = contentType.split(";").map((elt) =>
       elt.trim()
     );
-    return _.includes(contentTypeElements, "multipart/form-data");
+    return contentTypeElements.includes("multipart/form-data");
   }
   return false;
 };

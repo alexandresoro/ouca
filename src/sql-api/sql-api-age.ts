@@ -1,5 +1,4 @@
 import { Age } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllAges, queryToFindNumberOfDonneesByAgeId } from "../sql/sql-queries-age";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -13,7 +12,7 @@ export const findAllAges = async (): Promise<Age[]> => {
     queryToFindNumberOfDonneesByAgeId()
   ]);
 
-  _.forEach(ages, (age: Age) => {
+  ages.forEach((age: Age) => {
     age.nbDonnees = getNbByEntityId(age, nbDonneesByAge);
   });
 
@@ -21,5 +20,5 @@ export const findAllAges = async (): Promise<Age[]> => {
 };
 
 export const persistAge = async (age: Age): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_AGE, age, DB_SAVE_MAPPING.age);
+  return persistEntity(TABLE_AGE, age, DB_SAVE_MAPPING.get("age"));
 };

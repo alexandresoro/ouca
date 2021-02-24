@@ -1,5 +1,4 @@
 import { EstimationNombre } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { buildEstimationNombreFromEstimationNombreDb, buildEstimationsNombreFromEstimationsNombreDb } from "../mapping/estimation-nombre-mapping";
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -21,7 +20,7 @@ export const findAllEstimationsNombre = async (): Promise<
     estimationsDb
   );
 
-  _.forEach(estimations, (estimation: EstimationNombre) => {
+  estimations.forEach((estimation: EstimationNombre) => {
     estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
   });
 
@@ -49,6 +48,6 @@ export const persistEstimationNombre = async (
   return persistEntity(
     TABLE_ESTIMATION_NOMBRE,
     estimation,
-    DB_SAVE_MAPPING.estimationNombre
+    DB_SAVE_MAPPING.get("estimationNombre")
   );
 };

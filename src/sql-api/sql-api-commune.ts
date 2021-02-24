@@ -1,5 +1,4 @@
 import { Commune } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { buildCommuneFromCommuneDb, buildCommunesFromCommunesDb } from "../mapping/commune-mapping";
 import { CommuneDb } from "../objects/db/commune-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -30,7 +29,7 @@ export const findAllCommunes = async (): Promise<Commune[]> => {
 
   const communes: Commune[] = buildCommunesFromCommunesDb(communesDb);
 
-  _.forEach(communes, (commune: Commune) => {
+  communes.forEach((commune: Commune) => {
     commune.nbLieuxdits = getNbByEntityId(commune, nbLieuxditsByCommune);
     commune.nbDonnees = getNbByEntityId(commune, nbDonneesByCommune);
   });
@@ -79,5 +78,5 @@ export const findCommuneByDepartementIdAndNom = async (
 export const persistCommune = async (
   commune: Commune
 ): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_COMMUNE, commune, DB_SAVE_MAPPING.commune);
+  return persistEntity(TABLE_COMMUNE, commune, DB_SAVE_MAPPING.get("commune"));
 };

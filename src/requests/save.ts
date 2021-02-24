@@ -1,6 +1,5 @@
 import { ChildProcess, spawn } from "child_process";
 import { format } from "date-fns";
-import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import {
   DEFAULT_DATABASE_NAME,
@@ -27,7 +26,7 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
     ];
 
     if (isRemoteDump) {
-      commonDumpParams = _.concat(
+      commonDumpParams = ([] as string[]).concat(
         "--host=" + connectionConfig.host,
         "--port=" + connectionConfig.port,
         commonDumpParams

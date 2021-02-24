@@ -1,5 +1,4 @@
 import { Observateur } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllObservateurs, queryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -13,7 +12,7 @@ export const findAllObservateurs = async (): Promise<Observateur[]> => {
     queryToFindNumberOfDonneesByObservateurId()
   ]);
 
-  _.forEach(observateurs, (observateur: Observateur) => {
+  observateurs.forEach((observateur: Observateur) => {
     observateur.nbDonnees = getNbByEntityId(
       observateur,
       nbDonneesByObservateur
@@ -38,7 +37,7 @@ export const persistObservateur = async (
   return persistEntity(
     TABLE_OBSERVATEUR,
     observateur,
-    DB_SAVE_MAPPING.observateur
+    DB_SAVE_MAPPING.get("observateur")
   );
 };
 

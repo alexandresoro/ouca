@@ -1,5 +1,4 @@
 import { areSameCoordinates, Coordinates, Inventaire } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { buildInventaireDbFromInventaire, buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -63,7 +62,7 @@ const findCoordinatesByInventaireId = async (
   const coordinatesDb = await queryToFindCoordinatesByInventaireId(id);
   return coordinatesDb &&
     coordinatesDb[0] &&
-    !_.isNil(coordinatesDb[0].longitude)
+    (coordinatesDb[0].longitude != null)
     ? {
       ...coordinatesDb[0]
     }

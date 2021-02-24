@@ -1,7 +1,6 @@
 import { EntiteSimple } from "@ou-ca/ouca-model";
 import { parse } from "date-fns";
 import { fr as locale } from "date-fns/locale";
-import * as _ from "lodash";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 
 export const toCamel = (s: string): string => {
@@ -14,17 +13,21 @@ export const areArraysContainingSameValues = <T>(
   firstArray: T[],
   secondArray: T[]
 ): boolean => {
-  return (
-    _.intersection(firstArray, secondArray).length ===
-    _.union(firstArray, secondArray).length
-  );
+  if (firstArray.length !== secondArray.length) return false;
+  const allUniqueValues = new Set([...firstArray, ...secondArray]);
+  for (const value of allUniqueValues) {
+    const firstArrayCount = firstArray.filter(e => e === value).length;
+    const secondArrayCount = secondArray.filter(e => e === value).length;
+    if (firstArrayCount !== secondArrayCount) return false;
+  }
+  return true;
 };
 
 export const getArrayFromObjects = <T>(
   objects: T[],
   attributeName: string
 ): number[] => {
-  return _.map(objects, (object) => {
+  return objects.map((object) => {
     return object[attributeName];
   });
 };
@@ -88,7 +91,7 @@ export const getNbByEntityId = (
   object: EntiteSimple,
   nbById: NumberOfObjectsById[]
 ): number => {
-  const foundValue: NumberOfObjectsById = _.find(nbById, (element) => {
+  const foundValue: NumberOfObjectsById = nbById.find((element) => {
     return element.id === object.id;
   });
   return foundValue ? foundValue.nb : 0;

@@ -22,9 +22,12 @@
   },
   "dependencies": {
     "@ou-ca/ouca-model": "^0.0.62",
+    "@types/lodash.deburr": "^4.1.6",
+    "@types/lodash.groupby": "^4.6.6",
     "date-fns": "*",
     "date-fns-tz": "*",
-    "lodash": "^4.17.21",
+    "lodash.deburr": "^4.1.0",
+    "lodash.groupby": "^4.6.0",
     "mariadb": "*",
     "multiparty": "^4.2.2",
     "papaparse": "*",
@@ -34,7 +37,6 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.168",
     "@types/multiparty": "^0.0.32",
     "@types/node": "^14.14.31",
     "@types/ws": "^7.4.0",

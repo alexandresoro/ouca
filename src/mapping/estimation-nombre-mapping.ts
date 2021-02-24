@@ -1,5 +1,4 @@
 import { EstimationNombre } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 
 export const buildEstimationNombreFromEstimationNombreDb = (
@@ -15,7 +14,7 @@ export const buildEstimationNombreFromEstimationNombreDb = (
 export const buildEstimationsNombreFromEstimationsNombreDb = (
   estimationsDb: EstimationNombreDb[]
 ): EstimationNombre[] => {
-  return _.map(estimationsDb, (estimationDb) => {
+  return estimationsDb.map((estimationDb) => {
     return buildEstimationNombreFromEstimationNombreDb(estimationDb);
   });
 };

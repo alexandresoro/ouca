@@ -1,5 +1,4 @@
 import { Age, Classe, Commune, Comportement, Departement, Espece, EstimationDistance, EstimationNombre, findClasseById, findCommuneById, findDepartementById, Lieudit, Meteo, Milieu, Observateur, PostResponse, Sexe } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllAges, persistAge } from "../sql-api/sql-api-age";
@@ -259,7 +258,7 @@ export const deleteMilieu = async (
 export const exportObservateurs = async (): Promise<unknown> => {
   const observateurs: Observateur[] = await getObservateurs();
 
-  const objectsToExport = _.map(observateurs, (object) => {
+  const objectsToExport = observateurs.map((object) => {
     return {
       Observateur: object.libelle
     };
@@ -271,7 +270,7 @@ export const exportObservateurs = async (): Promise<unknown> => {
 export const exportMeteos = async (): Promise<unknown> => {
   const meteos: Meteo[] = await getMeteos();
 
-  const objectsToExport = _.map(meteos, (object) => {
+  const objectsToExport = meteos.map((object) => {
     return {
       Météo: object.libelle
     };
@@ -283,7 +282,7 @@ export const exportMeteos = async (): Promise<unknown> => {
 export const exportDepartements = async (): Promise<unknown> => {
   const departementsDb: Departement[] = await getDepartements();
 
-  const objectsToExport = _.map(departementsDb, (object) => {
+  const objectsToExport = departementsDb.map((object) => {
     return {
       Département: object.code
     };
@@ -296,7 +295,7 @@ export const exportCommunes = async (): Promise<unknown> => {
   const communesDb: Commune[] = await getCommunes();
   const departements: Departement[] = await getDepartements();
 
-  const objectsToExport = _.map(communesDb, (communeDb) => {
+  const objectsToExport = communesDb.map((communeDb) => {
     return {
       Département: findDepartementById(departements, communeDb.departementId)
         .code,
@@ -315,7 +314,7 @@ export const exportLieuxdits = async (): Promise<unknown> => {
     findAllDepartements()
   ]);
 
-  const objectsToExport = _.map(lieuxdits, (lieudit) => {
+  const objectsToExport = lieuxdits.map((lieudit) => {
     const commune = findCommuneById(communes, lieudit.communeId);
     return {
       Département: findDepartementById(departements, commune.departementId)
@@ -335,7 +334,7 @@ export const exportLieuxdits = async (): Promise<unknown> => {
 export const exportClasses = async (): Promise<unknown> => {
   const classes: Classe[] = await getClasses();
 
-  const objectsToExport = _.map(classes, (object) => {
+  const objectsToExport = classes.map((object) => {
     return { Classe: object.libelle };
   });
 
@@ -346,7 +345,7 @@ export const exportEspeces = async (): Promise<unknown> => {
   const especes: Espece[] = await getEspeces();
   const classes: Classe[] = await getClasses();
 
-  const objectsToExport = _.map(especes, (espece) => {
+  const objectsToExport = especes.map((espece) => {
     return {
       Classe: findClasseById(classes, espece.classeId).libelle,
       Code: espece.code,
@@ -361,7 +360,7 @@ export const exportEspeces = async (): Promise<unknown> => {
 export const exportAges = async (): Promise<unknown> => {
   const agesDb: Age[] = await getAges();
 
-  const agesToExport = _.map(agesDb, (ageDb) => {
+  const agesToExport = agesDb.map((ageDb) => {
     return { Âge: ageDb.libelle };
   });
 
@@ -371,7 +370,7 @@ export const exportAges = async (): Promise<unknown> => {
 export const exportSexes = async (): Promise<unknown> => {
   const sexes: Sexe[] = await getSexes();
 
-  const objectsToExport = _.map(sexes, (object) => {
+  const objectsToExport = sexes.map((object) => {
     return { Sexe: object.libelle };
   });
 
@@ -381,7 +380,7 @@ export const exportSexes = async (): Promise<unknown> => {
 export const exportEstimationsNombre = async (): Promise<unknown> => {
   const estimations: EstimationNombre[] = await getEstimationsNombre();
 
-  const objectsToExport = _.map(estimations, (object) => {
+  const objectsToExport = estimations.map((object) => {
     return { "Estimation du nombre": object.libelle };
   });
 
@@ -391,7 +390,7 @@ export const exportEstimationsNombre = async (): Promise<unknown> => {
 export const exportEstimationsDistance = async (): Promise<unknown> => {
   const estimations: EstimationDistance[] = await getEstimationsDistance();
 
-  const objectsToExport = _.map(estimations, (object) => {
+  const objectsToExport = estimations.map((object) => {
     return { "Estimation de la distance": object.libelle };
   });
 
@@ -401,7 +400,7 @@ export const exportEstimationsDistance = async (): Promise<unknown> => {
 export const exportComportements = async (): Promise<unknown> => {
   const comportementsDb: Comportement[] = await getComportements();
 
-  const comportementsToExport = _.map(comportementsDb, (object) => {
+  const comportementsToExport = comportementsDb.map((object) => {
     return { Code: object.code, Libellé: object.libelle };
   });
 
@@ -411,7 +410,7 @@ export const exportComportements = async (): Promise<unknown> => {
 export const exportMilieux = async (): Promise<unknown> => {
   const milieuxDb: Milieu[] = await getMilieux();
 
-  const milieuxToExport = _.map(milieuxDb, (object) => {
+  const milieuxToExport = milieuxDb.map((object) => {
     return { Code: object.code, Libellé: object.libelle };
   });
 

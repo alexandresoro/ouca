@@ -1,5 +1,4 @@
 import { EstimationDistance } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { getQueryToFindNumberOfDonneesByEstimationDistanceId, queryToFindAllEstimationsDistance } from "../sql/sql-queries-estimation-distance";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -15,7 +14,7 @@ export const findAllEstimationsDistance = async (): Promise<
     getQueryToFindNumberOfDonneesByEstimationDistanceId()
   ]);
 
-  _.forEach(estimations, (estimation: EstimationDistance) => {
+  estimations.forEach((estimation: EstimationDistance) => {
     estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
   });
 
@@ -28,6 +27,6 @@ export const persistEstimationDistance = async (
   return persistEntity(
     TABLE_ESTIMATION_DISTANCE,
     estimation,
-    DB_SAVE_MAPPING.estimationDistance
+    DB_SAVE_MAPPING.get("estimationDistance")
   );
 };

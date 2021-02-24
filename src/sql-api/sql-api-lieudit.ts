@@ -1,5 +1,4 @@
 import { areSameCoordinates, Coordinates, Lieudit } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { buildLieuditDbFromLieudit, buildLieuditFromLieuditDb, buildLieuxditsFromLieuxditsDb } from "../mapping/lieudit-mapping";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -25,7 +24,7 @@ export const findAllLieuxDits = async (): Promise<Lieudit[]> => {
 
   const lieuxDits: Lieudit[] = buildLieuxditsFromLieuxditsDb(lieuxDitsDb);
 
-  _.forEach(lieuxDits, (lieuDit: Lieudit) => {
+  lieuxDits.forEach((lieuDit: Lieudit) => {
     lieuDit.nbDonnees = getNbByEntityId(lieuDit, nbDonneesByLieuDit);
   });
 
@@ -70,7 +69,7 @@ const getCoordinatesToPersist = async (
 export const persistLieuDit = async (
   lieuDit: Lieudit
 ): Promise<SqlSaveResponse> => {
-  if (_.has(lieuDit, "coordinates")) {
+  if (Object.prototype.hasOwnProperty.call(lieuDit, "coordinates")) {
     lieuDit.coordinates = await getCoordinatesToPersist(lieuDit);
   }
 

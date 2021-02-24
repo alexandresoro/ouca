@@ -1,5 +1,4 @@
 import { COORDINATES_SYSTEMS_CONFIG, FlatDonnee } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { HttpParameters } from "../http/httpParameters";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
 import { } from "../sql/sql-queries-utils";
@@ -49,7 +48,7 @@ export const exportDonneesByCustomizedFilters = async (
   const coordinatesSuffix =
     " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
 
-  const objectsToExport = _.map(flatDonnees, (donnee) => {
+  const objectsToExport = flatDonnees.map((donnee) => {
     const donneeToExportPart1 = {
       ID: donnee.id,
       Observateur: donnee.observateur,

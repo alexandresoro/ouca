@@ -1,5 +1,4 @@
 import { Departement } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllDepartements, queryToFindDepartementByCode, queryToFindNumberOfCommunesByDepartementId, queryToFindNumberOfDonneesByDepartementId, queryToFindNumberOfLieuxDitsByDepartementId } from "../sql/sql-queries-departement";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -28,7 +27,7 @@ export const findAllDepartements = async (): Promise<Departement[]> => {
     queryToFindNumberOfDonneesByDepartementId()
   ]);
 
-  _.forEach(departements, (departement: Departement) => {
+  departements.forEach((departement: Departement) => {
     departement.nbCommunes = getNbByEntityId(
       departement,
       nbCommunesByDepartement
@@ -60,6 +59,6 @@ export const persistDepartement = async (
   return persistEntity(
     TABLE_DEPARTEMENT,
     departement,
-    DB_SAVE_MAPPING.departement
+    DB_SAVE_MAPPING.get("departement")
   );
 };

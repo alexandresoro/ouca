@@ -1,5 +1,4 @@
 import { Milieu } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllMilieux, queryToFindNumberOfDonneesByMilieuId } from "../sql/sql-queries-milieu";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -13,7 +12,7 @@ export const findAllMilieux = async (): Promise<Milieu[]> => {
     queryToFindNumberOfDonneesByMilieuId()
   ]);
 
-  _.forEach(milieux, (milieu: Milieu) => {
+  milieux.forEach((milieu: Milieu) => {
     milieu.nbDonnees = getNbByEntityId(milieu, nbDonneesByMilieu);
   });
 
@@ -23,5 +22,5 @@ export const findAllMilieux = async (): Promise<Milieu[]> => {
 export const persistMilieu = async (
   milieu: Milieu
 ): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_MILIEU, milieu, DB_SAVE_MAPPING.milieu);
+  return persistEntity(TABLE_MILIEU, milieu, DB_SAVE_MAPPING.get("milieu"));
 };

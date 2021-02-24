@@ -1,5 +1,4 @@
 import { Comportement } from "@ou-ca/ouca-model";
-import * as _ from "lodash";
 import { ComportementDb } from "../objects/db/comportement-db.model";
 
 export const buildComportementFromComportementDb = (
@@ -16,7 +15,7 @@ export const buildComportementFromComportementDb = (
 export const buildComportementsFromComportementsDb = (
   comportementsDb: ComportementDb[]
 ): Comportement[] => {
-  return _.map(comportementsDb, (comportementDb) => {
+  return comportementsDb.map((comportementDb) => {
     return buildComportementFromComportementDb(comportementDb);
   });
 };

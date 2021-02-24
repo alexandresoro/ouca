@@ -1,5 +1,4 @@
 import * as http from "http";
-import * as _ from "lodash";
 import WebSocket, { Server } from "ws";
 
 export class WebsocketServer {
@@ -19,7 +18,7 @@ export class WebsocketServer {
     clients?: WebSocket | WebSocket[]
   ): void {
     const clientsToTarget = clients
-      ? _.isArray(clients)
+      ? Array.isArray(clients)
         ? clients
         : [clients]
       : this.wss.clients;

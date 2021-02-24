@@ -111,7 +111,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.168":
+"@types/lodash.deburr@npm:^4.1.6":
+  version: 4.1.6
+  resolution: "@types/lodash.deburr@npm:4.1.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 1a8b2d1ba78c52c976907edfb6f161ba1ca8e8400c18b39d09aaaa075695ed8497d2858381438960f3ad92bcd35c477c799949846ead8a551ef6f232d8d840d2
+  languageName: node
+  linkType: hard
+
+"@types/lodash.groupby@npm:^4.6.6":
+  version: 4.6.6
+  resolution: "@types/lodash.groupby@npm:4.6.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 03607aaa6e6d059ce010966138322859dd5438c63f35413e3c9744b6f295a82cc82470a462cfc6987e6b0c97468370cb935a498554c2746e6365de0ea0882e68
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
   version: 4.14.168
   resolution: "@types/lodash@npm:4.14.168"
   checksum: 9a4e25f89fc035b9f0388f1f7be85e5eff49f9e6db0d93432c9a89fce0916f8a89db4e8290415f7ea02de6b00d3573826378dcb655b7b2d20530a6e8d6dd6fd0
@@ -401,7 +419,8 @@ __metadata:
   resolution: "basenaturaliste-backend@workspace:."
   dependencies:
     "@ou-ca/ouca-model": ^0.0.62
-    "@types/lodash": ^4.14.168
+    "@types/lodash.deburr": ^4.1.6
+    "@types/lodash.groupby": ^4.6.6
     "@types/multiparty": ^0.0.32
     "@types/node": ^14.14.31
     "@types/ws": ^7.4.0
@@ -411,7 +430,8 @@ __metadata:
     date-fns: "*"
     date-fns-tz: "*"
     eslint: ^7.20.0
-    lodash: ^4.17.21
+    lodash.deburr: ^4.1.0
+    lodash.groupby: ^4.6.0
     mariadb: "*"
     multiparty: ^4.2.2
     papaparse: "*"
@@ -1259,6 +1279,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.deburr@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "lodash.deburr@npm:4.1.0"
+  checksum: 65d20d5352e198de2037e5dd80e0932df5d0b6c84438e7a5f06fdbdda49aaca3377ae4e339569c6a6eeff884372f1ef65857a18c40359c071cdcf7b6eafec23f
+  languageName: node
+  linkType: hard
+
+"lodash.groupby@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "lodash.groupby@npm:4.6.0"
+  checksum: fb4c30f93ca5a11c4234df33578c1c7f9d86edb8e85a808cffa6fc2064b3a1856e93948489b1774264cf35995a29f82cbf6fd31093d9ebcb9a9c8fd7225f4686
+  languageName: node
+  linkType: hard
+
 "lodash@npm:^4.17.15":
   version: 4.17.20
   resolution: "lodash@npm:4.17.20"
@@ -1266,7 +1300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.20, lodash@npm:^4.17.21":
+"lodash@npm:^4.17.20":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 4983720b9abca930a4a46f18db163d7dad8dd00dbed6db0cc7b499b33b717cce69f80928b27bbb1ff2cbd3b19d251ee90669a8b5ea466072ca81c2ebe91e7468

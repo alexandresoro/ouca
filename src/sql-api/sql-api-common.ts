@@ -39,7 +39,7 @@ export const findEntityByLibelle = async <T extends EntiteSimple>(
 export const persistEntity = async <T extends EntityDb>(
   tableName: string,
   entityToSave: EntiteSimple | T,
-  mapping?: { [column: string]: string }
+  mapping?: Map<string, string>
 ): Promise<SqlSaveResponse> => {
   const sqlResponse = await queryToSaveEntity(tableName, entityToSave, mapping);
 

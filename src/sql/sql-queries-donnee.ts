@@ -1,6 +1,5 @@
 import { Donnee, DonneesFilter, FlatDonnee, NicheurCode } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
-import * as _ from "lodash";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -183,7 +182,7 @@ export const queryToFindNumberOfDonneesByDonneeEntityId = async (
 const getQueryToFindDonneesIdsByNicheursCodes = (
   nicheurCodes: NicheurCode[]
 ): string => {
-  const codesStr = _.map(nicheurCodes, (code) => {
+  const codesStr = nicheurCodes.map((code) => {
     return '"' + code + '"';
   }).join(",");
 
@@ -478,7 +477,7 @@ export const queryToFindDonneeIdsByAllAttributes = async (
   queryStr =
     queryStr +
     " AND d.distance" +
-    (_.isNil(donnee.distance) ? " is null" : "=" + donnee.distance);
+    ((donnee.distance == null) ? " is null" : "=" + donnee.distance);
 
   queryStr =
     queryStr +
