@@ -1,5 +1,5 @@
 # 1. Transpile the project
-FROM node:lts-alpine as build
+FROM node:14-alpine as build
 
 WORKDIR /app/backend
 
@@ -12,7 +12,7 @@ RUN yarn install --immutable
 RUN yarn build:prod
 
 # 2. Run the NodeJS backend
-FROM node:lts-alpine
+FROM node:14-alpine
 
 # Install only the dependencies that are required at runtime
 WORKDIR /app
