@@ -1,5 +1,6 @@
 import * as mariadb from "mariadb";
 import yargs from "yargs";
+import { logger } from "../utils/logger";
 
 export const DEFAULT_DATABASE_NAME = "basenaturaliste";
 
@@ -43,7 +44,7 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
     }
   };
 
-  console.log(
+  logger.info(
     `Database configured with address ${config.host}:${config.port} and user ${config.user} on database "${config.database}"`
   );
 
@@ -54,15 +55,15 @@ const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
   return mariadb
     .createConnection(getSqlConnectionConfiguration())
     .then((conn) => {
-      console.log("Connected to the database: ", conn.serverVersion());
+      logger.info(`Connected to the database: ${conn.serverVersion()}`);
       conn.on("error", (error) => {
-        console.log(error);
+        logger.error(error);
       });
       return conn;
     })
     .catch((error) => {
       // General connection error
-      console.log(
+      logger.error(
         "The connection to the database has failed with the following error:",
         error
       );

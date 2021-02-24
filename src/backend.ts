@@ -5,9 +5,9 @@ import {
 } from "@ou-ca/ouca-model";
 import * as http from "http";
 import * as multiparty from "multiparty";
-import { createLogger, format, transports } from "winston";
 import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
+import { logger } from "./utils/logger";
 import { WebsocketServer } from "./ws/websocket-server";
 import { sendInitialData } from "./ws/ws-messages";
 
@@ -17,16 +17,6 @@ const isDockerMode = process.argv.includes(DOCKER_ARG);
 
 const hostname = isDockerMode ? "0.0.0.0" : "127.0.0.1";
 const port = 4000;
-
-const loggerFormat = format.printf(({ level, message, timestamp }) => {
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  return `${timestamp} ${level}: ${message}`;
-});
-
-const logger = createLogger({
-  format: format.combine(format.timestamp(), loggerFormat),
-  transports: [new transports.Console()]
-});
 
 // HTTP server
 const server = http.createServer(
@@ -115,7 +105,7 @@ const wss = WebsocketServer.createServer(server);
 wss.on("connection", (client) => {
   client.on("message", (data): void => {
     const message = JSON.parse(data.toString()) as WebsocketMessage;
-    logger.info("Message received from websocket: " + JSON.stringify(message));
+    logger.debug("Message received from websocket: " + JSON.stringify(message));
     if (message.type === HEARTBEAT) {
       // Ping message received
       WebsocketServer.sendMessageToClients(
@@ -138,5 +128,5 @@ wss.on("connection", (client) => {
 });
 
 server.listen(port, hostname, () => {
-  logger.info(`Server running at http://${hostname}:${port}/`);
+  logger.debug(`Server running at http://${hostname}:${port}/`);
 });

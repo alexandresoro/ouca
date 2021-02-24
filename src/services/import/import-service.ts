@@ -1,5 +1,6 @@
 import deburr from "lodash.deburr";
 import Papa from "papaparse";
+import { logger } from "../../utils/logger";
 
 const COMMENT_PREFIX = "###";
 
@@ -38,9 +39,7 @@ export abstract class ImportService {
       }
     }
 
-    console.log(
-      `Résultat de l'import : ${(numberOfLines - numberOfErrors)}/${numberOfLines} importées avec succès --> ${numberOfErrors} lignes en erreur`
-    );
+    logger.info(`Résultat de l'import : ${(numberOfLines - numberOfErrors)}/${numberOfLines} importées avec succès --> ${numberOfErrors} lignes en erreur`);
 
     if (errors.length > 0) {
       return Papa.unparse(errors, {

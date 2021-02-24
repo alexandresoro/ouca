@@ -7,6 +7,7 @@ import {
   METEO_ID,
   OBSERVATEUR_ID
 } from "../utils/constants";
+import { logger } from "../utils/logger";
 
 const createKeyValueMapWithSameName = (
   names: string | string[]
@@ -17,43 +18,41 @@ const createKeyValueMapWithSameName = (
 export const DB_SAVE_MAPPING = new Map(Object.entries({
   observateur: createKeyValueMapWithSameName("libelle"),
   departement: createKeyValueMapWithSameName("code"),
-  commune: {
+  commune: new Map([
     ...createKeyValueMapWithSameName(["code", "nom"]),
-    departement_id: "departementId"
-  },
+    ["departement_id", "departementId"]
+  ]),
   meteo: createKeyValueMapWithSameName("libelle"),
   classe: createKeyValueMapWithSameName("libelle"),
-  espece: {
+  espece: new Map([
     ...createKeyValueMapWithSameName("code"),
-    classe_id: "classeId",
-    nom_francais: "nomFrancais",
-    nom_latin: "nomLatin"
-  },
+    ["classe_id", "classeId"],
+    ["nom_francais", "nomFrancais"],
+    ["nom_latin", "nomLatin"]
+  ]),
   sexe: createKeyValueMapWithSameName("libelle"),
   age: createKeyValueMapWithSameName("libelle"),
-  estimationNombre: {
+  estimationNombre: new Map([
     ...createKeyValueMapWithSameName("libelle"),
-    non_compte: "nonCompte"
-  },
-  estimationDistance: {
-    ...createKeyValueMapWithSameName("libelle")
-  },
+    ["non_compte", "nonCompte"]
+  ]),
+  estimationDistance: createKeyValueMapWithSameName("libelle"),
   milieu: createKeyValueMapWithSameName(["code", "libelle"]),
-  donnee: {
+  donnee: new Map([
     ...createKeyValueMapWithSameName([
       "nombre",
       "distance",
       "regroupement",
       "commentaire"
     ]),
-    inventaire_id: "inventaireId",
-    espece_id: "especeId",
-    age_id: "ageId",
-    sexe_id: "sexeId",
-    estimation_nombre_id: "estimationNombreId",
-    estimation_distance_id: "estimationDistanceId",
-    date_creation: "dateCreation"
-  },
+    ["inventaire_id", "inventaireId"],
+    ["espece_id", "especeId"],
+    ["age_id", "ageId"],
+    ["sexe_id", "sexeId"],
+    ["estimation_nombre_id", "estimationNombreId"],
+    ["estimation_distance_id", "estimationDistanceId"],
+    ["date_creation", "dateCreation"]
+  ]),
   configuration: createKeyValueMapWithSameName(["libelle", "value"])
 }));
 
@@ -77,7 +76,7 @@ export const DB_SAVE_LISTS_MAPPING = {
 };
 
 export function query<T>(query: string): Promise<T> {
-  console.log("---> " + query + ";");
+  logger.debug(`---> ${query};`);
   return SqlConnection.query(query + ";");
 }
 
@@ -117,13 +116,13 @@ export const queryToSaveEntity = async <T extends EntityDb>(
       // Filter the entries to the ones defined in the mapping
       // Otherwise, keep them all
       // This is to avoid to store invalid columns in the DB
-      return !mapping || mapping.has(entityKey);
+      return !mapping || (mapping.values() && [...mapping.values()].includes(entityKey));
     })
     .map(([key, value]) => {
 
-      const columnDb = [...mapping].find(([mappingKey, mappingValue]) => {
+      const columnDb = (mapping && [...mapping].find(([mappingKey, mappingValue]) => {
         return mappingValue === key
-      })?.[0] ?? key;
+      })?.[0]) ?? key;
 
       // Set the proper value in DB format
       let valueDb: string;

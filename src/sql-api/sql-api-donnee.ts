@@ -278,29 +278,29 @@ export const findDonneesByCustomizedFilters = async (
     // Transform the coordinates into the expected system
     updateCoordinates(donnee, filter.coordinatesSystemType);
 
-    donnee.associes = associesByDonnee[donnee.id].map(
+    donnee.associes = associesByDonnee[donnee.id]?.map(
       (associe) => associe.libelle
-    ).join(SEPARATOR_COMMA);
+    ).join(SEPARATOR_COMMA) ?? "";
 
-    donnee.meteos = meteosByDonnee[donnee.id].map(
+    donnee.meteos = meteosByDonnee[donnee.id]?.map(
       (meteo) => meteo.libelle
-    ).join(SEPARATOR_COMMA);
+    ).join(SEPARATOR_COMMA) ?? "";
 
-    donnee.comportements = comportementsByDonnee[donnee.id].map(
+    donnee.comportements = comportementsByDonnee[donnee.id]?.map(
       (comportement) => {
         return {
           code: comportement.code,
           libelle: comportement.libelle
         };
       }
-    );
+    ) ?? [];
 
-    donnee.milieux = milieuxByDonnee[donnee.id].map((milieu) => {
+    donnee.milieux = milieuxByDonnee[donnee.id]?.map((milieu) => {
       return {
         code: milieu.code,
         libelle: milieu.libelle
       };
-    });
+    }) ?? [];
 
     // Compute nicheur status for the Donnée (i.e. highest nicheur status of the comportements)
     // First we keep only the comportements having a nicheur status
@@ -312,10 +312,10 @@ export const findDonneesByCustomizedFilters = async (
       (comportement: Comportement) => {
         return comportement.nicheur;
       }
-    );
+    ) ?? [];
 
     // Then we keep the highest nicheur status
-    const nicheurStatusCode = nicheurStatuses && nicheurStatuses.reduce(
+    const nicheurStatusCode = nicheurStatuses?.length && nicheurStatuses.reduce(
       (nicheurStatusOne, nicheurStatusTwo) => {
         return NICHEUR_VALUES[nicheurStatusOne].weight >= NICHEUR_VALUES[nicheurStatusTwo].weight ? nicheurStatusOne : nicheurStatusTwo
       }
