@@ -152,17 +152,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^14.14.31":
+"@types/node@npm:^14.14.28, @types/node@npm:^14.14.31":
   version: 14.14.31
   resolution: "@types/node@npm:14.14.31"
   checksum: 635dc8a0898a923621e02ca179e17baa39fdfa44f0096fcc1b7046c9b32317e74a99956a7b45ca0e8069874f51f4e7873a418239a318a4b6e7936f6510ac5992
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^14.14.7":
-  version: 14.14.28
-  resolution: "@types/node@npm:14.14.28"
-  checksum: e750df4d5e93c639d04100e7d54d9e416ecc649d4d7951ac1d5b82d092c556f6e7775a191995e06d6def65ae7bc25533d188fe122dc660724d119ce3ddae2cea
   languageName: node
   linkType: hard
 
@@ -427,18 +420,18 @@ __metadata:
     "@types/yargs": ^16.0.0
     "@typescript-eslint/eslint-plugin": ^4.15.2
     "@typescript-eslint/parser": ^4.15.2
-    date-fns: "*"
-    date-fns-tz: "*"
+    date-fns: ^2.17.0
+    date-fns-tz: ^1.1.2
     eslint: ^7.20.0
     lodash.deburr: ^4.1.0
     lodash.groupby: ^4.6.0
-    mariadb: "*"
+    mariadb: ^2.5.3
     multiparty: ^4.2.2
-    papaparse: "*"
+    papaparse: ^5.3.0
     typescript: ^4.1.5
     winston: ^3.3.3
     ws: ^7.4.3
-    xlsx: "*"
+    xlsx: ^0.16.9
     yargs: ^16.2.0
   languageName: unknown
   linkType: soft
@@ -644,19 +637,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"date-fns-tz@npm:*":
-  version: 1.0.12
-  resolution: "date-fns-tz@npm:1.0.12"
+"date-fns-tz@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "date-fns-tz@npm:1.1.2"
   peerDependencies:
     date-fns: ">=2.0.0-alpha.13"
-  checksum: 32b80d1fcda104c139100ccac9462019fa2032683882c3492a04d4284d199e1a9f430750bb4b811f9dc4384cdb383e8a1e1beda8d6a8186c001b41c1d9b8b181
+  checksum: 0670c73e3c5ee3409c7e5d64486a9fe7a53fa149d3e8e42e78a7877e7f1aac6c4b1a19eeb4d9c12e773c2dc5419cd77271661875a72a466dfa8a34223fc5da85
   languageName: node
   linkType: hard
 
-"date-fns@npm:*":
-  version: 2.16.1
-  resolution: "date-fns@npm:2.16.1"
-  checksum: fbe5d9aa1dc4c92c7cf9c0b31e58f532ac9fe059f85fc622641b1ac9c673150329620ea6bf941a8ba10e8e677aa0b6ccdc04ce001f81e70fd49acd1760edcba0
+"date-fns@npm:^2.17.0":
+  version: 2.17.0
+  resolution: "date-fns@npm:2.17.0"
+  checksum: 51ee9e264aac54d2a16471691d560838bad681f729573f520b03ec0c21f28904c73bf98ec2d33603e71bdabf8506140449c2b50d0db6fdd042faed9fe5467b92
   languageName: node
   linkType: hard
 
@@ -961,6 +954,13 @@ __metadata:
   version: 4.2.0
   resolution: "fecha@npm:4.2.0"
   checksum: aa64b6bbd6c11c7f6ec66255a2abfcbb307a1c13e46235ef6055f695e7aa688f782807f32fcbf663bd248fd682ab4f7c3ab68ae15cf6bfcc3c0a019efe56a1f6
+  languageName: node
+  linkType: hard
+
+"fflate@npm:^0.3.8":
+  version: 0.3.11
+  resolution: "fflate@npm:0.3.11"
+  checksum: 3f9712b1bb5b84617cf3a0f6f18ddd84615e35563f676b97c955a086763bf5f814fa327e74ccd94b146b522e72082e0cb1538696be13428beb53f2b5e3dd4db2
   languageName: node
   linkType: hard
 
@@ -1327,18 +1327,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mariadb@npm:*":
-  version: 2.5.2
-  resolution: "mariadb@npm:2.5.2"
+"mariadb@npm:^2.5.3":
+  version: 2.5.3
+  resolution: "mariadb@npm:2.5.3"
   dependencies:
     "@types/geojson": ^7946.0.7
-    "@types/node": ^14.14.7
+    "@types/node": ^14.14.28
     denque: ^1.4.1
     iconv-lite: ^0.6.2
     long: ^4.0.0
-    moment-timezone: ^0.5.32
+    moment-timezone: ^0.5.33
     please-upgrade-node: ^3.2.0
-  checksum: 3d59b8a66c1d78c3e272756507ba27fdb3983d7b190c62f54721c06b205184407dbe056d8ba6c50cc7977ca0e32d7f03d29079d804e7c1e818a56420c4007eb6
+  checksum: 677a07cc2b1535e13ffd293aaab17e833a4ced4cbeadcdcb1e76318c51ea1492a394dfb3aa913be6b812236c604c64250173d12c55494ea5efef3709483d02d2
   languageName: node
   linkType: hard
 
@@ -1375,7 +1375,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment-timezone@npm:^0.5.32":
+"moment-timezone@npm:^0.5.33":
   version: 0.5.33
   resolution: "moment-timezone@npm:0.5.33"
   dependencies:
@@ -1448,7 +1448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"papaparse@npm:*":
+"papaparse@npm:^5.3.0":
   version: 5.3.0
   resolution: "papaparse@npm:5.3.0"
   checksum: 65a492e6dcfd03ea39114cdedbc3bf71be3ec16e622e94e09f6ffbba5a964bba6bd11c6aecec6a93d2f700d6f847716357266f9f6206a23ee1ee896c3f2bb2b4
@@ -2048,9 +2048,9 @@ typescript@^4.1.5:
   languageName: node
   linkType: hard
 
-"xlsx@npm:*":
-  version: 0.16.8
-  resolution: "xlsx@npm:0.16.8"
+"xlsx@npm:^0.16.9":
+  version: 0.16.9
+  resolution: "xlsx@npm:0.16.9"
   dependencies:
     adler-32: ~1.2.0
     cfb: ^1.1.4
@@ -2058,12 +2058,13 @@ typescript@^4.1.5:
     commander: ~2.17.1
     crc-32: ~1.2.0
     exit-on-epipe: ~1.0.1
+    fflate: ^0.3.8
     ssf: ~0.11.2
     wmf: ~1.0.1
     word: ~0.3.0
   bin:
     xlsx: bin/xlsx.njs
-  checksum: 38b47ba37762c76b8dfa031130be4827be122ab831fb1425a84ed4e6c6b1ec0d493adecb97ee2a71041ebf115d9684fe15d0a73840f01fe568729597fe40441e
+  checksum: f172dce6f08e5ed10d8a1b20fe2400b8edb5d8a4c297dd116b0f461c89b33e2ee71a65d11177697baeb7739d8cb3ff2c8b760adc89bf2d6e252ba25c9efe3efd
   languageName: node
   linkType: hard
 
