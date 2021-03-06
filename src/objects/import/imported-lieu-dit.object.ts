@@ -39,8 +39,8 @@ export class ImportedLieuDit {
       nom: this.nom,
       altitude: +this.altitude,
       coordinates: {
-        longitude: +this.longitude,
-        latitude: +this.latitude,
+        longitude: +(+this.longitude).toFixed(this.coordinatesSystem.decimalPlaces),
+        latitude: +(+this.latitude).toFixed(this.coordinatesSystem.decimalPlaces),
         system: this.coordinatesSystem.code
       }
     };
