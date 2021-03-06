@@ -18,9 +18,9 @@ import { findAllMilieux } from "../../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../../sql-api/sql-api-observateur";
 import { findAllSexes } from "../../sql-api/sql-api-sexe";
 import { areArraysContainingSameValues, isIdInListIds } from "../../utils/utils";
-import { ImportService } from "./import-service";
+import { ImportServiceSingle } from "./import-service-single";
 
-export class ImportDoneeeService extends ImportService {
+export class ImportDoneeeService extends ImportServiceSingle {
   private coordinatesSystem: CoordinatesSystem;
   private observateurs: Observateur[];
   private departements: Departement[];

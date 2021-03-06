@@ -4,7 +4,7 @@ import { logger } from "../../utils/logger";
 
 const COMMENT_PREFIX = "###";
 
-export abstract class ImportService {
+export abstract class ImportServiceSingle {
 
   public importFile = async (fileContent: string): Promise<string> => {
     if (!fileContent) {
@@ -30,12 +30,7 @@ export abstract class ImportService {
       if (lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX)) {
         numberOfLines++;
 
-        let errorMessage: string;
-        if (lineTab?.length !== this.getNumberOfColumns()) {
-          errorMessage = `Le nombre de colonnes de cette ligne est incorrect: ${lineTab.length} colonne(s) au lieu de ${this.getNumberOfColumns()} attendue(s)`;
-        } else {
-          errorMessage = await this.validateAndPrepareEntity(lineTab);
-        }
+        const errorMessage = await this.importLine(lineTab);
 
         if (errorMessage) {
           numberOfErrors++;
@@ -43,8 +38,6 @@ export abstract class ImportService {
         }
       }
     }
-
-    await this.persistAllValidEntities();
 
     logger.info(`Résultat de l'import : ${(numberOfLines - numberOfErrors)}/${numberOfLines} importées avec succès --> ${numberOfErrors} lignes en erreur`);
 
@@ -62,9 +55,15 @@ export abstract class ImportService {
 
   protected abstract init(): Promise<void>;
 
-  protected abstract persistAllValidEntities(): Promise<void>;
+  protected abstract importEntity(entityTab: string[]): Promise<string>;
 
-  protected abstract validateAndPrepareEntity(entityTab: string[]): Promise<string>;
+  private importLine = async (entityTab: string[]): Promise<string> => {
+    if (entityTab?.length !== this.getNumberOfColumns()) {
+      return `Le nombre de colonnes de cette ligne est incorrect: ${entityTab.length} colonne(s) au lieu de ${this.getNumberOfColumns()} attendue(s)`;
+    } else {
+      return await this.importEntity(entityTab);
+    }
+  };
 
   private buildErrorObject = (
     entityTab: string[],

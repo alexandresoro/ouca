@@ -101,17 +101,20 @@ export const queryToFindOneById = async <T>(
   return query<T[]>(`SELECT * FROM ${tableName} WHERE id=${id}`);
 };
 
-export const queryToSaveEntity = async <T extends EntityDb>(
-  tableName: string,
+// Method that processes an entity to be saved, in order to be used directly in the SQL query
+// It basically takes an object T, strips the 'id' property, 
+// filters the properties for which there is no corresponding DB column, 
+// and return and array of elements, each element being an array of size 2, the db column name and the value to be set
+// e.g. for an object {"id": 1, "toto": "titi", "tutu": 6} it will return
+// [["toto", "titi"], ["tutu", "6"]]
+const processEntityToSave = <T extends EntityDb>(
   entityToSave: T,
   mapping?: Map<string, string>
-): Promise<SqlSaveResponse> => {
-
-  let queryStr: string;
+): string[][] => {
 
   const { id, ...entityToSaveWithoutId } = entityToSave;
 
-  const dbEntityToSaveAsArray = Object.entries(entityToSaveWithoutId)
+  return Object.entries(entityToSaveWithoutId)
     .filter(([entityKey, entityValue]) => {
       // Filter the entries to the ones defined in the mapping
       // Otherwise, keep them all
@@ -139,6 +142,17 @@ export const queryToSaveEntity = async <T extends EntityDb>(
       return [columnDb, valueDb];
     });
 
+}
+
+export const queryToSaveEntity = async <T extends EntityDb>(
+  tableName: string,
+  entityToSave: T,
+  mapping?: Map<string, string>
+): Promise<SqlSaveResponse> => {
+
+  const dbEntityToSaveAsArray = processEntityToSave(entityToSave, mapping);
+
+  let queryStr: string;
   if (!entityToSave.id) {
     const columnNames = dbEntityToSaveAsArray.map((elt) => {
       return elt[0];
@@ -170,6 +184,30 @@ export const queryToSaveEntity = async <T extends EntityDb>(
       " WHERE id=" +
       entityToSave.id;
   }
+
+  return query<SqlSaveResponse>(queryStr);
+};
+
+export const queryToInsertMultipleEntities = async <T extends EntityDb>(
+  tableName: string,
+  entitiesToSave: T[],
+  mapping?: Map<string, string>
+): Promise<SqlSaveResponse> => {
+  const dbEntitiesToSaveAsArray = entitiesToSave.map(entity => processEntityToSave(entity, mapping));
+
+  const columnNames = dbEntitiesToSaveAsArray[0].map((elt) => {
+    return elt[0];
+  }).join(",");
+
+  const allValues = dbEntitiesToSaveAsArray
+    .map((dbEntityToSaveAsArray) => {
+      const values = dbEntityToSaveAsArray.map((elt) => {
+        return elt[1];
+      }).join(",");
+      return `(${values})`
+    }).join(",");
+
+  const queryStr = `INSERT INTO ${tableName}(${columnNames}) VALUES ${allValues}`;
 
   return query<SqlSaveResponse>(queryStr);
 };

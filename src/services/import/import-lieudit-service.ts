@@ -5,9 +5,9 @@ import { findAllCommunes } from "../../sql-api/sql-api-commune";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";
 import { findAllLieuxDits, persistLieuDit } from "../../sql-api/sql-api-lieudit";
-import { ImportService } from "./import-service";
+import { ImportServiceSingle } from "./import-service-single";
 
-export class ImportLieuxditService extends ImportService {
+export class ImportLieuxditService extends ImportServiceSingle {
   private departements: Departement[];
   private communes: Commune[];
   private lieuxDits: Lieudit[];

@@ -1,7 +1,7 @@
 import { EntiteSimple } from "@ou-ca/ouca-model";
 import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToFindEntityByCode, queryToFindEntityByLibelle, queryToSaveEntity } from "../sql/sql-queries-utils";
+import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToFindEntityByCode, queryToFindEntityByLibelle, queryToInsertMultipleEntities, queryToSaveEntity } from "../sql/sql-queries-utils";
 import { onTableUpdate } from "../ws/ws-messages";
 
 export const findAllEntities = async <T extends EntiteSimple>(
@@ -42,6 +42,18 @@ export const persistEntity = async <T extends EntityDb>(
   mapping?: Map<string, string>
 ): Promise<SqlSaveResponse> => {
   const sqlResponse = await queryToSaveEntity(tableName, entityToSave, mapping);
+
+  onTableUpdate(tableName);
+
+  return sqlResponse;
+};
+
+export const insertMultipleEntities = async <T extends EntityDb>(
+  tableName: string,
+  entitiesToSave: (EntiteSimple | T)[],
+  mapping?: Map<string, string>
+): Promise<SqlSaveResponse> => {
+  const sqlResponse = await queryToInsertMultipleEntities(tableName, entitiesToSave, mapping);
 
   onTableUpdate(tableName);
 

@@ -1,6 +1,6 @@
 import { Commune, Departement } from "@ou-ca/ouca-model";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
-import { findAllCommunes, persistCommune } from "../../sql-api/sql-api-commune";
+import { findAllCommunes, insertCommunes } from "../../sql-api/sql-api-commune";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";
 import { ImportService } from "./import-service";
 
@@ -9,15 +9,18 @@ export class ImportCommuneService extends ImportService {
   private departements: Departement[];
   private communes: Commune[];
 
+  private communesToInsert: Commune[];
+
   protected getNumberOfColumns = (): number => {
     return 3;
   };
 
   protected init = async (): Promise<void> => {
+    this.communesToInsert = [];
     [this.departements, this.communes] = await Promise.all([findAllDepartements(), findAllCommunes()]);
   };
 
-  protected importEntity = async (communeTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = async (communeTab: string[]): Promise<string> => {
     const importedCommune = new ImportedCommune(communeTab);
 
     const dataValidity = importedCommune.checkValidity();
@@ -48,13 +51,15 @@ export class ImportCommuneService extends ImportService {
     // Create and save the commune
     const communeToSave = importedCommune.buildCommune(departement.id);
 
-    const saveResult = await persistCommune(communeToSave);
-    if (!saveResult?.insertId) {
-      return "Une erreur est survenue pendant l'import";
-    }
-
+    this.communesToInsert.push(communeToSave);
     this.communes.push(communeToSave);
     return null;
   };
+
+  protected persistAllValidEntities = async (): Promise<void> => {
+    if (this.communesToInsert.length) {
+      await insertCommunes(this.communesToInsert);
+    }
+  }
 
 }

@@ -6,7 +6,7 @@ import { queryToFindAllCommunes, queryToFindCommuneByDepartementIdAndCode, query
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_COMMUNE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { persistEntity } from "./sql-api-common";
+import { insertMultipleEntities, persistEntity } from "./sql-api-common";
 
 const getFirstCommune = (communesDb: CommuneDb[]): Commune => {
   let commune: Commune = null;
@@ -79,4 +79,10 @@ export const persistCommune = async (
   commune: Commune
 ): Promise<SqlSaveResponse> => {
   return persistEntity(TABLE_COMMUNE, commune, DB_SAVE_MAPPING.get("commune"));
+};
+
+export const insertCommunes = async (
+  communes: Commune[]
+): Promise<SqlSaveResponse> => {
+  return insertMultipleEntities(TABLE_COMMUNE, communes, DB_SAVE_MAPPING.get("commune"));
 };
