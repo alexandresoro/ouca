@@ -132,9 +132,9 @@ export const queryToSaveEntity = async <T extends EntityDb>(
       } else if (_.isBoolean(entityValue)) {
         return entityValue ? "TRUE" : "FALSE";
       } else if (_.isString(entityValue)) {
-        return '"' + entityValue.trim() + '"';
+        return '"' + entityValue.trim().replace(/"/g, '\\"') + '"';
       } else {
-        return '"' + entityValue + '"';
+        return '"' + entityValue.replace(/"/g, '\\"') + '"';
       }
     })
     .toPairs()
@@ -237,7 +237,7 @@ export const queryToFindEntityByLibelle = async <T>(
   libelle: string
 ): Promise<T> => {
   return query<T>(
-    "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle.trim() + '"'
+    "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle.trim().replace(/"/g, '\\"') + '"'
   );
 };
 
@@ -246,7 +246,7 @@ export const queryToFindEntityByCode = async <T>(
   code: string
 ): Promise<T> => {
   return query<T>(
-    "SELECT * FROM " + entityName + ' WHERE code="' + code.trim() + '"'
+    "SELECT * FROM " + entityName + ' WHERE code="' + code.trim().replace(/"/g, '\\"') + '"'
   );
 };
 
@@ -259,9 +259,9 @@ export const queryToFindEntityByCodeAndLibelle = async <T>(
     "SELECT * FROM " +
     entityName +
     ' WHERE code="' +
-    code.trim() +
+    code.trim().replace(/"/g, '\\"') +
     '" AND libelle="' +
-    libelle.trim() +
+    libelle.trim().replace(/"/g, '\\"') +
     '"'
   );
 };

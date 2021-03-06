@@ -22,7 +22,7 @@ export const queryToFindLieuDitByCommuneIdAndNom = async (
     " WHERE commune_id=" +
     communeId +
     ' AND nom="' +
-    nom.trim() +
+    nom.trim().replace(/"/g, '\\"') +
     '"';
   return query<LieuditDb[]>(queryStr);
 };

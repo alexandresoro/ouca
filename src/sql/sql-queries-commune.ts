@@ -24,7 +24,7 @@ export const queryToFindCommuneByDepartementIdAndCodeAndNom = async (
     " AND code=" +
     code +
     ' AND nom="' +
-    nom.trim() +
+    nom.trim().replace(/"/g, '\\"') +
     '"';
   return query<CommuneDb[]>(queryStr);
 };
@@ -53,7 +53,7 @@ export const queryToFindCommuneByDepartementIdAndNom = async (
     " WHERE departement_id=" +
     departementId +
     ' AND nom="' +
-    nom.trim() +
+    nom.trim().replace(/"/g, '\\"') +
     '"';
   return query<CommuneDb[]>(queryStr);
 };

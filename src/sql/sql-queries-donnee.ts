@@ -488,7 +488,7 @@ export const queryToFindDonneeIdsByAllAttributes = async (
   queryStr =
     queryStr +
     " AND d.commentaire" +
-    (!donnee.commentaire ? " is null" : '="' + donnee.commentaire + '"');
+    (!donnee.commentaire ? " is null" : '="' + donnee.commentaire.replace(/"/g, '\\"') + '"');
 
   return query<{ id: number }[]>(queryStr);
 };

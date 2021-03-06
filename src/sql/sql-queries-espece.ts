@@ -16,7 +16,7 @@ export const queryToFindEspeceByCode = async (
   code: string
 ): Promise<EspeceDb[]> => {
   const queryStr: string =
-    "SELECT * " + " FROM espece " + ' WHERE code="' + code.trim() + '"';
+    "SELECT * " + " FROM espece " + ' WHERE code="' + code.trim().replace(/"/g, '\\"') + '"';
   return query(queryStr);
 };
 
@@ -27,7 +27,7 @@ export const queryToFindEspeceByNomFrancais = async (
     "SELECT * " +
     " FROM espece " +
     ' WHERE nom_francais="' +
-    nomFrancais.trim() +
+    nomFrancais.trim().replace(/"/g, '\\"') +
     '"';
   return query(queryStr);
 };
@@ -39,7 +39,7 @@ export const queryToFindEspeceByNomLatin = async (
     "SELECT * " +
     " FROM espece " +
     ' WHERE nom_latin="' +
-    nomLatin.trim() +
+    nomLatin.trim().replace(/"/g, '\\"') +
     '"';
   return query(queryStr);
 };
