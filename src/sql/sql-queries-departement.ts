@@ -15,7 +15,7 @@ export const queryToFindDepartementByCode = async (
   code: string
 ): Promise<Departement[]> => {
   const queryStr: string =
-    "SELECT * " + " FROM departement " + ' WHERE code="' + code.trim() + '"';
+    "SELECT * " + " FROM departement " + ' WHERE code="' + code.trim().replace(/"/g, '\\"') + '"';
   return query<Departement[]>(queryStr);
 };
 
