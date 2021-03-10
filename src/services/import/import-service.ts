@@ -1,14 +1,26 @@
+import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
 import Papa from "papaparse";
+import { DATA_VALIDATION_START, ImportNotifyProgressMessageContent, INSERT_DB_START, RETRIEVE_DB_INFO_START } from "../../model/import/import-update-message";
 import { logger } from "../../utils/logger";
 
 const COMMENT_PREFIX = "###";
 
-export abstract class ImportService {
+export const IMPORT_PROGRESS_UPDATE_EVENT = "importProgressUpdate";
 
-  public importFile = async (fileContent: string): Promise<string> => {
+export const IMPORT_STATUS_UPDATE_EVENT = "importStatusUpdate";
+
+export const IMPORT_COMPLETE_EVENT = "importComplete";
+
+const NOTIFY_PROGRESS_INTERVAL = 500; //ms
+
+export abstract class ImportService extends EventEmitter {
+
+  public importFile = async (fileContent: string): Promise<void> => {
+
     if (!fileContent) {
-      return "Le contenu du fichier n'a pas pu être lu";
+      this.emit(IMPORT_COMPLETE_EVENT, "Le contenu du fichier n'a pas pu être lu");
+      return;
     }
 
     const content: { data: string[][] } = Papa.parse<string[]>(fileContent, {
@@ -17,18 +29,28 @@ export abstract class ImportService {
     });
 
     if (!content.data) {
-      return "Le contenu du fichier n'a pas pu être lu";
+      this.emit(IMPORT_COMPLETE_EVENT, "Le contenu du fichier n'a pas pu être lu");
+      return;
     }
 
-    let numberOfLines = 0;
-    let numberOfErrors = 0;
+    const numberOfLines = content.data.filter((lineTab) => {
+      return lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX);
+    }).length;
     const errors = [];
+    let validatedEntries = 0;
 
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: RETRIEVE_DB_INFO_START });
+
+    // Retrieve any initialization info needed before validation
     await this.init();
 
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: DATA_VALIDATION_START });
+
+    let lastNotifyDate = Date.now();
+
+    // Validate all entries
     for (const lineTab of content.data) {
       if (lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX)) {
-        numberOfLines++;
 
         let errorMessage: string;
         if (lineTab?.length !== this.getNumberOfColumns()) {
@@ -38,23 +60,42 @@ export abstract class ImportService {
         }
 
         if (errorMessage) {
-          numberOfErrors++;
           errors.push(this.buildErrorObject(lineTab, errorMessage));
         }
+
+        validatedEntries++;
+
+        const now = Date.now();
+        if (now - lastNotifyDate >= NOTIFY_PROGRESS_INTERVAL) {
+          const progressContent: ImportNotifyProgressMessageContent = {
+            status: "Validating entries",
+            totalEntries: content.data.length,
+            entriesToBeValidated: numberOfLines,
+            validatedEntries,
+            errors: errors.length
+          };
+          this.emit(IMPORT_PROGRESS_UPDATE_EVENT, progressContent);
+          lastNotifyDate = now;
+        }
+
       }
     }
 
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: INSERT_DB_START });
+
+    // Insert the valid entries in the database
     await this.persistAllValidEntities();
 
-    logger.info(`Résultat de l'import : ${(numberOfLines - numberOfErrors)}/${numberOfLines} importées avec succès --> ${numberOfErrors} lignes en erreur`);
+    logger.info(`Résultat de l'import : ${(numberOfLines - errors.length)}/${numberOfLines} importées avec succès --> ${errors.length} lignes en erreur`);
 
     if (errors.length > 0) {
-      return Papa.unparse(errors, {
+      const errorsCsv = Papa.unparse(errors, {
         delimiter: ";",
         encoding: "UTF-8"
-      });
+      }) as string;
+      this.emit(IMPORT_COMPLETE_EVENT, errorsCsv);
     } else {
-      return "Aucune erreur pendant l'import";
+      this.emit(IMPORT_COMPLETE_EVENT, "Aucune erreur pendant l'import");
     }
   };
 

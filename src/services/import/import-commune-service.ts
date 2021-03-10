@@ -1,6 +1,7 @@
-import { Commune, Departement } from "@ou-ca/ouca-model";
+import { Commune } from "../../model/types/commune.model";
+import { Departement } from "../../model/types/departement.object";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
-import { findAllCommunes, insertCommunes } from "../../sql-api/sql-api-commune";
+import { findAllCommunes } from "../../sql-api/sql-api-commune";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";
 import { ImportService } from "./import-service";
 
@@ -20,12 +21,12 @@ export class ImportCommuneService extends ImportService {
     [this.departements, this.communes] = await Promise.all([findAllDepartements(), findAllCommunes()]);
   };
 
-  protected validateAndPrepareEntity = async (communeTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = (communeTab: string[]): Promise<string> => {
     const importedCommune = new ImportedCommune(communeTab);
 
     const dataValidity = importedCommune.checkValidity();
     if (dataValidity) {
-      return dataValidity;
+      return Promise.resolve(dataValidity);
     }
 
     // Check that the departement exists
@@ -33,7 +34,7 @@ export class ImportCommuneService extends ImportService {
       return this.compareStrings(departement.code, importedCommune.departement);
     });
     if (!departement) {
-      return "Le département n'existe pas";
+      return Promise.resolve("Le département n'existe pas");
     }
 
     // Check that the commune does not exists
@@ -45,7 +46,7 @@ export class ImportCommuneService extends ImportService {
       );
     });
     if (commune) {
-      return "Il existe déjà une commune avec ce code ou ce nom dans ce département";
+      return Promise.resolve("Il existe déjà une commune avec ce code ou ce nom dans ce département");
     }
 
     // Create and save the commune
@@ -53,12 +54,13 @@ export class ImportCommuneService extends ImportService {
 
     this.communesToInsert.push(communeToSave);
     this.communes.push(communeToSave);
-    return null;
+    return Promise.resolve(null as string);
   };
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   protected persistAllValidEntities = async (): Promise<void> => {
     if (this.communesToInsert.length) {
-      await insertCommunes(this.communesToInsert);
+      //await insertCommunes(this.communesToInsert);
     }
   }
 

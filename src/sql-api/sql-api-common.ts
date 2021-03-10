@@ -1,4 +1,4 @@
-import { EntiteSimple } from "@ou-ca/ouca-model";
+import { EntiteSimple } from "../model/types/entite-simple.object";
 import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToFindEntityByCode, queryToFindEntityByLibelle, queryToInsertMultipleEntities, queryToSaveEntity } from "../sql/sql-queries-utils";
@@ -54,8 +54,6 @@ export const insertMultipleEntities = async <T extends EntityDb>(
   mapping?: Map<string, string>
 ): Promise<SqlSaveResponse> => {
   const sqlResponse = await queryToInsertMultipleEntities(tableName, entitiesToSave, mapping);
-
-  onTableUpdate(tableName);
 
   return sqlResponse;
 };
