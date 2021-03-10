@@ -7,7 +7,6 @@ COPY package.json tsconfig.json yarn.lock .yarnrc.yml /app/backend/
 COPY .yarn/ /app/backend/.yarn
 COPY src/ /app/backend/src
 
-ARG NPM_GITHUB_TOKEN
 RUN yarn install --immutable
 RUN yarn build:prod
 
@@ -20,7 +19,6 @@ WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml /app/
 COPY .yarn/ /app/.yarn
 
-ARG NPM_GITHUB_TOKEN
 RUN yarn workspaces focus --production 
 RUN rm -f package.json yarn.lock .yarnrc.yml
 
