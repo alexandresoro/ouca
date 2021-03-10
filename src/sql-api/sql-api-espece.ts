@@ -1,5 +1,5 @@
-import { Espece } from "@ou-ca/ouca-model";
 import { buildEspeceFromEspeceDb, buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
+import { Espece } from "../model/types/espece.model";
 import { EspeceDb } from "../objects/db/espece-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllEspeces, queryToFindEspeceByCode, queryToFindEspeceByNomFrancais, queryToFindEspeceByNomLatin, queryToFindNumberOfDonneesByEspeceId } from "../sql/sql-queries-espece";

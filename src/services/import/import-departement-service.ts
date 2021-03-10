@@ -1,4 +1,4 @@
-import { Departement } from "@ou-ca/ouca-model";
+import { Departement } from "../../model/types/departement.object";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
 import { findAllDepartements, persistDepartement } from "../../sql-api/sql-api-departement";
 import { ImportServiceSingle } from "./import-service-single";

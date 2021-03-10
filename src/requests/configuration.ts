@@ -1,5 +1,5 @@
-import { AppConfiguration } from "@ou-ca/ouca-model";
 import { HttpParameters } from "../http/httpParameters";
+import { AppConfiguration } from "../model/types/app-configuration.object";
 import { findAppConfiguration, persistUserSettings } from "../sql-api/sql-api-configuration";
 
 export const getAppConfiguration = async (): Promise<AppConfiguration> => {

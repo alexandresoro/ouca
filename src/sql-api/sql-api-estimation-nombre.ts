@@ -1,5 +1,5 @@
-import { EstimationNombre } from "@ou-ca/ouca-model";
 import { buildEstimationNombreFromEstimationNombreDb, buildEstimationsNombreFromEstimationsNombreDb } from "../mapping/estimation-nombre-mapping";
+import { EstimationNombre } from "../model/types/estimation-nombre.object";
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllEstimationsNombre, queryToFindNumberOfDonneesByEstimationNombreId } from "../sql/sql-queries-estimation-nombre";

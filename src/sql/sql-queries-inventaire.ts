@@ -1,5 +1,5 @@
-import { Inventaire } from "@ou-ca/ouca-model";
-import { CoordinatesSystemType } from "@ou-ca/ouca-model/";
+import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
+import { Inventaire } from "../model/types/inventaire.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { query } from "./sql-queries-utils";
 

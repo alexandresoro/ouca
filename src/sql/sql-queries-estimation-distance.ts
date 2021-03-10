@@ -1,4 +1,4 @@
-import { EstimationDistance } from "@ou-ca/ouca-model";
+import { EstimationDistance } from "../model/types/estimation-distance.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_ESTIMATION_DISTANCE } from "../utils/constants";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";

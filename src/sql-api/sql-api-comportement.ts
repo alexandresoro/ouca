@@ -1,5 +1,5 @@
-import { Comportement } from "@ou-ca/ouca-model";
 import { buildComportementDbFromComportement, buildComportementsFromComportementsDb } from "../mapping/comportement-mapping";
+import { Comportement } from "../model/types/comportement.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllComportements, queryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
 import { TABLE_COMPORTEMENT } from "../utils/constants";

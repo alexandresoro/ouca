@@ -1,4 +1,5 @@
-import { CoordinatesSystem, Lieudit } from "@ou-ca/ouca-model";
+import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
+import { Lieudit } from "../../model/types/lieudit.model";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";
 
 const DEPARTEMENT_INDEX = 0;

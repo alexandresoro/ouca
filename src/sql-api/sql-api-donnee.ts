@@ -1,6 +1,14 @@
-import { Comportement, CoordinatesSystemType, Donnee, DonneesFilter, DonneeWithNavigationData, FlatDonnee, getCoordinates, Inventaire, NicheurCode, NICHEUR_VALUES } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
 import groupBy from "lodash.groupby";
+import { getCoordinates } from "../model/coordinates-system/coordinates-helper";
+import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
+import { Comportement } from "../model/types/comportement.object";
+import { DonneeWithNavigationData } from "../model/types/donnee-with-navigation-data.object";
+import { Donnee } from "../model/types/donnee.object";
+import { DonneesFilter } from "../model/types/donnees-filter.object";
+import { FlatDonnee } from "../model/types/flat-donnee.object";
+import { Inventaire } from "../model/types/inventaire.object";
+import { NicheurCode, NICHEUR_VALUES } from "../model/types/nicheur.model";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllComportementsByDonneeId, queryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";

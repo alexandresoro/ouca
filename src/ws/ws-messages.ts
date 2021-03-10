@@ -1,5 +1,5 @@
-import { WebsocketUpdateMessage } from "@ou-ca/ouca-model";
 import WebSocket from "ws";
+import { WebsocketUpdateMessage } from "../model/websocket/websocket-update-message";
 import { getAppConfiguration } from "../requests/configuration";
 import { findAllAges } from "../sql-api/sql-api-age";
 import { findAllClasses } from "../sql-api/sql-api-classe";

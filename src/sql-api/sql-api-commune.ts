@@ -1,5 +1,5 @@
-import { Commune } from "@ou-ca/ouca-model";
 import { buildCommuneFromCommuneDb, buildCommunesFromCommunesDb } from "../mapping/commune-mapping";
+import { Commune } from "../model/types/commune.model";
 import { CommuneDb } from "../objects/db/commune-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllCommunes, queryToFindCommuneByDepartementIdAndCode, queryToFindCommuneByDepartementIdAndCodeAndNom, queryToFindCommuneByDepartementIdAndNom, queryToFindNumberOfDonneesByCommuneId, queryToFindNumberOfLieuxDitsByCommuneId } from "../sql/sql-queries-commune";

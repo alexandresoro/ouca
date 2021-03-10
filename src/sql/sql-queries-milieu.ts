@@ -1,4 +1,4 @@
-import { Milieu } from "@ou-ca/ouca-model";
+import { Milieu } from "../model/types/milieu.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_CODE, ORDER_ASC, TABLE_MILIEU } from "../utils/constants";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";

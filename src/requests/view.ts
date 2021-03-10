@@ -1,5 +1,6 @@
-import { COORDINATES_SYSTEMS_CONFIG, FlatDonnee } from "@ou-ca/ouca-model";
 import { HttpParameters } from "../http/httpParameters";
+import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
+import { FlatDonnee } from "../model/types/flat-donnee.object";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
 import { } from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";

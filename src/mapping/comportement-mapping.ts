@@ -1,4 +1,4 @@
-import { Comportement } from "@ou-ca/ouca-model";
+import { Comportement } from "../model/types/comportement.object";
 import { ComportementDb } from "../objects/db/comportement-db.model";
 
 export const buildComportementFromComportementDb = (

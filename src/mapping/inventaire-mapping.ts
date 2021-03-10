@@ -1,6 +1,7 @@
-import { Coordinates, Inventaire } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
 import _ from "lodash";
+import { Coordinates } from "../model/types/coordinates.object";
+import { Inventaire } from "../model/types/inventaire.object";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 import { DATE_PATTERN, DATE_WITH_TIME_PATTERN } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";

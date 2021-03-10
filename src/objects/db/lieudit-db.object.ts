@@ -1,4 +1,4 @@
-import { CoordinatesSystemType } from "@ou-ca/ouca-model";
+import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 import { EntityDb } from "./entity-db.model";
 
 export interface LieuditDb extends EntityDb {

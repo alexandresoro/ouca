@@ -1,4 +1,4 @@
-import { CoordinatesSystem } from "@ou-ca/ouca-model";
+import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 
 
 const ALTITUDE_MIN_VALUE = 0;

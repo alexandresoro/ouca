@@ -21,7 +21,7 @@
     "start:debug": "node --inspect dist/backend"
   },
   "dependencies": {
-    "@ou-ca/ouca-model": "^0.0.62",
+    "@types/proj4": "^2.5.0",
     "date-fns": "^2.17.0",
     "date-fns-tz": "^1.1.2",
     "lodash.deburr": "^4.1.0",
@@ -29,6 +29,7 @@
     "mariadb": "^2.5.3",
     "multiparty": "^4.2.2",
     "papaparse": "^5.3.0",
+    "proj4": "^2.7.2",
     "winston": "^3.3.3",
     "ws": "^7.4.3",
     "xlsx": "^0.16.9",

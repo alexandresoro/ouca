@@ -1,5 +1,8 @@
-
-import { Commune, CoordinatesSystem, CoordinatesSystemType, COORDINATES_SYSTEMS_CONFIG, Departement, Lieudit } from "@ou-ca/ouca-model";
+import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
+import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
+import { Commune } from "../../model/types/commune.model";
+import { Departement } from "../../model/types/departement.object";
+import { Lieudit } from "../../model/types/lieudit.model";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { findAllCommunes } from "../../sql-api/sql-api-commune";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";

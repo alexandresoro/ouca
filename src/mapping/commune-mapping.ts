@@ -1,4 +1,4 @@
-import { Commune } from "@ou-ca/ouca-model";
+import { Commune } from "../model/types/commune.model";
 import { CommuneDb } from "../objects/db/commune-db.object";
 
 export const buildCommuneFromCommuneDb = (communeDb: CommuneDb): Commune => {

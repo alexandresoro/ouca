@@ -1,4 +1,4 @@
-import { Espece } from "@ou-ca/ouca-model";
+import { Espece } from "../model/types/espece.model";
 import { EspeceDb } from "../objects/db/espece-db.object";
 
 export const buildEspeceFromEspeceDb = (especeDb: EspeceDb): Espece => {

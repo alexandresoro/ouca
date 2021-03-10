@@ -1,4 +1,4 @@
-import { Milieu } from "@ou-ca/ouca-model";
+import { Milieu } from "../model/types/milieu.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllMilieux, queryToFindNumberOfDonneesByMilieuId } from "../sql/sql-queries-milieu";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";

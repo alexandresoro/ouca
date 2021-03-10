@@ -1,4 +1,4 @@
-import { EntiteAvecLibelleEtCode } from "@ou-ca/ouca-model";
+import { EntiteAvecLibelleEtCode } from "../../model/types/entite-avec-libelle-et-code.object";
 import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { findAllEntities } from "../../sql-api/sql-api-common";

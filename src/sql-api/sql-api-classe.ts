@@ -1,4 +1,4 @@
-import { Classe } from "@ou-ca/ouca-model";
+import { Classe } from "../model/types/classe.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllClasses, queryToFindNumberOfDonneesByClasseId, queryToFindNumberOfEspecesByClasseId } from "../sql/sql-queries-classe";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";

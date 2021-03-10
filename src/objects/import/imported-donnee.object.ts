@@ -1,6 +1,9 @@
-import { Coordinates, CoordinatesSystem, Donnee, Inventaire } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
 import _ from "lodash";
+import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
+import { Coordinates } from "../../model/types/coordinates.object";
+import { Donnee } from "../../model/types/donnee.object";
+import { Inventaire } from "../../model/types/inventaire.object";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";
 

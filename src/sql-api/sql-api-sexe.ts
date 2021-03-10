@@ -1,4 +1,4 @@
-import { Sexe } from "@ou-ca/ouca-model";
+import { Sexe } from "../model/types/sexe.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllSexes, queryToFindNumberOfDonneesBySexeId } from "../sql/sql-queries-sexe";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";

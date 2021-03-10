@@ -1,4 +1,4 @@
-import { Lieudit } from "@ou-ca/ouca-model";
+import { Lieudit } from "../model/types/lieudit.model";
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 
 export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {

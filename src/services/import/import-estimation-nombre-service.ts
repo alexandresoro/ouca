@@ -1,4 +1,4 @@
-import { EstimationNombre } from "@ou-ca/ouca-model";
+import { EstimationNombre } from "../../model/types/estimation-nombre.object";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { persistEstimationNombre } from "../../sql-api/sql-api-estimation-nombre";

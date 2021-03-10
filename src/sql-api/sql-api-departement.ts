@@ -1,4 +1,4 @@
-import { Departement } from "@ou-ca/ouca-model";
+import { Departement } from "../model/types/departement.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllDepartements, queryToFindDepartementByCode, queryToFindNumberOfCommunesByDepartementId, queryToFindNumberOfDonneesByDepartementId, queryToFindNumberOfLieuxDitsByDepartementId } from "../sql/sql-queries-departement";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";

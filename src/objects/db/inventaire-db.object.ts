@@ -1,4 +1,4 @@
-import { CoordinatesSystemType } from "@ou-ca/ouca-model";
+import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 
 export interface InventaireDb {
   id: number;

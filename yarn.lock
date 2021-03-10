@@ -88,15 +88,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ou-ca/ouca-model@npm:^0.0.62":
-  version: 0.0.62
-  resolution: "@ou-ca/ouca-model@npm:0.0.62::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40ou-ca%2Fouca-model%2F0.0.62%2Fac343b33a2ae370bc6cefb7c0fcd9cb8e6295d36902412ebc5aa2834cf9f326c"
-  dependencies:
-    proj4: ^2.7.0
-  checksum: f11069f51bec030a367a7f48a8145dc826b6797d54b9e4cc0f1a5b664b2998e5377e5819317dbb7d5c17564f336e2ec00559e9b47881a3ce5f493d432c3ef6a7
-  languageName: node
-  linkType: hard
-
 "@types/geojson@npm:^7946.0.7":
   version: 7946.0.7
   resolution: "@types/geojson@npm:7946.0.7"
@@ -156,6 +147,13 @@ __metadata:
   version: 14.14.31
   resolution: "@types/node@npm:14.14.31"
   checksum: 635dc8a0898a923621e02ca179e17baa39fdfa44f0096fcc1b7046c9b32317e74a99956a7b45ca0e8069874f51f4e7873a418239a318a4b6e7936f6510ac5992
+  languageName: node
+  linkType: hard
+
+"@types/proj4@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@types/proj4@npm:2.5.0"
+  checksum: 743741f98f8358fd4c303f831fdfcd42c880b5b79517de53ff698d89225afabb68495bdcfa38ab6bdab2aca7bbc500f7c105e2600ed6225651503d74e7f2c02d
   languageName: node
   linkType: hard
 
@@ -1423,11 +1421,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ouca-backend@workspace:."
   dependencies:
-    "@ou-ca/ouca-model": ^0.0.62
     "@types/lodash.deburr": ^4.1.6
     "@types/lodash.groupby": ^4.6.6
     "@types/multiparty": ^0.0.32
     "@types/node": ^14.14.31
+    "@types/proj4": ^2.5.0
     "@types/ws": ^7.4.0
     "@types/yargs": ^16.0.0
     "@typescript-eslint/eslint-plugin": ^4.15.2
@@ -1440,6 +1438,7 @@ __metadata:
     mariadb: ^2.5.3
     multiparty: ^4.2.2
     papaparse: ^5.3.0
+    proj4: ^2.7.2
     typescript: ^4.1.5
     winston: ^3.3.3
     ws: ^7.4.3
@@ -1531,13 +1530,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proj4@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "proj4@npm:2.7.0"
+"proj4@npm:^2.7.2":
+  version: 2.7.2
+  resolution: "proj4@npm:2.7.2"
   dependencies:
     mgrs: 1.0.0
     wkt-parser: ^1.2.4
-  checksum: 2f44e6b52306566f7752d0f6c5c609879c628fe1418d02ce7242e879043f39ff26203e6f7d19adc9c312e605c636338107db6824ca285ee5f5db8ffe6ec19792
+  checksum: 4be2e50f99ddeedabbc1a9977a006b88239982af9940bf9d73aeac5a8ab41a233be19d11e020aac30cd60715b6552842981b2809e3cca00c8c8dda0ece1921d1
   languageName: node
   linkType: hard
 

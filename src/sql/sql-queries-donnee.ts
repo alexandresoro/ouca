@@ -1,5 +1,8 @@
-import { Donnee, DonneesFilter, FlatDonnee, NicheurCode } from "@ou-ca/ouca-model";
 import { format } from "date-fns";
+import { Donnee } from "../model/types/donnee.object";
+import { DonneesFilter } from "../model/types/donnees-filter.object";
+import { FlatDonnee } from "../model/types/flat-donnee.object";
+import { NicheurCode } from "../model/types/nicheur.model";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";

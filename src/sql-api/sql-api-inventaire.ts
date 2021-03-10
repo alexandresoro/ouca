@@ -1,5 +1,7 @@
-import { areSameCoordinates, Coordinates, Inventaire } from "@ou-ca/ouca-model";
 import { buildInventaireDbFromInventaire, buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
+import { areSameCoordinates } from "../model/coordinates-system/coordinates-helper";
+import { Coordinates } from "../model/types/coordinates.object";
+import { Inventaire } from "../model/types/inventaire.object";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdByAllAttributes, queryToFindInventaireIdById } from "../sql/sql-queries-inventaire";
