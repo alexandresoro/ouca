@@ -16,7 +16,7 @@
     "build:debug": "tsc --sourceMap true",
     "build:prod": "tsc",
     "debug": "yarn build:debug --sourceMap true && yarn start:debug",
-    "lint": "yarn eslint './src/**'",
+    "lint": "yarn eslint './src/**/*.ts'",
     "start": "tsc && node dist/backend",
     "start:debug": "node --inspect dist/backend"
   },
