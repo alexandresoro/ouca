@@ -1,13 +1,2 @@
-node_modules/
-dist/
-
-yarn-error.log
 *.orig
 .DS_Store
-
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-.pnp.*
