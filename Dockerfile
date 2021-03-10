@@ -3,9 +3,12 @@ FROM node:14-alpine as build
 
 WORKDIR /app/backend
 
-COPY package.json tsconfig.json yarn.lock .yarnrc.yml /app/backend/
-COPY .yarn/ /app/backend/.yarn
-COPY src/ /app/backend/src
+RUN apk add git
+
+COPY ./ /app/backend/
+
+RUN git submodule init
+RUN git submodule update
 
 RUN yarn install --immutable
 RUN yarn build:prod
