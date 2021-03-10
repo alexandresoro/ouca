@@ -7,7 +7,6 @@ import {
 } from "../mapping";
 
 export const handleHttpRequest = (
-  isDockerMode: boolean,
   request: http.IncomingMessage,
   res: http.ServerResponse,
   postData?: any,
@@ -29,8 +28,7 @@ export const handleHttpRequest = (
       queryParameters,
       postData,
       inputFileName
-    },
-    isDockerMode
+    }
   )
     .then((result) => {
       res.statusCode = 200;

@@ -35,6 +35,6 @@ WORKDIR /app/backend
 
 COPY --from=build /app/backend/dist/ /app/backend/
 
-CMD node backend.js --dbHost ${DB_HOST} --dbPort ${DB_PORT} --dbUser ${DB_USER} --dbPassword ${DB_PASSWORD} -docker
+CMD node backend.js --dbHost ${DB_HOST} --dbPort ${DB_PORT} --dbUser ${DB_USER} --dbPassword ${DB_PASSWORD} --docker
 
 EXPOSE 4000/tcp

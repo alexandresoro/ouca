@@ -98,8 +98,7 @@ const EXCEL_MIME_TYPE =
 
 export const REQUEST_MAPPING: {
   [path: string]: (
-    httpParameters?: HttpParameters,
-    isDockerMode?: boolean
+    httpParameters?: HttpParameters
   ) => Promise<any>;
 } = {
   "/api/inventaire/save": saveInventaire,

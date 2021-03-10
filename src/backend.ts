@@ -1,22 +1,13 @@
-import {
-  HEARTBEAT,
-  IMPORT,
-  TEXT, WebsocketMessage
-} from "@ou-ca/ouca-model";
 import * as http from "http";
 import * as multiparty from "multiparty";
 import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
+import { HEARTBEAT, IMPORT, TEXT } from "./model/websocket/websocket-message-type.model";
+import { WebsocketMessage } from "./model/websocket/websocket-message.model";
 import { logger } from "./utils/logger";
+import { options } from "./utils/options";
 import { WebsocketServer } from "./ws/websocket-server";
 import { sendInitialData } from "./ws/ws-messages";
-
-const DOCKER_ARG = "-docker";
-
-const isDockerMode = process.argv.includes(DOCKER_ARG);
-
-const hostname = isDockerMode ? "0.0.0.0" : "127.0.0.1";
-const port = 4000;
 
 // HTTP server
 const server = http.createServer(
@@ -62,7 +53,6 @@ const server = http.createServer(
             part.on("end", () => {
               const fileContent: string = Buffer.concat(chunksPart).toString();
               handleHttpRequest(
-                isDockerMode,
                 request,
                 res,
                 fileContent,
@@ -91,15 +81,16 @@ const server = http.createServer(
             return;
           }
           const postData = JSON.parse(postDataStr);
-          handleHttpRequest(isDockerMode, request, res, postData);
+          handleHttpRequest(request, res, postData);
         });
       }
     } else {
-      handleHttpRequest(isDockerMode, request, res);
+      handleHttpRequest(request, res);
     }
   }
 );
 
+// Websocket
 const wss = WebsocketServer.createServer(server);
 
 wss.on("connection", (client) => {
@@ -127,6 +118,9 @@ wss.on("connection", (client) => {
   });
 });
 
-server.listen(port, hostname, () => {
-  logger.debug(`Server running at http://${hostname}:${port}/`);
+
+const listenAddress = options.docker ? "0.0.0.0" : options.listenAddress;
+
+server.listen(options.listenPort, listenAddress, () => {
+  logger.debug(`Server running at http://${listenAddress}:${options.listenPort}/`);
 });

@@ -1,11 +1,11 @@
 import { ChildProcess, spawn } from "child_process";
 import { format } from "date-fns";
-import { HttpParameters } from "../http/httpParameters";
 import {
   DEFAULT_DATABASE_NAME,
   getSqlConnectionConfiguration
 } from "../sql-api/sql-connection";
 import { DATE_PATTERN } from "../utils/constants";
+import { options } from "../utils/options";
 
 const DUMP_FILE_NAME = "sauvegarde_base_naturaliste_";
 const SQL_EXTENSION = ".sql";
@@ -18,18 +18,17 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
     const connectionConfig = getSqlConnectionConfiguration();
 
     let commonDumpParams: string[] = [
-      "--user=" + connectionConfig.user,
-      "--password=" + connectionConfig.password,
+      `--user=${connectionConfig.user}`,
+      `--password=${connectionConfig.password}`,
       "--default-character-set=utf8",
       "--skip-triggers",
       DEFAULT_DATABASE_NAME
     ];
 
     if (isRemoteDump) {
-      commonDumpParams = ([] as string[]).concat(
-        "--host=" + connectionConfig.host,
-        "--port=" + connectionConfig.port,
-        commonDumpParams
+      commonDumpParams = commonDumpParams.concat(
+        `--host=${connectionConfig.host}`,
+        `--port=${connectionConfig.port}`
       );
     }
 
@@ -51,12 +50,9 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
   });
 };
 
-export const saveDatabase = async (
-  httpParameters: HttpParameters,
-  isDockerMode: boolean
-): Promise<string> => {
+export const saveDatabase = async (): Promise<string> => {
   try {
-    return await executeSqlDump(isDockerMode);
+    return await executeSqlDump(options.docker);
   } catch (error) {
     console.error(
       "L'extraction de la base de données n'a pas pu être effectuée",

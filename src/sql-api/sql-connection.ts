@@ -1,6 +1,6 @@
 import * as mariadb from "mariadb";
-import yargs from "yargs";
 import { logger } from "../utils/logger";
+import { options } from "../utils/options";
 
 export const DEFAULT_DATABASE_NAME = "basenaturaliste";
 
@@ -13,18 +13,12 @@ export const DEFAULT_DATABASE_NAME = "basenaturaliste";
  * - dbPassword
  */
 export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
-  const argv = yargs.options({
-    dbHost: { type: "string", default: "127.0.0.1" },
-    dbPort: { type: "number", default: 3306 },
-    dbUser: { type: "string", default: "basenaturaliste" },
-    dbPassword: { type: "string", default: "basenaturaliste" }
-  }).argv;
 
   const config: mariadb.ConnectionConfig = {
-    host: argv.dbHost,
-    port: argv.dbPort,
-    user: argv.dbUser,
-    password: argv.dbPassword,
+    host: options.dbHost,
+    port: options.dbPort,
+    user: options.dbUser,
+    password: options.dbPassword,
     database: DEFAULT_DATABASE_NAME,
     multipleStatements: true,
     dateStrings: true,
