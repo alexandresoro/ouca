@@ -1,3 +1,4 @@
+import proj4 from "proj4";
 import { Coordinates } from "../types/coordinates.object";
 import { COORDINATES_SYSTEMS_CONFIG } from "./coordinates-system-list.object";
 import { CoordinatesSystemType } from "./coordinates-system.object";
