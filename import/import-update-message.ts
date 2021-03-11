@@ -11,6 +11,8 @@ export type StatusUpdate = typeof STATUS_UPDATE[number];
 
 export const IMPORT_COMPLETE = "IMPORT_COMPLETE";
 
+export const IMPORT_ERROR = "IMPORT_ERROR";
+
 export type ImportNotifyProgressMessageContent = {
   status: string,
   totalEntries: number,
@@ -31,6 +33,11 @@ export type ImportNotifyProgressMessage = {
 export type ImportPostCompleteMessage = {
   type: typeof IMPORT_COMPLETE;
   result: string;
+}
+
+export type ImportErrorMessage = {
+  type: typeof IMPORT_ERROR;
+  error: string | number;
 }
 
 export type ImportUpdateMessage = ImportNotifyStatusUpdateMessage | ImportNotifyProgressMessage | ImportPostCompleteMessage;

@@ -22,13 +22,15 @@ export const IMPORT_TYPE = [IMPORT_OBSERVATEUR, IMPORT_DEPARTEMENT, IMPORT_COMMU
 
 export type WebsocketImportRequestDataType = typeof IMPORT_TYPE;
 
+export type WebsocketImportRequestContent = {
+  dataType: WebsocketImportRequestDataType;
+  data: string;
+}
+
 export type WebsocketImportRequestMessage = {
 
   type: typeof IMPORT;
 
-  content: {
-    dataType: WebsocketImportRequestDataType;
-    data: string | ArrayBuffer;
-  }
+  content: WebsocketImportRequestContent
 
 }
