@@ -1,5 +1,4 @@
 import { IMPORT } from "./websocket-message-type.model";
-import { WebsocketMessage } from './websocket-message.model';
 
 export const IMPORT_OBSERVATEUR = "observateur";
 export const IMPORT_DEPARTEMENT = "departement";
@@ -23,7 +22,7 @@ export const IMPORT_TYPE = [IMPORT_OBSERVATEUR, IMPORT_DEPARTEMENT, IMPORT_COMMU
 
 export type WebsocketImportRequestDataType = typeof IMPORT_TYPE;
 
-export type WebsocketImportRequestMessage = WebsocketMessage & {
+export type WebsocketImportRequestMessage = {
 
   type: typeof IMPORT;
 
