@@ -20,7 +20,7 @@ export const IMPORT_DONNEE = "donnee";
 
 export const IMPORT_TYPE = [IMPORT_OBSERVATEUR, IMPORT_DEPARTEMENT, IMPORT_COMMUNE, IMPORT_LIEUDIT, IMPORT_METEO, IMPORT_CLASSE, IMPORT_ESPECE, IMPORT_AGE, IMPORT_SEXE, IMPORT_ESTIMATION_NOMBRE, IMPORT_ESTIMATION_DISTANCE, IMPORT_COMPORTEMENT, IMPORT_MILIEU, IMPORT_INVENTAIRE, IMPORT_DONNEE] as const;
 
-export type WebsocketImportRequestDataType = typeof IMPORT_TYPE;
+export type WebsocketImportRequestDataType = typeof IMPORT_TYPE[number];
 
 export type WebsocketImportRequestContent = {
   dataType: WebsocketImportRequestDataType;
