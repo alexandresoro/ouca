@@ -4,5 +4,5 @@ export type WebsocketMessage = {
 
   type: WebSocketMessageType;
 
-  content: string | any;
+  content?: string | any;
 }

@@ -4,10 +4,12 @@ export const IMPORT = "import"; // Channel that is used to handle messages relat
 
 export const OTHER = "other";
 
+export const INIT = "init";
+
 export const TEXT = "text";
 
 export const HEARTBEAT = "heartbeat"; // Channel used for ping/pong messages
 
-const WEBSOCKET_MESSAGE_TYPE = [UPDATE, IMPORT, OTHER, TEXT, HEARTBEAT] as const;
+const WEBSOCKET_MESSAGE_TYPE = [UPDATE, IMPORT, OTHER, INIT, TEXT, HEARTBEAT] as const;
 
 export type WebSocketMessageType = typeof WEBSOCKET_MESSAGE_TYPE[number];
