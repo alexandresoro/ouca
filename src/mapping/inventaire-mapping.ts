@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import _ from "lodash";
 import { Coordinates } from "../model/types/coordinates.object";
 import { Inventaire } from "../model/types/inventaire.object";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
@@ -52,7 +51,7 @@ export const buildInventaireDbFromInventaire = (
     date_creation: format(new Date(), DATE_WITH_TIME_PATTERN)
   };
 
-  if (_.has(inventaire, "customizedAltitude")) {
+  if (Object.prototype.hasOwnProperty.call(inventaire, "customizedAltitude")) {
     // Get the customized coordinates if any
     // By default we consider that coordinates are not customized
     let altitude: number = null;
