@@ -1,3 +1,4 @@
+import { NicheurCode } from "../model/types/nicheur.model";
 import { ComportementDb } from "../objects/db/comportement-db.model";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_CODE, ORDER_ASC, TABLE_COMPORTEMENT } from "../utils/constants";
@@ -15,7 +16,7 @@ export const queryToFindAllComportements = async (): Promise<
 
 export const queryToFindAllComportementsByDonneeId = async (
   donneesIds?: number[]
-): Promise<{ donneeId: number; code: string; libelle: string }[]> => {
+): Promise<{ donneeId: number; code: string; libelle: string, nicheur?: NicheurCode | null }[]> => {
   let queryStr: string =
     "SELECT d.donnee_id as donneeId, c.code, c.libelle, c.nicheur" +
     " FROM donnee_comportement d" +
@@ -27,7 +28,7 @@ export const queryToFindAllComportementsByDonneeId = async (
   }
 
   return query<
-    { donneeId: number; code: string; libelle: string; nicheur: string }[]
+    { donneeId: number; code: string; libelle: string; nicheur?: NicheurCode | null }[]
   >(queryStr);
 };
 
@@ -36,9 +37,9 @@ export const queryToFindComportementsIdsByDonneeId = async (
 ): Promise<{ comportementId: number }[]> => {
   return query<{ comportementId: number }[]>(
     "SELECT distinct comportement_id as comportementId" +
-      " FROM donnee_comportement" +
-      " WHERE donnee_id=" +
-      donneeId
+    " FROM donnee_comportement" +
+    " WHERE donnee_id=" +
+    donneeId
   );
 };
 

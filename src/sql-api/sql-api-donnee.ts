@@ -2,7 +2,6 @@ import { format } from "date-fns";
 import groupBy from "lodash.groupby";
 import { getCoordinates } from "../model/coordinates-system/coordinates-helper";
 import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
-import { Comportement } from "../model/types/comportement.object";
 import { DonneeWithNavigationData } from "../model/types/donnee-with-navigation-data.object";
 import { Donnee } from "../model/types/donnee.object";
 import { DonneesFilter } from "../model/types/donnees-filter.object";
@@ -251,6 +250,12 @@ const updateCoordinates = (
   donnee.customizedCoordinatesSystem = null;
 };
 
+const groupByDonneeId = <T extends { donneeId: number }>(table: T[]): { [key: number]: T[] } => {
+  return groupBy(table, (tableElement) => {
+    return tableElement.donneeId;
+  });
+}
+
 export const findDonneesByCustomizedFilters = async (
   filter: DonneesFilter
 ): Promise<FlatDonnee[]> => {
@@ -269,18 +274,10 @@ export const findDonneesByCustomizedFilters = async (
     ])
     : [[], [], [], []];
 
-  const [
-    associesByDonnee,
-    meteosByDonnee,
-    comportementsByDonnee,
-    milieuxByDonnee
-  ]: { [key: number]: any }[] = [associes, meteos, comportements, milieux].map(
-    (table) => {
-      return groupBy(table, (tableElement) => {
-        return tableElement.donneeId;
-      });
-    }
-  );
+  const associesByDonnee = groupByDonneeId(associes);
+  const meteosByDonnee = groupByDonneeId(meteos);
+  const comportementsByDonnee = groupByDonneeId(comportements);
+  const milieuxByDonnee = groupByDonneeId(milieux);
 
   donnees.forEach((donnee: FlatDonnee) => {
     // Transform the coordinates into the expected system
@@ -312,12 +309,12 @@ export const findDonneesByCustomizedFilters = async (
 
     // Compute nicheur status for the Donnée (i.e. highest nicheur status of the comportements)
     // First we keep only the comportements having a nicheur status
-    const nicheurStatuses: NicheurCode[] = comportementsByDonnee[donnee.id].filter(
-      (comportement: Comportement) => {
+    const nicheurStatuses: NicheurCode[] = comportementsByDonnee[donnee.id]?.filter(
+      (comportement) => {
         return !!comportement.nicheur;
       }
     ).map(
-      (comportement: Comportement) => {
+      (comportement) => {
         return comportement.nicheur;
       }
     ) ?? [];
