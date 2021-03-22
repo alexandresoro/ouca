@@ -1,10 +1,14 @@
 import { Observateur } from "../model/types/observateur.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllObservateurs, queryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";
-import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
+import { DB_SAVE_MAPPING, queryToCheckIfTableExists } from "../sql/sql-queries-utils";
 import { TABLE_OBSERVATEUR } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { deleteEntityById, findEntityByLibelle, persistEntity } from "./sql-api-common";
+
+export const checkIfTableObservateurExists = async (): Promise<boolean> => {
+  return queryToCheckIfTableExists(TABLE_OBSERVATEUR);
+}
 
 export const findAllObservateurs = async (): Promise<Observateur[]> => {
   const [observateurs, nbDonneesByObservateur] = await Promise.all([

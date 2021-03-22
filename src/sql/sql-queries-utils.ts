@@ -302,3 +302,9 @@ export const queryToFindEntityByCodeAndLibelle = async <T>(
     '"'
   );
 };
+
+export const queryToCheckIfTableExists = async (tableName: string): Promise<boolean> => {
+  const queryStr = `SHOW TABLES LIKE '${tableName}'`;
+  const results = await query<string[]>(queryStr);
+  return results?.length === 1;
+}

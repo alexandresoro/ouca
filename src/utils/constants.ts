@@ -28,6 +28,7 @@ export const TABLE_DONNEE = "donnee";
 export const TABLE_DONNEE_COMPORTEMENT = "donnee_comportement";
 export const TABLE_DONNEE_MILIEU = "donnee_milieu";
 export const TABLE_SETTINGS = "settings";
+export const TABLE_VERSION = "version";
 
 export const COLUMN_CODE = "code";
 export const COLUMN_ESPECE_ID = "espece_id";
