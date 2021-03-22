@@ -16,9 +16,11 @@ export const queryToFindNumberOfEspecesByClasseId = async (
 ): Promise<NumberOfObjectsById[]> => {
   let queryStr = "SELECT classe_id as id, count(*) as nb FROM espece";
   if (classeId) {
-    queryStr = queryStr + " WHERE classe_id=" + classeId;
+    queryStr = queryStr +
+      ` WHERE classe_id=${classeId}`;
   } else {
-    queryStr = queryStr + " GROUP BY classe_id";
+    queryStr = queryStr +
+      " GROUP BY classe_id";
   }
   return query<NumberOfObjectsById[]>(queryStr);
 };
@@ -29,9 +31,11 @@ export const queryToFindNumberOfDonneesByClasseId = async (
   let queryStr =
     "SELECT e.classe_id as id, count(*) as nb FROM espece e, donnee d WHERE d.espece_id=e.id";
   if (classeId) {
-    queryStr = queryStr + " AND e.classe_id=" + classeId;
+    queryStr = queryStr +
+      ` AND e.classe_id=${classeId}`;
   } else {
-    queryStr = queryStr + " GROUP BY classe_id";
+    queryStr = queryStr +
+      " GROUP BY classe_id";
   }
   return query<NumberOfObjectsById[]>(queryStr);
 };

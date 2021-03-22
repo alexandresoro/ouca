@@ -8,7 +8,7 @@ import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { DATE_PATTERN, TABLE_COMPORTEMENT, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
-import { query } from "./sql-queries-utils";
+import { prepareStringForSqlQuery, query } from "./sql-queries-utils";
 
 const getBaseQueryToFindDonnees = (): string => {
   return (
@@ -452,45 +452,39 @@ export const queryToFindDonneeIdsByAllAttributes = async (
   donnee: Donnee
 ): Promise<{ id: number }[]> => {
   let queryStr: string =
-    "SELECT d.id as id" +
-    " FROM donnee d" +
-    " WHERE d.inventaire_id=" +
-    donnee.inventaireId +
-    " AND d.espece_id=" +
-    donnee.especeId +
-    " AND d.sexe_id=" +
-    donnee.sexeId +
-    " AND d.age_id=" +
-    donnee.ageId +
-    " AND d.estimation_nombre_id=" +
-    donnee.estimationNombreId;
+    "SELECT d.id as id FROM donnee d" +
+    ` WHERE d.inventaire_id=${donnee.inventaireId}` +
+    ` AND d.espece_id=${donnee.especeId}` +
+    ` AND d.sexe_id=${donnee.sexeId}` +
+    ` AND d.age_id=${donnee.ageId}` +
+    ` AND d.estimation_nombre_id=${donnee.estimationNombreId}`;
 
   queryStr =
     queryStr +
     " AND d.nombre" +
-    (!donnee.nombre ? " is null" : "=" + donnee.nombre);
+    (!donnee.nombre ? " is null" : `=${donnee.nombre}`);
 
   queryStr =
     queryStr +
     " AND d.estimation_distance_id" +
     (!donnee.estimationDistanceId
       ? " is null"
-      : "=" + donnee.estimationDistanceId);
+      : `=${donnee.estimationDistanceId}`);
 
   queryStr =
     queryStr +
     " AND d.distance" +
-    ((donnee.distance == null) ? " is null" : "=" + donnee.distance);
+    ((donnee.distance == null) ? " is null" : `=${donnee.distance}`);
 
   queryStr =
     queryStr +
     " AND d.regroupement" +
-    (!donnee.regroupement ? " is null" : "=" + donnee.regroupement);
+    (!donnee.regroupement ? " is null" : `=${donnee.regroupement}`);
 
   queryStr =
     queryStr +
     " AND d.commentaire" +
-    (!donnee.commentaire ? " is null" : '="' + donnee.commentaire.replace(/"/g, '\\"') + '"');
+    (!donnee.commentaire ? " is null" : `="${prepareStringForSqlQuery(donnee.commentaire)}"`);
 
   return query<{ id: number }[]>(queryStr);
 };

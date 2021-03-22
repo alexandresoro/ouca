@@ -9,6 +9,7 @@ import {
 } from "../utils/constants";
 import { logger } from "../utils/logger";
 
+
 const createKeyValueMapWithSameName = (
   names: string | string[]
 ): Map<string, string> => {
@@ -76,7 +77,8 @@ export const DB_SAVE_LISTS_MAPPING = {
 };
 
 export function query<T>(query: string): Promise<T> {
-  logger.debug(`---> ${query};`);
+  logger.debug(`Executing SQL query : 
+  ${query};`);
   return SqlConnection.query(query + ";");
 }
 
@@ -85,10 +87,11 @@ export const queryToFindAllEntities = async <T>(
   attributeForOrdering?: string,
   order?: string
 ): Promise<T[]> => {
-  let queryStr: string = "SELECT * FROM " + tableName;
+  let queryStr = `SELECT * FROM ${tableName}`;
 
-  if (!!attributeForOrdering && !!order) {
-    queryStr = queryStr + " ORDER BY " + attributeForOrdering + " " + order;
+  if (attributeForOrdering && order) {
+    queryStr = queryStr +
+      ` ORDER BY ${attributeForOrdering} ${order}`;
   }
 
   return query<T[]>(queryStr);
@@ -134,7 +137,8 @@ const processEntityToSave = <T extends EntityDb>(
       } else if (typeof value === 'boolean') {
         valueDb = (value ? "TRUE" : "FALSE");
       } else if (typeof value === 'string') {
-        valueDb = '"' + value.trim().replace(/"/g, '\\"') + '"';
+
+        valueDb = '"' + prepareStringForSqlQuery(value) + '"';
       } else {
         valueDb = '"' + value + '"';
       }
@@ -162,27 +166,13 @@ export const queryToSaveEntity = async <T extends EntityDb>(
       return elt[1];
     }).join(",");
 
-    queryStr =
-      "INSERT INTO " +
-      tableName +
-      "(" +
-      columnNames +
-      ") " +
-      "VALUES (" +
-      values +
-      ")";
+    queryStr = `INSERT INTO ${tableName} (${columnNames}) VALUES (${values})`;
   } else {
     const updates = dbEntityToSaveAsArray.map((elt) => {
-      return elt[0] + "=" + elt[1];
+      return `${elt[0]}=${elt[1]}`;
     }).join(",");
 
-    queryStr =
-      "UPDATE " +
-      tableName +
-      " SET " +
-      updates +
-      " WHERE id=" +
-      entityToSave.id;
+    queryStr = `UPDATE ${tableName} SET ${updates} WHERE id=${entityToSave.id}`;
   }
 
   return query<SqlSaveResponse>(queryStr);
@@ -207,7 +197,7 @@ export const queryToInsertMultipleEntities = async <T extends EntityDb>(
       return `(${values})`
     }).join(",");
 
-  const queryStr = `INSERT INTO ${tableName}(${columnNames}) VALUES ${allValues}`;
+  const queryStr = `INSERT INTO ${tableName} (${columnNames}) VALUES (${allValues})`;
 
   return query<SqlSaveResponse>(queryStr);
 };
@@ -218,18 +208,11 @@ export const queryToSaveManyToManyEntity = async (
   subId: number
 ): Promise<SqlSaveResponse> => {
   const queryStr: string =
-    "INSERT INTO " +
-    tableName +
-    "(" +
+    `INSERT INTO ${tableName} (` +
     DB_SAVE_LISTS_MAPPING[tableName].mainId +
     "," +
     DB_SAVE_LISTS_MAPPING[tableName].subId +
-    ") " +
-    "VALUES (" +
-    mainId +
-    "," +
-    subId +
-    ")";
+    `) VALUES (${mainId},${subId})`;
 
   return query<SqlSaveResponse>(queryStr);
 };
@@ -250,7 +233,9 @@ export const queryToDeleteAnEntityById = async (
   tableName: string,
   id: number
 ): Promise<SqlSaveResponse> => {
-  return query<SqlSaveResponse>("DELETE FROM " + tableName + " WHERE id=" + id);
+  return query<SqlSaveResponse>(
+    `DELETE FROM ${tableName} WHERE id=${id}`
+  );
 };
 
 export const queryToDeleteAnEntityByAttribute = async (
@@ -259,13 +244,7 @@ export const queryToDeleteAnEntityByAttribute = async (
   attributeValue: string | number
 ): Promise<SqlSaveResponse> => {
   return query<SqlSaveResponse>(
-    "DELETE FROM " +
-    tableName +
-    " WHERE " +
-    attributeName +
-    '="' +
-    attributeValue +
-    '"'
+    `DELETE FROM ${tableName} WHERE ${attributeName}="${attributeValue}"`
   );
 };
 
@@ -273,8 +252,9 @@ export const queryToFindEntityByLibelle = async <T>(
   entityName: string,
   libelle: string
 ): Promise<T> => {
+  libelle = prepareStringForSqlQuery(libelle);
   return query<T>(
-    "SELECT * FROM " + entityName + ' WHERE libelle="' + libelle.trim().replace(/"/g, '\\"') + '"'
+    `SELECT * FROM ${entityName} WHERE libelle="${libelle}"`
   );
 };
 
@@ -282,8 +262,9 @@ export const queryToFindEntityByCode = async <T>(
   entityName: string,
   code: string
 ): Promise<T> => {
+  code = prepareStringForSqlQuery(code);
   return query<T>(
-    "SELECT * FROM " + entityName + ' WHERE code="' + code.trim().replace(/"/g, '\\"') + '"'
+    `SELECT * FROM ${entityName} WHERE code="${code}"`
   );
 };
 
@@ -292,14 +273,10 @@ export const queryToFindEntityByCodeAndLibelle = async <T>(
   code: string,
   libelle: string
 ): Promise<T> => {
+  code = prepareStringForSqlQuery(code);
+  libelle = prepareStringForSqlQuery(libelle);
   return query<T>(
-    "SELECT * FROM " +
-    entityName +
-    ' WHERE code="' +
-    code.trim().replace(/"/g, '\\"') +
-    '" AND libelle="' +
-    libelle.trim().replace(/"/g, '\\"') +
-    '"'
+    `SELECT * FROM ${entityName} WHERE code="${code}" AND libelle="${libelle}"`
   );
 };
 
@@ -307,4 +284,8 @@ export const queryToCheckIfTableExists = async (tableName: string): Promise<bool
   const queryStr = `SHOW TABLES LIKE '${tableName}'`;
   const results = await query<string[]>(queryStr);
   return results?.length === 1;
+}
+
+export const prepareStringForSqlQuery = (str: string): string => {
+  return str.trim().replace(/"/g, '\\"');
 }
