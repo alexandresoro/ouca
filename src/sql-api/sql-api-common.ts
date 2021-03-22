@@ -14,26 +14,14 @@ export const findEntityByCode = async <T extends EntiteSimple>(
   code: string,
   tableName: string
 ): Promise<T> => {
-  const entities = await queryToFindEntityByCode(tableName, code);
-
-  if (entities && entities[0]?.id) {
-    return entities[0];
-  }
-
-  return null;
+  return queryToFindEntityByCode(tableName, code);
 };
 
 export const findEntityByLibelle = async <T extends EntiteSimple>(
   libelle: string,
   tableName: string
 ): Promise<T> => {
-  const entities = await queryToFindEntityByLibelle<T>(tableName, libelle);
-
-  if (entities && entities[0]?.id) {
-    return entities[0];
-  }
-
-  return null;
+  return queryToFindEntityByLibelle<T>(tableName, libelle);
 };
 
 export const persistEntity = async <T extends EntityDb>(

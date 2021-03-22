@@ -1,7 +1,7 @@
 import { Departement } from "../model/types/departement.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_CODE, ORDER_ASC, TABLE_DEPARTEMENT } from "../utils/constants";
-import { prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { getFirstResult, prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllDepartements = async (): Promise<Departement[]> => {
   return queryToFindAllEntities<Departement>(
@@ -13,11 +13,12 @@ export const queryToFindAllDepartements = async (): Promise<Departement[]> => {
 
 export const queryToFindDepartementByCode = async (
   code: string
-): Promise<Departement[]> => {
+): Promise<Departement> => {
   code = prepareStringForSqlQuery(code)
-  return query<Departement[]>(
+  const results = await query<Departement[]>(
     `SELECT * FROM departement WHERE code="${code}"`
   );
+  return getFirstResult<Departement>(results);
 };
 
 export const queryToFindNumberOfDonneesByDepartementId = async (

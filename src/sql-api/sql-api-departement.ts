@@ -6,14 +6,6 @@ import { TABLE_DEPARTEMENT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { persistEntity } from "./sql-api-common";
 
-const getFirstDepartement = (departements: Departement[]): Departement => {
-  let departement: Departement = null;
-  if (departements && departements[0]?.id) {
-    departement = departements[0];
-  }
-  return departement;
-};
-
 export const findAllDepartements = async (): Promise<Departement[]> => {
   const [
     departements,
@@ -48,9 +40,7 @@ export const findAllDepartements = async (): Promise<Departement[]> => {
 export const getDepartementByCode = async (
   code: string
 ): Promise<Departement> => {
-  const departements = await queryToFindDepartementByCode(code);
-
-  return getFirstDepartement(departements);
+  return queryToFindDepartementByCode(code);
 };
 
 export const persistDepartement = async (

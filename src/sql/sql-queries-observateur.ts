@@ -18,8 +18,7 @@ export const queryToFindAssociesByInventaireId = async (
   return query<{ associeId: number }[]>(
     "SELECT distinct observateur_id as associeId" +
     " FROM inventaire_associe" +
-    " WHERE inventaire_id=" +
-    inventaireId
+    ` WHERE inventaire_id=${inventaireId}`
   );
 };
 
@@ -42,7 +41,8 @@ export const queryToFindAllAssociesByDonneeId = async (
     " LEFT JOIN observateur o ON i.observateur_id = o.id";
 
   if (donneesIds && donneesIds.length) {
-    queryStr = queryStr + " WHERE d.id IN (" + donneesIds.join(",") + ")";
+    queryStr = queryStr +
+      ` WHERE d.id IN (${donneesIds.join(",")})`;
   }
 
   return query<{ donneeId: number; libelle: string }[]>(queryStr);

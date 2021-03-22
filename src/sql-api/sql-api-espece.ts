@@ -1,20 +1,11 @@
 import { buildEspeceFromEspeceDb, buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
 import { Espece } from "../model/types/espece.model";
-import { EspeceDb } from "../objects/db/espece-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllEspeces, queryToFindEspeceByCode, queryToFindEspeceByNomFrancais, queryToFindEspeceByNomLatin, queryToFindNumberOfDonneesByEspeceId } from "../sql/sql-queries-espece";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_ESPECE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { persistEntity } from "./sql-api-common";
-
-const getFirstEspece = (especesDb: EspeceDb[]): Espece => {
-  let espece: Espece = null;
-  if (especesDb && especesDb[0]?.id) {
-    espece = buildEspeceFromEspeceDb(especesDb[0]);
-  }
-  return espece;
-};
 
 export const findAllEspeces = async (): Promise<Espece[]> => {
   const [especesDb, nbDonneesByEspece] = await Promise.all([
@@ -31,22 +22,22 @@ export const findAllEspeces = async (): Promise<Espece[]> => {
 };
 
 export const findEspeceByCode = async (code: string): Promise<Espece> => {
-  const especesDb = await queryToFindEspeceByCode(code);
-  return getFirstEspece(especesDb);
+  const especeDb = await queryToFindEspeceByCode(code);
+  return buildEspeceFromEspeceDb(especeDb);
 };
 
 export const findEspeceByNomFrancais = async (
   nomFrancais: string
 ): Promise<Espece> => {
-  const especesDb = await queryToFindEspeceByNomFrancais(nomFrancais);
-  return getFirstEspece(especesDb);
+  const especeDb = await queryToFindEspeceByNomFrancais(nomFrancais);
+  return buildEspeceFromEspeceDb(especeDb);
 };
 
 export const findEspeceByNomLatin = async (
   nomLatin: string
 ): Promise<Espece> => {
-  const especesDb = await queryToFindEspeceByNomLatin(nomLatin);
-  return getFirstEspece(especesDb);
+  const especeDb = await queryToFindEspeceByNomLatin(nomLatin);
+  return buildEspeceFromEspeceDb(especeDb);
 };
 
 export const persistEspece = async (

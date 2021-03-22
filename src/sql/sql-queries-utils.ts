@@ -100,8 +100,9 @@ export const queryToFindAllEntities = async <T>(
 export const queryToFindOneById = async <T>(
   tableName: string,
   id: number
-): Promise<T[]> => {
-  return query<T[]>(`SELECT * FROM ${tableName} WHERE id=${id}`);
+): Promise<T> => {
+  const results = await query<T[]>(`SELECT * FROM ${tableName} WHERE id=${id}`);
+  return getFirstResult<T>(results);
 };
 
 // Method that processes an entity to be saved, in order to be used directly in the SQL query
@@ -253,9 +254,10 @@ export const queryToFindEntityByLibelle = async <T>(
   libelle: string
 ): Promise<T> => {
   libelle = prepareStringForSqlQuery(libelle);
-  return query<T>(
+  const results = await query<T[]>(
     `SELECT * FROM ${entityName} WHERE libelle="${libelle}"`
   );
+  return getFirstResult<T>(results);
 };
 
 export const queryToFindEntityByCode = async <T>(
@@ -263,21 +265,10 @@ export const queryToFindEntityByCode = async <T>(
   code: string
 ): Promise<T> => {
   code = prepareStringForSqlQuery(code);
-  return query<T>(
+  const results = await query<T[]>(
     `SELECT * FROM ${entityName} WHERE code="${code}"`
   );
-};
-
-export const queryToFindEntityByCodeAndLibelle = async <T>(
-  entityName: string,
-  code: string,
-  libelle: string
-): Promise<T> => {
-  code = prepareStringForSqlQuery(code);
-  libelle = prepareStringForSqlQuery(libelle);
-  return query<T>(
-    `SELECT * FROM ${entityName} WHERE code="${code}" AND libelle="${libelle}"`
-  );
+  return getFirstResult<T>(results);
 };
 
 export const queryToCheckIfTableExists = async (tableName: string): Promise<boolean> => {
@@ -288,4 +279,8 @@ export const queryToCheckIfTableExists = async (tableName: string): Promise<bool
 
 export const prepareStringForSqlQuery = (str: string): string => {
   return str.trim().replace(/"/g, '\\"');
+}
+
+export const getFirstResult = <T>(results: T[]): T | null => {
+  return results && results[0] ? results[0] : null;
 }

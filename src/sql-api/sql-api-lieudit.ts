@@ -10,14 +10,6 @@ import { TABLE_LIEUDIT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { persistEntity } from "./sql-api-common";
 
-const getFirstLieuDit = (lieuxDitsDb: LieuditDb[]): Lieudit => {
-  let lieuDit: Lieudit = null;
-  if (lieuxDitsDb && lieuxDitsDb[0]?.id) {
-    lieuDit = buildLieuditFromLieuditDb(lieuxDitsDb[0]);
-  }
-  return lieuDit;
-};
-
 export const findAllLieuxDits = async (): Promise<Lieudit[]> => {
   const [lieuxDitsDb, nbDonneesByLieuDit] = await Promise.all([
     queryToFindAllLieuxDits(),
@@ -34,19 +26,19 @@ export const findAllLieuxDits = async (): Promise<Lieudit[]> => {
 };
 
 export const findLieuDitById = async (lieuditId: number): Promise<Lieudit> => {
-  const lieuxDitsDb = await queryToFindOneById<LieuditDb>(
+  const lieuDitDb = await queryToFindOneById<LieuditDb>(
     TABLE_LIEUDIT,
     lieuditId
   );
-  return getFirstLieuDit(lieuxDitsDb);
+  return buildLieuditFromLieuditDb(lieuDitDb);
 };
 
 export const findLieuDitByCommuneIdAndNom = async (
   communeId: number,
   nom: string
 ): Promise<Lieudit> => {
-  const lieuxDitsDb = await queryToFindLieuDitByCommuneIdAndNom(communeId, nom);
-  return getFirstLieuDit(lieuxDitsDb);
+  const lieuDitDb = await queryToFindLieuDitByCommuneIdAndNom(communeId, nom);
+  return buildLieuditFromLieuditDb(lieuDitDb);
 };
 
 const getCoordinatesToPersist = async (

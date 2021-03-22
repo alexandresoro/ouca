@@ -4,14 +4,15 @@ import { Coordinates } from "../model/types/coordinates.object";
 import { Inventaire } from "../model/types/inventaire.object";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdByAllAttributes, queryToFindInventaireIdById } from "../sql/sql-queries-inventaire";
-import { queryToFindMetosByInventaireId } from "../sql/sql-queries-meteo";
+import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdById, queryToFindInventairesIdsByAllAttributes } from "../sql/sql-queries-inventaire";
+import { queryToFindMeteosByInventaireId } from "../sql/sql-queries-meteo";
 import { queryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
 import { queriesToSaveListOfEntities, queryToDeleteAnEntityByAttribute, queryToFindOneById } from "../sql/sql-queries-utils";
 import { INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../utils/constants";
 import { mapAssociesIds, mapMeteosIds } from "../utils/mapping-utils";
 import { areArraysContainingSameValues } from "../utils/utils";
 import { deleteEntityById, persistEntity } from "./sql-api-common";
+
 
 const deleteAssociesAndMeteosByInventaireId = async (
   inventaireId: number
@@ -62,13 +63,7 @@ const findCoordinatesByInventaireId = async (
   id: number
 ): Promise<Coordinates> => {
   const coordinatesDb = await queryToFindCoordinatesByInventaireId(id);
-  return coordinatesDb &&
-    coordinatesDb[0] &&
-    (coordinatesDb[0].longitude != null)
-    ? {
-      ...coordinatesDb[0]
-    }
-    : null;
+  return coordinatesDb.longitude != null ? coordinatesDb : null;
 };
 
 export const findAssociesIdsByInventaireId = async (
@@ -81,14 +76,14 @@ export const findAssociesIdsByInventaireId = async (
 export const findMeteosIdsByInventaireId = async (
   inventaireId: number
 ): Promise<number[]> => {
-  const meteosDb = await queryToFindMetosByInventaireId(inventaireId);
+  const meteosDb = await queryToFindMeteosByInventaireId(inventaireId);
   return mapMeteosIds(meteosDb);
 };
 
 export const findExistingInventaireId = async (
   inventaire: Inventaire
 ): Promise<number> => {
-  const inventaireIds = await queryToFindInventaireIdByAllAttributes(
+  const inventaireIds = await queryToFindInventairesIdsByAllAttributes(
     inventaire
   );
 
@@ -128,18 +123,18 @@ export const findInventaireIdById = async (id: number): Promise<number> => {
 export const findInventaireById = async (
   inventaireId: number
 ): Promise<Inventaire> => {
-  const [inventairesDb, associesIds, meteosIds] = await Promise.all([
+  const [inventaireDb, associesIds, meteosIds] = await Promise.all([
     queryToFindOneById<InventaireDb>(TABLE_INVENTAIRE, inventaireId),
     findAssociesIdsByInventaireId(inventaireId),
     findMeteosIdsByInventaireId(inventaireId)
   ]);
 
-  if (!inventairesDb && !inventairesDb[0]?.id) {
+  if (!inventaireDb) {
     return null;
   }
 
   return buildInventaireFromInventaireDb(
-    inventairesDb[0],
+    inventaireDb,
     associesIds,
     meteosIds
   );

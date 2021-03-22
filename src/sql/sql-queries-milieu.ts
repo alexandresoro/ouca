@@ -17,7 +17,8 @@ export const queryToFindAllMilieuxByDonneeId = async (
 
   if (donneesIds && donneesIds.length) {
     queryStr =
-      queryStr + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
+      queryStr +
+      ` WHERE d.donnee_id IN (${donneesIds.join(",")})`;
   }
 
   return query<{ donneeId: number; code: string; libelle: string }[]>(queryStr);
@@ -29,8 +30,7 @@ export const queryToFindMilieuxIdsByDonneeId = async (
   return query<{ milieuId: number }[]>(
     "SELECT distinct milieu_id as milieuId" +
     " FROM donnee_milieu" +
-    " WHERE donnee_id=" +
-    donneeId
+    ` WHERE donnee_id=${donneeId}`
   );
 };
 
@@ -40,7 +40,8 @@ export const queryToFindNumberOfDonneesByMilieuId = async (
   let queryStr: string =
     "SELECT dc.milieu_id as id, count(*) as nb " + "FROM donnee_milieu dc ";
   if (milieuId) {
-    queryStr = queryStr + " WHERE dc.milieu_id=" + milieuId;
+    queryStr = queryStr +
+      ` WHERE dc.milieu_id=${milieuId}`;
   } else {
     queryStr = queryStr + " GROUP BY dc.milieu_id";
   }

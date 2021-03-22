@@ -17,20 +17,20 @@ export const queryToFindAllMeteosByDonneeId = async (
     " LEFT JOIN meteo m ON i.meteo_id = m.id";
 
   if (donneesIds && donneesIds.length) {
-    queryStr = queryStr + " WHERE d.id IN (" + donneesIds.join(",") + ")";
+    queryStr = queryStr +
+      ` WHERE d.id IN (${donneesIds.join(",")})`;
   }
 
   return query<{ donneeId: number; libelle: string }[]>(queryStr);
 };
 
-export const queryToFindMetosByInventaireId = async (
+export const queryToFindMeteosByInventaireId = async (
   inventaireId: number
 ): Promise<{ meteoId: number }[]> => {
   return query<{ meteoId: number }[]>(
     "SELECT distinct meteo_id as meteoId" +
     " FROM inventaire_meteo" +
-    " WHERE inventaire_id=" +
-    inventaireId
+    ` WHERE inventaire_id=${inventaireId}`
   );
 };
 
@@ -38,13 +38,15 @@ export const queryToFindNumberOfDonneesByMeteoId = async (
   meteoId?: number
 ): Promise<NumberOfObjectsById[]> => {
   let queryStr: string =
-    "SELECT im.meteo_id as id, count(*) as nb " +
-    "FROM inventaire_meteo im, donnee d " +
-    "WHERE d.inventaire_id=im.inventaire_id";
+    "SELECT im.meteo_id as id, count(*) as nb" +
+    " FROM inventaire_meteo im, donnee d" +
+    " WHERE d.inventaire_id=im.inventaire_id";
   if (meteoId) {
-    queryStr = queryStr + " AND im.meteo_id=" + meteoId;
+    queryStr = queryStr +
+      ` AND im.meteo_id=${meteoId}`;
   } else {
-    queryStr = queryStr + " GROUP BY im.meteo_id";
+    queryStr = queryStr +
+      " GROUP BY im.meteo_id";
   }
   return query<NumberOfObjectsById[]>(queryStr);
 };

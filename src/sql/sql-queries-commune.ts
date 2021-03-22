@@ -1,7 +1,7 @@
 import { CommuneDb } from "../objects/db/commune-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_NOM, ORDER_ASC, TABLE_COMMUNE } from "../utils/constants";
-import { prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { getFirstResult, prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToFindAllCommunes = async (): Promise<CommuneDb[]> => {
   return queryToFindAllEntities<CommuneDb>(
@@ -15,30 +15,33 @@ export const queryToFindCommuneByDepartementIdAndCodeAndNom = async (
   departementId: number,
   code: number,
   nom: string
-): Promise<CommuneDb[]> => {
+): Promise<CommuneDb> => {
   nom = prepareStringForSqlQuery(nom);
-  return query<CommuneDb[]>(
+  const results = await query<CommuneDb[]>(
     `SELECT * FROM commune WHERE departement_id=${departementId} AND code=${code} AND nom="${nom}"`
   );
+  return getFirstResult<CommuneDb>(results);
 };
 
 export const queryToFindCommuneByDepartementIdAndCode = async (
   departementId: number,
   code: number
-): Promise<CommuneDb[]> => {
-  return query<CommuneDb[]>(
+): Promise<CommuneDb> => {
+  const results = await query<CommuneDb[]>(
     `SELECT * FROM commune WHERE departement_id=${departementId} AND code=${code}`
   );
+  return getFirstResult<CommuneDb>(results);
 };
 
 export const queryToFindCommuneByDepartementIdAndNom = async (
   departementId: number,
   nom: string
-): Promise<CommuneDb[]> => {
+): Promise<CommuneDb> => {
   nom = prepareStringForSqlQuery(nom);
-  return query<CommuneDb[]>(
+  const results = await query<CommuneDb[]>(
     `SELECT * FROM commune WHERE departement_id=${departementId} AND nom="${nom}"`
   );
+  return getFirstResult<CommuneDb>(results);
 };
 
 export const queryToFindNumberOfDonneesByCommuneId = async (

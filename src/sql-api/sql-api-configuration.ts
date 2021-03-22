@@ -61,6 +61,5 @@ export const persistUserSettings = async (
 export const findCoordinatesSystem = async (): Promise<
   CoordinatesSystemType
 > => {
-  const systems = await queryToFindCoordinatesSystem();
-  return systems && systems[0]?.system ? systems[0].system : null;
+  return queryToFindCoordinatesSystem();
 };

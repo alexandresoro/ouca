@@ -23,8 +23,8 @@ export const queryToFindAllComportementsByDonneeId = async (
     " INNER JOIN comportement c ON d.comportement_id = c.id";
 
   if (donneesIds && donneesIds.length) {
-    queryStr =
-      queryStr + " WHERE d.donnee_id IN (" + donneesIds.join(",") + ")";
+    queryStr = queryStr +
+      ` WHERE d.donnee_id IN (${donneesIds.join(",")})`;
   }
 
   return query<
@@ -38,8 +38,7 @@ export const queryToFindComportementsIdsByDonneeId = async (
   return query<{ comportementId: number }[]>(
     "SELECT distinct comportement_id as comportementId" +
     " FROM donnee_comportement" +
-    " WHERE donnee_id=" +
-    donneeId
+    ` WHERE donnee_id=${donneeId}`
   );
 };
 
@@ -47,12 +46,14 @@ export const queryToFindNumberOfDonneesByComportementId = async (
   comportementId?: number
 ): Promise<NumberOfObjectsById[]> => {
   let queryStr: string =
-    "SELECT dc.comportement_id as id, count(*) as nb " +
-    "FROM donnee_comportement dc ";
+    "SELECT dc.comportement_id as id, count(*) as nb" +
+    " FROM donnee_comportement dc ";
   if (comportementId) {
-    queryStr = queryStr + " WHERE dc.comportement_id=" + comportementId;
+    queryStr = queryStr +
+      ` WHERE dc.comportement_id=${comportementId}`;
   } else {
-    queryStr = queryStr + " GROUP BY dc.comportement_id";
+    queryStr = queryStr +
+      " GROUP BY dc.comportement_id";
   }
   return query<NumberOfObjectsById[]>(queryStr);
 };

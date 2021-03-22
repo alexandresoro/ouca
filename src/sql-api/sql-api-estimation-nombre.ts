@@ -30,16 +30,11 @@ export const findAllEstimationsNombre = async (): Promise<
 export const findEstimationNombreByLibelle = async (
   libelle: string
 ): Promise<EstimationNombre> => {
-  const estimationsDb = await queryToFindEntityByLibelle<EstimationNombreDb>(
+  const estimationDb = await queryToFindEntityByLibelle<EstimationNombreDb>(
     TABLE_ESTIMATION_NOMBRE,
     libelle
   );
-
-  if (estimationsDb && estimationsDb[0]?.id) {
-    return buildEstimationNombreFromEstimationNombreDb(estimationsDb[0]);
-  }
-
-  return null;
+  return buildEstimationNombreFromEstimationNombreDb(estimationDb);
 };
 
 export const persistEstimationNombre = async (

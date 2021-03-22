@@ -1,6 +1,5 @@
 import { buildCommuneFromCommuneDb, buildCommunesFromCommunesDb } from "../mapping/commune-mapping";
 import { Commune } from "../model/types/commune.model";
-import { CommuneDb } from "../objects/db/commune-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllCommunes, queryToFindCommuneByDepartementIdAndCode, queryToFindCommuneByDepartementIdAndCodeAndNom, queryToFindCommuneByDepartementIdAndNom, queryToFindNumberOfDonneesByCommuneId, queryToFindNumberOfLieuxDitsByCommuneId } from "../sql/sql-queries-commune";
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
@@ -8,13 +7,6 @@ import { TABLE_COMMUNE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { insertMultipleEntities, persistEntity } from "./sql-api-common";
 
-const getFirstCommune = (communesDb: CommuneDb[]): Commune => {
-  let commune: Commune = null;
-  if (communesDb && communesDb[0]?.id) {
-    commune = buildCommuneFromCommuneDb(communesDb[0]);
-  }
-  return commune;
-};
 
 export const findAllCommunes = async (): Promise<Commune[]> => {
   const [
@@ -42,37 +34,37 @@ export const findCommuneByDepartementIdAndCodeAndNom = async (
   code: number,
   nom: string
 ): Promise<Commune> => {
-  const communesDb = await queryToFindCommuneByDepartementIdAndCodeAndNom(
+  const communeDb = await queryToFindCommuneByDepartementIdAndCodeAndNom(
     departementId,
     code,
     nom
   );
 
-  return getFirstCommune(communesDb);
+  return buildCommuneFromCommuneDb(communeDb);
 };
 
 export const findCommuneByDepartementIdAndCode = async (
   departementId: number,
   code: number
 ): Promise<Commune> => {
-  const communesDb = await queryToFindCommuneByDepartementIdAndCode(
+  const communeDb = await queryToFindCommuneByDepartementIdAndCode(
     departementId,
     code
   );
 
-  return getFirstCommune(communesDb);
+  return buildCommuneFromCommuneDb(communeDb);
 };
 
 export const findCommuneByDepartementIdAndNom = async (
   departementId: number,
   nom: string
 ): Promise<Commune> => {
-  const communesDb = await queryToFindCommuneByDepartementIdAndNom(
+  const communeDb = await queryToFindCommuneByDepartementIdAndNom(
     departementId,
     nom
   );
 
-  return getFirstCommune(communesDb);
+  return buildCommuneFromCommuneDb(communeDb);
 };
 
 export const persistCommune = async (
