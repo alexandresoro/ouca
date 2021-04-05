@@ -4,7 +4,7 @@ import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllComportements, queryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
 import { TABLE_COMPORTEMENT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { persistEntity } from "./sql-api-common";
+import { insertMultipleEntities, persistEntity } from "./sql-api-common";
 
 export const findAllComportements = async (): Promise<Comportement[]> => {
   const [comportementsDb, nbDonneesByComportement] = await Promise.all([
@@ -29,4 +29,11 @@ export const persistComportement = async (
 ): Promise<SqlSaveResponse> => {
   const comportementDb = buildComportementDbFromComportement(comportement);
   return persistEntity(TABLE_COMPORTEMENT, comportementDb);
+};
+
+export const insertComportements = (
+  comportements: Comportement[]
+): Promise<SqlSaveResponse> => {
+  const comportementsDb = comportements.map(buildComportementDbFromComportement);
+  return insertMultipleEntities(TABLE_COMPORTEMENT, comportementsDb);
 };

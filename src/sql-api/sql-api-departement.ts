@@ -4,7 +4,7 @@ import { queryToFindAllDepartements, queryToFindDepartementByCode, queryToFindNu
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_DEPARTEMENT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { persistEntity } from "./sql-api-common";
+import { insertMultipleEntities, persistEntity } from "./sql-api-common";
 
 export const findAllDepartements = async (): Promise<Departement[]> => {
   const [
@@ -51,4 +51,10 @@ export const persistDepartement = async (
     departement,
     DB_SAVE_MAPPING.get("departement")
   );
+};
+
+export const insertDepartements = async (
+  departements: Departement[]
+): Promise<SqlSaveResponse> => {
+  return insertMultipleEntities(TABLE_DEPARTEMENT, departements, DB_SAVE_MAPPING.get("departement"));
 };

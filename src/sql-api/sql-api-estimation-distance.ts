@@ -4,7 +4,7 @@ import { getQueryToFindNumberOfDonneesByEstimationDistanceId, queryToFindAllEsti
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_ESTIMATION_DISTANCE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { persistEntity } from "./sql-api-common";
+import { insertMultipleEntities, persistEntity } from "./sql-api-common";
 
 export const findAllEstimationsDistance = async (): Promise<
   EstimationDistance[]
@@ -29,4 +29,10 @@ export const persistEstimationDistance = async (
     estimation,
     DB_SAVE_MAPPING.get("estimationDistance")
   );
+};
+
+export const insertEstimationsDistance = async (
+  estimationsDistance: EstimationDistance[]
+): Promise<SqlSaveResponse> => {
+  return insertMultipleEntities(TABLE_ESTIMATION_DISTANCE, estimationsDistance, DB_SAVE_MAPPING.get("estimationDistance"));
 };

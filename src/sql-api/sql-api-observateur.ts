@@ -4,7 +4,7 @@ import { queryToFindAllObservateurs, queryToFindNumberOfDonneesByObservateurId }
 import { DB_SAVE_MAPPING, queryToCheckIfTableExists } from "../sql/sql-queries-utils";
 import { TABLE_OBSERVATEUR } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { deleteEntityById, findEntityByLibelle, persistEntity } from "./sql-api-common";
+import { deleteEntityById, findEntityByLibelle, insertMultipleEntities, persistEntity } from "./sql-api-common";
 
 export const checkIfTableObservateurExists = async (): Promise<boolean> => {
   return queryToCheckIfTableExists(TABLE_OBSERVATEUR);
@@ -49,4 +49,10 @@ export const deleteObservateur = async (
   id: number
 ): Promise<SqlSaveResponse> => {
   return deleteEntityById(TABLE_OBSERVATEUR, id);
+};
+
+export const insertObservateurs = async (
+  observateurs: Observateur[]
+): Promise<SqlSaveResponse> => {
+  return insertMultipleEntities(TABLE_OBSERVATEUR, observateurs, DB_SAVE_MAPPING.get("observateur"));
 };

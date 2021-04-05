@@ -14,7 +14,7 @@ import { findAllMeteos } from "../sql-api/sql-api-meteo";
 import { findAllMilieux } from "../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../sql-api/sql-api-observateur";
 import { findAllSexes } from "../sql-api/sql-api-sexe";
-import { TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_OBSERVATEUR, TABLE_SETTINGS, TABLE_SEXE } from "../utils/constants";
+import { ImportableTable, TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_OBSERVATEUR, TABLE_SETTINGS, TABLE_SEXE } from "../utils/constants";
 import { WebsocketServer } from "./websocket-server";
 import { wrapObject } from "./ws-wrapper";
 
@@ -32,7 +32,7 @@ const createUpdateMessage = <T extends unknown>(
   return JSON.stringify(updateObj);
 };
 
-export const onTableUpdate = (tableName: string): void => {
+export const onTableUpdate = (tableName: ImportableTable | string): void => {
   switch (tableName) {
     case TABLE_SETTINGS:
       void sendAppConfiguration();

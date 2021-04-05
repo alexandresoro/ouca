@@ -5,7 +5,7 @@ import { queryToFindAllEspeces, queryToFindEspeceByCode, queryToFindEspeceByNomF
 import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
 import { TABLE_ESPECE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { persistEntity } from "./sql-api-common";
+import { insertMultipleEntities, persistEntity } from "./sql-api-common";
 
 export const findAllEspeces = async (): Promise<Espece[]> => {
   const [especesDb, nbDonneesByEspece] = await Promise.all([
@@ -44,4 +44,10 @@ export const persistEspece = async (
   espece: Espece
 ): Promise<SqlSaveResponse> => {
   return persistEntity(TABLE_ESPECE, espece, DB_SAVE_MAPPING.get("espece"));
+};
+
+export const insertEspeces = (
+  especes: Espece[]
+): Promise<SqlSaveResponse> => {
+  return insertMultipleEntities(TABLE_ESPECE, especes, DB_SAVE_MAPPING.get("espece"));
 };
