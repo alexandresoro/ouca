@@ -86,7 +86,7 @@ export abstract class ImportService extends EventEmitter {
     // Insert the valid entries in the database
     await this.persistAllValidEntities();
 
-    logger.info(`Résultat de l'import : ${(numberOfLines - errors.length)}/${numberOfLines} importées avec succès --> ${errors.length} lignes en erreur`);
+    logger.debug(`Résultat de l'import : ${(numberOfLines - errors.length)}/${numberOfLines} importées avec succès --> ${errors.length} lignes en erreur`);
 
     if (errors.length > 0) {
       const errorsCsv = Papa.unparse(errors, {

@@ -1,7 +1,7 @@
 import { Commune } from "../../model/types/commune.model";
 import { Departement } from "../../model/types/departement.object";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
-import { findAllCommunes } from "../../sql-api/sql-api-commune";
+import { findAllCommunes, insertCommunes } from "../../sql-api/sql-api-commune";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";
 import { ImportService } from "./import-service";
 
@@ -57,10 +57,9 @@ export class ImportCommuneService extends ImportService {
     return Promise.resolve(null as string);
   };
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   protected persistAllValidEntities = async (): Promise<void> => {
     if (this.communesToInsert.length) {
-      //await insertCommunes(this.communesToInsert);
+      await insertCommunes(this.communesToInsert);
     }
   }
 
