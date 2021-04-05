@@ -1,6 +1,7 @@
 import { HttpParameters } from "../http/httpParameters";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
+import { DonneesFilter } from "../model/types/donnees-filter.object";
 import { FlatDonnee } from "../model/types/flat-donnee.object";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
 import { } from "../sql/sql-queries-utils";
@@ -23,15 +24,15 @@ const getMilieu = (donnee: FlatDonnee, index: number): string => {
 };
 
 export const getDonneesByCustomizedFilters = async (
-  httpParameters: HttpParameters
+  httpParameters: HttpParameters<DonneesFilter>
 ): Promise<FlatDonnee[]> => {
   return await findDonneesByCustomizedFilters(httpParameters.postData);
 };
 
 export const exportDonneesByCustomizedFilters = async (
-  httpParameters: HttpParameters
+  httpParameters: HttpParameters<DonneesFilter>
 ): Promise<unknown> => {
-  const flatDonnees: FlatDonnee[] = await findDonneesByCustomizedFilters(
+  const flatDonnees = await findDonneesByCustomizedFilters(
     httpParameters.postData
   );
 

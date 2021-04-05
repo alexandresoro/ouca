@@ -6,10 +6,10 @@ import {
   REQUEST_MEDIA_TYPE_RESPONSE_MAPPING
 } from "../mapping";
 
-export const handleHttpRequest = (
+export const handleHttpRequest = <T = unknown>(
   request: http.IncomingMessage,
   res: http.ServerResponse,
-  postData?: unknown,
+  postData?: T,
   inputFileName?: string
 ): void => {
   const jsonHttpHeader = "application/json";
@@ -59,13 +59,13 @@ export const handleHttpRequest = (
       res.setHeader("Content-Encoding", "gzip");
       const resultToSend =
         mediaTypeResponse === jsonHttpHeader ? JSON.stringify(result) : result;
-      zlib.gzip(resultToSend, (err, response) => {
+      zlib.gzip(resultToSend as zlib.InputType, (err, response) => { // TODO check how we can imrpve this without cast
         res.end(response);
       });
     })
-    .catch((error) => {
+    .catch((error: { nonFatal?: boolean }) => {
       console.error("Error:", error);
-      res.statusCode = error.nonFatal ? 200 : 500;
+      res.statusCode = error?.nonFatal ? 200 : 500;
       res.end(JSON.stringify(error));
       // process.exit();
     });

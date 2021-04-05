@@ -9,9 +9,9 @@ import { deleteInventaireById, findExistingInventaireId, findInventaireById, fin
 import { buildErrorPostResponse, buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 
 export const saveInventaire = async (
-  httpParameters: HttpParameters
+  httpParameters: HttpParameters<Inventaire>
 ): Promise<PostResponse> => {
-  const inventaireToSave: Inventaire = httpParameters.postData;
+  const inventaireToSave = httpParameters.postData;
 
   let sqlResponse: SqlSaveResponse;
 
@@ -41,9 +41,9 @@ export const saveInventaire = async (
 };
 
 export const saveDonnee = async (
-  httpParameters: HttpParameters
+  httpParameters: HttpParameters<Donnee>
 ): Promise<PostResponse> => {
-  const donneeToSave: Donnee = httpParameters.postData;
+  const donneeToSave = httpParameters.postData;
 
   // Check if the donnee already exists or not
   const existingDonneeId: number = await findExistingDonneeId(donneeToSave);

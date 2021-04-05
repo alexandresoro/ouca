@@ -1,9 +1,9 @@
 import { ParsedUrlQuery } from "querystring";
 
-export interface HttpParameters {
+export interface HttpParameters<T = unknown> {
   queryParameters: ParsedUrlQuery;
 
-  postData?: any;
+  postData?: T;
 
   // The name of the input file, when the content included is a file upload
   inputFileName?: string;
