@@ -1,10 +1,10 @@
 import * as XLSX from "xlsx";
 
 export const writeToExcel = (
-  objects: any[],
+  objects: unknown[],
   headers: string[],
   worksheetName: string
-): any => {
+): unknown => {
   const workbook = XLSX.utils.book_new();
 
   const worksheet = XLSX.utils.json_to_sheet(objects, {

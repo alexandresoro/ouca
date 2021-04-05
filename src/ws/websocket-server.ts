@@ -23,7 +23,7 @@ export class WebsocketServer {
         : [clients]
       : this.wss.clients;
 
-    clientsToTarget.forEach((client) => {
+    clientsToTarget.forEach((client: WebSocket) => {
       client.send(message);
     });
   }

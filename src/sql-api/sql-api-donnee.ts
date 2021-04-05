@@ -176,7 +176,7 @@ export const updateInventaireIdForDonnees = async (
 export const findExistingDonneeId = async (donnee: Donnee): Promise<number> => {
   const response = await queryToFindDonneeIdsByAllAttributes(donnee);
 
-  const eligibleDonneeIds: number[] = getArrayFromObjects<{ id: number }>(
+  const eligibleDonneeIds = getArrayFromObjects<{ id: number }, number>(
     response,
     ID
   );
@@ -188,11 +188,11 @@ export const findExistingDonneeId = async (donnee: Donnee): Promise<number> => {
       queryToFindMilieuxIdsByDonneeId(id)
     ]);
 
-    const comportementsIds: number[] = getArrayFromObjects(
+    const comportementsIds = getArrayFromObjects(
       comportements,
       "comportementId"
     );
-    const milieuxIds: number[] = getArrayFromObjects(milieux, "milieuId");
+    const milieuxIds = getArrayFromObjects(milieux, "milieuId");
 
     if (
       id !== donnee.id &&

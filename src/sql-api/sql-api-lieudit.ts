@@ -8,7 +8,7 @@ import { queryToFindAllLieuxDits, queryToFindLieuDitByCommuneIdAndNom, queryToFi
 import { queryToFindOneById } from "../sql/sql-queries-utils";
 import { TABLE_LIEUDIT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
-import { persistEntity } from "./sql-api-common";
+import { insertMultipleEntities, persistEntity } from "./sql-api-common";
 
 export const findAllLieuxDits = async (): Promise<Lieudit[]> => {
   const [lieuxDitsDb, nbDonneesByLieuDit] = await Promise.all([
@@ -70,4 +70,10 @@ export const persistLieuDit = async (
   const lieuditDb = buildLieuditDbFromLieudit(lieuDit);
 
   return persistEntity(TABLE_LIEUDIT, lieuditDb);
+};
+
+export const insertLieuxDits = async (
+  lieuxDits: LieuditDb[]
+): Promise<SqlSaveResponse> => {
+  return insertMultipleEntities(TABLE_LIEUDIT, lieuxDits);
 };

@@ -23,12 +23,12 @@ export const areArraysContainingSameValues = <T>(
   return true;
 };
 
-export const getArrayFromObjects = <T>(
+export const getArrayFromObjects = <T, U>(
   objects: T[],
   attributeName: string
-): number[] => {
+): U[] => {
   return objects.map((object) => {
-    return object[attributeName];
+    return object[attributeName] as U;
   });
 };
 
