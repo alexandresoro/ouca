@@ -68,7 +68,7 @@ const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
 export class SqlConnection {
   public static async query<T>(query: string): Promise<T> {
     const connection = await this.getConnection();
-    return connection.query(query);
+    return connection.query(query) as Promise<T>;
   }
 
   // The current database connection

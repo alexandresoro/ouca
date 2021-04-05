@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
 import { Coordinates } from "../model/types/coordinates.object";
 import { Inventaire } from "../model/types/inventaire.object";
 import { InventaireDb } from "../objects/db/inventaire-db.object";
@@ -57,7 +58,7 @@ export const buildInventaireDbFromInventaire = (
     let altitude: number = null;
     let longitude: number = null;
     let latitude: number = null;
-    let coordinatesSystem = null;
+    let coordinatesSystem: CoordinatesSystemType = null;
 
     // Then we check if coordinates were customized
     if (inventaire.coordinates) {

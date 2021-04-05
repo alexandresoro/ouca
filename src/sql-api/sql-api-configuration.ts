@@ -40,7 +40,7 @@ export const findAppConfiguration = async (): Promise<AppConfiguration> => {
     departements,
     ages,
     sexes,
-    estimationsNombre as any[] // TypeScript is crazy
+    estimationsNombre
   );
 };
 

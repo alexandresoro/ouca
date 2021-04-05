@@ -1,5 +1,6 @@
 import { HttpParameters } from "../http/httpParameters";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
+import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
 import { FlatDonnee } from "../model/types/flat-donnee.object";
 import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
 import { } from "../sql/sql-queries-utils";
@@ -37,14 +38,12 @@ export const exportDonneesByCustomizedFilters = async (
   if (flatDonnees.length > MAXIMUM_EXCEL_DATA_SUPPORTED) {
     return Promise.reject({
       reason:
-        "Votre recherche comporte plus de " +
-        MAXIMUM_EXCEL_DATA_SUPPORTED +
-        " données. Merci d'affiner votre recherche (par date...).",
+        `Votre recherche comporte plus de ${MAXIMUM_EXCEL_DATA_SUPPORTED} données. Merci d'affiner votre recherche (par date...).`,
       nonFatal: true
     });
   }
 
-  const coordinatesSystemType = httpParameters.postData.coordinatesSystemType;
+  const coordinatesSystemType: CoordinatesSystemType = httpParameters.postData.coordinatesSystemType;
   const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
   const coordinatesSuffix =
     " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";

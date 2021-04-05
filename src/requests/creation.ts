@@ -51,7 +51,7 @@ export const saveDonnee = async (
   if (existingDonneeId) {
     // The donnee already exists so we return an error
     return buildErrorPostResponse(
-      "Cette donnée existe déjà (ID = " + existingDonneeId + ")."
+      `Cette donnée existe déjà (ID = ${existingDonneeId}).`
     );
   } else {
     const saveDonneeResponse: SqlSaveResponse = await persistDonnee(

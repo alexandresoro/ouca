@@ -9,7 +9,7 @@ import {
 export const handleHttpRequest = (
   request: http.IncomingMessage,
   res: http.ServerResponse,
-  postData?: any,
+  postData?: unknown,
   inputFileName?: string
 ): void => {
   const jsonHttpHeader = "application/json";
