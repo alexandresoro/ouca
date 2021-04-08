@@ -3,10 +3,12 @@ import { fr as locale } from "date-fns/locale";
 import { EntiteSimple } from "../model/types/entite-simple.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 
-export const toCamel = (s: string): string => {
-  return s.replace(/([-_][a-z])/gi, ($1) => {
-    return $1.toUpperCase().replace("-", "").replace("_", "");
-  });
+export const areSetsContainingSameValues = <T>(
+  firstArray: Set<T>,
+  secondArray: Set<T>
+): boolean => {
+  if (firstArray.size !== secondArray.size) return false;
+  return [...firstArray].every(value => secondArray.has(value));
 };
 
 export const areArraysContainingSameValues = <T>(
@@ -32,8 +34,8 @@ export const getArrayFromObjects = <T, U>(
   });
 };
 
-export const isIdInListIds = (ids: number[], idToFind: number): boolean => {
-  return !!ids.find((id) => {
+export const isIdInListIds = (ids: Set<number>, idToFind: number): boolean => {
+  return !![...ids].find((id) => {
     return id === idToFind;
   });
 };

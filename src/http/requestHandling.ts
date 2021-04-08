@@ -9,8 +9,7 @@ import {
 export const handleHttpRequest = <T = unknown>(
   request: http.IncomingMessage,
   res: http.ServerResponse,
-  postData?: T,
-  inputFileName?: string
+  postData?: T
 ): void => {
   const jsonHttpHeader = "application/json";
 
@@ -26,8 +25,7 @@ export const handleHttpRequest = <T = unknown>(
   REQUEST_MAPPING[pathName](
     {
       queryParameters,
-      postData,
-      inputFileName
+      postData
     }
   )
     .then((result) => {

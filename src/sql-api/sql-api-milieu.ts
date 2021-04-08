@@ -1,10 +1,12 @@
 import { Milieu } from "../model/types/milieu.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllMilieux, queryToFindNumberOfDonneesByMilieuId } from "../sql/sql-queries-milieu";
-import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
+import { createKeyValueMapWithSameName } from "../sql/sql-queries-utils";
 import { TABLE_MILIEU } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+
+const DB_SAVE_MAPPING_MILIEU = createKeyValueMapWithSameName(["code", "libelle"]);
 
 export const findAllMilieux = async (): Promise<Milieu[]> => {
   const [milieux, nbDonneesByMilieu] = await Promise.all([
@@ -22,11 +24,11 @@ export const findAllMilieux = async (): Promise<Milieu[]> => {
 export const persistMilieu = async (
   milieu: Milieu
 ): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_MILIEU, milieu, DB_SAVE_MAPPING.get("milieu"));
+  return persistEntity(TABLE_MILIEU, milieu, DB_SAVE_MAPPING_MILIEU);
 };
 
 export const insertMilieux = (
   milieux: Milieu[]
 ): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_MILIEU, milieux, DB_SAVE_MAPPING.get("milieu"));
+  return insertMultipleEntities(TABLE_MILIEU, milieux, DB_SAVE_MAPPING_MILIEU);
 };

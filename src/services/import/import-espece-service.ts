@@ -2,24 +2,27 @@ import { Classe } from "../../model/types/classe.object";
 import { Espece } from "../../model/types/espece.model";
 import { ImportedEspece } from "../../objects/import/imported-espece.object";
 import { findAllClasses } from "../../sql-api/sql-api-classe";
-import { findAllEspeces, persistEspece } from "../../sql-api/sql-api-espece";
-import { ImportServiceSingle } from "./import-service-single";
+import { findAllEspeces, insertEspeces } from "../../sql-api/sql-api-espece";
+import { ImportService } from "./import-service";
 
-export class ImportEspeceService extends ImportServiceSingle {
+export class ImportEspeceService extends ImportService {
 
   private classes: Classe[];
   private especes: Espece[];
+
+  private especesToInsert: Espece[];
 
   protected getNumberOfColumns = (): number => {
     return 4;
   };
 
   protected init = async (): Promise<void> => {
+    this.especesToInsert = [];
     this.classes = await findAllClasses();
     this.especes = await findAllEspeces();
   }
 
-  protected importEntity = async (especeTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = (especeTab: string[]): string => {
     const importedEspece = new ImportedEspece(especeTab);
 
     const dataValidity = importedEspece.checkValidity();
@@ -62,14 +65,16 @@ export class ImportEspeceService extends ImportServiceSingle {
     // Create and save the espece
     const especeToSave = importedEspece.buildEspece(classe.id)
 
-    const saveResult = await persistEspece(especeToSave);
-    if (!saveResult?.insertId) {
-      return "Une erreur est survenue pendant l'import";
-    }
-
+    this.especesToInsert.push(especeToSave);
     this.especes.push(especeToSave);
     return null;
   };
+
+  protected persistAllValidEntities = async (): Promise<void> => {
+    if (this.especesToInsert.length) {
+      await insertEspeces(this.especesToInsert);
+    }
+  }
 
 
 }

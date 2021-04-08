@@ -2,21 +2,24 @@ import { EntiteAvecLibelleEtCode } from "../../model/types/entite-avec-libelle-e
 import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { findAllEntities } from "../../sql-api/sql-api-common";
-import { ImportServiceSingle } from "./import-service-single";
+import { ImportService } from "./import-service";
 
-export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportServiceSingle {
+export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {
 
   private entities: EntiteAvecLibelleEtCode[];
+
+  private entitiesToInsert: EntiteAvecLibelleEtCode[];
 
   protected getNumberOfColumns = (): number => {
     return 2;
   };
 
   protected init = async (): Promise<void> => {
+    this.entitiesToInsert = [];
     this.entities = await findAllEntities(this.getTableName());
   };
 
-  protected importEntity = async (entityTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = (entityTab: string[]): string => {
     const importedEntity = new ImportedEntiteAvecLibelleEtCode(entityTab);
 
     const dataValidity = importedEntity.checkValidity();
@@ -32,26 +35,24 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
       );
     });
     if (existingEntity) {
-      return (
-        "Il existe déjà " +
-        this.getAnEntityName() +
-        " avec ce code ou ce libellé"
-      );
+      return `Il existe déjà ${this.getAnEntityName()} avec ce code ou ce libellé`;
     }
 
     // Create and save the entity
     const entityToSave = importedEntity.buildEntiteAvecLibelleEtCode();
 
-    const saveResult = await this.saveEntity(entityToSave);
-    if (!saveResult?.insertId) {
-      return "Une erreur est survenue pendant l'import";
-    }
-
+    this.entitiesToInsert.push(entityToSave);
     this.entities.push(entityToSave);
     return null;
   };
 
-  protected abstract saveEntity(entity: unknown): Promise<SqlSaveResponse>;
+  protected persistAllValidEntities = async (): Promise<void> => {
+    if (this.entitiesToInsert.length) {
+      await this.saveEntities(this.entitiesToInsert);
+    }
+  }
+
+  protected abstract saveEntities(entities: EntiteAvecLibelleEtCode[]): Promise<SqlSaveResponse>;
 
   protected abstract getTableName(): string;
 

@@ -1,6 +1,6 @@
 import { Comportement } from "../../model/types/comportement.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { persistComportement } from "../../sql-api/sql-api-comportement";
+import { insertComportements } from "../../sql-api/sql-api-comportement";
 import { TABLE_COMPORTEMENT } from "../../utils/constants";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
 
@@ -13,9 +13,7 @@ export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeServ
     return "un comportement";
   }
 
-  protected saveEntity = async (
-    comportement: Comportement
-  ): Promise<SqlSaveResponse> => {
-    return persistComportement(comportement);
+  protected saveEntities = (comportements: Comportement[]): Promise<SqlSaveResponse> => {
+    return insertComportements(comportements);
   };
 }

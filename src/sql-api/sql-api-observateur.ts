@@ -1,10 +1,12 @@
 import { Observateur } from "../model/types/observateur.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllObservateurs, queryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";
-import { DB_SAVE_MAPPING, queryToCheckIfTableExists } from "../sql/sql-queries-utils";
+import { createKeyValueMapWithSameName, queryToCheckIfTableExists } from "../sql/sql-queries-utils";
 import { TABLE_OBSERVATEUR } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { deleteEntityById, findEntityByLibelle, insertMultipleEntities, persistEntity } from "./sql-api-common";
+
+const DB_SAVE_MAPPING_OBSERVATEUR = createKeyValueMapWithSameName("libelle");
 
 export const checkIfTableObservateurExists = async (): Promise<boolean> => {
   return queryToCheckIfTableExists(TABLE_OBSERVATEUR);
@@ -41,7 +43,7 @@ export const persistObservateur = async (
   return persistEntity(
     TABLE_OBSERVATEUR,
     observateur,
-    DB_SAVE_MAPPING.get("observateur")
+    DB_SAVE_MAPPING_OBSERVATEUR
   );
 };
 
@@ -54,5 +56,5 @@ export const deleteObservateur = async (
 export const insertObservateurs = async (
   observateurs: Observateur[]
 ): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_OBSERVATEUR, observateurs, DB_SAVE_MAPPING.get("observateur"));
+  return insertMultipleEntities(TABLE_OBSERVATEUR, observateurs, DB_SAVE_MAPPING_OBSERVATEUR);
 };

@@ -2,8 +2,10 @@ import * as http from "http";
 import * as multiparty from "multiparty";
 import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
 import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
-import { HEARTBEAT, IMPORT, TEXT } from "./model/websocket/websocket-message-type.model";
+import { WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
+import { HEARTBEAT, IMPORT, INIT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
+import { importWebsocket } from "./requests/import";
 import { logger } from "./utils/logger";
 import { options } from "./utils/options";
 import { WebsocketServer } from "./ws/websocket-server";
@@ -55,8 +57,7 @@ const server = http.createServer(
               handleHttpRequest(
                 request,
                 res,
-                fileContent,
-                part.filename
+                fileContent
               );
             });
           } else {
@@ -80,7 +81,7 @@ const server = http.createServer(
             res.end();
             return;
           }
-          const postData = JSON.parse(postDataStr);
+          const postData = JSON.parse(postDataStr) as unknown;
           handleHttpRequest(request, res, postData);
         });
       }
@@ -96,8 +97,8 @@ const wss = WebsocketServer.createServer(server);
 wss.on("connection", (client) => {
   client.on("message", (data): void => {
     const message = JSON.parse(data.toString()) as WebsocketMessage;
-    logger.debug("Message received from websocket: " + JSON.stringify(message));
     if (message.type === HEARTBEAT) {
+      logger.debug("Ping received");
       // Ping message received
       WebsocketServer.sendMessageToClients(
         JSON.stringify({
@@ -106,14 +107,16 @@ wss.on("connection", (client) => {
         }),
         client
       );
-    } else if (message.type === TEXT && message.content === "init") {
+    } else if (message.type === INIT) {
       // Client requests the initial configuration
       logger.info("Sending initial data to client");
       void sendInitialData(client);
     } else if (message.type === IMPORT) {
       // Import message received
-      logger.info("Import requested by the client");
-      // TODO
+      const importRequest = (message as WebsocketImportRequestMessage).content;
+      logger.info(`Import requested by the client for table ${importRequest.dataType}`);
+      logger.debug(`Import content is ${importRequest.data}`);
+      void importWebsocket(client, importRequest);
     }
   });
 });
@@ -122,5 +125,5 @@ wss.on("connection", (client) => {
 const listenAddress = options.docker ? "0.0.0.0" : options.listenAddress;
 
 server.listen(options.listenPort, listenAddress, () => {
-  logger.debug(`Server running at http://${listenAddress}:${options.listenPort}/`);
+  logger.info(`Server running at http://${listenAddress}:${options.listenPort}/`);
 });

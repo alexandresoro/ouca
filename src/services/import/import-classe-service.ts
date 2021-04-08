@@ -1,6 +1,6 @@
 import { Classe } from "../../model/types/classe.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { persistClasse } from "../../sql-api/sql-api-classe";
+import { insertClasses } from "../../sql-api/sql-api-classe";
 import { TABLE_CLASSE } from "../../utils/constants";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
@@ -13,7 +13,7 @@ export class ImportClasseService extends ImportEntiteAvecLibelleService {
     return "Cette classe espèce";
   }
 
-  protected saveEntity = async (classe: Classe): Promise<SqlSaveResponse> => {
-    return persistClasse(classe);
+  protected saveEntities = (classes: Classe[]): Promise<SqlSaveResponse> => {
+    return insertClasses(classes);
   };
 }

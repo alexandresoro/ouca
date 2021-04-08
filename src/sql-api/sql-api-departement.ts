@@ -1,10 +1,12 @@
 import { Departement } from "../model/types/departement.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllDepartements, queryToFindDepartementByCode, queryToFindNumberOfCommunesByDepartementId, queryToFindNumberOfDonneesByDepartementId, queryToFindNumberOfLieuxDitsByDepartementId } from "../sql/sql-queries-departement";
-import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
+import { createKeyValueMapWithSameName } from "../sql/sql-queries-utils";
 import { TABLE_DEPARTEMENT } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+
+const DB_SAVE_MAPPING_DEPARTEMENT = createKeyValueMapWithSameName("code");
 
 export const findAllDepartements = async (): Promise<Departement[]> => {
   const [
@@ -49,12 +51,12 @@ export const persistDepartement = async (
   return persistEntity(
     TABLE_DEPARTEMENT,
     departement,
-    DB_SAVE_MAPPING.get("departement")
+    DB_SAVE_MAPPING_DEPARTEMENT
   );
 };
 
 export const insertDepartements = async (
   departements: Departement[]
 ): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_DEPARTEMENT, departements, DB_SAVE_MAPPING.get("departement"));
+  return insertMultipleEntities(TABLE_DEPARTEMENT, departements, DB_SAVE_MAPPING_DEPARTEMENT);
 };

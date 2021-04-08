@@ -1,17 +1,18 @@
+import { format } from "date-fns";
 import { buildInventaireDbFromInventaire, buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
 import { areSameCoordinates } from "../model/coordinates-system/coordinates-helper";
 import { Coordinates } from "../model/types/coordinates.object";
 import { Inventaire } from "../model/types/inventaire.object";
-import { InventaireDb } from "../objects/db/inventaire-db.object";
+import { InventaireCompleteWithIds, InventaireDb } from "../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdById, queryToFindInventairesIdsByAllAttributes } from "../sql/sql-queries-inventaire";
+import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdById, queryToFindInventairesIdsByAllAttributes, queryToGetAllInventairesWithIds } from "../sql/sql-queries-inventaire";
 import { queryToFindMeteosByInventaireId } from "../sql/sql-queries-meteo";
 import { queryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
-import { queriesToSaveListOfEntities, queryToDeleteAnEntityByAttribute, queryToFindOneById } from "../sql/sql-queries-utils";
-import { INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../utils/constants";
+import { queryToDeleteAnEntityByAttribute, queryToFindOneById, queryToSaveListOfEntities } from "../sql/sql-queries-utils";
+import { DATE_WITH_TIME_PATTERN, INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../utils/constants";
 import { mapAssociesIds, mapMeteosIds } from "../utils/mapping-utils";
 import { areArraysContainingSameValues } from "../utils/utils";
-import { deleteEntityById, persistEntity } from "./sql-api-common";
+import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntityNoCheck } from "./sql-api-common";
 
 
 const deleteAssociesAndMeteosByInventaireId = async (
@@ -38,10 +39,9 @@ const saveInventaireMeteos = async (
   meteosIds: number[]
 ): Promise<void> => {
   if (meteosIds.length > 0 && inventaireId) {
-    await queriesToSaveListOfEntities(
+    await queryToSaveListOfEntities(
       TABLE_INVENTAIRE_METEO,
-      inventaireId,
-      meteosIds
+      [[inventaireId, meteosIds]]
     );
   }
 };
@@ -51,10 +51,9 @@ const saveInventaireAssocies = async (
   associesIds: number[]
 ): Promise<void> => {
   if (associesIds.length > 0 && inventaireId) {
-    await queriesToSaveListOfEntities(
+    await queryToSaveListOfEntities(
       TABLE_INVENTAIRE_ASSOCIE,
-      inventaireId,
-      associesIds
+      [[inventaireId, associesIds]]
     );
   }
 };
@@ -140,6 +139,10 @@ export const findInventaireById = async (
   );
 };
 
+export const findAllInventairesWithIds = async (): Promise<InventaireCompleteWithIds[]> => {
+  return queryToGetAllInventairesWithIds();
+}
+
 const getCoordinatesToPersist = async (
   inventaire: Inventaire
 ): Promise<Coordinates> => {
@@ -171,7 +174,7 @@ export const persistInventaire = async (
   await deleteAssociesAndMeteosByInventaireId(inventaire.id);
 
   // Save the inventaire
-  const inventaireResult = await persistEntity(TABLE_INVENTAIRE, inventaireDb);
+  const inventaireResult = await persistEntityNoCheck(TABLE_INVENTAIRE, inventaireDb);
 
   // Get the inventaire ID
   // If it is an update we take the existing ID else we take the inserted ID
@@ -184,4 +187,45 @@ export const persistInventaire = async (
   await saveInventaireMeteos(inventaireId, inventaire.meteosIds);
 
   return inventaireResult;
+};
+
+export const insertInventaires = async (
+  inventaires: InventaireCompleteWithIds[]
+): Promise<{ id: number }[]> => {
+
+  const inventairesWithCreationTime = inventaires.map((inventaire) => {
+    const { id, meteos_ids, associes_ids, ...inventaireOthers } = inventaire;
+
+    return {
+      ...inventaireOthers,
+      date_creation: format(new Date(), DATE_WITH_TIME_PATTERN)
+    }
+  });
+
+  // Insert all donnees, and retrieve their insertion id, to be able to map with meteos and associes
+  const insertedIds = await insertMultipleEntitiesAndReturnIdsNoCheck(TABLE_INVENTAIRE, inventairesWithCreationTime);
+
+  const meteosMapping = inventaires.map<[number, number[]]>((inventaire, index) => {
+    return inventaire.meteos_ids.size ? [insertedIds[index].id, [...inventaire.meteos_ids]] : null;
+  }).filter(mapping => mapping);
+
+  const associesMapping = inventaires.map<[number, number[]]>((inventaire, index) => {
+    return inventaire.associes_ids.size ? [insertedIds[index].id, [...inventaire.associes_ids]] : null;
+  }).filter(mapping => mapping);
+
+  if (meteosMapping.length) {
+    await queryToSaveListOfEntities(
+      TABLE_INVENTAIRE_METEO,
+      meteosMapping
+    );
+  }
+
+  if (associesMapping.length) {
+    await queryToSaveListOfEntities(
+      TABLE_INVENTAIRE_ASSOCIE,
+      associesMapping
+    );
+  }
+
+  return insertedIds;
 };

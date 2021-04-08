@@ -1,7 +1,7 @@
 import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
+import { EntityDb } from "./entity-db.model";
 
-export interface InventaireDb {
-  id: number;
+export type InventaireDb = EntityDb & {
   observateur_id: number;
   date: string;
   heure: string;
@@ -13,4 +13,14 @@ export interface InventaireDb {
   coordinates_system?: CoordinatesSystemType;
   temperature: number;
   date_creation: string;
+}
+
+export type InventaireDbWithJoins = InventaireDb & {
+  meteos_ids?: string, // The list of meteos comma-separated
+  associes_ids?: string // The list of associes comma-separated
+}
+
+export type InventaireCompleteWithIds = InventaireDb & {
+  meteos_ids: Set<number>,
+  associes_ids: Set<number>
 }

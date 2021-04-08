@@ -8,19 +8,36 @@ import { DonneesFilter } from "../model/types/donnees-filter.object";
 import { FlatDonnee } from "../model/types/flat-donnee.object";
 import { Inventaire } from "../model/types/inventaire.object";
 import { NicheurCode, NICHEUR_VALUES } from "../model/types/nicheur.model";
+import { DonneeCompleteWithIds } from "../objects/db/donnee-db.type";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllComportementsByDonneeId, queryToFindComportementsIdsByDonneeId } from "../sql/sql-queries-comportement";
-import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindAllDonnees, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindLastDonneeId, queryToFindLastRegroupement, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToUpdateDonneesInventaireId } from "../sql/sql-queries-donnee";
+import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindAllDonnees, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindLastDonneeId, queryToFindLastRegroupement, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../sql/sql-queries-donnee";
 import { queryToFindAllMeteosByDonneeId } from "../sql/sql-queries-meteo";
 import { queryToFindAllMilieuxByDonneeId, queryToFindMilieuxIdsByDonneeId } from "../sql/sql-queries-milieu";
 import { queryToFindAllAssociesByDonneeId } from "../sql/sql-queries-observateur";
-import { DB_SAVE_MAPPING, queriesToSaveListOfEntities, queryToDeleteAnEntityByAttribute } from "../sql/sql-queries-utils";
+import { createKeyValueMapWithSameName, queryToDeleteAnEntityByAttribute, queryToSaveListOfEntities } from "../sql/sql-queries-utils";
 import { DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, SEPARATOR_COMMA, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../utils/constants";
 import { mapComportementsIds, mapMilieuxIds } from "../utils/mapping-utils";
 import { areArraysContainingSameValues, getArrayFromObjects } from "../utils/utils";
-import { deleteEntityById, persistEntity } from "./sql-api-common";
+import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntity } from "./sql-api-common";
 import { deleteInventaireById, findAssociesIdsByInventaireId, findMeteosIdsByInventaireId } from "./sql-api-inventaire";
+
+const DB_SAVE_MAPPING_DONNEE = {
+  ...createKeyValueMapWithSameName([
+    "nombre",
+    "distance",
+    "regroupement",
+    "commentaire"
+  ]),
+  inventaire_id: "inventaireId",
+  espece_id: "especeId",
+  age_id: "ageId",
+  sexe_id: "sexeId",
+  estimation_nombre_id: "estimationNombreId",
+  estimation_distance_id: "estimationDistanceId",
+  date_creation: "dateCreation"
+}
 
 const findComportementsIdsByDonneeId = async (
   donneeId: number
@@ -130,7 +147,7 @@ export const persistDonnee = async (
       ...donneeToSave,
       dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN)
     },
-    DB_SAVE_MAPPING.get("donnee")
+    DB_SAVE_MAPPING_DONNEE
   );
 
   // If it is an update we take the existing ID else we take the inserted ID
@@ -139,20 +156,18 @@ export const persistDonnee = async (
     : saveDonneeResponse.insertId;
 
   // Save the comportements
-  if (donneeToSave.comportementsIds.length > 0) {
-    await queriesToSaveListOfEntities(
+  if (donneeToSave.comportementsIds.length) {
+    await queryToSaveListOfEntities(
       TABLE_DONNEE_COMPORTEMENT,
-      savedDonneeId,
-      donneeToSave.comportementsIds
+      [[savedDonneeId, donneeToSave.comportementsIds]]
     );
   }
 
   // Save the milieux
-  if (donneeToSave.milieuxIds.length > 0) {
-    await queriesToSaveListOfEntities(
+  if (donneeToSave.milieuxIds.length) {
+    await queryToSaveListOfEntities(
       TABLE_DONNEE_MILIEU,
-      savedDonneeId,
-      donneeToSave.milieuxIds
+      [[savedDonneeId, donneeToSave.milieuxIds]]
     );
   }
 
@@ -172,6 +187,46 @@ export const updateInventaireIdForDonnees = async (
     newInventaireId
   );
 };
+
+export const insertDonnees = async (
+  donnees: DonneeCompleteWithIds[]
+): Promise<{ id: number }[]> => {
+  const donneesForTableInsertion = donnees.map((donnee) => {
+    const { comportements_ids, milieux_ids, ...otherDonnee } = donnee
+    return {
+      ...otherDonnee,
+      date_creation: format(new Date(), DATE_WITH_TIME_PATTERN)
+    }
+  })
+
+  // Insert all donnees, and retrieve their insertion id, to be able to map with comportements + milieux
+  const insertedIds = await insertMultipleEntitiesAndReturnIdsNoCheck(TABLE_DONNEE, donneesForTableInsertion);
+
+  const comportementsMapping = donnees.map<[number, number[]]>((donnee, index) => {
+    return donnee.comportements_ids.size ? [insertedIds[index].id, [...donnee.comportements_ids]] : null;
+  }).filter(mapping => mapping);
+
+  const milieuxMapping = donnees.map<[number, number[]]>((donnee, index) => {
+    return donnee.milieux_ids.size ? [insertedIds[index].id, [...donnee.milieux_ids]] : null;
+  }).filter(mapping => mapping);
+
+  if (comportementsMapping.length) {
+    await queryToSaveListOfEntities(
+      TABLE_DONNEE_COMPORTEMENT,
+      comportementsMapping
+    );
+  }
+
+  if (milieuxMapping.length) {
+    await queryToSaveListOfEntities(
+      TABLE_DONNEE_MILIEU,
+      milieuxMapping
+    );
+  }
+
+  return insertedIds;
+};
+
 
 export const findExistingDonneeId = async (donnee: Donnee): Promise<number> => {
   const response = await queryToFindDonneeIdsByAllAttributes(donnee);
@@ -392,6 +447,11 @@ export const findAllFlatDonneesWithMinimalData = async (): Promise<
 > => {
   return await queryToFindAllDonnees();
 };
+
+export const findAllDonneesWithIds = async (): Promise<DonneeCompleteWithIds[]> => {
+  return queryToGetAllDonneesWithIds();
+}
+
 
 export const findDonneeByIdWithContext = async (
   donneeId: number

@@ -3,6 +3,7 @@ import { Donnee } from "../model/types/donnee.object";
 import { DonneesFilter } from "../model/types/donnees-filter.object";
 import { FlatDonnee } from "../model/types/flat-donnee.object";
 import { NicheurCode } from "../model/types/nicheur.model";
+import { DonneeCompleteWithIds, DonneeDbWithJoins } from "../objects/db/donnee-db.type";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -54,6 +55,27 @@ export const queryToCreateDonneeMilieuTable = async (): Promise<void> => {
     " )");
 }
 
+export const queryToGetAllDonneesWithIds = async (): Promise<DonneeCompleteWithIds[]> => {
+  const donneesWithJoins = await query<DonneeDbWithJoins[]>("SELECT d.id,d.inventaire_id,d.espece_id,d.sexe_id,d.age_id,d.estimation_nombre_id,d.nombre,d.estimation_distance_id,d.distance,d.commentaire,d.regroupement,d.date_creation" +
+    ',GROUP_CONCAT(Distinct comportement_id SEPARATOR ",") as comportements_ids,GROUP_CONCAT(Distinct milieu_id SEPARATOR ",") as milieux_ids' +
+    " FROM donnee d" +
+    " LEFT JOIN donnee_comportement c on d.id = c.donnee_id" +
+    " LEFT JOIN donnee_milieu m on d.id = m.donnee_id" +
+    " GROUP BY d.id"
+  );
+
+  const donneesProper = donneesWithJoins.map((donnee) => {
+    const { comportements_ids, milieux_ids, ...otherFieldsDonnee } = donnee;
+    return {
+      comportements_ids: new Set(comportements_ids?.split(",").map(comportementId => +comportementId) ?? []),
+      milieux_ids: new Set(milieux_ids?.split(",").map(milieuId => +milieuId) ?? []),
+      ...otherFieldsDonnee
+    }
+  });
+
+
+  return donneesProper;
+};
 
 const getBaseQueryToFindDonnees = (): string => {
   return (
@@ -136,8 +158,7 @@ export const queryToCountDonneesByInventaireId = async (
   inventaireId: number
 ): Promise<{ nbDonnees: number }[]> => {
   return query<{ nbDonnees: number }[]>(
-    "SELECT COUNT(*) as nbDonnees FROM donnee WHERE inventaire_id=" +
-    inventaireId
+    `SELECT COUNT(*) as nbDonnees FROM donnee WHERE inventaire_id=${inventaireId}`
   );
 };
 
@@ -146,10 +167,7 @@ export const queryToUpdateDonneesInventaireId = async (
   newInventaireId: number
 ): Promise<SqlSaveResponse> => {
   return query<SqlSaveResponse>(
-    "UPDATE donnee SET inventaire_id=" +
-    newInventaireId +
-    " WHERE inventaire_id=" +
-    oldInventaireId
+    `UPDATE donnee SET inventaire_id=${newInventaireId} WHERE inventaire_id=${oldInventaireId}`
   );
 };
 
@@ -160,7 +178,7 @@ export const queryToFindNextDonneeIdByCurrentDonneeId = async (
     "SELECT d.id" +
     " FROM donnee d" +
     " WHERE d.id>" +
-    currentDonneeId +
+    `${currentDonneeId}` +
     " ORDER BY id ASC LIMIT 0,1"
   );
 };
@@ -172,7 +190,7 @@ export const queryToFindPreviousDonneeIdByCurrentDonneeId = async (
     "SELECT d.id" +
     " FROM donnee d" +
     " WHERE d.id<" +
-    currentDonneeId +
+    `${currentDonneeId}` +
     " ORDER BY d.id DESC LIMIT 0,1"
   );
 };
@@ -193,7 +211,7 @@ export const queryToFindDonneeById = async (
   id: number
 ): Promise<FlatDonneeWithMinimalData[]> => {
   return query<FlatDonneeWithMinimalData[]>(
-    getBaseQueryToFindDonnees() + " AND d.id=" + id
+    getBaseQueryToFindDonnees() + ` AND d.id=${id}`
   );
 };
 
@@ -201,7 +219,7 @@ export const queryToFindDonneeIndexById = async (
   id: number
 ): Promise<{ nbDonnees: number }[]> => {
   return query<{ nbDonnees: number }[]>(
-    "SELECT count(*) as nbDonnees FROM donnee WHERE id<=" + id
+    `SELECT count(*) as nbDonnees FROM donnee WHERE id<=${id}`
   );
 };
 
@@ -220,7 +238,7 @@ export const queryToFindNumberOfDonneesByDonneeEntityId = async (
   let queryStr: string =
     "SELECT " + entityIdAttribute + " as id, count(*) as nb FROM donnee";
   if (id) {
-    queryStr = queryStr + " WHERE " + entityIdAttribute + "=" + id;
+    queryStr = queryStr + " WHERE " + entityIdAttribute + `=${id}`;
   } else {
     queryStr = queryStr + " GROUP BY " + entityIdAttribute;
   }
@@ -284,7 +302,7 @@ export const queryToFindDonneesByCriterion = async (
 
   if (criterion) {
     if (criterion.id) {
-      whereTab.push(" t_donnee.id=" + criterion.id);
+      whereTab.push(` t_donnee.id=${criterion.id}`);
     }
 
     if (
@@ -393,25 +411,25 @@ export const queryToFindDonneesByCriterion = async (
     }
 
     if (criterion.temperature && Number.isInteger(criterion.temperature)) {
-      whereTab.push(" t_inventaire.temperature=" + criterion.temperature);
+      whereTab.push(` t_inventaire.temperature=${criterion.temperature}`);
     }
 
     if (
       criterion.nombreGroup.nombre &&
       Number.isInteger(criterion.nombreGroup.nombre)
     ) {
-      whereTab.push(" t_donnee.nombre=" + criterion.nombreGroup.nombre);
+      whereTab.push(` t_donnee.nombre=${criterion.nombreGroup.nombre}`);
     }
 
     if (
       criterion.distanceGroup.distance &&
       Number.isInteger(criterion.distanceGroup.distance)
     ) {
-      whereTab.push(" t_donnee.distance=" + criterion.distanceGroup.distance);
+      whereTab.push(` t_donnee.distance=${criterion.distanceGroup.distance}`);
     }
 
     if (criterion.regroupement && Number.isInteger(criterion.regroupement)) {
-      whereTab.push(" t_donnee.regroupement=" + criterion.regroupement);
+      whereTab.push(` t_donnee.regroupement=${criterion.regroupement}`);
     }
 
     if (criterion.heure) {
@@ -542,7 +560,7 @@ export const queryToCountSpecimensBySexeForAnEspeceId = async (
     " FROM donnee d " +
     " LEFT JOIN sexe s on s.id = d.sexe_id " +
     " WHERE espece_id = " +
-    id +
+    `${id}` +
     " GROUP BY sexe_id" +
     " ORDER BY s.libelle ASC"
   );
@@ -556,7 +574,7 @@ export const queryToCountSpecimensByAgeForAnEspeceId = async (
     " FROM donnee d" +
     " LEFT JOIN age a on a.id = d.age_id" +
     " WHERE espece_id=" +
-    id +
+    `${id}` +
     " GROUP BY age_id" +
     " ORDER BY a.libelle ASC"
   );

@@ -1,6 +1,6 @@
 import { Milieu } from "../../model/types/milieu.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { persistMilieu } from "../../sql-api/sql-api-milieu";
+import { insertMilieux } from "../../sql-api/sql-api-milieu";
 import { TABLE_MILIEU } from "../../utils/constants";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
 
@@ -13,7 +13,7 @@ export class ImportMilieuService extends ImportEntiteAvecLibelleEtCodeService {
     return "un milieu";
   }
 
-  protected saveEntity = async (milieu: Milieu): Promise<SqlSaveResponse> => {
-    return persistMilieu(milieu);
+  protected saveEntities = (milieux: Milieu[]): Promise<SqlSaveResponse> => {
+    return insertMilieux(milieux);
   };
 }

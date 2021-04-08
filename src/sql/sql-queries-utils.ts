@@ -10,52 +10,16 @@ import {
 import { logger } from "../utils/logger";
 
 
-const createKeyValueMapWithSameName = (
+export const createKeyValueMapWithSameName = (
   names: string | string[]
-): Map<string, string> => {
-  return new Map(([] as string[]).concat(names).map(name => [name, name]));
+): Record<string, string> => {
+  return Object.fromEntries(([] as string[]).concat(names).map(name => [name, name]));
 };
 
-export const DB_SAVE_MAPPING = new Map(Object.entries({
-  observateur: createKeyValueMapWithSameName("libelle"),
-  departement: createKeyValueMapWithSameName("code"),
-  commune: new Map([
-    ...createKeyValueMapWithSameName(["code", "nom"]),
-    ["departement_id", "departementId"]
-  ]),
-  meteo: createKeyValueMapWithSameName("libelle"),
-  classe: createKeyValueMapWithSameName("libelle"),
-  espece: new Map([
-    ...createKeyValueMapWithSameName("code"),
-    ["classe_id", "classeId"],
-    ["nom_francais", "nomFrancais"],
-    ["nom_latin", "nomLatin"]
-  ]),
-  sexe: createKeyValueMapWithSameName("libelle"),
-  age: createKeyValueMapWithSameName("libelle"),
-  estimationNombre: new Map([
-    ...createKeyValueMapWithSameName("libelle"),
-    ["non_compte", "nonCompte"]
-  ]),
-  estimationDistance: createKeyValueMapWithSameName("libelle"),
-  milieu: createKeyValueMapWithSameName(["code", "libelle"]),
-  donnee: new Map([
-    ...createKeyValueMapWithSameName([
-      "nombre",
-      "distance",
-      "regroupement",
-      "commentaire"
-    ]),
-    ["inventaire_id", "inventaireId"],
-    ["espece_id", "especeId"],
-    ["age_id", "ageId"],
-    ["sexe_id", "sexeId"],
-    ["estimation_nombre_id", "estimationNombreId"],
-    ["estimation_distance_id", "estimationDistanceId"],
-    ["date_creation", "dateCreation"]
-  ]),
-  configuration: createKeyValueMapWithSameName(["libelle", "value"])
-}));
+
+const mappingTables = ["inventaire_associe", "inventaire_meteo", "donnee_comportement", "donnee_milieu"] as const;
+
+type MappingTable = typeof mappingTables[number];
 
 export const DB_SAVE_LISTS_MAPPING = {
   inventaire_associe: {
@@ -74,7 +38,7 @@ export const DB_SAVE_LISTS_MAPPING = {
     mainId: DONNEE_ID,
     subId: "milieu_id"
   }
-};
+} as const;
 
 export function query<T>(query: string): Promise<T> {
   logger.debug(`Executing SQL query : 
@@ -105,58 +69,54 @@ export const queryToFindOneById = async <T>(
   return getFirstResult<T>(results);
 };
 
+const getCorrespondingDbValue = (value: unknown): string => {
+  // Set the proper value in DB format
+  let valueDb: string;
+  if (value == null) {
+    valueDb = "null";
+  } else if (typeof value === 'boolean') {
+    valueDb = (value ? "TRUE" : "FALSE");
+  } else if (typeof value === 'string') {
+
+    valueDb = '"' + prepareStringForSqlQuery(value) + '"';
+  } else {
+    valueDb = '"' + value.toString() + '"';
+  }
+  return valueDb;
+}
+
 // Method that processes an entity to be saved, in order to be used directly in the SQL query
-// It basically takes an object T, strips the 'id' property, 
-// filters the properties for which there is no corresponding DB column, 
+// It basically takes the list of atributes that can exist for this entity from the mapping,
+// and look for the corresponding DB name and value in the object T
 // and return and array of elements, each element being an array of size 2, the db column name and the value to be set
 // e.g. for an object {"id": 1, "toto": "titi", "tutu": 6} it will return
 // [["toto", "titi"], ["tutu", "6"]]
 const processEntityToSave = <T extends EntityDb>(
   entityToSave: T,
-  mapping?: Map<string, string>
+  mapping: Record<string, string>
 ): string[][] => {
-
-  const { id, ...entityToSaveWithoutId } = entityToSave;
-
-  return Object.entries(entityToSaveWithoutId)
-    .filter(([entityKey, entityValue]) => {
-      // Filter the entries to the ones defined in the mapping
-      // Otherwise, keep them all
-      // This is to avoid to store invalid columns in the DB
-      return !mapping || (mapping.values() && [...mapping.values()].includes(entityKey));
-    })
-    .map(([key, value]) => {
-
-      const columnDb = (mapping && [...mapping].find(([mappingKey, mappingValue]) => {
-        return mappingValue === key
-      })?.[0]) ?? key;
-
-      // Set the proper value in DB format
-      let valueDb: string;
-      if (value == null) {
-        valueDb = "null";
-      } else if (typeof value === 'boolean') {
-        valueDb = (value ? "TRUE" : "FALSE");
-      } else if (typeof value === 'string') {
-
-        valueDb = '"' + prepareStringForSqlQuery(value) + '"';
-      } else {
-        valueDb = '"' + value + '"';
-      }
-
-      return [columnDb, valueDb];
+  return Object.entries(mapping)
+    .map(([dbKey, mappingKey]) => {
+      const entityValue: unknown = entityToSave[mappingKey];
+      const valueDb = getCorrespondingDbValue(entityValue);
+      return [dbKey, valueDb];
     });
 
 }
 
-export const queryToSaveEntity = async <T extends EntityDb>(
-  tableName: string,
+const processEntityToSaveNoCheck = <T extends Omit<EntityDb, "id">>(
   entityToSave: T,
-  mapping?: Map<string, string>
-): Promise<SqlSaveResponse> => {
+): string[][] => {
+  return Object.entries(entityToSave).map(([key, value]) => {
+    const valueDb = getCorrespondingDbValue(value);
+    return [key, valueDb];
+  });
 
-  const dbEntityToSaveAsArray = processEntityToSave(entityToSave, mapping);
+}
 
+const queryToSaveEntityCommon = <T extends EntityDb>(tableName: string,
+  entityToSave: T,
+  dbEntityToSaveAsArray: string[][]): Promise<SqlSaveResponse> => {
   let queryStr: string;
   if (!entityToSave.id) {
     const columnNames = dbEntityToSaveAsArray.map((elt) => {
@@ -169,7 +129,9 @@ export const queryToSaveEntity = async <T extends EntityDb>(
 
     queryStr = `INSERT INTO ${tableName} (${columnNames}) VALUES (${values})`;
   } else {
-    const updates = dbEntityToSaveAsArray.map((elt) => {
+    const updates = dbEntityToSaveAsArray.filter(([key]) => {
+      return key !== "id";
+    }).map((elt) => {
       return `${elt[0]}=${elt[1]}`;
     }).join(",");
 
@@ -177,15 +139,26 @@ export const queryToSaveEntity = async <T extends EntityDb>(
   }
 
   return query<SqlSaveResponse>(queryStr);
+}
+
+export const queryToSaveEntity = async <T extends EntityDb>(
+  tableName: string,
+  entityToSave: T,
+  mapping: Record<string, string>
+): Promise<SqlSaveResponse> => {
+  const dbEntityToSaveAsArray = processEntityToSave(entityToSave, mapping);
+  return queryToSaveEntityCommon(tableName, entityToSave, dbEntityToSaveAsArray);
 };
 
-export const queryToInsertMultipleEntities = async <T extends EntityDb>(
+export const queryToSaveEntityNoCheck = async <T extends EntityDb>(
   tableName: string,
-  entitiesToSave: T[],
-  mapping?: Map<string, string>
+  entityToSave: T,
 ): Promise<SqlSaveResponse> => {
-  const dbEntitiesToSaveAsArray = entitiesToSave.map(entity => processEntityToSave(entity, mapping));
+  const dbEntityToSaveAsArray = processEntityToSaveNoCheck(entityToSave);
+  return queryToSaveEntityCommon(tableName, entityToSave, dbEntityToSaveAsArray);
+};
 
+const getColumnNamesAndInsertionValuesFromEntitiesCommon = (dbEntitiesToSaveAsArray: string[][][]): { columnNames: string, allValues: string } => {
   const columnNames = dbEntitiesToSaveAsArray[0].map((elt) => {
     return elt[0];
   }).join(",");
@@ -198,36 +171,80 @@ export const queryToInsertMultipleEntities = async <T extends EntityDb>(
       return `(${values})`
     }).join(",");
 
-  const queryStr = `INSERT INTO ${tableName} (${columnNames}) VALUES (${allValues})`;
+  return {
+    columnNames,
+    allValues
+  }
+}
 
-  return query<SqlSaveResponse>(queryStr);
-};
+const getColumnNamesAndInsertionValuesFromEntities = <T extends EntityDb>(entitiesToSave: T[], mapping: Record<string, string>
+): { columnNames: string, allValues: string } => {
+  const dbEntitiesToSaveAsArray = entitiesToSave.map(entity => processEntityToSave(entity, mapping));
+  return getColumnNamesAndInsertionValuesFromEntitiesCommon(dbEntitiesToSaveAsArray);
+}
 
-export const queryToSaveManyToManyEntity = async (
-  tableName: string,
-  mainId: number,
-  subId: number
+const getColumnNamesAndInsertionValuesFromEntitiesNoCheck = <T extends Omit<EntityDb, "id">>(entitiesToSave: T[]): { columnNames: string, allValues: string } => {
+  const dbEntitiesToSaveAsArray = entitiesToSave.map(entity => processEntityToSaveNoCheck(entity));
+  return getColumnNamesAndInsertionValuesFromEntitiesCommon(dbEntitiesToSaveAsArray);
+}
+
+const queryToInsertMultipleEntitiesCommon = async (
+  columnNamesAndValues: { columnNames: string, allValues: string },
+  tableName: string
 ): Promise<SqlSaveResponse> => {
-  const queryStr: string =
-    `INSERT INTO ${tableName} (` +
-    DB_SAVE_LISTS_MAPPING[tableName].mainId +
-    "," +
-    DB_SAVE_LISTS_MAPPING[tableName].subId +
-    `) VALUES (${mainId},${subId})`;
-
+  const queryStr = `INSERT INTO ${tableName} (${columnNamesAndValues.columnNames}) VALUES ${columnNamesAndValues.allValues}`;
   return query<SqlSaveResponse>(queryStr);
 };
 
-export const queriesToSaveListOfEntities = async (
+export const queryToInsertMultipleEntities = async <T extends EntityDb>(
   tableName: string,
-  mainId: number,
-  subIds: number[]
-): Promise<SqlSaveResponse[]> => {
-  const queries: Promise<SqlSaveResponse>[] = [];
-  subIds.forEach((subId) => {
-    queries.push(queryToSaveManyToManyEntity(tableName, mainId, subId));
-  });
-  return Promise.all(queries);
+  entitiesToSave: T[],
+  mapping: Record<string, string>
+): Promise<SqlSaveResponse> => {
+  const columnNamesAndValues = getColumnNamesAndInsertionValuesFromEntities(entitiesToSave, mapping);
+  return queryToInsertMultipleEntitiesCommon(columnNamesAndValues, tableName);
+};
+
+export const queryToInsertMultipleEntitiesNoCheck = async <T extends EntityDb>(
+  tableName: string,
+  entitiesToSave: T[]
+): Promise<SqlSaveResponse> => {
+  const columnNamesAndValues = getColumnNamesAndInsertionValuesFromEntitiesNoCheck(entitiesToSave);
+  return queryToInsertMultipleEntitiesCommon(columnNamesAndValues, tableName);
+};
+
+const queryToInsertMultipleEntitiesAndReturnIdsCommon = async (
+  columnNamesAndValues: { columnNames: string, allValues: string },
+  tableName: string
+): Promise<{ id: number }[]> => {
+  const queryStr = `INSERT INTO ${tableName} (${columnNamesAndValues.columnNames}) VALUES ${columnNamesAndValues.allValues} RETURNING id`;
+  return query<{ id: number }[]>(queryStr);
+}
+
+export const queryToInsertMultipleEntitiesAndReturnIdsNoCheck = async <T extends Omit<EntityDb, "id">>(
+  tableName: string,
+  entitiesToSave: T[],
+): Promise<{ id: number }[]> => {
+  const columnNamesAndValues = getColumnNamesAndInsertionValuesFromEntitiesNoCheck(entitiesToSave);
+  return queryToInsertMultipleEntitiesAndReturnIdsCommon(columnNamesAndValues, tableName);
+};
+
+export const queryToSaveListOfEntities = async (
+  tableName: MappingTable,
+  mainAndSubIds: [number, number[]][]
+): Promise<SqlSaveResponse> => {
+  const columnNames = `${DB_SAVE_LISTS_MAPPING[tableName].mainId},${DB_SAVE_LISTS_MAPPING[tableName].subId}`
+
+
+  const allValues = mainAndSubIds.map((oneMainAndSubIds) => {
+    const mainId = oneMainAndSubIds[0];
+    return oneMainAndSubIds[1].map((subId) => {
+      return `(${mainId},${subId})`;
+    }).join(",");
+  }).join(",");
+
+  const queryStr = `INSERT INTO ${tableName} (${columnNames}) VALUES ${allValues}`;
+  return query<SqlSaveResponse>(queryStr);
 };
 
 export const queryToDeleteAnEntityById = async (

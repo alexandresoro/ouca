@@ -1,9 +1,9 @@
 import { format } from "date-fns";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 import { Coordinates } from "../../model/types/coordinates.object";
-import { Donnee } from "../../model/types/donnee.object";
-import { Inventaire } from "../../model/types/inventaire.object";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils";
+import { DonneeCompleteWithIds } from "../db/donnee-db.type";
+import { InventaireCompleteWithIds } from "../db/inventaire-db.object";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";
 
 const OBSERVATEUR_INDEX = 0;
@@ -128,55 +128,60 @@ export class ImportedDonnee {
     this.coordinatesSystem = coordinatesSystem;
   }
 
-  buildDonnee = (
+  buildDonneeWithIds = (
     inventaireId: number,
     especeId: number,
     sexeId: number,
     ageId: number,
     estimationNombreId: number,
     estimationDistanceId: number | null,
-    comportementsIds: number[],
-    milieuxIds: number[]
-  ): Donnee => {
+    comportementsIds: Set<number>,
+    milieuxIds: Set<number>
+  ): DonneeCompleteWithIds => {
     return {
       id: null,
-      inventaireId,
-      especeId,
-      sexeId,
-      ageId,
-      estimationNombreId,
+      inventaire_id: inventaireId,
+      espece_id: especeId,
+      sexe_id: sexeId,
+      age_id: ageId,
+      estimation_nombre_id: estimationNombreId,
       nombre: this.nombre ? +this.nombre : null,
-      estimationDistanceId,
+      estimation_distance_id: estimationDistanceId,
       distance: this.distance ? +this.distance : null,
+      commentaire: this.commentaire ? this.commentaire : null,
       regroupement: this.regroupement ? +this.regroupement : null,
-      comportementsIds,
-      milieuxIds,
-      commentaire: this.commentaire ? this.commentaire : null
+      date_creation: null,
+      comportements_ids: comportementsIds,
+      milieux_ids: milieuxIds,
     };
   }
 
-  buildInventaire = (
+  buildInventaireWithIds = (
+    temporaryId: number,
     observateurId: number,
-    associesIds: number[],
+    associesIds: Set<number>,
     lieuditId: number,
-    meteosIds: number[],
+    meteosIds: Set<number>,
     customizedAltitude: number | null,
     customizedCoordinates: Coordinates | null
-  ): Inventaire => {
-    const inventaire: Inventaire = {
-      id: null,
-      observateurId,
-      associesIds,
+  ): InventaireCompleteWithIds => {
+    const inventaire = {
+      id: temporaryId,
+      observateur_id: observateurId,
       date: format(getFormattedDate(this.date), DATE_PATTERN),
       heure: getFormattedTime(this.heure),
       duree: getFormattedTime(this.duree),
-      lieuditId,
-      customizedAltitude,
-      coordinates: customizedCoordinates,
+      lieudit_id: lieuditId,
+      altitude: customizedAltitude,
+      longitude: customizedCoordinates?.longitude ?? null,
+      latitude: customizedCoordinates?.latitude ?? null,
+      coordinates_system: this.coordinatesSystem?.code,
       temperature: (this.temperature == null || this.temperature === "")
         ? null
         : +this.temperature,
-      meteosIds
+      date_creation: null,
+      meteos_ids: meteosIds,
+      associes_ids: associesIds
     };
 
     return inventaire;

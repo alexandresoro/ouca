@@ -21,12 +21,12 @@ export class ImportCommuneService extends ImportService {
     [this.departements, this.communes] = await Promise.all([findAllDepartements(), findAllCommunes()]);
   };
 
-  protected validateAndPrepareEntity = (communeTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = (communeTab: string[]): string => {
     const importedCommune = new ImportedCommune(communeTab);
 
     const dataValidity = importedCommune.checkValidity();
     if (dataValidity) {
-      return Promise.resolve(dataValidity);
+      return dataValidity;
     }
 
     // Check that the departement exists
@@ -34,7 +34,7 @@ export class ImportCommuneService extends ImportService {
       return this.compareStrings(departement.code, importedCommune.departement);
     });
     if (!departement) {
-      return Promise.resolve("Le département n'existe pas");
+      return "Le département n'existe pas";
     }
 
     // Check that the commune does not exists
@@ -46,7 +46,7 @@ export class ImportCommuneService extends ImportService {
       );
     });
     if (commune) {
-      return Promise.resolve("Il existe déjà une commune avec ce code ou ce nom dans ce département");
+      return "Il existe déjà une commune avec ce code ou ce nom dans ce département";
     }
 
     // Create and save the commune
@@ -54,7 +54,7 @@ export class ImportCommuneService extends ImportService {
 
     this.communesToInsert.push(communeToSave);
     this.communes.push(communeToSave);
-    return Promise.resolve(null as string);
+    return null;
   };
 
   protected persistAllValidEntities = async (): Promise<void> => {

@@ -2,26 +2,27 @@ import { EntiteAvecLibelle } from "../../model/types/entite-avec-libelle.object"
 import { ImportedEntiteAvecLibelle } from "../../objects/import/imported-entite-avec-libelle.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { findAllEntities } from "../../sql-api/sql-api-common";
-import { ImportServiceSingle } from "./import-service-single";
+import { ImportService } from "./import-service";
 
-export abstract class ImportEntiteAvecLibelleService extends ImportServiceSingle {
-
+export abstract class ImportEntiteAvecLibelleService extends ImportService {
 
   private entities: EntiteAvecLibelle[];
+
+  private entitiesToInsert: EntiteAvecLibelle[];
 
   protected getNumberOfColumns = (): number => {
     return 1;
   };
 
   protected init = async (): Promise<void> => {
+    this.entitiesToInsert = [];
     this.entities = await findAllEntities(this.getTableName());
   };
 
   protected getImportedEntity = (entityTab: string[]): ImportedEntiteAvecLibelle => {
     return new ImportedEntiteAvecLibelle(entityTab);
   }
-
-  protected importEntity = async (entityTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = (entityTab: string[]): string => {
     const importedEntity = this.getImportedEntity(entityTab);
 
     const dataValidity = importedEntity.checkValidity();
@@ -40,16 +41,18 @@ export abstract class ImportEntiteAvecLibelleService extends ImportServiceSingle
     // Create and save the entity
     const entityToSave = importedEntity.buildEntiteAvecLibelle();
 
-    const saveResult = await this.saveEntity(entityToSave);
-    if (!saveResult?.insertId) {
-      return "Une erreur est survenue pendant l'import";
-    }
-
+    this.entitiesToInsert.push(entityToSave);
     this.entities.push(entityToSave);
     return null;
   };
 
-  protected abstract saveEntity(entity: unknown): Promise<SqlSaveResponse>;
+  protected persistAllValidEntities = async (): Promise<void> => {
+    if (this.entitiesToInsert.length) {
+      await this.saveEntities(this.entitiesToInsert);
+    }
+  }
+
+  protected abstract saveEntities(entities: EntiteAvecLibelle[]): Promise<SqlSaveResponse>;
 
   protected abstract getTableName(): string;
 

@@ -1,6 +1,6 @@
 import { Sexe } from "../../model/types/sexe.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { persistSexe } from "../../sql-api/sql-api-sexe";
+import { insertSexes } from "../../sql-api/sql-api-sexe";
 import { TABLE_SEXE } from "../../utils/constants";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
@@ -13,7 +13,8 @@ export class ImportSexeService extends ImportEntiteAvecLibelleService {
     return "Ce sexe";
   }
 
-  protected saveEntity = async (sexe: Sexe): Promise<SqlSaveResponse> => {
-    return persistSexe(sexe);
+  protected saveEntities = (sexes: Sexe[]): Promise<SqlSaveResponse> => {
+    return insertSexes(sexes);
   };
+
 }

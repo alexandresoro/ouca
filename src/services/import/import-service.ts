@@ -23,6 +23,7 @@ export abstract class ImportService extends EventEmitter {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     const content: { data: string[][] } = Papa.parse<string[]>(fileContent, {
       delimiter: ";",
       encoding: "UTF-8"
@@ -89,6 +90,7 @@ export abstract class ImportService extends EventEmitter {
     logger.debug(`Résultat de l'import : ${(numberOfLines - errors.length)}/${numberOfLines} importées avec succès --> ${errors.length} lignes en erreur`);
 
     if (errors.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       const errorsCsv = Papa.unparse(errors, {
         delimiter: ";",
         encoding: "UTF-8"
@@ -105,7 +107,7 @@ export abstract class ImportService extends EventEmitter {
 
   protected abstract persistAllValidEntities(): Promise<void>;
 
-  protected abstract validateAndPrepareEntity(entityTab: string[]): Promise<string>;
+  protected abstract validateAndPrepareEntity(entityTab: string[]): string | Promise<string>;
 
   private buildErrorObject = (
     entityTab: string[],

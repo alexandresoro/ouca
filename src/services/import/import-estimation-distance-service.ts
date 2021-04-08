@@ -1,6 +1,6 @@
 import { EstimationDistance } from "../../model/types/estimation-distance.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { persistEstimationDistance } from "../../sql-api/sql-api-estimation-distance";
+import { insertEstimationsDistance } from "../../sql-api/sql-api-estimation-distance";
 import { TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
@@ -13,9 +13,7 @@ export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleServ
     return "Cette estimation de la distance";
   }
 
-  protected saveEntity = async (
-    estimation: EstimationDistance
-  ): Promise<SqlSaveResponse> => {
-    return persistEstimationDistance(estimation);
+  protected saveEntities = (estimations: EstimationDistance[]): Promise<SqlSaveResponse> => {
+    return insertEstimationsDistance(estimations);
   };
 }

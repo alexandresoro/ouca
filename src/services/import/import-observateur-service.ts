@@ -1,6 +1,6 @@
 import { Observateur } from "../../model/types/observateur.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { persistObservateur } from "../../sql-api/sql-api-observateur";
+import { insertObservateurs } from "../../sql-api/sql-api-observateur";
 import { TABLE_OBSERVATEUR } from "../../utils/constants";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
@@ -13,9 +13,8 @@ export class ImportObservateurService extends ImportEntiteAvecLibelleService {
     return "Cet observateur";
   }
 
-  protected saveEntity = async (
-    observateur: Observateur
-  ): Promise<SqlSaveResponse> => {
-    return persistObservateur(observateur);
+  protected saveEntities = (observateurs: Observateur[]): Promise<SqlSaveResponse> => {
+    return insertObservateurs(observateurs);
   };
+
 }

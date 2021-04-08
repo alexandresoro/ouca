@@ -2,49 +2,45 @@ import { areCoordinatesCustomized } from "../../model/coordinates-system/coordin
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 import { Age } from "../../model/types/age.object";
-import { Classe } from "../../model/types/classe.object";
 import { Commune } from "../../model/types/commune.model";
 import { Comportement } from "../../model/types/comportement.object";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Departement } from "../../model/types/departement.object";
-import { Donnee } from "../../model/types/donnee.object";
 import { Espece } from "../../model/types/espece.model";
 import { EstimationDistance } from "../../model/types/estimation-distance.object";
 import { EstimationNombre } from "../../model/types/estimation-nombre.object";
-import { Inventaire } from "../../model/types/inventaire.object";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { Meteo } from "../../model/types/meteo.object";
 import { Milieu } from "../../model/types/milieu.object";
 import { Observateur } from "../../model/types/observateur.object";
 import { Sexe } from "../../model/types/sexe.object";
-import { FlatDonneeWithMinimalData } from "../../objects/flat-donnee-with-minimal-data.object";
+import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
+import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
 import { findAllAges } from "../../sql-api/sql-api-age";
-import { findAllClasses } from "../../sql-api/sql-api-classe";
 import { findAllCommunes } from "../../sql-api/sql-api-commune";
 import { findAllComportements } from "../../sql-api/sql-api-comportement";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";
-import { buildDonneeFromFlatDonneeWithMinimalData, findAllFlatDonneesWithMinimalData, persistDonnee } from "../../sql-api/sql-api-donnee";
+import { findAllDonneesWithIds, insertDonnees } from "../../sql-api/sql-api-donnee";
 import { findAllEspeces } from "../../sql-api/sql-api-espece";
 import { findAllEstimationsDistance } from "../../sql-api/sql-api-estimation-distance";
 import { findAllEstimationsNombre } from "../../sql-api/sql-api-estimation-nombre";
-import { persistInventaire } from "../../sql-api/sql-api-inventaire";
+import { findAllInventairesWithIds, insertInventaires } from "../../sql-api/sql-api-inventaire";
 import { findAllLieuxDits } from "../../sql-api/sql-api-lieudit";
 import { findAllMeteos } from "../../sql-api/sql-api-meteo";
 import { findAllMilieux } from "../../sql-api/sql-api-milieu";
 import { findAllObservateurs } from "../../sql-api/sql-api-observateur";
 import { findAllSexes } from "../../sql-api/sql-api-sexe";
-import { areArraysContainingSameValues, isIdInListIds } from "../../utils/utils";
-import { ImportServiceSingle } from "./import-service-single";
+import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
+import { ImportService } from "./import-service";
 
-export class ImportDoneeeService extends ImportServiceSingle {
+export class ImportDonneeService extends ImportService {
   private coordinatesSystem: CoordinatesSystem;
   private observateurs: Observateur[];
   private departements: Departement[];
   private communes: Commune[];
   private lieuxDits: Lieudit[];
-  private classes: Classe[];
   private especes: Espece[];
   private ages: Age[];
   private sexes: Sexe[];
@@ -53,7 +49,15 @@ export class ImportDoneeeService extends ImportServiceSingle {
   private comportements: Comportement[];
   private milieux: Milieu[];
   private meteos: Meteo[];
-  private donnees: FlatDonneeWithMinimalData[];
+  private existingInventaires: InventaireCompleteWithIds[];
+
+  private newInventaires: InventaireCompleteWithIds[]; // New inventaires that do not yet exist and will need to be created, their id is a temporary one < 0
+
+  private temporaryIdIndex = -1;
+
+  private existingDonnees: DonneeCompleteWithIds[];
+
+  private newDonnees: DonneeCompleteWithIds[];
 
   protected getNumberOfColumns = (): number => {
     return 32;
@@ -61,6 +65,9 @@ export class ImportDoneeeService extends ImportServiceSingle {
 
 
   protected init = async (): Promise<void> => {
+    this.newInventaires = [];
+    this.newDonnees = [];
+
     const coordinatesSystemType = await findCoordinatesSystem();
     if (!coordinatesSystemType) {
       return Promise.reject("Veuillez choisir le système de coordonnées de l'application dans la page de configuration");
@@ -73,7 +80,6 @@ export class ImportDoneeeService extends ImportServiceSingle {
     this.communes = await findAllCommunes();
     this.lieuxDits = await findAllLieuxDits();
     this.meteos = await findAllMeteos();
-    this.classes = await findAllClasses();
     this.especes = await findAllEspeces();
     this.sexes = await findAllSexes();
     this.ages = await findAllAges();
@@ -81,10 +87,11 @@ export class ImportDoneeeService extends ImportServiceSingle {
     this.estimationsDistance = await findAllEstimationsDistance();
     this.comportements = await findAllComportements();
     this.milieux = await findAllMilieux();
-    this.donnees = await findAllFlatDonneesWithMinimalData();
+    this.existingInventaires = await findAllInventairesWithIds();
+    this.existingDonnees = await findAllDonneesWithIds();
   };
 
-  protected importEntity = async (donneeTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = (donneeTab: string[]): string => {
     const importedDonnee: ImportedDonnee = new ImportedDonnee(donneeTab, this.coordinatesSystem);
 
     const dataValidity = importedDonnee.checkValidity();
@@ -101,7 +108,7 @@ export class ImportDoneeeService extends ImportServiceSingle {
     }
 
     // Get the "Observateurs associes" or return an error if some of them doesn't exist
-    const associesIds: number[] = [];
+    const associesIds = new Set<number>();
     for (const associeLibelle of importedDonnee.associes) {
       const associe: Observateur = this.findObservateur(associeLibelle);
       if (!associe) {
@@ -109,7 +116,7 @@ export class ImportDoneeeService extends ImportServiceSingle {
       }
 
       if (!isIdInListIds(associesIds, associe.id)) {
-        associesIds.push(associe.id);
+        associesIds.add(associe.id);
       }
     }
 
@@ -161,7 +168,7 @@ export class ImportDoneeeService extends ImportServiceSingle {
     }
 
     // Get the "Meteos" or return an error if some of them doesn't exist
-    const meteosIds: number[] = [];
+    const meteosIds = new Set<number>();
     for (const libelleMeteo of importedDonnee.meteos) {
       const meteo: Meteo = this.findMeteo(libelleMeteo);
       if (!meteo) {
@@ -169,7 +176,7 @@ export class ImportDoneeeService extends ImportServiceSingle {
       }
 
       if (!isIdInListIds(meteosIds, meteo.id)) {
-        meteosIds.push(meteo.id);
+        meteosIds.add(meteo.id);
       }
     }
 
@@ -218,7 +225,7 @@ export class ImportDoneeeService extends ImportServiceSingle {
     }
 
     // Get the "Comportements" or return an error if some of them does not exist
-    const comportementsIds: number[] = [];
+    const comportementsIds = new Set<number>();
     for (const comportementStr of importedDonnee.comportements) {
       const comportement = this.findComportement(comportementStr);
       if (!comportement) {
@@ -226,12 +233,12 @@ export class ImportDoneeeService extends ImportServiceSingle {
       }
 
       if (!isIdInListIds(comportementsIds, comportement.id)) {
-        comportementsIds.push(comportement.id);
+        comportementsIds.add(comportement.id);
       }
     }
 
     // Get the "Milieux" or return an error if some of them does not exist
-    const milieuxIds: number[] = [];
+    const milieuxIds = new Set<number>();
     for (const milieuStr of importedDonnee.milieux) {
       const milieu: Milieu = this.findMilieu(milieuStr);
       if (!milieu) {
@@ -239,14 +246,14 @@ export class ImportDoneeeService extends ImportServiceSingle {
       }
 
       if (!isIdInListIds(milieuxIds, milieu.id)) {
-        milieuxIds.push(milieu.id);
+        milieuxIds.add(milieu.id);
       }
     }
 
     // OK 68 premières lignes
 
-    // Create the "Inventaire" to save
-    const inventaireToSave: Inventaire = importedDonnee.buildInventaire(
+    let associatedInventaire = importedDonnee.buildInventaireWithIds(
+      this.temporaryIdIndex--,
       observateur.id,
       associesIds,
       lieudit.id,
@@ -255,120 +262,103 @@ export class ImportDoneeeService extends ImportServiceSingle {
       coordinates
     );
 
-    const existingDonneesByInventaire = this.donnees.filter((donnee) => {
+    // Find if we already have an existing inventaire that matches
+    const existingInventaire = [...this.existingInventaires, ...this.newInventaires].find((existingInventaire) => {
       return (
-        donnee.date === inventaireToSave.date &&
-        donnee.heure === inventaireToSave.heure &&
-        donnee.duree === inventaireToSave.duree &&
-        donnee.lieuditId === inventaireToSave.lieuditId &&
-        donnee.altitude === inventaireToSave.customizedAltitude &&
-        donnee.longitude === (inventaireToSave.coordinates ? inventaireToSave.coordinates.longitude : null) &&
-        donnee.latitude === (inventaireToSave.coordinates ? inventaireToSave.coordinates.latitude : null) &&
-        donnee.temperature === inventaireToSave.temperature &&
-        donnee.observateurId === inventaireToSave.observateurId
+        existingInventaire.observateur_id === associatedInventaire.observateur_id &&
+        existingInventaire.date === associatedInventaire.date &&
+        existingInventaire.heure === associatedInventaire.heure &&
+        existingInventaire.duree === associatedInventaire.duree &&
+        existingInventaire.lieudit_id === associatedInventaire.lieudit_id &&
+        existingInventaire.altitude === associatedInventaire.altitude &&
+        existingInventaire.longitude === associatedInventaire.longitude &&
+        existingInventaire.latitude === associatedInventaire.latitude &&
+        existingInventaire.temperature === associatedInventaire.temperature &&
+        areSetsContainingSameValues(existingInventaire.associes_ids, associatedInventaire.associes_ids) &&
+        areSetsContainingSameValues(existingInventaire.meteos_ids, associatedInventaire.meteos_ids)
       );
     });
 
-    let existingDonneeByInventaire: FlatDonneeWithMinimalData = null;
-    if (existingDonneesByInventaire?.length > 0) {
-      let index = 0;
-      while (!existingDonneeByInventaire && index < existingDonneesByInventaire.length) {
-        const donnee = await buildDonneeFromFlatDonneeWithMinimalData(existingDonneesByInventaire[index]);
-        if (areArraysContainingSameValues(inventaireToSave.associesIds, donnee.inventaire.associesIds) &&
-          areArraysContainingSameValues(inventaireToSave.meteosIds, donnee.inventaire.meteosIds)) {
-          existingDonneeByInventaire = existingDonneesByInventaire[index];
-        }
-
-        index++;
-      }
-    }
-
-    // Save the inventaire
-    if (!existingDonneeByInventaire) {
-      const inventaireSaveResponse = await persistInventaire(inventaireToSave);
-      inventaireToSave.id = inventaireSaveResponse.insertId;
-    } else {
-      inventaireToSave.id = existingDonneeByInventaire.inventaireId;
+    if (existingInventaire) {
+      associatedInventaire = existingInventaire;
     }
 
     // Create the "Donnee" to save
-    const donneeToSave: Donnee = importedDonnee.buildDonnee(
-      inventaireToSave.id,
+    const donneeWithIds = importedDonnee.buildDonneeWithIds(
+      associatedInventaire.id,
       espece.id,
       sexe.id,
       age.id,
       estimationNombre.id,
-      estimationDistance ? estimationDistance.id : null,
+      estimationDistance?.id ?? null,
       comportementsIds,
       milieuxIds
     );
 
-    const existingDonneesByDonnee = this.donnees.filter((donnee) => {
+    // Check if already have a similar donnee
+    const existingDonnee = [...this.existingDonnees, ...this.newDonnees].find((donnee) => {
       return (
-        donnee.inventaireId === donneeToSave.inventaireId &&
-        donnee.especeId === donneeToSave.especeId &&
-        donnee.sexeId === donneeToSave.sexeId &&
-        donnee.ageId === donneeToSave.ageId &&
-        donnee.nombre === donneeToSave.nombre &&
-        donnee.estimationNombreId === donneeToSave.estimationNombreId &&
-        donnee.distance === donneeToSave.distance &&
-        donnee.estimationDistanceId === donneeToSave.estimationDistanceId &&
-        donnee.regroupement === donneeToSave.regroupement &&
-        this.compareStrings(donnee.commentaire, donneeToSave.commentaire)
+        donnee.inventaire_id === donneeWithIds.inventaire_id &&
+        donnee.espece_id === donneeWithIds.espece_id &&
+        donnee.sexe_id === donneeWithIds.sexe_id &&
+        donnee.age_id === donneeWithIds.age_id &&
+        donnee.nombre === donneeWithIds.nombre &&
+        donnee.estimation_nombre_id === donneeWithIds.estimation_nombre_id &&
+        donnee.distance === donneeWithIds.distance &&
+        donnee.estimation_distance_id === donneeWithIds.estimation_distance_id &&
+        donnee.regroupement === donneeWithIds.regroupement &&
+        this.compareStrings(donnee.commentaire, donneeWithIds.commentaire) &&
+        areSetsContainingSameValues(donnee.comportements_ids, donneeWithIds.comportements_ids) &&
+        areSetsContainingSameValues(donnee.milieux_ids, donneeWithIds.milieux_ids)
       );
     });
 
-    let existingDonnee: FlatDonneeWithMinimalData = null;
-    if (existingDonneesByDonnee?.length > 0) {
-      let index = 0;
-      while (!existingDonnee && index < existingDonneesByDonnee.length) {
-        const donnee = await buildDonneeFromFlatDonneeWithMinimalData(existingDonneesByDonnee[index]);
-        if (areArraysContainingSameValues(donneeToSave.comportementsIds, donnee.comportementsIds) &&
-          areArraysContainingSameValues(donneeToSave.milieuxIds, donnee.milieuxIds)) {
-          existingDonnee = existingDonneesByDonnee[index];
-        }
-
-        index++;
-      }
-    }
-
     if (existingDonnee) {
       return `Une donnée similaire existe déjà (voir ID=${existingDonnee.id})`;
-    } else {
-      const saveDonneeResponse = await persistDonnee(donneeToSave);
-      if (!saveDonneeResponse?.insertId) {
-        return "Une erreur est survenue pendant l'import";
-      }
-      donneeToSave.id = saveDonneeResponse.insertId;
     }
 
-    const flatDonnee: FlatDonneeWithMinimalData = {
-      id: donneeToSave.id,
-      inventaireId: inventaireToSave.id,
-      observateurId: observateur.id,
-      date: inventaireToSave.date,
-      heure: inventaireToSave.heure,
-      duree: inventaireToSave.duree,
-      lieuditId: inventaireToSave.lieuditId,
-      latitude: inventaireToSave.coordinates ? inventaireToSave.coordinates.latitude : null,
-      longitude: inventaireToSave.coordinates ? inventaireToSave.coordinates.longitude : null,
-      altitude: inventaireToSave.customizedAltitude,
-      coordinatesSystem: inventaireToSave.coordinates?.system,
-      temperature: inventaireToSave.temperature,
-      especeId: espece.id,
-      sexeId: sexe.id,
-      ageId: age.id,
-      nombre: donneeToSave.nombre,
-      estimationNombreId: donneeToSave.estimationNombreId,
-      estimationDistanceId: donneeToSave.estimationDistanceId,
-      distance: donneeToSave.distance,
-      regroupement: donneeToSave.regroupement,
-      commentaire: donneeToSave.commentaire
+    if (!existingInventaire) {
+      this.newInventaires.push(associatedInventaire);
     }
+    this.newDonnees.push(donneeWithIds);
 
-    this.donnees.push(flatDonnee);
     return null;
   };
+
+  protected persistAllValidEntities = async (): Promise<void> => {
+
+    // Insert all new inventaires and map each temporary inventaire id to the real inserted one e.g. -13 => 14441, -14 => 14442...
+    let inventairesId: number[] = [];
+    const mappingInventairesIds: { [key: number]: number } = {};
+    if (this.newInventaires.length) {
+      inventairesId = (await insertInventaires(this.newInventaires)).map(inserted => inserted.id);
+      this.newInventaires.forEach((inventaire, index) => {
+        mappingInventairesIds[inventaire.id] = inventairesId[index];
+      });
+    }
+
+    // Replace the temporary inventaire ids of each donnee with their real one, 
+    // now that the inventaire have been properly inserted
+
+    let donneesToInsert = this.newDonnees;
+    if (Object.entries(mappingInventairesIds).length) {
+      donneesToInsert = this.newDonnees.map((donnee) => {
+        const { inventaire_id, ...otherDataDonnee } = donnee;
+        if (inventaire_id > 0) {
+          // This is not a donnee for which a new inventaire has been inserted
+          return donnee;
+        }
+        return {
+          ...otherDataDonnee,
+          inventaire_id: mappingInventairesIds[inventaire_id]
+        }
+      });
+    }
+
+    if (donneesToInsert.length) {
+      await insertDonnees(donneesToInsert);
+    }
+  }
 
   private findObservateur = (libelleObservateur: string): Observateur => {
     return this.observateurs.find((observateur) => {

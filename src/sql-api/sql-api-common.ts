@@ -18,7 +18,7 @@ import { queryToCreateMilieuTable } from "../sql/sql-queries-milieu";
 import { queryToCreateObservateurTable } from "../sql/sql-queries-observateur";
 import { queryToCreateSettingsTable } from "../sql/sql-queries-settings";
 import { queryToCreateSexeTable } from "../sql/sql-queries-sexe";
-import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToFindEntityByCode, queryToFindEntityByLibelle, queryToInsertMultipleEntities, queryToSaveEntity } from "../sql/sql-queries-utils";
+import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToFindEntityByLibelle, queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck, queryToSaveEntity, queryToSaveEntityNoCheck } from "../sql/sql-queries-utils";
 import { queryToCreateVersionTable } from "../sql/sql-queries-version";
 import { onTableUpdate } from "../ws/ws-messages";
 
@@ -52,13 +52,6 @@ export const findAllEntities = async <T extends EntiteSimple>(
   return queryToFindAllEntities<T>(tableName);
 };
 
-export const findEntityByCode = async <T extends EntiteSimple>(
-  code: string,
-  tableName: string
-): Promise<T> => {
-  return queryToFindEntityByCode(tableName, code);
-};
-
 export const findEntityByLibelle = async <T extends EntiteSimple>(
   libelle: string,
   tableName: string
@@ -69,9 +62,20 @@ export const findEntityByLibelle = async <T extends EntiteSimple>(
 export const persistEntity = async <T extends EntityDb>(
   tableName: string,
   entityToSave: EntiteSimple | T,
-  mapping?: Map<string, string>
+  mapping: Record<string, string>
 ): Promise<SqlSaveResponse> => {
   const sqlResponse = await queryToSaveEntity(tableName, entityToSave, mapping);
+
+  onTableUpdate(tableName);
+
+  return sqlResponse;
+};
+
+export const persistEntityNoCheck = async <T extends EntityDb>(
+  tableName: string,
+  entityToSave: T,
+): Promise<SqlSaveResponse> => {
+  const sqlResponse = await queryToSaveEntityNoCheck(tableName, entityToSave);
 
   onTableUpdate(tableName);
 
@@ -81,11 +85,32 @@ export const persistEntity = async <T extends EntityDb>(
 export const insertMultipleEntities = async <T extends EntityDb>(
   tableName: string,
   entitiesToSave: (EntiteSimple | T)[],
-  mapping?: Map<string, string>
+  mapping: Record<string, string>,
 ): Promise<SqlSaveResponse> => {
-  const sqlResponse = await queryToInsertMultipleEntities(tableName, entitiesToSave, mapping);
 
+  const sqlResponse = await queryToInsertMultipleEntities(tableName, entitiesToSave, mapping);
   return sqlResponse;
+
+};
+
+export const insertMultipleEntitiesNoCheck = async <T extends EntityDb>(
+  tableName: string,
+  entitiesToSave: (EntiteSimple | T)[],
+): Promise<SqlSaveResponse> => {
+
+  const sqlResponse = await queryToInsertMultipleEntitiesNoCheck(tableName, entitiesToSave);
+  return sqlResponse;
+
+};
+
+export const insertMultipleEntitiesAndReturnIdsNoCheck = async <T extends Omit<EntityDb, "id">>(
+  tableName: string,
+  entitiesToSave: (EntiteSimple | T)[],
+): Promise<{ id: number }[]> => {
+
+  const insertedIds = await queryToInsertMultipleEntitiesAndReturnIdsNoCheck(tableName, entitiesToSave);
+  return insertedIds;
+
 };
 
 export const deleteEntityById = async (

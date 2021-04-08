@@ -1,19 +1,23 @@
+import { buildLieuditDbFromLieudit } from "../../mapping/lieudit-mapping";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 import { Commune } from "../../model/types/commune.model";
 import { Departement } from "../../model/types/departement.object";
 import { Lieudit } from "../../model/types/lieudit.model";
+import { LieuditDb } from "../../objects/db/lieudit-db.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { findAllCommunes } from "../../sql-api/sql-api-commune";
 import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
 import { findAllDepartements } from "../../sql-api/sql-api-departement";
-import { findAllLieuxDits, persistLieuDit } from "../../sql-api/sql-api-lieudit";
-import { ImportServiceSingle } from "./import-service-single";
+import { findAllLieuxDits, insertLieuxDits } from "../../sql-api/sql-api-lieudit";
+import { ImportService } from "./import-service";
 
-export class ImportLieuxditService extends ImportServiceSingle {
+export class ImportLieuxditService extends ImportService {
   private departements: Departement[];
   private communes: Commune[];
   private lieuxDits: Lieudit[];
+
+  private lieuxDitsToInsert: LieuditDb[];
   private coordinatesSystem: CoordinatesSystem;
 
   protected getNumberOfColumns = (): number => {
@@ -21,6 +25,7 @@ export class ImportLieuxditService extends ImportServiceSingle {
   };
 
   protected init = async (): Promise<void> => {
+    this.lieuxDitsToInsert = [];
     let coordinatesSystemType: CoordinatesSystemType;
 
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([findAllDepartements(), findAllCommunes(), findAllLieuxDits(), findCoordinatesSystem()]);
@@ -32,7 +37,7 @@ export class ImportLieuxditService extends ImportServiceSingle {
     }
   }
 
-  protected importEntity = async (lieuDitTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = (lieuDitTab: string[]): string => {
     const importedLieuDit = new ImportedLieuDit(lieuDitTab, this.coordinatesSystem);
 
     const dataValidity = importedLieuDit.checkValidity();
@@ -74,15 +79,16 @@ export class ImportLieuxditService extends ImportServiceSingle {
       commune.id
     );
 
-    const saveResult = await persistLieuDit(lieuditToSave);
-    if (!saveResult?.insertId) {
-      return "Une erreur est survenue pendant l'import";
-    }
-
+    this.lieuxDitsToInsert.push(buildLieuditDbFromLieudit(lieuditToSave));
     this.lieuxDits.push(lieuditToSave);
 
     return null;
   };
 
+  protected persistAllValidEntities = async (): Promise<void> => {
+    if (this.lieuxDitsToInsert.length) {
+      await insertLieuxDits(this.lieuxDitsToInsert);
+    }
+  }
 
 }

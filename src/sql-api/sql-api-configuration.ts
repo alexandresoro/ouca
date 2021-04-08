@@ -6,7 +6,7 @@ import { queryToFindCoordinatesSystem } from "../sql/sql-queries-settings";
 import { queryToFindAllEntities } from "../sql/sql-queries-utils";
 import { TABLE_SETTINGS } from "../utils/constants";
 import { findAllAges } from "./sql-api-age";
-import { persistEntity } from "./sql-api-common";
+import { persistEntityNoCheck } from "./sql-api-common";
 import { findAllDepartements } from "./sql-api-departement";
 import { findAllEstimationsNombre } from "./sql-api-estimation-nombre";
 import { findAllObservateurs } from "./sql-api-observateur";
@@ -51,7 +51,7 @@ export const persistUserSettings = async (
     appConfiguration
   );
 
-  const sqlSaveResponse = await persistEntity(TABLE_SETTINGS, settingsDb);
+  const sqlSaveResponse = await persistEntityNoCheck(TABLE_SETTINGS, settingsDb);
 
   const isDbUpdateOK = sqlSaveResponse.affectedRows === 1;
 

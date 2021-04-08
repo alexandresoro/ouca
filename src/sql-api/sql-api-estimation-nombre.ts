@@ -3,10 +3,15 @@ import { EstimationNombre } from "../model/types/estimation-nombre.object";
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllEstimationsNombre, queryToFindNumberOfDonneesByEstimationNombreId } from "../sql/sql-queries-estimation-nombre";
-import { DB_SAVE_MAPPING, queryToFindEntityByLibelle } from "../sql/sql-queries-utils";
+import { createKeyValueMapWithSameName, queryToFindEntityByLibelle } from "../sql/sql-queries-utils";
 import { TABLE_ESTIMATION_NOMBRE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+
+const DB_SAVE_MAPPING_ESTIMATION_NOMBRE = {
+  ...createKeyValueMapWithSameName("libelle"),
+  non_compte: "nonCompte"
+}
 
 export const findAllEstimationsNombre = async (): Promise<
   EstimationNombre[]
@@ -43,12 +48,12 @@ export const persistEstimationNombre = async (
   return persistEntity(
     TABLE_ESTIMATION_NOMBRE,
     estimation,
-    DB_SAVE_MAPPING.get("estimationNombre")
+    DB_SAVE_MAPPING_ESTIMATION_NOMBRE
   );
 };
 
 export const insertEstimationsNombre = async (
   estimationsNombre: EstimationNombre[]
 ): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_ESTIMATION_NOMBRE, estimationsNombre, DB_SAVE_MAPPING.get("estimationNombre"));
+  return insertMultipleEntities(TABLE_ESTIMATION_NOMBRE, estimationsNombre, DB_SAVE_MAPPING_ESTIMATION_NOMBRE);
 };

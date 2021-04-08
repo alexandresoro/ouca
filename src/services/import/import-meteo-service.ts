@@ -1,6 +1,6 @@
 import { Meteo } from "../../model/types/meteo.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { persistMeteo } from "../../sql-api/sql-api-meteo";
+import { insertMeteos } from "../../sql-api/sql-api-meteo";
 import { TABLE_METEO } from "../../utils/constants";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
@@ -13,7 +13,7 @@ export class ImportMeteoService extends ImportEntiteAvecLibelleService {
     return "Cette météo";
   }
 
-  protected saveEntity = async (meteo: Meteo): Promise<SqlSaveResponse> => {
-    return persistMeteo(meteo);
+  protected saveEntities = (meteos: Meteo[]): Promise<SqlSaveResponse> => {
+    return insertMeteos(meteos);
   };
 }

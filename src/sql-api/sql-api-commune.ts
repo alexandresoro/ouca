@@ -2,10 +2,16 @@ import { buildCommuneFromCommuneDb, buildCommunesFromCommunesDb } from "../mappi
 import { Commune } from "../model/types/commune.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { queryToFindAllCommunes, queryToFindCommuneByDepartementIdAndCode, queryToFindCommuneByDepartementIdAndCodeAndNom, queryToFindCommuneByDepartementIdAndNom, queryToFindNumberOfDonneesByCommuneId, queryToFindNumberOfLieuxDitsByCommuneId } from "../sql/sql-queries-commune";
-import { DB_SAVE_MAPPING } from "../sql/sql-queries-utils";
+import { createKeyValueMapWithSameName } from "../sql/sql-queries-utils";
 import { TABLE_COMMUNE } from "../utils/constants";
 import { getNbByEntityId } from "../utils/utils";
 import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+
+const DB_SAVE_MAPPING_COMMUNE = {
+  ...createKeyValueMapWithSameName(["code", "nom"]),
+  departement_id: "departementId"
+};
+
 
 
 export const findAllCommunes = async (): Promise<Commune[]> => {
@@ -70,11 +76,11 @@ export const findCommuneByDepartementIdAndNom = async (
 export const persistCommune = async (
   commune: Commune
 ): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_COMMUNE, commune, DB_SAVE_MAPPING.get("commune"));
+  return persistEntity(TABLE_COMMUNE, commune, DB_SAVE_MAPPING_COMMUNE);
 };
 
 export const insertCommunes = async (
   communes: Commune[]
 ): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_COMMUNE, communes, DB_SAVE_MAPPING.get("commune"));
+  return insertMultipleEntities(TABLE_COMMUNE, communes, DB_SAVE_MAPPING_COMMUNE);
 };

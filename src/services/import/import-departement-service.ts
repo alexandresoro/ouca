@@ -1,10 +1,12 @@
 import { Departement } from "../../model/types/departement.object";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
-import { findAllDepartements, persistDepartement } from "../../sql-api/sql-api-departement";
-import { ImportServiceSingle } from "./import-service-single";
+import { findAllDepartements, insertDepartements } from "../../sql-api/sql-api-departement";
+import { ImportService } from "./import-service";
 
-export class ImportDepartementService extends ImportServiceSingle {
+export class ImportDepartementService extends ImportService {
   private departements: Departement[];
+
+  private departementsToInsert: Departement[];
 
   protected getNumberOfColumns = (): number => {
     return 1;
@@ -12,10 +14,11 @@ export class ImportDepartementService extends ImportServiceSingle {
 
 
   protected init = async (): Promise<void> => {
+    this.departementsToInsert = [];
     this.departements = await findAllDepartements();
   };
 
-  protected importEntity = async (departementTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = (departementTab: string[]): string => {
     const importedDepartement = new ImportedDepartement(departementTab);
 
     const dataValidity = importedDepartement.checkValidity();
@@ -34,14 +37,16 @@ export class ImportDepartementService extends ImportServiceSingle {
     // Create and save the commune
     const departementToSave = importedDepartement.buildDepartement();
 
-    const saveResult = await persistDepartement(departementToSave);
-    if (!saveResult?.insertId) {
-      return "Une erreur est survenue pendant l'import";
-    }
-
+    this.departementsToInsert.push(departementToSave);
     this.departements.push(departementToSave);
     return null;
   };
+
+  protected persistAllValidEntities = async (): Promise<void> => {
+    if (this.departementsToInsert.length) {
+      await insertDepartements(this.departementsToInsert);
+    }
+  }
 
 
 }
