@@ -92,6 +92,7 @@ import {
   getDonneesByCustomizedFilters
 } from "./requests/view";
 import { executeDatabaseMigration } from "./services/database-migration/database-migration.service";
+import { clearAllTables } from "./sql-api/sql-api-common";
 
 const CSV_MIME_TYPE = "text/csv";
 const EXCEL_MIME_TYPE =
@@ -182,6 +183,7 @@ export const REQUEST_MAPPING: {
   "/api/milieu/export": exportMilieux,
   "/api/configuration/all": getAppConfiguration,
   "/api/configuration/update": configurationUpdate,
+  "/api/database/clear": clearAllTables,
   "/api/database/save": saveDatabase,
   "/api/database/update": executeDatabaseMigration
 };

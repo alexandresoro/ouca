@@ -4,7 +4,7 @@ import { TABLE_SETTINGS } from "../utils/constants";
 import { getFirstResult, query } from "./sql-queries-utils";
 
 export const queryToCreateSettingsTable = async (): Promise<void> => {
-  return query<void>("CREATE TABLE IF NOT EXISTS settings (" +
+  await query<void>("CREATE TABLE IF NOT EXISTS settings (" +
     " id SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT," +
     " default_observateur_id SMALLINT(5) UNSIGNED NULL," +
     " default_departement_id SMALLINT(5) UNSIGNED NULL," +
@@ -24,10 +24,8 @@ export const queryToCreateSettingsTable = async (): Promise<void> => {
     " CONSTRAINT `fk_settings_sexe_id` FOREIGN KEY (default_sexe_id) REFERENCES sexe (id) ON DELETE SET NULL," +
     " CONSTRAINT `fk_settings_estimation_nombre_id` FOREIGN KEY (default_estimation_nombre_id) REFERENCES estimation_nombre (id) ON DELETE SET NULL" +
     " )");
-}
 
-export const queryToInitializeSettingsTable = async (): Promise<SqlSaveResponse> => {
-  return query<SqlSaveResponse>("INSERT INTO basenaturaliste.settings VALUES()");
+  await query<SqlSaveResponse>("INSERT INTO basenaturaliste.settings VALUES()");
 }
 
 export const queryToFindCoordinatesSystem = async (): Promise<CoordinatesSystemType
