@@ -9,6 +9,5 @@ export const getAppConfiguration = async (): Promise<AppConfiguration> => {
 export const configurationUpdate = async (
   httpParameters: HttpParameters<AppConfiguration>
 ): Promise<boolean> => {
-  const appConfiguration = httpParameters.postData;
-  return await persistUserSettings(appConfiguration);
+  return await persistUserSettings(httpParameters.postData);
 };

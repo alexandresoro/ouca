@@ -2,7 +2,6 @@ import { CoordinatesSystemType } from "../../model/coordinates-system/coordinate
 
 export interface SettingsDb {
   id: number;
-  user_id?: number;
   default_observateur_id: number;
   default_departement_id: number;
   default_age_id: number;
