@@ -4,6 +4,15 @@ import { COLUMN_LIBELLE, OBSERVATEUR_ID, ORDER_ASC, TABLE_OBSERVATEUR } from "..
 import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
+export const queryToCreateObservateurTable = async (): Promise<void> => {
+  return query<void>("CREATE TABLE IF NOT EXISTS observateur (" +
+    " id SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT," +
+    " libelle VARCHAR(100) NOT NULL," +
+    " PRIMARY KEY (id)," +
+    " UNIQUE KEY `unique_libelle` (libelle)" +
+    " )");
+}
+
 export const queryToFindAllObservateurs = async (): Promise<Observateur[]> => {
   return queryToFindAllEntities<Observateur>(
     TABLE_OBSERVATEUR,

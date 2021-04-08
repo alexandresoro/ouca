@@ -6,7 +6,17 @@ import {
   TABLE_ESTIMATION_NOMBRE
 } from "../utils/constants";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
-import { queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryToFindAllEntities } from "./sql-queries-utils";
+
+export const queryToCreateEstimationNombreTable = async (): Promise<void> => {
+  return query<void>("CREATE TABLE IF NOT EXISTS estimation_nombre (" +
+    " id SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT," +
+    " libelle VARCHAR(100) NOT NULL," +
+    " non_compte BIT(1) NOT NULL," +
+    " PRIMARY KEY (id)," +
+    " UNIQUE KEY `unique_libelle` (libelle)" +
+    " )");
+}
 
 export const queryToFindAllEstimationsNombre = async (): Promise<
   EstimationNombreDb[]

@@ -3,6 +3,15 @@ import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_CODE, ORDER_ASC, TABLE_DEPARTEMENT } from "../utils/constants";
 import { getFirstResult, prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
 
+export const queryToCreateDepartementTable = async (): Promise<void> => {
+  return query<void>("CREATE TABLE IF NOT EXISTS departement (" +
+    " id SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT," +
+    " code VARCHAR(100) NOT NULL," +
+    " PRIMARY KEY (id)," +
+    " UNIQUE KEY `unique_code` (code)" +
+    " )");
+}
+
 export const queryToFindAllDepartements = async (): Promise<Departement[]> => {
   return queryToFindAllEntities<Departement>(
     TABLE_DEPARTEMENT,

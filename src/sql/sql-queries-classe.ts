@@ -3,6 +3,15 @@ import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { COLUMN_LIBELLE, ORDER_ASC, TABLE_CLASSE } from "../utils/constants";
 import { query, queryToFindAllEntities } from "./sql-queries-utils";
 
+export const queryToCreateClasseTable = async (): Promise<void> => {
+  return query<void>("CREATE TABLE IF NOT EXISTS classe (" +
+    " id SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT," +
+    " libelle VARCHAR(100) NOT NULL," +
+    " PRIMARY KEY (id)," +
+    " UNIQUE KEY `unique_libelle` (libelle)" +
+    " )");
+}
+
 export const queryToFindAllClasses = async (): Promise<Classe[]> => {
   return queryToFindAllEntities<Classe>(
     TABLE_CLASSE,
