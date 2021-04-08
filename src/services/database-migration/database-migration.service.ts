@@ -1,3 +1,4 @@
+import { createAndInitializeAllTables } from "../../sql-api/sql-api-common";
 import { checkIfTableObservateurExists } from "../../sql-api/sql-api-observateur";
 import { findVersion, updateVersion } from "../../sql-api/sql-api-version";
 import { logger } from "../../utils/logger";
@@ -6,11 +7,13 @@ const LAST_VERSION = 1;
 
 const checkAndInitializeDatabase = async (): Promise<boolean> => {
   const tableObservateurExists = await checkIfTableObservateurExists();
+
   if (!tableObservateurExists) {
     logger.info("Initializing database : creating all tables.");
-    // TO DO
+    await createAndInitializeAllTables();
     await updateVersion(LAST_VERSION);
   }
+
   return tableObservateurExists;
 }
 

@@ -15,8 +15,8 @@ export const queryToInitializeVersionTable = async (): Promise<void> => {
 export const queryToFindVersion = async (): Promise<number> => {
   const queryStr =
     `SELECT * FROM version`;
-  const results = await query<number[]>(queryStr);
-  return getFirstResult<number>(results);
+  const results = await query<{ version: number }[]>(queryStr);
+  return getFirstResult<{ version: number }>(results).version;
 };
 
 export const queryToUpdateVersion = async (version: number): Promise<SqlSaveResponse> => {
