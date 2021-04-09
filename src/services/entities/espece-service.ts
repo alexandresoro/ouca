@@ -1,11 +1,11 @@
-import { buildEspeceFromEspeceDb, buildEspecesFromEspecesDb } from "../mapping/espece-mapping";
-import { Espece } from "../model/types/espece.model";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindAllEspeces, queryToFindEspeceByCode, queryToFindEspeceByNomFrancais, queryToFindEspeceByNomLatin, queryToFindNumberOfDonneesByEspeceId } from "../sql/sql-queries-espece";
-import { createKeyValueMapWithSameName } from "../sql/sql-queries-utils";
-import { TABLE_ESPECE } from "../utils/constants";
-import { getNbByEntityId } from "../utils/utils";
-import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+import { buildEspeceFromEspeceDb, buildEspecesFromEspecesDb } from "../../mapping/espece-mapping";
+import { Espece } from "../../model/types/espece.model";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { queryToFindAllEspeces, queryToFindEspeceByCode, queryToFindEspeceByNomFrancais, queryToFindEspeceByNomLatin, queryToFindNumberOfDonneesByEspeceId } from "../../sql/sql-queries-espece";
+import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
+import { TABLE_ESPECE } from "../../utils/constants";
+import { getNbByEntityId } from "../../utils/utils";
+import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESPECE = {
   ...createKeyValueMapWithSameName("code"),

@@ -6,10 +6,10 @@ import { Departement } from "../../model/types/departement.object";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb } from "../../objects/db/lieudit-db.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
-import { findAllCommunes } from "../../sql-api/sql-api-commune";
-import { findCoordinatesSystem } from "../../sql-api/sql-api-configuration";
-import { findAllDepartements } from "../../sql-api/sql-api-departement";
-import { findAllLieuxDits, insertLieuxDits } from "../../sql-api/sql-api-lieudit";
+import { findAllCommunes } from "../entities/commune-service";
+import { findCoordinatesSystem } from "../entities/configuration-service";
+import { findAllDepartements } from "../entities/departement-service";
+import { findAllLieuxDits, insertLieuxDits } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {

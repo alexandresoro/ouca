@@ -1,7 +1,7 @@
 import { Comportement } from "../../model/types/comportement.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { insertComportements } from "../../sql-api/sql-api-comportement";
 import { TABLE_COMPORTEMENT } from "../../utils/constants";
+import { insertComportements } from "../entities/comportement-service";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
 
 export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeService {

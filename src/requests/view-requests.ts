@@ -3,7 +3,7 @@ import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordina
 import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
 import { DonneesFilter } from "../model/types/donnees-filter.object";
 import { FlatDonnee } from "../model/types/flat-donnee.object";
-import { findDonneesByCustomizedFilters } from "../sql-api/sql-api-donnee";
+import { findDonneesByCustomizedFilters } from "../services/entities/donnee-service";
 import { } from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
 

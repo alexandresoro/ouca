@@ -1,10 +1,10 @@
-import { Observateur } from "../model/types/observateur.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindAllObservateurs, queryToFindNumberOfDonneesByObservateurId } from "../sql/sql-queries-observateur";
-import { createKeyValueMapWithSameName, queryToCheckIfTableExists } from "../sql/sql-queries-utils";
-import { TABLE_OBSERVATEUR } from "../utils/constants";
-import { getNbByEntityId } from "../utils/utils";
-import { deleteEntityById, findEntityByLibelle, insertMultipleEntities, persistEntity } from "./sql-api-common";
+import { Observateur } from "../../model/types/observateur.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { queryToFindAllObservateurs, queryToFindNumberOfDonneesByObservateurId } from "../../sql/sql-queries-observateur";
+import { createKeyValueMapWithSameName, queryToCheckIfTableExists } from "../../sql/sql-queries-utils";
+import { TABLE_OBSERVATEUR } from "../../utils/constants";
+import { getNbByEntityId } from "../../utils/utils";
+import { findEntityByLibelle, persistEntity, deleteEntityById, insertMultipleEntities } from "./entity-service";
 
 const DB_SAVE_MAPPING_OBSERVATEUR = createKeyValueMapWithSameName("libelle");
 

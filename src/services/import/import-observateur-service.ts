@@ -1,7 +1,7 @@
 import { Observateur } from "../../model/types/observateur.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { insertObservateurs } from "../../sql-api/sql-api-observateur";
 import { TABLE_OBSERVATEUR } from "../../utils/constants";
+import { insertObservateurs } from "../entities/observateur-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportObservateurService extends ImportEntiteAvecLibelleService {

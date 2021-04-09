@@ -1,7 +1,7 @@
 import { Age } from "../../model/types/age.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { insertAges } from "../../sql-api/sql-api-age";
 import { TABLE_AGE } from "../../utils/constants";
+import { insertAges } from "../entities/age-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportAgeService extends ImportEntiteAvecLibelleService {

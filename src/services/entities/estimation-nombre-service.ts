@@ -1,12 +1,12 @@
-import { buildEstimationNombreFromEstimationNombreDb, buildEstimationsNombreFromEstimationsNombreDb } from "../mapping/estimation-nombre-mapping";
-import { EstimationNombre } from "../model/types/estimation-nombre.object";
-import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindAllEstimationsNombre, queryToFindNumberOfDonneesByEstimationNombreId } from "../sql/sql-queries-estimation-nombre";
-import { createKeyValueMapWithSameName, queryToFindEntityByLibelle } from "../sql/sql-queries-utils";
-import { TABLE_ESTIMATION_NOMBRE } from "../utils/constants";
-import { getNbByEntityId } from "../utils/utils";
-import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+import { buildEstimationNombreFromEstimationNombreDb, buildEstimationsNombreFromEstimationsNombreDb } from "../../mapping/estimation-nombre-mapping";
+import { EstimationNombre } from "../../model/types/estimation-nombre.object";
+import { EstimationNombreDb } from "../../objects/db/estimation-nombre-db.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { queryToFindAllEstimationsNombre, queryToFindNumberOfDonneesByEstimationNombreId } from "../../sql/sql-queries-estimation-nombre";
+import { createKeyValueMapWithSameName, queryToFindEntityByLibelle } from "../../sql/sql-queries-utils";
+import { TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
+import { getNbByEntityId } from "../../utils/utils";
+import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESTIMATION_NOMBRE = {
   ...createKeyValueMapWithSameName("libelle"),

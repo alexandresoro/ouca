@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import {
   DEFAULT_DATABASE_NAME,
   getSqlConnectionConfiguration
-} from "../sql-api/sql-connection";
+} from "../sql/sql-connection";
 import { DATE_PATTERN } from "../utils/constants";
 import { options } from "../utils/options";
 

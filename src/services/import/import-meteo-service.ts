@@ -1,7 +1,7 @@
 import { Meteo } from "../../model/types/meteo.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { insertMeteos } from "../../sql-api/sql-api-meteo";
 import { TABLE_METEO } from "../../utils/constants";
+import { insertMeteos } from "../entities/meteo-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportMeteoService extends ImportEntiteAvecLibelleService {

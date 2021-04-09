@@ -1,8 +1,8 @@
 import { Classe } from "../../model/types/classe.object";
 import { Espece } from "../../model/types/espece.model";
 import { ImportedEspece } from "../../objects/import/imported-espece.object";
-import { findAllClasses } from "../../sql-api/sql-api-classe";
-import { findAllEspeces, insertEspeces } from "../../sql-api/sql-api-espece";
+import { findAllClasses } from "../entities/classe-service";
+import { findAllEspeces, insertEspeces } from "../entities/espece-service";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {

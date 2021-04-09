@@ -1,8 +1,8 @@
 import { EstimationNombre } from "../../model/types/estimation-nombre.object";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { insertEstimationsNombre } from "../../sql-api/sql-api-estimation-nombre";
 import { TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
+import { insertEstimationsNombre } from "../entities/estimation-nombre-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {

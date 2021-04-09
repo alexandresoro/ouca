@@ -75,7 +75,7 @@ import {
   getDonneesByCustomizedFiltersRequest
 } from "./requests/view-requests";
 import { executeDatabaseMigration } from "./services/database-migration/database-migration.service";
-import { clearAllTables } from "./sql-api/sql-api-common";
+import { clearAllTables } from "./services/entities/entity-service";
 
 const EXCEL_MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

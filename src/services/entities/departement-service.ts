@@ -1,10 +1,10 @@
-import { Departement } from "../model/types/departement.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindAllDepartements, queryToFindDepartementByCode, queryToFindNumberOfCommunesByDepartementId, queryToFindNumberOfDonneesByDepartementId, queryToFindNumberOfLieuxDitsByDepartementId } from "../sql/sql-queries-departement";
-import { createKeyValueMapWithSameName } from "../sql/sql-queries-utils";
-import { TABLE_DEPARTEMENT } from "../utils/constants";
-import { getNbByEntityId } from "../utils/utils";
-import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+import { Departement } from "../../model/types/departement.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { queryToFindAllDepartements, queryToFindDepartementByCode, queryToFindNumberOfCommunesByDepartementId, queryToFindNumberOfDonneesByDepartementId, queryToFindNumberOfLieuxDitsByDepartementId } from "../../sql/sql-queries-departement";
+import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
+import { TABLE_DEPARTEMENT } from "../../utils/constants";
+import { getNbByEntityId } from "../../utils/utils";
+import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_DEPARTEMENT = createKeyValueMapWithSameName("code");
 

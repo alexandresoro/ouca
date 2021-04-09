@@ -1,18 +1,18 @@
 import { format } from "date-fns";
-import { buildInventaireDbFromInventaire, buildInventaireFromInventaireDb } from "../mapping/inventaire-mapping";
-import { areSameCoordinates } from "../model/coordinates-system/coordinates-helper";
-import { Coordinates } from "../model/types/coordinates.object";
-import { Inventaire } from "../model/types/inventaire.object";
-import { InventaireCompleteWithIds, InventaireDb } from "../objects/db/inventaire-db.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdById, queryToFindInventairesIdsByAllAttributes, queryToGetAllInventairesWithIds } from "../sql/sql-queries-inventaire";
-import { queryToFindMeteosByInventaireId } from "../sql/sql-queries-meteo";
-import { queryToFindAssociesByInventaireId } from "../sql/sql-queries-observateur";
-import { queryToDeleteAnEntityByAttribute, queryToFindOneById, queryToSaveListOfEntities } from "../sql/sql-queries-utils";
-import { DATE_WITH_TIME_PATTERN, INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../utils/constants";
-import { mapAssociesIds, mapMeteosIds } from "../utils/mapping-utils";
-import { areArraysContainingSameValues } from "../utils/utils";
-import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntityNoCheck } from "./sql-api-common";
+import { buildInventaireFromInventaireDb, buildInventaireDbFromInventaire } from "../../mapping/inventaire-mapping";
+import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
+import { Coordinates } from "../../model/types/coordinates.object";
+import { Inventaire } from "../../model/types/inventaire.object";
+import { InventaireDb, InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { queryToFindCoordinatesByInventaireId, queryToFindInventairesIdsByAllAttributes, queryToFindInventaireIdById, queryToGetAllInventairesWithIds } from "../../sql/sql-queries-inventaire";
+import { queryToFindMeteosByInventaireId } from "../../sql/sql-queries-meteo";
+import { queryToFindAssociesByInventaireId } from "../../sql/sql-queries-observateur";
+import { queryToDeleteAnEntityByAttribute, queryToSaveListOfEntities, queryToFindOneById } from "../../sql/sql-queries-utils";
+import { TABLE_INVENTAIRE_ASSOCIE, INVENTAIRE_ID, TABLE_INVENTAIRE_METEO, TABLE_INVENTAIRE, DATE_WITH_TIME_PATTERN } from "../../utils/constants";
+import { mapAssociesIds, mapMeteosIds } from "../../utils/mapping-utils";
+import { areArraysContainingSameValues } from "../../utils/utils";
+import { deleteEntityById, persistEntityNoCheck, insertMultipleEntitiesAndReturnIdsNoCheck } from "./entity-service";
 
 
 const deleteAssociesAndMeteosByInventaireId = async (

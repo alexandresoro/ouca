@@ -4,8 +4,8 @@ import { Donnee } from "../model/types/donnee.object";
 import { Inventaire } from "../model/types/inventaire.object";
 import { PostResponse } from "../model/types/post-response.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { deleteDonneeById, findDonneeByIdWithContext, findExistingDonneeId, findLastDonneeId, findNextRegroupement, persistDonnee, updateInventaireIdForDonnees } from "../sql-api/sql-api-donnee";
-import { deleteInventaireById, findExistingInventaireId, findInventaireById, findInventaireIdById, persistInventaire } from "../sql-api/sql-api-inventaire";
+import { deleteDonneeById, findDonneeByIdWithContext, findExistingDonneeId, findLastDonneeId, findNextRegroupement, persistDonnee, updateInventaireIdForDonnees } from "../services/entities/donnee-service";
+import { deleteInventaireById, findExistingInventaireId, findInventaireById, findInventaireIdById, persistInventaire } from "../services/entities/inventaire-service";
 import { buildErrorPostResponse, buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 
 export const saveInventaireRequest = async (

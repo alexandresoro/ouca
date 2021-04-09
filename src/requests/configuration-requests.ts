@@ -1,6 +1,6 @@
 import { HttpParameters } from "../http/httpParameters";
 import { AppConfiguration } from "../model/types/app-configuration.object";
-import { findAppConfiguration, persistUserSettings } from "../sql-api/sql-api-configuration";
+import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 
 export const getAppConfigurationRequest = async (): Promise<AppConfiguration> => {
   return await findAppConfiguration();

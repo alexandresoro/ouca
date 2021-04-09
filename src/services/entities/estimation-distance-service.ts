@@ -1,10 +1,10 @@
-import { EstimationDistance } from "../model/types/estimation-distance.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { getQueryToFindNumberOfDonneesByEstimationDistanceId, queryToFindAllEstimationsDistance } from "../sql/sql-queries-estimation-distance";
-import { createKeyValueMapWithSameName } from "../sql/sql-queries-utils";
-import { TABLE_ESTIMATION_DISTANCE } from "../utils/constants";
-import { getNbByEntityId } from "../utils/utils";
-import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+import { EstimationDistance } from "../../model/types/estimation-distance.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { getQueryToFindNumberOfDonneesByEstimationDistanceId, queryToFindAllEstimationsDistance } from "../../sql/sql-queries-estimation-distance";
+import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
+import { TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";
+import { getNbByEntityId } from "../../utils/utils";
+import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESTIMATION_DISTANCE = createKeyValueMapWithSameName("libelle");
 

@@ -1,6 +1,5 @@
 import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { SqlConnection } from "../sql-api/sql-connection";
 import {
   DONNEE_ID,
   INVENTAIRE_ID,
@@ -8,6 +7,7 @@ import {
   OBSERVATEUR_ID
 } from "../utils/constants";
 import { logger } from "../utils/logger";
+import { SqlConnection } from "./sql-connection";
 
 
 export const createKeyValueMapWithSameName = (

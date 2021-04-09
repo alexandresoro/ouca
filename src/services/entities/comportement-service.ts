@@ -1,10 +1,11 @@
-import { buildComportementDbFromComportement, buildComportementsFromComportementsDb } from "../mapping/comportement-mapping";
-import { Comportement } from "../model/types/comportement.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindAllComportements, queryToFindNumberOfDonneesByComportementId } from "../sql/sql-queries-comportement";
-import { TABLE_COMPORTEMENT } from "../utils/constants";
-import { getNbByEntityId } from "../utils/utils";
-import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./sql-api-common";
+
+import { buildComportementsFromComportementsDb, buildComportementDbFromComportement } from "../../mapping/comportement-mapping";
+import { Comportement } from "../../model/types/comportement.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { queryToFindAllComportements, queryToFindNumberOfDonneesByComportementId } from "../../sql/sql-queries-comportement";
+import { TABLE_COMPORTEMENT } from "../../utils/constants";
+import { getNbByEntityId } from "../../utils/utils";
+import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
 
 export const findAllComportements = async (): Promise<Comportement[]> => {
   const [comportementsDb, nbDonneesByComportement] = await Promise.all([

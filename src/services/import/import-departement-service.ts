@@ -1,6 +1,6 @@
 import { Departement } from "../../model/types/departement.object";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
-import { findAllDepartements, insertDepartements } from "../../sql-api/sql-api-departement";
+import { findAllDepartements, insertDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {

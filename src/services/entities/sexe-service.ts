@@ -1,10 +1,11 @@
-import { Sexe } from "../model/types/sexe.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindAllSexes, queryToFindNumberOfDonneesBySexeId } from "../sql/sql-queries-sexe";
-import { createKeyValueMapWithSameName } from "../sql/sql-queries-utils";
-import { TABLE_SEXE } from "../utils/constants";
-import { getNbByEntityId } from "../utils/utils";
-import { insertMultipleEntities, persistEntity } from "./sql-api-common";
+
+import { Sexe } from "../../model/types/sexe.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { queryToFindAllSexes, queryToFindNumberOfDonneesBySexeId } from "../../sql/sql-queries-sexe";
+import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
+import { TABLE_SEXE } from "../../utils/constants";
+import { getNbByEntityId } from "../../utils/utils";
+import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_SEXE = createKeyValueMapWithSameName("libelle");
 

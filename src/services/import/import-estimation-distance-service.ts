@@ -1,7 +1,7 @@
 import { EstimationDistance } from "../../model/types/estimation-distance.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { insertEstimationsDistance } from "../../sql-api/sql-api-estimation-distance";
 import { TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";
+import { insertEstimationsDistance } from "../entities/estimation-distance-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleService {

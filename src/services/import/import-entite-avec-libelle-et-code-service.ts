@@ -1,7 +1,7 @@
 import { EntiteAvecLibelleEtCode } from "../../model/types/entite-avec-libelle-et-code.object";
 import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { findAllEntities } from "../../sql-api/sql-api-common";
+import { findAllEntities } from "../entities/entity-service";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {

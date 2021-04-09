@@ -1,7 +1,7 @@
-import { createAndInitializeAllTables } from "../../sql-api/sql-api-common";
-import { checkIfTableObservateurExists } from "../../sql-api/sql-api-observateur";
-import { findVersion, updateVersion } from "../../sql-api/sql-api-version";
 import { logger } from "../../utils/logger";
+import { createAndInitializeAllTables } from "../entities/entity-service";
+import { checkIfTableObservateurExists } from "../entities/observateur-service";
+import { findVersion, updateVersion } from "../entities/version-service";
 
 const LAST_VERSION = 1;
 

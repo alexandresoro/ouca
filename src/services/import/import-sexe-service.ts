@@ -1,7 +1,7 @@
 import { Sexe } from "../../model/types/sexe.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { insertSexes } from "../../sql-api/sql-api-sexe";
 import { TABLE_SEXE } from "../../utils/constants";
+import { insertSexes } from "../entities/sexe-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportSexeService extends ImportEntiteAvecLibelleService {

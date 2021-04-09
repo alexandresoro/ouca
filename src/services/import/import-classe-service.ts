@@ -1,7 +1,7 @@
 import { Classe } from "../../model/types/classe.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { insertClasses } from "../../sql-api/sql-api-classe";
 import { TABLE_CLASSE } from "../../utils/constants";
+import { insertClasses } from "../entities/classe-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportClasseService extends ImportEntiteAvecLibelleService {

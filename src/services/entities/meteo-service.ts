@@ -1,10 +1,10 @@
-import { Meteo } from "../model/types/meteo.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { queryToFindAllMeteos, queryToFindNumberOfDonneesByMeteoId } from "../sql/sql-queries-meteo";
-import { createKeyValueMapWithSameName } from "../sql/sql-queries-utils";
-import { TABLE_METEO } from "../utils/constants";
-import { getNbByEntityId } from "../utils/utils";
-import { findEntityByLibelle, insertMultipleEntities, persistEntity } from "./sql-api-common";
+import { Meteo } from "../../model/types/meteo.object";
+import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { queryToFindAllMeteos, queryToFindNumberOfDonneesByMeteoId } from "../../sql/sql-queries-meteo";
+import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
+import { TABLE_METEO } from "../../utils/constants";
+import { getNbByEntityId } from "../../utils/utils";
+import { findEntityByLibelle, insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_METEO = createKeyValueMapWithSameName("libelle");
 

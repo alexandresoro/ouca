@@ -1,16 +1,17 @@
-import { buildAppConfigurationFromSettingsDb, buildSettingsDbFromAppConfiguration } from "../mapping/settings-mapping";
-import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
-import { AppConfiguration } from "../model/types/app-configuration.object";
-import { SettingsDb } from "../objects/db/settings-db.object";
-import { queryToFindCoordinatesSystem } from "../sql/sql-queries-settings";
-import { queryToFindAllEntities } from "../sql/sql-queries-utils";
-import { TABLE_SETTINGS } from "../utils/constants";
-import { findAllAges } from "./sql-api-age";
-import { persistEntityNoCheck } from "./sql-api-common";
-import { findAllDepartements } from "./sql-api-departement";
-import { findAllEstimationsNombre } from "./sql-api-estimation-nombre";
-import { findAllObservateurs } from "./sql-api-observateur";
-import { findAllSexes } from "./sql-api-sexe";
+
+import { buildAppConfigurationFromSettingsDb, buildSettingsDbFromAppConfiguration } from "../../mapping/settings-mapping";
+import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
+import { AppConfiguration } from "../../model/types/app-configuration.object";
+import { SettingsDb } from "../../objects/db/settings-db.object";
+import { queryToFindCoordinatesSystem } from "../../sql/sql-queries-settings";
+import { queryToFindAllEntities } from "../../sql/sql-queries-utils";
+import { TABLE_SETTINGS } from "../../utils/constants";
+import { findAllAges } from "./age-service";
+import { findAllDepartements } from "./departement-service";
+import { persistEntityNoCheck } from "./entity-service";
+import { findAllEstimationsNombre } from "./estimation-nombre-service";
+import { findAllObservateurs } from "./observateur-service";
+import { findAllSexes } from "./sexe-service";
 
 const findUserSettings = async (): Promise<SettingsDb> => {
   const settingsDb = await queryToFindAllEntities<SettingsDb>(TABLE_SETTINGS);
