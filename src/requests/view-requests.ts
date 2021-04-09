@@ -23,13 +23,13 @@ const getMilieu = (donnee: FlatDonnee, index: number): string => {
     : "";
 };
 
-export const getDonneesByCustomizedFilters = async (
+export const getDonneesByCustomizedFiltersRequest = async (
   httpParameters: HttpParameters<DonneesFilter>
 ): Promise<FlatDonnee[]> => {
   return await findDonneesByCustomizedFilters(httpParameters.postData);
 };
 
-export const exportDonneesByCustomizedFilters = async (
+export const exportDonneesByCustomizedFiltersRequest = async (
   httpParameters: HttpParameters<DonneesFilter>
 ): Promise<unknown> => {
   const flatDonnees = await findDonneesByCustomizedFilters(

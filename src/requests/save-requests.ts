@@ -50,7 +50,7 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
   });
 };
 
-export const saveDatabase = async (): Promise<string> => {
+export const saveDatabaseRequest = async (): Promise<string> => {
   try {
     return await executeSqlDump(options.docker);
   } catch (error) {
@@ -62,6 +62,6 @@ export const saveDatabase = async (): Promise<string> => {
   }
 };
 
-export const saveDatabaseFileName = (): string => {
+export const saveDatabaseFileNameRequest = (): string => {
   return DUMP_FILE_NAME + format(new Date(), DATE_PATTERN) + SQL_EXTENSION;
 };

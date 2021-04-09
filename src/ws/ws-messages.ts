@@ -1,10 +1,10 @@
 import WebSocket from "ws";
 import { WebsocketUpdateMessage } from "../model/websocket/websocket-update-message";
-import { getAppConfiguration } from "../requests/configuration";
 import { findAllAges } from "../sql-api/sql-api-age";
 import { findAllClasses } from "../sql-api/sql-api-classe";
 import { findAllCommunes } from "../sql-api/sql-api-commune";
 import { findAllComportements } from "../sql-api/sql-api-comportement";
+import { findAppConfiguration } from "../sql-api/sql-api-configuration";
 import { findAllDepartements } from "../sql-api/sql-api-departement";
 import { findAllEspeces } from "../sql-api/sql-api-espece";
 import { findAllEstimationsDistance } from "../sql-api/sql-api-estimation-distance";
@@ -84,7 +84,7 @@ export const onTableUpdate = (tableName: ImportableTable | string): void => {
 export const sendAppConfiguration = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
-  const appConfiguration = await getAppConfiguration();
+  const appConfiguration = await findAppConfiguration();
   WebsocketServer.sendMessageToClients(
     createUpdateMessage(appConfiguration, "configuration"),
     target
@@ -224,7 +224,7 @@ export const sendMeteos = async (
 export const sendInitialData = async (
   client: WebSocket | WebSocket[]
 ): Promise<void> => {
-  const appConfiguration = await getAppConfiguration();
+  const appConfiguration = await findAppConfiguration();
   const observateurs = await findAllObservateurs();
   const lieuxdits = await findAllLieuxDits();
   const communes = await findAllCommunes();

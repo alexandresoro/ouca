@@ -45,18 +45,18 @@ const deleteEntity = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const getObservateurs = async (): Promise<Observateur[]> => {
+export const getObservateursRequest = async (): Promise<Observateur[]> => {
   return await findAllObservateurs();
 };
 
-export const saveObservateur = async (
+export const saveObservateurRequest = async (
   httpParameters: HttpParameters<Observateur>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistObservateur(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const removeObservateur = async (
+export const removeObservateurRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   const id: number = +httpParameters.queryParameters.id;
@@ -64,45 +64,45 @@ export const removeObservateur = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const getDepartements = async (): Promise<Departement[]> => {
+export const getDepartementsRequest = async (): Promise<Departement[]> => {
   return await findAllDepartements();
 };
 
-export const saveDepartement = async (
+export const saveDepartementRequest = async (
   httpParameters: HttpParameters<Departement>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistDepartement(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteDepartement = async (
+export const deleteDepartementRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_DEPARTEMENT);
 };
 
-export const getCommunes = async (): Promise<Commune[]> => {
+export const getCommunesRequest = async (): Promise<Commune[]> => {
   return await findAllCommunes();
 };
 
-export const saveCommune = async (
+export const saveCommuneRequest = async (
   httpParameters: HttpParameters<Commune>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistCommune(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteCommune = async (
+export const deleteCommuneRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_COMMUNE);
 };
 
-export const getLieuxdits = async (): Promise<Lieudit[]> => {
+export const getLieuxditsRequest = async (): Promise<Lieudit[]> => {
   return findAllLieuxDits();
 };
 
-export const saveLieudit = async (
+export const saveLieuditRequest = async (
   httpParameters: HttpParameters<Lieudit>
 ): Promise<PostResponse> => {
   const lieuditToSave = httpParameters.postData;
@@ -110,169 +110,169 @@ export const saveLieudit = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteLieudit = async (
+export const deleteLieuditRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_LIEUDIT);
 };
 
-export const getMeteos = async (): Promise<Meteo[]> => {
+export const getMeteosRequest = async (): Promise<Meteo[]> => {
   return await findAllMeteos();
 };
 
-export const saveMeteo = async (
+export const saveMeteoRequest = async (
   httpParameters: HttpParameters<Meteo>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistMeteo(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteMeteo = async (
+export const deleteMeteoRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_METEO);
 };
 
-export const getClasses = async (): Promise<Classe[]> => {
+export const getClassesRequest = async (): Promise<Classe[]> => {
   return await findAllClasses();
 };
 
-export const saveClasse = async (
+export const saveClasseRequest = async (
   httpParameters: HttpParameters<Classe>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistClasse(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteClasse = async (
+export const deleteClasseRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_CLASSE);
 };
 
-export const getEspeces = async (): Promise<Espece[]> => {
+export const getEspecesRequest = async (): Promise<Espece[]> => {
   return await findAllEspeces();
 };
 
-export const saveEspece = async (
+export const saveEspeceRequest = async (
   httpParameters: HttpParameters<Espece>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistEspece(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteEspece = async (
+export const deleteEspeceRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_ESPECE);
 };
 
-export const getSexes = async (): Promise<Sexe[]> => {
+export const getSexesRequest = async (): Promise<Sexe[]> => {
   return await findAllSexes();
 };
 
-export const saveSexe = async (
+export const saveSexeRequest = async (
   httpParameters: HttpParameters<Sexe>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistSexe(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteSexe = async (
+export const deleteSexeRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_SEXE);
 };
 
-export const getAges = async (): Promise<Age[]> => {
+export const getAgesRequest = async (): Promise<Age[]> => {
   return await findAllAges();
 };
 
-export const saveAge = async (
+export const saveAgeRequest = async (
   httpParameters: HttpParameters<Age>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistAge(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteAge = async (
+export const deleteAgeRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_AGE);
 };
 
-export const getEstimationsNombre = async (): Promise<EstimationNombre[]> => {
+export const getEstimationsNombreRequest = async (): Promise<EstimationNombre[]> => {
   return await findAllEstimationsNombre();
 };
 
-export const saveEstimationNombre = async (
+export const saveEstimationNombreRequest = async (
   httpParameters: HttpParameters<EstimationNombre>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistEstimationNombre(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteEstimationNombre = async (
+export const deleteEstimationNombreRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_ESTIMATION_NOMBRE);
 };
 
-export const getEstimationsDistance = async (): Promise<
+export const getEstimationsDistanceRequest = async (): Promise<
   EstimationDistance[]
 > => {
   return await findAllEstimationsDistance();
 };
 
-export const saveEstimationDistance = async (
+export const saveEstimationDistanceRequest = async (
   httpParameters: HttpParameters<EstimationDistance>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistEstimationDistance(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteEstimationDistance = async (
+export const deleteEstimationDistanceRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_ESTIMATION_DISTANCE);
 };
 
-export const getComportements = async (): Promise<Comportement[]> => {
+export const getComportementsRequest = async (): Promise<Comportement[]> => {
   return await findAllComportements();
 };
 
-export const saveComportement = async (
+export const saveComportementRequest = async (
   httpParameters: HttpParameters<Comportement>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistComportement(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteComportement = async (
+export const deleteComportementRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_COMPORTEMENT);
 };
 
-export const getMilieux = async (): Promise<Milieu[]> => {
+export const getMilieuxRequest = async (): Promise<Milieu[]> => {
   return await findAllMilieux();
 };
 
-export const saveMilieu = async (
+export const saveMilieuRequest = async (
   httpParameters: HttpParameters<Milieu>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistMilieu(httpParameters.postData);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const deleteMilieu = async (
+export const deleteMilieuRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_MILIEU);
 };
 
-export const exportObservateurs = async (): Promise<unknown> => {
-  const observateurs: Observateur[] = await getObservateurs();
+export const exportObservateursRequest = async (): Promise<unknown> => {
+  const observateurs: Observateur[] = await findAllObservateurs();
 
   const objectsToExport = observateurs.map((object) => {
     return {
@@ -283,8 +283,8 @@ export const exportObservateurs = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Observateurs");
 };
 
-export const exportMeteos = async (): Promise<unknown> => {
-  const meteos: Meteo[] = await getMeteos();
+export const exportMeteosRequest = async (): Promise<unknown> => {
+  const meteos: Meteo[] = await findAllMeteos();
 
   const objectsToExport = meteos.map((object) => {
     return {
@@ -295,8 +295,8 @@ export const exportMeteos = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Météos");
 };
 
-export const exportDepartements = async (): Promise<unknown> => {
-  const departementsDb: Departement[] = await getDepartements();
+export const exportDepartementsRequest = async (): Promise<unknown> => {
+  const departementsDb: Departement[] = await getDepartementsRequest();
 
   const objectsToExport = departementsDb.map((object) => {
     return {
@@ -307,9 +307,9 @@ export const exportDepartements = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Départements");
 };
 
-export const exportCommunes = async (): Promise<unknown> => {
-  const communesDb: Commune[] = await getCommunes();
-  const departements: Departement[] = await getDepartements();
+export const exportCommunesRequest = async (): Promise<unknown> => {
+  const communesDb: Commune[] = await findAllCommunes();
+  const departements: Departement[] = await findAllDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {
     return {
@@ -323,7 +323,7 @@ export const exportCommunes = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Communes");
 };
 
-export const exportLieuxdits = async (): Promise<unknown> => {
+export const exportLieuxditsRequest = async (): Promise<unknown> => {
   const [lieuxdits, communes, departements] = await Promise.all([
     findAllLieuxDits(),
     findAllCommunes(),
@@ -347,8 +347,8 @@ export const exportLieuxdits = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Lieux-dits");
 };
 
-export const exportClasses = async (): Promise<unknown> => {
-  const classes: Classe[] = await getClasses();
+export const exportClassesRequest = async (): Promise<unknown> => {
+  const classes: Classe[] = await findAllClasses();
 
   const objectsToExport = classes.map((object) => {
     return { Classe: object.libelle };
@@ -357,9 +357,9 @@ export const exportClasses = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Classes");
 };
 
-export const exportEspeces = async (): Promise<unknown> => {
-  const especes: Espece[] = await getEspeces();
-  const classes: Classe[] = await getClasses();
+export const exportEspecesRequest = async (): Promise<unknown> => {
+  const especes: Espece[] = await findAllEspeces();
+  const classes: Classe[] = await findAllClasses();
 
   const objectsToExport = especes.map((espece) => {
     return {
@@ -373,8 +373,8 @@ export const exportEspeces = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Espèces");
 };
 
-export const exportAges = async (): Promise<unknown> => {
-  const agesDb: Age[] = await getAges();
+export const exportAgesRequest = async (): Promise<unknown> => {
+  const agesDb: Age[] = await findAllAges();
 
   const agesToExport = agesDb.map((ageDb) => {
     return { Âge: ageDb.libelle };
@@ -383,8 +383,8 @@ export const exportAges = async (): Promise<unknown> => {
   return writeToExcel(agesToExport, [], "Âges");
 };
 
-export const exportSexes = async (): Promise<unknown> => {
-  const sexes: Sexe[] = await getSexes();
+export const exportSexesRequest = async (): Promise<unknown> => {
+  const sexes: Sexe[] = await findAllSexes();
 
   const objectsToExport = sexes.map((object) => {
     return { Sexe: object.libelle };
@@ -393,8 +393,8 @@ export const exportSexes = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Sexes");
 };
 
-export const exportEstimationsNombre = async (): Promise<unknown> => {
-  const estimations: EstimationNombre[] = await getEstimationsNombre();
+export const exportEstimationsNombreRequest = async (): Promise<unknown> => {
+  const estimations: EstimationNombre[] = await findAllEstimationsNombre();
 
   const objectsToExport = estimations.map((object) => {
     return { "Estimation du nombre": object.libelle };
@@ -403,8 +403,8 @@ export const exportEstimationsNombre = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Estimations du nombre");
 };
 
-export const exportEstimationsDistance = async (): Promise<unknown> => {
-  const estimations: EstimationDistance[] = await getEstimationsDistance();
+export const exportEstimationsDistanceRequest = async (): Promise<unknown> => {
+  const estimations: EstimationDistance[] = await findAllEstimationsDistance();
 
   const objectsToExport = estimations.map((object) => {
     return { "Estimation de la distance": object.libelle };
@@ -413,8 +413,8 @@ export const exportEstimationsDistance = async (): Promise<unknown> => {
   return writeToExcel(objectsToExport, [], "Estimations de la distance");
 };
 
-export const exportComportements = async (): Promise<unknown> => {
-  const comportementsDb: Comportement[] = await getComportements();
+export const exportComportementsRequest = async (): Promise<unknown> => {
+  const comportementsDb: Comportement[] = await findAllComportements();
 
   const comportementsToExport = comportementsDb.map((object) => {
     return { Code: object.code, Libellé: object.libelle };
@@ -423,8 +423,8 @@ export const exportComportements = async (): Promise<unknown> => {
   return writeToExcel(comportementsToExport, [], "Comportements");
 };
 
-export const exportMilieux = async (): Promise<unknown> => {
-  const milieuxDb: Milieu[] = await getMilieux();
+export const exportMilieuxRequest = async (): Promise<unknown> => {
+  const milieuxDb: Milieu[] = await findAllMilieux();
 
   const milieuxToExport = milieuxDb.map((object) => {
     return { Code: object.code, Libellé: object.libelle };
@@ -433,14 +433,14 @@ export const exportMilieux = async (): Promise<unknown> => {
   return writeToExcel(milieuxToExport, [], "Milieux");
 };
 
-export const getEspeceDetailsByAge = (
+export const getEspeceDetailsByAgeRequest = (
   httpParameters: HttpParameters
 ): Promise<{ name: string; value: number }[]> => {
   const especeId: number = +httpParameters.queryParameters.id;
   return countSpecimensByAgeForEspeceId(especeId);
 };
 
-export const getEspeceDetailsBySexe = (
+export const getEspeceDetailsBySexeRequest = (
   httpParameters: HttpParameters
 ): Promise<{ name: string; value: number }[]> => {
   const especeId: number = +httpParameters.queryParameters.id;

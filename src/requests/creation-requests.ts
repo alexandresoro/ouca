@@ -8,7 +8,7 @@ import { deleteDonneeById, findDonneeByIdWithContext, findExistingDonneeId, find
 import { deleteInventaireById, findExistingInventaireId, findInventaireById, findInventaireIdById, persistInventaire } from "../sql-api/sql-api-inventaire";
 import { buildErrorPostResponse, buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 
-export const saveInventaire = async (
+export const saveInventaireRequest = async (
   httpParameters: HttpParameters<Inventaire>
 ): Promise<PostResponse> => {
   const inventaireToSave = httpParameters.postData;
@@ -40,7 +40,7 @@ export const saveInventaire = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const saveDonnee = async (
+export const saveDonneeRequest = async (
   httpParameters: HttpParameters<Donnee>
 ): Promise<PostResponse> => {
   const donneeToSave = httpParameters.postData;
@@ -62,7 +62,7 @@ export const saveDonnee = async (
   }
 };
 
-export const deleteDonnee = async (
+export const deleteDonneeRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   const donneeId: number = +httpParameters.queryParameters.donneeId;
@@ -76,30 +76,30 @@ export const deleteDonnee = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const getDonneeByIdWithContext = async (
+export const getDonneeByIdWithContextRequest = async (
   httpParameters: HttpParameters
 ): Promise<DonneeWithNavigationData> => {
   const id: number = +httpParameters.queryParameters.id;
   return await findDonneeByIdWithContext(id);
 };
 
-export const getNextRegroupement = async (): Promise<number> => {
+export const getNextRegroupementRequest = async (): Promise<number> => {
   return await findNextRegroupement();
 };
 
-export const getInventaireById = async (
+export const getInventaireByIdRequest = async (
   httpParameters: HttpParameters
 ): Promise<Inventaire> => {
   const inventaireId: number = +httpParameters.queryParameters.id;
   return findInventaireById(inventaireId);
 };
 
-export const getInventaireIdById = async (
+export const getInventaireIdByIdRequest = async (
   httpParameters: HttpParameters
 ): Promise<number> => {
   return findInventaireIdById(+httpParameters.queryParameters.id);
 };
 
-export const getLastDonneeId = async (): Promise<number> => {
+export const getLastDonneeIdRequest = async (): Promise<number> => {
   return findLastDonneeId();
 };
