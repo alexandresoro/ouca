@@ -1,5 +1,5 @@
-import { Comportement } from "../model/types/comportement.object";
-import { ComportementDb } from "../objects/db/comportement-db.model";
+import { Comportement } from "../../model/types/comportement.object";
+import { ComportementDb } from "../../objects/db/comportement-db.model";
 
 export const buildComportementFromComportementDb = (
   comportementDb: ComportementDb

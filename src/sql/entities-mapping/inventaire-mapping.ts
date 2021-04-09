@@ -1,10 +1,10 @@
 import { format } from "date-fns";
-import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
-import { Coordinates } from "../model/types/coordinates.object";
-import { Inventaire } from "../model/types/inventaire.object";
-import { InventaireDb } from "../objects/db/inventaire-db.object";
-import { DATE_PATTERN, DATE_WITH_TIME_PATTERN } from "../utils/constants";
-import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
+import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
+import { Coordinates } from "../../model/types/coordinates.object";
+import { Inventaire } from "../../model/types/inventaire.object";
+import { InventaireDb } from "../../objects/db/inventaire-db.object";
+import { DATE_PATTERN, DATE_WITH_TIME_PATTERN } from "../../utils/constants";
+import { interpretDateTimestampAsLocalTimeZoneDate } from "../../utils/date";
 
 export const buildInventaireFromInventaireDb = (
   inventaireDb: InventaireDb,

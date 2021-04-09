@@ -1,7 +1,7 @@
 
-import { buildComportementsFromComportementsDb, buildComportementDbFromComportement } from "../../mapping/comportement-mapping";
 import { Comportement } from "../../model/types/comportement.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { buildComportementDbFromComportement, buildComportementsFromComportementsDb } from "../../sql/entities-mapping/comportement-mapping";
 import { queryToFindAllComportements, queryToFindNumberOfDonneesByComportementId } from "../../sql/sql-queries-comportement";
 import { TABLE_COMPORTEMENT } from "../../utils/constants";
 import { getNbByEntityId } from "../../utils/utils";

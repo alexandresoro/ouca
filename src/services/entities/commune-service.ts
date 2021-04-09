@@ -1,6 +1,6 @@
-import { buildCommuneFromCommuneDb, buildCommunesFromCommunesDb } from "../../mapping/commune-mapping";
 import { Commune } from "../../model/types/commune.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { buildCommuneFromCommuneDb, buildCommunesFromCommunesDb } from "../../sql/entities-mapping/commune-mapping";
 import { queryToFindAllCommunes, queryToFindCommuneByDepartementIdAndCode, queryToFindCommuneByDepartementIdAndCodeAndNom, queryToFindCommuneByDepartementIdAndNom, queryToFindNumberOfDonneesByCommuneId, queryToFindNumberOfLieuxDitsByCommuneId } from "../../sql/sql-queries-commune";
 import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
 import { TABLE_COMMUNE } from "../../utils/constants";

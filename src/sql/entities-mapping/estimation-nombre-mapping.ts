@@ -1,5 +1,5 @@
-import { EstimationNombre } from "../model/types/estimation-nombre.object";
-import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
+import { EstimationNombre } from "../../model/types/estimation-nombre.object";
+import { EstimationNombreDb } from "../../objects/db/estimation-nombre-db.object";
 
 export const buildEstimationNombreFromEstimationNombreDb = (
   estimationDb: EstimationNombreDb

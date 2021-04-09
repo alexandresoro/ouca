@@ -1,7 +1,7 @@
-import { buildEstimationNombreFromEstimationNombreDb, buildEstimationsNombreFromEstimationsNombreDb } from "../../mapping/estimation-nombre-mapping";
 import { EstimationNombre } from "../../model/types/estimation-nombre.object";
 import { EstimationNombreDb } from "../../objects/db/estimation-nombre-db.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { buildEstimationNombreFromEstimationNombreDb, buildEstimationsNombreFromEstimationsNombreDb } from "../../sql/entities-mapping/estimation-nombre-mapping";
 import { queryToFindAllEstimationsNombre, queryToFindNumberOfDonneesByEstimationNombreId } from "../../sql/sql-queries-estimation-nombre";
 import { createKeyValueMapWithSameName, queryToFindEntityByLibelle } from "../../sql/sql-queries-utils";
 import { TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";

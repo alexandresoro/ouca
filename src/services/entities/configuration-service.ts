@@ -1,8 +1,8 @@
 
-import { buildAppConfigurationFromSettingsDb, buildSettingsDbFromAppConfiguration } from "../../mapping/settings-mapping";
 import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 import { AppConfiguration } from "../../model/types/app-configuration.object";
 import { SettingsDb } from "../../objects/db/settings-db.object";
+import { buildAppConfigurationFromSettingsDb, buildSettingsDbFromAppConfiguration } from "../../sql/entities-mapping/settings-mapping";
 import { queryToFindCoordinatesSystem } from "../../sql/sql-queries-settings";
 import { queryToFindAllEntities } from "../../sql/sql-queries-utils";
 import { TABLE_SETTINGS } from "../../utils/constants";

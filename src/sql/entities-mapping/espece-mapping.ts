@@ -1,5 +1,5 @@
-import { Espece } from "../model/types/espece.model";
-import { EspeceDb } from "../objects/db/espece-db.object";
+import { Espece } from "../../model/types/espece.model";
+import { EspeceDb } from "../../objects/db/espece-db.object";
 
 export const buildEspeceFromEspeceDb = (especeDb: EspeceDb): Espece => {
   return {

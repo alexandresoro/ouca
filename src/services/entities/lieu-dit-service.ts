@@ -1,9 +1,9 @@
-import { buildLieuditDbFromLieudit, buildLieuditFromLieuditDb, buildLieuxditsFromLieuxditsDb } from "../../mapping/lieudit-mapping";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb } from "../../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { buildLieuditDbFromLieudit, buildLieuditFromLieuditDb, buildLieuxditsFromLieuxditsDb } from "../../sql/entities-mapping/lieudit-mapping";
 import { queryToFindAllLieuxDits, queryToFindLieuDitByCommuneIdAndNom, queryToFindNumberOfDonneesByLieuDitId } from "../../sql/sql-queries-lieudit";
 import { queryToFindOneById } from "../../sql/sql-queries-utils";
 import { TABLE_LIEUDIT } from "../../utils/constants";

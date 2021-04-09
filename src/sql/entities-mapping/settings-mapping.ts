@@ -1,11 +1,11 @@
-import { Age } from "../model/types/age.object";
-import { AppConfiguration } from "../model/types/app-configuration.object";
-import { Departement } from "../model/types/departement.object";
-import { EntiteSimple } from "../model/types/entite-simple.object";
-import { EstimationNombre } from "../model/types/estimation-nombre.object";
-import { Observateur } from "../model/types/observateur.object";
-import { Sexe } from "../model/types/sexe.object";
-import { SettingsDb } from "../objects/db/settings-db.object";
+import { Age } from "../../model/types/age.object";
+import { AppConfiguration } from "../../model/types/app-configuration.object";
+import { Departement } from "../../model/types/departement.object";
+import { EntiteSimple } from "../../model/types/entite-simple.object";
+import { EstimationNombre } from "../../model/types/estimation-nombre.object";
+import { Observateur } from "../../model/types/observateur.object";
+import { Sexe } from "../../model/types/sexe.object";
+import { SettingsDb } from "../../objects/db/settings-db.object";
 
 const getSettingAsEntity = <T extends EntiteSimple>(
   entityId: number,

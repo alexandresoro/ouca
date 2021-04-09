@@ -1,4 +1,3 @@
-import { buildLieuditDbFromLieudit } from "../../mapping/lieudit-mapping";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 import { Commune } from "../../model/types/commune.model";
@@ -6,6 +5,7 @@ import { Departement } from "../../model/types/departement.object";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb } from "../../objects/db/lieudit-db.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
+import { buildLieuditDbFromLieudit } from "../../sql/entities-mapping/lieudit-mapping";
 import { findAllCommunes } from "../entities/commune-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findAllDepartements } from "../entities/departement-service";
