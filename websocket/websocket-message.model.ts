@@ -1,8 +1,8 @@
 import { WebSocketMessageType } from "./websocket-message-type.model";
 
-export type WebsocketMessage = {
+export type WebsocketMessage<T extends WebSocketMessageType = WebSocketMessageType, C = unknown> = {
 
-  type: WebSocketMessageType;
+  type: T;
 
-  content?: string | any;
+  content?: C;
 }
