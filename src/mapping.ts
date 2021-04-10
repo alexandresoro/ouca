@@ -1,4 +1,4 @@
-import { HttpMethod } from "./http/httpMethod";
+import { GET, HttpMethod, POST } from "./http/httpMethod";
 import { HttpParameters } from "./http/httpParameters";
 import {
   configurationUpdateRequest,
@@ -80,106 +80,133 @@ import { clearAllTables } from "./services/entities/entity-service";
 const EXCEL_MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-export const REQUEST_MAPPING: Record<string, (
-  httpParameters?: HttpParameters
-) => Promise<unknown>> = {
-  "/api/inventaire/save": saveInventaireRequest,
-  "/api/inventaire/find": getInventaireByIdRequest,
-  "/api/inventaire/find_id": getInventaireIdByIdRequest,
-  "/api/donnee/search": getDonneesByCustomizedFiltersRequest,
-  "/api/donnee/export": exportDonneesByCustomizedFiltersRequest,
-  "/api/donnee/save": saveDonneeRequest,
-  "/api/donnee/delete": deleteDonneeRequest,
-  "/api/donnee/last": getLastDonneeIdRequest,
-  "/api/donnee/next_regroupement": getNextRegroupementRequest,
-  "/api/donnee/find_with_context": getDonneeByIdWithContextRequest,
-  "/api/observateur/all": getObservateursRequest,
-  "/api/observateur/save": saveObservateurRequest,
-  "/api/observateur/delete": removeObservateurRequest,
-  "/api/observateur/export": exportObservateursRequest,
-  "/api/departement/all": getDepartementsRequest,
-  "/api/departement/save": saveDepartementRequest,
-  "/api/departement/delete": deleteDepartementRequest,
-  "/api/departement/export": exportDepartementsRequest,
-  "/api/commune/all": getCommunesRequest,
-  "/api/commune/save": saveCommuneRequest,
-  "/api/commune/delete": deleteCommuneRequest,
-  "/api/commune/export": exportCommunesRequest,
-  "/api/lieudit/all": getLieuxditsRequest,
-  "/api/lieudit/save": saveLieuditRequest,
-  "/api/lieudit/delete": deleteLieuditRequest,
-  "/api/lieudit/export": exportLieuxditsRequest,
-  "/api/meteo/all": getMeteosRequest,
-  "/api/meteo/save": saveMeteoRequest,
-  "/api/meteo/delete": deleteMeteoRequest,
-  "/api/meteo/export": exportMeteosRequest,
-  "/api/classe/all": getClassesRequest,
-  "/api/classe/save": saveClasseRequest,
-  "/api/classe/delete": deleteClasseRequest,
-  "/api/classe/export": exportClassesRequest,
-  "/api/espece/all": getEspecesRequest,
-  "/api/espece/save": saveEspeceRequest,
-  "/api/espece/delete": deleteEspeceRequest,
-  "/api/espece/details_by_age": getEspeceDetailsByAgeRequest,
-  "/api/espece/details_by_sexe": getEspeceDetailsBySexeRequest,
-  "/api/espece/export": exportEspecesRequest,
-  "/api/sexe/all": getSexesRequest,
-  "/api/sexe/save": saveSexeRequest,
-  "/api/sexe/delete": deleteSexeRequest,
-  "/api/sexe/export": exportSexesRequest,
-  "/api/age/all": getAgesRequest,
-  "/api/age/save": saveAgeRequest,
-  "/api/age/delete": deleteAgeRequest,
-  "/api/age/export": exportAgesRequest,
-  "/api/estimation-nombre/all": getEstimationsNombreRequest,
-  "/api/estimation-nombre/save": saveEstimationNombreRequest,
-  "/api/estimation-nombre/delete": deleteEstimationNombreRequest,
-  "/api/estimation-nombre/export": exportEstimationsNombreRequest,
-  "/api/estimation-distance/all": getEstimationsDistanceRequest,
-  "/api/estimation-distance/save": saveEstimationDistanceRequest,
-  "/api/estimation-distance/delete": deleteEstimationDistanceRequest,
-  "/api/estimation-distance/export": exportEstimationsDistanceRequest,
-  "/api/comportement/all": getComportementsRequest,
-  "/api/comportement/save": saveComportementRequest,
-  "/api/comportement/delete": deleteComportementRequest,
-  "/api/comportement/export": exportComportementsRequest,
-  "/api/milieu/all": getMilieuxRequest,
-  "/api/milieu/save": saveMilieuRequest,
-  "/api/milieu/delete": deleteMilieuRequest,
-  "/api/milieu/export": exportMilieuxRequest,
-  "/api/configuration/all": getAppConfigurationRequest,
-  "/api/configuration/update": configurationUpdateRequest,
-  "/api/database/clear": clearAllTables,
-  "/api/database/save": saveDatabaseRequest,
-  "/api/database/update": executeDatabaseMigration
-};
-
-export const REQUEST_METHODS: Record<string, HttpMethod[]> = {
-  "/api/configuration/all": ["GET"],
-  "/api/configuration/update": ["POST"]
-};
-
-// Mapping between the api requested and the media type (MIME) of the response
-export const REQUEST_MEDIA_TYPE_RESPONSE_MAPPING: Record<string, string> = {
-  "/api/database/save": "application/sql",
-  "/api/observateur/export": EXCEL_MIME_TYPE,
-  "/api/departement/export": EXCEL_MIME_TYPE,
-  "/api/commune/export": EXCEL_MIME_TYPE,
-  "/api/lieudit/export": EXCEL_MIME_TYPE,
-  "/api/meteo/export": EXCEL_MIME_TYPE,
-  "/api/classe/export": EXCEL_MIME_TYPE,
-  "/api/espece/export": EXCEL_MIME_TYPE,
-  "/api/sexe/export": EXCEL_MIME_TYPE,
-  "/api/age/export": EXCEL_MIME_TYPE,
-  "/api/estimation-nombre/export": EXCEL_MIME_TYPE,
-  "/api/estimation-distance/export": EXCEL_MIME_TYPE,
-  "/api/comportement/export": EXCEL_MIME_TYPE,
-  "/api/milieu/export": EXCEL_MIME_TYPE,
-  "/api/donnee/export": EXCEL_MIME_TYPE,
-};
-
-// List of api requests that expect to return a response as file attachment
-// The value is actually a function that will return the file name to be used
-export const REQUESTS_WITH_ATTACHMENT_FILE_NAME_RESPONSES: Record<string, () => string> = {
-  "/api/database/save": saveDatabaseFileNameRequest
-};
+export const REQUEST_MAPPING: Record<string, {
+  method?: HttpMethod,
+  handler: (
+    httpParameters?: HttpParameters
+  ) => Promise<unknown>,
+  responseType?: string,
+  responseAttachmentHandler?: () => string
+}> = {
+  "/api/inventaire/save": { handler: saveInventaireRequest },
+  "/api/inventaire/find": { handler: getInventaireByIdRequest },
+  "/api/inventaire/find_id": { handler: getInventaireIdByIdRequest },
+  "/api/donnee/search": { handler: getDonneesByCustomizedFiltersRequest },
+  "/api/donnee/export": {
+    handler: exportDonneesByCustomizedFiltersRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/donnee/save": { handler: saveDonneeRequest },
+  "/api/donnee/delete": { handler: deleteDonneeRequest },
+  "/api/donnee/last": { handler: getLastDonneeIdRequest },
+  "/api/donnee/next_regroupement": { handler: getNextRegroupementRequest },
+  "/api/donnee/find_with_context": { handler: getDonneeByIdWithContextRequest },
+  "/api/observateur/all": { handler: getObservateursRequest },
+  "/api/observateur/save": { handler: saveObservateurRequest },
+  "/api/observateur/delete": { handler: removeObservateurRequest },
+  "/api/observateur/export": {
+    handler: exportObservateursRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/departement/all": { handler: getDepartementsRequest },
+  "/api/departement/save": { handler: saveDepartementRequest },
+  "/api/departement/delete": { handler: deleteDepartementRequest },
+  "/api/departement/export": {
+    handler: exportDepartementsRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/commune/all": { handler: getCommunesRequest },
+  "/api/commune/save": { handler: saveCommuneRequest },
+  "/api/commune/delete": { handler: deleteCommuneRequest },
+  "/api/commune/export": {
+    handler: exportCommunesRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/lieudit/all": { handler: getLieuxditsRequest },
+  "/api/lieudit/save": { handler: saveLieuditRequest },
+  "/api/lieudit/delete": { handler: deleteLieuditRequest },
+  "/api/lieudit/export": {
+    handler: exportLieuxditsRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/meteo/all": { handler: getMeteosRequest },
+  "/api/meteo/save": { handler: saveMeteoRequest },
+  "/api/meteo/delete": { handler: deleteMeteoRequest },
+  "/api/meteo/export": {
+    handler: exportMeteosRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/classe/all": { handler: getClassesRequest },
+  "/api/classe/save": { handler: saveClasseRequest },
+  "/api/classe/delete": { handler: deleteClasseRequest },
+  "/api/classe/export": {
+    handler: exportClassesRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/espece/all": { handler: getEspecesRequest },
+  "/api/espece/save": { handler: saveEspeceRequest },
+  "/api/espece/delete": { handler: deleteEspeceRequest },
+  "/api/espece/details_by_age": { handler: getEspeceDetailsByAgeRequest },
+  "/api/espece/details_by_sexe": { handler: getEspeceDetailsBySexeRequest },
+  "/api/espece/export": {
+    handler: exportEspecesRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/sexe/all": { handler: getSexesRequest },
+  "/api/sexe/save": { handler: saveSexeRequest },
+  "/api/sexe/delete": { handler: deleteSexeRequest },
+  "/api/sexe/export": {
+    handler: exportSexesRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/age/all": { handler: getAgesRequest },
+  "/api/age/save": { handler: saveAgeRequest },
+  "/api/age/delete": { handler: deleteAgeRequest },
+  "/api/age/export": {
+    handler: exportAgesRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/estimation-nombre/all": { handler: getEstimationsNombreRequest },
+  "/api/estimation-nombre/save": { handler: saveEstimationNombreRequest },
+  "/api/estimation-nombre/delete": { handler: deleteEstimationNombreRequest },
+  "/api/estimation-nombre/export": {
+    handler: exportEstimationsNombreRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/estimation-distance/all": { handler: getEstimationsDistanceRequest },
+  "/api/estimation-distance/save": { handler: saveEstimationDistanceRequest },
+  "/api/estimation-distance/delete": { handler: deleteEstimationDistanceRequest },
+  "/api/estimation-distance/export": {
+    handler: exportEstimationsDistanceRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/comportement/all": { handler: getComportementsRequest },
+  "/api/comportement/save": { handler: saveComportementRequest },
+  "/api/comportement/delete": { handler: deleteComportementRequest },
+  "/api/comportement/export": {
+    handler: exportComportementsRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/milieu/all": { handler: getMilieuxRequest },
+  "/api/milieu/save": { handler: saveMilieuRequest },
+  "/api/milieu/delete": { handler: deleteMilieuRequest },
+  "/api/milieu/export": {
+    handler: exportMilieuxRequest,
+    responseType: EXCEL_MIME_TYPE
+  },
+  "/api/configuration/all": {
+    method: GET,
+    handler: getAppConfigurationRequest
+  },
+  "/api/configuration/update": {
+    method: POST,
+    handler: configurationUpdateRequest
+  },
+  "/api/database/clear": { handler: clearAllTables },
+  "/api/database/save": {
+    handler: saveDatabaseRequest,
+    responseType: "application/sql",
+    responseAttachmentHandler: saveDatabaseFileNameRequest
+  },
+  "/api/database/update": { handler: executeDatabaseMigration }
+} as const;

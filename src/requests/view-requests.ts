@@ -26,14 +26,14 @@ const getMilieu = (donnee: FlatDonnee, index: number): string => {
 export const getDonneesByCustomizedFiltersRequest = async (
   httpParameters: HttpParameters<DonneesFilter>
 ): Promise<FlatDonnee[]> => {
-  return await findDonneesByCustomizedFilters(httpParameters.postData);
+  return await findDonneesByCustomizedFilters(httpParameters.body);
 };
 
 export const exportDonneesByCustomizedFiltersRequest = async (
   httpParameters: HttpParameters<DonneesFilter>
 ): Promise<unknown> => {
   const flatDonnees = await findDonneesByCustomizedFilters(
-    httpParameters.postData
+    httpParameters.body
   );
 
   if (flatDonnees.length > MAXIMUM_EXCEL_DATA_SUPPORTED) {
@@ -44,7 +44,7 @@ export const exportDonneesByCustomizedFiltersRequest = async (
     });
   }
 
-  const coordinatesSystemType: CoordinatesSystemType = httpParameters.postData.coordinatesSystemType;
+  const coordinatesSystemType: CoordinatesSystemType = httpParameters.body.coordinatesSystemType;
   const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
   const coordinatesSuffix =
     " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";

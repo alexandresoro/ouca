@@ -1,38 +1,32 @@
 import { ChildProcess, spawn } from "child_process";
 import { format } from "date-fns";
 import {
-  DEFAULT_DATABASE_NAME,
   getSqlConnectionConfiguration
 } from "../sql/sql-connection";
 import { DATE_PATTERN } from "../utils/constants";
-import { options } from "../utils/options";
+import { logger } from "../utils/logger";
 
 const DUMP_FILE_NAME = "sauvegarde_base_naturaliste_";
 const SQL_EXTENSION = ".sql";
 
-const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
+const executeSqlDump = async (): Promise<string> => {
   return new Promise((resolve, reject): void => {
     let stdout = "";
     let stderr = "";
 
     const connectionConfig = getSqlConnectionConfiguration();
 
-    let commonDumpParams: string[] = [
+    const dumpParams: string[] = [
       `--user=${connectionConfig.user}`,
       `--password=${connectionConfig.password}`,
       "--default-character-set=utf8",
       "--skip-triggers",
-      DEFAULT_DATABASE_NAME
+      `--host=${connectionConfig.host}`,
+      `--port=${connectionConfig.port}`,
+      connectionConfig.database
     ];
 
-    if (isRemoteDump) {
-      commonDumpParams = commonDumpParams.concat(
-        `--host=${connectionConfig.host}`,
-        `--port=${connectionConfig.port}`
-      );
-    }
-
-    const dumpProcess: ChildProcess = spawn("mysqldump", commonDumpParams);
+    const dumpProcess: ChildProcess = spawn("mysqldump", dumpParams);
 
     dumpProcess.stdout.on("data", (contents) => {
       stdout += contents;
@@ -52,9 +46,9 @@ const executeSqlDump = async (isRemoteDump: boolean): Promise<string> => {
 
 export const saveDatabaseRequest = async (): Promise<string> => {
   try {
-    return await executeSqlDump(options.docker);
+    return await executeSqlDump();
   } catch (error) {
-    console.error(
+    logger.error(
       "L'extraction de la base de données n'a pas pu être effectuée",
       error
     );

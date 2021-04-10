@@ -1,7 +1,7 @@
 import { ParsedUrlQuery } from "querystring";
 
 export type HttpParameters<T = unknown> = {
-  queryParameters: ParsedUrlQuery,
+  query: ParsedUrlQuery,
 
-  postData?: T
+  body?: T
 }

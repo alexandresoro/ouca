@@ -18,7 +18,7 @@ import { ImportableTable, TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTE
 import { WebsocketServer } from "./websocket-server";
 import { wrapObject } from "./ws-wrapper";
 
-const createUpdateMessage = <T extends unknown>(
+const createUpdateMessage = <T = unknown>(
   message: T,
   key: string
 ): string => {

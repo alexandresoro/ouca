@@ -3,10 +3,6 @@ export const DONNEE_ID = "donnee_id";
 export const INVENTAIRE_ID = "inventaire_id";
 export const METEO_ID = "meteo_id";
 export const OBSERVATEUR_ID = "observateur_id";
-export const NB_DONNEES = "nbDonnees";
-export const NB_COMMUNES = "nbCommunes";
-export const NB_LIEUXDITS = "nbLieuxdits";
-export const NB_ESPECES = "nbEspeces";
 
 export const TABLE_OBSERVATEUR = "observateur";
 export const TABLE_DEPARTEMENT = "departement";
@@ -41,18 +37,6 @@ export const COLUMN_NOM = "nom";
 
 export const ORDER_ASC = "ASC";
 export const ORDER_DESC = "DESC";
-
-export const KEY_DEFAULT_OBSERVATEUR_ID = "default_observateur_id";
-export const KEY_DEFAULT_DEPARTEMENT_ID = "default_departement_id";
-export const KEY_DEFAULT_AGE_ID = "default_age_id";
-export const KEY_DEFAULT_SEXE_ID = "default_sexe_id";
-export const KEY_DEFAULT_ESTIMATION_NOMBRE_ID = "default_estimation_nombre_id";
-export const KEY_DEFAULT_NOMBRE = "default_nombre";
-export const KEY_ARE_ASSOCIES_DISPLAYED = "are_associes_displayed";
-export const KEY_IS_METEO_DISPLAYED = "is_meteo_displayed";
-export const KEY_IS_DISTANCE_DISPLAYED = "is_distance_displayed";
-export const KEY_IS_REGROUPEMENT_DISPLAYED = "is_regroupement_displayed";
-export const KEY_COORDINATES_SYSTEM = "coordinates_system";
 
 export const SEPARATOR_COMMA = ", ";
 

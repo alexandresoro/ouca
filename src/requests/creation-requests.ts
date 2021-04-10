@@ -11,7 +11,7 @@ import { buildErrorPostResponse, buildPostResponseFromSqlResponse } from "../uti
 export const saveInventaireRequest = async (
   httpParameters: HttpParameters<Inventaire>
 ): Promise<PostResponse> => {
-  const inventaireToSave = httpParameters.postData;
+  const inventaireToSave = httpParameters.body;
 
   let sqlResponse: SqlSaveResponse;
 
@@ -43,7 +43,7 @@ export const saveInventaireRequest = async (
 export const saveDonneeRequest = async (
   httpParameters: HttpParameters<Donnee>
 ): Promise<PostResponse> => {
-  const donneeToSave = httpParameters.postData;
+  const donneeToSave = httpParameters.body;
 
   // Check if the donnee already exists or not
   const existingDonneeId: number = await findExistingDonneeId(donneeToSave);
@@ -65,8 +65,8 @@ export const saveDonneeRequest = async (
 export const deleteDonneeRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
-  const donneeId: number = +httpParameters.queryParameters.donneeId;
-  const inventaireId: number = +httpParameters.queryParameters.inventaireId;
+  const donneeId: number = +httpParameters.query.donneeId;
+  const inventaireId: number = +httpParameters.query.inventaireId;
 
   const sqlResponse: SqlSaveResponse = await deleteDonneeById(
     donneeId,
@@ -79,7 +79,7 @@ export const deleteDonneeRequest = async (
 export const getDonneeByIdWithContextRequest = async (
   httpParameters: HttpParameters
 ): Promise<DonneeWithNavigationData> => {
-  const id: number = +httpParameters.queryParameters.id;
+  const id: number = +httpParameters.query.id;
   return await findDonneeByIdWithContext(id);
 };
 
@@ -90,14 +90,14 @@ export const getNextRegroupementRequest = async (): Promise<number> => {
 export const getInventaireByIdRequest = async (
   httpParameters: HttpParameters
 ): Promise<Inventaire> => {
-  const inventaireId: number = +httpParameters.queryParameters.id;
+  const inventaireId: number = +httpParameters.query.id;
   return findInventaireById(inventaireId);
 };
 
 export const getInventaireIdByIdRequest = async (
   httpParameters: HttpParameters
 ): Promise<number> => {
-  return findInventaireIdById(+httpParameters.queryParameters.id);
+  return findInventaireIdById(+httpParameters.query.id);
 };
 
 export const getLastDonneeIdRequest = async (): Promise<number> => {

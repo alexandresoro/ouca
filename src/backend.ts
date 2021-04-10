@@ -1,7 +1,8 @@
-import * as http from "http";
-import * as multiparty from "multiparty";
-import { checkMethodValidity, OPTIONS, POST } from "./http/httpMethod";
-import { handleHttpRequest, isMultipartContent } from "./http/requestHandling";
+import cors from "cors";
+import express, { RequestHandler } from "express";
+import { DELETE, GET, POST } from "./http/httpMethod";
+import { handleRequest } from "./http/requestHandling";
+import { REQUEST_MAPPING } from "./mapping";
 import { WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
 import { HEARTBEAT, IMPORT, INIT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
@@ -11,88 +12,57 @@ import { options } from "./utils/options";
 import { WebsocketServer } from "./ws/websocket-server";
 import { sendInitialData } from "./ws/ws-messages";
 
-// HTTP server
-const server = http.createServer(
-  (request: http.IncomingMessage, res: http.ServerResponse) => {
-    logger.info(`Method ${request.method}, URL ${request.url}`);
+const app = express();
 
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    // This header is used on client side to extract the file name for the SQL extract for example
-    res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+// CORS
+app.use(cors());
+app.options('*', cors());
 
-    // Check if the method is allowed
-    const isMethodValid = checkMethodValidity(request);
-    if (!isMethodValid) {
-      res.statusCode = 405;
-      res.end();
-      return;
-    }
+// Parse JSON bodies
+app.use(express.json());
 
-    if (request.method === OPTIONS) {
-      // Because of CORS, when the UI is requesting a POST method with a JSON body, it will preflight an OPTIONS call
-      res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-      res.setHeader("Access-Control-Max-Age", "86400");
-      res.setHeader(
-        "Access-Control-Allow-Headers",
-        "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
-      );
+// Log requests
+app.use((req, res, next) => {
+  logger.info(`Method ${req.method}, URL ${req.url}`);
+  next()
+});
 
-      res.statusCode = 200;
-      res.end();
-    } else if (request.method === POST) {
-      // Check if the request is a multipart content
-      const isMultipartContentRequest: boolean = isMultipartContent(request);
+// Routes
+Object.entries(REQUEST_MAPPING).forEach(([route, mapping]) => {
 
-      if (isMultipartContentRequest) {
-        const form = new multiparty.Form();
-        const chunksPart = [];
-
-        form.on("part", (part) => {
-          if (part.filename) {
-            part.on("data", (chunk) => {
-              chunksPart.push(chunk);
-            });
-            part.on("end", () => {
-              const fileContent: string = Buffer.concat(chunksPart).toString();
-              handleHttpRequest(
-                request,
-                res,
-                fileContent
-              );
-            });
-          } else {
-            res.statusCode = 404;
-            res.end();
-            return;
-          }
-        });
-
-        form.parse(request);
-      } else {
-        const chunks = [];
-        request.on("data", (chunk) => {
-          chunks.push(chunk);
-        });
-        request.on("end", () => {
-          const postDataStr = Buffer.concat(chunks).toString();
-          if (!postDataStr) {
-            // If the request is a post without content, return a 400 error
-            res.statusCode = 400;
-            res.end();
-            return;
-          }
-          const postData = JSON.parse(postDataStr) as unknown;
-          handleHttpRequest(request, res, postData);
-        });
-      }
-    } else {
-      handleHttpRequest(request, res);
-    }
+  const routeHandler: RequestHandler<unknown, unknown, unknown, Record<string, string | string[]>> = (req, res) => {
+    handleRequest(req, res, mapping);
   }
-);
+
+  switch (mapping.method) {
+    case GET:
+      app.get(route, routeHandler);
+      break;
+    case POST:
+      app.post(route, routeHandler);
+      break;
+    case DELETE:
+      app.delete(route, routeHandler);
+      break;
+    default:
+      app.all(route, routeHandler);
+      break;
+  }
+
+});
+
+// 404
+app.use((req, res) => {
+  res.status(404).send();
+});
+
+// HTTP server
+const httpServer = app.listen(options.listenPort, options.listenAddress, () => {
+  logger.info(`Server running at http://${options.listenAddress}:${options.listenPort}/`);
+});
 
 // Websocket
-const wss = WebsocketServer.createServer(server);
+const wss = WebsocketServer.createServer(httpServer);
 
 wss.on("connection", (client) => {
   client.on("message", (data): void => {
@@ -110,20 +80,14 @@ wss.on("connection", (client) => {
     } else if (message.type === INIT) {
       // Client requests the initial configuration
       logger.info("Sending initial data to client");
-      void sendInitialData(client);
+      sendInitialData(client).catch((error) => { logger.error(error) });
     } else if (message.type === IMPORT) {
       // Import message received
       const importRequest = (message as WebsocketImportRequestMessage).content;
       logger.info(`Import requested by the client for table ${importRequest.dataType}`);
       logger.debug(`Import content is ${importRequest.data}`);
-      void importWebsocket(client, importRequest);
+      importWebsocket(client, importRequest)
+        .catch((error) => { logger.error(error) });
     }
   });
-});
-
-
-const listenAddress = options.docker ? "0.0.0.0" : options.listenAddress;
-
-server.listen(options.listenPort, listenAddress, () => {
-  logger.info(`Server running at http://${listenAddress}:${options.listenPort}/`);
 });

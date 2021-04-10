@@ -6,7 +6,6 @@ import {
   METEO_ID,
   OBSERVATEUR_ID
 } from "../utils/constants";
-import { logger } from "../utils/logger";
 import { SqlConnection } from "./sql-connection";
 
 
@@ -41,8 +40,6 @@ export const DB_SAVE_LISTS_MAPPING = {
 } as const;
 
 export function query<T>(query: string): Promise<T> {
-  logger.debug(`Executing SQL query : 
-  ${query};`);
   return SqlConnection.query(query + ";");
 }
 

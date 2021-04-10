@@ -2,15 +2,8 @@ import * as mariadb from "mariadb";
 import { logger } from "../utils/logger";
 import { options } from "../utils/options";
 
-export const DEFAULT_DATABASE_NAME = "basenaturaliste";
-
 /**
  * Returns the connection configuration of the database to connect to.
- * It returns the default configuration, or a configuration that can be overriden by argv params/
- * - dbUser
- * - dbPort
- * - dbUser
- * - dbPassword
  */
 export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
 
@@ -19,7 +12,7 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
     port: options.dbPort,
     user: options.dbUser,
     password: options.dbPassword,
-    database: DEFAULT_DATABASE_NAME,
+    database: options.dbName,
     multipleStatements: true,
     dateStrings: true,
     typeCast: function castField(field, useDefaultTypeCasting) {
@@ -39,59 +32,24 @@ export const getSqlConnectionConfiguration = (): mariadb.ConnectionConfig => {
   };
 
   logger.info(
-    `Database configured with address ${config.host}:${config.port} and user ${config.user} on database "${config.database}"`
+    `Database connection is configured to target address ${config.host}:${config.port} with user ${config.user} on database "${config.database}"`
   );
 
   return config;
 };
 
-const createDatabaseConnection = async (): Promise<mariadb.Connection> => {
-  return mariadb
-    .createConnection(getSqlConnectionConfiguration())
-    .then((conn) => {
-      logger.info(`Connected to the database: ${conn.serverVersion()}`);
-      conn.on("error", (error) => {
-        logger.error(error);
-      });
-      return conn;
-    })
-    .catch((error) => {
-      // General connection error
+const mariaDbPool = mariadb.createPool(getSqlConnectionConfiguration());
+
+export const SqlConnection = {
+  async query<T>(query: string): Promise<T> {
+    logger.debug(`Executing SQL query : 
+    ${query}`);
+    return (mariaDbPool.query(query) as Promise<T>).catch((error) => {
       logger.error(
         "The connection to the database has failed with the following error:",
         error
       );
       return Promise.reject(error);
     });
-};
-
-export class SqlConnection {
-  public static async query<T>(query: string): Promise<T> {
-    const connection = await this.getConnection();
-    return connection.query(query) as Promise<T>;
   }
-
-  // The current database connection
-  private static connection: mariadb.Connection | null | undefined;
-
-  private static async getConnection(): Promise<mariadb.Connection> {
-    // If we already have an existing connection but, the connection is no more valid,
-    // we destroy it in order to recreate a new one
-    if (this.connection && !this.connection.isValid()) {
-      this.connection.destroy();
-      this.connection = null;
-    }
-
-    // If no valid connection exists, we create a new one
-    if (!this.connection) {
-      try {
-        const connection = await createDatabaseConnection();
-        this.connection = connection;
-      } catch (error) {
-        // If something went wrong during the creation of the connection, we reject the promise
-        return Promise.reject(error);
-      }
-    }
-    return this.connection;
-  }
-}
+} as const;

@@ -44,7 +44,7 @@ const processImport = (workerPath: string, workerData: WebsocketImportRequestCon
     });
 
     worker.on('error', (error) => {
-      logger.warn(`Import failed with error ${JSON.stringify(error)}`);
+      logger.warn(`Import failed with error ${JSON.stringify(error, null, 2)}`);
 
       const errorMessage: ImportErrorMessage = {
         type: IMPORT_ERROR,
@@ -88,5 +88,5 @@ export const importWebsocket = async (
     tableToUpdate = importContent.dataType;
   }
 
-  return processImport('./dist/services/import/import-worker.js', importContent, tableToUpdate, client);
+  return processImport('./services/import/import-worker.js', importContent, tableToUpdate, client);
 };

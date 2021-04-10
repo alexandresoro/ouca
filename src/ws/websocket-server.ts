@@ -1,19 +1,22 @@
 import * as http from "http";
 import WebSocket, { Server } from "ws";
 
-export class WebsocketServer {
-  private static wss: Server;
+let wss: Server;
 
-  public static createServer(server: http.Server): Server {
-    this.wss = new Server({ server });
-    return this.wss;
-  }
+export const WebsocketServer = {
 
-  public static getServer(): Server {
-    return this.wss;
-  }
+  createServer(server: http.Server): Server {
+    if (!wss) {
+      wss = new Server({ server });
+    }
+    return wss;
+  },
 
-  public static sendMessageToClients(
+  getServer(): Server {
+    return wss;
+  },
+
+  sendMessageToClients(
     message: string,
     clients?: WebSocket | WebSocket[]
   ): void {
@@ -21,10 +24,11 @@ export class WebsocketServer {
       ? Array.isArray(clients)
         ? clients
         : [clients]
-      : this.wss.clients;
+      : wss.clients;
 
     clientsToTarget.forEach((client: WebSocket) => {
       client.send(message);
     });
   }
-}
+
+} as const

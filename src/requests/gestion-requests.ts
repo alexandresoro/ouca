@@ -40,7 +40,7 @@ const deleteEntity = async (
   httpParameters: HttpParameters,
   entityName: string
 ): Promise<PostResponse> => {
-  const id: number = +httpParameters.queryParameters.id;
+  const id: number = +httpParameters.query.id;
   const sqlResponse: SqlSaveResponse = await deleteEntityById(entityName, id);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
@@ -52,14 +52,14 @@ export const getObservateursRequest = async (): Promise<Observateur[]> => {
 export const saveObservateurRequest = async (
   httpParameters: HttpParameters<Observateur>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistObservateur(httpParameters.postData);
+  const sqlResponse = await persistObservateur(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
 export const removeObservateurRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
-  const id: number = +httpParameters.queryParameters.id;
+  const id: number = +httpParameters.query.id;
   const sqlResponse: SqlSaveResponse = await deleteObservateur(id);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
@@ -71,7 +71,7 @@ export const getDepartementsRequest = async (): Promise<Departement[]> => {
 export const saveDepartementRequest = async (
   httpParameters: HttpParameters<Departement>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistDepartement(httpParameters.postData);
+  const sqlResponse = await persistDepartement(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -88,7 +88,7 @@ export const getCommunesRequest = async (): Promise<Commune[]> => {
 export const saveCommuneRequest = async (
   httpParameters: HttpParameters<Commune>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistCommune(httpParameters.postData);
+  const sqlResponse = await persistCommune(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -105,7 +105,7 @@ export const getLieuxditsRequest = async (): Promise<Lieudit[]> => {
 export const saveLieuditRequest = async (
   httpParameters: HttpParameters<Lieudit>
 ): Promise<PostResponse> => {
-  const lieuditToSave = httpParameters.postData;
+  const lieuditToSave = httpParameters.body;
   const sqlResponse = await persistLieuDit(lieuditToSave);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
@@ -123,7 +123,7 @@ export const getMeteosRequest = async (): Promise<Meteo[]> => {
 export const saveMeteoRequest = async (
   httpParameters: HttpParameters<Meteo>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistMeteo(httpParameters.postData);
+  const sqlResponse = await persistMeteo(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -140,7 +140,7 @@ export const getClassesRequest = async (): Promise<Classe[]> => {
 export const saveClasseRequest = async (
   httpParameters: HttpParameters<Classe>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistClasse(httpParameters.postData);
+  const sqlResponse = await persistClasse(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -157,7 +157,7 @@ export const getEspecesRequest = async (): Promise<Espece[]> => {
 export const saveEspeceRequest = async (
   httpParameters: HttpParameters<Espece>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistEspece(httpParameters.postData);
+  const sqlResponse = await persistEspece(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -174,7 +174,7 @@ export const getSexesRequest = async (): Promise<Sexe[]> => {
 export const saveSexeRequest = async (
   httpParameters: HttpParameters<Sexe>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistSexe(httpParameters.postData);
+  const sqlResponse = await persistSexe(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -191,7 +191,7 @@ export const getAgesRequest = async (): Promise<Age[]> => {
 export const saveAgeRequest = async (
   httpParameters: HttpParameters<Age>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistAge(httpParameters.postData);
+  const sqlResponse = await persistAge(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -208,7 +208,7 @@ export const getEstimationsNombreRequest = async (): Promise<EstimationNombre[]>
 export const saveEstimationNombreRequest = async (
   httpParameters: HttpParameters<EstimationNombre>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistEstimationNombre(httpParameters.postData);
+  const sqlResponse = await persistEstimationNombre(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -227,7 +227,7 @@ export const getEstimationsDistanceRequest = async (): Promise<
 export const saveEstimationDistanceRequest = async (
   httpParameters: HttpParameters<EstimationDistance>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistEstimationDistance(httpParameters.postData);
+  const sqlResponse = await persistEstimationDistance(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -244,7 +244,7 @@ export const getComportementsRequest = async (): Promise<Comportement[]> => {
 export const saveComportementRequest = async (
   httpParameters: HttpParameters<Comportement>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistComportement(httpParameters.postData);
+  const sqlResponse = await persistComportement(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -261,7 +261,7 @@ export const getMilieuxRequest = async (): Promise<Milieu[]> => {
 export const saveMilieuRequest = async (
   httpParameters: HttpParameters<Milieu>
 ): Promise<PostResponse> => {
-  const sqlResponse = await persistMilieu(httpParameters.postData);
+  const sqlResponse = await persistMilieu(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
@@ -436,13 +436,13 @@ export const exportMilieuxRequest = async (): Promise<unknown> => {
 export const getEspeceDetailsByAgeRequest = (
   httpParameters: HttpParameters
 ): Promise<{ name: string; value: number }[]> => {
-  const especeId: number = +httpParameters.queryParameters.id;
+  const especeId: number = +httpParameters.query.id;
   return countSpecimensByAgeForEspeceId(especeId);
 };
 
 export const getEspeceDetailsBySexeRequest = (
   httpParameters: HttpParameters
 ): Promise<{ name: string; value: number }[]> => {
-  const especeId: number = +httpParameters.queryParameters.id;
+  const especeId: number = +httpParameters.query.id;
   return countSpecimensBySexeForEspeceId(especeId);
 };

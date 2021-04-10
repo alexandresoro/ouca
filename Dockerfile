@@ -39,6 +39,6 @@ WORKDIR /app/backend
 
 COPY --from=build /app/backend/dist/ /app/backend/
 
-CMD node backend.js --dbHost ${DB_HOST} --dbPort ${DB_PORT} --dbUser ${DB_USER} --dbPassword ${DB_PASSWORD} --logLevel ${LOG_LEVEL} --logToFile ${LOG_TO_FILE} --docker
+CMD node backend.js --dbHost ${DB_HOST} --dbPort ${DB_PORT} --dbUser ${DB_USER} --dbPassword ${DB_PASSWORD} --logLevel ${LOG_LEVEL} --logToFile ${LOG_TO_FILE} --listenAddress "0.0.0.0"
 
 EXPOSE 4000/tcp
