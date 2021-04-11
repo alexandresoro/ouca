@@ -159,15 +159,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.groupby@npm:^4.6.6":
-  version: 4.6.6
-  resolution: "@types/lodash.groupby@npm:4.6.6"
-  dependencies:
-    "@types/lodash": "*"
-  checksum: 03607aaa6e6d059ce010966138322859dd5438c63f35413e3c9744b6f295a82cc82470a462cfc6987e6b0c97468370cb935a498554c2746e6365de0ea0882e68
-  languageName: node
-  linkType: hard
-
 "@types/lodash@npm:*":
   version: 4.14.168
   resolution: "@types/lodash@npm:4.14.168"
@@ -1570,13 +1561,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.groupby@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "lodash.groupby@npm:4.6.0"
-  checksum: fb4c30f93ca5a11c4234df33578c1c7f9d86edb8e85a808cffa6fc2064b3a1856e93948489b1774264cf35995a29f82cbf6fd31093d9ebcb9a9c8fd7225f4686
-  languageName: node
-  linkType: hard
-
 "lodash@npm:^4.17.15":
   version: 4.17.20
   resolution: "lodash@npm:4.17.20"
@@ -1811,7 +1795,6 @@ __metadata:
     "@types/cors": ^2.8.10
     "@types/express": ^4.17.11
     "@types/lodash.deburr": ^4.1.6
-    "@types/lodash.groupby": ^4.6.6
     "@types/node": ^14.14.37
     "@types/proj4": ^2.5.0
     "@types/ws": ^7.4.1
@@ -1824,7 +1807,6 @@ __metadata:
     eslint: ^7.24.0
     express: ^4.17.1
     lodash.deburr: ^4.1.0
-    lodash.groupby: ^4.6.0
     mariadb: ^2.5.3
     papaparse: ^5.3.0
     proj4: ^2.7.2

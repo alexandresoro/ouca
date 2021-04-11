@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import groupBy from "lodash.groupby";
 import { getCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 import { DonneeWithNavigationData } from "../../model/types/donnee-with-navigation-data.object";
@@ -305,10 +304,14 @@ const updateCoordinates = (
   donnee.customizedCoordinatesSystem = null;
 };
 
-const groupByDonneeId = <T extends { donneeId: number }>(table: T[]): { [key: number]: T[] } => {
-  return groupBy(table, (tableElement) => {
-    return tableElement.donneeId;
-  });
+const groupByDonneeId = <T extends { donneeId: number }>(table: T[]): Record<number, T[]> => {
+  return table.reduce<Record<number, T[]>>(
+    (acc, value) => {
+      const donneeId = value.donneeId;
+      (acc[donneeId] || (acc[donneeId] = [])).push(value);
+      return acc;
+    },
+    {});
 }
 
 export const findDonneesByCustomizedFilters = async (
