@@ -33,8 +33,9 @@ export type ImportNotifyProgressMessage = {
 }
 
 export type ImportPostCompleteMessage = {
-  type: typeof IMPORT_COMPLETE;
-  result: string;
+  type: typeof IMPORT_COMPLETE,
+  hasErrors: boolean,
+  result: string
 }
 
 export type ImportErrorMessage = {
