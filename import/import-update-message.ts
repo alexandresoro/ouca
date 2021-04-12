@@ -34,8 +34,8 @@ export type ImportNotifyProgressMessage = {
 
 export type ImportPostCompleteMessage = {
   type: typeof IMPORT_COMPLETE,
-  hasErrors: boolean,
-  result: string
+  fileInputError: string,
+  lineErrors: string[][]
 }
 
 export type ImportErrorMessage = {
