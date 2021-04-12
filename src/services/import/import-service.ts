@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
 import Papa from "papaparse";
-import { DATA_VALIDATION_START, ImportNotifyProgressMessageContent, INSERT_DB_START, RETRIEVE_DB_INFO_START } from "../../model/import/import-update-message";
+import { DATA_VALIDATION_START, ImportNotifyProgressMessageContent, IMPORT_PROCESS_STARTED, INSERT_DB_START, RETRIEVE_DB_INFO_START } from "../../model/import/import-update-message";
 import { logger } from "../../utils/logger";
 
 const COMMENT_PREFIX = "###";
@@ -17,6 +17,8 @@ const NOTIFY_PROGRESS_INTERVAL = 500; //ms
 export abstract class ImportService extends EventEmitter {
 
   public importFile = async (fileContent: string): Promise<void> => {
+
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: IMPORT_PROCESS_STARTED });
 
     if (!fileContent) {
       this.emit(IMPORT_COMPLETE_EVENT, "Le contenu du fichier n'a pas pu être lu");
