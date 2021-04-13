@@ -36,7 +36,7 @@ const processImport = (workerPath: string, workerData: WebsocketImportRequestCon
         // that does not have the proper visibility
         onTableUpdate(tableToUpdate);
 
-        resolve(postMessage.fileInputError ?? postMessage.lineErrors.toString());
+        resolve(postMessage.fileInputError ?? postMessage.lineErrors?.toString());
       } else if (postMessage.type === VALIDATION_PROGRESS || STATUS_UPDATE.includes(postMessage.type)) {
         sendImportMessage(postMessage, client);
       }
