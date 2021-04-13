@@ -20,11 +20,22 @@ serviceWorker.on(IMPORT_STATUS_UPDATE_EVENT, (statusUpdate: ImportNotifyStatusUp
   parentPort.postMessage(statusUpdate);
 });
 
-serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string) => {
-  const messageContent: ImportPostCompleteMessage = {
-    type: IMPORT_COMPLETE,
-    result: importResult
+serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string | string[][]) => {
+
+  let messageContent: ImportPostCompleteMessage;
+
+  if (typeof importResult === "string") {
+    messageContent = {
+      type: IMPORT_COMPLETE,
+      fileInputError: importResult
+    }
+  } else {
+    messageContent = {
+      type: IMPORT_COMPLETE,
+      lineErrors: importResult
+    }
   }
+
   parentPort.postMessage(messageContent);
   process.exit(0);
 });

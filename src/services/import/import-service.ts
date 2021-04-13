@@ -39,7 +39,7 @@ export abstract class ImportService extends EventEmitter {
     const numberOfLines = content.data.filter((lineTab) => {
       return lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX);
     }).length;
-    const errors = [];
+    const errors = [] as string[][];
     let validatedEntries = 0;
 
     this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: RETRIEVE_DB_INFO_START });
@@ -92,14 +92,9 @@ export abstract class ImportService extends EventEmitter {
     logger.debug(`Résultat de l'import : ${(numberOfLines - errors.length)}/${numberOfLines} importées avec succès --> ${errors.length} lignes en erreur`);
 
     if (errors.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      const errorsCsv = Papa.unparse(errors, {
-        delimiter: ";",
-        encoding: "UTF-8"
-      }) as string;
-      this.emit(IMPORT_COMPLETE_EVENT, errorsCsv);
+      this.emit(IMPORT_COMPLETE_EVENT, errors);
     } else {
-      this.emit(IMPORT_COMPLETE_EVENT, "Aucune erreur pendant l'import");
+      this.emit(IMPORT_COMPLETE_EVENT, null);
     }
   };
 
