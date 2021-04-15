@@ -1,13 +1,59 @@
-import { Worker } from "worker_threads";
+import { isMainThread, parentPort, Worker, workerData } from "worker_threads";
 import WebSocket from "ws";
-import { ImportErrorMessage, ImportUpdateMessage, IMPORT_COMPLETE, IMPORT_ERROR, STATUS_UPDATE, VALIDATION_PROGRESS } from "../model/import/import-update-message";
+import { ImportErrorMessage, ImportNotifyProgressMessage, ImportNotifyProgressMessageContent, ImportNotifyStatusUpdateMessage, ImportPostCompleteMessage, ImportUpdateMessage, IMPORT_COMPLETE, IMPORT_ERROR, STATUS_UPDATE, VALIDATION_PROGRESS } from "../model/import/import-update-message";
 import { IMPORT_ESTIMATION_DISTANCE, IMPORT_ESTIMATION_NOMBRE, WebsocketImportRequestContent } from "../model/websocket/websocket-import-request-message";
 import { WebsocketImportUpdateMessage } from "../model/websocket/websocket-import-update-message";
 import { IMPORT } from "../model/websocket/websocket-message-type.model";
+import { IMPORT_COMPLETE_EVENT, IMPORT_PROGRESS_UPDATE_EVENT, IMPORT_STATUS_UPDATE_EVENT } from "../services/import/import-service";
+import { getNewImportServiceForRequestType } from "../services/import/import-service-per-request-type";
 import { ImportableTable, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE } from "../utils/constants";
 import { logger } from "../utils/logger";
 import { WebsocketServer } from "../ws/websocket-server";
 import { onTableUpdate } from "../ws/ws-messages";
+
+// Worker thread for the import
+if (!isMainThread) {
+  const importData = workerData as WebsocketImportRequestContent;
+
+  const serviceWorker = getNewImportServiceForRequestType(importData.dataType);
+
+  serviceWorker.on(IMPORT_PROGRESS_UPDATE_EVENT, (progressContent: ImportNotifyProgressMessageContent) => {
+    const messageContent: ImportNotifyProgressMessage = {
+      type: VALIDATION_PROGRESS,
+      progress: progressContent
+    }
+    parentPort.postMessage(messageContent);
+  });
+
+  serviceWorker.on(IMPORT_STATUS_UPDATE_EVENT, (statusUpdate: ImportNotifyStatusUpdateMessage) => {
+    parentPort.postMessage(statusUpdate);
+  });
+
+  serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string | string[][]) => {
+
+    let messageContent: ImportPostCompleteMessage;
+
+    if (typeof importResult === "string") {
+      messageContent = {
+        type: IMPORT_COMPLETE,
+        fileInputError: importResult
+      }
+    } else {
+      messageContent = {
+        type: IMPORT_COMPLETE,
+        lineErrors: importResult
+      }
+    }
+
+    parentPort.postMessage(messageContent);
+    process.exit(0);
+  });
+
+  serviceWorker.importFile(importData.data).catch((error) => {
+    throw error;
+  });
+
+}
 
 const sendImportMessage = (message: ImportUpdateMessage | ImportErrorMessage, client: WebSocket): void => {
   const messageToClient: WebsocketImportUpdateMessage = {
@@ -17,9 +63,10 @@ const sendImportMessage = (message: ImportUpdateMessage | ImportErrorMessage, cl
   WebsocketServer.sendMessageToClients(JSON.stringify(messageToClient), client);
 }
 
-const processImport = (workerPath: string, workerData: WebsocketImportRequestContent, tableToUpdate: ImportableTable, client: WebSocket): Promise<string> => {
+const processImport = (workerData: WebsocketImportRequestContent, tableToUpdate: ImportableTable, client: WebSocket): Promise<string> => {
   return new Promise((resolve, reject) => {
-    const worker = new Worker(workerPath, {
+    const worker = new Worker(__filename, {
+      argv: process.argv.slice(2),
       workerData
     });
 
@@ -88,5 +135,5 @@ export const importWebsocket = async (
     tableToUpdate = importContent.dataType;
   }
 
-  return processImport('./services/import/import-worker.js', importContent, tableToUpdate, client);
+  return processImport(importContent, tableToUpdate, client);
 };
