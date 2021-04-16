@@ -1,5 +1,6 @@
 import WebSocket from "ws";
 import { WebsocketUpdateMessage } from "../model/websocket/websocket-update-message";
+import { APPLICATION_DATA_VERSION } from "../services/database-migration/database-migration.service";
 import { findAllAges } from "../services/entities/age-service";
 import { findAllClasses } from "../services/entities/classe-service";
 import { findAllCommunes } from "../services/entities/commune-service";
@@ -14,6 +15,7 @@ import { findAllMeteos } from "../services/entities/meteo-service";
 import { findAllMilieux } from "../services/entities/milieu-service";
 import { findAllObservateurs } from "../services/entities/observateur-service";
 import { findAllSexes } from "../services/entities/sexe-service";
+import { findVersion } from "../services/entities/version-service";
 import { ImportableTable, TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_OBSERVATEUR, TABLE_SETTINGS, TABLE_SEXE } from "../utils/constants";
 import { WebsocketServer } from "./websocket-server";
 import { wrapObject } from "./ws-wrapper";
@@ -238,6 +240,7 @@ export const sendInitialData = async (
   const comportements = await findAllComportements();
   const milieux = await findAllMilieux();
   const meteos = await findAllMeteos();
+  const dbVersion = await findVersion();
 
   const initialDataContent = {
     configuration: appConfiguration,
@@ -253,7 +256,11 @@ export const sendInitialData = async (
     estimationsNombre,
     comportements,
     milieux,
-    meteos
+    meteos,
+    version: {
+      database: dbVersion,
+      application: APPLICATION_DATA_VERSION
+    }
   };
 
   const initialData: WebsocketUpdateMessage = {

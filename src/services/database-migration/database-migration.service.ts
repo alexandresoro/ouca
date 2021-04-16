@@ -3,7 +3,7 @@ import { createAndInitializeAllTables } from "../entities/entity-service";
 import { checkIfTableObservateurExists } from "../entities/observateur-service";
 import { findVersion, updateVersion } from "../entities/version-service";
 
-const LAST_VERSION = 1;
+export const APPLICATION_DATA_VERSION = 1;
 
 const checkAndInitializeDatabase = async (): Promise<boolean> => {
   const tableObservateurExists = await checkIfTableObservateurExists();
@@ -11,7 +11,7 @@ const checkAndInitializeDatabase = async (): Promise<boolean> => {
   if (!tableObservateurExists) {
     logger.info("Initializing database : creating all tables.");
     await createAndInitializeAllTables();
-    await updateVersion(LAST_VERSION);
+    await updateVersion(APPLICATION_DATA_VERSION);
   }
 
   return tableObservateurExists;
@@ -25,10 +25,10 @@ export const executeDatabaseMigration = async (): Promise<void> => {
   }
 
   const currentVersion = await findVersion();
-  logger.info(`Current database version is v${currentVersion}, last database version is v${LAST_VERSION}.`);
-  for (let version = currentVersion + 1; version <= LAST_VERSION; version++) {
+  logger.info(`Current database version is v${currentVersion}, last database version is v${APPLICATION_DATA_VERSION}.`);
+  for (let version = currentVersion + 1; version <= APPLICATION_DATA_VERSION; version++) {
     logger.info(`Migrating database from version v${version - 1} to version v${version}.`);
-    await MIGRATION[`migration${version}`]();
+    await MIGRATION[version]();
     await updateVersion(version);
   }
 };
@@ -40,5 +40,5 @@ const migrationFromV0toV1 = async () => {
 const MIGRATION: {
   [path: string]: () => Promise<void>;
 } = {
-  "migration1": migrationFromV0toV1
+  1: migrationFromV0toV1
 };
