@@ -1,6 +1,6 @@
 import { Commune } from "../types/commune.model";
 
-export const findCommuneById = (communes: Commune[], id: number): Commune => {
+export const findCommuneById = <T extends Commune | { id: number }>(communes: T[], id: number): T => {
   return communes.find((commune) => {
     return id === commune.id;
   });
