@@ -2,20 +2,25 @@ name: CI/CD
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
+    tags:
+      - "v*.*.*"
   pull_request:
-    branches: [master]
-
-env:
-  NPM_GITHUB_TOKEN: ${{secrets.NPM_DOCKERFILE_TOKEN}}
+    branches:
+      - master
 
 jobs:
-  build:
+  check-build-and-release:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x]
+        include:
+          - node-version: 14.x
+            type: "lts-check-build-only"
+          - node-version: 16.x
+            type: "release"
 
     steps:
       - uses: actions/checkout@v2
@@ -33,17 +38,26 @@ jobs:
       - name: Lint
         run: yarn lint
 
-      - name: Check build
+      - name: Build
         run: yarn build:prod
 
-  docker:
-    needs: build
+  publish-docker:
+    needs: check-build-and-release
 
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set the default docker tag
+        run: |
+          echo "DOCKER_TAG=latest" >> $GITHUB_ENV
+
+      - name: Retrieve docker label if this is a tag push
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          echo "DOCKER_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -65,8 +79,9 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: |
+            linux/amd64
+            linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-          build-args: NPM_GITHUB_TOKEN=${{ env.NPM_GITHUB_TOKEN }}
+            ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
