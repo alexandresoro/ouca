@@ -33,12 +33,12 @@ export const executeDatabaseMigration = async (): Promise<void> => {
   }
 };
 
-const migrationFromV0toV1 = async () => {
-  // TO DO
+const migrationFromV1toV2 = async () => {
+  // To fill when a database migration script is required
 }
 
 const MIGRATION: {
   [path: string]: () => Promise<void>;
 } = {
-  1: migrationFromV0toV1
+  2: migrationFromV1toV2
 };
