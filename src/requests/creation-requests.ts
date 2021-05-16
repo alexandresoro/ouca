@@ -34,6 +34,7 @@ export const saveInventaireRequest = async (
     };
   } else {
     // Save the inventaire
+    inventaireToSave.id = null;
     sqlResponse = await persistInventaire(inventaireToSave);
   }
 
