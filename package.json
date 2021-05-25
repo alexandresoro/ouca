@@ -15,9 +15,9 @@
   "scripts": {
     "build:debug": "tsc --sourceMap true",
     "build:prod": "tsc",
-    "debug": "yarn build:debug --sourceMap true && yarn start:debug",
-    "lint": "yarn eslint './src/**/*.ts'",
-    "start": "tsc && cd dist && node backend",
+    "debug": "npm run build:debug --sourceMap true && npm run start:debug",
+    "lint": "eslint './src/**/*.ts'",
+    "start": "tsc && node dist/backend",
     "start:debug": "node --inspect dist/backend"
   },
   "dependencies": {

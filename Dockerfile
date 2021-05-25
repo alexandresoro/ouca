@@ -10,8 +10,8 @@ COPY ./ /app/backend/
 RUN git submodule init
 RUN git submodule update
 
-RUN yarn install --immutable
-RUN yarn build:prod
+RUN npm ci
+RUN npm run build:prod
 
 # 2. Run the NodeJS backend
 FROM node:14-alpine
@@ -19,11 +19,10 @@ FROM node:14-alpine
 # Install only the dependencies that are required at runtime
 WORKDIR /app
 
-COPY package.json yarn.lock .yarnrc.yml /app/
-COPY .yarn/ /app/.yarn
+COPY package.json package-lock.json /app/
 
-RUN yarn workspaces focus --production 
-RUN rm -f package.json yarn.lock .yarnrc.yml
+RUN npm ci --production 
+RUN rm -f package.json package-lock.json
 
 ENV DB_HOST 127.0.0.1
 ENV DB_PORT 3306

@@ -33,13 +33,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm ci
 
       - name: Lint
-        run: yarn lint
+        run: npm run lint
 
       - name: Build
-        run: yarn build:prod
+        run: npm run build:prod
 
   publish-docker:
     needs: check-build-and-release

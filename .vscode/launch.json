@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Backend",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "npm",
       "runtimeArgs": ["debug"],
       "port": 9229,
     }
