@@ -91,3 +91,20 @@ wss.on("connection", (client) => {
     }
   });
 });
+
+// Handle shutdown request gracefully
+// This is used when inside a container
+// See https://emmer.dev/blog/you-don-t-need-an-init-system-for-node.js-in-docker/
+// Alternative is to use --init flag
+const shutdown = () => {
+  logger.info("Shutdown requested");
+  httpServer.close(() => {
+    logger.info("Web server has been shut down");
+    wss.close(() => {
+      logger.info("WebSocket server has been shut down");
+      process.exit(0);
+    });
+  });
+};
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
