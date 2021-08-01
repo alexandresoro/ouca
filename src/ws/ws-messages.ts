@@ -17,7 +17,7 @@ import { findAllObservateurs } from "../services/entities/observateur-service";
 import { findAllSexes } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
 import { ImportableTable, TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_OBSERVATEUR, TABLE_SETTINGS, TABLE_SEXE } from "../utils/constants";
-import { WebsocketServer } from "./websocket-server";
+import { sendMessageToClients } from "./websocket-server";
 import { wrapObject } from "./ws-wrapper";
 
 const createUpdateMessage = <T = unknown>(
@@ -87,7 +87,7 @@ export const sendAppConfiguration = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const appConfiguration = await findAppConfiguration();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(appConfiguration, "configuration"),
     target
   );
@@ -97,7 +97,7 @@ export const sendObservateurs = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const observateurs = await findAllObservateurs();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(observateurs, "observateurs"),
     target
   );
@@ -107,7 +107,7 @@ export const sendLieuxdits = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const lieuxdits = await findAllLieuxDits();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(lieuxdits, "lieuxdits"),
     target
   );
@@ -117,7 +117,7 @@ export const sendCommunes = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const communes = await findAllCommunes();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(communes, "communes"),
     target
   );
@@ -127,7 +127,7 @@ export const sendDepartements = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const departements = await findAllDepartements();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(departements, "departements"),
     target
   );
@@ -137,7 +137,7 @@ export const sendClasses = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const classes = await findAllClasses();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(classes, "classes"),
     target
   );
@@ -147,7 +147,7 @@ export const sendEspeces = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const especes = await findAllEspeces();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(especes, "especes"),
     target
   );
@@ -157,7 +157,7 @@ export const sendSexes = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const sexes = await findAllSexes();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(sexes, "sexes"),
     target
   );
@@ -167,7 +167,7 @@ export const sendAges = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const ages = await findAllAges();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(ages, "ages"),
     target
   );
@@ -177,7 +177,7 @@ export const sendEstimationsDistance = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const estimationsDistance = await findAllEstimationsDistance();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(estimationsDistance, "estimationsDistance"),
     target
   );
@@ -187,7 +187,7 @@ export const sendEstimationsNombre = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const estimationsNombre = await findAllEstimationsNombre();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(estimationsNombre, "estimationsNombre"),
     target
   );
@@ -197,7 +197,7 @@ export const sendComportements = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const comportements = await findAllComportements();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(comportements, "comportements"),
     target
   );
@@ -207,7 +207,7 @@ export const sendMilieux = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const milieux = await findAllMilieux();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(milieux, "milieux"),
     target
   );
@@ -217,7 +217,7 @@ export const sendMeteos = async (
   target?: WebSocket | WebSocket[]
 ): Promise<void> => {
   const meteos = await findAllMeteos();
-  WebsocketServer.sendMessageToClients(
+  sendMessageToClients(
     createUpdateMessage(meteos, "meteos"),
     target
   );
@@ -268,5 +268,5 @@ export const sendInitialData = async (
     content: initialDataContent
   };
 
-  WebsocketServer.sendMessageToClients(JSON.stringify(initialData), client);
+  sendMessageToClients(JSON.stringify(initialData), client);
 };

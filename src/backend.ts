@@ -12,7 +12,7 @@ import { WebsocketMessage } from "./model/websocket/websocket-message.model";
 import { importWebsocket } from "./requests/import";
 import { logger } from "./utils/logger";
 import { options } from "./utils/options";
-import { WebsocketServer } from "./ws/websocket-server";
+import { sendMessageToClients } from "./ws/websocket-server";
 import { sendInitialData } from "./ws/ws-messages";
 
 const server = fastify();
@@ -31,7 +31,7 @@ const server = fastify();
       if (message.type === HEARTBEAT) {
         logger.debug("Ping received");
         // Ping message received
-        WebsocketServer.sendMessageToClients(
+        sendMessageToClients(
           JSON.stringify({
             type: "other",
             content: "pong"

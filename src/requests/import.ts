@@ -8,7 +8,7 @@ import { IMPORT_COMPLETE_EVENT, IMPORT_PROGRESS_UPDATE_EVENT, IMPORT_STATUS_UPDA
 import { getNewImportServiceForRequestType } from "../services/import/import-service-per-request-type";
 import { ImportableTable, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE } from "../utils/constants";
 import { logger } from "../utils/logger";
-import { WebsocketServer } from "../ws/websocket-server";
+import { sendMessageToClients } from "../ws/websocket-server";
 import { onTableUpdate } from "../ws/ws-messages";
 
 // Worker thread for the import
@@ -60,7 +60,7 @@ const sendImportMessage = (message: ImportUpdateMessage | ImportErrorMessage, cl
     type: IMPORT,
     content: message
   }
-  WebsocketServer.sendMessageToClients(JSON.stringify(messageToClient), client);
+  sendMessageToClients(JSON.stringify(messageToClient), client);
 }
 
 const processImport = (workerData: WebsocketImportRequestContent, tableToUpdate: ImportableTable, client: WebSocket): Promise<string> => {
