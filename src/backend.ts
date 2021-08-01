@@ -25,7 +25,7 @@ const server = fastify();
     origin: "*"
   });
 
-  server.get('/ws/', { websocket: true }, (connection /* SocketStream */, req /* FastifyRequest */) => {
+  server.get('/ws/', { websocket: true }, (connection) => {
     connection.socket.on('message', data => {
       const message = JSON.parse(data.toString()) as WebsocketMessage;
       if (message.type === HEARTBEAT) {
