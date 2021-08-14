@@ -1,8 +1,9 @@
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { queryToFindVersion, queryToUpdateVersion } from "../../sql/sql-queries-version";
+import prisma from "../../sql/prisma";
+import { queryToUpdateVersion } from "../../sql/sql-queries-version";
 
 export const findVersion = async (): Promise<number> => {
-  return queryToFindVersion();
+  return prisma.version.findFirst().then(version => version.version);
 };
 
 export const updateVersion = async (version: number): Promise<SqlSaveResponse> => {

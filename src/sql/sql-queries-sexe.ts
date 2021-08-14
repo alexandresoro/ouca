@@ -1,8 +1,9 @@
 import { Sexe } from "../model/types/sexe.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_LIBELLE, ORDER_ASC, TABLE_SEXE } from "../utils/constants";
+import { COLUMN_LIBELLE } from "../utils/constants";
+import prisma from "./prisma";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateSexeTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS sexe (" +
@@ -14,7 +15,7 @@ export const queryToCreateSexeTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllSexes = async (): Promise<Sexe[]> => {
-  return queryToFindAllEntities<Sexe>(TABLE_SEXE, COLUMN_LIBELLE, ORDER_ASC);
+  return prisma.sexe.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
 };
 
 export const queryToFindNumberOfDonneesBySexeId = async (

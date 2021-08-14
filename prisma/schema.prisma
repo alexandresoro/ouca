@@ -1,0 +1,308 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Age {
+  id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle  String     @unique @db.VarChar(100)
+  donnee   Donnee[]
+  settings Settings[]
+
+  @@map("age")
+}
+
+model Classe {
+  id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle String   @unique @db.VarChar(100)
+  espece  Espece[]
+
+  @@map("classe")
+}
+
+model Commune {
+  id             Int         @id @default(autoincrement()) @db.UnsignedSmallInt
+  departement_id Int         @db.UnsignedSmallInt
+  code           Int         @db.UnsignedSmallInt
+  nom            String      @db.VarChar(100)
+  departement    Departement @relation(fields: [departement_id], references: [id])
+  lieudit        Lieudit[]
+
+  @@unique([departement_id, code], name: "idx_unq_commune_1")
+  @@unique([departement_id, nom], name: "idx_unq_commune_2")
+  @@unique([departement_id, code, nom], name: "idx_unq_commune_3")
+  @@map("commune")
+}
+
+enum Nicheur {
+  possible
+  probable
+  certain
+}
+
+model Comportement {
+  id                  Int                   @id @default(autoincrement()) @db.UnsignedSmallInt
+  code                String                @unique @db.VarChar(6)
+  libelle             String                @unique @db.VarChar(100)
+  nicheur             Nicheur?              
+  donnee_comportement donnee_comportement[]
+
+  @@unique([code, libelle], name: "idx_unq_comportement")
+  @@map("comportement")
+}
+
+model configuration {
+  id      Int    @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle String @unique @db.VarChar(100)
+  value   String @db.VarChar(100)
+}
+
+model Departement {
+  id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
+  code     String     @unique @db.VarChar(100)
+  commune  Commune[]
+  settings Settings[]
+
+  @@map("departement")
+}
+
+model Donnee {
+  id                     Int                   @id @default(autoincrement()) @db.UnsignedMediumInt
+  inventaire_id          Int                   @db.UnsignedMediumInt
+  espece_id              Int                   @db.UnsignedMediumInt
+  sexe_id                Int                   @db.UnsignedSmallInt
+  age_id                 Int                   @db.UnsignedSmallInt
+  estimation_nombre_id   Int                   @db.UnsignedSmallInt
+  nombre                 Int?                  @db.UnsignedSmallInt
+  estimation_distance_id Int?                  @db.UnsignedSmallInt
+  distance               Int?                  @db.UnsignedSmallInt
+  commentaire            String?               @db.Text
+  regroupement           Int?                  @db.UnsignedSmallInt
+  date_creation          DateTime              @db.DateTime(0)
+  age                    Age                   @relation(fields: [age_id], references: [id])
+  espece                 Espece                @relation(fields: [espece_id], references: [id])
+  estimation_nombre      EstimationNombre     @relation(fields: [estimation_nombre_id], references: [id])
+  inventaire             Inventaire            @relation(fields: [inventaire_id], references: [id])
+  sexe                   Sexe                  @relation(fields: [sexe_id], references: [id])
+  donnee_comportement    donnee_comportement[]
+  donnee_milieu          donnee_milieu[]
+
+  @@index([age_id], name: "fk_donnee_age_id")
+  @@index([espece_id], name: "fk_donnee_espece_id")
+  @@index([estimation_nombre_id], name: "fk_donnee_estimationnombre_id")
+  @@index([inventaire_id], name: "fk_donnee_inventaire_id")
+  @@index([sexe_id], name: "fk_donnee_sexe_id")
+
+  @@map("donnee")
+}
+
+model donnee_comportement {
+  comportement_id Int          @db.UnsignedSmallInt
+  donnee_id       Int          @db.UnsignedMediumInt
+  comportement    Comportement @relation(fields: [comportement_id], references: [id])
+  donnee          Donnee       @relation(fields: [donnee_id], references: [id])
+
+  @@id([donnee_id, comportement_id])
+  @@index([comportement_id], name: "fk_donnee_comportement_comportement_id")
+}
+
+model donnee_milieu {
+  milieu_id Int    @db.UnsignedSmallInt
+  donnee_id Int    @db.UnsignedMediumInt
+  donnee    Donnee @relation(fields: [donnee_id], references: [id])
+  milieu    Milieu @relation(fields: [milieu_id], references: [id])
+
+  @@id([donnee_id, milieu_id])
+  @@index([milieu_id], name: "fk_donnee_milieu_milieu_id")
+}
+
+model Espece {
+  id           Int      @id @default(autoincrement()) @db.UnsignedMediumInt
+  classe_id    Int?     @db.UnsignedSmallInt
+  code         String   @db.VarChar(20)
+  nom_francais String   @db.VarChar(100)
+  nom_latin    String   @db.VarChar(100)
+  classe       Classe?  @relation(fields: [classe_id], references: [id])
+  donnee       Donnee[]
+
+  @@unique([classe_id, code], name: "idx_unq_espece_1")
+  @@unique([classe_id, nom_francais], name: "idx_unq_espece_2")
+  @@unique([classe_id, nom_latin], name: "idx_unq_espece_3")
+  @@unique([classe_id, nom_francais, nom_latin], name: "idx_unq_espece_4")
+  @@unique([classe_id, code, nom_latin], name: "idx_unq_espece_5")
+  @@unique([classe_id, code, nom_francais], name: "idx_unq_espece_6")
+  @@unique([classe_id, code, nom_francais, nom_latin], name: "idx_unq_espece_7")
+
+  @@map("espece")
+}
+
+model EstimationDistance {
+  id      Int    @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle String @unique @db.VarChar(100)
+
+  @@map("estimation_distance")
+}
+
+model EstimationNombre {
+  id         Int        @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle    String     @unique @db.VarChar(100)
+  non_compte Boolean    @db.Bit(1)
+  donnee     Donnee[]
+  settings   Settings[]
+    
+  @@map("estimation_nombre")
+}
+
+model Inventaire {
+  id                 Int                  @id @default(autoincrement()) @db.UnsignedMediumInt
+  observateur_id     Int                  @db.UnsignedSmallInt
+  date               DateTime             @db.Date
+  heure              String?              @db.VarChar(5)
+  duree              String?              @db.VarChar(5)
+  lieudit_id         Int                  @db.UnsignedMediumInt
+  altitude           Int?                 @db.UnsignedSmallInt
+  longitude          Decimal?             @db.Decimal(13, 6)
+  latitude           Decimal?             @db.Decimal(13, 6)
+  coordinates_system CoordinatesSystem?
+  longitude_l2e      Int?                 @db.UnsignedMediumInt
+  latitude_l2e       Int?                 @db.UnsignedMediumInt
+  temperature        Int?                 @db.TinyInt
+  date_creation      DateTime             @db.DateTime(0)
+  lieudit            Lieudit              @relation(fields: [lieudit_id], references: [id])
+  observateur        Observateur          @relation(fields: [observateur_id], references: [id])
+  donnee             Donnee[]
+  inventaire_associe inventaire_associe[]
+  inventaire_meteo   inventaire_meteo[]
+
+  @@index([lieudit_id], name: "fk_inventaire_lieudit_id")
+  @@index([observateur_id], name: "fk_inventaire_observateur_id")
+  @@index([observateur_id, date, heure, duree, lieudit_id, altitude, longitude, latitude, temperature, date_creation], name: "index_inventaire_all")
+  @@map("inventaire")
+}
+
+model inventaire_associe {
+  inventaire_id  Int         @db.UnsignedMediumInt
+  observateur_id Int         @db.UnsignedSmallInt
+  inventaire     Inventaire  @relation(fields: [inventaire_id], references: [id])
+  observateur    Observateur @relation(fields: [observateur_id], references: [id])
+
+  @@id([inventaire_id, observateur_id])
+  @@index([observateur_id], name: "fk_inventaire_associe_observateur_id")
+}
+
+model inventaire_meteo {
+  meteo_id      Int        @db.UnsignedSmallInt
+  inventaire_id Int        @db.UnsignedMediumInt
+  inventaire    Inventaire @relation(fields: [inventaire_id], references: [id])
+  meteo         Meteo      @relation(fields: [meteo_id], references: [id])
+
+  @@id([inventaire_id, meteo_id])
+  @@index([meteo_id], name: "fk_inventaire_meteo_meteo_id")
+}
+
+model Lieudit {
+  id                 Int          @id @default(autoincrement()) @db.UnsignedMediumInt
+  commune_id         Int          @db.UnsignedSmallInt
+  nom                String       @db.VarChar(150)
+  altitude           Int          @db.UnsignedSmallInt
+  longitude          Decimal?     @db.Decimal(13, 6)
+  latitude           Decimal?     @db.Decimal(13, 6)
+  coordinates_system CoordinatesSystem
+  longitude_l2e      Int?         @db.UnsignedMediumInt
+  latitude_l2e       Int?         @db.UnsignedMediumInt
+  commune            Commune      @relation(fields: [commune_id], references: [id])
+  inventaire         Inventaire[]
+
+  @@unique([commune_id, nom], name: "idx_unq_lieudit")
+  @@map("lieudit")
+}
+
+model Meteo {
+  id               Int                @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle          String             @unique @db.VarChar(100)
+  inventaire_meteo inventaire_meteo[]
+
+  @@map("meteo")
+}
+
+model Milieu {
+  id            Int             @id @default(autoincrement()) @db.UnsignedSmallInt
+  code          String          @unique @db.VarChar(6)
+  libelle       String          @unique @db.VarChar(100)
+  donnee_milieu donnee_milieu[]
+
+  @@map("milieu")
+}
+
+model Observateur {
+  id                 Int                  @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle            String               @unique @db.VarChar(100)
+  inventaire         Inventaire[]
+  inventaire_associe inventaire_associe[]
+  settings           Settings[]
+
+  @@map("observateur")
+}
+
+enum CoordinatesSystem {
+  gps
+  lambert93
+}
+
+model Settings {
+  id                           Int                @id @default(autoincrement()) @db.UnsignedSmallInt
+  user_id                      Int                @unique @db.UnsignedSmallInt
+  default_observateur_id       Int?               @db.UnsignedSmallInt
+  default_departement_id       Int?               @db.UnsignedSmallInt
+  default_age_id               Int?               @db.UnsignedSmallInt
+  default_sexe_id              Int?               @db.UnsignedSmallInt
+  default_estimation_nombre_id Int?               @db.UnsignedSmallInt
+  default_nombre               Int?               @db.UnsignedSmallInt
+  are_associes_displayed       Boolean            @default(dbgenerated("(b'1')")) @db.Bit(1)
+  is_meteo_displayed           Boolean            @default(dbgenerated("(b'1')")) @db.Bit(1)
+  is_distance_displayed        Boolean            @default(dbgenerated("(b'1')")) @db.Bit(1)
+  is_regroupement_displayed    Boolean            @default(dbgenerated("(b'1')")) @db.Bit(1)
+  coordinates_system           CoordinatesSystem  @default(gps)
+  age                          Age?               @relation(fields: [default_age_id], references: [id])
+  departement                  Departement?       @relation(fields: [default_departement_id], references: [id])
+  estimation_nombre            EstimationNombre?  @relation(fields: [default_estimation_nombre_id], references: [id])
+  observateur                  Observateur?       @relation(fields: [default_observateur_id], references: [id])
+  sexe                         Sexe?              @relation(fields: [default_sexe_id], references: [id])
+  user                         User               @relation(fields: [user_id], references: [id])
+
+  @@index([default_age_id], name: "fk_settings_age_id")
+  @@index([default_departement_id], name: "fk_settings_departement_id")
+  @@index([default_estimation_nombre_id], name: "fk_settings_estimation_nombre_id")
+  @@index([default_observateur_id], name: "fk_settings_observateur_id")
+  @@index([default_sexe_id], name: "fk_settings_sexe_id")
+
+  @@map("settings")
+}
+
+model Sexe {
+  id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle  String     @unique @db.VarChar(100)
+  donnee   Donnee[]
+  settings Settings[]
+
+  @@map("sexe")
+}
+
+model User {
+  id        Int       @id @default(autoincrement()) @db.UnsignedSmallInt
+  firstname String    @db.VarChar(100)
+  lastname  String    @db.VarChar(100)
+  settings  Settings?
+
+  @@map("user")
+}
+
+model Version {
+  version Int @id @db.UnsignedSmallInt
+
+  @@map("version")
+}

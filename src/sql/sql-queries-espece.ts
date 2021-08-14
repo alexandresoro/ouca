@@ -2,12 +2,11 @@ import { EspeceDb } from "../objects/db/espece-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import {
   COLUMN_CODE,
-  COLUMN_ESPECE_ID,
-  ORDER_ASC,
-  TABLE_ESPECE
+  COLUMN_ESPECE_ID
 } from "../utils/constants";
+import prisma from "./prisma";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
-import { getFirstResult, prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { getFirstResult, prepareStringForSqlQuery, query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateEspeceTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS espece (" +
@@ -25,7 +24,7 @@ export const queryToCreateEspeceTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllEspeces = async (): Promise<EspeceDb[]> => {
-  return queryToFindAllEntities<EspeceDb>(TABLE_ESPECE, COLUMN_CODE, ORDER_ASC);
+  return prisma.espece.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
 };
 
 export const queryToFindEspeceByCode = async (

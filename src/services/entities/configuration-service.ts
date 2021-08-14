@@ -3,8 +3,7 @@ import { CoordinatesSystemType } from "../../model/coordinates-system/coordinate
 import { AppConfiguration } from "../../model/types/app-configuration.object";
 import { SettingsDb } from "../../objects/db/settings-db.object";
 import { buildAppConfigurationFromSettingsDb, buildSettingsDbFromAppConfiguration } from "../../sql/entities-mapping/settings-mapping";
-import { queryToFindCoordinatesSystem } from "../../sql/sql-queries-settings";
-import { queryToFindAllEntities } from "../../sql/sql-queries-utils";
+import prisma from "../../sql/prisma";
 import { TABLE_SETTINGS } from "../../utils/constants";
 import { findAllAges } from "./age-service";
 import { findAllDepartements } from "./departement-service";
@@ -14,8 +13,7 @@ import { findAllObservateurs } from "./observateur-service";
 import { findAllSexes } from "./sexe-service";
 
 const findUserSettings = async (): Promise<SettingsDb> => {
-  const settingsDb = await queryToFindAllEntities<SettingsDb>(TABLE_SETTINGS);
-  return settingsDb && settingsDb[0] ? settingsDb[0] : null;
+  return await prisma.settings.findFirst();
 };
 
 export const findAppConfiguration = async (): Promise<AppConfiguration> => {
@@ -62,5 +60,5 @@ export const persistUserSettings = async (
 export const findCoordinatesSystem = async (): Promise<
   CoordinatesSystemType
 > => {
-  return queryToFindCoordinatesSystem();
+  return prisma.settings.findFirst().then(settings => settings.coordinates_system);
 };

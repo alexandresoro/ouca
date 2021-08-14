@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from "winston";
-import { options } from "./options";
+import options from "./options";
 
 const loggerFormat = format.printf(({ level, message, timestamp }) => {
   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

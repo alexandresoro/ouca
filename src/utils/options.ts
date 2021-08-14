@@ -1,6 +1,6 @@
 import yargs from "yargs";
 
-export const options = yargs.options({
+export default yargs.options({
   dbHost: { type: "string", default: "127.0.0.1" },
   dbPort: { type: "number", default: 3306 },
   dbUser: { type: "string", default: "basenaturaliste" },

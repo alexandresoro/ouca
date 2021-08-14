@@ -1,8 +1,9 @@
 import { Observateur } from "../model/types/observateur.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_LIBELLE, OBSERVATEUR_ID, ORDER_ASC, TABLE_OBSERVATEUR } from "../utils/constants";
+import { COLUMN_LIBELLE, OBSERVATEUR_ID } from "../utils/constants";
+import prisma from "./prisma";
 import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateObservateurTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS observateur (" +
@@ -14,11 +15,7 @@ export const queryToCreateObservateurTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllObservateurs = async (): Promise<Observateur[]> => {
-  return queryToFindAllEntities<Observateur>(
-    TABLE_OBSERVATEUR,
-    COLUMN_LIBELLE,
-    ORDER_ASC
-  );
+  return prisma.observateur.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
 };
 
 export const queryToFindAssociesByInventaireId = async (

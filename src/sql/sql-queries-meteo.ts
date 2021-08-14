@@ -1,7 +1,8 @@
 import { Meteo } from "../model/types/meteo.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_LIBELLE, ORDER_ASC, TABLE_METEO } from "../utils/constants";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { COLUMN_LIBELLE } from "../utils/constants";
+import prisma from "./prisma";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateMeteoTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS meteo (" +
@@ -13,7 +14,7 @@ export const queryToCreateMeteoTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllMeteos = async (): Promise<Meteo[]> => {
-  return queryToFindAllEntities<Meteo>(TABLE_METEO, COLUMN_LIBELLE, ORDER_ASC);
+  return prisma.meteo.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
 };
 
 export const queryToFindAllMeteosByDonneeId = async (

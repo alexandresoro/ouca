@@ -1,8 +1,9 @@
 import { NicheurCode } from "../model/types/nicheur.model";
 import { ComportementDb } from "../objects/db/comportement-db.model";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_CODE, ORDER_ASC, TABLE_COMPORTEMENT } from "../utils/constants";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { COLUMN_CODE } from "../utils/constants";
+import prisma from "./prisma";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateComportementTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS comportement (" +
@@ -19,11 +20,7 @@ export const queryToCreateComportementTable = async (): Promise<void> => {
 export const queryToFindAllComportements = async (): Promise<
   ComportementDb[]
 > => {
-  return queryToFindAllEntities<ComportementDb>(
-    TABLE_COMPORTEMENT,
-    COLUMN_CODE,
-    ORDER_ASC
-  );
+  return prisma.comportement.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
 };
 
 export const queryToFindAllComportementsByDonneeId = async (

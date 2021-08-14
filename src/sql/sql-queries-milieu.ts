@@ -1,7 +1,8 @@
 import { Milieu } from "../model/types/milieu.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_CODE, ORDER_ASC, TABLE_MILIEU } from "../utils/constants";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { COLUMN_CODE } from "../utils/constants";
+import prisma from "./prisma";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateMilieuTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS milieu (" +
@@ -15,7 +16,7 @@ export const queryToCreateMilieuTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllMilieux = async (): Promise<Milieu[]> => {
-  return queryToFindAllEntities<Milieu>(TABLE_MILIEU, COLUMN_CODE, ORDER_ASC);
+  return prisma.milieu.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
 };
 
 export const queryToFindAllMilieuxByDonneeId = async (

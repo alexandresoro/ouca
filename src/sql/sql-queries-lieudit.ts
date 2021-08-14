@@ -1,8 +1,9 @@
 import { LieuditDb } from "../objects/db/lieudit-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_NOM, ORDER_ASC, TABLE_LIEUDIT } from "../utils/constants";
+import { COLUMN_NOM } from "../utils/constants";
+import prisma from "./prisma";
 import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
-import { getFirstResult, prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { getFirstResult, prepareStringForSqlQuery, query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateLieuDitTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS lieudit (" +
@@ -20,11 +21,7 @@ export const queryToCreateLieuDitTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllLieuxDits = async (): Promise<LieuditDb[]> => {
-  return queryToFindAllEntities<LieuditDb>(
-    TABLE_LIEUDIT,
-    COLUMN_NOM,
-    ORDER_ASC
-  );
+  return prisma.lieudit.findMany(queryParametersToFindAllEntities(COLUMN_NOM));
 };
 
 export const queryToFindLieuDitByCommuneIdAndNom = async (

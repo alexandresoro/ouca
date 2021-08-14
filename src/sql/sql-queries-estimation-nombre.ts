@@ -1,12 +1,11 @@
 import { EstimationNombreDb } from "../objects/db/estimation-nombre-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import {
-  COLUMN_LIBELLE,
-  ORDER_ASC,
-  TABLE_ESTIMATION_NOMBRE
+  COLUMN_LIBELLE
 } from "../utils/constants";
+import prisma from "./prisma";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateEstimationNombreTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS estimation_nombre (" +
@@ -21,11 +20,7 @@ export const queryToCreateEstimationNombreTable = async (): Promise<void> => {
 export const queryToFindAllEstimationsNombre = async (): Promise<
   EstimationNombreDb[]
 > => {
-  return queryToFindAllEntities<EstimationNombreDb>(
-    TABLE_ESTIMATION_NOMBRE,
-    COLUMN_LIBELLE,
-    ORDER_ASC
-  );
+  return prisma.estimationNombre.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
 };
 
 export const queryToFindNumberOfDonneesByEstimationNombreId = async (

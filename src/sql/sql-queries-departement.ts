@@ -1,7 +1,8 @@
 import { Departement } from "../model/types/departement.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_CODE, ORDER_ASC, TABLE_DEPARTEMENT } from "../utils/constants";
-import { getFirstResult, prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { COLUMN_CODE } from "../utils/constants";
+import prisma from "./prisma";
+import { getFirstResult, prepareStringForSqlQuery, query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateDepartementTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS departement (" +
@@ -13,11 +14,7 @@ export const queryToCreateDepartementTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllDepartements = async (): Promise<Departement[]> => {
-  return queryToFindAllEntities<Departement>(
-    TABLE_DEPARTEMENT,
-    COLUMN_CODE,
-    ORDER_ASC
-  );
+  return prisma.departement.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
 };
 
 export const queryToFindDepartementByCode = async (

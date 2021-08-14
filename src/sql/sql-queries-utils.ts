@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { EntityDb } from "../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import {
@@ -57,6 +58,17 @@ export const queryToFindAllEntities = async <T>(
 
   return query<T[]>(queryStr);
 };
+
+export const queryParametersToFindAllEntities = (attributeForOrdering?: string, order?: Prisma.SortOrder): { orderBy?: Record<string, Prisma.SortOrder> } => {
+  if (attributeForOrdering) {
+    return {
+      orderBy: {
+        [attributeForOrdering]: order ?? Prisma.SortOrder.asc
+      }
+    }
+  }
+  return {};
+}
 
 export const queryToFindOneById = async <T>(
   tableName: string,

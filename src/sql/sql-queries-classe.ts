@@ -1,7 +1,8 @@
 import { Classe } from "../model/types/classe.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_LIBELLE, ORDER_ASC, TABLE_CLASSE } from "../utils/constants";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { COLUMN_LIBELLE } from "../utils/constants";
+import prisma from "./prisma";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateClasseTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS classe (" +
@@ -13,11 +14,7 @@ export const queryToCreateClasseTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllClasses = async (): Promise<Classe[]> => {
-  return queryToFindAllEntities<Classe>(
-    TABLE_CLASSE,
-    COLUMN_LIBELLE,
-    ORDER_ASC
-  );
+  return prisma.classe.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
 };
 
 export const queryToFindNumberOfEspecesByClasseId = async (

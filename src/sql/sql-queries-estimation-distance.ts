@@ -1,8 +1,9 @@
 import { EstimationDistance } from "../model/types/estimation-distance.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_LIBELLE, ORDER_ASC, TABLE_ESTIMATION_DISTANCE } from "../utils/constants";
+import { COLUMN_LIBELLE } from "../utils/constants";
+import prisma from "./prisma";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateEstimationDistanceTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS estimation_distance (" +
@@ -16,11 +17,7 @@ export const queryToCreateEstimationDistanceTable = async (): Promise<void> => {
 export const queryToFindAllEstimationsDistance = async (): Promise<
   EstimationDistance[]
 > => {
-  return queryToFindAllEntities<EstimationDistance>(
-    TABLE_ESTIMATION_DISTANCE,
-    COLUMN_LIBELLE,
-    ORDER_ASC
-  );
+  return prisma.estimationDistance.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
 };
 
 export const getQueryToFindNumberOfDonneesByEstimationDistanceId = async (

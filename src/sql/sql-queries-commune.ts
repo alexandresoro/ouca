@@ -1,7 +1,8 @@
 import { CommuneDb } from "../objects/db/commune-db.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_NOM, ORDER_ASC, TABLE_COMMUNE } from "../utils/constants";
-import { getFirstResult, prepareStringForSqlQuery, query, queryToFindAllEntities } from "./sql-queries-utils";
+import { COLUMN_NOM } from "../utils/constants";
+import prisma from "./prisma";
+import { getFirstResult, prepareStringForSqlQuery, query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateCommuneTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS commune (" +
@@ -17,11 +18,7 @@ export const queryToCreateCommuneTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllCommunes = async (): Promise<CommuneDb[]> => {
-  return queryToFindAllEntities<CommuneDb>(
-    TABLE_COMMUNE,
-    COLUMN_NOM,
-    ORDER_ASC
-  );
+  return prisma.commune.findMany(queryParametersToFindAllEntities(COLUMN_NOM));
 };
 
 export const queryToFindCommuneByDepartementIdAndCodeAndNom = async (

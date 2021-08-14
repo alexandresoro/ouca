@@ -1,6 +1,6 @@
 import * as mariadb from "mariadb";
 import { logger } from "../utils/logger";
-import { options } from "../utils/options";
+import options from "../utils/options";
 
 /**
  * Returns the connection configuration of the database to connect to.

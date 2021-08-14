@@ -1,8 +1,9 @@
 import { Age } from "../model/types/age.object";
 import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_LIBELLE, ORDER_ASC, TABLE_AGE } from "../utils/constants";
+import { COLUMN_LIBELLE } from "../utils/constants";
+import prisma from "./prisma";
 import { queryToFindNumberOfDonneesByDonneeEntityId } from "./sql-queries-donnee";
-import { query, queryToFindAllEntities } from "./sql-queries-utils";
+import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
 
 export const queryToCreateAgeTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS age (" +
@@ -14,7 +15,7 @@ export const queryToCreateAgeTable = async (): Promise<void> => {
 }
 
 export const queryToFindAllAges = async (): Promise<Age[]> => {
-  return queryToFindAllEntities<Age>(TABLE_AGE, COLUMN_LIBELLE, ORDER_ASC);
+  return prisma.age.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
 };
 
 export const queryToFindNumberOfDonneesByAgeId = async (

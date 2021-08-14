@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb } from "../../objects/db/lieudit-db.object";
 
@@ -8,8 +9,8 @@ export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
     nom: lieuditDb.nom,
     altitude: lieuditDb.altitude,
     coordinates: {
-      longitude: lieuditDb.longitude,
-      latitude: lieuditDb.latitude,
+      longitude: lieuditDb.longitude.toNumber(),
+      latitude: lieuditDb.latitude.toNumber(),
       system: lieuditDb.coordinates_system
     }
   };
@@ -32,8 +33,8 @@ export const buildLieuditDbFromLieudit = (lieudit: Lieudit): LieuditDb => {
   };
 
   if (Object.prototype.hasOwnProperty.call(lieudit, "coordinates")) {
-    lieuditDb.longitude = lieudit.coordinates.longitude;
-    lieuditDb.latitude = lieudit.coordinates.latitude;
+    lieuditDb.longitude = new Decimal(lieudit.coordinates.longitude);
+    lieuditDb.latitude = new Decimal(lieudit.coordinates.latitude);
     lieuditDb.coordinates_system = lieudit.coordinates.system;
   }
 
