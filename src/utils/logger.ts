@@ -12,7 +12,9 @@ const getConsoleTypeToUse = () => {
     maxFiles: 100,
     tailable: true,
     filename: "./logs/logfile.log"
-  }) : new transports.Console();
+  }) : new transports.Console({
+    format: format.combine(format.colorize(), format.timestamp(), loggerFormat)
+  });
 }
 
 export const logger = createLogger({

@@ -1,8 +1,10 @@
+import { Prisma } from ".prisma/client";
 import { fastify } from "fastify";
 import fastifyCompress from "fastify-compress";
 import fastifyCors from "fastify-cors";
 import fastifyWebsocket from "fastify-websocket";
 import middie from "middie";
+import { Logger } from "winston";
 import { DELETE, GET, POST } from "./http/httpMethod";
 import { handleRequest, RequestGeneric } from "./http/requestHandling";
 import { REQUEST_MAPPING } from "./mapping";
@@ -10,12 +12,30 @@ import { WebsocketImportRequestMessage } from "./model/websocket/websocket-impor
 import { HEARTBEAT, IMPORT, INIT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
 import { importWebsocket } from "./requests/import";
+import prisma from "./sql/prisma";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
 import { sendMessageToClients } from "./ws/websocket-server";
 import { sendInitialData } from "./ws/ws-messages";
 
 const server = fastify();
+
+// Prisma queries logger
+const prismaLogger = <T = Prisma.QueryEvent | Prisma.LogEvent>(e: T, winstonLogger: (message: string) => Logger) => {
+  winstonLogger("PRISMA - " + JSON.stringify(e));
+}
+prisma.$on('query', (e) => {
+  prismaLogger(e, logger.debug);
+});
+prisma.$on('error', (e) => {
+  prismaLogger(e, logger.error);
+});
+prisma.$on('warn', (e) => {
+  prismaLogger(e, logger.warn);
+});
+prisma.$on('info', (e) => {
+  prismaLogger(e, logger.info)
+});
 
 (async () => {
   await server.register(middie);
