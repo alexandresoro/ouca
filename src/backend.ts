@@ -21,7 +21,7 @@ import { sendInitialData } from "./ws/ws-messages";
 const server = fastify();
 
 // Prisma queries logger
-const prismaLogger = <T = Prisma.QueryEvent | Prisma.LogEvent>(e: T, winstonLogger: (message: string) => Logger) => {
+const prismaLogger = (e: Prisma.QueryEvent | Prisma.LogEvent, winstonLogger: (message: string) => Logger) => {
   winstonLogger("PRISMA - " + JSON.stringify(e));
 }
 prisma.$on('query', (e) => {
