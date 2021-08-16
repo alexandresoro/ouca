@@ -25,7 +25,7 @@ COPY package.json package-lock.json prisma/schema.prisma /app/
 
 RUN npm ci --production 
 RUN rm -f package.json package-lock.json
-RUN rm -r prisma/
+RUN rm -rf prisma/
 
 WORKDIR /app/backend
 
