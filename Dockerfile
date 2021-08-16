@@ -19,12 +19,13 @@ FROM node:14-alpine
 # Install only the dependencies that are required at runtime
 WORKDIR /app
 
-COPY package.json package-lock.json /app/
+RUN apk add --no-cache mariadb-client
+
+COPY package.json package-lock.json prisma/schema.prisma /app/ 
 
 RUN npm ci --production 
 RUN rm -f package.json package-lock.json
-
-RUN apk add mariadb-client
+RUN rm -r prisma/
 
 WORKDIR /app/backend
 
