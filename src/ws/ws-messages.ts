@@ -84,7 +84,7 @@ export const onTableUpdate = (tableName: ImportableTable | string): void => {
 };
 
 export const sendAppConfiguration = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const appConfiguration = await findAppConfiguration();
   sendMessageToClients(
@@ -94,7 +94,7 @@ export const sendAppConfiguration = async (
 };
 
 export const sendObservateurs = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const observateurs = await findAllObservateurs();
   sendMessageToClients(
@@ -104,7 +104,7 @@ export const sendObservateurs = async (
 };
 
 export const sendLieuxdits = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const lieuxdits = await findAllLieuxDits();
   sendMessageToClients(
@@ -114,7 +114,7 @@ export const sendLieuxdits = async (
 };
 
 export const sendCommunes = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const communes = await findAllCommunes();
   sendMessageToClients(
@@ -124,7 +124,7 @@ export const sendCommunes = async (
 };
 
 export const sendDepartements = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const departements = await findAllDepartements();
   sendMessageToClients(
@@ -134,7 +134,7 @@ export const sendDepartements = async (
 };
 
 export const sendClasses = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const classes = await findAllClasses();
   sendMessageToClients(
@@ -144,7 +144,7 @@ export const sendClasses = async (
 };
 
 export const sendEspeces = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const especes = await findAllEspeces();
   sendMessageToClients(
@@ -154,7 +154,7 @@ export const sendEspeces = async (
 };
 
 export const sendSexes = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const sexes = await findAllSexes();
   sendMessageToClients(
@@ -164,7 +164,7 @@ export const sendSexes = async (
 };
 
 export const sendAges = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const ages = await findAllAges();
   sendMessageToClients(
@@ -174,7 +174,7 @@ export const sendAges = async (
 };
 
 export const sendEstimationsDistance = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const estimationsDistance = await findAllEstimationsDistance();
   sendMessageToClients(
@@ -184,7 +184,7 @@ export const sendEstimationsDistance = async (
 };
 
 export const sendEstimationsNombre = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const estimationsNombre = await findAllEstimationsNombre();
   sendMessageToClients(
@@ -194,7 +194,7 @@ export const sendEstimationsNombre = async (
 };
 
 export const sendComportements = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const comportements = await findAllComportements();
   sendMessageToClients(
@@ -204,7 +204,7 @@ export const sendComportements = async (
 };
 
 export const sendMilieux = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const milieux = await findAllMilieux();
   sendMessageToClients(
@@ -214,7 +214,7 @@ export const sendMilieux = async (
 };
 
 export const sendMeteos = async (
-  target?: WebSocket | WebSocket[]
+  target?: WebSocket
 ): Promise<void> => {
   const meteos = await findAllMeteos();
   sendMessageToClients(
@@ -224,7 +224,7 @@ export const sendMeteos = async (
 };
 
 export const sendInitialData = async (
-  client: WebSocket | WebSocket[]
+  client: WebSocket
 ): Promise<void> => {
   const appConfiguration = await findAppConfiguration();
   const observateurs = await findAllObservateurs();

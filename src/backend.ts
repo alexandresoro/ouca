@@ -15,14 +15,14 @@ import { importWebsocket } from "./requests/import";
 import prisma from "./sql/prisma";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
-import { sendMessageToClients } from "./ws/websocket-server";
+import { sendMessageToClients, setWebsocketServer } from "./ws/websocket-server";
 import { sendInitialData } from "./ws/ws-messages";
 
 const server = fastify();
 
 // Prisma queries logger
 const prismaLogger = (e: Prisma.QueryEvent | Prisma.LogEvent, winstonLogger: (message: string) => Logger) => {
-  winstonLogger("PRISMA - " + JSON.stringify(e));
+  winstonLogger("\n" + JSON.stringify(e, null, 2));
 }
 prisma.$on('query', (e) => {
   prismaLogger(e, logger.debug);
@@ -44,6 +44,8 @@ prisma.$on('info', (e) => {
   await server.register(fastifyCors, {
     origin: "*"
   });
+
+  setWebsocketServer(server.websocketServer);
 
   server.get('/ws/', { websocket: true }, (connection) => {
     connection.socket.on('message', data => {

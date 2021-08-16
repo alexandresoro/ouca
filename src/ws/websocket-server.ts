@@ -1,12 +1,18 @@
-import WebSocket from "ws";
+import WebSocket, { Server } from "ws";
+
+let wss: Server;
+
+export const setWebsocketServer = (wssServer: Server): void => {
+  wss = wssServer;
+}
 
 export const sendMessageToClients = (
   message: string,
-  clients?: WebSocket | WebSocket[]
+  client: WebSocket
 ): void => {
-  const clientsToTarget = Array.isArray(clients)
-    ? clients
-    : [clients]
+  const clientsToTarget = client
+    ? [client]
+    : [...wss.clients];
 
   clientsToTarget?.forEach(client => {
     client.send(message);
