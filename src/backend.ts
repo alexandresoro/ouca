@@ -115,4 +115,4 @@ prisma.$on('info', (e) => {
   process.on("SIGINT", shutdown);
   process.on("SIGTERM", shutdown);
 
-})().catch(e => { /**/ });
+})().catch(e => { logger.error(e) });
