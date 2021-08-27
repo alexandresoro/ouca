@@ -8,19 +8,19 @@ import { Sexe } from "./sexe.object";
 export type AppConfiguration = {
   id: number;
 
-  defaultObservateur: Observateur;
+  defaultObservateur: Omit<Observateur, 'nbDonnees'>;
 
-  defaultDepartement: Departement;
+  defaultDepartement: Omit<Departement, 'nbDonnees' | 'nbCommunes' | 'nbLieuxdits'>;
 
   coordinatesSystem: CoordinatesSystemType;
 
-  defaultEstimationNombre: EstimationNombre;
+  defaultEstimationNombre: Omit<EstimationNombre, 'nbDonnees'>;
 
   defaultNombre: number;
 
-  defaultSexe: Sexe;
+  defaultSexe: Omit<Sexe, 'nbDonnees'>;
 
-  defaultAge: Age;
+  defaultAge: Omit<Age, 'nbDonnees'>;
 
   areAssociesDisplayed: boolean;
 
