@@ -1,5 +1,4 @@
 import { Age } from "../types/age.object";
-import { AppConfiguration } from "../types/app-configuration.object";
 import { Classe } from "../types/classe.object";
 import { Commune } from "../types/commune.model";
 import { Comportement } from "../types/comportement.object";
@@ -15,8 +14,6 @@ import { Sexe } from "../types/sexe.object";
 import { AppVersion } from "./websocket-appversion.type";
 
 export interface WebsocketUpdateContent {
-  configuration?: AppConfiguration;
-
   observateurs?: Observateur[];
 
   lieuxdits?: Lieudit[];
