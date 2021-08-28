@@ -78,6 +78,7 @@ export type Observateur = {
 export type Query = {
   __typename?: 'Query';
   settings?: Maybe<Settings>;
+  version?: Maybe<Version>;
 };
 
 export type Settings = {
@@ -101,6 +102,12 @@ export type Sexe = {
   id: Scalars['Int'];
   nbDonnees?: Maybe<Scalars['Int']>;
   libelle: Scalars['String'];
+};
+
+export type Version = {
+  __typename?: 'Version';
+  database: Scalars['Int'];
+  application: Scalars['Int'];
 };
 
 
@@ -185,6 +192,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   Settings: ResolverTypeWrapper<Settings>;
   Sexe: ResolverTypeWrapper<Sexe>;
+  Version: ResolverTypeWrapper<Version>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -201,6 +209,7 @@ export type ResolversParentTypes = {
   Query: {};
   Settings: Settings;
   Sexe: Sexe;
+  Version: Version;
 };
 
 export type AgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Age'] = ResolversParentTypes['Age']> = {
@@ -240,6 +249,7 @@ export type ObservateurResolvers<ContextType = any, ParentType extends Resolvers
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
+  version?: Resolver<Maybe<ResolversTypes['Version']>, ParentType, ContextType>;
 };
 
 export type SettingsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Settings'] = ResolversParentTypes['Settings']> = {
@@ -265,6 +275,12 @@ export type SexeResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type VersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Version'] = ResolversParentTypes['Version']> = {
+  database?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  application?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Age?: AgeResolvers<ContextType>;
   Departement?: DepartementResolvers<ContextType>;
@@ -274,5 +290,6 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Settings?: SettingsResolvers<ContextType>;
   Sexe?: SexeResolvers<ContextType>;
+  Version?: VersionResolvers<ContextType>;
 };
 
