@@ -11,7 +11,6 @@ import { Meteo } from "../types/meteo.object";
 import { Milieu } from "../types/milieu.object";
 import { Observateur } from "../types/observateur.object";
 import { Sexe } from "../types/sexe.object";
-import { AppVersion } from "./websocket-appversion.type";
 
 export interface WebsocketUpdateContent {
   observateurs?: Observateur[];
@@ -39,6 +38,4 @@ export interface WebsocketUpdateContent {
   milieux?: Milieu[];
 
   meteos?: Meteo[];
-
-  version?: AppVersion;
 }
