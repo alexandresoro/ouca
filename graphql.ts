@@ -122,6 +122,7 @@ export type Query = {
 
 
 export type QueryEspecesArgs = {
+  q?: Maybe<Scalars['String']>;
   pageNumber?: Maybe<Scalars['Int']>;
   pageSize?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<EspecesOrderBy>;
