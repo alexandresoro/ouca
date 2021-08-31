@@ -30,7 +30,8 @@ export type Classe = {
 
 export const ClassesOrderBy = {
   Id: 'id',
-  Libelle: 'libelle'
+  Libelle: 'libelle',
+  NbEspeces: 'nbEspeces'
 } as const;
 
 export type ClassesOrderBy = typeof ClassesOrderBy[keyof typeof ClassesOrderBy];
