@@ -5,10 +5,7 @@ export const buildComportementFromComportementDb = (
   comportementDb: ComportementDb
 ): Comportement => {
   return {
-    id: comportementDb.id,
-    code: comportementDb.code,
-    libelle: comportementDb.libelle,
-    nicheur: comportementDb.nicheur
+    ...comportementDb
   };
 };
 
