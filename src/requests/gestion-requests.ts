@@ -150,10 +150,6 @@ export const deleteClasseRequest = async (
   return deleteEntity(httpParameters, TABLE_CLASSE);
 };
 
-export const getEspecesRequest = async (): Promise<Espece[]> => {
-  return await findAllEspeces();
-};
-
 export const saveEspeceRequest = async (
   httpParameters: HttpParameters<Espece>
 ): Promise<PostResponse> => {

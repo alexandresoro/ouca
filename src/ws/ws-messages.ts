@@ -1,11 +1,9 @@
 import WebSocket from "ws";
 import { WebsocketUpdateMessage } from "../model/websocket/websocket-update-message";
-import { APPLICATION_DATA_VERSION } from "../services/database-migration/database-migration.service";
 import { findAllAges } from "../services/entities/age-service";
 import { findAllClasses } from "../services/entities/classe-service";
 import { findAllCommunes } from "../services/entities/commune-service";
 import { findAllComportements } from "../services/entities/comportement-service";
-import { findAppConfiguration } from "../services/entities/configuration-service";
 import { findAllDepartements } from "../services/entities/departement-service";
 import { findAllEspeces } from "../services/entities/espece-service";
 import { findAllEstimationsDistance } from "../services/entities/estimation-distance-service";
@@ -15,8 +13,7 @@ import { findAllMeteos } from "../services/entities/meteo-service";
 import { findAllMilieux } from "../services/entities/milieu-service";
 import { findAllObservateurs } from "../services/entities/observateur-service";
 import { findAllSexes } from "../services/entities/sexe-service";
-import { findVersion } from "../services/entities/version-service";
-import { ImportableTable, TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_OBSERVATEUR, TABLE_SETTINGS, TABLE_SEXE } from "../utils/constants";
+import { ImportableTable, TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_OBSERVATEUR, TABLE_SEXE } from "../utils/constants";
 import { sendMessageToClients } from "./websocket-server";
 import { wrapObject } from "./ws-wrapper";
 
@@ -36,9 +33,6 @@ const createUpdateMessage = <T = unknown>(
 
 export const onTableUpdate = (tableName: ImportableTable | string): void => {
   switch (tableName) {
-    case TABLE_SETTINGS:
-      void sendAppConfiguration();
-      break;
     case TABLE_OBSERVATEUR:
       void sendObservateurs();
       break;
@@ -81,16 +75,6 @@ export const onTableUpdate = (tableName: ImportableTable | string): void => {
     default:
       break;
   }
-};
-
-export const sendAppConfiguration = async (
-  target?: WebSocket
-): Promise<void> => {
-  const appConfiguration = await findAppConfiguration();
-  sendMessageToClients(
-    createUpdateMessage(appConfiguration, "configuration"),
-    target
-  );
 };
 
 export const sendObservateurs = async (
@@ -226,24 +210,49 @@ export const sendMeteos = async (
 export const sendInitialData = async (
   client: WebSocket
 ): Promise<void> => {
-  const appConfiguration = await findAppConfiguration();
+  console.time('total')
+  console.time('observateurs')
   const observateurs = await findAllObservateurs();
+  console.timeEnd('observateurs')
+  console.time('lieuxdits')
   const lieuxdits = await findAllLieuxDits();
+  console.timeEnd('lieuxdits')
+  console.time('communes')
   const communes = await findAllCommunes();
+  console.timeEnd('communes')
+  console.time('departements')
   const departements = await findAllDepartements();
+  console.timeEnd('departements')
+  console.time('classes')
   const classes = await findAllClasses();
+  console.timeEnd('classes')
+  console.time('especes')
   const especes = await findAllEspeces();
+  console.timeEnd('especes')
+  console.time('sexes')
   const sexes = await findAllSexes();
+  console.timeEnd('sexes')
+  console.time('ages')
   const ages = await findAllAges();
+  console.timeEnd('ages')
+  console.time('estimationsDistance')
   const estimationsDistance = await findAllEstimationsDistance();
+  console.timeEnd('estimationsDistance')
+  console.time('estimationsNombre')
   const estimationsNombre = await findAllEstimationsNombre();
+  console.timeEnd('estimationsNombre')
+  console.time('comportements')
   const comportements = await findAllComportements();
+  console.timeEnd('comportements')
+  console.time('milieux')
   const milieux = await findAllMilieux();
+  console.timeEnd('milieux')
+  console.time('meteos')
   const meteos = await findAllMeteos();
-  const dbVersion = await findVersion();
+  console.timeEnd('meteos')
+  console.timeEnd('total')
 
   const initialDataContent = {
-    configuration: appConfiguration,
     observateurs,
     lieuxdits,
     communes,
@@ -257,10 +266,6 @@ export const sendInitialData = async (
     comportements,
     milieux,
     meteos,
-    version: {
-      database: dbVersion,
-      application: APPLICATION_DATA_VERSION
-    }
   };
 
   const initialData: WebsocketUpdateMessage = {

@@ -1,9 +1,6 @@
-import { GET, HttpMethod, POST } from "./http/httpMethod";
+import { RouteOptions } from "fastify";
+import { HttpMethod } from "./http/httpMethod";
 import { HttpParameters } from "./http/httpParameters";
-import {
-  configurationUpdateRequest,
-  getAppConfigurationRequest
-} from "./requests/configuration-requests";
 import {
   deleteDonneeRequest,
   getDonneeByIdWithContextRequest,
@@ -47,7 +44,6 @@ import {
   getDepartementsRequest,
   getEspeceDetailsByAgeRequest,
   getEspeceDetailsBySexeRequest,
-  getEspecesRequest,
   getEstimationsDistanceRequest,
   getEstimationsNombreRequest,
   getLieuxditsRequest,
@@ -143,7 +139,6 @@ export const REQUEST_MAPPING: Record<string, {
     handler: exportClassesRequest,
     responseType: EXCEL_MIME_TYPE
   },
-  "/api/espece/all": { handler: getEspecesRequest },
   "/api/espece/save": { handler: saveEspeceRequest },
   "/api/espece/delete": { handler: deleteEspeceRequest },
   "/api/espece/details_by_age": { handler: getEspeceDetailsByAgeRequest },
@@ -194,14 +189,6 @@ export const REQUEST_MAPPING: Record<string, {
     handler: exportMilieuxRequest,
     responseType: EXCEL_MIME_TYPE
   },
-  "/api/configuration/all": {
-    method: GET,
-    handler: getAppConfigurationRequest
-  },
-  "/api/configuration/update": {
-    method: POST,
-    handler: configurationUpdateRequest
-  },
   "/api/database/clear": { handler: clearAllTables },
   "/api/database/save": {
     handler: saveDatabaseRequest,
@@ -210,3 +197,5 @@ export const REQUEST_MAPPING: Record<string, {
   },
   "/api/database/update": { handler: executeDatabaseMigration }
 } as const;
+
+export const routes = [] as RouteOptions[];
