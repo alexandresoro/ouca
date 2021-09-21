@@ -7,7 +7,7 @@ export default new PrismaClient({
       url: `mysql://${options.dbUser}:${options.dbPassword}@${options.dbHost}:${options.dbPort}/${options.dbName}`
     }
   },
-  errorFormat: 'pretty',
+  errorFormat: 'minimal',
   log: [
     {
       emit: 'event',
