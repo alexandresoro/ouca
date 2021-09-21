@@ -1,47 +1,25 @@
-import { Age } from "../../model/types/age.object";
-import { AppConfiguration } from "../../model/types/app-configuration.object";
-import { Departement } from "../../model/types/departement.object";
-import { EntiteSimple } from "../../model/types/entite-simple.object";
-import { EstimationNombre } from "../../model/types/estimation-nombre.object";
-import { Observateur } from "../../model/types/observateur.object";
-import { Sexe } from "../../model/types/sexe.object";
-import { SettingsDb } from "../../objects/db/settings-db.object";
+import { Age, Departement, EstimationNombre, Observateur, Settings as SettingsDb, Sexe } from "@prisma/client";
+import { InputSettings, Settings } from "../../model/graphql";
 
-const getSettingAsEntity = <T extends EntiteSimple>(
-  entityId: number,
-  entities: T[]
-): T => {
-  if (!entityId || !entities) {
-    return null;
+export const buildSettingsFromSettingsDb = (
+  settings: SettingsDb & {
+    observateur: Observateur;
+    departement: Departement;
+    age: Age;
+    sexe: Sexe;
+    estimation_nombre: EstimationNombre;
   }
+): Settings => {
 
-  return entities.find((entity) => entity.id === entityId);
-};
+  const { non_compte, ...otherFieldsEstimationNombre } = settings.estimation_nombre;
 
-export const buildAppConfigurationFromSettingsDb = (
-  settings: SettingsDb,
-  observateurs: Observateur[],
-  departements: Departement[],
-  ages: Age[],
-  sexes: Sexe[],
-  estimationsNombre: EstimationNombre[]
-): AppConfiguration => {
-  const appConfiguration: AppConfiguration = {
+  return {
     id: settings.id,
-    defaultObservateur: getSettingAsEntity(
-      settings.default_observateur_id,
-      observateurs
-    ),
-    defaultDepartement: getSettingAsEntity(
-      settings.default_departement_id,
-      departements
-    ),
-    defaultAge: getSettingAsEntity(settings.default_age_id, ages),
-    defaultSexe: getSettingAsEntity(settings.default_sexe_id, sexes),
-    defaultEstimationNombre: getSettingAsEntity(
-      settings.default_estimation_nombre_id,
-      estimationsNombre
-    ),
+    defaultObservateur: settings.observateur,
+    defaultDepartement: settings.departement,
+    defaultAge: settings.age,
+    defaultSexe: settings.sexe,
+    defaultEstimationNombre: { ...otherFieldsEstimationNombre, nonCompte: non_compte },
     defaultNombre: settings.default_nombre,
     areAssociesDisplayed: settings.are_associes_displayed,
     isMeteoDisplayed: settings.is_meteo_displayed,
@@ -49,25 +27,24 @@ export const buildAppConfigurationFromSettingsDb = (
     isRegroupementDisplayed: settings.is_regroupement_displayed,
     coordinatesSystem: settings.coordinates_system
   };
-
-  return appConfiguration;
 };
 
-export const buildSettingsDbFromAppConfiguration = (
-  appConfiguration: AppConfiguration
+export const buildSettingsDbFromInputSettings = (
+  appConfiguration: InputSettings
 ): SettingsDb => {
   return {
     id: appConfiguration.id,
-    default_observateur_id: appConfiguration.defaultObservateur?.id,
-    default_departement_id: appConfiguration.defaultDepartement?.id,
-    default_age_id: appConfiguration.defaultAge?.id,
-    default_sexe_id: appConfiguration.defaultSexe?.id,
-    default_estimation_nombre_id: appConfiguration.defaultEstimationNombre?.id,
+    default_observateur_id: appConfiguration.defaultObservateur,
+    default_departement_id: appConfiguration.defaultDepartement,
+    default_age_id: appConfiguration.defaultAge,
+    default_sexe_id: appConfiguration.defaultSexe,
+    default_estimation_nombre_id: appConfiguration.defaultEstimationNombre,
     default_nombre: appConfiguration.defaultNombre,
     are_associes_displayed: appConfiguration.areAssociesDisplayed,
     is_meteo_displayed: appConfiguration.isMeteoDisplayed,
     is_distance_displayed: appConfiguration.isDistanceDisplayed,
     is_regroupement_displayed: appConfiguration.isRegroupementDisplayed,
-    coordinates_system: appConfiguration.coordinatesSystem
+    coordinates_system: appConfiguration.coordinatesSystem,
+    user_id: undefined // TODO handle multi users someday
   };
 };

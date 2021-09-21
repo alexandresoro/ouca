@@ -1,3 +1,4 @@
+import { Prisma } from ".prisma/client";
 import { format } from "date-fns";
 import { getCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
@@ -10,8 +11,9 @@ import { NicheurCode, NICHEUR_VALUES } from "../../model/types/nicheur.model";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { FlatDonneeWithMinimalData } from "../../objects/flat-donnee-with-minimal-data.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import prisma from "../../sql/prisma";
 import { queryToFindAllComportementsByDonneeId, queryToFindComportementsIdsByDonneeId } from "../../sql/sql-queries-comportement";
-import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindAllDonnees, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindLastDonneeId, queryToFindLastRegroupement, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
+import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindAllDonnees, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindLastRegroupement, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
 import { queryToFindAllMeteosByDonneeId } from "../../sql/sql-queries-meteo";
 import { queryToFindAllMilieuxByDonneeId, queryToFindMilieuxIdsByDonneeId } from "../../sql/sql-queries-milieu";
 import { queryToFindAllAssociesByDonneeId } from "../../sql/sql-queries-observateur";
@@ -264,8 +266,11 @@ export const findExistingDonneeId = async (donnee: Donnee): Promise<number> => {
 };
 
 export const findLastDonneeId = async (): Promise<number> => {
-  const ids = await queryToFindLastDonneeId();
-  return ids && ids[0]?.id ? ids[0].id : null;
+  return prisma.donnee.findFirst({
+    orderBy: {
+      id: Prisma.SortOrder.desc
+    }
+  }).then(donnee => donnee.id).catch(() => Promise.resolve(null as number));
 };
 
 const updateCoordinates = (

@@ -1,9 +1,11 @@
+import { Prisma } from "@prisma/client";
+import { EstimationsDistancePaginatedResult, QueryEstimationsDistanceArgs } from "../../model/graphql";
 import { EstimationDistance } from "../../model/types/estimation-distance.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { getQueryToFindNumberOfDonneesByEstimationDistanceId, queryToFindAllEstimationsDistance } from "../../sql/sql-queries-estimation-distance";
-import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
-import { TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";
-import { getNbByEntityId } from "../../utils/utils";
+import prisma from "../../sql/prisma";
+import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE, TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";
+import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESTIMATION_DISTANCE = createKeyValueMapWithSameName("libelle");
@@ -11,16 +13,78 @@ const DB_SAVE_MAPPING_ESTIMATION_DISTANCE = createKeyValueMapWithSameName("libel
 export const findAllEstimationsDistance = async (): Promise<
   EstimationDistance[]
 > => {
-  const [estimations, nbDonneesByEstimation] = await Promise.all([
-    queryToFindAllEstimationsDistance(),
-    getQueryToFindNumberOfDonneesByEstimationDistanceId()
-  ]);
-
-  estimations.forEach((estimation: EstimationDistance) => {
-    estimation.nbDonnees = getNbByEntityId(estimation, nbDonneesByEstimation);
+  const estimations = await prisma.estimationDistance.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    include: {
+      _count: {
+        select: {
+          donnee: true
+        }
+      }
+    }
   });
 
-  return estimations;
+  return estimations.map((estimation) => {
+    return {
+      ...estimation,
+      nbDonnees: estimation._count.donnee
+    }
+  });
+};
+
+export const findEstimationsDistance = async (
+  options: QueryEstimationsDistanceArgs = {},
+  includeCounts = true
+): Promise<EstimationsDistancePaginatedResult> => {
+
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
+
+  let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput>;
+  switch (orderByField) {
+    case "id":
+    case "libelle":
+      orderBy = {
+        [orderByField]: sortOrder
+      }
+      break;
+    case "nbDonnees": {
+      orderBy = sortOrder && {
+        donnee: {
+          _count: sortOrder
+        }
+      }
+    }
+      break;
+    default:
+      orderBy = {}
+  }
+
+  const estimationsDistance = await prisma.estimationDistance.findMany({
+    ...getPrismaPagination(searchParams),
+    orderBy,
+    include: includeCounts && {
+      _count: {
+        select: {
+          donnee: true
+        }
+      }
+    },
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+  });
+
+  const count = await prisma.estimationDistance.count({
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+  });
+
+  return {
+    result: estimationsDistance.map((estimation) => {
+      return {
+        ...estimation,
+        ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
+      }
+    }),
+    count
+  }
 };
 
 export const persistEstimationDistance = async (

@@ -1,25 +1,93 @@
 
+import { Prisma } from "@prisma/client";
+import { AgesPaginatedResult, QueryAgesArgs } from "../../model/graphql";
 import { Age } from "../../model/types/age.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { queryToFindAllAges, queryToFindNumberOfDonneesByAgeId } from "../../sql/sql-queries-age";
-import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
-import { TABLE_AGE } from "../../utils/constants";
-import { getNbByEntityId } from "../../utils/utils";
+import prisma from "../../sql/prisma";
+import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE, TABLE_AGE } from "../../utils/constants";
+import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_AGE = createKeyValueMapWithSameName("libelle")
 
-export const findAllAges = async (): Promise<Age[]> => {
-  const [ages, nbDonneesByAge] = await Promise.all([
-    queryToFindAllAges(),
-    queryToFindNumberOfDonneesByAgeId()
-  ]);
+export const findAllAges = async (options: {
+  includeCounts?: boolean
+} = {}): Promise<Age[]> => {
 
-  ages.forEach((age: Age) => {
-    age.nbDonnees = getNbByEntityId(age, nbDonneesByAge);
+  const includeCounts = options.includeCounts ?? true;
+
+  const ages = await prisma.age.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE), include: includeCounts && {
+      _count: {
+        select: {
+          donnee: true // Add number of donnees that contains it
+        }
+      }
+    }
   });
 
-  return ages;
+  return ages.map((age) => {
+    return {
+      ...age,
+      ...(includeCounts ? { nbDonnees: age._count.donnee } : {})
+    }
+  });
+};
+
+export const findAges = async (
+  options: QueryAgesArgs = {},
+  includeCounts = true
+): Promise<AgesPaginatedResult> => {
+
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
+
+  let orderBy: Prisma.Enumerable<Prisma.AgeOrderByWithRelationInput>;
+  switch (orderByField) {
+    case "id":
+    case "libelle":
+      orderBy = {
+        [orderByField]: sortOrder
+      }
+      break;
+    case "nbDonnees": {
+      orderBy = sortOrder && {
+        donnee: {
+          _count: sortOrder
+        }
+      }
+    }
+      break;
+    default:
+      orderBy = {}
+  }
+
+  const ages = await prisma.age.findMany({
+    ...getPrismaPagination(searchParams),
+    orderBy,
+    include: includeCounts && {
+      _count: {
+        select: {
+          donnee: true
+        }
+      }
+    },
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+  });
+
+  const count = await prisma.age.count({
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+  });
+
+  return {
+    result: ages.map((age) => {
+      return {
+        ...age,
+        ...(includeCounts ? { nbDonnees: age._count.donnee } : {})
+      }
+    }),
+    count
+  }
 };
 
 export const persistAge = async (age: Age): Promise<SqlSaveResponse> => {

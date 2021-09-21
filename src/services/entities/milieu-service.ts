@@ -1,24 +1,107 @@
-import { Milieu } from "../../model/types/milieu.object";
+import { Milieu, Prisma } from "@prisma/client";
+import { MilieuxPaginatedResult, QueryMilieuxArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { queryToFindAllMilieux, queryToFindNumberOfDonneesByMilieuId } from "../../sql/sql-queries-milieu";
-import { createKeyValueMapWithSameName } from "../../sql/sql-queries-utils";
-import { TABLE_MILIEU } from "../../utils/constants";
-import { getNbByEntityId } from "../../utils/utils";
+import prisma from "../../sql/prisma";
+import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_CODE, TABLE_MILIEU } from "../../utils/constants";
+import { getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_MILIEU = createKeyValueMapWithSameName(["code", "libelle"]);
 
+const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput => {
+  return (q != null && q.length) ? {
+    OR: [
+      {
+        code: {
+          contains: q
+        }
+      },
+      {
+        libelle: {
+          contains: q
+        }
+      }
+    ]
+  } : {};
+}
+
 export const findAllMilieux = async (): Promise<Milieu[]> => {
-  const [milieux, nbDonneesByMilieu] = await Promise.all([
-    queryToFindAllMilieux(),
-    queryToFindNumberOfDonneesByMilieuId()
+  const [milieux, donneesByMilieu] = await Promise.all([
+    prisma.milieu.findMany(queryParametersToFindAllEntities(COLUMN_CODE)),
+    prisma.donnee_milieu.groupBy({
+      by: ['milieu_id'],
+      _count: true,
+    })
   ]);
 
-  milieux.forEach((milieu: Milieu) => {
-    milieu.nbDonnees = getNbByEntityId(milieu, nbDonneesByMilieu);
+  return milieux.map(milieu => {
+    return {
+      ...milieu,
+      nbDonnees: donneesByMilieu.find(donneeByMilieu => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0
+    }
+  });
+};
+
+export const findMilieux = async (
+  options: QueryMilieuxArgs = {},
+  includeCounts = true
+): Promise<MilieuxPaginatedResult> => {
+
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
+
+  let orderBy: Prisma.Enumerable<Prisma.MilieuOrderByWithRelationInput>;
+  switch (orderByField) {
+    case "id":
+    case "code":
+    case "libelle":
+      orderBy = {
+        [orderByField]: sortOrder
+      }
+      break;
+    case "nbDonnees":
+      orderBy = sortOrder && {
+        donnee_milieu: {
+          _count: sortOrder
+        }
+      }
+      break;
+    default:
+      orderBy = {}
+
+  }
+
+  const milieux = await prisma.milieu.findMany({
+    ...getPrismaPagination(searchParams),
+    orderBy,
+    where: getFilterClause(searchParams?.q)
   });
 
-  return milieux;
+  const donneesByMilieu = includeCounts ? await prisma.donnee_milieu.groupBy({
+    by: ['milieu_id'],
+    where: {
+      milieu_id: {
+        in: milieux?.map(milieu => milieu.id)
+      }
+    },
+    _count: true
+  }) : null;
+
+
+  const count = await prisma.milieu.count({
+    where: getFilterClause(searchParams?.q)
+  });
+
+  return {
+    result: milieux.map(milieu => {
+      return {
+        ...milieu,
+        ...(includeCounts ? { nbDonnees: donneesByMilieu.find(donneeByMilieu => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0 } : {})
+      }
+    }),
+    count
+  }
+
 };
 
 export const persistMilieu = async (
