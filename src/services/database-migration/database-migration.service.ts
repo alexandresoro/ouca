@@ -24,7 +24,7 @@ export const executeDatabaseMigration = async (): Promise<void> => {
     return;
   }
 
-  const currentVersion = await findVersion();
+  const { database: currentVersion } = await findVersion();
   logger.info(`Current database version is v${currentVersion}, last database version is v${APPLICATION_DATA_VERSION}.`);
   for (let version = currentVersion + 1; version <= APPLICATION_DATA_VERSION; version++) {
     logger.info(`Migrating database from version v${version - 1} to version v${version}.`);
