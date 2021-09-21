@@ -1,13 +1,18 @@
 import { Prisma } from ".prisma/client";
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import { ApolloServer } from "apollo-server-fastify";
 import { fastify } from "fastify";
 import fastifyCompress from "fastify-compress";
 import fastifyCors from "fastify-cors";
 import fastifyWebsocket from "fastify-websocket";
 import middie from "middie";
 import { Logger } from "winston";
+import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
+import resolvers from "./graphql/resolvers";
+import typeDefs from "./graphql/typedefs";
 import { DELETE, GET, POST } from "./http/httpMethod";
 import { handleRequest, RequestGeneric } from "./http/requestHandling";
-import { REQUEST_MAPPING } from "./mapping";
+import { REQUEST_MAPPING, routes } from "./mapping";
 import { WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
 import { HEARTBEAT, IMPORT, INIT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
@@ -18,23 +23,34 @@ import options from "./utils/options";
 import { sendMessageToClients, setWebsocketServer } from "./ws/websocket-server";
 import { sendInitialData } from "./ws/ws-messages";
 
+
 const server = fastify();
 
+const apolloServer = new ApolloServer({
+  typeDefs: typeDefs,
+  resolvers: resolvers,
+  plugins: [
+    fastifyAppClosePlugin(server),
+    ApolloServerPluginDrainHttpServer({ httpServer: server.server }),
+    apolloRequestLogger
+  ]
+});
+
 // Prisma queries logger
-const prismaLogger = (e: Prisma.QueryEvent | Prisma.LogEvent, winstonLogger: (message: string) => Logger) => {
+const queriesLogger = (e: Prisma.QueryEvent | Prisma.LogEvent, winstonLogger: (message: string) => Logger) => {
   winstonLogger("\n" + JSON.stringify(e, null, 2));
 }
 prisma.$on('query', (e) => {
-  prismaLogger(e, logger.debug);
+  queriesLogger(e, logger.debug);
 });
 prisma.$on('error', (e) => {
-  prismaLogger(e, logger.error);
+  queriesLogger(e, logger.error);
 });
 prisma.$on('warn', (e) => {
-  prismaLogger(e, logger.warn);
+  queriesLogger(e, logger.warn);
 });
 prisma.$on('info', (e) => {
-  prismaLogger(e, logger.info)
+  queriesLogger(e, logger.info)
 });
 
 (async () => {
@@ -92,10 +108,14 @@ prisma.$on('info', (e) => {
     });
   });
 
-  // // 404
-  // server.use((req, res) => {
-  //   res.status(404).send();
-  // });
+  routes.forEach((route) => {
+    server.route(route);
+  });
+
+  await apolloServer.start();
+  void server.register(apolloServer.createHandler({
+    path: 'graphql'
+  }));
 
   server.listen(options.listenPort, options.listenAddress, (err, address) => {
     logger.info(`Server running at ${address}`);
