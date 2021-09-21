@@ -1,0 +1,8 @@
+schema: src/graphql/typedefs.ts
+generates:
+  src/model/graphql.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+    config:
+      enumsAsConst: true
