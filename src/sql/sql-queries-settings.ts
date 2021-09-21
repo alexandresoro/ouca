@@ -1,7 +1,5 @@
-import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { TABLE_SETTINGS } from "../utils/constants";
-import { getFirstResult, query } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 export const queryToCreateSettingsTable = async (): Promise<void> => {
   await query<void>("CREATE TABLE IF NOT EXISTS settings (" +
@@ -27,11 +25,3 @@ export const queryToCreateSettingsTable = async (): Promise<void> => {
 
   await query<SqlSaveResponse>("INSERT INTO basenaturaliste.settings VALUES()");
 }
-
-export const queryToFindCoordinatesSystem = async (): Promise<CoordinatesSystemType
-> => {
-  const results = await query<{ system: CoordinatesSystemType }[]>(
-    `SELECT coordinates_system as system FROM ${TABLE_SETTINGS}`
-  );
-  return getFirstResult(results)?.system ? getFirstResult(results).system : null;
-};

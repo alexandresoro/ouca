@@ -1,9 +1,4 @@
-import { LieuditDb } from "../objects/db/lieudit-db.object";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_NOM } from "../utils/constants";
-import prisma from "./prisma";
-import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
-import { getFirstResult, prepareStringForSqlQuery, query, queryParametersToFindAllEntities } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 export const queryToCreateLieuDitTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS lieudit (" +
@@ -19,27 +14,3 @@ export const queryToCreateLieuDitTable = async (): Promise<void> => {
     " CONSTRAINT `fk_lieudit_commune_id` FOREIGN KEY (commune_id) REFERENCES commune (id) ON DELETE CASCADE" +
     " )");
 }
-
-export const queryToFindAllLieuxDits = async (): Promise<LieuditDb[]> => {
-  return prisma.lieudit.findMany(queryParametersToFindAllEntities(COLUMN_NOM));
-};
-
-export const queryToFindLieuDitByCommuneIdAndNom = async (
-  communeId: number,
-  nom: string
-): Promise<LieuditDb> => {
-  nom = prepareStringForSqlQuery(nom);
-  const results = await query<LieuditDb[]>(
-    `SELECT * FROM lieudit WHERE commune_id=${communeId} AND nom="${nom}"`
-  );
-  return getFirstResult<LieuditDb>(results);
-};
-
-export const queryToFindNumberOfDonneesByLieuDitId = async (
-  lieuditId?: number
-): Promise<NumberOfObjectsById[]> => {
-  return queryToFindNumberOfDonneesByInventaireEntityId(
-    "lieudit_id",
-    lieuditId
-  );
-};

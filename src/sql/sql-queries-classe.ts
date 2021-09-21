@@ -1,8 +1,4 @@
-import { Classe } from "../model/types/classe.object";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_LIBELLE } from "../utils/constants";
-import prisma from "./prisma";
-import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 export const queryToCreateClasseTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS classe (" +
@@ -12,36 +8,3 @@ export const queryToCreateClasseTable = async (): Promise<void> => {
     " UNIQUE KEY `unique_libelle` (libelle)" +
     " )");
 }
-
-export const queryToFindAllClasses = async (): Promise<Classe[]> => {
-  return prisma.classe.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
-};
-
-export const queryToFindNumberOfEspecesByClasseId = async (
-  classeId?: number
-): Promise<NumberOfObjectsById[]> => {
-  let queryStr = "SELECT classe_id as id, count(*) as nb FROM espece";
-  if (classeId) {
-    queryStr = queryStr +
-      ` WHERE classe_id=${classeId}`;
-  } else {
-    queryStr = queryStr +
-      " GROUP BY classe_id";
-  }
-  return query<NumberOfObjectsById[]>(queryStr);
-};
-
-export const queryToFindNumberOfDonneesByClasseId = async (
-  classeId?: number
-): Promise<NumberOfObjectsById[]> => {
-  let queryStr =
-    "SELECT e.classe_id as id, count(*) as nb FROM espece e, donnee d WHERE d.espece_id=e.id";
-  if (classeId) {
-    queryStr = queryStr +
-      ` AND e.classe_id=${classeId}`;
-  } else {
-    queryStr = queryStr +
-      " GROUP BY classe_id";
-  }
-  return query<NumberOfObjectsById[]>(queryStr);
-};

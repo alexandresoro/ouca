@@ -1,9 +1,4 @@
-import { Observateur } from "../model/types/observateur.object";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_LIBELLE, OBSERVATEUR_ID } from "../utils/constants";
-import prisma from "./prisma";
-import { queryToFindNumberOfDonneesByInventaireEntityId } from "./sql-queries-inventaire";
-import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 export const queryToCreateObservateurTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS observateur (" +
@@ -14,10 +9,6 @@ export const queryToCreateObservateurTable = async (): Promise<void> => {
     " )");
 }
 
-export const queryToFindAllObservateurs = async (): Promise<Observateur[]> => {
-  return prisma.observateur.findMany(queryParametersToFindAllEntities(COLUMN_LIBELLE));
-};
-
 export const queryToFindAssociesByInventaireId = async (
   inventaireId: number
 ): Promise<{ associeId: number }[]> => {
@@ -25,15 +16,6 @@ export const queryToFindAssociesByInventaireId = async (
     "SELECT distinct observateur_id as associeId" +
     " FROM inventaire_associe" +
     ` WHERE inventaire_id=${inventaireId}`
-  );
-};
-
-export const queryToFindNumberOfDonneesByObservateurId = async (
-  observateurId?: number
-): Promise<NumberOfObjectsById[]> => {
-  return await queryToFindNumberOfDonneesByInventaireEntityId(
-    OBSERVATEUR_ID,
-    observateurId
   );
 };
 

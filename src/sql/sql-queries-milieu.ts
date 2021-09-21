@@ -1,8 +1,4 @@
-import { Milieu } from "../model/types/milieu.object";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_CODE } from "../utils/constants";
-import prisma from "./prisma";
-import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 export const queryToCreateMilieuTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS milieu (" +
@@ -14,10 +10,6 @@ export const queryToCreateMilieuTable = async (): Promise<void> => {
     " UNIQUE KEY `unique_libelle` (libelle)" +
     " )");
 }
-
-export const queryToFindAllMilieux = async (): Promise<Milieu[]> => {
-  return prisma.milieu.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
-};
 
 export const queryToFindAllMilieuxByDonneeId = async (
   donneesIds?: number[]
@@ -46,16 +38,3 @@ export const queryToFindMilieuxIdsByDonneeId = async (
   );
 };
 
-export const queryToFindNumberOfDonneesByMilieuId = async (
-  milieuId?: number
-): Promise<NumberOfObjectsById[]> => {
-  let queryStr: string =
-    "SELECT dc.milieu_id as id, count(*) as nb " + "FROM donnee_milieu dc ";
-  if (milieuId) {
-    queryStr = queryStr +
-      ` WHERE dc.milieu_id=${milieuId}`;
-  } else {
-    queryStr = queryStr + " GROUP BY dc.milieu_id";
-  }
-  return query<NumberOfObjectsById[]>(queryStr);
-};

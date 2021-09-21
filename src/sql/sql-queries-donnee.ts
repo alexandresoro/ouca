@@ -5,7 +5,6 @@ import { FlatDonnee } from "../model/types/flat-donnee.object";
 import { NicheurCode } from "../model/types/nicheur.model";
 import { DonneeCompleteWithIds, DonneeDbWithJoins } from "../objects/db/donnee-db.type";
 import { FlatDonneeWithMinimalData } from "../objects/flat-donnee-with-minimal-data.object";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { DATE_PATTERN, TABLE_COMPORTEMENT, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../utils/constants";
 import { interpretDateTimestampAsLocalTimeZoneDate } from "../utils/date";
@@ -195,12 +194,6 @@ export const queryToFindPreviousDonneeIdByCurrentDonneeId = async (
   );
 };
 
-export const queryToFindLastDonneeId = async (): Promise<{ id: number }[]> => {
-  return query<{ id: number }[]>(
-    "SELECT id FROM donnee ORDER BY id DESC LIMIT 0,1"
-  );
-};
-
 export const queryToFindAllDonnees = async (): Promise<
   FlatDonneeWithMinimalData[]
 > => {
@@ -229,20 +222,6 @@ export const queryToFindLastRegroupement = async (): Promise<
   return query<{ regroupement: number }[]>(
     "SELECT MAX(d.regroupement) as regroupement FROM donnee d"
   );
-};
-
-export const queryToFindNumberOfDonneesByDonneeEntityId = async (
-  entityIdAttribute: string,
-  id?: number
-): Promise<NumberOfObjectsById[]> => {
-  let queryStr: string =
-    "SELECT " + entityIdAttribute + " as id, count(*) as nb FROM donnee";
-  if (id) {
-    queryStr = queryStr + " WHERE " + entityIdAttribute + `=${id}`;
-  } else {
-    queryStr = queryStr + " GROUP BY " + entityIdAttribute;
-  }
-  return query<NumberOfObjectsById[]>(queryStr);
 };
 
 const getQueryToFindDonneesIdsByNicheursCodes = (

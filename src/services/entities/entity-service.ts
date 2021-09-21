@@ -18,7 +18,7 @@ import { queryToCreateMilieuTable } from "../../sql/sql-queries-milieu";
 import { queryToCreateObservateurTable } from "../../sql/sql-queries-observateur";
 import { queryToCreateSettingsTable } from "../../sql/sql-queries-settings";
 import { queryToCreateSexeTable } from "../../sql/sql-queries-sexe";
-import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToFindEntityByLibelle, queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck, queryToSaveEntity, queryToSaveEntityNoCheck } from "../../sql/sql-queries-utils";
+import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck, queryToSaveEntity, queryToSaveEntityNoCheck } from "../../sql/sql-queries-utils";
 import { queryToCreateVersionTable } from "../../sql/sql-queries-version";
 import { onTableUpdate } from "../../ws/ws-messages";
 
@@ -50,13 +50,6 @@ export const findAllEntities = async <T extends EntiteSimple>(
   tableName: string
 ): Promise<T[]> => {
   return queryToFindAllEntities<T>(tableName);
-};
-
-export const findEntityByLibelle = async <T extends EntiteSimple>(
-  libelle: string,
-  tableName: string
-): Promise<T> => {
-  return queryToFindEntityByLibelle<T>(tableName, libelle);
 };
 
 export const persistEntity = async <T extends EntityDb>(

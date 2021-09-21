@@ -275,28 +275,6 @@ export const queryToDeleteAnEntityByAttribute = async (
   );
 };
 
-export const queryToFindEntityByLibelle = async <T>(
-  entityName: string,
-  libelle: string
-): Promise<T> => {
-  libelle = prepareStringForSqlQuery(libelle);
-  const results = await query<T[]>(
-    `SELECT * FROM ${entityName} WHERE libelle="${libelle}"`
-  );
-  return getFirstResult<T>(results);
-};
-
-export const queryToFindEntityByCode = async <T>(
-  entityName: string,
-  code: string
-): Promise<T> => {
-  code = prepareStringForSqlQuery(code);
-  const results = await query<T[]>(
-    `SELECT * FROM ${entityName} WHERE code="${code}"`
-  );
-  return getFirstResult<T>(results);
-};
-
 export const queryToCheckIfTableExists = async (tableName: string): Promise<boolean> => {
   const queryStr = `SHOW TABLES LIKE '${tableName}'`;
   const results = await query<string[]>(queryStr);

@@ -1,7 +1,6 @@
 import { Coordinates } from "../model/types/coordinates.object";
 import { Inventaire } from "../model/types/inventaire.object";
 import { InventaireCompleteWithIds, InventaireDbWithJoins } from "../objects/db/inventaire-db.object";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 import { getFirstResult, query } from "./sql-queries-utils";
 
 export const queryToCreateInventaireTable = async (): Promise<void> => {
@@ -43,24 +42,6 @@ export const queryToCreateInventaireMeteoTable = async (): Promise<void> => {
     " CONSTRAINT `fk_inventaire_meteo_meteo_id` FOREIGN KEY (meteo_id) REFERENCES meteo (id) ON DELETE CASCADE" +
     " )");
 }
-
-export const queryToFindNumberOfDonneesByInventaireEntityId = async (
-  entityIdAttribute: string,
-  id?: number
-): Promise<NumberOfObjectsById[]> => {
-  let queryStr: string =
-    `SELECT i.${entityIdAttribute} as id, count(*) as nb` +
-    " FROM donnee d, inventaire i " +
-    " WHERE d.inventaire_id=i.id";
-  if (id) {
-    queryStr = queryStr +
-      ` AND i.${entityIdAttribute}=${id}`;
-  } else {
-    queryStr = queryStr +
-      ` GROUP BY i.${entityIdAttribute}`;
-  }
-  return query<NumberOfObjectsById[]>(queryStr);
-};
 
 export const queryToFindInventaireIdById = async (
   id: number

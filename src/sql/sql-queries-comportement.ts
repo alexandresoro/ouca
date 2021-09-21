@@ -1,9 +1,5 @@
 import { NicheurCode } from "../model/types/nicheur.model";
-import { ComportementDb } from "../objects/db/comportement-db.model";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
-import { COLUMN_CODE } from "../utils/constants";
-import prisma from "./prisma";
-import { query, queryParametersToFindAllEntities } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 export const queryToCreateComportementTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS comportement (" +
@@ -16,12 +12,6 @@ export const queryToCreateComportementTable = async (): Promise<void> => {
     " UNIQUE KEY `unique_libelle` (libelle)" +
     " )");
 }
-
-export const queryToFindAllComportements = async (): Promise<
-  ComportementDb[]
-> => {
-  return prisma.comportement.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
-};
 
 export const queryToFindAllComportementsByDonneeId = async (
   donneesIds?: number[]
@@ -51,18 +41,3 @@ export const queryToFindComportementsIdsByDonneeId = async (
   );
 };
 
-export const queryToFindNumberOfDonneesByComportementId = async (
-  comportementId?: number
-): Promise<NumberOfObjectsById[]> => {
-  let queryStr: string =
-    "SELECT dc.comportement_id as id, count(*) as nb" +
-    " FROM donnee_comportement dc ";
-  if (comportementId) {
-    queryStr = queryStr +
-      ` WHERE dc.comportement_id=${comportementId}`;
-  } else {
-    queryStr = queryStr +
-      " GROUP BY dc.comportement_id";
-  }
-  return query<NumberOfObjectsById[]>(queryStr);
-};
