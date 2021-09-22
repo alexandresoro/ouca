@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Departement, DepartementsPaginatedResult, QueryDepartementsArgs } from "../../model/graphql";
+import { Departement, DepartementsPaginatedResult, QueryPaginatedDepartementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -85,8 +85,8 @@ export const findAllDepartements = async (
   });
 };
 
-export const findDepartements = async (
-  options: QueryDepartementsArgs = {},
+export const findPaginatedDepartements = async (
+  options: QueryPaginatedDepartementsArgs = {},
   includeCounts = true
 ): Promise<DepartementsPaginatedResult> => {
 

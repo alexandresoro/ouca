@@ -1,6 +1,6 @@
 
 import { Nicheur, Prisma } from "@prisma/client";
-import { ComportementsPaginatedResult, QueryComportementsArgs } from "../../model/graphql";
+import { ComportementsPaginatedResult, QueryPaginatedComportementsArgs } from "../../model/graphql";
 import { Comportement } from "../../model/types/comportement.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildComportementDbFromComportement, buildComportementFromComportementDb } from "../../sql/entities-mapping/comportement-mapping";
@@ -48,8 +48,8 @@ export const findAllComportements = async (): Promise<Comportement[]> => {
   });
 };
 
-export const findComportements = async (
-  options: QueryComportementsArgs = {},
+export const findPaginatedComportements = async (
+  options: QueryPaginatedComportementsArgs = {},
   includeCounts = true
 ): Promise<ComportementsPaginatedResult> => {
 

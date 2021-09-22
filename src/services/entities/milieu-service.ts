@@ -1,5 +1,5 @@
 import { Milieu, Prisma } from "@prisma/client";
-import { MilieuxPaginatedResult, QueryMilieuxArgs } from "../../model/graphql";
+import { MilieuxPaginatedResult, QueryPaginatedMilieuxArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -43,8 +43,8 @@ export const findAllMilieux = async (): Promise<Milieu[]> => {
   });
 };
 
-export const findMilieux = async (
-  options: QueryMilieuxArgs = {},
+export const findPaginatedMilieux = async (
+  options: QueryPaginatedMilieuxArgs = {},
   includeCounts = true
 ): Promise<MilieuxPaginatedResult> => {
 

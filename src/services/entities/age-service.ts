@@ -1,6 +1,6 @@
 
 import { Prisma } from "@prisma/client";
-import { AgesPaginatedResult, QueryAgesArgs } from "../../model/graphql";
+import { AgesPaginatedResult, QueryPaginatedAgesArgs } from "../../model/graphql";
 import { Age } from "../../model/types/age.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -35,8 +35,8 @@ export const findAllAges = async (options: {
   });
 };
 
-export const findAges = async (
-  options: QueryAgesArgs = {},
+export const findPaginatedAges = async (
+  options: QueryPaginatedAgesArgs = {},
   includeCounts = true
 ): Promise<AgesPaginatedResult> => {
 

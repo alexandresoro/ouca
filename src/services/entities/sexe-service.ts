@@ -1,6 +1,6 @@
 
 import { Prisma } from "@prisma/client";
-import { QuerySexesArgs, SexesPaginatedResult } from "../../model/graphql";
+import { QueryPaginatedSexesArgs, SexesPaginatedResult } from "../../model/graphql";
 import { Sexe } from "../../model/types/sexe.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -35,8 +35,8 @@ export const findAllSexes = async (options: {
   });
 };
 
-export const findSexes = async (
-  options: QuerySexesArgs = {},
+export const findPaginatedSexes = async (
+  options: QueryPaginatedSexesArgs = {},
   includeCounts = true
 ): Promise<SexesPaginatedResult> => {
 

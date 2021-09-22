@@ -1,5 +1,5 @@
 import { Classe as ClasseEntity, Prisma } from "@prisma/client";
-import { Classe, ClassesPaginatedResult, QueryClassesArgs } from "../../model/graphql";
+import { Classe, ClassesPaginatedResult, QueryPaginatedClassesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -44,8 +44,8 @@ export const findAllClasses = async (): Promise<Classe[]> => {
   });
 };
 
-export const findClasses = async (
-  options: QueryClassesArgs = {},
+export const findPaginatedClasses = async (
+  options: QueryPaginatedClassesArgs = {},
   includeCounts = true
 ): Promise<ClassesPaginatedResult> => {
 

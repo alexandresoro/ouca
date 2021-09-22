@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { EstimationsNombrePaginatedResult, QueryEstimationsNombreArgs } from "../../model/graphql";
+import { EstimationsNombrePaginatedResult, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
 import { EstimationNombre } from "../../model/types/estimation-nombre.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildEstimationNombreFromEstimationNombreDb } from "../../sql/entities-mapping/estimation-nombre-mapping";
@@ -41,8 +41,8 @@ export const findAllEstimationsNombre = async (options: {
   });
 };
 
-export const findEstimationsNombre = async (
-  options: QueryEstimationsNombreArgs = {},
+export const findPaginatedEstimationsNombre = async (
+  options: QueryPaginatedEstimationsNombreArgs = {},
   includeCounts = true
 ): Promise<EstimationsNombrePaginatedResult> => {
 

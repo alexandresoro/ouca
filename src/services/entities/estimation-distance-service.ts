@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { EstimationsDistancePaginatedResult, QueryEstimationsDistanceArgs } from "../../model/graphql";
+import { EstimationsDistancePaginatedResult, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
 import { EstimationDistance } from "../../model/types/estimation-distance.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -32,8 +32,8 @@ export const findAllEstimationsDistance = async (): Promise<
   });
 };
 
-export const findEstimationsDistance = async (
-  options: QueryEstimationsDistanceArgs = {},
+export const findPaginatedEstimationsDistance = async (
+  options: QueryPaginatedEstimationsDistanceArgs = {},
   includeCounts = true
 ): Promise<EstimationsDistancePaginatedResult> => {
 

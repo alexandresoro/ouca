@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { EspecesPaginatedResult, QueryEspecesArgs } from "../../model/graphql";
+import { EspecesPaginatedResult, QueryPaginatedEspecesArgs } from "../../model/graphql";
 import { Espece } from "../../model/types/espece.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildEspeceFromEspeceDb } from "../../sql/entities-mapping/espece-mapping";
@@ -59,8 +59,8 @@ export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promi
   });
 };
 
-export const findEspeces = async (
-  options: QueryEspecesArgs = {},
+export const findPaginatedEspeces = async (
+  options: QueryPaginatedEspecesArgs = {},
   includeCounts = true
 ): Promise<EspecesPaginatedResult> => {
 

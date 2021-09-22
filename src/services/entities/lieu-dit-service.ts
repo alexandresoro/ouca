@@ -1,6 +1,6 @@
 import { Prisma } from ".prisma/client";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
-import { LieuDit, LieuxDitsPaginatedResult, QueryLieuxditsArgs } from "../../model/graphql";
+import { LieuDit, LieuxDitsPaginatedResult, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb } from "../../objects/db/lieudit-db.object";
@@ -61,8 +61,8 @@ export const findAllLieuxDits = async (options?: {
   });
 };
 
-export const findLieuxDits = async (
-  options: QueryLieuxditsArgs = {},
+export const findPaginatedLieuxDits = async (
+  options: QueryPaginatedLieuxditsArgs = {},
   includeCounts = true
 ): Promise<LieuxDitsPaginatedResult> => {
 

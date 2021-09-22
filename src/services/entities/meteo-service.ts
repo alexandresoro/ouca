@@ -1,5 +1,5 @@
 import { Meteo as MeteoEntity, Prisma } from "@prisma/client";
-import { Meteo, MeteosPaginatedResult, QueryMeteosArgs } from "../../model/graphql";
+import { Meteo, MeteosPaginatedResult, QueryPaginatedMeteosArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -39,8 +39,8 @@ export const findAllMeteos = async (): Promise<Meteo[]> => {
   });
 };
 
-export const findMeteos = async (
-  options: QueryMeteosArgs = {},
+export const findPaginatedMeteos = async (
+  options: QueryPaginatedMeteosArgs = {},
   includeCounts = true
 ): Promise<MeteosPaginatedResult> => {
 

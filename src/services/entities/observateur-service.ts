@@ -1,5 +1,5 @@
 import { Observateur as ObservateurEntity, Prisma } from ".prisma/client";
-import { Observateur, ObservateursPaginatedResult, QueryObservateursArgs } from "../../model/graphql";
+import { Observateur, ObservateursPaginatedResult, QueryPaginatedObservateursArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities, queryToCheckIfTableExists } from "../../sql/sql-queries-utils";
@@ -43,8 +43,8 @@ export const findAllObservateurs = async (
   });
 };
 
-export const findObservateurs = async (
-  options: QueryObservateursArgs = {},
+export const findPaginatedObservateurs = async (
+  options: QueryPaginatedObservateursArgs = {},
   includeCounts = true
 ): Promise<ObservateursPaginatedResult> => {
 

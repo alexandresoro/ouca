@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Commune, CommunesPaginatedResult, QueryCommunesArgs } from "../../model/graphql";
+import { Commune, CommunesPaginatedResult, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import { Commune as CommuneDb } from "../../model/types/commune.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildCommuneFromCommuneDb } from "../../sql/entities-mapping/commune-mapping";
@@ -74,8 +74,8 @@ export const findAllCommunes = async (): Promise<CommuneDb[]> => {
   });
 };
 
-export const findCommunes = async (
-  options: QueryCommunesArgs = {},
+export const findPaginatedCommunes = async (
+  options: QueryPaginatedCommunesArgs = {},
   includeCounts = true
 ): Promise<CommunesPaginatedResult> => {
 
