@@ -119,7 +119,7 @@ export const findCommunes = async (
       c.id
     `
 
-    const nbDonneesForFilteredCommunes = await prisma.$queryRaw<({ id: number, nbDonnees: number })[]>`${donneesPerCommuneRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+    const nbDonneesForFilteredCommunes = await prisma.$queryRaw<({ id: number, nbLieuxDits: number, nbDonnees: number })[]>`${donneesPerCommuneRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
 
     const communesRq = await prisma.commune.findMany({
       include: {
@@ -141,6 +141,7 @@ export const findCommunes = async (
       const commune = communesRq?.find(commune => commune.id === communeInfo.id);
       return {
         ...commune,
+        nbLieuxDits: communeInfo.nbLieuxDits,
         nbDonnees: communeInfo.nbDonnees
       };
     })
