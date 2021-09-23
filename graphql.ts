@@ -85,6 +85,14 @@ export type Comportement = {
   code: Scalars['String'];
   id: Scalars['Int'];
   libelle: Scalars['String'];
+  nicheur?: Maybe<Nicheur>;
+};
+
+export type ComportementWithCounts = {
+  __typename?: 'ComportementWithCounts';
+  code: Scalars['String'];
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nicheur?: Maybe<Nicheur>;
 };
@@ -101,7 +109,7 @@ export type ComportementsOrderBy = typeof ComportementsOrderBy[keyof typeof Comp
 export type ComportementsPaginatedResult = PaginatedResult & {
   __typename?: 'ComportementsPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<Comportement>>>;
+  result?: Maybe<Array<Maybe<ComportementWithCounts>>>;
 };
 
 export const CoordinatesSystemType = {
@@ -149,6 +157,15 @@ export const EntitesAvecLibelleOrderBy = {
 export type EntitesAvecLibelleOrderBy = typeof EntitesAvecLibelleOrderBy[keyof typeof EntitesAvecLibelleOrderBy];
 export type Espece = {
   __typename?: 'Espece';
+  classeId: Scalars['Int'];
+  code: Scalars['String'];
+  id: Scalars['Int'];
+  nomFrancais: Scalars['String'];
+  nomLatin: Scalars['String'];
+};
+
+export type EspeceWithCounts = {
+  __typename?: 'EspeceWithCounts';
   classe: Classe;
   code: Scalars['String'];
   id: Scalars['Int'];
@@ -170,11 +187,17 @@ export type EspecesOrderBy = typeof EspecesOrderBy[keyof typeof EspecesOrderBy];
 export type EspecesPaginatedResult = PaginatedResult & {
   __typename?: 'EspecesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<Espece>>>;
+  result?: Maybe<Array<Maybe<EspeceWithCounts>>>;
 };
 
 export type EstimationDistance = {
   __typename?: 'EstimationDistance';
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
+};
+
+export type EstimationDistanceWithCounts = {
+  __typename?: 'EstimationDistanceWithCounts';
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -206,7 +229,7 @@ export type EstimationNombreWithCounts = {
 export type EstimationsDistancePaginatedResult = PaginatedResult & {
   __typename?: 'EstimationsDistancePaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<EstimationDistance>>>;
+  result?: Maybe<Array<Maybe<EstimationDistanceWithCounts>>>;
 };
 
 export type EstimationsNombrePaginatedResult = PaginatedResult & {
@@ -265,17 +288,30 @@ export type Meteo = {
   __typename?: 'Meteo';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+};
+
+export type MeteoWithCounts = {
+  __typename?: 'MeteoWithCounts';
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
 };
 
 export type MeteosPaginatedResult = PaginatedResult & {
   __typename?: 'MeteosPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<Meteo>>>;
+  result?: Maybe<Array<Maybe<MeteoWithCounts>>>;
 };
 
 export type Milieu = {
   __typename?: 'Milieu';
+  code: Scalars['String'];
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
+};
+
+export type MilieuWithCounts = {
+  __typename?: 'MilieuWithCounts';
   code: Scalars['String'];
   id: Scalars['Int'];
   libelle: Scalars['String'];
@@ -293,7 +329,7 @@ export type MilieuxOrderBy = typeof MilieuxOrderBy[keyof typeof MilieuxOrderBy];
 export type MilieuxPaginatedResult = PaginatedResult & {
   __typename?: 'MilieuxPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<Milieu>>>;
+  result?: Maybe<Array<Maybe<MilieuWithCounts>>>;
 };
 
 export type Mutation = {
@@ -339,8 +375,13 @@ export type PaginatedResult = {
 export type Query = {
   __typename?: 'Query';
   ages?: Maybe<Array<Maybe<Age>>>;
+  comportements?: Maybe<Array<Maybe<Comportement>>>;
   departements?: Maybe<Array<Maybe<Departement>>>;
+  especes?: Maybe<Array<Maybe<Espece>>>;
+  estimationsDistance?: Maybe<Array<Maybe<EstimationDistance>>>;
   estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
+  meteos?: Maybe<Array<Maybe<Meteo>>>;
+  milieux?: Maybe<Array<Maybe<Milieu>>>;
   observateurs?: Maybe<Array<Maybe<Observateur>>>;
   paginatedAges?: Maybe<AgesPaginatedResult>;
   paginatedClasses?: Maybe<ClassesPaginatedResult>;
@@ -584,6 +625,7 @@ export type ResolversTypes = {
   CommunesOrderBy: CommunesOrderBy;
   CommunesPaginatedResult: ResolverTypeWrapper<CommunesPaginatedResult>;
   Comportement: ResolverTypeWrapper<Comportement>;
+  ComportementWithCounts: ResolverTypeWrapper<ComportementWithCounts>;
   ComportementsOrderBy: ComportementsOrderBy;
   ComportementsPaginatedResult: ResolverTypeWrapper<ComportementsPaginatedResult>;
   CoordinatesSystemType: CoordinatesSystemType;
@@ -593,9 +635,11 @@ export type ResolversTypes = {
   DepartementsPaginatedResult: ResolverTypeWrapper<DepartementsPaginatedResult>;
   EntitesAvecLibelleOrderBy: EntitesAvecLibelleOrderBy;
   Espece: ResolverTypeWrapper<Espece>;
+  EspeceWithCounts: ResolverTypeWrapper<EspeceWithCounts>;
   EspecesOrderBy: EspecesOrderBy;
   EspecesPaginatedResult: ResolverTypeWrapper<EspecesPaginatedResult>;
   EstimationDistance: ResolverTypeWrapper<EstimationDistance>;
+  EstimationDistanceWithCounts: ResolverTypeWrapper<EstimationDistanceWithCounts>;
   EstimationNombre: ResolverTypeWrapper<EstimationNombre>;
   EstimationNombreOrderBy: EstimationNombreOrderBy;
   EstimationNombreWithCounts: ResolverTypeWrapper<EstimationNombreWithCounts>;
@@ -608,8 +652,10 @@ export type ResolversTypes = {
   LieuxDitsOrderBy: LieuxDitsOrderBy;
   LieuxDitsPaginatedResult: ResolverTypeWrapper<LieuxDitsPaginatedResult>;
   Meteo: ResolverTypeWrapper<Meteo>;
+  MeteoWithCounts: ResolverTypeWrapper<MeteoWithCounts>;
   MeteosPaginatedResult: ResolverTypeWrapper<MeteosPaginatedResult>;
   Milieu: ResolverTypeWrapper<Milieu>;
+  MilieuWithCounts: ResolverTypeWrapper<MilieuWithCounts>;
   MilieuxOrderBy: MilieuxOrderBy;
   MilieuxPaginatedResult: ResolverTypeWrapper<MilieuxPaginatedResult>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -640,13 +686,16 @@ export type ResolversParentTypes = {
   Commune: Commune;
   CommunesPaginatedResult: CommunesPaginatedResult;
   Comportement: Comportement;
+  ComportementWithCounts: ComportementWithCounts;
   ComportementsPaginatedResult: ComportementsPaginatedResult;
   Departement: Departement;
   DepartementWithCounts: DepartementWithCounts;
   DepartementsPaginatedResult: DepartementsPaginatedResult;
   Espece: Espece;
+  EspeceWithCounts: EspeceWithCounts;
   EspecesPaginatedResult: EspecesPaginatedResult;
   EstimationDistance: EstimationDistance;
+  EstimationDistanceWithCounts: EstimationDistanceWithCounts;
   EstimationNombre: EstimationNombre;
   EstimationNombreWithCounts: EstimationNombreWithCounts;
   EstimationsDistancePaginatedResult: EstimationsDistancePaginatedResult;
@@ -657,8 +706,10 @@ export type ResolversParentTypes = {
   LieuDit: LieuDit;
   LieuxDitsPaginatedResult: LieuxDitsPaginatedResult;
   Meteo: Meteo;
+  MeteoWithCounts: MeteoWithCounts;
   MeteosPaginatedResult: MeteosPaginatedResult;
   Milieu: Milieu;
+  MilieuWithCounts: MilieuWithCounts;
   MilieuxPaginatedResult: MilieuxPaginatedResult;
   Mutation: {};
   Observateur: Observateur;
@@ -728,6 +779,14 @@ export type ComportementResolvers<ContextType = any, ParentType extends Resolver
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nicheur?: Resolver<Maybe<ResolversTypes['Nicheur']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ComportementWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ComportementWithCounts'] = ResolversParentTypes['ComportementWithCounts']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nicheur?: Resolver<Maybe<ResolversTypes['Nicheur']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -735,7 +794,7 @@ export type ComportementResolvers<ContextType = any, ParentType extends Resolver
 
 export type ComportementsPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ComportementsPaginatedResult'] = ResolversParentTypes['ComportementsPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['ComportementWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -761,6 +820,15 @@ export type DepartementsPaginatedResultResolvers<ContextType = any, ParentType e
 };
 
 export type EspeceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Espece'] = ResolversParentTypes['Espece']> = {
+  classeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  nomFrancais?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nomLatin?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EspeceWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EspeceWithCounts'] = ResolversParentTypes['EspeceWithCounts']> = {
   classe?: Resolver<ResolversTypes['Classe'], ParentType, ContextType>;
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -772,11 +840,17 @@ export type EspeceResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type EspecesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['EspecesPaginatedResult'] = ResolversParentTypes['EspecesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['EspeceWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EstimationDistanceResolvers<ContextType = any, ParentType extends ResolversParentTypes['EstimationDistance'] = ResolversParentTypes['EstimationDistance']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EstimationDistanceWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EstimationDistanceWithCounts'] = ResolversParentTypes['EstimationDistanceWithCounts']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -800,7 +874,7 @@ export type EstimationNombreWithCountsResolvers<ContextType = any, ParentType ex
 
 export type EstimationsDistancePaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['EstimationsDistancePaginatedResult'] = ResolversParentTypes['EstimationsDistancePaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistanceWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -831,17 +905,30 @@ export type LieuxDitsPaginatedResultResolvers<ContextType = any, ParentType exte
 export type MeteoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Meteo'] = ResolversParentTypes['Meteo']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MeteoWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MeteoWithCounts'] = ResolversParentTypes['MeteoWithCounts']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MeteosPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['MeteosPaginatedResult'] = ResolversParentTypes['MeteosPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['MeteoWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type MilieuResolvers<ContextType = any, ParentType extends ResolversParentTypes['Milieu'] = ResolversParentTypes['Milieu']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MilieuWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['MilieuWithCounts'] = ResolversParentTypes['MilieuWithCounts']> = {
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -851,7 +938,7 @@ export type MilieuResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type MilieuxPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['MilieuxPaginatedResult'] = ResolversParentTypes['MilieuxPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['MilieuWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -885,8 +972,13 @@ export type PaginatedResultResolvers<ContextType = any, ParentType extends Resol
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   ages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Age']>>>, ParentType, ContextType>;
+  comportements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType>;
   departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType>;
+  especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType>;
+  estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType>;
   estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType>;
+  meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
+  milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType>;
   observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType>;
   paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedAgesArgs, never>>;
   paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedClassesArgs, never>>;
@@ -956,13 +1048,16 @@ export type Resolvers<ContextType = any> = {
   Commune?: CommuneResolvers<ContextType>;
   CommunesPaginatedResult?: CommunesPaginatedResultResolvers<ContextType>;
   Comportement?: ComportementResolvers<ContextType>;
+  ComportementWithCounts?: ComportementWithCountsResolvers<ContextType>;
   ComportementsPaginatedResult?: ComportementsPaginatedResultResolvers<ContextType>;
   Departement?: DepartementResolvers<ContextType>;
   DepartementWithCounts?: DepartementWithCountsResolvers<ContextType>;
   DepartementsPaginatedResult?: DepartementsPaginatedResultResolvers<ContextType>;
   Espece?: EspeceResolvers<ContextType>;
+  EspeceWithCounts?: EspeceWithCountsResolvers<ContextType>;
   EspecesPaginatedResult?: EspecesPaginatedResultResolvers<ContextType>;
   EstimationDistance?: EstimationDistanceResolvers<ContextType>;
+  EstimationDistanceWithCounts?: EstimationDistanceWithCountsResolvers<ContextType>;
   EstimationNombre?: EstimationNombreResolvers<ContextType>;
   EstimationNombreWithCounts?: EstimationNombreWithCountsResolvers<ContextType>;
   EstimationsDistancePaginatedResult?: EstimationsDistancePaginatedResultResolvers<ContextType>;
@@ -970,8 +1065,10 @@ export type Resolvers<ContextType = any> = {
   LieuDit?: LieuDitResolvers<ContextType>;
   LieuxDitsPaginatedResult?: LieuxDitsPaginatedResultResolvers<ContextType>;
   Meteo?: MeteoResolvers<ContextType>;
+  MeteoWithCounts?: MeteoWithCountsResolvers<ContextType>;
   MeteosPaginatedResult?: MeteosPaginatedResultResolvers<ContextType>;
   Milieu?: MilieuResolvers<ContextType>;
+  MilieuWithCounts?: MilieuWithCountsResolvers<ContextType>;
   MilieuxPaginatedResult?: MilieuxPaginatedResultResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Observateur?: ObservateurResolvers<ContextType>;

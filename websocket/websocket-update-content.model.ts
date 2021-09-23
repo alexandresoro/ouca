@@ -1,7 +1,7 @@
+import { ComportementWithCounts } from "../graphql";
 import { Age } from "../types/age.object";
 import { Classe } from "../types/classe.object";
 import { Commune } from "../types/commune.model";
-import { Comportement } from "../types/comportement.object";
 import { Departement } from "../types/departement.object";
 import { Espece } from "../types/espece.model";
 import { EstimationDistance } from "../types/estimation-distance.object";
@@ -33,7 +33,7 @@ export interface WebsocketUpdateContent {
 
   estimationsNombre?: EstimationNombre[];
 
-  comportements?: Comportement[];
+  comportements?: ComportementWithCounts[];
 
   milieux?: Milieu[];
 
