@@ -17,13 +17,19 @@ export type Age = {
   __typename?: 'Age';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+};
+
+export type AgeWithCounts = {
+  __typename?: 'AgeWithCounts';
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
 };
 
 export type AgesPaginatedResult = PaginatedResult & {
   __typename?: 'AgesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<Age>>>;
+  result?: Maybe<Array<Maybe<AgeWithCounts>>>;
 };
 
 export type Classe = {
@@ -178,7 +184,6 @@ export type EstimationNombre = {
   __typename?: 'EstimationNombre';
   id: Scalars['Int'];
   libelle: Scalars['String'];
-  nbDonnees?: Maybe<Scalars['Int']>;
   nonCompte: Scalars['Boolean'];
 };
 
@@ -190,6 +195,14 @@ export const EstimationNombreOrderBy = {
 } as const;
 
 export type EstimationNombreOrderBy = typeof EstimationNombreOrderBy[keyof typeof EstimationNombreOrderBy];
+export type EstimationNombreWithCounts = {
+  __typename?: 'EstimationNombreWithCounts';
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
+  nbDonnees?: Maybe<Scalars['Int']>;
+  nonCompte: Scalars['Boolean'];
+};
+
 export type EstimationsDistancePaginatedResult = PaginatedResult & {
   __typename?: 'EstimationsDistancePaginatedResult';
   count: Scalars['Int'];
@@ -199,7 +212,7 @@ export type EstimationsDistancePaginatedResult = PaginatedResult & {
 export type EstimationsNombrePaginatedResult = PaginatedResult & {
   __typename?: 'EstimationsNombrePaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<EstimationNombre>>>;
+  result?: Maybe<Array<Maybe<EstimationNombreWithCounts>>>;
 };
 
 export type InputSettings = {
@@ -325,7 +338,9 @@ export type PaginatedResult = {
 
 export type Query = {
   __typename?: 'Query';
+  ages?: Maybe<Array<Maybe<Age>>>;
   departements?: Maybe<Array<Maybe<Departement>>>;
+  estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
   observateurs?: Maybe<Array<Maybe<Observateur>>>;
   paginatedAges?: Maybe<AgesPaginatedResult>;
   paginatedClasses?: Maybe<ClassesPaginatedResult>;
@@ -341,6 +356,7 @@ export type Query = {
   paginatedObservateurs?: Maybe<ObservateursPaginatedResult>;
   paginatedSexes?: Maybe<SexesPaginatedResult>;
   settings?: Maybe<Settings>;
+  sexes?: Maybe<Array<Maybe<Sexe>>>;
   version?: Maybe<Version>;
 };
 
@@ -461,13 +477,19 @@ export type Sexe = {
   __typename?: 'Sexe';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+};
+
+export type SexeWithCounts = {
+  __typename?: 'SexeWithCounts';
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
 };
 
 export type SexesPaginatedResult = PaginatedResult & {
   __typename?: 'SexesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<Sexe>>>;
+  result?: Maybe<Array<Maybe<SexeWithCounts>>>;
 };
 
 export const SortOrder = {
@@ -552,6 +574,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Age: ResolverTypeWrapper<Age>;
+  AgeWithCounts: ResolverTypeWrapper<AgeWithCounts>;
   AgesPaginatedResult: ResolverTypeWrapper<AgesPaginatedResult>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Classe: ResolverTypeWrapper<Classe>;
@@ -575,6 +598,7 @@ export type ResolversTypes = {
   EstimationDistance: ResolverTypeWrapper<EstimationDistance>;
   EstimationNombre: ResolverTypeWrapper<EstimationNombre>;
   EstimationNombreOrderBy: EstimationNombreOrderBy;
+  EstimationNombreWithCounts: ResolverTypeWrapper<EstimationNombreWithCounts>;
   EstimationsDistancePaginatedResult: ResolverTypeWrapper<EstimationsDistancePaginatedResult>;
   EstimationsNombrePaginatedResult: ResolverTypeWrapper<EstimationsNombrePaginatedResult>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
@@ -598,6 +622,7 @@ export type ResolversTypes = {
   SearchParams: SearchParams;
   Settings: ResolverTypeWrapper<Settings>;
   Sexe: ResolverTypeWrapper<Sexe>;
+  SexeWithCounts: ResolverTypeWrapper<SexeWithCounts>;
   SexesPaginatedResult: ResolverTypeWrapper<SexesPaginatedResult>;
   SortOrder: SortOrder;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -607,6 +632,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Age: Age;
+  AgeWithCounts: AgeWithCounts;
   AgesPaginatedResult: AgesPaginatedResult;
   Boolean: Scalars['Boolean'];
   Classe: Classe;
@@ -622,6 +648,7 @@ export type ResolversParentTypes = {
   EspecesPaginatedResult: EspecesPaginatedResult;
   EstimationDistance: EstimationDistance;
   EstimationNombre: EstimationNombre;
+  EstimationNombreWithCounts: EstimationNombreWithCounts;
   EstimationsDistancePaginatedResult: EstimationsDistancePaginatedResult;
   EstimationsNombrePaginatedResult: EstimationsNombrePaginatedResult;
   Float: Scalars['Float'];
@@ -642,6 +669,7 @@ export type ResolversParentTypes = {
   SearchParams: SearchParams;
   Settings: Settings;
   Sexe: Sexe;
+  SexeWithCounts: SexeWithCounts;
   SexesPaginatedResult: SexesPaginatedResult;
   String: Scalars['String'];
   Version: Version;
@@ -650,13 +678,19 @@ export type ResolversParentTypes = {
 export type AgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Age'] = ResolversParentTypes['Age']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AgeWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['AgeWithCounts'] = ResolversParentTypes['AgeWithCounts']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AgesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['AgesPaginatedResult'] = ResolversParentTypes['AgesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Age']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['AgeWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -752,6 +786,13 @@ export type EstimationDistanceResolvers<ContextType = any, ParentType extends Re
 export type EstimationNombreResolvers<ContextType = any, ParentType extends ResolversParentTypes['EstimationNombre'] = ResolversParentTypes['EstimationNombre']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nonCompte?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EstimationNombreWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EstimationNombreWithCounts'] = ResolversParentTypes['EstimationNombreWithCounts']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nonCompte?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -765,7 +806,7 @@ export type EstimationsDistancePaginatedResultResolvers<ContextType = any, Paren
 
 export type EstimationsNombrePaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['EstimationsNombrePaginatedResult'] = ResolversParentTypes['EstimationsNombrePaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombreWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -843,7 +884,9 @@ export type PaginatedResultResolvers<ContextType = any, ParentType extends Resol
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  ages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Age']>>>, ParentType, ContextType>;
   departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType>;
+  estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType>;
   observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType>;
   paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedAgesArgs, never>>;
   paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedClassesArgs, never>>;
@@ -859,6 +902,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   paginatedObservateurs?: Resolver<Maybe<ResolversTypes['ObservateursPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedObservateursArgs, never>>;
   paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSexesArgs, never>>;
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
+  sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType>;
   version?: Resolver<Maybe<ResolversTypes['Version']>, ParentType, ContextType>;
 };
 
@@ -881,13 +925,19 @@ export type SettingsResolvers<ContextType = any, ParentType extends ResolversPar
 export type SexeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Sexe'] = ResolversParentTypes['Sexe']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SexeWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['SexeWithCounts'] = ResolversParentTypes['SexeWithCounts']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SexesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['SexesPaginatedResult'] = ResolversParentTypes['SexesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['SexeWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -899,6 +949,7 @@ export type VersionResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type Resolvers<ContextType = any> = {
   Age?: AgeResolvers<ContextType>;
+  AgeWithCounts?: AgeWithCountsResolvers<ContextType>;
   AgesPaginatedResult?: AgesPaginatedResultResolvers<ContextType>;
   Classe?: ClasseResolvers<ContextType>;
   ClassesPaginatedResult?: ClassesPaginatedResultResolvers<ContextType>;
@@ -913,6 +964,7 @@ export type Resolvers<ContextType = any> = {
   EspecesPaginatedResult?: EspecesPaginatedResultResolvers<ContextType>;
   EstimationDistance?: EstimationDistanceResolvers<ContextType>;
   EstimationNombre?: EstimationNombreResolvers<ContextType>;
+  EstimationNombreWithCounts?: EstimationNombreWithCountsResolvers<ContextType>;
   EstimationsDistancePaginatedResult?: EstimationsDistancePaginatedResultResolvers<ContextType>;
   EstimationsNombrePaginatedResult?: EstimationsNombrePaginatedResultResolvers<ContextType>;
   LieuDit?: LieuDitResolvers<ContextType>;
@@ -929,6 +981,7 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Settings?: SettingsResolvers<ContextType>;
   Sexe?: SexeResolvers<ContextType>;
+  SexeWithCounts?: SexeWithCountsResolvers<ContextType>;
   SexesPaginatedResult?: SexesPaginatedResultResolvers<ContextType>;
   Version?: VersionResolvers<ContextType>;
 };
