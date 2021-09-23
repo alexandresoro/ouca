@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { EstimationsDistancePaginatedResult, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
-import { EstimationDistance } from "../../model/types/estimation-distance.object";
+import { EstimationDistance, EstimationDistanceWithCounts, EstimationsDistancePaginatedResult, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -10,8 +9,16 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESTIMATION_DISTANCE = createKeyValueMapWithSameName("libelle");
 
+export const findEstimationsDistance = async (): Promise<EstimationDistance[]> => {
+  return prisma.estimationDistance.findMany({
+    orderBy: {
+      libelle: "asc"
+    }
+  });
+};
+
 export const findAllEstimationsDistance = async (): Promise<
-  EstimationDistance[]
+  EstimationDistanceWithCounts[]
 > => {
   const estimations = await prisma.estimationDistance.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),

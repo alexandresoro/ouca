@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Departement, DepartementsPaginatedResult, QueryPaginatedDepartementsArgs } from "../../model/graphql";
+import { Departement, DepartementsPaginatedResult, DepartementWithCounts, QueryPaginatedDepartementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -18,11 +18,19 @@ export const getFilterClauseDepartement = (q: string | null | undefined): Prisma
 
 const DB_SAVE_MAPPING_DEPARTEMENT = createKeyValueMapWithSameName("code");
 
+export const findDepartements = async (): Promise<Departement[]> => {
+  return prisma.departement.findMany({
+    orderBy: {
+      code: "asc"
+    }
+  });
+};
+
 export const findAllDepartements = async (
   options: {
     includeCounts?: boolean
   } = {}
-): Promise<Departement[]> => {
+): Promise<DepartementWithCounts[]> => {
 
   const includeCounts = options.includeCounts ?? true;
 
@@ -92,7 +100,7 @@ export const findPaginatedDepartements = async (
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let departements: Departement[];
+  let departements: DepartementWithCounts[];
 
   if (orderByField === "nbDonnees" || orderByField === "nbLieuxDits") {
 

@@ -1,9 +1,9 @@
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
+import { ComportementWithCounts } from "../../model/graphql";
 import { Age } from "../../model/types/age.object";
 import { Commune } from "../../model/types/commune.model";
-import { Comportement } from "../../model/types/comportement.object";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Departement } from "../../model/types/departement.object";
 import { Espece } from "../../model/types/espece.model";
@@ -46,7 +46,7 @@ export class ImportDonneeService extends ImportService {
   private sexes: Sexe[];
   private estimationsNombre: EstimationNombre[];
   private estimationsDistance: EstimationDistance[];
-  private comportements: Comportement[];
+  private comportements: ComportementWithCounts[];
   private milieux: Milieu[];
   private meteos: Meteo[];
   private existingInventaires: InventaireCompleteWithIds[];
@@ -427,7 +427,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findComportement = (codeOrLibelleComportement: string): Comportement => {
+  private findComportement = (codeOrLibelleComportement: string): ComportementWithCounts => {
     return this.comportements.find((comportement) => {
       return this.compareStrings(comportement.code, codeOrLibelleComportement) || this.compareStrings(comportement.libelle, codeOrLibelleComportement);
     });

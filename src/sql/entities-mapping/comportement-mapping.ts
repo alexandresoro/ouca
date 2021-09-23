@@ -1,4 +1,4 @@
-import { Comportement } from "../../model/types/comportement.object";
+import { Comportement } from "../../model/graphql";
 import { ComportementDb } from "../../objects/db/comportement-db.model";
 
 export const buildComportementFromComportementDb = (

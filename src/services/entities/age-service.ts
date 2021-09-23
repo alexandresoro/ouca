@@ -1,7 +1,6 @@
 
 import { Prisma } from "@prisma/client";
-import { AgesPaginatedResult, QueryPaginatedAgesArgs } from "../../model/graphql";
-import { Age } from "../../model/types/age.object";
+import { Age, AgesPaginatedResult, AgeWithCounts, QueryPaginatedAgesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -11,9 +10,17 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_AGE = createKeyValueMapWithSameName("libelle")
 
+export const findAges = async (): Promise<Age[]> => {
+  return prisma.age.findMany({
+    orderBy: {
+      libelle: "asc"
+    }
+  });
+};
+
 export const findAllAges = async (options: {
   includeCounts?: boolean
-} = {}): Promise<Age[]> => {
+} = {}): Promise<AgeWithCounts[]> => {
 
   const includeCounts = options.includeCounts ?? true;
 

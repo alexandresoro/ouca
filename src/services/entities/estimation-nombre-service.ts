@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { EstimationsNombrePaginatedResult, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
-import { EstimationNombre } from "../../model/types/estimation-nombre.object";
+import { EstimationNombre, EstimationNombreWithCounts, EstimationsNombrePaginatedResult, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildEstimationNombreFromEstimationNombreDb } from "../../sql/entities-mapping/estimation-nombre-mapping";
 import prisma from "../../sql/prisma";
@@ -14,10 +13,24 @@ const DB_SAVE_MAPPING_ESTIMATION_NOMBRE = {
   non_compte: "nonCompte"
 }
 
+export const findEstimationsNombre = async (): Promise<EstimationNombre[]> => {
+  return prisma.estimationNombre.findMany({
+    orderBy: {
+      libelle: "asc"
+    }
+  }).then(estimations => estimations.map(estimation => {
+    const { non_compte, ...others } = estimation;
+    return {
+      ...others,
+      nonCompte: non_compte
+    }
+  }));
+};
+
 export const findAllEstimationsNombre = async (options: {
   includeCounts?: boolean
 } = {}): Promise<
-  EstimationNombre[]
+  EstimationNombreWithCounts[]
 > => {
 
   const includeCounts = options.includeCounts ?? true;

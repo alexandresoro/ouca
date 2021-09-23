@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
-import { EspecesPaginatedResult, QueryPaginatedEspecesArgs } from "../../model/graphql";
-import { Espece } from "../../model/types/espece.model";
+import { Espece, EspecesPaginatedResult, QueryPaginatedEspecesArgs } from "../../model/graphql";
+import { Espece as EspeceObj } from "../../model/types/espece.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildEspeceFromEspeceDb } from "../../sql/entities-mapping/espece-mapping";
 import prisma from "../../sql/prisma";
@@ -15,6 +15,22 @@ const DB_SAVE_MAPPING_ESPECE = {
   nom_francais: "nomFrancais",
   nom_latin: "nomLatin"
 }
+
+export const findEspeces = async (): Promise<Espece[]> => {
+  return prisma.espece.findMany({
+    orderBy: {
+      code: "asc"
+    }
+  }).then(especes => especes.map(espece => {
+    const { nom_francais, nom_latin, classe_id, ...others } = espece;
+    return {
+      ...others,
+      classeId: classe_id,
+      nomFrancais: nom_francais,
+      nomLatin: nom_latin
+    }
+  }));
+};
 
 const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput => {
   return (q != null && q.length) ? {
@@ -38,7 +54,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput 
   } : {};
 }
 
-export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promise<Espece[]> => {
+export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promise<EspeceObj[]> => {
   const especesDb = await prisma.espece.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     include: {
@@ -142,13 +158,13 @@ export const findPaginatedEspeces = async (
 };
 
 export const persistEspece = async (
-  espece: Espece
+  espece: EspeceObj
 ): Promise<SqlSaveResponse> => {
   return persistEntity(TABLE_ESPECE, espece, DB_SAVE_MAPPING_ESPECE);
 };
 
 export const insertEspeces = (
-  especes: Espece[]
+  especes: EspeceObj[]
 ): Promise<SqlSaveResponse> => {
   return insertMultipleEntities(TABLE_ESPECE, especes, DB_SAVE_MAPPING_ESPECE);
 };

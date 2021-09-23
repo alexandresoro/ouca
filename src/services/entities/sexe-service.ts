@@ -1,7 +1,6 @@
 
 import { Prisma } from "@prisma/client";
-import { QueryPaginatedSexesArgs, SexesPaginatedResult } from "../../model/graphql";
-import { Sexe } from "../../model/types/sexe.object";
+import { QueryPaginatedSexesArgs, Sexe, SexesPaginatedResult, SexeWithCounts } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -11,9 +10,18 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_SEXE = createKeyValueMapWithSameName("libelle");
 
+export const findSexes = async (): Promise<Sexe[]> => {
+  return prisma.sexe.findMany({
+    orderBy: {
+      libelle: "asc"
+    }
+  });
+};
+
+
 export const findAllSexes = async (options: {
   includeCounts?: boolean
-} = {}): Promise<Sexe[]> => {
+} = {}): Promise<SexeWithCounts[]> => {
 
   const includeCounts = options.includeCounts ?? true;
 

@@ -1,4 +1,5 @@
 import { HttpParameters } from "../http/httpParameters";
+import { ComportementWithCounts } from "../model/graphql";
 import { findClasseById } from "../model/helpers/classe.helper";
 import { findCommuneById } from "../model/helpers/commune.helper";
 import { findDepartementById } from "../model/helpers/departement.helper";
@@ -233,7 +234,7 @@ export const deleteEstimationDistanceRequest = async (
   return deleteEntity(httpParameters, TABLE_ESTIMATION_DISTANCE);
 };
 
-export const getComportementsRequest = async (): Promise<Comportement[]> => {
+export const getComportementsRequest = async (): Promise<ComportementWithCounts[]> => {
   return await findAllComportements();
 };
 
@@ -410,7 +411,7 @@ export const exportEstimationsDistanceRequest = async (): Promise<unknown> => {
 };
 
 export const exportComportementsRequest = async (): Promise<unknown> => {
-  const comportementsDb: Comportement[] = await findAllComportements();
+  const comportementsDb: ComportementWithCounts[] = await findAllComportements();
 
   const comportementsToExport = comportementsDb.map((object) => {
     return { Code: object.code, Libellé: object.libelle };

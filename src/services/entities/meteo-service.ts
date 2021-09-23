@@ -1,5 +1,5 @@
 import { Meteo as MeteoEntity, Prisma } from "@prisma/client";
-import { Meteo, MeteosPaginatedResult, QueryPaginatedMeteosArgs } from "../../model/graphql";
+import { Meteo, MeteosPaginatedResult, MeteoWithCounts, QueryPaginatedMeteosArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -10,7 +10,15 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_METEO = createKeyValueMapWithSameName("libelle");
 
-export const findAllMeteos = async (): Promise<Meteo[]> => {
+export const findMeteos = async (): Promise<Meteo[]> => {
+  return prisma.meteo.findMany({
+    orderBy: {
+      libelle: "asc"
+    }
+  });
+};
+
+export const findAllMeteos = async (): Promise<MeteoWithCounts[]> => {
   const meteos = await prisma.meteo.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     include: {
@@ -48,7 +56,7 @@ export const findPaginatedMeteos = async (
 
   const isNbDonneesNeeded = includeCounts || (orderByField === "nbDonnees");
 
-  let meteos: Meteo[];
+  let meteos: MeteoWithCounts[];
 
   if (isNbDonneesNeeded) {
 
@@ -104,12 +112,12 @@ export const findPaginatedMeteos = async (
   }
 };
 
-export const persistMeteo = async (meteo: Meteo): Promise<SqlSaveResponse> => {
+export const persistMeteo = async (meteo: MeteoWithCounts): Promise<SqlSaveResponse> => {
   return persistEntity(TABLE_METEO, meteo, DB_SAVE_MAPPING_METEO);
 };
 
 export const insertMeteos = async (
-  meteos: Meteo[]
+  meteos: MeteoWithCounts[]
 ): Promise<SqlSaveResponse> => {
   return insertMultipleEntities(TABLE_METEO, meteos, DB_SAVE_MAPPING_METEO);
 };

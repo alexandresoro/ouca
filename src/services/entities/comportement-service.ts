@@ -1,14 +1,21 @@
 
 import { Nicheur, Prisma } from "@prisma/client";
-import { ComportementsPaginatedResult, QueryPaginatedComportementsArgs } from "../../model/graphql";
-import { Comportement } from "../../model/types/comportement.object";
+import { Comportement, ComportementsPaginatedResult, ComportementWithCounts, QueryPaginatedComportementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { buildComportementDbFromComportement, buildComportementFromComportementDb } from "../../sql/entities-mapping/comportement-mapping";
+import { buildComportementDbFromComportement } from "../../sql/entities-mapping/comportement-mapping";
 import prisma from "../../sql/prisma";
 import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_COMPORTEMENT } from "../../utils/constants";
 import { getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
+
+export const findComportements = async (): Promise<Comportement[]> => {
+  return prisma.comportement.findMany({
+    orderBy: {
+      code: "asc"
+    }
+  });
+};
 
 const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhereInput => {
   return (q != null && q.length) ? {
@@ -32,7 +39,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhere
   } : {};
 }
 
-export const findAllComportements = async (): Promise<Comportement[]> => {
+export const findAllComportements = async (): Promise<ComportementWithCounts[]> => {
   const [comportementsDb, donneesByComportement] = await Promise.all([
     prisma.comportement.findMany(queryParametersToFindAllEntities(COLUMN_CODE)),
     prisma.donnee_comportement.groupBy({
@@ -42,7 +49,7 @@ export const findAllComportements = async (): Promise<Comportement[]> => {
 
   return comportementsDb.map(comportement => {
     return {
-      ...buildComportementFromComportementDb(comportement),
+      ...comportement,
       nbDonnees: donneesByComportement.find(donneeByComportement => donneeByComportement.comportement_id === comportement.id)?._count ?? 0
     }
   });
@@ -101,7 +108,7 @@ export const findPaginatedComportements = async (
   return {
     result: comportements.map(comportement => {
       return {
-        ...buildComportementFromComportementDb(comportement),
+        ...comportement,
         ...(includeCounts ? { nbDonnees: donneesByComportement.find(donneeByComportement => donneeByComportement.comportement_id === comportement.id)?._count ?? 0 } : {})
       }
     }),

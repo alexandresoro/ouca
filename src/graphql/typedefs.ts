@@ -45,13 +45,25 @@ export default gql`
 
   type Comportement {
     id: Int!
-    nbDonnees: Int
     code: String!
     libelle: String!
     nicheur: Nicheur
   }
 
+  type ComportementWithCounts {
+    id: Int!
+    code: String!
+    libelle: String!
+    nicheur: Nicheur
+    nbDonnees: Int
+  }
+
   type Departement {
+    id: Int!
+    code: String!
+  }
+
+  type DepartementWithCounts {
     id: Int!
     code: String!
     nbCommunes: Int
@@ -61,11 +73,21 @@ export default gql`
 
   type Observateur {
     id: Int!
-    nbDonnees: Int
     libelle: String!
   }
 
+  type ObservateurWithCounts {
+    id: Int!
+    libelle: String!
+    nbDonnees: Int
+  }
+
   type Classe {
+    id: Int!
+    libelle: String!
+  }
+
+  type ClasseWithCounts {
     id: Int!
     nbDonnees: Int
     nbEspeces: Int
@@ -83,6 +105,14 @@ export default gql`
 
   type Espece {
     id: Int!
+    code: String!
+    nomFrancais: String!
+    nomLatin: String!
+    classeId: Int!
+  }
+
+  type EspeceWithCounts {
+    id: Int!
     nbDonnees: Int
     code: String!
     nomFrancais: String!
@@ -92,18 +122,34 @@ export default gql`
 
   type EstimationDistance {
     id: Int!
+    libelle: String!
+  }
+
+  type EstimationDistanceWithCounts {
+    id: Int!
     nbDonnees: Int
     libelle: String!
   }
 
   type EstimationNombre {
     id: Int!
-    nbDonnees: Int
     libelle: String!
     nonCompte: Boolean!
   }
 
+  type EstimationNombreWithCounts {
+    id: Int!
+    libelle: String!
+    nonCompte: Boolean!
+    nbDonnees: Int
+  }
+
   type Meteo {
+    id: Int!
+    libelle: String!
+  }
+
+  type MeteoWithCounts {
     id: Int!
     nbDonnees: Int
     libelle: String!
@@ -122,6 +168,12 @@ export default gql`
 
   type Milieu {
     id: Int!
+    code: String!
+    libelle: String!
+  }
+
+  type MilieuWithCounts {
+    id: Int!
     nbDonnees: Int
     code: String!
     libelle: String!
@@ -129,14 +181,24 @@ export default gql`
 
   type Sexe {
     id: Int!
-    nbDonnees: Int
     libelle: String!
+  }
+
+  type SexeWithCounts {
+    id: Int!
+    libelle: String!
+    nbDonnees: Int
   }
 
   type Age {
     id: Int!
-    nbDonnees: Int
     libelle: String!
+  }
+
+  type AgeWithCounts {
+    id: Int!
+    libelle: String!
+    nbDonnees: Int
   }
 
   type Version {
@@ -240,12 +302,12 @@ export default gql`
   }
 
   type AgesPaginatedResult implements PaginatedResult {
-    result: [Age]
+    result: [AgeWithCounts]
     count: Int!
   }
   
   type ClassesPaginatedResult implements PaginatedResult {
-    result: [Classe]
+    result: [ClasseWithCounts]
     count: Int!
   }
 
@@ -255,27 +317,27 @@ export default gql`
   }
 
   type ComportementsPaginatedResult implements PaginatedResult {
-    result: [Comportement]
+    result: [ComportementWithCounts]
     count: Int!
   }
 
   type DepartementsPaginatedResult implements PaginatedResult {
-    result: [Departement]
+    result: [DepartementWithCounts]
     count: Int!
   }
 
   type EspecesPaginatedResult implements PaginatedResult {
-    result: [Espece]
+    result: [EspeceWithCounts]
     count: Int!
   }
 
   type EstimationsDistancePaginatedResult implements PaginatedResult {
-    result: [EstimationDistance]
+    result: [EstimationDistanceWithCounts]
     count: Int!
   }
 
   type EstimationsNombrePaginatedResult implements PaginatedResult {
-    result: [EstimationNombre]
+    result: [EstimationNombreWithCounts]
     count: Int!
   }
 
@@ -285,26 +347,37 @@ export default gql`
   }
 
   type MeteosPaginatedResult implements PaginatedResult {
-    result: [Meteo]
+    result: [MeteoWithCounts]
     count: Int!
   }
 
   type MilieuxPaginatedResult implements PaginatedResult {
-    result: [Milieu]
+    result: [MilieuWithCounts]
     count: Int!
   }
 
   type ObservateursPaginatedResult implements PaginatedResult {
-    result: [Observateur]
+    result: [ObservateurWithCounts]
     count: Int!
   }
 
   type SexesPaginatedResult implements PaginatedResult {
-    result: [Sexe]
+    result: [SexeWithCounts]
     count: Int!
   }
 
   type Query {
+    ages: [Age]
+    classes: [Classe]
+    comportements: [Comportement]
+    departements: [Departement]
+    especes: [Espece]
+    estimationsDistance: [EstimationDistance]
+    estimationsNombre: [EstimationNombre]
+    meteos: [Meteo]
+    milieux: [Milieu]
+    observateurs: [Observateur]
+    sexes: [Sexe]
     paginatedAges(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
     paginatedClasses(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
     paginatedCommunes(searchParams: SearchParams, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult

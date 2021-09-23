@@ -1,5 +1,5 @@
 import { Milieu, Prisma } from "@prisma/client";
-import { MilieuxPaginatedResult, QueryPaginatedMilieuxArgs } from "../../model/graphql";
+import { MilieuWithCounts, MilieuxPaginatedResult, QueryPaginatedMilieuxArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -8,6 +8,14 @@ import { getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_MILIEU = createKeyValueMapWithSameName(["code", "libelle"]);
+
+export const findMilieux = async (): Promise<Milieu[]> => {
+  return prisma.milieu.findMany({
+    orderBy: {
+      code: "asc"
+    }
+  });
+};
 
 const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput => {
   return (q != null && q.length) ? {
@@ -26,7 +34,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput 
   } : {};
 }
 
-export const findAllMilieux = async (): Promise<Milieu[]> => {
+export const findAllMilieux = async (): Promise<MilieuWithCounts[]> => {
   const [milieux, donneesByMilieu] = await Promise.all([
     prisma.milieu.findMany(queryParametersToFindAllEntities(COLUMN_CODE)),
     prisma.donnee_milieu.groupBy({

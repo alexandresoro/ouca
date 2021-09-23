@@ -1,5 +1,5 @@
 import { Classe as ClasseEntity, Prisma } from "@prisma/client";
-import { Classe, ClassesPaginatedResult, QueryPaginatedClassesArgs } from "../../model/graphql";
+import { Classe, ClassesPaginatedResult, ClasseWithCounts, QueryPaginatedClassesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -10,6 +10,14 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 
 const DB_SAVE_MAPPING_CLASSE = createKeyValueMapWithSameName("libelle");
+
+export const findClasses = async (): Promise<Classe[]> => {
+  return prisma.classe.findMany({
+    orderBy: {
+      libelle: "asc"
+    }
+  });
+};
 
 export const findAllClasses = async (): Promise<Classe[]> => {
   const classes = await
@@ -53,7 +61,7 @@ export const findPaginatedClasses = async (
 
   const isNbDonneesNeeded = includeCounts || (orderByField === "nbDonnees");
 
-  let classes: Classe[];
+  let classes: ClasseWithCounts[];
 
   if (isNbDonneesNeeded) {
 

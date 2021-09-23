@@ -1,5 +1,5 @@
 import { Observateur as ObservateurEntity, Prisma } from ".prisma/client";
-import { Observateur, ObservateursPaginatedResult, QueryPaginatedObservateursArgs } from "../../model/graphql";
+import { Observateur, ObservateursPaginatedResult, ObservateurWithCounts, QueryPaginatedObservateursArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities, queryToCheckIfTableExists } from "../../sql/sql-queries-utils";
@@ -15,9 +15,17 @@ export const checkIfTableObservateurExists = async (): Promise<boolean> => {
   return queryToCheckIfTableExists(TABLE_OBSERVATEUR);
 }
 
+export const findObservateurs = async (): Promise<Observateur[]> => {
+  return prisma.observateur.findMany({
+    orderBy: {
+      libelle: "asc"
+    }
+  });
+};
+
 export const findAllObservateurs = async (
   includeCounts = true
-): Promise<Observateur[]> => {
+): Promise<ObservateurWithCounts[]> => {
 
   const observateurs = await prisma.observateur.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
@@ -52,7 +60,7 @@ export const findPaginatedObservateurs = async (
 
   const isNbDonneesNeeded = includeCounts || (orderByField === "nbDonnees");
 
-  let observateurs: Observateur[];
+  let observateurs: ObservateurWithCounts[];
 
   if (isNbDonneesNeeded) {
 

@@ -1,22 +1,55 @@
-import { AgesPaginatedResult, ClassesPaginatedResult, CommunesPaginatedResult, ComportementsPaginatedResult, DepartementsPaginatedResult, EspecesPaginatedResult, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuxDitsPaginatedResult, MeteosPaginatedResult, MilieuxPaginatedResult, ObservateursPaginatedResult, Resolvers, Settings, SexesPaginatedResult, Version } from "../model/graphql";
-import { findPaginatedAges } from "../services/entities/age-service";
-import { findPaginatedClasses } from "../services/entities/classe-service";
+import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
+import { findAges, findPaginatedAges } from "../services/entities/age-service";
+import { findClasses, findPaginatedClasses } from "../services/entities/classe-service";
 import { findPaginatedCommunes } from "../services/entities/commune-service";
-import { findPaginatedComportements } from "../services/entities/comportement-service";
+import { findComportements, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
-import { findPaginatedDepartements } from "../services/entities/departement-service";
-import { findPaginatedEspeces } from "../services/entities/espece-service";
-import { findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
-import { findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
+import { findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
+import { findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
+import { findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
+import { findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
 import { findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
-import { findPaginatedMeteos } from "../services/entities/meteo-service";
-import { findPaginatedMilieux } from "../services/entities/milieu-service";
-import { findPaginatedObservateurs } from "../services/entities/observateur-service";
-import { findPaginatedSexes } from "../services/entities/sexe-service";
+import { findMeteos, findPaginatedMeteos } from "../services/entities/meteo-service";
+import { findMilieux, findPaginatedMilieux } from "../services/entities/milieu-service";
+import { findObservateurs, findPaginatedObservateurs } from "../services/entities/observateur-service";
+import { findPaginatedSexes, findSexes } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
 
 const resolvers: Resolvers = {
   Query: {
+    ages: async (): Promise<Age[]> => {
+      return findAges();
+    },
+    classes: async (): Promise<Classe[]> => {
+      return findClasses();
+    },
+    comportements: async (): Promise<Comportement[]> => {
+      return findComportements();
+    },
+    departements: async (): Promise<Departement[]> => {
+      return findDepartements();
+    },
+    especes: async (): Promise<Espece[]> => {
+      return findEspeces();
+    },
+    estimationsDistance: async (): Promise<EstimationDistance[]> => {
+      return findEstimationsDistance();
+    },
+    estimationsNombre: async (): Promise<EstimationNombre[]> => {
+      return findEstimationsNombre();
+    },
+    observateurs: async (): Promise<Observateur[]> => {
+      return findObservateurs();
+    },
+    meteos: async (): Promise<Meteo[]> => {
+      return findMeteos();
+    },
+    milieux: async (): Promise<Milieu[]> => {
+      return findMilieux();
+    },
+    sexes: async (): Promise<Sexe[]> => {
+      return findSexes();
+    },
     paginatedAges: async (_source, args): Promise<AgesPaginatedResult> => {
       return findPaginatedAges(args, true);
     },
