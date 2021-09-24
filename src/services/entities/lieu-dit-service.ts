@@ -1,6 +1,6 @@
 import { Prisma } from ".prisma/client";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
-import { LieuDit, LieuxDitsPaginatedResult, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
+import { LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb } from "../../objects/db/lieudit-db.object";
@@ -13,6 +13,23 @@ import counterReducer from "../../utils/counterReducer";
 import { getFilterClauseCommune } from "./commune-service";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
 import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
+
+export const findLieuxDits = async (): Promise<LieuDit[]> => {
+  return prisma.lieudit.findMany({
+    orderBy: {
+      nom: "asc"
+    }
+  }).then(lieuxDits => lieuxDits.map(lieuDit => {
+    const { commune_id, coordinates_system, latitude, longitude, ...others } = lieuDit;
+    return {
+      ...others,
+      latitude: latitude.toNumber(),
+      longitude: longitude.toNumber(),
+      coordinatesSystem: coordinates_system,
+      communeId: commune_id,
+    }
+  }));
+};
 
 const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput => {
   return (q != null && q.length) ? {
@@ -68,7 +85,7 @@ export const findPaginatedLieuxDits = async (
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let lieuxDits: LieuDit[];
+  let lieuxDits: LieuDitWithCounts[];
 
   if (orderByField === "nbDonnees") {
 

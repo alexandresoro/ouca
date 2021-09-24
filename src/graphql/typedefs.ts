@@ -169,6 +169,16 @@ export default gql`
     longitude: Float!
     latitude: Float!
     coordinatesSystem: CoordinatesSystemType!
+    communeId: Int!
+  }
+
+  type LieuDitWithCounts {
+    id: Int!          
+    nom: String!
+    altitude: Int!
+    longitude: Float!
+    latitude: Float!
+    coordinatesSystem: CoordinatesSystemType!
     commune: CommuneWithCounts!
     nbDonnees: Int
   }
@@ -349,7 +359,7 @@ export default gql`
   }
 
   type LieuxDitsPaginatedResult implements PaginatedResult {
-    result: [LieuDit]
+    result: [LieuDitWithCounts]
     count: Int!
   }
 
@@ -380,6 +390,7 @@ export default gql`
     comportements: [Comportement]
     departements: [Departement]
     especes: [Espece]
+    lieuxDits: [LieuDit]
     estimationsDistance: [EstimationDistance]
     estimationsNombre: [EstimationNombre]
     meteos: [Meteo]

@@ -1,4 +1,4 @@
-import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
+import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
 import { findAges, findPaginatedAges } from "../services/entities/age-service";
 import { findClasses, findPaginatedClasses } from "../services/entities/classe-service";
 import { findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
@@ -8,7 +8,7 @@ import { findDepartements, findPaginatedDepartements } from "../services/entitie
 import { findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
 import { findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
-import { findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
+import { findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
 import { findMeteos, findPaginatedMeteos } from "../services/entities/meteo-service";
 import { findMilieux, findPaginatedMilieux } from "../services/entities/milieu-service";
 import { findObservateurs, findPaginatedObservateurs } from "../services/entities/observateur-service";
@@ -40,6 +40,9 @@ const resolvers: Resolvers = {
     },
     estimationsNombre: async (): Promise<EstimationNombre[]> => {
       return findEstimationsNombre();
+    },
+    lieuxDits: async (): Promise<LieuDit[]> => {
+      return findLieuxDits();
     },
     meteos: async (): Promise<Meteo[]> => {
       return findMeteos();
