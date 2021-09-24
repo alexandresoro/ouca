@@ -7,7 +7,7 @@ import { LieuditDb } from "../../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildLieuditDbFromLieudit, buildLieuditFromLieuditDb } from "../../sql/entities-mapping/lieudit-mapping";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities, queryToFindOneById } from "../../sql/sql-queries-utils";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_NOM, TABLE_LIEUDIT } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getFilterClauseCommune } from "./commune-service";
@@ -256,10 +256,12 @@ export const findPaginatedLieuxDits = async (
 };
 
 export const findLieuDitById = async (lieuditId: number): Promise<Lieudit> => {
-  const lieuDitDb = await queryToFindOneById<LieuditDb>(
-    TABLE_LIEUDIT,
-    lieuditId
-  );
+  const lieuDitDb = await prisma.lieudit.findFirst({
+    where: {
+      id: lieuditId
+    }
+  });
+
   return buildLieuditFromLieuditDb(lieuDitDb);
 };
 
