@@ -270,6 +270,17 @@ export type InputSettings = {
 export type LieuDit = {
   __typename?: 'LieuDit';
   altitude: Scalars['Int'];
+  communeId: Scalars['Int'];
+  coordinatesSystem: CoordinatesSystemType;
+  id: Scalars['Int'];
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  nom: Scalars['String'];
+};
+
+export type LieuDitWithCounts = {
+  __typename?: 'LieuDitWithCounts';
+  altitude: Scalars['Int'];
   commune: CommuneWithCounts;
   coordinatesSystem: CoordinatesSystemType;
   id: Scalars['Int'];
@@ -295,7 +306,7 @@ export type LieuxDitsOrderBy = typeof LieuxDitsOrderBy[keyof typeof LieuxDitsOrd
 export type LieuxDitsPaginatedResult = PaginatedResult & {
   __typename?: 'LieuxDitsPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<LieuDit>>>;
+  result?: Maybe<Array<Maybe<LieuDitWithCounts>>>;
 };
 
 export type Meteo = {
@@ -396,6 +407,7 @@ export type Query = {
   especes?: Maybe<Array<Maybe<Espece>>>;
   estimationsDistance?: Maybe<Array<Maybe<EstimationDistance>>>;
   estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
+  lieuxDits?: Maybe<Array<Maybe<LieuDit>>>;
   meteos?: Maybe<Array<Maybe<Meteo>>>;
   milieux?: Maybe<Array<Maybe<Milieu>>>;
   observateurs?: Maybe<Array<Maybe<Observateur>>>;
@@ -667,6 +679,7 @@ export type ResolversTypes = {
   InputSettings: InputSettings;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LieuDit: ResolverTypeWrapper<LieuDit>;
+  LieuDitWithCounts: ResolverTypeWrapper<LieuDitWithCounts>;
   LieuxDitsOrderBy: LieuxDitsOrderBy;
   LieuxDitsPaginatedResult: ResolverTypeWrapper<LieuxDitsPaginatedResult>;
   Meteo: ResolverTypeWrapper<Meteo>;
@@ -724,6 +737,7 @@ export type ResolversParentTypes = {
   InputSettings: InputSettings;
   Int: Scalars['Int'];
   LieuDit: LieuDit;
+  LieuDitWithCounts: LieuDitWithCounts;
   LieuxDitsPaginatedResult: LieuxDitsPaginatedResult;
   Meteo: Meteo;
   MeteoWithCounts: MeteoWithCounts;
@@ -920,6 +934,17 @@ export type EstimationsNombrePaginatedResultResolvers<ContextType = any, ParentT
 
 export type LieuDitResolvers<ContextType = any, ParentType extends ResolversParentTypes['LieuDit'] = ResolversParentTypes['LieuDit']> = {
   altitude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  communeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  coordinatesSystem?: Resolver<ResolversTypes['CoordinatesSystemType'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  longitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  nom?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LieuDitWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['LieuDitWithCounts'] = ResolversParentTypes['LieuDitWithCounts']> = {
+  altitude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   commune?: Resolver<ResolversTypes['CommuneWithCounts'], ParentType, ContextType>;
   coordinatesSystem?: Resolver<ResolversTypes['CoordinatesSystemType'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -932,7 +957,7 @@ export type LieuDitResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type LieuxDitsPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LieuxDitsPaginatedResult'] = ResolversParentTypes['LieuxDitsPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDitWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1013,6 +1038,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType>;
   estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType>;
   estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType>;
+  lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType>;
   meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
   milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType>;
   observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType>;
@@ -1101,6 +1127,7 @@ export type Resolvers<ContextType = any> = {
   EstimationsDistancePaginatedResult?: EstimationsDistancePaginatedResultResolvers<ContextType>;
   EstimationsNombrePaginatedResult?: EstimationsNombrePaginatedResultResolvers<ContextType>;
   LieuDit?: LieuDitResolvers<ContextType>;
+  LieuDitWithCounts?: LieuDitWithCountsResolvers<ContextType>;
   LieuxDitsPaginatedResult?: LieuxDitsPaginatedResultResolvers<ContextType>;
   Meteo?: MeteoResolvers<ContextType>;
   MeteoWithCounts?: MeteoWithCountsResolvers<ContextType>;
