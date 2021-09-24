@@ -63,6 +63,14 @@ export type ClassesPaginatedResult = PaginatedResult & {
 export type Commune = {
   __typename?: 'Commune';
   code: Scalars['Int'];
+  departementId: Scalars['Int'];
+  id: Scalars['Int'];
+  nom: Scalars['String'];
+};
+
+export type CommuneWithCounts = {
+  __typename?: 'CommuneWithCounts';
+  code: Scalars['Int'];
   departement: Departement;
   id: Scalars['Int'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -83,7 +91,7 @@ export type CommunesOrderBy = typeof CommunesOrderBy[keyof typeof CommunesOrderB
 export type CommunesPaginatedResult = PaginatedResult & {
   __typename?: 'CommunesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<Commune>>>;
+  result?: Maybe<Array<Maybe<CommuneWithCounts>>>;
 };
 
 export type Comportement = {
@@ -262,7 +270,7 @@ export type InputSettings = {
 export type LieuDit = {
   __typename?: 'LieuDit';
   altitude: Scalars['Int'];
-  commune: Commune;
+  commune: CommuneWithCounts;
   coordinatesSystem: CoordinatesSystemType;
   id: Scalars['Int'];
   latitude: Scalars['Float'];
@@ -382,6 +390,7 @@ export type Query = {
   __typename?: 'Query';
   ages?: Maybe<Array<Maybe<Age>>>;
   classes?: Maybe<Array<Maybe<Classe>>>;
+  communes?: Maybe<Array<Maybe<Commune>>>;
   comportements?: Maybe<Array<Maybe<Comportement>>>;
   departements?: Maybe<Array<Maybe<Departement>>>;
   especes?: Maybe<Array<Maybe<Espece>>>;
@@ -630,6 +639,7 @@ export type ResolversTypes = {
   ClassesOrderBy: ClassesOrderBy;
   ClassesPaginatedResult: ResolverTypeWrapper<ClassesPaginatedResult>;
   Commune: ResolverTypeWrapper<Commune>;
+  CommuneWithCounts: ResolverTypeWrapper<CommuneWithCounts>;
   CommunesOrderBy: CommunesOrderBy;
   CommunesPaginatedResult: ResolverTypeWrapper<CommunesPaginatedResult>;
   Comportement: ResolverTypeWrapper<Comportement>;
@@ -693,6 +703,7 @@ export type ResolversParentTypes = {
   ClasseWithCounts: ClasseWithCounts;
   ClassesPaginatedResult: ClassesPaginatedResult;
   Commune: Commune;
+  CommuneWithCounts: CommuneWithCounts;
   CommunesPaginatedResult: CommunesPaginatedResult;
   Comportement: Comportement;
   ComportementWithCounts: ComportementWithCounts;
@@ -776,6 +787,14 @@ export type ClassesPaginatedResultResolvers<ContextType = any, ParentType extend
 
 export type CommuneResolvers<ContextType = any, ParentType extends ResolversParentTypes['Commune'] = ResolversParentTypes['Commune']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  departementId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  nom?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CommuneWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['CommuneWithCounts'] = ResolversParentTypes['CommuneWithCounts']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   departement?: Resolver<ResolversTypes['Departement'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -786,7 +805,7 @@ export type CommuneResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type CommunesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CommunesPaginatedResult'] = ResolversParentTypes['CommunesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Commune']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['CommuneWithCounts']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -901,7 +920,7 @@ export type EstimationsNombrePaginatedResultResolvers<ContextType = any, ParentT
 
 export type LieuDitResolvers<ContextType = any, ParentType extends ResolversParentTypes['LieuDit'] = ResolversParentTypes['LieuDit']> = {
   altitude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  commune?: Resolver<ResolversTypes['Commune'], ParentType, ContextType>;
+  commune?: Resolver<ResolversTypes['CommuneWithCounts'], ParentType, ContextType>;
   coordinatesSystem?: Resolver<ResolversTypes['CoordinatesSystemType'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -988,6 +1007,7 @@ export type PaginatedResultResolvers<ContextType = any, ParentType extends Resol
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   ages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Age']>>>, ParentType, ContextType>;
   classes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Classe']>>>, ParentType, ContextType>;
+  communes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Commune']>>>, ParentType, ContextType>;
   comportements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType>;
   departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType>;
   especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType>;
@@ -1063,6 +1083,7 @@ export type Resolvers<ContextType = any> = {
   ClasseWithCounts?: ClasseWithCountsResolvers<ContextType>;
   ClassesPaginatedResult?: ClassesPaginatedResultResolvers<ContextType>;
   Commune?: CommuneResolvers<ContextType>;
+  CommuneWithCounts?: CommuneWithCountsResolvers<ContextType>;
   CommunesPaginatedResult?: CommunesPaginatedResultResolvers<ContextType>;
   Comportement?: ComportementResolvers<ContextType>;
   ComportementWithCounts?: ComportementWithCountsResolvers<ContextType>;
