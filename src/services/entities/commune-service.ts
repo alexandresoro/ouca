@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Commune, CommunesPaginatedResult, QueryPaginatedCommunesArgs } from "../../model/graphql";
+import { Commune, CommunesPaginatedResult, CommuneWithCounts, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import { Commune as CommuneDb } from "../../model/types/commune.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildCommuneFromCommuneDb } from "../../sql/entities-mapping/commune-mapping";
@@ -9,6 +9,20 @@ import { COLUMN_NOM, TABLE_COMMUNE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
 import { insertMultipleEntities, persistEntity } from "./entity-service";
+
+export const findCommunes = async (): Promise<Commune[]> => {
+  return prisma.commune.findMany({
+    orderBy: {
+      nom: "asc"
+    }
+  }).then(communes => communes.map(commune => {
+    const { departement_id, ...others } = commune;
+    return {
+      ...others,
+      departementId: departement_id,
+    }
+  }));
+};
 
 export const getFilterClauseCommune = (q: string | null | undefined): Prisma.CommuneWhereInput => {
   return (q != null && q.length) ? {
@@ -81,7 +95,7 @@ export const findPaginatedCommunes = async (
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let communes: Commune[];
+  let communes: CommuneWithCounts[];
 
   if (orderByField === "nbDonnees") {
 

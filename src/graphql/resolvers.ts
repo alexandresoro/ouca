@@ -1,7 +1,7 @@
-import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
+import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
 import { findAges, findPaginatedAges } from "../services/entities/age-service";
 import { findClasses, findPaginatedClasses } from "../services/entities/classe-service";
-import { findPaginatedCommunes } from "../services/entities/commune-service";
+import { findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
 import { findComportements, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
@@ -23,6 +23,9 @@ const resolvers: Resolvers = {
     classes: async (): Promise<Classe[]> => {
       return findClasses();
     },
+    communes: async (): Promise<Commune[]> => {
+      return findCommunes();
+    },
     comportements: async (): Promise<Comportement[]> => {
       return findComportements();
     },
@@ -38,14 +41,14 @@ const resolvers: Resolvers = {
     estimationsNombre: async (): Promise<EstimationNombre[]> => {
       return findEstimationsNombre();
     },
-    observateurs: async (): Promise<Observateur[]> => {
-      return findObservateurs();
-    },
     meteos: async (): Promise<Meteo[]> => {
       return findMeteos();
     },
     milieux: async (): Promise<Milieu[]> => {
       return findMilieux();
+    },
+    observateurs: async (): Promise<Observateur[]> => {
+      return findObservateurs();
     },
     sexes: async (): Promise<Sexe[]> => {
       return findSexes();

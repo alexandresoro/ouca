@@ -98,6 +98,13 @@ export default gql`
     id: Int!
     code: Int!    
     nom: String!
+    departementId: Int!
+  }
+
+  type CommuneWithCounts {
+    id: Int!
+    code: Int!    
+    nom: String!
     departement: Departement!
     nbLieuxDits: Int
     nbDonnees: Int
@@ -162,7 +169,7 @@ export default gql`
     longitude: Float!
     latitude: Float!
     coordinatesSystem: CoordinatesSystemType!
-    commune: Commune!
+    commune: CommuneWithCounts!
     nbDonnees: Int
   }
 
@@ -312,7 +319,7 @@ export default gql`
   }
 
   type CommunesPaginatedResult implements PaginatedResult {
-    result: [Commune]
+    result: [CommuneWithCounts]
     count: Int!
   }
 
@@ -369,6 +376,7 @@ export default gql`
   type Query {
     ages: [Age]
     classes: [Classe]
+    communes: [Commune]
     comportements: [Comportement]
     departements: [Departement]
     especes: [Espece]
