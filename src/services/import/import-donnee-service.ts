@@ -1,7 +1,7 @@
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { ComportementWithCounts } from "../../model/graphql";
+import { ComportementWithCounts, LieuDit } from "../../model/graphql";
 import { Age } from "../../model/types/age.object";
 import { Commune } from "../../model/types/commune.model";
 import { Coordinates } from "../../model/types/coordinates.object";
@@ -9,7 +9,6 @@ import { Departement } from "../../model/types/departement.object";
 import { Espece } from "../../model/types/espece.model";
 import { EstimationDistance } from "../../model/types/estimation-distance.object";
 import { EstimationNombre } from "../../model/types/estimation-nombre.object";
-import { Lieudit } from "../../model/types/lieudit.model";
 import { Meteo } from "../../model/types/meteo.object";
 import { Milieu } from "../../model/types/milieu.object";
 import { Observateur } from "../../model/types/observateur.object";
@@ -40,7 +39,7 @@ export class ImportDonneeService extends ImportService {
   private observateurs: Observateur[];
   private departements: Departement[];
   private communes: Commune[];
-  private lieuxDits: Lieudit[];
+  private lieuxDits: LieuDit[];
   private especes: Espece[];
   private ages: Age[];
   private sexes: Sexe[];
@@ -381,7 +380,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findLieuDit = (communeId: number, nomLieuDit: string): Lieudit => {
+  private findLieuDit = (communeId: number, nomLieuDit: string): LieuDit => {
     return this.lieuxDits.find((lieuDit) => {
       return lieuDit.communeId === communeId && this.compareStrings(lieuDit.nom, nomLieuDit);
     });

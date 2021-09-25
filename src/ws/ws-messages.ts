@@ -211,52 +211,17 @@ export const sendInitialData = async (
   client: WebSocket
 ): Promise<void> => {
   console.time('total')
-  console.time('observateurs')
-  const observateurs = await findAllObservateurs();
-  console.timeEnd('observateurs')
-  console.time('lieuxdits')
-  const lieuxdits = await findAllLieuxDits();
-  console.timeEnd('lieuxdits')
-  console.time('communes')
-  const communes = await findAllCommunes();
-  console.timeEnd('communes')
-  console.time('departements')
-  const departements = await findAllDepartements();
-  console.timeEnd('departements')
-  console.time('classes')
   const classes = await findAllClasses();
-  console.timeEnd('classes')
-  console.time('especes')
   const especes = await findAllEspeces();
-  console.timeEnd('especes')
-  console.time('sexes')
   const sexes = await findAllSexes();
-  console.timeEnd('sexes')
-  console.time('ages')
   const ages = await findAllAges();
-  console.timeEnd('ages')
-  console.time('estimationsDistance')
   const estimationsDistance = await findAllEstimationsDistance();
-  console.timeEnd('estimationsDistance')
-  console.time('estimationsNombre')
   const estimationsNombre = await findAllEstimationsNombre();
-  console.timeEnd('estimationsNombre')
-  console.time('comportements')
   const comportements = await findAllComportements();
-  console.timeEnd('comportements')
-  console.time('milieux')
   const milieux = await findAllMilieux();
-  console.timeEnd('milieux')
-  console.time('meteos')
-  const meteos = await findAllMeteos();
-  console.timeEnd('meteos')
   console.timeEnd('total')
 
   const initialDataContent = {
-    observateurs,
-    lieuxdits,
-    communes,
-    departements,
     classes,
     especes,
     sexes,
@@ -265,7 +230,6 @@ export const sendInitialData = async (
     estimationsNombre,
     comportements,
     milieux,
-    meteos,
   };
 
   const initialData: WebsocketUpdateMessage = {

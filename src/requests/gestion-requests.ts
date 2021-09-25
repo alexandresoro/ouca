@@ -335,8 +335,8 @@ export const exportLieuxditsRequest = async (): Promise<unknown> => {
       "Code commune": commune.code,
       "Nom commune": commune.nom,
       "Lieu-dit": lieudit.nom,
-      Latitude: lieudit.coordinates.latitude,
-      Longitude: lieudit.coordinates.longitude,
+      Latitude: lieudit.latitude,
+      Longitude: lieudit.longitude,
       Altitude: lieudit.altitude
     };
   });

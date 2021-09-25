@@ -49,7 +49,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput
 
 export const findAllLieuxDits = async (options?: {
   where?: Prisma.LieuditWhereInput
-}): Promise<Lieudit[]> => {
+}): Promise<LieuDit[]> => {
   const lieuxDitsDb = await prisma.lieudit.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {
@@ -71,8 +71,14 @@ export const findAllLieuxDits = async (options?: {
       return inventaire._count.donnee;
     }).reduce(counterReducer, 0);
 
+    const { commune_id, coordinates_system, latitude, longitude, ...others } = lieudit
+
     return {
-      ...buildLieuditFromLieuditDb(lieudit),
+      ...others,
+      communeId: commune_id,
+      coordinatesSystem: coordinates_system,
+      longitude: longitude.toNumber(),
+      latitude: latitude.toNumber(),
       nbDonnees
     }
   });
