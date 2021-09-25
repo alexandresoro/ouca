@@ -1,4 +1,4 @@
-import { Commune } from "../../model/types/commune.model";
+import { Commune } from "../../model/graphql";
 
 const DEPARTEMENT_INDEX = 0;
 const CODE_INDEX = 1;

@@ -1,7 +1,6 @@
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
-import { Commune } from "../../model/types/commune.model";
-import { Departement } from "../../model/types/departement.object";
+import { Commune, DepartementWithCounts } from "../../model/graphql";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb } from "../../objects/db/lieudit-db.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
@@ -13,7 +12,7 @@ import { findAllLieuxDits, insertLieuxDits } from "../entities/lieu-dit-service"
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
-  private departements: Departement[];
+  private departements: DepartementWithCounts[];
   private communes: Commune[];
   private lieuxDits: Lieudit[];
 

@@ -1,4 +1,4 @@
-import { Departement } from "../../model/types/departement.object";
+import { Departement } from "../../model/graphql";
 
 const CODE_INDEX = 0;
 const CODE_MAX_LENGTH = 100;

@@ -1,4 +1,4 @@
-import { Departement } from "../../model/types/departement.object";
+import { Departement } from "@prisma/client";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
 import { findAllDepartements, insertDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";

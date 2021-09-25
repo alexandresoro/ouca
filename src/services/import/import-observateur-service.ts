@@ -1,4 +1,4 @@
-import { Observateur } from "../../model/types/observateur.object";
+import { Observateur } from "@prisma/client";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { TABLE_OBSERVATEUR } from "../../utils/constants";
 import { insertObservateurs } from "../entities/observateur-service";

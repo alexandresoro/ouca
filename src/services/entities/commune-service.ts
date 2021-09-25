@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 import { Commune, CommunesPaginatedResult, CommuneWithCounts, QueryPaginatedCommunesArgs } from "../../model/graphql";
-import { Commune as CommuneDb } from "../../model/types/commune.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildCommuneFromCommuneDb } from "../../sql/entities-mapping/commune-mapping";
 import prisma from "../../sql/prisma";
@@ -48,7 +47,7 @@ const DB_SAVE_MAPPING_COMMUNE = {
   departement_id: "departementId"
 };
 
-export const findAllCommunes = async (): Promise<CommuneDb[]> => {
+export const findAllCommunes = async (): Promise<Commune[]> => {
   const communesDb = await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {
@@ -249,13 +248,13 @@ export const findPaginatedCommunes = async (
 };
 
 export const persistCommune = async (
-  commune: CommuneDb
+  commune: Commune
 ): Promise<SqlSaveResponse> => {
   return persistEntity(TABLE_COMMUNE, commune, DB_SAVE_MAPPING_COMMUNE);
 };
 
 export const insertCommunes = async (
-  communes: CommuneDb[]
+  communes: Commune[]
 ): Promise<SqlSaveResponse> => {
   return insertMultipleEntities(TABLE_COMMUNE, communes, DB_SAVE_MAPPING_COMMUNE);
 };

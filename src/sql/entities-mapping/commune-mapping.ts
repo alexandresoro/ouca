@@ -1,4 +1,4 @@
-import { Commune } from "../../model/types/commune.model";
+import { Commune } from "../../model/graphql";
 import { CommuneDb } from "../../objects/db/commune-db.object";
 
 export const buildCommuneFromCommuneDb = (communeDb: CommuneDb): Commune => {

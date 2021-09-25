@@ -1,17 +1,13 @@
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { ComportementWithCounts, LieuDit } from "../../model/graphql";
+import { Commune, ComportementWithCounts, DepartementWithCounts, LieuDit, MeteoWithCounts, ObservateurWithCounts } from "../../model/graphql";
 import { Age } from "../../model/types/age.object";
-import { Commune } from "../../model/types/commune.model";
 import { Coordinates } from "../../model/types/coordinates.object";
-import { Departement } from "../../model/types/departement.object";
 import { Espece } from "../../model/types/espece.model";
 import { EstimationDistance } from "../../model/types/estimation-distance.object";
 import { EstimationNombre } from "../../model/types/estimation-nombre.object";
-import { Meteo } from "../../model/types/meteo.object";
 import { Milieu } from "../../model/types/milieu.object";
-import { Observateur } from "../../model/types/observateur.object";
 import { Sexe } from "../../model/types/sexe.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
@@ -36,8 +32,8 @@ import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
   private coordinatesSystem: CoordinatesSystem;
-  private observateurs: Observateur[];
-  private departements: Departement[];
+  private observateurs: ObservateurWithCounts[];
+  private departements: DepartementWithCounts[];
   private communes: Commune[];
   private lieuxDits: LieuDit[];
   private especes: Espece[];
@@ -47,7 +43,7 @@ export class ImportDonneeService extends ImportService {
   private estimationsDistance: EstimationDistance[];
   private comportements: ComportementWithCounts[];
   private milieux: Milieu[];
-  private meteos: Meteo[];
+  private meteos: MeteoWithCounts[];
   private existingInventaires: InventaireCompleteWithIds[];
 
   private newInventaires: InventaireCompleteWithIds[]; // New inventaires that do not yet exist and will need to be created, their id is a temporary one < 0
@@ -109,7 +105,7 @@ export class ImportDonneeService extends ImportService {
     // Get the "Observateurs associes" or return an error if some of them doesn't exist
     const associesIds = new Set<number>();
     for (const associeLibelle of importedDonnee.associes) {
-      const associe: Observateur = this.findObservateur(associeLibelle);
+      const associe: ObservateurWithCounts = this.findObservateur(associeLibelle);
       if (!associe) {
         return `L'observateur associé ${associeLibelle} n'existe pas`;
       }
@@ -120,7 +116,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Departement" or return an error if it doesn't exist
-    const departement: Departement = this.findDepartement(importedDonnee.departement);
+    const departement: DepartementWithCounts = this.findDepartement(importedDonnee.departement);
     if (!departement) {
       return `Le département ${importedDonnee.departement} n'existe pas`;
     }
@@ -169,7 +165,7 @@ export class ImportDonneeService extends ImportService {
     // Get the "Meteos" or return an error if some of them doesn't exist
     const meteosIds = new Set<number>();
     for (const libelleMeteo of importedDonnee.meteos) {
-      const meteo: Meteo = this.findMeteo(libelleMeteo);
+      const meteo: MeteoWithCounts = this.findMeteo(libelleMeteo);
       if (!meteo) {
         return `La météo ${libelleMeteo} n'existe pas`;
       }
@@ -359,13 +355,13 @@ export class ImportDonneeService extends ImportService {
     }
   }
 
-  private findObservateur = (libelleObservateur: string): Observateur => {
+  private findObservateur = (libelleObservateur: string): ObservateurWithCounts => {
     return this.observateurs.find((observateur) => {
       return this.compareStrings(observateur.libelle, libelleObservateur);
     });
   }
 
-  private findDepartement = (codeDepartement: string): Departement => {
+  private findDepartement = (codeDepartement: string): DepartementWithCounts => {
     return this.departements.find((departement) => {
       return this.compareStrings(departement.code, codeDepartement);
     });
@@ -386,7 +382,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findMeteo = (libelleMeteo: string): Meteo => {
+  private findMeteo = (libelleMeteo: string): MeteoWithCounts => {
     return this.meteos.find((meteo) => {
       return this.compareStrings(meteo.libelle, libelleMeteo);
     });

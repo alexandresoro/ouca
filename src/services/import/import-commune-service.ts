@@ -1,5 +1,4 @@
-import { Commune } from "../../model/types/commune.model";
-import { Departement } from "../../model/types/departement.object";
+import { Commune, DepartementWithCounts } from "../../model/graphql";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
 import { findAllCommunes, insertCommunes } from "../entities/commune-service";
 import { findAllDepartements } from "../entities/departement-service";
@@ -7,7 +6,7 @@ import { ImportService } from "./import-service";
 
 export class ImportCommuneService extends ImportService {
 
-  private departements: Departement[];
+  private departements: DepartementWithCounts[];
   private communes: Commune[];
 
   private communesToInsert: Commune[];

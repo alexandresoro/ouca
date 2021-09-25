@@ -1,4 +1,4 @@
-import { Meteo } from "../../model/types/meteo.object";
+import { Meteo } from "@prisma/client";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { TABLE_METEO } from "../../utils/constants";
 import { insertMeteos } from "../entities/meteo-service";

@@ -112,12 +112,12 @@ export const findPaginatedMeteos = async (
   }
 };
 
-export const persistMeteo = async (meteo: MeteoWithCounts): Promise<SqlSaveResponse> => {
+export const persistMeteo = async (meteo: Meteo): Promise<SqlSaveResponse> => {
   return persistEntity(TABLE_METEO, meteo, DB_SAVE_MAPPING_METEO);
 };
 
 export const insertMeteos = async (
-  meteos: MeteoWithCounts[]
+  meteos: Meteo[]
 ): Promise<SqlSaveResponse> => {
   return insertMultipleEntities(TABLE_METEO, meteos, DB_SAVE_MAPPING_METEO);
 };

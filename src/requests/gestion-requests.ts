@@ -1,20 +1,16 @@
 import { HttpParameters } from "../http/httpParameters";
-import { ComportementWithCounts } from "../model/graphql";
+import { Commune, ComportementWithCounts, Departement, DepartementWithCounts, Meteo, MeteoWithCounts, Observateur, ObservateurWithCounts } from "../model/graphql";
 import { findClasseById } from "../model/helpers/classe.helper";
 import { findCommuneById } from "../model/helpers/commune.helper";
 import { findDepartementById } from "../model/helpers/departement.helper";
 import { Age } from "../model/types/age.object";
 import { Classe } from "../model/types/classe.object";
-import { Commune } from "../model/types/commune.model";
 import { Comportement } from "../model/types/comportement.object";
-import { Departement } from "../model/types/departement.object";
 import { Espece } from "../model/types/espece.model";
 import { EstimationDistance } from "../model/types/estimation-distance.object";
 import { EstimationNombre } from "../model/types/estimation-nombre.object";
 import { Lieudit } from "../model/types/lieudit.model";
-import { Meteo } from "../model/types/meteo.object";
 import { Milieu } from "../model/types/milieu.object";
-import { Observateur } from "../model/types/observateur.object";
 import { PostResponse } from "../model/types/post-response.object";
 import { Sexe } from "../model/types/sexe.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
@@ -46,7 +42,7 @@ const deleteEntity = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const getObservateursRequest = async (): Promise<Observateur[]> => {
+export const getObservateursRequest = async (): Promise<ObservateurWithCounts[]> => {
   return await findAllObservateurs();
 };
 
@@ -65,7 +61,7 @@ export const removeObservateurRequest = async (
   return buildPostResponseFromSqlResponse(sqlResponse);
 };
 
-export const getDepartementsRequest = async (): Promise<Departement[]> => {
+export const getDepartementsRequest = async (): Promise<DepartementWithCounts[]> => {
   return await findAllDepartements();
 };
 
@@ -117,7 +113,7 @@ export const deleteLieuditRequest = async (
   return deleteEntity(httpParameters, TABLE_LIEUDIT);
 };
 
-export const getMeteosRequest = async (): Promise<Meteo[]> => {
+export const getMeteosRequest = async (): Promise<MeteoWithCounts[]> => {
   return await findAllMeteos();
 };
 
@@ -269,7 +265,7 @@ export const deleteMilieuRequest = async (
 };
 
 export const exportObservateursRequest = async (): Promise<unknown> => {
-  const observateurs: Observateur[] = await findAllObservateurs();
+  const observateurs: ObservateurWithCounts[] = await findAllObservateurs();
 
   const objectsToExport = observateurs.map((object) => {
     return {
@@ -281,7 +277,7 @@ export const exportObservateursRequest = async (): Promise<unknown> => {
 };
 
 export const exportMeteosRequest = async (): Promise<unknown> => {
-  const meteos: Meteo[] = await findAllMeteos();
+  const meteos: MeteoWithCounts[] = await findAllMeteos();
 
   const objectsToExport = meteos.map((object) => {
     return {
@@ -293,7 +289,7 @@ export const exportMeteosRequest = async (): Promise<unknown> => {
 };
 
 export const exportDepartementsRequest = async (): Promise<unknown> => {
-  const departementsDb: Departement[] = await getDepartementsRequest();
+  const departementsDb: DepartementWithCounts[] = await getDepartementsRequest();
 
   const objectsToExport = departementsDb.map((object) => {
     return {
@@ -306,7 +302,7 @@ export const exportDepartementsRequest = async (): Promise<unknown> => {
 
 export const exportCommunesRequest = async (): Promise<unknown> => {
   const communesDb: Commune[] = await findAllCommunes();
-  const departements: Departement[] = await findAllDepartements();
+  const departements: DepartementWithCounts[] = await findAllDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {
     return {
