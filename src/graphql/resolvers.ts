@@ -5,6 +5,7 @@ import { findCommunes, findPaginatedCommunes } from "../services/entities/commun
 import { findComportements, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
+import { findLastDonneeId } from "../services/entities/donnee-service";
 import { findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
 import { findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
@@ -55,6 +56,9 @@ const resolvers: Resolvers = {
     },
     sexes: async (): Promise<Sexe[]> => {
       return findSexes();
+    },
+    lastDonneeId: async (): Promise<number> => {
+      return findLastDonneeId();
     },
     paginatedAges: async (_source, args): Promise<AgesPaginatedResult> => {
       return findPaginatedAges(args, true);

@@ -397,6 +397,7 @@ export default gql`
     milieux: [Milieu]
     observateurs: [Observateur]
     sexes: [Sexe]
+    lastDonneeId: Int
     paginatedAges(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
     paginatedClasses(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
     paginatedCommunes(searchParams: SearchParams, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
