@@ -407,6 +407,7 @@ export type Query = {
   especes?: Maybe<Array<Maybe<Espece>>>;
   estimationsDistance?: Maybe<Array<Maybe<EstimationDistance>>>;
   estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
+  lastDonneeId?: Maybe<Scalars['Int']>;
   lieuxDits?: Maybe<Array<Maybe<LieuDit>>>;
   meteos?: Maybe<Array<Maybe<Meteo>>>;
   milieux?: Maybe<Array<Maybe<Milieu>>>;
@@ -1038,6 +1039,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType>;
   estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType>;
   estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType>;
+  lastDonneeId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType>;
   meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
   milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType>;
