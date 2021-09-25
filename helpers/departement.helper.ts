@@ -1,4 +1,4 @@
-import { Departement } from "../types/departement.object";
+import { Departement } from "../graphql";
 
 export const findDepartementById = (
   departements: Departement[],
