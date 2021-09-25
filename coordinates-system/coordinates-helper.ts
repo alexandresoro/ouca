@@ -1,6 +1,6 @@
+import { LieuDit } from "../graphql";
 import { Coordinates } from "../types/coordinates.object";
 import { EntityWithCoordinates } from "../types/entity-with-coordinates.model";
-import { Lieudit } from "../types/lieudit.model";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
@@ -12,14 +12,20 @@ export const getCoordinates = (
 };
 
 export const areCoordinatesCustomized = (
-  lieudit: Lieudit,
+  lieudit: LieuDit,
   altitude: number,
   longitude: number,
   latitude: number,
   system: CoordinatesSystemType
 ): boolean => {
   if (lieudit?.id) {
-    const lieuditCoordinates: Coordinates = getCoordinates(lieudit, system);
+    const lieuditCoordinates: Coordinates = getCoordinates({
+      coordinates: {
+        latitude: lieudit.latitude,
+        longitude: lieudit.longitude,
+        system: lieudit.coordinatesSystem
+      }
+    }, system);
 
     if (
       lieudit.altitude !== altitude ||

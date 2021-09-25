@@ -1,6 +1,6 @@
+import { LieuDit } from "../graphql";
 import { EntiteSimple } from "./entite-simple.object";
 import { EntityWithCoordinates } from "./entity-with-coordinates.model";
-import { Lieudit } from "./lieudit.model";
 import { Meteo } from "./meteo.object";
 import { Observateur } from "./observateur.object";
 
@@ -15,7 +15,7 @@ export type Inventaire = EntiteSimple & EntityWithCoordinates & {
 
   heure: string;
 
-  lieudit?: Lieudit;
+  lieudit?: LieuDit;
 
   lieuditId: number;
 

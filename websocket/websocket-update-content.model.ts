@@ -7,14 +7,10 @@ import { Espece } from "../types/espece.model";
 import { EstimationDistance } from "../types/estimation-distance.object";
 import { EstimationNombre } from "../types/estimation-nombre.object";
 import { Lieudit } from "../types/lieudit.model";
-import { Meteo } from "../types/meteo.object";
 import { Milieu } from "../types/milieu.object";
-import { Observateur } from "../types/observateur.object";
 import { Sexe } from "../types/sexe.object";
 
 export interface WebsocketUpdateContent {
-  observateurs?: Observateur[];
-
   lieuxdits?: Lieudit[];
 
   communes?: Commune[];
@@ -36,6 +32,4 @@ export interface WebsocketUpdateContent {
   comportements?: ComportementWithCounts[];
 
   milieux?: Milieu[];
-
-  meteos?: Meteo[];
 }
