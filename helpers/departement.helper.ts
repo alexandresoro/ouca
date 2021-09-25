@@ -1,9 +1,9 @@
-import { Departement } from "../graphql";
+import { DepartementWithCounts } from "../graphql";
 
 export const findDepartementById = (
-  departements: Departement[],
+  departements: DepartementWithCounts[],
   id: number
-): Departement => {
+): DepartementWithCounts => {
   return departements.find((departement) => {
     return id === departement.id;
   });
