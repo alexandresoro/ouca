@@ -417,6 +417,7 @@ export type Query = {
   meteos?: Maybe<Array<Maybe<Meteo>>>;
   milieux?: Maybe<Array<Maybe<Milieu>>>;
   observateur?: Maybe<Observateur>;
+  observateurList?: Maybe<Array<Maybe<Observateur>>>;
   observateurs?: Maybe<Array<Maybe<Observateur>>>;
   paginatedAges?: Maybe<AgesPaginatedResult>;
   paginatedClasses?: Maybe<ClassesPaginatedResult>;
@@ -439,6 +440,11 @@ export type Query = {
 
 export type QueryObservateurArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryObservateurListArgs = {
+  ids: Array<Maybe<Scalars['Int']>>;
 };
 
 
@@ -1062,6 +1068,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
   milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType>;
   observateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<QueryObservateurArgs, 'id'>>;
+  observateurList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateurListArgs, 'ids'>>;
   observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateursArgs, never>>;
   paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedAgesArgs, never>>;
   paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedClassesArgs, never>>;
