@@ -252,6 +252,11 @@ export type EstimationsNombrePaginatedResult = PaginatedResult & {
   result?: Maybe<Array<Maybe<EstimationNombreWithCounts>>>;
 };
 
+export type FindParams = {
+  max?: Maybe<Scalars['Int']>;
+  q?: Maybe<Scalars['String']>;
+};
+
 export type InputSettings = {
   areAssociesDisplayed: Scalars['Boolean'];
   coordinatesSystem: CoordinatesSystemType;
@@ -428,6 +433,11 @@ export type Query = {
   settings?: Maybe<Settings>;
   sexes?: Maybe<Array<Maybe<Sexe>>>;
   version?: Maybe<Version>;
+};
+
+
+export type QueryObservateursArgs = {
+  params?: Maybe<FindParams>;
 };
 
 
@@ -676,6 +686,7 @@ export type ResolversTypes = {
   EstimationNombreWithCounts: ResolverTypeWrapper<EstimationNombreWithCounts>;
   EstimationsDistancePaginatedResult: ResolverTypeWrapper<EstimationsDistancePaginatedResult>;
   EstimationsNombrePaginatedResult: ResolverTypeWrapper<EstimationsNombrePaginatedResult>;
+  FindParams: FindParams;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   InputSettings: InputSettings;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -734,6 +745,7 @@ export type ResolversParentTypes = {
   EstimationNombreWithCounts: EstimationNombreWithCounts;
   EstimationsDistancePaginatedResult: EstimationsDistancePaginatedResult;
   EstimationsNombrePaginatedResult: EstimationsNombrePaginatedResult;
+  FindParams: FindParams;
   Float: Scalars['Float'];
   InputSettings: InputSettings;
   Int: Scalars['Int'];
@@ -1043,7 +1055,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType>;
   meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
   milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType>;
-  observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType>;
+  observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateursArgs, never>>;
   paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedAgesArgs, never>>;
   paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedClassesArgs, never>>;
   paginatedCommunes?: Resolver<Maybe<ResolversTypes['CommunesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedCommunesArgs, never>>;
