@@ -436,6 +436,7 @@ export type Query = {
   paginatedSexes?: Maybe<SexesPaginatedResult>;
   settings?: Maybe<Settings>;
   sexes?: Maybe<Array<Maybe<Sexe>>>;
+  status?: Maybe<Scalars['Int']>;
   version?: Maybe<Version>;
 };
 
@@ -1099,6 +1100,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSexesArgs, never>>;
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
   sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   version?: Resolver<Maybe<ResolversTypes['Version']>, ParentType, ContextType>;
 };
 
