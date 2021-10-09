@@ -1,14 +1,8 @@
-import { Age } from "./age.object";
-import { Comportement } from "./comportement.object";
-import { EntiteSimple } from "./entite-simple.object";
-import { Espece } from "./espece.model";
-import { EstimationDistance } from "./estimation-distance.object";
-import { EstimationNombre } from "./estimation-nombre.object";
+import { Age, Comportement, Espece, EstimationDistance, EstimationNombre, Milieu, Sexe } from "../graphql";
 import { Inventaire } from "./inventaire.object";
-import { Milieu } from "./milieu.object";
-import { Sexe } from "./sexe.object";
 
-export type Donnee = EntiteSimple & {
+
+export type Donnee = {
   id: number;
 
   inventaire?: Inventaire;
