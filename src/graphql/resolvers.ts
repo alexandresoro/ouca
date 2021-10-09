@@ -10,14 +10,26 @@ import { findEspeces, findPaginatedEspeces } from "../services/entities/espece-s
 import { findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
 import { findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
-import { findMeteos, findPaginatedMeteos } from "../services/entities/meteo-service";
+import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos } from "../services/entities/meteo-service";
 import { findMilieux, findPaginatedMilieux } from "../services/entities/milieu-service";
-import { findObservateurs, findPaginatedObservateurs } from "../services/entities/observateur-service";
+import { findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs } from "../services/entities/observateur-service";
 import { findPaginatedSexes, findSexes } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
 
 const resolvers: Resolvers = {
   Query: {
+    meteo: async (_source, args): Promise<Meteo> => {
+      return findMeteo(args.id);
+    },
+    meteoList: async (_source, args): Promise<Meteo[]> => {
+      return findMeteosByIds(args.ids);
+    },
+    observateur: async (_source, args): Promise<Observateur> => {
+      return findObservateur(args.id);
+    },
+    observateurList: async (_source, args): Promise<Observateur[]> => {
+      return findObservateursByIds(args.ids);
+    },
     ages: async (): Promise<Age[]> => {
       return findAges();
     },
@@ -51,8 +63,8 @@ const resolvers: Resolvers = {
     milieux: async (): Promise<Milieu[]> => {
       return findMilieux();
     },
-    observateurs: async (): Promise<Observateur[]> => {
-      return findObservateurs();
+    observateurs: async (_source, args): Promise<Observateur[]> => {
+      return findObservateurs(args?.params);
     },
     sexes: async (): Promise<Sexe[]> => {
       return findSexes();

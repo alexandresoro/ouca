@@ -1,4 +1,4 @@
-import { EstimationNombre } from "../../model/types/estimation-nombre.object";
+import { EstimationNombre } from "../../model/graphql";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";

@@ -1,4 +1,4 @@
-import { Comportement } from "../../model/types/comportement.object";
+import { Comportement } from "@prisma/client";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { TABLE_COMPORTEMENT } from "../../utils/constants";
 import { insertComportements } from "../entities/comportement-service";

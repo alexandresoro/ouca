@@ -1,4 +1,4 @@
-import { Sexe } from "../../model/types/sexe.object";
+import { Sexe } from "@prisma/client";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { TABLE_SEXE } from "../../utils/constants";
 import { insertSexes } from "../entities/sexe-service";

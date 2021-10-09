@@ -1,4 +1,4 @@
-import { EstimationDistance } from "../../model/types/estimation-distance.object";
+import { EstimationDistance } from "@prisma/client";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";
 import { insertEstimationsDistance } from "../entities/estimation-distance-service";

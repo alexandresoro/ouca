@@ -1,4 +1,4 @@
-import { Milieu } from "../../model/types/milieu.object";
+import { Milieu } from "@prisma/client";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { TABLE_MILIEU } from "../../utils/constants";
 import { insertMilieux } from "../entities/milieu-service";

@@ -20,7 +20,6 @@ import { queryToCreateSettingsTable } from "../../sql/sql-queries-settings";
 import { queryToCreateSexeTable } from "../../sql/sql-queries-sexe";
 import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck, queryToSaveEntity, queryToSaveEntityNoCheck } from "../../sql/sql-queries-utils";
 import { queryToCreateVersionTable } from "../../sql/sql-queries-version";
-import { onTableUpdate } from "../../ws/ws-messages";
 
 export const createAndInitializeAllTables = async (): Promise<void> => {
   await queryToCreateObservateurTable();
@@ -59,8 +58,6 @@ export const persistEntity = async <T extends EntityDb>(
 ): Promise<SqlSaveResponse> => {
   const sqlResponse = await queryToSaveEntity(tableName, entityToSave, mapping);
 
-  onTableUpdate(tableName);
-
   return sqlResponse;
 };
 
@@ -69,8 +66,6 @@ export const persistEntityNoCheck = async <T extends EntityDb>(
   entityToSave: T,
 ): Promise<SqlSaveResponse> => {
   const sqlResponse = await queryToSaveEntityNoCheck(tableName, entityToSave);
-
-  onTableUpdate(tableName);
 
   return sqlResponse;
 };
@@ -111,8 +106,6 @@ export const deleteEntityById = async (
   id: number
 ): Promise<SqlSaveResponse> => {
   const sqlResponse = await queryToDeleteAnEntityById(entityName, id);
-
-  onTableUpdate(entityName);
 
   return sqlResponse;
 };

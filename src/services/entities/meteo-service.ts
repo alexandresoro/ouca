@@ -10,6 +10,28 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_METEO = createKeyValueMapWithSameName("libelle");
 
+export const findMeteo = async (id: number): Promise<Meteo | null> => {
+  return prisma.meteo.findUnique({
+    where: {
+      id
+    },
+  });
+};
+
+export const findMeteosByIds = async (ids: number[]): Promise<Meteo[]> => {
+
+  return prisma.meteo.findMany({
+    orderBy: {
+      libelle: "asc"
+    },
+    where: {
+      id: {
+        in: ids
+      }
+    },
+  });
+};
+
 export const findMeteos = async (): Promise<Meteo[]> => {
   return prisma.meteo.findMany({
     orderBy: {

@@ -1,18 +1,11 @@
 import { HttpParameters } from "../http/httpParameters";
-import { Commune, ComportementWithCounts, Departement, DepartementWithCounts, Meteo, MeteoWithCounts, Observateur, ObservateurWithCounts } from "../model/graphql";
-import { findClasseById } from "../model/helpers/classe.helper";
+import { Age, AgeWithCounts, Commune, Comportement, ComportementWithCounts, Departement, DepartementWithCounts, EstimationDistance, EstimationDistanceWithCounts, EstimationNombre, EstimationNombreWithCounts, Meteo, MeteoWithCounts, Milieu, MilieuWithCounts, Observateur, ObservateurWithCounts, Sexe, SexeWithCounts } from "../model/graphql";
 import { findCommuneById } from "../model/helpers/commune.helper";
 import { findDepartementById } from "../model/helpers/departement.helper";
-import { Age } from "../model/types/age.object";
 import { Classe } from "../model/types/classe.object";
-import { Comportement } from "../model/types/comportement.object";
 import { Espece } from "../model/types/espece.model";
-import { EstimationDistance } from "../model/types/estimation-distance.object";
-import { EstimationNombre } from "../model/types/estimation-nombre.object";
 import { Lieudit } from "../model/types/lieudit.model";
-import { Milieu } from "../model/types/milieu.object";
 import { PostResponse } from "../model/types/post-response.object";
-import { Sexe } from "../model/types/sexe.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllAges, persistAge } from "../services/entities/age-service";
 import { findAllClasses, persistClasse } from "../services/entities/classe-service";
@@ -160,7 +153,7 @@ export const deleteEspeceRequest = async (
   return deleteEntity(httpParameters, TABLE_ESPECE);
 };
 
-export const getSexesRequest = async (): Promise<Sexe[]> => {
+export const getSexesRequest = async (): Promise<SexeWithCounts[]> => {
   return await findAllSexes();
 };
 
@@ -177,7 +170,7 @@ export const deleteSexeRequest = async (
   return deleteEntity(httpParameters, TABLE_SEXE);
 };
 
-export const getAgesRequest = async (): Promise<Age[]> => {
+export const getAgesRequest = async (): Promise<AgeWithCounts[]> => {
   return await findAllAges();
 };
 
@@ -194,7 +187,7 @@ export const deleteAgeRequest = async (
   return deleteEntity(httpParameters, TABLE_AGE);
 };
 
-export const getEstimationsNombreRequest = async (): Promise<EstimationNombre[]> => {
+export const getEstimationsNombreRequest = async (): Promise<EstimationNombreWithCounts[]> => {
   return await findAllEstimationsNombre();
 };
 
@@ -212,7 +205,7 @@ export const deleteEstimationNombreRequest = async (
 };
 
 export const getEstimationsDistanceRequest = async (): Promise<
-  EstimationDistance[]
+  EstimationDistanceWithCounts[]
 > => {
   return await findAllEstimationsDistance();
 };
@@ -247,7 +240,7 @@ export const deleteComportementRequest = async (
   return deleteEntity(httpParameters, TABLE_COMPORTEMENT);
 };
 
-export const getMilieuxRequest = async (): Promise<Milieu[]> => {
+export const getMilieuxRequest = async (): Promise<MilieuWithCounts[]> => {
   return await findAllMilieux();
 };
 
@@ -356,7 +349,7 @@ export const exportEspecesRequest = async (): Promise<unknown> => {
 
   const objectsToExport = especes.map((espece) => {
     return {
-      Classe: findClasseById(classes, espece.classeId).libelle,
+      Classe: classes?.find(({ id }) => id === espece.classeId)?.libelle,
       Code: espece.code,
       "Nom français": espece.nomFrancais,
       "Nom scientifique": espece.nomLatin
@@ -367,7 +360,7 @@ export const exportEspecesRequest = async (): Promise<unknown> => {
 };
 
 export const exportAgesRequest = async (): Promise<unknown> => {
-  const agesDb: Age[] = await findAllAges();
+  const agesDb: AgeWithCounts[] = await findAllAges();
 
   const agesToExport = agesDb.map((ageDb) => {
     return { Âge: ageDb.libelle };
@@ -377,7 +370,7 @@ export const exportAgesRequest = async (): Promise<unknown> => {
 };
 
 export const exportSexesRequest = async (): Promise<unknown> => {
-  const sexes: Sexe[] = await findAllSexes();
+  const sexes: SexeWithCounts[] = await findAllSexes();
 
   const objectsToExport = sexes.map((object) => {
     return { Sexe: object.libelle };
@@ -387,7 +380,7 @@ export const exportSexesRequest = async (): Promise<unknown> => {
 };
 
 export const exportEstimationsNombreRequest = async (): Promise<unknown> => {
-  const estimations: EstimationNombre[] = await findAllEstimationsNombre();
+  const estimations = await findAllEstimationsNombre();
 
   const objectsToExport = estimations.map((object) => {
     return { "Estimation du nombre": object.libelle };
@@ -397,7 +390,7 @@ export const exportEstimationsNombreRequest = async (): Promise<unknown> => {
 };
 
 export const exportEstimationsDistanceRequest = async (): Promise<unknown> => {
-  const estimations: EstimationDistance[] = await findAllEstimationsDistance();
+  const estimations = await findAllEstimationsDistance();
 
   const objectsToExport = estimations.map((object) => {
     return { "Estimation de la distance": object.libelle };
@@ -417,7 +410,7 @@ export const exportComportementsRequest = async (): Promise<unknown> => {
 };
 
 export const exportMilieuxRequest = async (): Promise<unknown> => {
-  const milieuxDb: Milieu[] = await findAllMilieux();
+  const milieuxDb: MilieuWithCounts[] = await findAllMilieux();
 
   const milieuxToExport = milieuxDb.map((object) => {
     return { Code: object.code, Libellé: object.libelle };

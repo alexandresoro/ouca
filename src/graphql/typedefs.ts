@@ -233,6 +233,11 @@ export default gql`
     pageSize: Int
   }
 
+  input FindParams {
+    q: String
+    max: Int
+  }
+
   enum SortOrder {
     asc
     desc
@@ -384,6 +389,10 @@ export default gql`
   }
 
   type Query {
+    meteo(id: Int!): Meteo
+    meteoList(ids: [Int!]!): [Meteo]
+    observateur(id: Int!): Observateur
+    observateurList(ids: [Int!]!): [Observateur]
     ages: [Age]
     classes: [Classe]
     communes: [Commune]
@@ -395,7 +404,7 @@ export default gql`
     estimationsNombre: [EstimationNombre]
     meteos: [Meteo]
     milieux: [Milieu]
-    observateurs: [Observateur]
+    observateurs(params: FindParams): [Observateur]
     sexes: [Sexe]
     lastDonneeId: Int
     paginatedAges(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
@@ -413,6 +422,7 @@ export default gql`
     paginatedSexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
     settings: Settings
     version: Version
+    status: Int
   }
 
   type Mutation {

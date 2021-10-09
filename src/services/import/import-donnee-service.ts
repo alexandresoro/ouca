@@ -1,14 +1,9 @@
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { Commune, ComportementWithCounts, DepartementWithCounts, LieuDit, MeteoWithCounts, ObservateurWithCounts } from "../../model/graphql";
-import { Age } from "../../model/types/age.object";
+import { AgeWithCounts, Commune, ComportementWithCounts, DepartementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, LieuDit, MeteoWithCounts, MilieuWithCounts, ObservateurWithCounts, SexeWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Espece } from "../../model/types/espece.model";
-import { EstimationDistance } from "../../model/types/estimation-distance.object";
-import { EstimationNombre } from "../../model/types/estimation-nombre.object";
-import { Milieu } from "../../model/types/milieu.object";
-import { Sexe } from "../../model/types/sexe.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
@@ -37,12 +32,12 @@ export class ImportDonneeService extends ImportService {
   private communes: Commune[];
   private lieuxDits: LieuDit[];
   private especes: Espece[];
-  private ages: Age[];
-  private sexes: Sexe[];
-  private estimationsNombre: EstimationNombre[];
-  private estimationsDistance: EstimationDistance[];
+  private ages: AgeWithCounts[];
+  private sexes: SexeWithCounts[];
+  private estimationsNombre: EstimationNombreWithCounts[];
+  private estimationsDistance: EstimationDistanceWithCounts[];
   private comportements: ComportementWithCounts[];
-  private milieux: Milieu[];
+  private milieux: MilieuWithCounts[];
   private meteos: MeteoWithCounts[];
   private existingInventaires: InventaireCompleteWithIds[];
 
@@ -211,7 +206,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Estimation de la distance" or return an error if it doesn't exist
-    let estimationDistance: EstimationDistance = null;
+    let estimationDistance: EstimationDistanceWithCounts = null;
     if (importedDonnee.estimationDistance) {
       estimationDistance = this.findEstimationDistance(importedDonnee.estimationDistance)
       if (!estimationDistance) {
@@ -235,7 +230,7 @@ export class ImportDonneeService extends ImportService {
     // Get the "Milieux" or return an error if some of them does not exist
     const milieuxIds = new Set<number>();
     for (const milieuStr of importedDonnee.milieux) {
-      const milieu: Milieu = this.findMilieu(milieuStr);
+      const milieu: MilieuWithCounts = this.findMilieu(milieuStr);
       if (!milieu) {
         return `Le milieu avec pour code ou libellé ${milieuStr} n'existe pas`;
       }
@@ -398,25 +393,25 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findSexe = (libelleSexe: string): Sexe => {
+  private findSexe = (libelleSexe: string): SexeWithCounts => {
     return this.sexes.find((sexe) => {
       return this.compareStrings(sexe.libelle, libelleSexe);
     });
   }
 
-  private findAge = (libelleMeteo: string): Age => {
+  private findAge = (libelleMeteo: string): AgeWithCounts => {
     return this.ages.find((age) => {
       return this.compareStrings(age.libelle, libelleMeteo);
     });
   }
 
-  private findEstimationNombre = (libelleEstimation: string): EstimationNombre => {
+  private findEstimationNombre = (libelleEstimation: string): EstimationNombreWithCounts => {
     return this.estimationsNombre.find((estimation) => {
       return this.compareStrings(estimation.libelle, libelleEstimation);
     });
   }
 
-  private findEstimationDistance = (libelleEstimation: string): EstimationDistance => {
+  private findEstimationDistance = (libelleEstimation: string): EstimationDistanceWithCounts => {
     return this.estimationsDistance.find((estimation) => {
       return this.compareStrings(estimation.libelle, libelleEstimation);
     });
@@ -428,7 +423,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findMilieu = (codeOrLibelleMilieu: string): Milieu => {
+  private findMilieu = (codeOrLibelleMilieu: string): MilieuWithCounts => {
     return this.milieux.find((milieu) => {
       return this.compareStrings(milieu.code, codeOrLibelleMilieu) || this.compareStrings(milieu.libelle, codeOrLibelleMilieu);
     });

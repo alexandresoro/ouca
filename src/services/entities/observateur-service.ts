@@ -1,5 +1,5 @@
 import { Observateur as ObservateurEntity, Prisma } from ".prisma/client";
-import { Observateur, ObservateursPaginatedResult, ObservateurWithCounts, QueryPaginatedObservateursArgs } from "../../model/graphql";
+import { FindParams, Observateur, ObservateursPaginatedResult, ObservateurWithCounts, QueryPaginatedObservateursArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities, queryToCheckIfTableExists } from "../../sql/sql-queries-utils";
@@ -15,11 +15,42 @@ export const checkIfTableObservateurExists = async (): Promise<boolean> => {
   return queryToCheckIfTableExists(TABLE_OBSERVATEUR);
 }
 
-export const findObservateurs = async (): Promise<Observateur[]> => {
+export const findObservateur = async (id: number): Promise<Observateur | null> => {
+  return prisma.observateur.findUnique({
+    where: {
+      id
+    },
+  });
+};
+
+export const findObservateursByIds = async (ids: number[]): Promise<Observateur[]> => {
+
   return prisma.observateur.findMany({
     orderBy: {
       libelle: "asc"
-    }
+    },
+    where: {
+      id: {
+        in: ids
+      }
+    },
+  });
+};
+
+export const findObservateurs = async (params?: FindParams): Promise<Observateur[]> => {
+
+  const { q, max } = params ?? {};
+
+  return prisma.observateur.findMany({
+    orderBy: {
+      libelle: "asc"
+    },
+    where: {
+      libelle: {
+        contains: q || undefined
+      }
+    },
+    take: max || undefined
   });
 };
 

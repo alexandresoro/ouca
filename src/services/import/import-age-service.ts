@@ -1,4 +1,4 @@
-import { Age } from "../../model/types/age.object";
+import { Age } from "@prisma/client";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { TABLE_AGE } from "../../utils/constants";
 import { insertAges } from "../entities/age-service";

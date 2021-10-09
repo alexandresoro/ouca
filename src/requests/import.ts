@@ -8,8 +8,6 @@ import { IMPORT_COMPLETE_EVENT, IMPORT_PROGRESS_UPDATE_EVENT, IMPORT_STATUS_UPDA
 import { getNewImportServiceForRequestType } from "../services/import/import-service-per-request-type";
 import { ImportableTable, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE } from "../utils/constants";
 import { logger } from "../utils/logger";
-import { sendMessageToClients } from "../ws/websocket-server";
-import { onTableUpdate } from "../ws/ws-messages";
 
 // Worker thread for the import
 if (!isMainThread) {
@@ -60,7 +58,7 @@ const sendImportMessage = (message: ImportUpdateMessage | ImportErrorMessage, cl
     type: IMPORT,
     content: message
   }
-  sendMessageToClients(JSON.stringify(messageToClient), client);
+  client.send(JSON.stringify(messageToClient));
 }
 
 const processImport = (workerData: WebsocketImportRequestContent, tableToUpdate: ImportableTable, client: WebSocket): Promise<string> => {
@@ -75,13 +73,6 @@ const processImport = (workerData: WebsocketImportRequestContent, tableToUpdate:
       if (postMessage.type === IMPORT_COMPLETE) {
 
         sendImportMessage(postMessage, client);
-
-        // When an import has been processed, 
-        // inform all clients
-        // Compared to the standard update, we need to to it manually here
-        // once the worker has returned, as it is another "thread" 
-        // that does not have the proper visibility
-        onTableUpdate(tableToUpdate);
 
         resolve(postMessage.fileInputError ?? postMessage.lineErrors?.toString());
       } else if (postMessage.type === VALIDATION_PROGRESS || STATUS_UPDATE.includes(postMessage.type)) {

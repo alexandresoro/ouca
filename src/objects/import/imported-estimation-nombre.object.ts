@@ -1,4 +1,4 @@
-import { EstimationNombre } from "../../model/types/estimation-nombre.object";
+import { EstimationNombre } from "../../model/graphql";
 import { ImportedEntiteAvecLibelle } from "./imported-entite-avec-libelle.object";
 
 export class ImportedEstimationNombre extends ImportedEntiteAvecLibelle {

@@ -14,15 +14,12 @@ import { DELETE, GET, POST } from "./http/httpMethod";
 import { handleRequest, RequestGeneric } from "./http/requestHandling";
 import { REQUEST_MAPPING, routes } from "./mapping";
 import { WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
-import { HEARTBEAT, IMPORT, INIT } from "./model/websocket/websocket-message-type.model";
+import { HEARTBEAT, IMPORT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
 import { importWebsocket } from "./requests/import";
 import prisma from "./sql/prisma";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
-import { sendMessageToClients, setWebsocketServer } from "./ws/websocket-server";
-import { sendInitialData } from "./ws/ws-messages";
-
 
 const server = fastify();
 
@@ -61,25 +58,16 @@ prisma.$on('info', (e) => {
     origin: "*"
   });
 
-  setWebsocketServer(server.websocketServer);
-
   server.get('/ws/', { websocket: true }, (connection) => {
     connection.socket.on('message', data => {
       const message = JSON.parse(data.toString()) as WebsocketMessage;
       if (message.type === HEARTBEAT) {
         logger.debug("Ping received");
         // Ping message received
-        sendMessageToClients(
-          JSON.stringify({
-            type: "other",
-            content: "pong"
-          }),
-          connection.socket
-        );
-      } else if (message.type === INIT) {
-        // Client requests the initial configuration
-        logger.info("Sending initial data to client");
-        sendInitialData(connection.socket).catch((error) => { logger.error(error) });
+        connection.socket.send(JSON.stringify({
+          type: "other",
+          content: "pong"
+        }))
       } else if (message.type === IMPORT) {
         // Import message received
         const importRequest = (message as WebsocketImportRequestMessage).content;

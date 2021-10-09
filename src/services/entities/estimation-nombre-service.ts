@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { EstimationNombre, EstimationNombreWithCounts, EstimationsNombrePaginatedResult, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { buildEstimationNombreFromEstimationNombreDb } from "../../sql/entities-mapping/estimation-nombre-mapping";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE, TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
@@ -47,8 +46,10 @@ export const findAllEstimationsNombre = async (options: {
   });
 
   return estimationsDb.map((estimation) => {
+    const { non_compte, ...rest } = estimation;
     return {
-      ...buildEstimationNombreFromEstimationNombreDb(estimation),
+      ...rest,
+      nonCompte: non_compte,
       ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
     }
   });
@@ -105,8 +106,10 @@ export const findPaginatedEstimationsNombre = async (
 
   return {
     result: estimationsNombre.map((estimation) => {
+      const { non_compte, ...rest } = estimation;
       return {
-        ...buildEstimationNombreFromEstimationNombreDb(estimation),
+        ...rest,
+        nonCompte: non_compte,
         ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
       }
     }),
