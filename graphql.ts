@@ -409,6 +409,7 @@ export type Query = {
   classes?: Maybe<Array<Maybe<Classe>>>;
   communes?: Maybe<Array<Maybe<Commune>>>;
   comportement?: Maybe<Comportement>;
+  comportementList?: Maybe<Array<Maybe<Comportement>>>;
   comportements?: Maybe<Array<Maybe<Comportement>>>;
   departements?: Maybe<Array<Maybe<Departement>>>;
   especes?: Maybe<Array<Maybe<Espece>>>;
@@ -422,6 +423,7 @@ export type Query = {
   meteoList?: Maybe<Array<Maybe<Meteo>>>;
   meteos?: Maybe<Array<Maybe<Meteo>>>;
   milieu?: Maybe<Milieu>;
+  milieuList?: Maybe<Array<Maybe<Milieu>>>;
   milieux?: Maybe<Array<Maybe<Milieu>>>;
   observateur?: Maybe<Observateur>;
   observateurList?: Maybe<Array<Maybe<Observateur>>>;
@@ -462,6 +464,11 @@ export type QueryComportementArgs = {
 };
 
 
+export type QueryComportementListArgs = {
+  ids: Array<Scalars['Int']>;
+};
+
+
 export type QueryComportementsArgs = {
   params?: Maybe<FindParams>;
 };
@@ -499,6 +506,11 @@ export type QueryMeteoListArgs = {
 
 export type QueryMilieuArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryMilieuListArgs = {
+  ids: Array<Scalars['Int']>;
 };
 
 
@@ -1139,6 +1151,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   classes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Classe']>>>, ParentType, ContextType>;
   communes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Commune']>>>, ParentType, ContextType>;
   comportement?: Resolver<Maybe<ResolversTypes['Comportement']>, ParentType, ContextType, RequireFields<QueryComportementArgs, 'id'>>;
+  comportementList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType, RequireFields<QueryComportementListArgs, 'ids'>>;
   comportements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType, RequireFields<QueryComportementsArgs, never>>;
   departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType>;
   especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType>;
@@ -1152,6 +1165,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   meteoList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType, RequireFields<QueryMeteoListArgs, 'ids'>>;
   meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
   milieu?: Resolver<Maybe<ResolversTypes['Milieu']>, ParentType, ContextType, RequireFields<QueryMilieuArgs, 'id'>>;
+  milieuList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, RequireFields<QueryMilieuListArgs, 'ids'>>;
   milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, RequireFields<QueryMilieuxArgs, never>>;
   observateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<QueryObservateurArgs, 'id'>>;
   observateurList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateurListArgs, 'ids'>>;
