@@ -1,5 +1,5 @@
 import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
-import { findAges, findPaginatedAges } from "../services/entities/age-service";
+import { findAge, findAges, findPaginatedAges } from "../services/entities/age-service";
 import { findClasses, findPaginatedClasses } from "../services/entities/classe-service";
 import { findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
 import { findComportements, findPaginatedComportements } from "../services/entities/comportement-service";
@@ -13,11 +13,14 @@ import { findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu
 import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos } from "../services/entities/meteo-service";
 import { findMilieux, findPaginatedMilieux } from "../services/entities/milieu-service";
 import { findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs } from "../services/entities/observateur-service";
-import { findPaginatedSexes, findSexes } from "../services/entities/sexe-service";
+import { findPaginatedSexes, findSexe, findSexes } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
 
 const resolvers: Resolvers = {
   Query: {
+    age: async (_source, args): Promise<Age> => {
+      return findAge(args.id);
+    },
     estimationDistance: async (_source, args): Promise<EstimationDistance> => {
       return findEstimationDistance(args.id);
     },
@@ -36,8 +39,11 @@ const resolvers: Resolvers = {
     observateurList: async (_source, args): Promise<Observateur[]> => {
       return findObservateursByIds(args.ids);
     },
-    ages: async (): Promise<Age[]> => {
-      return findAges();
+    sexe: async (_source, args): Promise<Sexe> => {
+      return findSexe(args.id);
+    },
+    ages: async (_source, args): Promise<Age[]> => {
+      return findAges(args?.params);
     },
     classes: async (): Promise<Classe[]> => {
       return findClasses();
@@ -72,8 +78,8 @@ const resolvers: Resolvers = {
     observateurs: async (_source, args): Promise<Observateur[]> => {
       return findObservateurs(args?.params);
     },
-    sexes: async (): Promise<Sexe[]> => {
-      return findSexes();
+    sexes: async (_source, args): Promise<Sexe[]> => {
+      return findSexes(args?.params);
     },
     lastDonneeId: async (): Promise<number> => {
       return findLastDonneeId();

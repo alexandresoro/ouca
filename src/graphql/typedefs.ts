@@ -389,13 +389,15 @@ export default gql`
   }
 
   type Query {
+    age(id: Int!): Age
     estimationDistance(id: Int!): EstimationDistance
     estimationNombre(id: Int!): EstimationNombre
     meteo(id: Int!): Meteo
     meteoList(ids: [Int!]!): [Meteo]
     observateur(id: Int!): Observateur
     observateurList(ids: [Int!]!): [Observateur]
-    ages: [Age]
+    sexe(id: Int!): Sexe
+    ages(params: FindParams): [Age]
     classes: [Classe]
     communes: [Commune]
     comportements: [Comportement]
@@ -407,7 +409,7 @@ export default gql`
     meteos: [Meteo]
     milieux: [Milieu]
     observateurs(params: FindParams): [Observateur]
-    sexes: [Sexe]
+    sexes(params: FindParams): [Sexe]
     lastDonneeId: Int
     paginatedAges(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
     paginatedClasses(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
