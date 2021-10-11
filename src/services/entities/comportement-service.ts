@@ -17,6 +17,20 @@ export const findComportement = async (id: number): Promise<Comportement | null>
   });
 };
 
+export const findComportementsByIds = async (ids: number[]): Promise<Comportement[]> => {
+
+  return prisma.comportement.findMany({
+    orderBy: {
+      code: "asc"
+    },
+    where: {
+      id: {
+        in: ids
+      }
+    },
+  });
+};
+
 export const findComportements = async (params?: FindParams): Promise<Comportement[]> => {
 
   const { q, max } = params ?? {};

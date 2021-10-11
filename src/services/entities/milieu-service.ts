@@ -18,6 +18,20 @@ export const findMilieu = async (id: number): Promise<Milieu | null> => {
   });
 };
 
+export const findMilieuxByIds = async (ids: number[]): Promise<Milieu[]> => {
+
+  return prisma.milieu.findMany({
+    orderBy: {
+      code: "asc"
+    },
+    where: {
+      id: {
+        in: ids
+      }
+    },
+  });
+};
+
 export const findMilieux = async (params?: FindParams): Promise<Milieu[]> => {
 
   const { q, max } = params ?? {};

@@ -391,11 +391,13 @@ export default gql`
   type Query {
     age(id: Int!): Age
     comportement(id: Int!): Comportement
+    comportementList(ids: [Int!]!): [Comportement]
     estimationDistance(id: Int!): EstimationDistance
     estimationNombre(id: Int!): EstimationNombre
     meteo(id: Int!): Meteo
     meteoList(ids: [Int!]!): [Meteo]
     milieu(id: Int!): Milieu
+    milieuList(ids: [Int!]!): [Milieu]
     observateur(id: Int!): Observateur
     observateurList(ids: [Int!]!): [Observateur]
     sexe(id: Int!): Sexe

@@ -2,7 +2,7 @@ import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, Comm
 import { findAge, findAges, findPaginatedAges } from "../services/entities/age-service";
 import { findClasses, findPaginatedClasses } from "../services/entities/classe-service";
 import { findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
-import { findComportement, findComportements, findPaginatedComportements } from "../services/entities/comportement-service";
+import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
 import { findLastDonneeId } from "../services/entities/donnee-service";
@@ -11,7 +11,7 @@ import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimatio
 import { findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
 import { findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
 import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos } from "../services/entities/meteo-service";
-import { findMilieu, findMilieux, findPaginatedMilieux } from "../services/entities/milieu-service";
+import { findMilieu, findMilieux, findMilieuxByIds, findPaginatedMilieux } from "../services/entities/milieu-service";
 import { findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs } from "../services/entities/observateur-service";
 import { findPaginatedSexes, findSexe, findSexes } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
@@ -23,6 +23,9 @@ const resolvers: Resolvers = {
     },
     comportement: async (_source, args): Promise<Comportement> => {
       return findComportement(args.id);
+    },
+    comportementList: async (_source, args): Promise<Comportement[]> => {
+      return findComportementsByIds(args.ids);
     },
     estimationDistance: async (_source, args): Promise<EstimationDistance> => {
       return findEstimationDistance(args.id);
@@ -38,6 +41,9 @@ const resolvers: Resolvers = {
     },
     milieu: async (_source, args): Promise<Milieu> => {
       return findMilieu(args.id);
+    },
+    milieuList: async (_source, args): Promise<Milieu[]> => {
+      return findMilieuxByIds(args.ids);
     },
     observateur: async (_source, args): Promise<Observateur> => {
       return findObservateur(args.id);
