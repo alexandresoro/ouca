@@ -411,6 +411,7 @@ export type Query = {
   departements?: Maybe<Array<Maybe<Departement>>>;
   especes?: Maybe<Array<Maybe<Espece>>>;
   estimationDistance?: Maybe<EstimationDistance>;
+  estimationNombre?: Maybe<EstimationNombre>;
   estimationsDistance?: Maybe<Array<Maybe<EstimationDistance>>>;
   estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
   lastDonneeId?: Maybe<Scalars['Int']>;
@@ -447,7 +448,17 @@ export type QueryEstimationDistanceArgs = {
 };
 
 
+export type QueryEstimationNombreArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QueryEstimationsDistanceArgs = {
+  params?: Maybe<FindParams>;
+};
+
+
+export type QueryEstimationsNombreArgs = {
   params?: Maybe<FindParams>;
 };
 
@@ -1086,8 +1097,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType>;
   especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType>;
   estimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType, RequireFields<QueryEstimationDistanceArgs, 'id'>>;
+  estimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType, RequireFields<QueryEstimationNombreArgs, 'id'>>;
   estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType, RequireFields<QueryEstimationsDistanceArgs, never>>;
-  estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType>;
+  estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType, RequireFields<QueryEstimationsNombreArgs, never>>;
   lastDonneeId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType>;
   meteo?: Resolver<Maybe<ResolversTypes['Meteo']>, ParentType, ContextType, RequireFields<QueryMeteoArgs, 'id'>>;
