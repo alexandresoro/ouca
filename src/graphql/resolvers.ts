@@ -8,7 +8,7 @@ import { findDepartements, findPaginatedDepartements } from "../services/entitie
 import { findLastDonneeId } from "../services/entities/donnee-service";
 import { findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
 import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
-import { findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
+import { findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
 import { findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
 import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos } from "../services/entities/meteo-service";
 import { findMilieux, findPaginatedMilieux } from "../services/entities/milieu-service";
@@ -20,6 +20,9 @@ const resolvers: Resolvers = {
   Query: {
     estimationDistance: async (_source, args): Promise<EstimationDistance> => {
       return findEstimationDistance(args.id);
+    },
+    estimationNombre: async (_source, args): Promise<EstimationNombre> => {
+      return findEstimationNombre(args.id);
     },
     meteo: async (_source, args): Promise<Meteo> => {
       return findMeteo(args.id);
@@ -54,8 +57,8 @@ const resolvers: Resolvers = {
     estimationsDistance: async (_source, args): Promise<EstimationDistance[]> => {
       return findEstimationsDistance(args?.params);
     },
-    estimationsNombre: async (): Promise<EstimationNombre[]> => {
-      return findEstimationsNombre();
+    estimationsNombre: async (_source, args): Promise<EstimationNombre[]> => {
+      return findEstimationsNombre(args?.params);
     },
     lieuxDits: async (): Promise<LieuDit[]> => {
       return findLieuxDits();

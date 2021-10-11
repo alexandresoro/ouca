@@ -5,7 +5,8 @@
     "target": "ES2020",
     "esModuleInterop": true,
     "outDir": "dist",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "strictNullChecks": false // TODO Put this at true someday to improve code quality
   },
   "include": ["src/**/*"]
 }

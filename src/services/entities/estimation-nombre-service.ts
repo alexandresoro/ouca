@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { EstimationNombre, EstimationNombreWithCounts, EstimationsNombrePaginatedResult, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
+import { EstimationNombre, EstimationNombreWithCounts, EstimationsNombrePaginatedResult, FindParams, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -12,11 +12,38 @@ const DB_SAVE_MAPPING_ESTIMATION_NOMBRE = {
   non_compte: "nonCompte"
 }
 
-export const findEstimationsNombre = async (): Promise<EstimationNombre[]> => {
+export const findEstimationNombre = async (id: number): Promise<EstimationNombre | null> => {
+  return prisma.estimationNombre.findUnique({
+    where: {
+      id
+    },
+  }).then(estimation => {
+    if (estimation == null) {
+      return null;
+    }
+
+    const { non_compte, ...others } = estimation;
+    return {
+      ...others,
+      nonCompte: non_compte
+    }
+  });
+};
+
+export const findEstimationsNombre = async (params?: FindParams): Promise<EstimationNombre[]> => {
+
+  const { q, max } = params ?? {};
+
   return prisma.estimationNombre.findMany({
     orderBy: {
       libelle: "asc"
-    }
+    },
+    where: {
+      libelle: {
+        startsWith: q || undefined
+      }
+    },
+    take: max || undefined
   }).then(estimations => estimations.map(estimation => {
     const { non_compte, ...others } = estimation;
     return {
