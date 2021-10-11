@@ -404,6 +404,7 @@ export type PaginatedResult = {
 
 export type Query = {
   __typename?: 'Query';
+  age?: Maybe<Age>;
   ages?: Maybe<Array<Maybe<Age>>>;
   classes?: Maybe<Array<Maybe<Classe>>>;
   communes?: Maybe<Array<Maybe<Commune>>>;
@@ -437,9 +438,20 @@ export type Query = {
   paginatedObservateurs?: Maybe<ObservateursPaginatedResult>;
   paginatedSexes?: Maybe<SexesPaginatedResult>;
   settings?: Maybe<Settings>;
+  sexe?: Maybe<Sexe>;
   sexes?: Maybe<Array<Maybe<Sexe>>>;
   status?: Maybe<Scalars['Int']>;
   version?: Maybe<Version>;
+};
+
+
+export type QueryAgeArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryAgesArgs = {
+  params?: Maybe<FindParams>;
 };
 
 
@@ -576,6 +588,16 @@ export type QueryPaginatedSexesArgs = {
   orderBy?: Maybe<EntitesAvecLibelleOrderBy>;
   searchParams?: Maybe<SearchParams>;
   sortOrder?: Maybe<SortOrder>;
+};
+
+
+export type QuerySexeArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QuerySexesArgs = {
+  params?: Maybe<FindParams>;
 };
 
 export type SearchParams = {
@@ -1090,7 +1112,8 @@ export type PaginatedResultResolvers<ContextType = any, ParentType extends Resol
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  ages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Age']>>>, ParentType, ContextType>;
+  age?: Resolver<Maybe<ResolversTypes['Age']>, ParentType, ContextType, RequireFields<QueryAgeArgs, 'id'>>;
+  ages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Age']>>>, ParentType, ContextType, RequireFields<QueryAgesArgs, never>>;
   classes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Classe']>>>, ParentType, ContextType>;
   communes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Commune']>>>, ParentType, ContextType>;
   comportements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType>;
@@ -1123,7 +1146,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   paginatedObservateurs?: Resolver<Maybe<ResolversTypes['ObservateursPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedObservateursArgs, never>>;
   paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSexesArgs, never>>;
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
-  sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType>;
+  sexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<QuerySexeArgs, 'id'>>;
+  sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType, RequireFields<QuerySexesArgs, never>>;
   status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   version?: Resolver<Maybe<ResolversTypes['Version']>, ParentType, ContextType>;
 };
