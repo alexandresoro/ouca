@@ -410,6 +410,7 @@ export type Query = {
   comportements?: Maybe<Array<Maybe<Comportement>>>;
   departements?: Maybe<Array<Maybe<Departement>>>;
   especes?: Maybe<Array<Maybe<Espece>>>;
+  estimationDistance?: Maybe<EstimationDistance>;
   estimationsDistance?: Maybe<Array<Maybe<EstimationDistance>>>;
   estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
   lastDonneeId?: Maybe<Scalars['Int']>;
@@ -438,6 +439,16 @@ export type Query = {
   sexes?: Maybe<Array<Maybe<Sexe>>>;
   status?: Maybe<Scalars['Int']>;
   version?: Maybe<Version>;
+};
+
+
+export type QueryEstimationDistanceArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryEstimationsDistanceArgs = {
+  params?: Maybe<FindParams>;
 };
 
 
@@ -1074,7 +1085,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   comportements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType>;
   departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType>;
   especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType>;
-  estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType>;
+  estimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType, RequireFields<QueryEstimationDistanceArgs, 'id'>>;
+  estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType, RequireFields<QueryEstimationsDistanceArgs, never>>;
   estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType>;
   lastDonneeId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType>;
