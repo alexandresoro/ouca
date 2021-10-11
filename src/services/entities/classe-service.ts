@@ -1,5 +1,5 @@
 import { Classe as ClasseEntity, Prisma } from "@prisma/client";
-import { Classe, ClassesPaginatedResult, ClasseWithCounts, QueryPaginatedClassesArgs } from "../../model/graphql";
+import { Classe, ClassesPaginatedResult, ClasseWithCounts, FindParams, QueryPaginatedClassesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -11,11 +11,28 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_CLASSE = createKeyValueMapWithSameName("libelle");
 
-export const findClasses = async (): Promise<Classe[]> => {
+export const findClasse = async (id: number): Promise<Classe | null> => {
+  return prisma.classe.findUnique({
+    where: {
+      id
+    },
+  });
+};
+
+export const findClasses = async (params?: FindParams): Promise<Classe[]> => {
+
+  const { q, max } = params ?? {};
+
   return prisma.classe.findMany({
     orderBy: {
       libelle: "asc"
-    }
+    },
+    where: {
+      libelle: {
+        startsWith: q || undefined
+      }
+    },
+    take: max || undefined
   });
 };
 

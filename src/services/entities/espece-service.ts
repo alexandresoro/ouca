@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Espece, EspecesPaginatedResult, QueryPaginatedEspecesArgs } from "../../model/graphql";
+import { Espece, EspecesPaginatedResult, EspeceWithClasse, FindParams, QueryPaginatedEspecesArgs } from "../../model/graphql";
 import { Espece as EspeceObj } from "../../model/types/espece.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildEspeceFromEspeceDb } from "../../sql/entities-mapping/espece-mapping";
@@ -16,12 +16,15 @@ const DB_SAVE_MAPPING_ESPECE = {
   nom_latin: "nomLatin"
 }
 
-export const findEspeces = async (): Promise<Espece[]> => {
-  return prisma.espece.findMany({
-    orderBy: {
-      code: "asc"
-    }
-  }).then(especes => especes.map(espece => {
+export const findEspece = async (id: number): Promise<EspeceWithClasse | null> => {
+  return prisma.espece.findUnique({
+    include: {
+      classe: true
+    },
+    where: {
+      id
+    },
+  }).then(espece => {
     const { nom_francais, nom_latin, classe_id, ...others } = espece;
     return {
       ...others,
@@ -29,7 +32,75 @@ export const findEspeces = async (): Promise<Espece[]> => {
       nomFrancais: nom_francais,
       nomLatin: nom_latin
     }
-  }));
+  });
+};
+
+export const findEspeces = async (params?: FindParams): Promise<Espece[]> => {
+
+  const { q, max } = params ?? {};
+
+  const matchingWithCode = await prisma.espece.findMany({
+    orderBy: {
+      code: "asc"
+    },
+    where: q ? {
+      OR: [
+        {
+          code: {
+            startsWith: q
+          }
+        }
+      ]
+    } : undefined,
+    take: max || undefined
+  });
+
+  const matchingWithLibelle = await prisma.espece.findMany({
+    orderBy: {
+      code: "asc"
+    },
+    where: q ? {
+      OR: [
+        {
+          nom_francais: {
+            contains: q
+          }
+        },
+        {
+          nom_latin: {
+            contains: q
+          }
+        }
+      ]
+    } : undefined,
+    take: max || undefined
+  });
+
+  // Concatenate arrays and remove elements that could be present in several indexes, to keep a unique reference
+  // This is done like this to be consistent with what was done previously on UI side:
+  // code had a weight of 10, nom_francais and nom_latin had a weight of 1, so we don't "return first" the elements that appear multiple time
+  // The only difference with what was done before is that we used to sort them by adding up their priority:
+  // e.g. if the code and nom francais was matching, it was 11, then it was sorted before one for which only the code was matching for instance
+  // we could do the same here, but it's mostly pointless as the ones that are matching by code will be before, which was the main purpose of this thing initially
+  // And even so, it would never match 100%, as we could limit the matches per code/libelle, meaning that one entry may not be returned even though it would match because of this LIMIT
+  // We could be smarter, but I believe that this is enough for now
+  const matchingEntries = [...matchingWithCode, ...matchingWithLibelle]
+    .filter((element, index, self) =>
+      index === self.findIndex((eltArray) => (
+        eltArray.id === element.id
+      ))
+    )
+    .map(espece => {
+      const { nom_francais, nom_latin, classe_id, ...others } = espece;
+      return {
+        ...others,
+        classeId: classe_id,
+        nomFrancais: nom_francais,
+        nomLatin: nom_latin
+      }
+    })
+
+  return max ? matchingEntries.slice(0, max) : matchingEntries;
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput => {

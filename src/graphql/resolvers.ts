@@ -1,12 +1,12 @@
-import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
+import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EspeceWithClasse, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
 import { findAge, findAges, findPaginatedAges } from "../services/entities/age-service";
-import { findClasses, findPaginatedClasses } from "../services/entities/classe-service";
+import { findClasse, findClasses, findPaginatedClasses } from "../services/entities/classe-service";
 import { findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
 import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
 import { findLastDonneeId } from "../services/entities/donnee-service";
-import { findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
+import { findEspece, findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
 import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
 import { findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
@@ -21,11 +21,17 @@ const resolvers: Resolvers = {
     age: async (_source, args): Promise<Age> => {
       return findAge(args.id);
     },
+    classe: async (_source, args): Promise<Classe> => {
+      return findClasse(args.id);
+    },
     comportement: async (_source, args): Promise<Comportement> => {
       return findComportement(args.id);
     },
     comportementList: async (_source, args): Promise<Comportement[]> => {
       return findComportementsByIds(args.ids);
+    },
+    espece: async (_source, args): Promise<EspeceWithClasse> => {
+      return findEspece(args.id);
     },
     estimationDistance: async (_source, args): Promise<EstimationDistance> => {
       return findEstimationDistance(args.id);
@@ -57,8 +63,8 @@ const resolvers: Resolvers = {
     ages: async (_source, args): Promise<Age[]> => {
       return findAges(args?.params);
     },
-    classes: async (): Promise<Classe[]> => {
-      return findClasses();
+    classes: async (_source, args): Promise<Classe[]> => {
+      return findClasses(args?.params);
     },
     communes: async (): Promise<Commune[]> => {
       return findCommunes();
@@ -69,8 +75,8 @@ const resolvers: Resolvers = {
     departements: async (): Promise<Departement[]> => {
       return findDepartements();
     },
-    especes: async (): Promise<Espece[]> => {
-      return findEspeces();
+    especes: async (_source, args): Promise<Espece[]> => {
+      return findEspeces(args?.params);
     },
     estimationsDistance: async (_source, args): Promise<EstimationDistance[]> => {
       return findEstimationsDistance(args?.params);

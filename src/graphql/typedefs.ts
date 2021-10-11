@@ -118,6 +118,15 @@ export default gql`
     classeId: Int!
   }
 
+  type EspeceWithClasse {
+    id: Int!
+    code: String!
+    nomFrancais: String!
+    nomLatin: String!
+    classeId: Int!
+    classe: Classe!
+  }
+
   type EspeceWithCounts {
     id: Int!
     nbDonnees: Int
@@ -390,8 +399,10 @@ export default gql`
 
   type Query {
     age(id: Int!): Age
+    classe(id: Int!): Classe
     comportement(id: Int!): Comportement
     comportementList(ids: [Int!]!): [Comportement]
+    espece(id: Int!): EspeceWithClasse
     estimationDistance(id: Int!): EstimationDistance
     estimationNombre(id: Int!): EstimationNombre
     meteo(id: Int!): Meteo
@@ -402,11 +413,11 @@ export default gql`
     observateurList(ids: [Int!]!): [Observateur]
     sexe(id: Int!): Sexe
     ages(params: FindParams): [Age]
-    classes: [Classe]
+    classes(params: FindParams): [Classe]
     communes: [Commune]
     comportements(params: FindParams): [Comportement]
     departements: [Departement]
-    especes: [Espece]
+    especes(params: FindParams): [Espece]
     lieuxDits: [LieuDit]
     estimationsDistance(params: FindParams): [EstimationDistance]
     estimationsNombre(params: FindParams): [EstimationNombre]
