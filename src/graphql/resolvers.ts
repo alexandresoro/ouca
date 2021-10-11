@@ -7,7 +7,7 @@ import { findAppConfiguration, persistUserSettings } from "../services/entities/
 import { findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
 import { findLastDonneeId } from "../services/entities/donnee-service";
 import { findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
-import { findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
+import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
 import { findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
 import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos } from "../services/entities/meteo-service";
@@ -18,6 +18,9 @@ import { findVersion } from "../services/entities/version-service";
 
 const resolvers: Resolvers = {
   Query: {
+    estimationDistance: async (_source, args): Promise<EstimationDistance> => {
+      return findEstimationDistance(args.id);
+    },
     meteo: async (_source, args): Promise<Meteo> => {
       return findMeteo(args.id);
     },
@@ -48,8 +51,8 @@ const resolvers: Resolvers = {
     especes: async (): Promise<Espece[]> => {
       return findEspeces();
     },
-    estimationsDistance: async (): Promise<EstimationDistance[]> => {
-      return findEstimationsDistance();
+    estimationsDistance: async (_source, args): Promise<EstimationDistance[]> => {
+      return findEstimationsDistance(args?.params);
     },
     estimationsNombre: async (): Promise<EstimationNombre[]> => {
       return findEstimationsNombre();

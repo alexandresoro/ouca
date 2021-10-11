@@ -389,6 +389,7 @@ export default gql`
   }
 
   type Query {
+    estimationDistance(id: Int!): EstimationDistance
     meteo(id: Int!): Meteo
     meteoList(ids: [Int!]!): [Meteo]
     observateur(id: Int!): Observateur
@@ -400,7 +401,7 @@ export default gql`
     departements: [Departement]
     especes: [Espece]
     lieuxDits: [LieuDit]
-    estimationsDistance: [EstimationDistance]
+    estimationsDistance(params: FindParams): [EstimationDistance]
     estimationsNombre: [EstimationNombre]
     meteos: [Meteo]
     milieux: [Milieu]
