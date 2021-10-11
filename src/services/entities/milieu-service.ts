@@ -1,20 +1,78 @@
 import { Milieu, Prisma } from "@prisma/client";
-import { MilieuWithCounts, MilieuxPaginatedResult, QueryPaginatedMilieuxArgs } from "../../model/graphql";
+import { FindParams, MilieuWithCounts, MilieuxPaginatedResult, QueryPaginatedMilieuxArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_MILIEU } from "../../utils/constants";
+import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_MILIEU = createKeyValueMapWithSameName(["code", "libelle"]);
 
-export const findMilieux = async (): Promise<Milieu[]> => {
-  return prisma.milieu.findMany({
+export const findMilieu = async (id: number): Promise<Milieu | null> => {
+  return prisma.milieu.findUnique({
+    where: {
+      id
+    },
+  });
+};
+
+export const findMilieux = async (params?: FindParams): Promise<Milieu[]> => {
+
+  const { q, max } = params ?? {};
+
+  const matchingCodesAsNumber = numberAsCodeSqlMatcher(q);
+  const matchingCodesAsNumberClause = matchingCodesAsNumber.map((matchingCode) => {
+    return {
+      code: {
+        startsWith: matchingCode
+      }
+    }
+  })
+
+  const matchingWithCode = await prisma.milieu.findMany({
     orderBy: {
       code: "asc"
-    }
+    },
+    where: q ? {
+      OR: [
+        ...matchingCodesAsNumberClause,
+        {
+          code: {
+            startsWith: q // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
+          }
+        }
+      ]
+    } : undefined,
+    take: max || undefined
   });
+
+  const matchingWithLibelle = await prisma.milieu.findMany({
+    orderBy: {
+      code: "asc"
+    },
+    where: {
+      libelle: {
+        contains: q || undefined
+      }
+    },
+    take: max || undefined
+  });
+
+  // Concatenate arrays and remove elements that could be present in several indexes, to keep a unique reference
+  // This is done like this to be consistent with what was done previously on UI side:
+  // code had a weight of 1, and libelle had no weight, so we don't "return first" the elements that appear multiple time
+  // However, to be consistent, we still need to sort them by code as it can still be mixed up
+  const matchingEntries = [...matchingWithCode, ...matchingWithLibelle]
+    .sort((a, b) => a.code.localeCompare(b.code))
+    .filter((element, index, self) =>
+      index === self.findIndex((eltArray) => (
+        eltArray.id === element.id
+      ))
+    )
+
+  return max ? matchingEntries.slice(0, max) : matchingEntries;
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput => {

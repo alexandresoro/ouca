@@ -390,24 +390,26 @@ export default gql`
 
   type Query {
     age(id: Int!): Age
+    comportement(id: Int!): Comportement
     estimationDistance(id: Int!): EstimationDistance
     estimationNombre(id: Int!): EstimationNombre
     meteo(id: Int!): Meteo
     meteoList(ids: [Int!]!): [Meteo]
+    milieu(id: Int!): Milieu
     observateur(id: Int!): Observateur
     observateurList(ids: [Int!]!): [Observateur]
     sexe(id: Int!): Sexe
     ages(params: FindParams): [Age]
     classes: [Classe]
     communes: [Commune]
-    comportements: [Comportement]
+    comportements(params: FindParams): [Comportement]
     departements: [Departement]
     especes: [Espece]
     lieuxDits: [LieuDit]
     estimationsDistance(params: FindParams): [EstimationDistance]
     estimationsNombre(params: FindParams): [EstimationNombre]
     meteos: [Meteo]
-    milieux: [Milieu]
+    milieux(params: FindParams): [Milieu]
     observateurs(params: FindParams): [Observateur]
     sexes(params: FindParams): [Sexe]
     lastDonneeId: Int

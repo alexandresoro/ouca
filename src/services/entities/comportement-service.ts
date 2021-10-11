@@ -1,20 +1,77 @@
-
 import { Nicheur, Prisma } from "@prisma/client";
-import { Comportement, ComportementsPaginatedResult, ComportementWithCounts, QueryPaginatedComportementsArgs } from "../../model/graphql";
+import { Comportement, ComportementsPaginatedResult, ComportementWithCounts, FindParams, QueryPaginatedComportementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildComportementDbFromComportement } from "../../sql/entities-mapping/comportement-mapping";
 import prisma from "../../sql/prisma";
 import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_COMPORTEMENT } from "../../utils/constants";
+import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
 
-export const findComportements = async (): Promise<Comportement[]> => {
-  return prisma.comportement.findMany({
+export const findComportement = async (id: number): Promise<Comportement | null> => {
+  return prisma.comportement.findUnique({
+    where: {
+      id
+    },
+  });
+};
+
+export const findComportements = async (params?: FindParams): Promise<Comportement[]> => {
+
+  const { q, max } = params ?? {};
+
+  const matchingCodesAsNumber = numberAsCodeSqlMatcher(q);
+  const matchingCodesAsNumberClause = matchingCodesAsNumber.map((matchingCode) => {
+    return {
+      code: {
+        startsWith: matchingCode
+      }
+    }
+  })
+
+  const matchingWithCode = await prisma.comportement.findMany({
     orderBy: {
       code: "asc"
-    }
+    },
+    where: q ? {
+      OR: [
+        ...matchingCodesAsNumberClause,
+        {
+          code: {
+            startsWith: q // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
+          }
+        }
+      ]
+    } : undefined,
+    take: max || undefined
   });
+
+  const matchingWithLibelle = await prisma.comportement.findMany({
+    orderBy: {
+      code: "asc"
+    },
+    where: {
+      libelle: {
+        contains: q || undefined
+      }
+    },
+    take: max || undefined
+  });
+
+  // Concatenate arrays and remove elements that could be present in several indexes, to keep a unique reference
+  // This is done like this to be consistent with what was done previously on UI side:
+  // code had a weight of 1, and libelle had no weight, so we don't "return first" the elements that appear multiple time
+  // However, to be consistent, we still need to sort them by code as it can still be mixed up
+  const matchingEntries = [...matchingWithCode, ...matchingWithLibelle]
+    .sort((a, b) => a.code.localeCompare(b.code))
+    .filter((element, index, self) =>
+      index === self.findIndex((eltArray) => (
+        eltArray.id === element.id
+      ))
+    )
+
+  return max ? matchingEntries.slice(0, max) : matchingEntries;
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhereInput => {
