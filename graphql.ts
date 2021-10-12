@@ -172,7 +172,6 @@ export type EntitesAvecLibelleOrderBy = typeof EntitesAvecLibelleOrderBy[keyof t
 export type Espece = {
   __typename?: 'Espece';
   classe: Classe;
-  classeId: Scalars['Int'];
   code: Scalars['String'];
   id: Scalars['Int'];
   nomFrancais: Scalars['String'];
@@ -1009,7 +1008,6 @@ export type DepartementsPaginatedResultResolvers<ContextType = any, ParentType e
 
 export type EspeceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Espece'] = ResolversParentTypes['Espece']> = {
   classe?: Resolver<ResolversTypes['Classe'], ParentType, ContextType>;
-  classeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nomFrancais?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
