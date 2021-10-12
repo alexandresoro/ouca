@@ -115,7 +115,6 @@ export default gql`
     code: String!
     nomFrancais: String!
     nomLatin: String!
-    classeId: Int!
     classe: Classe!
   }
 
