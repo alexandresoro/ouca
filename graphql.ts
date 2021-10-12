@@ -171,16 +171,7 @@ export const EntitesAvecLibelleOrderBy = {
 export type EntitesAvecLibelleOrderBy = typeof EntitesAvecLibelleOrderBy[keyof typeof EntitesAvecLibelleOrderBy];
 export type Espece = {
   __typename?: 'Espece';
-  classeId: Scalars['Int'];
-  code: Scalars['String'];
-  id: Scalars['Int'];
-  nomFrancais: Scalars['String'];
-  nomLatin: Scalars['String'];
-};
-
-export type EspeceWithClasse = {
-  __typename?: 'EspeceWithClasse';
-  classe: Classe;
+  classe?: Maybe<Classe>;
   classeId: Scalars['Int'];
   code: Scalars['String'];
   id: Scalars['Int'];
@@ -423,7 +414,7 @@ export type Query = {
   comportementList?: Maybe<Array<Maybe<Comportement>>>;
   comportements?: Maybe<Array<Maybe<Comportement>>>;
   departements?: Maybe<Array<Maybe<Departement>>>;
-  espece?: Maybe<EspeceWithClasse>;
+  espece?: Maybe<Espece>;
   especes?: Maybe<Array<Maybe<Espece>>>;
   estimationDistance?: Maybe<EstimationDistance>;
   estimationNombre?: Maybe<EstimationNombre>;
@@ -502,6 +493,7 @@ export type QueryEspeceArgs = {
 
 
 export type QueryEspecesArgs = {
+  classeId?: Maybe<Scalars['Int']>;
   params?: Maybe<FindParams>;
 };
 
@@ -811,7 +803,6 @@ export type ResolversTypes = {
   DepartementsPaginatedResult: ResolverTypeWrapper<DepartementsPaginatedResult>;
   EntitesAvecLibelleOrderBy: EntitesAvecLibelleOrderBy;
   Espece: ResolverTypeWrapper<Espece>;
-  EspeceWithClasse: ResolverTypeWrapper<EspeceWithClasse>;
   EspeceWithCounts: ResolverTypeWrapper<EspeceWithCounts>;
   EspecesOrderBy: EspecesOrderBy;
   EspecesPaginatedResult: ResolverTypeWrapper<EspecesPaginatedResult>;
@@ -873,7 +864,6 @@ export type ResolversParentTypes = {
   DepartementWithCounts: DepartementWithCounts;
   DepartementsPaginatedResult: DepartementsPaginatedResult;
   Espece: Espece;
-  EspeceWithClasse: EspeceWithClasse;
   EspeceWithCounts: EspeceWithCounts;
   EspecesPaginatedResult: EspecesPaginatedResult;
   EstimationDistance: EstimationDistance;
@@ -1018,16 +1008,7 @@ export type DepartementsPaginatedResultResolvers<ContextType = any, ParentType e
 };
 
 export type EspeceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Espece'] = ResolversParentTypes['Espece']> = {
-  classeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  nomFrancais?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  nomLatin?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type EspeceWithClasseResolvers<ContextType = any, ParentType extends ResolversParentTypes['EspeceWithClasse'] = ResolversParentTypes['EspeceWithClasse']> = {
-  classe?: Resolver<ResolversTypes['Classe'], ParentType, ContextType>;
+  classe?: Resolver<Maybe<ResolversTypes['Classe']>, ParentType, ContextType>;
   classeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1199,7 +1180,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   comportementList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType, RequireFields<QueryComportementListArgs, 'ids'>>;
   comportements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType, RequireFields<QueryComportementsArgs, never>>;
   departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType>;
-  espece?: Resolver<Maybe<ResolversTypes['EspeceWithClasse']>, ParentType, ContextType, RequireFields<QueryEspeceArgs, 'id'>>;
+  espece?: Resolver<Maybe<ResolversTypes['Espece']>, ParentType, ContextType, RequireFields<QueryEspeceArgs, 'id'>>;
   especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType, RequireFields<QueryEspecesArgs, never>>;
   estimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType, RequireFields<QueryEstimationDistanceArgs, 'id'>>;
   estimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType, RequireFields<QueryEstimationNombreArgs, 'id'>>;
@@ -1294,7 +1275,6 @@ export type Resolvers<ContextType = any> = {
   DepartementWithCounts?: DepartementWithCountsResolvers<ContextType>;
   DepartementsPaginatedResult?: DepartementsPaginatedResultResolvers<ContextType>;
   Espece?: EspeceResolvers<ContextType>;
-  EspeceWithClasse?: EspeceWithClasseResolvers<ContextType>;
   EspeceWithCounts?: EspeceWithCountsResolvers<ContextType>;
   EspecesPaginatedResult?: EspecesPaginatedResultResolvers<ContextType>;
   EstimationDistance?: EstimationDistanceResolvers<ContextType>;
