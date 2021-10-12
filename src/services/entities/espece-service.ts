@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Espece, EspecesPaginatedResult, EspeceWithClasse, FindParams, QueryPaginatedEspecesArgs } from "../../model/graphql";
+import { Espece, EspecesPaginatedResult, FindParams, QueryPaginatedEspecesArgs } from "../../model/graphql";
 import { Espece as EspeceObj } from "../../model/types/espece.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildEspeceFromEspeceDb } from "../../sql/entities-mapping/espece-mapping";
@@ -16,11 +16,8 @@ const DB_SAVE_MAPPING_ESPECE = {
   nom_latin: "nomLatin"
 }
 
-export const findEspece = async (id: number): Promise<EspeceWithClasse | null> => {
+export const findEspece = async (id: number): Promise<Espece | null> => {
   return prisma.espece.findUnique({
-    include: {
-      classe: true
-    },
     where: {
       id
     },
@@ -35,44 +32,61 @@ export const findEspece = async (id: number): Promise<EspeceWithClasse | null> =
   });
 };
 
-export const findEspeces = async (params?: FindParams): Promise<Espece[]> => {
+export const findEspeces = async (options: {
+  params?: FindParams,
+  classeId?: number
+}): Promise<Espece[]> => {
 
+  const { params, classeId } = options ?? {};
   const { q, max } = params ?? {};
+
+  const classeIdClause = classeId ? {
+    classe_id: {
+      equals: classeId
+    }
+  } : {};
 
   const matchingWithCode = await prisma.espece.findMany({
     orderBy: {
       code: "asc"
     },
-    where: q ? {
-      OR: [
-        {
-          code: {
-            startsWith: q
-          }
+    where: {
+      AND: [{
+        code: {
+          startsWith: q || undefined
         }
+      },
+        classeIdClause
       ]
-    } : undefined,
+    },
     take: max || undefined
   });
+
+  const libelleClause = q ? {
+    OR: [
+      {
+        nom_francais: {
+          contains: q
+        }
+      },
+      {
+        nom_latin: {
+          contains: q
+        }
+      }
+    ]
+  } : {}
 
   const matchingWithLibelle = await prisma.espece.findMany({
     orderBy: {
       code: "asc"
     },
-    where: q ? {
-      OR: [
-        {
-          nom_francais: {
-            contains: q
-          }
-        },
-        {
-          nom_latin: {
-            contains: q
-          }
-        }
+    where: {
+      AND: [
+        libelleClause,
+        classeIdClause
       ]
-    } : undefined,
+    },
     take: max || undefined
   });
 

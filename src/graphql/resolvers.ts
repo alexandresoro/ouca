@@ -1,4 +1,4 @@
-import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EspeceWithClasse, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
+import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
 import { findAge, findAges, findPaginatedAges } from "../services/entities/age-service";
 import { findClasse, findClasses, findPaginatedClasses } from "../services/entities/classe-service";
 import { findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
@@ -30,7 +30,7 @@ const resolvers: Resolvers = {
     comportementList: async (_source, args): Promise<Comportement[]> => {
       return findComportementsByIds(args.ids);
     },
-    espece: async (_source, args): Promise<EspeceWithClasse> => {
+    espece: async (_source, args): Promise<Espece> => {
       return findEspece(args.id);
     },
     estimationDistance: async (_source, args): Promise<EstimationDistance> => {
@@ -76,7 +76,10 @@ const resolvers: Resolvers = {
       return findDepartements();
     },
     especes: async (_source, args): Promise<Espece[]> => {
-      return findEspeces(args?.params);
+      return findEspeces({
+        params: args?.params,
+        classeId: args?.classeId
+      });
     },
     estimationsDistance: async (_source, args): Promise<EstimationDistance[]> => {
       return findEstimationsDistance(args?.params);
@@ -151,6 +154,11 @@ const resolvers: Resolvers = {
   Mutation: {
     updateSettings: async (_source, { appConfiguration }): Promise<Settings> => {
       return persistUserSettings(appConfiguration);
+    }
+  },
+  Espece: {
+    classe: async (parent): Promise<Classe> => {
+      return findClasse(parent?.classeId);
     }
   }
 };
