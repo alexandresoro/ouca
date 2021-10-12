@@ -30,7 +30,7 @@ const resolvers: Resolvers = {
     comportementList: async (_source, args): Promise<Comportement[]> => {
       return findComportementsByIds(args.ids);
     },
-    espece: async (_source, args): Promise<Espece> => {
+    espece: async (_source, args): Promise<Omit<Espece, 'classe'>> => {
       return findEspece(args.id);
     },
     estimationDistance: async (_source, args): Promise<EstimationDistance> => {
@@ -75,7 +75,7 @@ const resolvers: Resolvers = {
     departements: async (): Promise<Departement[]> => {
       return findDepartements();
     },
-    especes: async (_source, args): Promise<Espece[]> => {
+    especes: async (_source, args): Promise<Omit<Espece, 'classe'>[]> => {
       return findEspeces({
         params: args?.params,
         classeId: args?.classeId

@@ -116,7 +116,7 @@ export default gql`
     nomFrancais: String!
     nomLatin: String!
     classeId: Int!
-    classe: Classe
+    classe: Classe!
   }
 
   type EspeceWithCounts {

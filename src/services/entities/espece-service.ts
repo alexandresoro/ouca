@@ -16,7 +16,7 @@ const DB_SAVE_MAPPING_ESPECE = {
   nom_latin: "nomLatin"
 }
 
-export const findEspece = async (id: number): Promise<Espece | null> => {
+export const findEspece = async (id: number): Promise<Omit<Espece, 'classe'> | null> => {
   return prisma.espece.findUnique({
     where: {
       id
@@ -35,7 +35,7 @@ export const findEspece = async (id: number): Promise<Espece | null> => {
 export const findEspeces = async (options: {
   params?: FindParams,
   classeId?: number
-}): Promise<Espece[]> => {
+}): Promise<Omit<Espece, 'classe'>[]> => {
 
   const { params, classeId } = options ?? {};
   const { q, max } = params ?? {};
