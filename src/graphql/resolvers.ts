@@ -1,6 +1,6 @@
 import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
 import { findAge, findAges, findPaginatedAges } from "../services/entities/age-service";
-import { findClasse, findClasses, findPaginatedClasses } from "../services/entities/classe-service";
+import { findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses } from "../services/entities/classe-service";
 import { findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
 import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
@@ -158,7 +158,7 @@ const resolvers: Resolvers = {
   },
   Espece: {
     classe: async (parent): Promise<Classe> => {
-      return findClasse(parent?.classeId);
+      return findClasseOfEspeceId(parent?.id);
     }
   }
 };

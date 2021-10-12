@@ -11,6 +11,14 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_CLASSE = createKeyValueMapWithSameName("libelle");
 
+export const findClasseOfEspeceId = async (especeId: number): Promise<Classe | null> => {
+  return prisma.espece.findUnique({
+    where: {
+      id: especeId
+    },
+  }).classe();
+};
+
 export const findClasse = async (id: number): Promise<Classe | null> => {
   return prisma.classe.findUnique({
     where: {
