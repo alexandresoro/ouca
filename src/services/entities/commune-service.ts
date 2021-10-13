@@ -14,25 +14,15 @@ export const findCommune = async (id: number): Promise<Omit<Commune, 'departemen
     where: {
       id
     },
-  }).then(commune => {
-    if (commune == null) {
-      return null;
-    }
-
-    const { departement_id, ...others } = commune;
-    return {
-      ...others,
-      departementId: departement_id,
-    }
-  });
+  }).then(buildCommuneFromCommuneDb);
 };
 
-export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Omit<Commune, 'departement' | 'departementId'> | null> => {
+export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Omit<Commune, 'departement'> | null> => {
   return prisma.lieudit.findUnique({
     where: {
       id: lieuDitId
     },
-  }).commune();
+  }).commune().then(buildCommuneFromCommuneDb);
 };
 
 export const findCommunes = async (options: {
@@ -95,13 +85,7 @@ export const findCommunes = async (options: {
     },
     where: whereClause,
     take: max || undefined
-  }).then(communes => communes.map(commune => {
-    const { departement_id, ...others } = commune;
-    return {
-      ...others,
-      departementId: departement_id,
-    }
-  }));
+  }).then(communes => communes.map(buildCommuneFromCommuneDb));
 };
 
 export const getFilterClauseCommune = (q: string | null | undefined): Prisma.CommuneWhereInput => {

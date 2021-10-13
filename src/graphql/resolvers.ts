@@ -168,7 +168,7 @@ const resolvers: Resolvers = {
     }
   },
   LieuDit: {
-    commune: async (parent): Promise<Omit<Commune, 'departement' | 'departementId'>> => {
+    commune: async (parent): Promise<Omit<Commune, 'departement'>> => {
       return findCommuneOfLieuDitId(parent?.id);
     }
   },
