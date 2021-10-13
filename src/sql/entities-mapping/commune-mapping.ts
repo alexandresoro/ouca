@@ -1,7 +1,7 @@
 import { Commune } from "../../model/graphql";
 import { CommuneDb } from "../../objects/db/commune-db.object";
 
-export const buildCommuneFromCommuneDb = (communeDb: CommuneDb): Commune => {
+export const buildCommuneFromCommuneDb = (communeDb: CommuneDb): Omit<Commune, 'departement'> => {
   return {
     ...communeDb,
     departementId: communeDb.departement_id
@@ -10,7 +10,7 @@ export const buildCommuneFromCommuneDb = (communeDb: CommuneDb): Commune => {
 
 export const buildCommunesFromCommunesDb = (
   communesDb: CommuneDb[]
-): Commune[] => {
+): Omit<Commune, 'departement'>[] => {
   return communesDb.map((communeDb) => {
     return buildCommuneFromCommuneDb(communeDb);
   });

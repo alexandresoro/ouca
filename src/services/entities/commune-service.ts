@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Commune, CommunesPaginatedResult, CommuneWithCounts, QueryPaginatedCommunesArgs } from "../../model/graphql";
+import { Commune, CommunesPaginatedResult, CommuneWithCounts, FindParams, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildCommuneFromCommuneDb } from "../../sql/entities-mapping/commune-mapping";
 import prisma from "../../sql/prisma";
@@ -7,13 +7,94 @@ import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from 
 import { COLUMN_NOM, TABLE_COMMUNE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities, persistEntity } from "./entity-service";
+import { insertMultipleEntities, persistEntityNoCheck } from "./entity-service";
 
-export const findCommunes = async (): Promise<Commune[]> => {
+export const findCommune = async (id: number): Promise<Omit<Commune, 'departement'> | null> => {
+  return prisma.commune.findUnique({
+    where: {
+      id
+    },
+  }).then(commune => {
+    if (commune == null) {
+      return null;
+    }
+
+    const { departement_id, ...others } = commune;
+    return {
+      ...others,
+      departementId: departement_id,
+    }
+  });
+};
+
+export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Omit<Commune, 'departement' | 'departementId'> | null> => {
+  return prisma.lieudit.findUnique({
+    where: {
+      id: lieuDitId
+    },
+  }).commune();
+};
+
+export const findCommunes = async (options: {
+  params?: FindParams,
+  departementId?: number
+}): Promise<Omit<Commune, 'departement'>[]> => {
+
+  const { params, departementId } = options ?? {};
+  const { q, max } = params ?? {};
+
+  // Ugly workaround to search by commune code as they are stored as Int in database,
+  // but we still want to search them as if they were Strings
+  // e.g. we want a commune with id 773 to be returned if the user query is "077" for example
+  const qAsNumber = parseInt(q);
+  const codeCommuneWhereClause = (!isNaN(qAsNumber) && qAsNumber > 0) ? {
+    OR: [
+      {
+        code: {
+          equals: qAsNumber
+        }
+      },
+      (qAsNumber < 10) ? {
+        code: {
+          gte: 100 * qAsNumber,
+          lt: 100 * (qAsNumber + 1)
+        }
+      } : {},
+      (qAsNumber < 100) ? {
+        code: {
+          gte: 10 * qAsNumber,
+          lt: 10 * (qAsNumber + 1)
+        }
+      } : {}
+    ]
+  } : {}
+
+  const whereClause = {
+    AND: [
+      {
+        OR: [
+          codeCommuneWhereClause,
+          {
+            nom: {
+              startsWith: q || undefined
+            }
+          }
+        ]
+      },
+      departementId ? {
+        departement_id: {
+          equals: departementId
+        }
+      } : {}
+    ]
+  }
+
   return prisma.commune.findMany({
     orderBy: {
       nom: "asc"
-    }
+    },
+    where: whereClause,
+    take: max || undefined
   }).then(communes => communes.map(commune => {
     const { departement_id, ...others } = commune;
     return {
@@ -47,7 +128,7 @@ const DB_SAVE_MAPPING_COMMUNE = {
   departement_id: "departementId"
 };
 
-export const findAllCommunes = async (): Promise<Commune[]> => {
+export const findAllCommunes = async (): Promise<Omit<Commune, 'departement'>[]> => {
   const communesDb = await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {
@@ -248,13 +329,17 @@ export const findPaginatedCommunes = async (
 };
 
 export const persistCommune = async (
-  commune: Commune
+  commune: Omit<Commune, 'departement'> & { departementId: number }
 ): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_COMMUNE, commune, DB_SAVE_MAPPING_COMMUNE);
+  const { departementId, ...others } = commune;
+  return persistEntityNoCheck(TABLE_COMMUNE, {
+    ...others,
+    departement_id: departementId
+  });
 };
 
 export const insertCommunes = async (
-  communes: Commune[]
+  communes: Omit<Commune, 'departement'>[]
 ): Promise<SqlSaveResponse> => {
   return insertMultipleEntities(TABLE_COMMUNE, communes, DB_SAVE_MAPPING_COMMUNE);
 };

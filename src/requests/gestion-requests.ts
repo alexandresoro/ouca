@@ -71,12 +71,12 @@ export const deleteDepartementRequest = async (
   return deleteEntity(httpParameters, TABLE_DEPARTEMENT);
 };
 
-export const getCommunesRequest = async (): Promise<Commune[]> => {
+export const getCommunesRequest = async (): Promise<Omit<Commune, 'departement'>[]> => {
   return await findAllCommunes();
 };
 
 export const saveCommuneRequest = async (
-  httpParameters: HttpParameters<Commune>
+  httpParameters: HttpParameters<Omit<Commune, 'departement'> & { departementId: number }>
 ): Promise<PostResponse> => {
   const sqlResponse = await persistCommune(httpParameters.body);
   return buildPostResponseFromSqlResponse(sqlResponse);
@@ -294,7 +294,7 @@ export const exportDepartementsRequest = async (): Promise<unknown> => {
 };
 
 export const exportCommunesRequest = async (): Promise<unknown> => {
-  const communesDb: Commune[] = await findAllCommunes();
+  const communesDb = await findAllCommunes();
   const departements: DepartementWithCounts[] = await findAllDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {

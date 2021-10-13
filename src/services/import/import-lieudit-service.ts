@@ -13,7 +13,7 @@ import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
   private departements: DepartementWithCounts[];
-  private communes: Commune[];
+  private communes: Omit<Commune, 'departement'>[];
   private lieuxDits: Lieudit[];
 
   private lieuxDitsToInsert: LieuditDb[];

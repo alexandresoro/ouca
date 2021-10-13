@@ -1,6 +1,6 @@
 import { Prisma } from ".prisma/client";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
-import { LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
+import { FindParams, LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb } from "../../objects/db/lieudit-db.object";
@@ -14,11 +14,56 @@ import { getFilterClauseCommune } from "./commune-service";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
 import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
 
-export const findLieuxDits = async (): Promise<LieuDit[]> => {
+export const findLieuDit = async (id: number): Promise<Omit<LieuDit, 'commune'> | null> => {
+  return prisma.lieudit.findUnique({
+    where: {
+      id
+    },
+  }).then(lieuDit => {
+    if (lieuDit == null) {
+      return null;
+    }
+
+    const { commune_id, coordinates_system, latitude, longitude, ...others } = lieuDit;
+    return {
+      ...others,
+      latitude: latitude.toNumber(),
+      longitude: longitude.toNumber(),
+      coordinatesSystem: coordinates_system,
+      communeId: commune_id,
+    }
+  });
+};
+
+export const findLieuxDits = async (options: {
+  params?: FindParams,
+  communeId?: number
+}): Promise<Omit<LieuDit, 'commune'>[]> => {
+
+  const { params, communeId } = options ?? {};
+  const { q, max } = params ?? {};
+
+  const whereClause = {
+    AND: [
+      {
+        nom: {
+          startsWith: q || undefined
+        }
+      },
+      communeId ? {
+        commune_id: {
+          equals: communeId
+        }
+      } : {}
+    ]
+  }
+
   return prisma.lieudit.findMany({
     orderBy: {
       nom: "asc"
-    }
+    },
+    where: whereClause,
+    take: max || undefined
   }).then(lieuxDits => lieuxDits.map(lieuDit => {
     const { commune_id, coordinates_system, latitude, longitude, ...others } = lieuDit;
     return {
@@ -49,7 +94,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput
 
 export const findAllLieuxDits = async (options?: {
   where?: Prisma.LieuditWhereInput
-}): Promise<LieuDit[]> => {
+}): Promise<Omit<LieuDit, 'commune'>[]> => {
   const lieuxDitsDb = await prisma.lieudit.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {

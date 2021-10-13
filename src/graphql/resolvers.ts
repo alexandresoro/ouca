@@ -1,15 +1,15 @@
 import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
 import { findAge, findAges, findPaginatedAges } from "../services/entities/age-service";
 import { findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses } from "../services/entities/classe-service";
-import { findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
+import { findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
 import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
-import { findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
+import { findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
 import { findLastDonneeId } from "../services/entities/donnee-service";
 import { findEspece, findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
 import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
-import { findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
+import { findLieuDit, findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
 import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos } from "../services/entities/meteo-service";
 import { findMilieu, findMilieux, findMilieuxByIds, findPaginatedMilieux } from "../services/entities/milieu-service";
 import { findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs } from "../services/entities/observateur-service";
@@ -24,11 +24,17 @@ const resolvers: Resolvers = {
     classe: async (_source, args): Promise<Classe> => {
       return findClasse(args.id);
     },
+    commune: async (_source, args): Promise<Omit<Commune, 'departement'>> => {
+      return findCommune(args.id);
+    },
     comportement: async (_source, args): Promise<Comportement> => {
       return findComportement(args.id);
     },
     comportementList: async (_source, args): Promise<Comportement[]> => {
       return findComportementsByIds(args.ids);
+    },
+    departement: async (_source, args): Promise<Departement> => {
+      return findDepartement(args.id);
     },
     espece: async (_source, args): Promise<Omit<Espece, 'classe'>> => {
       return findEspece(args.id);
@@ -38,6 +44,9 @@ const resolvers: Resolvers = {
     },
     estimationNombre: async (_source, args): Promise<EstimationNombre> => {
       return findEstimationNombre(args.id);
+    },
+    lieuDit: async (_source, args): Promise<Omit<LieuDit, 'commune'>> => {
+      return findLieuDit(args.id);
     },
     meteo: async (_source, args): Promise<Meteo> => {
       return findMeteo(args.id);
@@ -66,20 +75,17 @@ const resolvers: Resolvers = {
     classes: async (_source, args): Promise<Classe[]> => {
       return findClasses(args?.params);
     },
-    communes: async (): Promise<Commune[]> => {
-      return findCommunes();
+    communes: async (_source, args): Promise<Omit<Commune, 'departement'>[]> => {
+      return findCommunes(args);
     },
     comportements: async (_source, args): Promise<Comportement[]> => {
       return findComportements(args?.params);
     },
-    departements: async (): Promise<Departement[]> => {
-      return findDepartements();
+    departements: async (_source, args): Promise<Departement[]> => {
+      return findDepartements(args?.params);
     },
     especes: async (_source, args): Promise<Omit<Espece, 'classe'>[]> => {
-      return findEspeces({
-        params: args?.params,
-        classeId: args?.classeId
-      });
+      return findEspeces(args);
     },
     estimationsDistance: async (_source, args): Promise<EstimationDistance[]> => {
       return findEstimationsDistance(args?.params);
@@ -87,8 +93,8 @@ const resolvers: Resolvers = {
     estimationsNombre: async (_source, args): Promise<EstimationNombre[]> => {
       return findEstimationsNombre(args?.params);
     },
-    lieuxDits: async (): Promise<LieuDit[]> => {
-      return findLieuxDits();
+    lieuxDits: async (_source, args): Promise<Omit<LieuDit, 'commune'>[]> => {
+      return findLieuxDits(args);
     },
     meteos: async (): Promise<Meteo[]> => {
       return findMeteos();
@@ -154,6 +160,16 @@ const resolvers: Resolvers = {
   Mutation: {
     updateSettings: async (_source, { appConfiguration }): Promise<Settings> => {
       return persistUserSettings(appConfiguration);
+    }
+  },
+  Commune: {
+    departement: async (parent): Promise<Departement> => {
+      return findDepartementOfCommuneId(parent?.id);
+    }
+  },
+  LieuDit: {
+    commune: async (parent): Promise<Omit<Commune, 'departement' | 'departementId'>> => {
+      return findCommuneOfLieuDitId(parent?.id);
     }
   },
   Espece: {

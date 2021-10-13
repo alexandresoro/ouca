@@ -22,6 +22,10 @@ export const findEspece = async (id: number): Promise<Omit<Espece, 'classe'> | n
       id
     },
   }).then(espece => {
+    if (espece == null) {
+      return null;
+    }
+
     const { nom_francais, nom_latin, classe_id, ...others } = espece;
     return {
       ...others,

@@ -29,8 +29,8 @@ export class ImportDonneeService extends ImportService {
   private coordinatesSystem: CoordinatesSystem;
   private observateurs: ObservateurWithCounts[];
   private departements: DepartementWithCounts[];
-  private communes: Commune[];
-  private lieuxDits: LieuDit[];
+  private communes: Omit<Commune, 'departement'>[];
+  private lieuxDits: Omit<LieuDit, 'commune'>[];
   private especes: Espece[];
   private ages: AgeWithCounts[];
   private sexes: SexeWithCounts[];
@@ -117,7 +117,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Commune" or return an error if it does not exist
-    const commune: Commune = this.findCommune(departement.id, importedDonnee.commune);
+    const commune = this.findCommune(departement.id, importedDonnee.commune);
     if (!commune) {
       return `La commune avec pour code ou nom ${importedDonnee.commune} n'existe pas dans le département ${departement.code}`;
     }
@@ -362,7 +362,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findCommune = (departementId: number, nomOrCodeCommune: string): Commune => {
+  private findCommune = (departementId: number, nomOrCodeCommune: string): Omit<Commune, 'departement'> => {
     return this.communes.find((commune) => {
       return (
         commune.departementId === departementId &&
@@ -371,7 +371,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findLieuDit = (communeId: number, nomLieuDit: string): LieuDit => {
+  private findLieuDit = (communeId: number, nomLieuDit: string): Omit<LieuDit, 'commune'> => {
     return this.lieuxDits.find((lieuDit) => {
       return lieuDit.communeId === communeId && this.compareStrings(lieuDit.nom, nomLieuDit);
     });

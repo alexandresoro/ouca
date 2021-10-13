@@ -7,9 +7,9 @@ import { ImportService } from "./import-service";
 export class ImportCommuneService extends ImportService {
 
   private departements: DepartementWithCounts[];
-  private communes: Commune[];
+  private communes: Omit<Commune, 'departement'>[];
 
-  private communesToInsert: Commune[];
+  private communesToInsert: Omit<Commune, 'departement'>[];
 
   protected getNumberOfColumns = (): number => {
     return 3;

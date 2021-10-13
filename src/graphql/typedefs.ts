@@ -99,6 +99,7 @@ export default gql`
     code: Int!    
     nom: String!
     departementId: Int!
+    departement: Departement!
   }
 
   type CommuneWithCounts {
@@ -170,6 +171,7 @@ export default gql`
     latitude: Float!
     coordinatesSystem: CoordinatesSystemType!
     communeId: Int!
+    commune: Commune!
   }
 
   type LieuDitWithCounts {
@@ -391,11 +393,14 @@ export default gql`
   type Query {
     age(id: Int!): Age
     classe(id: Int!): Classe
+    commune(id: Int!): Commune
     comportement(id: Int!): Comportement
     comportementList(ids: [Int!]!): [Comportement]
+    departement(id: Int!): Departement
     espece(id: Int!): Espece
     estimationDistance(id: Int!): EstimationDistance
     estimationNombre(id: Int!): EstimationNombre
+    lieuDit(id: Int!): LieuDit
     meteo(id: Int!): Meteo
     meteoList(ids: [Int!]!): [Meteo]
     milieu(id: Int!): Milieu
@@ -405,11 +410,11 @@ export default gql`
     sexe(id: Int!): Sexe
     ages(params: FindParams): [Age]
     classes(params: FindParams): [Classe]
-    communes: [Commune]
+    communes(params: FindParams, departementId: Int): [Commune]
     comportements(params: FindParams): [Comportement]
-    departements: [Departement]
+    departements(params: FindParams): [Departement]
     especes(params: FindParams, classeId: Int): [Espece]
-    lieuxDits: [LieuDit]
+    lieuxDits(params: FindParams, communeId: Int): [LieuDit]
     estimationsDistance(params: FindParams): [EstimationDistance]
     estimationsNombre(params: FindParams): [EstimationNombre]
     meteos: [Meteo]
@@ -432,7 +437,6 @@ export default gql`
     paginatedSexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
     settings: Settings
     version: Version
-    status: Int
   }
 
   type Mutation {

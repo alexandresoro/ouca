@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { Departement, DepartementsPaginatedResult, DepartementWithCounts, QueryPaginatedDepartementsArgs } from "../../model/graphql";
+import { Departement, DepartementsPaginatedResult, DepartementWithCounts, FindParams, QueryPaginatedDepartementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
@@ -18,11 +18,36 @@ export const getFilterClauseDepartement = (q: string | null | undefined): Prisma
 
 const DB_SAVE_MAPPING_DEPARTEMENT = createKeyValueMapWithSameName("code");
 
-export const findDepartements = async (): Promise<Departement[]> => {
+export const findDepartement = async (id: number): Promise<Departement | null> => {
+  return prisma.departement.findUnique({
+    where: {
+      id
+    },
+  });
+};
+
+export const findDepartementOfCommuneId = async (communeId: number): Promise<Departement | null> => {
+  return prisma.commune.findUnique({
+    where: {
+      id: communeId
+    },
+  }).departement();
+};
+
+export const findDepartements = async (params?: FindParams): Promise<Departement[]> => {
+
+  const { q, max } = params ?? {};
+
   return prisma.departement.findMany({
     orderBy: {
       code: "asc"
-    }
+    },
+    where: {
+      code: {
+        startsWith: q || undefined
+      }
+    },
+    take: max || undefined
   });
 };
 

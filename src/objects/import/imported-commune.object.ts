@@ -22,7 +22,7 @@ export class ImportedCommune {
 
   buildCommune = (
     departementId: number
-  ): Commune => {
+  ): Omit<Commune, 'departement'> => {
     return {
       id: null,
       departementId,
