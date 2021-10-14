@@ -17,16 +17,6 @@ export const findEstimationNombre = async (id: number): Promise<EstimationNombre
     where: {
       id
     },
-  }).then(estimation => {
-    if (estimation == null) {
-      return null;
-    }
-
-    const { non_compte, ...others } = estimation;
-    return {
-      ...others,
-      nonCompte: non_compte
-    }
   });
 };
 
@@ -44,13 +34,7 @@ export const findEstimationsNombre = async (params?: FindParams): Promise<Estima
       }
     },
     take: max || undefined
-  }).then(estimations => estimations.map(estimation => {
-    const { non_compte, ...others } = estimation;
-    return {
-      ...others,
-      nonCompte: non_compte
-    }
-  }));
+  });
 };
 
 export const findAllEstimationsNombre = async (options: {
@@ -73,10 +57,8 @@ export const findAllEstimationsNombre = async (options: {
   });
 
   return estimationsDb.map((estimation) => {
-    const { non_compte, ...rest } = estimation;
     return {
-      ...rest,
-      nonCompte: non_compte,
+      ...estimation,
       ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
     }
   });
@@ -93,13 +75,9 @@ export const findPaginatedEstimationsNombre = async (
   switch (orderByField) {
     case "id":
     case "libelle":
-      orderBy = {
-        [orderByField]: sortOrder
-      }
-      break;
     case "nonCompte":
       orderBy = {
-        "non_compte": sortOrder
+        [orderByField]: sortOrder
       }
       break;
     case "nbDonnees": {
@@ -133,10 +111,8 @@ export const findPaginatedEstimationsNombre = async (
 
   return {
     result: estimationsNombre.map((estimation) => {
-      const { non_compte, ...rest } = estimation;
       return {
-        ...rest,
-        nonCompte: non_compte,
+        ...estimation,
         ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
       }
     }),

@@ -1,8 +1,8 @@
+import { Lieudit as LieuditDb } from "@prisma/client";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 import { Commune, DepartementWithCounts } from "../../model/graphql";
 import { Lieudit } from "../../model/types/lieudit.model";
-import { LieuditDb } from "../../objects/db/lieudit-db.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { buildLieuditDbFromLieudit } from "../../sql/entities-mapping/lieudit-mapping";
 import { findAllCommunes } from "../entities/commune-service";
@@ -86,7 +86,14 @@ export class ImportLieuxditService extends ImportService {
 
   protected persistAllValidEntities = async (): Promise<void> => {
     if (this.lieuxDitsToInsert.length) {
-      await insertLieuxDits(this.lieuxDitsToInsert);
+      await insertLieuxDits(this.lieuxDitsToInsert.map((lieuDit) => {
+        const { communeId, coordinatesSystem, ...others } = lieuDit;
+        return {
+          ...others,
+          coordinates_system: coordinatesSystem, // TODO check this once migrated properly
+          commune_id: communeId
+        }
+      }));
     }
   }
 

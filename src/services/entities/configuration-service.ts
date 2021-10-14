@@ -1,15 +1,14 @@
 
-import { CoordinatesSystem } from "@prisma/client";
+import { CoordinatesSystem, Settings as SettingsDb } from "@prisma/client";
 import { InputSettings, Settings } from "../../model/graphql";
-import { buildSettingsDbFromInputSettings, buildSettingsFromSettingsDb } from "../../sql/entities-mapping/settings-mapping";
 import prisma from "../../sql/prisma";
 
 const includedElements = {
-  observateur: true,
-  departement: true,
-  age: true,
-  sexe: true,
-  estimation_nombre: true
+  defaultObservateur: true,
+  defaultDepartement: true,
+  defaultAge: true,
+  defaultSexe: true,
+  defaultEstimationNombre: true
 }
 
 export const findAppConfiguration = async (): Promise<Settings> => {
@@ -18,7 +17,32 @@ export const findAppConfiguration = async (): Promise<Settings> => {
     include: includedElements
   });
 
-  return buildSettingsFromSettingsDb(settingsDb);
+  return settingsDb;
+};
+
+export const findCoordinatesSystem = async (): Promise<CoordinatesSystem> => {
+  return prisma.settings.findFirst().then(settings => settings.coordinatesSystem);
+};
+
+
+const buildSettingsDbFromInputSettings = (
+  appConfiguration: InputSettings
+): SettingsDb => {
+  return {
+    id: appConfiguration.id,
+    defaultObservateurId: appConfiguration.defaultObservateur,
+    defaultDepartementId: appConfiguration.defaultDepartement,
+    defaultAgeId: appConfiguration.defaultAge,
+    defaultSexeId: appConfiguration.defaultSexe,
+    defaultEstimationNombreId: appConfiguration.defaultEstimationNombre,
+    defaultNombre: appConfiguration.defaultNombre,
+    areAssociesDisplayed: appConfiguration.areAssociesDisplayed,
+    isMeteoDisplayed: appConfiguration.isMeteoDisplayed,
+    isDistanceDisplayed: appConfiguration.isDistanceDisplayed,
+    isRegroupementDisplayed: appConfiguration.isRegroupementDisplayed,
+    coordinatesSystem: appConfiguration.coordinatesSystem,
+    user_id: undefined // TODO handle multi users someday
+  };
 };
 
 export const persistUserSettings = async (appConfiguration: InputSettings): Promise<Settings> => {
@@ -33,9 +57,5 @@ export const persistUserSettings = async (appConfiguration: InputSettings): Prom
     }
   });
 
-  return buildSettingsFromSettingsDb(updatedSettingsDb);
-};
-
-export const findCoordinatesSystem = async (): Promise<CoordinatesSystem> => {
-  return prisma.settings.findFirst().then(settings => settings.coordinates_system);
+  return updatedSettingsDb;
 };

@@ -1,11 +1,12 @@
 import { Prisma } from ".prisma/client";
+import { Lieudit as LieuditDb } from "@prisma/client";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { FindParams, LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Lieudit } from "../../model/types/lieudit.model";
-import { LieuditDb } from "../../objects/db/lieudit-db.object";
+import { LieuditDb as LieuditObj } from "../../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { buildLieuditDbFromLieudit, buildLieuditFromLieuditDb } from "../../sql/entities-mapping/lieudit-mapping";
+import { buildLieuditDbFromLieudit } from "../../sql/entities-mapping/lieudit-mapping";
 import prisma from "../../sql/prisma";
 import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_NOM, TABLE_LIEUDIT } from "../../utils/constants";
@@ -14,25 +15,27 @@ import { getFilterClauseCommune } from "./commune-service";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
 import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
 
+const buildLieuditFromLieuditDb = <T extends LieuditDb>(lieuditDb: T): Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number } => {
+
+  if (lieuditDb == null) {
+    return null;
+  }
+
+  const { latitude, longitude, ...others } = lieuditDb;
+
+  return {
+    ...others,
+    longitude: longitude.toNumber(),
+    latitude: latitude.toNumber(),
+  };
+};
+
 export const findLieuDit = async (id: number): Promise<Omit<LieuDit, 'commune'> | null> => {
   return prisma.lieudit.findUnique({
     where: {
       id
     },
-  }).then(lieuDit => {
-    if (lieuDit == null) {
-      return null;
-    }
-
-    const { commune_id, coordinates_system, latitude, longitude, ...others } = lieuDit;
-    return {
-      ...others,
-      latitude: latitude.toNumber(),
-      longitude: longitude.toNumber(),
-      coordinatesSystem: coordinates_system,
-      communeId: commune_id,
-    }
-  });
+  }).then(buildLieuditFromLieuditDb);
 };
 
 export const findLieuxDits = async (options: {
@@ -64,16 +67,7 @@ export const findLieuxDits = async (options: {
     },
     where: whereClause,
     take: max || undefined
-  }).then(lieuxDits => lieuxDits.map(lieuDit => {
-    const { commune_id, coordinates_system, latitude, longitude, ...others } = lieuDit;
-    return {
-      ...others,
-      latitude: latitude.toNumber(),
-      longitude: longitude.toNumber(),
-      coordinatesSystem: coordinates_system,
-      communeId: commune_id,
-    }
-  }));
+  }).then(lieuxDits => lieuxDits.map(buildLieuditFromLieuditDb));
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput => {
@@ -116,14 +110,8 @@ export const findAllLieuxDits = async (options?: {
       return inventaire._count.donnee;
     }).reduce(counterReducer, 0);
 
-    const { commune_id, coordinates_system, latitude, longitude, ...others } = lieudit
-
     return {
-      ...others,
-      communeId: commune_id,
-      coordinatesSystem: coordinates_system,
-      longitude: longitude.toNumber(),
-      latitude: latitude.toNumber(),
+      ...buildLieuditFromLieuditDb(lieudit),
       nbDonnees
     }
   });
@@ -201,12 +189,8 @@ export const findPaginatedLieuxDits = async (
     lieuxDits = nbDonneesForFilteredLieuxDits.map((lieuditInfo) => {
       const lieudit = lieuxDitsRq?.find(lieudit => lieudit.id === lieuditInfo.id);
 
-      const { latitude, longitude, coordinates_system, ...otherFields } = lieudit;
       return {
-        ...otherFields,
-        latitude: latitude.toNumber(),
-        longitude: longitude.toNumber(),
-        coordinatesSystem: coordinates_system,
+        ...buildLieuditFromLieuditDb(lieudit),
         nbDonnees: lieuditInfo.nbDonnees
       };
     })
@@ -284,12 +268,8 @@ export const findPaginatedLieuxDits = async (
         return inventaire._count.donnee;
       }).reduce(counterReducer, 0);
 
-      const { latitude, longitude, coordinates_system, ...otherFields } = lieudit;
       return {
-        ...otherFields,
-        latitude: latitude.toNumber(),
-        longitude: longitude.toNumber(),
-        coordinatesSystem: coordinates_system,
+        ...buildLieuditFromLieuditDb(lieudit),
         nbDonnees
       };
     })
@@ -313,7 +293,7 @@ export const findLieuDitById = async (lieuditId: number): Promise<Lieudit> => {
     }
   });
 
-  return buildLieuditFromLieuditDb(lieuDitDb);
+  return buildLieuditFromLieuditDb(lieuDitDb); // TODO fix this that is now incorrect
 };
 
 const getCoordinatesToPersist = async (
@@ -348,7 +328,7 @@ export const persistLieuDit = async (
 };
 
 export const insertLieuxDits = async (
-  lieuxDits: LieuditDb[]
+  lieuxDits: LieuditObj[]
 ): Promise<SqlSaveResponse> => {
   return insertMultipleEntitiesNoCheck(TABLE_LIEUDIT, lieuxDits);
 };

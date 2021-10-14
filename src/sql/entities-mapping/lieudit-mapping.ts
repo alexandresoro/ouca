@@ -1,42 +1,25 @@
+import { Lieudit as LieuditDb } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime";
-import { Lieudit } from "../../model/types/lieudit.model";
-import { LieuditDb } from "../../objects/db/lieudit-db.object";
+import { Lieudit as LieuditObj } from "../../model/types/lieudit.model";
 
-export const buildLieuditFromLieuditDb = (lieuditDb: LieuditDb): Lieudit => {
+export const buildLieuditDbFromLieudit = (lieudit: LieuditObj): LieuditDb => {
   return {
-    id: lieuditDb.id,
-    communeId: lieuditDb.commune_id,
-    nom: lieuditDb.nom,
-    altitude: lieuditDb.altitude,
-    coordinates: {
-      longitude: lieuditDb.longitude.toNumber(),
-      latitude: lieuditDb.latitude.toNumber(),
-      system: lieuditDb.coordinates_system
-    }
-  };
-};
-
-export const buildLieuxditsFromLieuxditsDb = (
-  lieuxditsDb: LieuditDb[]
-): Lieudit[] => {
-  return lieuxditsDb.map((lieuditDb) => {
-    return buildLieuditFromLieuditDb(lieuditDb);
-  });
-};
-
-export const buildLieuditDbFromLieudit = (lieudit: Lieudit): LieuditDb => {
-  const lieuditDb: LieuditDb = {
     id: lieudit.id,
-    commune_id: lieudit.communeId,
+    communeId: lieudit.communeId,
     nom: lieudit.nom,
-    altitude: lieudit.altitude
+    altitude: lieudit.altitude,
+    latitude_l2e: null,
+    longitude_l2e: null,
+    ...(
+      Object.prototype.hasOwnProperty.call(lieudit, "coordinates") ? {
+        longitude: new Decimal(lieudit.coordinates.longitude),
+        latitude: new Decimal(lieudit.coordinates.latitude),
+        coordinatesSystem: lieudit.coordinates.system
+      } : {
+        longitude: null,
+        latitude: null,
+        coordinatesSystem: null
+      }
+    )
   };
-
-  if (Object.prototype.hasOwnProperty.call(lieudit, "coordinates")) {
-    lieuditDb.longitude = new Decimal(lieudit.coordinates.longitude);
-    lieuditDb.latitude = new Decimal(lieudit.coordinates.latitude);
-    lieuditDb.coordinates_system = lieudit.coordinates.system;
-  }
-
-  return lieuditDb;
 };

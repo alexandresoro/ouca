@@ -1,7 +1,6 @@
 import { Nicheur, Prisma } from "@prisma/client";
 import { Comportement, ComportementsPaginatedResult, ComportementWithCounts, FindParams, QueryPaginatedComportementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { buildComportementDbFromComportement } from "../../sql/entities-mapping/comportement-mapping";
 import prisma from "../../sql/prisma";
 import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_COMPORTEMENT } from "../../utils/constants";
@@ -191,13 +190,11 @@ export const findPaginatedComportements = async (
 export const persistComportement = async (
   comportement: Comportement
 ): Promise<SqlSaveResponse> => {
-  const comportementDb = buildComportementDbFromComportement(comportement);
-  return persistEntityNoCheck(TABLE_COMPORTEMENT, comportementDb);
+  return persistEntityNoCheck(TABLE_COMPORTEMENT, comportement);
 };
 
 export const insertComportements = (
   comportements: Comportement[]
 ): Promise<SqlSaveResponse> => {
-  const comportementsDb = comportements.map(buildComportementDbFromComportement);
-  return insertMultipleEntitiesNoCheck(TABLE_COMPORTEMENT, comportementsDb);
+  return insertMultipleEntitiesNoCheck(TABLE_COMPORTEMENT, comportements);
 };

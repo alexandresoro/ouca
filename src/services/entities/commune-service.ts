@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { Commune, CommunesPaginatedResult, CommuneWithCounts, FindParams, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { buildCommuneFromCommuneDb } from "../../sql/entities-mapping/commune-mapping";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_NOM, TABLE_COMMUNE } from "../../utils/constants";
@@ -14,7 +13,7 @@ export const findCommune = async (id: number): Promise<Omit<Commune, 'departemen
     where: {
       id
     },
-  }).then(buildCommuneFromCommuneDb);
+  });
 };
 
 export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Omit<Commune, 'departement'> | null> => {
@@ -22,7 +21,7 @@ export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Omit<Co
     where: {
       id: lieuDitId
     },
-  }).commune().then(buildCommuneFromCommuneDb);
+  }).commune();
 };
 
 export const findCommunes = async (options: {
@@ -85,7 +84,7 @@ export const findCommunes = async (options: {
     },
     where: whereClause,
     take: max || undefined
-  }).then(communes => communes.map(buildCommuneFromCommuneDb));
+  });
 };
 
 export const getFilterClauseCommune = (q: string | null | undefined): Prisma.CommuneWhereInput => {
@@ -145,7 +144,7 @@ export const findAllCommunes = async (): Promise<Omit<Commune, 'departement'>[]>
     }).flat(2).reduce(counterReducer, 0)
 
     return {
-      ...buildCommuneFromCommuneDb(commune),
+      ...commune,
       nbLieuxdits: commune._count.lieudit,
       nbDonnees
     }

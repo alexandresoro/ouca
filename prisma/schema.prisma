@@ -25,16 +25,16 @@ model Classe {
 }
 
 model Commune {
-  id             Int         @id @default(autoincrement()) @db.UnsignedSmallInt
-  departement_id Int         @db.UnsignedSmallInt
-  code           Int         @db.UnsignedSmallInt
-  nom            String      @db.VarChar(100)
-  departement    Departement @relation(fields: [departement_id], references: [id])
-  lieudit        Lieudit[]
+  id            Int         @id @default(autoincrement()) @db.UnsignedSmallInt
+  departementId Int         @map("departement_id") @db.UnsignedSmallInt
+  code          Int         @db.UnsignedSmallInt
+  nom           String      @db.VarChar(100)
+  departement   Departement @relation(fields: [departementId], references: [id])
+  lieudit       Lieudit[]
 
-  @@unique([departement_id, code], name: "idx_unq_commune_1")
-  @@unique([departement_id, nom], name: "idx_unq_commune_2")
-  @@unique([departement_id, code, nom], name: "idx_unq_commune_3")
+  @@unique([departementId, code], name: "idx_unq_commune_1")
+  @@unique([departementId, nom], name: "idx_unq_commune_2")
+  @@unique([departementId, code, nom], name: "idx_unq_commune_3")
   @@map("commune")
 }
 
@@ -48,7 +48,7 @@ model Comportement {
   id                  Int                   @id @default(autoincrement()) @db.UnsignedSmallInt
   code                String                @unique @db.VarChar(6)
   libelle             String                @unique @db.VarChar(100)
-  nicheur             Nicheur?              
+  nicheur             Nicheur?
   donnee_comportement donnee_comportement[]
 
   @@unique([code, libelle], name: "idx_unq_comportement")
@@ -85,12 +85,13 @@ model Donnee {
   date_creation          DateTime              @db.DateTime(0)
   age                    Age                   @relation(fields: [age_id], references: [id])
   espece                 Espece                @relation(fields: [espece_id], references: [id])
-  estimation_nombre      EstimationNombre     @relation(fields: [estimation_nombre_id], references: [id])
+  estimation_nombre      EstimationNombre      @relation(fields: [estimation_nombre_id], references: [id])
   estimation_distance    EstimationDistance?   @relation(fields: [estimation_distance_id], references: [id])
   inventaire             Inventaire            @relation(fields: [inventaire_id], references: [id])
   sexe                   Sexe                  @relation(fields: [sexe_id], references: [id])
   donnee_comportement    donnee_comportement[]
   donnee_milieu          donnee_milieu[]
+
 
   @@index([age_id], name: "fk_donnee_age_id")
   @@index([espece_id], name: "fk_donnee_espece_id")
@@ -98,7 +99,6 @@ model Donnee {
   @@index([estimation_distance_id], name: "fk_donnee_estimationdistance_id")
   @@index([inventaire_id], name: "fk_donnee_inventaire_id")
   @@index([sexe_id], name: "fk_donnee_sexe_id")
-
   @@map("donnee")
 }
 
@@ -123,40 +123,40 @@ model donnee_milieu {
 }
 
 model Espece {
-  id           Int      @id @default(autoincrement()) @db.UnsignedMediumInt
-  classe_id    Int?     @db.UnsignedSmallInt
-  code         String   @db.VarChar(20)
-  nom_francais String   @db.VarChar(100)
-  nom_latin    String   @db.VarChar(100)
-  classe       Classe?  @relation(fields: [classe_id], references: [id])
-  donnee       Donnee[]
+  id          Int      @id @default(autoincrement()) @db.UnsignedMediumInt
+  classeId    Int?     @map("classe_id") @db.UnsignedSmallInt
+  code        String   @db.VarChar(20)
+  nomFrancais String   @map("nom_francais") @db.VarChar(100)
+  nomLatin    String   @map("nom_latin") @db.VarChar(100)
+  classe      Classe?  @relation(fields: [classeId], references: [id])
+  donnee      Donnee[]
 
-  @@unique([classe_id, code], name: "idx_unq_espece_1")
-  @@unique([classe_id, nom_francais], name: "idx_unq_espece_2")
-  @@unique([classe_id, nom_latin], name: "idx_unq_espece_3")
-  @@unique([classe_id, nom_francais, nom_latin], name: "idx_unq_espece_4")
-  @@unique([classe_id, code, nom_latin], name: "idx_unq_espece_5")
-  @@unique([classe_id, code, nom_francais], name: "idx_unq_espece_6")
-  @@unique([classe_id, code, nom_francais, nom_latin], name: "idx_unq_espece_7")
 
+  @@unique([classeId, code], name: "idx_unq_espece_1")
+  @@unique([classeId, nomFrancais], name: "idx_unq_espece_2")
+  @@unique([classeId, nomLatin], name: "idx_unq_espece_3")
+  @@unique([classeId, nomFrancais, nomLatin], name: "idx_unq_espece_4")
+  @@unique([classeId, code, nomLatin], name: "idx_unq_espece_5")
+  @@unique([classeId, code, nomFrancais], name: "idx_unq_espece_6")
+  @@unique([classeId, code, nomFrancais, nomLatin], name: "idx_unq_espece_7")
   @@map("espece")
 }
 
 model EstimationDistance {
-  id      Int    @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle String @unique @db.VarChar(100)
-  donnee     Donnee[]
+  id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle String   @unique @db.VarChar(100)
+  donnee  Donnee[]
 
   @@map("estimation_distance")
 }
 
 model EstimationNombre {
-  id         Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle    String     @unique @db.VarChar(100)
-  non_compte Boolean    @db.Bit(1)
-  donnee     Donnee[]
-  settings   Settings[]
-    
+  id        Int        @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle   String     @unique @db.VarChar(100)
+  nonCompte Boolean    @map("non_compte") @db.Bit(1)
+  donnee    Donnee[]
+  settings  Settings[]
+
   @@map("estimation_nombre")
 }
 
@@ -208,19 +208,19 @@ model inventaire_meteo {
 }
 
 model Lieudit {
-  id                 Int          @id @default(autoincrement()) @db.UnsignedMediumInt
-  commune_id         Int          @db.UnsignedSmallInt
-  nom                String       @db.VarChar(150)
-  altitude           Int          @db.UnsignedSmallInt
-  longitude          Decimal?     @db.Decimal(13, 6)
-  latitude           Decimal?     @db.Decimal(13, 6)
-  coordinates_system CoordinatesSystem
-  longitude_l2e      Int?         @db.UnsignedMediumInt
-  latitude_l2e       Int?         @db.UnsignedMediumInt
-  commune            Commune      @relation(fields: [commune_id], references: [id])
-  inventaire         Inventaire[]
+  id                Int               @id @default(autoincrement()) @db.UnsignedMediumInt
+  communeId         Int               @map("commune_id") @db.UnsignedSmallInt
+  nom               String            @db.VarChar(150)
+  altitude          Int               @db.UnsignedSmallInt
+  longitude         Decimal?          @db.Decimal(13, 6)
+  latitude          Decimal?          @db.Decimal(13, 6)
+  coordinatesSystem CoordinatesSystem @map("coordinates_system")
+  longitude_l2e     Int?              @db.UnsignedMediumInt
+  latitude_l2e      Int?              @db.UnsignedMediumInt
+  commune           Commune           @relation(fields: [communeId], references: [id])
+  inventaire        Inventaire[]
 
-  @@unique([commune_id, nom], name: "idx_unq_lieudit")
+  @@unique([communeId, nom], name: "idx_unq_lieudit")
   @@map("lieudit")
 }
 
@@ -257,32 +257,32 @@ enum CoordinatesSystem {
 }
 
 model Settings {
-  id                           Int                @id @default(autoincrement()) @db.UnsignedSmallInt
-  user_id                      Int                @unique @db.UnsignedSmallInt
-  default_observateur_id       Int?               @db.UnsignedSmallInt
-  default_departement_id       Int?               @db.UnsignedSmallInt
-  default_age_id               Int?               @db.UnsignedSmallInt
-  default_sexe_id              Int?               @db.UnsignedSmallInt
-  default_estimation_nombre_id Int?               @db.UnsignedSmallInt
-  default_nombre               Int?               @db.UnsignedSmallInt
-  are_associes_displayed       Boolean            @default(dbgenerated("(b'1')")) @db.Bit(1)
-  is_meteo_displayed           Boolean            @default(dbgenerated("(b'1')")) @db.Bit(1)
-  is_distance_displayed        Boolean            @default(dbgenerated("(b'1')")) @db.Bit(1)
-  is_regroupement_displayed    Boolean            @default(dbgenerated("(b'1')")) @db.Bit(1)
-  coordinates_system           CoordinatesSystem  @default(gps)
-  age                          Age?               @relation(fields: [default_age_id], references: [id])
-  departement                  Departement?       @relation(fields: [default_departement_id], references: [id])
-  estimation_nombre            EstimationNombre?  @relation(fields: [default_estimation_nombre_id], references: [id])
-  observateur                  Observateur?       @relation(fields: [default_observateur_id], references: [id])
-  sexe                         Sexe?              @relation(fields: [default_sexe_id], references: [id])
-  user                         User               @relation(fields: [user_id], references: [id])
+  id                        Int               @id @default(autoincrement()) @db.UnsignedSmallInt
+  user_id                   Int               @unique @db.UnsignedSmallInt
+  defaultObservateurId      Int?              @map("default_observateur_id") @db.UnsignedSmallInt
+  defaultDepartementId      Int?              @map("default_departement_id") @db.UnsignedSmallInt
+  defaultAgeId              Int?              @map("default_age_id") @db.UnsignedSmallInt
+  defaultSexeId             Int?              @map("default_sexe_id") @db.UnsignedSmallInt
+  defaultEstimationNombreId Int?              @map("default_estimation_nombre_id") @db.UnsignedSmallInt
+  defaultNombre             Int?              @map("default_nombre") @db.UnsignedSmallInt
+  areAssociesDisplayed      Boolean           @default(dbgenerated("(b'1')")) @map("are_associes_displayed") @db.Bit(1)
+  isMeteoDisplayed          Boolean           @default(dbgenerated("(b'1')")) @map("is_meteo_displayed") @db.Bit(1)
+  isDistanceDisplayed       Boolean           @default(dbgenerated("(b'1')")) @map("is_distance_displayed") @db.Bit(1)
+  isRegroupementDisplayed   Boolean           @default(dbgenerated("(b'1')")) @map("is_regroupement_displayed") @db.Bit(1)
+  coordinatesSystem         CoordinatesSystem @default(gps) @map("coordinates_system")
+  defaultAge                Age?              @relation(fields: [defaultAgeId], references: [id])
+  defaultDepartement        Departement?      @relation(fields: [defaultDepartementId], references: [id])
+  defaultEstimationNombre   EstimationNombre? @relation(fields: [defaultEstimationNombreId], references: [id])
+  defaultObservateur        Observateur?      @relation(fields: [defaultObservateurId], references: [id])
+  defaultSexe               Sexe?             @relation(fields: [defaultSexeId], references: [id])
+  user                      User              @relation(fields: [user_id], references: [id])
 
-  @@index([default_age_id], name: "fk_settings_age_id")
-  @@index([default_departement_id], name: "fk_settings_departement_id")
-  @@index([default_estimation_nombre_id], name: "fk_settings_estimation_nombre_id")
-  @@index([default_observateur_id], name: "fk_settings_observateur_id")
-  @@index([default_sexe_id], name: "fk_settings_sexe_id")
 
+  @@index([defaultAgeId], name: "fk_settings_age_id")
+  @@index([defaultDepartementId], name: "fk_settings_departement_id")
+  @@index([defaultEstimationNombreId], name: "fk_settings_estimation_nombre_id")
+  @@index([defaultObservateurId], name: "fk_settings_observateur_id")
+  @@index([defaultSexeId], name: "fk_settings_sexe_id")
   @@map("settings")
 }
 

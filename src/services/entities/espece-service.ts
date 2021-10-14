@@ -1,8 +1,7 @@
-import { Prisma } from "@prisma/client";
-import { Espece, EspecesPaginatedResult, FindParams, QueryPaginatedEspecesArgs } from "../../model/graphql";
+import { Espece as EspeceDb, Prisma } from "@prisma/client";
+import { EspecesPaginatedResult, FindParams, QueryPaginatedEspecesArgs } from "../../model/graphql";
 import { Espece as EspeceObj } from "../../model/types/espece.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { buildEspeceFromEspeceDb } from "../../sql/entities-mapping/espece-mapping";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_ESPECE } from "../../utils/constants";
@@ -16,36 +15,24 @@ const DB_SAVE_MAPPING_ESPECE = {
   nom_latin: "nomLatin"
 }
 
-export const findEspece = async (id: number): Promise<Omit<Espece, 'classe'> | null> => {
+export const findEspece = async (id: number): Promise<EspeceDb | null> => {
   return prisma.espece.findUnique({
     where: {
       id
     },
-  }).then(espece => {
-    if (espece == null) {
-      return null;
-    }
-
-    const { nom_francais, nom_latin, classe_id, ...others } = espece;
-    return {
-      ...others,
-      classeId: classe_id,
-      nomFrancais: nom_francais,
-      nomLatin: nom_latin
-    }
   });
 };
 
 export const findEspeces = async (options: {
   params?: FindParams,
   classeId?: number
-}): Promise<Omit<Espece, 'classe'>[]> => {
+}): Promise<EspeceDb[]> => {
 
   const { params, classeId } = options ?? {};
   const { q, max } = params ?? {};
 
   const classeIdClause = classeId ? {
-    classe_id: {
+    classeId: {
       equals: classeId
     }
   } : {};
@@ -69,12 +56,12 @@ export const findEspeces = async (options: {
   const libelleClause = q ? {
     OR: [
       {
-        nom_francais: {
+        nomFrancais: {
           contains: q
         }
       },
       {
-        nom_latin: {
+        nomLatin: {
           contains: q
         }
       }
@@ -107,16 +94,7 @@ export const findEspeces = async (options: {
       index === self.findIndex((eltArray) => (
         eltArray.id === element.id
       ))
-    )
-    .map(espece => {
-      const { nom_francais, nom_latin, classe_id, ...others } = espece;
-      return {
-        ...others,
-        classeId: classe_id,
-        nomFrancais: nom_francais,
-        nomLatin: nom_latin
-      }
-    })
+    );
 
   return max ? matchingEntries.slice(0, max) : matchingEntries;
 };
@@ -130,12 +108,12 @@ const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput 
         }
       },
       {
-        nom_francais: {
+        nomFrancais: {
           contains: q
         }
       },
       {
-        nom_latin: {
+        nomLatin: {
           contains: q
         }
       }
@@ -143,7 +121,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput 
   } : {};
 }
 
-export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promise<EspeceObj[]> => {
+export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promise<(EspeceDb & { nbDonnees: number })[]> => {
   const especesDb = await prisma.espece.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     include: {
@@ -158,7 +136,7 @@ export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promi
 
   return especesDb.map((espece) => {
     return {
-      ...buildEspeceFromEspeceDb(espece),
+      ...espece,
       nbDonnees: espece._count.donnee
     }
   });
@@ -175,18 +153,10 @@ export const findPaginatedEspeces = async (
   switch (orderByField) {
     case "id":
     case "code":
-      orderBy = {
-        [orderByField]: sortOrder
-      }
-      break;
     case "nomFrancais":
-      orderBy = {
-        nom_francais: sortOrder
-      }
-      break;
     case "nomLatin":
       orderBy = {
-        nom_latin: sortOrder
+        [orderByField]: sortOrder
       }
       break;
     case "nomClasse":
@@ -236,9 +206,6 @@ export const findPaginatedEspeces = async (
     result: especesDb.map((espece) => {
       return {
         ...espece,
-        classeId: espece.classe_id,
-        nomFrancais: espece.nom_francais,
-        nomLatin: espece.nom_latin,
         ...(includeCounts ? { nbDonnees: espece._count.donnee } : {})
       }
     }),
