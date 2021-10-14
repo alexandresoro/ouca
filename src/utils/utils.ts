@@ -1,7 +1,5 @@
 import { parse } from "date-fns";
 import { fr as locale } from "date-fns/locale";
-import { EntiteSimple } from "../model/types/entite-simple.object";
-import { NumberOfObjectsById } from "../objects/number-of-objects-by-id.object";
 
 export const areSetsContainingSameValues = <T>(
   firstArray: Set<T>,
@@ -87,14 +85,4 @@ export const isTimeValid = (timeStr: string): boolean => {
 
   const timeRegExp = new RegExp("^[0-9][0-9][:][0-9][0-9]$");
   return value && timeRegExp.test(value);
-};
-
-export const getNbByEntityId = (
-  object: EntiteSimple,
-  nbById: NumberOfObjectsById[]
-): number => {
-  const foundValue: NumberOfObjectsById = nbById.find((element) => {
-    return element.id === object.id;
-  });
-  return foundValue ? foundValue.nb : 0;
 };
