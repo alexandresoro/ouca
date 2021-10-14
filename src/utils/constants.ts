@@ -29,12 +29,8 @@ export const IMPORT_TABLES = [TABLE_OBSERVATEUR, TABLE_DEPARTEMENT, TABLE_COMMUN
 export type ImportableTable = typeof IMPORT_TABLES[number];
 
 export const COLUMN_CODE = "code";
-export const COLUMN_ESPECE_ID = "espece_id";
 export const COLUMN_LIBELLE = "libelle";
 export const COLUMN_NOM = "nom";
-
-export const ORDER_ASC = "ASC";
-export const ORDER_DESC = "DESC";
 
 export const SEPARATOR_COMMA = ", ";
 
