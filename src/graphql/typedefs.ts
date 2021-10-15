@@ -414,7 +414,7 @@ export default gql`
     comportements(params: FindParams): [Comportement]
     departements(params: FindParams): [Departement]
     especes(params: FindParams, classeId: Int): [Espece]
-    lieuxDits(params: FindParams, communeId: Int): [LieuDit]
+    lieuxDits(params: FindParams, communeId: Int, departementId: Int): [LieuDit]
     estimationsDistance(params: FindParams): [EstimationDistance]
     estimationsNombre(params: FindParams): [EstimationNombre]
     meteos: [Meteo]

@@ -40,10 +40,11 @@ export const findLieuDit = async (id: number): Promise<Omit<LieuDit, 'commune'> 
 
 export const findLieuxDits = async (options: {
   params?: FindParams,
-  communeId?: number
+  communeId?: number,
+  departementId?: number
 }): Promise<Omit<LieuDit, 'commune'>[]> => {
 
-  const { params, communeId } = options ?? {};
+  const { params, communeId, departementId } = options ?? {};
   const { q, max } = params ?? {};
 
   const whereClause = {
@@ -53,6 +54,13 @@ export const findLieuxDits = async (options: {
           startsWith: q || undefined
         }
       },
+      departementId ? {
+        commune: {
+          departementId: {
+            equals: departementId
+          }
+        }
+      } : {},
       communeId ? {
         communeId: {
           equals: communeId
