@@ -51,7 +51,7 @@ export const findLieuxDits = async (options: {
     AND: [
       {
         nom: {
-          startsWith: q || undefined
+          contains: q || undefined
         }
       },
       departementId ? {
