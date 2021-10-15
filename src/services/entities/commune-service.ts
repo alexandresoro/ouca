@@ -71,7 +71,7 @@ export const findCommunes = async (options: {
         ]
       },
       departementId ? {
-        departement_id: {
+        departementId: {
           equals: departementId
         }
       } : {}
