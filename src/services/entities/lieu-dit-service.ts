@@ -54,7 +54,7 @@ export const findLieuxDits = async (options: {
         }
       },
       communeId ? {
-        commune_id: {
+        communeId: {
           equals: communeId
         }
       } : {}
