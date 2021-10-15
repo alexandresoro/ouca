@@ -549,6 +549,7 @@ export type QueryLieuDitArgs = {
 
 export type QueryLieuxDitsArgs = {
   communeId?: Maybe<Scalars['Int']>;
+  departementId?: Maybe<Scalars['Int']>;
   params?: Maybe<FindParams>;
 };
 
