@@ -15,7 +15,7 @@ export const checkIfTableObservateurExists = async (): Promise<boolean> => {
   return queryToCheckIfTableExists(TABLE_OBSERVATEUR);
 }
 
-export const findObservateur = async (id: number): Promise<Observateur | null> => {
+export const findObservateur = async (id: number): Promise<ObservateurEntity | null> => {
   return prisma.observateur.findUnique({
     where: {
       id
@@ -23,7 +23,7 @@ export const findObservateur = async (id: number): Promise<Observateur | null> =
   });
 };
 
-export const findObservateursByIds = async (ids: number[]): Promise<Observateur[]> => {
+export const findObservateursByIds = async (ids: number[]): Promise<ObservateurEntity[]> => {
 
   return prisma.observateur.findMany({
     orderBy: {

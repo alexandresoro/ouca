@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { EstimationNombre as EstimationNombreEntity, Prisma } from "@prisma/client";
 import { EstimationNombre, EstimationNombreWithCounts, EstimationsNombrePaginatedResult, FindParams, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -12,7 +12,7 @@ const DB_SAVE_MAPPING_ESTIMATION_NOMBRE = {
   non_compte: "nonCompte"
 }
 
-export const findEstimationNombre = async (id: number): Promise<EstimationNombre | null> => {
+export const findEstimationNombre = async (id: number): Promise<EstimationNombreEntity | null> => {
   return prisma.estimationNombre.findUnique({
     where: {
       id
@@ -20,7 +20,7 @@ export const findEstimationNombre = async (id: number): Promise<EstimationNombre
   });
 };
 
-export const findEstimationsNombre = async (params?: FindParams): Promise<EstimationNombre[]> => {
+export const findEstimationsNombre = async (params?: FindParams): Promise<EstimationNombreEntity[]> => {
 
   const { q, max } = params ?? {};
 

@@ -1,4 +1,4 @@
-import { Nicheur, Prisma } from "@prisma/client";
+import { Comportement as ComportementEntity, Nicheur, Prisma } from "@prisma/client";
 import { Comportement, ComportementsPaginatedResult, ComportementWithCounts, FindParams, QueryPaginatedComportementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -8,7 +8,7 @@ import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
 
-export const findComportement = async (id: number): Promise<Comportement | null> => {
+export const findComportement = async (id: number): Promise<ComportementEntity | null> => {
   return prisma.comportement.findUnique({
     where: {
       id
@@ -16,7 +16,7 @@ export const findComportement = async (id: number): Promise<Comportement | null>
   });
 };
 
-export const findComportementsByIds = async (ids: number[]): Promise<Comportement[]> => {
+export const findComportementsByIds = async (ids: number[]): Promise<ComportementEntity[]> => {
 
   return prisma.comportement.findMany({
     orderBy: {

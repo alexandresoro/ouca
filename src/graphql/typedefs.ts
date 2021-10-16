@@ -220,6 +220,48 @@ export default gql`
     nbDonnees: Int
   }
 
+  type Coordinates {
+    altitude: Int!
+    longitude: Float!
+    latitude: Float!
+    system: CoordinatesSystemType!
+  }
+
+  type Inventaire {
+    id: Int!
+    observateur: Observateur!
+    associes: [Observateur]!
+    date: String!
+    heure: String
+    duree: String
+    lieuDit: LieuDit!
+    customizedCoordinates: Coordinates
+    temperature: Int
+    meteos: [Meteo]!
+  }
+
+  type Donnee {
+    id: Int!
+    inventaire: Inventaire!
+    espece: Espece!
+    sexe: Sexe!
+    age: Age!
+    estimationNombre: EstimationNombre
+    nombre: Int
+    estimationDistance: EstimationDistance
+    distance: Int
+    regroupement: Int
+    comportements: [Comportement]!
+    milieux: [Milieu]!
+    commentaire: String
+  }
+
+  type DonneeNavigationData {
+    previousDonneeId: Int
+    nextDonneeId: Int
+    index: Int!
+  }
+
   type Version {
     database: Int!
     application: Int!
@@ -321,6 +363,13 @@ export default gql`
   #
   # Results
   #
+
+  type DonneeResult {
+    id: Int!
+    donnee: Donnee
+    navigation: DonneeNavigationData
+  }
+
   interface PaginatedResult {
     count: Int!
   }
@@ -397,6 +446,7 @@ export default gql`
     comportement(id: Int!): Comportement
     comportementList(ids: [Int!]!): [Comportement]
     departement(id: Int!): Departement
+    donnee(id: Int!): DonneeResult
     espece(id: Int!): Espece
     estimationDistance(id: Int!): EstimationDistance
     estimationNombre(id: Int!): EstimationNombre

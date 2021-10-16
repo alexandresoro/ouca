@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Departement as DepartementEntity, Prisma } from "@prisma/client";
 import { Departement, DepartementsPaginatedResult, DepartementWithCounts, FindParams, QueryPaginatedDepartementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -18,7 +18,7 @@ export const getFilterClauseDepartement = (q: string | null | undefined): Prisma
 
 const DB_SAVE_MAPPING_DEPARTEMENT = createKeyValueMapWithSameName("code");
 
-export const findDepartement = async (id: number): Promise<Departement | null> => {
+export const findDepartement = async (id: number): Promise<DepartementEntity | null> => {
   return prisma.departement.findUnique({
     where: {
       id
@@ -26,7 +26,7 @@ export const findDepartement = async (id: number): Promise<Departement | null> =
   });
 };
 
-export const findDepartementOfCommuneId = async (communeId: number): Promise<Departement | null> => {
+export const findDepartementOfCommuneId = async (communeId: number): Promise<DepartementEntity | null> => {
   return prisma.commune.findUnique({
     where: {
       id: communeId

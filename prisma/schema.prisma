@@ -85,8 +85,8 @@ model Donnee {
   date_creation          DateTime              @db.DateTime(0)
   age                    Age                   @relation(fields: [age_id], references: [id])
   espece                 Espece                @relation(fields: [espece_id], references: [id])
-  estimation_nombre      EstimationNombre      @relation(fields: [estimation_nombre_id], references: [id])
-  estimation_distance    EstimationDistance?   @relation(fields: [estimation_distance_id], references: [id])
+  estimationNombre       EstimationNombre      @relation(fields: [estimation_nombre_id], references: [id])
+  estimationDistance     EstimationDistance?   @relation(fields: [estimation_distance_id], references: [id])
   inventaire             Inventaire            @relation(fields: [inventaire_id], references: [id])
   sexe                   Sexe                  @relation(fields: [sexe_id], references: [id])
   donnee_comportement    donnee_comportement[]
@@ -175,7 +175,7 @@ model Inventaire {
   latitude_l2e       Int?                 @db.UnsignedMediumInt
   temperature        Int?                 @db.TinyInt
   date_creation      DateTime             @db.DateTime(0)
-  lieudit            Lieudit              @relation(fields: [lieudit_id], references: [id])
+  lieuDit            Lieudit              @relation(fields: [lieudit_id], references: [id])
   observateur        Observateur          @relation(fields: [observateur_id], references: [id])
   donnee             Donnee[]
   inventaire_associe inventaire_associe[]

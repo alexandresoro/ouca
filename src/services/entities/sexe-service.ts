@@ -1,5 +1,5 @@
 
-import { Prisma } from "@prisma/client";
+import { Prisma, Sexe as SexeEntity } from "@prisma/client";
 import { FindParams, QueryPaginatedSexesArgs, Sexe, SexesPaginatedResult, SexeWithCounts } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -10,7 +10,7 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_SEXE = createKeyValueMapWithSameName("libelle");
 
-export const findSexe = async (id: number): Promise<Sexe | null> => {
+export const findSexe = async (id: number): Promise<SexeEntity | null> => {
   return prisma.sexe.findUnique({
     where: {
       id
@@ -18,7 +18,7 @@ export const findSexe = async (id: number): Promise<Sexe | null> => {
   });
 };
 
-export const findSexes = async (params?: FindParams): Promise<Sexe[]> => {
+export const findSexes = async (params?: FindParams): Promise<SexeEntity[]> => {
 
   const { q, max } = params ?? {};
 

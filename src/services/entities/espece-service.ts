@@ -1,4 +1,4 @@
-import { Espece as EspeceDb, Prisma } from "@prisma/client";
+import { Espece as EspeceEntity, Prisma } from "@prisma/client";
 import { EspecesPaginatedResult, FindParams, QueryPaginatedEspecesArgs } from "../../model/graphql";
 import { Espece as EspeceObj } from "../../model/types/espece.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
@@ -15,7 +15,7 @@ const DB_SAVE_MAPPING_ESPECE = {
   nom_latin: "nomLatin"
 }
 
-export const findEspece = async (id: number): Promise<EspeceDb | null> => {
+export const findEspece = async (id: number): Promise<EspeceEntity | null> => {
   return prisma.espece.findUnique({
     where: {
       id
@@ -23,10 +23,18 @@ export const findEspece = async (id: number): Promise<EspeceDb | null> => {
   });
 };
 
+export const findEspeceOfDonneeId = async (donneeId: number): Promise<EspeceEntity | null> => {
+  return prisma.donnee.findUnique({
+    where: {
+      id: donneeId
+    },
+  }).espece();
+};
+
 export const findEspeces = async (options: {
   params?: FindParams,
   classeId?: number
-}): Promise<EspeceDb[]> => {
+}): Promise<EspeceEntity[]> => {
 
   const { params, classeId } = options ?? {};
   const { q, max } = params ?? {};
@@ -121,7 +129,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput 
   } : {};
 }
 
-export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promise<(EspeceDb & { nbDonnees: number })[]> => {
+export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promise<(EspeceEntity & { nbDonnees: number })[]> => {
   const especesDb = await prisma.espece.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     include: {

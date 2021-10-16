@@ -1,9 +1,10 @@
-import { Prisma } from ".prisma/client";
+import { Age, Comportement, Donnee as DonneeEntity, Milieu, Prisma, Sexe } from "@prisma/client";
 import { format } from "date-fns";
 import { getCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
+import { DonneeNavigationData } from "../../model/graphql";
 import { DonneeWithNavigationData } from "../../model/types/donnee-with-navigation-data.object";
-import { Donnee } from "../../model/types/donnee.object";
+import { Donnee as DonneeObj } from "../../model/types/donnee.object";
 import { DonneesFilter } from "../../model/types/donnees-filter.object";
 import { FlatDonnee } from "../../model/types/flat-donnee.object";
 import { Inventaire } from "../../model/types/inventaire.object";
@@ -24,6 +25,13 @@ import { areArraysContainingSameValues, getArrayFromObjects } from "../../utils/
 import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntity } from "./entity-service";
 import { deleteInventaireById, findAssociesIdsByInventaireId, findMeteosIdsByInventaireId } from "./inventaire-service";
 
+type DonneeWithRelations = DonneeEntity & {
+  age: Age | null
+  sexe: Sexe | null
+  comportements: Comportement[]
+  milieux: Milieu[]
+};
+
 const DB_SAVE_MAPPING_DONNEE = {
   ...createKeyValueMapWithSameName([
     "nombre",
@@ -39,6 +47,95 @@ const DB_SAVE_MAPPING_DONNEE = {
   estimation_distance_id: "estimationDistanceId",
   date_creation: "dateCreation"
 }
+
+export const findDonnee = async (
+  id: number
+): Promise<DonneeWithRelations> => {
+  return prisma.donnee.findUnique({
+    include: {
+      age: true,
+      sexe: true,
+      estimationDistance: true,
+      estimationNombre: true,
+      donnee_comportement: {
+        select: {
+          comportement: true
+        }
+      },
+      donnee_milieu: {
+        select: {
+          milieu: true
+        }
+      }
+    },
+    where: {
+      id
+    }
+  }).then(donnee => {
+    if (donnee == null) {
+      return null;
+    }
+    const { donnee_comportement, donnee_milieu, ...restDonnee } = donnee;
+    const comportementsArray = donnee_comportement.map((donnee_comportement) => {
+      return donnee_comportement?.comportement;
+    });
+    const milieuxArray = donnee_milieu.map((donnee_milieu) => {
+      return donnee_milieu?.milieu;
+    });
+
+    return {
+      ...restDonnee,
+      comportements: comportementsArray,
+      milieux: milieuxArray
+    }
+  });
+};
+
+export const findDonneeNavigationData = async (
+  donneeId: number
+): Promise<DonneeNavigationData> => {
+  const previousDonnee = await prisma.donnee.findFirst({
+    select: {
+      id: true
+    },
+    where: {
+      id: {
+        lt: donneeId
+      }
+    },
+    orderBy: {
+      id: 'desc'
+    }
+  });
+
+  const nextDonnee = await prisma.donnee.findFirst({
+    select: {
+      id: true
+    },
+    where: {
+      id: {
+        gt: donneeId
+      }
+    },
+    orderBy: {
+      id: 'asc'
+    }
+  });
+
+  const index = await prisma.donnee.count({
+    where: {
+      id: {
+        lte: donneeId
+      }
+    }
+  });
+
+  return {
+    index,
+    previousDonneeId: previousDonnee?.id,
+    nextDonneeId: nextDonnee?.id
+  }
+};
 
 const findComportementsIdsByDonneeId = async (
   donneeId: number
@@ -63,7 +160,7 @@ const countDonneesByInventaireId = async (
 
 export const buildDonneeFromFlatDonneeWithMinimalData = async (
   flatDonnee: FlatDonneeWithMinimalData
-): Promise<Donnee> => {
+): Promise<DonneeObj> => {
   if (flatDonnee?.id && flatDonnee?.inventaireId) {
     const [
       associesIds,
@@ -100,7 +197,7 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
       nbDonnees
     };
 
-    const donnee: Donnee = {
+    const donnee: DonneeObj = {
       id: flatDonnee.id,
       inventaireId: flatDonnee.inventaireId,
       inventaire,
@@ -123,7 +220,7 @@ export const buildDonneeFromFlatDonneeWithMinimalData = async (
 };
 
 export const persistDonnee = async (
-  donneeToSave: Donnee
+  donneeToSave: DonneeObj
 ): Promise<SqlSaveResponse> => {
   if (donneeToSave.id) {
     // It is an update: we delete the current comportements
@@ -229,7 +326,7 @@ export const insertDonnees = async (
 };
 
 
-export const findExistingDonneeId = async (donnee: Donnee): Promise<number> => {
+export const findExistingDonneeId = async (donnee: DonneeObj): Promise<number> => {
   const response = await queryToFindDonneeIdsByAllAttributes(donnee);
 
   const eligibleDonneeIds = getArrayFromObjects<{ id: number }, number>(
@@ -442,7 +539,7 @@ const findDonneeIndexById = async (id: number): Promise<number> => {
   return ids && ids[0]?.nbDonnees ? ids[0].nbDonnees : null;
 };
 
-const findDonneeById = async (id: number): Promise<Donnee> => {
+const findDonneeById = async (id: number): Promise<DonneeObj> => {
   const flatDonnees = await queryToFindDonneeById(id);
   if (!flatDonnees || !flatDonnees[0]?.id) {
     return null;
@@ -459,7 +556,6 @@ export const findAllFlatDonneesWithMinimalData = async (): Promise<
 export const findAllDonneesWithIds = async (): Promise<DonneeCompleteWithIds[]> => {
   return queryToGetAllDonneesWithIds();
 }
-
 
 export const findDonneeByIdWithContext = async (
   donneeId: number

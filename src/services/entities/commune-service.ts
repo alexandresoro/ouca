@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Commune as CommuneEntity, Prisma } from "@prisma/client";
 import { Commune, CommunesPaginatedResult, CommuneWithCounts, FindParams, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -8,7 +8,7 @@ import counterReducer from "../../utils/counterReducer";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
 import { insertMultipleEntities, persistEntityNoCheck } from "./entity-service";
 
-export const findCommune = async (id: number): Promise<Omit<Commune, 'departement'> | null> => {
+export const findCommune = async (id: number): Promise<CommuneEntity | null> => {
   return prisma.commune.findUnique({
     where: {
       id
@@ -16,7 +16,7 @@ export const findCommune = async (id: number): Promise<Omit<Commune, 'departemen
   });
 };
 
-export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Omit<Commune, 'departement'> | null> => {
+export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<CommuneEntity | null> => {
   return prisma.lieudit.findUnique({
     where: {
       id: lieuDitId

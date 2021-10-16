@@ -1,5 +1,5 @@
 import { Prisma } from ".prisma/client";
-import { Lieudit as LieuditDb } from "@prisma/client";
+import { Lieudit as LieuditEntity } from "@prisma/client";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { FindParams, LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
@@ -15,7 +15,7 @@ import { getFilterClauseCommune } from "./commune-service";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
 import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
 
-const buildLieuditFromLieuditDb = <T extends LieuditDb>(lieuditDb: T): Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number } => {
+const buildLieuditFromLieuditDb = <T extends LieuditEntity>(lieuditDb: T): Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number } => {
 
   if (lieuditDb == null) {
     return null;
@@ -30,12 +30,20 @@ const buildLieuditFromLieuditDb = <T extends LieuditDb>(lieuditDb: T): Omit<T, '
   };
 };
 
-export const findLieuDit = async (id: number): Promise<Omit<LieuDit, 'commune'> | null> => {
+export const findLieuDit = async (id: number): Promise<Omit<LieuditEntity, 'latitude' | 'longitude'> & { latitude: number, longitude: number } | null> => {
   return prisma.lieudit.findUnique({
     where: {
       id
     },
   }).then(buildLieuditFromLieuditDb);
+};
+
+export const findLieuDitOfInventaireId = async (inventaireId: number): Promise<LieuditEntity | null> => {
+  return prisma.inventaire.findUnique({
+    where: {
+      id: inventaireId
+    },
+  }).lieuDit();
 };
 
 export const findLieuxDits = async (options: {

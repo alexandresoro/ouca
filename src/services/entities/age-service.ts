@@ -1,5 +1,5 @@
 
-import { Prisma } from "@prisma/client";
+import { Age as AgeEntity, Prisma } from "@prisma/client";
 import { Age, AgesPaginatedResult, AgeWithCounts, FindParams, QueryPaginatedAgesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -10,7 +10,7 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_AGE = createKeyValueMapWithSameName("libelle")
 
-export const findAge = async (id: number): Promise<Age | null> => {
+export const findAge = async (id: number): Promise<AgeEntity | null> => {
   return prisma.age.findUnique({
     where: {
       id

@@ -1,3 +1,4 @@
+import { CoordinatesSystem, Inventaire as InventaireEntity, Meteo, Observateur } from "@prisma/client";
 import { format } from "date-fns";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { Coordinates } from "../../model/types/coordinates.object";
@@ -5,6 +6,7 @@ import { Inventaire } from "../../model/types/inventaire.object";
 import { InventaireCompleteWithIds, InventaireDb } from "../../objects/db/inventaire-db.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { buildInventaireDbFromInventaire, buildInventaireFromInventaireDb } from "../../sql/entities-mapping/inventaire-mapping";
+import prisma from "../../sql/prisma";
 import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdById, queryToFindInventairesIdsByAllAttributes, queryToGetAllInventairesWithIds } from "../../sql/sql-queries-inventaire";
 import { queryToFindMeteosByInventaireId } from "../../sql/sql-queries-meteo";
 import { queryToFindAssociesByInventaireId } from "../../sql/sql-queries-observateur";
@@ -13,6 +15,83 @@ import { DATE_WITH_TIME_PATTERN, INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAI
 import { mapAssociesIds, mapMeteosIds } from "../../utils/mapping-utils";
 import { areArraysContainingSameValues } from "../../utils/utils";
 import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntityNoCheck } from "./entity-service";
+
+const DATE_PATTERN = "yyyy-MM-dd";
+
+type InventaireWithRelations = Omit<InventaireEntity, 'date' | 'latitude' | 'longitude' | 'altitude' | 'coordinates_system'> & {
+  observateur: Observateur
+  customizedCoordinates?: {
+    altitude: number,
+    latitude: number,
+    longitude: number,
+    system: CoordinatesSystem
+  }
+  date: string // Formatted as yyyy-MM-dd
+  associes: Observateur[]
+  meteos: Meteo[]
+};
+
+export const findInventaire = async (
+  id: number
+): Promise<InventaireWithRelations> => {
+  return prisma.inventaire.findUnique({
+    include: {
+      observateur: true,
+      inventaire_associe: {
+        select: {
+          observateur: true
+        }
+      },
+      inventaire_meteo: {
+        select: {
+          meteo: true
+        }
+      }
+    },
+    where: {
+      id
+    }
+  }).then(inventaire => {
+    if (inventaire == null) {
+      return null;
+    }
+
+    const { inventaire_associe, inventaire_meteo, altitude, latitude, longitude, coordinates_system, date, ...restInventaire } = inventaire;
+
+    const associesArray = inventaire_associe.map((inventaire_associe) => {
+      return inventaire_associe?.observateur;
+    });
+    const meteosArray = inventaire_meteo.map((inventaire_meteo) => {
+      return inventaire_meteo?.meteo;
+    });
+
+    const customizedCoordinates = (coordinates_system != null && altitude != null && latitude != null && longitude != null)
+      ? {
+        customizedCoordinates: {
+          altitude,
+          latitude: latitude.toNumber(),
+          longitude: longitude.toNumber(),
+          system: coordinates_system
+        }
+      }
+      : {};
+    return {
+      ...restInventaire,
+      ...customizedCoordinates,
+      date: format(date, DATE_PATTERN),
+      associes: associesArray,
+      meteos: meteosArray
+    }
+  });
+};
+
+export const findInventaireOfDonneeId = async (donneeId: number): Promise<InventaireEntity | null> => {
+  return prisma.donnee.findUnique({
+    where: {
+      id: donneeId
+    },
+  }).inventaire();
+};
 
 
 const deleteAssociesAndMeteosByInventaireId = async (

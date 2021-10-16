@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { EstimationDistance as EstimationDistanceEntity, Prisma } from "@prisma/client";
 import { EstimationDistance, EstimationDistanceWithCounts, EstimationsDistancePaginatedResult, FindParams, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -9,7 +9,7 @@ import { insertMultipleEntities, persistEntity } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESTIMATION_DISTANCE = createKeyValueMapWithSameName("libelle");
 
-export const findEstimationDistance = async (id: number): Promise<EstimationDistance | null> => {
+export const findEstimationDistance = async (id: number): Promise<EstimationDistanceEntity | null> => {
   return prisma.estimationDistance.findUnique({
     where: {
       id
@@ -17,7 +17,7 @@ export const findEstimationDistance = async (id: number): Promise<EstimationDist
   });
 };
 
-export const findEstimationsDistance = async (params?: FindParams): Promise<EstimationDistance[]> => {
+export const findEstimationsDistance = async (params?: FindParams): Promise<EstimationDistanceEntity[]> => {
 
   const { q, max } = params ?? {};
 
