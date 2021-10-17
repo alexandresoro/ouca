@@ -12,7 +12,7 @@ export const getCoordinates = (
 };
 
 export const areCoordinatesCustomized = (
-  lieudit: Omit<LieuDit, 'commune'>,
+  lieudit: Omit<Partial<LieuDit>, 'commune'>,
   altitude: number,
   longitude: number,
   latitude: number,
