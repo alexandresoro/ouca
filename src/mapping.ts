@@ -48,9 +48,7 @@ import {
   saveAgeRequest,
   saveClasseRequest,
   saveCommuneRequest,
-  saveComportementRequest,
-  saveDepartementRequest,
-  saveEspeceRequest,
+  saveComportementRequest, saveEspeceRequest,
   saveEstimationDistanceRequest,
   saveEstimationNombreRequest,
   saveLieuditRequest,
@@ -94,7 +92,6 @@ export const REQUEST_MAPPING: Record<string, {
     responseType: EXCEL_MIME_TYPE
   },
   "/api/departement/all": { handler: getDepartementsRequest },
-  "/api/departement/save": { handler: saveDepartementRequest },
   "/api/departement/delete": { handler: deleteDepartementRequest },
   "/api/departement/export": {
     handler: exportDepartementsRequest,

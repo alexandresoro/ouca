@@ -2,6 +2,10 @@ import { gql } from "apollo-server";
 
 export default gql`
 
+  input InputDepartement {
+    code: String!
+  }
+
   input InputSettings {
     id: Int!
     areAssociesDisplayed: Boolean!
@@ -490,6 +494,7 @@ export default gql`
   }
 
   type Mutation {
+    upsertDepartement(id: Int, data: InputDepartement!): Departement
     updateSettings(appConfiguration: InputSettings): Settings
   }
 

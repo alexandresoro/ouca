@@ -4,7 +4,7 @@ import { findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses } f
 import { findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
 import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
-import { findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
+import { findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
 import { findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement } from "../services/entities/donnee-service";
 import { findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
 import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
@@ -170,6 +170,9 @@ const resolvers: Resolvers = {
     }
   },
   Mutation: {
+    upsertDepartement: async (_source, args): Promise<Departement> => {
+      return upsertDepartement(args);
+    },
     updateSettings: async (_source, { appConfiguration }): Promise<Settings> => {
       return persistUserSettings(appConfiguration);
     }

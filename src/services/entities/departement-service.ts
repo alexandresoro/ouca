@@ -1,12 +1,12 @@
 import { Departement as DepartementEntity, Prisma } from "@prisma/client";
-import { Departement, DepartementsPaginatedResult, DepartementWithCounts, FindParams, QueryPaginatedDepartementsArgs } from "../../model/graphql";
+import { Departement, DepartementsPaginatedResult, DepartementWithCounts, FindParams, MutationUpsertDepartementArgs, QueryPaginatedDepartementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_DEPARTEMENT } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities, persistEntity } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 export const getFilterClauseDepartement = (q: string | null | undefined): Prisma.DepartementWhereInput => {
   return (q != null && q.length) ? {
@@ -285,14 +285,19 @@ export const findPaginatedDepartements = async (
   }
 };
 
-export const persistDepartement = async (
-  departement: Departement
-): Promise<SqlSaveResponse> => {
-  return persistEntity(
-    TABLE_DEPARTEMENT,
-    departement,
-    DB_SAVE_MAPPING_DEPARTEMENT
-  );
+export const upsertDepartement = async (
+  args: MutationUpsertDepartementArgs
+): Promise<DepartementEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.departement.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.departement.create({ data });
+  }
 };
 
 export const insertDepartements = async (
