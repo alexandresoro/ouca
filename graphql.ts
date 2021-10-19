@@ -64,7 +64,6 @@ export type Commune = {
   __typename?: 'Commune';
   code: Scalars['Int'];
   departement: Departement;
-  departementId: Scalars['Int'];
   id: Scalars['Int'];
   nom: Scalars['String'];
 };
@@ -330,7 +329,6 @@ export type LieuDit = {
   __typename?: 'LieuDit';
   altitude: Scalars['Int'];
   commune: Commune;
-  communeId: Scalars['Int'];
   coordinatesSystem: CoordinatesSystemType;
   id: Scalars['Int'];
   latitude: Scalars['Float'];
@@ -477,6 +475,7 @@ export type Query = {
   estimationNombre?: Maybe<EstimationNombre>;
   estimationsDistance?: Maybe<Array<Maybe<EstimationDistance>>>;
   estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
+  inventaire?: Maybe<Inventaire>;
   lastDonneeId?: Maybe<Scalars['Int']>;
   lieuDit?: Maybe<LieuDit>;
   lieuxDits?: Maybe<Array<Maybe<LieuDit>>>;
@@ -486,6 +485,7 @@ export type Query = {
   milieu?: Maybe<Milieu>;
   milieuList?: Maybe<Array<Maybe<Milieu>>>;
   milieux?: Maybe<Array<Maybe<Milieu>>>;
+  nextRegroupement: Scalars['Int'];
   observateur?: Maybe<Observateur>;
   observateurList?: Maybe<Array<Maybe<Observateur>>>;
   observateurs?: Maybe<Array<Maybe<Observateur>>>;
@@ -598,6 +598,11 @@ export type QueryEstimationsDistanceArgs = {
 
 export type QueryEstimationsNombreArgs = {
   params?: Maybe<FindParams>;
+};
+
+
+export type QueryInventaireArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -1047,7 +1052,6 @@ export type ClassesPaginatedResultResolvers<ContextType = any, ParentType extend
 export type CommuneResolvers<ContextType = any, ParentType extends ResolversParentTypes['Commune'] = ResolversParentTypes['Commune']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   departement?: Resolver<ResolversTypes['Departement'], ParentType, ContextType>;
-  departementId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nom?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1234,7 +1238,6 @@ export type InventaireResolvers<ContextType = any, ParentType extends ResolversP
 export type LieuDitResolvers<ContextType = any, ParentType extends ResolversParentTypes['LieuDit'] = ResolversParentTypes['LieuDit']> = {
   altitude?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   commune?: Resolver<ResolversTypes['Commune'], ParentType, ContextType>;
-  communeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   coordinatesSystem?: Resolver<ResolversTypes['CoordinatesSystemType'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -1348,6 +1351,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   estimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType, RequireFields<QueryEstimationNombreArgs, 'id'>>;
   estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType, RequireFields<QueryEstimationsDistanceArgs, never>>;
   estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType, RequireFields<QueryEstimationsNombreArgs, never>>;
+  inventaire?: Resolver<Maybe<ResolversTypes['Inventaire']>, ParentType, ContextType, RequireFields<QueryInventaireArgs, 'id'>>;
   lastDonneeId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lieuDit?: Resolver<Maybe<ResolversTypes['LieuDit']>, ParentType, ContextType, RequireFields<QueryLieuDitArgs, 'id'>>;
   lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType, RequireFields<QueryLieuxDitsArgs, never>>;
@@ -1357,6 +1361,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   milieu?: Resolver<Maybe<ResolversTypes['Milieu']>, ParentType, ContextType, RequireFields<QueryMilieuArgs, 'id'>>;
   milieuList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, RequireFields<QueryMilieuListArgs, 'ids'>>;
   milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, RequireFields<QueryMilieuxArgs, never>>;
+  nextRegroupement?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   observateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<QueryObservateurArgs, 'id'>>;
   observateurList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateurListArgs, 'ids'>>;
   observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateursArgs, never>>;
