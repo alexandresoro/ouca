@@ -1,11 +1,10 @@
 import { HttpParameters } from "../http/httpParameters";
-import { DonneeWithNavigationData } from "../model/types/donnee-with-navigation-data.object";
 import { Donnee } from "../model/types/donnee.object";
 import { Inventaire } from "../model/types/inventaire.object";
 import { PostResponse } from "../model/types/post-response.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { deleteDonneeById, findDonneeByIdWithContext, findExistingDonneeId, findLastDonneeId, findNextRegroupement, persistDonnee, updateInventaireIdForDonnees } from "../services/entities/donnee-service";
-import { deleteInventaireById, findExistingInventaireId, findInventaireById, findInventaireIdById, persistInventaire } from "../services/entities/inventaire-service";
+import { deleteDonneeById, findExistingDonneeId, persistDonnee, updateInventaireIdForDonnees } from "../services/entities/donnee-service";
+import { deleteInventaireById, findExistingInventaireId, persistInventaire } from "../services/entities/inventaire-service";
 import { buildErrorPostResponse, buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 
 export const saveInventaireRequest = async (
@@ -75,32 +74,4 @@ export const deleteDonneeRequest = async (
   );
 
   return buildPostResponseFromSqlResponse(sqlResponse);
-};
-
-export const getDonneeByIdWithContextRequest = async (
-  httpParameters: HttpParameters
-): Promise<DonneeWithNavigationData> => {
-  const id: number = +httpParameters.query.id;
-  return await findDonneeByIdWithContext(id);
-};
-
-export const getNextRegroupementRequest = async (): Promise<number> => {
-  return await findNextRegroupement();
-};
-
-export const getInventaireByIdRequest = async (
-  httpParameters: HttpParameters
-): Promise<Inventaire> => {
-  const inventaireId: number = +httpParameters.query.id;
-  return findInventaireById(inventaireId);
-};
-
-export const getInventaireIdByIdRequest = async (
-  httpParameters: HttpParameters
-): Promise<number> => {
-  return findInventaireIdById(+httpParameters.query.id);
-};
-
-export const getLastDonneeIdRequest = async (): Promise<number> => {
-  return findLastDonneeId();
 };

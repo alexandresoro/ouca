@@ -1,4 +1,5 @@
-import { Commune, DepartementWithCounts } from "../../model/graphql";
+import { Commune } from "@prisma/client";
+import { DepartementWithCounts } from "../../model/graphql";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
 import { findAllCommunes, insertCommunes } from "../entities/commune-service";
 import { findAllDepartements } from "../entities/departement-service";
@@ -7,9 +8,9 @@ import { ImportService } from "./import-service";
 export class ImportCommuneService extends ImportService {
 
   private departements: DepartementWithCounts[];
-  private communes: Omit<Commune, 'departement'>[];
+  private communes: Commune[];
 
-  private communesToInsert: Omit<Commune, 'departement'>[];
+  private communesToInsert: Commune[];
 
   protected getNumberOfColumns = (): number => {
     return 3;

@@ -15,7 +15,9 @@ import { getFilterClauseCommune } from "./commune-service";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
 import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
 
-const buildLieuditFromLieuditDb = <T extends LieuditEntity>(lieuditDb: T): Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number } => {
+export type LieuDitWithCoordinatesAsNumber<T extends LieuditEntity = LieuditEntity> = Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number }
+
+const buildLieuditFromLieuditDb = <T extends LieuditEntity>(lieuditDb: T): LieuDitWithCoordinatesAsNumber<T> => {
 
   if (lieuditDb == null) {
     return null;
@@ -30,7 +32,7 @@ const buildLieuditFromLieuditDb = <T extends LieuditEntity>(lieuditDb: T): Omit<
   };
 };
 
-export const findLieuDit = async (id: number): Promise<Omit<LieuditEntity, 'latitude' | 'longitude'> & { latitude: number, longitude: number } | null> => {
+export const findLieuDit = async (id: number): Promise<LieuDitWithCoordinatesAsNumber | null> => {
   return prisma.lieudit.findUnique({
     where: {
       id
@@ -101,8 +103,19 @@ const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput
   } : {};
 }
 
-
 export const findAllLieuxDits = async (options?: {
+  where?: Prisma.LieuditWhereInput
+}): Promise<LieuDitWithCoordinatesAsNumber[]> => {
+  const lieuxDitsDb = await prisma.lieudit.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
+    where: options?.where ?? {}
+  });
+
+  return lieuxDitsDb.map(buildLieuditFromLieuditDb);
+};
+
+
+export const findAllLieuxDitsWithCounts = async (options?: {
   where?: Prisma.LieuditWhereInput
 }): Promise<Omit<LieuDit, 'commune'>[]> => {
   const lieuxDitsDb = await prisma.lieudit.findMany({
@@ -338,7 +351,7 @@ export const persistLieuDit = async (
     lieuDit.coordinates = await getCoordinatesToPersist(lieuDit);
   }
 
-  const lieuditDb = buildLieuditDbFromLieudit(lieuDit);
+  const lieuditDb = buildLieuditDbFromLieudit(lieuDit as unknown as any); // TODO check this once migration done
 
   return persistEntityNoCheck(TABLE_LIEUDIT, lieuditDb);
 };

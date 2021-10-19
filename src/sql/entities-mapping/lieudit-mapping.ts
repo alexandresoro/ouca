@@ -1,8 +1,8 @@
-import { Lieudit as LieuditDb } from "@prisma/client";
+import { Lieudit } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime";
-import { Lieudit as LieuditObj } from "../../model/types/lieudit.model";
+import { LieuDit } from "../../model/graphql";
 
-export const buildLieuditDbFromLieudit = (lieudit: LieuditObj): LieuditDb => {
+export const buildLieuditDbFromLieudit = (lieudit: LieuDit & { communeId: number }): Lieudit => {
   return {
     id: lieudit.id,
     communeId: lieudit.communeId,
@@ -12,9 +12,9 @@ export const buildLieuditDbFromLieudit = (lieudit: LieuditObj): LieuditDb => {
     longitude_l2e: null,
     ...(
       Object.prototype.hasOwnProperty.call(lieudit, "coordinates") ? {
-        longitude: new Decimal(lieudit.coordinates.longitude),
-        latitude: new Decimal(lieudit.coordinates.latitude),
-        coordinatesSystem: lieudit.coordinates.system
+        longitude: new Decimal(lieudit.longitude),
+        latitude: new Decimal(lieudit.latitude),
+        coordinatesSystem: lieudit.coordinatesSystem
       } : {
         longitude: null,
         latitude: null,

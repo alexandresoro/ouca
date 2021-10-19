@@ -14,7 +14,7 @@ import { FlatDonneeWithMinimalData } from "../../objects/flat-donnee-with-minima
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { queryToFindAllComportementsByDonneeId, queryToFindComportementsIdsByDonneeId } from "../../sql/sql-queries-comportement";
-import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindAllDonnees, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindLastRegroupement, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
+import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindAllDonnees, queryToFindDonneeById, queryToFindDonneeIdsByAllAttributes, queryToFindDonneeIndexById, queryToFindDonneesByCriterion, queryToFindNextDonneeIdByCurrentDonneeId, queryToFindPreviousDonneeIdByCurrentDonneeId, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
 import { queryToFindAllMeteosByDonneeId } from "../../sql/sql-queries-meteo";
 import { queryToFindAllMilieuxByDonneeId, queryToFindMilieuxIdsByDonneeId } from "../../sql/sql-queries-milieu";
 import { queryToFindAllAssociesByDonneeId } from "../../sql/sql-queries-observateur";
@@ -581,10 +581,13 @@ export const findDonneeByIdWithContext = async (
 };
 
 export const findNextRegroupement = async (): Promise<number> => {
-  const regroupements = await queryToFindLastRegroupement();
-  return regroupements && regroupements[0]?.regroupement
-    ? regroupements[0]?.regroupement + 1
-    : 1;
+  const regroupementsAggr = await prisma.donnee.aggregate({
+    _max: {
+      regroupement: true
+    }
+  });
+  const regroupementMax = regroupementsAggr?._max?.regroupement ?? 0;
+  return regroupementMax + 1;
 };
 
 export const countSpecimensByAgeForEspeceId = async (

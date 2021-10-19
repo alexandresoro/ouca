@@ -5,7 +5,7 @@ import { findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommune
 import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements } from "../services/entities/departement-service";
-import { findDonnee, findDonneeNavigationData, findLastDonneeId } from "../services/entities/donnee-service";
+import { findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement } from "../services/entities/donnee-service";
 import { findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
 import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
@@ -50,6 +50,9 @@ const resolvers: Resolvers = {
     },
     estimationNombre: async (_source, args): Promise<EstimationNombre> => {
       return findEstimationNombre(args.id);
+    },
+    inventaire: async (_source, args): Promise<Omit<Inventaire, 'lieuDit'>> => {
+      return findInventaire(args.id);
     },
     lieuDit: async (_source, args): Promise<Omit<LieuDit, 'commune'>> => {
       return findLieuDit(args.id);
@@ -116,6 +119,9 @@ const resolvers: Resolvers = {
     },
     lastDonneeId: async (): Promise<number> => {
       return findLastDonneeId();
+    },
+    nextRegroupement: async (): Promise<number> => {
+      return findNextRegroupement();
     },
     paginatedAges: async (_source, args): Promise<AgesPaginatedResult> => {
       return findPaginatedAges(args, true);

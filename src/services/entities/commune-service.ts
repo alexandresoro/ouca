@@ -111,7 +111,13 @@ const DB_SAVE_MAPPING_COMMUNE = {
   departement_id: "departementId"
 };
 
-export const findAllCommunes = async (): Promise<Omit<Commune, 'departement'>[]> => {
+export const findAllCommunes = async (): Promise<CommuneEntity[]> => {
+  return await prisma.commune.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_NOM)
+  });
+};
+
+export const findAllCommunesWithCounts = async (): Promise<Omit<Commune, 'departement'>[]> => {
   const communesDb = await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {

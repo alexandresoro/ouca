@@ -1,4 +1,4 @@
-import { Commune } from "../../model/graphql";
+import { Commune } from "@prisma/client";
 
 const DEPARTEMENT_INDEX = 0;
 const CODE_INDEX = 1;
@@ -22,7 +22,7 @@ export class ImportedCommune {
 
   buildCommune = (
     departementId: number
-  ): Omit<Commune, 'departement'> => {
+  ): Commune => {
     return {
       id: null,
       departementId,

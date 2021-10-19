@@ -2,13 +2,7 @@ import { RouteOptions } from "fastify";
 import { HttpMethod } from "./http/httpMethod";
 import { HttpParameters } from "./http/httpParameters";
 import {
-  deleteDonneeRequest,
-  getDonneeByIdWithContextRequest,
-  getInventaireByIdRequest,
-  getInventaireIdByIdRequest,
-  getLastDonneeIdRequest,
-  getNextRegroupementRequest,
-  saveDonneeRequest,
+  deleteDonneeRequest, saveDonneeRequest,
   saveInventaireRequest
 } from "./requests/creation-requests";
 import {
@@ -85,8 +79,6 @@ export const REQUEST_MAPPING: Record<string, {
   responseAttachmentHandler?: () => string
 }> = {
   "/api/inventaire/save": { handler: saveInventaireRequest },
-  "/api/inventaire/find": { handler: getInventaireByIdRequest },
-  "/api/inventaire/find_id": { handler: getInventaireIdByIdRequest },
   "/api/donnee/search": { handler: getDonneesByCustomizedFiltersRequest },
   "/api/donnee/export": {
     handler: exportDonneesByCustomizedFiltersRequest,
@@ -94,9 +86,6 @@ export const REQUEST_MAPPING: Record<string, {
   },
   "/api/donnee/save": { handler: saveDonneeRequest },
   "/api/donnee/delete": { handler: deleteDonneeRequest },
-  "/api/donnee/last": { handler: getLastDonneeIdRequest },
-  "/api/donnee/next_regroupement": { handler: getNextRegroupementRequest },
-  "/api/donnee/find_with_context": { handler: getDonneeByIdWithContextRequest },
   "/api/observateur/all": { handler: getObservateursRequest },
   "/api/observateur/save": { handler: saveObservateurRequest },
   "/api/observateur/delete": { handler: removeObservateurRequest },

@@ -1,5 +1,5 @@
 import { HttpParameters } from "../http/httpParameters";
-import { Age, AgeWithCounts, Commune, Comportement, ComportementWithCounts, Departement, DepartementWithCounts, EstimationDistance, EstimationDistanceWithCounts, EstimationNombre, EstimationNombreWithCounts, Meteo, MeteoWithCounts, Milieu, MilieuWithCounts, Observateur, ObservateurWithCounts, Sexe, SexeWithCounts } from "../model/graphql";
+import { Age, AgeWithCounts, Commune, Comportement, ComportementWithCounts, Departement, DepartementWithCounts, EstimationDistance, EstimationDistanceWithCounts, EstimationNombre, EstimationNombreWithCounts, LieuDit, Meteo, MeteoWithCounts, Milieu, MilieuWithCounts, Observateur, ObservateurWithCounts, Sexe, SexeWithCounts } from "../model/graphql";
 import { findCommuneById } from "../model/helpers/commune.helper";
 import { findDepartementById } from "../model/helpers/departement.helper";
 import { Classe } from "../model/types/classe.object";
@@ -9,7 +9,7 @@ import { PostResponse } from "../model/types/post-response.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllAges, persistAge } from "../services/entities/age-service";
 import { findAllClasses, persistClasse } from "../services/entities/classe-service";
-import { findAllCommunes, persistCommune } from "../services/entities/commune-service";
+import { findAllCommunes, findAllCommunesWithCounts, persistCommune } from "../services/entities/commune-service";
 import { findAllComportements, persistComportement } from "../services/entities/comportement-service";
 import { findAllDepartements, persistDepartement } from "../services/entities/departement-service";
 import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId } from "../services/entities/donnee-service";
@@ -17,7 +17,7 @@ import { deleteEntityById } from "../services/entities/entity-service";
 import { findAllEspeces, persistEspece } from "../services/entities/espece-service";
 import { findAllEstimationsDistance, persistEstimationDistance } from "../services/entities/estimation-distance-service";
 import { findAllEstimationsNombre, persistEstimationNombre } from "../services/entities/estimation-nombre-service";
-import { findAllLieuxDits, persistLieuDit } from "../services/entities/lieu-dit-service";
+import { findAllLieuxDits, findAllLieuxDitsWithCounts, persistLieuDit } from "../services/entities/lieu-dit-service";
 import { findAllMeteos, persistMeteo } from "../services/entities/meteo-service";
 import { findAllMilieux, persistMilieu } from "../services/entities/milieu-service";
 import { deleteObservateur, findAllObservateurs, persistObservateur } from "../services/entities/observateur-service";
@@ -72,7 +72,7 @@ export const deleteDepartementRequest = async (
 };
 
 export const getCommunesRequest = async (): Promise<Omit<Commune, 'departement'>[]> => {
-  return await findAllCommunes();
+  return await findAllCommunesWithCounts();
 };
 
 export const saveCommuneRequest = async (
@@ -88,8 +88,8 @@ export const deleteCommuneRequest = async (
   return deleteEntity(httpParameters, TABLE_COMMUNE);
 };
 
-export const getLieuxditsRequest = async (): Promise<Lieudit[]> => {
-  return findAllLieuxDits();
+export const getLieuxditsRequest = async (): Promise<Omit<LieuDit, 'commune'>[]> => {
+  return findAllLieuxDitsWithCounts();
 };
 
 export const saveLieuditRequest = async (

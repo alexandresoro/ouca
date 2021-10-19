@@ -1,7 +1,8 @@
+import { Commune } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { AgeWithCounts, Commune, ComportementWithCounts, DepartementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, LieuDit, MeteoWithCounts, MilieuWithCounts, ObservateurWithCounts, SexeWithCounts } from "../../model/graphql";
+import { AgeWithCounts, ComportementWithCounts, DepartementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MeteoWithCounts, MilieuWithCounts, ObservateurWithCounts, SexeWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Espece } from "../../model/types/espece.model";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
@@ -18,7 +19,7 @@ import { findAllEspeces } from "../entities/espece-service";
 import { findAllEstimationsDistance } from "../entities/estimation-distance-service";
 import { findAllEstimationsNombre } from "../entities/estimation-nombre-service";
 import { findAllInventairesWithIds, insertInventaires } from "../entities/inventaire-service";
-import { findAllLieuxDits } from "../entities/lieu-dit-service";
+import { findAllLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { findAllMeteos } from "../entities/meteo-service";
 import { findAllMilieux } from "../entities/milieu-service";
 import { findAllObservateurs } from "../entities/observateur-service";
@@ -29,8 +30,8 @@ export class ImportDonneeService extends ImportService {
   private coordinatesSystem: CoordinatesSystem;
   private observateurs: ObservateurWithCounts[];
   private departements: DepartementWithCounts[];
-  private communes: Omit<Commune, 'departement'>[];
-  private lieuxDits: Omit<LieuDit, 'commune'>[];
+  private communes: Commune[];
+  private lieuxDits: LieuDitWithCoordinatesAsNumber[];
   private especes: Espece[];
   private ages: AgeWithCounts[];
   private sexes: SexeWithCounts[];
@@ -371,7 +372,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findLieuDit = (communeId: number, nomLieuDit: string): Omit<LieuDit, 'commune'> => {
+  private findLieuDit = (communeId: number, nomLieuDit: string): LieuDitWithCoordinatesAsNumber => {
     return this.lieuxDits.find((lieuDit) => {
       return lieuDit.communeId === communeId && this.compareStrings(lieuDit.nom, nomLieuDit);
     });

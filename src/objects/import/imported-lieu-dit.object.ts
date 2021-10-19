@@ -1,5 +1,6 @@
+import { Lieudit } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { Lieudit } from "../../model/types/lieudit.model";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";
 
 const DEPARTEMENT_INDEX = 0;
@@ -39,11 +40,11 @@ export class ImportedLieuDit {
       communeId,
       nom: this.nom,
       altitude: +this.altitude,
-      coordinates: {
-        longitude: +(+this.longitude).toFixed(this.coordinatesSystem.decimalPlaces),
-        latitude: +(+this.latitude).toFixed(this.coordinatesSystem.decimalPlaces),
-        system: this.coordinatesSystem.code
-      }
+      longitude: new Decimal(+(+this.longitude).toFixed(this.coordinatesSystem.decimalPlaces)),
+      latitude: new Decimal(+(+this.latitude).toFixed(this.coordinatesSystem.decimalPlaces)),
+      coordinatesSystem: this.coordinatesSystem.code,
+      latitude_l2e: null,
+      longitude_l2e: null
     };
   };
 

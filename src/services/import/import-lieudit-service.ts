@@ -1,22 +1,20 @@
-import { Lieudit as LieuditDb } from "@prisma/client";
+import { Commune, Lieudit } from "@prisma/client";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
-import { Commune, DepartementWithCounts } from "../../model/graphql";
-import { Lieudit } from "../../model/types/lieudit.model";
+import { DepartementWithCounts } from "../../model/graphql";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
-import { buildLieuditDbFromLieudit } from "../../sql/entities-mapping/lieudit-mapping";
 import { findAllCommunes } from "../entities/commune-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findAllDepartements } from "../entities/departement-service";
-import { findAllLieuxDits, insertLieuxDits } from "../entities/lieu-dit-service";
+import { findAllLieuxDits, insertLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
   private departements: DepartementWithCounts[];
-  private communes: Omit<Commune, 'departement'>[];
-  private lieuxDits: Lieudit[];
+  private communes: Commune[];
+  private lieuxDits: (Lieudit | LieuDitWithCoordinatesAsNumber)[];
 
-  private lieuxDitsToInsert: LieuditDb[];
+  private lieuxDitsToInsert: Lieudit[];
   private coordinatesSystem: CoordinatesSystem;
 
   protected getNumberOfColumns = (): number => {
@@ -65,7 +63,7 @@ export class ImportLieuxditService extends ImportService {
     }
 
     // Check that the lieu-dit does not exist yet
-    const lieudit: Lieudit = this.lieuxDits.find((lieuDit) => {
+    const lieudit = this.lieuxDits.find((lieuDit) => {
       return (
         lieuDit.communeId === commune.id && this.compareStrings(lieuDit.nom, importedLieuDit.nom)
       );
@@ -78,7 +76,7 @@ export class ImportLieuxditService extends ImportService {
       commune.id
     );
 
-    this.lieuxDitsToInsert.push(buildLieuditDbFromLieudit(lieuditToSave));
+    this.lieuxDitsToInsert.push(lieuditToSave);
     this.lieuxDits.push(lieuditToSave);
 
     return null;

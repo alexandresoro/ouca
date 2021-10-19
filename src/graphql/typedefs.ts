@@ -98,7 +98,6 @@ export default gql`
     id: Int!
     code: Int!    
     nom: String!
-    departementId: Int!
     departement: Departement!
   }
 
@@ -170,7 +169,6 @@ export default gql`
     longitude: Float!
     latitude: Float!
     coordinatesSystem: CoordinatesSystemType!
-    communeId: Int!
     commune: Commune!
   }
 
@@ -450,6 +448,7 @@ export default gql`
     espece(id: Int!): Espece
     estimationDistance(id: Int!): EstimationDistance
     estimationNombre(id: Int!): EstimationNombre
+    inventaire(id: Int!): Inventaire
     lieuDit(id: Int!): LieuDit
     meteo(id: Int!): Meteo
     meteoList(ids: [Int!]!): [Meteo]
@@ -471,6 +470,7 @@ export default gql`
     milieux(params: FindParams): [Milieu]
     observateurs(params: FindParams): [Observateur]
     sexes(params: FindParams): [Sexe]
+    nextRegroupement: Int!
     lastDonneeId: Int
     paginatedAges(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
     paginatedClasses(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
