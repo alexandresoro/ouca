@@ -296,6 +296,10 @@ export type FindParams = {
   q?: Maybe<Scalars['String']>;
 };
 
+export type InputDepartement = {
+  code: Scalars['String'];
+};
+
 export type InputSettings = {
   areAssociesDisplayed: Scalars['Boolean'];
   coordinatesSystem: CoordinatesSystemType;
@@ -418,11 +422,18 @@ export type MilieuxPaginatedResult = PaginatedResult & {
 export type Mutation = {
   __typename?: 'Mutation';
   updateSettings?: Maybe<Settings>;
+  upsertDepartement?: Maybe<Departement>;
 };
 
 
 export type MutationUpdateSettingsArgs = {
   appConfiguration?: Maybe<InputSettings>;
+};
+
+
+export type MutationUpsertDepartementArgs = {
+  data: InputDepartement;
+  id?: Maybe<Scalars['Int']>;
 };
 
 export const Nicheur = {
@@ -919,6 +930,7 @@ export type ResolversTypes = {
   EstimationsNombrePaginatedResult: ResolverTypeWrapper<Partial<EstimationsNombrePaginatedResult>>;
   FindParams: ResolverTypeWrapper<Partial<FindParams>>;
   Float: ResolverTypeWrapper<Partial<Scalars['Float']>>;
+  InputDepartement: ResolverTypeWrapper<Partial<InputDepartement>>;
   InputSettings: ResolverTypeWrapper<Partial<InputSettings>>;
   Int: ResolverTypeWrapper<Partial<Scalars['Int']>>;
   Inventaire: ResolverTypeWrapper<Partial<Inventaire>>;
@@ -983,6 +995,7 @@ export type ResolversParentTypes = {
   EstimationsNombrePaginatedResult: Partial<EstimationsNombrePaginatedResult>;
   FindParams: Partial<FindParams>;
   Float: Partial<Scalars['Float']>;
+  InputDepartement: Partial<InputDepartement>;
   InputSettings: Partial<InputSettings>;
   Int: Partial<Scalars['Int']>;
   Inventaire: Partial<Inventaire>;
@@ -1306,6 +1319,7 @@ export type MilieuxPaginatedResultResolvers<ContextType = any, ParentType extend
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   updateSettings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType, RequireFields<MutationUpdateSettingsArgs, never>>;
+  upsertDepartement?: Resolver<Maybe<ResolversTypes['Departement']>, ParentType, ContextType, RequireFields<MutationUpsertDepartementArgs, 'data'>>;
 };
 
 export type ObservateurResolvers<ContextType = any, ParentType extends ResolversParentTypes['Observateur'] = ResolversParentTypes['Observateur']> = {
