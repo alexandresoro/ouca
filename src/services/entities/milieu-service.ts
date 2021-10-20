@@ -199,6 +199,14 @@ export const upsertMilieu = async (
   }
 };
 
+export const deleteMilieu = async (id: number): Promise<Milieu> => {
+  return prisma.milieu.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertMilieux = (
   milieux: Milieu[]
 ): Promise<SqlSaveResponse> => {

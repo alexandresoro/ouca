@@ -129,6 +129,14 @@ export const upsertAge = async (
   }
 };
 
+export const deleteAge = async (id: number): Promise<AgeEntity> => {
+  return prisma.age.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertAges = async (
   ages: Age[]
 ): Promise<SqlSaveResponse> => {

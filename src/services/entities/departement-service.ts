@@ -300,6 +300,14 @@ export const upsertDepartement = async (
   }
 };
 
+export const deleteDepartement = async (id: number): Promise<DepartementEntity> => {
+  return prisma.departement.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertDepartements = async (
   departements: Departement[]
 ): Promise<SqlSaveResponse> => {

@@ -332,6 +332,14 @@ export const upsertCommune = async (
   }
 };
 
+export const deleteCommune = async (id: number): Promise<CommuneEntity> => {
+  return prisma.commune.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertCommunes = async (
   communes: Omit<Commune, 'departement'>[]
 ): Promise<SqlSaveResponse> => {

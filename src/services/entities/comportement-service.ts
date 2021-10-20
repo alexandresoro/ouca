@@ -202,6 +202,14 @@ export const upsertComportement = async (
   }
 };
 
+export const deleteComportement = async (id: number): Promise<ComportementEntity> => {
+  return prisma.comportement.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertComportements = (
   comportements: Comportement[]
 ): Promise<SqlSaveResponse> => {

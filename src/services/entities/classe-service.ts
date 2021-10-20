@@ -186,6 +186,14 @@ export const upsertClasse = async (
   }
 };
 
+export const deleteClasse = async (id: number): Promise<ClasseEntity> => {
+  return prisma.classe.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertClasses = async (
   classes: Classe[]
 ): Promise<SqlSaveResponse> => {

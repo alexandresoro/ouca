@@ -556,6 +556,19 @@ export default gql`
   }
 
   type Mutation {
+    deleteAge(id: Int!): Int
+    deleteClasse(id: Int!): Int
+    deleteCommune(id: Int!): Int
+    deleteComportement(id: Int!): Int
+    deleteDepartement(id: Int!): Int
+    deleteEspece(id: Int!): Int
+    deleteEstimationDistance(id: Int!): Int
+    deleteEstimationNombre(id: Int!): Int
+    deleteLieuDit(id: Int!): Int
+    deleteMeteo(id: Int!): Int
+    deleteMilieu(id: Int!): Int
+    deleteObservateur(id: Int!): Int
+    deleteSexe(id: Int!): Int
     upsertAge(id: Int, data: InputAge!): Age
     upsertClasse(id: Int, data: InputClasse!): Classe
     upsertCommune(id: Int, data: InputCommune!): Commune

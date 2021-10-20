@@ -130,6 +130,14 @@ export const upsertSexe = async (
   }
 };
 
+export const deleteSexe = async (id: number): Promise<SexeEntity> => {
+  return prisma.sexe.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertSexes = async (
   sexes: Sexe[]
 ): Promise<SqlSaveResponse> => {

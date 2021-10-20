@@ -149,6 +149,14 @@ export const upsertMeteo = async (
   }
 };
 
+export const deleteMeteo = async (id: number): Promise<MeteoEntity> => {
+  return prisma.meteo.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertMeteos = async (
   meteos: Meteo[]
 ): Promise<SqlSaveResponse> => {

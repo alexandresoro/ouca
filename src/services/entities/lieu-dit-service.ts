@@ -357,6 +357,14 @@ export const upsertLieuDit = async (
   }
 };
 
+export const deleteLieuDit = async (id: number): Promise<LieuDitWithCoordinatesAsNumber> => {
+  return prisma.lieudit.delete({
+    where: {
+      id
+    }
+  }).then(buildLieuditFromLieuditDb);
+}
+
 export const insertLieuxDits = async (
   lieuxDits: LieuditObj[]
 ): Promise<SqlSaveResponse> => {

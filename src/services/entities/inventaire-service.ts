@@ -11,12 +11,10 @@ import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdById, quer
 import { queryToFindMeteosByInventaireId } from "../../sql/sql-queries-meteo";
 import { queryToFindAssociesByInventaireId } from "../../sql/sql-queries-observateur";
 import { queryToDeleteAnEntityByAttribute, queryToFindOneById, queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
-import { DATE_WITH_TIME_PATTERN, INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../../utils/constants";
+import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../../utils/constants";
 import { mapAssociesIds, mapMeteosIds } from "../../utils/mapping-utils";
 import { areArraysContainingSameValues } from "../../utils/utils";
 import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntityNoCheck } from "./entity-service";
-
-const DATE_PATTERN = "yyyy-MM-dd";
 
 type InventaireWithRelations = Omit<InventaireEntity, 'date' | 'latitude' | 'longitude' | 'altitude' | 'coordinates_system'> & {
   observateur: Observateur

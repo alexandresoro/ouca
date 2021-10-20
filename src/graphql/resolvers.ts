@@ -1,21 +1,21 @@
 import { Commune as CommuneEntity, Espece as EspeceEntity } from "@prisma/client";
 import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
-import { findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
-import { findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses, upsertClasse } from "../services/entities/classe-service";
-import { findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommunes, upsertCommune } from "../services/entities/commune-service";
-import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements, upsertComportement } from "../services/entities/comportement-service";
+import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
+import { deleteClasse, findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses, upsertClasse } from "../services/entities/classe-service";
+import { deleteCommune, findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommunes, upsertCommune } from "../services/entities/commune-service";
+import { deleteComportement, findComportement, findComportements, findComportementsByIds, findPaginatedComportements, upsertComportement } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
-import { findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
+import { deleteDepartement, findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
 import { findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement } from "../services/entities/donnee-service";
-import { findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
-import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
-import { findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
+import { deleteEspece, findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
+import { deleteEstimationDistance, findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
+import { deleteEstimationNombre, findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
 import { findInventaire, findInventaireOfDonneeId } from "../services/entities/inventaire-service";
-import { findLieuDit, findLieuDitOfInventaireId, findLieuxDits, findPaginatedLieuxDits, LieuDitWithCoordinatesAsNumber, upsertLieuDit } from "../services/entities/lieu-dit-service";
-import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos, upsertMeteo } from "../services/entities/meteo-service";
-import { findMilieu, findMilieux, findMilieuxByIds, findPaginatedMilieux, upsertMilieu } from "../services/entities/milieu-service";
-import { findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs, upsertObservateur } from "../services/entities/observateur-service";
-import { findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
+import { deleteLieuDit, findLieuDit, findLieuDitOfInventaireId, findLieuxDits, findPaginatedLieuxDits, LieuDitWithCoordinatesAsNumber, upsertLieuDit } from "../services/entities/lieu-dit-service";
+import { deleteMeteo, findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos, upsertMeteo } from "../services/entities/meteo-service";
+import { deleteMilieu, findMilieu, findMilieux, findMilieuxByIds, findPaginatedMilieux, upsertMilieu } from "../services/entities/milieu-service";
+import { deleteObservateur, findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs, upsertObservateur } from "../services/entities/observateur-service";
+import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
 
 const resolvers: Resolvers = {
@@ -171,6 +171,45 @@ const resolvers: Resolvers = {
     }
   },
   Mutation: {
+    deleteAge: async (_source, args): Promise<number> => {
+      return deleteAge(args.id).then(({ id }) => id);
+    },
+    deleteClasse: async (_source, args): Promise<number> => {
+      return deleteClasse(args.id).then(({ id }) => id);
+    },
+    deleteCommune: async (_source, args): Promise<number> => {
+      return deleteCommune(args.id).then(({ id }) => id);
+    },
+    deleteComportement: async (_source, args): Promise<number> => {
+      return deleteComportement(args.id).then(({ id }) => id);
+    },
+    deleteDepartement: async (_source, args): Promise<number> => {
+      return deleteDepartement(args.id).then(({ id }) => id);
+    },
+    deleteEspece: async (_source, args): Promise<number> => {
+      return deleteEspece(args.id).then(({ id }) => id);
+    },
+    deleteEstimationDistance: async (_source, args): Promise<number> => {
+      return deleteEstimationDistance(args.id).then(({ id }) => id);
+    },
+    deleteEstimationNombre: async (_source, args): Promise<number> => {
+      return deleteEstimationNombre(args.id).then(({ id }) => id);
+    },
+    deleteLieuDit: async (_source, args): Promise<number> => {
+      return deleteLieuDit(args.id).then(({ id }) => id);
+    },
+    deleteMeteo: async (_source, args): Promise<number> => {
+      return deleteMeteo(args.id).then(({ id }) => id);
+    },
+    deleteMilieu: async (_source, args): Promise<number> => {
+      return deleteMilieu(args.id).then(({ id }) => id);
+    },
+    deleteObservateur: async (_source, args): Promise<number> => {
+      return deleteObservateur(args.id).then(({ id }) => id);
+    },
+    deleteSexe: async (_source, args): Promise<number> => {
+      return deleteSexe(args.id).then(({ id }) => id);
+    },
     upsertAge: async (_source, args): Promise<Age> => {
       return upsertAge(args);
     },

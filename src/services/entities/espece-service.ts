@@ -236,6 +236,14 @@ export const upsertEspece = async (
   }
 };
 
+export const deleteEspece = async (id: number): Promise<EspeceEntity> => {
+  return prisma.espece.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertEspeces = (
   especes: EspeceObj[]
 ): Promise<SqlSaveResponse> => {

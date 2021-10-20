@@ -126,6 +126,14 @@ export const upsertEstimationDistance = async (
   }
 };
 
+export const deleteEstimationDistance = async (id: number): Promise<EstimationDistanceEntity> => {
+  return prisma.estimationDistance.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertEstimationsDistance = async (
   estimationsDistance: EstimationDistance[]
 ): Promise<SqlSaveResponse> => {

@@ -4,118 +4,24 @@ import { findCommuneById } from "../model/helpers/commune.helper";
 import { findDepartementById } from "../model/helpers/departement.helper";
 import { Classe } from "../model/types/classe.object";
 import { Espece } from "../model/types/espece.model";
-import { PostResponse } from "../model/types/post-response.object";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllAges } from "../services/entities/age-service";
 import { findAllClasses } from "../services/entities/classe-service";
 import { findAllCommunes } from "../services/entities/commune-service";
 import { findAllComportements } from "../services/entities/comportement-service";
 import { findAllDepartements } from "../services/entities/departement-service";
 import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId } from "../services/entities/donnee-service";
-import { deleteEntityById } from "../services/entities/entity-service";
 import { findAllEspeces } from "../services/entities/espece-service";
 import { findAllEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findAllEstimationsNombre } from "../services/entities/estimation-nombre-service";
 import { findAllLieuxDits } from "../services/entities/lieu-dit-service";
 import { findAllMeteos } from "../services/entities/meteo-service";
 import { findAllMilieux } from "../services/entities/milieu-service";
-import { deleteObservateur, findAllObservateurs } from "../services/entities/observateur-service";
+import { findAllObservateurs } from "../services/entities/observateur-service";
 import { findAllSexes } from "../services/entities/sexe-service";
-import { TABLE_AGE, TABLE_CLASSE, TABLE_COMMUNE, TABLE_COMPORTEMENT, TABLE_DEPARTEMENT, TABLE_ESPECE, TABLE_ESTIMATION_DISTANCE, TABLE_ESTIMATION_NOMBRE, TABLE_LIEUDIT, TABLE_METEO, TABLE_MILIEU, TABLE_SEXE } from "../utils/constants";
 import { writeToExcel } from "../utils/export-excel-utils";
-import { buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
-
-const deleteEntity = async (
-  httpParameters: HttpParameters,
-  entityName: string
-): Promise<PostResponse> => {
-  const id: number = +httpParameters.query.id;
-  const sqlResponse: SqlSaveResponse = await deleteEntityById(entityName, id);
-  return buildPostResponseFromSqlResponse(sqlResponse);
-};
-
-export const removeObservateurRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  const id: number = +httpParameters.query.id;
-  const sqlResponse: SqlSaveResponse = await deleteObservateur(id);
-  return buildPostResponseFromSqlResponse(sqlResponse);
-};
 
 export const getDepartementsRequest = async (): Promise<DepartementWithCounts[]> => {
   return await findAllDepartements();
-};
-
-export const deleteDepartementRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_DEPARTEMENT);
-};
-
-export const deleteCommuneRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_COMMUNE);
-};
-
-export const deleteLieuditRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_LIEUDIT);
-};
-
-export const deleteMeteoRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_METEO);
-};
-
-export const deleteClasseRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_CLASSE);
-};
-
-export const deleteEspeceRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_ESPECE);
-};
-
-export const deleteSexeRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_SEXE);
-};
-
-export const deleteAgeRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_AGE);
-};
-
-export const deleteEstimationNombreRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_ESTIMATION_NOMBRE);
-};
-
-export const deleteEstimationDistanceRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_ESTIMATION_DISTANCE);
-};
-
-export const deleteComportementRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_COMPORTEMENT);
-};
-
-export const deleteMilieuRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  return deleteEntity(httpParameters, TABLE_MILIEU);
 };
 
 export const exportObservateursRequest = async (): Promise<unknown> => {

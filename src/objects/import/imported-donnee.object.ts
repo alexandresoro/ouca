@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 import { Coordinates } from "../../model/types/coordinates.object";
+import { DATE_PATTERN } from "../../utils/constants";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils";
 import { DonneeCompleteWithIds } from "../db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../db/inventaire-db.object";
@@ -34,7 +35,6 @@ const MILIEU_4_INDEX = 30;
 const COMMENTAIRE_INDEX = 31;
 
 const LIST_SEPARATOR = ",";
-const DATE_PATTERN = "yyyy-MM-dd";
 
 const TEMPERATURE_MIN_VALUE = -128;
 const TEMPERATURE_MAX_VALUE = 127;

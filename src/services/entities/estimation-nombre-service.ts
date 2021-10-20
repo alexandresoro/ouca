@@ -135,6 +135,14 @@ export const upsertEstimationNombre = async (
   }
 };
 
+export const deleteEstimationNombre = async (id: number): Promise<EstimationNombreEntity> => {
+  return prisma.estimationNombre.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export const insertEstimationsNombre = async (
   estimationsNombre: EstimationNombre[]
 ): Promise<SqlSaveResponse> => {

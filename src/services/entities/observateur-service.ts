@@ -6,7 +6,7 @@ import { createKeyValueMapWithSameName, queryParametersToFindAllEntities, queryT
 import { COLUMN_LIBELLE, TABLE_OBSERVATEUR } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { deleteEntityById, insertMultipleEntities } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 
 const DB_SAVE_MAPPING_OBSERVATEUR = createKeyValueMapWithSameName("libelle");
@@ -158,11 +158,13 @@ export const upsertObservateur = async (
   }
 };
 
-export const deleteObservateur = async (
-  id: number
-): Promise<SqlSaveResponse> => {
-  return deleteEntityById(TABLE_OBSERVATEUR, id);
-};
+export const deleteObservateur = async (id: number): Promise<ObservateurEntity> => {
+  return prisma.observateur.delete({
+    where: {
+      id
+    }
+  });
+}
 
 export const insertObservateurs = async (
   observateurs: Observateur[]
