@@ -313,6 +313,7 @@ export type InputCommune = {
 export type InputComportement = {
   code: Scalars['String'];
   libelle: Scalars['String'];
+  nicheur?: Maybe<Nicheur>;
 };
 
 export type InputDepartement = {
