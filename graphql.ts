@@ -296,8 +296,65 @@ export type FindParams = {
   q?: Maybe<Scalars['String']>;
 };
 
+export type InputAge = {
+  libelle: Scalars['String'];
+};
+
+export type InputClasse = {
+  libelle: Scalars['String'];
+};
+
+export type InputCommune = {
+  code: Scalars['Int'];
+  departementId: Scalars['Int'];
+  nom: Scalars['String'];
+};
+
+export type InputComportement = {
+  code: Scalars['String'];
+  libelle: Scalars['String'];
+};
+
 export type InputDepartement = {
   code: Scalars['String'];
+};
+
+export type InputEspece = {
+  classeId: Scalars['Int'];
+  code: Scalars['String'];
+  nomFrancais: Scalars['String'];
+  nomLatin: Scalars['String'];
+};
+
+export type InputEstimationDistance = {
+  libelle: Scalars['String'];
+};
+
+export type InputEstimationNombre = {
+  libelle: Scalars['String'];
+  nonCompte: Scalars['Boolean'];
+};
+
+export type InputLieuDit = {
+  altitude: Scalars['Int'];
+  communeId: Scalars['Int'];
+  coordinatesSystem: CoordinatesSystemType;
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  nom: Scalars['String'];
+};
+
+export type InputMeteo = {
+  libelle: Scalars['String'];
+};
+
+export type InputMilieu = {
+  code: Scalars['String'];
+  libelle: Scalars['String'];
+};
+
+export type InputObservateur = {
+  libelle: Scalars['String'];
 };
 
 export type InputSettings = {
@@ -313,6 +370,10 @@ export type InputSettings = {
   isDistanceDisplayed: Scalars['Boolean'];
   isMeteoDisplayed: Scalars['Boolean'];
   isRegroupementDisplayed: Scalars['Boolean'];
+};
+
+export type InputSexe = {
+  libelle: Scalars['String'];
 };
 
 export type Inventaire = {
@@ -422,7 +483,19 @@ export type MilieuxPaginatedResult = PaginatedResult & {
 export type Mutation = {
   __typename?: 'Mutation';
   updateSettings?: Maybe<Settings>;
+  upsertAge?: Maybe<Age>;
+  upsertClasse?: Maybe<Classe>;
+  upsertCommune?: Maybe<Commune>;
+  upsertComportement?: Maybe<Comportement>;
   upsertDepartement?: Maybe<Departement>;
+  upsertEspece?: Maybe<Espece>;
+  upsertEstimationDistance?: Maybe<EstimationDistance>;
+  upsertEstimationNombre?: Maybe<EstimationNombre>;
+  upsertLieuDit?: Maybe<LieuDit>;
+  upsertMeteo?: Maybe<Meteo>;
+  upsertMilieu?: Maybe<Milieu>;
+  upsertObservateur?: Maybe<Observateur>;
+  upsertSexe?: Maybe<Sexe>;
 };
 
 
@@ -431,8 +504,80 @@ export type MutationUpdateSettingsArgs = {
 };
 
 
+export type MutationUpsertAgeArgs = {
+  data: InputAge;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertClasseArgs = {
+  data: InputClasse;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertCommuneArgs = {
+  data: InputCommune;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertComportementArgs = {
+  data: InputComportement;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
 export type MutationUpsertDepartementArgs = {
   data: InputDepartement;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertEspeceArgs = {
+  data: InputEspece;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertEstimationDistanceArgs = {
+  data: InputEstimationDistance;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertEstimationNombreArgs = {
+  data: InputEstimationNombre;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertLieuDitArgs = {
+  data: InputLieuDit;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertMeteoArgs = {
+  data: InputMeteo;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertMilieuArgs = {
+  data: InputMilieu;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertObservateurArgs = {
+  data: InputObservateur;
+  id?: Maybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertSexeArgs = {
+  data: InputSexe;
   id?: Maybe<Scalars['Int']>;
 };
 
@@ -930,8 +1075,20 @@ export type ResolversTypes = {
   EstimationsNombrePaginatedResult: ResolverTypeWrapper<Partial<EstimationsNombrePaginatedResult>>;
   FindParams: ResolverTypeWrapper<Partial<FindParams>>;
   Float: ResolverTypeWrapper<Partial<Scalars['Float']>>;
+  InputAge: ResolverTypeWrapper<Partial<InputAge>>;
+  InputClasse: ResolverTypeWrapper<Partial<InputClasse>>;
+  InputCommune: ResolverTypeWrapper<Partial<InputCommune>>;
+  InputComportement: ResolverTypeWrapper<Partial<InputComportement>>;
   InputDepartement: ResolverTypeWrapper<Partial<InputDepartement>>;
+  InputEspece: ResolverTypeWrapper<Partial<InputEspece>>;
+  InputEstimationDistance: ResolverTypeWrapper<Partial<InputEstimationDistance>>;
+  InputEstimationNombre: ResolverTypeWrapper<Partial<InputEstimationNombre>>;
+  InputLieuDit: ResolverTypeWrapper<Partial<InputLieuDit>>;
+  InputMeteo: ResolverTypeWrapper<Partial<InputMeteo>>;
+  InputMilieu: ResolverTypeWrapper<Partial<InputMilieu>>;
+  InputObservateur: ResolverTypeWrapper<Partial<InputObservateur>>;
   InputSettings: ResolverTypeWrapper<Partial<InputSettings>>;
+  InputSexe: ResolverTypeWrapper<Partial<InputSexe>>;
   Int: ResolverTypeWrapper<Partial<Scalars['Int']>>;
   Inventaire: ResolverTypeWrapper<Partial<Inventaire>>;
   LieuDit: ResolverTypeWrapper<Partial<LieuDit>>;
@@ -995,8 +1152,20 @@ export type ResolversParentTypes = {
   EstimationsNombrePaginatedResult: Partial<EstimationsNombrePaginatedResult>;
   FindParams: Partial<FindParams>;
   Float: Partial<Scalars['Float']>;
+  InputAge: Partial<InputAge>;
+  InputClasse: Partial<InputClasse>;
+  InputCommune: Partial<InputCommune>;
+  InputComportement: Partial<InputComportement>;
   InputDepartement: Partial<InputDepartement>;
+  InputEspece: Partial<InputEspece>;
+  InputEstimationDistance: Partial<InputEstimationDistance>;
+  InputEstimationNombre: Partial<InputEstimationNombre>;
+  InputLieuDit: Partial<InputLieuDit>;
+  InputMeteo: Partial<InputMeteo>;
+  InputMilieu: Partial<InputMilieu>;
+  InputObservateur: Partial<InputObservateur>;
   InputSettings: Partial<InputSettings>;
+  InputSexe: Partial<InputSexe>;
   Int: Partial<Scalars['Int']>;
   Inventaire: Partial<Inventaire>;
   LieuDit: Partial<LieuDit>;
@@ -1319,7 +1488,19 @@ export type MilieuxPaginatedResultResolvers<ContextType = any, ParentType extend
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   updateSettings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType, RequireFields<MutationUpdateSettingsArgs, never>>;
+  upsertAge?: Resolver<Maybe<ResolversTypes['Age']>, ParentType, ContextType, RequireFields<MutationUpsertAgeArgs, 'data'>>;
+  upsertClasse?: Resolver<Maybe<ResolversTypes['Classe']>, ParentType, ContextType, RequireFields<MutationUpsertClasseArgs, 'data'>>;
+  upsertCommune?: Resolver<Maybe<ResolversTypes['Commune']>, ParentType, ContextType, RequireFields<MutationUpsertCommuneArgs, 'data'>>;
+  upsertComportement?: Resolver<Maybe<ResolversTypes['Comportement']>, ParentType, ContextType, RequireFields<MutationUpsertComportementArgs, 'data'>>;
   upsertDepartement?: Resolver<Maybe<ResolversTypes['Departement']>, ParentType, ContextType, RequireFields<MutationUpsertDepartementArgs, 'data'>>;
+  upsertEspece?: Resolver<Maybe<ResolversTypes['Espece']>, ParentType, ContextType, RequireFields<MutationUpsertEspeceArgs, 'data'>>;
+  upsertEstimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType, RequireFields<MutationUpsertEstimationDistanceArgs, 'data'>>;
+  upsertEstimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType, RequireFields<MutationUpsertEstimationNombreArgs, 'data'>>;
+  upsertLieuDit?: Resolver<Maybe<ResolversTypes['LieuDit']>, ParentType, ContextType, RequireFields<MutationUpsertLieuDitArgs, 'data'>>;
+  upsertMeteo?: Resolver<Maybe<ResolversTypes['Meteo']>, ParentType, ContextType, RequireFields<MutationUpsertMeteoArgs, 'data'>>;
+  upsertMilieu?: Resolver<Maybe<ResolversTypes['Milieu']>, ParentType, ContextType, RequireFields<MutationUpsertMilieuArgs, 'data'>>;
+  upsertObservateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<MutationUpsertObservateurArgs, 'data'>>;
+  upsertSexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<MutationUpsertSexeArgs, 'data'>>;
 };
 
 export type ObservateurResolvers<ContextType = any, ParentType extends ResolversParentTypes['Observateur'] = ResolversParentTypes['Observateur']> = {
