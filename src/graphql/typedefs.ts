@@ -2,8 +2,69 @@ import { gql } from "apollo-server";
 
 export default gql`
 
+  input InputAge {
+    libelle: String!
+  }
+
+  input InputClasse {
+    libelle: String!
+  }
+
+  input InputCommune {
+    departementId: Int!
+    code: Int!
+    nom: String!
+  }
+
+  input InputComportement {
+    code: String!
+    libelle: String!
+  }
+
   input InputDepartement {
     code: String!
+  }
+
+  input InputEspece {
+    classeId: Int!
+    code: String!
+    nomFrancais: String!
+    nomLatin: String!
+  }
+
+  input InputEstimationDistance {
+    libelle: String!
+  }
+
+  input InputEstimationNombre {
+    libelle: String!
+    nonCompte: Boolean!
+  }
+
+  input InputLieuDit {
+    communeId: Int!
+    nom: String!
+    altitude: Int!
+    longitude: Float!
+    latitude: Float!
+    coordinatesSystem: CoordinatesSystemType!
+  }
+
+  input InputMeteo {
+    libelle: String!
+  }
+
+  input InputMilieu {
+    code: String!
+    libelle: String!
+  }
+
+  input InputObservateur {
+    libelle: String!
+  }
+
+  input InputSexe {
+    libelle: String!
   }
 
   input InputSettings {
@@ -494,7 +555,19 @@ export default gql`
   }
 
   type Mutation {
+    upsertAge(id: Int, data: InputAge!): Age
+    upsertClasse(id: Int, data: InputClasse!): Classe
+    upsertCommune(id: Int, data: InputCommune!): Commune
+    upsertComportement(id: Int, data: InputComportement!): Comportement
     upsertDepartement(id: Int, data: InputDepartement!): Departement
+    upsertEspece(id: Int, data: InputEspece!): Espece
+    upsertEstimationDistance(id: Int, data: InputEstimationDistance!): EstimationDistance
+    upsertEstimationNombre(id: Int, data: InputEstimationNombre!): EstimationNombre
+    upsertLieuDit(id: Int, data: InputLieuDit!): LieuDit
+    upsertMeteo(id: Int, data: InputMeteo!): Meteo
+    upsertMilieu(id: Int, data: InputMilieu!): Milieu
+    upsertObservateur(id: Int, data: InputObservateur!): Observateur
+    upsertSexe(id: Int, data: InputSexe!): Sexe
     updateSettings(appConfiguration: InputSettings): Settings
   }
 
