@@ -1,12 +1,12 @@
 
 import { Age as AgeEntity, Prisma } from "@prisma/client";
-import { Age, AgesPaginatedResult, AgeWithCounts, FindParams, QueryPaginatedAgesArgs } from "../../model/graphql";
+import { Age, AgesPaginatedResult, AgeWithCounts, FindParams, MutationUpsertAgeArgs, QueryPaginatedAgesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE, TABLE_AGE } from "../../utils/constants";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities, persistEntity } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 const DB_SAVE_MAPPING_AGE = createKeyValueMapWithSameName("libelle")
 
@@ -114,8 +114,19 @@ export const findPaginatedAges = async (
   }
 };
 
-export const persistAge = async (age: Age): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_AGE, age, DB_SAVE_MAPPING_AGE);
+export const upsertAge = async (
+  args: MutationUpsertAgeArgs
+): Promise<AgeEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.age.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.age.create({ data });
+  }
 };
 
 export const insertAges = async (

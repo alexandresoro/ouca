@@ -1,12 +1,12 @@
 import { Espece as EspeceEntity, Prisma } from "@prisma/client";
-import { EspecesPaginatedResult, FindParams, QueryPaginatedEspecesArgs } from "../../model/graphql";
+import { EspecesPaginatedResult, FindParams, MutationUpsertEspeceArgs, QueryPaginatedEspecesArgs } from "../../model/graphql";
 import { Espece as EspeceObj } from "../../model/types/espece.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_ESPECE } from "../../utils/constants";
 import { getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities, persistEntity } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESPECE = {
   ...createKeyValueMapWithSameName("code"),
@@ -221,10 +221,19 @@ export const findPaginatedEspeces = async (
   }
 };
 
-export const persistEspece = async (
-  espece: EspeceObj
-): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_ESPECE, espece, DB_SAVE_MAPPING_ESPECE);
+export const upsertEspece = async (
+  args: MutationUpsertEspeceArgs
+): Promise<EspeceEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.espece.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.espece.create({ data });
+  }
 };
 
 export const insertEspeces = (

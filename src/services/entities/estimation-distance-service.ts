@@ -1,11 +1,11 @@
 import { EstimationDistance as EstimationDistanceEntity, Prisma } from "@prisma/client";
-import { EstimationDistance, EstimationDistanceWithCounts, EstimationsDistancePaginatedResult, FindParams, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
+import { EstimationDistance, EstimationDistanceWithCounts, EstimationsDistancePaginatedResult, FindParams, MutationUpsertEstimationDistanceArgs, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE, TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities, persistEntity } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESTIMATION_DISTANCE = createKeyValueMapWithSameName("libelle");
 
@@ -111,14 +111,19 @@ export const findPaginatedEstimationsDistance = async (
   }
 };
 
-export const persistEstimationDistance = async (
-  estimation: EstimationDistance
-): Promise<SqlSaveResponse> => {
-  return persistEntity(
-    TABLE_ESTIMATION_DISTANCE,
-    estimation,
-    DB_SAVE_MAPPING_ESTIMATION_DISTANCE
-  );
+export const upsertEstimationDistance = async (
+  args: MutationUpsertEstimationDistanceArgs
+): Promise<EstimationDistanceEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.estimationDistance.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.estimationDistance.create({ data });
+  }
 };
 
 export const insertEstimationsDistance = async (

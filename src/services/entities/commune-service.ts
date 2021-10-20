@@ -1,12 +1,12 @@
 import { Commune as CommuneEntity, Prisma } from "@prisma/client";
-import { Commune, CommunesPaginatedResult, CommuneWithCounts, FindParams, QueryPaginatedCommunesArgs } from "../../model/graphql";
+import { Commune, CommunesPaginatedResult, CommuneWithCounts, FindParams, MutationUpsertCommuneArgs, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_NOM, TABLE_COMMUNE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities, persistEntityNoCheck } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 export const findCommune = async (id: number): Promise<CommuneEntity | null> => {
   return prisma.commune.findUnique({
@@ -317,14 +317,19 @@ export const findPaginatedCommunes = async (
   }
 };
 
-export const persistCommune = async (
-  commune: Omit<Commune, 'departement'> & { departementId: number }
-): Promise<SqlSaveResponse> => {
-  const { departementId, ...others } = commune;
-  return persistEntityNoCheck(TABLE_COMMUNE, {
-    ...others,
-    departement_id: departementId
-  });
+export const upsertCommune = async (
+  args: MutationUpsertCommuneArgs
+): Promise<CommuneEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.commune.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.commune.create({ data });
+  }
 };
 
 export const insertCommunes = async (

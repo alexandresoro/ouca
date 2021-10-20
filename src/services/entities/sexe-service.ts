@@ -1,12 +1,12 @@
 
 import { Prisma, Sexe as SexeEntity } from "@prisma/client";
-import { FindParams, QueryPaginatedSexesArgs, Sexe, SexesPaginatedResult, SexeWithCounts } from "../../model/graphql";
+import { FindParams, MutationUpsertSexeArgs, QueryPaginatedSexesArgs, Sexe, SexesPaginatedResult, SexeWithCounts } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE, TABLE_SEXE } from "../../utils/constants";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities, persistEntity } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 const DB_SAVE_MAPPING_SEXE = createKeyValueMapWithSameName("libelle");
 
@@ -115,8 +115,19 @@ export const findPaginatedSexes = async (
   }
 };
 
-export const persistSexe = async (sexe: Sexe): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_SEXE, sexe, DB_SAVE_MAPPING_SEXE);
+export const upsertSexe = async (
+  args: MutationUpsertSexeArgs
+): Promise<SexeEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.sexe.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.sexe.create({ data });
+  }
 };
 
 export const insertSexes = async (

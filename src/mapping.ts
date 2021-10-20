@@ -44,18 +44,7 @@ import {
   getMeteosRequest,
   getMilieuxRequest, getObservateursRequest,
   getSexesRequest,
-  removeObservateurRequest,
-  saveAgeRequest,
-  saveClasseRequest,
-  saveCommuneRequest,
-  saveComportementRequest, saveEspeceRequest,
-  saveEstimationDistanceRequest,
-  saveEstimationNombreRequest,
-  saveLieuditRequest,
-  saveMeteoRequest,
-  saveMilieuRequest,
-  saveObservateurRequest,
-  saveSexeRequest
+  removeObservateurRequest
 } from "./requests/gestion-requests";
 import { saveDatabaseFileNameRequest, saveDatabaseRequest } from "./requests/save-requests";
 import {
@@ -85,7 +74,6 @@ export const REQUEST_MAPPING: Record<string, {
   "/api/donnee/save": { handler: saveDonneeRequest },
   "/api/donnee/delete": { handler: deleteDonneeRequest },
   "/api/observateur/all": { handler: getObservateursRequest },
-  "/api/observateur/save": { handler: saveObservateurRequest },
   "/api/observateur/delete": { handler: removeObservateurRequest },
   "/api/observateur/export": {
     handler: exportObservateursRequest,
@@ -98,34 +86,29 @@ export const REQUEST_MAPPING: Record<string, {
     responseType: EXCEL_MIME_TYPE
   },
   "/api/commune/all": { handler: getCommunesRequest },
-  "/api/commune/save": { handler: saveCommuneRequest },
   "/api/commune/delete": { handler: deleteCommuneRequest },
   "/api/commune/export": {
     handler: exportCommunesRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/lieudit/all": { handler: getLieuxditsRequest },
-  "/api/lieudit/save": { handler: saveLieuditRequest },
   "/api/lieudit/delete": { handler: deleteLieuditRequest },
   "/api/lieudit/export": {
     handler: exportLieuxditsRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/meteo/all": { handler: getMeteosRequest },
-  "/api/meteo/save": { handler: saveMeteoRequest },
   "/api/meteo/delete": { handler: deleteMeteoRequest },
   "/api/meteo/export": {
     handler: exportMeteosRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/classe/all": { handler: getClassesRequest },
-  "/api/classe/save": { handler: saveClasseRequest },
   "/api/classe/delete": { handler: deleteClasseRequest },
   "/api/classe/export": {
     handler: exportClassesRequest,
     responseType: EXCEL_MIME_TYPE
   },
-  "/api/espece/save": { handler: saveEspeceRequest },
   "/api/espece/delete": { handler: deleteEspeceRequest },
   "/api/espece/details_by_age": { handler: getEspeceDetailsByAgeRequest },
   "/api/espece/details_by_sexe": { handler: getEspeceDetailsBySexeRequest },
@@ -134,42 +117,36 @@ export const REQUEST_MAPPING: Record<string, {
     responseType: EXCEL_MIME_TYPE
   },
   "/api/sexe/all": { handler: getSexesRequest },
-  "/api/sexe/save": { handler: saveSexeRequest },
   "/api/sexe/delete": { handler: deleteSexeRequest },
   "/api/sexe/export": {
     handler: exportSexesRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/age/all": { handler: getAgesRequest },
-  "/api/age/save": { handler: saveAgeRequest },
   "/api/age/delete": { handler: deleteAgeRequest },
   "/api/age/export": {
     handler: exportAgesRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/estimation-nombre/all": { handler: getEstimationsNombreRequest },
-  "/api/estimation-nombre/save": { handler: saveEstimationNombreRequest },
   "/api/estimation-nombre/delete": { handler: deleteEstimationNombreRequest },
   "/api/estimation-nombre/export": {
     handler: exportEstimationsNombreRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/estimation-distance/all": { handler: getEstimationsDistanceRequest },
-  "/api/estimation-distance/save": { handler: saveEstimationDistanceRequest },
   "/api/estimation-distance/delete": { handler: deleteEstimationDistanceRequest },
   "/api/estimation-distance/export": {
     handler: exportEstimationsDistanceRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/comportement/all": { handler: getComportementsRequest },
-  "/api/comportement/save": { handler: saveComportementRequest },
   "/api/comportement/delete": { handler: deleteComportementRequest },
   "/api/comportement/export": {
     handler: exportComportementsRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/milieu/all": { handler: getMilieuxRequest },
-  "/api/milieu/save": { handler: saveMilieuRequest },
   "/api/milieu/delete": { handler: deleteMilieuRequest },
   "/api/milieu/export": {
     handler: exportMilieuxRequest,

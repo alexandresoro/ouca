@@ -1,11 +1,11 @@
 import { EstimationNombre as EstimationNombreEntity, Prisma } from "@prisma/client";
-import { EstimationNombre, EstimationNombreWithCounts, EstimationsNombrePaginatedResult, FindParams, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
+import { EstimationNombre, EstimationNombreWithCounts, EstimationsNombrePaginatedResult, FindParams, MutationUpsertEstimationNombreArgs, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE, TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities, persistEntity } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 const DB_SAVE_MAPPING_ESTIMATION_NOMBRE = {
   ...createKeyValueMapWithSameName("libelle"),
@@ -120,14 +120,19 @@ export const findPaginatedEstimationsNombre = async (
   }
 };
 
-export const persistEstimationNombre = async (
-  estimation: EstimationNombre
-): Promise<SqlSaveResponse> => {
-  return persistEntity(
-    TABLE_ESTIMATION_NOMBRE,
-    estimation,
-    DB_SAVE_MAPPING_ESTIMATION_NOMBRE
-  );
+export const upsertEstimationNombre = async (
+  args: MutationUpsertEstimationNombreArgs
+): Promise<EstimationNombreEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.estimationNombre.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.estimationNombre.create({ data });
+  }
 };
 
 export const insertEstimationsNombre = async (

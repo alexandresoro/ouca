@@ -19,6 +19,7 @@ export default gql`
   input InputComportement {
     code: String!
     libelle: String!
+    nicheur: Nicheur
   }
 
   input InputDepartement {

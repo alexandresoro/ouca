@@ -1,20 +1,21 @@
+import { Commune as CommuneEntity, Espece as EspeceEntity } from "@prisma/client";
 import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
-import { findAge, findAges, findPaginatedAges } from "../services/entities/age-service";
-import { findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses } from "../services/entities/classe-service";
-import { findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommunes } from "../services/entities/commune-service";
-import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements } from "../services/entities/comportement-service";
+import { findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
+import { findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses, upsertClasse } from "../services/entities/classe-service";
+import { findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommunes, upsertCommune } from "../services/entities/commune-service";
+import { findComportement, findComportements, findComportementsByIds, findPaginatedComportements, upsertComportement } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
 import { findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement } from "../services/entities/donnee-service";
-import { findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces } from "../services/entities/espece-service";
-import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance } from "../services/entities/estimation-distance-service";
-import { findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre } from "../services/entities/estimation-nombre-service";
+import { findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
+import { findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
+import { findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
 import { findInventaire, findInventaireOfDonneeId } from "../services/entities/inventaire-service";
-import { findLieuDit, findLieuDitOfInventaireId, findLieuxDits, findPaginatedLieuxDits } from "../services/entities/lieu-dit-service";
-import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos } from "../services/entities/meteo-service";
-import { findMilieu, findMilieux, findMilieuxByIds, findPaginatedMilieux } from "../services/entities/milieu-service";
-import { findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs } from "../services/entities/observateur-service";
-import { findPaginatedSexes, findSexe, findSexes } from "../services/entities/sexe-service";
+import { findLieuDit, findLieuDitOfInventaireId, findLieuxDits, findPaginatedLieuxDits, LieuDitWithCoordinatesAsNumber, upsertLieuDit } from "../services/entities/lieu-dit-service";
+import { findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos, upsertMeteo } from "../services/entities/meteo-service";
+import { findMilieu, findMilieux, findMilieuxByIds, findPaginatedMilieux, upsertMilieu } from "../services/entities/milieu-service";
+import { findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs, upsertObservateur } from "../services/entities/observateur-service";
+import { findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
 
 const resolvers: Resolvers = {
@@ -170,8 +171,44 @@ const resolvers: Resolvers = {
     }
   },
   Mutation: {
+    upsertAge: async (_source, args): Promise<Age> => {
+      return upsertAge(args);
+    },
+    upsertClasse: async (_source, args): Promise<Classe> => {
+      return upsertClasse(args);
+    },
+    upsertCommune: async (_source, args): Promise<CommuneEntity> => {
+      return upsertCommune(args);
+    },
+    upsertComportement: async (_source, args): Promise<Comportement> => {
+      return upsertComportement(args);
+    },
     upsertDepartement: async (_source, args): Promise<Departement> => {
       return upsertDepartement(args);
+    },
+    upsertEspece: async (_source, args): Promise<EspeceEntity> => {
+      return upsertEspece(args);
+    },
+    upsertEstimationDistance: async (_source, args): Promise<EstimationDistance> => {
+      return upsertEstimationDistance(args);
+    },
+    upsertEstimationNombre: async (_source, args): Promise<EstimationNombre> => {
+      return upsertEstimationNombre(args);
+    },
+    upsertLieuDit: async (_source, args): Promise<LieuDitWithCoordinatesAsNumber> => {
+      return upsertLieuDit(args);
+    },
+    upsertMeteo: async (_source, args): Promise<Meteo> => {
+      return upsertMeteo(args);
+    },
+    upsertMilieu: async (_source, args): Promise<Milieu> => {
+      return upsertMilieu(args);
+    },
+    upsertObservateur: async (_source, args): Promise<Observateur> => {
+      return upsertObservateur(args);
+    },
+    upsertSexe: async (_source, args): Promise<Sexe> => {
+      return upsertSexe(args);
     },
     updateSettings: async (_source, { appConfiguration }): Promise<Settings> => {
       return persistUserSettings(appConfiguration);

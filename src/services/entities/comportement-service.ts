@@ -1,12 +1,12 @@
 import { Comportement as ComportementEntity, Nicheur, Prisma } from "@prisma/client";
-import { Comportement, ComportementsPaginatedResult, ComportementWithCounts, FindParams, QueryPaginatedComportementsArgs } from "../../model/graphql";
+import { Comportement, ComportementsPaginatedResult, ComportementWithCounts, FindParams, MutationUpsertComportementArgs, QueryPaginatedComportementsArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_COMPORTEMENT } from "../../utils/constants";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
+import { insertMultipleEntitiesNoCheck } from "./entity-service";
 
 export const findComportement = async (id: number): Promise<ComportementEntity | null> => {
   return prisma.comportement.findUnique({
@@ -187,10 +187,19 @@ export const findPaginatedComportements = async (
 }
 
 
-export const persistComportement = async (
-  comportement: Comportement
-): Promise<SqlSaveResponse> => {
-  return persistEntityNoCheck(TABLE_COMPORTEMENT, comportement);
+export const upsertComportement = async (
+  args: MutationUpsertComportementArgs
+): Promise<ComportementEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.comportement.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.comportement.create({ data });
+  }
 };
 
 export const insertComportements = (

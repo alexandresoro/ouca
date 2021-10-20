@@ -1,12 +1,12 @@
 import { Classe as ClasseEntity, Prisma } from "@prisma/client";
-import { Classe, ClassesPaginatedResult, ClasseWithCounts, FindParams, QueryPaginatedClassesArgs } from "../../model/graphql";
+import { Classe, ClassesPaginatedResult, ClasseWithCounts, FindParams, MutationUpsertClasseArgs, QueryPaginatedClassesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE, TABLE_CLASSE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities, persistEntity } from "./entity-service";
+import { insertMultipleEntities } from "./entity-service";
 
 
 const DB_SAVE_MAPPING_CLASSE = createKeyValueMapWithSameName("libelle");
@@ -171,10 +171,19 @@ export const findPaginatedClasses = async (
   }
 };
 
-export const persistClasse = async (
-  classe: Classe
-): Promise<SqlSaveResponse> => {
-  return persistEntity(TABLE_CLASSE, classe, DB_SAVE_MAPPING_CLASSE);
+export const upsertClasse = async (
+  args: MutationUpsertClasseArgs
+): Promise<ClasseEntity> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.classe.update({
+      where: { id },
+      data
+    });
+
+  } else {
+    return prisma.classe.create({ data });
+  }
 };
 
 export const insertClasses = async (

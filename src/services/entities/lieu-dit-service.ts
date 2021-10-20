@@ -1,19 +1,17 @@
-import { Prisma } from ".prisma/client";
-import { Lieudit as LieuditEntity } from "@prisma/client";
+import { Lieudit as LieuditEntity, Prisma } from "@prisma/client";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
-import { FindParams, LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
+import { FindParams, LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, MutationUpsertLieuDitArgs, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb as LieuditObj } from "../../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { buildLieuditDbFromLieudit } from "../../sql/entities-mapping/lieudit-mapping";
 import prisma from "../../sql/prisma";
 import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_NOM, TABLE_LIEUDIT } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getFilterClauseCommune } from "./commune-service";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntitiesNoCheck, persistEntityNoCheck } from "./entity-service";
+import { insertMultipleEntitiesNoCheck } from "./entity-service";
 
 export type LieuDitWithCoordinatesAsNumber<T extends LieuditEntity = LieuditEntity> = Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number }
 
@@ -344,16 +342,19 @@ const getCoordinatesToPersist = async (
   return coordinatesToPersist;
 };
 
-export const persistLieuDit = async (
-  lieuDit: Lieudit
-): Promise<SqlSaveResponse> => {
-  if (Object.prototype.hasOwnProperty.call(lieuDit, "coordinates")) {
-    lieuDit.coordinates = await getCoordinatesToPersist(lieuDit);
+export const upsertLieuDit = async (
+  args: MutationUpsertLieuDitArgs
+): Promise<LieuDitWithCoordinatesAsNumber> => {
+  const { id, data } = args;
+  if (id) {
+    return prisma.lieudit.update({
+      where: { id },
+      data
+    }).then(buildLieuditFromLieuditDb);
+
+  } else {
+    return prisma.lieudit.create({ data }).then(buildLieuditFromLieuditDb);
   }
-
-  const lieuditDb = buildLieuditDbFromLieudit(lieuDit as unknown as any); // TODO check this once migration done
-
-  return persistEntityNoCheck(TABLE_LIEUDIT, lieuditDb);
 };
 
 export const insertLieuxDits = async (
