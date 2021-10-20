@@ -1,5 +1,5 @@
 import { HttpParameters } from "../http/httpParameters";
-import { AgeWithCounts, Commune, ComportementWithCounts, DepartementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, LieuDit, MeteoWithCounts, MilieuWithCounts, ObservateurWithCounts, SexeWithCounts } from "../model/graphql";
+import { AgeWithCounts, ComportementWithCounts, DepartementWithCounts, MeteoWithCounts, MilieuWithCounts, ObservateurWithCounts, SexeWithCounts } from "../model/graphql";
 import { findCommuneById } from "../model/helpers/commune.helper";
 import { findDepartementById } from "../model/helpers/departement.helper";
 import { Classe } from "../model/types/classe.object";
@@ -8,7 +8,7 @@ import { PostResponse } from "../model/types/post-response.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { findAllAges } from "../services/entities/age-service";
 import { findAllClasses } from "../services/entities/classe-service";
-import { findAllCommunes, findAllCommunesWithCounts } from "../services/entities/commune-service";
+import { findAllCommunes } from "../services/entities/commune-service";
 import { findAllComportements } from "../services/entities/comportement-service";
 import { findAllDepartements } from "../services/entities/departement-service";
 import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId } from "../services/entities/donnee-service";
@@ -16,7 +16,7 @@ import { deleteEntityById } from "../services/entities/entity-service";
 import { findAllEspeces } from "../services/entities/espece-service";
 import { findAllEstimationsDistance } from "../services/entities/estimation-distance-service";
 import { findAllEstimationsNombre } from "../services/entities/estimation-nombre-service";
-import { findAllLieuxDits, findAllLieuxDitsWithCounts } from "../services/entities/lieu-dit-service";
+import { findAllLieuxDits } from "../services/entities/lieu-dit-service";
 import { findAllMeteos } from "../services/entities/meteo-service";
 import { findAllMilieux } from "../services/entities/milieu-service";
 import { deleteObservateur, findAllObservateurs } from "../services/entities/observateur-service";
@@ -32,10 +32,6 @@ const deleteEntity = async (
   const id: number = +httpParameters.query.id;
   const sqlResponse: SqlSaveResponse = await deleteEntityById(entityName, id);
   return buildPostResponseFromSqlResponse(sqlResponse);
-};
-
-export const getObservateursRequest = async (): Promise<ObservateurWithCounts[]> => {
-  return await findAllObservateurs();
 };
 
 export const removeObservateurRequest = async (
@@ -56,18 +52,10 @@ export const deleteDepartementRequest = async (
   return deleteEntity(httpParameters, TABLE_DEPARTEMENT);
 };
 
-export const getCommunesRequest = async (): Promise<Omit<Commune, 'departement'>[]> => {
-  return await findAllCommunesWithCounts();
-};
-
 export const deleteCommuneRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_COMMUNE);
-};
-
-export const getLieuxditsRequest = async (): Promise<Omit<LieuDit, 'commune'>[]> => {
-  return findAllLieuxDitsWithCounts();
 };
 
 export const deleteLieuditRequest = async (
@@ -76,18 +64,10 @@ export const deleteLieuditRequest = async (
   return deleteEntity(httpParameters, TABLE_LIEUDIT);
 };
 
-export const getMeteosRequest = async (): Promise<MeteoWithCounts[]> => {
-  return await findAllMeteos();
-};
-
 export const deleteMeteoRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_METEO);
-};
-
-export const getClassesRequest = async (): Promise<Classe[]> => {
-  return await findAllClasses();
 };
 
 export const deleteClasseRequest = async (
@@ -102,18 +82,10 @@ export const deleteEspeceRequest = async (
   return deleteEntity(httpParameters, TABLE_ESPECE);
 };
 
-export const getSexesRequest = async (): Promise<SexeWithCounts[]> => {
-  return await findAllSexes();
-};
-
 export const deleteSexeRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_SEXE);
-};
-
-export const getAgesRequest = async (): Promise<AgeWithCounts[]> => {
-  return await findAllAges();
 };
 
 export const deleteAgeRequest = async (
@@ -122,20 +94,10 @@ export const deleteAgeRequest = async (
   return deleteEntity(httpParameters, TABLE_AGE);
 };
 
-export const getEstimationsNombreRequest = async (): Promise<EstimationNombreWithCounts[]> => {
-  return await findAllEstimationsNombre();
-};
-
 export const deleteEstimationNombreRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_ESTIMATION_NOMBRE);
-};
-
-export const getEstimationsDistanceRequest = async (): Promise<
-  EstimationDistanceWithCounts[]
-> => {
-  return await findAllEstimationsDistance();
 };
 
 export const deleteEstimationDistanceRequest = async (
@@ -144,18 +106,10 @@ export const deleteEstimationDistanceRequest = async (
   return deleteEntity(httpParameters, TABLE_ESTIMATION_DISTANCE);
 };
 
-export const getComportementsRequest = async (): Promise<ComportementWithCounts[]> => {
-  return await findAllComportements();
-};
-
 export const deleteComportementRequest = async (
   httpParameters: HttpParameters
 ): Promise<PostResponse> => {
   return deleteEntity(httpParameters, TABLE_COMPORTEMENT);
-};
-
-export const getMilieuxRequest = async (): Promise<MilieuWithCounts[]> => {
-  return await findAllMilieux();
 };
 
 export const deleteMilieuRequest = async (
