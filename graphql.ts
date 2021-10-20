@@ -483,6 +483,19 @@ export type MilieuxPaginatedResult = PaginatedResult & {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  deleteAge?: Maybe<Scalars['Int']>;
+  deleteClasse?: Maybe<Scalars['Int']>;
+  deleteCommune?: Maybe<Scalars['Int']>;
+  deleteComportement?: Maybe<Scalars['Int']>;
+  deleteDepartement?: Maybe<Scalars['Int']>;
+  deleteEspece?: Maybe<Scalars['Int']>;
+  deleteEstimationDistance?: Maybe<Scalars['Int']>;
+  deleteEstimationNombre?: Maybe<Scalars['Int']>;
+  deleteLieuDit?: Maybe<Scalars['Int']>;
+  deleteMeteo?: Maybe<Scalars['Int']>;
+  deleteMilieu?: Maybe<Scalars['Int']>;
+  deleteObservateur?: Maybe<Scalars['Int']>;
+  deleteSexe?: Maybe<Scalars['Int']>;
   updateSettings?: Maybe<Settings>;
   upsertAge?: Maybe<Age>;
   upsertClasse?: Maybe<Classe>;
@@ -497,6 +510,71 @@ export type Mutation = {
   upsertMilieu?: Maybe<Milieu>;
   upsertObservateur?: Maybe<Observateur>;
   upsertSexe?: Maybe<Sexe>;
+};
+
+
+export type MutationDeleteAgeArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteClasseArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteCommuneArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteComportementArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteDepartementArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteEspeceArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteEstimationDistanceArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteEstimationNombreArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteLieuDitArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteMeteoArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteMilieuArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteObservateurArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteSexeArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -1488,6 +1566,19 @@ export type MilieuxPaginatedResultResolvers<ContextType = any, ParentType extend
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  deleteAge?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteAgeArgs, 'id'>>;
+  deleteClasse?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteClasseArgs, 'id'>>;
+  deleteCommune?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteCommuneArgs, 'id'>>;
+  deleteComportement?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteComportementArgs, 'id'>>;
+  deleteDepartement?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteDepartementArgs, 'id'>>;
+  deleteEspece?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteEspeceArgs, 'id'>>;
+  deleteEstimationDistance?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteEstimationDistanceArgs, 'id'>>;
+  deleteEstimationNombre?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteEstimationNombreArgs, 'id'>>;
+  deleteLieuDit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteLieuDitArgs, 'id'>>;
+  deleteMeteo?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteMeteoArgs, 'id'>>;
+  deleteMilieu?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteMilieuArgs, 'id'>>;
+  deleteObservateur?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteObservateurArgs, 'id'>>;
+  deleteSexe?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteSexeArgs, 'id'>>;
   updateSettings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType, RequireFields<MutationUpdateSettingsArgs, never>>;
   upsertAge?: Resolver<Maybe<ResolversTypes['Age']>, ParentType, ContextType, RequireFields<MutationUpsertAgeArgs, 'data'>>;
   upsertClasse?: Resolver<Maybe<ResolversTypes['Classe']>, ParentType, ContextType, RequireFields<MutationUpsertClasseArgs, 'data'>>;
