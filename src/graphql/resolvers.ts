@@ -6,7 +6,7 @@ import { deleteCommune, findCommune, findCommuneOfLieuDitId, findCommunes, findP
 import { deleteComportement, findComportement, findComportements, findComportementsByIds, findPaginatedComportements, upsertComportement } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { deleteDepartement, findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
-import { findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement } from "../services/entities/donnee-service";
+import { findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement, findPaginatedDonneesByCriteria } from "../services/entities/donnee-service";
 import { deleteEspece, findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
 import { deleteEstimationDistance, findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
 import { deleteEstimationNombre, findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
@@ -162,6 +162,11 @@ const resolvers: Resolvers = {
     },
     paginatedSexes: async (_source, args): Promise<SexesPaginatedResult> => {
       return findPaginatedSexes(args, true);
+    },
+    paginatedSearchDonnees: async (_source, args): Promise<{
+      count: number
+    }> => {
+      return findPaginatedDonneesByCriteria(args?.searchCriteria, args?.pageNumber, args?.pageSize);
     },
     settings: async (): Promise<Settings> => {
       return findAppConfiguration();

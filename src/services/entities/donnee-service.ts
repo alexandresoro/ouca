@@ -1,8 +1,9 @@
 import { Age, Comportement, Donnee as DonneeEntity, Milieu, Prisma, Sexe } from "@prisma/client";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
+import { zonedTimeToUtc } from "date-fns-tz";
 import { getCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
-import { DonneeNavigationData } from "../../model/graphql";
+import { DonneeNavigationData, SearchDonneeCriteria } from "../../model/graphql";
 import { DonneeWithNavigationData } from "../../model/types/donnee-with-navigation-data.object";
 import { Donnee as DonneeObj } from "../../model/types/donnee.object";
 import { DonneesFilter } from "../../model/types/donnees-filter.object";
@@ -19,13 +20,14 @@ import { queryToFindAllMeteosByDonneeId } from "../../sql/sql-queries-meteo";
 import { queryToFindAllMilieuxByDonneeId, queryToFindMilieuxIdsByDonneeId } from "../../sql/sql-queries-milieu";
 import { queryToFindAllAssociesByDonneeId } from "../../sql/sql-queries-observateur";
 import { createKeyValueMapWithSameName, queryToDeleteAnEntityByAttribute, queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
-import { DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, SEPARATOR_COMMA, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../../utils/constants";
+import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, SEPARATOR_COMMA, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../../utils/constants";
 import { mapComportementsIds, mapMilieuxIds } from "../../utils/mapping-utils";
 import { areArraysContainingSameValues, getArrayFromObjects } from "../../utils/utils";
+import { getPrismaPagination } from "./entities-utils";
 import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntity } from "./entity-service";
 import { deleteInventaireById, findAssociesIdsByInventaireId, findMeteosIdsByInventaireId } from "./inventaire-service";
 
-type DonneeWithRelations = DonneeEntity & {
+export type DonneeWithRelations = DonneeEntity & {
   age: Age | null
   sexe: Sexe | null
   comportements: Comportement[]
@@ -48,47 +50,194 @@ const DB_SAVE_MAPPING_DONNEE = {
   date_creation: "dateCreation"
 }
 
+const COMMON_DONNEE_INCLUDE = {
+  age: true,
+  sexe: true,
+  estimationDistance: true,
+  estimationNombre: true,
+  donnee_comportement: {
+    select: {
+      comportement: true
+    }
+  },
+  donnee_milieu: {
+    select: {
+      milieu: true
+    }
+  }
+}
+
+const normalizeDonnee = (donnee: DonneeEntity & {
+  age: Age
+  sexe: Sexe
+  donnee_comportement: {
+    comportement: Comportement
+  }[]
+  donnee_milieu: {
+    milieu: Milieu
+  }[]
+}): DonneeWithRelations => {
+  if (donnee == null) {
+    return null;
+  }
+  const { donnee_comportement, donnee_milieu, ...restDonnee } = donnee;
+  const comportementsArray = donnee_comportement.map((donnee_comportement) => {
+    return donnee_comportement?.comportement;
+  });
+  const milieuxArray = donnee_milieu.map((donnee_milieu) => {
+    return donnee_milieu?.milieu;
+  });
+
+  return {
+    ...restDonnee,
+    comportements: comportementsArray,
+    milieux: milieuxArray
+  }
+}
+
 export const findDonnee = async (
   id: number
 ): Promise<DonneeWithRelations> => {
   return prisma.donnee.findUnique({
-    include: {
-      age: true,
-      sexe: true,
-      estimationDistance: true,
-      estimationNombre: true,
-      donnee_comportement: {
-        select: {
-          comportement: true
-        }
-      },
-      donnee_milieu: {
-        select: {
-          milieu: true
-        }
-      }
-    },
+    include: COMMON_DONNEE_INCLUDE,
     where: {
       id
     }
-  }).then(donnee => {
-    if (donnee == null) {
-      return null;
-    }
-    const { donnee_comportement, donnee_milieu, ...restDonnee } = donnee;
-    const comportementsArray = donnee_comportement.map((donnee_comportement) => {
-      return donnee_comportement?.comportement;
-    });
-    const milieuxArray = donnee_milieu.map((donnee_milieu) => {
-      return donnee_milieu?.milieu;
-    });
+  }).then(normalizeDonnee);
+};
 
-    return {
-      ...restDonnee,
-      comportements: comportementsArray,
-      milieux: milieuxArray
-    }
+export const findPaginatedDonneesByCriteria = async (
+  searchCriteria: SearchDonneeCriteria,
+  pageNumber: number,
+  pageSize: number
+): Promise<{
+  result: DonneeWithRelations[]
+  count: number
+}> => {
+
+  const prismaPagination = getPrismaPagination({
+    pageNumber,
+    pageSize
   });
+
+  const searchCriteriaClause = {
+    id: searchCriteria?.id ?? undefined,
+    inventaire: {
+      observateur_id: {
+        in: searchCriteria?.observateurs ?? undefined
+      },
+      ...(searchCriteria?.associes ? {
+        inventaire_associe: {
+          some: {
+            observateur_id: {
+              in: searchCriteria?.associes
+            }
+          }
+        }
+      } : {}),
+      temperature: searchCriteria?.temperature ?? undefined,
+      date: {
+        gte: searchCriteria?.fromDate ? zonedTimeToUtc(parse(searchCriteria.fromDate, DATE_PATTERN, new Date()), 'UTC') : undefined,
+        lt: searchCriteria?.toDate ? zonedTimeToUtc(parse(searchCriteria.toDate, DATE_PATTERN, new Date()), 'UTC') : undefined
+      },
+      heure: searchCriteria?.heure ?? undefined,
+      duree: searchCriteria?.duree ?? undefined,
+      lieudit_id: {
+        in: searchCriteria?.lieuxdits ?? undefined
+      },
+      lieuDit: {
+        communeId: {
+          in: searchCriteria?.communes ?? undefined
+        },
+        commune: {
+          departementId: {
+            in: searchCriteria?.departements ?? undefined
+          }
+        }
+      },
+      ...(searchCriteria?.meteos ? {
+        inventaire_meteo: {
+          some: {
+            meteo_id: {
+              in: searchCriteria?.meteos
+            }
+          }
+        }
+      } : {}),
+    },
+    espece_id: {
+      in: searchCriteria?.especes ?? undefined
+    },
+    espece: {
+      classeId: {
+        in: searchCriteria?.classes ?? undefined
+      }
+    },
+    nombre: searchCriteria?.nombre ?? undefined,
+    estimation_nombre_id: {
+      in: searchCriteria?.estimationsNombre ?? undefined
+    },
+    sexe_id: {
+      in: searchCriteria?.sexes ?? undefined
+    },
+    age_id: {
+      in: searchCriteria?.ages ?? undefined
+    },
+    distance: searchCriteria?.distance ?? undefined,
+    estimation_distance_id: {
+      in: searchCriteria?.estimationsDistance ?? undefined
+    },
+    regroupement: searchCriteria?.regroupement ?? undefined,
+    ...(searchCriteria?.comportements || searchCriteria?.nicheurs ?
+      {
+        donnee_comportement: {
+          some: {
+            ...(searchCriteria?.comportements ? {
+              comportement_id: {
+                in: searchCriteria?.comportements
+              }
+            } : {}),
+            ...(searchCriteria?.nicheurs ? {
+              comportement: {
+                nicheur: {
+                  in: searchCriteria?.nicheurs
+                }
+              }
+            } : {})
+          }
+        }
+      } : {}),
+    ...(searchCriteria?.milieux ? {
+      donnee_milieu: {
+        some: {
+          milieu_id: {
+            in: searchCriteria?.milieux
+          }
+        }
+      }
+    } : {}),
+    commentaire: {
+      contains: searchCriteria?.commentaire ?? undefined
+    }
+  }
+
+  const donnees = await prisma.donnee.findMany({
+    ...prismaPagination,
+    include: COMMON_DONNEE_INCLUDE,
+    where: searchCriteriaClause
+  }).then((donnees) => {
+    return donnees.map(normalizeDonnee);
+  });
+
+  const count = await prisma.donnee.count({
+    where: searchCriteriaClause
+  });
+
+  return {
+    result: donnees,
+    count
+  }
+
 };
 
 export const findDonneeNavigationData = async (

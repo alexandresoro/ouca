@@ -531,6 +531,11 @@ export default gql`
     count: Int!
   }
 
+  type PaginatedSearchDonneesResult implements PaginatedResult {
+    result: [Donnee]
+    count: Int!
+  }
+
   type Query {
     age(id: Int!): Age
     classe(id: Int!): Classe
@@ -579,7 +584,7 @@ export default gql`
     paginatedMilieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
     paginatedObservateurs(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): ObservateursPaginatedResult
     paginatedSexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
-    searchDonnees(searchCriteria: SearchDonneeCriteria): [Donnee]
+    paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, pageNumber: Int, pageSize: Int): PaginatedSearchDonneesResult
     settings: Settings
     version: Version
   }
