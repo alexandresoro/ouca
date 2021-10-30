@@ -737,6 +737,7 @@ export type Query = {
   paginatedMilieux?: Maybe<MilieuxPaginatedResult>;
   paginatedObservateurs?: Maybe<ObservateursPaginatedResult>;
   paginatedSexes?: Maybe<SexesPaginatedResult>;
+  searchDonnees?: Maybe<Array<Maybe<Donnee>>>;
   settings?: Maybe<Settings>;
   sexe?: Maybe<Sexe>;
   sexes?: Maybe<Array<Maybe<Sexe>>>;
@@ -984,6 +985,11 @@ export type QueryPaginatedSexesArgs = {
 };
 
 
+export type QuerySearchDonneesArgs = {
+  searchCriteria?: Maybe<SearchDonneeCriteria>;
+};
+
+
 export type QuerySexeArgs = {
   id: Scalars['Int'];
 };
@@ -991,6 +997,34 @@ export type QuerySexeArgs = {
 
 export type QuerySexesArgs = {
   params?: Maybe<FindParams>;
+};
+
+export type SearchDonneeCriteria = {
+  ages?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  associes?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  classes?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  commentaire?: Maybe<Scalars['String']>;
+  communes?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  comportements?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  departements?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  distance?: Maybe<Scalars['Int']>;
+  duree?: Maybe<Scalars['String']>;
+  especes?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  estimationsDistance?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  estimationsNombre?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  fromDate?: Maybe<Scalars['String']>;
+  heure?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
+  lieuxdits?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  meteos?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  milieux?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  nicheurs?: Maybe<Array<Maybe<Nicheur>>>;
+  nombre?: Maybe<Scalars['Int']>;
+  observateurs?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  regroupement?: Maybe<Scalars['Int']>;
+  sexes?: Maybe<Array<Maybe<Scalars['Int']>>>;
+  temperature?: Maybe<Scalars['Int']>;
+  toDate?: Maybe<Scalars['String']>;
 };
 
 export type SearchParams = {
@@ -1188,6 +1222,7 @@ export type ResolversTypes = {
   ObservateursPaginatedResult: ResolverTypeWrapper<Partial<ObservateursPaginatedResult>>;
   PaginatedResult: ResolversTypes['AgesPaginatedResult'] | ResolversTypes['ClassesPaginatedResult'] | ResolversTypes['CommunesPaginatedResult'] | ResolversTypes['ComportementsPaginatedResult'] | ResolversTypes['DepartementsPaginatedResult'] | ResolversTypes['EspecesPaginatedResult'] | ResolversTypes['EstimationsDistancePaginatedResult'] | ResolversTypes['EstimationsNombrePaginatedResult'] | ResolversTypes['LieuxDitsPaginatedResult'] | ResolversTypes['MeteosPaginatedResult'] | ResolversTypes['MilieuxPaginatedResult'] | ResolversTypes['ObservateursPaginatedResult'] | ResolversTypes['SexesPaginatedResult'];
   Query: ResolverTypeWrapper<{}>;
+  SearchDonneeCriteria: ResolverTypeWrapper<Partial<SearchDonneeCriteria>>;
   SearchParams: ResolverTypeWrapper<Partial<SearchParams>>;
   Settings: ResolverTypeWrapper<Partial<Settings>>;
   Sexe: ResolverTypeWrapper<Partial<Sexe>>;
@@ -1262,6 +1297,7 @@ export type ResolversParentTypes = {
   ObservateursPaginatedResult: Partial<ObservateursPaginatedResult>;
   PaginatedResult: ResolversParentTypes['AgesPaginatedResult'] | ResolversParentTypes['ClassesPaginatedResult'] | ResolversParentTypes['CommunesPaginatedResult'] | ResolversParentTypes['ComportementsPaginatedResult'] | ResolversParentTypes['DepartementsPaginatedResult'] | ResolversParentTypes['EspecesPaginatedResult'] | ResolversParentTypes['EstimationsDistancePaginatedResult'] | ResolversParentTypes['EstimationsNombrePaginatedResult'] | ResolversParentTypes['LieuxDitsPaginatedResult'] | ResolversParentTypes['MeteosPaginatedResult'] | ResolversParentTypes['MilieuxPaginatedResult'] | ResolversParentTypes['ObservateursPaginatedResult'] | ResolversParentTypes['SexesPaginatedResult'];
   Query: {};
+  SearchDonneeCriteria: Partial<SearchDonneeCriteria>;
   SearchParams: Partial<SearchParams>;
   Settings: Partial<Settings>;
   Sexe: Partial<Sexe>;
@@ -1665,6 +1701,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   paginatedMilieux?: Resolver<Maybe<ResolversTypes['MilieuxPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedMilieuxArgs, never>>;
   paginatedObservateurs?: Resolver<Maybe<ResolversTypes['ObservateursPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedObservateursArgs, never>>;
   paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSexesArgs, never>>;
+  searchDonnees?: Resolver<Maybe<Array<Maybe<ResolversTypes['Donnee']>>>, ParentType, ContextType, RequireFields<QuerySearchDonneesArgs, never>>;
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
   sexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<QuerySexeArgs, 'id'>>;
   sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType, RequireFields<QuerySexesArgs, never>>;
