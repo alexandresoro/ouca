@@ -83,6 +83,34 @@ export default gql`
     defaultAge: Int!
   }
 
+  input SearchDonneeCriteria {
+    id: Int
+    observateurs: [Int]
+    temperature: Int
+    meteos: [Int]
+    associes: [Int]
+    heure: String
+    duree: String
+    classes: [Int]
+    especes: [Int]
+    departements: [Int]
+    communes: [Int]
+    lieuxdits: [Int]
+    nombre: Int
+    estimationsNombre: [Int]
+    sexes: [Int]
+    ages: [Int]
+    distance: Int
+    estimationsDistance: [Int]
+    regroupement: Int
+    fromDate: String
+    toDate: String
+    commentaire: String
+    nicheurs: [Nicheur]
+    comportements: [Int]
+    milieux: [Int]
+  }
+
   type Settings {
     id: Int!
     areAssociesDisplayed: Boolean!
@@ -551,6 +579,7 @@ export default gql`
     paginatedMilieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
     paginatedObservateurs(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): ObservateursPaginatedResult
     paginatedSexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
+    searchDonnees(searchCriteria: SearchDonneeCriteria): [Donnee]
     settings: Settings
     version: Version
   }
