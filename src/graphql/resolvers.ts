@@ -166,7 +166,7 @@ const resolvers: Resolvers = {
     paginatedSearchDonnees: async (_source, args): Promise<{
       count: number
     }> => {
-      return findPaginatedDonneesByCriteria(args?.searchCriteria, args?.pageNumber, args?.pageSize);
+      return findPaginatedDonneesByCriteria(args?.searchCriteria, args?.pageNumber, args?.pageSize, args?.orderBy, args?.sortOrder);
     },
     settings: async (): Promise<Settings> => {
       return findAppConfiguration();

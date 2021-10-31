@@ -452,6 +452,23 @@ export default gql`
     nbDonnees
   }
 
+  enum SearchDonneesOrderBy {
+    id
+    codeEspece
+    nomFrancais
+    nombre
+    sexe
+    age
+    departement
+    codeCommune
+    nomCommune
+    lieuDit
+    date
+    heure
+    duree
+    observateur
+  }
+
   #
   # Results
   #
@@ -584,7 +601,7 @@ export default gql`
     paginatedMilieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
     paginatedObservateurs(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): ObservateursPaginatedResult
     paginatedSexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
-    paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, pageNumber: Int, pageSize: Int): PaginatedSearchDonneesResult
+    paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, pageNumber: Int, pageSize: Int, orderBy: SearchDonneesOrderBy, sortOrder: SortOrder): PaginatedSearchDonneesResult
     settings: Settings
     version: Version
   }

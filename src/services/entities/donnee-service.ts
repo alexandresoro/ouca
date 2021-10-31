@@ -3,7 +3,7 @@ import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { getCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
-import { DonneeNavigationData, SearchDonneeCriteria } from "../../model/graphql";
+import { DonneeNavigationData, SearchDonneeCriteria, SearchDonneesOrderBy, SortOrder } from "../../model/graphql";
 import { DonneeWithNavigationData } from "../../model/types/donnee-with-navigation-data.object";
 import { Donnee as DonneeObj } from "../../model/types/donnee.object";
 import { DonneesFilter } from "../../model/types/donnees-filter.object";
@@ -109,7 +109,9 @@ export const findDonnee = async (
 export const findPaginatedDonneesByCriteria = async (
   searchCriteria: SearchDonneeCriteria,
   pageNumber: number,
-  pageSize: number
+  pageSize: number,
+  orderByField: SearchDonneesOrderBy,
+  sortOrder: SortOrder
 ): Promise<{
   result: DonneeWithRelations[]
   count: number
@@ -120,7 +122,112 @@ export const findPaginatedDonneesByCriteria = async (
     pageSize
   });
 
-  const searchCriteriaClause = {
+  let orderBy: Prisma.Enumerable<Prisma.DonneeOrderByWithRelationInput>;
+  switch (orderByField) {
+    case "id":
+    case "nombre":
+      orderBy = {
+        [orderByField]: sortOrder
+      }
+      break;
+    case "codeEspece":
+      orderBy = {
+        espece: {
+          code: sortOrder
+        }
+      }
+      break;
+    case "nomFrancais":
+      orderBy = {
+        espece: {
+          nomFrancais: sortOrder
+        }
+      }
+      break;
+    case "sexe":
+      orderBy = {
+        sexe: {
+          libelle: sortOrder
+        }
+      }
+      break;
+    case "age":
+      orderBy = {
+        age: {
+          libelle: sortOrder
+        }
+      }
+      break;
+    case "departement":
+      orderBy = sortOrder && {
+        inventaire: {
+          lieuDit: {
+            commune: {
+              departement: {
+                code: sortOrder
+              }
+            }
+          }
+        }
+      }
+      break;
+    case "codeCommune":
+      orderBy = sortOrder && {
+        inventaire: {
+          lieuDit: {
+            commune: {
+              code: sortOrder
+            }
+          }
+        }
+      }
+      break;
+    case "nomCommune":
+      orderBy = sortOrder && {
+        inventaire: {
+          lieuDit: {
+            commune: {
+              nom: sortOrder
+            }
+          }
+        }
+      }
+      break;
+    case "lieuDit":
+      orderBy = sortOrder && {
+        inventaire: {
+          lieuDit: {
+            nom: sortOrder
+          }
+        }
+      }
+      break;
+    case "date":
+    case "heure":
+    case "duree":
+      orderBy = sortOrder && {
+        inventaire: {
+          [orderByField]: sortOrder
+        }
+      }
+      break;
+    case "observateur": {
+      orderBy = sortOrder && {
+        inventaire: {
+          observateur: {
+            libelle: sortOrder
+          }
+        }
+      }
+    }
+      break;
+    default:
+      orderBy = {
+        id: SortOrder.Desc
+      }
+  }
+
+  const searchCriteriaClause = searchCriteria ? {
     id: searchCriteria?.id ?? undefined,
     inventaire: {
       observateur_id: {
@@ -219,11 +326,12 @@ export const findPaginatedDonneesByCriteria = async (
     commentaire: {
       contains: searchCriteria?.commentaire ?? undefined
     }
-  }
+  } : undefined
 
   const donnees = await prisma.donnee.findMany({
     ...prismaPagination,
     include: COMMON_DONNEE_INCLUDE,
+    orderBy,
     where: searchCriteriaClause
   }).then((donnees) => {
     return donnees.map(normalizeDonnee);
