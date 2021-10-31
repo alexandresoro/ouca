@@ -985,9 +985,11 @@ export type QueryPaginatedObservateursArgs = {
 
 
 export type QueryPaginatedSearchDonneesArgs = {
+  orderBy?: Maybe<SearchDonneesOrderBy>;
   pageNumber?: Maybe<Scalars['Int']>;
   pageSize?: Maybe<Scalars['Int']>;
   searchCriteria?: Maybe<SearchDonneeCriteria>;
+  sortOrder?: Maybe<SortOrder>;
 };
 
 
@@ -1035,6 +1037,24 @@ export type SearchDonneeCriteria = {
   toDate?: Maybe<Scalars['String']>;
 };
 
+export const SearchDonneesOrderBy = {
+  Age: 'age',
+  CodeCommune: 'codeCommune',
+  CodeEspece: 'codeEspece',
+  Date: 'date',
+  Departement: 'departement',
+  Duree: 'duree',
+  Heure: 'heure',
+  Id: 'id',
+  LieuDit: 'lieuDit',
+  NomCommune: 'nomCommune',
+  NomFrancais: 'nomFrancais',
+  Nombre: 'nombre',
+  Observateur: 'observateur',
+  Sexe: 'sexe'
+} as const;
+
+export type SearchDonneesOrderBy = typeof SearchDonneesOrderBy[keyof typeof SearchDonneesOrderBy];
 export type SearchParams = {
   pageNumber?: Maybe<Scalars['Int']>;
   pageSize?: Maybe<Scalars['Int']>;
@@ -1232,6 +1252,7 @@ export type ResolversTypes = {
   PaginatedSearchDonneesResult: ResolverTypeWrapper<Partial<PaginatedSearchDonneesResult>>;
   Query: ResolverTypeWrapper<{}>;
   SearchDonneeCriteria: ResolverTypeWrapper<Partial<SearchDonneeCriteria>>;
+  SearchDonneesOrderBy: ResolverTypeWrapper<Partial<SearchDonneesOrderBy>>;
   SearchParams: ResolverTypeWrapper<Partial<SearchParams>>;
   Settings: ResolverTypeWrapper<Partial<Settings>>;
   Sexe: ResolverTypeWrapper<Partial<Sexe>>;
