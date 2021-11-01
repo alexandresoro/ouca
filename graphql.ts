@@ -743,6 +743,7 @@ export type Query = {
   paginatedMilieux?: Maybe<MilieuxPaginatedResult>;
   paginatedObservateurs?: Maybe<ObservateursPaginatedResult>;
   paginatedSearchDonnees?: Maybe<PaginatedSearchDonneesResult>;
+  paginatedSearchEspeces?: Maybe<EspecesPaginatedResult>;
   paginatedSexes?: Maybe<SexesPaginatedResult>;
   settings?: Maybe<Settings>;
   sexe?: Maybe<Sexe>;
@@ -989,6 +990,14 @@ export type QueryPaginatedSearchDonneesArgs = {
   pageNumber?: Maybe<Scalars['Int']>;
   pageSize?: Maybe<Scalars['Int']>;
   searchCriteria?: Maybe<SearchDonneeCriteria>;
+  sortOrder?: Maybe<SortOrder>;
+};
+
+
+export type QueryPaginatedSearchEspecesArgs = {
+  orderBy?: Maybe<EspecesOrderBy>;
+  searchCriteria?: Maybe<SearchDonneeCriteria>;
+  searchParams?: Maybe<SearchParams>;
   sortOrder?: Maybe<SortOrder>;
 };
 
@@ -1738,6 +1747,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   paginatedMilieux?: Resolver<Maybe<ResolversTypes['MilieuxPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedMilieuxArgs, never>>;
   paginatedObservateurs?: Resolver<Maybe<ResolversTypes['ObservateursPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedObservateursArgs, never>>;
   paginatedSearchDonnees?: Resolver<Maybe<ResolversTypes['PaginatedSearchDonneesResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSearchDonneesArgs, never>>;
+  paginatedSearchEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSearchEspecesArgs, never>>;
   paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSexesArgs, never>>;
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
   sexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<QuerySexeArgs, 'id'>>;
