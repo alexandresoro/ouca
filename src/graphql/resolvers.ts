@@ -163,6 +163,12 @@ const resolvers: Resolvers = {
     paginatedSexes: async (_source, args): Promise<SexesPaginatedResult> => {
       return findPaginatedSexes(args, true);
     },
+    paginatedSearchEspeces: async (_source, args): Promise<{
+      count: number
+    }> => {
+      const { searchCriteria, ...rest } = args ?? {};
+      return findPaginatedEspeces(rest, true, searchCriteria);
+    },
     paginatedSearchDonnees: async (_source, args): Promise<{
       count: number
     }> => {

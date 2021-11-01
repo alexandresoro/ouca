@@ -601,6 +601,7 @@ export default gql`
     paginatedMilieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
     paginatedObservateurs(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): ObservateursPaginatedResult
     paginatedSexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
+    paginatedSearchEspeces(searchCriteria: SearchDonneeCriteria, searchParams: SearchParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
     paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, pageNumber: Int, pageSize: Int, orderBy: SearchDonneesOrderBy, sortOrder: SortOrder): PaginatedSearchDonneesResult
     settings: Settings
     version: Version

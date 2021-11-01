@@ -1,10 +1,11 @@
 import { Espece as EspeceEntity, Prisma } from "@prisma/client";
-import { EspecesPaginatedResult, FindParams, MutationUpsertEspeceArgs, QueryPaginatedEspecesArgs } from "../../model/graphql";
+import { EspecesPaginatedResult, EspeceWithCounts, FindParams, MutationUpsertEspeceArgs, QueryPaginatedEspecesArgs, SearchDonneeCriteria } from "../../model/graphql";
 import { Espece as EspeceObj } from "../../model/types/espece.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE, TABLE_ESPECE } from "../../utils/constants";
+import { buildSearchDonneeCriteria } from "./donnee-service";
 import { getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntities } from "./entity-service";
 
@@ -152,7 +153,8 @@ export const findAllEspeces = async (options?: Prisma.EspeceFindManyArgs): Promi
 
 export const findPaginatedEspeces = async (
   options: QueryPaginatedEspecesArgs = {},
-  includeCounts = true
+  includeCounts = true,
+  searchCriteria: SearchDonneeCriteria = undefined
 ): Promise<EspecesPaginatedResult> => {
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;
@@ -177,7 +179,7 @@ export const findPaginatedEspeces = async (
     case "nbDonnees": {
       orderBy = sortOrder && {
         donnee: {
-          _count: sortOrder
+          _count: sortOrder // Note: this may not be working perfectly with donnee search criteria: _count will return the full number of donnees, let's consider this as acceptable for now
         }
       }
     }
@@ -186,8 +188,78 @@ export const findPaginatedEspeces = async (
       orderBy = {}
   }
 
-  const [especesDb, count] = await prisma.$transaction([
-    prisma.espece.findMany({
+  const { espece_id, espece, ...restSearchDonneeCriteria } = buildSearchDonneeCriteria(searchCriteria) ?? {};
+
+  let especesResult: EspeceWithCounts[];
+
+  const especeFilterClause: Prisma.EspeceWhereInput = {
+    AND: [
+      getFilterClause(searchParams?.q),
+      searchCriteria ? {
+        id: espece_id,
+        ...espece,
+        donnee: {
+          some: {
+            ...restSearchDonneeCriteria
+          }
+        }
+      } : undefined
+    ]
+  };
+
+  if (orderByField === "nbDonnees" && searchCriteria) {
+    // As the orderBy donnee _count will not work properly because it will compare with ALL donnees and not only the matching one, we need to do differently
+
+    // Mapping between especes_id and their count sorted by their own number of donnees
+    const donneesByMatchingEspece = await prisma.donnee.groupBy({
+      by: ['espece_id'],
+      where: {
+        espece_id,
+        espece: {
+          AND: [
+            espece,
+            getFilterClause(searchParams?.q)
+          ]
+        },
+        ...restSearchDonneeCriteria
+      },
+      orderBy: {
+        _count: {
+          espece_id: sortOrder
+        }
+      },
+      _count: true,
+      ...getPrismaPagination(searchParams)
+    })
+
+    // Once we have the proper especes_is, we can retrieve their corresponding data
+    const especesRq = await prisma.espece.findMany({
+      include: {
+        classe: {
+          select: {
+            id: true,
+            libelle: true
+          }
+        }
+      },
+      where: {
+        id: {
+          in: donneesByMatchingEspece.map(({ espece_id }) => espece_id) // /!\ The IN clause could break if not paginated enough
+        }
+      }
+    });
+
+    especesResult = donneesByMatchingEspece.map(({ espece_id, _count }) => {
+      const espece = especesRq?.find(({ id }) => id === espece_id);
+      return {
+        ...espece,
+        nbDonnees: _count
+      };
+    })
+
+  } else {
+
+    const especesDb = await prisma.espece.findMany({
       ...getPrismaPagination(searchParams),
       include: {
         classe: {
@@ -195,28 +267,51 @@ export const findPaginatedEspeces = async (
             id: true,
             libelle: true
           }
-        },
-        _count: includeCounts && {
-          select: {
-            donnee: true
-          }
-        },
+        }
       },
       orderBy,
-      where: getFilterClause(searchParams?.q)
-    }),
-    prisma.espece.count({
-      where: getFilterClause(searchParams?.q)
+      where: especeFilterClause
     })
-  ])
+
+    // As we can also filter by donnees but want the filtered count, the _count cannot be calculated properly from the previous findMany => it would return the full count
+    if (includeCounts) {
+      const donneesByMatchingEspece = await prisma.donnee.groupBy({
+        by: ['espece_id'],
+        where: {
+          AND: [
+            {
+              espece_id: {
+                in: especesDb.map(espece => espece?.id) // /!\ The IN clause could break if not paginated enough
+              }
+            },
+            searchCriteria ? {
+              espece,
+              ...restSearchDonneeCriteria
+            } : undefined
+          ]
+        },
+        _count: true
+      })
+
+      especesResult = especesDb.map((espece) => {
+        return {
+          ...espece,
+          ...(includeCounts ? { nbDonnees: donneesByMatchingEspece.find(({ espece_id }) => espece_id === espece.id)?._count } : {})
+        }
+      })
+
+    } else {
+      especesResult = especesDb;
+    }
+
+  }
+
+  const count = await prisma.espece.count({
+    where: especeFilterClause
+  })
 
   return {
-    result: especesDb.map((espece) => {
-      return {
-        ...espece,
-        ...(includeCounts ? { nbDonnees: espece._count.donnee } : {})
-      }
-    }),
+    result: especesResult,
     count
   }
 };

@@ -34,6 +34,109 @@ export type DonneeWithRelations = DonneeEntity & {
   milieux: Milieu[]
 };
 
+export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria): Prisma.DonneeWhereInput | undefined => {
+  return searchCriteria ? {
+    id: searchCriteria?.id ?? undefined,
+    inventaire: {
+      observateur_id: {
+        in: searchCriteria?.observateurs ?? undefined
+      },
+      ...(searchCriteria?.associes ? {
+        inventaire_associe: {
+          some: {
+            observateur_id: {
+              in: searchCriteria?.associes
+            }
+          }
+        }
+      } : {}),
+      temperature: searchCriteria?.temperature ?? undefined,
+      date: {
+        gte: searchCriteria?.fromDate ? zonedTimeToUtc(parse(searchCriteria.fromDate, DATE_PATTERN, new Date()), 'UTC') : undefined,
+        lt: searchCriteria?.toDate ? zonedTimeToUtc(parse(searchCriteria.toDate, DATE_PATTERN, new Date()), 'UTC') : undefined
+      },
+      heure: searchCriteria?.heure ?? undefined,
+      duree: searchCriteria?.duree ?? undefined,
+      lieudit_id: {
+        in: searchCriteria?.lieuxdits ?? undefined
+      },
+      lieuDit: {
+        communeId: {
+          in: searchCriteria?.communes ?? undefined
+        },
+        commune: {
+          departementId: {
+            in: searchCriteria?.departements ?? undefined
+          }
+        }
+      },
+      ...(searchCriteria?.meteos ? {
+        inventaire_meteo: {
+          some: {
+            meteo_id: {
+              in: searchCriteria?.meteos
+            }
+          }
+        }
+      } : {}),
+    },
+    espece_id: {
+      in: searchCriteria?.especes ?? undefined
+    },
+    espece: {
+      classeId: {
+        in: searchCriteria?.classes ?? undefined
+      }
+    },
+    nombre: searchCriteria?.nombre ?? undefined,
+    estimation_nombre_id: {
+      in: searchCriteria?.estimationsNombre ?? undefined
+    },
+    sexe_id: {
+      in: searchCriteria?.sexes ?? undefined
+    },
+    age_id: {
+      in: searchCriteria?.ages ?? undefined
+    },
+    distance: searchCriteria?.distance ?? undefined,
+    estimation_distance_id: {
+      in: searchCriteria?.estimationsDistance ?? undefined
+    },
+    regroupement: searchCriteria?.regroupement ?? undefined,
+    ...(searchCriteria?.comportements || searchCriteria?.nicheurs ?
+      {
+        donnee_comportement: {
+          some: {
+            ...(searchCriteria?.comportements ? {
+              comportement_id: {
+                in: searchCriteria?.comportements
+              }
+            } : {}),
+            ...(searchCriteria?.nicheurs ? {
+              comportement: {
+                nicheur: {
+                  in: searchCriteria?.nicheurs
+                }
+              }
+            } : {})
+          }
+        }
+      } : {}),
+    ...(searchCriteria?.milieux ? {
+      donnee_milieu: {
+        some: {
+          milieu_id: {
+            in: searchCriteria?.milieux
+          }
+        }
+      }
+    } : {}),
+    commentaire: {
+      contains: searchCriteria?.commentaire ?? undefined
+    }
+  } : undefined
+}
+
 const DB_SAVE_MAPPING_DONNEE = {
   ...createKeyValueMapWithSameName([
     "nombre",
@@ -227,118 +330,17 @@ export const findPaginatedDonneesByCriteria = async (
       }
   }
 
-  const searchCriteriaClause = searchCriteria ? {
-    id: searchCriteria?.id ?? undefined,
-    inventaire: {
-      observateur_id: {
-        in: searchCriteria?.observateurs ?? undefined
-      },
-      ...(searchCriteria?.associes ? {
-        inventaire_associe: {
-          some: {
-            observateur_id: {
-              in: searchCriteria?.associes
-            }
-          }
-        }
-      } : {}),
-      temperature: searchCriteria?.temperature ?? undefined,
-      date: {
-        gte: searchCriteria?.fromDate ? zonedTimeToUtc(parse(searchCriteria.fromDate, DATE_PATTERN, new Date()), 'UTC') : undefined,
-        lt: searchCriteria?.toDate ? zonedTimeToUtc(parse(searchCriteria.toDate, DATE_PATTERN, new Date()), 'UTC') : undefined
-      },
-      heure: searchCriteria?.heure ?? undefined,
-      duree: searchCriteria?.duree ?? undefined,
-      lieudit_id: {
-        in: searchCriteria?.lieuxdits ?? undefined
-      },
-      lieuDit: {
-        communeId: {
-          in: searchCriteria?.communes ?? undefined
-        },
-        commune: {
-          departementId: {
-            in: searchCriteria?.departements ?? undefined
-          }
-        }
-      },
-      ...(searchCriteria?.meteos ? {
-        inventaire_meteo: {
-          some: {
-            meteo_id: {
-              in: searchCriteria?.meteos
-            }
-          }
-        }
-      } : {}),
-    },
-    espece_id: {
-      in: searchCriteria?.especes ?? undefined
-    },
-    espece: {
-      classeId: {
-        in: searchCriteria?.classes ?? undefined
-      }
-    },
-    nombre: searchCriteria?.nombre ?? undefined,
-    estimation_nombre_id: {
-      in: searchCriteria?.estimationsNombre ?? undefined
-    },
-    sexe_id: {
-      in: searchCriteria?.sexes ?? undefined
-    },
-    age_id: {
-      in: searchCriteria?.ages ?? undefined
-    },
-    distance: searchCriteria?.distance ?? undefined,
-    estimation_distance_id: {
-      in: searchCriteria?.estimationsDistance ?? undefined
-    },
-    regroupement: searchCriteria?.regroupement ?? undefined,
-    ...(searchCriteria?.comportements || searchCriteria?.nicheurs ?
-      {
-        donnee_comportement: {
-          some: {
-            ...(searchCriteria?.comportements ? {
-              comportement_id: {
-                in: searchCriteria?.comportements
-              }
-            } : {}),
-            ...(searchCriteria?.nicheurs ? {
-              comportement: {
-                nicheur: {
-                  in: searchCriteria?.nicheurs
-                }
-              }
-            } : {})
-          }
-        }
-      } : {}),
-    ...(searchCriteria?.milieux ? {
-      donnee_milieu: {
-        some: {
-          milieu_id: {
-            in: searchCriteria?.milieux
-          }
-        }
-      }
-    } : {}),
-    commentaire: {
-      contains: searchCriteria?.commentaire ?? undefined
-    }
-  } : undefined
-
   const donnees = await prisma.donnee.findMany({
     ...prismaPagination,
     include: COMMON_DONNEE_INCLUDE,
     orderBy,
-    where: searchCriteriaClause
+    where: buildSearchDonneeCriteria(searchCriteria)
   }).then((donnees) => {
     return donnees.map(normalizeDonnee);
   });
 
   const count = await prisma.donnee.count({
-    where: searchCriteriaClause
+    where: buildSearchDonneeCriteria(searchCriteria)
   });
 
   return {
