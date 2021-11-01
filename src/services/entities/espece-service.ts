@@ -188,14 +188,15 @@ export const findPaginatedEspeces = async (
       orderBy = {}
   }
 
-  const { espece_id, espece, ...restSearchDonneeCriteria } = buildSearchDonneeCriteria(searchCriteria) ?? {};
+  const builtSearchCriteria = buildSearchDonneeCriteria(searchCriteria);
+  const { espece_id, espece, ...restSearchDonneeCriteria } = builtSearchCriteria ?? {};
 
   let especesResult: EspeceWithCounts[];
 
   const especeFilterClause: Prisma.EspeceWhereInput = {
     AND: [
       getFilterClause(searchParams?.q),
-      searchCriteria ? {
+      builtSearchCriteria ? {
         id: espece_id,
         ...espece,
         donnee: {
@@ -207,7 +208,7 @@ export const findPaginatedEspeces = async (
     ]
   };
 
-  if (orderByField === "nbDonnees" && searchCriteria) {
+  if (orderByField === "nbDonnees" && builtSearchCriteria) {
     // As the orderBy donnee _count will not work properly because it will compare with ALL donnees and not only the matching one, we need to do differently
 
     // Mapping between especes_id and their count sorted by their own number of donnees
@@ -284,7 +285,7 @@ export const findPaginatedEspeces = async (
                 in: especesDb.map(espece => espece?.id) // /!\ The IN clause could break if not paginated enough
               }
             },
-            searchCriteria ? {
+            builtSearchCriteria ? {
               espece,
               ...restSearchDonneeCriteria
             } : undefined

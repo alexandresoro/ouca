@@ -35,7 +35,7 @@ export type DonneeWithRelations = DonneeEntity & {
 };
 
 export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria): Prisma.DonneeWhereInput | undefined => {
-  return searchCriteria ? {
+  return (searchCriteria && Object.keys(searchCriteria).length) ? {
     id: searchCriteria?.id ?? undefined,
     inventaire: {
       observateur_id: {
