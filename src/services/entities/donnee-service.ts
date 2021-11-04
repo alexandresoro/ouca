@@ -53,7 +53,7 @@ export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria):
       temperature: searchCriteria?.temperature ?? undefined,
       date: {
         gte: searchCriteria?.fromDate ? zonedTimeToUtc(parse(searchCriteria.fromDate, DATE_PATTERN, new Date()), 'UTC') : undefined,
-        lt: searchCriteria?.toDate ? zonedTimeToUtc(parse(searchCriteria.toDate, DATE_PATTERN, new Date()), 'UTC') : undefined
+        lte: searchCriteria?.toDate ? zonedTimeToUtc(parse(searchCriteria.toDate, DATE_PATTERN, new Date()), 'UTC') : undefined
       },
       heure: searchCriteria?.heure ?? undefined,
       duree: searchCriteria?.duree ?? undefined,
