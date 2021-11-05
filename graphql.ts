@@ -987,9 +987,8 @@ export type QueryPaginatedObservateursArgs = {
 
 export type QueryPaginatedSearchDonneesArgs = {
   orderBy?: Maybe<SearchDonneesOrderBy>;
-  pageNumber?: Maybe<Scalars['Int']>;
-  pageSize?: Maybe<Scalars['Int']>;
   searchCriteria?: Maybe<SearchDonneeCriteria>;
+  searchParams?: Maybe<SearchParams>;
   sortOrder?: Maybe<SortOrder>;
 };
 
