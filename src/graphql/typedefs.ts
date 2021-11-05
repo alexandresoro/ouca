@@ -369,6 +369,11 @@ export default gql`
     pageSize: Int
   }
 
+  input SearchDonneeParams {
+    pageNumber: Int
+    pageSize: Int
+  }
+
   input FindParams {
     q: String
     max: Int
@@ -601,8 +606,8 @@ export default gql`
     paginatedMilieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
     paginatedObservateurs(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): ObservateursPaginatedResult
     paginatedSexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
-    paginatedSearchEspeces(searchCriteria: SearchDonneeCriteria, searchParams: SearchParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
-    paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, searchParams: SearchParams, orderBy: SearchDonneesOrderBy, sortOrder: SortOrder): PaginatedSearchDonneesResult
+    paginatedSearchEspeces(searchCriteria: SearchDonneeCriteria, searchParams: SearchDonneeParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
+    paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, searchParams: SearchDonneeParams, orderBy: SearchDonneesOrderBy, sortOrder: SortOrder): PaginatedSearchDonneesResult
     settings: Settings
     version: Version
   }
