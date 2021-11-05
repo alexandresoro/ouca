@@ -23,8 +23,7 @@ import {
 } from "./requests/gestion-requests";
 import { saveDatabaseFileNameRequest, saveDatabaseRequest } from "./requests/save-requests";
 import {
-  exportDonneesByCustomizedFiltersRequest,
-  getDonneesByCustomizedFiltersRequest
+  exportDonneesByCustomizedFiltersRequest
 } from "./requests/view-requests";
 import { executeDatabaseMigration } from "./services/database-migration/database-migration.service";
 import { clearAllTables } from "./services/entities/entity-service";
@@ -41,7 +40,6 @@ export const REQUEST_MAPPING: Record<string, {
   responseAttachmentHandler?: () => string
 }> = {
   "/api/inventaire/save": { handler: saveInventaireRequest },
-  "/api/donnee/search": { handler: getDonneesByCustomizedFiltersRequest },
   "/api/donnee/export": {
     handler: exportDonneesByCustomizedFiltersRequest,
     responseType: EXCEL_MIME_TYPE

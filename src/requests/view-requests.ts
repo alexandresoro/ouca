@@ -4,7 +4,6 @@ import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-s
 import { DonneesFilter } from "../model/types/donnees-filter.object";
 import { FlatDonnee } from "../model/types/flat-donnee.object";
 import { findDonneesByCustomizedFilters } from "../services/entities/donnee-service";
-import { } from "../sql/sql-queries-utils";
 import { writeToExcel } from "../utils/export-excel-utils";
 
 const MAXIMUM_EXCEL_DATA_SUPPORTED = 50000;
@@ -21,12 +20,6 @@ const getMilieu = (donnee: FlatDonnee, index: number): string => {
   return donnee.milieux.length >= index
     ? donnee.milieux[index - 1].code + " - " + donnee.milieux[index - 1].libelle
     : "";
-};
-
-export const getDonneesByCustomizedFiltersRequest = async (
-  httpParameters: HttpParameters<DonneesFilter>
-): Promise<FlatDonnee[]> => {
-  return await findDonneesByCustomizedFilters(httpParameters.body);
 };
 
 export const exportDonneesByCustomizedFiltersRequest = async (
