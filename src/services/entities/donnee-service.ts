@@ -1,9 +1,9 @@
-import { Age, Comportement, Donnee as DonneeEntity, Milieu, Prisma, Sexe } from "@prisma/client";
+import { Age, Comportement, Donnee as DonneeEntity, Milieu, Nicheur, Prisma, Sexe } from "@prisma/client";
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { getCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
-import { DonneeNavigationData, SearchDonneeCriteria, SearchDonneesOrderBy, SortOrder } from "../../model/graphql";
+import { DonneeNavigationData, QueryPaginatedSearchDonneesArgs, SearchDonneeCriteria, SortOrder } from "../../model/graphql";
 import { DonneeWithNavigationData } from "../../model/types/donnee-with-navigation-data.object";
 import { Donnee as DonneeObj } from "../../model/types/donnee.object";
 import { DonneesFilter } from "../../model/types/donnees-filter.object";
@@ -22,7 +22,7 @@ import { queryToFindAllAssociesByDonneeId } from "../../sql/sql-queries-observat
 import { createKeyValueMapWithSameName, queryToDeleteAnEntityByAttribute, queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
 import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, SEPARATOR_COMMA, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../../utils/constants";
 import { mapComportementsIds, mapMilieuxIds } from "../../utils/mapping-utils";
-import { areArraysContainingSameValues, getArrayFromObjects } from "../../utils/utils";
+import { areArraysContainingSameValues, getArrayFromObjects, getFormattedDate } from "../../utils/utils";
 import { getPrismaPagination } from "./entities-utils";
 import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntity } from "./entity-service";
 import { deleteInventaireById, findAssociesIdsByInventaireId, findMeteosIdsByInventaireId } from "./inventaire-service";
@@ -137,6 +137,226 @@ export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria):
   } : undefined
 }
 
+const getFilterClause = (q: string | null | undefined): Prisma.DonneeWhereInput | undefined => {
+
+  const parsedAsDate = getFormattedDate(q);
+  const dateForComparison: Date | undefined = (parsedAsDate instanceof Date && !isNaN(parsedAsDate.valueOf())) ? zonedTimeToUtc(parsedAsDate, 'UTC') : undefined;
+
+  return (q != null && q.length) ? {
+    OR: [
+      { id: Number.isFinite(q) ? +q : undefined },
+      { inventaire_id: Number.isFinite(q) ? +q : undefined },
+      {
+        inventaire: {
+          OR: [
+            {
+              observateur: {
+                libelle: {
+                  contains: q
+                }
+              }
+            },
+            {
+              inventaire_associe: {
+                some: {
+                  observateur: {
+                    libelle: {
+                      contains: q
+                    }
+                  }
+                }
+              }
+            },
+            {
+              date: dateForComparison
+            },
+            {
+              heure: {
+                contains: q
+              }
+            },
+            {
+              duree: {
+                contains: q
+              }
+            },
+            {
+              lieuDit: {
+                OR: [
+                  {
+                    commune: {
+                      OR: [
+                        {
+                          departement: {
+                            code: {
+                              contains: q
+                            }
+                          }
+                        },
+                        {
+                          code: Number.isFinite(q) ? +q : undefined
+                        },
+                        {
+                          nom: {
+                            contains: q
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    nom: {
+                      contains: q
+                    }
+                  }
+                ]
+              },
+            },
+            {
+              altitude: Number.isFinite(q) ? +q : undefined
+            },
+            {
+              latitude: Number.isFinite(q) ? +q : undefined
+            },
+            {
+              longitude: Number.isFinite(q) ? +q : undefined
+            },
+            {
+              temperature: Number.isFinite(q) ? +q : undefined
+            },
+            {
+              inventaire_meteo: {
+                some: {
+                  meteo: {
+                    libelle: {
+                      contains: q
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        espece: {
+          OR: [
+            {
+              classe: {
+                libelle: {
+                  contains: q
+                }
+              }
+            },
+            {
+              code: {
+                contains: q
+              }
+            },
+            {
+              nomFrancais: {
+                contains: q
+              }
+            },
+            {
+              nomLatin: {
+                contains: q
+              }
+            }
+          ]
+        }
+      },
+      {
+        sexe: {
+          libelle: {
+            contains: q
+          }
+        }
+      },
+      {
+        age: {
+          libelle: {
+            contains: q
+          }
+        }
+      },
+      {
+        estimationNombre: {
+          libelle: {
+            contains: q
+          }
+        }
+      },
+      {
+        nombre: Number.isFinite(q) ? +q : undefined
+      },
+      {
+        estimationDistance: {
+          libelle: {
+            contains: q
+          }
+        }
+      },
+      {
+        distance: Number.isFinite(q) ? +q : undefined
+      },
+      {
+        regroupement: Number.isFinite(q) ? +q : undefined
+      },
+      {
+        donnee_comportement: {
+          some: {
+            comportement: {
+              OR: [
+                {
+                  code: {
+                    contains: q
+                  }
+                },
+                {
+                  libelle: {
+                    contains: q
+                  }
+                },
+                {
+                  nicheur: {
+                    in: (Object.keys(Nicheur) as Nicheur[]).filter(nicheur => nicheur.includes(q))
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        donnee_milieu: {
+          some: {
+            milieu: {
+              OR: [
+                {
+                  code: {
+                    contains: q
+                  }
+                },
+                {
+                  libelle: {
+                    contains: q
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        commentaire: {
+          contains: q
+        }
+      }
+    ]
+  } : undefined;
+}
+
 const DB_SAVE_MAPPING_DONNEE = {
   ...createKeyValueMapWithSameName([
     "nombre",
@@ -210,20 +430,13 @@ export const findDonnee = async (
 };
 
 export const findPaginatedDonneesByCriteria = async (
-  searchCriteria: SearchDonneeCriteria,
-  pageNumber: number,
-  pageSize: number,
-  orderByField: SearchDonneesOrderBy,
-  sortOrder: SortOrder
+  options: QueryPaginatedSearchDonneesArgs = {},
 ): Promise<{
   result: DonneeWithRelations[]
   count: number
 }> => {
 
-  const prismaPagination = getPrismaPagination({
-    pageNumber,
-    pageSize
-  });
+  const { searchParams, searchCriteria, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.DonneeOrderByWithRelationInput>;
   switch (orderByField) {
@@ -330,17 +543,24 @@ export const findPaginatedDonneesByCriteria = async (
       }
   }
 
+  const globalWhereCondition: Prisma.DonneeWhereInput = {
+    AND: [
+      buildSearchDonneeCriteria(searchCriteria),
+      getFilterClause(searchParams?.q)
+    ]
+  }
+
   const donnees = await prisma.donnee.findMany({
-    ...prismaPagination,
+    ...getPrismaPagination(searchParams),
     include: COMMON_DONNEE_INCLUDE,
     orderBy,
-    where: buildSearchDonneeCriteria(searchCriteria)
+    where: globalWhereCondition
   }).then((donnees) => {
     return donnees.map(normalizeDonnee);
   });
 
   const count = await prisma.donnee.count({
-    where: buildSearchDonneeCriteria(searchCriteria)
+    where: globalWhereCondition
   });
 
   return {

@@ -45,6 +45,11 @@ export const getFormattedDate = (value: string): Date | null => {
     locale
   });
 
+  // As date-fns parsing is not exact and could provide surprises, we check that we indeed parsed a proper year
+  if (parsedDate.getFullYear() < 1000) {
+    return null;
+  }
+
   // Invalid date is represented by NaN which is not === to itself
   if (parsedDate.getTime() === parsedDate.getTime()) {
     return parsedDate;
