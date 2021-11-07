@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - dev
     tags:
       - "v*.*.*"
   pull_request:
@@ -53,6 +54,11 @@ jobs:
       - name: Set the default docker tag
         run: |
           echo "DOCKER_TAG=latest" >> $GITHUB_ENV
+
+      - name: Set docker tag as dev if on dev branch
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          echo "DOCKER_TAG=dev" >> $GITHUB_ENV
 
       - name: Retrieve docker label if this is a tag push
         if: startsWith(github.ref, 'refs/tags/')
