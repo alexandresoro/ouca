@@ -38,7 +38,7 @@ export const handleRequest = async (
       void res.type(JSON_HTTP_HEADER);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
     res.compress(result as any);
   } catch (error) {
     const errorTyped = error as { nonFatal?: boolean };
