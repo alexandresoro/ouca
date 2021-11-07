@@ -1,4 +1,4 @@
-import { Commune as CommuneEntity, Prisma } from "@prisma/client";
+import { Commune as CommuneEntity, Departement, Prisma } from "@prisma/client";
 import { Commune, CommunesPaginatedResult, CommuneWithCounts, FindParams, MutationUpsertCommuneArgs, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -114,6 +114,15 @@ const DB_SAVE_MAPPING_COMMUNE = {
 export const findAllCommunes = async (): Promise<CommuneEntity[]> => {
   return await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM)
+  });
+};
+
+export const findAllCommunesWithDepartements = async (): Promise<(CommuneEntity & { departement: Departement })[]> => {
+  return await prisma.commune.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
+    include: {
+      departement: true
+    }
   });
 };
 

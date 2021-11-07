@@ -1,4 +1,4 @@
-import { Lieudit as LieuditEntity, Prisma } from "@prisma/client";
+import { Commune, Departement, Lieudit as LieuditEntity, Prisma } from "@prisma/client";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { FindParams, LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, MutationUpsertLieuDitArgs, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
@@ -100,6 +100,21 @@ const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput
     ]
   } : {};
 }
+
+export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<(LieuDitWithCoordinatesAsNumber & { commune: (Commune & { departement: Departement }) })[]> => {
+  const lieuxDitsDb = await prisma.lieudit.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
+    include: {
+      commune: {
+        include: {
+          departement: true
+        }
+      }
+    }
+  });
+
+  return lieuxDitsDb.map(buildLieuditFromLieuditDb);
+};
 
 export const findAllLieuxDits = async (options?: {
   where?: Prisma.LieuditWhereInput

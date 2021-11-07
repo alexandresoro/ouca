@@ -17,7 +17,7 @@ import { deleteMilieu, findMilieu, findMilieux, findMilieuxByIds, findPaginatedM
 import { deleteObservateur, findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs, upsertObservateur } from "../services/entities/observateur-service";
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
-import { generateDepartementsExport } from "../services/export-entites";
+import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
 
 const resolvers: Resolvers = {
   Query: {
@@ -175,8 +175,44 @@ const resolvers: Resolvers = {
     }> => {
       return findPaginatedDonneesByCriteria(args);
     },
+    exportAges: async (): Promise<string> => {
+      return generateAgesExport();
+    },
+    exportClasses: async (): Promise<string> => {
+      return generateClassesExport();
+    },
+    exportCommunes: async (): Promise<string> => {
+      return generateCommunesExport();
+    },
+    exportComportements: async (): Promise<string> => {
+      return generateComportementsExport();
+    },
     exportDepartements: async (): Promise<string> => {
       return generateDepartementsExport();
+    },
+    exportEstimationsDistance: async (): Promise<string> => {
+      return generateEstimationsDistanceExport();
+    },
+    exportEstimationsNombre: async (): Promise<string> => {
+      return generateEstimationsNombreExport();
+    },
+    exportEspeces: async (): Promise<string> => {
+      return generateEspecesExport();
+    },
+    exportLieuxDits: async (): Promise<string> => {
+      return generateLieuxDitsExport();
+    },
+    exportMeteos: async (): Promise<string> => {
+      return generateMeteosExport();
+    },
+    exportMilieux: async (): Promise<string> => {
+      return generateMilieuxExport();
+    },
+    exportObservateurs: async (): Promise<string> => {
+      return generateObservateursExport();
+    },
+    exportSexes: async (): Promise<string> => {
+      return generateSexesExport();
     },
     settings: async (): Promise<Settings> => {
       return findAppConfiguration();
