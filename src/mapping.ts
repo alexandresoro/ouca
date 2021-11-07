@@ -34,7 +34,7 @@ const EXCEL_MIME_TYPE =
 export const REQUEST_MAPPING: Record<string, {
   method?: HttpMethod,
   handler: (
-    httpParameters?: HttpParameters
+    httpParameters?: HttpParameters<any>
   ) => Promise<unknown>,
   responseType?: string,
   responseAttachmentHandler?: () => string
