@@ -11,7 +11,7 @@ RUN git submodule init
 RUN git submodule update
 
 RUN npm ci
-RUN npm run build:prod
+RUN npm run build
 
 # 2. Run the NodeJS backend
 FROM node:14-alpine

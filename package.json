@@ -13,9 +13,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build:debug": "tsc --sourceMap true",
-    "build:prod": "tsc",
-    "debug": "npm run build:debug --sourceMap true && npm run start:debug",
+    "build": "tsc",
+    "debug": "tsc --sourceMap true && npm run start:debug",
     "lint": "eslint './src/**/*.ts'",
     "start": "tsc && node dist/backend",
     "start:debug": "node --inspect dist/backend",
