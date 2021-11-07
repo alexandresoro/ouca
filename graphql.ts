@@ -716,6 +716,7 @@ export type Query = {
   estimationNombre?: Maybe<EstimationNombre>;
   estimationsDistance?: Maybe<Array<Maybe<EstimationDistance>>>;
   estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
+  exportDepartements?: Maybe<Scalars['String']>;
   inventaire?: Maybe<Inventaire>;
   lastDonneeId?: Maybe<Scalars['Int']>;
   lieuDit?: Maybe<LieuDit>;
@@ -1726,6 +1727,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   estimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType, RequireFields<QueryEstimationNombreArgs, 'id'>>;
   estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType, RequireFields<QueryEstimationsDistanceArgs, never>>;
   estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType, RequireFields<QueryEstimationsNombreArgs, never>>;
+  exportDepartements?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   inventaire?: Resolver<Maybe<ResolversTypes['Inventaire']>, ParentType, ContextType, RequireFields<QueryInventaireArgs, 'id'>>;
   lastDonneeId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lieuDit?: Resolver<Maybe<ResolversTypes['LieuDit']>, ParentType, ContextType, RequireFields<QueryLieuDitArgs, 'id'>>;
