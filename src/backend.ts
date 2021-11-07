@@ -4,8 +4,11 @@ import { ApolloServer } from "apollo-server-fastify";
 import { fastify } from "fastify";
 import fastifyCompress from "fastify-compress";
 import fastifyCors from "fastify-cors";
+import fastifyStatic from "fastify-static";
 import fastifyWebsocket from "fastify-websocket";
+import fs from "fs";
 import middie from "middie";
+import path from "path";
 import { Logger } from "winston";
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
 import resolvers from "./graphql/resolvers";
@@ -20,6 +23,7 @@ import { importWebsocket } from "./requests/import";
 import prisma from "./sql/prisma";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
+import { PUBLIC_DIR } from "./utils/paths";
 
 const server = fastify();
 
@@ -50,12 +54,26 @@ prisma.$on('info', (e) => {
   queriesLogger(e, logger.info)
 });
 
+const PUBLIC_DIR_PATH = path.join(process.cwd(), PUBLIC_DIR);
+const DOWNLOAD_PATH = "/download";
+
+// Create a public dir if does not exist
+// Used to serve some static content
+if (!fs.existsSync(PUBLIC_DIR_PATH)) {
+  fs.mkdirSync(PUBLIC_DIR_PATH);
+}
+
 (async () => {
   await server.register(middie);
   await server.register(fastifyWebsocket);
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {
     origin: "*"
+  });
+
+  await server.register(fastifyStatic, {
+    root: PUBLIC_DIR_PATH,
+    prefix: DOWNLOAD_PATH
   });
 
   server.get('/ws/', { websocket: true }, (connection) => {

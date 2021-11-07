@@ -609,6 +609,19 @@ export default gql`
     paginatedSearchEspeces(searchCriteria: SearchDonneeCriteria, searchParams: SearchDonneeParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
     paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, searchParams: SearchDonneeParams, orderBy: SearchDonneesOrderBy, sortOrder: SortOrder): PaginatedSearchDonneesResult
     settings: Settings
+    exportAges: String
+    exportClasses: String
+    exportCommunes: String
+    exportComportements: String
+    exportDepartements: String
+    exportEspeces: String
+    exportEstimationsDistance: String
+    exportEstimationsNombre: String
+    exportLieuxDits: String
+    exportMeteos: String
+    exportMilieux: String
+    exportObservateurs: String
+    exportSexes: String
     version: Version
   }
 

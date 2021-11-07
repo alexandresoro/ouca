@@ -9,9 +9,7 @@ import {
   exportAgesRequest,
   exportClassesRequest,
   exportCommunesRequest,
-  exportComportementsRequest,
-  exportDepartementsRequest,
-  exportEspecesRequest,
+  exportComportementsRequest, exportEspecesRequest,
   exportEstimationsDistanceRequest,
   exportEstimationsNombreRequest,
   exportLieuxditsRequest,
@@ -48,10 +46,6 @@ export const REQUEST_MAPPING: Record<string, {
   "/api/donnee/delete": { handler: deleteDonneeRequest },
   "/api/observateur/export": {
     handler: exportObservateursRequest,
-    responseType: EXCEL_MIME_TYPE
-  },
-  "/api/departement/export": {
-    handler: exportDepartementsRequest,
     responseType: EXCEL_MIME_TYPE
   },
   "/api/commune/export": {

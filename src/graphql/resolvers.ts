@@ -17,6 +17,7 @@ import { deleteMilieu, findMilieu, findMilieux, findMilieuxByIds, findPaginatedM
 import { deleteObservateur, findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs, upsertObservateur } from "../services/entities/observateur-service";
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
+import { generateDepartementsExport } from "../services/export-entites";
 
 const resolvers: Resolvers = {
   Query: {
@@ -173,6 +174,9 @@ const resolvers: Resolvers = {
       count: number
     }> => {
       return findPaginatedDonneesByCriteria(args);
+    },
+    exportDepartements: async (): Promise<string> => {
+      return generateDepartementsExport();
     },
     settings: async (): Promise<Settings> => {
       return findAppConfiguration();

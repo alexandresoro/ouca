@@ -16,8 +16,8 @@
     "build": "tsc",
     "debug": "tsc --sourceMap true && npm run start:debug",
     "lint": "eslint './src/**/*.ts'",
-    "start": "tsc && node dist/backend",
-    "start:debug": "node --inspect dist/backend",
+    "start": "tsc && cd dist && node backend",
+    "start:debug": "cd dist && node --inspect backend",
     "generate-graphql": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
@@ -30,6 +30,7 @@
     "fastify": "^3.21.1",
     "fastify-compress": "^3.6.1",
     "fastify-cors": "^6.0.2",
+    "fastify-static": "^4.5.0",
     "fastify-websocket": "^4.0.0",
     "graphql": "^15.5.3",
     "lodash.deburr": "^4.1.0",

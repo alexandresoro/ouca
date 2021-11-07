@@ -20,10 +20,6 @@ import { findAllObservateurs } from "../services/entities/observateur-service";
 import { findAllSexes } from "../services/entities/sexe-service";
 import { writeToExcel } from "../utils/export-excel-utils";
 
-export const getDepartementsRequest = async (): Promise<DepartementWithCounts[]> => {
-  return await findAllDepartements();
-};
-
 export const exportObservateursRequest = async (): Promise<unknown> => {
   const observateurs: ObservateurWithCounts[] = await findAllObservateurs();
 
@@ -46,18 +42,6 @@ export const exportMeteosRequest = async (): Promise<unknown> => {
   });
 
   return writeToExcel(objectsToExport, [], "Météos");
-};
-
-export const exportDepartementsRequest = async (): Promise<unknown> => {
-  const departementsDb: DepartementWithCounts[] = await getDepartementsRequest();
-
-  const objectsToExport = departementsDb.map((object) => {
-    return {
-      Département: object.code
-    };
-  });
-
-  return writeToExcel(objectsToExport, [], "Départements");
 };
 
 export const exportCommunesRequest = async (): Promise<unknown> => {
