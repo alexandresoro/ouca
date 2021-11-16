@@ -721,6 +721,7 @@ export type Query = {
   exportCommunes?: Maybe<Scalars['String']>;
   exportComportements?: Maybe<Scalars['String']>;
   exportDepartements?: Maybe<Scalars['String']>;
+  exportDonnees?: Maybe<Scalars['String']>;
   exportEspeces?: Maybe<Scalars['String']>;
   exportEstimationsDistance?: Maybe<Scalars['String']>;
   exportEstimationsNombre?: Maybe<Scalars['String']>;
@@ -854,6 +855,11 @@ export type QueryEstimationsDistanceArgs = {
 
 export type QueryEstimationsNombreArgs = {
   params?: Maybe<FindParams>;
+};
+
+
+export type QueryExportDonneesArgs = {
+  searchCriteria?: Maybe<SearchDonneeCriteria>;
 };
 
 
@@ -1744,6 +1750,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   exportCommunes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportComportements?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportDepartements?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  exportDonnees?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryExportDonneesArgs, never>>;
   exportEspeces?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportEstimationsDistance?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportEstimationsNombre?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
