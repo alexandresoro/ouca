@@ -614,6 +614,7 @@ export default gql`
     exportCommunes: String
     exportComportements: String
     exportDepartements: String
+    exportDonnees(searchCriteria: SearchDonneeCriteria): String
     exportEspeces: String
     exportEstimationsDistance: String
     exportEstimationsNombre: String

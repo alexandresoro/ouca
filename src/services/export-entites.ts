@@ -1,5 +1,10 @@
 import { randomUUID } from 'crypto';
+import { format } from 'date-fns';
 import path from 'path';
+import { GPS_COORDINATES } from '../model/coordinates-system/gps.object';
+import { SearchDonneeCriteria } from '../model/graphql';
+import { getNicheurStatusToDisplay } from '../model/helpers/nicheur-helper';
+import { DATE_PATTERN, SEPARATOR_COMMA } from '../utils/constants';
 import { writeToExcelFile } from '../utils/export-excel-utils';
 import { PUBLIC_DIR } from '../utils/paths';
 import { findAllAges } from './entities/age-service';
@@ -7,6 +12,7 @@ import { findAllClasses } from './entities/classe-service';
 import { findAllCommunesWithDepartements } from './entities/commune-service';
 import { findAllComportements } from './entities/comportement-service';
 import { findAllDepartements } from "./entities/departement-service";
+import { DonneeWithRelations, findDonneesByCriteria } from './entities/donnee-service';
 import { findAllEspecesWithClasses } from './entities/espece-service';
 import { findAllEstimationsDistance } from './entities/estimation-distance-service';
 import { findAllEstimationsNombre } from './entities/estimation-nombre-service';
@@ -84,6 +90,79 @@ export const generateDepartementsExport = async (): Promise<string> => {
 
   const fileName = randomUUID();
   await writeToExcelFile(objectsToExport, [], "Départements", path.join(PUBLIC_DIR, fileName));
+  return fileName;
+};
+
+const getComportement = (donnee: DonneeWithRelations, index: number): string => {
+  return donnee.comportements.length >= index
+    ? donnee.comportements[index - 1].code +
+    " - " +
+    donnee.comportements[index - 1].libelle
+    : "";
+};
+
+const getMilieu = (donnee: DonneeWithRelations, index: number): string => {
+  return donnee.milieux.length >= index
+    ? donnee.milieux[index - 1].code + " - " + donnee.milieux[index - 1].libelle
+    : "";
+};
+
+export const generateDonneesExport = async (searchCriteria: SearchDonneeCriteria): Promise<string> => {
+
+  const coordinatesSystem = GPS_COORDINATES;
+  const coordinatesSuffix =
+    " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
+
+  const donnees = await findDonneesByCriteria(searchCriteria);
+
+  const objectsToExport = donnees.map((donnee) => {
+
+    const nicheurStatus = getNicheurStatusToDisplay(donnee.comportements, '')
+
+    return {
+      ID: donnee.id,
+      Observateur: donnee.inventaire.observateur.libelle,
+      "Observateurs associés": donnee.inventaire.associes?.join(SEPARATOR_COMMA) ?? '',
+      Date: format(donnee.inventaire.date, DATE_PATTERN),
+      Heure: donnee.inventaire.heure,
+      Durée: donnee.inventaire.duree,
+      Département: donnee.inventaire.lieuDit.commune.departement.code,
+      "Code commune": donnee.inventaire.lieuDit.commune.code,
+      "Nom commune": donnee.inventaire.lieuDit.commune.nom,
+      "Lieu-dit": donnee.inventaire.lieuDit.nom,
+      ["Latitude" + coordinatesSuffix]: donnee.inventaire.latitude?.toNumber() ?? donnee.inventaire.lieuDit.latitude?.toNumber(),
+      ["Longitude" + coordinatesSuffix]: donnee.inventaire.longitude?.toNumber() ?? donnee.inventaire.lieuDit.longitude?.toNumber(),
+      "Altitude en mètres": donnee.inventaire.altitude ?? donnee.inventaire.lieuDit.altitude,
+      "Température en °C": donnee.inventaire.temperature,
+      Météo: donnee.inventaire.meteos?.join(SEPARATOR_COMMA) ?? '',
+      Classe: donnee.espece.classe.libelle,
+      "Code espèce": donnee.espece.code,
+      "Nom francais": donnee.espece.nomFrancais,
+      "Nom scientifique": donnee.espece.nomLatin,
+      Sexe: donnee.sexe.libelle,
+      Âge: donnee.age.libelle,
+      "Nombre d'individus": donnee.nombre,
+      "Estimation du nombre": donnee.estimationNombre?.libelle,
+      "Estimation de la distance": donnee.estimationDistance?.libelle,
+      "Distance en mètres": donnee.distance,
+      "Numéro de regroupement": donnee.regroupement,
+      Nicheur: nicheurStatus,
+      "Comportement 1": getComportement(donnee, 1),
+      "Comportement 2": getComportement(donnee, 2),
+      "Comportement 3": getComportement(donnee, 3),
+      "Comportement 4": getComportement(donnee, 4),
+      "Comportement 5": getComportement(donnee, 5),
+      "Comportement 6": getComportement(donnee, 6),
+      "Milieu 1": getMilieu(donnee, 1),
+      "Milieu 2": getMilieu(donnee, 2),
+      "Milieu 3": getMilieu(donnee, 3),
+      "Milieu 4": getMilieu(donnee, 4),
+      Commentaires: donnee.commentaire
+    };
+  });
+
+  const fileName = randomUUID();
+  await writeToExcelFile(objectsToExport, [], "donnees", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 

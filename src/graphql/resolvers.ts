@@ -17,7 +17,7 @@ import { deleteMilieu, findMilieu, findMilieux, findMilieuxByIds, findPaginatedM
 import { deleteObservateur, findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs, upsertObservateur } from "../services/entities/observateur-service";
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
-import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
+import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateDonneesExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
 
 const resolvers: Resolvers = {
   Query: {
@@ -195,6 +195,9 @@ const resolvers: Resolvers = {
     },
     exportEstimationsNombre: async (): Promise<string> => {
       return generateEstimationsNombreExport();
+    },
+    exportDonnees: async (_source, args): Promise<string> => {
+      return generateDonneesExport(args?.searchCriteria);
     },
     exportEspeces: async (): Promise<string> => {
       return generateEspecesExport();

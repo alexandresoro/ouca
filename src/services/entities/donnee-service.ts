@@ -1,4 +1,4 @@
-import { Age, Comportement, Donnee as DonneeEntity, Milieu, Prisma, Sexe } from "@prisma/client";
+import { Age, Classe, Commune, Comportement, Departement, Donnee as DonneeEntity, Espece, EstimationDistance, EstimationNombre, Inventaire as InventaireEntity, Lieudit, Meteo, Milieu, Observateur, Prisma, Sexe } from "@prisma/client";
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { getCoordinates } from "../../model/coordinates-system/coordinates-helper";
@@ -32,6 +32,22 @@ export type DonneeWithRelations = DonneeEntity & {
   sexe: Sexe | null
   comportements: Comportement[]
   milieux: Milieu[]
+};
+
+export type FullDonnee = DonneeWithRelations & {
+  inventaire: InventaireEntity & {
+    observateur: Observateur
+    associes: Observateur[]
+    lieuDit: Lieudit & {
+      commune: Commune & {
+        departement: Departement
+      }
+    },
+    meteos: Meteo[]
+  }
+  espece: Espece & { classe: Classe }
+  estimationDistance: EstimationDistance
+  estimationNombre: EstimationNombre
 };
 
 export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria): Prisma.DonneeWhereInput | undefined => {
@@ -170,16 +186,17 @@ const COMMON_DONNEE_INCLUDE = {
   }
 }
 
-const normalizeDonnee = (donnee: DonneeEntity & {
-  age: Age
-  sexe: Sexe
+const normalizeDonnee = <T extends {
   donnee_comportement: {
     comportement: Comportement
   }[]
   donnee_milieu: {
     milieu: Milieu
   }[]
-}): DonneeWithRelations => {
+}>(donnee: T): Omit<T, 'donnee_comportement' | 'donnee_milieu'> & {
+  comportements: Comportement[]
+  milieux: Milieu[]
+} => {
   if (donnee == null) {
     return null;
   }
@@ -198,6 +215,35 @@ const normalizeDonnee = (donnee: DonneeEntity & {
   }
 }
 
+const normalizeInventaire = <T extends {
+  inventaire_associe: {
+    observateur: Observateur
+  }[]
+  inventaire_meteo: {
+    meteo: Meteo
+  }[]
+}>(inventaire: T): Omit<T, 'inventaire_associe' | 'inventaire_meteo'> & {
+  associes: Observateur[]
+  meteos: Meteo[]
+} => {
+  if (inventaire == null) {
+    return null;
+  }
+  const { inventaire_associe, inventaire_meteo, ...restInventaire } = inventaire;
+  const associesArray = inventaire_associe.map((inventaire_associe) => {
+    return inventaire_associe?.observateur;
+  });
+  const meteosArray = inventaire_meteo.map((inventaire_meteo) => {
+    return inventaire_meteo?.meteo;
+  });
+
+  return {
+    ...restInventaire,
+    associes: associesArray,
+    meteos: meteosArray
+  }
+}
+
 export const findDonnee = async (
   id: number
 ): Promise<DonneeWithRelations> => {
@@ -207,6 +253,61 @@ export const findDonnee = async (
       id
     }
   }).then(normalizeDonnee);
+};
+
+export const findDonneesByCriteria = async (
+  searchCriteria: SearchDonneeCriteria = null,
+): Promise<FullDonnee[]> => {
+
+  const donnees = await prisma.donnee.findMany({
+    include: {
+      ...COMMON_DONNEE_INCLUDE,
+      inventaire: {
+        include: {
+          observateur: true,
+          inventaire_associe: {
+            select: {
+              observateur: true
+            }
+          },
+          lieuDit: {
+            include: {
+              commune: {
+                include: {
+                  departement: true
+                }
+              }
+            }
+          },
+          inventaire_meteo: {
+            select: {
+              meteo: true
+            }
+          }
+        }
+      },
+      espece: {
+        include: {
+          classe: true
+        }
+      }
+    },
+    orderBy: {
+      id: SortOrder.Asc
+    },
+    where: buildSearchDonneeCriteria(searchCriteria)
+  }).then((donnees) => {
+    return donnees.map((donnee) => {
+      const { inventaire, ...restDonnee } = donnee;
+      const normalizedInventaire = normalizeInventaire(inventaire);
+      return {
+        ...normalizeDonnee(restDonnee),
+        inventaire: normalizedInventaire
+      }
+    });
+  });
+
+  return donnees;
 };
 
 export const findPaginatedDonneesByCriteria = async (
