@@ -1,8 +1,5 @@
 import { Commune, Departement, Lieudit as LieuditEntity, Prisma } from "@prisma/client";
-import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { FindParams, LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, MutationUpsertLieuDitArgs, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
-import { Coordinates } from "../../model/types/coordinates.object";
-import { Lieudit } from "../../model/types/lieudit.model";
 import { LieuditDb as LieuditObj } from "../../objects/db/lieudit-db.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
@@ -326,35 +323,6 @@ export const findPaginatedLieuxDits = async (
     result: lieuxDits,
     count
   }
-};
-
-export const findLieuDitById = async (lieuditId: number): Promise<Lieudit> => {
-  const lieuDitDb = await prisma.lieudit.findFirst({
-    where: {
-      id: lieuditId
-    }
-  });
-
-  return buildLieuditFromLieuditDb(lieuDitDb); // TODO fix this that is now incorrect
-};
-
-const getCoordinatesToPersist = async (
-  lieuDit: Lieudit
-): Promise<Coordinates> => {
-  const newCoordinates = lieuDit.coordinates;
-
-  let coordinatesToPersist = newCoordinates;
-
-  if (lieuDit.id) {
-    // We check if the coordinates of the lieudit are the same as the one stored in database
-    const oldLieuDit = await findLieuDitById(lieuDit.id);
-
-    if (areSameCoordinates(oldLieuDit?.coordinates, newCoordinates)) {
-      coordinatesToPersist = oldLieuDit.coordinates;
-    }
-  }
-
-  return coordinatesToPersist;
 };
 
 export const upsertLieuDit = async (
