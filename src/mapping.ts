@@ -10,14 +10,8 @@ import {
   getEspeceDetailsBySexeRequest
 } from "./requests/gestion-requests";
 import { saveDatabaseFileNameRequest, saveDatabaseRequest } from "./requests/save-requests";
-import {
-  exportDonneesByCustomizedFiltersRequest
-} from "./requests/view-requests";
 import { executeDatabaseMigration } from "./services/database-migration/database-migration.service";
 import { clearAllTables } from "./services/entities/entity-service";
-
-const EXCEL_MIME_TYPE =
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 export const REQUEST_MAPPING: Record<string, {
   method?: HttpMethod,
@@ -28,10 +22,6 @@ export const REQUEST_MAPPING: Record<string, {
   responseAttachmentHandler?: () => string
 }> = {
   "/api/inventaire/save": { handler: saveInventaireRequest },
-  "/api/donnee/export": {
-    handler: exportDonneesByCustomizedFiltersRequest,
-    responseType: EXCEL_MIME_TYPE
-  },
   "/api/donnee/save": { handler: saveDonneeRequest },
   "/api/donnee/delete": { handler: deleteDonneeRequest },
   "/api/espece/details_by_age": { handler: getEspeceDetailsByAgeRequest },

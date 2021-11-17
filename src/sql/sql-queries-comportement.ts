@@ -1,4 +1,3 @@
-import { NicheurCode } from "../model/types/nicheur.model";
 import { query } from "./sql-queries-utils";
 
 export const queryToCreateComportementTable = async (): Promise<void> => {
@@ -12,24 +11,6 @@ export const queryToCreateComportementTable = async (): Promise<void> => {
     " UNIQUE KEY `unique_libelle` (libelle)" +
     " )");
 }
-
-export const queryToFindAllComportementsByDonneeId = async (
-  donneesIds?: number[]
-): Promise<{ donneeId: number; code: string; libelle: string, nicheur?: NicheurCode | null }[]> => {
-  let queryStr: string =
-    "SELECT d.donnee_id as donneeId, c.code, c.libelle, c.nicheur" +
-    " FROM donnee_comportement d" +
-    " INNER JOIN comportement c ON d.comportement_id = c.id";
-
-  if (donneesIds && donneesIds.length) {
-    queryStr = queryStr +
-      ` WHERE d.donnee_id IN (${donneesIds.join(",")})`;
-  }
-
-  return query<
-    { donneeId: number; code: string; libelle: string; nicheur?: NicheurCode | null }[]
-  >(queryStr);
-};
 
 export const queryToFindComportementsIdsByDonneeId = async (
   donneeId: number

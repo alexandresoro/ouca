@@ -11,23 +11,6 @@ export const queryToCreateMilieuTable = async (): Promise<void> => {
     " )");
 }
 
-export const queryToFindAllMilieuxByDonneeId = async (
-  donneesIds?: number[]
-): Promise<{ donneeId: number; code: string; libelle: string }[]> => {
-  let queryStr: string =
-    "SELECT d.donnee_id as donneeId, m.code, m.libelle" +
-    " FROM donnee_milieu d" +
-    " INNER JOIN milieu m ON d.milieu_id = m.id";
-
-  if (donneesIds && donneesIds.length) {
-    queryStr =
-      queryStr +
-      ` WHERE d.donnee_id IN (${donneesIds.join(",")})`;
-  }
-
-  return query<{ donneeId: number; code: string; libelle: string }[]>(queryStr);
-};
-
 export const queryToFindMilieuxIdsByDonneeId = async (
   donneeId: number
 ): Promise<{ milieuId: number }[]> => {
