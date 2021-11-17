@@ -27,6 +27,7 @@
     "apollo-server-fastify": "^3.3.0",
     "date-fns": "^2.17.0",
     "date-fns-tz": "^1.1.6",
+    "exceljs": "^4.3.0",
     "fastify": "^3.21.1",
     "fastify-compress": "^3.6.1",
     "fastify-cors": "^6.0.2",
@@ -39,7 +40,6 @@
     "papaparse": "^5.3.1",
     "proj4": "^2.7.5",
     "winston": "^3.3.3",
-    "xlsx": "^0.17.3",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

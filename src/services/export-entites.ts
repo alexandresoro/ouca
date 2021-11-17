@@ -1,10 +1,9 @@
 import { randomUUID } from 'crypto';
-import { format } from 'date-fns';
 import path from 'path';
 import { GPS_COORDINATES } from '../model/coordinates-system/gps.object';
 import { SearchDonneeCriteria } from '../model/graphql';
 import { getNicheurStatusToDisplay } from '../model/helpers/nicheur-helper';
-import { DATE_PATTERN, SEPARATOR_COMMA } from '../utils/constants';
+import { SEPARATOR_COMMA } from '../utils/constants';
 import { writeToExcelFile } from '../utils/export-excel-utils';
 import { PUBLIC_DIR } from '../utils/paths';
 import { findAllAges } from './entities/age-service';
@@ -32,7 +31,7 @@ export const generateAgesExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(agesToExport, [], "Âges", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(agesToExport, "Âges", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -44,7 +43,7 @@ export const generateClassesExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Classes", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Classes", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -60,7 +59,7 @@ export const generateCommunesExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Communes", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Communes", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -75,7 +74,7 @@ export const generateComportementsExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(comportementsToExport, [], "Comportements", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(comportementsToExport, "Comportements", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -89,7 +88,7 @@ export const generateDepartementsExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Départements", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Départements", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -162,7 +161,7 @@ export const generateDonneesExport = async (searchCriteria: SearchDonneeCriteria
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "donnees", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "donnees", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -179,7 +178,7 @@ export const generateEspecesExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Espèces", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Espèces", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -193,7 +192,7 @@ export const generateEstimationsDistanceExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Estimations de la distance", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Estimations de la distance", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -207,7 +206,7 @@ export const generateEstimationsNombreExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Estimations du nombre", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Estimations du nombre", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -227,7 +226,7 @@ export const generateLieuxDitsExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Lieux-dits", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Lieux-dits", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -241,7 +240,7 @@ export const generateMeteosExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Météos", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Météos", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -256,7 +255,7 @@ export const generateMilieuxExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(milieuxToExport, [], "Milieux", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(milieuxToExport, "Milieux", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -270,7 +269,7 @@ export const generateObservateursExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Observateurs", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Observateurs", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };
 
@@ -284,6 +283,6 @@ export const generateSexesExport = async (): Promise<string> => {
   });
 
   const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, [], "Sexes", path.join(PUBLIC_DIR, fileName));
+  await writeToExcelFile(objectsToExport, "Sexes", path.join(PUBLIC_DIR, fileName));
   return fileName;
 };

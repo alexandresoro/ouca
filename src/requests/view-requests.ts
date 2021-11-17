@@ -1,12 +1,14 @@
+import { randomUUID } from "crypto";
+import { readFileSync } from "fs";
+import path from "path";
 import { HttpParameters } from "../http/httpParameters";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
 import { DonneesFilter } from "../model/types/donnees-filter.object";
 import { FlatDonnee } from "../model/types/flat-donnee.object";
 import { findDonneesByCustomizedFilters } from "../services/entities/donnee-service";
-import { writeToExcel } from "../utils/export-excel-utils";
-
-const MAXIMUM_EXCEL_DATA_SUPPORTED = 50000;
+import { writeToExcelFile } from "../utils/export-excel-utils";
+import { PUBLIC_DIR } from "../utils/paths";
 
 const getComportement = (donnee: FlatDonnee, index: number): string => {
   return donnee.comportements.length >= index
@@ -28,14 +30,6 @@ export const exportDonneesByCustomizedFiltersRequest = async (
   const flatDonnees = await findDonneesByCustomizedFilters(
     httpParameters.body
   );
-
-  if (flatDonnees.length > MAXIMUM_EXCEL_DATA_SUPPORTED) {
-    return Promise.reject({
-      reason:
-        `Votre recherche comporte plus de ${MAXIMUM_EXCEL_DATA_SUPPORTED} données. Merci d'affiner votre recherche (par date...).`,
-      nonFatal: true
-    });
-  }
 
   const coordinatesSystemType: CoordinatesSystemType = httpParameters.body.coordinatesSystemType;
   const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
@@ -97,5 +91,7 @@ export const exportDonneesByCustomizedFiltersRequest = async (
     return donneeToExport;
   });
 
-  return writeToExcel(objectsToExport, [], "donnees");
+  const fileName = randomUUID();
+  await writeToExcelFile(objectsToExport, "donnees", path.join(PUBLIC_DIR, fileName));
+  return readFileSync(path.join(PUBLIC_DIR, fileName));
 };

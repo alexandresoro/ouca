@@ -1,41 +1,36 @@
-import { utils, write, writeFile } from "xlsx";
+import { stream } from "exceljs";
 
-export const writeToExcel = (
-  objects: unknown[],
-  headers: string[],
-  worksheetName: string
-): unknown => {
-  const workbook = utils.book_new();
-
-  const worksheet = utils.json_to_sheet(objects, {
-    header: headers,
-    dateNF: "dd/mm/yyyy"
-  });
-
-  utils.book_append_sheet(workbook, worksheet, worksheetName);
-
-  return write(workbook, {
-    bookType: "xlsx",
-    type: "buffer"
-  });
-};
-
-export const writeToExcelFile = (
-  objects: unknown[],
-  headers: string[],
+export const writeToExcelFile = async (
+  objects: { [key: string]: unknown }[],
   worksheetName: string,
   fileName: string
-): unknown => {
-  const workbook = utils.book_new();
+): Promise<void> => {
 
-  const worksheet = utils.json_to_sheet(objects, {
-    header: headers,
-    dateNF: "dd/mm/yyyy"
+  const workbook = new stream.xlsx.WorkbookWriter({
+    filename: fileName,
+    useStyles: true
   });
 
-  utils.book_append_sheet(workbook, worksheet, worksheetName);
+  const sheet = workbook.addWorksheet(worksheetName);
 
-  return writeFile(workbook, fileName, {
-    bookType: "xlsx",
-  });
+  if (objects?.length) {
+    sheet.columns = Object.keys(objects[0]).map(column => {
+      return {
+        header: column,
+        key: column,
+        ...(column === "Date" ? {
+          style: {
+            numFmt: 'dd/mm/yyyy'
+          }
+        } : {})
+      }
+    });
+
+    objects.forEach(object => {
+      sheet.addRow(object).commit();
+    })
+  }
+
+  sheet.commit();
+  await workbook.commit();
 };
