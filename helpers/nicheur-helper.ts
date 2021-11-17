@@ -1,6 +1,6 @@
 import { NicheurCode, NICHEUR_VALUES } from "../types/nicheur.model";
 
-export const getNicheurStatusToDisplay = (comportements: { nicheur: NicheurCode | null }[], noNicheurFoundText: string): string => {
+export const getNicheurStatusToDisplay = (comportements: { nicheur?: NicheurCode | null }[], noNicheurFoundText: string): string => {
 
   // Compute nicheur status for the Donnée (i.e. highest nicheur status of the comportements)
   // First we keep only the comportements having a nicheur status
