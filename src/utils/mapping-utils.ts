@@ -11,17 +11,3 @@ export const mapMeteosIds = (meteosDb: { meteoId: number }[]): number[] => {
     return meteoDb.meteoId;
   });
 };
-
-export const mapComportementsIds = (
-  comportementsDb: { comportementId: number }[]
-): number[] => {
-  return comportementsDb.map((comportementDb) => {
-    return comportementDb.comportementId;
-  });
-};
-
-export const mapMilieuxIds = (milieuxDds: { milieuId: number }[]): number[] => {
-  return milieuxDds.map((milieuDb) => {
-    return milieuDb.milieuId;
-  });
-};
