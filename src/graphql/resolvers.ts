@@ -1,5 +1,6 @@
 import { Commune as CommuneEntity, Espece as EspeceEntity } from "@prisma/client";
 import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
+import { saveDatabaseRequest } from "../services/database/save-database";
 import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
 import { deleteClasse, findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses, upsertClasse } from "../services/entities/classe-service";
 import { deleteCommune, findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommunes, upsertCommune } from "../services/entities/commune-service";
@@ -216,6 +217,9 @@ const resolvers: Resolvers = {
     },
     exportSexes: async (): Promise<string> => {
       return generateSexesExport();
+    },
+    dumpDatabase: async (): Promise<string> => {
+      return saveDatabaseRequest();
     },
     settings: async (): Promise<Settings> => {
       return findAppConfiguration();

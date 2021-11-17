@@ -1,10 +1,11 @@
 import { ChildProcess, spawn } from "child_process";
 import { format } from "date-fns";
-import {
-  getSqlConnectionConfiguration
-} from "../sql/sql-connection";
-import { DATE_PATTERN } from "../utils/constants";
-import { logger } from "../utils/logger";
+import { promises } from "fs";
+import path from "path";
+import { DATE_PATTERN } from "../../utils/constants";
+import { logger } from "../../utils/logger";
+import options from "../../utils/options";
+import { PUBLIC_DIR } from "../../utils/paths";
 
 const DUMP_FILE_NAME = "sauvegarde_base_naturaliste_";
 const SQL_EXTENSION = ".sql";
@@ -14,16 +15,14 @@ const executeSqlDump = async (): Promise<string> => {
     let stdout = "";
     let stderr = "";
 
-    const connectionConfig = getSqlConnectionConfiguration();
-
     const dumpParams: string[] = [
-      `--user=${connectionConfig.user}`,
-      `--password=${connectionConfig.password}`,
+      `--user=${options.dbUser}`,
+      `--password=${options.dbPassword}`,
       "--default-character-set=utf8",
       "--skip-triggers",
-      `--host=${connectionConfig.host}`,
-      `--port=${connectionConfig.port}`,
-      connectionConfig.database
+      `--host=${options.dbHost}`,
+      `--port=${options.dbPort}`,
+      options.dbName
     ];
 
     const dumpProcess: ChildProcess = spawn("mysqldump", dumpParams);
@@ -44,9 +43,18 @@ const executeSqlDump = async (): Promise<string> => {
   });
 };
 
+const getDatabaseFileName = (): string => {
+  return DUMP_FILE_NAME + format(new Date(), DATE_PATTERN) + SQL_EXTENSION;
+};
+
 export const saveDatabaseRequest = async (): Promise<string> => {
   try {
-    return await executeSqlDump();
+    const dumpString = await executeSqlDump();
+    const fileName = getDatabaseFileName();
+
+    await promises.writeFile(path.join(PUBLIC_DIR, fileName), dumpString);
+
+    return fileName;
   } catch (error) {
     logger.error(
       "L'extraction de la base de données n'a pas pu être effectuée",
@@ -54,8 +62,4 @@ export const saveDatabaseRequest = async (): Promise<string> => {
     );
     return Promise.reject(error);
   }
-};
-
-export const saveDatabaseFileNameRequest = (): string => {
-  return DUMP_FILE_NAME + format(new Date(), DATE_PATTERN) + SQL_EXTENSION;
 };

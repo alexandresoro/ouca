@@ -105,7 +105,7 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
   // Routes
   Object.entries(REQUEST_MAPPING).forEach(([route, mapping]) => {
     server.route<RequestGeneric>({
-      method: mapping.method ?? [GET, POST, DELETE],
+      method: [GET, POST, DELETE],
       url: route,
       handler: async (req, res) => {
         handleRequest(req, res, mapping).catch(e => res.send(e));

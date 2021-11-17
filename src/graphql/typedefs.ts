@@ -623,6 +623,7 @@ export default gql`
     exportMilieux: String
     exportObservateurs: String
     exportSexes: String
+    dumpDatabase: String
     version: Version
   }
 
