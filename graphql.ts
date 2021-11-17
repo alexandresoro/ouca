@@ -710,6 +710,7 @@ export type Query = {
   departement?: Maybe<Departement>;
   departements?: Maybe<Array<Maybe<Departement>>>;
   donnee?: Maybe<DonneeResult>;
+  dumpDatabase?: Maybe<Scalars['String']>;
   espece?: Maybe<Espece>;
   especes?: Maybe<Array<Maybe<Espece>>>;
   estimationDistance?: Maybe<EstimationDistance>;
@@ -1739,6 +1740,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   departement?: Resolver<Maybe<ResolversTypes['Departement']>, ParentType, ContextType, RequireFields<QueryDepartementArgs, 'id'>>;
   departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType, RequireFields<QueryDepartementsArgs, never>>;
   donnee?: Resolver<Maybe<ResolversTypes['DonneeResult']>, ParentType, ContextType, RequireFields<QueryDonneeArgs, 'id'>>;
+  dumpDatabase?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   espece?: Resolver<Maybe<ResolversTypes['Espece']>, ParentType, ContextType, RequireFields<QueryEspeceArgs, 'id'>>;
   especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType, RequireFields<QueryEspecesArgs, never>>;
   estimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType, RequireFields<QueryEstimationDistanceArgs, 'id'>>;
