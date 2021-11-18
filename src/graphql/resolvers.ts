@@ -7,7 +7,7 @@ import { deleteCommune, findCommune, findCommuneOfLieuDitId, findCommunes, findP
 import { deleteComportement, findComportement, findComportements, findComportementsByIds, findPaginatedComportements, upsertComportement } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { deleteDepartement, findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
-import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId, findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement, findPaginatedDonneesByCriteria } from "../services/entities/donnee-service";
+import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId, deleteDonnee, findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement, findPaginatedDonneesByCriteria } from "../services/entities/donnee-service";
 import { deleteEspece, findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
 import { deleteEstimationDistance, findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
 import { deleteEstimationNombre, findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
@@ -249,6 +249,9 @@ const resolvers: Resolvers = {
     },
     deleteDepartement: async (_source, args): Promise<number> => {
       return deleteDepartement(args.id).then(({ id }) => id);
+    },
+    deleteDonnee: async (_source, args): Promise<number> => {
+      return deleteDonnee(args.id).then(({ id }) => id);
     },
     deleteEspece: async (_source, args): Promise<number> => {
       return deleteEspece(args.id).then(({ id }) => id);

@@ -1,7 +1,7 @@
 import { RouteOptions } from "fastify";
 import { HttpParameters } from "./http/httpParameters";
 import {
-  deleteDonneeRequest, saveDonneeRequest,
+  saveDonneeRequest,
   saveInventaireRequest
 } from "./requests/creation-requests";
 import { executeDatabaseMigration } from "./services/database-migration/database-migration.service";
@@ -14,7 +14,6 @@ export const REQUEST_MAPPING: Record<string, {
 }> = {
   "/api/inventaire/save": { handler: saveInventaireRequest },
   "/api/donnee/save": { handler: saveDonneeRequest },
-  "/api/donnee/delete": { handler: deleteDonneeRequest },
   "/api/database/clear": { handler: clearAllTables },
   "/api/database/update": { handler: executeDatabaseMigration }
 } as const;

@@ -7,14 +7,13 @@ import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { queryToFindComportementsIdsByDonneeId } from "../../sql/sql-queries-comportement";
-import { queryToCountDonneesByInventaireId, queryToFindDonneeIdsByAllAttributes, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
+import { queryToFindDonneeIdsByAllAttributes, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
 import { queryToFindMilieuxIdsByDonneeId } from "../../sql/sql-queries-milieu";
 import { createKeyValueMapWithSameName, queryToDeleteAnEntityByAttribute, queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
 import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../../utils/constants";
 import { areArraysContainingSameValues, getArrayFromObjects } from "../../utils/utils";
 import { getPrismaPagination } from "./entities-utils";
-import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntity } from "./entity-service";
-import { deleteInventaireById } from "./inventaire-service";
+import { insertMultipleEntitiesAndReturnIdsNoCheck, persistEntity } from "./entity-service";
 
 export type DonneeWithRelations = DonneeEntity & {
   age: Age | null
@@ -480,13 +479,6 @@ export const findDonneeNavigationData = async (
   }
 };
 
-const countDonneesByInventaireId = async (
-  inventaireId: number
-): Promise<number> => {
-  const numbers = await queryToCountDonneesByInventaireId(inventaireId);
-  return numbers && numbers[0]?.nbDonnees ? numbers[0].nbDonnees : 0;
-};
-
 export const persistDonnee = async (
   donneeToSave: DonneeObj
 ): Promise<SqlSaveResponse> => {
@@ -638,27 +630,37 @@ export const findLastDonneeId = async (): Promise<number> => {
   }).then(donnee => donnee.id).catch(() => Promise.resolve(null as number));
 };
 
-export const deleteDonneeById = async (
-  donneeId: number,
-  inventaireId: number
-): Promise<SqlSaveResponse> => {
-  if (donneeId) {
-    // First delete the donnee
-    const sqlResponse: SqlSaveResponse = await deleteEntityById(
-      TABLE_DONNEE,
-      donneeId
-    );
-
-    // Check how many donnees the inventaire has after the deletion
-    const nbDonnees = await countDonneesByInventaireId(inventaireId);
-
-    if (nbDonnees === 0) {
-      // If the inventaire has no more donnees then we remove the inventaire
-      await deleteInventaireById(inventaireId);
+export const deleteDonnee = async (donneeId: number): Promise<DonneeEntity> => {
+  // First get the corresponding inventaire_id
+  const inventaire = await prisma.donnee.findUnique({
+    where: {
+      id: donneeId
     }
+  }).inventaire();
 
-    return sqlResponse;
+  // Delete the actual donnee
+  const deletedDonnee = await prisma.donnee.delete({
+    where: {
+      id: donneeId
+    }
+  })
+
+  // Check how many donnees the inventaire has after the deletion
+  const nbDonneesOfInventaire = await prisma.donnee.count({
+    where: {
+      inventaire_id: inventaire?.id
+    }
+  })
+
+  if (nbDonneesOfInventaire === 0) {
+    // If the inventaire has no more donnees then we remove the inventaire
+    await prisma.inventaire.delete({
+      where: {
+        id: inventaire?.id
+      }
+    })
   }
+  return deletedDonnee;
 };
 
 export const findAllDonneesWithIds = async (): Promise<DonneeCompleteWithIds[]> => {

@@ -3,7 +3,7 @@ import { Donnee } from "../model/types/donnee.object";
 import { Inventaire } from "../model/types/inventaire.object";
 import { PostResponse } from "../model/types/post-response.object";
 import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { deleteDonneeById, findExistingDonneeId, persistDonnee, updateInventaireIdForDonnees } from "../services/entities/donnee-service";
+import { findExistingDonneeId, persistDonnee, updateInventaireIdForDonnees } from "../services/entities/donnee-service";
 import { deleteInventaireById, findExistingInventaireId, persistInventaire } from "../services/entities/inventaire-service";
 import { buildErrorPostResponse, buildPostResponseFromSqlResponse } from "../utils/post-response-utils";
 
@@ -60,18 +60,4 @@ export const saveDonneeRequest = async (
 
     return buildPostResponseFromSqlResponse(saveDonneeResponse);
   }
-};
-
-export const deleteDonneeRequest = async (
-  httpParameters: HttpParameters
-): Promise<PostResponse> => {
-  const donneeId: number = +httpParameters.query.donneeId;
-  const inventaireId: number = +httpParameters.query.inventaireId;
-
-  const sqlResponse: SqlSaveResponse = await deleteDonneeById(
-    donneeId,
-    inventaireId
-  );
-
-  return buildPostResponseFromSqlResponse(sqlResponse);
 };

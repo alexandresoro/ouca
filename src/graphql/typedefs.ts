@@ -648,6 +648,7 @@ export default gql`
     deleteCommune(id: Int!): Int
     deleteComportement(id: Int!): Int
     deleteDepartement(id: Int!): Int
+    deleteDonnee(id: Int!): Int
     deleteEspece(id: Int!): Int
     deleteEstimationDistance(id: Int!): Int
     deleteEstimationNombre(id: Int!): Int

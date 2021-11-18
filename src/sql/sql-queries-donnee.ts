@@ -69,14 +69,6 @@ export const queryToGetAllDonneesWithIds = async (): Promise<DonneeCompleteWithI
   return donneesProper;
 };
 
-export const queryToCountDonneesByInventaireId = async (
-  inventaireId: number
-): Promise<{ nbDonnees: number }[]> => {
-  return query<{ nbDonnees: number }[]>(
-    `SELECT COUNT(*) as nbDonnees FROM donnee WHERE inventaire_id=${inventaireId}`
-  );
-};
-
 export const queryToUpdateDonneesInventaireId = async (
   oldInventaireId: number,
   newInventaireId: number
