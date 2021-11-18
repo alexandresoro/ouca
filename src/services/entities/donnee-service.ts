@@ -1,13 +1,13 @@
 import { Age, Classe, Commune, Comportement, Departement, Donnee as DonneeEntity, Espece, EstimationDistance, EstimationNombre, Inventaire, Lieudit, Meteo, Milieu, Observateur, Prisma, Sexe } from "@prisma/client";
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
-import { DonneeNavigationData, QueryPaginatedSearchDonneesArgs, SearchDonneeCriteria, SortOrder } from "../../model/graphql";
+import { AgeWithSpecimensCount, DonneeNavigationData, QueryPaginatedSearchDonneesArgs, SearchDonneeCriteria, SexeWithSpecimensCount, SortOrder } from "../../model/graphql";
 import { Donnee as DonneeObj } from "../../model/types/donnee.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
 import { queryToFindComportementsIdsByDonneeId } from "../../sql/sql-queries-comportement";
-import { queryToCountDonneesByInventaireId, queryToCountSpecimensByAgeForAnEspeceId, queryToCountSpecimensBySexeForAnEspeceId, queryToFindDonneeIdsByAllAttributes, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
+import { queryToCountDonneesByInventaireId, queryToFindDonneeIdsByAllAttributes, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
 import { queryToFindMilieuxIdsByDonneeId } from "../../sql/sql-queries-milieu";
 import { createKeyValueMapWithSameName, queryToDeleteAnEntityByAttribute, queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
 import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../../utils/constants";
@@ -676,13 +676,61 @@ export const findNextRegroupement = async (): Promise<number> => {
 };
 
 export const countSpecimensByAgeForEspeceId = async (
-  id: number
-): Promise<{ name: string; value: number }[]> => {
-  return await queryToCountSpecimensByAgeForAnEspeceId(id);
+  especeId: number
+): Promise<AgeWithSpecimensCount[]> => {
+  const agesOfEspece = await prisma.donnee.groupBy({
+    by: ['age_id'],
+    where: {
+      espece_id: especeId
+    },
+    _sum: {
+      nombre: true
+    }
+  });
+
+  const ages = await prisma.age.findMany({
+    where: {
+      id: {
+        in: agesOfEspece.map(ageOfEspece => ageOfEspece.age_id)
+      }
+    }
+  })
+
+  return ages.map((age) => {
+    const nbSpecimens = agesOfEspece?.find(ageOfEspece => ageOfEspece?.age_id === age.id)?._sum?.nombre ?? 0
+    return {
+      ...age,
+      nbSpecimens
+    }
+  })
 };
 
 export const countSpecimensBySexeForEspeceId = async (
-  id: number
-): Promise<{ name: string; value: number }[]> => {
-  return await queryToCountSpecimensBySexeForAnEspeceId(id);
+  especeId: number
+): Promise<SexeWithSpecimensCount[]> => {
+  const sexesOfEspece = await prisma.donnee.groupBy({
+    by: ['sexe_id'],
+    where: {
+      espece_id: especeId
+    },
+    _sum: {
+      nombre: true
+    }
+  });
+
+  const sexes = await prisma.sexe.findMany({
+    where: {
+      id: {
+        in: sexesOfEspece.map(sexeOfEspece => sexeOfEspece.sexe_id)
+      }
+    }
+  })
+
+  return sexes.map((sexe) => {
+    const nbSpecimens = sexesOfEspece?.find(sexeOfEspece => sexeOfEspece?.sexe_id === sexe.id)?._sum?.nombre ?? 0
+    return {
+      ...sexe,
+      nbSpecimens
+    }
+  })
 };

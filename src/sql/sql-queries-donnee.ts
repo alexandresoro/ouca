@@ -126,31 +126,3 @@ export const queryToFindDonneeIdsByAllAttributes = async (
 
   return query<{ id: number }[]>(queryStr);
 };
-
-export const queryToCountSpecimensBySexeForAnEspeceId = async (
-  id: number
-): Promise<{ name: string; value: number }[]> => {
-  return query<{ name: string; value: number }[]>(
-    "SELECT s.libelle as name, sum(nombre) as value" +
-    " FROM donnee d " +
-    " LEFT JOIN sexe s on s.id = d.sexe_id " +
-    " WHERE espece_id = " +
-    `${id}` +
-    " GROUP BY sexe_id" +
-    " ORDER BY s.libelle ASC"
-  );
-};
-
-export const queryToCountSpecimensByAgeForAnEspeceId = async (
-  id: number
-): Promise<{ name: string; value: number }[]> => {
-  return query<{ name: string; value: number }[]>(
-    "SELECT a.libelle as name, sum(nombre) as value" +
-    " FROM donnee d" +
-    " LEFT JOIN age a on a.id = d.age_id" +
-    " WHERE espece_id=" +
-    `${id}` +
-    " GROUP BY age_id" +
-    " ORDER BY a.libelle ASC"
-  );
-};

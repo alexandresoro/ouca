@@ -301,6 +301,13 @@ export default gql`
     nbDonnees: Int
   }
 
+  type SexeWithSpecimensCount {
+    id: Int!
+    libelle: String!
+    nbSpecimens: Int!
+  }
+
+
   type Age {
     id: Int!
     libelle: String!
@@ -310,6 +317,12 @@ export default gql`
     id: Int!
     libelle: String!
     nbDonnees: Int
+  }
+
+  type AgeWithSpecimensCount {
+    id: Int!
+    libelle: String!
+    nbSpecimens: Int!
   }
 
   type Coordinates {
@@ -578,6 +591,8 @@ export default gql`
     observateur(id: Int!): Observateur
     observateurList(ids: [Int!]!): [Observateur]
     sexe(id: Int!): Sexe
+    specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
+    specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
     ages(params: FindParams): [Age]
     classes(params: FindParams): [Classe]
     communes(params: FindParams, departementId: Int): [Commune]

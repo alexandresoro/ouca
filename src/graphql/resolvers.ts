@@ -1,5 +1,5 @@
 import { Commune as CommuneEntity, Espece as EspeceEntity } from "@prisma/client";
-import { Age, AgesPaginatedResult, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, Version } from "../model/graphql";
+import { Age, AgesPaginatedResult, AgeWithSpecimensCount, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, Version } from "../model/graphql";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
 import { deleteClasse, findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses, upsertClasse } from "../services/entities/classe-service";
@@ -7,7 +7,7 @@ import { deleteCommune, findCommune, findCommuneOfLieuDitId, findCommunes, findP
 import { deleteComportement, findComportement, findComportements, findComportementsByIds, findPaginatedComportements, upsertComportement } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { deleteDepartement, findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
-import { findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement, findPaginatedDonneesByCriteria } from "../services/entities/donnee-service";
+import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId, findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement, findPaginatedDonneesByCriteria } from "../services/entities/donnee-service";
 import { deleteEspece, findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
 import { deleteEstimationDistance, findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
 import { deleteEstimationNombre, findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
@@ -80,6 +80,12 @@ const resolvers: Resolvers = {
     },
     sexe: async (_source, args): Promise<Sexe> => {
       return findSexe(args.id);
+    },
+    specimenCountByAge: (_source, args): Promise<AgeWithSpecimensCount[]> => {
+      return countSpecimensByAgeForEspeceId(args?.especeId);
+    },
+    specimenCountBySexe: (_source, args): Promise<SexeWithSpecimensCount[]> => {
+      return countSpecimensBySexeForEspeceId(args?.especeId);
     },
     ages: async (_source, args): Promise<Age[]> => {
       return findAges(args?.params);
