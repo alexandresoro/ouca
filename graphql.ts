@@ -26,6 +26,13 @@ export type AgeWithCounts = {
   nbDonnees?: Maybe<Scalars['Int']>;
 };
 
+export type AgeWithSpecimensCount = {
+  __typename?: 'AgeWithSpecimensCount';
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
+  nbSpecimens: Scalars['Int'];
+};
+
 export type AgesPaginatedResult = PaginatedResult & {
   __typename?: 'AgesPaginatedResult';
   count: Scalars['Int'];
@@ -763,6 +770,8 @@ export type Query = {
   settings?: Maybe<Settings>;
   sexe?: Maybe<Sexe>;
   sexes?: Maybe<Array<Maybe<Sexe>>>;
+  specimenCountByAge?: Maybe<Array<Maybe<AgeWithSpecimensCount>>>;
+  specimenCountBySexe?: Maybe<Array<Maybe<SexeWithSpecimensCount>>>;
   version?: Maybe<Version>;
 };
 
@@ -1037,6 +1046,16 @@ export type QuerySexesArgs = {
   params?: Maybe<FindParams>;
 };
 
+
+export type QuerySpecimenCountByAgeArgs = {
+  especeId: Scalars['Int'];
+};
+
+
+export type QuerySpecimenCountBySexeArgs = {
+  especeId: Scalars['Int'];
+};
+
 export type SearchDonneeCriteria = {
   ages?: Maybe<Array<Maybe<Scalars['Int']>>>;
   associes?: Maybe<Array<Maybe<Scalars['Int']>>>;
@@ -1121,6 +1140,13 @@ export type SexeWithCounts = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
+};
+
+export type SexeWithSpecimensCount = {
+  __typename?: 'SexeWithSpecimensCount';
+  id: Scalars['Int'];
+  libelle: Scalars['String'];
+  nbSpecimens: Scalars['Int'];
 };
 
 export type SexesPaginatedResult = PaginatedResult & {
@@ -1212,6 +1238,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Age: ResolverTypeWrapper<Partial<Age>>;
   AgeWithCounts: ResolverTypeWrapper<Partial<AgeWithCounts>>;
+  AgeWithSpecimensCount: ResolverTypeWrapper<Partial<AgeWithSpecimensCount>>;
   AgesPaginatedResult: ResolverTypeWrapper<Partial<AgesPaginatedResult>>;
   Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
   Classe: ResolverTypeWrapper<Partial<Classe>>;
@@ -1291,6 +1318,7 @@ export type ResolversTypes = {
   Settings: ResolverTypeWrapper<Partial<Settings>>;
   Sexe: ResolverTypeWrapper<Partial<Sexe>>;
   SexeWithCounts: ResolverTypeWrapper<Partial<SexeWithCounts>>;
+  SexeWithSpecimensCount: ResolverTypeWrapper<Partial<SexeWithSpecimensCount>>;
   SexesPaginatedResult: ResolverTypeWrapper<Partial<SexesPaginatedResult>>;
   SortOrder: ResolverTypeWrapper<Partial<SortOrder>>;
   String: ResolverTypeWrapper<Partial<Scalars['String']>>;
@@ -1301,6 +1329,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Age: Partial<Age>;
   AgeWithCounts: Partial<AgeWithCounts>;
+  AgeWithSpecimensCount: Partial<AgeWithSpecimensCount>;
   AgesPaginatedResult: Partial<AgesPaginatedResult>;
   Boolean: Partial<Scalars['Boolean']>;
   Classe: Partial<Classe>;
@@ -1368,6 +1397,7 @@ export type ResolversParentTypes = {
   Settings: Partial<Settings>;
   Sexe: Partial<Sexe>;
   SexeWithCounts: Partial<SexeWithCounts>;
+  SexeWithSpecimensCount: Partial<SexeWithSpecimensCount>;
   SexesPaginatedResult: Partial<SexesPaginatedResult>;
   String: Partial<Scalars['String']>;
   Version: Partial<Version>;
@@ -1383,6 +1413,13 @@ export type AgeWithCountsResolvers<ContextType = any, ParentType extends Resolve
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AgeWithSpecimensCountResolvers<ContextType = any, ParentType extends ResolversParentTypes['AgeWithSpecimensCount'] = ResolversParentTypes['AgeWithSpecimensCount']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nbSpecimens?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1793,6 +1830,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
   sexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<QuerySexeArgs, 'id'>>;
   sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType, RequireFields<QuerySexesArgs, never>>;
+  specimenCountByAge?: Resolver<Maybe<Array<Maybe<ResolversTypes['AgeWithSpecimensCount']>>>, ParentType, ContextType, RequireFields<QuerySpecimenCountByAgeArgs, 'especeId'>>;
+  specimenCountBySexe?: Resolver<Maybe<Array<Maybe<ResolversTypes['SexeWithSpecimensCount']>>>, ParentType, ContextType, RequireFields<QuerySpecimenCountBySexeArgs, 'especeId'>>;
   version?: Resolver<Maybe<ResolversTypes['Version']>, ParentType, ContextType>;
 };
 
@@ -1825,6 +1864,13 @@ export type SexeWithCountsResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SexeWithSpecimensCountResolvers<ContextType = any, ParentType extends ResolversParentTypes['SexeWithSpecimensCount'] = ResolversParentTypes['SexeWithSpecimensCount']> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nbSpecimens?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type SexesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['SexesPaginatedResult'] = ResolversParentTypes['SexesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   result?: Resolver<Maybe<Array<Maybe<ResolversTypes['SexeWithCounts']>>>, ParentType, ContextType>;
@@ -1840,6 +1886,7 @@ export type VersionResolvers<ContextType = any, ParentType extends ResolversPare
 export type Resolvers<ContextType = any> = {
   Age?: AgeResolvers<ContextType>;
   AgeWithCounts?: AgeWithCountsResolvers<ContextType>;
+  AgeWithSpecimensCount?: AgeWithSpecimensCountResolvers<ContextType>;
   AgesPaginatedResult?: AgesPaginatedResultResolvers<ContextType>;
   Classe?: ClasseResolvers<ContextType>;
   ClasseWithCounts?: ClasseWithCountsResolvers<ContextType>;
@@ -1886,6 +1933,7 @@ export type Resolvers<ContextType = any> = {
   Settings?: SettingsResolvers<ContextType>;
   Sexe?: SexeResolvers<ContextType>;
   SexeWithCounts?: SexeWithCountsResolvers<ContextType>;
+  SexeWithSpecimensCount?: SexeWithSpecimensCountResolvers<ContextType>;
   SexesPaginatedResult?: SexesPaginatedResultResolvers<ContextType>;
   Version?: VersionResolvers<ContextType>;
 };
