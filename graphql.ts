@@ -495,6 +495,7 @@ export type Mutation = {
   deleteCommune?: Maybe<Scalars['Int']>;
   deleteComportement?: Maybe<Scalars['Int']>;
   deleteDepartement?: Maybe<Scalars['Int']>;
+  deleteDonnee?: Maybe<Scalars['Int']>;
   deleteEspece?: Maybe<Scalars['Int']>;
   deleteEstimationDistance?: Maybe<Scalars['Int']>;
   deleteEstimationNombre?: Maybe<Scalars['Int']>;
@@ -541,6 +542,11 @@ export type MutationDeleteComportementArgs = {
 
 
 export type MutationDeleteDepartementArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteDonneeArgs = {
   id: Scalars['Int'];
 };
 
@@ -1710,6 +1716,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteCommune?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteCommuneArgs, 'id'>>;
   deleteComportement?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteComportementArgs, 'id'>>;
   deleteDepartement?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteDepartementArgs, 'id'>>;
+  deleteDonnee?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteDonneeArgs, 'id'>>;
   deleteEspece?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteEspeceArgs, 'id'>>;
   deleteEstimationDistance?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteEstimationDistanceArgs, 'id'>>;
   deleteEstimationNombre?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteEstimationNombreArgs, 'id'>>;
