@@ -100,7 +100,7 @@ const getCorrespondingDbValue = (value: unknown): string => {
 // and return and array of elements, each element being an array of size 2, the db column name and the value to be set
 // e.g. for an object {"id": 1, "toto": "titi", "tutu": 6} it will return
 // [["toto", "titi"], ["tutu", "6"]]
-const processEntityToSave = <T extends EntityDb>(
+const processEntityToSave = <T extends EntityDb & { [key: string]: unknown }>(
   entityToSave: T,
   mapping: Record<string, string>
 ): string[][] => {
@@ -150,7 +150,7 @@ const queryToSaveEntityCommon = <T extends EntityDb>(tableName: string,
   return query<SqlSaveResponse>(queryStr);
 }
 
-export const queryToSaveEntity = async <T extends EntityDb>(
+export const queryToSaveEntity = async <T extends EntityDb & { [key: string]: unknown }>(
   tableName: string,
   entityToSave: T,
   mapping: Record<string, string>
@@ -186,7 +186,7 @@ const getColumnNamesAndInsertionValuesFromEntitiesCommon = (dbEntitiesToSaveAsAr
   }
 }
 
-const getColumnNamesAndInsertionValuesFromEntities = <T extends EntityDb>(entitiesToSave: T[], mapping: Record<string, string>
+const getColumnNamesAndInsertionValuesFromEntities = <T extends EntityDb & { [key: string]: unknown }>(entitiesToSave: T[], mapping: Record<string, string>
 ): { columnNames: string, allValues: string } => {
   const dbEntitiesToSaveAsArray = entitiesToSave.map(entity => processEntityToSave(entity, mapping));
   return getColumnNamesAndInsertionValuesFromEntitiesCommon(dbEntitiesToSaveAsArray);
@@ -205,7 +205,7 @@ const queryToInsertMultipleEntitiesCommon = async (
   return query<SqlSaveResponse>(queryStr);
 };
 
-export const queryToInsertMultipleEntities = async <T extends EntityDb>(
+export const queryToInsertMultipleEntities = async <T extends EntityDb & { [key: string]: unknown }>(
   tableName: string,
   entitiesToSave: T[],
   mapping: Record<string, string>

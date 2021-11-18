@@ -7,7 +7,6 @@
     "outDir": "dist",
     "resolveJsonModule": true,
     "strict": true,
-    "noImplicitAny": false, // TODO Put this at true someday to improve code quality
     "strictNullChecks": false // TODO Put this at true someday to improve code quality
   },
   "include": ["src/**/*"]

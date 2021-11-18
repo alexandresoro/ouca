@@ -23,7 +23,7 @@ export const areArraysContainingSameValues = <T>(
   return true;
 };
 
-export const getArrayFromObjects = <T, U>(
+export const getArrayFromObjects = <T extends { [key: string]: unknown }, U>(
   objects: T[],
   attributeName: string
 ): U[] => {

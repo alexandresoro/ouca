@@ -1,5 +1,7 @@
 import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import Papa from "papaparse";
 import { DATA_VALIDATION_START, ImportNotifyProgressMessageContent, IMPORT_PROCESS_STARTED, INSERT_DB_START, RETRIEVE_DB_INFO_START } from "../../model/import/import-update-message";
 import { logger } from "../../utils/logger";

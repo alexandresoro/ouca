@@ -179,7 +179,7 @@ export class ImportedDonnee {
       temperature: (this.temperature == null || this.temperature === "")
         ? null
         : +this.temperature,
-      date_creation: null,
+      date_creation: null as string,
       meteos_ids: meteosIds,
       associes_ids: associesIds
     };

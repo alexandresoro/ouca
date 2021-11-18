@@ -51,7 +51,7 @@ export const findAllEntities = async <T extends EntiteSimple>(
   return queryToFindAllEntities<T>(tableName);
 };
 
-export const persistEntity = async <T extends EntityDb>(
+export const persistEntity = async <T extends EntityDb & { [key: string]: unknown }>(
   tableName: string,
   entityToSave: EntiteSimple | T,
   mapping: Record<string, string>
@@ -70,7 +70,7 @@ export const persistEntityNoCheck = async <T extends EntityDb>(
   return sqlResponse;
 };
 
-export const insertMultipleEntities = async <T extends EntityDb>(
+export const insertMultipleEntities = async <T extends EntityDb & { [key: string]: unknown }>(
   tableName: string,
   entitiesToSave: (EntiteSimple | T)[],
   mapping: Record<string, string>,
