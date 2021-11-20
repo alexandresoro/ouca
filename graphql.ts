@@ -1,5 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql';
+import {PartialDeep} from 'type-fest';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -299,8 +301,8 @@ export type EstimationsNombrePaginatedResult = PaginatedResult & {
 };
 
 export type FindParams = {
-  max?: Maybe<Scalars['Int']>;
-  q?: Maybe<Scalars['String']>;
+  max?: InputMaybe<Scalars['Int']>;
+  q?: InputMaybe<Scalars['String']>;
 };
 
 export type InputAge = {
@@ -320,11 +322,26 @@ export type InputCommune = {
 export type InputComportement = {
   code: Scalars['String'];
   libelle: Scalars['String'];
-  nicheur?: Maybe<Nicheur>;
+  nicheur?: InputMaybe<Nicheur>;
 };
 
 export type InputDepartement = {
   code: Scalars['String'];
+};
+
+export type InputDonnee = {
+  ageId: Scalars['Int'];
+  commentaire?: InputMaybe<Scalars['String']>;
+  comportementsIds?: InputMaybe<Array<Scalars['Int']>>;
+  distance?: InputMaybe<Scalars['Int']>;
+  especeId: Scalars['Int'];
+  estimationDistanceId?: InputMaybe<Scalars['Int']>;
+  estimationNombreId: Scalars['Int'];
+  inventaireId: Scalars['Int'];
+  milieuxIds?: InputMaybe<Array<Scalars['Int']>>;
+  nombre?: InputMaybe<Scalars['Int']>;
+  regroupement?: InputMaybe<Scalars['Int']>;
+  sexeId: Scalars['Int'];
 };
 
 export type InputEspece = {
@@ -510,6 +527,7 @@ export type Mutation = {
   upsertCommune?: Maybe<Commune>;
   upsertComportement?: Maybe<Comportement>;
   upsertDepartement?: Maybe<Departement>;
+  upsertDonnee?: Maybe<UpsertDonneeResult>;
   upsertEspece?: Maybe<Espece>;
   upsertEstimationDistance?: Maybe<EstimationDistance>;
   upsertEstimationNombre?: Maybe<EstimationNombre>;
@@ -592,85 +610,91 @@ export type MutationDeleteSexeArgs = {
 
 
 export type MutationUpdateSettingsArgs = {
-  appConfiguration?: Maybe<InputSettings>;
+  appConfiguration?: InputMaybe<InputSettings>;
 };
 
 
 export type MutationUpsertAgeArgs = {
   data: InputAge;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertClasseArgs = {
   data: InputClasse;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertCommuneArgs = {
   data: InputCommune;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertComportementArgs = {
   data: InputComportement;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertDepartementArgs = {
   data: InputDepartement;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertDonneeArgs = {
+  data: InputDonnee;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertEspeceArgs = {
   data: InputEspece;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertEstimationDistanceArgs = {
   data: InputEstimationDistance;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertEstimationNombreArgs = {
   data: InputEstimationNombre;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertLieuDitArgs = {
   data: InputLieuDit;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertMeteoArgs = {
   data: InputMeteo;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertMilieuArgs = {
   data: InputMilieu;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertObservateurArgs = {
   data: InputObservateur;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 
 export type MutationUpsertSexeArgs = {
   data: InputSexe;
-  id?: Maybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']>;
 };
 
 export const Nicheur = {
@@ -788,7 +812,7 @@ export type QueryAgeArgs = {
 
 
 export type QueryAgesArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -798,7 +822,7 @@ export type QueryClasseArgs = {
 
 
 export type QueryClassesArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -808,8 +832,8 @@ export type QueryCommuneArgs = {
 
 
 export type QueryCommunesArgs = {
-  departementId?: Maybe<Scalars['Int']>;
-  params?: Maybe<FindParams>;
+  departementId?: InputMaybe<Scalars['Int']>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -824,7 +848,7 @@ export type QueryComportementListArgs = {
 
 
 export type QueryComportementsArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -834,7 +858,7 @@ export type QueryDepartementArgs = {
 
 
 export type QueryDepartementsArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -849,8 +873,8 @@ export type QueryEspeceArgs = {
 
 
 export type QueryEspecesArgs = {
-  classeId?: Maybe<Scalars['Int']>;
-  params?: Maybe<FindParams>;
+  classeId?: InputMaybe<Scalars['Int']>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -865,17 +889,17 @@ export type QueryEstimationNombreArgs = {
 
 
 export type QueryEstimationsDistanceArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
 export type QueryEstimationsNombreArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
 export type QueryExportDonneesArgs = {
-  searchCriteria?: Maybe<SearchDonneeCriteria>;
+  searchCriteria?: InputMaybe<SearchDonneeCriteria>;
 };
 
 
@@ -890,9 +914,9 @@ export type QueryLieuDitArgs = {
 
 
 export type QueryLieuxDitsArgs = {
-  communeId?: Maybe<Scalars['Int']>;
-  departementId?: Maybe<Scalars['Int']>;
-  params?: Maybe<FindParams>;
+  communeId?: InputMaybe<Scalars['Int']>;
+  departementId?: InputMaybe<Scalars['Int']>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -917,7 +941,7 @@ export type QueryMilieuListArgs = {
 
 
 export type QueryMilieuxArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -932,114 +956,114 @@ export type QueryObservateurListArgs = {
 
 
 export type QueryObservateursArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
 export type QueryPaginatedAgesArgs = {
-  orderBy?: Maybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedClassesArgs = {
-  orderBy?: Maybe<ClassesOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<ClassesOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedCommunesArgs = {
-  orderBy?: Maybe<CommunesOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<CommunesOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedComportementsArgs = {
-  orderBy?: Maybe<ComportementsOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<ComportementsOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedDepartementsArgs = {
-  orderBy?: Maybe<DepartementsOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<DepartementsOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedEspecesArgs = {
-  orderBy?: Maybe<EspecesOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<EspecesOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedEstimationsDistanceArgs = {
-  orderBy?: Maybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedEstimationsNombreArgs = {
-  orderBy?: Maybe<EstimationNombreOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<EstimationNombreOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedLieuxditsArgs = {
-  orderBy?: Maybe<LieuxDitsOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<LieuxDitsOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedMeteosArgs = {
-  orderBy?: Maybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedMilieuxArgs = {
-  orderBy?: Maybe<MilieuxOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<MilieuxOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedObservateursArgs = {
-  orderBy?: Maybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedSearchDonneesArgs = {
-  orderBy?: Maybe<SearchDonneesOrderBy>;
-  searchCriteria?: Maybe<SearchDonneeCriteria>;
-  searchParams?: Maybe<SearchDonneeParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<SearchDonneesOrderBy>;
+  searchCriteria?: InputMaybe<SearchDonneeCriteria>;
+  searchParams?: InputMaybe<SearchDonneeParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedSearchEspecesArgs = {
-  orderBy?: Maybe<EspecesOrderBy>;
-  searchCriteria?: Maybe<SearchDonneeCriteria>;
-  searchParams?: Maybe<SearchDonneeParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<EspecesOrderBy>;
+  searchCriteria?: InputMaybe<SearchDonneeCriteria>;
+  searchParams?: InputMaybe<SearchDonneeParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
 export type QueryPaginatedSexesArgs = {
-  orderBy?: Maybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: Maybe<SearchParams>;
-  sortOrder?: Maybe<SortOrder>;
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
@@ -1049,7 +1073,7 @@ export type QuerySexeArgs = {
 
 
 export type QuerySexesArgs = {
-  params?: Maybe<FindParams>;
+  params?: InputMaybe<FindParams>;
 };
 
 
@@ -1063,36 +1087,36 @@ export type QuerySpecimenCountBySexeArgs = {
 };
 
 export type SearchDonneeCriteria = {
-  ages?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  associes?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  classes?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  commentaire?: Maybe<Scalars['String']>;
-  communes?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  comportements?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  departements?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  distance?: Maybe<Scalars['Int']>;
-  duree?: Maybe<Scalars['String']>;
-  especes?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  estimationsDistance?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  estimationsNombre?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  fromDate?: Maybe<Scalars['String']>;
-  heure?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
-  lieuxdits?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  meteos?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  milieux?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  nicheurs?: Maybe<Array<Maybe<Nicheur>>>;
-  nombre?: Maybe<Scalars['Int']>;
-  observateurs?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  regroupement?: Maybe<Scalars['Int']>;
-  sexes?: Maybe<Array<Maybe<Scalars['Int']>>>;
-  temperature?: Maybe<Scalars['Int']>;
-  toDate?: Maybe<Scalars['String']>;
+  ages?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  associes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  classes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  commentaire?: InputMaybe<Scalars['String']>;
+  communes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  comportements?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  departements?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  distance?: InputMaybe<Scalars['Int']>;
+  duree?: InputMaybe<Scalars['String']>;
+  especes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  estimationsDistance?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  estimationsNombre?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  fromDate?: InputMaybe<Scalars['String']>;
+  heure?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['Int']>;
+  lieuxdits?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  meteos?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  milieux?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  nicheurs?: InputMaybe<Array<InputMaybe<Nicheur>>>;
+  nombre?: InputMaybe<Scalars['Int']>;
+  observateurs?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  regroupement?: InputMaybe<Scalars['Int']>;
+  sexes?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  temperature?: InputMaybe<Scalars['Int']>;
+  toDate?: InputMaybe<Scalars['String']>;
 };
 
 export type SearchDonneeParams = {
-  pageNumber?: Maybe<Scalars['Int']>;
-  pageSize?: Maybe<Scalars['Int']>;
+  pageNumber?: InputMaybe<Scalars['Int']>;
+  pageSize?: InputMaybe<Scalars['Int']>;
 };
 
 export const SearchDonneesOrderBy = {
@@ -1114,9 +1138,9 @@ export const SearchDonneesOrderBy = {
 
 export type SearchDonneesOrderBy = typeof SearchDonneesOrderBy[keyof typeof SearchDonneesOrderBy];
 export type SearchParams = {
-  pageNumber?: Maybe<Scalars['Int']>;
-  pageSize?: Maybe<Scalars['Int']>;
-  q?: Maybe<Scalars['String']>;
+  pageNumber?: InputMaybe<Scalars['Int']>;
+  pageSize?: InputMaybe<Scalars['Int']>;
+  q?: InputMaybe<Scalars['String']>;
 };
 
 export type Settings = {
@@ -1167,6 +1191,12 @@ export const SortOrder = {
 } as const;
 
 export type SortOrder = typeof SortOrder[keyof typeof SortOrder];
+export type UpsertDonneeResult = {
+  __typename?: 'UpsertDonneeResult';
+  donnee?: Maybe<Donnee>;
+  failureReason?: Maybe<Scalars['String']>;
+};
+
 export type Version = {
   __typename?: 'Version';
   application: Scalars['Int'];
@@ -1195,7 +1225,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -1242,171 +1272,175 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Age: ResolverTypeWrapper<Partial<Age>>;
-  AgeWithCounts: ResolverTypeWrapper<Partial<AgeWithCounts>>;
-  AgeWithSpecimensCount: ResolverTypeWrapper<Partial<AgeWithSpecimensCount>>;
-  AgesPaginatedResult: ResolverTypeWrapper<Partial<AgesPaginatedResult>>;
-  Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
-  Classe: ResolverTypeWrapper<Partial<Classe>>;
-  ClasseWithCounts: ResolverTypeWrapper<Partial<ClasseWithCounts>>;
-  ClassesOrderBy: ResolverTypeWrapper<Partial<ClassesOrderBy>>;
-  ClassesPaginatedResult: ResolverTypeWrapper<Partial<ClassesPaginatedResult>>;
-  Commune: ResolverTypeWrapper<Partial<Commune>>;
-  CommuneWithCounts: ResolverTypeWrapper<Partial<CommuneWithCounts>>;
-  CommunesOrderBy: ResolverTypeWrapper<Partial<CommunesOrderBy>>;
-  CommunesPaginatedResult: ResolverTypeWrapper<Partial<CommunesPaginatedResult>>;
-  Comportement: ResolverTypeWrapper<Partial<Comportement>>;
-  ComportementWithCounts: ResolverTypeWrapper<Partial<ComportementWithCounts>>;
-  ComportementsOrderBy: ResolverTypeWrapper<Partial<ComportementsOrderBy>>;
-  ComportementsPaginatedResult: ResolverTypeWrapper<Partial<ComportementsPaginatedResult>>;
-  Coordinates: ResolverTypeWrapper<Partial<Coordinates>>;
-  CoordinatesSystemType: ResolverTypeWrapper<Partial<CoordinatesSystemType>>;
-  Departement: ResolverTypeWrapper<Partial<Departement>>;
-  DepartementWithCounts: ResolverTypeWrapper<Partial<DepartementWithCounts>>;
-  DepartementsOrderBy: ResolverTypeWrapper<Partial<DepartementsOrderBy>>;
-  DepartementsPaginatedResult: ResolverTypeWrapper<Partial<DepartementsPaginatedResult>>;
-  Donnee: ResolverTypeWrapper<Partial<Donnee>>;
-  DonneeNavigationData: ResolverTypeWrapper<Partial<DonneeNavigationData>>;
-  DonneeResult: ResolverTypeWrapper<Partial<DonneeResult>>;
-  EntitesAvecLibelleOrderBy: ResolverTypeWrapper<Partial<EntitesAvecLibelleOrderBy>>;
-  Espece: ResolverTypeWrapper<Partial<Espece>>;
-  EspeceWithCounts: ResolverTypeWrapper<Partial<EspeceWithCounts>>;
-  EspecesOrderBy: ResolverTypeWrapper<Partial<EspecesOrderBy>>;
-  EspecesPaginatedResult: ResolverTypeWrapper<Partial<EspecesPaginatedResult>>;
-  EstimationDistance: ResolverTypeWrapper<Partial<EstimationDistance>>;
-  EstimationDistanceWithCounts: ResolverTypeWrapper<Partial<EstimationDistanceWithCounts>>;
-  EstimationNombre: ResolverTypeWrapper<Partial<EstimationNombre>>;
-  EstimationNombreOrderBy: ResolverTypeWrapper<Partial<EstimationNombreOrderBy>>;
-  EstimationNombreWithCounts: ResolverTypeWrapper<Partial<EstimationNombreWithCounts>>;
-  EstimationsDistancePaginatedResult: ResolverTypeWrapper<Partial<EstimationsDistancePaginatedResult>>;
-  EstimationsNombrePaginatedResult: ResolverTypeWrapper<Partial<EstimationsNombrePaginatedResult>>;
-  FindParams: ResolverTypeWrapper<Partial<FindParams>>;
-  Float: ResolverTypeWrapper<Partial<Scalars['Float']>>;
-  InputAge: ResolverTypeWrapper<Partial<InputAge>>;
-  InputClasse: ResolverTypeWrapper<Partial<InputClasse>>;
-  InputCommune: ResolverTypeWrapper<Partial<InputCommune>>;
-  InputComportement: ResolverTypeWrapper<Partial<InputComportement>>;
-  InputDepartement: ResolverTypeWrapper<Partial<InputDepartement>>;
-  InputEspece: ResolverTypeWrapper<Partial<InputEspece>>;
-  InputEstimationDistance: ResolverTypeWrapper<Partial<InputEstimationDistance>>;
-  InputEstimationNombre: ResolverTypeWrapper<Partial<InputEstimationNombre>>;
-  InputLieuDit: ResolverTypeWrapper<Partial<InputLieuDit>>;
-  InputMeteo: ResolverTypeWrapper<Partial<InputMeteo>>;
-  InputMilieu: ResolverTypeWrapper<Partial<InputMilieu>>;
-  InputObservateur: ResolverTypeWrapper<Partial<InputObservateur>>;
-  InputSettings: ResolverTypeWrapper<Partial<InputSettings>>;
-  InputSexe: ResolverTypeWrapper<Partial<InputSexe>>;
-  Int: ResolverTypeWrapper<Partial<Scalars['Int']>>;
-  Inventaire: ResolverTypeWrapper<Partial<Inventaire>>;
-  LieuDit: ResolverTypeWrapper<Partial<LieuDit>>;
-  LieuDitWithCounts: ResolverTypeWrapper<Partial<LieuDitWithCounts>>;
-  LieuxDitsOrderBy: ResolverTypeWrapper<Partial<LieuxDitsOrderBy>>;
-  LieuxDitsPaginatedResult: ResolverTypeWrapper<Partial<LieuxDitsPaginatedResult>>;
-  Meteo: ResolverTypeWrapper<Partial<Meteo>>;
-  MeteoWithCounts: ResolverTypeWrapper<Partial<MeteoWithCounts>>;
-  MeteosPaginatedResult: ResolverTypeWrapper<Partial<MeteosPaginatedResult>>;
-  Milieu: ResolverTypeWrapper<Partial<Milieu>>;
-  MilieuWithCounts: ResolverTypeWrapper<Partial<MilieuWithCounts>>;
-  MilieuxOrderBy: ResolverTypeWrapper<Partial<MilieuxOrderBy>>;
-  MilieuxPaginatedResult: ResolverTypeWrapper<Partial<MilieuxPaginatedResult>>;
+  Age: ResolverTypeWrapper<PartialDeep<Age>>;
+  AgeWithCounts: ResolverTypeWrapper<PartialDeep<AgeWithCounts>>;
+  AgeWithSpecimensCount: ResolverTypeWrapper<PartialDeep<AgeWithSpecimensCount>>;
+  AgesPaginatedResult: ResolverTypeWrapper<PartialDeep<AgesPaginatedResult>>;
+  Boolean: ResolverTypeWrapper<PartialDeep<Scalars['Boolean']>>;
+  Classe: ResolverTypeWrapper<PartialDeep<Classe>>;
+  ClasseWithCounts: ResolverTypeWrapper<PartialDeep<ClasseWithCounts>>;
+  ClassesOrderBy: ResolverTypeWrapper<PartialDeep<ClassesOrderBy>>;
+  ClassesPaginatedResult: ResolverTypeWrapper<PartialDeep<ClassesPaginatedResult>>;
+  Commune: ResolverTypeWrapper<PartialDeep<Commune>>;
+  CommuneWithCounts: ResolverTypeWrapper<PartialDeep<CommuneWithCounts>>;
+  CommunesOrderBy: ResolverTypeWrapper<PartialDeep<CommunesOrderBy>>;
+  CommunesPaginatedResult: ResolverTypeWrapper<PartialDeep<CommunesPaginatedResult>>;
+  Comportement: ResolverTypeWrapper<PartialDeep<Comportement>>;
+  ComportementWithCounts: ResolverTypeWrapper<PartialDeep<ComportementWithCounts>>;
+  ComportementsOrderBy: ResolverTypeWrapper<PartialDeep<ComportementsOrderBy>>;
+  ComportementsPaginatedResult: ResolverTypeWrapper<PartialDeep<ComportementsPaginatedResult>>;
+  Coordinates: ResolverTypeWrapper<PartialDeep<Coordinates>>;
+  CoordinatesSystemType: ResolverTypeWrapper<PartialDeep<CoordinatesSystemType>>;
+  Departement: ResolverTypeWrapper<PartialDeep<Departement>>;
+  DepartementWithCounts: ResolverTypeWrapper<PartialDeep<DepartementWithCounts>>;
+  DepartementsOrderBy: ResolverTypeWrapper<PartialDeep<DepartementsOrderBy>>;
+  DepartementsPaginatedResult: ResolverTypeWrapper<PartialDeep<DepartementsPaginatedResult>>;
+  Donnee: ResolverTypeWrapper<PartialDeep<Donnee>>;
+  DonneeNavigationData: ResolverTypeWrapper<PartialDeep<DonneeNavigationData>>;
+  DonneeResult: ResolverTypeWrapper<PartialDeep<DonneeResult>>;
+  EntitesAvecLibelleOrderBy: ResolverTypeWrapper<PartialDeep<EntitesAvecLibelleOrderBy>>;
+  Espece: ResolverTypeWrapper<PartialDeep<Espece>>;
+  EspeceWithCounts: ResolverTypeWrapper<PartialDeep<EspeceWithCounts>>;
+  EspecesOrderBy: ResolverTypeWrapper<PartialDeep<EspecesOrderBy>>;
+  EspecesPaginatedResult: ResolverTypeWrapper<PartialDeep<EspecesPaginatedResult>>;
+  EstimationDistance: ResolverTypeWrapper<PartialDeep<EstimationDistance>>;
+  EstimationDistanceWithCounts: ResolverTypeWrapper<PartialDeep<EstimationDistanceWithCounts>>;
+  EstimationNombre: ResolverTypeWrapper<PartialDeep<EstimationNombre>>;
+  EstimationNombreOrderBy: ResolverTypeWrapper<PartialDeep<EstimationNombreOrderBy>>;
+  EstimationNombreWithCounts: ResolverTypeWrapper<PartialDeep<EstimationNombreWithCounts>>;
+  EstimationsDistancePaginatedResult: ResolverTypeWrapper<PartialDeep<EstimationsDistancePaginatedResult>>;
+  EstimationsNombrePaginatedResult: ResolverTypeWrapper<PartialDeep<EstimationsNombrePaginatedResult>>;
+  FindParams: ResolverTypeWrapper<PartialDeep<FindParams>>;
+  Float: ResolverTypeWrapper<PartialDeep<Scalars['Float']>>;
+  InputAge: ResolverTypeWrapper<PartialDeep<InputAge>>;
+  InputClasse: ResolverTypeWrapper<PartialDeep<InputClasse>>;
+  InputCommune: ResolverTypeWrapper<PartialDeep<InputCommune>>;
+  InputComportement: ResolverTypeWrapper<PartialDeep<InputComportement>>;
+  InputDepartement: ResolverTypeWrapper<PartialDeep<InputDepartement>>;
+  InputDonnee: ResolverTypeWrapper<PartialDeep<InputDonnee>>;
+  InputEspece: ResolverTypeWrapper<PartialDeep<InputEspece>>;
+  InputEstimationDistance: ResolverTypeWrapper<PartialDeep<InputEstimationDistance>>;
+  InputEstimationNombre: ResolverTypeWrapper<PartialDeep<InputEstimationNombre>>;
+  InputLieuDit: ResolverTypeWrapper<PartialDeep<InputLieuDit>>;
+  InputMeteo: ResolverTypeWrapper<PartialDeep<InputMeteo>>;
+  InputMilieu: ResolverTypeWrapper<PartialDeep<InputMilieu>>;
+  InputObservateur: ResolverTypeWrapper<PartialDeep<InputObservateur>>;
+  InputSettings: ResolverTypeWrapper<PartialDeep<InputSettings>>;
+  InputSexe: ResolverTypeWrapper<PartialDeep<InputSexe>>;
+  Int: ResolverTypeWrapper<PartialDeep<Scalars['Int']>>;
+  Inventaire: ResolverTypeWrapper<PartialDeep<Inventaire>>;
+  LieuDit: ResolverTypeWrapper<PartialDeep<LieuDit>>;
+  LieuDitWithCounts: ResolverTypeWrapper<PartialDeep<LieuDitWithCounts>>;
+  LieuxDitsOrderBy: ResolverTypeWrapper<PartialDeep<LieuxDitsOrderBy>>;
+  LieuxDitsPaginatedResult: ResolverTypeWrapper<PartialDeep<LieuxDitsPaginatedResult>>;
+  Meteo: ResolverTypeWrapper<PartialDeep<Meteo>>;
+  MeteoWithCounts: ResolverTypeWrapper<PartialDeep<MeteoWithCounts>>;
+  MeteosPaginatedResult: ResolverTypeWrapper<PartialDeep<MeteosPaginatedResult>>;
+  Milieu: ResolverTypeWrapper<PartialDeep<Milieu>>;
+  MilieuWithCounts: ResolverTypeWrapper<PartialDeep<MilieuWithCounts>>;
+  MilieuxOrderBy: ResolverTypeWrapper<PartialDeep<MilieuxOrderBy>>;
+  MilieuxPaginatedResult: ResolverTypeWrapper<PartialDeep<MilieuxPaginatedResult>>;
   Mutation: ResolverTypeWrapper<{}>;
-  Nicheur: ResolverTypeWrapper<Partial<Nicheur>>;
-  Observateur: ResolverTypeWrapper<Partial<Observateur>>;
-  ObservateurWithCounts: ResolverTypeWrapper<Partial<ObservateurWithCounts>>;
-  ObservateursPaginatedResult: ResolverTypeWrapper<Partial<ObservateursPaginatedResult>>;
+  Nicheur: ResolverTypeWrapper<PartialDeep<Nicheur>>;
+  Observateur: ResolverTypeWrapper<PartialDeep<Observateur>>;
+  ObservateurWithCounts: ResolverTypeWrapper<PartialDeep<ObservateurWithCounts>>;
+  ObservateursPaginatedResult: ResolverTypeWrapper<PartialDeep<ObservateursPaginatedResult>>;
   PaginatedResult: ResolversTypes['AgesPaginatedResult'] | ResolversTypes['ClassesPaginatedResult'] | ResolversTypes['CommunesPaginatedResult'] | ResolversTypes['ComportementsPaginatedResult'] | ResolversTypes['DepartementsPaginatedResult'] | ResolversTypes['EspecesPaginatedResult'] | ResolversTypes['EstimationsDistancePaginatedResult'] | ResolversTypes['EstimationsNombrePaginatedResult'] | ResolversTypes['LieuxDitsPaginatedResult'] | ResolversTypes['MeteosPaginatedResult'] | ResolversTypes['MilieuxPaginatedResult'] | ResolversTypes['ObservateursPaginatedResult'] | ResolversTypes['PaginatedSearchDonneesResult'] | ResolversTypes['SexesPaginatedResult'];
-  PaginatedSearchDonneesResult: ResolverTypeWrapper<Partial<PaginatedSearchDonneesResult>>;
+  PaginatedSearchDonneesResult: ResolverTypeWrapper<PartialDeep<PaginatedSearchDonneesResult>>;
   Query: ResolverTypeWrapper<{}>;
-  SearchDonneeCriteria: ResolverTypeWrapper<Partial<SearchDonneeCriteria>>;
-  SearchDonneeParams: ResolverTypeWrapper<Partial<SearchDonneeParams>>;
-  SearchDonneesOrderBy: ResolverTypeWrapper<Partial<SearchDonneesOrderBy>>;
-  SearchParams: ResolverTypeWrapper<Partial<SearchParams>>;
-  Settings: ResolverTypeWrapper<Partial<Settings>>;
-  Sexe: ResolverTypeWrapper<Partial<Sexe>>;
-  SexeWithCounts: ResolverTypeWrapper<Partial<SexeWithCounts>>;
-  SexeWithSpecimensCount: ResolverTypeWrapper<Partial<SexeWithSpecimensCount>>;
-  SexesPaginatedResult: ResolverTypeWrapper<Partial<SexesPaginatedResult>>;
-  SortOrder: ResolverTypeWrapper<Partial<SortOrder>>;
-  String: ResolverTypeWrapper<Partial<Scalars['String']>>;
-  Version: ResolverTypeWrapper<Partial<Version>>;
+  SearchDonneeCriteria: ResolverTypeWrapper<PartialDeep<SearchDonneeCriteria>>;
+  SearchDonneeParams: ResolverTypeWrapper<PartialDeep<SearchDonneeParams>>;
+  SearchDonneesOrderBy: ResolverTypeWrapper<PartialDeep<SearchDonneesOrderBy>>;
+  SearchParams: ResolverTypeWrapper<PartialDeep<SearchParams>>;
+  Settings: ResolverTypeWrapper<PartialDeep<Settings>>;
+  Sexe: ResolverTypeWrapper<PartialDeep<Sexe>>;
+  SexeWithCounts: ResolverTypeWrapper<PartialDeep<SexeWithCounts>>;
+  SexeWithSpecimensCount: ResolverTypeWrapper<PartialDeep<SexeWithSpecimensCount>>;
+  SexesPaginatedResult: ResolverTypeWrapper<PartialDeep<SexesPaginatedResult>>;
+  SortOrder: ResolverTypeWrapper<PartialDeep<SortOrder>>;
+  String: ResolverTypeWrapper<PartialDeep<Scalars['String']>>;
+  UpsertDonneeResult: ResolverTypeWrapper<PartialDeep<UpsertDonneeResult>>;
+  Version: ResolverTypeWrapper<PartialDeep<Version>>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Age: Partial<Age>;
-  AgeWithCounts: Partial<AgeWithCounts>;
-  AgeWithSpecimensCount: Partial<AgeWithSpecimensCount>;
-  AgesPaginatedResult: Partial<AgesPaginatedResult>;
-  Boolean: Partial<Scalars['Boolean']>;
-  Classe: Partial<Classe>;
-  ClasseWithCounts: Partial<ClasseWithCounts>;
-  ClassesPaginatedResult: Partial<ClassesPaginatedResult>;
-  Commune: Partial<Commune>;
-  CommuneWithCounts: Partial<CommuneWithCounts>;
-  CommunesPaginatedResult: Partial<CommunesPaginatedResult>;
-  Comportement: Partial<Comportement>;
-  ComportementWithCounts: Partial<ComportementWithCounts>;
-  ComportementsPaginatedResult: Partial<ComportementsPaginatedResult>;
-  Coordinates: Partial<Coordinates>;
-  Departement: Partial<Departement>;
-  DepartementWithCounts: Partial<DepartementWithCounts>;
-  DepartementsPaginatedResult: Partial<DepartementsPaginatedResult>;
-  Donnee: Partial<Donnee>;
-  DonneeNavigationData: Partial<DonneeNavigationData>;
-  DonneeResult: Partial<DonneeResult>;
-  Espece: Partial<Espece>;
-  EspeceWithCounts: Partial<EspeceWithCounts>;
-  EspecesPaginatedResult: Partial<EspecesPaginatedResult>;
-  EstimationDistance: Partial<EstimationDistance>;
-  EstimationDistanceWithCounts: Partial<EstimationDistanceWithCounts>;
-  EstimationNombre: Partial<EstimationNombre>;
-  EstimationNombreWithCounts: Partial<EstimationNombreWithCounts>;
-  EstimationsDistancePaginatedResult: Partial<EstimationsDistancePaginatedResult>;
-  EstimationsNombrePaginatedResult: Partial<EstimationsNombrePaginatedResult>;
-  FindParams: Partial<FindParams>;
-  Float: Partial<Scalars['Float']>;
-  InputAge: Partial<InputAge>;
-  InputClasse: Partial<InputClasse>;
-  InputCommune: Partial<InputCommune>;
-  InputComportement: Partial<InputComportement>;
-  InputDepartement: Partial<InputDepartement>;
-  InputEspece: Partial<InputEspece>;
-  InputEstimationDistance: Partial<InputEstimationDistance>;
-  InputEstimationNombre: Partial<InputEstimationNombre>;
-  InputLieuDit: Partial<InputLieuDit>;
-  InputMeteo: Partial<InputMeteo>;
-  InputMilieu: Partial<InputMilieu>;
-  InputObservateur: Partial<InputObservateur>;
-  InputSettings: Partial<InputSettings>;
-  InputSexe: Partial<InputSexe>;
-  Int: Partial<Scalars['Int']>;
-  Inventaire: Partial<Inventaire>;
-  LieuDit: Partial<LieuDit>;
-  LieuDitWithCounts: Partial<LieuDitWithCounts>;
-  LieuxDitsPaginatedResult: Partial<LieuxDitsPaginatedResult>;
-  Meteo: Partial<Meteo>;
-  MeteoWithCounts: Partial<MeteoWithCounts>;
-  MeteosPaginatedResult: Partial<MeteosPaginatedResult>;
-  Milieu: Partial<Milieu>;
-  MilieuWithCounts: Partial<MilieuWithCounts>;
-  MilieuxPaginatedResult: Partial<MilieuxPaginatedResult>;
+  Age: PartialDeep<Age>;
+  AgeWithCounts: PartialDeep<AgeWithCounts>;
+  AgeWithSpecimensCount: PartialDeep<AgeWithSpecimensCount>;
+  AgesPaginatedResult: PartialDeep<AgesPaginatedResult>;
+  Boolean: PartialDeep<Scalars['Boolean']>;
+  Classe: PartialDeep<Classe>;
+  ClasseWithCounts: PartialDeep<ClasseWithCounts>;
+  ClassesPaginatedResult: PartialDeep<ClassesPaginatedResult>;
+  Commune: PartialDeep<Commune>;
+  CommuneWithCounts: PartialDeep<CommuneWithCounts>;
+  CommunesPaginatedResult: PartialDeep<CommunesPaginatedResult>;
+  Comportement: PartialDeep<Comportement>;
+  ComportementWithCounts: PartialDeep<ComportementWithCounts>;
+  ComportementsPaginatedResult: PartialDeep<ComportementsPaginatedResult>;
+  Coordinates: PartialDeep<Coordinates>;
+  Departement: PartialDeep<Departement>;
+  DepartementWithCounts: PartialDeep<DepartementWithCounts>;
+  DepartementsPaginatedResult: PartialDeep<DepartementsPaginatedResult>;
+  Donnee: PartialDeep<Donnee>;
+  DonneeNavigationData: PartialDeep<DonneeNavigationData>;
+  DonneeResult: PartialDeep<DonneeResult>;
+  Espece: PartialDeep<Espece>;
+  EspeceWithCounts: PartialDeep<EspeceWithCounts>;
+  EspecesPaginatedResult: PartialDeep<EspecesPaginatedResult>;
+  EstimationDistance: PartialDeep<EstimationDistance>;
+  EstimationDistanceWithCounts: PartialDeep<EstimationDistanceWithCounts>;
+  EstimationNombre: PartialDeep<EstimationNombre>;
+  EstimationNombreWithCounts: PartialDeep<EstimationNombreWithCounts>;
+  EstimationsDistancePaginatedResult: PartialDeep<EstimationsDistancePaginatedResult>;
+  EstimationsNombrePaginatedResult: PartialDeep<EstimationsNombrePaginatedResult>;
+  FindParams: PartialDeep<FindParams>;
+  Float: PartialDeep<Scalars['Float']>;
+  InputAge: PartialDeep<InputAge>;
+  InputClasse: PartialDeep<InputClasse>;
+  InputCommune: PartialDeep<InputCommune>;
+  InputComportement: PartialDeep<InputComportement>;
+  InputDepartement: PartialDeep<InputDepartement>;
+  InputDonnee: PartialDeep<InputDonnee>;
+  InputEspece: PartialDeep<InputEspece>;
+  InputEstimationDistance: PartialDeep<InputEstimationDistance>;
+  InputEstimationNombre: PartialDeep<InputEstimationNombre>;
+  InputLieuDit: PartialDeep<InputLieuDit>;
+  InputMeteo: PartialDeep<InputMeteo>;
+  InputMilieu: PartialDeep<InputMilieu>;
+  InputObservateur: PartialDeep<InputObservateur>;
+  InputSettings: PartialDeep<InputSettings>;
+  InputSexe: PartialDeep<InputSexe>;
+  Int: PartialDeep<Scalars['Int']>;
+  Inventaire: PartialDeep<Inventaire>;
+  LieuDit: PartialDeep<LieuDit>;
+  LieuDitWithCounts: PartialDeep<LieuDitWithCounts>;
+  LieuxDitsPaginatedResult: PartialDeep<LieuxDitsPaginatedResult>;
+  Meteo: PartialDeep<Meteo>;
+  MeteoWithCounts: PartialDeep<MeteoWithCounts>;
+  MeteosPaginatedResult: PartialDeep<MeteosPaginatedResult>;
+  Milieu: PartialDeep<Milieu>;
+  MilieuWithCounts: PartialDeep<MilieuWithCounts>;
+  MilieuxPaginatedResult: PartialDeep<MilieuxPaginatedResult>;
   Mutation: {};
-  Observateur: Partial<Observateur>;
-  ObservateurWithCounts: Partial<ObservateurWithCounts>;
-  ObservateursPaginatedResult: Partial<ObservateursPaginatedResult>;
+  Observateur: PartialDeep<Observateur>;
+  ObservateurWithCounts: PartialDeep<ObservateurWithCounts>;
+  ObservateursPaginatedResult: PartialDeep<ObservateursPaginatedResult>;
   PaginatedResult: ResolversParentTypes['AgesPaginatedResult'] | ResolversParentTypes['ClassesPaginatedResult'] | ResolversParentTypes['CommunesPaginatedResult'] | ResolversParentTypes['ComportementsPaginatedResult'] | ResolversParentTypes['DepartementsPaginatedResult'] | ResolversParentTypes['EspecesPaginatedResult'] | ResolversParentTypes['EstimationsDistancePaginatedResult'] | ResolversParentTypes['EstimationsNombrePaginatedResult'] | ResolversParentTypes['LieuxDitsPaginatedResult'] | ResolversParentTypes['MeteosPaginatedResult'] | ResolversParentTypes['MilieuxPaginatedResult'] | ResolversParentTypes['ObservateursPaginatedResult'] | ResolversParentTypes['PaginatedSearchDonneesResult'] | ResolversParentTypes['SexesPaginatedResult'];
-  PaginatedSearchDonneesResult: Partial<PaginatedSearchDonneesResult>;
+  PaginatedSearchDonneesResult: PartialDeep<PaginatedSearchDonneesResult>;
   Query: {};
-  SearchDonneeCriteria: Partial<SearchDonneeCriteria>;
-  SearchDonneeParams: Partial<SearchDonneeParams>;
-  SearchParams: Partial<SearchParams>;
-  Settings: Partial<Settings>;
-  Sexe: Partial<Sexe>;
-  SexeWithCounts: Partial<SexeWithCounts>;
-  SexeWithSpecimensCount: Partial<SexeWithSpecimensCount>;
-  SexesPaginatedResult: Partial<SexesPaginatedResult>;
-  String: Partial<Scalars['String']>;
-  Version: Partial<Version>;
+  SearchDonneeCriteria: PartialDeep<SearchDonneeCriteria>;
+  SearchDonneeParams: PartialDeep<SearchDonneeParams>;
+  SearchParams: PartialDeep<SearchParams>;
+  Settings: PartialDeep<Settings>;
+  Sexe: PartialDeep<Sexe>;
+  SexeWithCounts: PartialDeep<SexeWithCounts>;
+  SexeWithSpecimensCount: PartialDeep<SexeWithSpecimensCount>;
+  SexesPaginatedResult: PartialDeep<SexesPaginatedResult>;
+  String: PartialDeep<Scalars['String']>;
+  UpsertDonneeResult: PartialDeep<UpsertDonneeResult>;
+  Version: PartialDeep<Version>;
 };
 
 export type AgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Age'] = ResolversParentTypes['Age']> = {
@@ -1731,6 +1765,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   upsertCommune?: Resolver<Maybe<ResolversTypes['Commune']>, ParentType, ContextType, RequireFields<MutationUpsertCommuneArgs, 'data'>>;
   upsertComportement?: Resolver<Maybe<ResolversTypes['Comportement']>, ParentType, ContextType, RequireFields<MutationUpsertComportementArgs, 'data'>>;
   upsertDepartement?: Resolver<Maybe<ResolversTypes['Departement']>, ParentType, ContextType, RequireFields<MutationUpsertDepartementArgs, 'data'>>;
+  upsertDonnee?: Resolver<Maybe<ResolversTypes['UpsertDonneeResult']>, ParentType, ContextType, RequireFields<MutationUpsertDonneeArgs, 'data'>>;
   upsertEspece?: Resolver<Maybe<ResolversTypes['Espece']>, ParentType, ContextType, RequireFields<MutationUpsertEspeceArgs, 'data'>>;
   upsertEstimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType, RequireFields<MutationUpsertEstimationDistanceArgs, 'data'>>;
   upsertEstimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType, RequireFields<MutationUpsertEstimationNombreArgs, 'data'>>;
@@ -1884,6 +1919,12 @@ export type SexesPaginatedResultResolvers<ContextType = any, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UpsertDonneeResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpsertDonneeResult'] = ResolversParentTypes['UpsertDonneeResult']> = {
+  donnee?: Resolver<Maybe<ResolversTypes['Donnee']>, ParentType, ContextType>;
+  failureReason?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type VersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Version'] = ResolversParentTypes['Version']> = {
   application?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   database?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1942,6 +1983,7 @@ export type Resolvers<ContextType = any> = {
   SexeWithCounts?: SexeWithCountsResolvers<ContextType>;
   SexeWithSpecimensCount?: SexeWithSpecimensCountResolvers<ContextType>;
   SexesPaginatedResult?: SexesPaginatedResultResolvers<ContextType>;
+  UpsertDonneeResult?: UpsertDonneeResultResolvers<ContextType>;
   Version?: VersionResolvers<ContextType>;
 };
 
