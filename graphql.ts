@@ -360,6 +360,20 @@ export type InputEstimationNombre = {
   nonCompte: Scalars['Boolean'];
 };
 
+export type InputInventaire = {
+  altitude?: InputMaybe<Scalars['Int']>;
+  associesIds?: InputMaybe<Array<Scalars['Int']>>;
+  date: Scalars['String'];
+  duree?: InputMaybe<Scalars['String']>;
+  heure?: InputMaybe<Scalars['String']>;
+  latitude?: InputMaybe<Scalars['Float']>;
+  lieuDitId: Scalars['Int'];
+  longitude?: InputMaybe<Scalars['Float']>;
+  meteosIds?: InputMaybe<Array<Scalars['Int']>>;
+  observateurId: Scalars['Int'];
+  temperature?: InputMaybe<Scalars['Int']>;
+};
+
 export type InputLieuDit = {
   altitude: Scalars['Int'];
   communeId: Scalars['Int'];
@@ -531,6 +545,7 @@ export type Mutation = {
   upsertEspece?: Maybe<Espece>;
   upsertEstimationDistance?: Maybe<EstimationDistance>;
   upsertEstimationNombre?: Maybe<EstimationNombre>;
+  upsertInventaire?: Maybe<UpsertInventaireResult>;
   upsertLieuDit?: Maybe<LieuDit>;
   upsertMeteo?: Maybe<Meteo>;
   upsertMilieu?: Maybe<Milieu>;
@@ -665,6 +680,13 @@ export type MutationUpsertEstimationDistanceArgs = {
 export type MutationUpsertEstimationNombreArgs = {
   data: InputEstimationNombre;
   id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUpsertInventaireArgs = {
+  data: InputInventaire;
+  id?: InputMaybe<Scalars['Int']>;
+  migrateDonneesIfMatchesExistingInventaire?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -1197,6 +1219,18 @@ export type UpsertDonneeResult = {
   failureReason?: Maybe<Scalars['String']>;
 };
 
+export type UpsertInventaireFailureReason = {
+  __typename?: 'UpsertInventaireFailureReason';
+  correspondingInventaireFound: Scalars['Int'];
+  inventaireExpectedToBeUpdated: Scalars['Int'];
+};
+
+export type UpsertInventaireResult = {
+  __typename?: 'UpsertInventaireResult';
+  failureReason?: Maybe<UpsertInventaireFailureReason>;
+  inventaire?: Maybe<Inventaire>;
+};
+
 export type Version = {
   __typename?: 'Version';
   application: Scalars['Int'];
@@ -1321,6 +1355,7 @@ export type ResolversTypes = {
   InputEspece: ResolverTypeWrapper<PartialDeep<InputEspece>>;
   InputEstimationDistance: ResolverTypeWrapper<PartialDeep<InputEstimationDistance>>;
   InputEstimationNombre: ResolverTypeWrapper<PartialDeep<InputEstimationNombre>>;
+  InputInventaire: ResolverTypeWrapper<PartialDeep<InputInventaire>>;
   InputLieuDit: ResolverTypeWrapper<PartialDeep<InputLieuDit>>;
   InputMeteo: ResolverTypeWrapper<PartialDeep<InputMeteo>>;
   InputMilieu: ResolverTypeWrapper<PartialDeep<InputMilieu>>;
@@ -1360,6 +1395,8 @@ export type ResolversTypes = {
   SortOrder: ResolverTypeWrapper<PartialDeep<SortOrder>>;
   String: ResolverTypeWrapper<PartialDeep<Scalars['String']>>;
   UpsertDonneeResult: ResolverTypeWrapper<PartialDeep<UpsertDonneeResult>>;
+  UpsertInventaireFailureReason: ResolverTypeWrapper<PartialDeep<UpsertInventaireFailureReason>>;
+  UpsertInventaireResult: ResolverTypeWrapper<PartialDeep<UpsertInventaireResult>>;
   Version: ResolverTypeWrapper<PartialDeep<Version>>;
 };
 
@@ -1406,6 +1443,7 @@ export type ResolversParentTypes = {
   InputEspece: PartialDeep<InputEspece>;
   InputEstimationDistance: PartialDeep<InputEstimationDistance>;
   InputEstimationNombre: PartialDeep<InputEstimationNombre>;
+  InputInventaire: PartialDeep<InputInventaire>;
   InputLieuDit: PartialDeep<InputLieuDit>;
   InputMeteo: PartialDeep<InputMeteo>;
   InputMilieu: PartialDeep<InputMilieu>;
@@ -1440,6 +1478,8 @@ export type ResolversParentTypes = {
   SexesPaginatedResult: PartialDeep<SexesPaginatedResult>;
   String: PartialDeep<Scalars['String']>;
   UpsertDonneeResult: PartialDeep<UpsertDonneeResult>;
+  UpsertInventaireFailureReason: PartialDeep<UpsertInventaireFailureReason>;
+  UpsertInventaireResult: PartialDeep<UpsertInventaireResult>;
   Version: PartialDeep<Version>;
 };
 
@@ -1769,6 +1809,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   upsertEspece?: Resolver<Maybe<ResolversTypes['Espece']>, ParentType, ContextType, RequireFields<MutationUpsertEspeceArgs, 'data'>>;
   upsertEstimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType, RequireFields<MutationUpsertEstimationDistanceArgs, 'data'>>;
   upsertEstimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType, RequireFields<MutationUpsertEstimationNombreArgs, 'data'>>;
+  upsertInventaire?: Resolver<Maybe<ResolversTypes['UpsertInventaireResult']>, ParentType, ContextType, RequireFields<MutationUpsertInventaireArgs, 'data'>>;
   upsertLieuDit?: Resolver<Maybe<ResolversTypes['LieuDit']>, ParentType, ContextType, RequireFields<MutationUpsertLieuDitArgs, 'data'>>;
   upsertMeteo?: Resolver<Maybe<ResolversTypes['Meteo']>, ParentType, ContextType, RequireFields<MutationUpsertMeteoArgs, 'data'>>;
   upsertMilieu?: Resolver<Maybe<ResolversTypes['Milieu']>, ParentType, ContextType, RequireFields<MutationUpsertMilieuArgs, 'data'>>;
@@ -1925,6 +1966,18 @@ export type UpsertDonneeResultResolvers<ContextType = any, ParentType extends Re
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UpsertInventaireFailureReasonResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpsertInventaireFailureReason'] = ResolversParentTypes['UpsertInventaireFailureReason']> = {
+  correspondingInventaireFound?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  inventaireExpectedToBeUpdated?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UpsertInventaireResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpsertInventaireResult'] = ResolversParentTypes['UpsertInventaireResult']> = {
+  failureReason?: Resolver<Maybe<ResolversTypes['UpsertInventaireFailureReason']>, ParentType, ContextType>;
+  inventaire?: Resolver<Maybe<ResolversTypes['Inventaire']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type VersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Version'] = ResolversParentTypes['Version']> = {
   application?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   database?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1984,6 +2037,8 @@ export type Resolvers<ContextType = any> = {
   SexeWithSpecimensCount?: SexeWithSpecimensCountResolvers<ContextType>;
   SexesPaginatedResult?: SexesPaginatedResultResolvers<ContextType>;
   UpsertDonneeResult?: UpsertDonneeResultResolvers<ContextType>;
+  UpsertInventaireFailureReason?: UpsertInventaireFailureReasonResolvers<ContextType>;
+  UpsertInventaireResult?: UpsertInventaireResultResolvers<ContextType>;
   Version?: VersionResolvers<ContextType>;
 };
 
