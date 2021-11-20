@@ -71,34 +71,34 @@ model Departement {
 }
 
 model Donnee {
-  id                     Int                   @id @default(autoincrement()) @db.UnsignedMediumInt
-  inventaire_id          Int                   @db.UnsignedMediumInt
-  espece_id              Int                   @db.UnsignedMediumInt
-  sexe_id                Int                   @db.UnsignedSmallInt
-  age_id                 Int                   @db.UnsignedSmallInt
-  estimation_nombre_id   Int                   @db.UnsignedSmallInt
-  nombre                 Int?                  @db.UnsignedSmallInt
-  estimation_distance_id Int?                  @db.UnsignedSmallInt
-  distance               Int?                  @db.UnsignedSmallInt
-  commentaire            String?               @db.Text
-  regroupement           Int?                  @db.UnsignedSmallInt
-  date_creation          DateTime              @db.DateTime(0)
-  age                    Age                   @relation(fields: [age_id], references: [id])
-  espece                 Espece                @relation(fields: [espece_id], references: [id])
-  estimationNombre       EstimationNombre      @relation(fields: [estimation_nombre_id], references: [id])
-  estimationDistance     EstimationDistance?   @relation(fields: [estimation_distance_id], references: [id])
-  inventaire             Inventaire            @relation(fields: [inventaire_id], references: [id])
-  sexe                   Sexe                  @relation(fields: [sexe_id], references: [id])
-  donnee_comportement    donnee_comportement[]
-  donnee_milieu          donnee_milieu[]
+  id                   Int                   @id @default(autoincrement()) @db.UnsignedMediumInt
+  inventaireId         Int                   @map("inventaire_id") @db.UnsignedMediumInt
+  especeId             Int                   @map("espece_id") @db.UnsignedMediumInt
+  sexeId               Int                   @map("sexe_id") @db.UnsignedSmallInt
+  ageId                Int                   @map("age_id") @db.UnsignedSmallInt
+  estimationNombreId   Int                   @map("estimation_nombre_id") @db.UnsignedSmallInt
+  nombre               Int?                  @db.UnsignedSmallInt
+  estimationDistanceId Int?                  @map("estimation_distance_id") @db.UnsignedSmallInt
+  distance             Int?                  @db.UnsignedSmallInt
+  commentaire          String?               @db.Text
+  regroupement         Int?                  @db.UnsignedSmallInt
+  date_creation        DateTime              @db.DateTime(0)
+  age                  Age                   @relation(fields: [ageId], references: [id])
+  espece               Espece                @relation(fields: [especeId], references: [id])
+  estimationNombre     EstimationNombre      @relation(fields: [estimationNombreId], references: [id])
+  estimationDistance   EstimationDistance?   @relation(fields: [estimationDistanceId], references: [id])
+  inventaire           Inventaire            @relation(fields: [inventaireId], references: [id])
+  sexe                 Sexe                  @relation(fields: [sexeId], references: [id])
+  donnee_comportement  donnee_comportement[]
+  donnee_milieu        donnee_milieu[]
 
 
-  @@index([age_id], name: "fk_donnee_age_id")
-  @@index([espece_id], name: "fk_donnee_espece_id")
-  @@index([estimation_nombre_id], name: "fk_donnee_estimationnombre_id")
-  @@index([estimation_distance_id], name: "fk_donnee_estimationdistance_id")
-  @@index([inventaire_id], name: "fk_donnee_inventaire_id")
-  @@index([sexe_id], name: "fk_donnee_sexe_id")
+  @@index([ageId], name: "fk_donnee_age_id")
+  @@index([especeId], name: "fk_donnee_espece_id")
+  @@index([estimationNombreId], name: "fk_donnee_estimationnombre_id")
+  @@index([estimationDistanceId], name: "fk_donnee_estimationdistance_id")
+  @@index([inventaireId], name: "fk_donnee_inventaire_id")
+  @@index([sexeId], name: "fk_donnee_sexe_id")
   @@map("donnee")
 }
 

@@ -1,7 +1,7 @@
 import { Age, Classe, Commune, Comportement, Departement, Donnee as DonneeEntity, Espece, EstimationDistance, EstimationNombre, Inventaire, Lieudit, Meteo, Milieu, Observateur, Prisma, Sexe } from "@prisma/client";
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
-import { AgeWithSpecimensCount, DonneeNavigationData, QueryPaginatedSearchDonneesArgs, SearchDonneeCriteria, SexeWithSpecimensCount, SortOrder } from "../../model/graphql";
+import { AgeWithSpecimensCount, DonneeNavigationData, InputDonnee, MutationUpsertDonneeArgs, QueryPaginatedSearchDonneesArgs, SearchDonneeCriteria, SexeWithSpecimensCount, SortOrder } from "../../model/graphql";
 import { Donnee as DonneeObj } from "../../model/types/donnee.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
@@ -84,7 +84,7 @@ export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria):
         }
       } : {}),
     },
-    espece_id: {
+    especeId: {
       in: searchCriteria?.especes ?? undefined
     },
     espece: {
@@ -93,17 +93,17 @@ export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria):
       }
     },
     nombre: searchCriteria?.nombre ?? undefined,
-    estimation_nombre_id: {
+    estimationNombreId: {
       in: searchCriteria?.estimationsNombre ?? undefined
     },
-    sexe_id: {
+    sexeId: {
       in: searchCriteria?.sexes ?? undefined
     },
-    age_id: {
+    ageId: {
       in: searchCriteria?.ages ?? undefined
     },
     distance: searchCriteria?.distance ?? undefined,
-    estimation_distance_id: {
+    estimationDistanceId: {
       in: searchCriteria?.estimationsDistance ?? undefined
     },
     regroupement: searchCriteria?.regroupement ?? undefined,
@@ -622,12 +622,141 @@ export const findExistingDonneeId = async (donnee: DonneeObj): Promise<number> =
   return null;
 };
 
+export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEntity | null> => {
+  const donneesCandidates = await prisma.donnee.findMany({
+    where: {
+      inventaireId: donnee.inventaireId,
+      especeId: donnee.especeId,
+      sexeId: donnee.sexeId,
+      ageId: donnee.ageId,
+      estimationNombreId: donnee.estimationNombreId,
+      ...(donnee.nombre != null ? {
+        nombre: donnee?.nombre
+      } : {}),
+      ...(donnee.estimationDistanceId != null ? {
+        estimationDistanceId: donnee?.estimationDistanceId
+      } : {}),
+      ...(donnee.distance != null ? {
+        distance: donnee?.distance
+      } : {}),
+      ...(donnee.regroupement != null ? {
+        regroupement: donnee?.regroupement
+      } : {}),
+      ...(donnee.commentaire != null ? {
+        commentaire: donnee?.commentaire
+      } : {}),
+      ...(donnee.comportementsIds != null ? {
+        donnee_comportement: {
+          every: {
+            comportement_id: {
+              in: donnee.comportementsIds
+            }
+          },
+        }
+      } : {}),
+      ...(donnee.milieuxIds != null ? {
+        donnee_milieu: {
+          every: {
+            milieu_id: {
+              in: donnee.milieuxIds
+            }
+          },
+        }
+      } : {})
+    },
+    include: {
+      donnee_comportement: true,
+      donnee_milieu: true
+    }
+  });
+
+  // At this point the candidates are the ones that match all parameters and for which each comportement+milieu is in the required list
+  // However, we did not check yet that this candidates have exactly the requested comportements/milieux as they can have additional ones
+
+
+  return donneesCandidates?.filter((donneeEntity) => {
+    const matcherComportementsLength = donnee?.comportementsIds?.length ?? 0;
+    const matcherMilieuxLength = donnee?.milieuxIds?.length ?? 0;
+
+    const areComportementsSameLength = (matcherComportementsLength == 0) || donneeEntity.donnee_comportement?.length === matcherComportementsLength;
+    const areMilieuxSameLength = (matcherMilieuxLength == 0) || donneeEntity.donnee_milieu?.length === matcherMilieuxLength;
+
+    return areComportementsSameLength && areMilieuxSameLength;
+  })?.[0] ?? null;
+}
+
 export const findLastDonneeId = async (): Promise<number> => {
   return prisma.donnee.findFirst({
     orderBy: {
       id: Prisma.SortOrder.desc
     }
   }).then(donnee => donnee.id).catch(() => Promise.resolve(null as number));
+};
+
+export const upsertDonnee = async (
+  args: MutationUpsertDonneeArgs
+): Promise<DonneeWithRelations> => {
+  const { id, data } = args;
+
+  // Check if an exact same donnee already exists or not
+  const existingDonnee = await findExistingDonnee(data);
+
+  if (existingDonnee) {
+    // The donnee already exists so we return an error
+    return Promise.reject(`Cette donnée existe déjà (ID = ${existingDonnee.id}).`)
+  } else {
+    const { comportementsIds, milieuxIds, ...restData } = data;
+
+    const comportementMap = comportementsIds?.map((comportementId) => {
+      return {
+        comportement_id: comportementId
+      }
+    }) ?? [];
+
+    const milieuMap = milieuxIds?.map((milieuId) => {
+      return {
+        milieu_id: milieuId
+      }
+    }) ?? [];
+
+    if (id) {
+
+      return prisma.donnee.update({
+        where: { id },
+        include: COMMON_DONNEE_INCLUDE,
+        data: {
+          ...restData,
+          donnee_comportement: {
+            deleteMany: {
+              donnee_id: id
+            },
+            create: comportementMap
+          },
+          donnee_milieu: {
+            deleteMany: {
+              donnee_id: id
+            },
+            create: milieuMap
+          }
+        }
+      }).then(normalizeDonnee);
+
+    } else {
+      return prisma.donnee.create({
+        data: {
+          ...restData,
+          date_creation: new Date(),
+          donnee_comportement: {
+            create: comportementMap
+          },
+          donnee_milieu: {
+            create: milieuMap
+          }
+        },
+        include: COMMON_DONNEE_INCLUDE
+      }).then(normalizeDonnee);
+    }
+  }
 };
 
 export const deleteDonnee = async (donneeId: number): Promise<DonneeEntity> => {
@@ -648,7 +777,7 @@ export const deleteDonnee = async (donneeId: number): Promise<DonneeEntity> => {
   // Check how many donnees the inventaire has after the deletion
   const nbDonneesOfInventaire = await prisma.donnee.count({
     where: {
-      inventaire_id: inventaire?.id
+      inventaireId: inventaire?.id
     }
   })
 
@@ -681,9 +810,9 @@ export const countSpecimensByAgeForEspeceId = async (
   especeId: number
 ): Promise<AgeWithSpecimensCount[]> => {
   const agesOfEspece = await prisma.donnee.groupBy({
-    by: ['age_id'],
+    by: ['ageId'],
     where: {
-      espece_id: especeId
+      especeId
     },
     _sum: {
       nombre: true
@@ -693,13 +822,13 @@ export const countSpecimensByAgeForEspeceId = async (
   const ages = await prisma.age.findMany({
     where: {
       id: {
-        in: agesOfEspece.map(ageOfEspece => ageOfEspece.age_id)
+        in: agesOfEspece.map(ageOfEspece => ageOfEspece.ageId)
       }
     }
   })
 
   return ages.map((age) => {
-    const nbSpecimens = agesOfEspece?.find(ageOfEspece => ageOfEspece?.age_id === age.id)?._sum?.nombre ?? 0
+    const nbSpecimens = agesOfEspece?.find(ageOfEspece => ageOfEspece?.ageId === age.id)?._sum?.nombre ?? 0
     return {
       ...age,
       nbSpecimens
@@ -711,9 +840,9 @@ export const countSpecimensBySexeForEspeceId = async (
   especeId: number
 ): Promise<SexeWithSpecimensCount[]> => {
   const sexesOfEspece = await prisma.donnee.groupBy({
-    by: ['sexe_id'],
+    by: ['sexeId'],
     where: {
-      espece_id: especeId
+      especeId
     },
     _sum: {
       nombre: true
@@ -723,13 +852,13 @@ export const countSpecimensBySexeForEspeceId = async (
   const sexes = await prisma.sexe.findMany({
     where: {
       id: {
-        in: sexesOfEspece.map(sexeOfEspece => sexeOfEspece.sexe_id)
+        in: sexesOfEspece.map(sexeOfEspece => sexeOfEspece.sexeId)
       }
     }
   })
 
   return sexes.map((sexe) => {
-    const nbSpecimens = sexesOfEspece?.find(sexeOfEspece => sexeOfEspece?.sexe_id === sexe.id)?._sum?.nombre ?? 0
+    const nbSpecimens = sexesOfEspece?.find(sexeOfEspece => sexeOfEspece?.sexeId === sexe.id)?._sum?.nombre ?? 0
     return {
       ...sexe,
       nbSpecimens

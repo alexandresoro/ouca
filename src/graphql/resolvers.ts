@@ -7,7 +7,7 @@ import { deleteCommune, findCommune, findCommuneOfLieuDitId, findCommunes, findP
 import { deleteComportement, findComportement, findComportements, findComportementsByIds, findPaginatedComportements, upsertComportement } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import { deleteDepartement, findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
-import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId, deleteDonnee, findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement, findPaginatedDonneesByCriteria } from "../services/entities/donnee-service";
+import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId, deleteDonnee, DonneeWithRelations, findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement, findPaginatedDonneesByCriteria, upsertDonnee } from "../services/entities/donnee-service";
 import { deleteEspece, findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
 import { deleteEstimationDistance, findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
 import { deleteEstimationNombre, findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
@@ -291,6 +291,22 @@ const resolvers: Resolvers = {
     },
     upsertDepartement: async (_source, args): Promise<Departement> => {
       return upsertDepartement(args);
+    },
+    upsertDonnee: async (_source, args): Promise<{
+      failureReason?: string,
+      donnee?: DonneeWithRelations
+    }> => {
+      try {
+        const upsertedDonnee = await upsertDonnee(args);
+        return {
+          donnee: upsertedDonnee
+        }
+      } catch (error) {
+        const failureReason = error as string;
+        return {
+          failureReason
+        }
+      }
     },
     upsertEspece: async (_source, args): Promise<EspeceEntity> => {
       return upsertEspece(args);

@@ -26,6 +26,21 @@ export default gql`
     code: String!
   }
 
+  input InputDonnee {
+    inventaireId: Int!
+    especeId: Int!
+    sexeId: Int!
+    ageId: Int!
+    estimationNombreId: Int!
+    nombre: Int
+    estimationDistanceId: Int
+    distance: Int
+    regroupement: Int
+    commentaire: String
+    comportementsIds: [Int!]
+    milieuxIds: [Int!]
+  }
+
   input InputEspece {
     classeId: Int!
     code: String!
@@ -571,6 +586,11 @@ export default gql`
     count: Int!
   }
 
+  type UpsertDonneeResult {
+    donnee: Donnee
+    failureReason: String
+  }
+
   type Query {
     age(id: Int!): Age
     classe(id: Int!): Classe
@@ -662,6 +682,7 @@ export default gql`
     upsertCommune(id: Int, data: InputCommune!): Commune
     upsertComportement(id: Int, data: InputComportement!): Comportement
     upsertDepartement(id: Int, data: InputDepartement!): Departement
+    upsertDonnee(id: Int, data: InputDonnee!): UpsertDonneeResult
     upsertEspece(id: Int, data: InputEspece!): Espece
     upsertEstimationDistance(id: Int, data: InputEstimationDistance!): EstimationDistance
     upsertEstimationNombre(id: Int, data: InputEstimationNombre!): EstimationNombre

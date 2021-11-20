@@ -198,7 +198,7 @@ export const findPaginatedEspeces = async (
   }
 
   const builtSearchCriteria = buildSearchDonneeCriteria(searchCriteria);
-  const { espece_id, espece, ...restSearchDonneeCriteria } = builtSearchCriteria ?? {};
+  const { especeId, espece, ...restSearchDonneeCriteria } = builtSearchCriteria ?? {};
 
   let especesResult: EspeceWithCounts[];
 
@@ -206,7 +206,7 @@ export const findPaginatedEspeces = async (
     AND: [
       getFilterClause(searchParams?.q),
       builtSearchCriteria ? {
-        id: espece_id,
+        id: especeId,
         ...espece,
         donnee: {
           some: {
@@ -222,9 +222,9 @@ export const findPaginatedEspeces = async (
 
     // Mapping between especes_id and their count sorted by their own number of donnees
     const donneesByMatchingEspece = await prisma.donnee.groupBy({
-      by: ['espece_id'],
+      by: ['especeId'],
       where: {
-        espece_id,
+        especeId,
         espece: {
           AND: [
             espece,
@@ -235,7 +235,7 @@ export const findPaginatedEspeces = async (
       },
       orderBy: {
         _count: {
-          espece_id: sortOrder
+          especeId: sortOrder
         }
       },
       _count: true,
@@ -254,13 +254,13 @@ export const findPaginatedEspeces = async (
       },
       where: {
         id: {
-          in: donneesByMatchingEspece.map(({ espece_id }) => espece_id) // /!\ The IN clause could break if not paginated enough
+          in: donneesByMatchingEspece.map(({ especeId }) => especeId) // /!\ The IN clause could break if not paginated enough
         }
       }
     });
 
-    especesResult = donneesByMatchingEspece.map(({ espece_id, _count }) => {
-      const espece = especesRq?.find(({ id }) => id === espece_id);
+    especesResult = donneesByMatchingEspece.map(({ especeId, _count }) => {
+      const espece = especesRq?.find(({ id }) => id === especeId);
       return {
         ...espece,
         nbDonnees: _count
@@ -286,11 +286,11 @@ export const findPaginatedEspeces = async (
     // As we can also filter by donnees but want the filtered count, the _count cannot be calculated properly from the previous findMany => it would return the full count
     if (includeCounts) {
       const donneesByMatchingEspece = await prisma.donnee.groupBy({
-        by: ['espece_id'],
+        by: ['especeId'],
         where: {
           AND: [
             {
-              espece_id: {
+              especeId: {
                 in: especesDb.map(espece => espece?.id) // /!\ The IN clause could break if not paginated enough
               }
             },
@@ -306,7 +306,7 @@ export const findPaginatedEspeces = async (
       especesResult = especesDb.map((espece) => {
         return {
           ...espece,
-          ...(includeCounts ? { nbDonnees: donneesByMatchingEspece.find(({ espece_id }) => espece_id === espece.id)?._count } : {})
+          ...(includeCounts ? { nbDonnees: donneesByMatchingEspece.find(({ especeId }) => especeId === espece.id)?._count } : {})
         }
       })
 
