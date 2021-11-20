@@ -14,6 +14,7 @@ import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, TABLE_DONNEE, TABL
 import { areArraysContainingSameValues, getArrayFromObjects } from "../../utils/utils";
 import { getPrismaPagination } from "./entities-utils";
 import { insertMultipleEntitiesAndReturnIdsNoCheck, persistEntity } from "./entity-service";
+import { normalizeInventaire } from "./inventaire-service";
 
 export type DonneeWithRelations = DonneeEntity & {
   age: Age | null
@@ -38,11 +39,20 @@ export type FullDonnee = DonneeWithRelations & {
   estimationNombre: EstimationNombre
 };
 
+type DonneeRelatedTablesFields = {
+  donnee_comportement: {
+    comportement: Comportement
+  }[]
+  donnee_milieu: {
+    milieu: Milieu
+  }[]
+}
+
 export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria): Prisma.DonneeWhereInput | undefined => {
   return (searchCriteria && Object.keys(searchCriteria).length) ? {
     id: searchCriteria?.id ?? undefined,
     inventaire: {
-      observateur_id: {
+      observateurId: {
         in: searchCriteria?.observateurs ?? undefined
       },
       ...(searchCriteria?.associes ? {
@@ -61,7 +71,7 @@ export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria):
       },
       heure: searchCriteria?.heure ?? undefined,
       duree: searchCriteria?.duree ?? undefined,
-      lieudit_id: {
+      lieuDitId: {
         in: searchCriteria?.lieuxdits ?? undefined
       },
       lieuDit: {
@@ -174,14 +184,7 @@ const COMMON_DONNEE_INCLUDE = {
   }
 }
 
-const normalizeDonnee = <T extends {
-  donnee_comportement: {
-    comportement: Comportement
-  }[]
-  donnee_milieu: {
-    milieu: Milieu
-  }[]
-}>(donnee: T): Omit<T, 'donnee_comportement' | 'donnee_milieu'> & {
+const normalizeDonnee = <T extends DonneeRelatedTablesFields>(donnee: T): Omit<T, 'donnee_comportement' | 'donnee_milieu'> & {
   comportements: Comportement[]
   milieux: Milieu[]
 } => {
@@ -200,35 +203,6 @@ const normalizeDonnee = <T extends {
     ...restDonnee,
     comportements: comportementsArray,
     milieux: milieuxArray
-  }
-}
-
-const normalizeInventaire = <T extends {
-  inventaire_associe: {
-    observateur: Observateur
-  }[]
-  inventaire_meteo: {
-    meteo: Meteo
-  }[]
-}>(inventaire: T): Omit<T, 'inventaire_associe' | 'inventaire_meteo'> & {
-  associes: Observateur[]
-  meteos: Meteo[]
-} => {
-  if (inventaire == null) {
-    return null;
-  }
-  const { inventaire_associe, inventaire_meteo, ...restInventaire } = inventaire;
-  const associesArray = inventaire_associe.map((inventaire_associe) => {
-    return inventaire_associe?.observateur;
-  });
-  const meteosArray = inventaire_meteo.map((inventaire_meteo) => {
-    return inventaire_meteo?.meteo;
-  });
-
-  return {
-    ...restInventaire,
-    associes: associesArray,
-    meteos: meteosArray
   }
 }
 
@@ -630,21 +604,11 @@ export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEnt
       sexeId: donnee.sexeId,
       ageId: donnee.ageId,
       estimationNombreId: donnee.estimationNombreId,
-      ...(donnee.nombre != null ? {
-        nombre: donnee?.nombre
-      } : {}),
-      ...(donnee.estimationDistanceId != null ? {
-        estimationDistanceId: donnee?.estimationDistanceId
-      } : {}),
-      ...(donnee.distance != null ? {
-        distance: donnee?.distance
-      } : {}),
-      ...(donnee.regroupement != null ? {
-        regroupement: donnee?.regroupement
-      } : {}),
-      ...(donnee.commentaire != null ? {
-        commentaire: donnee?.commentaire
-      } : {}),
+      nombre: donnee?.nombre ?? null,
+      estimationDistanceId: donnee?.estimationDistanceId ?? null,
+      distance: donnee?.distance ?? null,
+      regroupement: donnee?.regroupement ?? null,
+      commentaire: donnee?.commentaire ?? null,
       ...(donnee.comportementsIds != null ? {
         donnee_comportement: {
           every: {
@@ -678,8 +642,8 @@ export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEnt
     const matcherComportementsLength = donnee?.comportementsIds?.length ?? 0;
     const matcherMilieuxLength = donnee?.milieuxIds?.length ?? 0;
 
-    const areComportementsSameLength = (matcherComportementsLength == 0) || donneeEntity.donnee_comportement?.length === matcherComportementsLength;
-    const areMilieuxSameLength = (matcherMilieuxLength == 0) || donneeEntity.donnee_milieu?.length === matcherMilieuxLength;
+    const areComportementsSameLength = (donneeEntity.donnee_comportement?.length === matcherComportementsLength);
+    const areMilieuxSameLength = (donneeEntity.donnee_milieu?.length === matcherMilieuxLength);
 
     return areComportementsSameLength && areMilieuxSameLength;
   })?.[0] ?? null;
@@ -745,7 +709,7 @@ export const upsertDonnee = async (
       return prisma.donnee.create({
         data: {
           ...restData,
-          date_creation: new Date(),
+          date_creation: format(new Date(), DATE_WITH_TIME_PATTERN),
           donnee_comportement: {
             create: comportementMap
           },

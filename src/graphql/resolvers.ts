@@ -1,5 +1,5 @@
 import { Commune as CommuneEntity, Espece as EspeceEntity } from "@prisma/client";
-import { Age, AgesPaginatedResult, AgeWithSpecimensCount, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, Version } from "../model/graphql";
+import { Age, AgesPaginatedResult, AgeWithSpecimensCount, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, UpsertInventaireFailureReason, Version } from "../model/graphql";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
 import { deleteClasse, findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses, upsertClasse } from "../services/entities/classe-service";
@@ -11,7 +11,7 @@ import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId, delete
 import { deleteEspece, findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
 import { deleteEstimationDistance, findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
 import { deleteEstimationNombre, findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
-import { findInventaire, findInventaireOfDonneeId } from "../services/entities/inventaire-service";
+import { findInventaire, findInventaireOfDonneeId, InventaireWithRelations, upsertInventaire } from "../services/entities/inventaire-service";
 import { deleteLieuDit, findLieuDit, findLieuDitOfInventaireId, findLieuxDits, findPaginatedLieuxDits, LieuDitWithCoordinatesAsNumber, upsertLieuDit } from "../services/entities/lieu-dit-service";
 import { deleteMeteo, findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos, upsertMeteo } from "../services/entities/meteo-service";
 import { deleteMilieu, findMilieu, findMilieux, findMilieuxByIds, findPaginatedMilieux, upsertMilieu } from "../services/entities/milieu-service";
@@ -316,6 +316,22 @@ const resolvers: Resolvers = {
     },
     upsertEstimationNombre: async (_source, args): Promise<EstimationNombre> => {
       return upsertEstimationNombre(args);
+    },
+    upsertInventaire: async (_source, args): Promise<{
+      failureReason?: UpsertInventaireFailureReason,
+      inventaire?: InventaireWithRelations
+    }> => {
+      try {
+        const upsertedInventaire = await upsertInventaire(args);
+        return {
+          inventaire: upsertedInventaire
+        }
+      } catch (error) {
+        const failureReason = error as UpsertInventaireFailureReason;
+        return {
+          failureReason
+        }
+      }
     },
     upsertLieuDit: async (_source, args): Promise<LieuDitWithCoordinatesAsNumber> => {
       return upsertLieuDit(args);

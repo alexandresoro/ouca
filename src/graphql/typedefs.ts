@@ -57,6 +57,20 @@ export default gql`
     nonCompte: Boolean!
   }
 
+  input InputInventaire {
+    observateurId: Int!
+    associesIds: [Int!]
+    date: String!
+    duree: String
+    heure: String
+    lieuDitId: Int!
+    altitude: Int
+    latitude: Float
+    longitude: Float
+    meteosIds: [Int!]
+    temperature: Int
+  }
+
   input InputLieuDit {
     communeId: Int!
     nom: String!
@@ -591,6 +605,16 @@ export default gql`
     failureReason: String
   }
 
+  type UpsertInventaireFailureReason {
+    inventaireExpectedToBeUpdated: Int!
+    correspondingInventaireFound: Int!
+  }
+
+  type UpsertInventaireResult {
+    inventaire: Inventaire
+    failureReason: UpsertInventaireFailureReason
+  }
+
   type Query {
     age(id: Int!): Age
     classe(id: Int!): Classe
@@ -686,6 +710,7 @@ export default gql`
     upsertEspece(id: Int, data: InputEspece!): Espece
     upsertEstimationDistance(id: Int, data: InputEstimationDistance!): EstimationDistance
     upsertEstimationNombre(id: Int, data: InputEstimationNombre!): EstimationNombre
+    upsertInventaire(id: Int, data: InputInventaire!, migrateDonneesIfMatchesExistingInventaire: Boolean): UpsertInventaireResult
     upsertLieuDit(id: Int, data: InputLieuDit!): LieuDit
     upsertMeteo(id: Int, data: InputMeteo!): Meteo
     upsertMilieu(id: Int, data: InputMilieu!): Milieu

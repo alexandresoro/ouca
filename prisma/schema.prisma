@@ -162,11 +162,11 @@ model EstimationNombre {
 
 model Inventaire {
   id                 Int                  @id @default(autoincrement()) @db.UnsignedMediumInt
-  observateur_id     Int                  @db.UnsignedSmallInt
+  observateurId      Int                  @map("observateur_id") @db.UnsignedSmallInt
   date               DateTime             @db.Date
   heure              String?              @db.VarChar(5)
   duree              String?              @db.VarChar(5)
-  lieudit_id         Int                  @db.UnsignedMediumInt
+  lieuDitId          Int                  @map("lieudit_id") @db.UnsignedMediumInt
   altitude           Int?                 @db.UnsignedSmallInt
   longitude          Decimal?             @db.Decimal(13, 6)
   latitude           Decimal?             @db.Decimal(13, 6)
@@ -175,15 +175,15 @@ model Inventaire {
   latitude_l2e       Int?                 @db.UnsignedMediumInt
   temperature        Int?                 @db.TinyInt
   date_creation      DateTime             @db.DateTime(0)
-  lieuDit            Lieudit              @relation(fields: [lieudit_id], references: [id])
-  observateur        Observateur          @relation(fields: [observateur_id], references: [id])
+  lieuDit            Lieudit              @relation(fields: [lieuDitId], references: [id])
+  observateur        Observateur          @relation(fields: [observateurId], references: [id])
   donnee             Donnee[]
   inventaire_associe inventaire_associe[]
   inventaire_meteo   inventaire_meteo[]
 
-  @@index([lieudit_id], name: "fk_inventaire_lieudit_id")
-  @@index([observateur_id], name: "fk_inventaire_observateur_id")
-  @@index([observateur_id, date, heure, duree, lieudit_id, altitude, longitude, latitude, temperature, date_creation], name: "index_inventaire_all")
+  @@index([lieuDitId], name: "fk_inventaire_lieudit_id")
+  @@index([observateurId], name: "fk_inventaire_observateur_id")
+  @@index([observateurId, date, heure, duree, lieuDitId, altitude, longitude, latitude, temperature, date_creation], name: "index_inventaire_all")
   @@map("inventaire")
 }
 
