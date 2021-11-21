@@ -709,7 +709,7 @@ export const upsertDonnee = async (
       return prisma.donnee.create({
         data: {
           ...restData,
-          date_creation: format(new Date(), DATE_WITH_TIME_PATTERN),
+          date_creation: new Date(),
           donnee_comportement: {
             create: comportementMap
           },

@@ -437,7 +437,7 @@ export const upsertInventaire = async (
         data: {
           ...restData,
           date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), 'UTC'),
-          date_creation: format(new Date(), DATE_WITH_TIME_PATTERN),
+          date_creation: new Date(),
           inventaire_associe: {
             create: associesMap
           },
