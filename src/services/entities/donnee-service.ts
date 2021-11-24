@@ -665,7 +665,7 @@ export const upsertDonnee = async (
   // Check if an exact same donnee already exists or not
   const existingDonnee = await findExistingDonnee(data);
 
-  if (existingDonnee) {
+  if (existingDonnee && existingDonnee.id !== id) {
     // The donnee already exists so we return an error
     return Promise.reject(`Cette donnée existe déjà (ID = ${existingDonnee.id}).`)
   } else {
