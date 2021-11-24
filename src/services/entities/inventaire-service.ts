@@ -2,7 +2,7 @@ import { CoordinatesSystem, Inventaire as InventaireEntity, Meteo, Observateur }
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
-import { InputInventaire, MutationUpsertInventaireArgs, UpsertInventaireFailureReason } from "../../model/graphql";
+import { CoordinatesSystemType, InputInventaire, MutationUpsertInventaireArgs, UpsertInventaireFailureReason } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Inventaire } from "../../model/types/inventaire.object";
 import { InventaireCompleteWithIds, InventaireDb } from "../../objects/db/inventaire-db.object";
@@ -415,6 +415,7 @@ export const upsertInventaire = async (
         include: COMMON_INVENTAIRE_INCLUDE,
         data: {
           ...restData,
+          coordinates_system: (restData?.altitude != null && restData?.latitude != null && restData?.longitude != null) ? CoordinatesSystemType.Gps : null,
           date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), 'UTC'),
           inventaire_associe: {
             deleteMany: {
@@ -436,6 +437,7 @@ export const upsertInventaire = async (
       return prisma.inventaire.create({
         data: {
           ...restData,
+          coordinates_system: (restData?.altitude != null && restData?.latitude != null && restData?.longitude != null) ? CoordinatesSystemType.Gps : null,
           date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), 'UTC'),
           date_creation: new Date(),
           inventaire_associe: {
