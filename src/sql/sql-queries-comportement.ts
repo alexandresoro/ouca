@@ -11,14 +11,3 @@ export const queryToCreateComportementTable = async (): Promise<void> => {
     " UNIQUE KEY `unique_libelle` (libelle)" +
     " )");
 }
-
-export const queryToFindComportementsIdsByDonneeId = async (
-  donneeId: number
-): Promise<{ comportementId: number }[]> => {
-  return query<{ comportementId: number }[]>(
-    "SELECT distinct comportement_id as comportementId" +
-    " FROM donnee_comportement" +
-    ` WHERE donnee_id=${donneeId}`
-  );
-};
-

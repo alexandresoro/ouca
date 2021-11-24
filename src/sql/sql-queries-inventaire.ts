@@ -1,7 +1,5 @@
-import { Coordinates } from "../model/types/coordinates.object";
-import { Inventaire } from "../model/types/inventaire.object";
 import { InventaireCompleteWithIds, InventaireDbWithJoins } from "../objects/db/inventaire-db.object";
-import { getFirstResult, query } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 export const queryToCreateInventaireTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS inventaire (" +
@@ -43,12 +41,6 @@ export const queryToCreateInventaireMeteoTable = async (): Promise<void> => {
     " )");
 }
 
-export const queryToFindInventaireIdById = async (
-  id: number
-): Promise<{ id: number }[]> => {
-  return query<{ id: number }[]>(`SELECT id FROM inventaire WHERE id=${id}`);
-};
-
 export const queryToGetAllInventairesWithIds = async (): Promise<InventaireCompleteWithIds[]> => {
   const inventairesWithJoins = await query<InventaireDbWithJoins[]>("SELECT i.id,i.observateur_id,i.date,i.heure,i.duree,i.lieudit_id,i.altitude,i.longitude,i.latitude,i.coordinates_system,i.temperature,i.date_creation" +
     ',GROUP_CONCAT(Distinct meteo_id SEPARATOR ",") as meteos_ids,GROUP_CONCAT(Distinct a.observateur_id SEPARATOR ",") as associes_ids' +
@@ -69,59 +61,4 @@ export const queryToGetAllInventairesWithIds = async (): Promise<InventaireCompl
 
 
   return inventairesProper;
-};
-
-/**
- * Note: Coordinates longitude and latitude are excluded from this search
- * because they can be in different coordinates systems
- */
-export const queryToFindInventairesIdsByAllAttributes = async (
-  inventaire: Inventaire
-): Promise<{ id: number }[]> => {
-  let queryStr: string =
-    "SELECT i.id as id" +
-    " FROM inventaire i" +
-    ` WHERE i.observateur_id=${inventaire.observateurId}` +
-    ` AND i.date=STR_TO_DATE('${inventaire.date}', '%Y-%m-%d')` +
-    ` AND i.lieudit_id=${inventaire.lieuditId}`;
-
-  queryStr =
-    queryStr +
-    " AND i.heure" +
-    (!inventaire.heure ? " is null" : `="${inventaire.heure}"`);
-
-  queryStr =
-    queryStr +
-    " AND i.duree" +
-    (!inventaire.duree ? " is null" : `="${inventaire.duree}"`);
-
-  queryStr =
-    queryStr +
-    " AND i.altitude" +
-    ((inventaire.customizedAltitude == null)
-      ? " is null"
-      : `=${inventaire.customizedAltitude}`);
-
-  queryStr =
-    queryStr +
-    " AND i.temperature" +
-    ((inventaire.temperature == null)
-      ? " is null"
-      : `=${inventaire.temperature}`);
-
-  return query<{ id: number }[]>(queryStr);
-};
-
-export const queryToFindCoordinatesByInventaireId = async (
-  inventaireId: number
-): Promise<
-  Coordinates
-> => {
-  const queryStr: string =
-    "SELECT longitude, latitude, coordinates_system as system" +
-    " FROM inventaire" +
-    ` WHERE id=${inventaireId}`;
-
-  const results = await query<Coordinates[]>(queryStr);
-  return getFirstResult(results);
 };

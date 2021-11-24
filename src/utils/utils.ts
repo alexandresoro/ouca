@@ -9,29 +9,6 @@ export const areSetsContainingSameValues = <T>(
   return [...firstArray].every(value => secondArray.has(value));
 };
 
-export const areArraysContainingSameValues = <T>(
-  firstArray: T[],
-  secondArray: T[]
-): boolean => {
-  if (firstArray.length !== secondArray.length) return false;
-  const allUniqueValues = new Set([...firstArray, ...secondArray]);
-  for (const value of allUniqueValues) {
-    const firstArrayCount = firstArray.filter(e => e === value).length;
-    const secondArrayCount = secondArray.filter(e => e === value).length;
-    if (firstArrayCount !== secondArrayCount) return false;
-  }
-  return true;
-};
-
-export const getArrayFromObjects = <T extends { [key: string]: unknown }, U>(
-  objects: T[],
-  attributeName: string
-): U[] => {
-  return objects.map((object) => {
-    return object[attributeName] as U;
-  });
-};
-
 export const isIdInListIds = (ids: Set<number>, idToFind: number): boolean => {
   return !![...ids].find((id) => {
     return id === idToFind;

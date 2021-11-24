@@ -10,14 +10,3 @@ export const queryToCreateMilieuTable = async (): Promise<void> => {
     " UNIQUE KEY `unique_libelle` (libelle)" +
     " )");
 }
-
-export const queryToFindMilieuxIdsByDonneeId = async (
-  donneeId: number
-): Promise<{ milieuId: number }[]> => {
-  return query<{ milieuId: number }[]>(
-    "SELECT distinct milieu_id as milieuId" +
-    " FROM donnee_milieu" +
-    ` WHERE donnee_id=${donneeId}`
-  );
-};
-

@@ -18,7 +18,7 @@ import { queryToCreateMilieuTable } from "../../sql/sql-queries-milieu";
 import { queryToCreateObservateurTable } from "../../sql/sql-queries-observateur";
 import { queryToCreateSettingsTable } from "../../sql/sql-queries-settings";
 import { queryToCreateSexeTable } from "../../sql/sql-queries-sexe";
-import { queryToDeleteAnEntityById, queryToFindAllEntities, queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck, queryToSaveEntity, queryToSaveEntityNoCheck } from "../../sql/sql-queries-utils";
+import { queryToFindAllEntities, queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck } from "../../sql/sql-queries-utils";
 import { queryToCreateVersionTable } from "../../sql/sql-queries-version";
 
 export const createAndInitializeAllTables = async (): Promise<void> => {
@@ -51,25 +51,6 @@ export const findAllEntities = async <T extends EntiteSimple>(
   return queryToFindAllEntities<T>(tableName);
 };
 
-export const persistEntity = async <T extends EntityDb & { [key: string]: unknown }>(
-  tableName: string,
-  entityToSave: EntiteSimple | T,
-  mapping: Record<string, string>
-): Promise<SqlSaveResponse> => {
-  const sqlResponse = await queryToSaveEntity(tableName, entityToSave, mapping);
-
-  return sqlResponse;
-};
-
-export const persistEntityNoCheck = async <T extends EntityDb>(
-  tableName: string,
-  entityToSave: T,
-): Promise<SqlSaveResponse> => {
-  const sqlResponse = await queryToSaveEntityNoCheck(tableName, entityToSave);
-
-  return sqlResponse;
-};
-
 export const insertMultipleEntities = async <T extends EntityDb & { [key: string]: unknown }>(
   tableName: string,
   entitiesToSave: (EntiteSimple | T)[],
@@ -99,15 +80,6 @@ export const insertMultipleEntitiesAndReturnIdsNoCheck = async <T extends Omit<E
   const insertedIds = await queryToInsertMultipleEntitiesAndReturnIdsNoCheck(tableName, entitiesToSave);
   return insertedIds;
 
-};
-
-export const deleteEntityById = async (
-  entityName: string,
-  id: number
-): Promise<SqlSaveResponse> => {
-  const sqlResponse = await queryToDeleteAnEntityById(entityName, id);
-
-  return sqlResponse;
 };
 
 export const clearAllTables = async (): Promise<void> => {

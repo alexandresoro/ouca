@@ -8,13 +8,3 @@ export const queryToCreateMeteoTable = async (): Promise<void> => {
     " UNIQUE KEY `unique_libelle` (libelle)" +
     " )");
 }
-
-export const queryToFindMeteosByInventaireId = async (
-  inventaireId: number
-): Promise<{ meteoId: number }[]> => {
-  return query<{ meteoId: number }[]>(
-    "SELECT distinct meteo_id as meteoId" +
-    " FROM inventaire_meteo" +
-    ` WHERE inventaire_id=${inventaireId}`
-  );
-};

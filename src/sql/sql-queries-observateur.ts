@@ -8,13 +8,3 @@ export const queryToCreateObservateurTable = async (): Promise<void> => {
     " UNIQUE KEY `unique_libelle` (libelle)" +
     " )");
 }
-
-export const queryToFindAssociesByInventaireId = async (
-  inventaireId: number
-): Promise<{ associeId: number }[]> => {
-  return query<{ associeId: number }[]>(
-    "SELECT distinct observateur_id as associeId" +
-    " FROM inventaire_associe" +
-    ` WHERE inventaire_id=${inventaireId}`
-  );
-};

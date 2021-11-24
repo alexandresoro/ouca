@@ -1,24 +1,15 @@
-import { CoordinatesSystem, Inventaire as InventaireEntity, Meteo, Observateur } from "@prisma/client";
+import { CoordinatesSystem, Inventaire, Meteo, Observateur } from "@prisma/client";
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
-import { areSameCoordinates } from "../../model/coordinates-system/coordinates-helper";
 import { CoordinatesSystemType, InputInventaire, MutationUpsertInventaireArgs, UpsertInventaireFailureReason } from "../../model/graphql";
-import { Coordinates } from "../../model/types/coordinates.object";
-import { Inventaire } from "../../model/types/inventaire.object";
-import { InventaireCompleteWithIds, InventaireDb } from "../../objects/db/inventaire-db.object";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { buildInventaireDbFromInventaire, buildInventaireFromInventaireDb } from "../../sql/entities-mapping/inventaire-mapping";
+import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
 import prisma from "../../sql/prisma";
-import { queryToFindCoordinatesByInventaireId, queryToFindInventaireIdById, queryToFindInventairesIdsByAllAttributes, queryToGetAllInventairesWithIds } from "../../sql/sql-queries-inventaire";
-import { queryToFindMeteosByInventaireId } from "../../sql/sql-queries-meteo";
-import { queryToFindAssociesByInventaireId } from "../../sql/sql-queries-observateur";
-import { queryToDeleteAnEntityByAttribute, queryToFindOneById, queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
-import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, INVENTAIRE_ID, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../../utils/constants";
-import { mapAssociesIds, mapMeteosIds } from "../../utils/mapping-utils";
-import { areArraysContainingSameValues } from "../../utils/utils";
-import { deleteEntityById, insertMultipleEntitiesAndReturnIdsNoCheck, persistEntityNoCheck } from "./entity-service";
+import { queryToGetAllInventairesWithIds } from "../../sql/sql-queries-inventaire";
+import { queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
+import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../../utils/constants";
+import { insertMultipleEntitiesAndReturnIdsNoCheck } from "./entity-service";
 
-export type InventaireWithRelations = Omit<InventaireEntity, 'date' | 'latitude' | 'longitude' | 'altitude' | 'coordinates_system'> & {
+export type InventaireWithRelations = Omit<Inventaire, 'date' | 'latitude' | 'longitude' | 'altitude' | 'coordinates_system'> & {
   observateur: Observateur
   customizedCoordinates?: {
     altitude: number,
@@ -84,7 +75,7 @@ export const normalizeInventaire = <
 }
 
 const normalizeInventaireComplete = <
-  T extends InventaireEntity & InventaireRelatedTablesFields & InventaireResolvedFields
+  T extends Inventaire & InventaireRelatedTablesFields & InventaireResolvedFields
 >(inventaire: T): InventaireWithRelations => {
 
   if (inventaire == null) {
@@ -124,7 +115,7 @@ export const findInventaire = async (
   }).then(normalizeInventaireComplete);
 };
 
-export const findInventaireOfDonneeId = async (donneeId: number): Promise<InventaireEntity | null> => {
+export const findInventaireOfDonneeId = async (donneeId: number): Promise<Inventaire | null> => {
   return prisma.donnee.findUnique({
     where: {
       id: donneeId
@@ -132,103 +123,9 @@ export const findInventaireOfDonneeId = async (donneeId: number): Promise<Invent
   }).inventaire();
 };
 
-
-const deleteAssociesAndMeteosByInventaireId = async (
-  inventaireId: number
-): Promise<void> => {
-  if (inventaireId) {
-    await Promise.all([
-      queryToDeleteAnEntityByAttribute(
-        TABLE_INVENTAIRE_ASSOCIE,
-        INVENTAIRE_ID,
-        inventaireId
-      ),
-      queryToDeleteAnEntityByAttribute(
-        TABLE_INVENTAIRE_METEO,
-        INVENTAIRE_ID,
-        inventaireId
-      )
-    ]);
-  }
-};
-
-const saveInventaireMeteos = async (
-  inventaireId: number,
-  meteosIds: number[]
-): Promise<void> => {
-  if (meteosIds.length > 0 && inventaireId) {
-    await queryToSaveListOfEntities(
-      TABLE_INVENTAIRE_METEO,
-      [[inventaireId, meteosIds]]
-    );
-  }
-};
-
-const saveInventaireAssocies = async (
-  inventaireId: number,
-  associesIds: number[]
-): Promise<void> => {
-  if (associesIds.length > 0 && inventaireId) {
-    await queryToSaveListOfEntities(
-      TABLE_INVENTAIRE_ASSOCIE,
-      [[inventaireId, associesIds]]
-    );
-  }
-};
-
-const findCoordinatesByInventaireId = async (
-  id: number
-): Promise<Coordinates> => {
-  const coordinatesDb = await queryToFindCoordinatesByInventaireId(id);
-  return coordinatesDb.longitude != null ? coordinatesDb : null;
-};
-
-export const findAssociesIdsByInventaireId = async (
-  inventaireId: number
-): Promise<number[]> => {
-  const associesDb = await queryToFindAssociesByInventaireId(inventaireId);
-  return mapAssociesIds(associesDb);
-};
-
-export const findMeteosIdsByInventaireId = async (
-  inventaireId: number
-): Promise<number[]> => {
-  const meteosDb = await queryToFindMeteosByInventaireId(inventaireId);
-  return mapMeteosIds(meteosDb);
-};
-
-export const findExistingInventaireId = async (
-  inventaire: Inventaire
-): Promise<number> => {
-  const inventaireIds = await queryToFindInventairesIdsByAllAttributes(
-    inventaire
-  );
-
-  for (const inventaireId of inventaireIds) {
-    const id = inventaireId.id;
-    // Compare the observateurs associes, the meteos and the coordinates
-    const [associesIds, meteosIds, coordinates] = await Promise.all([
-      findAssociesIdsByInventaireId(id),
-      findMeteosIdsByInventaireId(id),
-      findCoordinatesByInventaireId(id)
-    ]);
-
-    if (
-      id !== inventaire.id &&
-      areSameCoordinates(coordinates, inventaire.coordinates) &&
-      areArraysContainingSameValues(associesIds, inventaire.associesIds) &&
-      areArraysContainingSameValues(meteosIds, inventaire.meteosIds)
-    ) {
-      return id;
-    }
-  }
-
-  return null;
-};
-
 export const findExistingInventaire = async (
   inventaire: InputInventaire
-): Promise<InventaireEntity | null> => {
+): Promise<Inventaire | null> => {
 
   const inventaireCandidates = await prisma.inventaire.findMany({
     where: {
@@ -278,59 +175,9 @@ export const findExistingInventaire = async (
   })?.[0] ?? null;
 };
 
-export const deleteInventaireById = async (
-  id: number
-): Promise<SqlSaveResponse> => {
-  return await deleteEntityById(TABLE_INVENTAIRE, id);
-};
-
-export const findInventaireIdById = async (id: number): Promise<number> => {
-  const ids = await queryToFindInventaireIdById(id);
-  return ids && ids[0]?.id ? ids[0].id : null;
-};
-
-export const findInventaireById = async (
-  inventaireId: number
-): Promise<Inventaire> => {
-  const [inventaireDb, associesIds, meteosIds] = await Promise.all([
-    queryToFindOneById<InventaireDb>(TABLE_INVENTAIRE, inventaireId),
-    findAssociesIdsByInventaireId(inventaireId),
-    findMeteosIdsByInventaireId(inventaireId)
-  ]);
-
-  if (!inventaireDb) {
-    return null;
-  }
-
-  return buildInventaireFromInventaireDb(
-    inventaireDb,
-    associesIds,
-    meteosIds
-  );
-};
-
 export const findAllInventairesWithIds = async (): Promise<InventaireCompleteWithIds[]> => {
   return queryToGetAllInventairesWithIds();
 }
-
-const getCoordinatesToPersist = async (
-  inventaire: Inventaire
-): Promise<Coordinates> => {
-  const newCoordinates = inventaire.coordinates;
-
-  let coordinatesToPersist = newCoordinates;
-
-  if (inventaire.id) {
-    // We check if the coordinates of the lieudit are the same as the one stored in database
-    const oldInventaire = await findInventaireById(inventaire.id);
-
-    if (areSameCoordinates(oldInventaire?.coordinates, newCoordinates)) {
-      coordinatesToPersist = oldInventaire.coordinates;
-    }
-  }
-
-  return coordinatesToPersist;
-};
 
 export const upsertInventaire = async (
   args: MutationUpsertInventaireArgs
@@ -452,33 +299,6 @@ export const upsertInventaire = async (
     }
 
   }
-};
-
-export const persistInventaire = async (
-  inventaire: Inventaire
-): Promise<SqlSaveResponse> => {
-  const coordinates = inventaire.coordinates
-    ? await getCoordinatesToPersist(inventaire)
-    : null;
-  const inventaireDb = buildInventaireDbFromInventaire(inventaire, coordinates);
-
-  // Delete the current associes and meteos to insert later the updated ones
-  await deleteAssociesAndMeteosByInventaireId(inventaire.id);
-
-  // Save the inventaire
-  const inventaireResult = await persistEntityNoCheck(TABLE_INVENTAIRE, inventaireDb);
-
-  // Get the inventaire ID
-  // If it is an update we take the existing ID else we take the inserted ID
-  const inventaireId: number = inventaire.id
-    ? inventaire.id
-    : inventaireResult.insertId;
-
-  // Save the observateurs associes and the meteos
-  await saveInventaireAssocies(inventaireId, inventaire.associesIds);
-  await saveInventaireMeteos(inventaireId, inventaire.meteosIds);
-
-  return inventaireResult;
 };
 
 export const insertInventaires = async (

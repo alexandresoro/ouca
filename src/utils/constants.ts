@@ -1,4 +1,3 @@
-export const ID = "id";
 export const DONNEE_ID = "donnee_id";
 export const INVENTAIRE_ID = "inventaire_id";
 export const METEO_ID = "meteo_id";

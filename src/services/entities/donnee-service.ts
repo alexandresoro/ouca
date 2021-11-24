@@ -2,18 +2,13 @@ import { Age, Classe, Commune, Comportement, Departement, Donnee as DonneeEntity
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { AgeWithSpecimensCount, DonneeNavigationData, InputDonnee, MutationUpsertDonneeArgs, QueryPaginatedSearchDonneesArgs, SearchDonneeCriteria, SexeWithSpecimensCount, SortOrder } from "../../model/graphql";
-import { Donnee as DonneeObj } from "../../model/types/donnee.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
-import { queryToFindComportementsIdsByDonneeId } from "../../sql/sql-queries-comportement";
-import { queryToFindDonneeIdsByAllAttributes, queryToGetAllDonneesWithIds, queryToUpdateDonneesInventaireId } from "../../sql/sql-queries-donnee";
-import { queryToFindMilieuxIdsByDonneeId } from "../../sql/sql-queries-milieu";
-import { createKeyValueMapWithSameName, queryToDeleteAnEntityByAttribute, queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
-import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, DONNEE_ID, ID, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../../utils/constants";
-import { areArraysContainingSameValues, getArrayFromObjects } from "../../utils/utils";
+import { queryToGetAllDonneesWithIds } from "../../sql/sql-queries-donnee";
+import { queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
+import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../../utils/constants";
 import { getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntitiesAndReturnIdsNoCheck, persistEntity } from "./entity-service";
+import { insertMultipleEntitiesAndReturnIdsNoCheck } from "./entity-service";
 import { normalizeInventaire } from "./inventaire-service";
 
 export type DonneeWithRelations = DonneeEntity & {
@@ -149,22 +144,6 @@ export const buildSearchDonneeCriteria = (searchCriteria: SearchDonneeCriteria):
       contains: searchCriteria?.commentaire ?? undefined
     }
   } : undefined
-}
-
-const DB_SAVE_MAPPING_DONNEE = {
-  ...createKeyValueMapWithSameName([
-    "nombre",
-    "distance",
-    "regroupement",
-    "commentaire"
-  ]),
-  inventaire_id: "inventaireId",
-  espece_id: "especeId",
-  age_id: "ageId",
-  sexe_id: "sexeId",
-  estimation_nombre_id: "estimationNombreId",
-  estimation_distance_id: "estimationDistanceId",
-  date_creation: "dateCreation"
 }
 
 const COMMON_DONNEE_INCLUDE = {
@@ -453,73 +432,6 @@ export const findDonneeNavigationData = async (
   }
 };
 
-export const persistDonnee = async (
-  donneeToSave: DonneeObj
-): Promise<SqlSaveResponse> => {
-  if (donneeToSave.id) {
-    // It is an update: we delete the current comportements
-    // and milieux to insert later the updated ones
-    await Promise.all([
-      queryToDeleteAnEntityByAttribute(
-        TABLE_DONNEE_COMPORTEMENT,
-        DONNEE_ID,
-        donneeToSave.id
-      ),
-      queryToDeleteAnEntityByAttribute(
-        TABLE_DONNEE_MILIEU,
-        DONNEE_ID,
-        donneeToSave.id
-      )
-    ]);
-  }
-
-  const saveDonneeResponse: SqlSaveResponse = await persistEntity(
-    TABLE_DONNEE,
-    {
-      ...donneeToSave,
-      dateCreation: format(new Date(), DATE_WITH_TIME_PATTERN)
-    },
-    DB_SAVE_MAPPING_DONNEE
-  );
-
-  // If it is an update we take the existing ID else we take the inserted ID
-  const savedDonneeId: number = donneeToSave.id
-    ? donneeToSave.id
-    : saveDonneeResponse.insertId;
-
-  // Save the comportements
-  if (donneeToSave.comportementsIds.length) {
-    await queryToSaveListOfEntities(
-      TABLE_DONNEE_COMPORTEMENT,
-      [[savedDonneeId, donneeToSave.comportementsIds]]
-    );
-  }
-
-  // Save the milieux
-  if (donneeToSave.milieuxIds.length) {
-    await queryToSaveListOfEntities(
-      TABLE_DONNEE_MILIEU,
-      [[savedDonneeId, donneeToSave.milieuxIds]]
-    );
-  }
-
-  return {
-    affectedRows: saveDonneeResponse.affectedRows,
-    insertId: savedDonneeId,
-    warningStatus: saveDonneeResponse.warningStatus
-  };
-};
-
-export const updateInventaireIdForDonnees = async (
-  oldInventaireId: number,
-  newInventaireId: number
-): Promise<SqlSaveResponse> => {
-  return await queryToUpdateDonneesInventaireId(
-    oldInventaireId,
-    newInventaireId
-  );
-};
-
 export const insertDonnees = async (
   donnees: DonneeCompleteWithIds[]
 ): Promise<{ id: number }[]> => {
@@ -557,43 +469,6 @@ export const insertDonnees = async (
   }
 
   return insertedIds;
-};
-
-
-export const findExistingDonneeId = async (donnee: DonneeObj): Promise<number> => {
-  const response = await queryToFindDonneeIdsByAllAttributes(donnee);
-
-  const eligibleDonneeIds = getArrayFromObjects<{ id: number }, number>(
-    response,
-    ID
-  );
-
-  for (const id of eligibleDonneeIds) {
-    // Compare the comportements and the milieux
-    const [comportements, milieux] = await Promise.all([
-      queryToFindComportementsIdsByDonneeId(id),
-      queryToFindMilieuxIdsByDonneeId(id)
-    ]);
-
-    const comportementsIds = getArrayFromObjects(
-      comportements,
-      "comportementId"
-    );
-    const milieuxIds = getArrayFromObjects(milieux, "milieuId");
-
-    if (
-      id !== donnee.id &&
-      areArraysContainingSameValues(
-        comportementsIds,
-        donnee.comportementsIds
-      ) &&
-      areArraysContainingSameValues(milieuxIds, donnee.milieuxIds)
-    ) {
-      return id;
-    }
-  }
-
-  return null;
 };
 
 export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEntity | null> => {

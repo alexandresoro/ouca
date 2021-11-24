@@ -1,7 +1,5 @@
-import { Donnee } from "../model/types/donnee.object";
 import { DonneeCompleteWithIds, DonneeDbWithJoins } from "../objects/db/donnee-db.type";
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
-import { prepareStringForSqlQuery, query } from "./sql-queries-utils";
+import { query } from "./sql-queries-utils";
 
 export const queryToCreateDonneeTable = async (): Promise<void> => {
   return query<void>("CREATE TABLE IF NOT EXISTS donnee (" +
@@ -67,54 +65,4 @@ export const queryToGetAllDonneesWithIds = async (): Promise<DonneeCompleteWithI
 
 
   return donneesProper;
-};
-
-export const queryToUpdateDonneesInventaireId = async (
-  oldInventaireId: number,
-  newInventaireId: number
-): Promise<SqlSaveResponse> => {
-  return query<SqlSaveResponse>(
-    `UPDATE donnee SET inventaire_id=${newInventaireId} WHERE inventaire_id=${oldInventaireId}`
-  );
-};
-
-export const queryToFindDonneeIdsByAllAttributes = async (
-  donnee: Donnee
-): Promise<{ id: number }[]> => {
-  let queryStr: string =
-    "SELECT d.id as id FROM donnee d" +
-    ` WHERE d.inventaire_id=${donnee.inventaireId}` +
-    ` AND d.espece_id=${donnee.especeId}` +
-    ` AND d.sexe_id=${donnee.sexeId}` +
-    ` AND d.age_id=${donnee.ageId}` +
-    ` AND d.estimation_nombre_id=${donnee.estimationNombreId}`;
-
-  queryStr =
-    queryStr +
-    " AND d.nombre" +
-    (!donnee.nombre ? " is null" : `=${donnee.nombre}`);
-
-  queryStr =
-    queryStr +
-    " AND d.estimation_distance_id" +
-    (!donnee.estimationDistanceId
-      ? " is null"
-      : `=${donnee.estimationDistanceId}`);
-
-  queryStr =
-    queryStr +
-    " AND d.distance" +
-    ((donnee.distance == null) ? " is null" : `=${donnee.distance}`);
-
-  queryStr =
-    queryStr +
-    " AND d.regroupement" +
-    (!donnee.regroupement ? " is null" : `=${donnee.regroupement}`);
-
-  queryStr =
-    queryStr +
-    " AND d.commentaire" +
-    (!donnee.commentaire ? " is null" : `="${prepareStringForSqlQuery(donnee.commentaire)}"`);
-
-  return query<{ id: number }[]>(queryStr);
 };

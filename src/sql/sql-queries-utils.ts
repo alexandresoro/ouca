@@ -70,14 +70,6 @@ export const queryParametersToFindAllEntities = (attributeForOrdering?: string, 
   return {};
 }
 
-export const queryToFindOneById = async <T>(
-  tableName: string,
-  id: number
-): Promise<T> => {
-  const results = await query<T[]>(`SELECT * FROM ${tableName} WHERE id=${id}`);
-  return getFirstResult<T>(results);
-};
-
 const getCorrespondingDbValue = (value: unknown): string => {
   // Set the proper value in DB format
   let valueDb: string;
@@ -122,50 +114,6 @@ const processEntityToSaveNoCheck = <T extends Omit<EntityDb, "id">>(
   });
 
 }
-
-const queryToSaveEntityCommon = <T extends EntityDb>(tableName: string,
-  entityToSave: T,
-  dbEntityToSaveAsArray: string[][]): Promise<SqlSaveResponse> => {
-  let queryStr: string;
-  if (!entityToSave.id) {
-    const columnNames = dbEntityToSaveAsArray.map((elt) => {
-      return elt[0];
-    }).join(",");
-
-    const values = dbEntityToSaveAsArray.map((elt) => {
-      return elt[1];
-    }).join(",");
-
-    queryStr = `INSERT INTO ${tableName} (${columnNames}) VALUES (${values})`;
-  } else {
-    const updates = dbEntityToSaveAsArray.filter(([key]) => {
-      return key !== "id";
-    }).map((elt) => {
-      return `${elt[0]}=${elt[1]}`;
-    }).join(",");
-
-    queryStr = `UPDATE ${tableName} SET ${updates} WHERE id=${entityToSave.id}`;
-  }
-
-  return query<SqlSaveResponse>(queryStr);
-}
-
-export const queryToSaveEntity = async <T extends EntityDb & { [key: string]: unknown }>(
-  tableName: string,
-  entityToSave: T,
-  mapping: Record<string, string>
-): Promise<SqlSaveResponse> => {
-  const dbEntityToSaveAsArray = processEntityToSave(entityToSave, mapping);
-  return queryToSaveEntityCommon(tableName, entityToSave, dbEntityToSaveAsArray);
-};
-
-export const queryToSaveEntityNoCheck = async <T extends EntityDb>(
-  tableName: string,
-  entityToSave: T,
-): Promise<SqlSaveResponse> => {
-  const dbEntityToSaveAsArray = processEntityToSaveNoCheck(entityToSave);
-  return queryToSaveEntityCommon(tableName, entityToSave, dbEntityToSaveAsArray);
-};
 
 const getColumnNamesAndInsertionValuesFromEntitiesCommon = (dbEntitiesToSaveAsArray: string[][][]): { columnNames: string, allValues: string } => {
   const columnNames = dbEntitiesToSaveAsArray[0].map((elt) => {
@@ -256,25 +204,6 @@ export const queryToSaveListOfEntities = async (
   return query<SqlSaveResponse>(queryStr);
 };
 
-export const queryToDeleteAnEntityById = async (
-  tableName: string,
-  id: number
-): Promise<SqlSaveResponse> => {
-  return query<SqlSaveResponse>(
-    `DELETE FROM ${tableName} WHERE id=${id}`
-  );
-};
-
-export const queryToDeleteAnEntityByAttribute = async (
-  tableName: string,
-  attributeName: string,
-  attributeValue: string | number
-): Promise<SqlSaveResponse> => {
-  return query<SqlSaveResponse>(
-    `DELETE FROM ${tableName} WHERE ${attributeName}="${attributeValue}"`
-  );
-};
-
 export const queryToCheckIfTableExists = async (tableName: string): Promise<boolean> => {
   const queryStr = `SHOW TABLES LIKE '${tableName}'`;
   const results = await query<string[]>(queryStr);
@@ -283,8 +212,4 @@ export const queryToCheckIfTableExists = async (tableName: string): Promise<bool
 
 export const prepareStringForSqlQuery = (str: string): string => {
   return str.trim().replace(/"/g, '\\"');
-}
-
-export const getFirstResult = <T>(results: T[]): T | null => {
-  return results && results[0] ? results[0] : null;
 }
