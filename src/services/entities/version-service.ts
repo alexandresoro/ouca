@@ -5,9 +5,9 @@ import { queryToUpdateVersion } from "../../sql/sql-queries-version";
 import { APPLICATION_DATA_VERSION } from "../database-migration/database-migration.service";
 
 export const findVersion = async (): Promise<Version> => {
-  const { version } = await prisma.version.findFirst();
+  const versionDb = await prisma.version.findFirst();
   return {
-    database: version,
+    database: versionDb?.version ?? 0,
     application: APPLICATION_DATA_VERSION
   }
 };
