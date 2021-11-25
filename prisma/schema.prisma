@@ -258,7 +258,6 @@ enum CoordinatesSystem {
 
 model Settings {
   id                        Int               @id @default(autoincrement()) @db.UnsignedSmallInt
-  user_id                   Int               @unique @db.UnsignedSmallInt
   defaultObservateurId      Int?              @map("default_observateur_id") @db.UnsignedSmallInt
   defaultDepartementId      Int?              @map("default_departement_id") @db.UnsignedSmallInt
   defaultAgeId              Int?              @map("default_age_id") @db.UnsignedSmallInt
@@ -275,7 +274,6 @@ model Settings {
   defaultEstimationNombre   EstimationNombre? @relation(fields: [defaultEstimationNombreId], references: [id])
   defaultObservateur        Observateur?      @relation(fields: [defaultObservateurId], references: [id])
   defaultSexe               Sexe?             @relation(fields: [defaultSexeId], references: [id])
-  user                      User              @relation(fields: [user_id], references: [id])
 
 
   @@index([defaultAgeId], name: "fk_settings_age_id")
@@ -293,15 +291,6 @@ model Sexe {
   settings Settings[]
 
   @@map("sexe")
-}
-
-model User {
-  id        Int       @id @default(autoincrement()) @db.UnsignedSmallInt
-  firstname String    @db.VarChar(100)
-  lastname  String    @db.VarChar(100)
-  settings  Settings?
-
-  @@map("user")
 }
 
 model Version {

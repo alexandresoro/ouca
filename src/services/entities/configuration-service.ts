@@ -40,8 +40,7 @@ const buildSettingsDbFromInputSettings = (
     isMeteoDisplayed: appConfiguration.isMeteoDisplayed,
     isDistanceDisplayed: appConfiguration.isDistanceDisplayed,
     isRegroupementDisplayed: appConfiguration.isRegroupementDisplayed,
-    coordinatesSystem: appConfiguration.coordinatesSystem,
-    user_id: undefined // TODO handle multi users someday
+    coordinatesSystem: appConfiguration.coordinatesSystem
   };
 };
 
