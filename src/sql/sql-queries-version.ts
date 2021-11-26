@@ -1,4 +1,3 @@
-import { SqlSaveResponse } from "../objects/sql-save-response.object";
 import { query } from "./sql-queries-utils";
 
 export const queryToCreateVersionTable = async (): Promise<void> => {
@@ -9,8 +8,3 @@ export const queryToCreateVersionTable = async (): Promise<void> => {
 
   await query<void>("INSERT INTO version VALUES (0)");
 }
-
-export const queryToUpdateVersion = async (version: number): Promise<SqlSaveResponse> => {
-  const queryStr = `UPDATE version SET version=${version}`;
-  return query<SqlSaveResponse>(queryStr);
-};

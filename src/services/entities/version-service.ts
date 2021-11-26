@@ -1,7 +1,5 @@
 import { Version } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
-import { queryToUpdateVersion } from "../../sql/sql-queries-version";
 import { APPLICATION_DATA_VERSION } from "../database-migration/database-migration.service";
 
 export const findVersion = async (): Promise<Version> => {
@@ -12,6 +10,21 @@ export const findVersion = async (): Promise<Version> => {
   }
 };
 
-export const updateVersion = async (version: number): Promise<SqlSaveResponse> => {
-  return queryToUpdateVersion(version);
+export const updateVersion = async (version: number): Promise<void> => {
+
+  const existingVersion = await prisma.version.findFirst();
+
+  if (!existingVersion) {
+    await prisma.version.create({
+      data: {
+        version: 0
+      }
+    })
+  }
+
+  await prisma.version.updateMany({
+    data: {
+      version
+    }
+  });
 };
