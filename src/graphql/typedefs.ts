@@ -146,13 +146,13 @@ export default gql`
     isMeteoDisplayed: Boolean!
     isDistanceDisplayed: Boolean!
     isRegroupementDisplayed: Boolean!
-    defaultDepartement: Departement!
-    defaultObservateur: Observateur!
+    defaultDepartement: Departement
+    defaultObservateur: Observateur
     coordinatesSystem: CoordinatesSystemType!
-    defaultEstimationNombre: EstimationNombre!
-    defaultNombre: Int!
-    defaultSexe: Sexe!
-    defaultAge: Age!
+    defaultEstimationNombre: EstimationNombre
+    defaultNombre: Int
+    defaultSexe: Sexe
+    defaultAge: Age
   }
 
   enum Nicheur {
