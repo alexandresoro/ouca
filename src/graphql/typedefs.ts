@@ -717,6 +717,7 @@ export default gql`
     upsertObservateur(id: Int, data: InputObservateur!): Observateur
     upsertSexe(id: Int, data: InputSexe!): Sexe
     updateSettings(appConfiguration: InputSettings): Settings
+    initializeDatabase: Boolean
     updateDatabase: Boolean
   }
 

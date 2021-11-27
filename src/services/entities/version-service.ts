@@ -5,7 +5,7 @@ import { APPLICATION_DATA_VERSION } from "../database-migration/database-migrati
 export const findVersion = async (): Promise<Version> => {
   const versionDb = await prisma.version.findFirst();
   return {
-    database: versionDb?.version ?? 0,
+    database: versionDb?.version ?? -1,
     application: APPLICATION_DATA_VERSION
   }
 };

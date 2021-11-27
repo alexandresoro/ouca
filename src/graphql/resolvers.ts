@@ -20,6 +20,7 @@ import { deleteObservateur, findObservateur, findObservateurs, findObservateursB
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
 import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateDonneesExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
+import { seedDatabase } from "../sql/seed";
 
 const resolvers: Resolvers = {
   Query: {
@@ -351,6 +352,10 @@ const resolvers: Resolvers = {
     },
     updateSettings: async (_source, { appConfiguration }): Promise<Settings> => {
       return persistUserSettings(appConfiguration);
+    },
+    initializeDatabase: async (): Promise<boolean> => {
+      await seedDatabase();
+      return true;
     },
     updateDatabase: async (): Promise<boolean> => {
       await executeDatabaseMigration();
