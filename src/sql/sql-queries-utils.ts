@@ -204,12 +204,6 @@ export const queryToSaveListOfEntities = async (
   return query<SqlSaveResponse>(queryStr);
 };
 
-export const queryToCheckIfTableExists = async (tableName: string): Promise<boolean> => {
-  const queryStr = `SHOW TABLES LIKE '${tableName}'`;
-  const results = await query<string[]>(queryStr);
-  return results?.length === 1;
-}
-
 export const prepareStringForSqlQuery = (str: string): string => {
   return str.trim().replace(/"/g, '\\"');
 }

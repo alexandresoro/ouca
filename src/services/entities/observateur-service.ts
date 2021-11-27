@@ -2,7 +2,7 @@ import { Observateur as ObservateurEntity, Prisma } from ".prisma/client";
 import { FindParams, MutationUpsertObservateurArgs, Observateur, ObservateursPaginatedResult, ObservateurWithCounts, QueryPaginatedObservateursArgs } from "../../model/graphql";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities, queryToCheckIfTableExists } from "../../sql/sql-queries-utils";
+import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE, TABLE_OBSERVATEUR } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
@@ -10,10 +10,6 @@ import { insertMultipleEntities } from "./entity-service";
 
 
 const DB_SAVE_MAPPING_OBSERVATEUR = createKeyValueMapWithSameName("libelle");
-
-export const checkIfTableObservateurExists = async (): Promise<boolean> => {
-  return queryToCheckIfTableExists(TABLE_OBSERVATEUR);
-}
 
 export const findObservateur = async (id: number): Promise<ObservateurEntity | null> => {
   return prisma.observateur.findUnique({
