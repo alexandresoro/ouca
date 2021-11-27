@@ -1170,12 +1170,12 @@ export type Settings = {
   __typename?: 'Settings';
   areAssociesDisplayed: Scalars['Boolean'];
   coordinatesSystem: CoordinatesSystemType;
-  defaultAge: Age;
-  defaultDepartement: Departement;
-  defaultEstimationNombre: EstimationNombre;
-  defaultNombre: Scalars['Int'];
-  defaultObservateur: Observateur;
-  defaultSexe: Sexe;
+  defaultAge?: Maybe<Age>;
+  defaultDepartement?: Maybe<Departement>;
+  defaultEstimationNombre?: Maybe<EstimationNombre>;
+  defaultNombre?: Maybe<Scalars['Int']>;
+  defaultObservateur?: Maybe<Observateur>;
+  defaultSexe?: Maybe<Sexe>;
   id: Scalars['Int'];
   isDistanceDisplayed: Scalars['Boolean'];
   isMeteoDisplayed: Scalars['Boolean'];
@@ -1923,12 +1923,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 export type SettingsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Settings'] = ResolversParentTypes['Settings']> = {
   areAssociesDisplayed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   coordinatesSystem?: Resolver<ResolversTypes['CoordinatesSystemType'], ParentType, ContextType>;
-  defaultAge?: Resolver<ResolversTypes['Age'], ParentType, ContextType>;
-  defaultDepartement?: Resolver<ResolversTypes['Departement'], ParentType, ContextType>;
-  defaultEstimationNombre?: Resolver<ResolversTypes['EstimationNombre'], ParentType, ContextType>;
-  defaultNombre?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  defaultObservateur?: Resolver<ResolversTypes['Observateur'], ParentType, ContextType>;
-  defaultSexe?: Resolver<ResolversTypes['Sexe'], ParentType, ContextType>;
+  defaultAge?: Resolver<Maybe<ResolversTypes['Age']>, ParentType, ContextType>;
+  defaultDepartement?: Resolver<Maybe<ResolversTypes['Departement']>, ParentType, ContextType>;
+  defaultEstimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType>;
+  defaultNombre?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  defaultObservateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType>;
+  defaultSexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   isDistanceDisplayed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   isMeteoDisplayed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
