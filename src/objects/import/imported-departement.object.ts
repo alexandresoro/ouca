@@ -1,4 +1,4 @@
-import { Departement } from "../../model/graphql";
+import { Departement } from "@prisma/client";
 
 const CODE_INDEX = 0;
 const CODE_MAX_LENGTH = 100;
@@ -11,9 +11,8 @@ export class ImportedDepartement {
     this.code = departementTab[CODE_INDEX].trim();
   }
 
-  buildDepartement = (): Departement => {
+  buildDepartement = (): Omit<Departement, 'id'> => {
     return {
-      id: null,
       code: this.code
     };
   };

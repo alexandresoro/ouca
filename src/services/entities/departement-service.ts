@@ -1,12 +1,10 @@
-import { Departement as DepartementEntity, Prisma } from "@prisma/client";
-import { Departement, DepartementsPaginatedResult, DepartementWithCounts, FindParams, MutationUpsertDepartementArgs, QueryPaginatedDepartementsArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Departement, Prisma } from "@prisma/client";
+import { DepartementsPaginatedResult, DepartementWithCounts, FindParams, MutationUpsertDepartementArgs, QueryPaginatedDepartementsArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_CODE, TABLE_DEPARTEMENT } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_CODE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
 export const getFilterClauseDepartement = (q: string | null | undefined): Prisma.DepartementWhereInput => {
   return (q != null && q.length) ? {
@@ -16,9 +14,7 @@ export const getFilterClauseDepartement = (q: string | null | undefined): Prisma
   } : {};
 }
 
-const DB_SAVE_MAPPING_DEPARTEMENT = createKeyValueMapWithSameName("code");
-
-export const findDepartement = async (id: number): Promise<DepartementEntity | null> => {
+export const findDepartement = async (id: number): Promise<Departement | null> => {
   return prisma.departement.findUnique({
     where: {
       id
@@ -26,7 +22,7 @@ export const findDepartement = async (id: number): Promise<DepartementEntity | n
   });
 };
 
-export const findDepartementOfCommuneId = async (communeId: number): Promise<DepartementEntity | null> => {
+export const findDepartementOfCommuneId = async (communeId: number): Promise<Departement | null> => {
   return prisma.commune.findUnique({
     where: {
       id: communeId
@@ -287,7 +283,7 @@ export const findPaginatedDepartements = async (
 
 export const upsertDepartement = async (
   args: MutationUpsertDepartementArgs
-): Promise<DepartementEntity> => {
+): Promise<Departement> => {
   const { id, data } = args;
   if (id) {
     return prisma.departement.update({
@@ -300,7 +296,7 @@ export const upsertDepartement = async (
   }
 };
 
-export const deleteDepartement = async (id: number): Promise<DepartementEntity> => {
+export const deleteDepartement = async (id: number): Promise<Departement> => {
   return prisma.departement.delete({
     where: {
       id
@@ -308,8 +304,10 @@ export const deleteDepartement = async (id: number): Promise<DepartementEntity> 
   });
 }
 
-export const insertDepartements = async (
-  departements: Departement[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_DEPARTEMENT, departements, DB_SAVE_MAPPING_DEPARTEMENT);
+export const createDepartements = async (
+  departements: Omit<Departement, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.departement.createMany({
+    data: departements
+  });
 };
