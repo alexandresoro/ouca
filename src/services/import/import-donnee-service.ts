@@ -1,8 +1,8 @@
-import { Commune, Observateur } from "@prisma/client";
+import { Commune, Departement, Observateur } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { AgeWithCounts, ComportementWithCounts, DepartementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MeteoWithCounts, MilieuWithCounts, SexeWithCounts } from "../../model/graphql";
+import { AgeWithCounts, ComportementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MeteoWithCounts, MilieuWithCounts, SexeWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Espece } from "../../model/types/espece.model";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
@@ -29,7 +29,7 @@ import { ImportService } from "./import-service";
 export class ImportDonneeService extends ImportService {
   private coordinatesSystem: CoordinatesSystem;
   private observateurs: Observateur[];
-  private departements: DepartementWithCounts[];
+  private departements: Departement[];
   private communes: Commune[];
   private lieuxDits: LieuDitWithCoordinatesAsNumber[];
   private especes: Espece[];
@@ -67,7 +67,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     this.observateurs = await findAllObservateurs(false);
-    this.departements = await findAllDepartements();
+    this.departements = await findAllDepartements({ includeCounts: false });
     this.communes = await findAllCommunes();
     this.lieuxDits = await findAllLieuxDits();
     this.meteos = await findAllMeteos();
@@ -112,7 +112,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Departement" or return an error if it doesn't exist
-    const departement: DepartementWithCounts = this.findDepartement(importedDonnee.departement);
+    const departement = this.findDepartement(importedDonnee.departement);
     if (!departement) {
       return `Le département ${importedDonnee.departement} n'existe pas`;
     }
@@ -357,7 +357,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findDepartement = (codeDepartement: string): DepartementWithCounts => {
+  private findDepartement = (codeDepartement: string): Departement => {
     return this.departements.find((departement) => {
       return this.compareStrings(departement.code, codeDepartement);
     });
