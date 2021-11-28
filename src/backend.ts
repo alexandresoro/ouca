@@ -1,4 +1,4 @@
-import { Prisma } from ".prisma/client";
+import { Prisma } from "@prisma/client";
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { ApolloServer } from "apollo-server-fastify";
 import { fastify } from "fastify";
@@ -13,9 +13,6 @@ import { Logger } from "winston";
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
-import { DELETE, GET, POST } from "./http/httpMethod";
-import { handleRequest, RequestGeneric } from "./http/requestHandling";
-import { REQUEST_MAPPING, routes } from "./mapping";
 import { WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
 import { HEARTBEAT, IMPORT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
@@ -64,6 +61,8 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
 }
 
 (async () => {
+
+  // Middlewares
   await server.register(middie);
   await server.register(fastifyWebsocket);
   await server.register(fastifyCompress);
@@ -71,6 +70,7 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
     origin: "*"
   });
 
+  // Static files server
   await server.register(fastifyStatic, {
     root: PUBLIC_DIR_PATH,
     prefix: DOWNLOAD_PATH
@@ -97,27 +97,13 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
     })
   })
 
+  // Generic logger
   void server.use((req, res, next) => {
     logger.info(`Method ${req.method}, URL ${req.url}`);
     next()
   });
 
-  // Routes
-  Object.entries(REQUEST_MAPPING).forEach(([route, mapping]) => {
-    server.route<RequestGeneric>({
-      method: [GET, POST, DELETE],
-      url: route,
-      handler: async (req, res) => {
-        handleRequest(req, res, mapping).catch(e => res.send(e));
-        await res;
-      }
-    });
-  });
-
-  routes.forEach((route) => {
-    server.route(route);
-  });
-
+  // GraphQL server
   await apolloServer.start();
   void server.register(apolloServer.createHandler({
     path: 'graphql'
