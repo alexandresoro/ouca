@@ -718,6 +718,7 @@ export default gql`
     upsertSexe(id: Int, data: InputSexe!): Sexe
     updateSettings(appConfiguration: InputSettings): Settings
     initializeDatabase: Boolean
+    resetDatabase: Boolean
     updateDatabase: Boolean
   }
 

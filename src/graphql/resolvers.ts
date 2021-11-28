@@ -1,6 +1,7 @@
 import { Commune as CommuneEntity, Espece as EspeceEntity } from "@prisma/client";
 import { Age, AgesPaginatedResult, AgeWithSpecimensCount, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, UpsertInventaireFailureReason, Version } from "../model/graphql";
 import { executeDatabaseMigration } from "../services/database-migration/database-migration.service";
+import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
 import { deleteClasse, findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses, upsertClasse } from "../services/entities/classe-service";
@@ -355,6 +356,10 @@ const resolvers: Resolvers = {
     },
     initializeDatabase: async (): Promise<boolean> => {
       await seedDatabase();
+      return true;
+    },
+    resetDatabase: async (): Promise<boolean> => {
+      await resetDatabase();
       return true;
     },
     updateDatabase: async (): Promise<boolean> => {
