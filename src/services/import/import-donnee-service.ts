@@ -1,8 +1,8 @@
-import { Commune, Departement, Espece, Meteo, Observateur } from "@prisma/client";
+import { Commune, Departement, Espece, Meteo, Observateur, Sexe } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { AgeWithCounts, ComportementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MilieuWithCounts, SexeWithCounts } from "../../model/graphql";
+import { AgeWithCounts, ComportementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MilieuWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
@@ -33,7 +33,7 @@ export class ImportDonneeService extends ImportService {
   private lieuxDits: LieuDitWithCoordinatesAsNumber[];
   private especes: Espece[];
   private ages: AgeWithCounts[];
-  private sexes: SexeWithCounts[];
+  private sexes: Sexe[];
   private estimationsNombre: EstimationNombreWithCounts[];
   private estimationsDistance: EstimationDistanceWithCounts[];
   private comportements: ComportementWithCounts[];
@@ -71,7 +71,7 @@ export class ImportDonneeService extends ImportService {
     this.lieuxDits = await findAllLieuxDits();
     this.meteos = await findAllMeteos();
     this.especes = await findAllEspeces();
-    this.sexes = await findAllSexes();
+    this.sexes = await findAllSexes({ includeCounts: false });
     this.ages = await findAllAges();
     this.estimationsNombre = await findAllEstimationsNombre();
     this.estimationsDistance = await findAllEstimationsDistance();
@@ -393,7 +393,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findSexe = (libelleSexe: string): SexeWithCounts => {
+  private findSexe = (libelleSexe: string): Sexe => {
     return this.sexes.find((sexe) => {
       return this.compareStrings(sexe.libelle, libelleSexe);
     });
