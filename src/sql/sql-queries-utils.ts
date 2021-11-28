@@ -63,25 +63,6 @@ const getCorrespondingDbValue = (value: unknown): string => {
   return valueDb;
 }
 
-// Method that processes an entity to be saved, in order to be used directly in the SQL query
-// It basically takes the list of atributes that can exist for this entity from the mapping,
-// and look for the corresponding DB name and value in the object T
-// and return and array of elements, each element being an array of size 2, the db column name and the value to be set
-// e.g. for an object {"id": 1, "toto": "titi", "tutu": 6} it will return
-// [["toto", "titi"], ["tutu", "6"]]
-const processEntityToSave = <T extends EntityDb & { [key: string]: unknown }>(
-  entityToSave: T,
-  mapping: Record<string, string>
-): string[][] => {
-  return Object.entries(mapping)
-    .map(([dbKey, mappingKey]) => {
-      const entityValue: unknown = entityToSave[mappingKey];
-      const valueDb = getCorrespondingDbValue(entityValue);
-      return [dbKey, valueDb];
-    });
-
-}
-
 const processEntityToSaveNoCheck = <T extends Omit<EntityDb, "id">>(
   entityToSave: T,
 ): string[][] => {
