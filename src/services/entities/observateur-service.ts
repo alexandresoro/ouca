@@ -1,17 +1,12 @@
-import { Observateur as ObservateurEntity, Prisma } from ".prisma/client";
-import { FindParams, MutationUpsertObservateurArgs, Observateur, ObservateursPaginatedResult, ObservateurWithCounts, QueryPaginatedObservateursArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Observateur, Prisma } from "@prisma/client";
+import { FindParams, MutationUpsertObservateurArgs, ObservateursPaginatedResult, ObservateurWithCounts, QueryPaginatedObservateursArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_LIBELLE, TABLE_OBSERVATEUR } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
-
-const DB_SAVE_MAPPING_OBSERVATEUR = createKeyValueMapWithSameName("libelle");
-
-export const findObservateur = async (id: number): Promise<ObservateurEntity | null> => {
+export const findObservateur = async (id: number): Promise<Observateur | null> => {
   return prisma.observateur.findUnique({
     where: {
       id
@@ -19,7 +14,7 @@ export const findObservateur = async (id: number): Promise<ObservateurEntity | n
   });
 };
 
-export const findObservateursByIds = async (ids: number[]): Promise<ObservateurEntity[]> => {
+export const findObservateursByIds = async (ids: number[]): Promise<Observateur[]> => {
 
   return prisma.observateur.findMany({
     orderBy: {
@@ -115,7 +110,7 @@ export const findPaginatedObservateurs = async (
       o.id
     `
 
-    observateurs = await prisma.$queryRaw<(ObservateurEntity & { nbDonnees: number })[]>`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+    observateurs = await prisma.$queryRaw<(Observateur & { nbDonnees: number })[]>`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
 
   } else {
 
@@ -141,7 +136,7 @@ export const findPaginatedObservateurs = async (
 
 export const upsertObservateur = async (
   args: MutationUpsertObservateurArgs
-): Promise<ObservateurEntity> => {
+): Promise<Observateur> => {
   const { id, data } = args;
   if (id) {
     return prisma.observateur.update({
@@ -154,7 +149,7 @@ export const upsertObservateur = async (
   }
 };
 
-export const deleteObservateur = async (id: number): Promise<ObservateurEntity> => {
+export const deleteObservateur = async (id: number): Promise<Observateur> => {
   return prisma.observateur.delete({
     where: {
       id
@@ -162,8 +157,10 @@ export const deleteObservateur = async (id: number): Promise<ObservateurEntity> 
   });
 }
 
-export const insertObservateurs = async (
-  observateurs: Observateur[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_OBSERVATEUR, observateurs, DB_SAVE_MAPPING_OBSERVATEUR);
+export const createObservateurs = async (
+  observateurs: Omit<Observateur, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.observateur.createMany({
+    data: observateurs
+  });
 };

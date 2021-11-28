@@ -12,9 +12,8 @@ export class ImportedEntiteAvecLibelle {
     this.libelle = entiteAvecLibelleTab[LIBELLE_INDEX].trim();
   }
 
-  buildEntiteAvecLibelle = (): EntiteAvecLibelle => {
+  buildEntiteAvecLibelle = (): Omit<EntiteAvecLibelle, 'id'> => {
     return {
-      id: null,
       libelle: this.libelle
     };
   };
