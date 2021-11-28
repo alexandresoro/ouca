@@ -1,8 +1,8 @@
-import { Age, Commune, Departement, Espece, EstimationDistance, EstimationNombre, Meteo, Observateur, Sexe } from "@prisma/client";
+import { Age, Commune, Comportement, Departement, Espece, EstimationDistance, EstimationNombre, Meteo, Observateur, Sexe } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { ComportementWithCounts, MilieuWithCounts } from "../../model/graphql";
+import { MilieuWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
@@ -36,7 +36,7 @@ export class ImportDonneeService extends ImportService {
   private sexes: Sexe[];
   private estimationsNombre: EstimationNombre[];
   private estimationsDistance: EstimationDistance[];
-  private comportements: ComportementWithCounts[];
+  private comportements: Comportement[];
   private milieux: MilieuWithCounts[];
   private meteos: Meteo[];
   private existingInventaires: InventaireCompleteWithIds[];
@@ -417,7 +417,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findComportement = (codeOrLibelleComportement: string): ComportementWithCounts => {
+  private findComportement = (codeOrLibelleComportement: string): Comportement => {
     return this.comportements.find((comportement) => {
       return this.compareStrings(comportement.code, codeOrLibelleComportement) || this.compareStrings(comportement.libelle, codeOrLibelleComportement);
     });
