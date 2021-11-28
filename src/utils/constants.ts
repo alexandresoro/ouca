@@ -23,10 +23,6 @@ export const TABLE_DONNEE = "donnee";
 export const TABLE_DONNEE_COMPORTEMENT = "donnee_comportement";
 export const TABLE_DONNEE_MILIEU = "donnee_milieu";
 
-export const IMPORT_TABLES = [TABLE_OBSERVATEUR, TABLE_DEPARTEMENT, TABLE_COMMUNE, TABLE_LIEUDIT, TABLE_METEO, TABLE_CLASSE, TABLE_ESPECE, TABLE_AGE, TABLE_SEXE, TABLE_ESTIMATION_NOMBRE, TABLE_ESTIMATION_DISTANCE, TABLE_COMPORTEMENT, TABLE_MILIEU, TABLE_DONNEE] as const;
-
-export type ImportableTable = typeof IMPORT_TABLES[number];
-
 export const COLUMN_CODE = "code";
 export const COLUMN_LIBELLE = "libelle";
 export const COLUMN_NOM = "nom";
