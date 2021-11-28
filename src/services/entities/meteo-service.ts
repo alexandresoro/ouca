@@ -1,16 +1,12 @@
-import { Meteo as MeteoEntity, Prisma } from "@prisma/client";
-import { Meteo, MeteosPaginatedResult, MeteoWithCounts, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Meteo, Prisma } from "@prisma/client";
+import { MeteosPaginatedResult, MeteoWithCounts, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_LIBELLE, TABLE_METEO } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
-const DB_SAVE_MAPPING_METEO = createKeyValueMapWithSameName("libelle");
-
-export const findMeteo = async (id: number): Promise<MeteoEntity | null> => {
+export const findMeteo = async (id: number): Promise<Meteo | null> => {
   return prisma.meteo.findUnique({
     where: {
       id
@@ -18,7 +14,7 @@ export const findMeteo = async (id: number): Promise<MeteoEntity | null> => {
   });
 };
 
-export const findMeteosByIds = async (ids: number[]): Promise<MeteoEntity[]> => {
+export const findMeteosByIds = async (ids: number[]): Promise<Meteo[]> => {
 
   return prisma.meteo.findMany({
     orderBy: {
@@ -32,7 +28,7 @@ export const findMeteosByIds = async (ids: number[]): Promise<MeteoEntity[]> => 
   });
 };
 
-export const findMeteos = async (): Promise<MeteoEntity[]> => {
+export const findMeteos = async (): Promise<Meteo[]> => {
   return prisma.meteo.findMany({
     orderBy: {
       libelle: "asc"
@@ -110,7 +106,7 @@ export const findPaginatedMeteos = async (
       m.id
     `
 
-    meteos = await prisma.$queryRaw<(MeteoEntity & { nbDonnees: number })[]>`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+    meteos = await prisma.$queryRaw<(Meteo & { nbDonnees: number })[]>`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
 
   } else {
 
@@ -136,7 +132,7 @@ export const findPaginatedMeteos = async (
 
 export const upsertMeteo = async (
   args: MutationUpsertMeteoArgs
-): Promise<MeteoEntity> => {
+): Promise<Meteo> => {
   const { id, data } = args;
   if (id) {
     return prisma.meteo.update({
@@ -149,7 +145,7 @@ export const upsertMeteo = async (
   }
 };
 
-export const deleteMeteo = async (id: number): Promise<MeteoEntity> => {
+export const deleteMeteo = async (id: number): Promise<Meteo> => {
   return prisma.meteo.delete({
     where: {
       id
@@ -157,8 +153,10 @@ export const deleteMeteo = async (id: number): Promise<MeteoEntity> => {
   });
 }
 
-export const insertMeteos = async (
-  meteos: Meteo[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_METEO, meteos, DB_SAVE_MAPPING_METEO);
+export const createMeteos = async (
+  meteos: Omit<Meteo, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.meteo.createMany({
+    data: meteos
+  });
 };
