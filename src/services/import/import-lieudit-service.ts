@@ -1,20 +1,19 @@
-import { Commune, Lieudit } from "@prisma/client";
+import { Commune, Departement, Lieudit } from "@prisma/client";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
-import { DepartementWithCounts } from "../../model/graphql";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { findAllCommunes } from "../entities/commune-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findAllDepartements } from "../entities/departement-service";
-import { findAllLieuxDits, insertLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
+import { createLieuxDits, findAllLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
-  private departements: DepartementWithCounts[];
+  private departements: Departement[];
   private communes: Commune[];
-  private lieuxDits: (Lieudit | LieuDitWithCoordinatesAsNumber)[];
+  private lieuxDits: (Omit<Lieudit, 'id'> | LieuDitWithCoordinatesAsNumber)[];
 
-  private lieuxDitsToInsert: Lieudit[];
+  private lieuxDitsToInsert: Omit<Lieudit, 'id'>[];
   private coordinatesSystem: CoordinatesSystem;
 
   protected getNumberOfColumns = (): number => {
@@ -25,7 +24,7 @@ export class ImportLieuxditService extends ImportService {
     this.lieuxDitsToInsert = [];
     let coordinatesSystemType: CoordinatesSystemType;
 
-    [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([findAllDepartements(), findAllCommunes(), findAllLieuxDits(), findCoordinatesSystem()]);
+    [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([findAllDepartements({ includeCounts: false }), findAllCommunes(), findAllLieuxDits(), findCoordinatesSystem()]);
 
     if (!coordinatesSystemType) {
       return Promise.reject("Veuillez choisir le système de coordonnées de l'application dans la page de configuration");
@@ -84,14 +83,7 @@ export class ImportLieuxditService extends ImportService {
 
   protected persistAllValidEntities = async (): Promise<void> => {
     if (this.lieuxDitsToInsert.length) {
-      await insertLieuxDits(this.lieuxDitsToInsert.map((lieuDit) => {
-        const { communeId, coordinatesSystem, ...others } = lieuDit;
-        return {
-          ...others,
-          coordinates_system: coordinatesSystem, // TODO check this once migrated properly
-          commune_id: communeId
-        }
-      }));
+      await createLieuxDits(this.lieuxDitsToInsert);
     }
   }
 

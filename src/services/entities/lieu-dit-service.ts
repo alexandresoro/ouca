@@ -1,18 +1,15 @@
-import { Commune, Departement, Lieudit as LieuditEntity, Prisma } from "@prisma/client";
-import { FindParams, LieuDit, LieuDitWithCounts, LieuxDitsPaginatedResult, MutationUpsertLieuDitArgs, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
-import { LieuditDb as LieuditObj } from "../../objects/db/lieudit-db.object";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Commune, Departement, Lieudit, Prisma } from "@prisma/client";
+import { FindParams, LieuDitWithCounts, LieuxDitsPaginatedResult, MutationUpsertLieuDitArgs, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_NOM, TABLE_LIEUDIT } from "../../utils/constants";
+import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getFilterClauseCommune } from "./commune-service";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntitiesNoCheck } from "./entity-service";
 
-export type LieuDitWithCoordinatesAsNumber<T extends LieuditEntity = LieuditEntity> = Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number }
+export type LieuDitWithCoordinatesAsNumber<T extends Lieudit = Lieudit> = Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number }
 
-const buildLieuditFromLieuditDb = <T extends LieuditEntity>(lieuditDb: T): LieuDitWithCoordinatesAsNumber<T> => {
+const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWithCoordinatesAsNumber<T> => {
 
   if (lieuditDb == null) {
     return null;
@@ -35,7 +32,7 @@ export const findLieuDit = async (id: number): Promise<LieuDitWithCoordinatesAsN
   }).then(buildLieuditFromLieuditDb);
 };
 
-export const findLieuDitOfInventaireId = async (inventaireId: number): Promise<LieuditEntity | null> => {
+export const findLieuDitOfInventaireId = async (inventaireId: number): Promise<Lieudit | null> => {
   return prisma.inventaire.findUnique({
     where: {
       id: inventaireId
@@ -47,7 +44,7 @@ export const findLieuxDits = async (options: {
   params?: FindParams,
   communeId?: number,
   departementId?: number
-}): Promise<Omit<LieuDit, 'commune'>[]> => {
+}): Promise<Omit<LieuDitWithCoordinatesAsNumber, 'commune'>[]> => {
 
   const { params, communeId, departementId } = options ?? {};
   const { q, max } = params ?? {};
@@ -127,7 +124,7 @@ export const findAllLieuxDits = async (options?: {
 
 export const findAllLieuxDitsWithCounts = async (options?: {
   where?: Prisma.LieuditWhereInput
-}): Promise<Omit<LieuDit, 'commune'>[]> => {
+}): Promise<Omit<LieuDitWithCoordinatesAsNumber, 'commune'>[]> => {
   const lieuxDitsDb = await prisma.lieudit.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {
@@ -348,8 +345,10 @@ export const deleteLieuDit = async (id: number): Promise<LieuDitWithCoordinatesA
   }).then(buildLieuditFromLieuditDb);
 }
 
-export const insertLieuxDits = async (
-  lieuxDits: LieuditObj[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntitiesNoCheck(TABLE_LIEUDIT, lieuxDits);
+export const createLieuxDits = async (
+  lieuxDits: Omit<Lieudit, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.lieudit.createMany({
+    data: lieuxDits
+  });
 };

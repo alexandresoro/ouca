@@ -97,22 +97,6 @@ const getColumnNamesAndInsertionValuesFromEntitiesNoCheck = <T extends Omit<Enti
   return getColumnNamesAndInsertionValuesFromEntitiesCommon(dbEntitiesToSaveAsArray);
 }
 
-const queryToInsertMultipleEntitiesCommon = async (
-  columnNamesAndValues: { columnNames: string, allValues: string },
-  tableName: string
-): Promise<SqlSaveResponse> => {
-  const queryStr = `INSERT INTO ${tableName} (${columnNamesAndValues.columnNames}) VALUES ${columnNamesAndValues.allValues}`;
-  return query<SqlSaveResponse>(queryStr);
-};
-
-export const queryToInsertMultipleEntitiesNoCheck = async <T extends EntityDb>(
-  tableName: string,
-  entitiesToSave: T[]
-): Promise<SqlSaveResponse> => {
-  const columnNamesAndValues = getColumnNamesAndInsertionValuesFromEntitiesNoCheck(entitiesToSave);
-  return queryToInsertMultipleEntitiesCommon(columnNamesAndValues, tableName);
-};
-
 const queryToInsertMultipleEntitiesAndReturnIdsCommon = async (
   columnNamesAndValues: { columnNames: string, allValues: string },
   tableName: string

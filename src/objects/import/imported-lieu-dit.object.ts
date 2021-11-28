@@ -34,9 +34,8 @@ export class ImportedLieuDit {
 
   buildLieudit = (
     communeId: number
-  ): Lieudit => {
+  ): Omit<Lieudit, 'id'> => {
     return {
-      id: null,
       communeId,
       nom: this.nom,
       altitude: +this.altitude,
