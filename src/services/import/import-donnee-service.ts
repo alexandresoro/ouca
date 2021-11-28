@@ -1,8 +1,7 @@
-import { Age, Commune, Comportement, Departement, Espece, EstimationDistance, EstimationNombre, Meteo, Observateur, Sexe } from "@prisma/client";
+import { Age, Commune, Comportement, Departement, Espece, EstimationDistance, EstimationNombre, Meteo, Milieu, Observateur, Sexe } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { MilieuWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
@@ -37,7 +36,7 @@ export class ImportDonneeService extends ImportService {
   private estimationsNombre: EstimationNombre[];
   private estimationsDistance: EstimationDistance[];
   private comportements: Comportement[];
-  private milieux: MilieuWithCounts[];
+  private milieux: Milieu[];
   private meteos: Meteo[];
   private existingInventaires: InventaireCompleteWithIds[];
 
@@ -230,7 +229,7 @@ export class ImportDonneeService extends ImportService {
     // Get the "Milieux" or return an error if some of them does not exist
     const milieuxIds = new Set<number>();
     for (const milieuStr of importedDonnee.milieux) {
-      const milieu: MilieuWithCounts = this.findMilieu(milieuStr);
+      const milieu = this.findMilieu(milieuStr);
       if (!milieu) {
         return `Le milieu avec pour code ou libellé ${milieuStr} n'existe pas`;
       }
@@ -423,7 +422,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findMilieu = (codeOrLibelleMilieu: string): MilieuWithCounts => {
+  private findMilieu = (codeOrLibelleMilieu: string): Milieu => {
     return this.milieux.find((milieu) => {
       return this.compareStrings(milieu.code, codeOrLibelleMilieu) || this.compareStrings(milieu.libelle, codeOrLibelleMilieu);
     });
