@@ -1,8 +1,8 @@
-import { Age, Commune, Departement, Espece, EstimationNombre, Meteo, Observateur, Sexe } from "@prisma/client";
+import { Age, Commune, Departement, Espece, EstimationDistance, EstimationNombre, Meteo, Observateur, Sexe } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { ComportementWithCounts, EstimationDistanceWithCounts, MilieuWithCounts } from "../../model/graphql";
+import { ComportementWithCounts, MilieuWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
@@ -35,7 +35,7 @@ export class ImportDonneeService extends ImportService {
   private ages: Age[];
   private sexes: Sexe[];
   private estimationsNombre: EstimationNombre[];
-  private estimationsDistance: EstimationDistanceWithCounts[];
+  private estimationsDistance: EstimationDistance[];
   private comportements: ComportementWithCounts[];
   private milieux: MilieuWithCounts[];
   private meteos: Meteo[];
@@ -206,7 +206,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Estimation de la distance" or return an error if it doesn't exist
-    let estimationDistance: EstimationDistanceWithCounts = null;
+    let estimationDistance = null;
     if (importedDonnee.estimationDistance) {
       estimationDistance = this.findEstimationDistance(importedDonnee.estimationDistance)
       if (!estimationDistance) {
@@ -411,7 +411,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findEstimationDistance = (libelleEstimation: string): EstimationDistanceWithCounts => {
+  private findEstimationDistance = (libelleEstimation: string): EstimationDistance => {
     return this.estimationsDistance.find((estimation) => {
       return this.compareStrings(estimation.libelle, libelleEstimation);
     });
