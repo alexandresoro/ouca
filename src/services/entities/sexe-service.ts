@@ -1,16 +1,11 @@
-
-import { Prisma, Sexe as SexeEntity } from "@prisma/client";
-import { FindParams, MutationUpsertSexeArgs, QueryPaginatedSexesArgs, Sexe, SexesPaginatedResult, SexeWithCounts } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Prisma, Sexe } from "@prisma/client";
+import { FindParams, MutationUpsertSexeArgs, QueryPaginatedSexesArgs, SexesPaginatedResult, SexeWithCounts } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_LIBELLE, TABLE_SEXE } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE } from "../../utils/constants";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
-const DB_SAVE_MAPPING_SEXE = createKeyValueMapWithSameName("libelle");
-
-export const findSexe = async (id: number): Promise<SexeEntity | null> => {
+export const findSexe = async (id: number): Promise<Sexe | null> => {
   return prisma.sexe.findUnique({
     where: {
       id
@@ -18,7 +13,7 @@ export const findSexe = async (id: number): Promise<SexeEntity | null> => {
   });
 };
 
-export const findSexes = async (params?: FindParams): Promise<SexeEntity[]> => {
+export const findSexes = async (params?: FindParams): Promise<Sexe[]> => {
 
   const { q, max } = params ?? {};
 
@@ -117,7 +112,7 @@ export const findPaginatedSexes = async (
 
 export const upsertSexe = async (
   args: MutationUpsertSexeArgs
-): Promise<SexeEntity> => {
+): Promise<Sexe> => {
   const { id, data } = args;
   if (id) {
     return prisma.sexe.update({
@@ -130,7 +125,7 @@ export const upsertSexe = async (
   }
 };
 
-export const deleteSexe = async (id: number): Promise<SexeEntity> => {
+export const deleteSexe = async (id: number): Promise<Sexe> => {
   return prisma.sexe.delete({
     where: {
       id
@@ -138,8 +133,10 @@ export const deleteSexe = async (id: number): Promise<SexeEntity> => {
   });
 }
 
-export const insertSexes = async (
-  sexes: Sexe[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_SEXE, sexes, DB_SAVE_MAPPING_SEXE);
+export const createSexes = async (
+  sexes: Omit<Sexe, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.sexe.createMany({
+    data: sexes
+  });
 };

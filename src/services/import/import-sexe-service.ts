@@ -1,20 +1,21 @@
-import { Sexe } from "@prisma/client";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { TABLE_SEXE } from "../../utils/constants";
-import { insertSexes } from "../entities/sexe-service";
+import { Prisma, Sexe } from "@prisma/client";
+import { createSexes, findAllSexes } from "../entities/sexe-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportSexeService extends ImportEntiteAvecLibelleService {
   protected getTableName(): string {
-    return TABLE_SEXE;
+    throw new Error("Method not implemented.");
   }
+  protected init = async (): Promise<void> => {
+    this.entitiesToInsert = [];
+    this.entities = await findAllSexes({ includeCounts: false });
+  };
 
   protected getThisEntityName(): string {
     return "Ce sexe";
   }
 
-  protected saveEntities = (sexes: Sexe[]): Promise<SqlSaveResponse> => {
-    return insertSexes(sexes);
+  protected saveEntities = (ages: Omit<Sexe, 'id'>[]): Promise<Prisma.BatchPayload> => {
+    return createSexes(ages);
   };
-
 }
