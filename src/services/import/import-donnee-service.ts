@@ -1,8 +1,8 @@
-import { Commune, Departement, Observateur } from "@prisma/client";
+import { Commune, Departement, Meteo, Observateur } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { AgeWithCounts, ComportementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MeteoWithCounts, MilieuWithCounts, SexeWithCounts } from "../../model/graphql";
+import { AgeWithCounts, ComportementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MilieuWithCounts, SexeWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Espece } from "../../model/types/espece.model";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
@@ -39,7 +39,7 @@ export class ImportDonneeService extends ImportService {
   private estimationsDistance: EstimationDistanceWithCounts[];
   private comportements: ComportementWithCounts[];
   private milieux: MilieuWithCounts[];
-  private meteos: MeteoWithCounts[];
+  private meteos: Meteo[];
   private existingInventaires: InventaireCompleteWithIds[];
 
   private newInventaires: InventaireCompleteWithIds[]; // New inventaires that do not yet exist and will need to be created, their id is a temporary one < 0
@@ -161,7 +161,7 @@ export class ImportDonneeService extends ImportService {
     // Get the "Meteos" or return an error if some of them doesn't exist
     const meteosIds = new Set<number>();
     for (const libelleMeteo of importedDonnee.meteos) {
-      const meteo: MeteoWithCounts = this.findMeteo(libelleMeteo);
+      const meteo = this.findMeteo(libelleMeteo);
       if (!meteo) {
         return `La météo ${libelleMeteo} n'existe pas`;
       }
@@ -378,7 +378,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findMeteo = (libelleMeteo: string): MeteoWithCounts => {
+  private findMeteo = (libelleMeteo: string): Meteo => {
     return this.meteos.find((meteo) => {
       return this.compareStrings(meteo.libelle, libelleMeteo);
     });
