@@ -1,4 +1,4 @@
-import { Espece } from "../../model/types/espece.model";
+import { Espece } from "@prisma/client";
 
 const CLASSE_INDEX = 0;
 const CODE_INDEX = 1;
@@ -23,9 +23,8 @@ export class ImportedEspece {
     this.nomLatin = especeTab[NOM_LATIN_INDEX].trim();
   }
 
-  buildEspece = (classeId: number): Espece => {
+  buildEspece = (classeId: number): Omit<Espece, 'id'> => {
     return {
-      id: null,
       classeId,
       code: this.code,
       nomFrancais: this.nomFrancais,

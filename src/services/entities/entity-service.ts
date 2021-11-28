@@ -1,18 +1,7 @@
 import { EntiteSimple } from "../../model/types/entite-simple.object";
 import { EntityDb } from "../../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck } from "../../sql/sql-queries-utils";
-
-export const insertMultipleEntities = async <T extends EntityDb & { [key: string]: unknown }>(
-  tableName: string,
-  entitiesToSave: (EntiteSimple | T)[],
-  mapping: Record<string, string>,
-): Promise<SqlSaveResponse> => {
-
-  const sqlResponse = await queryToInsertMultipleEntities(tableName, entitiesToSave, mapping);
-  return sqlResponse;
-
-};
+import { queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck } from "../../sql/sql-queries-utils";
 
 export const insertMultipleEntitiesNoCheck = async <T extends EntityDb>(
   tableName: string,

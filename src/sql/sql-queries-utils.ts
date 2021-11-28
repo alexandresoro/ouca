@@ -9,14 +9,6 @@ import {
 } from "../utils/constants";
 import { SqlConnection } from "./sql-connection";
 
-
-export const createKeyValueMapWithSameName = (
-  names: string | string[]
-): Record<string, string> => {
-  return Object.fromEntries(([] as string[]).concat(names).map(name => [name, name]));
-};
-
-
 const mappingTables = ["inventaire_associe", "inventaire_meteo", "donnee_comportement", "donnee_milieu"] as const;
 
 type MappingTable = typeof mappingTables[number];
@@ -119,12 +111,6 @@ const getColumnNamesAndInsertionValuesFromEntitiesCommon = (dbEntitiesToSaveAsAr
   }
 }
 
-const getColumnNamesAndInsertionValuesFromEntities = <T extends EntityDb & { [key: string]: unknown }>(entitiesToSave: T[], mapping: Record<string, string>
-): { columnNames: string, allValues: string } => {
-  const dbEntitiesToSaveAsArray = entitiesToSave.map(entity => processEntityToSave(entity, mapping));
-  return getColumnNamesAndInsertionValuesFromEntitiesCommon(dbEntitiesToSaveAsArray);
-}
-
 const getColumnNamesAndInsertionValuesFromEntitiesNoCheck = <T extends Omit<EntityDb, "id">>(entitiesToSave: T[]): { columnNames: string, allValues: string } => {
   const dbEntitiesToSaveAsArray = entitiesToSave.map(entity => processEntityToSaveNoCheck(entity));
   return getColumnNamesAndInsertionValuesFromEntitiesCommon(dbEntitiesToSaveAsArray);
@@ -136,15 +122,6 @@ const queryToInsertMultipleEntitiesCommon = async (
 ): Promise<SqlSaveResponse> => {
   const queryStr = `INSERT INTO ${tableName} (${columnNamesAndValues.columnNames}) VALUES ${columnNamesAndValues.allValues}`;
   return query<SqlSaveResponse>(queryStr);
-};
-
-export const queryToInsertMultipleEntities = async <T extends EntityDb & { [key: string]: unknown }>(
-  tableName: string,
-  entitiesToSave: T[],
-  mapping: Record<string, string>
-): Promise<SqlSaveResponse> => {
-  const columnNamesAndValues = getColumnNamesAndInsertionValuesFromEntities(entitiesToSave, mapping);
-  return queryToInsertMultipleEntitiesCommon(columnNamesAndValues, tableName);
 };
 
 export const queryToInsertMultipleEntitiesNoCheck = async <T extends EntityDb>(
