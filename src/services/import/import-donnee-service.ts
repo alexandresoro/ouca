@@ -1,8 +1,8 @@
-import { Age, Commune, Departement, Espece, Meteo, Observateur, Sexe } from "@prisma/client";
+import { Age, Commune, Departement, Espece, EstimationNombre, Meteo, Observateur, Sexe } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { ComportementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MilieuWithCounts } from "../../model/graphql";
+import { ComportementWithCounts, EstimationDistanceWithCounts, MilieuWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
@@ -34,7 +34,7 @@ export class ImportDonneeService extends ImportService {
   private especes: Espece[];
   private ages: Age[];
   private sexes: Sexe[];
-  private estimationsNombre: EstimationNombreWithCounts[];
+  private estimationsNombre: EstimationNombre[];
   private estimationsDistance: EstimationDistanceWithCounts[];
   private comportements: ComportementWithCounts[];
   private milieux: MilieuWithCounts[];
@@ -73,7 +73,7 @@ export class ImportDonneeService extends ImportService {
     this.especes = await findAllEspeces();
     this.sexes = await findAllSexes({ includeCounts: false });
     this.ages = await findAllAges({ includeCounts: false });
-    this.estimationsNombre = await findAllEstimationsNombre();
+    this.estimationsNombre = await findAllEstimationsNombre({ includeCounts: false });
     this.estimationsDistance = await findAllEstimationsDistance();
     this.comportements = await findAllComportements();
     this.milieux = await findAllMilieux();
@@ -405,7 +405,7 @@ export class ImportDonneeService extends ImportService {
     });
   }
 
-  private findEstimationNombre = (libelleEstimation: string): EstimationNombreWithCounts => {
+  private findEstimationNombre = (libelleEstimation: string): EstimationNombre => {
     return this.estimationsNombre.find((estimation) => {
       return this.compareStrings(estimation.libelle, libelleEstimation);
     });
