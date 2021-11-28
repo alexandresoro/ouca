@@ -3,7 +3,6 @@ import { EntityDb } from "../../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { queryToCreateAgeTable } from "../../sql/sql-queries-age";
 import { queryToCreateClasseTable } from "../../sql/sql-queries-classe";
-import { queriesToClearAllTables } from "../../sql/sql-queries-common";
 import { queryToCreateCommuneTable } from "../../sql/sql-queries-commune";
 import { queryToCreateComportementTable } from "../../sql/sql-queries-comportement";
 import { queryToCreateDepartementTable } from "../../sql/sql-queries-departement";
@@ -81,7 +80,3 @@ export const insertMultipleEntitiesAndReturnIdsNoCheck = async <T extends Omit<E
   return insertedIds;
 
 };
-
-export const clearAllTables = async (): Promise<void> => {
-  await queriesToClearAllTables();
-}
