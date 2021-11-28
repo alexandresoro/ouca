@@ -107,7 +107,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhere
   } : {};
 }
 
-export const findAllComportements = async (): Promise<ComportementWithCounts[]> => {
+export const findAllComportements = async (): Promise<(ComportementWithCounts & { nicheur: Nicheur | null })[]> => {
   const [comportementsDb, donneesByComportement] = await Promise.all([
     prisma.comportement.findMany(queryParametersToFindAllEntities(COLUMN_CODE)),
     prisma.donnee_comportement.groupBy({
