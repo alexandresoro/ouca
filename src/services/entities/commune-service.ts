@@ -1,14 +1,12 @@
-import { Commune as CommuneEntity, Departement, Prisma } from "@prisma/client";
-import { Commune, CommunesPaginatedResult, CommuneWithCounts, FindParams, MutationUpsertCommuneArgs, QueryPaginatedCommunesArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Commune, Departement, Prisma } from "@prisma/client";
+import { CommunesPaginatedResult, CommuneWithCounts, FindParams, MutationUpsertCommuneArgs, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_NOM, TABLE_COMMUNE } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
-export const findCommune = async (id: number): Promise<CommuneEntity | null> => {
+export const findCommune = async (id: number): Promise<Commune | null> => {
   return prisma.commune.findUnique({
     where: {
       id
@@ -16,7 +14,7 @@ export const findCommune = async (id: number): Promise<CommuneEntity | null> => 
   });
 };
 
-export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<CommuneEntity | null> => {
+export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Commune | null> => {
   return prisma.lieudit.findUnique({
     where: {
       id: lieuDitId
@@ -27,7 +25,7 @@ export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Commune
 export const findCommunes = async (options: {
   params?: FindParams,
   departementId?: number
-}): Promise<Omit<Commune, 'departement'>[]> => {
+}): Promise<Commune[]> => {
 
   const { params, departementId } = options ?? {};
   const { q, max } = params ?? {};
@@ -106,18 +104,13 @@ export const getFilterClauseCommune = (q: string | null | undefined): Prisma.Com
   } : {};
 }
 
-const DB_SAVE_MAPPING_COMMUNE = {
-  ...createKeyValueMapWithSameName(["code", "nom"]),
-  departement_id: "departementId"
-};
-
-export const findAllCommunes = async (): Promise<CommuneEntity[]> => {
+export const findAllCommunes = async (): Promise<Commune[]> => {
   return await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM)
   });
 };
 
-export const findAllCommunesWithDepartements = async (): Promise<(CommuneEntity & { departement: Departement })[]> => {
+export const findAllCommunesWithDepartements = async (): Promise<(Commune & { departement: Departement })[]> => {
   return await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {
@@ -328,7 +321,7 @@ export const findPaginatedCommunes = async (
 
 export const upsertCommune = async (
   args: MutationUpsertCommuneArgs
-): Promise<CommuneEntity> => {
+): Promise<Commune> => {
   const { id, data } = args;
   if (id) {
     return prisma.commune.update({
@@ -341,7 +334,7 @@ export const upsertCommune = async (
   }
 };
 
-export const deleteCommune = async (id: number): Promise<CommuneEntity> => {
+export const deleteCommune = async (id: number): Promise<Commune> => {
   return prisma.commune.delete({
     where: {
       id
@@ -349,8 +342,10 @@ export const deleteCommune = async (id: number): Promise<CommuneEntity> => {
   });
 }
 
-export const insertCommunes = async (
-  communes: Omit<Commune, 'departement'>[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_COMMUNE, communes, DB_SAVE_MAPPING_COMMUNE);
+export const createCommunes = async (
+  communes: Omit<Commune, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.commune.createMany({
+    data: communes
+  });
 };

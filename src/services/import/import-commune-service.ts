@@ -1,16 +1,15 @@
-import { Commune } from "@prisma/client";
-import { DepartementWithCounts } from "../../model/graphql";
+import { Commune, Departement } from "@prisma/client";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
-import { findAllCommunes, insertCommunes } from "../entities/commune-service";
+import { createCommunes, findAllCommunes } from "../entities/commune-service";
 import { findAllDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 
 export class ImportCommuneService extends ImportService {
 
-  private departements: DepartementWithCounts[];
-  private communes: Commune[];
+  private departements: Departement[];
+  private communes: (Commune | Omit<Commune, 'id'>)[];
 
-  private communesToInsert: Commune[];
+  private communesToInsert: Omit<Commune, 'id'>[];
 
   protected getNumberOfColumns = (): number => {
     return 3;
@@ -18,7 +17,7 @@ export class ImportCommuneService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.communesToInsert = [];
-    [this.departements, this.communes] = await Promise.all([findAllDepartements(), findAllCommunes()]);
+    [this.departements, this.communes] = await Promise.all([findAllDepartements({ includeCounts: false }), findAllCommunes()]);
   };
 
   protected validateAndPrepareEntity = (communeTab: string[]): string => {
@@ -59,7 +58,7 @@ export class ImportCommuneService extends ImportService {
 
   protected persistAllValidEntities = async (): Promise<void> => {
     if (this.communesToInsert.length) {
-      await insertCommunes(this.communesToInsert);
+      await createCommunes(this.communesToInsert);
     }
   }
 
