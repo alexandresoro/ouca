@@ -1,19 +1,21 @@
-import { Classe } from "../../model/types/classe.object";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { TABLE_CLASSE } from "../../utils/constants";
-import { insertClasses } from "../entities/classe-service";
+import { Classe, Prisma } from "@prisma/client";
+import { createClasses, findAllClasses } from "../entities/classe-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportClasseService extends ImportEntiteAvecLibelleService {
   protected getTableName(): string {
-    return TABLE_CLASSE;
+    throw new Error("Method not implemented.");
   }
+  protected init = async (): Promise<void> => {
+    this.entitiesToInsert = [];
+    this.entities = await findAllClasses();
+  };
 
   protected getThisEntityName(): string {
     return "Cette classe espèce";
   }
 
-  protected saveEntities = (classes: Classe[]): Promise<SqlSaveResponse> => {
-    return insertClasses(classes);
+  protected saveEntities = (classes: Omit<Classe, 'id'>[]): Promise<Prisma.BatchPayload> => {
+    return createClasses(classes);
   };
 }

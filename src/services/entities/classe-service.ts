@@ -1,17 +1,12 @@
-import { Classe as ClasseEntity, Prisma } from "@prisma/client";
-import { Classe, ClassesPaginatedResult, ClasseWithCounts, FindParams, MutationUpsertClasseArgs, QueryPaginatedClassesArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Classe, Prisma } from "@prisma/client";
+import { ClassesPaginatedResult, ClasseWithCounts, FindParams, MutationUpsertClasseArgs, QueryPaginatedClassesArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_LIBELLE, TABLE_CLASSE } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
-
-const DB_SAVE_MAPPING_CLASSE = createKeyValueMapWithSameName("libelle");
-
-export const findClasseOfEspeceId = async (especeId: number): Promise<ClasseEntity | null> => {
+export const findClasseOfEspeceId = async (especeId: number): Promise<Classe | null> => {
   return prisma.espece.findUnique({
     where: {
       id: especeId
@@ -114,7 +109,7 @@ export const findPaginatedClasses = async (
       c.id
     `
 
-    classes = await prisma.$queryRaw<(ClasseEntity & { nbEspeces: number, nbDonnees: number })[]>`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+    classes = await prisma.$queryRaw<(Classe & { nbEspeces: number, nbDonnees: number })[]>`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
 
   } else {
 
@@ -173,7 +168,7 @@ export const findPaginatedClasses = async (
 
 export const upsertClasse = async (
   args: MutationUpsertClasseArgs
-): Promise<ClasseEntity> => {
+): Promise<Classe> => {
   const { id, data } = args;
   if (id) {
     return prisma.classe.update({
@@ -186,7 +181,7 @@ export const upsertClasse = async (
   }
 };
 
-export const deleteClasse = async (id: number): Promise<ClasseEntity> => {
+export const deleteClasse = async (id: number): Promise<Classe> => {
   return prisma.classe.delete({
     where: {
       id
@@ -194,8 +189,10 @@ export const deleteClasse = async (id: number): Promise<ClasseEntity> => {
   });
 }
 
-export const insertClasses = async (
-  classes: Classe[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_CLASSE, classes, DB_SAVE_MAPPING_CLASSE);
+export const createClasses = async (
+  classes: Omit<Classe, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.classe.createMany({
+    data: classes
+  });
 };
