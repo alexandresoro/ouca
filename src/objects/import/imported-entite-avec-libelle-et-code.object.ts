@@ -16,9 +16,8 @@ export class ImportedEntiteAvecLibelleEtCode {
     this.libelle = entiteAvecLibelleEtCodeTab[LIBELLE_INDEX].trim();
   }
 
-  buildEntiteAvecLibelleEtCode = (): EntiteAvecLibelleEtCode => {
+  buildEntiteAvecLibelleEtCode = (): Omit<EntiteAvecLibelleEtCode, 'id'> => {
     return {
-      id: null,
       code: this.code,
       libelle: this.libelle
     };

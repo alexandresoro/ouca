@@ -1,14 +1,10 @@
 import { Milieu, Prisma } from "@prisma/client";
 import { FindParams, MilieuWithCounts, MilieuxPaginatedResult, MutationUpsertMilieuArgs, QueryPaginatedMilieuxArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_CODE, TABLE_MILIEU } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_CODE } from "../../utils/constants";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
-
-const DB_SAVE_MAPPING_MILIEU = createKeyValueMapWithSameName(["code", "libelle"]);
 
 export const findMilieu = async (id: number): Promise<Milieu | null> => {
   return prisma.milieu.findUnique({
@@ -207,8 +203,10 @@ export const deleteMilieu = async (id: number): Promise<Milieu> => {
   });
 }
 
-export const insertMilieux = (
-  milieux: Milieu[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_MILIEU, milieux, DB_SAVE_MAPPING_MILIEU);
+export const createMilieux = async (
+  milieux: Omit<Milieu, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.milieu.createMany({
+    data: milieux
+  });
 };

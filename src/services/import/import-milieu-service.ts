@@ -1,19 +1,21 @@
-import { Milieu } from "@prisma/client";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { TABLE_MILIEU } from "../../utils/constants";
-import { insertMilieux } from "../entities/milieu-service";
+import { Milieu, Prisma } from "@prisma/client";
+import { createMilieux, findAllMilieux } from "../entities/milieu-service";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
 
 export class ImportMilieuService extends ImportEntiteAvecLibelleEtCodeService {
   protected getTableName(): string {
-    return TABLE_MILIEU;
+    throw new Error("Method not implemented.");
   }
+  protected init = async (): Promise<void> => {
+    this.entitiesToInsert = [];
+    this.entities = await findAllMilieux();
+  };
 
   protected getAnEntityName(): string {
     return "un milieu";
   }
 
-  protected saveEntities = (milieux: Milieu[]): Promise<SqlSaveResponse> => {
-    return insertMilieux(milieux);
+  protected saveEntities = (milieux: Omit<Milieu, 'id'>[]): Promise<Prisma.BatchPayload> => {
+    return createMilieux(milieux);
   };
 }

@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { EntiteAvecLibelleEtCode } from "../../model/types/entite-avec-libelle-et-code.object";
 import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
@@ -6,9 +7,9 @@ import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {
 
-  private entities: EntiteAvecLibelleEtCode[];
+  protected entities: (EntiteAvecLibelleEtCode | Omit<EntiteAvecLibelleEtCode, 'id'>)[];
 
-  private entitiesToInsert: EntiteAvecLibelleEtCode[];
+  protected entitiesToInsert: Omit<EntiteAvecLibelleEtCode, 'id'>[];
 
   protected getNumberOfColumns = (): number => {
     return 2;
@@ -16,7 +17,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
 
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findAllEntities(this.getTableName());
+    this.entities = await findAllEntities<EntiteAvecLibelleEtCode>(this.getTableName());
   };
 
   protected validateAndPrepareEntity = (entityTab: string[]): string => {
@@ -52,7 +53,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
     }
   }
 
-  protected abstract saveEntities(entities: EntiteAvecLibelleEtCode[]): Promise<SqlSaveResponse>;
+  protected abstract saveEntities(entities: Omit<EntiteAvecLibelleEtCode, 'id'>[]): Promise<SqlSaveResponse | Prisma.BatchPayload>;
 
   protected abstract getTableName(): string;
 
