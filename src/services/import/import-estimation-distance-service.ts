@@ -3,9 +3,7 @@ import { createEstimationsDistance, findAllEstimationsDistance } from "../entiti
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleService {
-  protected getTableName(): string {
-    throw new Error("Method not implemented.");
-  }
+
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
     this.entities = await findAllEstimationsDistance();

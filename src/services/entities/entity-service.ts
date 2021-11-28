@@ -1,13 +1,7 @@
 import { EntiteSimple } from "../../model/types/entite-simple.object";
 import { EntityDb } from "../../objects/db/entity-db.model";
 import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { queryToFindAllEntities, queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck } from "../../sql/sql-queries-utils";
-
-export const findAllEntities = async <T extends EntiteSimple>(
-  tableName: string
-): Promise<T[]> => {
-  return queryToFindAllEntities<T>(tableName);
-};
+import { queryToInsertMultipleEntities, queryToInsertMultipleEntitiesAndReturnIdsNoCheck, queryToInsertMultipleEntitiesNoCheck } from "../../sql/sql-queries-utils";
 
 export const insertMultipleEntities = async <T extends EntityDb & { [key: string]: unknown }>(
   tableName: string,

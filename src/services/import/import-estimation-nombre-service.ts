@@ -4,9 +4,7 @@ import { createEstimationsNombre, findAllEstimationsNombre } from "../entities/e
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {
-  protected getTableName(): string {
-    throw new Error("Method not implemented.");
-  }
+
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
     this.entities = await findAllEstimationsNombre({ includeCounts: false });

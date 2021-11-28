@@ -44,21 +44,6 @@ export function query<T>(query: string): Promise<T> {
   return SqlConnection.query(query + ";");
 }
 
-export const queryToFindAllEntities = async <T>(
-  tableName: string,
-  attributeForOrdering?: string,
-  order?: string
-): Promise<T[]> => {
-  let queryStr = `SELECT * FROM ${tableName}`;
-
-  if (attributeForOrdering && order) {
-    queryStr = queryStr +
-      ` ORDER BY ${attributeForOrdering} ${order}`;
-  }
-
-  return query<T[]>(queryStr);
-};
-
 export const queryParametersToFindAllEntities = (attributeForOrdering?: string, order?: Prisma.SortOrder): { orderBy?: Record<string, Prisma.SortOrder> } => {
   if (attributeForOrdering) {
     return {
