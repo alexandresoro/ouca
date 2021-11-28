@@ -1,8 +1,6 @@
+import { parse } from 'csv-parse/sync';
 import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import Papa from "papaparse";
 import { DATA_VALIDATION_START, ImportNotifyProgressMessageContent, IMPORT_PROCESS_STARTED, INSERT_DB_START, RETRIEVE_DB_INFO_START } from "../../model/import/import-update-message";
 import { logger } from "../../utils/logger";
 
@@ -27,18 +25,18 @@ export abstract class ImportService extends EventEmitter {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    const content: { data: string[][] } = Papa.parse<string[]>(fileContent, {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const content: string[][] = parse(fileContent, {
       delimiter: ";",
-      encoding: "UTF-8"
+      encoding: 'utf-8'
     });
 
-    if (!content.data) {
+    if (!content) {
       this.emit(IMPORT_COMPLETE_EVENT, "Le contenu du fichier n'a pas pu être lu");
       return;
     }
 
-    const numberOfLines = content.data.filter((lineTab) => {
+    const numberOfLines = content.filter((lineTab) => {
       return lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX);
     }).length;
     const errors = [] as string[][];
@@ -54,7 +52,7 @@ export abstract class ImportService extends EventEmitter {
     let lastNotifyDate = Date.now();
 
     // Validate all entries
-    for (const lineTab of content.data) {
+    for (const lineTab of content) {
       if (lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX)) {
 
         let errorMessage: string;
@@ -74,7 +72,7 @@ export abstract class ImportService extends EventEmitter {
         if (now - lastNotifyDate >= NOTIFY_PROGRESS_INTERVAL) {
           const progressContent: ImportNotifyProgressMessageContent = {
             status: "Validating entries",
-            totalEntries: content.data.length,
+            totalEntries: content.length,
             entriesToBeValidated: numberOfLines,
             validatedEntries,
             errors: errors.length
