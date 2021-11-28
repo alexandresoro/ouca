@@ -1,8 +1,8 @@
-import { Commune } from "@prisma/client";
+import { Commune, Observateur } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { AgeWithCounts, ComportementWithCounts, DepartementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MeteoWithCounts, MilieuWithCounts, ObservateurWithCounts, SexeWithCounts } from "../../model/graphql";
+import { AgeWithCounts, ComportementWithCounts, DepartementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MeteoWithCounts, MilieuWithCounts, SexeWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { Espece } from "../../model/types/espece.model";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
@@ -28,7 +28,7 @@ import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
   private coordinatesSystem: CoordinatesSystem;
-  private observateurs: ObservateurWithCounts[];
+  private observateurs: Observateur[];
   private departements: DepartementWithCounts[];
   private communes: Commune[];
   private lieuxDits: LieuDitWithCoordinatesAsNumber[];
@@ -66,7 +66,7 @@ export class ImportDonneeService extends ImportService {
       this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
     }
 
-    this.observateurs = await findAllObservateurs();
+    this.observateurs = await findAllObservateurs(false);
     this.departements = await findAllDepartements();
     this.communes = await findAllCommunes();
     this.lieuxDits = await findAllLieuxDits();
@@ -101,7 +101,7 @@ export class ImportDonneeService extends ImportService {
     // Get the "Observateurs associes" or return an error if some of them doesn't exist
     const associesIds = new Set<number>();
     for (const associeLibelle of importedDonnee.associes) {
-      const associe: ObservateurWithCounts = this.findObservateur(associeLibelle);
+      const associe = this.findObservateur(associeLibelle);
       if (!associe) {
         return `L'observateur associé ${associeLibelle} n'existe pas`;
       }
@@ -351,7 +351,7 @@ export class ImportDonneeService extends ImportService {
     }
   }
 
-  private findObservateur = (libelleObservateur: string): ObservateurWithCounts => {
+  private findObservateur = (libelleObservateur: string): Observateur => {
     return this.observateurs.find((observateur) => {
       return this.compareStrings(observateur.libelle, libelleObservateur);
     });
