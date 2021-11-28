@@ -1,14 +1,12 @@
-import { Comportement as ComportementEntity, Nicheur, Prisma } from "@prisma/client";
-import { Comportement, ComportementsPaginatedResult, ComportementWithCounts, FindParams, MutationUpsertComportementArgs, QueryPaginatedComportementsArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Comportement, Nicheur, Prisma } from "@prisma/client";
+import { ComportementsPaginatedResult, ComportementWithCounts, FindParams, MutationUpsertComportementArgs, QueryPaginatedComportementsArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_CODE, TABLE_COMPORTEMENT } from "../../utils/constants";
+import { COLUMN_CODE } from "../../utils/constants";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntitiesNoCheck } from "./entity-service";
 
-export const findComportement = async (id: number): Promise<ComportementEntity | null> => {
+export const findComportement = async (id: number): Promise<Comportement | null> => {
   return prisma.comportement.findUnique({
     where: {
       id
@@ -16,7 +14,7 @@ export const findComportement = async (id: number): Promise<ComportementEntity |
   });
 };
 
-export const findComportementsByIds = async (ids: number[]): Promise<ComportementEntity[]> => {
+export const findComportementsByIds = async (ids: number[]): Promise<Comportement[]> => {
 
   return prisma.comportement.findMany({
     orderBy: {
@@ -189,7 +187,7 @@ export const findPaginatedComportements = async (
 
 export const upsertComportement = async (
   args: MutationUpsertComportementArgs
-): Promise<ComportementEntity> => {
+): Promise<Comportement> => {
   const { id, data } = args;
   if (id) {
     return prisma.comportement.update({
@@ -202,7 +200,7 @@ export const upsertComportement = async (
   }
 };
 
-export const deleteComportement = async (id: number): Promise<ComportementEntity> => {
+export const deleteComportement = async (id: number): Promise<Comportement> => {
   return prisma.comportement.delete({
     where: {
       id
@@ -210,8 +208,10 @@ export const deleteComportement = async (id: number): Promise<ComportementEntity
   });
 }
 
-export const insertComportements = (
-  comportements: Comportement[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntitiesNoCheck(TABLE_COMPORTEMENT, comportements);
+export const createComportements = async (
+  comportements: Omit<Comportement, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.comportement.createMany({
+    data: comportements
+  });
 };
