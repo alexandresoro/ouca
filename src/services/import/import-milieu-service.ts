@@ -3,9 +3,7 @@ import { createMilieux, findAllMilieux } from "../entities/milieu-service";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
 
 export class ImportMilieuService extends ImportEntiteAvecLibelleEtCodeService {
-  protected getTableName(): string {
-    throw new Error("Method not implemented.");
-  }
+
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
     this.entities = await findAllMilieux();
