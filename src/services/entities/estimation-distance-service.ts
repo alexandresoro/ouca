@@ -1,15 +1,11 @@
-import { EstimationDistance as EstimationDistanceEntity, Prisma } from "@prisma/client";
-import { EstimationDistance, EstimationDistanceWithCounts, EstimationsDistancePaginatedResult, FindParams, MutationUpsertEstimationDistanceArgs, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { EstimationDistance, Prisma } from "@prisma/client";
+import { EstimationDistanceWithCounts, EstimationsDistancePaginatedResult, FindParams, MutationUpsertEstimationDistanceArgs, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_LIBELLE, TABLE_ESTIMATION_DISTANCE } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE } from "../../utils/constants";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
-const DB_SAVE_MAPPING_ESTIMATION_DISTANCE = createKeyValueMapWithSameName("libelle");
-
-export const findEstimationDistance = async (id: number): Promise<EstimationDistanceEntity | null> => {
+export const findEstimationDistance = async (id: number): Promise<EstimationDistance | null> => {
   return prisma.estimationDistance.findUnique({
     where: {
       id
@@ -17,7 +13,7 @@ export const findEstimationDistance = async (id: number): Promise<EstimationDist
   });
 };
 
-export const findEstimationsDistance = async (params?: FindParams): Promise<EstimationDistanceEntity[]> => {
+export const findEstimationsDistance = async (params?: FindParams): Promise<EstimationDistance[]> => {
 
   const { q, max } = params ?? {};
 
@@ -113,7 +109,7 @@ export const findPaginatedEstimationsDistance = async (
 
 export const upsertEstimationDistance = async (
   args: MutationUpsertEstimationDistanceArgs
-): Promise<EstimationDistanceEntity> => {
+): Promise<EstimationDistance> => {
   const { id, data } = args;
   if (id) {
     return prisma.estimationDistance.update({
@@ -126,7 +122,7 @@ export const upsertEstimationDistance = async (
   }
 };
 
-export const deleteEstimationDistance = async (id: number): Promise<EstimationDistanceEntity> => {
+export const deleteEstimationDistance = async (id: number): Promise<EstimationDistance> => {
   return prisma.estimationDistance.delete({
     where: {
       id
@@ -134,8 +130,10 @@ export const deleteEstimationDistance = async (id: number): Promise<EstimationDi
   });
 }
 
-export const insertEstimationsDistance = async (
-  estimationsDistance: EstimationDistance[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_ESTIMATION_DISTANCE, estimationsDistance, DB_SAVE_MAPPING_ESTIMATION_DISTANCE);
+export const createEstimationsDistance = async (
+  estimationsDistance: Omit<EstimationDistance, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.estimationDistance.createMany({
+    data: estimationsDistance
+  });
 };
