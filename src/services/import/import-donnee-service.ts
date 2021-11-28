@@ -1,10 +1,9 @@
-import { Commune, Departement, Meteo, Observateur } from "@prisma/client";
+import { Commune, Departement, Espece, Meteo, Observateur } from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 import { AgeWithCounts, ComportementWithCounts, EstimationDistanceWithCounts, EstimationNombreWithCounts, MilieuWithCounts, SexeWithCounts } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
-import { Espece } from "../../model/types/espece.model";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
@@ -172,7 +171,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Espece" or return an error if it doesn't exist
-    const espece: Espece = this.findEspece(importedDonnee.espece);
+    const espece = this.findEspece(importedDonnee.espece);
     if (!espece) {
       return `L'espèce avec pour code, nom français ou nom scientifique ${importedDonnee.espece} n'existe pas`;
     }
