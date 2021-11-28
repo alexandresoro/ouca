@@ -1,19 +1,21 @@
-import { Age } from "@prisma/client";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { TABLE_AGE } from "../../utils/constants";
-import { insertAges } from "../entities/age-service";
+import { Age, Prisma } from "@prisma/client";
+import { createAges, findAllAges } from "../entities/age-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportAgeService extends ImportEntiteAvecLibelleService {
   protected getTableName(): string {
-    return TABLE_AGE;
+    throw new Error("Method not implemented.");
   }
+  protected init = async (): Promise<void> => {
+    this.entitiesToInsert = [];
+    this.entities = await findAllAges({ includeCounts: false });
+  };
 
   protected getThisEntityName(): string {
     return "Cet âge";
   }
 
-  protected saveEntities = (ages: Age[]): Promise<SqlSaveResponse> => {
-    return insertAges(ages);
+  protected saveEntities = (ages: Omit<Age, 'id'>[]): Promise<Prisma.BatchPayload> => {
+    return createAges(ages);
   };
 }

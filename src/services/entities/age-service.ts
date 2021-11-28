@@ -1,16 +1,12 @@
 
-import { Age as AgeEntity, Prisma } from "@prisma/client";
-import { Age, AgesPaginatedResult, AgeWithCounts, FindParams, MutationUpsertAgeArgs, QueryPaginatedAgesArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { Age, Prisma } from "@prisma/client";
+import { AgesPaginatedResult, AgeWithCounts, FindParams, MutationUpsertAgeArgs, QueryPaginatedAgesArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_LIBELLE, TABLE_AGE } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE } from "../../utils/constants";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
-const DB_SAVE_MAPPING_AGE = createKeyValueMapWithSameName("libelle")
-
-export const findAge = async (id: number): Promise<AgeEntity | null> => {
+export const findAge = async (id: number): Promise<Age | null> => {
   return prisma.age.findUnique({
     where: {
       id
@@ -116,7 +112,7 @@ export const findPaginatedAges = async (
 
 export const upsertAge = async (
   args: MutationUpsertAgeArgs
-): Promise<AgeEntity> => {
+): Promise<Age> => {
   const { id, data } = args;
   if (id) {
     return prisma.age.update({
@@ -129,7 +125,7 @@ export const upsertAge = async (
   }
 };
 
-export const deleteAge = async (id: number): Promise<AgeEntity> => {
+export const deleteAge = async (id: number): Promise<Age> => {
   return prisma.age.delete({
     where: {
       id
@@ -137,8 +133,10 @@ export const deleteAge = async (id: number): Promise<AgeEntity> => {
   });
 }
 
-export const insertAges = async (
-  ages: Age[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_AGE, ages, DB_SAVE_MAPPING_AGE);
+export const createAges = async (
+  ages: Omit<Age, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.age.createMany({
+    data: ages
+  });
 };
