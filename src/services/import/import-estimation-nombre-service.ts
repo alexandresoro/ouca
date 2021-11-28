@@ -1,14 +1,16 @@
-import { EstimationNombre } from "../../model/graphql";
+import { EstimationNombre, Prisma } from "@prisma/client";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
-import { TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
-import { insertEstimationsNombre } from "../entities/estimation-nombre-service";
+import { createEstimationsNombre, findAllEstimationsNombre } from "../entities/estimation-nombre-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {
   protected getTableName(): string {
-    return TABLE_ESTIMATION_NOMBRE;
+    throw new Error("Method not implemented.");
   }
+  protected init = async (): Promise<void> => {
+    this.entitiesToInsert = [];
+    this.entities = await findAllEstimationsNombre({ includeCounts: false });
+  };
 
   protected getThisEntityName(): string {
     return "Cette estimation du nombre";
@@ -18,7 +20,7 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
     return new ImportedEstimationNombre(entityTab);
   }
 
-  protected saveEntities = (estimations: EstimationNombre[]): Promise<SqlSaveResponse> => {
-    return insertEstimationsNombre(estimations);
+  protected saveEntities = (estimationsNombre: Omit<EstimationNombre, 'id'>[]): Promise<Prisma.BatchPayload> => {
+    return createEstimationsNombre(estimationsNombre);
   };
 }

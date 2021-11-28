@@ -1,11 +1,10 @@
-import { EstimationNombre } from "../../model/graphql";
+import { EstimationNombre } from "@prisma/client";
 import { ImportedEntiteAvecLibelle } from "./imported-entite-avec-libelle.object";
 
 export class ImportedEstimationNombre extends ImportedEntiteAvecLibelle {
 
-  buildEntiteAvecLibelle = (): EstimationNombre => {
+  buildEntiteAvecLibelle = (): Omit<EstimationNombre, 'id'> => {
     return {
-      id: null,
       libelle: this.libelle,
       nonCompte: false
     };

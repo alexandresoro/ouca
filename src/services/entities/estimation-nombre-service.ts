@@ -1,18 +1,11 @@
-import { EstimationNombre as EstimationNombreEntity, Prisma } from "@prisma/client";
-import { EstimationNombre, EstimationNombreWithCounts, EstimationsNombrePaginatedResult, FindParams, MutationUpsertEstimationNombreArgs, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
+import { EstimationNombre, Prisma } from "@prisma/client";
+import { EstimationNombreWithCounts, EstimationsNombrePaginatedResult, FindParams, MutationUpsertEstimationNombreArgs, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { createKeyValueMapWithSameName, queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
-import { COLUMN_LIBELLE, TABLE_ESTIMATION_NOMBRE } from "../../utils/constants";
+import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
+import { COLUMN_LIBELLE } from "../../utils/constants";
 import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntities } from "./entity-service";
 
-const DB_SAVE_MAPPING_ESTIMATION_NOMBRE = {
-  ...createKeyValueMapWithSameName("libelle"),
-  non_compte: "nonCompte"
-}
-
-export const findEstimationNombre = async (id: number): Promise<EstimationNombreEntity | null> => {
+export const findEstimationNombre = async (id: number): Promise<EstimationNombre | null> => {
   return prisma.estimationNombre.findUnique({
     where: {
       id
@@ -20,7 +13,7 @@ export const findEstimationNombre = async (id: number): Promise<EstimationNombre
   });
 };
 
-export const findEstimationsNombre = async (params?: FindParams): Promise<EstimationNombreEntity[]> => {
+export const findEstimationsNombre = async (params?: FindParams): Promise<EstimationNombre[]> => {
 
   const { q, max } = params ?? {};
 
@@ -122,7 +115,7 @@ export const findPaginatedEstimationsNombre = async (
 
 export const upsertEstimationNombre = async (
   args: MutationUpsertEstimationNombreArgs
-): Promise<EstimationNombreEntity> => {
+): Promise<EstimationNombre> => {
   const { id, data } = args;
   if (id) {
     return prisma.estimationNombre.update({
@@ -135,7 +128,7 @@ export const upsertEstimationNombre = async (
   }
 };
 
-export const deleteEstimationNombre = async (id: number): Promise<EstimationNombreEntity> => {
+export const deleteEstimationNombre = async (id: number): Promise<EstimationNombre> => {
   return prisma.estimationNombre.delete({
     where: {
       id
@@ -143,8 +136,10 @@ export const deleteEstimationNombre = async (id: number): Promise<EstimationNomb
   });
 }
 
-export const insertEstimationsNombre = async (
-  estimationsNombre: EstimationNombre[]
-): Promise<SqlSaveResponse> => {
-  return insertMultipleEntities(TABLE_ESTIMATION_NOMBRE, estimationsNombre, DB_SAVE_MAPPING_ESTIMATION_NOMBRE);
+export const createEstimationsNombre = async (
+  estimationsNombre: Omit<EstimationNombre, 'id'>[]
+): Promise<Prisma.BatchPayload> => {
+  return prisma.estimationNombre.createMany({
+    data: estimationsNombre
+  });
 };
