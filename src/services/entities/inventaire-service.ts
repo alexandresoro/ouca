@@ -132,6 +132,8 @@ export const findExistingInventaire = async (
       observateurId: inventaire.observateurId,
       date: zonedTimeToUtc(parse(inventaire.date, DATE_PATTERN, new Date()), 'UTC'),
       heure: inventaire.heure ?? null,
+      duree: inventaire.duree ?? null,
+      lieuDitId: inventaire.lieuDitId,
       altitude: inventaire.altitude ?? null,
       latitude: inventaire.latitude ?? null,
       longitude: inventaire.longitude ?? null,
