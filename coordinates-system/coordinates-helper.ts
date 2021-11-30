@@ -1,11 +1,10 @@
 import { LieuDit } from "../graphql";
 import { Coordinates } from "../types/coordinates.object";
-import { EntityWithCoordinates } from "../types/entity-with-coordinates.model";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
 export const getCoordinates = (
-  object: EntityWithCoordinates,
+  object: { coordinates?: Coordinates },
   coordinatesSystem: CoordinatesSystemType
 ): Coordinates => {
   return transformCoordinates(object.coordinates, coordinatesSystem);
