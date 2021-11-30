@@ -21,8 +21,8 @@ WORKDIR /app
 
 RUN apk add --no-cache mariadb-client
 
-COPY package.json package-lock.json /app/ 
 COPY prisma/ /app/prisma/
+COPY package.json package-lock.json /app/ 
 
 RUN npm ci --production && \
   rm -f package.json package-lock.json
