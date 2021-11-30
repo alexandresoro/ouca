@@ -10,4 +10,4 @@ export default yargs.options({
   listenPort: { type: "number", default: 4000 },
   logLevel: { type: "string", default: "warn" },
   logToFile: { type: "boolean", default: false },
-}).argv;
+}).parseSync();
