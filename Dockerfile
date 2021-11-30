@@ -21,11 +21,10 @@ WORKDIR /app
 
 RUN apk add --no-cache mariadb-client
 
-COPY package.json package-lock.json prisma/schema.prisma /app/ 
+COPY package.json package-lock.json prisma/ /app/ 
 
 RUN npm ci --production 
 RUN rm -f package.json package-lock.json
-RUN rm -rf prisma/
 
 WORKDIR /app/backend
 
