@@ -1,10 +1,9 @@
 import { Observateur, Prisma } from "@prisma/client";
 import { FindParams, MutationUpsertObservateurArgs, ObservateursPaginatedResult, ObservateurWithCounts, QueryPaginatedObservateursArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
-import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
+import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findObservateur = async (id: number): Promise<Observateur | null> => {
   return prisma.observateur.findUnique({

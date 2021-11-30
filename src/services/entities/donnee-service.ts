@@ -1,14 +1,12 @@
 import { Age, Classe, Commune, Comportement, Departement, Donnee as DonneeEntity, Espece, EstimationDistance, EstimationNombre, Inventaire, Lieudit, Meteo, Milieu, Observateur, Prisma, Sexe } from "@prisma/client";
-import { format, parse } from "date-fns";
+import { parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { AgeWithSpecimensCount, DonneeNavigationData, InputDonnee, MutationUpsertDonneeArgs, QueryPaginatedSearchDonneesArgs, SearchDonneeCriteria, SexeWithSpecimensCount, SortOrder } from "../../model/graphql";
 import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import prisma from "../../sql/prisma";
 import { queryToGetAllDonneesWithIds } from "../../sql/sql-queries-donnee";
-import { queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
-import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, TABLE_DONNEE, TABLE_DONNEE_COMPORTEMENT, TABLE_DONNEE_MILIEU } from "../../utils/constants";
+import { DATE_PATTERN } from "../../utils/constants";
 import { getPrismaPagination } from "./entities-utils";
-import { insertMultipleEntitiesAndReturnIdsNoCheck } from "./entity-service";
 import { normalizeInventaire } from "./inventaire-service";
 
 export type DonneeWithRelations = DonneeEntity & {
@@ -430,45 +428,6 @@ export const findDonneeNavigationData = async (
     previousDonneeId: previousDonnee?.id,
     nextDonneeId: nextDonnee?.id
   }
-};
-
-export const insertDonnees = async (
-  donnees: DonneeCompleteWithIds[]
-): Promise<{ id: number }[]> => {
-  const donneesForTableInsertion = donnees.map((donnee) => {
-    const { comportements_ids, milieux_ids, ...otherDonnee } = donnee
-    return {
-      ...otherDonnee,
-      date_creation: format(new Date(), DATE_WITH_TIME_PATTERN)
-    }
-  })
-
-  // Insert all donnees, and retrieve their insertion id, to be able to map with comportements + milieux
-  const insertedIds = await insertMultipleEntitiesAndReturnIdsNoCheck(TABLE_DONNEE, donneesForTableInsertion);
-
-  const comportementsMapping = donnees.map<[number, number[]]>((donnee, index) => {
-    return donnee.comportements_ids.size ? [insertedIds[index].id, [...donnee.comportements_ids]] : null;
-  }).filter(mapping => mapping);
-
-  const milieuxMapping = donnees.map<[number, number[]]>((donnee, index) => {
-    return donnee.milieux_ids.size ? [insertedIds[index].id, [...donnee.milieux_ids]] : null;
-  }).filter(mapping => mapping);
-
-  if (comportementsMapping.length) {
-    await queryToSaveListOfEntities(
-      TABLE_DONNEE_COMPORTEMENT,
-      comportementsMapping
-    );
-  }
-
-  if (milieuxMapping.length) {
-    await queryToSaveListOfEntities(
-      TABLE_DONNEE_MILIEU,
-      milieuxMapping
-    );
-  }
-
-  return insertedIds;
 };
 
 export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEntity | null> => {

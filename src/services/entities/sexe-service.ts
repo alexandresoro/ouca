@@ -1,9 +1,8 @@
 import { Prisma, Sexe } from "@prisma/client";
 import { FindParams, MutationUpsertSexeArgs, QueryPaginatedSexesArgs, SexesPaginatedResult, SexeWithCounts } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE } from "../../utils/constants";
-import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
+import { getEntiteAvecLibelleFilterClause, getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findSexe = async (id: number): Promise<Sexe | null> => {
   return prisma.sexe.findUnique({

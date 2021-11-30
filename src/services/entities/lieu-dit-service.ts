@@ -1,11 +1,10 @@
 import { Commune, Departement, Lieudit, Prisma } from "@prisma/client";
 import { FindParams, LieuDitWithCounts, LieuxDitsPaginatedResult, MutationUpsertLieuDitArgs, QueryPaginatedLieuxditsArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getFilterClauseCommune } from "./commune-service";
-import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
+import { getPrismaPagination, getSqlPagination, getSqlSorting, queryParametersToFindAllEntities } from "./entities-utils";
 
 export type LieuDitWithCoordinatesAsNumber<T extends Lieudit = Lieudit> = Omit<T, 'latitude' | 'longitude'> & { latitude: number, longitude: number }
 

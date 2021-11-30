@@ -1,9 +1,8 @@
 import { EstimationDistance, Prisma } from "@prisma/client";
 import { EstimationDistanceWithCounts, EstimationsDistancePaginatedResult, FindParams, MutationUpsertEstimationDistanceArgs, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE } from "../../utils/constants";
-import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
+import { getEntiteAvecLibelleFilterClause, getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findEstimationDistance = async (id: number): Promise<EstimationDistance | null> => {
   return prisma.estimationDistance.findUnique({

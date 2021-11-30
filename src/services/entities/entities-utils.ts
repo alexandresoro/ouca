@@ -50,3 +50,14 @@ export const getSqlSorting = (sortOptions: SortOptions): Prisma.Sql => {
     ? Prisma.raw(`ORDER BY ${orderBy} ${sortOrder ?? 'asc'}`)
     : Prisma.empty;
 }
+
+export const queryParametersToFindAllEntities = (attributeForOrdering?: string, order?: Prisma.SortOrder): { orderBy?: Record<string, Prisma.SortOrder> } => {
+  if (attributeForOrdering) {
+    return {
+      orderBy: {
+        [attributeForOrdering]: order ?? Prisma.SortOrder.asc
+      }
+    }
+  }
+  return {};
+}

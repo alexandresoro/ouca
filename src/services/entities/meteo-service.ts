@@ -1,10 +1,9 @@
 import { Meteo, Prisma } from "@prisma/client";
 import { MeteosPaginatedResult, MeteoWithCounts, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
-import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
+import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findMeteo = async (id: number): Promise<Meteo | null> => {
   return prisma.meteo.findUnique({

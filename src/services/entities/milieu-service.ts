@@ -1,10 +1,9 @@
 import { Milieu, Prisma } from "@prisma/client";
 import { FindParams, MilieuWithCounts, MilieuxPaginatedResult, MutationUpsertMilieuArgs, QueryPaginatedMilieuxArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE } from "../../utils/constants";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
-import { getPrismaPagination } from "./entities-utils";
+import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findMilieu = async (id: number): Promise<Milieu | null> => {
   return prisma.milieu.findUnique({

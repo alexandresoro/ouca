@@ -1,10 +1,9 @@
 import { Comportement, Nicheur, Prisma } from "@prisma/client";
 import { ComportementsPaginatedResult, ComportementWithCounts, FindParams, MutationUpsertComportementArgs, QueryPaginatedComportementsArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE } from "../../utils/constants";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
-import { getPrismaPagination } from "./entities-utils";
+import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findComportement = async (id: number): Promise<Comportement | null> => {
   return prisma.comportement.findUnique({

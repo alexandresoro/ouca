@@ -1,10 +1,9 @@
 import { Commune, Departement, Prisma } from "@prisma/client";
 import { CommunesPaginatedResult, CommuneWithCounts, FindParams, MutationUpsertCommuneArgs, QueryPaginatedCommunesArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
-import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
+import { getPrismaPagination, getSqlPagination, getSqlSorting, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findCommune = async (id: number): Promise<Commune | null> => {
   return prisma.commune.findUnique({

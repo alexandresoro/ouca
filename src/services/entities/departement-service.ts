@@ -1,10 +1,9 @@
 import { Departement, Prisma } from "@prisma/client";
 import { DepartementsPaginatedResult, DepartementWithCounts, FindParams, MutationUpsertDepartementArgs, QueryPaginatedDepartementsArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
-import { getPrismaPagination, getSqlPagination, getSqlSorting } from "./entities-utils";
+import { getPrismaPagination, getSqlPagination, getSqlSorting, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const getFilterClauseDepartement = (q: string | null | undefined): Prisma.DepartementWhereInput => {
   return (q != null && q.length) ? {

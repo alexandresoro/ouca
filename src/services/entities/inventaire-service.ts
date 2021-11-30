@@ -1,13 +1,9 @@
-import { CoordinatesSystem, Inventaire, Meteo, Observateur, Prisma } from "@prisma/client";
+import { CoordinatesSystem, Inventaire, Meteo, Observateur } from "@prisma/client";
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { CoordinatesSystemType, InputInventaire, MutationUpsertInventaireArgs, UpsertInventaireFailureReason } from "../../model/graphql";
-import { InventaireCompleteWithIds } from "../../objects/db/inventaire-db.object";
 import prisma from "../../sql/prisma";
-import { queryToGetAllInventairesWithIds } from "../../sql/sql-queries-inventaire";
-import { queryToSaveListOfEntities } from "../../sql/sql-queries-utils";
-import { DATE_PATTERN, DATE_WITH_TIME_PATTERN, TABLE_INVENTAIRE, TABLE_INVENTAIRE_ASSOCIE, TABLE_INVENTAIRE_METEO } from "../../utils/constants";
-import { insertMultipleEntitiesAndReturnIdsNoCheck } from "./entity-service";
+import { DATE_PATTERN } from "../../utils/constants";
 
 export type InventaireWithRelations = Omit<Inventaire, 'date' | 'latitude' | 'longitude' | 'altitude' | 'coordinates_system'> & {
   observateur: Observateur
@@ -177,10 +173,6 @@ export const findExistingInventaire = async (
   })?.[0] ?? null;
 };
 
-export const findAllInventairesWithIds = async (): Promise<InventaireCompleteWithIds[]> => {
-  return queryToGetAllInventairesWithIds();
-}
-
 export const findAllInventaires = async (): Promise<InventaireWithRelations[]> => {
   return prisma.inventaire.findMany({
     include: COMMON_INVENTAIRE_INCLUDE,
@@ -309,82 +301,4 @@ export const upsertInventaire = async (
     }
 
   }
-};
-
-export const insertInventaires = async (
-  inventaires: InventaireCompleteWithIds[]
-): Promise<{ id: number }[]> => {
-
-  const inventairesWithCreationTime = inventaires.map((inventaire) => {
-    const { id, meteos_ids, associes_ids, ...inventaireOthers } = inventaire;
-
-    return {
-      ...inventaireOthers,
-      date_creation: format(new Date(), DATE_WITH_TIME_PATTERN)
-    }
-  });
-
-  // Insert all donnees, and retrieve their insertion id, to be able to map with meteos and associes
-  const insertedIds = await insertMultipleEntitiesAndReturnIdsNoCheck(TABLE_INVENTAIRE, inventairesWithCreationTime);
-
-  const meteosMapping = inventaires.map<[number, number[]]>((inventaire, index) => {
-    return inventaire.meteos_ids.size ? [insertedIds[index].id, [...inventaire.meteos_ids]] : null;
-  }).filter(mapping => mapping);
-
-  const associesMapping = inventaires.map<[number, number[]]>((inventaire, index) => {
-    return inventaire.associes_ids.size ? [insertedIds[index].id, [...inventaire.associes_ids]] : null;
-  }).filter(mapping => mapping);
-
-  if (meteosMapping.length) {
-    await queryToSaveListOfEntities(
-      TABLE_INVENTAIRE_METEO,
-      meteosMapping
-    );
-  }
-
-  if (associesMapping.length) {
-    await queryToSaveListOfEntities(
-      TABLE_INVENTAIRE_ASSOCIE,
-      associesMapping
-    );
-  }
-
-  return insertedIds;
-};
-
-export const createInventaires = async (
-  inventaires: Omit<InputInventaire, 'id'>[],
-  coordinatesSystem: CoordinatesSystemType
-): Promise<Prisma.BatchPayload> => {
-  return prisma.inventaire.createMany({
-    data: inventaires.map((inventaire) => {
-
-      const { associesIds, meteosIds, date, ...restInventaire } = inventaire;
-
-      const associesMap = associesIds?.map((associeId) => {
-        return {
-          observateur_id: associeId
-        }
-      }) ?? [];
-
-      const meteosMap = meteosIds?.map((meteoId) => {
-        return {
-          meteo_id: meteoId
-        }
-      }) ?? [];
-
-      return {
-        ...restInventaire,
-        date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), 'UTC'),
-        date_creation: new Date(),
-        coordinates_system: coordinatesSystem ?? null,
-        inventaire_associe: {
-          create: associesMap
-        },
-        inventaire_meteo: {
-          create: meteosMap
-        }
-      }
-    })
-  });
 };

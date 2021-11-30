@@ -2,9 +2,8 @@
 import { Age, Prisma } from "@prisma/client";
 import { AgesPaginatedResult, AgeWithCounts, FindParams, MutationUpsertAgeArgs, QueryPaginatedAgesArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_LIBELLE } from "../../utils/constants";
-import { getEntiteAvecLibelleFilterClause, getPrismaPagination } from "./entities-utils";
+import { getEntiteAvecLibelleFilterClause, getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findAge = async (id: number): Promise<Age | null> => {
   return prisma.age.findUnique({

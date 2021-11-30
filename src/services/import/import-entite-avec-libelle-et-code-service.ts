@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { EntiteAvecLibelleEtCode } from "../../model/types/entite-avec-libelle-et-code.object";
 import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object";
-import { SqlSaveResponse } from "../../objects/sql-save-response.object";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {
@@ -47,7 +46,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
     }
   }
 
-  protected abstract saveEntities(entities: Omit<EntiteAvecLibelleEtCode, 'id'>[]): Promise<SqlSaveResponse | Prisma.BatchPayload>;
+  protected abstract saveEntities(entities: Omit<EntiteAvecLibelleEtCode, 'id'>[]): Promise<Prisma.BatchPayload>;
 
   protected abstract getAnEntityName(): string;
 }

@@ -1,10 +1,9 @@
 import { Classe, Espece, Prisma } from "@prisma/client";
 import { EspecesPaginatedResult, EspeceWithCounts, FindParams, MutationUpsertEspeceArgs, QueryPaginatedEspecesArgs, SearchDonneeCriteria } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { queryParametersToFindAllEntities } from "../../sql/sql-queries-utils";
 import { COLUMN_CODE } from "../../utils/constants";
 import { buildSearchDonneeCriteria } from "./donnee-service";
-import { getPrismaPagination } from "./entities-utils";
+import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findEspece = async (id: number): Promise<Espece | null> => {
   return prisma.espece.findUnique({
