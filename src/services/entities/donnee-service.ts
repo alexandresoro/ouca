@@ -2,9 +2,7 @@ import { Age, Classe, Commune, Comportement, Departement, Donnee as DonneeEntity
 import { parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { AgeWithSpecimensCount, DonneeNavigationData, InputDonnee, MutationUpsertDonneeArgs, QueryPaginatedSearchDonneesArgs, SearchDonneeCriteria, SexeWithSpecimensCount, SortOrder } from "../../model/graphql";
-import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import prisma from "../../sql/prisma";
-import { queryToGetAllDonneesWithIds } from "../../sql/sql-queries-donnee";
 import { DATE_PATTERN } from "../../utils/constants";
 import { getPrismaPagination } from "./entities-utils";
 import { normalizeInventaire } from "./inventaire-service";
@@ -610,10 +608,6 @@ export const deleteDonnee = async (donneeId: number): Promise<DonneeEntity> => {
   }
   return deletedDonnee;
 };
-
-export const findAllDonneesWithIds = async (): Promise<DonneeCompleteWithIds[]> => {
-  return queryToGetAllDonneesWithIds();
-}
 
 export const findAllDonnees = async (): Promise<DonneeWithRelations[]> => {
   return prisma.donnee.findMany({
