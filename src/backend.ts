@@ -106,7 +106,8 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
   // GraphQL server
   await apolloServer.start();
   void server.register(apolloServer.createHandler({
-    path: 'graphql'
+    path: 'graphql',
+    cors: false // Need to set to false otherwise it conflicts with the one defined as middleware above
   }));
 
   server.listen(options.listenPort, options.listenAddress, (err, address) => {

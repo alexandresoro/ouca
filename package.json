@@ -29,7 +29,7 @@
     "date-fns": "^2.27.0",
     "date-fns-tz": "^1.1.6",
     "exceljs": "^4.3.0",
-    "fastify": "^3.21.1",
+    "fastify": "^3.24.1",
     "fastify-compress": "^3.6.1",
     "fastify-cors": "^6.0.2",
     "fastify-static": "^4.5.0",
