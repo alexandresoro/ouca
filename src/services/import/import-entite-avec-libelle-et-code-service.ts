@@ -1,13 +1,12 @@
 import { Prisma } from "@prisma/client";
-import { EntiteAvecLibelleEtCode } from "../../model/types/entite-avec-libelle-et-code.object";
 import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {
 
-  protected entities: (EntiteAvecLibelleEtCode | Omit<EntiteAvecLibelleEtCode, 'id'>)[];
+  protected entities: { libelle: string, code: string }[];
 
-  protected entitiesToInsert: Omit<EntiteAvecLibelleEtCode, 'id'>[];
+  protected entitiesToInsert: { libelle: string, code: string }[];
 
   protected getNumberOfColumns = (): number => {
     return 2;
@@ -46,7 +45,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
     }
   }
 
-  protected abstract saveEntities(entities: Omit<EntiteAvecLibelleEtCode, 'id'>[]): Promise<Prisma.BatchPayload>;
+  protected abstract saveEntities(entities: { libelle: string, code: string }[]): Promise<Prisma.BatchPayload>;
 
   protected abstract getAnEntityName(): string;
 }

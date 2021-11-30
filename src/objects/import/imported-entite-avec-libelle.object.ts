@@ -1,4 +1,3 @@
-import { EntiteAvecLibelle } from "../../model/types/entite-avec-libelle.object";
 
 const LIBELLE_INDEX = 0;
 
@@ -11,8 +10,7 @@ export class ImportedEntiteAvecLibelle {
   constructor(entiteAvecLibelleTab: string[]) {
     this.libelle = entiteAvecLibelleTab[LIBELLE_INDEX].trim();
   }
-
-  buildEntiteAvecLibelle = (): Omit<EntiteAvecLibelle, 'id'> => {
+  buildEntiteAvecLibelle = (): { libelle: string } => {
     return {
       libelle: this.libelle
     };
