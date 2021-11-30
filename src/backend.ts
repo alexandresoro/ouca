@@ -16,7 +16,7 @@ import typeDefs from "./graphql/typedefs";
 import { WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
 import { HEARTBEAT, IMPORT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
-import { importWebsocket } from "./requests/import";
+import { importWebsocket } from "./services/import";
 import prisma from "./sql/prisma";
 import { logger } from "./utils/logger";
 import options from "./utils/options";

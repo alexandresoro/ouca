@@ -4,9 +4,9 @@ import { ImportErrorMessage, ImportNotifyProgressMessage, ImportNotifyProgressMe
 import { WebsocketImportRequestContent } from "../model/websocket/websocket-import-request-message";
 import { WebsocketImportUpdateMessage } from "../model/websocket/websocket-import-update-message";
 import { IMPORT } from "../model/websocket/websocket-message-type.model";
-import { IMPORT_COMPLETE_EVENT, IMPORT_PROGRESS_UPDATE_EVENT, IMPORT_STATUS_UPDATE_EVENT } from "../services/import/import-service";
-import { getNewImportServiceForRequestType } from "../services/import/import-service-per-request-type";
 import { logger } from "../utils/logger";
+import { IMPORT_COMPLETE_EVENT, IMPORT_PROGRESS_UPDATE_EVENT, IMPORT_STATUS_UPDATE_EVENT } from "./import/import-service";
+import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type";
 
 // Worker thread for the import
 if (!isMainThread) {
