@@ -581,21 +581,42 @@ export const upsertDonnee = async (
       }).then(normalizeDonnee);
 
     } else {
-      return prisma.donnee.create({
-        data: {
-          ...restData,
-          date_creation: new Date(),
-          donnee_comportement: {
-            create: comportementMap
-          },
-          donnee_milieu: {
-            create: milieuMap
-          }
-        },
-        include: COMMON_DONNEE_INCLUDE
-      }).then(normalizeDonnee);
+      return createDonnee(data);
     }
   }
+};
+
+export const createDonnee = async (
+  donnee: InputDonnee
+): Promise<DonneeWithRelations> => {
+
+  const { comportementsIds, milieuxIds, ...restData } = donnee;
+
+  const comportementMap = comportementsIds?.map((comportementId) => {
+    return {
+      comportement_id: comportementId
+    }
+  }) ?? [];
+
+  const milieuMap = milieuxIds?.map((milieuId) => {
+    return {
+      milieu_id: milieuId
+    }
+  }) ?? [];
+
+  return prisma.donnee.create({
+    data: {
+      ...restData,
+      date_creation: new Date(),
+      donnee_comportement: {
+        create: comportementMap
+      },
+      donnee_milieu: {
+        create: milieuMap
+      }
+    },
+    include: COMMON_DONNEE_INCLUDE
+  }).then(normalizeDonnee);
 };
 
 export const deleteDonnee = async (donneeId: number): Promise<DonneeEntity> => {

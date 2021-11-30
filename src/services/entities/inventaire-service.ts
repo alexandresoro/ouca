@@ -1,4 +1,4 @@
-import { CoordinatesSystem, Inventaire, Meteo, Observateur } from "@prisma/client";
+import { CoordinatesSystem, Inventaire, Meteo, Observateur, Prisma } from "@prisma/client";
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { CoordinatesSystemType, InputInventaire, MutationUpsertInventaireArgs, UpsertInventaireFailureReason } from "../../model/graphql";
@@ -181,6 +181,14 @@ export const findAllInventairesWithIds = async (): Promise<InventaireCompleteWit
   return queryToGetAllInventairesWithIds();
 }
 
+export const findAllInventaires = async (): Promise<InventaireWithRelations[]> => {
+  return prisma.inventaire.findMany({
+    include: COMMON_INVENTAIRE_INCLUDE,
+  }).then((inventaires) => {
+    return inventaires.map(normalizeInventaireComplete)
+  });
+}
+
 export const upsertInventaire = async (
   args: MutationUpsertInventaireArgs
 ): Promise<InventaireWithRelations> => {
@@ -342,4 +350,41 @@ export const insertInventaires = async (
   }
 
   return insertedIds;
+};
+
+export const createInventaires = async (
+  inventaires: Omit<InputInventaire, 'id'>[],
+  coordinatesSystem: CoordinatesSystemType
+): Promise<Prisma.BatchPayload> => {
+  return prisma.inventaire.createMany({
+    data: inventaires.map((inventaire) => {
+
+      const { associesIds, meteosIds, date, ...restInventaire } = inventaire;
+
+      const associesMap = associesIds?.map((associeId) => {
+        return {
+          observateur_id: associeId
+        }
+      }) ?? [];
+
+      const meteosMap = meteosIds?.map((meteoId) => {
+        return {
+          meteo_id: meteoId
+        }
+      }) ?? [];
+
+      return {
+        ...restInventaire,
+        date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), 'UTC'),
+        date_creation: new Date(),
+        coordinates_system: coordinatesSystem ?? null,
+        inventaire_associe: {
+          create: associesMap
+        },
+        inventaire_meteo: {
+          create: meteosMap
+        }
+      }
+    })
+  });
 };
