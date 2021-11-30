@@ -615,6 +615,14 @@ export const findAllDonneesWithIds = async (): Promise<DonneeCompleteWithIds[]> 
   return queryToGetAllDonneesWithIds();
 }
 
+export const findAllDonnees = async (): Promise<DonneeWithRelations[]> => {
+  return prisma.donnee.findMany({
+    include: COMMON_DONNEE_INCLUDE,
+  }).then((donnees) => {
+    return donnees.map(normalizeDonnee)
+  });
+}
+
 export const findNextRegroupement = async (): Promise<number> => {
   const regroupementsAggr = await prisma.donnee.aggregate({
     _max: {

@@ -4,7 +4,6 @@ import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coord
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 import { InputDonnee } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
-import { DonneeCompleteWithIds } from "../../objects/db/donnee-db.type";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { findAllAges } from "../entities/age-service";
@@ -12,7 +11,7 @@ import { findAllCommunes } from "../entities/commune-service";
 import { findAllComportements } from "../entities/comportement-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findAllDepartements } from "../entities/departement-service";
-import { createDonnee, findAllDonneesWithIds } from "../entities/donnee-service";
+import { createDonnee, DonneeWithRelations, findAllDonnees } from "../entities/donnee-service";
 import { findAllEspeces } from "../entities/espece-service";
 import { findAllEstimationsDistance } from "../entities/estimation-distance-service";
 import { findAllEstimationsNombre } from "../entities/estimation-nombre-service";
@@ -40,7 +39,7 @@ export class ImportDonneeService extends ImportService {
   private meteos: Meteo[];
   private inventaires: InventaireWithRelations[] = []; // The list of existing inventaires + the ones we created along with the validation
 
-  private existingDonnees: DonneeCompleteWithIds[];
+  private existingDonnees: DonneeWithRelations[];
 
   private newDonnees: InputDonnee[];
 
@@ -72,7 +71,7 @@ export class ImportDonneeService extends ImportService {
     this.comportements = await findAllComportements();
     this.milieux = await findAllMilieux();
     this.inventaires = await findAllInventaires();
-    this.existingDonnees = await findAllDonneesWithIds();
+    this.existingDonnees = await findAllDonnees();
   };
 
   protected validateAndPrepareEntity = async (donneeTab: string[]): Promise<string> => {
@@ -266,18 +265,18 @@ export class ImportDonneeService extends ImportService {
     // Check if already have a similar donnee in the database
     const existingDonneeDatabase = this.existingDonnees.find((donnee) => {
       return (
-        donnee.inventaire_id === existingInventaire?.id &&
-        donnee.espece_id === espece.id &&
-        donnee.sexe_id === sexe.id &&
-        donnee.age_id === age.id &&
+        donnee.inventaireId === existingInventaire?.id &&
+        donnee.especeId === espece.id &&
+        donnee.sexeId === sexe.id &&
+        donnee.ageId === age.id &&
         donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
-        donnee.estimation_nombre_id === estimationNombre.id &&
+        donnee.estimationNombreId === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
-        donnee.estimation_distance_id === (estimationDistance?.id ?? null) &&
+        donnee.estimationDistanceId === (estimationDistance?.id ?? null) &&
         donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
-        areSetsContainingSameValues(donnee.comportements_ids, comportementsIds) &&
-        areSetsContainingSameValues(donnee.milieux_ids, milieuxIds)
+        areSetsContainingSameValues(new Set(donnee.comportements?.map(comportement => comportement?.id)), comportementsIds) &&
+        areSetsContainingSameValues(new Set(donnee.milieux?.map(milieu => milieu?.id)), milieuxIds)
       );
     });
 
