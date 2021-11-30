@@ -12,16 +12,18 @@ on:
       - master
 
 jobs:
-  check-build-and-release:
+  check-build:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         include:
           - node-version: 14.x
-            type: "lts-check-build-only"
+            type: "old"
           - node-version: 16.x
-            type: "release"
+            type: "build,lts"
+          - node-version: 17.x
+            type: "next"
 
     steps:
       - uses: actions/checkout@v2
@@ -42,8 +44,8 @@ jobs:
       - name: Build
         run: npm run build
 
-  publish-docker:
-    needs: check-build-and-release
+  docker-publish:
+    needs: check-build
 
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
