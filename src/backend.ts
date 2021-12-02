@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { ApolloServer } from "apollo-server-fastify";
 import { fastify } from "fastify";
@@ -9,7 +8,6 @@ import fastifyWebsocket from "fastify-websocket";
 import fs from "fs";
 import middie from "middie";
 import path from "path";
-import { Logger } from "winston";
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
@@ -22,7 +20,9 @@ import { logger } from "./utils/logger";
 import options from "./utils/options";
 import { PUBLIC_DIR } from "./utils/paths";
 
-const server = fastify();
+const server = fastify({
+  logger
+});
 
 const apolloServer = new ApolloServer({
   typeDefs: typeDefs,
@@ -35,20 +35,17 @@ const apolloServer = new ApolloServer({
 });
 
 // Prisma queries logger
-const queriesLogger = (e: Prisma.QueryEvent | Prisma.LogEvent, winstonLogger: (message: string) => Logger) => {
-  winstonLogger("\n" + JSON.stringify(e, null, 2));
-}
 prisma.$on('query', (e) => {
-  queriesLogger(e, logger.debug);
+  logger.trace(e);
 });
 prisma.$on('error', (e) => {
-  queriesLogger(e, logger.error);
+  logger.error(e);
 });
 prisma.$on('warn', (e) => {
-  queriesLogger(e, logger.warn);
+  logger.warn(e);
 });
 prisma.$on('info', (e) => {
-  queriesLogger(e, logger.info)
+  logger.info(e)
 });
 
 const PUBLIC_DIR_PATH = path.join(process.cwd(), PUBLIC_DIR);
@@ -97,12 +94,6 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
     })
   })
 
-  // Generic logger
-  void server.use((req, res, next) => {
-    logger.info(`Method ${req.method}, URL ${req.url}`);
-    next()
-  });
-
   // GraphQL server
   await apolloServer.start();
   void server.register(apolloServer.createHandler({
@@ -110,9 +101,7 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
     cors: false // Need to set to false otherwise it conflicts with the one defined as middleware above
   }));
 
-  server.listen(options.listenPort, options.listenAddress, (err, address) => {
-    logger.info(`Server running at ${address}`);
-  });
+  await server.listen(options.listenPort, options.listenAddress);
 
   // Handle shutdown request gracefully
   // This is used when inside a container

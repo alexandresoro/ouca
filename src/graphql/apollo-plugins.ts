@@ -1,23 +1,29 @@
-import { GraphQLRequestContext, GraphQLRequestContextWillSendResponse } from 'apollo-server-types';
+import { PluginDefinition } from 'apollo-server-core';
+import cuid from 'cuid';
 import { FastifyInstance } from "fastify";
 import { logger } from "../utils/logger";
 
-export const apolloRequestLogger = {
+export const apolloRequestLogger: PluginDefinition = {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/require-await
-  async requestDidStart() {
+  async requestDidStart(context) {
+
+    context.logger = logger.child({ requestId: cuid() });
+    context.logger.info({
+      operationName: context.request.operationName,
+      query: context.request.query,
+      variables: context.request.variables,
+    });
 
     return {
 
       // eslint-disable-next-line @typescript-eslint/require-await
-      async didEncounterErrors(requestContext: GraphQLRequestContext) {
-        logger.warn(`GraphQL query has encountered the following error\n Request: ${JSON.stringify(requestContext.request, null, 2)}\n  Errors: ${JSON.stringify(requestContext.errors, null, 2)}`)
+      async didEncounterErrors({ logger, errors }) {
+        errors.forEach((error) => logger.warn(error));
       },
 
       // eslint-disable-next-line @typescript-eslint/require-await
-      async willSendResponse(
-        requestContext: GraphQLRequestContextWillSendResponse<unknown>,
-      ) {
-        logger.debug(`GraphQL\n Request: ${JSON.stringify(requestContext.request, null, 2)}\n Response: ${JSON.stringify(requestContext.response, null, 2)}`)
+      async willSendResponse({ logger, response }) {
+        logger.debug(response);
       }
 
     }
