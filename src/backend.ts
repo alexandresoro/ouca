@@ -6,7 +6,6 @@ import fastifyCors from "fastify-cors";
 import fastifyStatic from "fastify-static";
 import fastifyWebsocket from "fastify-websocket";
 import fs from "fs";
-import middie from "middie";
 import path from "path";
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
 import resolvers from "./graphql/resolvers";
@@ -60,7 +59,6 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
 (async () => {
 
   // Middlewares
-  await server.register(middie);
   await server.register(fastifyWebsocket);
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {
