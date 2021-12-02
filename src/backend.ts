@@ -11,7 +11,7 @@ import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plu
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
 import { WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
-import { HEARTBEAT, IMPORT } from "./model/websocket/websocket-message-type.model";
+import { IMPORT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
 import { importWebsocket } from "./services/import";
 import prisma from "./sql/prisma";
@@ -74,14 +74,7 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
   server.get('/ws/', { websocket: true }, (connection) => {
     connection.socket.on('message', data => {
       const message = JSON.parse(data.toString()) as WebsocketMessage;
-      if (message.type === HEARTBEAT) {
-        logger.debug("Ping received");
-        // Ping message received
-        connection.socket.send(JSON.stringify({
-          type: "other",
-          content: "pong"
-        }))
-      } else if (message.type === IMPORT) {
+      if (message.type === IMPORT) {
         // Import message received
         const importRequest = (message as WebsocketImportRequestMessage).content;
         logger.info(`Import requested by the client for table ${importRequest.dataType}`);
