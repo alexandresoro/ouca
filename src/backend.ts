@@ -24,8 +24,8 @@ const server = fastify({
 });
 
 const apolloServer = new ApolloServer({
-  typeDefs: typeDefs,
-  resolvers: resolvers,
+  typeDefs,
+  resolvers,
   plugins: [
     fastifyAppClosePlugin(server),
     ApolloServerPluginDrainHttpServer({ httpServer: server.server }),
