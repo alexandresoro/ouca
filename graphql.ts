@@ -305,6 +305,31 @@ export type FindParams = {
   q?: InputMaybe<Scalars['String']>;
 };
 
+export const ImportErrorType = {
+  ImportFailure: 'IMPORT_FAILURE',
+  ImportProcessError: 'IMPORT_PROCESS_ERROR',
+  ImportProcessUnexpectedExit: 'IMPORT_PROCESS_UNEXPECTED_EXIT'
+} as const;
+
+export type ImportErrorType = typeof ImportErrorType[keyof typeof ImportErrorType];
+export type ImportStatus = {
+  __typename?: 'ImportStatus';
+  errorDescription?: Maybe<Scalars['String']>;
+  errorType?: Maybe<ImportErrorType>;
+  importErrorsReportFile?: Maybe<Scalars['String']>;
+  ongoingValidationStats?: Maybe<OngoingValidationStats>;
+  status: ImportStatusEnum;
+  subStatus?: Maybe<OngoingSubStatus>;
+};
+
+export const ImportStatusEnum = {
+  Complete: 'COMPLETE',
+  Failed: 'FAILED',
+  NotStarted: 'NOT_STARTED',
+  Ongoing: 'ONGOING'
+} as const;
+
+export type ImportStatusEnum = typeof ImportStatusEnum[keyof typeof ImportStatusEnum];
 export type InputAge = {
   libelle: Scalars['String'];
 };
@@ -748,6 +773,22 @@ export type ObservateursPaginatedResult = PaginatedResult & {
   result?: Maybe<Array<Maybe<ObservateurWithCounts>>>;
 };
 
+export const OngoingSubStatus = {
+  InsertingImportedData: 'INSERTING_IMPORTED_DATA',
+  ProcessStarted: 'PROCESS_STARTED',
+  RetrievingRequiredData: 'RETRIEVING_REQUIRED_DATA',
+  ValidatingInputFile: 'VALIDATING_INPUT_FILE'
+} as const;
+
+export type OngoingSubStatus = typeof OngoingSubStatus[keyof typeof OngoingSubStatus];
+export type OngoingValidationStats = {
+  __typename?: 'OngoingValidationStats';
+  nbEntriesChecked?: Maybe<Scalars['Int']>;
+  nbEntriesWithErrors?: Maybe<Scalars['Int']>;
+  totalEntries?: Maybe<Scalars['Int']>;
+  totalLines?: Maybe<Scalars['Int']>;
+};
+
 export type PaginatedResult = {
   count: Scalars['Int'];
 };
@@ -793,6 +834,7 @@ export type Query = {
   exportMilieux?: Maybe<Scalars['String']>;
   exportObservateurs?: Maybe<Scalars['String']>;
   exportSexes?: Maybe<Scalars['String']>;
+  importStatus?: Maybe<ImportStatus>;
   inventaire?: Maybe<Inventaire>;
   lastDonneeId?: Maybe<Scalars['Int']>;
   lieuDit?: Maybe<LieuDit>;
@@ -925,6 +967,11 @@ export type QueryEstimationsNombreArgs = {
 
 export type QueryExportDonneesArgs = {
   searchCriteria?: InputMaybe<SearchDonneeCriteria>;
+};
+
+
+export type QueryImportStatusArgs = {
+  importId: Scalars['String'];
 };
 
 
@@ -1349,6 +1396,9 @@ export type ResolversTypes = {
   EstimationsNombrePaginatedResult: ResolverTypeWrapper<PartialDeep<EstimationsNombrePaginatedResult>>;
   FindParams: ResolverTypeWrapper<PartialDeep<FindParams>>;
   Float: ResolverTypeWrapper<PartialDeep<Scalars['Float']>>;
+  ImportErrorType: ResolverTypeWrapper<PartialDeep<ImportErrorType>>;
+  ImportStatus: ResolverTypeWrapper<PartialDeep<ImportStatus>>;
+  ImportStatusEnum: ResolverTypeWrapper<PartialDeep<ImportStatusEnum>>;
   InputAge: ResolverTypeWrapper<PartialDeep<InputAge>>;
   InputClasse: ResolverTypeWrapper<PartialDeep<InputClasse>>;
   InputCommune: ResolverTypeWrapper<PartialDeep<InputCommune>>;
@@ -1383,6 +1433,8 @@ export type ResolversTypes = {
   Observateur: ResolverTypeWrapper<PartialDeep<Observateur>>;
   ObservateurWithCounts: ResolverTypeWrapper<PartialDeep<ObservateurWithCounts>>;
   ObservateursPaginatedResult: ResolverTypeWrapper<PartialDeep<ObservateursPaginatedResult>>;
+  OngoingSubStatus: ResolverTypeWrapper<PartialDeep<OngoingSubStatus>>;
+  OngoingValidationStats: ResolverTypeWrapper<PartialDeep<OngoingValidationStats>>;
   PaginatedResult: ResolversTypes['AgesPaginatedResult'] | ResolversTypes['ClassesPaginatedResult'] | ResolversTypes['CommunesPaginatedResult'] | ResolversTypes['ComportementsPaginatedResult'] | ResolversTypes['DepartementsPaginatedResult'] | ResolversTypes['EspecesPaginatedResult'] | ResolversTypes['EstimationsDistancePaginatedResult'] | ResolversTypes['EstimationsNombrePaginatedResult'] | ResolversTypes['LieuxDitsPaginatedResult'] | ResolversTypes['MeteosPaginatedResult'] | ResolversTypes['MilieuxPaginatedResult'] | ResolversTypes['ObservateursPaginatedResult'] | ResolversTypes['PaginatedSearchDonneesResult'] | ResolversTypes['SexesPaginatedResult'];
   PaginatedSearchDonneesResult: ResolverTypeWrapper<PartialDeep<PaginatedSearchDonneesResult>>;
   Query: ResolverTypeWrapper<{}>;
@@ -1437,6 +1489,7 @@ export type ResolversParentTypes = {
   EstimationsNombrePaginatedResult: PartialDeep<EstimationsNombrePaginatedResult>;
   FindParams: PartialDeep<FindParams>;
   Float: PartialDeep<Scalars['Float']>;
+  ImportStatus: PartialDeep<ImportStatus>;
   InputAge: PartialDeep<InputAge>;
   InputClasse: PartialDeep<InputClasse>;
   InputCommune: PartialDeep<InputCommune>;
@@ -1468,6 +1521,7 @@ export type ResolversParentTypes = {
   Observateur: PartialDeep<Observateur>;
   ObservateurWithCounts: PartialDeep<ObservateurWithCounts>;
   ObservateursPaginatedResult: PartialDeep<ObservateursPaginatedResult>;
+  OngoingValidationStats: PartialDeep<OngoingValidationStats>;
   PaginatedResult: ResolversParentTypes['AgesPaginatedResult'] | ResolversParentTypes['ClassesPaginatedResult'] | ResolversParentTypes['CommunesPaginatedResult'] | ResolversParentTypes['ComportementsPaginatedResult'] | ResolversParentTypes['DepartementsPaginatedResult'] | ResolversParentTypes['EspecesPaginatedResult'] | ResolversParentTypes['EstimationsDistancePaginatedResult'] | ResolversParentTypes['EstimationsNombrePaginatedResult'] | ResolversParentTypes['LieuxDitsPaginatedResult'] | ResolversParentTypes['MeteosPaginatedResult'] | ResolversParentTypes['MilieuxPaginatedResult'] | ResolversParentTypes['ObservateursPaginatedResult'] | ResolversParentTypes['PaginatedSearchDonneesResult'] | ResolversParentTypes['SexesPaginatedResult'];
   PaginatedSearchDonneesResult: PartialDeep<PaginatedSearchDonneesResult>;
   Query: {};
@@ -1704,6 +1758,16 @@ export type EstimationsNombrePaginatedResultResolvers<ContextType = any, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ImportStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportStatus'] = ResolversParentTypes['ImportStatus']> = {
+  errorDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  errorType?: Resolver<Maybe<ResolversTypes['ImportErrorType']>, ParentType, ContextType>;
+  importErrorsReportFile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ongoingValidationStats?: Resolver<Maybe<ResolversTypes['OngoingValidationStats']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['ImportStatusEnum'], ParentType, ContextType>;
+  subStatus?: Resolver<Maybe<ResolversTypes['OngoingSubStatus']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type InventaireResolvers<ContextType = any, ParentType extends ResolversParentTypes['Inventaire'] = ResolversParentTypes['Inventaire']> = {
   associes?: Resolver<Array<Maybe<ResolversTypes['Observateur']>>, ParentType, ContextType>;
   customizedCoordinates?: Resolver<Maybe<ResolversTypes['Coordinates']>, ParentType, ContextType>;
@@ -1842,6 +1906,14 @@ export type ObservateursPaginatedResultResolvers<ContextType = any, ParentType e
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type OngoingValidationStatsResolvers<ContextType = any, ParentType extends ResolversParentTypes['OngoingValidationStats'] = ResolversParentTypes['OngoingValidationStats']> = {
+  nbEntriesChecked?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  nbEntriesWithErrors?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  totalEntries?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  totalLines?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedResult'] = ResolversParentTypes['PaginatedResult']> = {
   __resolveType: TypeResolveFn<'AgesPaginatedResult' | 'ClassesPaginatedResult' | 'CommunesPaginatedResult' | 'ComportementsPaginatedResult' | 'DepartementsPaginatedResult' | 'EspecesPaginatedResult' | 'EstimationsDistancePaginatedResult' | 'EstimationsNombrePaginatedResult' | 'LieuxDitsPaginatedResult' | 'MeteosPaginatedResult' | 'MilieuxPaginatedResult' | 'ObservateursPaginatedResult' | 'PaginatedSearchDonneesResult' | 'SexesPaginatedResult', ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1887,6 +1959,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   exportMilieux?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportObservateurs?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportSexes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  importStatus?: Resolver<Maybe<ResolversTypes['ImportStatus']>, ParentType, ContextType, RequireFields<QueryImportStatusArgs, 'importId'>>;
   inventaire?: Resolver<Maybe<ResolversTypes['Inventaire']>, ParentType, ContextType, RequireFields<QueryInventaireArgs, 'id'>>;
   lastDonneeId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lieuDit?: Resolver<Maybe<ResolversTypes['LieuDit']>, ParentType, ContextType, RequireFields<QueryLieuDitArgs, 'id'>>;
@@ -2020,6 +2093,7 @@ export type Resolvers<ContextType = any> = {
   EstimationNombreWithCounts?: EstimationNombreWithCountsResolvers<ContextType>;
   EstimationsDistancePaginatedResult?: EstimationsDistancePaginatedResultResolvers<ContextType>;
   EstimationsNombrePaginatedResult?: EstimationsNombrePaginatedResultResolvers<ContextType>;
+  ImportStatus?: ImportStatusResolvers<ContextType>;
   Inventaire?: InventaireResolvers<ContextType>;
   LieuDit?: LieuDitResolvers<ContextType>;
   LieuDitWithCounts?: LieuDitWithCountsResolvers<ContextType>;
@@ -2034,6 +2108,7 @@ export type Resolvers<ContextType = any> = {
   Observateur?: ObservateurResolvers<ContextType>;
   ObservateurWithCounts?: ObservateurWithCountsResolvers<ContextType>;
   ObservateursPaginatedResult?: ObservateursPaginatedResultResolvers<ContextType>;
+  OngoingValidationStats?: OngoingValidationStatsResolvers<ContextType>;
   PaginatedResult?: PaginatedResultResolvers<ContextType>;
   PaginatedSearchDonneesResult?: PaginatedSearchDonneesResultResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
