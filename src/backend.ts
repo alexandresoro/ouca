@@ -13,7 +13,7 @@ import { promisify } from 'util';
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
-import { IMPORT_TYPE, WebsocketImportRequestDataType } from "./model/websocket/websocket-import-request-message";
+import { ImportType, IMPORT_TYPE } from './model/import-types';
 import { startImportTask } from './services/import-manager';
 import prisma from "./sql/prisma";
 import { logger } from "./utils/logger";
@@ -82,7 +82,7 @@ checkAndCreateFolders();
 
     await promisify(pipeline)(data.file, fs.createWriteStream(path.join(IMPORTS_DIR_PATH, uploadId)));
 
-    startImportTask(uploadId, params.entityName as WebsocketImportRequestDataType);
+    startImportTask(uploadId, params.entityName as ImportType);
 
     await reply.send(JSON.stringify({
       uploadId

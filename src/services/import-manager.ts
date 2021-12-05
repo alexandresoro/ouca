@@ -4,8 +4,8 @@ import { writeFileSync } from "fs";
 import path from "path";
 import { Worker } from "worker_threads";
 import { ImportErrorType, ImportStatus, ImportStatusEnum, OngoingSubStatus, OngoingValidationStats } from "../model/graphql";
-import { ImportUpdateMessage, IMPORT_COMPLETE, IMPORT_FAILED, VALIDATION_PROGRESS } from "../model/import/import-update-message";
-import { WebsocketImportRequestDataType } from "../model/websocket/websocket-import-request-message";
+import { ImportType } from "../model/import-types";
+import { ImportUpdateMessage, IMPORT_COMPLETE, IMPORT_FAILED, VALIDATION_PROGRESS } from "../objects/import/import-update-message";
 import { logger } from "../utils/logger";
 import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths";
 
@@ -45,7 +45,7 @@ type ImportGlobalErrorStructure = {
   }
 }
 
-export const startImportTask = (importId: string, importType: WebsocketImportRequestDataType) => {
+export const startImportTask = (importId: string, importType: ImportType) => {
 
   logger.debug(`Creating new worker for import id ${importId} and type ${importType}`);
 

@@ -2,7 +2,7 @@ import { parse } from 'csv-parse/sync';
 import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
 import { OngoingSubStatus } from '../../model/graphql';
-import { ImportNotifyProgressMessageContent } from "../../model/import/import-update-message";
+import { ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message";
 import { logger } from "../../utils/logger";
 
 const COMMENT_PREFIX = "###";

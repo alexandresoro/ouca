@@ -1,4 +1,4 @@
-import { IMPORT_AGE, IMPORT_CLASSE, IMPORT_COMMUNE, IMPORT_COMPORTEMENT, IMPORT_DEPARTEMENT, IMPORT_DONNEE, IMPORT_ESPECE, IMPORT_ESTIMATION_DISTANCE, IMPORT_ESTIMATION_NOMBRE, IMPORT_LIEUDIT, IMPORT_METEO, IMPORT_MILIEU, IMPORT_OBSERVATEUR, IMPORT_SEXE, WebsocketImportRequestDataType } from "../../model/websocket/websocket-import-request-message";
+import { ImportType, IMPORT_AGE, IMPORT_CLASSE, IMPORT_COMMUNE, IMPORT_COMPORTEMENT, IMPORT_DEPARTEMENT, IMPORT_DONNEE, IMPORT_ESPECE, IMPORT_ESTIMATION_DISTANCE, IMPORT_ESTIMATION_NOMBRE, IMPORT_LIEUDIT, IMPORT_METEO, IMPORT_MILIEU, IMPORT_OBSERVATEUR, IMPORT_SEXE } from "../../model/import-types";
 import { ImportAgeService } from "./import-age-service";
 import { ImportClasseService } from "./import-classe-service";
 import { ImportCommuneService } from "./import-commune-service";
@@ -15,7 +15,7 @@ import { ImportObservateurService } from "./import-observateur-service";
 import { ImportService } from "./import-service";
 import { ImportSexeService } from "./import-sexe-service";
 
-export const getNewImportServiceForRequestType = (requestType: WebsocketImportRequestDataType): ImportService => {
+export const getNewImportServiceForRequestType = (requestType: ImportType): ImportService => {
 
   switch (requestType) {
     case IMPORT_OBSERVATEUR:
