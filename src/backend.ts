@@ -6,7 +6,6 @@ import fastifyCompress from "fastify-compress";
 import fastifyCors from "fastify-cors";
 import fastifyMultipart from "fastify-multipart";
 import fastifyStatic from "fastify-static";
-import fastifyWebsocket from "fastify-websocket";
 import fs from "fs";
 import path from "path";
 import { pipeline } from 'stream';
@@ -14,10 +13,7 @@ import { promisify } from 'util';
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
-import { IMPORT_TYPE, WebsocketImportRequestDataType, WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
-import { IMPORT } from "./model/websocket/websocket-message-type.model";
-import { WebsocketMessage } from "./model/websocket/websocket-message.model";
-import { importWebsocket } from "./services/import";
+import { IMPORT_TYPE, WebsocketImportRequestDataType } from "./model/websocket/websocket-import-request-message";
 import { startImportTask } from './services/import-manager';
 import prisma from "./sql/prisma";
 import { logger } from "./utils/logger";
@@ -58,7 +54,6 @@ checkAndCreateFolders();
 
   // Middlewares
   await server.register(fastifyMultipart);
-  await server.register(fastifyWebsocket);
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {
     origin: "*"
@@ -92,20 +87,6 @@ checkAndCreateFolders();
     await reply.send(JSON.stringify({
       uploadId
     }));
-  })
-
-  server.get('/ws/', { websocket: true }, (connection) => {
-    connection.socket.on('message', data => {
-      const message = JSON.parse(data.toString()) as WebsocketMessage;
-      if (message.type === IMPORT) {
-        // Import message received
-        const importRequest = (message as WebsocketImportRequestMessage).content;
-        logger.info(`Import requested by the client for table ${importRequest.dataType}`);
-        logger.debug(`Import content is ${importRequest.data}`);
-        importWebsocket(connection.socket, importRequest)
-          .catch((error) => { logger.error(error) });
-      }
-    })
   })
 
   // GraphQL server
