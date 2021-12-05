@@ -140,6 +140,18 @@ export default gql`
     milieux: [Int]
   }
 
+  input UserCreateInput {
+    username: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+  }
+
+  input UserLoginInput {
+    username: String!
+    password: String!
+  }
+
   type Settings {
     id: Int!
     areAssociesDisplayed: Boolean!
@@ -651,6 +663,10 @@ export default gql`
     failureReason: UpsertInventaireFailureReason
   }
 
+  type AuthPayload {
+    token: String!
+  }
+
   type Query {
     age(id: Int!): Age
     classe(id: Int!): Classe
@@ -757,6 +773,8 @@ export default gql`
     initializeDatabase: Boolean
     resetDatabase: Boolean
     updateDatabase: Boolean
+    userSignup(signupData: UserCreateInput!) : AuthPayload!
+    userLogin(loginData: UserLoginInput!): AuthPayload!
   }
 
 `;

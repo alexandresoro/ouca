@@ -1,5 +1,5 @@
-import { Commune as CommuneEntity, Espece as EspeceEntity } from "@prisma/client";
-import { Age, AgesPaginatedResult, AgeWithSpecimensCount, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, ImportStatus, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, UpsertInventaireFailureReason, Version } from "../model/graphql";
+import { Commune as CommuneEntity, DatabaseRole, Espece as EspeceEntity } from "@prisma/client";
+import { Age, AgesPaginatedResult, AgeWithSpecimensCount, AuthPayload, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, ImportStatus, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, UpsertInventaireFailureReason, Version } from "../model/graphql";
 import { executeDatabaseMigration } from "../services/database-migration/database-migration.service";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
@@ -22,6 +22,7 @@ import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from 
 import { findVersion } from "../services/entities/version-service";
 import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateDonneesExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
+import { createUser, loginUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
 
 const resolvers: Resolvers = {
@@ -369,7 +370,13 @@ const resolvers: Resolvers = {
     updateDatabase: async (): Promise<boolean> => {
       await executeDatabaseMigration();
       return true;
-    }
+    },
+    userSignup: async (_source, args): Promise<AuthPayload> => {
+      return createUser(args.signupData, DatabaseRole.contributor).then((token) => { return { token } });
+    },
+    userLogin: async (_source, args): Promise<AuthPayload> => {
+      return loginUser(args.loginData).then((token) => { return { token } });
+    },
   },
   Commune: {
     departement: async (parent): Promise<Departement> => {
