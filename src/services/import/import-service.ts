@@ -1,7 +1,8 @@
 import { parse } from 'csv-parse/sync';
 import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
-import { DATA_VALIDATION_START, ImportNotifyProgressMessageContent, IMPORT_PROCESS_STARTED, INSERT_DB_START, RETRIEVE_DB_INFO_START } from "../../model/import/import-update-message";
+import { OngoingSubStatus } from '../../model/graphql';
+import { ImportNotifyProgressMessageContent } from "../../model/import/import-update-message";
 import { logger } from "../../utils/logger";
 
 const COMMENT_PREFIX = "###";
@@ -12,16 +13,16 @@ export const IMPORT_STATUS_UPDATE_EVENT = "importStatusUpdate";
 
 export const IMPORT_COMPLETE_EVENT = "importComplete";
 
-const NOTIFY_PROGRESS_INTERVAL = 500; //ms
+export const IMPORT_FAILED_EVENT = "importFailed";
 
 export abstract class ImportService extends EventEmitter {
 
   public importFile = async (fileContent: string): Promise<void> => {
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: IMPORT_PROCESS_STARTED });
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.ProcessStarted });
 
     if (!fileContent) {
-      this.emit(IMPORT_COMPLETE_EVENT, "Le contenu du fichier n'a pas pu être lu");
+      this.emit(IMPORT_FAILED_EVENT, "Le contenu du fichier n'a pas pu être lu");
       return;
     }
 
@@ -42,14 +43,12 @@ export abstract class ImportService extends EventEmitter {
     const errors = [] as string[][];
     let validatedEntries = 0;
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: RETRIEVE_DB_INFO_START });
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.RetrievingRequiredData });
 
     // Retrieve any initialization info needed before validation
     await this.init();
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: DATA_VALIDATION_START });
-
-    let lastNotifyDate = Date.now();
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.ValidatingInputFile });
 
     // Validate all entries
     for (const lineTab of content) {
@@ -68,23 +67,19 @@ export abstract class ImportService extends EventEmitter {
 
         validatedEntries++;
 
-        const now = Date.now();
-        if (now - lastNotifyDate >= NOTIFY_PROGRESS_INTERVAL) {
-          const progressContent: ImportNotifyProgressMessageContent = {
-            status: "Validating entries",
-            totalEntries: content.length,
-            entriesToBeValidated: numberOfLines,
-            validatedEntries,
-            errors: errors.length
-          };
-          this.emit(IMPORT_PROGRESS_UPDATE_EVENT, progressContent);
-          lastNotifyDate = now;
-        }
+        const progressContent: ImportNotifyProgressMessageContent = {
+          status: "Validating entries",
+          totalEntries: content.length,
+          entriesToBeValidated: numberOfLines,
+          validatedEntries,
+          errors: errors.length
+        };
+        this.emit(IMPORT_PROGRESS_UPDATE_EVENT, progressContent);
 
       }
     }
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: INSERT_DB_START });
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.InsertingImportedData });
 
     // Insert the valid entries in the database
     await this.persistAllValidEntities();

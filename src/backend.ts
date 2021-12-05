@@ -1,23 +1,28 @@
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { ApolloServer } from "apollo-server-fastify";
+import { randomUUID } from 'crypto';
 import { fastify } from "fastify";
 import fastifyCompress from "fastify-compress";
 import fastifyCors from "fastify-cors";
+import fastifyMultipart from "fastify-multipart";
 import fastifyStatic from "fastify-static";
 import fastifyWebsocket from "fastify-websocket";
 import fs from "fs";
 import path from "path";
+import { pipeline } from 'stream';
+import { promisify } from 'util';
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
-import { WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
+import { IMPORT_TYPE, WebsocketImportRequestDataType, WebsocketImportRequestMessage } from "./model/websocket/websocket-import-request-message";
 import { IMPORT } from "./model/websocket/websocket-message-type.model";
 import { WebsocketMessage } from "./model/websocket/websocket-message.model";
 import { importWebsocket } from "./services/import";
+import { startImportTask } from './services/import-manager';
 import prisma from "./sql/prisma";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
-import { PUBLIC_DIR } from "./utils/paths";
+import { checkAndCreateFolders, DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
 
 const server = fastify({
   logger
@@ -47,18 +52,12 @@ prisma.$on('info', (e) => {
   logger.info(e)
 });
 
-const PUBLIC_DIR_PATH = path.join(process.cwd(), PUBLIC_DIR);
-const DOWNLOAD_PATH = "/download";
-
-// Create a public dir if does not exist
-// Used to serve some static content
-if (!fs.existsSync(PUBLIC_DIR_PATH)) {
-  fs.mkdirSync(PUBLIC_DIR_PATH);
-}
+checkAndCreateFolders();
 
 (async () => {
 
   // Middlewares
+  await server.register(fastifyMultipart);
   await server.register(fastifyWebsocket);
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {
@@ -68,8 +67,32 @@ if (!fs.existsSync(PUBLIC_DIR_PATH)) {
   // Static files server
   await server.register(fastifyStatic, {
     root: PUBLIC_DIR_PATH,
-    prefix: DOWNLOAD_PATH
+    prefix: DOWNLOAD_ENDPOINT
   });
+
+  // Upload import path
+  server.post<{ Params: { entityName: string } }>('/uploads/:entityName', async (req, reply) => {
+
+    const { params } = req;
+
+    // Check that the import is a known one
+    if (!IMPORT_TYPE.find((importType) => {
+      return importType === params.entityName
+    })) {
+      return await reply.code(404).send();
+    }
+
+    const data = await req.file();
+    const uploadId = randomUUID();
+
+    await promisify(pipeline)(data.file, fs.createWriteStream(path.join(IMPORTS_DIR_PATH, uploadId)));
+
+    startImportTask(uploadId, params.entityName as WebsocketImportRequestDataType);
+
+    await reply.send(JSON.stringify({
+      uploadId
+    }));
+  })
 
   server.get('/ws/', { websocket: true }, (connection) => {
     connection.socket.on('message', data => {

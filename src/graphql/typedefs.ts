@@ -600,6 +600,42 @@ export default gql`
     count: Int!
   }
 
+  enum ImportStatusEnum {
+    NOT_STARTED,
+    ONGOING,
+    COMPLETE,
+    FAILED
+  }
+
+  enum ImportErrorType {
+    IMPORT_FAILURE,
+    IMPORT_PROCESS_ERROR,
+    IMPORT_PROCESS_UNEXPECTED_EXIT
+  }
+
+  enum OngoingSubStatus {
+    PROCESS_STARTED,
+    RETRIEVING_REQUIRED_DATA,
+    VALIDATING_INPUT_FILE,
+    INSERTING_IMPORTED_DATA
+  }
+
+  type OngoingValidationStats {
+    totalLines: Int
+    totalEntries: Int
+    nbEntriesChecked: Int
+    nbEntriesWithErrors: Int
+  }
+
+  type ImportStatus {
+    status: ImportStatusEnum!
+    subStatus: OngoingSubStatus
+    errorType: ImportErrorType
+    errorDescription: String
+    importErrorsReportFile: String
+    ongoingValidationStats: OngoingValidationStats
+  }
+
   type UpsertDonneeResult {
     donnee: Donnee
     failureReason: String
@@ -668,6 +704,7 @@ export default gql`
     paginatedSearchEspeces(searchCriteria: SearchDonneeCriteria, searchParams: SearchDonneeParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
     paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, searchParams: SearchDonneeParams, orderBy: SearchDonneesOrderBy, sortOrder: SortOrder): PaginatedSearchDonneesResult
     settings: Settings
+    importStatus(importId: String!): ImportStatus
     exportAges: String
     exportClasses: String
     exportCommunes: String

@@ -1,11 +1,12 @@
 import { isMainThread, parentPort, Worker, workerData } from "worker_threads";
 import WebSocket from "ws";
-import { ImportErrorMessage, ImportNotifyProgressMessage, ImportNotifyProgressMessageContent, ImportNotifyStatusUpdateMessage, ImportPostCompleteMessage, ImportUpdateMessage, IMPORT_COMPLETE, IMPORT_ERROR, STATUS_UPDATE, VALIDATION_PROGRESS } from "../model/import/import-update-message";
+import { OngoingSubStatus } from "../model/graphql";
+import { ImportErrorMessage, ImportFailureMessage, ImportNotifyProgressMessage, ImportNotifyProgressMessageContent, ImportNotifyStatusUpdateMessage, ImportPostCompleteMessage, ImportUpdateMessage, IMPORT_COMPLETE, IMPORT_FAILED, IMPORT_GLOBAL_ERROR, VALIDATION_PROGRESS } from "../model/import/import-update-message";
 import { WebsocketImportRequestContent } from "../model/websocket/websocket-import-request-message";
 import { WebsocketImportUpdateMessage } from "../model/websocket/websocket-import-update-message";
 import { IMPORT } from "../model/websocket/websocket-message-type.model";
 import { logger } from "../utils/logger";
-import { IMPORT_COMPLETE_EVENT, IMPORT_PROGRESS_UPDATE_EVENT, IMPORT_STATUS_UPDATE_EVENT } from "./import/import-service";
+import { IMPORT_COMPLETE_EVENT, IMPORT_FAILED_EVENT, IMPORT_PROGRESS_UPDATE_EVENT, IMPORT_STATUS_UPDATE_EVENT } from "./import/import-service";
 import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type";
 
 // Worker thread for the import
@@ -26,21 +27,23 @@ if (!isMainThread) {
     parentPort.postMessage(statusUpdate);
   });
 
-  serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string | string[][]) => {
+  serviceWorker.on(IMPORT_FAILED_EVENT, (failureReason?: string) => {
 
-    let messageContent: ImportPostCompleteMessage;
+    const messageContent: ImportFailureMessage = {
+      type: IMPORT_FAILED,
+      failureReason
+    };
 
-    if (typeof importResult === "string") {
-      messageContent = {
-        type: IMPORT_COMPLETE,
-        fileInputError: importResult
-      }
-    } else {
-      messageContent = {
-        type: IMPORT_COMPLETE,
-        lineErrors: importResult
-      }
-    }
+    parentPort.postMessage(messageContent);
+    process.exit(0);
+  });
+
+  serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string[][]) => {
+
+    const messageContent: ImportPostCompleteMessage = {
+      type: IMPORT_COMPLETE,
+      lineErrors: importResult
+    };
 
     parentPort.postMessage(messageContent);
     process.exit(0);
@@ -73,8 +76,13 @@ const processImport = (workerData: WebsocketImportRequestContent, client: WebSoc
 
         sendImportMessage(postMessage, client);
 
-        resolve(postMessage.fileInputError ?? postMessage.lineErrors?.toString());
-      } else if (postMessage.type === VALIDATION_PROGRESS || STATUS_UPDATE.includes(postMessage.type)) {
+        resolve(postMessage.lineErrors?.toString());
+      } else if (postMessage.type === IMPORT_FAILED) {
+
+        sendImportMessage(postMessage, client);
+
+        resolve(postMessage.failureReason);
+      } else if ((postMessage.type === VALIDATION_PROGRESS || Object.values(OngoingSubStatus).includes(postMessage.type))) {
         sendImportMessage(postMessage, client);
       }
 
@@ -84,7 +92,7 @@ const processImport = (workerData: WebsocketImportRequestContent, client: WebSoc
       logger.warn(`Import failed with error ${JSON.stringify(error, null, 2)}`);
 
       const errorMessage: ImportErrorMessage = {
-        type: IMPORT_ERROR,
+        type: IMPORT_GLOBAL_ERROR,
         error: JSON.stringify(error)
       };
 
@@ -98,7 +106,7 @@ const processImport = (workerData: WebsocketImportRequestContent, client: WebSoc
         logger.warn(`Import failed with thread exit code ${exitCode}`);
 
         const errorMessage: ImportErrorMessage = {
-          type: IMPORT_ERROR,
+          type: IMPORT_GLOBAL_ERROR,
           error: exitCode
         };
 

@@ -1,0 +1,218 @@
+import { randomUUID } from "crypto";
+import { stringify } from 'csv-stringify/sync';
+import { writeFileSync } from "fs";
+import path from "path";
+import { Worker } from "worker_threads";
+import { ImportErrorType, ImportStatus, ImportStatusEnum, OngoingSubStatus, OngoingValidationStats } from "../model/graphql";
+import { ImportUpdateMessage, IMPORT_COMPLETE, IMPORT_FAILED, VALIDATION_PROGRESS } from "../model/import/import-update-message";
+import { WebsocketImportRequestDataType } from "../model/websocket/websocket-import-request-message";
+import { logger } from "../utils/logger";
+import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths";
+
+
+const importStatuses: Map<string, ImportStatusStructure> = new Map();
+
+type ImportStatusStructure = {
+  status: ImportStatusEnum
+  worker: Worker
+  statusDetails?: unknown
+}
+
+type ImportOngoingStructure = {
+  status: typeof ImportStatusEnum.Ongoing
+  worker: Worker
+  statusDetails?: {
+    subStatus: OngoingSubStatus
+    ongoingValidationStats?: OngoingValidationStats
+  }
+}
+
+type ImportCompleteStructure = {
+  status: typeof ImportStatusEnum.Complete
+  worker: Worker
+  statusDetails?: {
+    importErrorsReportFile?: string
+    nbErrors?: number
+  }
+}
+
+type ImportGlobalErrorStructure = {
+  status: typeof ImportStatusEnum.Failed
+  worker: Worker
+  statusDetails?: {
+    type: ImportErrorType
+    description: number | string
+  }
+}
+
+export const startImportTask = (importId: string, importType: WebsocketImportRequestDataType) => {
+
+  logger.debug(`Creating new worker for import id ${importId} and type ${importType}`);
+
+  const worker = new Worker('./services/import-worker.js', {
+    argv: process.argv.slice(2),
+    workerData: {
+      importId,
+      importType
+    }
+  });
+
+  worker.on('message', (postMessage: ImportUpdateMessage) => {
+
+    if (postMessage.type === IMPORT_COMPLETE) {
+
+      // Create the report file if any
+      let importReportId: string;
+      if (postMessage.lineErrors) {
+        importReportId = randomUUID();
+        const csvString = stringify(postMessage.lineErrors, {
+          delimiter: ";",
+          record_delimiter: "windows"
+        });
+        writeFileSync(path.join(PUBLIC_DIR_PATH, IMPORT_REPORTS_DIR, importReportId), csvString);
+      }
+
+      const currentStatus = importStatuses.get(importId);
+      const newStatus: ImportCompleteStructure = {
+        ...currentStatus,
+        status: ImportStatusEnum.Complete,
+        ...(importReportId ? {
+          statusDetails: {
+            importErrorsReportFile: `${DOWNLOAD_ENDPOINT}${IMPORT_REPORTS_DIR}/${importReportId}`,
+            nbErrors: postMessage?.lineErrors?.length ?? 0
+          }
+        } : {})
+      }
+      importStatuses.set(importId, newStatus);
+
+    } else if (postMessage.type === IMPORT_FAILED) {
+
+      const currentStatus = importStatuses.get(importId);
+      const newStatus: ImportGlobalErrorStructure = {
+        ...currentStatus,
+        status: ImportStatusEnum.Failed,
+        statusDetails: {
+          type: ImportErrorType.ImportFailure,
+          description: postMessage?.failureReason
+        }
+      }
+      importStatuses.set(importId, newStatus);
+
+    } else if (postMessage.type === VALIDATION_PROGRESS) {
+      const currentStatus = importStatuses.get(importId);
+      const newStatus: ImportOngoingStructure = {
+        ...currentStatus,
+        status: ImportStatusEnum.Ongoing,
+        statusDetails: {
+          subStatus: OngoingSubStatus.ValidatingInputFile,
+          ongoingValidationStats: {
+            totalLines: postMessage?.progress?.totalEntries,
+            totalEntries: postMessage?.progress?.entriesToBeValidated,
+            nbEntriesChecked: postMessage?.progress?.validatedEntries,
+            nbEntriesWithErrors: postMessage?.progress?.errors
+          }
+        }
+      }
+      importStatuses.set(importId, newStatus);
+    } else if (Object.values(OngoingSubStatus).includes(postMessage.type)) {
+      const currentStatus = importStatuses.get(importId);
+      const newStatus: ImportOngoingStructure = {
+        ...currentStatus,
+        status: ImportStatusEnum.Ongoing,
+        statusDetails: {
+          subStatus: postMessage?.type
+        }
+      }
+      importStatuses.set(importId, newStatus);
+    }
+
+  });
+
+  worker.on('error', (error) => {
+    logger.warn({
+      msgType: 'Import error',
+      importId,
+      errorMsg: error
+    });
+    const currentStatus = importStatuses.get(importId);
+    const newStatus: ImportGlobalErrorStructure = {
+      ...currentStatus,
+      status: ImportStatusEnum.Failed,
+      statusDetails: {
+        type: ImportErrorType.ImportProcessError,
+        description: error?.message
+      }
+    }
+    importStatuses.set(importId, newStatus);
+  });
+
+  worker.on('exit', (exitCode) => {
+    if (exitCode) {
+      logger.warn({
+        msgType: 'Import thread error',
+        importId,
+        exitCode
+      });
+      const currentStatus = importStatuses.get(importId);
+      const newStatus: ImportGlobalErrorStructure = {
+        ...currentStatus,
+        status: ImportStatusEnum.Failed,
+        statusDetails: {
+          type: ImportErrorType.ImportProcessUnexpectedExit,
+          description: exitCode
+        }
+      }
+      importStatuses.set(importId, newStatus);
+    }
+  });
+
+  importStatuses.set(importId, {
+    status: ImportStatusEnum.NotStarted,
+    worker
+  });
+}
+
+export const getImportStatus = (importId: string): Promise<ImportStatus | null> => {
+
+  if (!importStatuses.has(importId)) {
+    // No status found for this import
+    return null;
+  }
+
+  const importStatus = importStatuses.get(importId);
+
+  switch (importStatus?.status) {
+    case ImportStatusEnum.NotStarted:
+      // If the import task exists but has not yet started
+      return Promise.resolve({
+        status: importStatus.status
+      });
+    case ImportStatusEnum.Failed:
+      // If the import task has failed due to an unexpected error or a failure to treat the inported file
+      return Promise.resolve({
+        status: importStatus.status,
+        errorType: (importStatus as ImportGlobalErrorStructure)?.statusDetails.type,
+        errorDescription: (importStatus as ImportGlobalErrorStructure)?.statusDetails.description?.toString()
+      });
+    case ImportStatusEnum.Complete:
+      return Promise.resolve({
+        status: importStatus.status,
+        importErrorsReportFile: (importStatus as ImportCompleteStructure)?.statusDetails?.importErrorsReportFile,
+        ...((importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors ? {
+          ongoingValidationStats: {
+            nbEntriesWithErrors: (importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors
+          }
+        } : {})
+      });
+    case ImportStatusEnum.Ongoing: {
+      return Promise.resolve({
+        status: importStatus.status,
+        subStatus: (importStatus as ImportOngoingStructure)?.statusDetails?.subStatus,
+        ongoingValidationStats: (importStatus as ImportOngoingStructure)?.statusDetails?.ongoingValidationStats
+      });
+    }
+    default:
+      return null;
+  }
+
+}
