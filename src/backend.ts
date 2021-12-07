@@ -1,12 +1,14 @@
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import { ApolloServerPluginDrainHttpServer, AuthenticationError } from 'apollo-server-core';
 import { ApolloServer } from "apollo-server-fastify";
 import { randomUUID } from 'crypto';
 import { fastify } from "fastify";
 import fastifyCompress from "fastify-compress";
+import fastifyCookie from "fastify-cookie";
 import fastifyCors from "fastify-cors";
 import fastifyMultipart from "fastify-multipart";
 import fastifyStatic from "fastify-static";
 import fs from "fs";
+import { jwtVerify, JWTVerifyResult } from 'jose';
 import path from "path";
 import { pipeline } from 'stream';
 import { promisify } from 'util';
@@ -16,6 +18,7 @@ import typeDefs from "./graphql/typedefs";
 import { ImportType, IMPORT_TYPE } from './model/import-types';
 import { startImportTask } from './services/import-manager';
 import prisma from "./sql/prisma";
+import { TokenKeys } from './utils/keys';
 import { logger } from "./utils/logger";
 import options from "./utils/options";
 import { checkAndCreateFolders, DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
@@ -31,7 +34,25 @@ const apolloServer = new ApolloServer({
     fastifyAppClosePlugin(server),
     ApolloServerPluginDrainHttpServer({ httpServer: server.server }),
     apolloRequestLogger
-  ]
+  ],
+  context: async ({ request, reply }) => {
+
+    // Extract the user of the token, if any
+    const token = request.cookies['token'];
+    let tokenVerifyResult: JWTVerifyResult;
+    if (token) {
+      const publicKey = await TokenKeys.getKey();
+      tokenVerifyResult = await jwtVerify(token, publicKey).catch((e) => {
+        throw new AuthenticationError(e as string);
+      });
+    }
+
+    return {
+      request,
+      reply,
+      user: tokenVerifyResult?.payload?.sub ?? null
+    };
+  }
 });
 
 // Prisma queries logger
@@ -54,9 +75,11 @@ checkAndCreateFolders();
 
   // Middlewares
   await server.register(fastifyMultipart);
+  await server.register(fastifyCookie);
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {
-    origin: "*"
+    origin: "https://studio.apollographql.com", // TODO check this properly someday
+    credentials: true
   });
 
   // Static files server

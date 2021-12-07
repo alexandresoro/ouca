@@ -1,5 +1,7 @@
 import { Commune as CommuneEntity, DatabaseRole, Espece as EspeceEntity } from "@prisma/client";
-import { Age, AgesPaginatedResult, AgeWithSpecimensCount, AuthPayload, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, ImportStatus, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, UpsertInventaireFailureReason, Version } from "../model/graphql";
+import { AuthenticationError } from "apollo-server-core";
+import { FastifyReply } from "fastify";
+import { Age, AgesPaginatedResult, AgeWithSpecimensCount, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, ImportStatus, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, UpsertInventaireFailureReason, UserInfo, Version } from "../model/graphql";
 import { executeDatabaseMigration } from "../services/database-migration/database-migration.service";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
@@ -22,10 +24,23 @@ import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from 
 import { findVersion } from "../services/entities/version-service";
 import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateDonneesExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
-import { createUser, loginUser } from "../services/user-service";
+import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
+import { createUser, loginUser, updateUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
 
-const resolvers: Resolvers = {
+type Context = {
+  request: unknown,
+  reply: FastifyReply,
+  user: string | null
+}
+
+const validateUserAuthentication = (context: Context): void => {
+  if (!context?.user) {
+    throw new AuthenticationError("User is not authenticated.")
+  }
+}
+
+const resolvers: Resolvers<Context> = {
   Query: {
     age: async (_source, args): Promise<Age> => {
       return findAge(args.id);
@@ -371,11 +386,39 @@ const resolvers: Resolvers = {
       await executeDatabaseMigration();
       return true;
     },
-    userSignup: async (_source, args): Promise<AuthPayload> => {
-      return createUser(args.signupData, DatabaseRole.contributor).then((token) => { return { token } });
+    userSignup: async (_source, args, context): Promise<UserInfo> => {
+      const userInfo = await createUser(args.signupData, DatabaseRole.contributor);
+
+      if (userInfo) {
+        await createAndAddSignedTokenAsCookie(context.reply, userInfo)
+      }
+
+      return userInfo;
     },
-    userLogin: async (_source, args): Promise<AuthPayload> => {
-      return loginUser(args.loginData).then((token) => { return { token } });
+    userLogin: async (_source, args, context): Promise<UserInfo> => {
+      const userInfo = await loginUser(args.loginData);
+
+      if (userInfo) {
+        await createAndAddSignedTokenAsCookie(context.reply, userInfo)
+      }
+
+      return userInfo;
+    },
+    userLogout: async (_source, args, context): Promise<boolean> => {
+      validateUserAuthentication(context);
+      await deleteTokenCookie(context.reply);
+      return true;
+    },
+    userEdit: async (_source, args, context): Promise<UserInfo> => {
+      validateUserAuthentication(context);
+
+      const updatedUser = await updateUser(args.id, args.editUserData);
+
+      if (updatedUser) {
+        await createAndAddSignedTokenAsCookie(context.reply, updatedUser);
+      }
+
+      return updatedUser;
     },
   },
   Commune: {

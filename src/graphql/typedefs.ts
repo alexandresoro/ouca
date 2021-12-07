@@ -152,6 +152,14 @@ export default gql`
     password: String!
   }
 
+  input EditUserData {
+    username: String
+    currentPassword: String!
+    newPassword: String
+    firstName: String
+    lastName: String
+  }
+
   type Settings {
     id: Int!
     areAssociesDisplayed: Boolean!
@@ -663,8 +671,11 @@ export default gql`
     failureReason: UpsertInventaireFailureReason
   }
 
-  type AuthPayload {
-    token: String!
+  type UserInfo {
+    id: ID!
+    username: String!
+    firstName: String!
+    lastName: String
   }
 
   type Query {
@@ -773,8 +784,10 @@ export default gql`
     initializeDatabase: Boolean
     resetDatabase: Boolean
     updateDatabase: Boolean
-    userSignup(signupData: UserCreateInput!) : AuthPayload!
-    userLogin(loginData: UserLoginInput!): AuthPayload!
+    userSignup(signupData: UserCreateInput!) : UserInfo
+    userLogin(loginData: UserLoginInput!): UserInfo
+    userLogout: Boolean!
+    userEdit(id: ID!, editUserData: EditUserData!): UserInfo
   }
 
 `;

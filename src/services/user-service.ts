@@ -1,47 +1,40 @@
 import { DatabaseRole, User } from "@prisma/client";
 import { randomBytes, scryptSync } from "crypto";
-import { SignJWT } from "jose";
-import { UserCreateInput, UserLoginInput } from "../model/graphql";
+import { EditUserData, UserCreateInput, UserLoginInput } from "../model/graphql";
 import prisma from "../sql/prisma";
-import { SALT_AND_PWD_DELIMITER, SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
+import { SALT_AND_PWD_DELIMITER } from "../utils/keys";
 
 const PASSWORD_KEY_LENGTH = 64;
 
-const createSignedTokenForUser = async (user: User): Promise<string> => {
-  const { firstName, lastName, role, username } = user;
+// Make sure that the password is properly encrypted :-)
+const getHashedPassword = (plaintextPassword: string): string => {
+  const salt = randomBytes(16);
+  const encryptedPasswordBuffer = scryptSync(plaintextPassword, salt, PASSWORD_KEY_LENGTH);
 
-  const signingKey = await TokenKeys.getKey();
-
-  return new SignJWT(
-    {
-      given_name: firstName,
-      family_name: lastName,
-      roles: role
-    })
-    .setProtectedHeader({ alg: SIGNING_TOKEN_ALGO })
-    .setIssuedAt()
-    .setSubject(username)
-    .sign(signingKey);
+  return `${salt.toString('hex')}${SALT_AND_PWD_DELIMITER}${encryptedPasswordBuffer.toString('hex')}`;
 }
 
-export const createUser = async (signupData: UserCreateInput, role: DatabaseRole): Promise<string> => {
+export const createUser = async (signupData: UserCreateInput, role: DatabaseRole): Promise<Omit<User, 'password'>> => {
 
   const { password, ...otherUserInfo } = signupData;
 
-  // Make sure that the password is properly encrypted :-)
-  const salt = randomBytes(16);
-  const encryptedPasswordBuffer = scryptSync(password, salt, PASSWORD_KEY_LENGTH);
-
   return prisma.user.create({
+    select: {
+      id: true,
+      username: true,
+      firstName: true,
+      lastName: true,
+      role: true
+    },
     data: {
       ...otherUserInfo,
       role,
-      password: `${salt.toString('hex')}${SALT_AND_PWD_DELIMITER}${encryptedPasswordBuffer.toString('hex')}`
+      password: getHashedPassword(password)
     }
-  }).then(createSignedTokenForUser);
+  });
 };
 
-export const loginUser = async (loginData: UserLoginInput): Promise<string> => {
+export const loginUser = async (loginData: UserLoginInput): Promise<Omit<User, 'password'>> => {
 
   const { username, password } = loginData;
 
@@ -64,5 +57,41 @@ export const loginUser = async (loginData: UserLoginInput): Promise<string> => {
     return Promise.reject("The provided password is incorrect")
   }
 
-  return createSignedTokenForUser(matchingUser);
+  const { password: userPassword, ...userInfo } = matchingUser;
+
+  return userInfo;
+};
+
+export const updateUser = async (userId: string, userUpdate: EditUserData): Promise<Omit<User, 'password'>> => {
+
+  const { currentPassword, newPassword, ...restUserUpdate } = userUpdate;
+
+  // Try to find the matching profile
+  const matchingUser = await prisma.user.findUnique({
+    where: {
+      id: userId
+    }
+  });
+
+  if (!matchingUser) {
+    return Promise.reject("No matching user has been found");
+  }
+
+  // Check that the password matches
+  const [saltAsHex, storedSaltedPassword] = matchingUser.password.split(SALT_AND_PWD_DELIMITER);
+  const inputSaltedPassword = scryptSync(currentPassword, Buffer.from(saltAsHex, 'hex'), PASSWORD_KEY_LENGTH).toString('hex');
+
+  if (inputSaltedPassword !== storedSaltedPassword) {
+    return Promise.reject("The provided password is incorrect")
+  }
+
+  return prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      ...restUserUpdate,
+      password: newPassword ? getHashedPassword(newPassword) : undefined
+    }
+  });
 };
