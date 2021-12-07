@@ -41,11 +41,6 @@ export type AgesPaginatedResult = PaginatedResult & {
   result?: Maybe<Array<Maybe<AgeWithCounts>>>;
 };
 
-export type AuthPayload = {
-  __typename?: 'AuthPayload';
-  token: Scalars['String'];
-};
-
 export type Classe = {
   __typename?: 'Classe';
   id: Scalars['Int'];
@@ -213,6 +208,14 @@ export type DonneeResult = {
   donnee?: Maybe<Donnee>;
   id: Scalars['Int'];
   navigation?: Maybe<DonneeNavigationData>;
+};
+
+export type EditUserData = {
+  currentPassword: Scalars['String'];
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  newPassword?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export const EntitesAvecLibelleOrderBy = {
@@ -584,8 +587,10 @@ export type Mutation = {
   upsertMilieu?: Maybe<Milieu>;
   upsertObservateur?: Maybe<Observateur>;
   upsertSexe?: Maybe<Sexe>;
-  userLogin: AuthPayload;
-  userSignup: AuthPayload;
+  userEdit?: Maybe<UserInfo>;
+  userLogin?: Maybe<UserInfo>;
+  userLogout: Scalars['Boolean'];
+  userSignup?: Maybe<UserInfo>;
 };
 
 
@@ -752,6 +757,12 @@ export type MutationUpsertObservateurArgs = {
 export type MutationUpsertSexeArgs = {
   data: InputSexe;
   id?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type MutationUserEditArgs = {
+  editUserData: EditUserData;
+  id: Scalars['ID'];
 };
 
 
@@ -1305,6 +1316,14 @@ export type UserCreateInput = {
   username: Scalars['String'];
 };
 
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  firstName: Scalars['String'];
+  id: Scalars['ID'];
+  lastName?: Maybe<Scalars['String']>;
+  username: Scalars['String'];
+};
+
 export type UserLoginInput = {
   password: Scalars['String'];
   username: Scalars['String'];
@@ -1389,7 +1408,6 @@ export type ResolversTypes = {
   AgeWithCounts: ResolverTypeWrapper<PartialDeep<AgeWithCounts>>;
   AgeWithSpecimensCount: ResolverTypeWrapper<PartialDeep<AgeWithSpecimensCount>>;
   AgesPaginatedResult: ResolverTypeWrapper<PartialDeep<AgesPaginatedResult>>;
-  AuthPayload: ResolverTypeWrapper<PartialDeep<AuthPayload>>;
   Boolean: ResolverTypeWrapper<PartialDeep<Scalars['Boolean']>>;
   Classe: ResolverTypeWrapper<PartialDeep<Classe>>;
   ClasseWithCounts: ResolverTypeWrapper<PartialDeep<ClasseWithCounts>>;
@@ -1412,6 +1430,7 @@ export type ResolversTypes = {
   Donnee: ResolverTypeWrapper<PartialDeep<Donnee>>;
   DonneeNavigationData: ResolverTypeWrapper<PartialDeep<DonneeNavigationData>>;
   DonneeResult: ResolverTypeWrapper<PartialDeep<DonneeResult>>;
+  EditUserData: ResolverTypeWrapper<PartialDeep<EditUserData>>;
   EntitesAvecLibelleOrderBy: ResolverTypeWrapper<PartialDeep<EntitesAvecLibelleOrderBy>>;
   Espece: ResolverTypeWrapper<PartialDeep<Espece>>;
   EspeceWithCounts: ResolverTypeWrapper<PartialDeep<EspeceWithCounts>>;
@@ -1426,6 +1445,7 @@ export type ResolversTypes = {
   EstimationsNombrePaginatedResult: ResolverTypeWrapper<PartialDeep<EstimationsNombrePaginatedResult>>;
   FindParams: ResolverTypeWrapper<PartialDeep<FindParams>>;
   Float: ResolverTypeWrapper<PartialDeep<Scalars['Float']>>;
+  ID: ResolverTypeWrapper<PartialDeep<Scalars['ID']>>;
   ImportErrorType: ResolverTypeWrapper<PartialDeep<ImportErrorType>>;
   ImportStatus: ResolverTypeWrapper<PartialDeep<ImportStatus>>;
   ImportStatusEnum: ResolverTypeWrapper<PartialDeep<ImportStatusEnum>>;
@@ -1483,6 +1503,7 @@ export type ResolversTypes = {
   UpsertInventaireFailureReason: ResolverTypeWrapper<PartialDeep<UpsertInventaireFailureReason>>;
   UpsertInventaireResult: ResolverTypeWrapper<PartialDeep<UpsertInventaireResult>>;
   UserCreateInput: ResolverTypeWrapper<PartialDeep<UserCreateInput>>;
+  UserInfo: ResolverTypeWrapper<PartialDeep<UserInfo>>;
   UserLoginInput: ResolverTypeWrapper<PartialDeep<UserLoginInput>>;
   Version: ResolverTypeWrapper<PartialDeep<Version>>;
 };
@@ -1493,7 +1514,6 @@ export type ResolversParentTypes = {
   AgeWithCounts: PartialDeep<AgeWithCounts>;
   AgeWithSpecimensCount: PartialDeep<AgeWithSpecimensCount>;
   AgesPaginatedResult: PartialDeep<AgesPaginatedResult>;
-  AuthPayload: PartialDeep<AuthPayload>;
   Boolean: PartialDeep<Scalars['Boolean']>;
   Classe: PartialDeep<Classe>;
   ClasseWithCounts: PartialDeep<ClasseWithCounts>;
@@ -1511,6 +1531,7 @@ export type ResolversParentTypes = {
   Donnee: PartialDeep<Donnee>;
   DonneeNavigationData: PartialDeep<DonneeNavigationData>;
   DonneeResult: PartialDeep<DonneeResult>;
+  EditUserData: PartialDeep<EditUserData>;
   Espece: PartialDeep<Espece>;
   EspeceWithCounts: PartialDeep<EspeceWithCounts>;
   EspecesPaginatedResult: PartialDeep<EspecesPaginatedResult>;
@@ -1522,6 +1543,7 @@ export type ResolversParentTypes = {
   EstimationsNombrePaginatedResult: PartialDeep<EstimationsNombrePaginatedResult>;
   FindParams: PartialDeep<FindParams>;
   Float: PartialDeep<Scalars['Float']>;
+  ID: PartialDeep<Scalars['ID']>;
   ImportStatus: PartialDeep<ImportStatus>;
   InputAge: PartialDeep<InputAge>;
   InputClasse: PartialDeep<InputClasse>;
@@ -1571,6 +1593,7 @@ export type ResolversParentTypes = {
   UpsertInventaireFailureReason: PartialDeep<UpsertInventaireFailureReason>;
   UpsertInventaireResult: PartialDeep<UpsertInventaireResult>;
   UserCreateInput: PartialDeep<UserCreateInput>;
+  UserInfo: PartialDeep<UserInfo>;
   UserLoginInput: PartialDeep<UserLoginInput>;
   Version: PartialDeep<Version>;
 };
@@ -1598,11 +1621,6 @@ export type AgeWithSpecimensCountResolvers<ContextType = any, ParentType extends
 export type AgesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['AgesPaginatedResult'] = ResolversParentTypes['AgesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   result?: Resolver<Maybe<Array<Maybe<ResolversTypes['AgeWithCounts']>>>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
-  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1925,8 +1943,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   upsertMilieu?: Resolver<Maybe<ResolversTypes['Milieu']>, ParentType, ContextType, RequireFields<MutationUpsertMilieuArgs, 'data'>>;
   upsertObservateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<MutationUpsertObservateurArgs, 'data'>>;
   upsertSexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<MutationUpsertSexeArgs, 'data'>>;
-  userLogin?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationUserLoginArgs, 'loginData'>>;
-  userSignup?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationUserSignupArgs, 'signupData'>>;
+  userEdit?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, RequireFields<MutationUserEditArgs, 'editUserData' | 'id'>>;
+  userLogin?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, RequireFields<MutationUserLoginArgs, 'loginData'>>;
+  userLogout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  userSignup?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, RequireFields<MutationUserSignupArgs, 'signupData'>>;
 };
 
 export type ObservateurResolvers<ContextType = any, ParentType extends ResolversParentTypes['Observateur'] = ResolversParentTypes['Observateur']> = {
@@ -2099,6 +2119,14 @@ export type UpsertInventaireResultResolvers<ContextType = any, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserInfo'] = ResolversParentTypes['UserInfo']> = {
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type VersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Version'] = ResolversParentTypes['Version']> = {
   application?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   database?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -2110,7 +2138,6 @@ export type Resolvers<ContextType = any> = {
   AgeWithCounts?: AgeWithCountsResolvers<ContextType>;
   AgeWithSpecimensCount?: AgeWithSpecimensCountResolvers<ContextType>;
   AgesPaginatedResult?: AgesPaginatedResultResolvers<ContextType>;
-  AuthPayload?: AuthPayloadResolvers<ContextType>;
   Classe?: ClasseResolvers<ContextType>;
   ClasseWithCounts?: ClasseWithCountsResolvers<ContextType>;
   ClassesPaginatedResult?: ClassesPaginatedResultResolvers<ContextType>;
@@ -2163,6 +2190,7 @@ export type Resolvers<ContextType = any> = {
   UpsertDonneeResult?: UpsertDonneeResultResolvers<ContextType>;
   UpsertInventaireFailureReason?: UpsertInventaireFailureReasonResolvers<ContextType>;
   UpsertInventaireResult?: UpsertInventaireResultResolvers<ContextType>;
+  UserInfo?: UserInfoResolvers<ContextType>;
   Version?: VersionResolvers<ContextType>;
 };
 
