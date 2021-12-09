@@ -27,6 +27,7 @@ import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
 import { createUser, deleteUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
+import { logger } from "../utils/logger";
 
 type Context = {
   request: unknown,
@@ -407,6 +408,8 @@ const resolvers: Resolvers<Context> = {
 
       if (userInfo) {
         await createAndAddSignedTokenAsCookie(context.reply, userInfo)
+
+        logger.info(`User ${userInfo?.username} has been created`);
       }
       return userInfo;
     },
@@ -415,6 +418,9 @@ const resolvers: Resolvers<Context> = {
 
       if (userInfo) {
         await createAndAddSignedTokenAsCookie(context.reply, userInfo)
+
+        logger.debug(`User ${userInfo?.username} logged in`);
+
         return userInfo;
       }
 
@@ -423,6 +429,9 @@ const resolvers: Resolvers<Context> = {
     userLogout: async (_source, args, context): Promise<boolean> => {
       validateUserAuthentication(context);
       await deleteTokenCookie(context.reply);
+
+      logger.debug(`User ${context.username} logged out`);
+
       return true;
     },
     userEdit: async (_source, args, context): Promise<UserInfo> => {
@@ -453,6 +462,9 @@ const resolvers: Resolvers<Context> = {
           await deleteTokenCookie(context.reply);
 
         }
+
+        logger.info(`User with id ${args.id} has been deleted. Request has been initiated by ${context.username}`);
+
         return true;
       }
 

@@ -7,7 +7,7 @@ import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
 const TOKEN_KEY = "token";
 
 // TODO improve these policies for prod
-const COOKIE_OPTION: CookieSerializeOptions = {
+const COOKIE_OPTIONS: CookieSerializeOptions = {
   httpOnly: true,
   sameSite: "none",
   secure: true,
@@ -36,9 +36,9 @@ export const createAndAddSignedTokenAsCookie = async (reply: FastifyReply, user:
 
   const token = await createSignedTokenForUser(user);
 
-  void reply.setCookie(TOKEN_KEY, token, COOKIE_OPTION);
+  void reply.setCookie(TOKEN_KEY, token, COOKIE_OPTIONS);
 }
 
 export const deleteTokenCookie = async (reply: FastifyReply): Promise<void> => {
-  void reply.clearCookie(TOKEN_KEY, COOKIE_OPTION);
+  void reply.clearCookie(TOKEN_KEY, COOKIE_OPTIONS);
 }

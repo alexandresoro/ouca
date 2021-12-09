@@ -8,7 +8,7 @@ export const apolloRequestLogger: PluginDefinition = {
   async requestDidStart(context) {
 
     context.logger = logger.child({ requestId: cuid() });
-    context.logger.info({
+    context.logger.debug({
       operationName: context.request.operationName,
       query: context.request.query,
       variables: context.request.variables,
