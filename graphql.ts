@@ -587,6 +587,7 @@ export type Mutation = {
   upsertMilieu?: Maybe<Milieu>;
   upsertObservateur?: Maybe<Observateur>;
   upsertSexe?: Maybe<Sexe>;
+  userDelete: Scalars['Boolean'];
   userEdit?: Maybe<UserInfo>;
   userLogin?: Maybe<UserInfo>;
   userLogout: Scalars['Boolean'];
@@ -760,6 +761,11 @@ export type MutationUpsertSexeArgs = {
 };
 
 
+export type MutationUserDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationUserEditArgs = {
   editUserData: EditUserData;
   id: Scalars['ID'];
@@ -772,6 +778,7 @@ export type MutationUserLoginArgs = {
 
 
 export type MutationUserSignupArgs = {
+  role?: InputMaybe<UserRole>;
   signupData: UserCreateInput;
 };
 
@@ -1321,6 +1328,7 @@ export type UserInfo = {
   firstName: Scalars['String'];
   id: Scalars['ID'];
   lastName?: Maybe<Scalars['String']>;
+  role: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -1329,6 +1337,12 @@ export type UserLoginInput = {
   username: Scalars['String'];
 };
 
+export const UserRole = {
+  Admin: 'admin',
+  Contributor: 'contributor'
+} as const;
+
+export type UserRole = typeof UserRole[keyof typeof UserRole];
 export type Version = {
   __typename?: 'Version';
   application: Scalars['Int'];
@@ -1505,6 +1519,7 @@ export type ResolversTypes = {
   UserCreateInput: ResolverTypeWrapper<PartialDeep<UserCreateInput>>;
   UserInfo: ResolverTypeWrapper<PartialDeep<UserInfo>>;
   UserLoginInput: ResolverTypeWrapper<PartialDeep<UserLoginInput>>;
+  UserRole: ResolverTypeWrapper<PartialDeep<UserRole>>;
   Version: ResolverTypeWrapper<PartialDeep<Version>>;
 };
 
@@ -1943,6 +1958,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   upsertMilieu?: Resolver<Maybe<ResolversTypes['Milieu']>, ParentType, ContextType, RequireFields<MutationUpsertMilieuArgs, 'data'>>;
   upsertObservateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<MutationUpsertObservateurArgs, 'data'>>;
   upsertSexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<MutationUpsertSexeArgs, 'data'>>;
+  userDelete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUserDeleteArgs, 'id'>>;
   userEdit?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, RequireFields<MutationUserEditArgs, 'editUserData' | 'id'>>;
   userLogin?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, RequireFields<MutationUserLoginArgs, 'loginData'>>;
   userLogout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -2123,6 +2139,7 @@ export type UserInfoResolvers<ContextType = any, ParentType extends ResolversPar
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
