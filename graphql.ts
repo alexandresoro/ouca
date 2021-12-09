@@ -591,6 +591,7 @@ export type Mutation = {
   userEdit?: Maybe<UserInfo>;
   userLogin?: Maybe<UserInfo>;
   userLogout: Scalars['Boolean'];
+  userRefresh?: Maybe<Scalars['Boolean']>;
   userSignup?: Maybe<UserInfo>;
 };
 
@@ -1962,6 +1963,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   userEdit?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, RequireFields<MutationUserEditArgs, 'editUserData' | 'id'>>;
   userLogin?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, RequireFields<MutationUserLoginArgs, 'loginData'>>;
   userLogout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  userRefresh?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   userSignup?: Resolver<Maybe<ResolversTypes['UserInfo']>, ParentType, ContextType, RequireFields<MutationUserSignupArgs, 'signupData'>>;
 };
 
