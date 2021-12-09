@@ -11,7 +11,7 @@ const COOKIE_OPTIONS: CookieSerializeOptions = {
   httpOnly: true,
   sameSite: "none",
   secure: true,
-  maxAge: 60 * 60 * 24 * 2 // Let's keep if for 2 days for now
+  maxAge: 60 * 60 * 24 // Let's keep it for 1 day for now
 }
 
 const createSignedTokenForUser = async (user: Omit<User, 'password'>): Promise<string> => {
