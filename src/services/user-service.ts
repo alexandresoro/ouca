@@ -14,6 +14,21 @@ const getHashedPassword = (plaintextPassword: string): string => {
   return `${salt.toString('hex')}${SALT_AND_PWD_DELIMITER}${encryptedPasswordBuffer.toString('hex')}`;
 }
 
+export const getUser = async (userId: string): Promise<Omit<User, 'password'>> => {
+  return prisma.user.findUnique({
+    select: {
+      id: true,
+      username: true,
+      firstName: true,
+      lastName: true,
+      role: true
+    },
+    where: {
+      id: userId
+    }
+  });
+};
+
 export const createUser = async (signupData: UserCreateInput, role: DatabaseRole): Promise<Omit<User, 'password'>> => {
 
   const { password, ...otherUserInfo } = signupData;

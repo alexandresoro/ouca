@@ -25,7 +25,7 @@ import { findVersion } from "../services/entities/version-service";
 import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateDonneesExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
-import { createUser, deleteUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
+import { createUser, deleteUser, getUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
 import { logger } from "../utils/logger";
 
@@ -425,6 +425,16 @@ const resolvers: Resolvers<Context> = {
       }
 
       throw new AuthenticationError("Authentication failed");
+    },
+    userRefresh: async (_source, args, context): Promise<boolean> => {
+      validateUserAuthentication(context);
+
+      const userInfo = await getUser(context.userId);
+      if (userInfo) {
+        await createAndAddSignedTokenAsCookie(context.reply, userInfo);
+      }
+
+      return false;
     },
     userLogout: async (_source, args, context): Promise<boolean> => {
       validateUserAuthentication(context);

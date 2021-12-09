@@ -84,7 +84,7 @@ checkAndCreateFolders();
   await server.register(fastifyCookie);
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {
-    origin: "https://studio.apollographql.com", // TODO check this properly someday
+    origin: true,
     credentials: true
   });
 
