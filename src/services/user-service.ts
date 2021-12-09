@@ -95,3 +95,15 @@ export const updateUser = async (userId: string, userUpdate: EditUserData): Prom
     }
   });
 };
+
+export const deleteUser = async (userId: string): Promise<void> => {
+  await prisma.user.delete({
+    where: {
+      id: userId
+    }
+  });
+};
+
+export const getUsersCount = async (): Promise<number> => {
+  return prisma.user.count();
+};

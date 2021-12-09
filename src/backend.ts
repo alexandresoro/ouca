@@ -17,6 +17,7 @@ import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
 import { ImportType, IMPORT_TYPE } from './model/import-types';
 import { startImportTask } from './services/import-manager';
+import { deleteTokenCookie } from './services/token-service';
 import prisma from "./sql/prisma";
 import { TokenKeys } from './utils/keys';
 import { logger } from "./utils/logger";
@@ -43,6 +44,9 @@ const apolloServer = new ApolloServer({
     if (token) {
       const publicKey = await TokenKeys.getKey();
       tokenVerifyResult = await jwtVerify(token, publicKey).catch((e) => {
+        // If the user has sent a token that could not be validated,
+        // make sure that at least the cookie is deleted
+        void deleteTokenCookie(reply);
         throw new AuthenticationError(e as string);
       });
     }
@@ -50,7 +54,9 @@ const apolloServer = new ApolloServer({
     return {
       request,
       reply,
-      user: tokenVerifyResult?.payload?.sub ?? null
+      userId: tokenVerifyResult?.payload?.sub ?? null,
+      username: tokenVerifyResult?.payload?.name ?? null,
+      role: tokenVerifyResult?.payload?.roles ?? null
     };
   }
 });

@@ -1,5 +1,5 @@
 import { Commune as CommuneEntity, DatabaseRole, Espece as EspeceEntity } from "@prisma/client";
-import { AuthenticationError } from "apollo-server-core";
+import { ApolloError, AuthenticationError, ForbiddenError } from "apollo-server-core";
 import { FastifyReply } from "fastify";
 import { Age, AgesPaginatedResult, AgeWithSpecimensCount, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, ImportStatus, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, UpsertInventaireFailureReason, UserInfo, Version } from "../model/graphql";
 import { executeDatabaseMigration } from "../services/database-migration/database-migration.service";
@@ -25,17 +25,19 @@ import { findVersion } from "../services/entities/version-service";
 import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateDonneesExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
-import { createUser, loginUser, updateUser } from "../services/user-service";
+import { createUser, deleteUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
 
 type Context = {
   request: unknown,
   reply: FastifyReply,
-  user: string | null
+  userId: string | null,
+  username: string | null,
+  role: string | null
 }
 
 const validateUserAuthentication = (context: Context): void => {
-  if (!context?.user) {
+  if (!context?.userId) {
     throw new AuthenticationError("User is not authenticated.")
   }
 }
@@ -387,12 +389,25 @@ const resolvers: Resolvers<Context> = {
       return true;
     },
     userSignup: async (_source, args, context): Promise<UserInfo> => {
-      const userInfo = await createUser(args.signupData, DatabaseRole.contributor);
+      // Only an administrator can create new accounts
+      // Except when no accounts at all exist:
+      // In that case, the first created account is an admin
+      const usersCount = await getUsersCount();
+
+      let userInfo;
+      if (usersCount === 0) {
+        userInfo = await createUser(args.signupData, DatabaseRole.admin);
+      } else {
+        validateUserAuthentication(context);
+        if (context?.role !== DatabaseRole.admin) {
+          throw new ForbiddenError("User account creation is not allowed for the current user")
+        }
+        userInfo = await createUser(args.signupData, args?.role ?? DatabaseRole.contributor);
+      }
 
       if (userInfo) {
         await createAndAddSignedTokenAsCookie(context.reply, userInfo)
       }
-
       return userInfo;
     },
     userLogin: async (_source, args, context): Promise<UserInfo> => {
@@ -400,9 +415,10 @@ const resolvers: Resolvers<Context> = {
 
       if (userInfo) {
         await createAndAddSignedTokenAsCookie(context.reply, userInfo)
+        return userInfo;
       }
 
-      return userInfo;
+      throw new AuthenticationError("Authentication failed");
     },
     userLogout: async (_source, args, context): Promise<boolean> => {
       validateUserAuthentication(context);
@@ -412,13 +428,35 @@ const resolvers: Resolvers<Context> = {
     userEdit: async (_source, args, context): Promise<UserInfo> => {
       validateUserAuthentication(context);
 
-      const updatedUser = await updateUser(args.id, args.editUserData);
+      // Only a user can delete itself
+      if (context.userId === args?.id) {
+        const updatedUser = await updateUser(args.id, args.editUserData);
 
-      if (updatedUser) {
-        await createAndAddSignedTokenAsCookie(context.reply, updatedUser);
+        if (updatedUser) {
+          await createAndAddSignedTokenAsCookie(context.reply, updatedUser);
+        }
+
+        return updatedUser;
       }
 
-      return updatedUser;
+      throw new ForbiddenError("User modification is only allowed from the user itself")
+    },
+    userDelete: async (_source, args, context): Promise<boolean> => {
+      validateUserAuthentication(context);
+
+      // Only a user can delete itself
+      // With admin role, admin can delete anyone
+      if ((context.userId === args?.id) || (context.role === DatabaseRole.admin)) {
+        await deleteUser(args.id);
+
+        if (context.userId === args?.id) {
+          await deleteTokenCookie(context.reply);
+
+        }
+        return true;
+      }
+
+      throw new ApolloError("User deletion request failed");
     },
   },
   Commune: {

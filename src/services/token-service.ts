@@ -15,19 +15,20 @@ const COOKIE_OPTION: CookieSerializeOptions = {
 }
 
 const createSignedTokenForUser = async (user: Omit<User, 'password'>): Promise<string> => {
-  const { firstName, lastName, role, username } = user;
+  const { id, firstName, lastName, role, username } = user;
 
   const signingKey = await TokenKeys.getKey();
 
   return new SignJWT(
     {
+      name: username,
       given_name: firstName,
       family_name: lastName,
       roles: role
     })
     .setProtectedHeader({ alg: SIGNING_TOKEN_ALGO })
     .setIssuedAt()
-    .setSubject(username)
+    .setSubject(id)
     .sign(signingKey);
 }
 

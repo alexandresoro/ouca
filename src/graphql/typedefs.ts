@@ -536,6 +536,11 @@ export default gql`
     observateur
   }
 
+  enum UserRole {
+    admin
+    contributor
+  }
+
   #
   # Results
   #
@@ -676,6 +681,7 @@ export default gql`
     username: String!
     firstName: String!
     lastName: String
+    role: String!
   }
 
   type Query {
@@ -784,10 +790,11 @@ export default gql`
     initializeDatabase: Boolean
     resetDatabase: Boolean
     updateDatabase: Boolean
-    userSignup(signupData: UserCreateInput!) : UserInfo
+    userSignup(signupData: UserCreateInput!, role: UserRole) : UserInfo
     userLogin(loginData: UserLoginInput!): UserInfo
     userLogout: Boolean!
     userEdit(id: ID!, editUserData: EditUserData!): UserInfo
+    userDelete(id: ID!): Boolean!
   }
 
 `;
