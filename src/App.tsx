@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import logo from './logo.svg';
 
 export default function App(): ReactElement {
   return (
