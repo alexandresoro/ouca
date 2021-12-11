@@ -1,7 +1,16 @@
 {
   "name": "ouca-web",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Où-ça app UI",
+  "contributors": [
+    {
+      "name": "Camille Carrier"
+    },
+    {
+      "name": "Alexandre Soro"
+    }
+  ],
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -43,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines": {
+    "node": ">=14"
   }
 }
