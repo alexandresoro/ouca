@@ -2,6 +2,7 @@
   "welcomeText": "Bienvenue sur l'application Où-ça !",
   "loginLabel": "Utilisateur",
   "loginRequiredLabel": "Le nom d'utilisateur est requis",
+  "loginFailedMessage": "Le nom d'utilisateur ou le mot de passe est incorrect. Veuillez réessayer.",
   "passwordLabel": "Mot de passe",
   "passwordRequiredLabel": "Le mot de passe est requis",
   "loginButton": "Connexion"

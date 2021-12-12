@@ -1,10 +1,30 @@
+import { gql, useMutation } from "@apollo/client";
 import { LoadingButton } from "@mui/lab";
 import { Container, Paper, styled, TextField, Typography, useTheme } from "@mui/material";
-import { ReactElement } from "react";
+import { ReactElement, useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { ReactComponent as LoginLogo } from '../assets/img/green-bird.svg';
+import { UserContext } from "../contexts/UserContext";
+import { MutationUserLoginArgs, UserInfo } from "../model/graphql";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
+
+type UserLoginResult = {
+  userLogin: UserInfo | null;
+}
+
+const USER_LOGIN_MUTATION = gql`
+  mutation UserLogin($loginData: UserLoginInput!) {
+    userLogin(loginData: $loginData) {
+      id
+      username
+      firstName
+      lastName
+      role
+    }
+  }
+`;
 
 const LoginTextField = styled(TextField)(({ theme }) => ({
   width: "32ch"
@@ -19,8 +39,10 @@ export default function LoginPage(): ReactElement {
 
   const { t } = useTranslation();
   const theme = useTheme();
+  const { setUserInfo } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  const { control, formState: { errors, isValid }, handleSubmit } = useForm<LoginInputs>({
+  const { control, setError, formState: { errors }, handleSubmit } = useForm<LoginInputs>({
     defaultValues: {
       username: "",
       password: ""
@@ -28,8 +50,27 @@ export default function LoginPage(): ReactElement {
     mode: "all"
   });
 
-  const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-    console.log(data)
+  const [sendUserLogin, { loading }] = useMutation<UserLoginResult, MutationUserLoginArgs>(USER_LOGIN_MUTATION);
+
+  const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
+    try {
+      const loginResult = await sendUserLogin({
+        variables: {
+          loginData: data
+        }
+      });
+      // Successful login
+      setUserInfo(loginResult?.data?.userLogin ?? null);
+
+      // Navigate to home page
+      navigate("/");
+
+    } catch (error) {
+      setError("username", {
+        type: "manual",
+        message: t("loginFailedMessage")
+      })
+    }
   };
 
   return (
@@ -45,12 +86,9 @@ export default function LoginPage(): ReactElement {
       <CenteredFlexBox>
         <Typography color="textPrimary" fontSize={"32px"}>{t("welcomeText")}</Typography>
       </CenteredFlexBox>
-      <Paper elevation={0} sx={{
+      <Paper sx={{
         marginTop: 3,
-        padding: 2,
-        borderStyle: "solid",
-        borderWidth: "2px",
-        borderColor: theme.palette?.primary?.main
+        padding: 2
       }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
@@ -97,7 +135,7 @@ export default function LoginPage(): ReactElement {
           <CenteredFlexBox>
             <LoadingButton
               type="submit"
-              disabled={!isValid}
+              loading={loading}
               variant="contained"
               sx={{
                 margin: 2

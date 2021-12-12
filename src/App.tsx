@@ -1,8 +1,10 @@
 import { Box, createTheme, ThemeProvider, useMediaQuery } from '@mui/material';
-import { cyan, grey } from '@mui/material/colors';
+import { cyan, grey, pink } from '@mui/material/colors';
 import React, { ReactElement, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
+import TempPage from './components/TempPage';
+import { UserProvider } from './contexts/UserContext';
 
 export default function App(): ReactElement {
 
@@ -16,6 +18,9 @@ export default function App(): ReactElement {
           primary: {
             main: cyan[800]
           },
+          secondary: {
+            main: pink["A200"]
+          },
           ...(prefersDarkMode
             ? {
             }
@@ -27,6 +32,20 @@ export default function App(): ReactElement {
         },
         typography: {
           fontFamily: "Lato"
+        },
+        components: {
+          MuiPaper: {
+            defaultProps: {
+              elevation: 0
+            },
+            styleOverrides: {
+              root: {
+                borderStyle: "solid",
+                borderWidth: "2px",
+                borderColor: cyan[800]
+              }
+            }
+          }
         }
       }),
     [prefersDarkMode]
@@ -34,13 +53,16 @@ export default function App(): ReactElement {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{
-        backgroundColor: theme?.palette?.background?.default
-      }}>
-        <Routes>
-          <Route path="/login" element={<LoginPage />}></Route>
-        </Routes>
-      </Box>
+      <UserProvider>
+        <Box sx={{
+          backgroundColor: theme?.palette?.background?.default
+        }}>
+          <Routes>
+            <Route path="/" element={<TempPage />}></Route>
+            <Route path="/login" element={<LoginPage />}></Route>
+          </Routes>
+        </Box>
+      </UserProvider>
     </ThemeProvider>
   );
 }

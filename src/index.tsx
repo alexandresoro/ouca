@@ -1,3 +1,8 @@
+import {
+  ApolloClient,
+  ApolloProvider,
+  InMemoryCache
+} from "@apollo/client";
 import "@fontsource/lato";
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -7,11 +12,18 @@ import './i18n';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
+const apolloClient = new ApolloClient({
+  uri: '/graphql',
+  cache: new InMemoryCache()
+});
+
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ApolloProvider client={apolloClient}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
