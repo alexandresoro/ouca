@@ -4,13 +4,13 @@ export const getNicheurStatusToDisplay = (comportements: { nicheur?: NicheurCode
 
   // Compute nicheur status for the Donnée (i.e. highest nicheur status of the comportements)
   // First we keep only the comportements having a nicheur status
-  const nicheurStatuses: NicheurCode[] = comportements?.filter(
+  const nicheurStatuses = comportements?.filter(
     (comportement) => {
       return !!comportement.nicheur;
     }
   ).map(
     (comportement) => {
-      return comportement.nicheur;
+      return comportement.nicheur as NicheurCode;
     }
   ) ?? [];
 

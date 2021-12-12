@@ -4,7 +4,7 @@ import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
 export const getCoordinates = (
-  object: { coordinates?: Coordinates },
+  object: { coordinates: Coordinates },
   coordinatesSystem: CoordinatesSystemType
 ): Coordinates => {
   return transformCoordinates(object.coordinates, coordinatesSystem);
@@ -20,9 +20,9 @@ export const areCoordinatesCustomized = (
   if (lieudit?.id) {
     const lieuditCoordinates: Coordinates = getCoordinates({
       coordinates: {
-        latitude: lieudit.latitude,
-        longitude: lieudit.longitude,
-        system: lieudit.coordinatesSystem
+        latitude: lieudit.latitude as number,
+        longitude: lieudit.longitude as number,
+        system: lieudit.coordinatesSystem as CoordinatesSystemType
       }
     }, system);
 
