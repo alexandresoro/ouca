@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { LoadingButton } from "@mui/lab";
-import { Container, Paper, styled, TextField, Typography } from "@mui/material";
+import { Card, Container, styled, TextField, Typography } from "@mui/material";
 import { ReactElement, useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -85,7 +85,7 @@ export default function LoginPage(): ReactElement {
       <CenteredFlexBox>
         <Typography color="textPrimary" fontSize={"32px"}>{t("welcomeText")}</Typography>
       </CenteredFlexBox>
-      <Paper sx={{
+      <Card sx={{
         marginTop: 3,
         padding: 2
       }}>
@@ -144,7 +144,7 @@ export default function LoginPage(): ReactElement {
             </LoadingButton>
           </CenteredFlexBox>
         </form>
-      </Paper>
+      </Card>
     </Container>
   )
 }
