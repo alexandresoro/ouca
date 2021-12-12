@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { LoadingButton } from "@mui/lab";
-import { Container, Paper, styled, TextField, Typography, useTheme } from "@mui/material";
+import { Container, Paper, styled, TextField, Typography } from "@mui/material";
 import { ReactElement, useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -26,7 +26,7 @@ const USER_LOGIN_MUTATION = gql`
   }
 `;
 
-const LoginTextField = styled(TextField)(({ theme }) => ({
+const LoginTextField = styled(TextField)(() => ({
   width: "32ch"
 }));
 
@@ -38,7 +38,6 @@ type LoginInputs = {
 export default function LoginPage(): ReactElement {
 
   const { t } = useTranslation();
-  const theme = useTheme();
   const { setUserInfo } = useContext(UserContext);
   const navigate = useNavigate();
 
