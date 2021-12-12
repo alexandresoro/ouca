@@ -1,3 +1,8 @@
 {
-  "translation": {}
+  "welcomeText": "Bienvenue sur l'application Où-ça !",
+  "loginLabel": "Utilisateur",
+  "loginRequiredLabel": "Le nom d'utilisateur est requis",
+  "passwordLabel": "Mot de passe",
+  "passwordRequiredLabel": "Le mot de passe est requis",
+  "loginButton": "Connexion"
 }
