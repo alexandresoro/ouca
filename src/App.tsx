@@ -59,9 +59,9 @@ export default function App(): ReactElement {
           backgroundColor: theme?.palette?.background?.default
         }}>
           <Routes>
+            <Route path="/login" element={<LoginPage />}></Route>
             <Route path="/" element={<Layout />}>
               <Route index element={<TempPage />}></Route>
-              <Route path="login" element={<LoginPage />}></Route>
             </Route>
           </Routes>
         </Box>

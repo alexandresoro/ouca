@@ -1,22 +1,22 @@
-import { AppBar, Toolbar } from "@mui/material";
+import { AppBar, Box, Toolbar } from "@mui/material";
 import { ReactElement } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 export default function Layout(): ReactElement {
 
-  const location = useLocation();
-  const shouldDisplayHeader = (location?.pathname !== "/login");
-
   return (
-    <>
-      {
-        shouldDisplayHeader && (
-          <AppBar position="static">
-            <Toolbar></Toolbar>
-          </AppBar>
-        )
-      }
-      <Outlet />
-    </>
+    <Box sx={{
+      height: "100vh"
+    }}>
+      <AppBar position="static">
+        <Toolbar></Toolbar>
+      </AppBar>
+      <Box sx={{
+        flex: "1 1 auto",
+        overflowY: "auto"
+      }}>
+        <Outlet />
+      </Box>
+    </Box>
   )
 }
