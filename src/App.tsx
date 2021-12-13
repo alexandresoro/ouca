@@ -32,7 +32,10 @@ export default function App(): ReactElement {
             })
         },
         typography: {
-          fontFamily: "Lato"
+          fontFamily: "Lato",
+          button: {
+            textTransform: "none"
+          }
         },
         components: {
           MuiCard: {

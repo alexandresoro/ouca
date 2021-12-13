@@ -1,6 +1,7 @@
-import { AppBar, Box, Toolbar } from "@mui/material";
+import { Box } from "@mui/material";
 import { ReactElement } from "react";
 import { Outlet } from "react-router-dom";
+import Header from './Header';
 
 export default function Layout(): ReactElement {
 
@@ -8,9 +9,7 @@ export default function Layout(): ReactElement {
     <Box sx={{
       height: "100vh"
     }}>
-      <AppBar position="static">
-        <Toolbar></Toolbar>
-      </AppBar>
+      <Header />
       <Box sx={{
         flex: "1 1 auto",
         overflowY: "auto"

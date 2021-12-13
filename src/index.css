@@ -3,3 +3,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@font-face {
+  font-family: "Showcard Gothic";
+  src: url("assets/fonts/showg.ttf") format("truetype");
+}

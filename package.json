@@ -22,6 +22,7 @@
     "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.6.0",
     "@fontsource/lato": "^4.5.0",
+    "@mui/icons-material": "^5.2.1",
     "@mui/lab": "^5.0.0-alpha.59",
     "@mui/material": "^5.2.3",
     "date-fns": "^2.27.0",
