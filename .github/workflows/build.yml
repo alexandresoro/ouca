@@ -36,11 +36,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build
+        run: export NODE_OPTIONS=--openssl-legacy-provider
+
       - name: Tests
         run: npm run test -- --passWithNoTests
 
       - name: Build
-        run: npm run build -- --openssl-legacy-provider
+        run: npm run build
 
       - name: Prepare release content
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && matrix.type == 'release'
