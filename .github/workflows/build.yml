@@ -20,8 +20,8 @@ jobs:
         include:
           - node-version: 16.x
             type: "build,lts"
-          - node-version: 17.x
-            type: "next"
+          # - node-version: 17.x
+          #   type: "next"
 
     steps:
       - uses: actions/checkout@v2
@@ -40,7 +40,7 @@ jobs:
         run: npm run test -- --passWithNoTests
 
       - name: Build
-        run: NODE_OPTIONS=--openssl-legacy-provider npm run build
+        run: npm run build
 
       - name: Prepare release content
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && matrix.type == 'release'
