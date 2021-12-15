@@ -1,5 +1,5 @@
 {
-  admin {ADMIN_CONF}
+  admin {$ADMIN_CONF}
 }
 
 {$DOMAIN_URL}
