@@ -1,0 +1,23 @@
+{$DOMAIN_URL}
+
+root * /srv
+
+handle /download/* {
+  reverse_proxy {$BACKEND_HOST}:{$BACKEND_PORT}
+}
+
+handle /uploads/* {
+  reverse_proxy {$BACKEND_HOST}:{$BACKEND_PORT}
+}
+
+handle /graphql {
+  reverse_proxy {$BACKEND_HOST}:{$BACKEND_PORT}
+}
+
+handle {
+  try_files {path} index.html
+  file_server
+}
+
+encode gzip
+log
