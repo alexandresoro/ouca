@@ -61,7 +61,7 @@ jobs:
   publish-docker:
     needs: check-build-and-release
 
-    if: github.event_name == 'push' && false
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -93,7 +93,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push to GitHub Container Registry
         id: docker_build
