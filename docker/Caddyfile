@@ -1,3 +1,7 @@
+{
+  admin {ADMIN_CONF}
+}
+
 {$DOMAIN_URL}
 
 root * /srv
