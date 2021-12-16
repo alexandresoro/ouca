@@ -28,7 +28,7 @@ jobs:
         run: npm run test -- --passWithNoTests
         
       - name: Build
-        run: GENERATE_SOURCEMAP=false npm run build
+        run: GENERATE_SOURCEMAP=false REACT_APP_API_URL=${{secrets.REACT_APP_API_URL}} npm run build
 
       - name: Publish to Netlify
         uses: netlify/actions/cli@master
