@@ -1,4 +1,4 @@
-name: CI/CD
+name: Check build
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - master
 
 jobs:
-  check-build-and-release:
+  check-build:
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,7 +29,7 @@ jobs:
           submodules: true
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -42,24 +42,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Prepare release content
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && matrix.type == 'release'
-        run: |
-          cp LICENSE dist/
-          tar -cvzf ouca-web-dist-${GITHUB_REF#refs/tags/}.tar.gz -C dist/ .
-
-      - name: Publish the release
-        uses: softprops/action-gh-release@v1
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && matrix.type == 'release'
-        with:
-          prerelease: true
-          files: |
-            ouca-web-dist-*.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   publish-docker:
-    needs: check-build-and-release
+    needs: check-build
 
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -87,23 +71,3 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
-
-      - name: Log into GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push to GitHub Container Registry
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: .
-          platforms: |
-            linux/amd64
-            linux/arm64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
