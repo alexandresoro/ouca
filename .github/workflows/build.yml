@@ -11,7 +11,7 @@ on:
       - master
 
 jobs:
-  check-build:
+  build-and-release:
     runs-on: ubuntu-latest
 
     strategy:
@@ -66,29 +66,3 @@ jobs:
             ouca-web-*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  publish-docker:
-    needs: check-build
-
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set the default docker tag
-        run: |
-          echo "DOCKER_TAG=latest" >> $GITHUB_ENV
-
-      - name: Set docker tag as dev if on dev branch
-        if: github.ref == 'refs/heads/dev'
-        run: |
-          echo "DOCKER_TAG=dev" >> $GITHUB_ENV
-
-      - name: Retrieve docker label if this is a tag push
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          echo "DOCKER_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
