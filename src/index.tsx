@@ -13,7 +13,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 
 const apolloClient = new ApolloClient({
-  uri: '/graphql',
+  uri: `${process.env.REACT_APP_API_URL ?? ""}/graphql`,
   cache: new InMemoryCache()
 });
 
