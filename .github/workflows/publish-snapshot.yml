@@ -8,7 +8,7 @@ on:
       - "v*.*.*"
 
 jobs:
-  check-build-and-release:
+  publish-snapshot:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,7 +41,7 @@ jobs:
 
       - name: Prepare release content
         run: |
-          tar -cvzf ouca-web-${env.release_tag}.tar.gz -C build/ .
+          tar -cvzf ouca-web-${{env.release_tag}}.tar.gz -C build/ .
           
       - name: Publish the release
         uses: softprops/action-gh-release@v1
