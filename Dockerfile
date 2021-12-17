@@ -15,6 +15,7 @@ RUN npm run build
 
 # 2. Run the NodeJS backend
 FROM node:16-alpine
+ENV NODE_ENV=production
 
 # Install only the dependencies that are required at runtime
 WORKDIR /app
