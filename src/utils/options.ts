@@ -1,6 +1,8 @@
 import yargs from "yargs";
 
-export default yargs.options({
+const ENV_OUCA_PREFIX = "OUCA";
+
+export default yargs.env(ENV_OUCA_PREFIX).options({
   dbHost: { type: "string", default: "127.0.0.1" },
   dbPort: { type: "number", default: 3306 },
   dbUser: { type: "string", default: "basenaturaliste" },
