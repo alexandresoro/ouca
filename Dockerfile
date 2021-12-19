@@ -19,6 +19,8 @@ FROM node:14-alpine
 # Install only the dependencies that are required at runtime
 WORKDIR /app
 
+ENV OUCA_LISTEN_ADDRESS 0.0.0.0
+
 RUN apk add --no-cache mariadb-client
 
 COPY package.json package-lock.json prisma/schema.prisma /app/ 
@@ -31,6 +33,6 @@ WORKDIR /app/backend
 
 COPY --from=build /app/backend/dist/ /app/backend/
 
-ENTRYPOINT ["node", "backend.js", "--listenAddress", "0.0.0.0"]
+ENTRYPOINT ["node", "backend.js"]
 
 EXPOSE 4000/tcp
