@@ -4,7 +4,9 @@
 
 The aim of the _Où ça ?_ project is to provide naturalists with an application where they can record and visualize their wildlife observations.
 
-This project provides the API to interact with these observations - add new elements, edit them and so on.
+This project provides an API to interact with these observations - add new elements, edit them and so on.
+
+This API is structured as a stateless microservice. It exposes a GraphQL and a small REST API, and is agnostic of the integrator.
 
 ## Structure of an observation
 
@@ -28,58 +30,69 @@ The characteristics above are considered to be an inventory. An observation belo
 
 ## Prerequisites
 
-This project expects to be connected to a database instance. For now, only _MariaDB >10.5_ is supported.
+- This project expects to be connected to a database instance. For now, only _MariaDB >10.5_ is supported.
+- _Node.js 16_ or later
+- _npm 7_ or later
 
 ## Deployment
 
-1. Build the project:
+1. Install dependencies
 
 ```
-yarn build
+npm ci
 ```
 
-This will generate the server files in the _dist/_ folder.
+2. Start or build the project:
 
-2. Start the webserver
-
-Open your favorite terminal with Node.js already installed.
-Assuming your _dist/_ folder is in the path $path_to_project$, run the following:
+To start:
 
 ```
-node $path_to_project$/dist/backend
+npm start
 ```
 
-This will start a local webserver on port 4000.
+This will start the server on the default port.
 
-### Available options
-
-When starting the webserver, it is possible to override the default configuration with the following options:
-
-- **dbHost** : the IP address or server name where the database is located (e.g. 10.0.0.77, basenaturaliste.com). _Default is 127.0.0.1_.
-- **dbPort** : the port where the database is located. _Default is 3306_.
-- **dbUser** : the user of the database. _Default is "basenaturaliste"_.
-- **dbPassword** : the password to connect to the database. _Default is "basenaturaliste"_.
-
-Example:
+To build:
 
 ```
-node $path_to_project$/dist/backend --dbHost=basenaturaliste.com --dbPassword=dbpwd
+npm run build
 ```
 
-## Docker
+This will generate the output files in the _dist/_ folder.
 
-This project can be run as a Docker container.
+## API structure
 
-A Dockerfile is provided, and will expose the backend on port 4000.
+Most of the API is exposed via GraphQL on `/graphql` path.
 
-The database settings can be overridden with the following variables:
+The application exposes a static path at `/download`, that is to be used for two use cases: database exports and imports report files. The exact file paths are returned by their respective GraphQL actions.
 
-| Option     | Docker ENV variable |
-| ---------- | :-----------------: |
-| dbHost     |       DB_HOST       |
-| dbPort     |       DB_PORT       |
-| dbUser     |       DB_USER       |
-| dbPassword |     DB_PASSWORD     |
+Finally, the app exposes a single REST endpoint at `POST /uploads/:entityName` to allow users to import observations. This endpoint expects a single file as a multipart data body and will return an `uploadId` if valid.
+
+## Authentication
+
+(To be updated when complete)
+
+Most of the accesses to the API require users to be authenticated.
+Authentication is using a signed JWT `httpOnly` cookie.
+On successful user login and signup actions, the server will send this cookie with key `token` in the HTTP response.
+A logout action is exposed that will simply clear the cookie in the response to mimic a proper logout.
+
+## Options
+
+
+| Option          |    Type               |      Default      | Description |
+| --------------- | :-------------------: |                   | |
+| `listenAddress` |        `string`       | `127.0.0.1`       | The IP address where the server listens to |
+| `listenPort`    |        `number`       | `4000`            | The port used by the server |
+| `logLevel`      |        `string`       | `warn`            | The log level of the server. Uses [Pino](https://github.com/pinojs/pino) logging levels |
+| `logToFile`     |        `boolean`      | `false`           | Logs to a file instead of the standard output. Log file location is `./logs/logfile.log`|
+| `dbHost`        |        `string`       | `127.0.0.1`       | The address of the database to connect to |
+| `dbPort`        |        `number`       | `3306`            | The port of the database to connect to |
+| `dbUser`        |        `string`       | `basenaturaliste` | The user account that connects to the database |
+| `dbPassword`    |        `string`       | `basenaturaliste` | The password of the database user |
+| `dbName`        |        `string`       | `basenaturaliste` | The name of the database that contains the observations |
+  
+Each option can be passed as a CLI argument, and is also available as an environment variable with prefix `OUCA_` e.g. `ÒUCA_LISTEN_PORT`.
 
 ## Authors
 
