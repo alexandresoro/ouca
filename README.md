@@ -8,26 +8,6 @@ This project provides an API to interact with these observations - add new eleme
 
 This API is structured as a stateless microservice. It exposes a GraphQL and a small REST API, and is agnostic of the integrator.
 
-## Structure of an observation
-
-An observation is materialized by the following characteristics:
-
-- An observer and potential associate observers.
-- The observation date with an optional time and duration.
-- A location for the observation. It is structured with an "area" that belongs to a "city" which itself belongs to a "department".
-- An optional temperature and weather characteristics.
-
-The characteristics above are considered to be an inventory. An observation belongs to a single inventory, but an inventory can contain several observation, which represents a real use case where several observations can be made during the same session.
-
-- A species and its related species class.
-- An estimate on the number of species encountered.
-- An estimate on the distance between the observer and the species observed.
-- The age of the species encountered.
-- The sex of the species encountered.
-- An optional list of behaviors describing the state of the species.
-- An optional list of environments surrounding the species.
-- An optional comment on the observation.
-
 ## Prerequisites
 
 - This project expects to be connected to a database instance. For now, only _MariaDB >10.5_ is supported.
@@ -81,7 +61,7 @@ A logout action is exposed that will simply clear the cookie in the response to 
 
 
 | Option          |    Type               |      Default      | Description |
-| --------------- | :-------------------: |                   | |
+| --------------- | :-------------------: | :---------------: | ----------- |
 | `listenAddress` |        `string`       | `127.0.0.1`       | The IP address where the server listens to |
 | `listenPort`    |        `number`       | `4000`            | The port used by the server |
 | `logLevel`      |        `string`       | `warn`            | The log level of the server. Uses [Pino](https://github.com/pinojs/pino) logging levels |
@@ -92,7 +72,28 @@ A logout action is exposed that will simply clear the cookie in the response to 
 | `dbPassword`    |        `string`       | `basenaturaliste` | The password of the database user |
 | `dbName`        |        `string`       | `basenaturaliste` | The name of the database that contains the observations |
   
-Each option can be passed as a CLI argument, and is also available as an environment variable with prefix `OUCA_` e.g. `ÒUCA_LISTEN_PORT`.
+Each option can be passed as a CLI argument, and is also available as an environment variable with prefix `OUCA_` e.g. `OUCA_LISTEN_PORT`.
+
+
+## Structure of an observation
+
+An observation is materialized by the following characteristics:
+
+- An observer and potential associate observers.
+- The observation date with an optional time and duration.
+- A location for the observation. It is structured with an "area" that belongs to a "city" which itself belongs to a "department".
+- An optional temperature and weather characteristics.
+
+The characteristics above are considered to be an inventory. An observation belongs to a single inventory, but an inventory can contain several observation, which represents a real use case where several observations can be made during the same session.
+
+- A species and its related species class.
+- An estimate on the number of species encountered.
+- An estimate on the distance between the observer and the species observed.
+- The age of the species encountered.
+- The sex of the species encountered.
+- An optional list of behaviors describing the state of the species.
+- An optional list of environments surrounding the species.
+- An optional comment on the observation.
 
 ## Authors
 
