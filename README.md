@@ -1,22 +1,34 @@
-# Où ça ? - Base Naturaliste (backend)
-
-This is the Node.js backend for _Où ça ?_ application.
+# Où ça ? - Base Naturaliste API
 
 ## About the project
 
-The aim of the _Où ça ?_ project is to provide naturalists an application where they can record and visualize their wildlife observations.
+The aim of the _Où ça ?_ project is to provide naturalists with an application where they can record and visualize their wildlife observations.
 
-For more details about the application itself, please refer to the documentation of the frontend project.
+This project provides the API to interact with these observations - add new elements, edit them and so on.
 
-## Getting Started
+## Structure of an observation
 
-This project is a Node.js webserver that connects to an instance of a MariaDB database where the application data is stored.
+An observation is materialized by the following characteristics:
 
-### Related project
+- An observer and potential associate observers.
+- The observation date with an optional time and duration.
+- A location for the observation. It is structured with an "area" that belongs to a "city" which itself belongs to a "department".
+- An optional temperature and weather characteristics.
 
-The frontend for _Où ça ?_ application which uses this backend:
+The characteristics above are considered to be an inventory. An observation belongs to a single inventory, but an inventory can contain several observation, which represents a real use case where several observations can be made during the same session.
 
-- [Où ça ? (frontend)](https://github.com/ou-ca/ouca-frontend)
+- A species and its related species class.
+- An estimate on the number of species encountered.
+- An estimate on the distance between the observer and the species observed.
+- The age of the species encountered.
+- The sex of the species encountered.
+- An optional list of behaviors describing the state of the species.
+- An optional list of environments surrounding the species.
+- An optional comment on the observation.
+
+## Prerequisites
+
+This project expects to be connected to a database instance. For now, only _MariaDB >10.5_ is supported.
 
 ## Deployment
 
