@@ -6,5 +6,6 @@ body {
 
 @font-face {
   font-family: "Showcard Gothic";
+  font-display: swap;
   src: url("assets/fonts/showg.ttf") format("truetype");
 }
