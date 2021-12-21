@@ -10,6 +10,7 @@ export const getNicheurStatusToDisplay = (comportements: { nicheur?: NicheurCode
     }
   ).map(
     (comportement) => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       return comportement.nicheur as NicheurCode;
     }
   ) ?? [];

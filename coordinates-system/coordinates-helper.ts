@@ -20,7 +20,9 @@ export const areCoordinatesCustomized = (
   if (lieudit?.id) {
     const lieuditCoordinates: Coordinates = getCoordinates({
       coordinates: {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         latitude: lieudit.latitude as number,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         longitude: lieudit.longitude as number,
         system: lieudit.coordinatesSystem as CoordinatesSystemType
       }
