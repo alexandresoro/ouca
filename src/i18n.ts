@@ -5,7 +5,6 @@ import fr from "./i18n/fr.json";
 void i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
-    debug: true,
     resources: {
       fr: {
         translation: fr
