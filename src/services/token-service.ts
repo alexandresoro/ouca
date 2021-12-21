@@ -3,14 +3,14 @@ import { FastifyReply } from "fastify";
 import { CookieSerializeOptions } from "fastify-cookie";
 import { SignJWT } from "jose";
 import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
+import options from "../utils/options";
 
 const TOKEN_KEY = "token";
 
-// TODO improve these policies for prod
 const COOKIE_OPTIONS: CookieSerializeOptions = {
   httpOnly: true,
-  sameSite: "none",
-  secure: true,
+  sameSite: options.jwtCookieSameSite ? "strict" : "none",
+  secure: options.jwtCookieSecure,
   maxAge: 60 * 60 * 24 // Let's keep it for 1 day for now
 }
 
@@ -40,5 +40,5 @@ export const createAndAddSignedTokenAsCookie = async (reply: FastifyReply, user:
 }
 
 export const deleteTokenCookie = async (reply: FastifyReply): Promise<void> => {
-  void reply.clearCookie(TOKEN_KEY, COOKIE_OPTIONS);
+  void reply.clearCookie(TOKEN_KEY);
 }

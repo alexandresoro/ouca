@@ -30,6 +30,7 @@
     "cuid": "^2.1.8",
     "date-fns": "^2.27.0",
     "date-fns-tz": "^1.2.2",
+    "dotenv": "^10.0.0",
     "exceljs": "^4.3.0",
     "fastify": "^3.25.1",
     "fastify-compress": "^4.0.1",

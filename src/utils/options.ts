@@ -1,6 +1,12 @@
+import dotenv from 'dotenv';
+import path from 'path';
 import yargs from "yargs";
 
 const ENV_OUCA_PREFIX = "OUCA";
+
+dotenv.config({
+  path: path.join(process.cwd(), "..", ".env"),
+})
 
 export default yargs.env(ENV_OUCA_PREFIX).options({
   dbHost: { type: "string", default: "127.0.0.1" },
@@ -12,4 +18,7 @@ export default yargs.env(ENV_OUCA_PREFIX).options({
   listenPort: { type: "number", default: 4000 },
   logLevel: { type: "string", default: "warn" },
   logToFile: { type: "boolean", default: false },
+  jwtSigningKey: { type: "string" },
+  jwtCookieSameSite: { type: "boolean", default: true },
+  jwtCookieSecure: { type: "boolean", default: true }
 }).parseSync();
