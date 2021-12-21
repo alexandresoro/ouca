@@ -1,14 +1,17 @@
 import { gql, useMutation } from "@apollo/client";
 import { LoadingButton } from "@mui/lab";
-import { Card, Container, styled, TextField, Typography } from "@mui/material";
-import { ReactElement, useContext } from "react";
+import { Box, Card, Container, styled, TextField, Typography } from "@mui/material";
+import { lazy, ReactElement, Suspense, useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ReactComponent as LoginLogo } from '../assets/img/green-bird.svg';
 import { UserContext } from "../contexts/UserContext";
 import { MutationUserLoginArgs, UserInfo } from "../model/graphql";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
+
+const LOGO_SIZE = "250px";
+
+const LoginLogo = lazy(() => import('../assets/img/green-bird.svg').then(({ ReactComponent }) => ({ default: ReactComponent })));
 
 type UserLoginResult = {
   userLogin: UserInfo | null;
@@ -80,7 +83,9 @@ export default function LoginPage(): ReactElement {
       paddingTop: 5
     }}>
       <CenteredFlexBox>
-        <LoginLogo width={"300px"} height={"300px"} />
+        <Suspense fallback={<Box width={LOGO_SIZE} height={LOGO_SIZE} />}>
+          <LoginLogo width={LOGO_SIZE} height={LOGO_SIZE} />
+        </Suspense>
       </CenteredFlexBox>
       <CenteredFlexBox>
         <Typography color="textPrimary" fontSize={"32px"}>{t("welcomeText")}</Typography>
