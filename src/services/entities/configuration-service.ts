@@ -44,6 +44,12 @@ const buildSettingsDbFromInputSettings = (
   };
 };
 
+export const createInitialUserSettings = async (userId: string): Promise<Settings> => {
+  return prisma.settings.create({
+    data: {}
+  });
+}
+
 export const persistUserSettings = async (appConfiguration: InputSettings): Promise<Settings> => {
 
   const { id, ...settings } = buildSettingsDbFromInputSettings(appConfiguration);
