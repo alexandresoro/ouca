@@ -667,7 +667,7 @@ export type MutationDeleteSexeArgs = {
 
 
 export type MutationUpdateSettingsArgs = {
-  appConfiguration?: InputMaybe<InputSettings>;
+  appConfiguration: InputSettings;
 };
 
 
@@ -1943,7 +1943,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   initializeDatabase?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   resetDatabase?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   updateDatabase?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  updateSettings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType, RequireFields<MutationUpdateSettingsArgs, never>>;
+  updateSettings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType, RequireFields<MutationUpdateSettingsArgs, 'appConfiguration'>>;
   upsertAge?: Resolver<Maybe<ResolversTypes['Age']>, ParentType, ContextType, RequireFields<MutationUpsertAgeArgs, 'data'>>;
   upsertClasse?: Resolver<Maybe<ResolversTypes['Classe']>, ParentType, ContextType, RequireFields<MutationUpsertClasseArgs, 'data'>>;
   upsertCommune?: Resolver<Maybe<ResolversTypes['Commune']>, ParentType, ContextType, RequireFields<MutationUpsertCommuneArgs, 'data'>>;
