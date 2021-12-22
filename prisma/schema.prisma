@@ -243,10 +243,10 @@ model Settings {
   defaultSexeId             Int?              @map("default_sexe_id") @db.UnsignedSmallInt
   defaultEstimationNombreId Int?              @map("default_estimation_nombre_id") @db.UnsignedSmallInt
   defaultNombre             Int?              @map("default_nombre") @db.UnsignedSmallInt
-  areAssociesDisplayed      Boolean           @default(dbgenerated("(b'1')")) @map("are_associes_displayed") @db.Bit(1)
-  isMeteoDisplayed          Boolean           @default(dbgenerated("(b'1')")) @map("is_meteo_displayed") @db.Bit(1)
-  isDistanceDisplayed       Boolean           @default(dbgenerated("(b'1')")) @map("is_distance_displayed") @db.Bit(1)
-  isRegroupementDisplayed   Boolean           @default(dbgenerated("(b'1')")) @map("is_regroupement_displayed") @db.Bit(1)
+  areAssociesDisplayed      Boolean           @default(true) @map("are_associes_displayed") @db.Bit(1)
+  isMeteoDisplayed          Boolean           @default(true) @map("is_meteo_displayed") @db.Bit(1)
+  isDistanceDisplayed       Boolean           @default(true) @map("is_distance_displayed") @db.Bit(1)
+  isRegroupementDisplayed   Boolean           @default(true) @map("is_regroupement_displayed") @db.Bit(1)
   coordinatesSystem         CoordinatesSystem @default(gps) @map("coordinates_system")
   defaultAge                Age?              @relation(fields: [defaultAgeId], references: [id], onUpdate: Restrict, map: "fk_settings_age_id")
   defaultDepartement        Departement?      @relation(fields: [defaultDepartementId], references: [id], onUpdate: Restrict, map: "fk_settings_departement_id")
