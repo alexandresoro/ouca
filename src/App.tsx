@@ -4,6 +4,7 @@ import React, { ReactElement, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import LoginPage from './components/LoginPage';
+import SettingsPage from './components/SettingsPage';
 import TempPage from './components/TempPage';
 import { UserProvider } from './contexts/UserContext';
 
@@ -65,6 +66,7 @@ export default function App(): ReactElement {
             <Route path="/login" element={<LoginPage />}></Route>
             <Route path="/" element={<Layout />}>
               <Route index element={<TempPage />}></Route>
+              <Route path="configuration" element={<SettingsPage />}></Route>
             </Route>
           </Routes>
         </Box>
