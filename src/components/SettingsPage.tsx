@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Card, Container, MenuItem, Stack, TextField, Typography } from "@mui/material";
-import { ReactElement, useCallback, useContext, useEffect } from "react";
+import { Alert, AlertColor, Card, Container, MenuItem, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../contexts/UserContext";
@@ -142,9 +142,13 @@ export default function SettingsPage(): ReactElement {
 
   const { userInfo } = useContext(UserContext);
 
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [alertType, setAlertType] = useState<AlertColor | undefined>(undefined);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  // TODO check fetch policies
   const { loading, error, data: userSettingsResult } = useQuery<UserSettingsResult>(USER_SETTINGS_QUERY);
   const {
-    loading: loadingSettingsSelectValuesQueryResult,
     error: errorSettingsSelectValuesQueryResult,
     data: settingsSelectValuesQueryResult
   } = useQuery<SettingsSelectValuesQueryResult>(SETTINGS_SELECT_VALUES_QUERY);
@@ -153,6 +157,7 @@ export default function SettingsPage(): ReactElement {
 
   const { control, formState: { errors }, handleSubmit, reset, watch } = useForm<SettingsInputs>();
 
+  // Reset the form with the user preferences, when they are retrieved
   useEffect(() => {
     if (userSettingsResult?.settings) {
       reset({
@@ -171,11 +176,30 @@ export default function SettingsPage(): ReactElement {
     }
   }, [userSettingsResult, reset]);
 
+  const displaySuccessNotification = useCallback(() => {
+    setNotificationOpen(false);
+    setAlertType("success");
+    setAlertMessage(t("saveSettingsSuccess"));
+    setNotificationOpen(true);
+  }, [t]);
+
+  const displayErrorNotification = useCallback(() => {
+    setNotificationOpen(false);
+    setAlertType("error");
+    setAlertMessage(t("saveSettingsError"));
+    setNotificationOpen(true);
+  }, [t]);
+
+  // Handle updated settings
   const sendUpdatedSettings = useCallback(async (values: SettingsInputs) => {
     if (!userSettingsResult?.settings) {
       return;
     }
     const { defaultNombre, ...otherValues } = values;
+
+    // TODO add userId at some point
+    console.log(userInfo)
+
     await sendUserSettingsUpdate({
       variables: {
         appConfiguration: {
@@ -184,10 +208,17 @@ export default function SettingsPage(): ReactElement {
           ...otherValues
         }
       }
+    }).then(({ errors }) => {
+      if (!errors) {
+        displaySuccessNotification();
+      } else {
+        displayErrorNotification();
+      }
     });
-  }, [sendUserSettingsUpdate, userSettingsResult]);
+  }, [sendUserSettingsUpdate, userSettingsResult, displaySuccessNotification, displayErrorNotification, userInfo]);
 
 
+  // Watch inputs for changes, and submit the form if any
   useEffect(() => {
     const subscription = watch(() => {
       if (!loading) {
@@ -196,6 +227,24 @@ export default function SettingsPage(): ReactElement {
     });
     return () => subscription.unsubscribe();
   }, [watch, handleSubmit, sendUpdatedSettings, loading]);
+
+  // Display a generic error message when somthing wrong happened while retrieving the settings
+  useEffect(() => {
+    if (error || errorSettingsSelectValuesQueryResult) {
+      setNotificationOpen(false);
+      setAlertType("error");
+      setAlertMessage(t("retrieveSettingsError"));
+      setNotificationOpen(true);
+    }
+  }, [t, error, errorSettingsSelectValuesQueryResult]);
+
+  const handleNotificationClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setNotificationOpen(false);
+  };
 
   return (
     <>
@@ -287,6 +336,8 @@ export default function SettingsPage(): ReactElement {
                   defaultValue=""
                   rules={{
                     required: true,
+                    min: 1,
+                    max: 65535,
                     validate: v => !isNaN(v as unknown as number)
                   }}
                   render={({ field }) => (
@@ -400,6 +451,15 @@ export default function SettingsPage(): ReactElement {
           </form>
         </Card>
       </Container>
+
+      <Snackbar
+        open={notificationOpen}
+        autoHideDuration={2500}
+        onClose={handleNotificationClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity={alertType}>{alertMessage}</Alert>
+      </Snackbar>
     </>
   )
 }

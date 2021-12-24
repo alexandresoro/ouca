@@ -35,6 +35,9 @@
   "displayDistance": "Afficher la distance",
   "displayRegroupmentNumber": "Afficher le numéro de regroupement",
   "coordinatesSystem": "Système de coordonnées",
+  "retrieveSettingsError": "Une erreur est survenue lors de la récupération des préférences. Veuillez réessayer",
+  "saveSettingsSuccess": "Vos préférences sont sauvegardées",
+  "saveSettingsError": "Une erreur est survenue lors de la sauvegarde de vos préférences. Veuillez réessayer",
   "exportDatabaseButton": "Sauvegarde de la base",
   "importFromFile": "Import depuis un fichier",
   "logout": "Déconnexion"
