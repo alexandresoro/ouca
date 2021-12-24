@@ -1,12 +1,13 @@
 import { Box, createTheme, ThemeProvider, useMediaQuery } from '@mui/material';
 import { cyan, grey, pink } from '@mui/material/colors';
-import React, { ReactElement, useMemo } from 'react';
+import React, { lazy, ReactElement, Suspense, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
-import LoginPage from './components/LoginPage';
-import SettingsPage from './components/SettingsPage';
 import TempPage from './components/TempPage';
 import { UserProvider } from './contexts/UserContext';
+
+const LoginPage = lazy(() => import("./components/LoginPage"));
+const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
 export default function App(): ReactElement {
 
@@ -62,13 +63,23 @@ export default function App(): ReactElement {
         <Box sx={{
           backgroundColor: theme?.palette?.background?.default
         }}>
-          <Routes>
-            <Route path="/login" element={<LoginPage />}></Route>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<TempPage />}></Route>
-              <Route path="configuration" element={<SettingsPage />}></Route>
-            </Route>
-          </Routes>
+          <Suspense fallback="">
+            <Routes>
+              <Route path="/login" element={
+                <Suspense fallback={<></>}>
+                  <LoginPage />
+                </Suspense>}>
+              </Route>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<TempPage />}></Route>
+                <Route path="configuration" element={
+                  <Suspense fallback={<></>}>
+                    <SettingsPage />
+                  </Suspense>}>
+                </Route>
+              </Route>
+            </Routes>
+          </Suspense>
         </Box>
       </UserProvider>
     </ThemeProvider>

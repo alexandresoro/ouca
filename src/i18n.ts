@@ -1,15 +1,11 @@
 import i18n from 'i18next';
+import i18nextHttpBackend from 'i18next-http-backend';
 import { initReactI18next } from "react-i18next";
-import fr from "./i18n/fr.json";
 
 void i18n
   .use(initReactI18next) // passes i18n down to react-i18next
+  .use(i18nextHttpBackend)
   .init({
-    resources: {
-      fr: {
-        translation: fr
-      }
-    },
     lng: "fr", // if you're using a language detector, do not define the lng option
     fallbackLng: "fr",
 

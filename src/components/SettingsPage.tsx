@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Alert, AlertColor, Card, Container, MenuItem, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import { Alert, AlertColor, Card, CircularProgress, Container, MenuItem, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -8,13 +8,19 @@ import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordina
 import { Age, CoordinatesSystemType, Departement, EstimationNombre, MutationUpdateSettingsArgs, Observateur, Settings, Sexe } from "../model/graphql";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
+import CenteredFlexBox from "./utils/CenteredFlexBox";
 import StyledPanelHeader from "./utils/StyledPanelHeader";
 
-type UserSettingsResult = {
-  settings: Settings;
+type SettingsQueryResult = {
+  settings: Settings
+  ages: Age[]
+  observateurs: Observateur[]
+  departements: Departement[]
+  estimationsNombre: EstimationNombre[]
+  sexes: Sexe[]
 }
 
-const USER_SETTINGS_QUERY = gql`
+const SETTINGS_QUERY = gql`
   query GetUserSettings {
     settings {
       id
@@ -45,6 +51,27 @@ const USER_SETTINGS_QUERY = gql`
         libelle
       }
       defaultNombre
+    }
+    ages {
+      id
+      libelle
+    }
+    departements {
+      id
+      code
+    }
+    estimationsNombre {
+      id
+      libelle
+      nonCompte
+    }
+    observateurs {
+      id
+      libelle
+    }
+    sexes {
+      id
+      libelle
     }
   }
 `;
@@ -84,40 +111,6 @@ const USER_SETTINGS_MUTATION = gql`
   }
 `;
 
-type SettingsSelectValuesQueryResult = {
-  ages: Age[]
-  observateurs: Observateur[]
-  departements: Departement[]
-  estimationsNombre: EstimationNombre[]
-  sexes: Sexe[]
-}
-
-const SETTINGS_SELECT_VALUES_QUERY = gql`
-  query SettingsSelectValues {
-    ages {
-      id
-      libelle
-    }
-    departements {
-      id
-      code
-    }
-    estimationsNombre {
-      id
-      libelle
-      nonCompte
-    }
-    observateurs {
-      id
-      libelle
-    }
-    sexes {
-      id
-      libelle
-    }
-  }
-`;
-
 type SettingsInputs = {
   defaultObservateur: number
   defaultDepartement: number
@@ -143,56 +136,55 @@ export default function SettingsPage(): ReactElement {
   const { userInfo } = useContext(UserContext);
 
   const [notificationOpen, setNotificationOpen] = useState(false);
-  const [alertType, setAlertType] = useState<AlertColor | undefined>(undefined);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alertContent, setAlertContent] = useState<{ type: AlertColor | undefined, message: string }>({ type: undefined, message: "" })
 
   // TODO check fetch policies
-  const { loading, error, data: userSettingsResult } = useQuery<UserSettingsResult>(USER_SETTINGS_QUERY);
-  const {
-    error: errorSettingsSelectValuesQueryResult,
-    data: settingsSelectValuesQueryResult
-  } = useQuery<SettingsSelectValuesQueryResult>(SETTINGS_SELECT_VALUES_QUERY);
+  const { loading, error, data } = useQuery<SettingsQueryResult>(SETTINGS_QUERY);
 
-  const [sendUserSettingsUpdate] = useMutation<UserSettingsResult, MutationUpdateSettingsArgs>(USER_SETTINGS_MUTATION);
+  const [sendUserSettingsUpdate] = useMutation<{ settings: Settings }, MutationUpdateSettingsArgs>(USER_SETTINGS_MUTATION);
 
   const { control, formState: { errors }, handleSubmit, reset, watch } = useForm<SettingsInputs>();
 
   // Reset the form with the user preferences, when they are retrieved
   useEffect(() => {
-    if (userSettingsResult?.settings) {
+    if (data?.settings) {
       reset({
-        defaultObservateur: userSettingsResult.settings.defaultObservateur?.id,
-        defaultDepartement: userSettingsResult.settings.defaultDepartement?.id,
-        defaultEstimationNombre: userSettingsResult.settings.defaultEstimationNombre?.id,
-        defaultNombre: userSettingsResult.settings.defaultNombre ?? '',
-        defaultSexe: userSettingsResult.settings.defaultSexe?.id,
-        defaultAge: userSettingsResult.settings.defaultAge?.id,
-        areAssociesDisplayed: !!userSettingsResult.settings.areAssociesDisplayed,
-        isMeteoDisplayed: !!userSettingsResult.settings.isMeteoDisplayed,
-        isDistanceDisplayed: !!userSettingsResult.settings.isDistanceDisplayed,
-        isRegroupementDisplayed: !!userSettingsResult.settings.isRegroupementDisplayed,
-        coordinatesSystem: userSettingsResult?.settings?.coordinatesSystem
+        defaultObservateur: data.settings.defaultObservateur?.id,
+        defaultDepartement: data.settings.defaultDepartement?.id,
+        defaultEstimationNombre: data.settings.defaultEstimationNombre?.id,
+        defaultNombre: data.settings.defaultNombre ?? '',
+        defaultSexe: data.settings.defaultSexe?.id,
+        defaultAge: data.settings.defaultAge?.id,
+        areAssociesDisplayed: !!data.settings.areAssociesDisplayed,
+        isMeteoDisplayed: !!data.settings.isMeteoDisplayed,
+        isDistanceDisplayed: !!data.settings.isDistanceDisplayed,
+        isRegroupementDisplayed: !!data.settings.isRegroupementDisplayed,
+        coordinatesSystem: data?.settings?.coordinatesSystem
       })
     }
-  }, [userSettingsResult, reset]);
+  }, [data, reset]);
 
   const displaySuccessNotification = useCallback(() => {
     setNotificationOpen(false);
-    setAlertType("success");
-    setAlertMessage(t("saveSettingsSuccess"));
+    setAlertContent({
+      type: "success",
+      message: t("saveSettingsSuccess")
+    });
     setNotificationOpen(true);
   }, [t]);
 
   const displayErrorNotification = useCallback(() => {
     setNotificationOpen(false);
-    setAlertType("error");
-    setAlertMessage(t("saveSettingsError"));
+    setAlertContent({
+      type: "error",
+      message: t("saveSettingsError")
+    });
     setNotificationOpen(true);
   }, [t]);
 
   // Handle updated settings
   const sendUpdatedSettings = useCallback(async (values: SettingsInputs) => {
-    if (!userSettingsResult?.settings) {
+    if (!data?.settings) {
       return;
     }
     const { defaultNombre, ...otherValues } = values;
@@ -203,7 +195,7 @@ export default function SettingsPage(): ReactElement {
     await sendUserSettingsUpdate({
       variables: {
         appConfiguration: {
-          id: userSettingsResult.settings.id,
+          id: data.settings.id,
           defaultNombre: (typeof defaultNombre === "string") ? parseInt(defaultNombre) : defaultNombre,
           ...otherValues
         }
@@ -215,7 +207,7 @@ export default function SettingsPage(): ReactElement {
         displayErrorNotification();
       }
     });
-  }, [sendUserSettingsUpdate, userSettingsResult, displaySuccessNotification, displayErrorNotification, userInfo]);
+  }, [sendUserSettingsUpdate, data, displaySuccessNotification, displayErrorNotification, userInfo]);
 
 
   // Watch inputs for changes, and submit the form if any
@@ -230,13 +222,15 @@ export default function SettingsPage(): ReactElement {
 
   // Display a generic error message when somthing wrong happened while retrieving the settings
   useEffect(() => {
-    if (error || errorSettingsSelectValuesQueryResult) {
+    if (error) {
       setNotificationOpen(false);
-      setAlertType("error");
-      setAlertMessage(t("retrieveSettingsError"));
+      setAlertContent({
+        type: "error",
+        message: t("retrieveSettingsError")
+      });
       setNotificationOpen(true);
     }
-  }, [t, error, errorSettingsSelectValuesQueryResult]);
+  }, [t, error]);
 
   const handleNotificationClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -255,201 +249,208 @@ export default function SettingsPage(): ReactElement {
         sx={{
           marginTop: 5
         }}>
-        <Card sx={{
-          padding: 3
-        }}>
-          <form>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              justifyContent="center"
-              alignItems="center"
-              spacing={{
-                xs: 0,
-                sm: 5,
-                md: 8
-              }}
-            >
-              <Stack sx={{
-                flex: "auto",
-                width: {
-                  xs: "100%"
-                }
-              }}>
+        {loading && (
+          <CenteredFlexBox>
+            <CircularProgress size={100} />
+          </CenteredFlexBox>
+        )}
+        {!(loading || error) && (
+          <Card sx={{
+            padding: 3
+          }}>
+            <form>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="center"
+                alignItems="center"
+                spacing={{
+                  xs: 0,
+                  sm: 5,
+                  md: 8
+                }}
+              >
+                <Stack sx={{
+                  flex: "auto",
+                  width: {
+                    xs: "100%"
+                  }
+                }}>
 
-                <ReactHookFormSelect
-                  name="defaultObservateur"
-                  label={t("defaultObserver")}
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true
-                  }}
-                >
-                  {settingsSelectValuesQueryResult?.observateurs?.map((observateur) => (
-                    <MenuItem key={observateur.id} value={observateur.id}>{observateur.libelle}</MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  <ReactHookFormSelect
+                    name="defaultObservateur"
+                    label={t("defaultObserver")}
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: true
+                    }}
+                    formControlProps={{
+                      margin: "normal",
+                      fullWidth: true
+                    }}
+                  >
+                    {data?.observateurs?.map((observateur) => (
+                      <MenuItem key={observateur.id} value={observateur.id}>{observateur.libelle}</MenuItem>
+                    ))}
+                  </ReactHookFormSelect>
 
-                <ReactHookFormSelect
-                  name="defaultDepartement"
-                  label={t("defaultDepartment")}
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true
-                  }}
-                >
-                  {settingsSelectValuesQueryResult?.departements?.map((departement) => (
-                    <MenuItem key={departement.id} value={departement.id}>{departement.code}</MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  <ReactHookFormSelect
+                    name="defaultDepartement"
+                    label={t("defaultDepartment")}
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: true
+                    }}
+                    formControlProps={{
+                      margin: "normal",
+                      fullWidth: true
+                    }}
+                  >
+                    {data?.departements?.map((departement) => (
+                      <MenuItem key={departement.id} value={departement.id}>{departement.code}</MenuItem>
+                    ))}
+                  </ReactHookFormSelect>
 
-                <ReactHookFormSelect
-                  name="defaultEstimationNombre"
-                  label={t("defaultNumberEstimates")}
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true
-                  }}
-                >
-                  {settingsSelectValuesQueryResult?.estimationsNombre?.map((estimationNombre) => (
-                    <MenuItem key={estimationNombre.id} value={estimationNombre.id}>{estimationNombre.libelle}</MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  <ReactHookFormSelect
+                    name="defaultEstimationNombre"
+                    label={t("defaultNumberEstimates")}
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: true
+                    }}
+                    formControlProps={{
+                      margin: "normal",
+                      fullWidth: true
+                    }}
+                  >
+                    {data?.estimationsNombre?.map((estimationNombre) => (
+                      <MenuItem key={estimationNombre.id} value={estimationNombre.id}>{estimationNombre.libelle}</MenuItem>
+                    ))}
+                  </ReactHookFormSelect>
 
-                <Controller
-                  name="defaultNombre"
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true,
-                    min: 1,
-                    max: 65535,
-                    validate: v => !isNaN(v as unknown as number)
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      label={t("defaultNumber")}
-                      inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      variant="standard"
-                      fullWidth
-                      required
-                      error={!!errors?.defaultNombre}
-                      margin="normal"
-                      {...field}
-                    />
-                  )}
-                />
+                  <Controller
+                    name="defaultNombre"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: true,
+                      min: 1,
+                      max: 65535,
+                      validate: v => !isNaN(v as unknown as number)
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        label={t("defaultNumber")}
+                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                        variant="standard"
+                        fullWidth
+                        required
+                        error={!!errors?.defaultNombre}
+                        margin="normal"
+                        {...field}
+                      />
+                    )}
+                  />
 
-                <ReactHookFormSelect
-                  name="defaultSexe"
-                  label={t("defaultSex")}
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true
-                  }}
-                >
-                  {settingsSelectValuesQueryResult?.sexes?.map((sexe) => (
-                    <MenuItem key={sexe.id} value={sexe.id}>{sexe.libelle}</MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  <ReactHookFormSelect
+                    name="defaultSexe"
+                    label={t("defaultSex")}
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: true
+                    }}
+                    formControlProps={{
+                      margin: "normal",
+                      fullWidth: true
+                    }}
+                  >
+                    {data?.sexes?.map((sexe) => (
+                      <MenuItem key={sexe.id} value={sexe.id}>{sexe.libelle}</MenuItem>
+                    ))}
+                  </ReactHookFormSelect>
 
-                <ReactHookFormSelect
-                  name="defaultAge"
-                  label={t("defaultAge")}
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true
-                  }}
-                >
-                  {settingsSelectValuesQueryResult?.ages?.map((age) => (
-                    <MenuItem key={age.id} value={age.id}>{age.libelle}</MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  <ReactHookFormSelect
+                    name="defaultAge"
+                    label={t("defaultAge")}
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: true
+                    }}
+                    formControlProps={{
+                      margin: "normal",
+                      fullWidth: true
+                    }}
+                  >
+                    {data?.ages?.map((age) => (
+                      <MenuItem key={age.id} value={age.id}>{age.libelle}</MenuItem>
+                    ))}
+                  </ReactHookFormSelect>
+
+                </Stack>
+
+                <Stack sx={{
+                  flex: "auto",
+                  width: {
+                    xs: "100%"
+                  }
+                }}>
+
+                  <ReactHookFormSwitch
+                    name="areAssociesDisplayed"
+                    control={control}
+                    defaultValue=""
+                    label={t("displayAssociateObservers")}
+                  />
+
+                  <ReactHookFormSwitch
+                    name="isMeteoDisplayed"
+                    control={control}
+                    defaultValue=""
+                    label={t("displayWeather")}
+                  />
+
+                  <ReactHookFormSwitch
+                    name="isDistanceDisplayed"
+                    control={control}
+                    defaultValue=""
+                    label={t("displayDistance")}
+                  />
+
+                  <ReactHookFormSwitch
+                    name="isRegroupementDisplayed"
+                    control={control}
+                    defaultValue=""
+                    label={t("displayRegroupmentNumber")}
+                  />
+
+                  <ReactHookFormSelect
+                    name="coordinatesSystem"
+                    label={t("coordinatesSystem")}
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                      required: true
+                    }}
+                    formControlProps={{
+                      margin: "normal",
+                      fullWidth: true
+                    }}
+                  >
+                    {COORDINATES_SYSTEMS.map((coordinateSystem) => (
+                      <MenuItem key={coordinateSystem.code} value={coordinateSystem.code}>{coordinateSystem.name}</MenuItem>
+                    ))}
+                  </ReactHookFormSelect>
+
+                </Stack>
 
               </Stack>
-
-              <Stack sx={{
-                flex: "auto",
-                width: {
-                  xs: "100%"
-                }
-              }}>
-
-                <ReactHookFormSwitch
-                  name="areAssociesDisplayed"
-                  control={control}
-                  defaultValue=""
-                  label={t("displayAssociateObservers")}
-                />
-
-                <ReactHookFormSwitch
-                  name="isMeteoDisplayed"
-                  control={control}
-                  defaultValue=""
-                  label={t("displayWeather")}
-                />
-
-                <ReactHookFormSwitch
-                  name="isDistanceDisplayed"
-                  control={control}
-                  defaultValue=""
-                  label={t("displayDistance")}
-                />
-
-                <ReactHookFormSwitch
-                  name="isRegroupementDisplayed"
-                  control={control}
-                  defaultValue=""
-                  label={t("displayRegroupmentNumber")}
-                />
-
-                <ReactHookFormSelect
-                  name="coordinatesSystem"
-                  label={t("coordinatesSystem")}
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true
-                  }}
-                >
-                  {COORDINATES_SYSTEMS.map((coordinateSystem) => (
-                    <MenuItem key={coordinateSystem.code} value={coordinateSystem.code}>{coordinateSystem.name}</MenuItem>
-                  ))}
-                </ReactHookFormSelect>
-
-              </Stack>
-
-            </Stack>
-          </form>
-        </Card>
+            </form>
+          </Card>
+        )}
       </Container>
 
       <Snackbar
@@ -458,7 +459,7 @@ export default function SettingsPage(): ReactElement {
         onClose={handleNotificationClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert severity={alertType}>{alertMessage}</Alert>
+        <Alert severity={alertContent.type}>{alertContent.message}</Alert>
       </Snackbar>
     </>
   )
