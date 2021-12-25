@@ -1,0 +1,9 @@
+# Build output dir
+build
+
+# Files that don't need to be perfect
+.github
+.vscode
+
+# Ignore submodule formatting
+src/model

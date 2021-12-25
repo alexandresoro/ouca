@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate formatting
+        run: npx prettier --check .
+
       - name: Tests
         run: npm run test -- --passWithNoTests
 
