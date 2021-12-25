@@ -22,6 +22,7 @@
   "distanceEstimatesButton": "Estimations de la distance",
   "behaviorsButton": "Comportements",
   "environmentsButton": "Milieux",
+  "aria-userMenuButton": "Menu utilisateur",
   "profile": "Profil",
   "settings": "Préférences",
   "defaultObserver": "Observateur par défaut",

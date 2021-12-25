@@ -253,6 +253,7 @@ export default function Header(): ReactElement {
 
           <IconButton
             onClick={handleClickOptions}
+            aria-label={t("aria-userMenuButton")}
             sx={{
               p: 0
             }}
