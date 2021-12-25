@@ -1,21 +1,24 @@
 import { Box } from "@mui/material";
 import { ReactElement } from "react";
 import { Outlet } from "react-router-dom";
-import Header from './Header';
+import Header from "./Header";
 
 export default function Layout(): ReactElement {
-
   return (
-    <Box sx={{
-      height: "100vh"
-    }}>
+    <Box
+      sx={{
+        height: "100vh"
+      }}
+    >
       <Header />
-      <Box sx={{
-        flex: "1 1 auto",
-        overflowY: "auto"
-      }}>
+      <Box
+        sx={{
+          flex: "1 1 auto",
+          overflowY: "auto"
+        }}
+      >
         <Outlet />
       </Box>
     </Box>
-  )
+  );
 }

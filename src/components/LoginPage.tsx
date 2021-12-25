@@ -11,11 +11,13 @@ import CenteredFlexBox from "./utils/CenteredFlexBox";
 
 const LOGO_SIZE = "250px";
 
-const LoginLogo = lazy(() => import('../assets/img/green-bird.svg').then(({ ReactComponent }) => ({ default: ReactComponent })));
+const LoginLogo = lazy(() =>
+  import("../assets/img/green-bird.svg").then(({ ReactComponent }) => ({ default: ReactComponent }))
+);
 
 type UserLoginResult = {
   userLogin: UserInfo | null;
-}
+};
 
 const USER_LOGIN_MUTATION = gql`
   mutation UserLogin($loginData: UserLoginInput!) {
@@ -34,17 +36,21 @@ const LoginTextField = styled(TextField)(() => ({
 }));
 
 type LoginInputs = {
-  username: string
-  password: string
-}
+  username: string;
+  password: string;
+};
 
 export default function LoginPage(): ReactElement {
-
   const { t } = useTranslation();
   const { setUserInfo } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const { control, setError, formState: { errors }, handleSubmit } = useForm<LoginInputs>({
+  const {
+    control,
+    setError,
+    formState: { errors },
+    handleSubmit
+  } = useForm<LoginInputs>({
     defaultValues: {
       username: "",
       password: ""
@@ -66,34 +72,39 @@ export default function LoginPage(): ReactElement {
 
       // Navigate to home page
       navigate("/");
-
     } catch (error) {
       setError("username", {
         type: "manual",
         message: t("loginFailedMessage")
-      })
+      });
     }
   };
 
   return (
-    <Container sx={{
-      height: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      paddingTop: 5
-    }}>
+    <Container
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        paddingTop: 5
+      }}
+    >
       <CenteredFlexBox>
         <Suspense fallback={<Box width={LOGO_SIZE} height={LOGO_SIZE} />}>
           <LoginLogo width={LOGO_SIZE} height={LOGO_SIZE} />
         </Suspense>
       </CenteredFlexBox>
       <CenteredFlexBox>
-        <Typography color="textPrimary" fontSize={"32px"}>{t("welcomeText")}</Typography>
+        <Typography color="textPrimary" fontSize={"32px"}>
+          {t("welcomeText")}
+        </Typography>
       </CenteredFlexBox>
-      <Card sx={{
-        marginTop: 3,
-        padding: 2
-      }}>
+      <Card
+        sx={{
+          marginTop: 3,
+          padding: 2
+        }}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
             name="username"
@@ -109,7 +120,7 @@ export default function LoginPage(): ReactElement {
                   required
                   fullWidth
                   error={!!errors?.username}
-                  helperText={errors?.username?.message ?? ' '}
+                  helperText={errors?.username?.message ?? " "}
                   {...field}
                 />
               </CenteredFlexBox>
@@ -130,7 +141,7 @@ export default function LoginPage(): ReactElement {
                   required
                   fullWidth
                   error={!!errors?.password}
-                  helperText={errors?.password?.message ?? ' '}
+                  helperText={errors?.password?.message ?? " "}
                   {...field}
                 />
               </CenteredFlexBox>
@@ -151,5 +162,5 @@ export default function LoginPage(): ReactElement {
         </form>
       </Card>
     </Container>
-  )
+  );
 }

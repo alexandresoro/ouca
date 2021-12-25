@@ -1,6 +1,38 @@
 import { ApolloError, gql, useMutation } from "@apollo/client";
-import { AccountBox, Add, EmojiEmotions, EmojiNature, FileDownload, Filter1, List, Logout, People, Person, Place, PlusOne, Save, Search, Settings, SpaceBar, Terrain, WbSunny } from "@mui/icons-material";
-import { AppBar, Avatar, Box, Button, ButtonBase, Divider, IconButton, ListItemIcon, Menu, MenuItem, Toolbar, useTheme } from "@mui/material";
+import {
+  AccountBox,
+  Add,
+  EmojiEmotions,
+  EmojiNature,
+  FileDownload,
+  Filter1,
+  List,
+  Logout,
+  People,
+  Person,
+  Place,
+  PlusOne,
+  Save,
+  Search,
+  Settings,
+  SpaceBar,
+  Terrain,
+  WbSunny
+} from "@mui/icons-material";
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  ButtonBase,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Toolbar,
+  useTheme
+} from "@mui/material";
 import { ReactElement, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,7 +44,7 @@ import FlexSpacer from "./utils/FlexSpacer";
 
 type UserLogoutResult = {
   userLogout: boolean;
-}
+};
 
 const USER_LOGOUT_MUTATION = gql`
   mutation Logout {
@@ -112,7 +144,6 @@ const OPTIONS_MENU_OPTIONS = [
 ];
 
 export default function Header(): ReactElement {
-
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -168,37 +199,39 @@ export default function Header(): ReactElement {
   return (
     <AppBar position="sticky">
       <Toolbar variant="dense">
-        <ButtonBase component={Link} to="/" >
-          <Logo height="60px" width="70px" style={{
-            marginBottom: "-12px"
-          }} />
-          <Box sx={{
-            marginLeft: "10px",
-            fontFamily: "Showcard Gothic",
-            fontSize: "26px",
-            textShadow: "2px 2px rgba(0, 0, 0, 0.4)"
-          }}>oùça?</Box>
+        <ButtonBase component={Link} to="/">
+          <Logo
+            height="60px"
+            width="70px"
+            style={{
+              marginBottom: "-12px"
+            }}
+          />
+          <Box
+            sx={{
+              marginLeft: "10px",
+              fontFamily: "Showcard Gothic",
+              fontSize: "26px",
+              textShadow: "2px 2px rgba(0, 0, 0, 0.4)"
+            }}
+          >
+            oùça?
+          </Box>
         </ButtonBase>
         <FlexSpacer />
-        <Box sx={{
-          display: "flex",
-          gap: theme.spacing(3)
-        }}>
-          <Button component={Link} to="/creation"
-            color="inherit"
-            startIcon={<Add />}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: theme.spacing(3)
+          }}
+        >
+          <Button component={Link} to="/creation" color="inherit" startIcon={<Add />}>
             {t("observationButton")}
           </Button>
-          <Button component={Link} to="/vue"
-            color="inherit"
-            startIcon={<Search />}>
+          <Button component={Link} to="/vue" color="inherit" startIcon={<Search />}>
             {t("viewDataButton")}
           </Button>
-          <Button
-            color="inherit"
-            startIcon={<List />}
-            onClick={handleClickDatabase}
-          >
+          <Button color="inherit" startIcon={<List />} onClick={handleClickDatabase}>
             {t("databaseManagementButton")}
           </Button>
 
@@ -208,26 +241,35 @@ export default function Header(): ReactElement {
             onClose={handleCloseDatabaseMenu}
             onClick={handleCloseDatabaseMenu}
           >
-            {
-              DATABASE_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => (
-                <MenuItem key={to} component={Link} to={to}>
-                  <ListItemIcon>
-                    <Icon fontSize="small" />
-                  </ListItemIcon>
-                  {t(localizationKey)}
-                </MenuItem>
-              ))
-            }
+            {DATABASE_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => (
+              <MenuItem key={to} component={Link} to={to}>
+                <ListItemIcon>
+                  <Icon fontSize="small" />
+                </ListItemIcon>
+                {t(localizationKey)}
+              </MenuItem>
+            ))}
           </Menu>
 
-          <IconButton onClick={handleClickOptions} sx={{ p: 0 }}>
-            <Avatar sx={{
-              ...(fullName ? {
-                bgcolor: stringToColor(fullName)
-              } : {}),
-              width: 32,
-              height: 32
-            }}>{initials}</Avatar>
+          <IconButton
+            onClick={handleClickOptions}
+            sx={{
+              p: 0
+            }}
+          >
+            <Avatar
+              sx={{
+                ...(fullName
+                  ? {
+                      bgcolor: stringToColor(fullName)
+                    }
+                  : {}),
+                width: 32,
+                height: 32
+              }}
+            >
+              {initials}
+            </Avatar>
           </IconButton>
 
           <Menu
@@ -236,24 +278,22 @@ export default function Header(): ReactElement {
             onClose={handleCloseOptionsMenu}
             onClick={handleCloseOptionsMenu}
           >
-            {
-              OPTIONS_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
-                const CurrentMenuItem = (
-                  <MenuItem key={to} component={Link} to={to}>
-                    <ListItemIcon>
-                      <Icon fontSize="small" />
-                    </ListItemIcon>
-                    {t(localizationKey)}
-                  </MenuItem>
-                );
+            {OPTIONS_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
+              const CurrentMenuItem = (
+                <MenuItem key={to} component={Link} to={to}>
+                  <ListItemIcon>
+                    <Icon fontSize="small" />
+                  </ListItemIcon>
+                  {t(localizationKey)}
+                </MenuItem>
+              );
 
-                const Dividers = [];
-                if (localizationKey === "settings") {
-                  Dividers.push(<Divider />)
-                }
-                return [CurrentMenuItem, ...Dividers]
-              })
-            }
+              const Dividers = [];
+              if (localizationKey === "settings") {
+                Dividers.push(<Divider />);
+              }
+              return [CurrentMenuItem, ...Dividers];
+            })}
             <Divider />
             <MenuItem onClick={handleLogoutAction}>
               <ListItemIcon>
@@ -262,10 +302,8 @@ export default function Header(): ReactElement {
               {t("logout")}
             </MenuItem>
           </Menu>
-
-
         </Box>
       </Toolbar>
     </AppBar>
-  )
+  );
 }

@@ -1,16 +1,12 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  InMemoryCache
-} from "@apollo/client";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import "@fontsource/lato";
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import './i18n';
-import './index.css';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import "./i18n";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
 
 const apolloClient = new ApolloClient({
   uri: `${process.env.REACT_APP_API_URL ?? ""}/graphql`,
@@ -25,7 +21,7 @@ ReactDOM.render(
       </BrowserRouter>
     </ApolloProvider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

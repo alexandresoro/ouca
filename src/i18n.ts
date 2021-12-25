@@ -1,5 +1,5 @@
-import i18n from 'i18next';
-import i18nextHttpBackend from 'i18next-http-backend';
+import i18n from "i18next";
+import i18nextHttpBackend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
 
 void i18n

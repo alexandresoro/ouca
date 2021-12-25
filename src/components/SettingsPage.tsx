@@ -1,24 +1,44 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Alert, AlertColor, Card, CircularProgress, Container, MenuItem, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  AlertColor,
+  Card,
+  CircularProgress,
+  Container,
+  MenuItem,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
 import { ReactElement, useCallback, useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../contexts/UserContext";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
-import { Age, CoordinatesSystemType, Departement, EstimationNombre, MutationUpdateSettingsArgs, Observateur, Settings, Sexe } from "../model/graphql";
+import {
+  Age,
+  CoordinatesSystemType,
+  Departement,
+  EstimationNombre,
+  MutationUpdateSettingsArgs,
+  Observateur,
+  Settings,
+  Sexe
+} from "../model/graphql";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
 import StyledPanelHeader from "./utils/StyledPanelHeader";
 
 type SettingsQueryResult = {
-  settings: Settings
-  ages: Age[]
-  observateurs: Observateur[]
-  departements: Departement[]
-  estimationsNombre: EstimationNombre[]
-  sexes: Sexe[]
-}
+  settings: Settings;
+  ages: Age[];
+  observateurs: Observateur[];
+  departements: Departement[];
+  estimationsNombre: EstimationNombre[];
+  sexes: Sexe[];
+};
 
 const SETTINGS_QUERY = gql`
   query GetUserSettings {
@@ -112,38 +132,46 @@ const USER_SETTINGS_MUTATION = gql`
 `;
 
 type SettingsInputs = {
-  defaultObservateur: number
-  defaultDepartement: number
-  defaultEstimationNombre: number
-  defaultNombre: number | string
-  defaultSexe: number
-  defaultAge: number
-  areAssociesDisplayed: boolean
-  isMeteoDisplayed: boolean
-  isDistanceDisplayed: boolean
-  isRegroupementDisplayed: boolean
-  coordinatesSystem: CoordinatesSystemType
-}
+  defaultObservateur: number;
+  defaultDepartement: number;
+  defaultEstimationNombre: number;
+  defaultNombre: number | string;
+  defaultSexe: number;
+  defaultAge: number;
+  areAssociesDisplayed: boolean;
+  isMeteoDisplayed: boolean;
+  isDistanceDisplayed: boolean;
+  isRegroupementDisplayed: boolean;
+  coordinatesSystem: CoordinatesSystemType;
+};
 
-const COORDINATES_SYSTEMS = Object.values(
-  COORDINATES_SYSTEMS_CONFIG
-);
+const COORDINATES_SYSTEMS = Object.values(COORDINATES_SYSTEMS_CONFIG);
 
 export default function SettingsPage(): ReactElement {
-
   const { t } = useTranslation();
 
   const { userInfo } = useContext(UserContext);
 
   const [notificationOpen, setNotificationOpen] = useState(false);
-  const [alertContent, setAlertContent] = useState<{ type: AlertColor | undefined, message: string }>({ type: undefined, message: "" })
+  const [alertContent, setAlertContent] = useState<{ type: AlertColor | undefined; message: string }>({
+    type: undefined,
+    message: ""
+  });
 
   // TODO check fetch policies
   const { loading, error, data } = useQuery<SettingsQueryResult>(SETTINGS_QUERY);
 
-  const [sendUserSettingsUpdate] = useMutation<{ settings: Settings }, MutationUpdateSettingsArgs>(USER_SETTINGS_MUTATION);
+  const [sendUserSettingsUpdate] = useMutation<{ settings: Settings }, MutationUpdateSettingsArgs>(
+    USER_SETTINGS_MUTATION
+  );
 
-  const { control, formState: { errors }, handleSubmit, reset, watch } = useForm<SettingsInputs>();
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+    watch
+  } = useForm<SettingsInputs>();
 
   // Reset the form with the user preferences, when they are retrieved
   useEffect(() => {
@@ -152,7 +180,7 @@ export default function SettingsPage(): ReactElement {
         defaultObservateur: data.settings.defaultObservateur?.id,
         defaultDepartement: data.settings.defaultDepartement?.id,
         defaultEstimationNombre: data.settings.defaultEstimationNombre?.id,
-        defaultNombre: data.settings.defaultNombre ?? '',
+        defaultNombre: data.settings.defaultNombre ?? "",
         defaultSexe: data.settings.defaultSexe?.id,
         defaultAge: data.settings.defaultAge?.id,
         areAssociesDisplayed: !!data.settings.areAssociesDisplayed,
@@ -160,7 +188,7 @@ export default function SettingsPage(): ReactElement {
         isDistanceDisplayed: !!data.settings.isDistanceDisplayed,
         isRegroupementDisplayed: !!data.settings.isRegroupementDisplayed,
         coordinatesSystem: data?.settings?.coordinatesSystem
-      })
+      });
     }
   }, [data, reset]);
 
@@ -183,32 +211,34 @@ export default function SettingsPage(): ReactElement {
   }, [t]);
 
   // Handle updated settings
-  const sendUpdatedSettings = useCallback(async (values: SettingsInputs) => {
-    if (!data?.settings) {
-      return;
-    }
-    const { defaultNombre, ...otherValues } = values;
+  const sendUpdatedSettings = useCallback(
+    async (values: SettingsInputs) => {
+      if (!data?.settings) {
+        return;
+      }
+      const { defaultNombre, ...otherValues } = values;
 
-    // TODO add userId at some point
-    console.log(userInfo)
+      // TODO add userId at some point
+      console.log(userInfo);
 
-    await sendUserSettingsUpdate({
-      variables: {
-        appConfiguration: {
-          id: data.settings.id,
-          defaultNombre: (typeof defaultNombre === "string") ? parseInt(defaultNombre) : defaultNombre,
-          ...otherValues
+      await sendUserSettingsUpdate({
+        variables: {
+          appConfiguration: {
+            id: data.settings.id,
+            defaultNombre: typeof defaultNombre === "string" ? parseInt(defaultNombre) : defaultNombre,
+            ...otherValues
+          }
         }
-      }
-    }).then(({ errors }) => {
-      if (!errors) {
-        displaySuccessNotification();
-      } else {
-        displayErrorNotification();
-      }
-    });
-  }, [sendUserSettingsUpdate, data, displaySuccessNotification, displayErrorNotification, userInfo]);
-
+      }).then(({ errors }) => {
+        if (!errors) {
+          displaySuccessNotification();
+        } else {
+          displayErrorNotification();
+        }
+      });
+    },
+    [sendUserSettingsUpdate, data, displaySuccessNotification, displayErrorNotification, userInfo]
+  );
 
   // Watch inputs for changes, and submit the form if any
   useEffect(() => {
@@ -233,7 +263,7 @@ export default function SettingsPage(): ReactElement {
   }, [t, error]);
 
   const handleNotificationClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
@@ -243,24 +273,30 @@ export default function SettingsPage(): ReactElement {
   return (
     <>
       <StyledPanelHeader>
-        <Typography variant="h5" component="h1" >{t("settings")}</Typography>
+        <Typography variant="h5" component="h1">
+          {t("settings")}
+        </Typography>
       </StyledPanelHeader>
-      <Container maxWidth="xl"
+      <Container
+        maxWidth="xl"
         sx={{
           marginTop: 5
-        }}>
+        }}
+      >
         {loading && (
           <CenteredFlexBox>
             <CircularProgress size={100} />
           </CenteredFlexBox>
         )}
         {!(loading || error) && (
-          <Card sx={{
-            padding: 3
-          }}>
+          <Card
+            sx={{
+              padding: 3
+            }}
+          >
             <form>
               <Stack
-                direction={{ xs: 'column', sm: 'row' }}
+                direction={{ xs: "column", sm: "row" }}
                 justifyContent="center"
                 alignItems="center"
                 spacing={{
@@ -269,13 +305,14 @@ export default function SettingsPage(): ReactElement {
                   md: 8
                 }}
               >
-                <Stack sx={{
-                  flex: "auto",
-                  width: {
-                    xs: "100%"
-                  }
-                }}>
-
+                <Stack
+                  sx={{
+                    flex: "auto",
+                    width: {
+                      xs: "100%"
+                    }
+                  }}
+                >
                   <ReactHookFormSelect
                     name="defaultObservateur"
                     label={t("defaultObserver")}
@@ -290,7 +327,9 @@ export default function SettingsPage(): ReactElement {
                     }}
                   >
                     {data?.observateurs?.map((observateur) => (
-                      <MenuItem key={observateur.id} value={observateur.id}>{observateur.libelle}</MenuItem>
+                      <MenuItem key={observateur.id} value={observateur.id}>
+                        {observateur.libelle}
+                      </MenuItem>
                     ))}
                   </ReactHookFormSelect>
 
@@ -308,7 +347,9 @@ export default function SettingsPage(): ReactElement {
                     }}
                   >
                     {data?.departements?.map((departement) => (
-                      <MenuItem key={departement.id} value={departement.id}>{departement.code}</MenuItem>
+                      <MenuItem key={departement.id} value={departement.id}>
+                        {departement.code}
+                      </MenuItem>
                     ))}
                   </ReactHookFormSelect>
 
@@ -326,7 +367,9 @@ export default function SettingsPage(): ReactElement {
                     }}
                   >
                     {data?.estimationsNombre?.map((estimationNombre) => (
-                      <MenuItem key={estimationNombre.id} value={estimationNombre.id}>{estimationNombre.libelle}</MenuItem>
+                      <MenuItem key={estimationNombre.id} value={estimationNombre.id}>
+                        {estimationNombre.libelle}
+                      </MenuItem>
                     ))}
                   </ReactHookFormSelect>
 
@@ -338,12 +381,12 @@ export default function SettingsPage(): ReactElement {
                       required: true,
                       min: 1,
                       max: 65535,
-                      validate: v => !isNaN(v as unknown as number)
+                      validate: (v) => !isNaN(v as unknown as number)
                     }}
                     render={({ field }) => (
                       <TextField
                         label={t("defaultNumber")}
-                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                        inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                         variant="standard"
                         fullWidth
                         required
@@ -368,7 +411,9 @@ export default function SettingsPage(): ReactElement {
                     }}
                   >
                     {data?.sexes?.map((sexe) => (
-                      <MenuItem key={sexe.id} value={sexe.id}>{sexe.libelle}</MenuItem>
+                      <MenuItem key={sexe.id} value={sexe.id}>
+                        {sexe.libelle}
+                      </MenuItem>
                     ))}
                   </ReactHookFormSelect>
 
@@ -386,19 +431,21 @@ export default function SettingsPage(): ReactElement {
                     }}
                   >
                     {data?.ages?.map((age) => (
-                      <MenuItem key={age.id} value={age.id}>{age.libelle}</MenuItem>
+                      <MenuItem key={age.id} value={age.id}>
+                        {age.libelle}
+                      </MenuItem>
                     ))}
                   </ReactHookFormSelect>
-
                 </Stack>
 
-                <Stack sx={{
-                  flex: "auto",
-                  width: {
-                    xs: "100%"
-                  }
-                }}>
-
+                <Stack
+                  sx={{
+                    flex: "auto",
+                    width: {
+                      xs: "100%"
+                    }
+                  }}
+                >
                   <ReactHookFormSwitch
                     name="areAssociesDisplayed"
                     control={control}
@@ -441,12 +488,12 @@ export default function SettingsPage(): ReactElement {
                     }}
                   >
                     {COORDINATES_SYSTEMS.map((coordinateSystem) => (
-                      <MenuItem key={coordinateSystem.code} value={coordinateSystem.code}>{coordinateSystem.name}</MenuItem>
+                      <MenuItem key={coordinateSystem.code} value={coordinateSystem.code}>
+                        {coordinateSystem.name}
+                      </MenuItem>
                     ))}
                   </ReactHookFormSelect>
-
                 </Stack>
-
               </Stack>
             </form>
           </Card>
@@ -462,5 +509,5 @@ export default function SettingsPage(): ReactElement {
         <Alert severity={alertContent.type}>{alertContent.message}</Alert>
       </Snackbar>
     </>
-  )
+  );
 }

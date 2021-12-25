@@ -15,7 +15,7 @@ export const getFullName = (userInfo: UserInfo | null): string | null => {
   }
 
   return fullName;
-}
+};
 
 export const getInitials = (userInfo: UserInfo | null): string | null => {
   if (!userInfo) {
@@ -31,4 +31,4 @@ export const getInitials = (userInfo: UserInfo | null): string | null => {
   }
 
   return initials;
-}
+};

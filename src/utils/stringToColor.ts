@@ -7,7 +7,7 @@ const stringToColor = (string: string): string => {
     hash = string.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  let color = '#';
+  let color = "#";
 
   for (i = 0; i < 3; i += 1) {
     const value = (hash >> (i * 8)) & 0xff;
@@ -16,6 +16,6 @@ const stringToColor = (string: string): string => {
   /* eslint-enable no-bitwise */
 
   return color;
-}
+};
 
 export default stringToColor;
