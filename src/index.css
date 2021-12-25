@@ -7,5 +7,5 @@ body {
 @font-face {
   font-family: "Showcard Gothic";
   font-display: swap;
-  src: url("assets/fonts/showg.ttf") format("truetype");
+  src: url("./assets/fonts/showg.woff2") format("woff2");
 }
