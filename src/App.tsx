@@ -1,12 +1,13 @@
 import { Box, createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
 import { cyan, grey, pink } from "@mui/material/colors";
 import React, { lazy, ReactElement, Suspense, useMemo } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import TempPage from "./components/TempPage";
 import { UserProvider } from "./contexts/UserContext";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
+const ObservateurPage = lazy(() => import("./components/manage/observateur/ObservateurPage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
 export default function App(): ReactElement {
@@ -49,6 +50,13 @@ export default function App(): ReactElement {
                 borderColor: cyan[800]
               }
             }
+          },
+          MuiTableCell: {
+            styleOverrides: {
+              head: {
+                fontWeight: "700"
+              }
+            }
           }
         }
       }),
@@ -75,6 +83,16 @@ export default function App(): ReactElement {
               ></Route>
               <Route path="/" element={<Layout />}>
                 <Route index element={<TempPage />}></Route>
+                <Route path="manage" element={<Outlet />}>
+                  <Route
+                    path="observateur"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <ObservateurPage />
+                      </Suspense>
+                    }
+                  ></Route>
+                </Route>
                 <Route
                   path="configuration"
                   element={

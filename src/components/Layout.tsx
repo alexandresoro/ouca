@@ -7,7 +7,9 @@ export default function Layout(): ReactElement {
   return (
     <Box
       sx={{
-        height: "100vh"
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column"
       }}
     >
       <Header />
