@@ -56,67 +56,67 @@ const DATABASE_MENU_OPTIONS = [
   {
     localizationKey: "observersButton",
     Icon: Person,
-    to: "/observateur"
+    to: "/manage/observateur"
   },
   {
     localizationKey: "departmentsButton",
     Icon: Place,
-    to: "/departement"
+    to: "/manage/departement"
   },
   {
     localizationKey: "citiesButton",
     Icon: Place,
-    to: "/commune"
+    to: "/manage/commune"
   },
   {
     localizationKey: "areasButton",
     Icon: Place,
-    to: "/lieudit"
+    to: "/manage/lieudit"
   },
   {
     localizationKey: "weathersButton",
     Icon: WbSunny,
-    to: "/meteo"
+    to: "/manage/meteo"
   },
   {
     localizationKey: "speciesClassesButton",
     Icon: EmojiNature,
-    to: "/classe"
+    to: "/manage/classe"
   },
   {
     localizationKey: "speciesButton",
     Icon: EmojiNature,
-    to: "/espece"
+    to: "/manage/espece"
   },
   {
     localizationKey: "sexesButton",
     Icon: People,
-    to: "/sexe"
+    to: "/manage/sexe"
   },
   {
     localizationKey: "agesButton",
     Icon: PlusOne,
-    to: "/age"
+    to: "/manage/age"
   },
   {
     localizationKey: "numberEstimatesButton",
     Icon: Filter1,
-    to: "/estimation-nombre"
+    to: "/manage/estimation-nombre"
   },
   {
     localizationKey: "distanceEstimatesButton",
     Icon: SpaceBar,
-    to: "/estimation-distance"
+    to: "/manage/estimation-distance"
   },
   {
     localizationKey: "behaviorsButton",
     Icon: EmojiEmotions,
-    to: "/comportement"
+    to: "/manage/comportement"
   },
   {
     localizationKey: "environmentsButton",
     Icon: Terrain,
-    to: "/milieu"
+    to: "/manage/milieu"
   }
 ];
 
