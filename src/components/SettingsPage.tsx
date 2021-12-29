@@ -1,20 +1,10 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import {
-  Alert,
-  AlertColor,
-  Card,
-  CircularProgress,
-  Container,
-  MenuItem,
-  Snackbar,
-  Stack,
-  TextField,
-  Typography
-} from "@mui/material";
-import { ReactElement, useCallback, useContext, useEffect, useState } from "react";
+import { Card, CircularProgress, Container, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { ReactElement, useCallback, useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../contexts/UserContext";
+import useSnackbarContent from "../hooks/useSnackbarContent";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import {
   Age,
@@ -26,6 +16,7 @@ import {
   Settings,
   Sexe
 } from "../model/graphql";
+import NotificationSnackbar from "./common/NotificationSnackbar";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
@@ -152,11 +143,7 @@ export default function SettingsPage(): ReactElement {
 
   const { userInfo } = useContext(UserContext);
 
-  const [notificationOpen, setNotificationOpen] = useState(false);
-  const [alertContent, setAlertContent] = useState<{ type: AlertColor | undefined; message: string }>({
-    type: undefined,
-    message: ""
-  });
+  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
 
   // TODO check fetch policies
   const { loading, error, data } = useQuery<SettingsQueryResult>(SETTINGS_QUERY);
@@ -193,22 +180,18 @@ export default function SettingsPage(): ReactElement {
   }, [data, reset]);
 
   const displaySuccessNotification = useCallback(() => {
-    setNotificationOpen(false);
-    setAlertContent({
+    setSnackbarContent({
       type: "success",
       message: t("saveSettingsSuccess")
     });
-    setNotificationOpen(true);
-  }, [t]);
+  }, [t, setSnackbarContent]);
 
   const displayErrorNotification = useCallback(() => {
-    setNotificationOpen(false);
-    setAlertContent({
+    setSnackbarContent({
       type: "error",
       message: t("saveSettingsError")
     });
-    setNotificationOpen(true);
-  }, [t]);
+  }, [t, setSnackbarContent]);
 
   // Handle updated settings
   const sendUpdatedSettings = useCallback(
@@ -253,22 +236,12 @@ export default function SettingsPage(): ReactElement {
   // Display a generic error message when somthing wrong happened while retrieving the settings
   useEffect(() => {
     if (error) {
-      setNotificationOpen(false);
-      setAlertContent({
+      setSnackbarContent({
         type: "error",
         message: t("retrieveSettingsError")
       });
-      setNotificationOpen(true);
     }
-  }, [t, error]);
-
-  const handleNotificationClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setNotificationOpen(false);
-  };
+  }, [t, setSnackbarContent, error]);
 
   return (
     <>
@@ -500,14 +473,11 @@ export default function SettingsPage(): ReactElement {
         )}
       </Container>
 
-      <Snackbar
-        open={notificationOpen}
-        autoHideDuration={2500}
-        onClose={handleNotificationClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert severity={alertContent.type}>{alertContent.message}</Alert>
-      </Snackbar>
+      <NotificationSnackbar
+        keyAlert={snackbarContent?.timestamp}
+        type={snackbarContent.type}
+        message={snackbarContent.message}
+      />
     </>
   );
 }

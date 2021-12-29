@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -15,16 +15,28 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
+import useSnackbarContent from "../../../hooks/useSnackbarContent";
 import {
   EntitesAvecLibelleOrderBy,
+  MutationDeleteObservateurArgs,
   ObservateursPaginatedResult,
+  ObservateurWithCounts,
   QueryPaginatedObservateursArgs,
   SortOrder
 } from "../../../model/graphql";
+import NotificationSnackbar from "../../common/NotificationSnackbar";
+import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
+import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type PaginatedObservateursQueryResult = {
   paginatedObservateurs: ObservateursPaginatedResult;
+};
+
+type DeleteObservateurMutationResult = {
+  deleteObservateur: number | null;
 };
 
 const PAGINATED_OBSERVATEURS_QUERY = gql`
@@ -37,6 +49,12 @@ const PAGINATED_OBSERVATEURS_QUERY = gql`
         nbDonnees
       }
     }
+  }
+`;
+
+const DELETE_OBSERVATEUR = gql`
+  mutation DeleteObservateur($id: Int!) {
+    deleteObservateur(id: $id)
   }
 `;
 
@@ -53,12 +71,12 @@ const COLUMNS = [
 
 export default function ObservateurTable(): ReactElement {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(20);
-  const [orderBy, setOrderBy] = useState<EntitesAvecLibelleOrderBy | undefined>(undefined);
-  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.Asc);
+  const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+    usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
+
+  const [dialogObservateur, setDialogObservateur] = useState<ObservateurWithCounts | null>(null);
 
   const { data } = useQuery<PaginatedObservateursQueryResult, QueryPaginatedObservateursArgs>(
     PAGINATED_OBSERVATEURS_QUERY,
@@ -75,6 +93,50 @@ export default function ObservateurTable(): ReactElement {
       }
     }
   );
+
+  const [deleteObservateur] = useMutation<DeleteObservateurMutationResult, MutationDeleteObservateurArgs>(
+    DELETE_OBSERVATEUR
+  );
+
+  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+
+  const handleEditObservateur = (id: number | undefined) => {
+    if (id) {
+      navigate(`edit/${id}`);
+    }
+  };
+
+  const handleDeleteObservateur = (observateur: ObservateurWithCounts | null) => {
+    if (observateur) {
+      setDialogObservateur(observateur);
+    }
+  };
+
+  const handleDeleteObservateurConfirmation = async (observateur: ObservateurWithCounts | null) => {
+    if (observateur) {
+      setDialogObservateur(null);
+      await deleteObservateur({
+        variables: {
+          id: observateur.id
+        },
+        refetchQueries: [PAGINATED_OBSERVATEURS_QUERY]
+      })
+        .then(({ data, errors }) => {
+          if (!errors && data?.deleteObservateur) {
+            setSnackbarContent({
+              type: "success",
+              message: t("deleteObserverConfirmationMessage")
+            });
+          }
+        })
+        .catch(() => {
+          setSnackbarContent({
+            type: "error",
+            message: t("deleteObserverErrorMessage")
+          });
+        });
+    }
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -133,6 +195,12 @@ export default function ObservateurTable(): ReactElement {
                 <TableRow hover key={observateur?.id}>
                   <TableCell>{observateur?.libelle}</TableCell>
                   <TableCell>{observateur?.nbDonnees}</TableCell>
+                  <TableCell align="right">
+                    <TableCellActionButtons
+                      onEditClicked={() => handleEditObservateur(observateur?.id)}
+                      onDeleteClicked={() => handleDeleteObservateur(observateur)}
+                    />
+                  </TableCell>
                 </TableRow>
               );
             })}
@@ -141,7 +209,7 @@ export default function ObservateurTable(): ReactElement {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[20, 50, 100]}
-                count={data?.paginatedObservateurs?.count ?? 0}
+                count={data?.paginatedObservateurs?.count ?? -1}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}
@@ -151,6 +219,20 @@ export default function ObservateurTable(): ReactElement {
           </TableFooter>
         </Table>
       </TableContainer>
+      <DeletionConfirmationDialog
+        open={!!dialogObservateur}
+        messageContent={t("deleteObserverConfirmationDialogMessage", {
+          name: dialogObservateur?.libelle,
+          nbData: dialogObservateur?.nbDonnees
+        })}
+        onCancelAction={() => setDialogObservateur(null)}
+        onConfirmAction={() => handleDeleteObservateurConfirmation(dialogObservateur)}
+      />
+      <NotificationSnackbar
+        keyAlert={snackbarContent?.timestamp}
+        type={snackbarContent.type}
+        message={snackbarContent.message}
+      />
     </>
   );
 }
