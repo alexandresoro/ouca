@@ -209,7 +209,7 @@ export default function ObservateurTable(): ReactElement {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[20, 50, 100]}
-                count={data?.paginatedObservateurs?.count ?? -1}
+                count={data?.paginatedObservateurs?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}
