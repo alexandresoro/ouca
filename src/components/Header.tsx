@@ -31,6 +31,7 @@ import {
   Menu,
   MenuItem,
   Toolbar,
+  Typography,
   useTheme
 } from "@mui/material";
 import { ReactElement, useContext, useState } from "react";
@@ -215,7 +216,16 @@ export default function Header(): ReactElement {
               textShadow: "2px 2px rgba(0, 0, 0, 0.4)"
             }}
           >
-            oùça?
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{
+                fontFamily: "Yuji Hentaigana Akebono",
+                fontWeight: "bold"
+              }}
+            >
+              oùça?
+            </Typography>
           </Box>
         </ButtonBase>
         <FlexSpacer />
