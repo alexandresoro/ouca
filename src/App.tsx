@@ -8,6 +8,7 @@ import { UserProvider } from "./contexts/UserContext";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const ObservateurPage = lazy(() => import("./components/manage/observateur/ObservateurPage"));
+const AgePage = lazy(() => import("./components/manage/age/AgePage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
 export default function App(): ReactElement {
@@ -89,6 +90,14 @@ export default function App(): ReactElement {
                     element={
                       <Suspense fallback={<></>}>
                         <ObservateurPage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="age"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <AgePage />
                       </Suspense>
                     }
                   ></Route>

@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbarContent from "../../../hooks/useSnackbarContent";
 import {
+  AgesPaginatedResult,
+  AgeWithCounts,
   EntitesAvecLibelleOrderBy,
-  MutationDeleteObservateurArgs,
-  ObservateursPaginatedResult,
-  ObservateurWithCounts,
-  QueryPaginatedObservateursArgs,
+  MutationDeleteAgeArgs,
+  QueryPaginatedAgesArgs,
   SortOrder
 } from "../../../model/graphql";
 import NotificationSnackbar from "../../common/NotificationSnackbar";
@@ -31,17 +31,17 @@ import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedObservateursQueryResult = {
-  paginatedObservateurs: ObservateursPaginatedResult;
+type PaginatedAgesQueryResult = {
+  paginatedAges: AgesPaginatedResult;
 };
 
-type DeleteObservateurMutationResult = {
-  deleteObservateur: number | null;
+type DeleteAgeMutationResult = {
+  deleteAge: number | null;
 };
 
-const PAGINATED_OBSERVATEURS_QUERY = gql`
-  query PaginatedObservateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    paginatedObservateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+const PAGINATED_AGES_QUERY = gql`
+  query PaginatedAges($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+    paginatedAges(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
       result {
         id
@@ -52,9 +52,9 @@ const PAGINATED_OBSERVATEURS_QUERY = gql`
   }
 `;
 
-const DELETE_OBSERVATEUR = gql`
-  mutation DeleteObservateur($id: Int!) {
-    deleteObservateur(id: $id)
+const DELETE_AGE = gql`
+  mutation DeleteAge($id: Int!) {
+    deleteAge(id: $id)
   }
 `;
 
@@ -69,70 +69,65 @@ const COLUMNS = [
   }
 ] as const;
 
-export default function ObservateurTable(): ReactElement {
+export default function AgeTable(): ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
-  const [dialogObservateur, setDialogObservateur] = useState<ObservateurWithCounts | null>(null);
+  const [dialogAge, setDialogAge] = useState<AgeWithCounts | null>(null);
 
-  const { data } = useQuery<PaginatedObservateursQueryResult, QueryPaginatedObservateursArgs>(
-    PAGINATED_OBSERVATEURS_QUERY,
-    {
-      fetchPolicy: "cache-and-network",
-      variables: {
-        searchParams: {
-          pageNumber: page,
-          pageSize: rowsPerPage,
-          q: query
-        },
-        orderBy,
-        sortOrder
-      }
+  const { data } = useQuery<PaginatedAgesQueryResult, QueryPaginatedAgesArgs>(PAGINATED_AGES_QUERY, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      searchParams: {
+        pageNumber: page,
+        pageSize: rowsPerPage,
+        q: query
+      },
+      orderBy,
+      sortOrder
     }
-  );
+  });
 
-  const [deleteObservateur] = useMutation<DeleteObservateurMutationResult, MutationDeleteObservateurArgs>(
-    DELETE_OBSERVATEUR
-  );
+  const [deleteAge] = useMutation<DeleteAgeMutationResult, MutationDeleteAgeArgs>(DELETE_AGE);
 
   const [snackbarContent, setSnackbarContent] = useSnackbarContent();
 
-  const handleEditObservateur = (id: number | undefined) => {
+  const handleEditAge = (id: number | undefined) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteObservateur = (observateur: ObservateurWithCounts | null) => {
-    if (observateur) {
-      setDialogObservateur(observateur);
+  const handleDeleteAge = (age: AgeWithCounts | null) => {
+    if (age) {
+      setDialogAge(age);
     }
   };
 
-  const handleDeleteObservateurConfirmation = async (observateur: ObservateurWithCounts | null) => {
-    if (observateur) {
-      setDialogObservateur(null);
-      await deleteObservateur({
+  const handleDeleteAgeConfirmation = async (age: AgeWithCounts | null) => {
+    if (age) {
+      setDialogAge(null);
+      await deleteAge({
         variables: {
-          id: observateur.id
+          id: age.id
         },
-        refetchQueries: [PAGINATED_OBSERVATEURS_QUERY]
+        refetchQueries: [PAGINATED_AGES_QUERY]
       })
         .then(({ data, errors }) => {
-          if (!errors && data?.deleteObservateur) {
+          if (!errors && data?.deleteAge) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteObserverConfirmationMessage")
+              message: t("deleteAgeConfirmationMessage")
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteObserverErrorMessage")
+            message: t("deleteAgeErrorMessage")
           });
         });
     }
@@ -190,15 +185,15 @@ export default function ObservateurTable(): ReactElement {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedObservateurs?.result?.map((observateur) => {
+            {data?.paginatedAges?.result?.map((age) => {
               return (
-                <TableRow hover key={observateur?.id}>
-                  <TableCell>{observateur?.libelle}</TableCell>
-                  <TableCell>{observateur?.nbDonnees}</TableCell>
+                <TableRow hover key={age?.id}>
+                  <TableCell>{age?.libelle}</TableCell>
+                  <TableCell>{age?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      onEditClicked={() => handleEditObservateur(observateur?.id)}
-                      onDeleteClicked={() => handleDeleteObservateur(observateur)}
+                      onEditClicked={() => handleEditAge(age?.id)}
+                      onDeleteClicked={() => handleDeleteAge(age)}
                     />
                   </TableCell>
                 </TableRow>
@@ -209,7 +204,7 @@ export default function ObservateurTable(): ReactElement {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[20, 50, 100]}
-                count={data?.paginatedObservateurs?.count ?? 0}
+                count={data?.paginatedAges?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}
@@ -220,15 +215,15 @@ export default function ObservateurTable(): ReactElement {
         </Table>
       </TableContainer>
       <DeletionConfirmationDialog
-        open={!!dialogObservateur}
-        messageContent={t("deleteObserverConfirmationDialogMessage", {
-          name: dialogObservateur?.libelle
+        open={!!dialogAge}
+        messageContent={t("deleteAgeConfirmationDialogMessage", {
+          name: dialogAge?.libelle
         })}
-        impactedItemsMessage={t("deleteObserverConfirmationDialogMessageNbData", {
-          count: dialogObservateur?.nbDonnees ?? 0
+        impactedItemsMessage={t("deleteAgeConfirmationDialogMessageNbData", {
+          count: dialogAge?.nbDonnees ?? 0
         })}
-        onCancelAction={() => setDialogObservateur(null)}
-        onConfirmAction={() => handleDeleteObservateurConfirmation(dialogObservateur)}
+        onCancelAction={() => setDialogAge(null)}
+        onConfirmAction={() => handleDeleteAgeConfirmation(dialogAge)}
       />
       <NotificationSnackbar
         keyAlert={snackbarContent?.timestamp}
