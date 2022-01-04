@@ -4,7 +4,7 @@ import { Box, Card, Container, styled, TextField, Typography } from "@mui/materi
 import { lazy, ReactElement, Suspense, useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import { MutationUserLoginArgs, UserInfo } from "../model/graphql";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
@@ -35,6 +35,10 @@ const LoginTextField = styled(TextField)(() => ({
   width: "32ch"
 }));
 
+type LocationState = {
+  from: Location;
+};
+
 type LoginInputs = {
   username: string;
   password: string;
@@ -43,7 +47,10 @@ type LoginInputs = {
 export default function LoginPage(): ReactElement {
   const { t } = useTranslation();
   const { setUserInfo } = useContext(UserContext);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const from = (location.state as LocationState)?.from?.pathname || "/";
 
   const {
     control,
@@ -71,7 +78,7 @@ export default function LoginPage(): ReactElement {
       setUserInfo(loginResult?.data?.userLogin ?? null);
 
       // Navigate to home page
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (error) {
       setError("username", {
         type: "manual",

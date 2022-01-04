@@ -4,6 +4,7 @@ import React, { lazy, ReactElement, Suspense, useMemo } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import TempPage from "./components/TempPage";
+import RequireAuth from "./components/utils/RequireAuth";
 import { UserProvider } from "./contexts/UserContext";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
@@ -82,7 +83,14 @@ export default function App(): ReactElement {
                   </Suspense>
                 }
               ></Route>
-              <Route path="/" element={<Layout />}>
+              <Route
+                path="/"
+                element={
+                  <RequireAuth>
+                    <Layout />
+                  </RequireAuth>
+                }
+              >
                 <Route index element={<TempPage />}></Route>
                 <Route path="manage" element={<Outlet />}>
                   <Route
