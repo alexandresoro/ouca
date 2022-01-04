@@ -284,7 +284,7 @@ model User {
   firstName String       @map("first_name") @db.VarChar(50)
   lastName  String?      @map("last_name") @db.VarChar(50)
 
-  @@map("users")
+  @@map("user")
 }
 
 model Version {
