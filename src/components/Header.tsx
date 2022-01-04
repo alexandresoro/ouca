@@ -183,7 +183,7 @@ export default function Header(): ReactElement {
         setUserInfo(null);
 
         // Navigate to login page
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
     } catch (error) {
       const apolloError = error as ApolloError;
@@ -192,7 +192,7 @@ export default function Header(): ReactElement {
       // reset anyway
       if (apolloError?.graphQLErrors?.[0]?.extensions?.code === "UNAUTHENTICATED") {
         setUserInfo(null);
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
     }
   };
