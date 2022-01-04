@@ -792,7 +792,7 @@ export default gql`
     updateDatabase: Boolean
     userSignup(signupData: UserCreateInput!, role: UserRole) : UserInfo
     userLogin(loginData: UserLoginInput!): UserInfo
-    userRefresh: Boolean
+    userRefresh: UserInfo
     userLogout: Boolean!
     userEdit(id: ID!, editUserData: EditUserData!): UserInfo
     userDelete(id: ID!): Boolean!

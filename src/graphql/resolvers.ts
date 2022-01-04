@@ -426,16 +426,16 @@ const resolvers: Resolvers<Context> = {
 
       throw new AuthenticationError("Authentication failed");
     },
-    userRefresh: async (_source, args, context): Promise<boolean> => {
+    userRefresh: async (_source, args, context): Promise<UserInfo> => {
       validateUserAuthentication(context);
 
       const userInfo = await getUser(context.userId);
       if (userInfo) {
         await createAndAddSignedTokenAsCookie(context.reply, userInfo);
-        return true;
+        return userInfo;
       }
 
-      return false;
+      return null;
     },
     userLogout: async (_source, args, context): Promise<boolean> => {
       validateUserAuthentication(context);
