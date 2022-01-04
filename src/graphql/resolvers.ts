@@ -432,6 +432,7 @@ const resolvers: Resolvers<Context> = {
       const userInfo = await getUser(context.userId);
       if (userInfo) {
         await createAndAddSignedTokenAsCookie(context.reply, userInfo);
+        return true;
       }
 
       return false;
