@@ -33,6 +33,8 @@
   "aria-userMenuButton": "Menu utilisateur",
   "aria-editButton": "Éditer",
   "aria-deleteButton": "Supprimer",
+  "age": "age",
+  "observer": "observateur",
   "deleteObserverConfirmationDialogMessage": "Êtes-vous certain de vouloir supprimer l'observateur {{name}} ?",
   "deleteObserverConfirmationDialogMessageNbData_zero": "Aucune donnée n'est liée à cet observateur.",
   "deleteObserverConfirmationDialogMessageNbData_one": "L'unique donnée liée à cet observateur sera supprimée.",
