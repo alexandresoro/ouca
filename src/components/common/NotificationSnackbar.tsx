@@ -1,5 +1,5 @@
 import { Alert, AlertColor, Snackbar, SnackbarCloseReason } from "@mui/material";
-import { useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 
 type NotificationSnackbarProps = {
   type?: AlertColor;
@@ -7,7 +7,7 @@ type NotificationSnackbarProps = {
   keyAlert?: number;
 };
 
-const NotificationSnackbar = (props: NotificationSnackbarProps) => {
+const NotificationSnackbar: FunctionComponent<NotificationSnackbarProps> = (props) => {
   const { type, message, keyAlert } = props;
 
   const [isOpen, setIsOpen] = useState(false);

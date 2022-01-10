@@ -1,8 +1,8 @@
 import { TextField, TextFieldProps } from "@mui/material";
-import { ReactElement } from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
-export default function FilterTextField(props: TextFieldProps): ReactElement {
+const FilterTextField: FunctionComponent<TextFieldProps> = (props) => {
   const { t } = useTranslation();
 
   return (
@@ -18,4 +18,6 @@ export default function FilterTextField(props: TextFieldProps): ReactElement {
       />
     </>
   );
-}
+};
+
+export default FilterTextField;

@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { CircularProgress } from "@mui/material";
-import { ReactElement, useContext, useEffect } from "react";
+import { FunctionComponent, ReactElement, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
 import { UserInfo } from "../../model/graphql";
@@ -21,8 +21,7 @@ const REFRESH_TOKEN_MUTATION = gql`
     }
   }
 `;
-
-export default function RequireAuth(props: { children: ReactElement }) {
+const RequireAuth: FunctionComponent<{ children: ReactElement }> = (props) => {
   const { children } = props;
 
   const { userInfo, setUserInfo } = useContext(UserContext);
@@ -63,4 +62,6 @@ export default function RequireAuth(props: { children: ReactElement }) {
       <CircularProgress />
     </CenteredFlexBox>
   );
-}
+};
+
+export default RequireAuth;

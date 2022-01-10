@@ -1,6 +1,6 @@
 import { Delete, Edit } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
-import { ReactElement } from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import PrimaryIconButton from "../../utils/PrimaryIconButton";
 
@@ -9,7 +9,7 @@ type TableCellActionButtonsProps = {
   onDeleteClicked?: () => void;
 };
 
-export default function TableCellActionButtons(props: TableCellActionButtonsProps): ReactElement {
+const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (props) => {
   const { onEditClicked, onDeleteClicked } = props;
   const { t } = useTranslation();
 
@@ -27,4 +27,6 @@ export default function TableCellActionButtons(props: TableCellActionButtonsProp
       </Tooltip>
     </>
   );
-}
+};
+
+export default TableCellActionButtons;

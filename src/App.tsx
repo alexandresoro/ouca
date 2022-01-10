@@ -1,6 +1,6 @@
 import { Box, createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
 import { cyan, grey, pink } from "@mui/material/colors";
-import React, { lazy, ReactElement, Suspense, useMemo } from "react";
+import React, { FunctionComponent, lazy, Suspense, useMemo } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import TempPage from "./components/TempPage";
@@ -8,11 +8,11 @@ import RequireAuth from "./components/utils/RequireAuth";
 import { UserProvider } from "./contexts/UserContext";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
-const ObservateurPage = lazy(() => import("./components/manage/observateur/ObservateurPage"));
-const AgePage = lazy(() => import("./components/manage/age/AgePage"));
+const ObervateurManage = lazy(() => import("./components/manage/observateur/ObervateurManage"));
+const AgeManage = lazy(() => import("./components/manage/age/AgeManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
-export default function App(): ReactElement {
+const App: FunctionComponent = () => {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   const theme = useMemo(
@@ -94,18 +94,18 @@ export default function App(): ReactElement {
                 <Route index element={<TempPage />}></Route>
                 <Route path="manage" element={<Outlet />}>
                   <Route
-                    path="observateur"
+                    path="observateur/*"
                     element={
                       <Suspense fallback={<></>}>
-                        <ObservateurPage />
+                        <ObervateurManage />
                       </Suspense>
                     }
                   ></Route>
                   <Route
-                    path="age"
+                    path="age/*"
                     element={
                       <Suspense fallback={<></>}>
-                        <AgePage />
+                        <AgeManage />
                       </Suspense>
                     }
                   ></Route>
@@ -125,4 +125,6 @@ export default function App(): ReactElement {
       </UserProvider>
     </ThemeProvider>
   );
-}
+};
+
+export default App;

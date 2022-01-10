@@ -7,7 +7,7 @@ import {
   DialogTitle,
   Typography
 } from "@mui/material";
-import { ReactElement } from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 type DeletionConfirmationDialogProps = {
@@ -18,7 +18,7 @@ type DeletionConfirmationDialogProps = {
   onConfirmAction: () => void;
 };
 
-export default function DeletionConfirmationDialog(props: DeletionConfirmationDialogProps): ReactElement {
+const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogProps> = (props) => {
   const { open, messageContent, impactedItemsMessage, onCancelAction, onConfirmAction } = props;
 
   const { t } = useTranslation();
@@ -60,4 +60,6 @@ export default function DeletionConfirmationDialog(props: DeletionConfirmationDi
       </DialogActions>
     </Dialog>
   );
-}
+};
+
+export default DeletionConfirmationDialog;

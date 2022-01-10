@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
-import { ReactElement } from "react";
+import { FunctionComponent } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 
-export default function Layout(): ReactElement {
+const Layout: FunctionComponent = () => {
   return (
     <Box
       sx={{
@@ -23,4 +23,6 @@ export default function Layout(): ReactElement {
       </Box>
     </Box>
   );
-}
+};
+
+export default Layout;

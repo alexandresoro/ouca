@@ -1,6 +1,6 @@
 import { gql, useApolloClient } from "@apollo/client";
 import { Container } from "@mui/material";
-import { ReactElement } from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { DOWNLOAD_PATH, EXCEL_FILE_EXTENSION } from "../../../utils/constants";
 import { downloadFile } from "../../../utils/file-download-helper";
@@ -17,7 +17,7 @@ const EXPORT_AGES = gql`
   }
 `;
 
-export default function AgePage(): ReactElement {
+const AgePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const client = useApolloClient();
@@ -45,4 +45,6 @@ export default function AgePage(): ReactElement {
       </Container>
     </>
   );
-}
+};
+
+export default AgePage;

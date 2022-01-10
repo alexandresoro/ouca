@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import { LoadingButton } from "@mui/lab";
 import { Box, Card, Container, styled, TextField, Typography } from "@mui/material";
-import { lazy, ReactElement, Suspense, useContext } from "react";
+import { FunctionComponent, lazy, Suspense, useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -44,7 +44,7 @@ type LoginInputs = {
   password: string;
 };
 
-export default function LoginPage(): ReactElement {
+const LoginPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const { setUserInfo } = useContext(UserContext);
   const location = useLocation();
@@ -170,4 +170,6 @@ export default function LoginPage(): ReactElement {
       </Card>
     </Container>
   );
-}
+};
+
+export default LoginPage;

@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Card, CircularProgress, Container, MenuItem, Stack, TextField, Typography } from "@mui/material";
-import { ReactElement, useCallback, useContext, useEffect } from "react";
+import { FunctionComponent, useCallback, useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../contexts/UserContext";
@@ -138,7 +138,7 @@ type SettingsInputs = {
 
 const COORDINATES_SYSTEMS = Object.values(COORDINATES_SYSTEMS_CONFIG);
 
-export default function SettingsPage(): ReactElement {
+const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const { userInfo } = useContext(UserContext);
@@ -480,4 +480,6 @@ export default function SettingsPage(): ReactElement {
       />
     </>
   );
-}
+};
+
+export default SettingsPage;

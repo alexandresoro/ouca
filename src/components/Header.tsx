@@ -34,7 +34,7 @@ import {
   Typography,
   useTheme
 } from "@mui/material";
-import { ReactElement, useContext, useState } from "react";
+import { FunctionComponent, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as Logo } from "../assets/img/logo.svg";
@@ -144,7 +144,7 @@ const OPTIONS_MENU_OPTIONS = [
   }
 ];
 
-export default function Header(): ReactElement {
+const Header: FunctionComponent = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -317,4 +317,6 @@ export default function Header(): ReactElement {
       </Toolbar>
     </AppBar>
   );
-}
+};
+
+export default Header;

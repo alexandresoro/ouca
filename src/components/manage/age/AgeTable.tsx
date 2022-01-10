@@ -13,7 +13,7 @@ import {
   TableSortLabel
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import { ReactElement, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -69,7 +69,7 @@ const COLUMNS = [
   }
 ] as const;
 
-export default function AgeTable(): ReactElement {
+const AgeTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -232,4 +232,6 @@ export default function AgeTable(): ReactElement {
       />
     </>
   );
-}
+};
+
+export default AgeTable;
