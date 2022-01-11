@@ -94,6 +94,14 @@ checkAndCreateFolders();
     prefix: DOWNLOAD_ENDPOINT
   });
 
+  // Download files
+  server.get<{ Params: { id: string }, Querystring: { filename?: string } }>('/download/:id', async (req, reply) => {
+    return reply.download(req.params.id, req.query.filename ?? undefined)
+  })
+  server.get<{ Params: { id: string }, Querystring: { filename?: string } }>('/download/importReports/:id', async (req, reply) => {
+    return reply.download(req.params.id, req.query.filename ?? undefined)
+  })
+
   // Upload import path
   server.post<{ Params: { entityName: string } }>('/uploads/:entityName', async (req, reply) => {
 
