@@ -65,7 +65,7 @@ const COLUMNS = [
   },
   {
     key: "nbDonnees",
-    locKey: "speciesNumber"
+    locKey: "numberOfObservations"
   }
 ] as const;
 

@@ -39,7 +39,7 @@ type DeleteEstimationNombreMutationResult = {
   deleteEstimationNombre: number | null;
 };
 
-const PAGINATED_OBSERVATEURS_QUERY = gql`
+const PAGINATED_QUERY = gql`
   query PaginatedEstimationsNombre(
     $searchParams: SearchParams
     $orderBy: EstimationNombreOrderBy
@@ -57,7 +57,7 @@ const PAGINATED_OBSERVATEURS_QUERY = gql`
   }
 `;
 
-const DELETE_OBSERVATEUR = gql`
+const DELETE = gql`
   mutation DeleteEstimationNombre($id: Int!) {
     deleteEstimationNombre(id: $id)
   }
@@ -74,7 +74,7 @@ const COLUMNS = [
   },
   {
     key: "nbDonnees",
-    locKey: "speciesNumber"
+    locKey: "numberOfObservations"
   }
 ] as const;
 
@@ -88,7 +88,7 @@ const EstimationNombreTable: FunctionComponent = () => {
   const [dialogEstimationNombre, setDialogEstimationNombre] = useState<EstimationNombreWithCounts | null>(null);
 
   const { data } = useQuery<PaginatedEstimationsNombreQueryResult, QueryPaginatedEstimationsNombreArgs>(
-    PAGINATED_OBSERVATEURS_QUERY,
+    PAGINATED_QUERY,
     {
       fetchPolicy: "cache-and-network",
       variables: {
@@ -106,7 +106,7 @@ const EstimationNombreTable: FunctionComponent = () => {
   const [deleteEstimationNombre] = useMutation<
     DeleteEstimationNombreMutationResult,
     MutationDeleteEstimationNombreArgs
-  >(DELETE_OBSERVATEUR);
+  >(DELETE);
 
   const [snackbarContent, setSnackbarContent] = useSnackbarContent();
 
@@ -129,7 +129,7 @@ const EstimationNombreTable: FunctionComponent = () => {
         variables: {
           id: estimationNombre.id
         },
-        refetchQueries: [PAGINATED_OBSERVATEURS_QUERY]
+        refetchQueries: [PAGINATED_QUERY]
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteEstimationNombre) {

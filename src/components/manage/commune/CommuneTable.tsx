@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbarContent from "../../../hooks/useSnackbarContent";
 import {
-  EntitesAvecLibelleOrderBy,
-  MutationDeleteObservateurArgs,
-  ObservateursPaginatedResult,
-  ObservateurWithCounts,
-  QueryPaginatedObservateursArgs,
+  CommunesOrderBy,
+  CommunesPaginatedResult,
+  CommuneWithCounts,
+  MutationDeleteCommuneArgs,
+  QueryPaginatedCommunesArgs,
   SortOrder
 } from "../../../model/graphql";
 import NotificationSnackbar from "../../common/NotificationSnackbar";
@@ -31,37 +31,54 @@ import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedObservateursQueryResult = {
-  paginatedObservateurs: ObservateursPaginatedResult;
+type PaginatedCommunesQueryResult = {
+  paginatedCommunes: CommunesPaginatedResult;
 };
 
-type DeleteObservateurMutationResult = {
-  deleteObservateur: number | null;
+type DeleteCommuneMutationResult = {
+  deleteCommune: number | null;
 };
 
-const PAGINATED_OBSERVATEURS_QUERY = gql`
-  query PaginatedObservateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    paginatedObservateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+const PAGINATED_QUERY = gql`
+  query PaginatedCommunes($searchParams: SearchParams, $orderBy: CommunesOrderBy, $sortOrder: SortOrder) {
+    paginatedCommunes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
       result {
+        departement {
+          code
+        }
         id
-        libelle
+        code
+        nom
+        nbLieuxDits
         nbDonnees
       }
     }
   }
 `;
 
-const DELETE_OBSERVATEUR = gql`
-  mutation DeleteObservateur($id: Int!) {
-    deleteObservateur(id: $id)
+const DELETE = gql`
+  mutation DeleteCommune($id: Int!) {
+    deleteCommune(id: $id)
   }
 `;
 
 const COLUMNS = [
   {
-    key: "libelle",
-    locKey: "label"
+    key: "departement",
+    locKey: "department"
+  },
+  {
+    key: "code",
+    locKey: "code"
+  },
+  {
+    key: "nom",
+    locKey: "name"
+  },
+  {
+    key: "nbLieuxDits",
+    locKey: "numberOfLocalities"
   },
   {
     key: "nbDonnees",
@@ -69,70 +86,65 @@ const COLUMNS = [
   }
 ] as const;
 
-const ObservateurTable: FunctionComponent = () => {
+const CommuneTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
+    usePaginatedTableParams<CommunesOrderBy>();
 
-  const [dialogObservateur, setDialogObservateur] = useState<ObservateurWithCounts | null>(null);
+  const [dialogCommune, setDialogCommune] = useState<CommuneWithCounts | null>(null);
 
-  const { data } = useQuery<PaginatedObservateursQueryResult, QueryPaginatedObservateursArgs>(
-    PAGINATED_OBSERVATEURS_QUERY,
-    {
-      fetchPolicy: "cache-and-network",
-      variables: {
-        searchParams: {
-          pageNumber: page,
-          pageSize: rowsPerPage,
-          q: query
-        },
-        orderBy,
-        sortOrder
-      }
+  const { data } = useQuery<PaginatedCommunesQueryResult, QueryPaginatedCommunesArgs>(PAGINATED_QUERY, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      searchParams: {
+        pageNumber: page,
+        pageSize: rowsPerPage,
+        q: query
+      },
+      orderBy,
+      sortOrder
     }
-  );
+  });
 
-  const [deleteObservateur] = useMutation<DeleteObservateurMutationResult, MutationDeleteObservateurArgs>(
-    DELETE_OBSERVATEUR
-  );
+  const [deleteCommune] = useMutation<DeleteCommuneMutationResult, MutationDeleteCommuneArgs>(DELETE);
 
   const [snackbarContent, setSnackbarContent] = useSnackbarContent();
 
-  const handleEditObservateur = (id: number | undefined) => {
+  const handleEditCommune = (id: number | undefined) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteObservateur = (observateur: ObservateurWithCounts | null) => {
-    if (observateur) {
-      setDialogObservateur(observateur);
+  const handleDeleteCommune = (commune: CommuneWithCounts | null) => {
+    if (commune) {
+      setDialogCommune(commune);
     }
   };
 
-  const handleDeleteObservateurConfirmation = async (observateur: ObservateurWithCounts | null) => {
-    if (observateur) {
-      setDialogObservateur(null);
-      await deleteObservateur({
+  const handleDeleteCommuneConfirmation = async (commune: CommuneWithCounts | null) => {
+    if (commune) {
+      setDialogCommune(null);
+      await deleteCommune({
         variables: {
-          id: observateur.id
+          id: commune.id
         },
-        refetchQueries: [PAGINATED_OBSERVATEURS_QUERY]
+        refetchQueries: [PAGINATED_QUERY]
       })
         .then(({ data, errors }) => {
-          if (!errors && data?.deleteObservateur) {
+          if (!errors && data?.deleteCommune) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteObserverConfirmationMessage")
+              message: t("deleteConfirmationMessage")
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteObserverErrorMessage")
+            message: t("deleteErrorMessage")
           });
         });
     }
@@ -147,7 +159,7 @@ const ObservateurTable: FunctionComponent = () => {
     setPage(0);
   };
 
-  const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
+  const handleRequestSort = (sortingColumn: CommunesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -190,15 +202,18 @@ const ObservateurTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedObservateurs?.result?.map((observateur) => {
+            {data?.paginatedCommunes?.result?.map((commune) => {
               return (
-                <TableRow hover key={observateur?.id}>
-                  <TableCell>{observateur?.libelle}</TableCell>
-                  <TableCell>{observateur?.nbDonnees}</TableCell>
+                <TableRow hover key={commune?.id}>
+                  <TableCell>{commune?.departement?.code}</TableCell>
+                  <TableCell>{commune?.code}</TableCell>
+                  <TableCell>{commune?.nom}</TableCell>
+                  <TableCell>{commune?.nbLieuxDits}</TableCell>
+                  <TableCell>{commune?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      onEditClicked={() => handleEditObservateur(observateur?.id)}
-                      onDeleteClicked={() => handleDeleteObservateur(observateur)}
+                      onEditClicked={() => handleEditCommune(commune?.id)}
+                      onDeleteClicked={() => handleDeleteCommune(commune)}
                     />
                   </TableCell>
                 </TableRow>
@@ -209,7 +224,7 @@ const ObservateurTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[20, 50, 100]}
-                count={data?.paginatedObservateurs?.count ?? 0}
+                count={data?.paginatedCommunes?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}
@@ -220,15 +235,17 @@ const ObservateurTable: FunctionComponent = () => {
         </Table>
       </TableContainer>
       <DeletionConfirmationDialog
-        open={!!dialogObservateur}
-        messageContent={t("deleteObserverConfirmationDialogMessage", {
-          name: dialogObservateur?.libelle
+        open={!!dialogCommune}
+        messageContent={t("deleteCommuneDialogMsg", {
+          name: dialogCommune?.nom,
+          department: dialogCommune?.departement?.code
         })}
-        impactedItemsMessage={t("deleteObserverConfirmationDialogMessageNbData", {
-          count: dialogObservateur?.nbDonnees ?? 0
+        impactedItemsMessage={t("deleteCommuneDialogMsgImpactedData", {
+          nbOfObservations: dialogCommune?.nbDonnees ?? 0,
+          nbOfLocalities: dialogCommune?.nbLieuxDits ?? 0
         })}
-        onCancelAction={() => setDialogObservateur(null)}
-        onConfirmAction={() => handleDeleteObservateurConfirmation(dialogObservateur)}
+        onCancelAction={() => setDialogCommune(null)}
+        onConfirmAction={() => handleDeleteCommuneConfirmation(dialogCommune)}
       />
       <NotificationSnackbar
         keyAlert={snackbarContent?.timestamp}
@@ -239,4 +256,4 @@ const ObservateurTable: FunctionComponent = () => {
   );
 };
 
-export default ObservateurTable;
+export default CommuneTable;
