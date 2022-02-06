@@ -3,15 +3,16 @@ import { cyan, grey, pink } from "@mui/material/colors";
 import React, { FunctionComponent, lazy, Suspense, useMemo } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
-import CommuneManage from "./components/manage/commune/CommuneManage";
-import EstimationNombreManage from "./components/manage/estimation-nombre/EstimationNombreManage";
 import TempPage from "./components/TempPage";
 import RequireAuth from "./components/utils/RequireAuth";
 import { UserProvider } from "./contexts/UserContext";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const ObervateurManage = lazy(() => import("./components/manage/observateur/ObervateurManage"));
+const CommuneManage = lazy(() => import("./components/manage/commune/CommuneManage"));
+const LieuDitManage = lazy(() => import("./components/manage/lieu-dit/LieuDitManage"));
 const AgeManage = lazy(() => import("./components/manage/age/AgeManage"));
+const EstimationNombreManage = lazy(() => import("./components/manage/estimation-nombre/EstimationNombreManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
 const App: FunctionComponent = () => {
@@ -108,6 +109,14 @@ const App: FunctionComponent = () => {
                     element={
                       <Suspense fallback={<></>}>
                         <CommuneManage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="lieudit/*"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <LieuDitManage />
                       </Suspense>
                     }
                   ></Route>

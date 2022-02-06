@@ -70,7 +70,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/commune"
   },
   {
-    localizationKey: "areasButton",
+    localizationKey: "localities",
     Icon: Place,
     to: "/manage/lieudit"
   },
