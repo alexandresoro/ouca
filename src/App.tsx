@@ -9,6 +9,7 @@ import { UserProvider } from "./contexts/UserContext";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const ObervateurManage = lazy(() => import("./components/manage/observateur/ObervateurManage"));
+const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
 const CommuneManage = lazy(() => import("./components/manage/commune/CommuneManage"));
 const LieuDitManage = lazy(() => import("./components/manage/lieu-dit/LieuDitManage"));
 const AgeManage = lazy(() => import("./components/manage/age/AgeManage"));
@@ -101,6 +102,14 @@ const App: FunctionComponent = () => {
                     element={
                       <Suspense fallback={<></>}>
                         <ObervateurManage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="departement/*"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <DepartementManage />
                       </Suspense>
                     }
                   ></Route>

@@ -60,7 +60,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/observateur"
   },
   {
-    localizationKey: "departmentsButton",
+    localizationKey: "departments",
     Icon: Place,
     to: "/manage/departement"
   },

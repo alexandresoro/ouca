@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbarContent from "../../../hooks/useSnackbarContent";
 import {
-  CommunesOrderBy,
-  CommunesPaginatedResult,
-  CommuneWithCounts,
-  MutationDeleteCommuneArgs,
-  QueryPaginatedCommunesArgs,
+  DepartementsOrderBy,
+  DepartementsPaginatedResult,
+  DepartementWithCounts,
+  MutationDeleteDepartementArgs,
+  QueryPaginatedDepartementsArgs,
   SortOrder
 } from "../../../model/graphql";
 import NotificationSnackbar from "../../common/NotificationSnackbar";
@@ -31,25 +31,22 @@ import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedCommunesQueryResult = {
-  paginatedCommunes: CommunesPaginatedResult;
+type PaginatedDepartementsQueryResult = {
+  paginatedDepartements: DepartementsPaginatedResult;
 };
 
-type DeleteCommuneMutationResult = {
-  deleteCommune: number | null;
+type DeleteDepartementMutationResult = {
+  deleteDepartement: number | null;
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedCommunes($searchParams: SearchParams, $orderBy: CommunesOrderBy, $sortOrder: SortOrder) {
-    paginatedCommunes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedDepartements($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
+    paginatedDepartements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
       result {
-        departement {
-          code
-        }
         id
         code
-        nom
+        nbCommunes
         nbLieuxDits
         nbDonnees
       }
@@ -58,23 +55,19 @@ const PAGINATED_QUERY = gql`
 `;
 
 const DELETE = gql`
-  mutation DeleteCommune($id: Int!) {
-    deleteCommune(id: $id)
+  mutation DeleteDepartement($id: Int!) {
+    deleteDepartement(id: $id)
   }
 `;
 
 const COLUMNS = [
   {
-    key: "departement",
-    locKey: "department"
-  },
-  {
     key: "code",
     locKey: "code"
   },
   {
-    key: "nom",
-    locKey: "name"
+    key: "nbCommunes",
+    locKey: "numberOfCities"
   },
   {
     key: "nbLieuxDits",
@@ -86,16 +79,16 @@ const COLUMNS = [
   }
 ] as const;
 
-const CommuneTable: FunctionComponent = () => {
+const DepartementTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<CommunesOrderBy>();
+    usePaginatedTableParams<DepartementsOrderBy>();
 
-  const [dialogCommune, setDialogCommune] = useState<CommuneWithCounts | null>(null);
+  const [dialogDepartement, setDialogDepartement] = useState<DepartementWithCounts | null>(null);
 
-  const { data } = useQuery<PaginatedCommunesQueryResult, QueryPaginatedCommunesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedDepartementsQueryResult, QueryPaginatedDepartementsArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -108,33 +101,33 @@ const CommuneTable: FunctionComponent = () => {
     }
   });
 
-  const [deleteCommune] = useMutation<DeleteCommuneMutationResult, MutationDeleteCommuneArgs>(DELETE);
+  const [deleteDepartement] = useMutation<DeleteDepartementMutationResult, MutationDeleteDepartementArgs>(DELETE);
 
   const [snackbarContent, setSnackbarContent] = useSnackbarContent();
 
-  const handleEditCommune = (id: number | undefined) => {
+  const handleEditDepartement = (id: number | undefined) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteCommune = (commune: CommuneWithCounts | null) => {
-    if (commune) {
-      setDialogCommune(commune);
+  const handleDeleteDepartement = (departement: DepartementWithCounts | null) => {
+    if (departement) {
+      setDialogDepartement(departement);
     }
   };
 
-  const handleDeleteCommuneConfirmation = async (commune: CommuneWithCounts | null) => {
-    if (commune) {
-      setDialogCommune(null);
-      await deleteCommune({
+  const handleDeleteDepartementConfirmation = async (departement: DepartementWithCounts | null) => {
+    if (departement) {
+      setDialogDepartement(null);
+      await deleteDepartement({
         variables: {
-          id: commune.id
+          id: departement.id
         },
         refetchQueries: [PAGINATED_QUERY]
       })
         .then(({ data, errors }) => {
-          if (!errors && data?.deleteCommune) {
+          if (!errors && data?.deleteDepartement) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage")
@@ -159,7 +152,7 @@ const CommuneTable: FunctionComponent = () => {
     setPage(0);
   };
 
-  const handleRequestSort = (sortingColumn: CommunesOrderBy) => {
+  const handleRequestSort = (sortingColumn: DepartementsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -202,18 +195,17 @@ const CommuneTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedCommunes?.result?.map((commune) => {
+            {data?.paginatedDepartements?.result?.map((departement) => {
               return (
-                <TableRow hover key={commune?.id}>
-                  <TableCell>{commune?.departement?.code}</TableCell>
-                  <TableCell>{commune?.code}</TableCell>
-                  <TableCell>{commune?.nom}</TableCell>
-                  <TableCell>{commune?.nbLieuxDits}</TableCell>
-                  <TableCell>{commune?.nbDonnees}</TableCell>
+                <TableRow hover key={departement?.id}>
+                  <TableCell>{departement?.code}</TableCell>
+                  <TableCell>{departement?.nbCommunes}</TableCell>
+                  <TableCell>{departement?.nbLieuxDits}</TableCell>
+                  <TableCell>{departement?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      onEditClicked={() => handleEditCommune(commune?.id)}
-                      onDeleteClicked={() => handleDeleteCommune(commune)}
+                      onEditClicked={() => handleEditDepartement(departement?.id)}
+                      onDeleteClicked={() => handleDeleteDepartement(departement)}
                     />
                   </TableCell>
                 </TableRow>
@@ -224,7 +216,7 @@ const CommuneTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[20, 50, 100]}
-                count={data?.paginatedCommunes?.count ?? 0}
+                count={data?.paginatedDepartements?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}
@@ -235,17 +227,17 @@ const CommuneTable: FunctionComponent = () => {
         </Table>
       </TableContainer>
       <DeletionConfirmationDialog
-        open={!!dialogCommune}
-        messageContent={t("deleteCityDialogMsg", {
-          name: dialogCommune?.nom,
-          department: dialogCommune?.departement?.code
+        open={!!dialogDepartement}
+        messageContent={t("deleteDepartmentDialogMsg", {
+          code: dialogDepartement?.code
         })}
-        impactedItemsMessage={t("deleteCityDialogMsgImpactedData", {
-          nbOfObservations: dialogCommune?.nbDonnees ?? 0,
-          nbOfLocalities: dialogCommune?.nbLieuxDits ?? 0
+        impactedItemsMessage={t("deleteDepartmentDialogMsgImpactedData", {
+          nbOfObservations: dialogDepartement?.nbDonnees ?? 0,
+          nbOfCities: dialogDepartement?.nbCommunes ?? 0,
+          nbOfLocalities: dialogDepartement?.nbLieuxDits ?? 0
         })}
-        onCancelAction={() => setDialogCommune(null)}
-        onConfirmAction={() => handleDeleteCommuneConfirmation(dialogCommune)}
+        onCancelAction={() => setDialogDepartement(null)}
+        onConfirmAction={() => handleDeleteDepartementConfirmation(dialogDepartement)}
       />
       <NotificationSnackbar
         keyAlert={snackbarContent?.timestamp}
@@ -256,4 +248,4 @@ const CommuneTable: FunctionComponent = () => {
   );
 };
 
-export default CommuneTable;
+export default DepartementTable;
