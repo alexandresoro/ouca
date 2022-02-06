@@ -328,7 +328,7 @@ const SettingsPage: FunctionComponent = () => {
 
                   <ReactHookFormSelect
                     name="defaultEstimationNombre"
-                    label={t("defaultNumberEstimates")}
+                    label={t("defaultNumberPrecision")}
                     control={control}
                     defaultValue=""
                     rules={{

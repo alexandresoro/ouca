@@ -100,12 +100,12 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/age"
   },
   {
-    localizationKey: "numberEstimatesButton",
+    localizationKey: "numberPrecisionsButton",
     Icon: Filter1,
     to: "/manage/estimation-nombre"
   },
   {
-    localizationKey: "distanceEstimatesButton",
+    localizationKey: "distancePrecisionsButton",
     Icon: SpaceBar,
     to: "/manage/estimation-distance"
   },

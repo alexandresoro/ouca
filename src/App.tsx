@@ -3,6 +3,7 @@ import { cyan, grey, pink } from "@mui/material/colors";
 import React, { FunctionComponent, lazy, Suspense, useMemo } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
+import EstimationNombreManage from "./components/manage/estimation-nombre/EstimationNombreManage";
 import TempPage from "./components/TempPage";
 import RequireAuth from "./components/utils/RequireAuth";
 import { UserProvider } from "./contexts/UserContext";
@@ -106,6 +107,14 @@ const App: FunctionComponent = () => {
                     element={
                       <Suspense fallback={<></>}>
                         <AgeManage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="estimation-nombre/*"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <EstimationNombreManage />
                       </Suspense>
                     }
                   ></Route>
