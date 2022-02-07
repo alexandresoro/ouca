@@ -85,7 +85,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/classe"
   },
   {
-    localizationKey: "speciesButton",
+    localizationKey: "species",
     Icon: EmojiNature,
     to: "/manage/espece"
   },
