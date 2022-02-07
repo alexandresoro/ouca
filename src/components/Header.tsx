@@ -80,7 +80,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/meteo"
   },
   {
-    localizationKey: "speciesClassesButton",
+    localizationKey: "speciesClasses",
     Icon: EmojiNature,
     to: "/manage/classe"
   },
