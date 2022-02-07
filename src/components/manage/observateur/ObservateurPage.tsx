@@ -34,7 +34,7 @@ const ObservateurPage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("observersButton")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("observers")} onClickExport={handleExportClick} />
       <Container
         maxWidth="xl"
         sx={{

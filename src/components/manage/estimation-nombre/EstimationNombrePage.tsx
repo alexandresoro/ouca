@@ -34,7 +34,7 @@ const EstimationNombrePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("numberPrecisionsButton")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("numberPrecisions")} onClickExport={handleExportClick} />
       <Container
         maxWidth="xl"
         sx={{

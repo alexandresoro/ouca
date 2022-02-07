@@ -55,7 +55,7 @@ const USER_LOGOUT_MUTATION = gql`
 
 const DATABASE_MENU_OPTIONS = [
   {
-    localizationKey: "observersButton",
+    localizationKey: "observers",
     Icon: Person,
     to: "/manage/observateur"
   },
@@ -65,7 +65,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/departement"
   },
   {
-    localizationKey: "citiesButton",
+    localizationKey: "cities",
     Icon: Place,
     to: "/manage/commune"
   },
@@ -95,12 +95,12 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/sexe"
   },
   {
-    localizationKey: "agesButton",
+    localizationKey: "ages",
     Icon: PlusOne,
     to: "/manage/age"
   },
   {
-    localizationKey: "numberPrecisionsButton",
+    localizationKey: "numberPrecisions",
     Icon: Filter1,
     to: "/manage/estimation-nombre"
   },

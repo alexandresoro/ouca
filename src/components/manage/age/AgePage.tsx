@@ -34,7 +34,7 @@ const AgePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("agesButton")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("ages")} onClickExport={handleExportClick} />
       <Container
         maxWidth="xl"
         sx={{

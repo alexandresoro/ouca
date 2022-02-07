@@ -120,14 +120,14 @@ const AgeTable: FunctionComponent = () => {
           if (!errors && data?.deleteAge) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteAgeConfirmationMessage")
+              message: t("deleteConfirmationMessage")
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteAgeErrorMessage")
+            message: t("deleteErrorMessage")
           });
         });
     }
@@ -216,11 +216,11 @@ const AgeTable: FunctionComponent = () => {
       </TableContainer>
       <DeletionConfirmationDialog
         open={!!dialogAge}
-        messageContent={t("deleteAgeConfirmationDialogMessage", {
+        messageContent={t("deleteAgeDialogMsg", {
           name: dialogAge?.libelle
         })}
-        impactedItemsMessage={t("deleteAgeConfirmationDialogMessageNbData", {
-          count: dialogAge?.nbDonnees ?? 0
+        impactedItemsMessage={t("deleteAgeDialogMsgImpactedData", {
+          nbOfObservations: dialogAge?.nbDonnees ?? 0
         })}
         onCancelAction={() => setDialogAge(null)}
         onConfirmAction={() => handleDeleteAgeConfirmation(dialogAge)}

@@ -135,14 +135,14 @@ const EstimationNombreTable: FunctionComponent = () => {
           if (!errors && data?.deleteEstimationNombre) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteEstimationNombreConfirmationMessage")
+              message: t("deleteConfirmationMessage")
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteEstimationNombreErrorMessage")
+            message: t("deleteErrorMessage")
           });
         });
     }
@@ -232,11 +232,11 @@ const EstimationNombreTable: FunctionComponent = () => {
       </TableContainer>
       <DeletionConfirmationDialog
         open={!!dialogEstimationNombre}
-        messageContent={t("deleteEstimationNombreConfirmationDialogMessage", {
+        messageContent={t("deleteNumberPrecisionDialogMsg", {
           name: dialogEstimationNombre?.libelle
         })}
-        impactedItemsMessage={t("deleteEstimationNombreConfirmationDialogMessageNbData", {
-          count: dialogEstimationNombre?.nbDonnees ?? 0
+        impactedItemsMessage={t("deleteNumberPrecisionDialogMsgImpactedData", {
+          nbOfObservations: dialogEstimationNombre?.nbDonnees ?? 0
         })}
         onCancelAction={() => setDialogEstimationNombre(null)}
         onConfirmAction={() => handleDeleteEstimationNombreConfirmation(dialogEstimationNombre)}

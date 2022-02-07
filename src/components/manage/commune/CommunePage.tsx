@@ -34,7 +34,7 @@ const CommunePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("citiesButton")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("cities")} onClickExport={handleExportClick} />
       <Container
         maxWidth="xl"
         sx={{

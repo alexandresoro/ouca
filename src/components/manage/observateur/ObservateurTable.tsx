@@ -125,14 +125,14 @@ const ObservateurTable: FunctionComponent = () => {
           if (!errors && data?.deleteObservateur) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteObserverConfirmationMessage")
+              message: t("deleteConfirmationMessage")
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteObserverErrorMessage")
+            message: t("deleteErrorMessage")
           });
         });
     }
@@ -221,11 +221,11 @@ const ObservateurTable: FunctionComponent = () => {
       </TableContainer>
       <DeletionConfirmationDialog
         open={!!dialogObservateur}
-        messageContent={t("deleteObserverConfirmationDialogMessage", {
+        messageContent={t("deleteObserverDialogMsg", {
           name: dialogObservateur?.libelle
         })}
-        impactedItemsMessage={t("deleteObserverConfirmationDialogMessageNbData", {
-          count: dialogObservateur?.nbDonnees ?? 0
+        impactedItemsMessage={t("deleteObserverDialogMsgImpactedData", {
+          nbOfObservations: dialogObservateur?.nbDonnees ?? 0
         })}
         onCancelAction={() => setDialogObservateur(null)}
         onConfirmAction={() => handleDeleteObservateurConfirmation(dialogObservateur)}

@@ -71,7 +71,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   return (
     <>
-      <ManageTopBar title={t("observersButton")} showButtons={false} />
+      <ManageTopBar title={t("observers")} showButtons={false} />
       <Container
         maxWidth="xl"
         sx={{
