@@ -19,6 +19,7 @@ const SexeManage = lazy(() => import("./components/manage/sexe/SexeManage"));
 const AgeManage = lazy(() => import("./components/manage/age/AgeManage"));
 const EstimationNombreManage = lazy(() => import("./components/manage/estimation-nombre/EstimationNombreManage"));
 const EstimationDistanceManage = lazy(() => import("./components/manage/estimation-distance/EstimationDistanceManage"));
+const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
 const App: FunctionComponent = () => {
@@ -187,6 +188,14 @@ const App: FunctionComponent = () => {
                     element={
                       <Suspense fallback={<></>}>
                         <EstimationDistanceManage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="milieu/*"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <MilieuManage />
                       </Suspense>
                     }
                   ></Route>

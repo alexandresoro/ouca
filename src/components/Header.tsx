@@ -115,7 +115,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/comportement"
   },
   {
-    localizationKey: "environmentsButton",
+    localizationKey: "environments",
     Icon: Terrain,
     to: "/manage/milieu"
   }
