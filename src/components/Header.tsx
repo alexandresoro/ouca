@@ -110,7 +110,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/estimation-distance"
   },
   {
-    localizationKey: "behaviorsButton",
+    localizationKey: "behaviors",
     Icon: EmojiEmotions,
     to: "/manage/comportement"
   },
