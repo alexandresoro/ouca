@@ -17,6 +17,7 @@ const ClasseManage = lazy(() => import("./components/manage/classe/ClasseManage"
 const SexeManage = lazy(() => import("./components/manage/sexe/SexeManage"));
 const AgeManage = lazy(() => import("./components/manage/age/AgeManage"));
 const EstimationNombreManage = lazy(() => import("./components/manage/estimation-nombre/EstimationNombreManage"));
+const EstimationDistanceManage = lazy(() => import("./components/manage/estimation-distance/EstimationDistanceManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
 const App: FunctionComponent = () => {
@@ -169,6 +170,14 @@ const App: FunctionComponent = () => {
                     element={
                       <Suspense fallback={<></>}>
                         <EstimationNombreManage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="estimation-distance/*"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <EstimationDistanceManage />
                       </Suspense>
                     }
                   ></Route>

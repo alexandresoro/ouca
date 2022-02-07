@@ -105,7 +105,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/estimation-nombre"
   },
   {
-    localizationKey: "distancePrecisionsButton",
+    localizationKey: "distancePrecisions",
     Icon: SpaceBar,
     to: "/manage/estimation-distance"
   },
