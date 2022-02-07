@@ -106,18 +106,18 @@ const ClasseTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteClasse = (Classe: ClasseWithCounts | null) => {
-    if (Classe) {
-      setDialogClasse(Classe);
+  const handleDeleteClasse = (classe: ClasseWithCounts | null) => {
+    if (classe) {
+      setDialogClasse(classe);
     }
   };
 
-  const handleDeleteClasseConfirmation = async (Classe: ClasseWithCounts | null) => {
-    if (Classe) {
+  const handleDeleteClasseConfirmation = async (classe: ClasseWithCounts | null) => {
+    if (classe) {
       setDialogClasse(null);
       await deleteClasse({
         variables: {
-          id: Classe.id
+          id: classe.id
         },
         refetchQueries: [PAGINATED_QUERY]
       })
@@ -190,16 +190,16 @@ const ClasseTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedClasses?.result?.map((Classe) => {
+            {data?.paginatedClasses?.result?.map((classe) => {
               return (
-                <TableRow hover key={Classe?.id}>
-                  <TableCell>{Classe?.libelle}</TableCell>
-                  <TableCell>{Classe?.nbEspeces}</TableCell>
-                  <TableCell>{Classe?.nbDonnees}</TableCell>
+                <TableRow hover key={classe?.id}>
+                  <TableCell>{classe?.libelle}</TableCell>
+                  <TableCell>{classe?.nbEspeces}</TableCell>
+                  <TableCell>{classe?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      onEditClicked={() => handleEditClasse(Classe?.id)}
-                      onDeleteClicked={() => handleDeleteClasse(Classe)}
+                      onEditClicked={() => handleEditClasse(classe?.id)}
+                      onDeleteClicked={() => handleDeleteClasse(classe)}
                     />
                   </TableCell>
                 </TableRow>
