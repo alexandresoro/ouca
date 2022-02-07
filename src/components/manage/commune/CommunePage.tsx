@@ -11,7 +11,7 @@ type ExportCommunesResult = {
   exportCommunes: string | null;
 };
 
-const EXPORT_AGES = gql`
+const EXPORT_QUERY = gql`
   query ExportCommunes {
     exportCommunes
   }
@@ -24,7 +24,7 @@ const CommunePage: FunctionComponent = () => {
 
   const handleExportClick = async () => {
     const { data } = await client.query<ExportCommunesResult>({
-      query: EXPORT_AGES,
+      query: EXPORT_QUERY,
       fetchPolicy: "network-only"
     });
     if (data.exportCommunes) {

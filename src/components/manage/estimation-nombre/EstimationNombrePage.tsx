@@ -11,7 +11,7 @@ type ExportEstimationsNombreResult = {
   exportEstimationsNombre: string | null;
 };
 
-const EXPORT_OBSERVATEURS = gql`
+const EXPORT_QUERY = gql`
   query ExportEstimationsNombre {
     exportEstimationsNombre
   }
@@ -24,7 +24,7 @@ const EstimationNombrePage: FunctionComponent = () => {
 
   const handleExportClick = async () => {
     const { data } = await client.query<ExportEstimationsNombreResult>({
-      query: EXPORT_OBSERVATEURS,
+      query: EXPORT_QUERY,
       fetchPolicy: "network-only"
     });
     if (data.exportEstimationsNombre) {

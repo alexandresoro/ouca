@@ -75,7 +75,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/lieudit"
   },
   {
-    localizationKey: "weathersButton",
+    localizationKey: "weathers",
     Icon: WbSunny,
     to: "/manage/meteo"
   },

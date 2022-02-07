@@ -11,7 +11,7 @@ type ExportObservateursResult = {
   exportObservateurs: string | null;
 };
 
-const EXPORT_OBSERVATEURS = gql`
+const EXPORT_QUERY = gql`
   query ExportObservateurs {
     exportObservateurs
   }
@@ -24,7 +24,7 @@ const ObservateurPage: FunctionComponent = () => {
 
   const handleExportClick = async () => {
     const { data } = await client.query<ExportObservateursResult>({
-      query: EXPORT_OBSERVATEURS,
+      query: EXPORT_QUERY,
       fetchPolicy: "network-only"
     });
     if (data.exportObservateurs) {

@@ -12,6 +12,7 @@ const ObervateurManage = lazy(() => import("./components/manage/observateur/Ober
 const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
 const CommuneManage = lazy(() => import("./components/manage/commune/CommuneManage"));
 const LieuDitManage = lazy(() => import("./components/manage/lieu-dit/LieuDitManage"));
+const MeteoManage = lazy(() => import("./components/manage/meteo/MeteoManage"));
 const AgeManage = lazy(() => import("./components/manage/age/AgeManage"));
 const EstimationNombreManage = lazy(() => import("./components/manage/estimation-nombre/EstimationNombreManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
@@ -126,6 +127,14 @@ const App: FunctionComponent = () => {
                     element={
                       <Suspense fallback={<></>}>
                         <LieuDitManage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="meteo/*"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <MeteoManage />
                       </Suspense>
                     }
                   ></Route>

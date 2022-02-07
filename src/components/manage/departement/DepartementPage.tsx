@@ -11,7 +11,7 @@ type ExportDepartementsResult = {
   exportDepartements: string | null;
 };
 
-const EXPORT_AGES = gql`
+const EXPORT_QUERY = gql`
   query ExportDepartements {
     exportDepartements
   }
@@ -24,7 +24,7 @@ const DepartementPage: FunctionComponent = () => {
 
   const handleExportClick = async () => {
     const { data } = await client.query<ExportDepartementsResult>({
-      query: EXPORT_AGES,
+      query: EXPORT_QUERY,
       fetchPolicy: "network-only"
     });
     if (data.exportDepartements) {

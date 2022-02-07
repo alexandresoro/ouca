@@ -5,46 +5,46 @@ import { useTranslation } from "react-i18next";
 import { DOWNLOAD_PATH, EXCEL_FILE_EXTENSION } from "../../../utils/constants";
 import { downloadFile } from "../../../utils/file-download-helper";
 import ManageTopBar from "../common/ManageTopBar";
-import LieuDitTable from "./LieuDitTable";
+import MeteoTable from "./MeteoTable";
 
-type ExportLieuxDitsResult = {
-  exportLieuxDits: string | null;
+type ExportMeteosResult = {
+  exportMeteos: string | null;
 };
 
 const EXPORT_QUERY = gql`
-  query ExportLieuxDits {
-    exportLieuxDits
+  query ExportMeteos {
+    exportMeteos
   }
 `;
 
-const LieuDitPage: FunctionComponent = () => {
+const MeteoPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const client = useApolloClient();
 
   const handleExportClick = async () => {
-    const { data } = await client.query<ExportLieuxDitsResult>({
+    const { data } = await client.query<ExportMeteosResult>({
       query: EXPORT_QUERY,
       fetchPolicy: "network-only"
     });
-    if (data.exportLieuxDits) {
-      downloadFile(DOWNLOAD_PATH + data.exportLieuxDits, `${t("localities")}${EXCEL_FILE_EXTENSION}`);
+    if (data.exportMeteos) {
+      downloadFile(DOWNLOAD_PATH + data.exportMeteos, `${t("weathers")}${EXCEL_FILE_EXTENSION}`);
     }
   };
 
   return (
     <>
-      <ManageTopBar title={t("localities")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("weathers")} onClickExport={handleExportClick} />
       <Container
         maxWidth="xl"
         sx={{
           marginTop: 5
         }}
       >
-        <LieuDitTable />
+        <MeteoTable />
       </Container>
     </>
   );
 };
 
-export default LieuDitPage;
+export default MeteoPage;
