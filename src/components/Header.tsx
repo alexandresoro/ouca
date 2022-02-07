@@ -90,7 +90,7 @@ const DATABASE_MENU_OPTIONS = [
     to: "/manage/espece"
   },
   {
-    localizationKey: "sexesButton",
+    localizationKey: "genders",
     Icon: People,
     to: "/manage/sexe"
   },

@@ -1,0 +1,50 @@
+import { gql, useApolloClient } from "@apollo/client";
+import { Container } from "@mui/material";
+import { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
+import { DOWNLOAD_PATH, EXCEL_FILE_EXTENSION } from "../../../utils/constants";
+import { downloadFile } from "../../../utils/file-download-helper";
+import ManageTopBar from "../common/ManageTopBar";
+import SexeTable from "./SexeTable";
+
+type ExportSexesResult = {
+  exportSexes: string | null;
+};
+
+const EXPORT_QUERY = gql`
+  query ExportSexes {
+    exportSexes
+  }
+`;
+
+const SexePage: FunctionComponent = () => {
+  const { t } = useTranslation();
+
+  const client = useApolloClient();
+
+  const handleExportClick = async () => {
+    const { data } = await client.query<ExportSexesResult>({
+      query: EXPORT_QUERY,
+      fetchPolicy: "network-only"
+    });
+    if (data.exportSexes) {
+      downloadFile(DOWNLOAD_PATH + data.exportSexes, `${t("genders")}${EXCEL_FILE_EXTENSION}`);
+    }
+  };
+
+  return (
+    <>
+      <ManageTopBar title={t("genders")} onClickExport={handleExportClick} />
+      <Container
+        maxWidth="xl"
+        sx={{
+          marginTop: 5
+        }}
+      >
+        <SexeTable />
+      </Container>
+    </>
+  );
+};
+
+export default SexePage;
