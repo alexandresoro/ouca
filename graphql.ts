@@ -183,14 +183,14 @@ export type Donnee = {
   __typename?: 'Donnee';
   age: Age;
   commentaire?: Maybe<Scalars['String']>;
-  comportements: Array<Maybe<Comportement>>;
+  comportements: Array<Comportement>;
   distance?: Maybe<Scalars['Int']>;
   espece: Espece;
   estimationDistance?: Maybe<EstimationDistance>;
-  estimationNombre?: Maybe<EstimationNombre>;
+  estimationNombre: EstimationNombre;
   id: Scalars['Int'];
   inventaire: Inventaire;
-  milieux: Array<Maybe<Milieu>>;
+  milieux: Array<Milieu>;
   nombre?: Maybe<Scalars['Int']>;
   regroupement?: Maybe<Scalars['Int']>;
   sexe: Sexe;
@@ -1739,14 +1739,14 @@ export type DepartementsPaginatedResultResolvers<ContextType = any, ParentType e
 export type DonneeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Donnee'] = ResolversParentTypes['Donnee']> = {
   age?: Resolver<ResolversTypes['Age'], ParentType, ContextType>;
   commentaire?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  comportements?: Resolver<Array<Maybe<ResolversTypes['Comportement']>>, ParentType, ContextType>;
+  comportements?: Resolver<Array<ResolversTypes['Comportement']>, ParentType, ContextType>;
   distance?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   espece?: Resolver<ResolversTypes['Espece'], ParentType, ContextType>;
   estimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType>;
-  estimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType>;
+  estimationNombre?: Resolver<ResolversTypes['EstimationNombre'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   inventaire?: Resolver<ResolversTypes['Inventaire'], ParentType, ContextType>;
-  milieux?: Resolver<Array<Maybe<ResolversTypes['Milieu']>>, ParentType, ContextType>;
+  milieux?: Resolver<Array<ResolversTypes['Milieu']>, ParentType, ContextType>;
   nombre?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   regroupement?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   sexe?: Resolver<ResolversTypes['Sexe'], ParentType, ContextType>;
