@@ -400,13 +400,13 @@ export default gql`
     espece: Espece!
     sexe: Sexe!
     age: Age!
-    estimationNombre: EstimationNombre
+    estimationNombre: EstimationNombre!
     nombre: Int
     estimationDistance: EstimationDistance
     distance: Int
     regroupement: Int
-    comportements: [Comportement]!
-    milieux: [Milieu]!
+    comportements: [Comportement!]!
+    milieux: [Milieu!]!
     commentaire: String
   }
 
