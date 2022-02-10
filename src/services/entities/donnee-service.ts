@@ -8,10 +8,11 @@ import { getPrismaPagination } from "./entities-utils";
 import { normalizeInventaire } from "./inventaire-service";
 
 export type DonneeWithRelations = DonneeEntity & {
-  age: Age | null
-  sexe: Sexe | null
+  age: Age
+  sexe: Sexe
   comportements: Comportement[]
   milieux: Milieu[]
+  estimationNombre: EstimationNombre
 };
 
 export type FullDonnee = DonneeWithRelations & {
@@ -27,7 +28,6 @@ export type FullDonnee = DonneeWithRelations & {
   }
   espece: Espece & { classe: Classe }
   estimationDistance: EstimationDistance
-  estimationNombre: EstimationNombre
 };
 
 type DonneeRelatedTablesFields = {
