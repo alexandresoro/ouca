@@ -32,7 +32,7 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
     >
       <DialogTitle id="delete-confirmation-dialog-title">{t("deleteConfirmationDialogTitle")}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="delete-confirmation-dialog-description">
+        <DialogContentText component="div" id="delete-confirmation-dialog-description">
           <Typography variant="body1" component="p">
             {messageContent}
           </Typography>
