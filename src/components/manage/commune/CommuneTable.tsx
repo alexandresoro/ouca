@@ -223,7 +223,7 @@ const CommuneTable: FunctionComponent = () => {
           <TableFooter>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[20, 50, 100]}
+                rowsPerPageOptions={[25, 50, 100]}
                 count={data?.paginatedCommunes?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}

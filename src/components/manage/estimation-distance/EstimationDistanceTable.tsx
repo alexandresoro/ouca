@@ -215,7 +215,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
           <TableFooter>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[20, 50, 100]}
+                rowsPerPageOptions={[25, 50, 100]}
                 count={data?.paginatedEstimationsDistance?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
