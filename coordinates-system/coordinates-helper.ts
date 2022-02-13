@@ -1,4 +1,4 @@
-import { LieuDit } from "../graphql";
+import { Inventaire, LieuDit } from "../graphql";
 import { Coordinates } from "../types/coordinates.object";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
@@ -38,6 +38,30 @@ export const areCoordinatesCustomized = (
   }
 
   return false;
+};
+
+const isNil = (value: number) => {
+  return value === undefined || value === null;
+};
+
+export const getInventaireCoordinates = (
+  inventaire: Inventaire
+): {latitude: number, longitude:number, altitude: number} => {
+  // Customized coordinates are defined
+  if(inventaire.customizedCoordinates && !isNil(inventaire.customizedCoordinates.longitude)) {
+    return {
+      latitude: inventaire.customizedCoordinates.latitude,
+      longitude: inventaire.customizedCoordinates.longitude,
+      altitude: inventaire.customizedCoordinates.altitude
+    }
+  }
+
+  // Default lieu-dit coordinates are used
+  return {
+    latitude: inventaire.lieuDit.latitude,
+    longitude: inventaire.lieuDit.longitude,
+    altitude: inventaire.lieuDit.altitude
+  }
 };
 
 export const areSameCoordinates = (
