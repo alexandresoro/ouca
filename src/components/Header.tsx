@@ -2,21 +2,20 @@ import { ApolloError, gql, useMutation } from "@apollo/client";
 import {
   AccountBox,
   Add,
-  EmojiEmotions,
   EmojiNature,
   FileDownload,
   Filter1,
   List,
   Logout,
-  People,
+  Male,
+  Park,
   Person,
+  Pets,
   Place,
   PlusOne,
-  Save,
   Search,
   Settings,
   SpaceBar,
-  Terrain,
   WbSunny
 } from "@mui/icons-material";
 import {
@@ -39,7 +38,6 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as Logo } from "../assets/img/logo.svg";
 import { UserContext } from "../contexts/UserContext";
-import stringToColor from "../utils/stringToColor";
 import { getFullName, getInitials } from "../utils/usernameUtils";
 import FlexSpacer from "./utils/FlexSpacer";
 
@@ -91,7 +89,7 @@ const DATABASE_MENU_OPTIONS = [
   },
   {
     localizationKey: "genders",
-    Icon: People,
+    Icon: Male,
     to: "/manage/sexe"
   },
   {
@@ -111,12 +109,12 @@ const DATABASE_MENU_OPTIONS = [
   },
   {
     localizationKey: "behaviors",
-    Icon: EmojiEmotions,
+    Icon: Pets,
     to: "/manage/comportement"
   },
   {
     localizationKey: "environments",
-    Icon: Terrain,
+    Icon: Park,
     to: "/manage/milieu"
   }
 ];
@@ -131,11 +129,6 @@ const OPTIONS_MENU_OPTIONS = [
     localizationKey: "settings",
     Icon: Settings,
     to: "/configuration"
-  },
-  {
-    localizationKey: "exportDatabaseButton",
-    Icon: Save,
-    to: "/sauvegarde"
   },
   {
     localizationKey: "importFromFile",
@@ -238,8 +231,8 @@ const Header: FunctionComponent = () => {
           <Button component={Link} to="/creation" color="inherit" startIcon={<Add />}>
             {t("observationButton")}
           </Button>
-          <Button component={Link} to="/vue" color="inherit" startIcon={<Search />}>
-            {t("viewDataButton")}
+          <Button component={Link} to="/view" color="inherit" startIcon={<Search />}>
+            {t("viewObservations")}
           </Button>
           <Button color="inherit" startIcon={<List />} onClick={handleClickDatabase}>
             {t("databaseManagementButton")}
@@ -251,14 +244,22 @@ const Header: FunctionComponent = () => {
             onClose={handleCloseDatabaseMenu}
             onClick={handleCloseDatabaseMenu}
           >
-            {DATABASE_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => (
-              <MenuItem key={to} component={Link} to={to}>
-                <ListItemIcon>
-                  <Icon fontSize="small" />
-                </ListItemIcon>
-                {t(localizationKey)}
-              </MenuItem>
-            ))}
+            {DATABASE_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
+              const CurrentMenuItem = (
+                <MenuItem key={to} component={Link} to={to}>
+                  <ListItemIcon>
+                    <Icon fontSize="small" />
+                  </ListItemIcon>
+                  {t(localizationKey)}
+                </MenuItem>
+              );
+
+              const Dividers = [];
+              if (localizationKey === "weathers") {
+                Dividers.push(<Divider />);
+              }
+              return [CurrentMenuItem, ...Dividers];
+            })}
           </Menu>
 
           <IconButton
@@ -272,7 +273,7 @@ const Header: FunctionComponent = () => {
               sx={{
                 ...(fullName
                   ? {
-                      bgcolor: stringToColor(fullName)
+                      bgcolor: theme.palette.secondary.main
                     }
                   : {}),
                 width: 32,

@@ -8,6 +8,7 @@ import RequireAuth from "./components/utils/RequireAuth";
 import { UserProvider } from "./contexts/UserContext";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
+const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
 const ObervateurManage = lazy(() => import("./components/manage/observateur/ObervateurManage"));
 const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
 const CommuneManage = lazy(() => import("./components/manage/commune/CommuneManage"));
@@ -103,6 +104,14 @@ const App: FunctionComponent = () => {
                 }
               >
                 <Route index element={<TempPage />}></Route>
+                <Route
+                  path="view"
+                  element={
+                    <Suspense fallback={<></>}>
+                      <ViewDonneesPage />
+                    </Suspense>
+                  }
+                ></Route>
                 <Route path="manage" element={<Outlet />}>
                   <Route
                     path="observateur/*"

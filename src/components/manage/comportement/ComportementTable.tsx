@@ -200,7 +200,7 @@ const ComportementTable: FunctionComponent = () => {
                 <TableRow hover key={comportement?.id}>
                   <TableCell>{comportement?.code}</TableCell>
                   <TableCell>{comportement?.libelle}</TableCell>
-                  <TableCell>{comportement?.nicheur}</TableCell>
+                  <TableCell>{comportement?.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</TableCell>
                   <TableCell>{comportement?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
