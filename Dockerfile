@@ -34,6 +34,11 @@ WORKDIR /app/backend
 
 COPY --from=build /app/backend/dist/ /app/backend/
 
+# Create the necessary directories
+RUN mkdir public && \
+  mkdir uploads && \
+  mkdir logs
+
 ENTRYPOINT ["node", "backend.js"]
 
 EXPOSE 4000/tcp

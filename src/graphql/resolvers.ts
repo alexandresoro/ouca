@@ -45,283 +45,376 @@ const validateUserAuthentication = (context: Context): void => {
 
 const resolvers: Resolvers<Context> = {
   Query: {
-    age: async (_source, args): Promise<Age> => {
+    age: async (_source, args, context): Promise<Age> => {
+      validateUserAuthentication(context);
       return findAge(args.id);
     },
-    classe: async (_source, args): Promise<Classe> => {
+    classe: async (_source, args, context): Promise<Classe> => {
+      validateUserAuthentication(context);
       return findClasse(args.id);
     },
-    commune: async (_source, args): Promise<Omit<Commune, 'departement'>> => {
+    commune: async (_source, args, context): Promise<Omit<Commune, 'departement'>> => {
+      validateUserAuthentication(context);
       return findCommune(args.id);
     },
-    comportement: async (_source, args): Promise<Comportement> => {
+    comportement: async (_source, args, context): Promise<Comportement> => {
+      validateUserAuthentication(context);
       return findComportement(args.id);
     },
-    comportementList: async (_source, args): Promise<Comportement[]> => {
+    comportementList: async (_source, args, context): Promise<Comportement[]> => {
+      validateUserAuthentication(context);
       return findComportementsByIds(args.ids);
     },
-    departement: async (_source, args): Promise<Departement> => {
+    departement: async (_source, args, context): Promise<Departement> => {
+      validateUserAuthentication(context);
       return findDepartement(args.id);
     },
-    donnee: (_source, args): { id: number } => {
+    donnee: (_source, args, context): { id: number } => {
+      validateUserAuthentication(context);
       return {
         id: args.id,
       };
     },
-    espece: async (_source, args): Promise<Omit<Espece, 'classe'>> => {
+    espece: async (_source, args, context): Promise<Omit<Espece, 'classe'>> => {
+      validateUserAuthentication(context);
       return findEspece(args.id);
     },
-    estimationDistance: async (_source, args): Promise<EstimationDistance> => {
+    estimationDistance: async (_source, args, context): Promise<EstimationDistance> => {
+      validateUserAuthentication(context);
       return findEstimationDistance(args.id);
     },
-    estimationNombre: async (_source, args): Promise<EstimationNombre> => {
+    estimationNombre: async (_source, args, context): Promise<EstimationNombre> => {
+      validateUserAuthentication(context);
       return findEstimationNombre(args.id);
     },
-    inventaire: async (_source, args): Promise<Omit<Inventaire, 'lieuDit'>> => {
+    inventaire: async (_source, args, context): Promise<Omit<Inventaire, 'lieuDit'>> => {
+      validateUserAuthentication(context);
       return findInventaire(args.id);
     },
-    lieuDit: async (_source, args): Promise<Omit<LieuDit, 'commune'>> => {
+    lieuDit: async (_source, args, context): Promise<Omit<LieuDit, 'commune'>> => {
+      validateUserAuthentication(context);
       return findLieuDit(args.id);
     },
-    meteo: async (_source, args): Promise<Meteo> => {
+    meteo: async (_source, args, context): Promise<Meteo> => {
+      validateUserAuthentication(context);
       return findMeteo(args.id);
     },
-    meteoList: async (_source, args): Promise<Meteo[]> => {
+    meteoList: async (_source, args, context): Promise<Meteo[]> => {
+      validateUserAuthentication(context);
       return findMeteosByIds(args.ids);
     },
-    milieu: async (_source, args): Promise<Milieu> => {
+    milieu: async (_source, args, context): Promise<Milieu> => {
+      validateUserAuthentication(context);
       return findMilieu(args.id);
     },
-    milieuList: async (_source, args): Promise<Milieu[]> => {
+    milieuList: async (_source, args, context): Promise<Milieu[]> => {
+      validateUserAuthentication(context);
       return findMilieuxByIds(args.ids);
     },
-    observateur: async (_source, args): Promise<Observateur> => {
+    observateur: async (_source, args, context): Promise<Observateur> => {
+      validateUserAuthentication(context);
       return findObservateur(args.id);
     },
-    observateurList: async (_source, args): Promise<Observateur[]> => {
+    observateurList: async (_source, args, context): Promise<Observateur[]> => {
+      validateUserAuthentication(context);
       return findObservateursByIds(args.ids);
     },
-    sexe: async (_source, args): Promise<Sexe> => {
+    sexe: async (_source, args, context): Promise<Sexe> => {
+      validateUserAuthentication(context);
       return findSexe(args.id);
     },
-    specimenCountByAge: (_source, args): Promise<AgeWithSpecimensCount[]> => {
+    specimenCountByAge: (_source, args, context): Promise<AgeWithSpecimensCount[]> => {
+      validateUserAuthentication(context);
       return countSpecimensByAgeForEspeceId(args?.especeId);
     },
-    specimenCountBySexe: (_source, args): Promise<SexeWithSpecimensCount[]> => {
+    specimenCountBySexe: (_source, args, context): Promise<SexeWithSpecimensCount[]> => {
+      validateUserAuthentication(context);
       return countSpecimensBySexeForEspeceId(args?.especeId);
     },
-    ages: async (_source, args): Promise<Age[]> => {
+    ages: async (_source, args, context): Promise<Age[]> => {
+      validateUserAuthentication(context);
       return findAges(args?.params);
     },
-    classes: async (_source, args): Promise<Classe[]> => {
+    classes: async (_source, args, context): Promise<Classe[]> => {
+      validateUserAuthentication(context);
       return findClasses(args?.params);
     },
-    communes: async (_source, args): Promise<Omit<Commune, 'departement'>[]> => {
+    communes: async (_source, args, context): Promise<Omit<Commune, 'departement'>[]> => {
+      validateUserAuthentication(context);
       return findCommunes(args);
     },
-    comportements: async (_source, args): Promise<Comportement[]> => {
+    comportements: async (_source, args, context): Promise<Comportement[]> => {
+      validateUserAuthentication(context);
       return findComportements(args?.params);
     },
-    departements: async (_source, args): Promise<Departement[]> => {
+    departements: async (_source, args, context): Promise<Departement[]> => {
+      validateUserAuthentication(context);
       return findDepartements(args?.params);
     },
-    especes: async (_source, args): Promise<Omit<Espece, 'classe'>[]> => {
+    especes: async (_source, args, context): Promise<Omit<Espece, 'classe'>[]> => {
+      validateUserAuthentication(context);
       return findEspeces(args);
     },
-    estimationsDistance: async (_source, args): Promise<EstimationDistance[]> => {
+    estimationsDistance: async (_source, args, context): Promise<EstimationDistance[]> => {
+      validateUserAuthentication(context);
       return findEstimationsDistance(args?.params);
     },
-    estimationsNombre: async (_source, args): Promise<EstimationNombre[]> => {
+    estimationsNombre: async (_source, args, context): Promise<EstimationNombre[]> => {
+      validateUserAuthentication(context);
       return findEstimationsNombre(args?.params);
     },
-    lieuxDits: async (_source, args): Promise<Omit<LieuDit, 'commune'>[]> => {
+    lieuxDits: async (_source, args, context): Promise<Omit<LieuDit, 'commune'>[]> => {
+      validateUserAuthentication(context);
       return findLieuxDits(args);
     },
-    meteos: async (): Promise<Meteo[]> => {
+    meteos: async (_source, args, context): Promise<Meteo[]> => {
+      validateUserAuthentication(context);
       return findMeteos();
     },
-    milieux: async (_source, args): Promise<Milieu[]> => {
+    milieux: async (_source, args, context): Promise<Milieu[]> => {
+      validateUserAuthentication(context);
       return findMilieux(args?.params);
     },
-    observateurs: async (_source, args): Promise<Observateur[]> => {
+    observateurs: async (_source, args, context): Promise<Observateur[]> => {
+      validateUserAuthentication(context);
       return findObservateurs(args?.params);
     },
-    sexes: async (_source, args): Promise<Sexe[]> => {
+    sexes: async (_source, args, context): Promise<Sexe[]> => {
+      validateUserAuthentication(context);
       return findSexes(args?.params);
     },
-    lastDonneeId: async (): Promise<number> => {
+    lastDonneeId: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return findLastDonneeId();
     },
-    nextRegroupement: async (): Promise<number> => {
+    nextRegroupement: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return findNextRegroupement();
     },
-    paginatedAges: async (_source, args): Promise<AgesPaginatedResult> => {
+    paginatedAges: async (_source, args, context): Promise<AgesPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedAges(args, true);
     },
-    paginatedClasses: async (_source, args): Promise<ClassesPaginatedResult> => {
+    paginatedClasses: async (_source, args, context): Promise<ClassesPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedClasses(args, true);
     },
-    paginatedCommunes: async (_source, args): Promise<CommunesPaginatedResult> => {
+    paginatedCommunes: async (_source, args, context): Promise<CommunesPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedCommunes(args, true);
     },
-    paginatedComportements: async (_source, args): Promise<ComportementsPaginatedResult> => {
+    paginatedComportements: async (_source, args, context): Promise<ComportementsPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedComportements(args, true);
     },
-    paginatedDepartements: async (_source, args): Promise<DepartementsPaginatedResult> => {
+    paginatedDepartements: async (_source, args, context): Promise<DepartementsPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedDepartements(args, true);
     },
-    paginatedEspeces: async (_source, args): Promise<EspecesPaginatedResult> => {
+    paginatedEspeces: async (_source, args, context): Promise<EspecesPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedEspeces(args, true);
     },
-    paginatedEstimationsDistance: async (_source, args): Promise<EstimationsDistancePaginatedResult> => {
+    paginatedEstimationsDistance: async (_source, args, context): Promise<EstimationsDistancePaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedEstimationsDistance(args, true);
     },
-    paginatedEstimationsNombre: async (_source, args): Promise<EstimationsNombrePaginatedResult> => {
+    paginatedEstimationsNombre: async (_source, args, context): Promise<EstimationsNombrePaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedEstimationsNombre(args, true);
     },
-    paginatedLieuxdits: async (_source, args): Promise<LieuxDitsPaginatedResult> => {
+    paginatedLieuxdits: async (_source, args, context): Promise<LieuxDitsPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedLieuxDits(args, true);
     },
-    paginatedMeteos: async (_source, args): Promise<MeteosPaginatedResult> => {
+    paginatedMeteos: async (_source, args, context): Promise<MeteosPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedMeteos(args, true);
     },
-    paginatedMilieux: async (_source, args): Promise<MilieuxPaginatedResult> => {
+    paginatedMilieux: async (_source, args, context): Promise<MilieuxPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedMilieux(args, true);
     },
-    paginatedObservateurs: async (_source, args): Promise<ObservateursPaginatedResult> => {
+    paginatedObservateurs: async (_source, args, context): Promise<ObservateursPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedObservateurs(args, true);
     },
-    paginatedSexes: async (_source, args): Promise<SexesPaginatedResult> => {
+    paginatedSexes: async (_source, args, context): Promise<SexesPaginatedResult> => {
+      validateUserAuthentication(context);
       return findPaginatedSexes(args, true);
     },
-    paginatedSearchEspeces: async (_source, args): Promise<{
+    paginatedSearchEspeces: async (_source, args, context): Promise<{
       count: number
     }> => {
+      validateUserAuthentication(context);
       const { searchCriteria, ...rest } = args ?? {};
       return findPaginatedEspeces(rest, true, searchCriteria);
     },
-    paginatedSearchDonnees: async (_source, args): Promise<{
+    paginatedSearchDonnees: async (_source, args, context): Promise<{
       count: number
     }> => {
+      validateUserAuthentication(context);
       return findPaginatedDonneesByCriteria(args);
     },
-    importStatus: async (_source, args): Promise<ImportStatus> => {
+    importStatus: async (_source, args, context): Promise<ImportStatus> => {
+      validateUserAuthentication(context);
       return getImportStatus(args.importId);
     },
-    exportAges: async (): Promise<string> => {
+    exportAges: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateAgesExport();
     },
-    exportClasses: async (): Promise<string> => {
+    exportClasses: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateClassesExport();
     },
-    exportCommunes: async (): Promise<string> => {
+    exportCommunes: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateCommunesExport();
     },
-    exportComportements: async (): Promise<string> => {
+    exportComportements: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateComportementsExport();
     },
-    exportDepartements: async (): Promise<string> => {
+    exportDepartements: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateDepartementsExport();
     },
-    exportEstimationsDistance: async (): Promise<string> => {
+    exportEstimationsDistance: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateEstimationsDistanceExport();
     },
-    exportEstimationsNombre: async (): Promise<string> => {
+    exportEstimationsNombre: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateEstimationsNombreExport();
     },
-    exportDonnees: async (_source, args): Promise<string> => {
+    exportDonnees: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateDonneesExport(args?.searchCriteria);
     },
-    exportEspeces: async (): Promise<string> => {
+    exportEspeces: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateEspecesExport();
     },
-    exportLieuxDits: async (): Promise<string> => {
+    exportLieuxDits: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateLieuxDitsExport();
     },
-    exportMeteos: async (): Promise<string> => {
+    exportMeteos: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateMeteosExport();
     },
-    exportMilieux: async (): Promise<string> => {
+    exportMilieux: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateMilieuxExport();
     },
-    exportObservateurs: async (): Promise<string> => {
+    exportObservateurs: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateObservateursExport();
     },
-    exportSexes: async (): Promise<string> => {
+    exportSexes: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
       return generateSexesExport();
     },
-    dumpDatabase: async (): Promise<string> => {
+    dumpDatabase: async (_source, args, context): Promise<string> => {
+      validateUserAuthentication(context);
+      if (context?.role !== DatabaseRole.admin) {
+        throw new ForbiddenError("Database dump is not allowed for the current user")
+      }
       return saveDatabaseRequest();
     },
-    settings: async (): Promise<Settings> => {
+    settings: async (_source, args, context): Promise<Settings> => {
+      validateUserAuthentication(context);
+      // TODO handle own user settings
       return findAppConfiguration();
     },
-    version: async (): Promise<Version> => {
+    version: async (_source, args, context): Promise<Version> => {
+      validateUserAuthentication(context);
       return findVersion();
     }
   },
   Mutation: {
-    deleteAge: async (_source, args): Promise<number> => {
+    deleteAge: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteAge(args.id).then(({ id }) => id);
     },
-    deleteClasse: async (_source, args): Promise<number> => {
+    deleteClasse: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteClasse(args.id).then(({ id }) => id);
     },
-    deleteCommune: async (_source, args): Promise<number> => {
+    deleteCommune: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteCommune(args.id).then(({ id }) => id);
     },
-    deleteComportement: async (_source, args): Promise<number> => {
+    deleteComportement: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteComportement(args.id).then(({ id }) => id);
     },
-    deleteDepartement: async (_source, args): Promise<number> => {
+    deleteDepartement: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteDepartement(args.id).then(({ id }) => id);
     },
-    deleteDonnee: async (_source, args): Promise<number> => {
+    deleteDonnee: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteDonnee(args.id).then(({ id }) => id);
     },
-    deleteEspece: async (_source, args): Promise<number> => {
+    deleteEspece: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteEspece(args.id).then(({ id }) => id);
     },
-    deleteEstimationDistance: async (_source, args): Promise<number> => {
+    deleteEstimationDistance: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteEstimationDistance(args.id).then(({ id }) => id);
     },
-    deleteEstimationNombre: async (_source, args): Promise<number> => {
+    deleteEstimationNombre: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteEstimationNombre(args.id).then(({ id }) => id);
     },
-    deleteLieuDit: async (_source, args): Promise<number> => {
+    deleteLieuDit: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteLieuDit(args.id).then(({ id }) => id);
     },
-    deleteMeteo: async (_source, args): Promise<number> => {
+    deleteMeteo: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteMeteo(args.id).then(({ id }) => id);
     },
-    deleteMilieu: async (_source, args): Promise<number> => {
+    deleteMilieu: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteMilieu(args.id).then(({ id }) => id);
     },
-    deleteObservateur: async (_source, args): Promise<number> => {
+    deleteObservateur: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteObservateur(args.id).then(({ id }) => id);
     },
-    deleteSexe: async (_source, args): Promise<number> => {
+    deleteSexe: async (_source, args, context): Promise<number> => {
+      validateUserAuthentication(context);
       return deleteSexe(args.id).then(({ id }) => id);
     },
-    upsertAge: async (_source, args): Promise<Age> => {
+    upsertAge: async (_source, args, context): Promise<Age> => {
+      validateUserAuthentication(context);
       return upsertAge(args);
     },
-    upsertClasse: async (_source, args): Promise<Classe> => {
+    upsertClasse: async (_source, args, context): Promise<Classe> => {
+      validateUserAuthentication(context);
       return upsertClasse(args);
     },
-    upsertCommune: async (_source, args): Promise<CommuneEntity> => {
+    upsertCommune: async (_source, args, context): Promise<CommuneEntity> => {
+      validateUserAuthentication(context);
       return upsertCommune(args);
     },
-    upsertComportement: async (_source, args): Promise<Comportement> => {
+    upsertComportement: async (_source, args, context): Promise<Comportement> => {
+      validateUserAuthentication(context);
       return upsertComportement(args);
     },
-    upsertDepartement: async (_source, args): Promise<Departement> => {
+    upsertDepartement: async (_source, args, context): Promise<Departement> => {
+      validateUserAuthentication(context);
       return upsertDepartement(args);
     },
-    upsertDonnee: async (_source, args): Promise<{
+    upsertDonnee: async (_source, args, context): Promise<{
       failureReason?: string,
       donnee?: DonneeWithRelations
     }> => {
+      validateUserAuthentication(context);
       try {
         const upsertedDonnee = await upsertDonnee(args);
         return {
@@ -334,19 +427,23 @@ const resolvers: Resolvers<Context> = {
         }
       }
     },
-    upsertEspece: async (_source, args): Promise<EspeceEntity> => {
+    upsertEspece: async (_source, args, context): Promise<EspeceEntity> => {
+      validateUserAuthentication(context);
       return upsertEspece(args);
     },
-    upsertEstimationDistance: async (_source, args): Promise<EstimationDistance> => {
+    upsertEstimationDistance: async (_source, args, context): Promise<EstimationDistance> => {
+      validateUserAuthentication(context);
       return upsertEstimationDistance(args);
     },
-    upsertEstimationNombre: async (_source, args): Promise<EstimationNombre> => {
+    upsertEstimationNombre: async (_source, args, context): Promise<EstimationNombre> => {
+      validateUserAuthentication(context);
       return upsertEstimationNombre(args);
     },
-    upsertInventaire: async (_source, args): Promise<{
+    upsertInventaire: async (_source, args, context): Promise<{
       failureReason?: UpsertInventaireFailureReason,
       inventaire?: InventaireWithRelations
     }> => {
+      validateUserAuthentication(context);
       try {
         const upsertedInventaire = await upsertInventaire(args);
         return {
@@ -359,33 +456,48 @@ const resolvers: Resolvers<Context> = {
         }
       }
     },
-    upsertLieuDit: async (_source, args): Promise<LieuDitWithCoordinatesAsNumber> => {
+    upsertLieuDit: async (_source, args, context): Promise<LieuDitWithCoordinatesAsNumber> => {
+      validateUserAuthentication(context);
       return upsertLieuDit(args);
     },
-    upsertMeteo: async (_source, args): Promise<Meteo> => {
+    upsertMeteo: async (_source, args, context): Promise<Meteo> => {
+      validateUserAuthentication(context);
       return upsertMeteo(args);
     },
-    upsertMilieu: async (_source, args): Promise<Milieu> => {
+    upsertMilieu: async (_source, args, context): Promise<Milieu> => {
+      validateUserAuthentication(context);
       return upsertMilieu(args);
     },
-    upsertObservateur: async (_source, args): Promise<Observateur> => {
+    upsertObservateur: async (_source, args, context): Promise<Observateur> => {
+      validateUserAuthentication(context);
       return upsertObservateur(args);
     },
-    upsertSexe: async (_source, args): Promise<Sexe> => {
+    upsertSexe: async (_source, args, context): Promise<Sexe> => {
+      validateUserAuthentication(context);
       return upsertSexe(args);
     },
-    updateSettings: async (_source, { appConfiguration }): Promise<Settings> => {
+    updateSettings: async (_source, { appConfiguration }, context): Promise<Settings> => {
+      validateUserAuthentication(context);
+      // TODO check to update own user settings
       return persistUserSettings(appConfiguration);
     },
     initializeDatabase: async (): Promise<boolean> => {
       await seedDatabase();
       return true;
     },
-    resetDatabase: async (): Promise<boolean> => {
+    resetDatabase: async (_source, args, context): Promise<boolean> => {
+      validateUserAuthentication(context);
+      if (context?.role !== DatabaseRole.admin) {
+        throw new ForbiddenError("Database reset is not allowed for the current user")
+      }
       await resetDatabase();
       return true;
     },
-    updateDatabase: async (): Promise<boolean> => {
+    updateDatabase: async (_source, args, context): Promise<boolean> => {
+      validateUserAuthentication(context);
+      if (context?.role !== DatabaseRole.admin) {
+        throw new ForbiddenError("Database update is not allowed for the current user")
+      }
       await executeDatabaseMigration();
       return true;
     },

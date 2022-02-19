@@ -8,7 +8,6 @@ import fastifyCors from "fastify-cors";
 import fastifyMultipart from "fastify-multipart";
 import fastifyStatic from "fastify-static";
 import fs from "fs";
-import { jwtVerify, JWTVerifyResult } from 'jose';
 import path from "path";
 import { pipeline } from 'stream';
 import { promisify } from 'util';
@@ -17,9 +16,8 @@ import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
 import { ImportType, IMPORT_TYPE } from './model/import-types';
 import { startImportTask } from './services/import-manager';
-import { deleteTokenCookie } from './services/token-service';
+import { validateAndExtractUserToken } from './services/token-service';
 import prisma from "./sql/prisma";
-import { TokenKeys } from './utils/keys';
 import { logger } from "./utils/logger";
 import options from "./utils/options";
 import { checkAndCreateFolders, DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
@@ -38,25 +36,17 @@ const apolloServer = new ApolloServer({
   ],
   context: async ({ request, reply }) => {
 
-    // Extract the user of the token, if any
-    const token = request.cookies['token'];
-    let tokenVerifyResult: JWTVerifyResult;
-    if (token) {
-      const publicKey = await TokenKeys.getKey();
-      tokenVerifyResult = await jwtVerify(token, publicKey).catch((e) => {
-        // If the user has sent a token that could not be validated,
-        // make sure that at least the cookie is deleted
-        void deleteTokenCookie(reply);
-        throw new AuthenticationError(e as string);
-      });
-    }
+    // Extract the token from the authentication cookie, if any
+    const tokenPayload = await validateAndExtractUserToken(request, reply).catch((e) => {
+      throw new AuthenticationError(e as string);
+    });
 
     return {
       request,
       reply,
-      userId: tokenVerifyResult?.payload?.sub ?? null,
-      username: tokenVerifyResult?.payload?.name ?? null,
-      role: tokenVerifyResult?.payload?.roles ?? null
+      userId: tokenPayload?.sub ?? null,
+      username: tokenPayload?.name ?? null,
+      role: tokenPayload?.roles ?? null
     };
   }
 });
@@ -96,14 +86,27 @@ checkAndCreateFolders();
 
   // Download files
   server.get<{ Params: { id: string }, Querystring: { filename?: string } }>('/download/:id', async (req, reply) => {
+    const tokenPayload = await validateAndExtractUserToken(req, reply);
+    if (!tokenPayload?.sub) {
+      return reply.code(401).send();
+    }
     return reply.download(req.params.id, req.query.filename ?? undefined)
   })
   server.get<{ Params: { id: string }, Querystring: { filename?: string } }>('/download/importReports/:id', async (req, reply) => {
+    const tokenPayload = await validateAndExtractUserToken(req, reply);
+    if (!tokenPayload?.sub) {
+      return reply.code(401).send();
+    }
+
     return reply.download(req.params.id, req.query.filename ?? undefined)
   })
 
   // Upload import path
   server.post<{ Params: { entityName: string } }>('/uploads/:entityName', async (req, reply) => {
+    const tokenPayload = await validateAndExtractUserToken(req, reply);
+    if (!tokenPayload?.sub) {
+      return reply.code(401).send();
+    }
 
     const { params } = req;
 
