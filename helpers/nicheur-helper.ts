@@ -10,7 +10,7 @@ export const getHighestNicheurStatus = (comportements: { nicheur?: NicheurCode |
     }
   ).map(
     (comportement) => {
-      return comportement.nicheur as NicheurCode;
+      return comportement.nicheur;
     }
   ) ?? [];
 
