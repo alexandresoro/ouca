@@ -34,7 +34,7 @@
     "papaparse": "^5.3.0",
     "proj4": "^2.7.2",
     "winston": "^3.3.3",
-    "xlsx": "^0.16.9",
+    "xlsx": "^0.18.2",
     "yargs": "^16.2.0"
   },
   "devDependencies": {
