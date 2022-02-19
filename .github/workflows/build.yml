@@ -56,10 +56,10 @@ jobs:
         run: |
           echo "DOCKER_TAG=latest" >> $GITHUB_ENV
 
-      - name: Set docker tag as dev if on dev branch
-        if: github.ref == 'refs/heads/dev'
+      - name: Set docker tag as branch name if on a branch
+        if: startsWith(github.ref, 'refs/heads/')
         run: |
-          echo "DOCKER_TAG=dev" >> $GITHUB_ENV
+          echo "DOCKER_TAG=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Retrieve docker label if this is a tag push
         if: startsWith(github.ref, 'refs/tags/')
