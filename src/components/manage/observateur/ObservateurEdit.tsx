@@ -22,14 +22,14 @@ const OBSERVATEURS_QUERY = gql`
   }
 `;
 
-// const OBSERVATEUR_UPSERT = gql`
-//   mutation ObservateurUpsert($id: Int, $data: InputObservateur!) {
-//     upsertObservateur(id: $id, data: $data) {
-//       id
-//       libelle
-//     }
-//   }
-// `;
+const OBSERVATEUR_UPSERT = gql`
+  mutation ObservateurUpsert($id: Int, $data: InputObservateur!) {
+    upsertObservateur(id: $id, data: $data) {
+      id
+      libelle
+    }
+  }
+`;
 
 type ObservateurEditProps = {
   isEditionMode: boolean;
@@ -88,8 +88,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: t("requiredFieldError") as unknown as string,
-                  validate: validateLibelle
+                  required: t("requiredFieldError") as unknown as string
                 }}
                 render={({ field }) => (
                   <TextField
