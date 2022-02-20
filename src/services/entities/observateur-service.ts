@@ -102,7 +102,7 @@ export const findPaginatedObservateurs = async (
 
     const donneesPerObservateurIdRequest = Prisma.sql`
     SELECT 
-      o.*, count(d.id) as nbDonnees
+      o.*, o.owner_id as ownerId, count(d.id) as nbDonnees
     FROM 
       donnee d 
     RIGHT JOIN 
