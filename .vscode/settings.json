@@ -1,9 +1,11 @@
 {
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "eslint.validate": ["typescript", "javascript"],
   "eslint.packageManager": "npm",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
     "source.organizeImports": true
-  },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  }
 }
