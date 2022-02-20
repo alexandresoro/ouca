@@ -18,7 +18,8 @@
     "lint": "eslint './src/**/*.ts'",
     "start": "tsc && cd dist && node backend",
     "start:debug": "cd dist && node --inspect backend",
-    "generate-graphql": "graphql-codegen --config codegen.yml"
+    "generate-graphql": "graphql-codegen --config codegen.yml",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@prisma/client": "^3.9.2",
@@ -60,11 +61,16 @@
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "eslint": "^8.9.0",
+    "husky": "^7.0.0",
+    "lint-staged": "^12.3.4",
     "prisma": "^3.9.2",
     "type-fest": "^2.12.0",
     "typescript": "^4.5.5"
   },
   "engines": {
     "node": ">=16"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache"
   }
 }
