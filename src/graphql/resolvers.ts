@@ -1,47 +1,197 @@
 import { Commune as CommuneEntity, DatabaseRole, Espece as EspeceEntity } from "@prisma/client";
 import { ApolloError, AuthenticationError, ForbiddenError } from "apollo-server-core";
 import { FastifyReply } from "fastify";
-import { Age, AgesPaginatedResult, AgeWithSpecimensCount, Classe, ClassesPaginatedResult, Commune, CommunesPaginatedResult, Comportement, ComportementsPaginatedResult, Departement, DepartementsPaginatedResult, Donnee, DonneeNavigationData, Espece, EspecesPaginatedResult, EstimationDistance, EstimationNombre, EstimationsDistancePaginatedResult, EstimationsNombrePaginatedResult, ImportStatus, Inventaire, LieuDit, LieuxDitsPaginatedResult, Meteo, MeteosPaginatedResult, Milieu, MilieuxPaginatedResult, Observateur, ObservateursPaginatedResult, Resolvers, Settings, Sexe, SexesPaginatedResult, SexeWithSpecimensCount, UpsertInventaireFailureReason, UserInfo, Version } from "../model/graphql";
+import {
+  Age,
+  AgesPaginatedResult,
+  AgeWithSpecimensCount,
+  Classe,
+  ClassesPaginatedResult,
+  Commune,
+  CommunesPaginatedResult,
+  Comportement,
+  ComportementsPaginatedResult,
+  Departement,
+  DepartementsPaginatedResult,
+  Donnee,
+  DonneeNavigationData,
+  Espece,
+  EspecesPaginatedResult,
+  EstimationDistance,
+  EstimationNombre,
+  EstimationsDistancePaginatedResult,
+  EstimationsNombrePaginatedResult,
+  ImportStatus,
+  Inventaire,
+  LieuDit,
+  LieuxDitsPaginatedResult,
+  Meteo,
+  MeteosPaginatedResult,
+  Milieu,
+  MilieuxPaginatedResult,
+  Observateur,
+  ObservateursPaginatedResult,
+  Resolvers,
+  Settings,
+  Sexe,
+  SexesPaginatedResult,
+  SexeWithSpecimensCount,
+  UpsertInventaireFailureReason,
+  UserInfo,
+  Version
+} from "../model/graphql";
 import { executeDatabaseMigration } from "../services/database-migration/database-migration.service";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
-import { deleteClasse, findClasse, findClasseOfEspeceId, findClasses, findPaginatedClasses, upsertClasse } from "../services/entities/classe-service";
-import { deleteCommune, findCommune, findCommuneOfLieuDitId, findCommunes, findPaginatedCommunes, upsertCommune } from "../services/entities/commune-service";
-import { deleteComportement, findComportement, findComportements, findComportementsByIds, findPaginatedComportements, upsertComportement } from "../services/entities/comportement-service";
+import {
+  deleteClasse,
+  findClasse,
+  findClasseOfEspeceId,
+  findClasses,
+  findPaginatedClasses,
+  upsertClasse
+} from "../services/entities/classe-service";
+import {
+  deleteCommune,
+  findCommune,
+  findCommuneOfLieuDitId,
+  findCommunes,
+  findPaginatedCommunes,
+  upsertCommune
+} from "../services/entities/commune-service";
+import {
+  deleteComportement,
+  findComportement,
+  findComportements,
+  findComportementsByIds,
+  findPaginatedComportements,
+  upsertComportement
+} from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
-import { deleteDepartement, findDepartement, findDepartementOfCommuneId, findDepartements, findPaginatedDepartements, upsertDepartement } from "../services/entities/departement-service";
-import { countSpecimensByAgeForEspeceId, countSpecimensBySexeForEspeceId, deleteDonnee, DonneeWithRelations, findDonnee, findDonneeNavigationData, findLastDonneeId, findNextRegroupement, findPaginatedDonneesByCriteria, upsertDonnee } from "../services/entities/donnee-service";
-import { deleteEspece, findEspece, findEspeceOfDonneeId, findEspeces, findPaginatedEspeces, upsertEspece } from "../services/entities/espece-service";
-import { deleteEstimationDistance, findEstimationDistance, findEstimationsDistance, findPaginatedEstimationsDistance, upsertEstimationDistance } from "../services/entities/estimation-distance-service";
-import { deleteEstimationNombre, findEstimationNombre, findEstimationsNombre, findPaginatedEstimationsNombre, upsertEstimationNombre } from "../services/entities/estimation-nombre-service";
-import { findInventaire, findInventaireOfDonneeId, InventaireWithRelations, upsertInventaire } from "../services/entities/inventaire-service";
-import { deleteLieuDit, findLieuDit, findLieuDitOfInventaireId, findLieuxDits, findPaginatedLieuxDits, LieuDitWithCoordinatesAsNumber, upsertLieuDit } from "../services/entities/lieu-dit-service";
-import { deleteMeteo, findMeteo, findMeteos, findMeteosByIds, findPaginatedMeteos, upsertMeteo } from "../services/entities/meteo-service";
-import { deleteMilieu, findMilieu, findMilieux, findMilieuxByIds, findPaginatedMilieux, upsertMilieu } from "../services/entities/milieu-service";
-import { deleteObservateur, findObservateur, findObservateurs, findObservateursByIds, findPaginatedObservateurs, upsertObservateur } from "../services/entities/observateur-service";
+import {
+  deleteDepartement,
+  findDepartement,
+  findDepartementOfCommuneId,
+  findDepartements,
+  findPaginatedDepartements,
+  upsertDepartement
+} from "../services/entities/departement-service";
+import {
+  countSpecimensByAgeForEspeceId,
+  countSpecimensBySexeForEspeceId,
+  deleteDonnee,
+  DonneeWithRelations,
+  findDonnee,
+  findDonneeNavigationData,
+  findLastDonneeId,
+  findNextRegroupement,
+  findPaginatedDonneesByCriteria,
+  upsertDonnee
+} from "../services/entities/donnee-service";
+import {
+  deleteEspece,
+  findEspece,
+  findEspeceOfDonneeId,
+  findEspeces,
+  findPaginatedEspeces,
+  upsertEspece
+} from "../services/entities/espece-service";
+import {
+  deleteEstimationDistance,
+  findEstimationDistance,
+  findEstimationsDistance,
+  findPaginatedEstimationsDistance,
+  upsertEstimationDistance
+} from "../services/entities/estimation-distance-service";
+import {
+  deleteEstimationNombre,
+  findEstimationNombre,
+  findEstimationsNombre,
+  findPaginatedEstimationsNombre,
+  upsertEstimationNombre
+} from "../services/entities/estimation-nombre-service";
+import {
+  findInventaire,
+  findInventaireOfDonneeId,
+  InventaireWithRelations,
+  upsertInventaire
+} from "../services/entities/inventaire-service";
+import {
+  deleteLieuDit,
+  findLieuDit,
+  findLieuDitOfInventaireId,
+  findLieuxDits,
+  findPaginatedLieuxDits,
+  LieuDitWithCoordinatesAsNumber,
+  upsertLieuDit
+} from "../services/entities/lieu-dit-service";
+import {
+  deleteMeteo,
+  findMeteo,
+  findMeteos,
+  findMeteosByIds,
+  findPaginatedMeteos,
+  upsertMeteo
+} from "../services/entities/meteo-service";
+import {
+  deleteMilieu,
+  findMilieu,
+  findMilieux,
+  findMilieuxByIds,
+  findPaginatedMilieux,
+  upsertMilieu
+} from "../services/entities/milieu-service";
+import {
+  deleteObservateur,
+  findObservateur,
+  findObservateurs,
+  findObservateursByIds,
+  findPaginatedObservateurs,
+  upsertObservateur
+} from "../services/entities/observateur-service";
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
 import { findVersion } from "../services/entities/version-service";
-import { generateAgesExport, generateClassesExport, generateCommunesExport, generateComportementsExport, generateDepartementsExport, generateDonneesExport, generateEspecesExport, generateEstimationsDistanceExport, generateEstimationsNombreExport, generateLieuxDitsExport, generateMeteosExport, generateMilieuxExport, generateObservateursExport, generateSexesExport } from "../services/export-entites";
+import {
+  generateAgesExport,
+  generateClassesExport,
+  generateCommunesExport,
+  generateComportementsExport,
+  generateDepartementsExport,
+  generateDonneesExport,
+  generateEspecesExport,
+  generateEstimationsDistanceExport,
+  generateEstimationsNombreExport,
+  generateLieuxDitsExport,
+  generateMeteosExport,
+  generateMilieuxExport,
+  generateObservateursExport,
+  generateSexesExport
+} from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
 import { createUser, deleteUser, getUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
 import { logger } from "../utils/logger";
+import { User } from "../utils/user";
 
-type Context = {
-  request: unknown,
-  reply: FastifyReply,
-  userId: string | null,
-  username: string | null,
-  role: string | null
-}
+export type Context = {
+  request: unknown;
+  reply: FastifyReply;
+  userId: string | null;
+  username: string | null;
+  role: DatabaseRole | null;
+};
 
-const validateUserAuthentication = (context: Context): void => {
+const validateUserAuthentication = (context: Context): User => {
   if (!context?.userId) {
-    throw new AuthenticationError("User is not authenticated.")
+    throw new AuthenticationError("User is not authenticated.");
   }
-}
+  return {
+    id: context?.userId,
+    role: context.role
+  };
+};
 
 const resolvers: Resolvers<Context> = {
   Query: {
@@ -53,7 +203,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findClasse(args.id);
     },
-    commune: async (_source, args, context): Promise<Omit<Commune, 'departement'>> => {
+    commune: async (_source, args, context): Promise<Omit<Commune, "departement">> => {
       validateUserAuthentication(context);
       return findCommune(args.id);
     },
@@ -72,10 +222,10 @@ const resolvers: Resolvers<Context> = {
     donnee: (_source, args, context): { id: number } => {
       validateUserAuthentication(context);
       return {
-        id: args.id,
+        id: args.id
       };
     },
-    espece: async (_source, args, context): Promise<Omit<Espece, 'classe'>> => {
+    espece: async (_source, args, context): Promise<Omit<Espece, "classe">> => {
       validateUserAuthentication(context);
       return findEspece(args.id);
     },
@@ -87,11 +237,11 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findEstimationNombre(args.id);
     },
-    inventaire: async (_source, args, context): Promise<Omit<Inventaire, 'lieuDit'>> => {
+    inventaire: async (_source, args, context): Promise<Omit<Inventaire, "lieuDit">> => {
       validateUserAuthentication(context);
       return findInventaire(args.id);
     },
-    lieuDit: async (_source, args, context): Promise<Omit<LieuDit, 'commune'>> => {
+    lieuDit: async (_source, args, context): Promise<Omit<LieuDit, "commune">> => {
       validateUserAuthentication(context);
       return findLieuDit(args.id);
     },
@@ -139,7 +289,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findClasses(args?.params);
     },
-    communes: async (_source, args, context): Promise<Omit<Commune, 'departement'>[]> => {
+    communes: async (_source, args, context): Promise<Omit<Commune, "departement">[]> => {
       validateUserAuthentication(context);
       return findCommunes(args);
     },
@@ -151,7 +301,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findDepartements(args?.params);
     },
-    especes: async (_source, args, context): Promise<Omit<Espece, 'classe'>[]> => {
+    especes: async (_source, args, context): Promise<Omit<Espece, "classe">[]> => {
       validateUserAuthentication(context);
       return findEspeces(args);
     },
@@ -163,7 +313,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findEstimationsNombre(args?.params);
     },
-    lieuxDits: async (_source, args, context): Promise<Omit<LieuDit, 'commune'>[]> => {
+    lieuxDits: async (_source, args, context): Promise<Omit<LieuDit, "commune">[]> => {
       validateUserAuthentication(context);
       return findLieuxDits(args);
     },
@@ -243,15 +393,23 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findPaginatedSexes(args, true);
     },
-    paginatedSearchEspeces: async (_source, args, context): Promise<{
-      count: number
+    paginatedSearchEspeces: async (
+      _source,
+      args,
+      context
+    ): Promise<{
+      count: number;
     }> => {
       validateUserAuthentication(context);
       const { searchCriteria, ...rest } = args ?? {};
       return findPaginatedEspeces(rest, true, searchCriteria);
     },
-    paginatedSearchDonnees: async (_source, args, context): Promise<{
-      count: number
+    paginatedSearchDonnees: async (
+      _source,
+      args,
+      context
+    ): Promise<{
+      count: number;
     }> => {
       validateUserAuthentication(context);
       return findPaginatedDonneesByCriteria(args);
@@ -319,7 +477,7 @@ const resolvers: Resolvers<Context> = {
     dumpDatabase: async (_source, args, context): Promise<string> => {
       validateUserAuthentication(context);
       if (context?.role !== DatabaseRole.admin) {
-        throw new ForbiddenError("Database dump is not allowed for the current user")
+        throw new ForbiddenError("Database dump is not allowed for the current user");
       }
       return saveDatabaseRequest();
     },
@@ -410,21 +568,25 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return upsertDepartement(args);
     },
-    upsertDonnee: async (_source, args, context): Promise<{
-      failureReason?: string,
-      donnee?: DonneeWithRelations
+    upsertDonnee: async (
+      _source,
+      args,
+      context
+    ): Promise<{
+      failureReason?: string;
+      donnee?: DonneeWithRelations;
     }> => {
       validateUserAuthentication(context);
       try {
         const upsertedDonnee = await upsertDonnee(args);
         return {
           donnee: upsertedDonnee
-        }
+        };
       } catch (error) {
         const failureReason = error as string;
         return {
           failureReason
-        }
+        };
       }
     },
     upsertEspece: async (_source, args, context): Promise<EspeceEntity> => {
@@ -439,21 +601,25 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return upsertEstimationNombre(args);
     },
-    upsertInventaire: async (_source, args, context): Promise<{
-      failureReason?: UpsertInventaireFailureReason,
-      inventaire?: InventaireWithRelations
+    upsertInventaire: async (
+      _source,
+      args,
+      context
+    ): Promise<{
+      failureReason?: UpsertInventaireFailureReason;
+      inventaire?: InventaireWithRelations;
     }> => {
       validateUserAuthentication(context);
       try {
         const upsertedInventaire = await upsertInventaire(args);
         return {
           inventaire: upsertedInventaire
-        }
+        };
       } catch (error) {
         const failureReason = error as UpsertInventaireFailureReason;
         return {
           failureReason
-        }
+        };
       }
     },
     upsertLieuDit: async (_source, args, context): Promise<LieuDitWithCoordinatesAsNumber> => {
@@ -469,8 +635,8 @@ const resolvers: Resolvers<Context> = {
       return upsertMilieu(args);
     },
     upsertObservateur: async (_source, args, context): Promise<Observateur> => {
-      validateUserAuthentication(context);
-      return upsertObservateur(args);
+      const user = validateUserAuthentication(context);
+      return upsertObservateur(args, user);
     },
     upsertSexe: async (_source, args, context): Promise<Sexe> => {
       validateUserAuthentication(context);
@@ -488,7 +654,7 @@ const resolvers: Resolvers<Context> = {
     resetDatabase: async (_source, args, context): Promise<boolean> => {
       validateUserAuthentication(context);
       if (context?.role !== DatabaseRole.admin) {
-        throw new ForbiddenError("Database reset is not allowed for the current user")
+        throw new ForbiddenError("Database reset is not allowed for the current user");
       }
       await resetDatabase();
       return true;
@@ -496,7 +662,7 @@ const resolvers: Resolvers<Context> = {
     updateDatabase: async (_source, args, context): Promise<boolean> => {
       validateUserAuthentication(context);
       if (context?.role !== DatabaseRole.admin) {
-        throw new ForbiddenError("Database update is not allowed for the current user")
+        throw new ForbiddenError("Database update is not allowed for the current user");
       }
       await executeDatabaseMigration();
       return true;
@@ -513,13 +679,13 @@ const resolvers: Resolvers<Context> = {
       } else {
         validateUserAuthentication(context);
         if (context?.role !== DatabaseRole.admin) {
-          throw new ForbiddenError("User account creation is not allowed for the current user")
+          throw new ForbiddenError("User account creation is not allowed for the current user");
         }
         userInfo = await createUser(args.signupData, args?.role ?? DatabaseRole.contributor);
       }
 
       if (userInfo) {
-        await createAndAddSignedTokenAsCookie(context.reply, userInfo)
+        await createAndAddSignedTokenAsCookie(context.reply, userInfo);
 
         logger.info(`User ${userInfo?.username} has been created`);
       }
@@ -529,7 +695,7 @@ const resolvers: Resolvers<Context> = {
       const userInfo = await loginUser(args.loginData);
 
       if (userInfo) {
-        await createAndAddSignedTokenAsCookie(context.reply, userInfo)
+        await createAndAddSignedTokenAsCookie(context.reply, userInfo);
 
         logger.debug(`User ${userInfo?.username} logged in`);
 
@@ -571,19 +737,18 @@ const resolvers: Resolvers<Context> = {
         return updatedUser;
       }
 
-      throw new ForbiddenError("User modification is only allowed from the user itself")
+      throw new ForbiddenError("User modification is only allowed from the user itself");
     },
     userDelete: async (_source, args, context): Promise<boolean> => {
       validateUserAuthentication(context);
 
       // Only a user can delete itself
       // With admin role, admin can delete anyone
-      if ((context.userId === args?.id) || (context.role === DatabaseRole.admin)) {
+      if (context.userId === args?.id || context.role === DatabaseRole.admin) {
         await deleteUser(args.id);
 
         if (context.userId === args?.id) {
           await deleteTokenCookie(context.reply);
-
         }
 
         logger.info(`User with id ${args.id} has been deleted. Request has been initiated by ${context.username}`);
@@ -592,7 +757,7 @@ const resolvers: Resolvers<Context> = {
       }
 
       throw new ApolloError("User deletion request failed");
-    },
+    }
   },
   Commune: {
     departement: async (parent): Promise<Departement> => {
@@ -600,17 +765,17 @@ const resolvers: Resolvers<Context> = {
     }
   },
   Donnee: {
-    espece: async (parent): Promise<Omit<Espece, 'classe'>> => {
+    espece: async (parent): Promise<Omit<Espece, "classe">> => {
       const espece = await findEspeceOfDonneeId(parent?.id);
       return findEspece(espece?.id);
     },
-    inventaire: async (parent): Promise<Omit<Inventaire, 'lieuDit'>> => {
+    inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit">> => {
       const inventaire = await findInventaireOfDonneeId(parent?.id);
       return findInventaire(inventaire?.id);
     }
   },
   DonneeResult: {
-    donnee: async (parent): Promise<Omit<Donnee, 'inventaire' | 'espece'>> => {
+    donnee: async (parent): Promise<Omit<Donnee, "inventaire" | "espece">> => {
       return findDonnee(parent?.id);
     },
     navigation: async (parent): Promise<DonneeNavigationData> => {
@@ -618,13 +783,13 @@ const resolvers: Resolvers<Context> = {
     }
   },
   Inventaire: {
-    lieuDit: async (parent): Promise<Omit<LieuDit, 'commune'>> => {
+    lieuDit: async (parent): Promise<Omit<LieuDit, "commune">> => {
       const lieuDit = await findLieuDitOfInventaireId(parent?.id);
       return findLieuDit(lieuDit?.id);
-    },
+    }
   },
   LieuDit: {
-    commune: async (parent): Promise<Omit<Commune, 'departement'>> => {
+    commune: async (parent): Promise<Omit<Commune, "departement">> => {
       return findCommuneOfLieuDitId(parent?.id);
     }
   },

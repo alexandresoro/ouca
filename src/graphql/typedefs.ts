@@ -1,7 +1,6 @@
 import { gql } from "apollo-server-core";
 
 export default gql`
-
   input InputAge {
     libelle: String!
   }
@@ -217,11 +216,13 @@ export default gql`
   type Observateur {
     id: Int!
     libelle: String!
+    ownerId: String!
   }
 
   type ObservateurWithCounts {
     id: Int!
     libelle: String!
+    ownerId: String!
     nbDonnees: Int
   }
 
@@ -239,14 +240,14 @@ export default gql`
 
   type Commune {
     id: Int!
-    code: Int!    
+    code: Int!
     nom: String!
     departement: Departement!
   }
 
   type CommuneWithCounts {
     id: Int!
-    code: Int!    
+    code: Int!
     nom: String!
     departement: Departement!
     nbLieuxDits: Int
@@ -306,7 +307,7 @@ export default gql`
   }
 
   type LieuDit {
-    id: Int!          
+    id: Int!
     nom: String!
     altitude: Int!
     longitude: Float!
@@ -316,7 +317,7 @@ export default gql`
   }
 
   type LieuDitWithCounts {
-    id: Int!          
+    id: Int!
     nom: String!
     altitude: Int!
     longitude: Float!
@@ -355,7 +356,6 @@ export default gql`
     libelle: String!
     nbSpecimens: Int!
   }
-
 
   type Age {
     id: Int!
@@ -420,7 +420,6 @@ export default gql`
     database: Int!
     application: Int!
   }
-
 
   #
   # Args
@@ -501,7 +500,7 @@ export default gql`
   }
 
   enum LieuxDitsOrderBy {
-    id         
+    id
     nom
     altitude
     longitude
@@ -559,7 +558,7 @@ export default gql`
     result: [AgeWithCounts]
     count: Int!
   }
-  
+
   type ClassesPaginatedResult implements PaginatedResult {
     result: [ClasseWithCounts]
     count: Int!
@@ -626,22 +625,22 @@ export default gql`
   }
 
   enum ImportStatusEnum {
-    NOT_STARTED,
-    ONGOING,
-    COMPLETE,
+    NOT_STARTED
+    ONGOING
+    COMPLETE
     FAILED
   }
 
   enum ImportErrorType {
-    IMPORT_FAILURE,
-    IMPORT_PROCESS_ERROR,
+    IMPORT_FAILURE
+    IMPORT_PROCESS_ERROR
     IMPORT_PROCESS_UNEXPECTED_EXIT
   }
 
   enum OngoingSubStatus {
-    PROCESS_STARTED,
-    RETRIEVING_REQUIRED_DATA,
-    VALIDATING_INPUT_FILE,
+    PROCESS_STARTED
+    RETRIEVING_REQUIRED_DATA
+    VALIDATING_INPUT_FILE
     INSERTING_IMPORTED_DATA
   }
 
@@ -721,21 +720,71 @@ export default gql`
     sexes(params: FindParams): [Sexe]
     nextRegroupement: Int!
     lastDonneeId: Int
-    paginatedAges(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
+    paginatedAges(
+      searchParams: SearchParams
+      orderBy: EntitesAvecLibelleOrderBy
+      sortOrder: SortOrder
+    ): AgesPaginatedResult
     paginatedClasses(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
-    paginatedCommunes(searchParams: SearchParams, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
-    paginatedComportements(searchParams: SearchParams, orderBy: ComportementsOrderBy, sortOrder: SortOrder): ComportementsPaginatedResult
-    paginatedDepartements(searchParams: SearchParams, orderBy: DepartementsOrderBy, sortOrder: SortOrder): DepartementsPaginatedResult
+    paginatedCommunes(
+      searchParams: SearchParams
+      orderBy: CommunesOrderBy
+      sortOrder: SortOrder
+    ): CommunesPaginatedResult
+    paginatedComportements(
+      searchParams: SearchParams
+      orderBy: ComportementsOrderBy
+      sortOrder: SortOrder
+    ): ComportementsPaginatedResult
+    paginatedDepartements(
+      searchParams: SearchParams
+      orderBy: DepartementsOrderBy
+      sortOrder: SortOrder
+    ): DepartementsPaginatedResult
     paginatedEspeces(searchParams: SearchParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
-    paginatedEstimationsDistance(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): EstimationsDistancePaginatedResult
-    paginatedEstimationsNombre(searchParams: SearchParams, orderBy: EstimationNombreOrderBy, sortOrder: SortOrder): EstimationsNombrePaginatedResult
-    paginatedLieuxdits(searchParams: SearchParams, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
-    paginatedMeteos(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): MeteosPaginatedResult
+    paginatedEstimationsDistance(
+      searchParams: SearchParams
+      orderBy: EntitesAvecLibelleOrderBy
+      sortOrder: SortOrder
+    ): EstimationsDistancePaginatedResult
+    paginatedEstimationsNombre(
+      searchParams: SearchParams
+      orderBy: EstimationNombreOrderBy
+      sortOrder: SortOrder
+    ): EstimationsNombrePaginatedResult
+    paginatedLieuxdits(
+      searchParams: SearchParams
+      orderBy: LieuxDitsOrderBy
+      sortOrder: SortOrder
+    ): LieuxDitsPaginatedResult
+    paginatedMeteos(
+      searchParams: SearchParams
+      orderBy: EntitesAvecLibelleOrderBy
+      sortOrder: SortOrder
+    ): MeteosPaginatedResult
     paginatedMilieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
-    paginatedObservateurs(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): ObservateursPaginatedResult
-    paginatedSexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
-    paginatedSearchEspeces(searchCriteria: SearchDonneeCriteria, searchParams: SearchDonneeParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
-    paginatedSearchDonnees(searchCriteria: SearchDonneeCriteria, searchParams: SearchDonneeParams, orderBy: SearchDonneesOrderBy, sortOrder: SortOrder): PaginatedSearchDonneesResult
+    paginatedObservateurs(
+      searchParams: SearchParams
+      orderBy: EntitesAvecLibelleOrderBy
+      sortOrder: SortOrder
+    ): ObservateursPaginatedResult
+    paginatedSexes(
+      searchParams: SearchParams
+      orderBy: EntitesAvecLibelleOrderBy
+      sortOrder: SortOrder
+    ): SexesPaginatedResult
+    paginatedSearchEspeces(
+      searchCriteria: SearchDonneeCriteria
+      searchParams: SearchDonneeParams
+      orderBy: EspecesOrderBy
+      sortOrder: SortOrder
+    ): EspecesPaginatedResult
+    paginatedSearchDonnees(
+      searchCriteria: SearchDonneeCriteria
+      searchParams: SearchDonneeParams
+      orderBy: SearchDonneesOrderBy
+      sortOrder: SortOrder
+    ): PaginatedSearchDonneesResult
     settings: Settings
     importStatus(importId: String!): ImportStatus
     exportAges: String
@@ -780,7 +829,11 @@ export default gql`
     upsertEspece(id: Int, data: InputEspece!): Espece
     upsertEstimationDistance(id: Int, data: InputEstimationDistance!): EstimationDistance
     upsertEstimationNombre(id: Int, data: InputEstimationNombre!): EstimationNombre
-    upsertInventaire(id: Int, data: InputInventaire!, migrateDonneesIfMatchesExistingInventaire: Boolean): UpsertInventaireResult
+    upsertInventaire(
+      id: Int
+      data: InputInventaire!
+      migrateDonneesIfMatchesExistingInventaire: Boolean
+    ): UpsertInventaireResult
     upsertLieuDit(id: Int, data: InputLieuDit!): LieuDit
     upsertMeteo(id: Int, data: InputMeteo!): Meteo
     upsertMilieu(id: Int, data: InputMilieu!): Milieu
@@ -790,12 +843,11 @@ export default gql`
     initializeDatabase: Boolean
     resetDatabase: Boolean
     updateDatabase: Boolean
-    userSignup(signupData: UserCreateInput!, role: UserRole) : UserInfo
+    userSignup(signupData: UserCreateInput!, role: UserRole): UserInfo
     userLogin(loginData: UserLoginInput!): UserInfo
     userRefresh: UserInfo
     userLogout: Boolean!
     userEdit(id: ID!, editUserData: EditUserData!): UserInfo
     userDelete(id: ID!): Boolean!
   }
-
 `;

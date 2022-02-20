@@ -223,8 +223,10 @@ model Milieu {
 model Observateur {
   id                 Int                  @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle            String               @unique(map: "unique_libelle") @db.VarChar(100)
+  ownerId            String               @map("owner_id")
   inventaire         Inventaire[]
   inventaire_associe inventaire_associe[]
+  owner              User                 @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_observateur_owner_id")
   settings           Settings[]
 
   @@map("observateur")
@@ -277,12 +279,13 @@ enum DatabaseRole {
 }
 
 model User {
-  id        String       @id @default(uuid())
-  username  String       @unique(map: "unique_username") @db.VarChar(50)
-  password  String       @db.VarChar(161)
-  role      DatabaseRole
-  firstName String       @map("first_name") @db.VarChar(50)
-  lastName  String?      @map("last_name") @db.VarChar(50)
+  id          String        @id @default(uuid())
+  username    String        @unique(map: "unique_username") @db.VarChar(50)
+  password    String        @db.VarChar(161)
+  role        DatabaseRole
+  firstName   String        @map("first_name") @db.VarChar(50)
+  lastName    String?       @map("last_name") @db.VarChar(50)
+  observateur Observateur[]
 
   @@map("user")
 }
