@@ -27,7 +27,8 @@ RUN apk add --no-cache mariadb-client
 COPY prisma/ /app/prisma/
 COPY package.json package-lock.json /app/ 
 
-RUN npm ci --production && \
+RUN npm set-script prepare "" && \
+  npm ci --production && \
   rm -f package.json package-lock.json
 
 WORKDIR /app/backend
