@@ -75,6 +75,6 @@
     "*": [
       "prettier --check"
     ],
-    "*.ts": "eslint --cache"
+    "*.ts": "eslint"
   }
 }
