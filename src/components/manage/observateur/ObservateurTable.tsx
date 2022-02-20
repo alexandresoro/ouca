@@ -13,9 +13,10 @@ import {
   TableSortLabel
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../contexts/UserContext";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbarContent from "../../../hooks/useSnackbarContent";
 import {
@@ -46,6 +47,7 @@ const PAGINATED_OBSERVATEURS_QUERY = gql`
       result {
         id
         libelle
+        ownerId
         nbDonnees
       }
     }
@@ -72,6 +74,8 @@ const COLUMNS = [
 const ObservateurTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const { userInfo } = useContext(UserContext);
 
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
@@ -197,6 +201,7 @@ const ObservateurTable: FunctionComponent = () => {
                   <TableCell>{observateur?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={userInfo?.role !== "admin" && userInfo?.id !== observateur?.ownerId}
                       onEditClicked={() => handleEditObservateur(observateur?.id)}
                       onDeleteClicked={() => handleDeleteObservateur(observateur)}
                     />

@@ -5,23 +5,24 @@ import { useTranslation } from "react-i18next";
 import PrimaryIconButton from "../../utils/PrimaryIconButton";
 
 type TableCellActionButtonsProps = {
+  disabled?: boolean;
   onEditClicked?: () => void;
   onDeleteClicked?: () => void;
 };
 
 const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (props) => {
-  const { onEditClicked, onDeleteClicked } = props;
+  const { disabled, onEditClicked, onDeleteClicked } = props;
   const { t } = useTranslation();
 
   return (
     <>
       <Tooltip title={t("aria-editButton") as unknown as string}>
-        <PrimaryIconButton aria-label={t("aria-editButton")} onClick={onEditClicked}>
+        <PrimaryIconButton disabled={disabled} aria-label={t("aria-editButton")} onClick={onEditClicked}>
           <Edit />
         </PrimaryIconButton>
       </Tooltip>
       <Tooltip title={t("aria-deleteButton") as unknown as string}>
-        <PrimaryIconButton aria-label={t("aria-deleteButton")} onClick={onDeleteClicked}>
+        <PrimaryIconButton disabled={disabled} aria-label={t("aria-deleteButton")} onClick={onDeleteClicked}>
           <Delete />
         </PrimaryIconButton>
       </Tooltip>
