@@ -541,8 +541,8 @@ const resolvers: Resolvers<Context> = {
       return deleteMilieu(args.id).then(({ id }) => id);
     },
     deleteObservateur: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
-      return deleteObservateur(args.id).then(({ id }) => id);
+      const user = validateUserAuthentication(context);
+      return deleteObservateur(args.id, user).then(({ id }) => id);
     },
     deleteSexe: async (_source, args, context): Promise<number> => {
       validateUserAuthentication(context);

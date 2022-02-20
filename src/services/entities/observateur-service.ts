@@ -171,7 +171,18 @@ export const upsertObservateur = async (args: MutationUpsertObservateurArgs, use
   }
 };
 
-export const deleteObservateur = async (id: number): Promise<Observateur> => {
+export const deleteObservateur = async (id: number, user: User): Promise<Observateur> => {
+  // Check that the user is allowed to modify the existing data
+  if (user?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.observateur.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== user.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.observateur.delete({
     where: {
       id
@@ -180,6 +191,7 @@ export const deleteObservateur = async (id: number): Promise<Observateur> => {
 };
 
 export const createObservateurs = async (observateurs: Omit<Observateur, "id">[]): Promise<Prisma.BatchPayload> => {
+  // TODO add user ownership
   return prisma.observateur.createMany({
     data: observateurs
   });
