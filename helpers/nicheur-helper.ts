@@ -6,11 +6,12 @@ export const getHighestNicheurStatus = (comportements: { nicheur?: NicheurCode |
   // First we keep only the comportements having a nicheur status
   const nicheurStatuses = comportements?.filter(
     (comportement) => {
-      return !!comportement.nicheur;
+      return comportement?.nicheur != null;
     }
   ).map(
     (comportement) => {
-      return comportement.nicheur;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      return comportement.nicheur as NicheurCode;
     }
   ) ?? [];
 
