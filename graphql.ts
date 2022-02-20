@@ -5,7 +5,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -794,6 +794,7 @@ export type Observateur = {
   __typename?: 'Observateur';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+  ownerId: Scalars['String'];
 };
 
 export type ObservateurWithCounts = {
@@ -801,6 +802,7 @@ export type ObservateurWithCounts = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
+  ownerId: Scalars['String'];
 };
 
 export type ObservateursPaginatedResult = PaginatedResult & {
@@ -1970,6 +1972,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type ObservateurResolvers<ContextType = any, ParentType extends ResolversParentTypes['Observateur'] = ResolversParentTypes['Observateur']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ownerId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1977,6 +1980,7 @@ export type ObservateurWithCountsResolvers<ContextType = any, ParentType extends
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  ownerId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2007,30 +2011,30 @@ export type PaginatedSearchDonneesResultResolvers<ContextType = any, ParentType 
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   age?: Resolver<Maybe<ResolversTypes['Age']>, ParentType, ContextType, RequireFields<QueryAgeArgs, 'id'>>;
-  ages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Age']>>>, ParentType, ContextType, RequireFields<QueryAgesArgs, never>>;
+  ages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Age']>>>, ParentType, ContextType, Partial<QueryAgesArgs>>;
   classe?: Resolver<Maybe<ResolversTypes['Classe']>, ParentType, ContextType, RequireFields<QueryClasseArgs, 'id'>>;
-  classes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Classe']>>>, ParentType, ContextType, RequireFields<QueryClassesArgs, never>>;
+  classes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Classe']>>>, ParentType, ContextType, Partial<QueryClassesArgs>>;
   commune?: Resolver<Maybe<ResolversTypes['Commune']>, ParentType, ContextType, RequireFields<QueryCommuneArgs, 'id'>>;
-  communes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Commune']>>>, ParentType, ContextType, RequireFields<QueryCommunesArgs, never>>;
+  communes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Commune']>>>, ParentType, ContextType, Partial<QueryCommunesArgs>>;
   comportement?: Resolver<Maybe<ResolversTypes['Comportement']>, ParentType, ContextType, RequireFields<QueryComportementArgs, 'id'>>;
   comportementList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType, RequireFields<QueryComportementListArgs, 'ids'>>;
-  comportements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType, RequireFields<QueryComportementsArgs, never>>;
+  comportements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comportement']>>>, ParentType, ContextType, Partial<QueryComportementsArgs>>;
   departement?: Resolver<Maybe<ResolversTypes['Departement']>, ParentType, ContextType, RequireFields<QueryDepartementArgs, 'id'>>;
-  departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType, RequireFields<QueryDepartementsArgs, never>>;
+  departements?: Resolver<Maybe<Array<Maybe<ResolversTypes['Departement']>>>, ParentType, ContextType, Partial<QueryDepartementsArgs>>;
   donnee?: Resolver<Maybe<ResolversTypes['DonneeResult']>, ParentType, ContextType, RequireFields<QueryDonneeArgs, 'id'>>;
   dumpDatabase?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   espece?: Resolver<Maybe<ResolversTypes['Espece']>, ParentType, ContextType, RequireFields<QueryEspeceArgs, 'id'>>;
-  especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType, RequireFields<QueryEspecesArgs, never>>;
+  especes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Espece']>>>, ParentType, ContextType, Partial<QueryEspecesArgs>>;
   estimationDistance?: Resolver<Maybe<ResolversTypes['EstimationDistance']>, ParentType, ContextType, RequireFields<QueryEstimationDistanceArgs, 'id'>>;
   estimationNombre?: Resolver<Maybe<ResolversTypes['EstimationNombre']>, ParentType, ContextType, RequireFields<QueryEstimationNombreArgs, 'id'>>;
-  estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType, RequireFields<QueryEstimationsDistanceArgs, never>>;
-  estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType, RequireFields<QueryEstimationsNombreArgs, never>>;
+  estimationsDistance?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationDistance']>>>, ParentType, ContextType, Partial<QueryEstimationsDistanceArgs>>;
+  estimationsNombre?: Resolver<Maybe<Array<Maybe<ResolversTypes['EstimationNombre']>>>, ParentType, ContextType, Partial<QueryEstimationsNombreArgs>>;
   exportAges?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportClasses?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportCommunes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportComportements?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportDepartements?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  exportDonnees?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryExportDonneesArgs, never>>;
+  exportDonnees?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, Partial<QueryExportDonneesArgs>>;
   exportEspeces?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportEstimationsDistance?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   exportEstimationsNombre?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2043,35 +2047,35 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   inventaire?: Resolver<Maybe<ResolversTypes['Inventaire']>, ParentType, ContextType, RequireFields<QueryInventaireArgs, 'id'>>;
   lastDonneeId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lieuDit?: Resolver<Maybe<ResolversTypes['LieuDit']>, ParentType, ContextType, RequireFields<QueryLieuDitArgs, 'id'>>;
-  lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType, RequireFields<QueryLieuxDitsArgs, never>>;
+  lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType, Partial<QueryLieuxDitsArgs>>;
   meteo?: Resolver<Maybe<ResolversTypes['Meteo']>, ParentType, ContextType, RequireFields<QueryMeteoArgs, 'id'>>;
   meteoList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType, RequireFields<QueryMeteoListArgs, 'ids'>>;
   meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
   milieu?: Resolver<Maybe<ResolversTypes['Milieu']>, ParentType, ContextType, RequireFields<QueryMilieuArgs, 'id'>>;
   milieuList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, RequireFields<QueryMilieuListArgs, 'ids'>>;
-  milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, RequireFields<QueryMilieuxArgs, never>>;
+  milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, Partial<QueryMilieuxArgs>>;
   nextRegroupement?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   observateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<QueryObservateurArgs, 'id'>>;
   observateurList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateurListArgs, 'ids'>>;
-  observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateursArgs, never>>;
-  paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedAgesArgs, never>>;
-  paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedClassesArgs, never>>;
-  paginatedCommunes?: Resolver<Maybe<ResolversTypes['CommunesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedCommunesArgs, never>>;
-  paginatedComportements?: Resolver<Maybe<ResolversTypes['ComportementsPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedComportementsArgs, never>>;
-  paginatedDepartements?: Resolver<Maybe<ResolversTypes['DepartementsPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedDepartementsArgs, never>>;
-  paginatedEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedEspecesArgs, never>>;
-  paginatedEstimationsDistance?: Resolver<Maybe<ResolversTypes['EstimationsDistancePaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedEstimationsDistanceArgs, never>>;
-  paginatedEstimationsNombre?: Resolver<Maybe<ResolversTypes['EstimationsNombrePaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedEstimationsNombreArgs, never>>;
-  paginatedLieuxdits?: Resolver<Maybe<ResolversTypes['LieuxDitsPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedLieuxditsArgs, never>>;
-  paginatedMeteos?: Resolver<Maybe<ResolversTypes['MeteosPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedMeteosArgs, never>>;
-  paginatedMilieux?: Resolver<Maybe<ResolversTypes['MilieuxPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedMilieuxArgs, never>>;
-  paginatedObservateurs?: Resolver<Maybe<ResolversTypes['ObservateursPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedObservateursArgs, never>>;
-  paginatedSearchDonnees?: Resolver<Maybe<ResolversTypes['PaginatedSearchDonneesResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSearchDonneesArgs, never>>;
-  paginatedSearchEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSearchEspecesArgs, never>>;
-  paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSexesArgs, never>>;
+  observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, Partial<QueryObservateursArgs>>;
+  paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedAgesArgs>>;
+  paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedClassesArgs>>;
+  paginatedCommunes?: Resolver<Maybe<ResolversTypes['CommunesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedCommunesArgs>>;
+  paginatedComportements?: Resolver<Maybe<ResolversTypes['ComportementsPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedComportementsArgs>>;
+  paginatedDepartements?: Resolver<Maybe<ResolversTypes['DepartementsPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedDepartementsArgs>>;
+  paginatedEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedEspecesArgs>>;
+  paginatedEstimationsDistance?: Resolver<Maybe<ResolversTypes['EstimationsDistancePaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedEstimationsDistanceArgs>>;
+  paginatedEstimationsNombre?: Resolver<Maybe<ResolversTypes['EstimationsNombrePaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedEstimationsNombreArgs>>;
+  paginatedLieuxdits?: Resolver<Maybe<ResolversTypes['LieuxDitsPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedLieuxditsArgs>>;
+  paginatedMeteos?: Resolver<Maybe<ResolversTypes['MeteosPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedMeteosArgs>>;
+  paginatedMilieux?: Resolver<Maybe<ResolversTypes['MilieuxPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedMilieuxArgs>>;
+  paginatedObservateurs?: Resolver<Maybe<ResolversTypes['ObservateursPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedObservateursArgs>>;
+  paginatedSearchDonnees?: Resolver<Maybe<ResolversTypes['PaginatedSearchDonneesResult']>, ParentType, ContextType, Partial<QueryPaginatedSearchDonneesArgs>>;
+  paginatedSearchEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedSearchEspecesArgs>>;
+  paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedSexesArgs>>;
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
   sexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<QuerySexeArgs, 'id'>>;
-  sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType, RequireFields<QuerySexesArgs, never>>;
+  sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType, Partial<QuerySexesArgs>>;
   specimenCountByAge?: Resolver<Maybe<Array<Maybe<ResolversTypes['AgeWithSpecimensCount']>>>, ParentType, ContextType, RequireFields<QuerySpecimenCountByAgeArgs, 'especeId'>>;
   specimenCountBySexe?: Resolver<Maybe<Array<Maybe<ResolversTypes['SexeWithSpecimensCount']>>>, ParentType, ContextType, RequireFields<QuerySpecimenCountBySexeArgs, 'especeId'>>;
   version?: Resolver<Maybe<ResolversTypes['Version']>, ParentType, ContextType>;
