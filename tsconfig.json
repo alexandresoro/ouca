@@ -9,5 +9,6 @@
     "strict": true,
     "strictNullChecks": false // TODO Put this at true someday to improve code quality
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.*"]
 }
