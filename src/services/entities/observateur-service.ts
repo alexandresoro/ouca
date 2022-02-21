@@ -57,28 +57,34 @@ export const findObservateurs = async (params?: FindParams): Promise<Observateur
 };
 
 export const findAllObservateurs = async (includeCounts = true): Promise<ObservateurWithCounts[]> => {
-  const observateurs = await prisma.observateur.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    include: includeCounts && {
-      inventaire: {
-        select: {
-          _count: {
-            select: {
-              donnee: true
+  if (includeCounts) {
+    const observateurs = await prisma.observateur.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      include: {
+        inventaire: {
+          select: {
+            _count: {
+              select: {
+                donnee: true
+              }
             }
           }
         }
       }
-    }
-  });
+    });
 
-  return observateurs.map((observateur) => {
-    const nbDonnees = observateur?.inventaire?.map((espece) => espece._count?.donnee).reduce(counterReducer, 0) ?? 0;
-    return {
-      ...observateur,
-      ...(includeCounts ? { nbDonnees } : {})
-    };
-  });
+    return observateurs.map((observateur) => {
+      const nbDonnees = observateur?.inventaire?.map((espece) => espece._count?.donnee).reduce(counterReducer, 0) ?? 0;
+      return {
+        ...observateur,
+        ...(includeCounts ? { nbDonnees } : {})
+      };
+    });
+  } else {
+    return prisma.observateur.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
+    });
+  }
 };
 
 export const findPaginatedObservateurs = async (

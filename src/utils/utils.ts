@@ -1,12 +1,9 @@
 import { parse } from "date-fns";
 import { fr as locale } from "date-fns/locale";
 
-export const areSetsContainingSameValues = <T>(
-  firstArray: Set<T>,
-  secondArray: Set<T>
-): boolean => {
+export const areSetsContainingSameValues = <T>(firstArray: Set<T>, secondArray: Set<T>): boolean => {
   if (firstArray.size !== secondArray.size) return false;
-  return [...firstArray].every(value => secondArray.has(value));
+  return [...firstArray].every((value) => secondArray.has(value));
 };
 
 export const isIdInListIds = (ids: Set<number>, idToFind: number): boolean => {
@@ -40,12 +37,7 @@ export const getFormattedTime = (timeStr: string): string => {
     let value = timeStr;
     const timeRegExp1 = new RegExp("^[0-9][0-9][0-9][0-9]$");
     if (timeRegExp1.test(value)) {
-      value =
-        value.charAt(0) +
-        value.charAt(1) +
-        ":" +
-        value.charAt(2) +
-        value.charAt(3);
+      value = value.charAt(0) + value.charAt(1) + ":" + value.charAt(2) + value.charAt(3);
     }
 
     const timeRegExp2 = new RegExp("^[0-9][0-9][h][0-9][0-9]$");
@@ -66,5 +58,5 @@ export const isTimeValid = (timeStr: string): boolean => {
   const value = getFormattedTime(timeStr);
 
   const timeRegExp = new RegExp("^[0-9][0-9][:][0-9][0-9]$");
-  return value && timeRegExp.test(value);
+  return !!value && timeRegExp.test(value);
 };
