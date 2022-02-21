@@ -45,7 +45,6 @@ const REGROUPEMENT_MIN_VALUE = 1;
 const REGROUPEMENT_MAX_VALUE = 65535;
 
 export class ImportedDonnee {
-
   observateur: string;
   associes: string[];
   date: string;
@@ -74,9 +73,7 @@ export class ImportedDonnee {
 
   constructor(donneeTab: string[], coordinatesSystem: CoordinatesSystem) {
     this.observateur = donneeTab[OBSERVATEUR_INDEX].trim();
-    this.associes = donneeTab[ASSOCIES_INDEX]
-      ? donneeTab[ASSOCIES_INDEX].trim().split(LIST_SEPARATOR)
-      : [];
+    this.associes = donneeTab[ASSOCIES_INDEX] ? donneeTab[ASSOCIES_INDEX].trim().split(LIST_SEPARATOR) : [];
     this.date = donneeTab[DATE_INDEX].trim();
     this.heure = donneeTab[HEURE_INDEX].trim();
     this.duree = donneeTab[DUREE_INDEX].trim();
@@ -87,9 +84,7 @@ export class ImportedDonnee {
     this.longitude = donneeTab[LONGITUDE_INDEX].trim().replace(",", ".");
     this.latitude = donneeTab[LATITUDE_INDEX].trim().replace(",", ".");
     this.temperature = donneeTab[TEMPERATURE_INDEX].trim().replace(",", ".");
-    this.meteos = donneeTab[METEOS_INDEX]
-      ? donneeTab[METEOS_INDEX].trim().split(LIST_SEPARATOR)
-      : [];
+    this.meteos = donneeTab[METEOS_INDEX] ? donneeTab[METEOS_INDEX].trim().split(LIST_SEPARATOR) : [];
     this.espece = donneeTab[ESPECE_INDEX].trim();
     this.age = donneeTab[AGE_INDEX].trim();
     this.sexe = donneeTab[SEXE_INDEX].trim();
@@ -101,11 +96,7 @@ export class ImportedDonnee {
     this.commentaire = donneeTab[COMMENTAIRE_INDEX].trim().replace(";", ",");
 
     this.comportements = [];
-    for (
-      let comportementIndex = COMP_1_INDEX;
-      comportementIndex <= COMP_6_INDEX;
-      comportementIndex++
-    ) {
+    for (let comportementIndex = COMP_1_INDEX; comportementIndex <= COMP_6_INDEX; comportementIndex++) {
       const comportement: string = donneeTab[comportementIndex].trim();
       if (comportement) {
         this.comportements.push(comportement);
@@ -113,11 +104,7 @@ export class ImportedDonnee {
     }
 
     this.milieux = [];
-    for (
-      let milieuIndex = MILIEU_1_INDEX;
-      milieuIndex <= MILIEU_4_INDEX;
-      milieuIndex++
-    ) {
+    for (let milieuIndex = MILIEU_1_INDEX; milieuIndex <= MILIEU_4_INDEX; milieuIndex++) {
       const milieu: string = donneeTab[milieuIndex].trim();
       if (milieu) {
         this.milieux.push(milieu);
@@ -149,9 +136,9 @@ export class ImportedDonnee {
       commentaire: this.commentaire ? this.commentaire : null,
       regroupement: this.regroupement ? +this.regroupement : null,
       comportementsIds: [...comportementsIds],
-      milieuxIds: [...milieuxIds],
+      milieuxIds: [...milieuxIds]
     };
-  }
+  };
 
   buildInputInventaire = (
     observateurId: number,
@@ -161,16 +148,17 @@ export class ImportedDonnee {
     customizedAltitude: number | null,
     customizedCoordinates: Coordinates | null
   ): InputInventaire => {
-    const customizedCoordinatesStr = (customizedAltitude != null && customizedCoordinates != null)
-      ? {
-        customizedCoordinates: {
-          altitude: customizedAltitude,
-          latitude: customizedCoordinates?.latitude,
-          longitude: customizedCoordinates?.longitude,
-          system: customizedCoordinates?.system
-        }
-      }
-      : {};
+    const customizedCoordinatesStr =
+      customizedAltitude != null && customizedCoordinates != null
+        ? {
+            customizedCoordinates: {
+              altitude: customizedAltitude,
+              latitude: customizedCoordinates?.latitude,
+              longitude: customizedCoordinates?.longitude,
+              system: customizedCoordinates?.system
+            }
+          }
+        : {};
 
     return {
       observateurId,
@@ -179,15 +167,13 @@ export class ImportedDonnee {
       duree: getFormattedTime(this.duree),
       lieuDitId: lieuditId,
       ...customizedCoordinatesStr,
-      temperature: (this.temperature == null || this.temperature === "")
-        ? null
-        : +this.temperature,
+      temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
       meteosIds: [...meteosIds],
       associesIds: [...associesIds]
     };
-  }
+  };
 
-  checkValidity = (): string => {
+  checkValidity = (): string | null => {
     const observateurError = this.checkObservateurValidity();
     if (observateurError) {
       return observateurError;
@@ -281,11 +267,11 @@ export class ImportedDonnee {
     return null;
   };
 
-  private checkObservateurValidity = (): string => {
+  private checkObservateurValidity = (): string | null => {
     return this.observateur ? null : "L'observateur ne peut pas être vide";
   };
 
-  private checkDateValidity = (): string => {
+  private checkDateValidity = (): string | null => {
     if (!this.date) {
       return "La date ne peut pas être vide";
     }
@@ -297,33 +283,33 @@ export class ImportedDonnee {
     return null;
   };
 
-  private checkHeureValidity = (): string => {
+  private checkHeureValidity = (): string | null => {
     if (this.heure && !isTimeValid(this.heure)) {
       return "L'heure ne respecte pas le format demandé: HH:MM";
     }
     return null;
   };
 
-  private checkDureeValidity = (): string => {
+  private checkDureeValidity = (): string | null => {
     if (this.duree && !isTimeValid(this.duree)) {
       return "La durée ne respecte pas le format demandé: HH:MM";
     }
     return null;
   };
 
-  private checkDepartementValidity = (): string => {
+  private checkDepartementValidity = (): string | null => {
     return this.departement ? null : "Le département ne peut pas être vide";
   };
 
-  private checkCommuneValidity = (): string => {
+  private checkCommuneValidity = (): string | null => {
     return this.commune ? null : "La commune du lieu-dit ne peut pas être vide";
   };
 
-  private checkLieuditValidity = (): string => {
+  private checkLieuditValidity = (): string | null => {
     return this.lieuDit ? null : "Le lieu-dit ne peut pas être vide";
   };
 
-  private checkTemperatureValidity = (): string => {
+  private checkTemperatureValidity = (): string | null => {
     if (this.temperature) {
       const temperature = Number(this.temperature);
 
@@ -331,10 +317,7 @@ export class ImportedDonnee {
         return "La température doit être un entier";
       }
 
-      if (
-        temperature < TEMPERATURE_MIN_VALUE ||
-        temperature > TEMPERATURE_MAX_VALUE
-      ) {
+      if (temperature < TEMPERATURE_MIN_VALUE || temperature > TEMPERATURE_MAX_VALUE) {
         return `La temperature doit être un entier compris entre ${TEMPERATURE_MIN_VALUE} et ${TEMPERATURE_MAX_VALUE}`;
       }
     }
@@ -342,23 +325,23 @@ export class ImportedDonnee {
     return null;
   };
 
-  private checkEspeceValidity = (): string => {
+  private checkEspeceValidity = (): string | null => {
     return this.espece ? null : "L'espèce ne peut pas être vide";
   };
 
-  private checkSexeValidity = (): string => {
+  private checkSexeValidity = (): string | null => {
     return this.sexe ? null : "Le sexe ne peut pas être vide";
   };
 
-  private checkAgeValidity = (): string => {
+  private checkAgeValidity = (): string | null => {
     return this.age ? null : "L'âge ne peut pas être vide";
   };
 
-  private checkEstimationNombreValidity = (): string => {
+  private checkEstimationNombreValidity = (): string | null => {
     return this.estimationNombre ? null : "L'estimation du nombre ne peut pas être vide";
   };
 
-  private checkNombreValidity = (): string => {
+  private checkNombreValidity = (): string | null => {
     if (this.nombre) {
       const nombre = Number(this.nombre);
 
@@ -374,7 +357,7 @@ export class ImportedDonnee {
     return null;
   };
 
-  private checkDistanceValidity = (): string => {
+  private checkDistanceValidity = (): string | null => {
     if (this.distance) {
       const distance = Number(this.distance);
 
@@ -382,10 +365,7 @@ export class ImportedDonnee {
         return "La distance de contact doit être un entier";
       }
 
-      if (
-        distance < DISTANCE_MIN_VALUE ||
-        distance > DISTANCE_MAX_VALUE
-      ) {
+      if (distance < DISTANCE_MIN_VALUE || distance > DISTANCE_MAX_VALUE) {
         return `La distance de contact doit être un entier compris entre ${DISTANCE_MIN_VALUE} et ${DISTANCE_MAX_VALUE}`;
       }
     }
@@ -393,7 +373,7 @@ export class ImportedDonnee {
     return null;
   };
 
-  private checkRegroupementValidity = (): string => {
+  private checkRegroupementValidity = (): string | null => {
     if (this.regroupement) {
       const regroupement = Number(this.regroupement);
 
@@ -401,10 +381,7 @@ export class ImportedDonnee {
         return "La numéro de regroupement doit être un entier";
       }
 
-      if (
-        regroupement < REGROUPEMENT_MIN_VALUE ||
-        regroupement > REGROUPEMENT_MAX_VALUE
-      ) {
+      if (regroupement < REGROUPEMENT_MIN_VALUE || regroupement > REGROUPEMENT_MAX_VALUE) {
         return `Le numéro de regroupement doit être un entier compris entre ${REGROUPEMENT_MIN_VALUE} et ${REGROUPEMENT_MAX_VALUE}`;
       }
     }

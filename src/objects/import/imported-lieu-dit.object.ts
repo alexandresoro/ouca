@@ -13,7 +13,6 @@ const ALTITUDE_INDEX = 5;
 const LIEUDIT_MAX_LENGTH = 150;
 
 export class ImportedLieuDit {
-
   departement: string;
   commune: string;
   nom: string;
@@ -32,9 +31,7 @@ export class ImportedLieuDit {
     this.coordinatesSystem = coordinatesSystem;
   }
 
-  buildLieudit = (
-    communeId: number
-  ): Omit<Lieudit, 'id'> => {
+  buildLieudit = (communeId: number): Omit<Lieudit, "id"> => {
     return {
       communeId,
       nom: this.nom,
@@ -45,7 +42,7 @@ export class ImportedLieuDit {
     };
   };
 
-  checkValidity = (): string => {
+  checkValidity = (): string | undefined => {
     const departementError = this.checkDepartementValidity();
     if (departementError) {
       return departementError;
@@ -75,18 +72,17 @@ export class ImportedLieuDit {
     if (altitudeError) {
       return altitudeError;
     }
-  }
+  };
 
-
-  private checkDepartementValidity = (): string => {
+  private checkDepartementValidity = (): string | null => {
     return this.departement ? null : "Le département du lieu-dit ne peut pas être vide";
   };
 
-  private checkCommuneValidity = (): string => {
+  private checkCommuneValidity = (): string | null => {
     return this.commune ? null : "La commune du lieu-dit ne peut pas être vide";
   };
 
-  private checkNomValidity = (): string => {
+  private checkNomValidity = (): string | null => {
     if (!this.nom) {
       return "Le nom du lieu-dit ne peut pas être vide";
     }
@@ -97,6 +93,4 @@ export class ImportedLieuDit {
 
     return null;
   };
-
-
 }

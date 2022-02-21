@@ -9,7 +9,6 @@ const CODE_MAX_VALUE = 65535;
 const NOM_MAX_LENGTH = 100;
 
 export class ImportedCommune {
-
   departement: string;
   code: string;
   nom: string;
@@ -20,9 +19,7 @@ export class ImportedCommune {
     this.nom = communeTab[NOM_INDEX].trim();
   }
 
-  buildCommune = (
-    departementId: number
-  ): Omit<Commune, 'id'> => {
+  buildCommune = (departementId: number): Omit<Commune, "id"> => {
     return {
       departementId,
       code: +this.code,
@@ -30,7 +27,7 @@ export class ImportedCommune {
     };
   };
 
-  checkValidity = (): string => {
+  checkValidity = (): string | undefined => {
     const departementError = this.checkDepartementValidity();
     if (departementError) {
       return departementError;
@@ -45,13 +42,13 @@ export class ImportedCommune {
     if (nomCommuneError) {
       return nomCommuneError;
     }
-  }
+  };
 
-  private checkDepartementValidity = (): string => {
+  private checkDepartementValidity = (): string | null => {
     return this.departement ? null : "Le département de la commune ne peut pas être vide";
   };
 
-  private checkCodeCommuneValidity = (): string => {
+  private checkCodeCommuneValidity = (): string | null => {
     if (!this.code) {
       return "Le code de la commune ne peut pas être vide";
     }
@@ -62,17 +59,14 @@ export class ImportedCommune {
       return "Le code de la commune doit être un entier";
     }
 
-    if (
-      codeCommune < CODE_MIN_VALUE ||
-      codeCommune > CODE_MAX_VALUE
-    ) {
+    if (codeCommune < CODE_MIN_VALUE || codeCommune > CODE_MAX_VALUE) {
       return `Le code de la commune doit être un entier compris entre ${CODE_MIN_VALUE} et ${CODE_MAX_VALUE}`;
     }
 
     return null;
   };
 
-  private checkNomCommuneValidity = (): string => {
+  private checkNomCommuneValidity = (): string | null => {
     if (!this.nom) {
       return "Le nom de la commune ne peut pas être vide";
     }
@@ -83,5 +77,4 @@ export class ImportedCommune {
 
     return null;
   };
-
 }

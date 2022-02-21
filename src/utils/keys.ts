@@ -12,8 +12,7 @@ export const SIGNING_TOKEN_ALGO = "HS256";
 // The way we generate the keys mean that they are changed everytime the app starts
 // So a token will be invalidated if it comes from a previous session
 class TokenKeysClass {
-
-  private key: KeyLike | Uint8Array;
+  private key!: KeyLike | Uint8Array;
 
   public getKey = async (): Promise<KeyLike | Uint8Array> => {
     if (!this.key) {
@@ -26,8 +25,7 @@ class TokenKeysClass {
       }
     }
     return this.key;
-  }
-
+  };
 }
 
 export const TokenKeys = new TokenKeysClass();

@@ -10,7 +10,6 @@ const NOM_FRANCAIS_MAX_LENGTH = 100;
 const NOM_LATIN_MAX_LENGTH = 100;
 
 export class ImportedEspece {
-
   classe: string;
   code: string;
   nomFrancais: string;
@@ -23,7 +22,7 @@ export class ImportedEspece {
     this.nomLatin = especeTab[NOM_LATIN_INDEX].trim();
   }
 
-  buildEspece = (classeId: number): Omit<Espece, 'id'> => {
+  buildEspece = (classeId: number): Omit<Espece, "id"> => {
     return {
       classeId,
       code: this.code,
@@ -32,7 +31,7 @@ export class ImportedEspece {
     };
   };
 
-  checkValidity = (): string => {
+  checkValidity = (): string | null => {
     const classeError = this.checkClasseValidity();
     if (classeError) {
       return classeError;
@@ -54,13 +53,13 @@ export class ImportedEspece {
     }
 
     return null;
-  }
+  };
 
-  private checkClasseValidity = (): string => {
+  private checkClasseValidity = (): string | null => {
     return this.classe ? null : "La classe de l'espèce ne peut pas être vide";
   };
 
-  private checkCodeValidity = (): string => {
+  private checkCodeValidity = (): string | null => {
     if (!this.code) {
       return "Le code de l'espèce ne peut pas être vide";
     }
@@ -72,7 +71,7 @@ export class ImportedEspece {
     return null;
   };
 
-  private checkNomFrancaisValidity = (): string => {
+  private checkNomFrancaisValidity = (): string | null => {
     if (!this.nomFrancais) {
       return "Le nom français ne peut pas être vide";
     }
@@ -84,7 +83,7 @@ export class ImportedEspece {
     return null;
   };
 
-  private checkNomLatinValidity = (): string => {
+  private checkNomLatinValidity = (): string | null => {
     if (!this.nomLatin) {
       return "Le nom scientifique ne peut pas être vide";
     }

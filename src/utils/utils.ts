@@ -32,7 +32,7 @@ export const getFormattedDate = (value: string): Date | null => {
   return null;
 };
 
-export const getFormattedTime = (timeStr: string): string => {
+export const getFormattedTime = (timeStr: string): string | null => {
   if (timeStr) {
     let value = timeStr;
     const timeRegExp1 = new RegExp("^[0-9][0-9][0-9][0-9]$");

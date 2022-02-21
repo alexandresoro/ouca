@@ -184,7 +184,7 @@ export type Context = {
 };
 
 const validateUserAuthentication = (context: Context): User => {
-  if (!context?.userId) {
+  if (!context?.userId || !context?.role) {
     throw new AuthenticationError("User is not authenticated.");
   }
   return {
@@ -195,19 +195,19 @@ const validateUserAuthentication = (context: Context): User => {
 
 const resolvers: Resolvers<Context> = {
   Query: {
-    age: async (_source, args, context): Promise<Age> => {
+    age: async (_source, args, context): Promise<Age | null> => {
       validateUserAuthentication(context);
       return findAge(args.id);
     },
-    classe: async (_source, args, context): Promise<Classe> => {
+    classe: async (_source, args, context): Promise<Classe | null> => {
       validateUserAuthentication(context);
       return findClasse(args.id);
     },
-    commune: async (_source, args, context): Promise<Omit<Commune, "departement">> => {
+    commune: async (_source, args, context): Promise<Omit<Commune, "departement"> | null> => {
       validateUserAuthentication(context);
       return findCommune(args.id);
     },
-    comportement: async (_source, args, context): Promise<Comportement> => {
+    comportement: async (_source, args, context): Promise<Comportement | null> => {
       validateUserAuthentication(context);
       return findComportement(args.id);
     },
@@ -215,7 +215,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findComportementsByIds(args.ids);
     },
-    departement: async (_source, args, context): Promise<Departement> => {
+    departement: async (_source, args, context): Promise<Departement | null> => {
       validateUserAuthentication(context);
       return findDepartement(args.id);
     },
@@ -225,15 +225,15 @@ const resolvers: Resolvers<Context> = {
         id: args.id
       };
     },
-    espece: async (_source, args, context): Promise<Omit<Espece, "classe">> => {
+    espece: async (_source, args, context): Promise<Omit<Espece, "classe"> | null> => {
       validateUserAuthentication(context);
       return findEspece(args.id);
     },
-    estimationDistance: async (_source, args, context): Promise<EstimationDistance> => {
+    estimationDistance: async (_source, args, context): Promise<EstimationDistance | null> => {
       validateUserAuthentication(context);
       return findEstimationDistance(args.id);
     },
-    estimationNombre: async (_source, args, context): Promise<EstimationNombre> => {
+    estimationNombre: async (_source, args, context): Promise<EstimationNombre | null> => {
       validateUserAuthentication(context);
       return findEstimationNombre(args.id);
     },
@@ -241,11 +241,11 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findInventaire(args.id);
     },
-    lieuDit: async (_source, args, context): Promise<Omit<LieuDit, "commune">> => {
+    lieuDit: async (_source, args, context): Promise<Omit<LieuDit, "commune"> | null> => {
       validateUserAuthentication(context);
       return findLieuDit(args.id);
     },
-    meteo: async (_source, args, context): Promise<Meteo> => {
+    meteo: async (_source, args, context): Promise<Meteo | null> => {
       validateUserAuthentication(context);
       return findMeteo(args.id);
     },
@@ -253,7 +253,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findMeteosByIds(args.ids);
     },
-    milieu: async (_source, args, context): Promise<Milieu> => {
+    milieu: async (_source, args, context): Promise<Milieu | null> => {
       validateUserAuthentication(context);
       return findMilieu(args.id);
     },
@@ -261,7 +261,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findMilieuxByIds(args.ids);
     },
-    observateur: async (_source, args, context): Promise<Observateur> => {
+    observateur: async (_source, args, context): Promise<Observateur | null> => {
       validateUserAuthentication(context);
       return findObservateur(args.id);
     },
@@ -269,7 +269,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findObservateursByIds(args.ids);
     },
-    sexe: async (_source, args, context): Promise<Sexe> => {
+    sexe: async (_source, args, context): Promise<Sexe | null> => {
       validateUserAuthentication(context);
       return findSexe(args.id);
     },
@@ -414,7 +414,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findPaginatedDonneesByCriteria(args);
     },
-    importStatus: async (_source, args, context): Promise<ImportStatus> => {
+    importStatus: async (_source, args, context): Promise<ImportStatus | null> => {
       validateUserAuthentication(context);
       return getImportStatus(args.importId);
     },
@@ -704,7 +704,7 @@ const resolvers: Resolvers<Context> = {
 
       throw new AuthenticationError("Authentication failed");
     },
-    userRefresh: async (_source, args, context): Promise<UserInfo> => {
+    userRefresh: async (_source, args, context): Promise<UserInfo | null> => {
       validateUserAuthentication(context);
 
       const userInfo = await getUser(context.userId);

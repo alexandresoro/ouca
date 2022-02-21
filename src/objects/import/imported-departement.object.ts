@@ -4,28 +4,27 @@ const CODE_INDEX = 0;
 const CODE_MAX_LENGTH = 100;
 
 export class ImportedDepartement {
-
   code: string;
 
   constructor(departementTab: string[]) {
     this.code = departementTab[CODE_INDEX].trim();
   }
 
-  buildDepartement = (): Omit<Departement, 'id'> => {
+  buildDepartement = (): Omit<Departement, "id"> => {
     return {
       code: this.code
     };
   };
 
-  checkValidity = (): string => {
+  checkValidity = (): string | null => {
     const codeError = this.checkCodeValidity();
     if (codeError) {
       return codeError;
     }
     return null;
-  }
+  };
 
-  private checkCodeValidity = (): string => {
+  private checkCodeValidity = (): string | null => {
     if (!this.code) {
       return "Le département ne peut pas être vide";
     }

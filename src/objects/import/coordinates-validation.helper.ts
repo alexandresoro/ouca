@@ -1,11 +1,10 @@
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 
-
 const ALTITUDE_MIN_VALUE = 0;
 const ALTITUDE_MAX_VALUE = 65535;
 
 export class CoordinatesValidatorHelper {
-  public static checkAltitudeValidity(altitudeStr: string): string {
+  public static checkAltitudeValidity(altitudeStr: string): string | null {
     if (!altitudeStr) {
       return "L'altitude du lieu-dit ne peut pas être vide";
     }
@@ -16,17 +15,14 @@ export class CoordinatesValidatorHelper {
       return "L'altitude du lieu-dit doit être un entier";
     }
 
-    if (
-      altitude < ALTITUDE_MIN_VALUE ||
-      altitude > ALTITUDE_MAX_VALUE
-    ) {
+    if (altitude < ALTITUDE_MIN_VALUE || altitude > ALTITUDE_MAX_VALUE) {
       return `L'altitude du lieu-dit doit être un entier compris entre ${ALTITUDE_MIN_VALUE} et ${ALTITUDE_MAX_VALUE}`;
     }
 
     return null;
   }
 
-  public static checkLongitudeValidity(longitudeStr: string, coordinatesSystem: CoordinatesSystem): string {
+  public static checkLongitudeValidity(longitudeStr: string, coordinatesSystem: CoordinatesSystem): string | undefined {
     if (!longitudeStr) {
       return "La longitude du lieu-dit ne peut pas être vide";
     }
@@ -42,7 +38,7 @@ export class CoordinatesValidatorHelper {
     }
   }
 
-  public static checkLatitudeValidity(latitudeStr: string, coordinatesSystem: CoordinatesSystem): string {
+  public static checkLatitudeValidity(latitudeStr: string, coordinatesSystem: CoordinatesSystem): string | undefined {
     if (!latitudeStr) {
       return "La latitude du lieu-dit ne peut pas être vide";
     }

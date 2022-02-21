@@ -5,7 +5,6 @@ const CODE_MAX_LENGTH = 6;
 const LIBELLE_MAX_LENGTH = 100;
 
 export class ImportedEntiteAvecLibelleEtCode {
-
   code: string;
   libelle: string;
 
@@ -15,8 +14,8 @@ export class ImportedEntiteAvecLibelleEtCode {
   }
 
   buildEntiteAvecLibelleEtCode = (): {
-    libelle: string
-    code: string
+    libelle: string;
+    code: string;
   } => {
     return {
       code: this.code,
@@ -24,7 +23,7 @@ export class ImportedEntiteAvecLibelleEtCode {
     };
   };
 
-  checkValidity = (): string => {
+  checkValidity = (): string | undefined => {
     const codeError = this.checkCodeValidity();
     if (codeError) {
       return codeError;
@@ -34,24 +33,21 @@ export class ImportedEntiteAvecLibelleEtCode {
     if (libelleError) {
       return libelleError;
     }
-  }
+  };
 
-  private checkCodeValidity = (): string => {
+  private checkCodeValidity = (): string | null => {
     if (!this.code) {
       return "Le code ne peut pas être vide";
     }
 
     if (this.code.length > CODE_MAX_LENGTH) {
-      return (
-        `La longueur maximale du code est de ${CODE_MAX_LENGTH} caractères`
-      );
+      return `La longueur maximale du code est de ${CODE_MAX_LENGTH} caractères`;
     }
 
     return null;
   };
 
-
-  private checkLibelleValidity = (): string => {
+  private checkLibelleValidity = (): string | null => {
     if (!this.libelle) {
       return "Le libellé ne peut pas être vide";
     }
@@ -62,8 +58,4 @@ export class ImportedEntiteAvecLibelleEtCode {
 
     return null;
   };
-
-
-
-
 }
