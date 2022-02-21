@@ -333,7 +333,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findSexes(args?.params);
     },
-    lastDonneeId: async (_source, args, context): Promise<number> => {
+    lastDonneeId: async (_source, args, context): Promise<number | null> => {
       validateUserAuthentication(context);
       return findLastDonneeId();
     },
@@ -481,7 +481,7 @@ const resolvers: Resolvers<Context> = {
       }
       return saveDatabaseRequest();
     },
-    settings: async (_source, args, context): Promise<Settings> => {
+    settings: async (_source, args, context): Promise<Settings | null> => {
       validateUserAuthentication(context);
       // TODO handle own user settings
       return findAppConfiguration();
@@ -705,9 +705,9 @@ const resolvers: Resolvers<Context> = {
       throw new AuthenticationError("Authentication failed");
     },
     userRefresh: async (_source, args, context): Promise<UserInfo | null> => {
-      validateUserAuthentication(context);
+      const user = validateUserAuthentication(context);
 
-      const userInfo = await getUser(context.userId);
+      const userInfo = await getUser(user.id);
       if (userInfo) {
         await createAndAddSignedTokenAsCookie(context.reply, userInfo);
         return userInfo;

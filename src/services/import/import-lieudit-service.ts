@@ -9,12 +9,12 @@ import { createLieuxDits, findAllLieuxDits, LieuDitWithCoordinatesAsNumber } fro
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
-  private departements: Departement[];
-  private communes: Commune[];
-  private lieuxDits: (Omit<Lieudit, 'id'> | LieuDitWithCoordinatesAsNumber)[];
+  private departements!: Departement[];
+  private communes!: Commune[];
+  private lieuxDits!: (Omit<Lieudit, "id"> | LieuDitWithCoordinatesAsNumber)[];
 
-  private lieuxDitsToInsert: Omit<Lieudit, 'id'>[];
-  private coordinatesSystem: CoordinatesSystem;
+  private lieuxDitsToInsert!: Omit<Lieudit, "id">[];
+  private coordinatesSystem!: CoordinatesSystem;
 
   protected getNumberOfColumns = (): number => {
     return 6;
@@ -22,18 +22,25 @@ export class ImportLieuxditService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.lieuxDitsToInsert = [];
-    let coordinatesSystemType: CoordinatesSystemType;
+    let coordinatesSystemType: CoordinatesSystemType | undefined;
 
-    [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([findAllDepartements({ includeCounts: false }), findAllCommunes(), findAllLieuxDits(), findCoordinatesSystem()]);
+    [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
+      findAllDepartements({ includeCounts: false }),
+      findAllCommunes(),
+      findAllLieuxDits(),
+      findCoordinatesSystem()
+    ]);
 
     if (!coordinatesSystemType) {
-      return Promise.reject("Veuillez choisir le système de coordonnées de l'application dans la page de configuration");
+      return Promise.reject(
+        "Veuillez choisir le système de coordonnées de l'application dans la page de configuration"
+      );
     } else {
       this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
     }
-  }
+  };
 
-  protected validateAndPrepareEntity = (lieuDitTab: string[]): string => {
+  protected validateAndPrepareEntity = (lieuDitTab: string[]): string | null => {
     const importedLieuDit = new ImportedLieuDit(lieuDitTab, this.coordinatesSystem);
 
     const dataValidity = importedLieuDit.checkValidity();
@@ -63,17 +70,13 @@ export class ImportLieuxditService extends ImportService {
 
     // Check that the lieu-dit does not exist yet
     const lieudit = this.lieuxDits.find((lieuDit) => {
-      return (
-        lieuDit.communeId === commune.id && this.compareStrings(lieuDit.nom, importedLieuDit.nom)
-      );
+      return lieuDit.communeId === commune.id && this.compareStrings(lieuDit.nom, importedLieuDit.nom);
     });
     if (lieudit) {
       return "Il existe déjà un lieu-dit avec ce nom dans cette commune";
     }
 
-    const lieuditToSave = importedLieuDit.buildLieudit(
-      commune.id
-    );
+    const lieuditToSave = importedLieuDit.buildLieudit(commune.id);
 
     this.lieuxDitsToInsert.push(lieuditToSave);
     this.lieuxDits.push(lieuditToSave);
@@ -85,6 +88,5 @@ export class ImportLieuxditService extends ImportService {
     if (this.lieuxDitsToInsert.length) {
       await createLieuxDits(this.lieuxDitsToInsert);
     }
-  }
-
+  };
 }

@@ -40,7 +40,7 @@ export const findObservateursByIds = async (ids: number[]): Promise<Observateur[
   });
 };
 
-export const findObservateurs = async (params?: FindParams): Promise<Observateur[]> => {
+export const findObservateurs = async (params?: FindParams | null): Promise<Observateur[]> => {
   const { q, max } = params ?? {};
 
   return prisma.observateur.findMany({

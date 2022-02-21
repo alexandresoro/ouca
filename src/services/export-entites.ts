@@ -1,25 +1,25 @@
-import { randomUUID } from 'crypto';
-import path from 'path';
-import { GPS_COORDINATES } from '../model/coordinates-system/gps.object';
-import { SearchDonneeCriteria } from '../model/graphql';
-import { getNicheurStatusToDisplay } from '../model/helpers/nicheur-helper';
-import { SEPARATOR_COMMA } from '../utils/constants';
-import { writeToExcelFile } from '../utils/export-excel-utils';
-import { PUBLIC_DIR } from '../utils/paths';
-import { findAllAges } from './entities/age-service';
-import { findAllClasses } from './entities/classe-service';
-import { findAllCommunesWithDepartements } from './entities/commune-service';
-import { findAllComportements } from './entities/comportement-service';
+import { randomUUID } from "crypto";
+import path from "path";
+import { GPS_COORDINATES } from "../model/coordinates-system/gps.object";
+import { SearchDonneeCriteria } from "../model/graphql";
+import { getNicheurStatusToDisplay } from "../model/helpers/nicheur-helper";
+import { SEPARATOR_COMMA } from "../utils/constants";
+import { writeToExcelFile } from "../utils/export-excel-utils";
+import { PUBLIC_DIR } from "../utils/paths";
+import { findAllAges } from "./entities/age-service";
+import { findAllClasses } from "./entities/classe-service";
+import { findAllCommunesWithDepartements } from "./entities/commune-service";
+import { findAllComportements } from "./entities/comportement-service";
 import { findAllDepartements } from "./entities/departement-service";
-import { DonneeWithRelations, findDonneesByCriteria } from './entities/donnee-service';
-import { findAllEspecesWithClasses } from './entities/espece-service';
-import { findAllEstimationsDistance } from './entities/estimation-distance-service';
-import { findAllEstimationsNombre } from './entities/estimation-nombre-service';
-import { findAllLieuxDitsWithCommuneAndDepartement } from './entities/lieu-dit-service';
-import { findAllMeteos } from './entities/meteo-service';
-import { findAllMilieux } from './entities/milieu-service';
-import { findAllObservateurs } from './entities/observateur-service';
-import { findAllSexes } from './entities/sexe-service';
+import { DonneeWithRelations, findDonneesByCriteria } from "./entities/donnee-service";
+import { findAllEspecesWithClasses } from "./entities/espece-service";
+import { findAllEstimationsDistance } from "./entities/estimation-distance-service";
+import { findAllEstimationsNombre } from "./entities/estimation-nombre-service";
+import { findAllLieuxDitsWithCommuneAndDepartement } from "./entities/lieu-dit-service";
+import { findAllMeteos } from "./entities/meteo-service";
+import { findAllMilieux } from "./entities/milieu-service";
+import { findAllObservateurs } from "./entities/observateur-service";
+import { findAllSexes } from "./entities/sexe-service";
 
 export const generateAgesExport = async (): Promise<string> => {
   const agesDb = await findAllAges({ includeCounts: false });
@@ -94,9 +94,7 @@ export const generateDepartementsExport = async (): Promise<string> => {
 
 const getComportement = (donnee: DonneeWithRelations, index: number): string => {
   return donnee.comportements.length >= index
-    ? donnee.comportements[index - 1].code +
-    " - " +
-    donnee.comportements[index - 1].libelle
+    ? donnee.comportements[index - 1].code + " - " + donnee.comportements[index - 1].libelle
     : "";
 };
 
@@ -106,22 +104,22 @@ const getMilieu = (donnee: DonneeWithRelations, index: number): string => {
     : "";
 };
 
-export const generateDonneesExport = async (searchCriteria: SearchDonneeCriteria): Promise<string> => {
-
+export const generateDonneesExport = async (
+  searchCriteria: SearchDonneeCriteria | null | undefined
+): Promise<string> => {
   const coordinatesSystem = GPS_COORDINATES;
-  const coordinatesSuffix =
-    " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
+  const coordinatesSuffix = " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
 
   const donnees = await findDonneesByCriteria(searchCriteria);
 
   const objectsToExport = donnees.map((donnee) => {
-
-    const nicheurStatus = getNicheurStatusToDisplay(donnee.comportements, '')
+    const nicheurStatus = getNicheurStatusToDisplay(donnee.comportements, "");
 
     return {
       ID: donnee.id,
       Observateur: donnee.inventaire.observateur.libelle,
-      "Observateurs associés": donnee.inventaire.associes?.map(associe => associe?.libelle)?.join(SEPARATOR_COMMA) ?? '',
+      "Observateurs associés":
+        donnee.inventaire.associes?.map((associe) => associe?.libelle)?.join(SEPARATOR_COMMA) ?? "",
       Date: donnee.inventaire.date,
       Heure: donnee.inventaire.heure,
       Durée: donnee.inventaire.duree,
@@ -129,11 +127,13 @@ export const generateDonneesExport = async (searchCriteria: SearchDonneeCriteria
       "Code commune": donnee.inventaire.lieuDit.commune.code,
       "Nom commune": donnee.inventaire.lieuDit.commune.nom,
       "Lieu-dit": donnee.inventaire.lieuDit.nom,
-      ["Latitude" + coordinatesSuffix]: donnee.inventaire.latitude?.toNumber() ?? donnee.inventaire.lieuDit.latitude?.toNumber(),
-      ["Longitude" + coordinatesSuffix]: donnee.inventaire.longitude?.toNumber() ?? donnee.inventaire.lieuDit.longitude?.toNumber(),
+      ["Latitude" + coordinatesSuffix]:
+        donnee.inventaire.latitude?.toNumber() ?? donnee.inventaire.lieuDit.latitude?.toNumber(),
+      ["Longitude" + coordinatesSuffix]:
+        donnee.inventaire.longitude?.toNumber() ?? donnee.inventaire.lieuDit.longitude?.toNumber(),
       "Altitude en mètres": donnee.inventaire.altitude ?? donnee.inventaire.lieuDit.altitude,
       "Température en °C": donnee.inventaire.temperature,
-      Météo: donnee.inventaire.meteos?.map(meteo => meteo?.libelle)?.join(SEPARATOR_COMMA) ?? '',
+      Météo: donnee.inventaire.meteos?.map((meteo) => meteo?.libelle)?.join(SEPARATOR_COMMA) ?? "",
       Classe: donnee.espece.classe.libelle,
       "Code espèce": donnee.espece.code,
       "Nom francais": donnee.espece.nomFrancais,

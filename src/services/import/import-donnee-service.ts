@@ -1,4 +1,16 @@
-import { Age, Commune, Comportement, Departement, Espece, EstimationDistance, EstimationNombre, Meteo, Milieu, Observateur, Sexe } from "@prisma/client";
+import {
+  Age,
+  Commune,
+  Comportement,
+  Departement,
+  Espece,
+  EstimationDistance,
+  EstimationNombre,
+  Meteo,
+  Milieu,
+  Observateur,
+  Sexe
+} from "@prisma/client";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
@@ -24,36 +36,37 @@ import { findAllSexes } from "../entities/sexe-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
-  private coordinatesSystem: CoordinatesSystem;
-  private observateurs: Observateur[];
-  private departements: Departement[];
-  private communes: Commune[];
-  private lieuxDits: LieuDitWithCoordinatesAsNumber[];
-  private especes: Espece[];
-  private ages: Age[];
-  private sexes: Sexe[];
-  private estimationsNombre: EstimationNombre[];
-  private estimationsDistance: EstimationDistance[];
-  private comportements: Comportement[];
-  private milieux: Milieu[];
-  private meteos: Meteo[];
+  private coordinatesSystem!: CoordinatesSystem;
+  private observateurs!: Observateur[];
+  private departements!: Departement[];
+  private communes!: Commune[];
+  private lieuxDits!: LieuDitWithCoordinatesAsNumber[];
+  private especes!: Espece[];
+  private ages!: Age[];
+  private sexes!: Sexe[];
+  private estimationsNombre!: EstimationNombre[];
+  private estimationsDistance!: EstimationDistance[];
+  private comportements!: Comportement[];
+  private milieux!: Milieu[];
+  private meteos!: Meteo[];
   private inventaires: InventaireWithRelations[] = []; // The list of existing inventaires + the ones we created along with the validation
 
-  private existingDonnees: DonneeWithRelations[];
+  private existingDonnees!: DonneeWithRelations[];
 
-  private newDonnees: InputDonnee[];
+  private newDonnees!: InputDonnee[];
 
   protected getNumberOfColumns = (): number => {
     return 32;
   };
-
 
   protected init = async (): Promise<void> => {
     this.newDonnees = [];
 
     const coordinatesSystemType = await findCoordinatesSystem();
     if (!coordinatesSystemType) {
-      return Promise.reject("Veuillez choisir le système de coordonnées de l'application dans la page de configuration");
+      return Promise.reject(
+        "Veuillez choisir le système de coordonnées de l'application dans la page de configuration"
+      );
     } else {
       this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
     }
@@ -74,7 +87,7 @@ export class ImportDonneeService extends ImportService {
     this.existingDonnees = await findAllDonnees();
   };
 
-  protected validateAndPrepareEntity = async (donneeTab: string[]): Promise<string> => {
+  protected validateAndPrepareEntity = async (donneeTab: string[]): Promise<string | null> => {
     const importedDonnee: ImportedDonnee = new ImportedDonnee(donneeTab, this.coordinatesSystem);
 
     const dataValidity = importedDonnee.checkValidity();
@@ -122,8 +135,8 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the customized coordinates
-    let altitude: number = +importedDonnee.altitude;
-    let coordinates: Coordinates = {
+    let altitude: number | null = +importedDonnee.altitude;
+    let coordinates: Coordinates | null = {
       longitude: +importedDonnee.longitude,
       latitude: +importedDonnee.latitude,
       system: importedDonnee.coordinatesSystem.code
@@ -199,9 +212,9 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Estimation de la distance" or return an error if it doesn't exist
-    let estimationDistance: EstimationDistance = null;
+    let estimationDistance: EstimationDistance | undefined | null = null;
     if (importedDonnee.estimationDistance) {
-      estimationDistance = this.findEstimationDistance(importedDonnee.estimationDistance)
+      estimationDistance = this.findEstimationDistance(importedDonnee.estimationDistance);
       if (!estimationDistance) {
         return `L'estimation de la distance ${importedDonnee.estimationDistance} n'existe pas`;
       }
@@ -242,7 +255,7 @@ export class ImportDonneeService extends ImportService {
       meteosIds,
       altitude,
       coordinates
-    )
+    );
 
     // Find if we already have an existing inventaire that matches the one from the current donnee
     const existingInventaire = this.inventaires.find((existingInventaire) => {
@@ -256,11 +269,16 @@ export class ImportDonneeService extends ImportService {
         existingInventaire.customizedCoordinates?.longitude === inputInventaire.longitude &&
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.latitude &&
         existingInventaire.temperature === inputInventaire.temperature &&
-        areSetsContainingSameValues(new Set(existingInventaire.associes?.map(associe => associe?.id)), new Set(inputInventaire.associesIds)) &&
-        areSetsContainingSameValues(new Set(existingInventaire.meteos?.map(meteo => meteo?.id)), new Set(inputInventaire.meteosIds))
+        areSetsContainingSameValues(
+          new Set(existingInventaire.associes?.map((associe) => associe?.id)),
+          new Set(inputInventaire.associesIds)
+        ) &&
+        areSetsContainingSameValues(
+          new Set(existingInventaire.meteos?.map((meteo) => meteo?.id)),
+          new Set(inputInventaire.meteosIds)
+        )
       );
     });
-
 
     // Check if already have a similar donnee in the database
     const existingDonneeDatabase = this.existingDonnees.find((donnee) => {
@@ -275,8 +293,11 @@ export class ImportDonneeService extends ImportService {
         donnee.estimationDistanceId === (estimationDistance?.id ?? null) &&
         donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
-        areSetsContainingSameValues(new Set(donnee.comportements?.map(comportement => comportement?.id)), comportementsIds) &&
-        areSetsContainingSameValues(new Set(donnee.milieux?.map(milieu => milieu?.id)), milieuxIds)
+        areSetsContainingSameValues(
+          new Set(donnee.comportements?.map((comportement) => comportement?.id)),
+          comportementsIds
+        ) &&
+        areSetsContainingSameValues(new Set(donnee.milieux?.map((milieu) => milieu?.id)), milieuxIds)
       );
     });
 
@@ -310,7 +331,6 @@ export class ImportDonneeService extends ImportService {
     let inventaireId: number;
 
     if (!existingInventaire) {
-
       // Create the inventaire if it does not exist yet
       const inventaire = await upsertInventaire({
         data: inputInventaire
@@ -319,7 +339,6 @@ export class ImportDonneeService extends ImportService {
 
       // Add the inventaire to the list
       this.inventaires.push(inventaire);
-
     } else {
       inventaireId = existingInventaire.id;
     }
@@ -345,42 +364,42 @@ export class ImportDonneeService extends ImportService {
     for (const inputDonnee of this.newDonnees) {
       await createDonnee(inputDonnee);
     }
-  }
+  };
 
-  private findObservateur = (libelleObservateur: string): Observateur => {
+  private findObservateur = (libelleObservateur: string): Observateur | undefined => {
     return this.observateurs.find((observateur) => {
       return this.compareStrings(observateur.libelle, libelleObservateur);
     });
-  }
+  };
 
-  private findDepartement = (codeDepartement: string): Departement => {
+  private findDepartement = (codeDepartement: string): Departement | undefined => {
     return this.departements.find((departement) => {
       return this.compareStrings(departement.code, codeDepartement);
     });
-  }
+  };
 
-  private findCommune = (departementId: number, nomOrCodeCommune: string): Omit<Commune, 'departement'> => {
+  private findCommune = (departementId: number, nomOrCodeCommune: string): Omit<Commune, "departement"> | undefined => {
     return this.communes.find((commune) => {
       return (
         commune.departementId === departementId &&
         (this.compareStrings(`${commune.code}`, nomOrCodeCommune) || this.compareStrings(commune.nom, nomOrCodeCommune))
       );
     });
-  }
+  };
 
-  private findLieuDit = (communeId: number, nomLieuDit: string): LieuDitWithCoordinatesAsNumber => {
+  private findLieuDit = (communeId: number, nomLieuDit: string): LieuDitWithCoordinatesAsNumber | undefined => {
     return this.lieuxDits.find((lieuDit) => {
       return lieuDit.communeId === communeId && this.compareStrings(lieuDit.nom, nomLieuDit);
     });
-  }
+  };
 
-  private findMeteo = (libelleMeteo: string): Meteo => {
+  private findMeteo = (libelleMeteo: string): Meteo | undefined => {
     return this.meteos.find((meteo) => {
       return this.compareStrings(meteo.libelle, libelleMeteo);
     });
-  }
+  };
 
-  private findEspece = (codeOrNomEspece: string): Espece => {
+  private findEspece = (codeOrNomEspece: string): Espece | undefined => {
     return this.especes.find((espece) => {
       return (
         this.compareStrings(espece.code, codeOrNomEspece) ||
@@ -388,41 +407,47 @@ export class ImportDonneeService extends ImportService {
         this.compareStrings(espece.nomLatin, codeOrNomEspece)
       );
     });
-  }
+  };
 
-  private findSexe = (libelleSexe: string): Sexe => {
+  private findSexe = (libelleSexe: string): Sexe | undefined => {
     return this.sexes.find((sexe) => {
       return this.compareStrings(sexe.libelle, libelleSexe);
     });
-  }
+  };
 
-  private findAge = (libelleMeteo: string): Age => {
+  private findAge = (libelleMeteo: string): Age | undefined => {
     return this.ages.find((age) => {
       return this.compareStrings(age.libelle, libelleMeteo);
     });
-  }
+  };
 
-  private findEstimationNombre = (libelleEstimation: string): EstimationNombre => {
+  private findEstimationNombre = (libelleEstimation: string): EstimationNombre | undefined => {
     return this.estimationsNombre.find((estimation) => {
       return this.compareStrings(estimation.libelle, libelleEstimation);
     });
-  }
+  };
 
-  private findEstimationDistance = (libelleEstimation: string): EstimationDistance => {
+  private findEstimationDistance = (libelleEstimation: string): EstimationDistance | undefined => {
     return this.estimationsDistance.find((estimation) => {
       return this.compareStrings(estimation.libelle, libelleEstimation);
     });
-  }
+  };
 
-  private findComportement = (codeOrLibelleComportement: string): Comportement => {
+  private findComportement = (codeOrLibelleComportement: string): Comportement | undefined => {
     return this.comportements.find((comportement) => {
-      return this.compareStrings(comportement.code, codeOrLibelleComportement) || this.compareStrings(comportement.libelle, codeOrLibelleComportement);
+      return (
+        this.compareStrings(comportement.code, codeOrLibelleComportement) ||
+        this.compareStrings(comportement.libelle, codeOrLibelleComportement)
+      );
     });
-  }
+  };
 
-  private findMilieu = (codeOrLibelleMilieu: string): Milieu => {
+  private findMilieu = (codeOrLibelleMilieu: string): Milieu | undefined => {
     return this.milieux.find((milieu) => {
-      return this.compareStrings(milieu.code, codeOrLibelleMilieu) || this.compareStrings(milieu.libelle, codeOrLibelleMilieu);
+      return (
+        this.compareStrings(milieu.code, codeOrLibelleMilieu) ||
+        this.compareStrings(milieu.libelle, codeOrLibelleMilieu)
+      );
     });
-  }
+  };
 }

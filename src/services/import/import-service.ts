@@ -1,7 +1,7 @@
-import { parse } from 'csv-parse/sync';
+import { parse } from "csv-parse/sync";
 import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
-import { OngoingSubStatus } from '../../model/graphql';
+import { OngoingSubStatus } from "../../model/graphql";
 import { ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message";
 import { logger } from "../../utils/logger";
 
@@ -16,9 +16,7 @@ export const IMPORT_COMPLETE_EVENT = "importComplete";
 export const IMPORT_FAILED_EVENT = "importFailed";
 
 export abstract class ImportService extends EventEmitter {
-
   public importFile = async (fileContent: string): Promise<void> => {
-
     this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.ProcessStarted });
 
     if (!fileContent) {
@@ -29,7 +27,7 @@ export abstract class ImportService extends EventEmitter {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const content: string[][] = parse(fileContent, {
       delimiter: ";",
-      encoding: 'utf-8'
+      encoding: "utf-8"
     });
 
     if (!content) {
@@ -53,10 +51,11 @@ export abstract class ImportService extends EventEmitter {
     // Validate all entries
     for (const lineTab of content) {
       if (lineTab.length > 0 && !lineTab[0].startsWith(COMMENT_PREFIX)) {
-
-        let errorMessage: string;
+        let errorMessage: string | null;
         if (lineTab?.length !== this.getNumberOfColumns()) {
-          errorMessage = `Le nombre de colonnes de cette ligne est incorrect: ${lineTab.length} colonne(s) au lieu de ${this.getNumberOfColumns()} attendue(s)`;
+          errorMessage = `Le nombre de colonnes de cette ligne est incorrect: ${
+            lineTab.length
+          } colonne(s) au lieu de ${this.getNumberOfColumns()} attendue(s)`;
         } else {
           errorMessage = await this.validateAndPrepareEntity(lineTab);
         }
@@ -75,7 +74,6 @@ export abstract class ImportService extends EventEmitter {
           errors: errors.length
         };
         this.emit(IMPORT_PROGRESS_UPDATE_EVENT, progressContent);
-
       }
     }
 
@@ -84,7 +82,11 @@ export abstract class ImportService extends EventEmitter {
     // Insert the valid entries in the database
     await this.persistAllValidEntities();
 
-    logger.debug(`Résultat de l'import : ${(numberOfLines - errors.length)}/${numberOfLines} importées avec succès --> ${errors.length} lignes en erreur`);
+    logger.debug(
+      `Résultat de l'import : ${numberOfLines - errors.length}/${numberOfLines} importées avec succès --> ${
+        errors.length
+      } lignes en erreur`
+    );
 
     if (errors.length > 0) {
       this.emit(IMPORT_COMPLETE_EVENT, errors);
@@ -99,17 +101,14 @@ export abstract class ImportService extends EventEmitter {
 
   protected abstract persistAllValidEntities(): Promise<void>;
 
-  protected abstract validateAndPrepareEntity(entityTab: string[]): string | Promise<string>;
+  protected abstract validateAndPrepareEntity(entityTab: string[]): string | null | Promise<string | null>;
 
-  private buildErrorObject = (
-    entityTab: string[],
-    errorMessage: string
-  ): string[] => {
+  private buildErrorObject = (entityTab: string[], errorMessage: string): string[] => {
     entityTab.push(errorMessage);
     return entityTab;
   };
 
-  protected compareStrings = (string1: string, string2: string): boolean => {
+  protected compareStrings = (string1: string | null | undefined, string2: string | null | undefined): boolean => {
     if (!string1 && !string2) {
       return true;
     }
@@ -119,5 +118,5 @@ export abstract class ImportService extends EventEmitter {
     }
 
     return deburr(string1.trim()).toLowerCase() === deburr(string2.trim()).toLowerCase();
-  }
+  };
 }

@@ -4,21 +4,20 @@ import { createDepartements, findAllDepartements } from "../entities/departement
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {
-  private departements: (Departement | Omit<Departement, 'id'>)[];
+  private departements!: (Departement | Omit<Departement, "id">)[];
 
-  private departementsToInsert: Omit<Departement, 'id'>[];
+  private departementsToInsert!: Omit<Departement, "id">[];
 
   protected getNumberOfColumns = (): number => {
     return 1;
   };
-
 
   protected init = async (): Promise<void> => {
     this.departementsToInsert = [];
     this.departements = await findAllDepartements({ includeCounts: false });
   };
 
-  protected validateAndPrepareEntity = (departementTab: string[]): string => {
+  protected validateAndPrepareEntity = (departementTab: string[]): string | null => {
     const importedDepartement = new ImportedDepartement(departementTab);
 
     const dataValidity = importedDepartement.checkValidity();
@@ -46,7 +45,5 @@ export class ImportDepartementService extends ImportService {
     if (this.departementsToInsert.length) {
       await createDepartements(this.departementsToInsert);
     }
-  }
-
-
+  };
 }

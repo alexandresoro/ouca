@@ -1,5 +1,11 @@
 import { Comportement, Nicheur, Prisma } from "@prisma/client";
-import { ComportementsPaginatedResult, ComportementWithCounts, FindParams, MutationUpsertComportementArgs, QueryPaginatedComportementsArgs } from "../../model/graphql";
+import {
+  ComportementsPaginatedResult,
+  ComportementWithCounts,
+  FindParams,
+  MutationUpsertComportementArgs,
+  QueryPaginatedComportementsArgs
+} from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { COLUMN_CODE } from "../../utils/constants";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
@@ -9,12 +15,11 @@ export const findComportement = async (id: number): Promise<Comportement | null>
   return prisma.comportement.findUnique({
     where: {
       id
-    },
+    }
   });
 };
 
 export const findComportementsByIds = async (ids: number[]): Promise<Comportement[]> => {
-
   return prisma.comportement.findMany({
     orderBy: {
       code: "asc"
@@ -23,12 +28,11 @@ export const findComportementsByIds = async (ids: number[]): Promise<Comportemen
       id: {
         in: ids
       }
-    },
+    }
   });
 };
 
-export const findComportements = async (params?: FindParams): Promise<Comportement[]> => {
-
+export const findComportements = async (params?: FindParams | null): Promise<Comportement[]> => {
   const { q, max } = params ?? {};
 
   const matchingCodesAsNumber = numberAsCodeSqlMatcher(q);
@@ -37,23 +41,25 @@ export const findComportements = async (params?: FindParams): Promise<Comporteme
       code: {
         startsWith: matchingCode
       }
-    }
-  })
+    };
+  });
 
   const matchingWithCode = await prisma.comportement.findMany({
     orderBy: {
       code: "asc"
     },
-    where: q ? {
-      OR: [
-        ...matchingCodesAsNumberClause,
-        {
-          code: {
-            startsWith: q // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
-          }
+    where: q
+      ? {
+          OR: [
+            ...matchingCodesAsNumberClause,
+            {
+              code: {
+                startsWith: q // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
+              }
+            }
+          ]
         }
-      ]
-    } : undefined,
+      : undefined,
     take: max || undefined
   });
 
@@ -75,50 +81,51 @@ export const findComportements = async (params?: FindParams): Promise<Comporteme
   // However, to be consistent, we still need to sort them by code as it can still be mixed up
   const matchingEntries = [...matchingWithCode, ...matchingWithLibelle]
     .sort((a, b) => a.code.localeCompare(b.code))
-    .filter((element, index, self) =>
-      index === self.findIndex((eltArray) => (
-        eltArray.id === element.id
-      ))
-    )
+    .filter((element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id));
 
   return max ? matchingEntries.slice(0, max) : matchingEntries;
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhereInput => {
-  return (q != null && q.length) ? {
-    OR: [
-      {
-        code: {
-          contains: q
-        }
-      },
-      {
-        libelle: {
-          contains: q
-        }
-      },
-      {
-        nicheur: {
-          in: (Object.keys(Nicheur) as Nicheur[]).filter(nicheur => nicheur.includes(q))
-        }
+  return q != null && q.length
+    ? {
+        OR: [
+          {
+            code: {
+              contains: q
+            }
+          },
+          {
+            libelle: {
+              contains: q
+            }
+          },
+          {
+            nicheur: {
+              in: (Object.keys(Nicheur) as Nicheur[]).filter((nicheur) => nicheur.includes(q))
+            }
+          }
+        ]
       }
-    ]
-  } : {};
-}
+    : {};
+};
 
 export const findAllComportements = async (): Promise<(ComportementWithCounts & { nicheur: Nicheur | null })[]> => {
   const [comportementsDb, donneesByComportement] = await Promise.all([
     prisma.comportement.findMany(queryParametersToFindAllEntities(COLUMN_CODE)),
     prisma.donnee_comportement.groupBy({
-      by: ['comportement_id'],
+      by: ["comportement_id"],
       _count: true
-    })]);
+    })
+  ]);
 
-  return comportementsDb.map(comportement => {
+  return comportementsDb.map((comportement) => {
     return {
       ...comportement,
-      nbDonnees: donneesByComportement.find(donneeByComportement => donneeByComportement.comportement_id === comportement.id)?._count ?? 0
-    }
+      nbDonnees:
+        donneesByComportement.find((donneeByComportement) => donneeByComportement.comportement_id === comportement.id)
+          ?._count ?? 0
+    };
   });
 };
 
@@ -126,7 +133,6 @@ export const findPaginatedComportements = async (
   options: QueryPaginatedComportementsArgs = {},
   includeCounts = true
 ): Promise<ComportementsPaginatedResult> => {
-
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.ComportementOrderByWithRelationInput>;
@@ -137,18 +143,17 @@ export const findPaginatedComportements = async (
     case "nicheur":
       orderBy = {
         [orderByField]: sortOrder
-      }
+      };
       break;
     case "nbDonnees":
       orderBy = sortOrder && {
         donnee_comportement: {
           _count: sortOrder
         }
-      }
+      };
       break;
     default:
-      orderBy = {}
-
+      orderBy = {};
   }
 
   const comportements = await prisma.comportement.findMany({
@@ -157,43 +162,47 @@ export const findPaginatedComportements = async (
     where: getFilterClause(searchParams?.q)
   });
 
-  const donneesByComportement = includeCounts ? await prisma.donnee_comportement.groupBy({
-    by: ['comportement_id'],
-    where: {
-      comportement_id: {
-        in: comportements?.map(comportement => comportement.id)
-      }
-    },
-    _count: true
-  }) : null;
-
+  const donneesByComportement = includeCounts
+    ? await prisma.donnee_comportement.groupBy({
+        by: ["comportement_id"],
+        where: {
+          comportement_id: {
+            in: comportements?.map((comportement) => comportement.id)
+          }
+        },
+        _count: true
+      })
+    : null;
 
   const count = await prisma.comportement.count({
     where: getFilterClause(searchParams?.q)
   });
 
   return {
-    result: comportements.map(comportement => {
+    result: comportements.map((comportement) => {
       return {
         ...comportement,
-        ...(includeCounts ? { nbDonnees: donneesByComportement.find(donneeByComportement => donneeByComportement.comportement_id === comportement.id)?._count ?? 0 } : {})
-      }
+        ...(includeCounts
+          ? {
+              nbDonnees:
+                donneesByComportement.find(
+                  (donneeByComportement) => donneeByComportement.comportement_id === comportement.id
+                )?._count ?? 0
+            }
+          : {})
+      };
     }),
     count
-  }
-}
+  };
+};
 
-
-export const upsertComportement = async (
-  args: MutationUpsertComportementArgs
-): Promise<Comportement> => {
+export const upsertComportement = async (args: MutationUpsertComportementArgs): Promise<Comportement> => {
   const { id, data } = args;
   if (id) {
     return prisma.comportement.update({
       where: { id },
       data
     });
-
   } else {
     return prisma.comportement.create({ data });
   }
@@ -205,11 +214,9 @@ export const deleteComportement = async (id: number): Promise<Comportement> => {
       id
     }
   });
-}
+};
 
-export const createComportements = async (
-  comportements: Omit<Comportement, 'id'>[]
-): Promise<Prisma.BatchPayload> => {
+export const createComportements = async (comportements: Omit<Comportement, "id">[]): Promise<Prisma.BatchPayload> => {
   return prisma.comportement.createMany({
     data: comportements
   });

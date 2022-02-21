@@ -27,10 +27,10 @@ const executeSqlDump = async (): Promise<string> => {
 
     const dumpProcess: ChildProcess = spawn("mysqldump", dumpParams);
 
-    dumpProcess.stdout.on("data", (contents) => {
+    dumpProcess.stdout?.on("data", (contents) => {
       stdout += contents;
     });
-    dumpProcess.stderr.on("data", (contents) => {
+    dumpProcess.stderr?.on("data", (contents) => {
       stderr += contents;
     });
     dumpProcess.on("error", reject).on("close", (code) => {
@@ -56,10 +56,7 @@ export const saveDatabaseRequest = async (): Promise<string> => {
 
     return fileName;
   } catch (error) {
-    logger.error(
-      "L'extraction de la base de données n'a pas pu être effectuée",
-      error
-    );
+    logger.error("L'extraction de la base de données n'a pas pu être effectuée", error);
     return Promise.reject(error);
   }
 };

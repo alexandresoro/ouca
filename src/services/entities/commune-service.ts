@@ -1,31 +1,43 @@
 import { Commune, Departement, Prisma } from "@prisma/client";
-import { CommunesPaginatedResult, CommuneWithCounts, FindParams, MutationUpsertCommuneArgs, QueryPaginatedCommunesArgs } from "../../model/graphql";
+import {
+  CommunesPaginatedResult,
+  CommuneWithCounts,
+  FindParams,
+  MutationUpsertCommuneArgs,
+  QueryPaginatedCommunesArgs
+} from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
-import { getPrismaPagination, getSqlPagination, getSqlSorting, queryParametersToFindAllEntities } from "./entities-utils";
+import {
+  getPrismaPagination,
+  getSqlPagination,
+  getSqlSorting,
+  queryParametersToFindAllEntities
+} from "./entities-utils";
 
 export const findCommune = async (id: number): Promise<Commune | null> => {
   return prisma.commune.findUnique({
     where: {
       id
-    },
+    }
   });
 };
 
 export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Commune | null> => {
-  return prisma.lieudit.findUnique({
-    where: {
-      id: lieuDitId
-    },
-  }).commune();
+  return prisma.lieudit
+    .findUnique({
+      where: {
+        id: lieuDitId
+      }
+    })
+    .commune();
 };
 
 export const findCommunes = async (options: {
-  params?: FindParams,
-  departementId?: number
+  params?: FindParams | null;
+  departementId?: number | null;
 }): Promise<Commune[]> => {
-
   const { params, departementId } = options ?? {};
   const { q, max } = params ?? {};
 
@@ -33,27 +45,34 @@ export const findCommunes = async (options: {
   // but we still want to search them as if they were Strings
   // e.g. we want a commune with id 773 to be returned if the user query is "077" for example
   const qAsNumber = parseInt(q);
-  const codeCommuneWhereClause = (!isNaN(qAsNumber) && qAsNumber > 0) ? {
-    OR: [
-      {
-        code: {
-          equals: qAsNumber
+  const codeCommuneWhereClause =
+    !isNaN(qAsNumber) && qAsNumber > 0
+      ? {
+          OR: [
+            {
+              code: {
+                equals: qAsNumber
+              }
+            },
+            qAsNumber < 10
+              ? {
+                  code: {
+                    gte: 100 * qAsNumber,
+                    lt: 100 * (qAsNumber + 1)
+                  }
+                }
+              : {},
+            qAsNumber < 100
+              ? {
+                  code: {
+                    gte: 10 * qAsNumber,
+                    lt: 10 * (qAsNumber + 1)
+                  }
+                }
+              : {}
+          ]
         }
-      },
-      (qAsNumber < 10) ? {
-        code: {
-          gte: 100 * qAsNumber,
-          lt: 100 * (qAsNumber + 1)
-        }
-      } : {},
-      (qAsNumber < 100) ? {
-        code: {
-          gte: 10 * qAsNumber,
-          lt: 10 * (qAsNumber + 1)
-        }
-      } : {}
-    ]
-  } : {}
+      : {};
 
   const whereClause = {
     AND: [
@@ -67,13 +86,15 @@ export const findCommunes = async (options: {
           }
         ]
       },
-      departementId ? {
-        departementId: {
-          equals: departementId
-        }
-      } : {}
+      departementId
+        ? {
+            departementId: {
+              equals: departementId
+            }
+          }
+        : {}
     ]
-  }
+  };
 
   return prisma.commune.findMany({
     orderBy: {
@@ -85,23 +106,25 @@ export const findCommunes = async (options: {
 };
 
 export const getFilterClauseCommune = (q: string | null | undefined): Prisma.CommuneWhereInput => {
-  return (q != null && q.length) ? {
-    OR: [
-      {
-        nom: {
-          contains: q
-        }
-      },
-      {
-        departement: {
-          code: {
-            contains: q
+  return q != null && q.length
+    ? {
+        OR: [
+          {
+            nom: {
+              contains: q
+            }
+          },
+          {
+            departement: {
+              code: {
+                contains: q
+              }
+            }
           }
-        }
+        ]
       }
-    ]
-  } : {};
-}
+    : {};
+};
 
 export const findAllCommunes = async (): Promise<Commune[]> => {
   return await prisma.commune.findMany({
@@ -118,7 +141,7 @@ export const findAllCommunesWithDepartements = async (): Promise<(Commune & { de
   });
 };
 
-export const findAllCommunesWithCounts = async (): Promise<Omit<Commune, 'departement'>[]> => {
+export const findAllCommunesWithCounts = async (): Promise<Omit<Commune, "departement">[]> => {
   const communesDb = await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {
@@ -144,17 +167,20 @@ export const findAllCommunesWithCounts = async (): Promise<Omit<Commune, 'depart
   });
 
   return communesDb.map((commune) => {
-    const nbDonnees = commune.lieudit.map(lieudit => {
-      return lieudit.inventaire.map(inventaire => {
-        return inventaire._count.donnee;
-      });
-    }).flat(2).reduce(counterReducer, 0)
+    const nbDonnees = commune.lieudit
+      .map((lieudit) => {
+        return lieudit.inventaire.map((inventaire) => {
+          return inventaire._count.donnee;
+        });
+      })
+      .flat(2)
+      .reduce(counterReducer, 0);
 
     return {
       ...commune,
       nbLieuxdits: commune._count.lieudit,
       nbDonnees
-    }
+    };
   });
 };
 
@@ -162,20 +188,20 @@ export const findPaginatedCommunes = async (
   options: QueryPaginatedCommunesArgs = {},
   includeCounts = true
 ): Promise<CommunesPaginatedResult> => {
-
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let communes: CommuneWithCounts[];
 
   if (orderByField === "nbDonnees") {
-
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
-    const filterRequest = queryExpression ? Prisma.sql`
+    const filterRequest = queryExpression
+      ? Prisma.sql`
     WHERE
       c.nom LIKE ${queryExpression}
     OR
       dpt.code LIKE ${queryExpression}
-    ` : Prisma.empty;
+    `
+      : Prisma.empty;
 
     const donneesPerCommuneRequest = Prisma.sql`
     SELECT 
@@ -201,9 +227,11 @@ export const findPaginatedCommunes = async (
     ${filterRequest}
     GROUP BY 
       c.id
-    `
+    `;
 
-    const nbDonneesForFilteredCommunes = await prisma.$queryRaw<({ id: number, nbLieuxDits: number, nbDonnees: number })[]>`${donneesPerCommuneRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+    const nbDonneesForFilteredCommunes = await prisma.$queryRaw<
+      { id: number; nbLieuxDits: number; nbDonnees: number }[]
+    >`${donneesPerCommuneRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
 
     const communesRq = await prisma.commune.findMany({
       include: {
@@ -216,22 +244,20 @@ export const findPaginatedCommunes = async (
       },
       where: {
         id: {
-          in: nbDonneesForFilteredCommunes.map(communeInfo => communeInfo.id) // /!\ The IN clause could break if not paginated enough
+          in: nbDonneesForFilteredCommunes.map((communeInfo) => communeInfo.id) // /!\ The IN clause could break if not paginated enough
         }
       }
     });
 
     communes = nbDonneesForFilteredCommunes.map((communeInfo) => {
-      const commune = communesRq?.find(commune => commune.id === communeInfo.id);
+      const commune = communesRq?.find((commune) => commune.id === communeInfo.id);
       return {
         ...commune,
         nbLieuxDits: communeInfo.nbLieuxDits,
         nbDonnees: communeInfo.nbDonnees
       };
-    })
-
+    });
   } else {
-
     let orderBy: Prisma.Enumerable<Prisma.CommuneOrderByWithRelationInput>;
     switch (orderByField) {
       case "id":
@@ -239,24 +265,24 @@ export const findPaginatedCommunes = async (
       case "nom":
         orderBy = {
           [orderByField]: sortOrder
-        }
+        };
         break;
       case "departement":
         orderBy = sortOrder && {
           departement: {
             code: sortOrder
           }
-        }
+        };
         break;
       case "nbLieuxDits":
         orderBy = sortOrder && {
           lieudit: {
             _count: sortOrder
           }
-        }
+        };
         break;
       default:
-        orderBy = {}
+        orderBy = {};
     }
 
     const communesRq = await prisma.commune.findMany({
@@ -292,20 +318,21 @@ export const findPaginatedCommunes = async (
     });
 
     communes = communesRq.map((commune) => {
-
-      const nbDonnees = commune.lieudit.map(lieudit => {
-        return lieudit.inventaire.map(inventaire => {
-          return inventaire._count.donnee;
-        });
-      }).flat(2).reduce(counterReducer, 0)
+      const nbDonnees = commune.lieudit
+        .map((lieudit) => {
+          return lieudit.inventaire.map((inventaire) => {
+            return inventaire._count.donnee;
+          });
+        })
+        .flat(2)
+        .reduce(counterReducer, 0);
 
       return {
         ...commune,
         nbLieuxDits: commune._count.lieudit,
         nbDonnees
       };
-    })
-
+    });
   }
 
   const count = await prisma.commune.count({
@@ -315,19 +342,16 @@ export const findPaginatedCommunes = async (
   return {
     result: communes,
     count
-  }
+  };
 };
 
-export const upsertCommune = async (
-  args: MutationUpsertCommuneArgs
-): Promise<Commune> => {
+export const upsertCommune = async (args: MutationUpsertCommuneArgs): Promise<Commune> => {
   const { id, data } = args;
   if (id) {
     return prisma.commune.update({
       where: { id },
       data
     });
-
   } else {
     return prisma.commune.create({ data });
   }
@@ -339,11 +363,9 @@ export const deleteCommune = async (id: number): Promise<Commune> => {
       id
     }
   });
-}
+};
 
-export const createCommunes = async (
-  communes: Omit<Commune, 'id'>[]
-): Promise<Prisma.BatchPayload> => {
+export const createCommunes = async (communes: Omit<Commune, "id">[]): Promise<Prisma.BatchPayload> => {
   return prisma.commune.createMany({
     data: communes
   });

@@ -1,19 +1,28 @@
 import { EstimationNombre, Prisma } from "@prisma/client";
-import { EstimationNombreWithCounts, EstimationsNombrePaginatedResult, FindParams, MutationUpsertEstimationNombreArgs, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
+import {
+  EstimationNombreWithCounts,
+  EstimationsNombrePaginatedResult,
+  FindParams,
+  MutationUpsertEstimationNombreArgs,
+  QueryPaginatedEstimationsNombreArgs
+} from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { COLUMN_LIBELLE } from "../../utils/constants";
-import { getEntiteAvecLibelleFilterClause, getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+import {
+  getEntiteAvecLibelleFilterClause,
+  getPrismaPagination,
+  queryParametersToFindAllEntities
+} from "./entities-utils";
 
 export const findEstimationNombre = async (id: number): Promise<EstimationNombre | null> => {
   return prisma.estimationNombre.findUnique({
     where: {
       id
-    },
+    }
   });
 };
 
-export const findEstimationsNombre = async (params?: FindParams): Promise<EstimationNombre[]> => {
-
+export const findEstimationsNombre = async (params?: FindParams | null): Promise<EstimationNombre[]> => {
   const { q, max } = params ?? {};
 
   return prisma.estimationNombre.findMany({
@@ -29,12 +38,11 @@ export const findEstimationsNombre = async (params?: FindParams): Promise<Estima
   });
 };
 
-export const findAllEstimationsNombre = async (options: {
-  includeCounts?: boolean
-} = {}): Promise<
-  EstimationNombreWithCounts[]
-> => {
-
+export const findAllEstimationsNombre = async (
+  options: {
+    includeCounts?: boolean;
+  } = {}
+): Promise<EstimationNombreWithCounts[]> => {
   const includeCounts = options.includeCounts ?? true;
 
   const estimationsDb = await prisma.estimationNombre.findMany({
@@ -52,7 +60,7 @@ export const findAllEstimationsNombre = async (options: {
     return {
       ...estimation,
       ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
-    }
+    };
   });
 };
 
@@ -60,7 +68,6 @@ export const findPaginatedEstimationsNombre = async (
   options: QueryPaginatedEstimationsNombreArgs = {},
   includeCounts = true
 ): Promise<EstimationsNombrePaginatedResult> => {
-
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationNombreOrderByWithRelationInput>;
@@ -70,18 +77,19 @@ export const findPaginatedEstimationsNombre = async (
     case "nonCompte":
       orderBy = {
         [orderByField]: sortOrder
-      }
+      };
       break;
-    case "nbDonnees": {
-      orderBy = sortOrder && {
-        donnee: {
-          _count: sortOrder
-        }
+    case "nbDonnees":
+      {
+        orderBy = sortOrder && {
+          donnee: {
+            _count: sortOrder
+          }
+        };
       }
-    }
       break;
     default:
-      orderBy = {}
+      orderBy = {};
   }
 
   const estimationsNombre = await prisma.estimationNombre.findMany({
@@ -94,7 +102,7 @@ export const findPaginatedEstimationsNombre = async (
         }
       }
     },
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
   });
 
   const count = await prisma.estimationNombre.count({
@@ -106,22 +114,19 @@ export const findPaginatedEstimationsNombre = async (
       return {
         ...estimation,
         ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
-      }
+      };
     }),
     count
-  }
+  };
 };
 
-export const upsertEstimationNombre = async (
-  args: MutationUpsertEstimationNombreArgs
-): Promise<EstimationNombre> => {
+export const upsertEstimationNombre = async (args: MutationUpsertEstimationNombreArgs): Promise<EstimationNombre> => {
   const { id, data } = args;
   if (id) {
     return prisma.estimationNombre.update({
       where: { id },
       data
     });
-
   } else {
     return prisma.estimationNombre.create({ data });
   }
@@ -133,10 +138,10 @@ export const deleteEstimationNombre = async (id: number): Promise<EstimationNomb
       id
     }
   });
-}
+};
 
 export const createEstimationsNombre = async (
-  estimationsNombre: Omit<EstimationNombre, 'id'>[]
+  estimationsNombre: Omit<EstimationNombre, "id">[]
 ): Promise<Prisma.BatchPayload> => {
   return prisma.estimationNombre.createMany({
     data: estimationsNombre

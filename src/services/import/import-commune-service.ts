@@ -5,11 +5,10 @@ import { findAllDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 
 export class ImportCommuneService extends ImportService {
+  private departements!: Departement[];
+  private communes!: (Commune | Omit<Commune, "id">)[];
 
-  private departements: Departement[];
-  private communes: (Commune | Omit<Commune, 'id'>)[];
-
-  private communesToInsert: Omit<Commune, 'id'>[];
+  private communesToInsert!: Omit<Commune, "id">[];
 
   protected getNumberOfColumns = (): number => {
     return 3;
@@ -17,10 +16,13 @@ export class ImportCommuneService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.communesToInsert = [];
-    [this.departements, this.communes] = await Promise.all([findAllDepartements({ includeCounts: false }), findAllCommunes()]);
+    [this.departements, this.communes] = await Promise.all([
+      findAllDepartements({ includeCounts: false }),
+      findAllCommunes()
+    ]);
   };
 
-  protected validateAndPrepareEntity = (communeTab: string[]): string => {
+  protected validateAndPrepareEntity = (communeTab: string[]): string | null => {
     const importedCommune = new ImportedCommune(communeTab);
 
     const dataValidity = importedCommune.checkValidity();
@@ -40,8 +42,7 @@ export class ImportCommuneService extends ImportService {
     const commune = this.communes.find((commune) => {
       return (
         commune.departementId === departement.id &&
-        (commune.code === +importedCommune.code ||
-          this.compareStrings(commune.nom, importedCommune.nom))
+        (commune.code === +importedCommune.code || this.compareStrings(commune.nom, importedCommune.nom))
       );
     });
     if (commune) {
@@ -60,6 +61,5 @@ export class ImportCommuneService extends ImportService {
     if (this.communesToInsert.length) {
       await createCommunes(this.communesToInsert);
     }
-  }
-
+  };
 }

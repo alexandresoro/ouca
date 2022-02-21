@@ -11,10 +11,10 @@ const getHashedPassword = (plaintextPassword: string): string => {
   const salt = randomBytes(16);
   const encryptedPasswordBuffer = scryptSync(plaintextPassword, salt, PASSWORD_KEY_LENGTH);
 
-  return `${salt.toString('hex')}${SALT_AND_PWD_DELIMITER}${encryptedPasswordBuffer.toString('hex')}`;
-}
+  return `${salt.toString("hex")}${SALT_AND_PWD_DELIMITER}${encryptedPasswordBuffer.toString("hex")}`;
+};
 
-export const getUser = async (userId: string): Promise<Omit<User, 'password'>> => {
+export const getUser = async (userId: string): Promise<Omit<User, "password"> | null> => {
   return prisma.user.findUnique({
     select: {
       id: true,
@@ -29,8 +29,7 @@ export const getUser = async (userId: string): Promise<Omit<User, 'password'>> =
   });
 };
 
-export const createUser = async (signupData: UserCreateInput, role: DatabaseRole): Promise<Omit<User, 'password'>> => {
-
+export const createUser = async (signupData: UserCreateInput, role: DatabaseRole): Promise<Omit<User, "password">> => {
   const { password, ...otherUserInfo } = signupData;
 
   return prisma.user.create({
@@ -49,8 +48,7 @@ export const createUser = async (signupData: UserCreateInput, role: DatabaseRole
   });
 };
 
-export const loginUser = async (loginData: UserLoginInput): Promise<Omit<User, 'password'>> => {
-
+export const loginUser = async (loginData: UserLoginInput): Promise<Omit<User, "password">> => {
   const { username, password } = loginData;
 
   // Try to find the matching profile
@@ -66,10 +64,10 @@ export const loginUser = async (loginData: UserLoginInput): Promise<Omit<User, '
 
   // Check that the password matches
   const [saltAsHex, storedSaltedPassword] = matchingUser.password.split(SALT_AND_PWD_DELIMITER);
-  const inputSaltedPassword = scryptSync(password, Buffer.from(saltAsHex, 'hex'), PASSWORD_KEY_LENGTH).toString('hex');
+  const inputSaltedPassword = scryptSync(password, Buffer.from(saltAsHex, "hex"), PASSWORD_KEY_LENGTH).toString("hex");
 
   if (inputSaltedPassword !== storedSaltedPassword) {
-    return Promise.reject("The provided password is incorrect")
+    return Promise.reject("The provided password is incorrect");
   }
 
   const { password: userPassword, ...userInfo } = matchingUser;
@@ -77,8 +75,7 @@ export const loginUser = async (loginData: UserLoginInput): Promise<Omit<User, '
   return userInfo;
 };
 
-export const updateUser = async (userId: string, userUpdate: EditUserData): Promise<Omit<User, 'password'>> => {
-
+export const updateUser = async (userId: string, userUpdate: EditUserData): Promise<Omit<User, "password">> => {
   const { currentPassword, newPassword, ...restUserUpdate } = userUpdate;
 
   // Try to find the matching profile
@@ -94,10 +91,12 @@ export const updateUser = async (userId: string, userUpdate: EditUserData): Prom
 
   // Check that the password matches
   const [saltAsHex, storedSaltedPassword] = matchingUser.password.split(SALT_AND_PWD_DELIMITER);
-  const inputSaltedPassword = scryptSync(currentPassword, Buffer.from(saltAsHex, 'hex'), PASSWORD_KEY_LENGTH).toString('hex');
+  const inputSaltedPassword = scryptSync(currentPassword, Buffer.from(saltAsHex, "hex"), PASSWORD_KEY_LENGTH).toString(
+    "hex"
+  );
 
   if (inputSaltedPassword !== storedSaltedPassword) {
-    return Promise.reject("The provided password is incorrect")
+    return Promise.reject("The provided password is incorrect");
   }
 
   return prisma.user.update({

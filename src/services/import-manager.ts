@@ -1,55 +1,64 @@
 import { randomUUID } from "crypto";
-import { stringify } from 'csv-stringify/sync';
+import { stringify } from "csv-stringify/sync";
 import { writeFileSync } from "fs";
 import path from "path";
 import { Worker } from "worker_threads";
-import { ImportErrorType, ImportStatus, ImportStatusEnum, OngoingSubStatus, OngoingValidationStats } from "../model/graphql";
+import {
+  ImportErrorType,
+  ImportStatus,
+  ImportStatusEnum,
+  OngoingSubStatus,
+  OngoingValidationStats
+} from "../model/graphql";
 import { ImportType } from "../model/import-types";
-import { ImportUpdateMessage, IMPORT_COMPLETE, IMPORT_FAILED, VALIDATION_PROGRESS } from "../objects/import/import-update-message";
+import {
+  ImportUpdateMessage,
+  IMPORT_COMPLETE,
+  IMPORT_FAILED,
+  VALIDATION_PROGRESS
+} from "../objects/import/import-update-message";
 import { logger } from "../utils/logger";
 import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths";
-
 
 const importStatuses: Map<string, ImportStatusStructure> = new Map();
 
 type ImportStatusStructure = {
-  status: ImportStatusEnum
-  worker: Worker
-  statusDetails?: unknown
-}
+  status: ImportStatusEnum;
+  worker: Worker;
+  statusDetails?: unknown;
+};
 
 type ImportOngoingStructure = {
-  status: typeof ImportStatusEnum.Ongoing
-  worker: Worker
+  status: typeof ImportStatusEnum.Ongoing;
+  worker: Worker;
   statusDetails?: {
-    subStatus: OngoingSubStatus
-    ongoingValidationStats?: OngoingValidationStats
-  }
-}
+    subStatus: OngoingSubStatus;
+    ongoingValidationStats?: OngoingValidationStats;
+  };
+};
 
 type ImportCompleteStructure = {
-  status: typeof ImportStatusEnum.Complete
-  worker: Worker
+  status: typeof ImportStatusEnum.Complete;
+  worker: Worker;
   statusDetails?: {
-    importErrorsReportFile?: string
-    nbErrors?: number
-  }
-}
+    importErrorsReportFile?: string;
+    nbErrors?: number;
+  };
+};
 
 type ImportGlobalErrorStructure = {
-  status: typeof ImportStatusEnum.Failed
-  worker: Worker
+  status: typeof ImportStatusEnum.Failed;
+  worker: Worker;
   statusDetails?: {
-    type: ImportErrorType
-    description: number | string
-  }
-}
+    type: ImportErrorType;
+    description: number | string;
+  };
+};
 
 export const startImportTask = (importId: string, importType: ImportType) => {
-
   logger.debug(`Creating new worker for import id ${importId} and type ${importType}`);
 
-  const worker = new Worker('./services/import-worker.js', {
+  const worker = new Worker("./services/import-worker.js", {
     argv: process.argv.slice(2),
     workerData: {
       importId,
@@ -57,10 +66,8 @@ export const startImportTask = (importId: string, importType: ImportType) => {
     }
   });
 
-  worker.on('message', (postMessage: ImportUpdateMessage) => {
-
+  worker.on("message", (postMessage: ImportUpdateMessage) => {
     if (postMessage.type === IMPORT_COMPLETE) {
-
       // Create the report file if any
       let importReportId: string;
       if (postMessage.lineErrors) {
@@ -76,17 +83,17 @@ export const startImportTask = (importId: string, importType: ImportType) => {
       const newStatus: ImportCompleteStructure = {
         ...currentStatus,
         status: ImportStatusEnum.Complete,
-        ...(importReportId ? {
-          statusDetails: {
-            importErrorsReportFile: `${DOWNLOAD_ENDPOINT}${IMPORT_REPORTS_DIR}/${importReportId}`,
-            nbErrors: postMessage?.lineErrors?.length ?? 0
-          }
-        } : {})
-      }
+        ...(importReportId
+          ? {
+              statusDetails: {
+                importErrorsReportFile: `${DOWNLOAD_ENDPOINT}${IMPORT_REPORTS_DIR}/${importReportId}`,
+                nbErrors: postMessage?.lineErrors?.length ?? 0
+              }
+            }
+          : {})
+      };
       importStatuses.set(importId, newStatus);
-
     } else if (postMessage.type === IMPORT_FAILED) {
-
       const currentStatus = importStatuses.get(importId);
       const newStatus: ImportGlobalErrorStructure = {
         ...currentStatus,
@@ -95,9 +102,8 @@ export const startImportTask = (importId: string, importType: ImportType) => {
           type: ImportErrorType.ImportFailure,
           description: postMessage?.failureReason
         }
-      }
+      };
       importStatuses.set(importId, newStatus);
-
     } else if (postMessage.type === VALIDATION_PROGRESS) {
       const currentStatus = importStatuses.get(importId);
       const newStatus: ImportOngoingStructure = {
@@ -112,7 +118,7 @@ export const startImportTask = (importId: string, importType: ImportType) => {
             nbEntriesWithErrors: postMessage?.progress?.errors
           }
         }
-      }
+      };
       importStatuses.set(importId, newStatus);
     } else if (Object.values(OngoingSubStatus).includes(postMessage.type)) {
       const currentStatus = importStatuses.get(importId);
@@ -122,15 +128,14 @@ export const startImportTask = (importId: string, importType: ImportType) => {
         statusDetails: {
           subStatus: postMessage?.type
         }
-      }
+      };
       importStatuses.set(importId, newStatus);
     }
-
   });
 
-  worker.on('error', (error) => {
+  worker.on("error", (error) => {
     logger.warn({
-      msgType: 'Import error',
+      msgType: "Import error",
       importId,
       errorMsg: error
     });
@@ -142,14 +147,14 @@ export const startImportTask = (importId: string, importType: ImportType) => {
         type: ImportErrorType.ImportProcessError,
         description: error?.message
       }
-    }
+    };
     importStatuses.set(importId, newStatus);
   });
 
-  worker.on('exit', (exitCode) => {
+  worker.on("exit", (exitCode) => {
     if (exitCode) {
       logger.warn({
-        msgType: 'Import thread error',
+        msgType: "Import thread error",
         importId,
         exitCode
       });
@@ -161,7 +166,7 @@ export const startImportTask = (importId: string, importType: ImportType) => {
           type: ImportErrorType.ImportProcessUnexpectedExit,
           description: exitCode
         }
-      }
+      };
       importStatuses.set(importId, newStatus);
     }
   });
@@ -170,10 +175,9 @@ export const startImportTask = (importId: string, importType: ImportType) => {
     status: ImportStatusEnum.NotStarted,
     worker
   });
-}
+};
 
-export const getImportStatus = (importId: string): Promise<ImportStatus | null> => {
-
+export const getImportStatus = (importId: string): Promise<ImportStatus> | null => {
   if (!importStatuses.has(importId)) {
     // No status found for this import
     return null;
@@ -191,18 +195,20 @@ export const getImportStatus = (importId: string): Promise<ImportStatus | null> 
       // If the import task has failed due to an unexpected error or a failure to treat the inported file
       return Promise.resolve({
         status: importStatus.status,
-        errorType: (importStatus as ImportGlobalErrorStructure)?.statusDetails.type,
-        errorDescription: (importStatus as ImportGlobalErrorStructure)?.statusDetails.description?.toString()
+        errorType: (importStatus as ImportGlobalErrorStructure)?.statusDetails?.type,
+        errorDescription: (importStatus as ImportGlobalErrorStructure)?.statusDetails?.description?.toString()
       });
     case ImportStatusEnum.Complete:
       return Promise.resolve({
         status: importStatus.status,
         importErrorsReportFile: (importStatus as ImportCompleteStructure)?.statusDetails?.importErrorsReportFile,
-        ...((importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors ? {
-          ongoingValidationStats: {
-            nbEntriesWithErrors: (importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors
-          }
-        } : {})
+        ...((importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors
+          ? {
+              ongoingValidationStats: {
+                nbEntriesWithErrors: (importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors
+              }
+            }
+          : {})
       });
     case ImportStatusEnum.Ongoing: {
       return Promise.resolve({
@@ -214,5 +220,4 @@ export const getImportStatus = (importId: string): Promise<ImportStatus | null> 
     default:
       return null;
   }
-
-}
+};

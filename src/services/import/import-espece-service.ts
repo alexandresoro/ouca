@@ -5,11 +5,10 @@ import { createEspeces, findAllEspeces } from "../entities/espece-service";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {
+  private classes!: Classe[];
+  private especes!: (Espece | Omit<Espece, "id">)[];
 
-  private classes: Classe[];
-  private especes: (Espece | Omit<Espece, 'id'>)[];
-
-  private especesToInsert: Omit<Espece, 'id'>[];
+  private especesToInsert!: Omit<Espece, "id">[];
 
   protected getNumberOfColumns = (): number => {
     return 4;
@@ -19,9 +18,9 @@ export class ImportEspeceService extends ImportService {
     this.especesToInsert = [];
     this.classes = await findAllClasses();
     this.especes = await findAllEspeces();
-  }
+  };
 
-  protected validateAndPrepareEntity = (especeTab: string[]): string => {
+  protected validateAndPrepareEntity = (especeTab: string[]): string | null => {
     const importedEspece = new ImportedEspece(especeTab);
 
     const dataValidity = importedEspece.checkValidity();
@@ -62,7 +61,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Create and save the espece
-    const especeToSave = importedEspece.buildEspece(classe.id)
+    const especeToSave = importedEspece.buildEspece(classe.id);
 
     this.especesToInsert.push(especeToSave);
     this.especes.push(especeToSave);
@@ -73,7 +72,5 @@ export class ImportEspeceService extends ImportService {
     if (this.especesToInsert.length) {
       await createEspeces(this.especesToInsert);
     }
-  }
-
-
+  };
 }

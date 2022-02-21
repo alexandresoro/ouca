@@ -1,19 +1,28 @@
 import { EstimationDistance, Prisma } from "@prisma/client";
-import { EstimationDistanceWithCounts, EstimationsDistancePaginatedResult, FindParams, MutationUpsertEstimationDistanceArgs, QueryPaginatedEstimationsDistanceArgs } from "../../model/graphql";
+import {
+  EstimationDistanceWithCounts,
+  EstimationsDistancePaginatedResult,
+  FindParams,
+  MutationUpsertEstimationDistanceArgs,
+  QueryPaginatedEstimationsDistanceArgs
+} from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { COLUMN_LIBELLE } from "../../utils/constants";
-import { getEntiteAvecLibelleFilterClause, getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+import {
+  getEntiteAvecLibelleFilterClause,
+  getPrismaPagination,
+  queryParametersToFindAllEntities
+} from "./entities-utils";
 
 export const findEstimationDistance = async (id: number): Promise<EstimationDistance | null> => {
   return prisma.estimationDistance.findUnique({
     where: {
       id
-    },
+    }
   });
 };
 
-export const findEstimationsDistance = async (params?: FindParams): Promise<EstimationDistance[]> => {
-
+export const findEstimationsDistance = async (params?: FindParams | null): Promise<EstimationDistance[]> => {
   const { q, max } = params ?? {};
 
   return prisma.estimationDistance.findMany({
@@ -29,9 +38,7 @@ export const findEstimationsDistance = async (params?: FindParams): Promise<Esti
   });
 };
 
-export const findAllEstimationsDistance = async (): Promise<
-  EstimationDistanceWithCounts[]
-> => {
+export const findAllEstimationsDistance = async (): Promise<EstimationDistanceWithCounts[]> => {
   const estimations = await prisma.estimationDistance.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     include: {
@@ -47,7 +54,7 @@ export const findAllEstimationsDistance = async (): Promise<
     return {
       ...estimation,
       nbDonnees: estimation._count.donnee
-    }
+    };
   });
 };
 
@@ -55,7 +62,6 @@ export const findPaginatedEstimationsDistance = async (
   options: QueryPaginatedEstimationsDistanceArgs = {},
   includeCounts = true
 ): Promise<EstimationsDistancePaginatedResult> => {
-
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput>;
@@ -64,18 +70,19 @@ export const findPaginatedEstimationsDistance = async (
     case "libelle":
       orderBy = {
         [orderByField]: sortOrder
-      }
+      };
       break;
-    case "nbDonnees": {
-      orderBy = sortOrder && {
-        donnee: {
-          _count: sortOrder
-        }
+    case "nbDonnees":
+      {
+        orderBy = sortOrder && {
+          donnee: {
+            _count: sortOrder
+          }
+        };
       }
-    }
       break;
     default:
-      orderBy = {}
+      orderBy = {};
   }
 
   const estimationsDistance = await prisma.estimationDistance.findMany({
@@ -88,7 +95,7 @@ export const findPaginatedEstimationsDistance = async (
         }
       }
     },
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
   });
 
   const count = await prisma.estimationDistance.count({
@@ -100,10 +107,10 @@ export const findPaginatedEstimationsDistance = async (
       return {
         ...estimation,
         ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
-      }
+      };
     }),
     count
-  }
+  };
 };
 
 export const upsertEstimationDistance = async (
@@ -115,7 +122,6 @@ export const upsertEstimationDistance = async (
       where: { id },
       data
     });
-
   } else {
     return prisma.estimationDistance.create({ data });
   }
@@ -127,10 +133,10 @@ export const deleteEstimationDistance = async (id: number): Promise<EstimationDi
       id
     }
   });
-}
+};
 
 export const createEstimationsDistance = async (
-  estimationsDistance: Omit<EstimationDistance, 'id'>[]
+  estimationsDistance: Omit<EstimationDistance, "id">[]
 ): Promise<Prisma.BatchPayload> => {
   return prisma.estimationDistance.createMany({
     data: estimationsDistance

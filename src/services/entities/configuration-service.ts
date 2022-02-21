@@ -1,4 +1,3 @@
-
 import { CoordinatesSystem, Settings as SettingsDb } from "@prisma/client";
 import { InputSettings, Settings } from "../../model/graphql";
 import prisma from "../../sql/prisma";
@@ -9,10 +8,9 @@ const includedElements = {
   defaultAge: true,
   defaultSexe: true,
   defaultEstimationNombre: true
-}
+};
 
-export const findAppConfiguration = async (): Promise<Settings> => {
-
+export const findAppConfiguration = async (): Promise<Settings | null> => {
   const settingsDb = await prisma.settings.findFirst({
     include: includedElements
   });
@@ -20,14 +18,11 @@ export const findAppConfiguration = async (): Promise<Settings> => {
   return settingsDb;
 };
 
-export const findCoordinatesSystem = async (): Promise<CoordinatesSystem> => {
-  return prisma.settings.findFirst().then(settings => settings.coordinatesSystem);
+export const findCoordinatesSystem = async (): Promise<CoordinatesSystem | undefined> => {
+  return prisma.settings.findFirst().then((settings) => settings?.coordinatesSystem);
 };
 
-
-const buildSettingsDbFromInputSettings = (
-  appConfiguration: InputSettings
-): SettingsDb => {
+const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): SettingsDb => {
   return {
     id: appConfiguration.id,
     defaultObservateurId: appConfiguration.defaultObservateur,
@@ -48,10 +43,9 @@ export const createInitialUserSettings = async (userId: string): Promise<Setting
   return prisma.settings.create({
     data: {}
   });
-}
+};
 
 export const persistUserSettings = async (appConfiguration: InputSettings): Promise<Settings> => {
-
   const { id, ...settings } = buildSettingsDbFromInputSettings(appConfiguration);
 
   const updatedSettingsDb = await prisma.settings.update({

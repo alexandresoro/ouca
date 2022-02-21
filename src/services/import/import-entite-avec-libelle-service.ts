@@ -3,10 +3,9 @@ import { ImportedEntiteAvecLibelle } from "../../objects/import/imported-entite-
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleService extends ImportService {
+  protected entities!: { libelle: string }[];
 
-  protected entities: { libelle: string }[];
-
-  protected entitiesToInsert: { libelle: string }[];
+  protected entitiesToInsert!: { libelle: string }[];
 
   protected getNumberOfColumns = (): number => {
     return 1;
@@ -14,8 +13,8 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
 
   protected getImportedEntity = (entityTab: string[]): ImportedEntiteAvecLibelle => {
     return new ImportedEntiteAvecLibelle(entityTab);
-  }
-  protected validateAndPrepareEntity = (entityTab: string[]): string => {
+  };
+  protected validateAndPrepareEntity = (entityTab: string[]): string | null => {
     const importedEntity = this.getImportedEntity(entityTab);
 
     const dataValidity = importedEntity.checkValidity();
@@ -43,10 +42,9 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
     if (this.entitiesToInsert.length) {
       await this.saveEntities(this.entitiesToInsert);
     }
-  }
+  };
 
   protected abstract saveEntities(entities: { libelle: string }[]): Promise<Prisma.BatchPayload>;
 
   protected abstract getThisEntityName(): string;
-
 }
