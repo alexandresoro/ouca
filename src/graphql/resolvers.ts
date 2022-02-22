@@ -716,10 +716,10 @@ const resolvers: Resolvers<Context> = {
       return null;
     },
     userLogout: async (_source, args, context): Promise<boolean> => {
-      validateUserAuthentication(context);
+      const user = validateUserAuthentication(context);
       await deleteTokenCookie(context.reply);
 
-      logger.debug(`User ${context.username} logged out`);
+      logger.debug(`User ID ${user.id} logged out`);
 
       return true;
     },
@@ -740,18 +740,18 @@ const resolvers: Resolvers<Context> = {
       throw new ForbiddenError("User modification is only allowed from the user itself");
     },
     userDelete: async (_source, args, context): Promise<boolean> => {
-      validateUserAuthentication(context);
+      const user = validateUserAuthentication(context);
 
       // Only a user can delete itself
       // With admin role, admin can delete anyone
-      if (context.userId === args?.id || context.role === DatabaseRole.admin) {
+      if (user.id === args?.id || context.role === DatabaseRole.admin) {
         await deleteUser(args.id);
 
         if (context.userId === args?.id) {
           await deleteTokenCookie(context.reply);
         }
 
-        logger.info(`User with id ${args.id} has been deleted. Request has been initiated by ${context.username}`);
+        logger.info(`User with id ${args.id} has been deleted. Request has been initiated by ID ${user.id}`);
 
         return true;
       }

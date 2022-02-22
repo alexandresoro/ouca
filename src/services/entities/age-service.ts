@@ -45,23 +45,29 @@ export const findAllAges = async (
 ): Promise<AgeWithCounts[]> => {
   const includeCounts = options.includeCounts ?? true;
 
-  const ages = await prisma.age.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    include: includeCounts && {
-      _count: {
-        select: {
-          donnee: true // Add number of donnees that contains it
+  if (includeCounts) {
+    const ages = await prisma.age.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      include: {
+        _count: {
+          select: {
+            donnee: true // Add number of donnees that contains it
+          }
         }
       }
-    }
-  });
+    });
 
-  return ages.map((age) => {
-    return {
-      ...age,
-      ...(includeCounts ? { nbDonnees: age._count.donnee } : {})
-    };
-  });
+    return ages.map((age) => {
+      return {
+        ...age,
+        ...(includeCounts ? { nbDonnees: age._count.donnee } : {})
+      };
+    });
+  } else {
+    return prisma.age.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
+    });
+  }
 };
 
 export const findPaginatedAges = async (
@@ -80,43 +86,58 @@ export const findPaginatedAges = async (
       break;
     case "nbDonnees":
       {
-        orderBy = sortOrder && {
-          donnee: {
-            _count: sortOrder
-          }
-        };
+        orderBy = sortOrder
+          ? {
+              donnee: {
+                _count: sortOrder
+              }
+            }
+          : {};
       }
       break;
     default:
       orderBy = {};
   }
 
-  const ages = await prisma.age.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    include: includeCounts && {
-      _count: {
-        select: {
-          donnee: true
-        }
-      }
-    },
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-  });
-
   const count = await prisma.age.count({
     where: getEntiteAvecLibelleFilterClause(searchParams?.q)
   });
 
-  return {
-    result: ages.map((age) => {
-      return {
-        ...age,
-        ...(includeCounts ? { nbDonnees: age._count.donnee } : {})
-      };
-    }),
-    count
-  };
+  if (includeCounts) {
+    const ages = await prisma.age.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      include: {
+        _count: {
+          select: {
+            donnee: true
+          }
+        }
+      },
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
+
+    return {
+      result: ages.map((age) => {
+        return {
+          ...age,
+          ...(includeCounts ? { nbDonnees: age._count.donnee } : {})
+        };
+      }),
+      count
+    };
+  } else {
+    const ages = await prisma.age.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
+
+    return {
+      result: ages,
+      count
+    };
+  }
 };
 
 export const upsertAge = async (args: MutationUpsertAgeArgs): Promise<Age> => {

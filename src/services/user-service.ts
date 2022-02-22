@@ -104,7 +104,9 @@ export const updateUser = async (userId: string, userUpdate: EditUserData): Prom
       id: userId
     },
     data: {
-      ...restUserUpdate,
+      firstName: restUserUpdate.firstName ?? undefined,
+      lastName: restUserUpdate.lastName ?? undefined,
+      username: restUserUpdate.username ?? undefined,
       password: newPassword ? getHashedPassword(newPassword) : undefined
     }
   });
