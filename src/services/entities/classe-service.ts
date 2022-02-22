@@ -133,39 +133,45 @@ export const findPaginatedClasses = async (
         };
         break;
       case "nbEspeces":
-        orderBy = sortOrder && {
-          espece: {
-            _count: sortOrder
-          }
-        };
+        orderBy = sortOrder
+          ? {
+              espece: {
+                _count: sortOrder
+              }
+            }
+          : {};
         break;
       default:
         orderBy = {};
     }
 
-    const classesRq = await prisma.classe.findMany({
-      ...getPrismaPagination(searchParams),
-      include: {
-        _count: includeCounts && {
-          select: {
-            espece: true
-          }
-        }
-      },
-      orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-    });
-
-    classes = classesRq.map((classe) => {
-      return {
-        ...classe,
-        ...(includeCounts
-          ? {
-              nbEspeces: classe._count.espece
+    if (includeCounts) {
+      const classesRq = await prisma.classe.findMany({
+        ...getPrismaPagination(searchParams),
+        include: {
+          _count: {
+            select: {
+              espece: true
             }
-          : {})
-      };
-    });
+          }
+        },
+        orderBy,
+        where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      });
+
+      classes = classesRq.map((classe) => {
+        return {
+          ...classe,
+          nbEspeces: classe._count.espece
+        };
+      });
+    } else {
+      classes = await prisma.classe.findMany({
+        ...getPrismaPagination(searchParams),
+        orderBy,
+        where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      });
+    }
   }
 
   const count = await prisma.classe.count({

@@ -60,7 +60,7 @@ export const findAllAges = async (
     return ages.map((age) => {
       return {
         ...age,
-        ...(includeCounts ? { nbDonnees: age._count.donnee } : {})
+        nbDonnees: age._count.donnee
       };
     });
   } else {
@@ -121,7 +121,7 @@ export const findPaginatedAges = async (
       result: ages.map((age) => {
         return {
           ...age,
-          ...(includeCounts ? { nbDonnees: age._count.donnee } : {})
+          nbDonnees: age._count.donnee
         };
       }),
       count
