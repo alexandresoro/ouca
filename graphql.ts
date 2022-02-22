@@ -236,7 +236,7 @@ export type Espece = {
 
 export type EspeceWithCounts = {
   __typename?: 'EspeceWithCounts';
-  classe: Classe;
+  classe?: Maybe<Classe>;
   code: Scalars['String'];
   id: Scalars['Int'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -1779,7 +1779,7 @@ export type EspeceResolvers<ContextType = any, ParentType extends ResolversParen
 };
 
 export type EspeceWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['EspeceWithCounts'] = ResolversParentTypes['EspeceWithCounts']> = {
-  classe?: Resolver<ResolversTypes['Classe'], ParentType, ContextType>;
+  classe?: Resolver<Maybe<ResolversTypes['Classe']>, ParentType, ContextType>;
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
