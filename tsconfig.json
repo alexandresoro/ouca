@@ -6,9 +6,7 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "resolveJsonModule": true,
-    "strict": true,
-    "strictNullChecks": false // TODO Put this at true someday to improve code quality
+    "strict": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["**/*.spec.*"]
+  "include": ["src/**/*"]
 }

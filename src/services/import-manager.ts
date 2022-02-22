@@ -41,8 +41,8 @@ type ImportCompleteStructure = {
   status: typeof ImportStatusEnum.Complete;
   worker: Worker;
   statusDetails?: {
-    importErrorsReportFile?: string;
-    nbErrors?: number;
+    importErrorsReportFile?: string | undefined;
+    nbErrors?: number | undefined;
   };
 };
 
@@ -51,7 +51,7 @@ type ImportGlobalErrorStructure = {
   worker: Worker;
   statusDetails?: {
     type: ImportErrorType;
-    description: number | string;
+    description: number | string | undefined;
   };
 };
 
@@ -69,7 +69,7 @@ export const startImportTask = (importId: string, importType: ImportType) => {
   worker.on("message", (postMessage: ImportUpdateMessage) => {
     if (postMessage.type === IMPORT_COMPLETE) {
       // Create the report file if any
-      let importReportId: string;
+      let importReportId: string | undefined = undefined;
       if (postMessage.lineErrors) {
         importReportId = randomUUID();
         const csvString = stringify(postMessage.lineErrors, {
@@ -79,7 +79,8 @@ export const startImportTask = (importId: string, importType: ImportType) => {
         writeFileSync(path.join(PUBLIC_DIR_PATH, IMPORT_REPORTS_DIR, importReportId), csvString);
       }
 
-      const currentStatus = importStatuses.get(importId);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportCompleteStructure = {
         ...currentStatus,
         status: ImportStatusEnum.Complete,
@@ -90,11 +91,13 @@ export const startImportTask = (importId: string, importType: ImportType) => {
                 nbErrors: postMessage?.lineErrors?.length ?? 0
               }
             }
-          : {})
+          : ({} as never))
       };
+
       importStatuses.set(importId, newStatus);
     } else if (postMessage.type === IMPORT_FAILED) {
-      const currentStatus = importStatuses.get(importId);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportGlobalErrorStructure = {
         ...currentStatus,
         status: ImportStatusEnum.Failed,
@@ -105,7 +108,8 @@ export const startImportTask = (importId: string, importType: ImportType) => {
       };
       importStatuses.set(importId, newStatus);
     } else if (postMessage.type === VALIDATION_PROGRESS) {
-      const currentStatus = importStatuses.get(importId);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportOngoingStructure = {
         ...currentStatus,
         status: ImportStatusEnum.Ongoing,
@@ -121,7 +125,8 @@ export const startImportTask = (importId: string, importType: ImportType) => {
       };
       importStatuses.set(importId, newStatus);
     } else if (Object.values(OngoingSubStatus).includes(postMessage.type)) {
-      const currentStatus = importStatuses.get(importId);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportOngoingStructure = {
         ...currentStatus,
         status: ImportStatusEnum.Ongoing,
@@ -139,7 +144,8 @@ export const startImportTask = (importId: string, importType: ImportType) => {
       importId,
       errorMsg: error
     });
-    const currentStatus = importStatuses.get(importId);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const currentStatus = importStatuses.get(importId)!;
     const newStatus: ImportGlobalErrorStructure = {
       ...currentStatus,
       status: ImportStatusEnum.Failed,
@@ -158,7 +164,8 @@ export const startImportTask = (importId: string, importType: ImportType) => {
         importId,
         exitCode
       });
-      const currentStatus = importStatuses.get(importId);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportGlobalErrorStructure = {
         ...currentStatus,
         status: ImportStatusEnum.Failed,

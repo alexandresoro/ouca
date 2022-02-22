@@ -8,4 +8,4 @@ generates:
           content: "import {PartialDeep} from 'type-fest';"
     config:
       enumsAsConst: true
-      defaultMapper: PartialDeep<{T}>
+      defaultMapper: PartialDeep<{T}> | null

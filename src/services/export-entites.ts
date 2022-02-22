@@ -134,7 +134,7 @@ export const generateDonneesExport = async (
       "Altitude en mètres": donnee.inventaire.altitude ?? donnee.inventaire.lieuDit.altitude,
       "Température en °C": donnee.inventaire.temperature,
       Météo: donnee.inventaire.meteos?.map((meteo) => meteo?.libelle)?.join(SEPARATOR_COMMA) ?? "",
-      Classe: donnee.espece.classe.libelle,
+      Classe: donnee.espece.classe?.libelle,
       "Code espèce": donnee.espece.code,
       "Nom francais": donnee.espece.nomFrancais,
       "Nom scientifique": donnee.espece.nomLatin,
@@ -170,7 +170,7 @@ export const generateEspecesExport = async (): Promise<string> => {
 
   const objectsToExport = especes.map((espece) => {
     return {
-      Classe: espece.classe.libelle,
+      Classe: espece.classe?.libelle,
       Code: espece.code,
       "Nom français": espece.nomFrancais,
       "Nom scientifique": espece.nomLatin

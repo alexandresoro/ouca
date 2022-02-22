@@ -113,30 +113,30 @@ export default gql`
 
   input SearchDonneeCriteria {
     id: Int
-    observateurs: [Int]
+    observateurs: [Int!]
     temperature: Int
-    meteos: [Int]
-    associes: [Int]
+    meteos: [Int!]
+    associes: [Int!]
     heure: String
     duree: String
-    classes: [Int]
-    especes: [Int]
-    departements: [Int]
-    communes: [Int]
-    lieuxdits: [Int]
+    classes: [Int!]
+    especes: [Int!]
+    departements: [Int!]
+    communes: [Int!]
+    lieuxdits: [Int!]
     nombre: Int
-    estimationsNombre: [Int]
-    sexes: [Int]
-    ages: [Int]
+    estimationsNombre: [Int!]
+    sexes: [Int!]
+    ages: [Int!]
     distance: Int
-    estimationsDistance: [Int]
+    estimationsDistance: [Int!]
     regroupement: Int
     fromDate: String
     toDate: String
     commentaire: String
-    nicheurs: [Nicheur]
-    comportements: [Int]
-    milieux: [Int]
+    nicheurs: [Nicheur!]
+    comportements: [Int!]
+    milieux: [Int!]
   }
 
   input UserCreateInput {
@@ -268,7 +268,7 @@ export default gql`
     code: String!
     nomFrancais: String!
     nomLatin: String!
-    classe: Classe!
+    classe: Classe
   }
 
   type EstimationDistance {

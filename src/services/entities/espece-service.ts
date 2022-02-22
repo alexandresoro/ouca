@@ -12,7 +12,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { buildSearchDonneeCriteria } from "./donnee-service";
 import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
-export const findEspece = async (id: number): Promise<Espece | null> => {
+export const findEspece = async (id: number | undefined): Promise<Espece | null> => {
   return prisma.espece.findUnique({
     where: {
       id
@@ -20,7 +20,7 @@ export const findEspece = async (id: number): Promise<Espece | null> => {
   });
 };
 
-export const findEspeceOfDonneeId = async (donneeId: number): Promise<Espece | null> => {
+export const findEspeceOfDonneeId = async (donneeId: number | undefined): Promise<Espece | null> => {
   return prisma.donnee
     .findUnique({
       where: {
@@ -128,7 +128,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput 
     : {};
 };
 
-export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: Classe })[]> => {
+export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: Classe | null })[]> => {
   return prisma.espece.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     include: {
@@ -138,7 +138,7 @@ export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: C
 };
 
 export const findAllEspeces = async (
-  options?: Prisma.EspeceFindManyArgs
+  options?: Omit<Prisma.EspeceFindManyArgs, "include">
 ): Promise<(Espece & { nbDonnees: number })[]> => {
   const especesDb = await prisma.espece.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
@@ -167,34 +167,36 @@ export const findPaginatedEspeces = async (
 ): Promise<EspecesPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let orderBy: Prisma.Enumerable<Prisma.EspeceOrderByWithRelationInput>;
-  switch (orderByField) {
-    case "id":
-    case "code":
-    case "nomFrancais":
-    case "nomLatin":
-      orderBy = {
-        [orderByField]: sortOrder
-      };
-      break;
-    case "nomClasse":
-      orderBy = {
-        classe: {
-          libelle: sortOrder
-        }
-      };
-      break;
-    case "nbDonnees":
-      {
-        orderBy = sortOrder && {
-          donnee: {
-            _count: sortOrder // Note: this may not be working perfectly with donnee search criteria: _count will return the full number of donnees, let's consider this as acceptable for now
+  let orderBy: Prisma.Enumerable<Prisma.EspeceOrderByWithRelationInput> | undefined = undefined;
+  if (sortOrder) {
+    switch (orderByField) {
+      case "id":
+      case "code":
+      case "nomFrancais":
+      case "nomLatin":
+        orderBy = {
+          [orderByField]: sortOrder
+        };
+        break;
+      case "nomClasse":
+        orderBy = {
+          classe: {
+            libelle: sortOrder
           }
         };
-      }
-      break;
-    default:
-      orderBy = {};
+        break;
+      case "nbDonnees":
+        {
+          orderBy = {
+            donnee: {
+              _count: sortOrder // Note: this may not be working perfectly with donnee search criteria: _count will return the full number of donnees, let's consider this as acceptable for now
+            }
+          };
+        }
+        break;
+      default:
+        orderBy = {};
+    }
   }
 
   const builtSearchCriteria = buildSearchDonneeCriteria(searchCriteria);
@@ -215,7 +217,7 @@ export const findPaginatedEspeces = async (
               }
             }
           }
-        : undefined
+        : {}
     ]
   };
 
@@ -228,15 +230,19 @@ export const findPaginatedEspeces = async (
       where: {
         especeId,
         espece: {
-          AND: [espece, getFilterClause(searchParams?.q)]
+          AND: [espece ?? {}, getFilterClause(searchParams?.q)]
         },
         ...restSearchDonneeCriteria
       },
-      orderBy: {
-        _count: {
-          especeId: sortOrder
-        }
-      },
+      ...(sortOrder
+        ? {
+            orderBy: {
+              _count: {
+                especeId: sortOrder
+              }
+            }
+          }
+        : {}),
       _count: true,
       ...getPrismaPagination(searchParams)
     });
@@ -261,7 +267,8 @@ export const findPaginatedEspeces = async (
     especesResult = donneesByMatchingEspece.map(({ especeId, _count }) => {
       const espece = especesRq?.find(({ id }) => id === especeId);
       return {
-        ...espece,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ...espece!,
         nbDonnees: _count
       };
     });
@@ -296,7 +303,7 @@ export const findPaginatedEspeces = async (
                   espece,
                   ...restSearchDonneeCriteria
                 }
-              : undefined
+              : {}
           ]
         },
         _count: true

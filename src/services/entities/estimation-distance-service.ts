@@ -64,53 +64,68 @@ export const findPaginatedEstimationsDistance = async (
 ): Promise<EstimationsDistancePaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput>;
-  switch (orderByField) {
-    case "id":
-    case "libelle":
-      orderBy = {
-        [orderByField]: sortOrder
-      };
-      break;
-    case "nbDonnees":
-      {
-        orderBy = sortOrder && {
-          donnee: {
-            _count: sortOrder
-          }
+  let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput> | undefined = undefined;
+  if (sortOrder) {
+    switch (orderByField) {
+      case "id":
+      case "libelle":
+        orderBy = {
+          [orderByField]: sortOrder
         };
-      }
-      break;
-    default:
-      orderBy = {};
-  }
-
-  const estimationsDistance = await prisma.estimationDistance.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    include: includeCounts && {
-      _count: {
-        select: {
-          donnee: true
+        break;
+      case "nbDonnees":
+        {
+          orderBy = {
+            donnee: {
+              _count: sortOrder
+            }
+          };
         }
-      }
-    },
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-  });
+        break;
+      default:
+        orderBy = {};
+    }
+  }
 
   const count = await prisma.estimationDistance.count({
     where: getEntiteAvecLibelleFilterClause(searchParams?.q)
   });
 
-  return {
-    result: estimationsDistance.map((estimation) => {
-      return {
-        ...estimation,
-        ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
-      };
-    }),
-    count
-  };
+  if (includeCounts) {
+    const estimationsDistance = await prisma.estimationDistance.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      include: {
+        _count: {
+          select: {
+            donnee: true
+          }
+        }
+      },
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
+
+    return {
+      result: estimationsDistance.map((estimation) => {
+        return {
+          ...estimation,
+          nbDonnees: estimation._count.donnee
+        };
+      }),
+      count
+    };
+  } else {
+    const estimationsDistance = await prisma.estimationDistance.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
+
+    return {
+      result: estimationsDistance,
+      count
+    };
+  }
 };
 
 export const upsertEstimationDistance = async (

@@ -76,27 +76,27 @@ export const findPaginatedAges = async (
 ): Promise<AgesPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let orderBy: Prisma.Enumerable<Prisma.AgeOrderByWithRelationInput>;
-  switch (orderByField) {
-    case "id":
-    case "libelle":
-      orderBy = {
-        [orderByField]: sortOrder
-      };
-      break;
-    case "nbDonnees":
-      {
-        orderBy = sortOrder
-          ? {
-              donnee: {
-                _count: sortOrder
-              }
+  let orderBy: Prisma.Enumerable<Prisma.AgeOrderByWithRelationInput> | undefined = undefined;
+  if (sortOrder) {
+    switch (orderByField) {
+      case "id":
+      case "libelle":
+        orderBy = {
+          [orderByField]: sortOrder
+        };
+        break;
+      case "nbDonnees":
+        {
+          orderBy = {
+            donnee: {
+              _count: sortOrder
             }
-          : {};
-      }
-      break;
-    default:
-      orderBy = {};
+          };
+        }
+        break;
+      default:
+        orderBy = {};
+    }
   }
 
   const count = await prisma.age.count({

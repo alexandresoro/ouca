@@ -52,8 +52,8 @@ export type FullDonnee = DonneeWithRelations & {
     };
     meteos: Meteo[];
   };
-  espece: Espece & { classe: Classe };
-  estimationDistance: EstimationDistance;
+  espece: Espece & { classe: Classe | null };
+  estimationDistance: EstimationDistance | null;
 };
 
 type DonneeRelatedTablesFields = {
@@ -210,9 +210,6 @@ const normalizeDonnee = <T extends DonneeRelatedTablesFields>(
   comportements: Comportement[];
   milieux: Milieu[];
 } => {
-  if (donnee == null) {
-    return null;
-  }
   const { donnee_comportement, donnee_milieu, ...restDonnee } = donnee;
   const comportementsArray = donnee_comportement.map((donnee_comportement) => {
     return donnee_comportement?.comportement;
@@ -228,7 +225,7 @@ const normalizeDonnee = <T extends DonneeRelatedTablesFields>(
   };
 };
 
-export const findDonnee = async (id: number): Promise<DonneeWithRelations> => {
+export const findDonnee = async (id: number | undefined): Promise<DonneeWithRelations | null> => {
   return prisma.donnee
     .findUnique({
       include: COMMON_DONNEE_INCLUDE,
@@ -236,7 +233,7 @@ export const findDonnee = async (id: number): Promise<DonneeWithRelations> => {
         id
       }
     })
-    .then(normalizeDonnee);
+    .then((donnee) => (donnee ? normalizeDonnee(donnee) : null));
 };
 
 export const findDonneesByCriteria = async (
@@ -303,110 +300,113 @@ export const findPaginatedDonneesByCriteria = async (
 }> => {
   const { searchParams, searchCriteria, orderBy: orderByField, sortOrder } = options;
 
-  let orderBy: Prisma.Enumerable<Prisma.DonneeOrderByWithRelationInput>;
-  switch (orderByField) {
-    case "id":
-    case "nombre":
-      orderBy = {
-        [orderByField]: sortOrder
-      };
-      break;
-    case "codeEspece":
-      orderBy = {
-        espece: {
-          code: sortOrder ?? undefined
-        }
-      };
-      break;
-    case "nomFrancais":
-      orderBy = {
-        espece: {
-          nomFrancais: sortOrder ?? undefined
-        }
-      };
-      break;
-    case "sexe":
-      orderBy = {
-        sexe: {
-          libelle: sortOrder ?? undefined
-        }
-      };
-      break;
-    case "age":
-      orderBy = {
-        age: {
-          libelle: sortOrder ?? undefined
-        }
-      };
-      break;
-    case "departement":
-      orderBy = sortOrder && {
-        inventaire: {
-          lieuDit: {
-            commune: {
-              departement: {
+  let orderBy: Prisma.Enumerable<Prisma.DonneeOrderByWithRelationInput> | undefined = undefined;
+  if (sortOrder) {
+    switch (orderByField) {
+      case "id":
+      case "nombre":
+        orderBy = {
+          [orderByField]: sortOrder
+        };
+        break;
+      case "codeEspece":
+        orderBy = {
+          espece: {
+            code: sortOrder
+          }
+        };
+
+        break;
+      case "nomFrancais":
+        orderBy = {
+          espece: {
+            nomFrancais: sortOrder
+          }
+        };
+        break;
+      case "sexe":
+        orderBy = {
+          sexe: {
+            libelle: sortOrder
+          }
+        };
+        break;
+      case "age":
+        orderBy = {
+          age: {
+            libelle: sortOrder
+          }
+        };
+        break;
+      case "departement":
+        orderBy = {
+          inventaire: {
+            lieuDit: {
+              commune: {
+                departement: {
+                  code: sortOrder
+                }
+              }
+            }
+          }
+        };
+        break;
+      case "codeCommune":
+        orderBy = {
+          inventaire: {
+            lieuDit: {
+              commune: {
                 code: sortOrder
               }
             }
           }
-        }
-      };
-      break;
-    case "codeCommune":
-      orderBy = sortOrder && {
-        inventaire: {
-          lieuDit: {
-            commune: {
-              code: sortOrder
-            }
-          }
-        }
-      };
-      break;
-    case "nomCommune":
-      orderBy = sortOrder && {
-        inventaire: {
-          lieuDit: {
-            commune: {
-              nom: sortOrder
-            }
-          }
-        }
-      };
-      break;
-    case "lieuDit":
-      orderBy = sortOrder && {
-        inventaire: {
-          lieuDit: {
-            nom: sortOrder
-          }
-        }
-      };
-      break;
-    case "date":
-    case "heure":
-    case "duree":
-      orderBy = sortOrder && {
-        inventaire: {
-          [orderByField]: sortOrder
-        }
-      };
-      break;
-    case "observateur":
-      {
-        orderBy = sortOrder && {
+        };
+        break;
+      case "nomCommune":
+        orderBy = {
           inventaire: {
-            observateur: {
-              libelle: sortOrder
+            lieuDit: {
+              commune: {
+                nom: sortOrder
+              }
             }
           }
         };
-      }
-      break;
-    default:
-      orderBy = {
-        id: SortOrder.Desc
-      };
+        break;
+      case "lieuDit":
+        orderBy = {
+          inventaire: {
+            lieuDit: {
+              nom: sortOrder
+            }
+          }
+        };
+        break;
+      case "date":
+      case "heure":
+      case "duree":
+        orderBy = {
+          inventaire: {
+            [orderByField]: sortOrder
+          }
+        };
+        break;
+      case "observateur":
+        {
+          orderBy = {
+            inventaire: {
+              observateur: {
+                libelle: sortOrder
+              }
+            }
+          };
+        }
+        break;
+      default:
+        orderBy = {
+          id: SortOrder.Desc
+        };
+    }
   }
 
   const donnees = await prisma.donnee
@@ -430,7 +430,7 @@ export const findPaginatedDonneesByCriteria = async (
   };
 };
 
-export const findDonneeNavigationData = async (donneeId: number): Promise<DonneeNavigationData> => {
+export const findDonneeNavigationData = async (donneeId: number | undefined): Promise<DonneeNavigationData> => {
   const previousDonnee = await prisma.donnee.findFirst({
     select: {
       id: true
@@ -540,7 +540,7 @@ export const findLastDonneeId = async (): Promise<number | null> => {
       }
     })
     .then((donnee) => donnee?.id ?? null)
-    .catch(() => Promise.resolve(null as null));
+    .catch(() => Promise.resolve(null));
 };
 
 export const upsertDonnee = async (args: MutationUpsertDonneeArgs): Promise<DonneeWithRelations> => {

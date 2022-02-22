@@ -1,21 +1,29 @@
 import { CoordinatesSystem, Inventaire, Meteo, Observateur } from "@prisma/client";
 import { format, parse } from "date-fns";
 import { zonedTimeToUtc } from "date-fns-tz";
-import { CoordinatesSystemType, InputInventaire, MutationUpsertInventaireArgs, UpsertInventaireFailureReason } from "../../model/graphql";
+import {
+  CoordinatesSystemType,
+  InputInventaire,
+  MutationUpsertInventaireArgs,
+  UpsertInventaireFailureReason
+} from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { DATE_PATTERN } from "../../utils/constants";
 
-export type InventaireWithRelations = Omit<Inventaire, 'date' | 'latitude' | 'longitude' | 'altitude' | 'coordinates_system'> & {
-  observateur: Observateur
+export type InventaireWithRelations = Omit<
+  Inventaire,
+  "date" | "latitude" | "longitude" | "altitude" | "coordinates_system"
+> & {
+  observateur: Observateur;
   customizedCoordinates?: {
-    altitude: number,
-    latitude: number,
-    longitude: number,
-    system: CoordinatesSystem
-  }
-  date: string // Formatted as yyyy-MM-dd
-  associes: Observateur[]
-  meteos: Meteo[]
+    altitude: number;
+    latitude: number;
+    longitude: number;
+    system: CoordinatesSystem;
+  };
+  date: string; // Formatted as yyyy-MM-dd
+  associes: Observateur[];
+  meteos: Meteo[];
 };
 
 const COMMON_INVENTAIRE_INCLUDE = {
@@ -30,31 +38,27 @@ const COMMON_INVENTAIRE_INCLUDE = {
       meteo: true
     }
   }
-}
+};
 
 type InventaireRelatedTablesFields = {
   inventaire_associe: {
-    observateur: Observateur
-  }[]
+    observateur: Observateur;
+  }[];
   inventaire_meteo: {
-    meteo: Meteo
-  }[]
-}
+    meteo: Meteo;
+  }[];
+};
 
 type InventaireResolvedFields = {
-  observateur: Observateur
-}
+  observateur: Observateur;
+};
 
-export const normalizeInventaire = <
-  T extends InventaireRelatedTablesFields
->(inventaire: T): Omit<T, 'inventaire_associe' | 'inventaire_meteo'> & {
-  associes: Observateur[]
-  meteos: Meteo[]
+export const normalizeInventaire = <T extends InventaireRelatedTablesFields>(
+  inventaire: T
+): Omit<T, "inventaire_associe" | "inventaire_meteo"> & {
+  associes: Observateur[];
+  meteos: Meteo[];
 } => {
-
-  if (inventaire == null) {
-    return null;
-  }
   const { inventaire_associe, inventaire_meteo, ...restInventaire } = inventaire;
   const associesArray = inventaire_associe.map((inventaire_associe) => {
     return inventaire_associe?.observateur;
@@ -67,66 +71,61 @@ export const normalizeInventaire = <
     ...restInventaire,
     associes: associesArray,
     meteos: meteosArray
-  }
-}
+  };
+};
 
-const normalizeInventaireComplete = <
-  T extends Inventaire & InventaireRelatedTablesFields & InventaireResolvedFields
->(inventaire: T): InventaireWithRelations => {
-
-  if (inventaire == null) {
-    return null;
-  }
-
+const normalizeInventaireComplete = <T extends Inventaire & InventaireRelatedTablesFields & InventaireResolvedFields>(
+  inventaire: T
+): InventaireWithRelations => {
   const { altitude, latitude, longitude, coordinates_system, date, ...restInventaire } = inventaire;
 
-  const customizedCoordinates = (coordinates_system != null && altitude != null && latitude != null && longitude != null)
-    ? {
-      customizedCoordinates: {
-        altitude,
-        latitude: latitude.toNumber(),
-        longitude: longitude.toNumber(),
-        system: coordinates_system
-      }
-    }
-    : {};
+  const customizedCoordinates =
+    coordinates_system != null && altitude != null && latitude != null && longitude != null
+      ? {
+          customizedCoordinates: {
+            altitude,
+            latitude: latitude.toNumber(),
+            longitude: longitude.toNumber(),
+            system: coordinates_system
+          }
+        }
+      : {};
 
   const inventaireWithoutAssociesMeteos = normalizeInventaire(restInventaire);
 
   return {
     ...inventaireWithoutAssociesMeteos,
     ...customizedCoordinates,
-    date: format(date, DATE_PATTERN),
-  }
-}
-
-export const findInventaire = async (
-  id: number
-): Promise<InventaireWithRelations> => {
-  return prisma.inventaire.findUnique({
-    include: COMMON_INVENTAIRE_INCLUDE,
-    where: {
-      id
-    }
-  }).then(normalizeInventaireComplete);
+    date: format(date, DATE_PATTERN)
+  };
 };
 
-export const findInventaireOfDonneeId = async (donneeId: number): Promise<Inventaire | null> => {
-  return prisma.donnee.findUnique({
-    where: {
-      id: donneeId
-    },
-  }).inventaire();
+export const findInventaire = async (id: number | undefined): Promise<InventaireWithRelations | null> => {
+  return prisma.inventaire
+    .findUnique({
+      include: COMMON_INVENTAIRE_INCLUDE,
+      where: {
+        id
+      }
+    })
+    .then((inventaire) => (inventaire ? normalizeInventaireComplete(inventaire) : null));
 };
 
-export const findExistingInventaire = async (
-  inventaire: InputInventaire
-): Promise<Inventaire | null> => {
+export const findInventaireOfDonneeId = async (donneeId: number | undefined): Promise<Inventaire | null> => {
+  return prisma.donnee
+    .findUnique({
+      where: {
+        id: donneeId
+      }
+    })
+    .inventaire();
+};
 
+export const findExistingInventaire = async (inventaire: InputInventaire): Promise<Inventaire | null> => {
   const inventaireCandidates = await prisma.inventaire.findMany({
     where: {
       observateurId: inventaire.observateurId,
-      date: zonedTimeToUtc(parse(inventaire.date, DATE_PATTERN, new Date()), 'UTC'),
+      date: zonedTimeToUtc(parse(inventaire.date, DATE_PATTERN, new Date()), "UTC"),
       heure: inventaire.heure ?? null,
       duree: inventaire.duree ?? null,
       lieuDitId: inventaire.lieuDitId,
@@ -134,24 +133,28 @@ export const findExistingInventaire = async (
       latitude: inventaire.latitude ?? null,
       longitude: inventaire.longitude ?? null,
       temperature: inventaire.temperature ?? null,
-      ...(inventaire.associesIds != null ? {
-        inventaire_associe: {
-          every: {
-            observateur_id: {
-              in: inventaire.associesIds
+      ...(inventaire.associesIds != null
+        ? {
+            inventaire_associe: {
+              every: {
+                observateur_id: {
+                  in: inventaire.associesIds
+                }
+              }
             }
-          },
-        }
-      } : {}),
-      ...(inventaire.meteosIds != null ? {
-        inventaire_meteo: {
-          every: {
-            meteo_id: {
-              in: inventaire.meteosIds
+          }
+        : {}),
+      ...(inventaire.meteosIds != null
+        ? {
+            inventaire_meteo: {
+              every: {
+                meteo_id: {
+                  in: inventaire.meteosIds
+                }
+              }
             }
-          },
-        }
-      } : {})
+          }
+        : {})
     },
     include: {
       inventaire_associe: true,
@@ -162,28 +165,30 @@ export const findExistingInventaire = async (
   // At this point the candidates are the ones that match all parameters and for which each associe+meteo is in the required list
   // However, we did not check yet that this candidates have exactly the requested associes/meteos as they can have additional ones
 
-  return inventaireCandidates?.filter((inventaireEntity) => {
-    const matcherAssociesLength = inventaire?.associesIds?.length ?? 0;
-    const matcherMeteosLength = inventaire?.meteosIds?.length ?? 0;
+  return (
+    inventaireCandidates?.filter((inventaireEntity) => {
+      const matcherAssociesLength = inventaire?.associesIds?.length ?? 0;
+      const matcherMeteosLength = inventaire?.meteosIds?.length ?? 0;
 
-    const areAssociesSameLength = (inventaireEntity.inventaire_associe?.length === matcherAssociesLength);
-    const areMeteosSameLength = (inventaireEntity.inventaire_meteo?.length === matcherMeteosLength);
+      const areAssociesSameLength = inventaireEntity.inventaire_associe?.length === matcherAssociesLength;
+      const areMeteosSameLength = inventaireEntity.inventaire_meteo?.length === matcherMeteosLength;
 
-    return areAssociesSameLength && areMeteosSameLength;
-  })?.[0] ?? null;
+      return areAssociesSameLength && areMeteosSameLength;
+    })?.[0] ?? null
+  );
 };
 
 export const findAllInventaires = async (): Promise<InventaireWithRelations[]> => {
-  return prisma.inventaire.findMany({
-    include: COMMON_INVENTAIRE_INCLUDE,
-  }).then((inventaires) => {
-    return inventaires.map(normalizeInventaireComplete)
-  });
-}
+  return prisma.inventaire
+    .findMany({
+      include: COMMON_INVENTAIRE_INCLUDE
+    })
+    .then((inventaires) => {
+      return inventaires.map(normalizeInventaireComplete);
+    });
+};
 
-export const upsertInventaire = async (
-  args: MutationUpsertInventaireArgs
-): Promise<InventaireWithRelations> => {
+export const upsertInventaire = async (args: MutationUpsertInventaireArgs): Promise<InventaireWithRelations> => {
   const { id, data, migrateDonneesIfMatchesExistingInventaire = false } = args;
 
   // Check if an exact same inventaire already exists or not
@@ -199,18 +204,18 @@ export const upsertInventaire = async (
       // Meanwhile we found that the new values correspond to another already inventaire B
       // So we should not update inventaire A but we should provide as feedback that we did not update it
       // because it is already corresponding to B.
-      // With this information, it is up to the caller to react accordingly 
+      // With this information, it is up to the caller to react accordingly
       // (e.g. ask all donnees from inventaire B to be moved to A),
       // but this is not up to this upsert method to take this initiave
       const upsertInventaireFailureReason: UpsertInventaireFailureReason = {
         inventaireExpectedToBeUpdated: id,
         correspondingInventaireFound: existingInventaire.id
-      }
+      };
       return Promise.reject(upsertInventaireFailureReason);
     }
 
     if (id) {
-      // In that case, the user explicitely requested that the donnees of inventaire A 
+      // In that case, the user explicitely requested that the donnees of inventaire A
       // should now be linked to inventaire B if matches
 
       // We update the inventaire ID for the donnees and we delete the duplicated inventaire
@@ -226,79 +231,92 @@ export const upsertInventaire = async (
         where: {
           id
         }
-      })
+      });
     }
-
 
     // We wished to create an inventaire but we already found one,
     // so we won't create anything and simply return the existing one
-    return prisma.inventaire.findUnique({
-      where: {
-        id: existingInventaire.id
-      },
-      include: COMMON_INVENTAIRE_INCLUDE
-    }).then(normalizeInventaireComplete);
-
+    return (
+      prisma.inventaire
+        .findUnique({
+          where: {
+            id: existingInventaire.id
+          },
+          include: COMMON_INVENTAIRE_INCLUDE
+        })
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .then((inventaire) => normalizeInventaireComplete(inventaire!))
+    );
   } else {
     // The inventaire we wish to upsert does not have an equivalent existing one
     // In that case, we proceed as a classic upsert
 
     const { associesIds, meteosIds, date, ...restData } = data;
 
-    const associesMap = associesIds?.map((associeId) => {
-      return {
-        observateur_id: associeId
-      }
-    }) ?? [];
+    const associesMap =
+      associesIds?.map((associeId) => {
+        return {
+          observateur_id: associeId
+        };
+      }) ?? [];
 
-    const meteosMap = meteosIds?.map((meteoId) => {
-      return {
-        meteo_id: meteoId
-      }
-    }) ?? [];
+    const meteosMap =
+      meteosIds?.map((meteoId) => {
+        return {
+          meteo_id: meteoId
+        };
+      }) ?? [];
 
     if (id) {
       // Update an existing inventaire
-      return prisma.inventaire.update({
-        where: { id },
-        include: COMMON_INVENTAIRE_INCLUDE,
-        data: {
-          ...restData,
-          coordinates_system: (restData?.altitude != null && restData?.latitude != null && restData?.longitude != null) ? CoordinatesSystemType.Gps : null,
-          date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), 'UTC'),
-          inventaire_associe: {
-            deleteMany: {
-              inventaire_id: id
+      return prisma.inventaire
+        .update({
+          where: { id },
+          include: COMMON_INVENTAIRE_INCLUDE,
+          data: {
+            ...restData,
+            coordinates_system:
+              restData?.altitude != null && restData?.latitude != null && restData?.longitude != null
+                ? CoordinatesSystemType.Gps
+                : null,
+            date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), "UTC"),
+            inventaire_associe: {
+              deleteMany: {
+                inventaire_id: id
+              },
+              create: associesMap
             },
-            create: associesMap
-          },
-          inventaire_meteo: {
-            deleteMany: {
-              inventaire_id: id
-            },
-            create: meteosMap
+            inventaire_meteo: {
+              deleteMany: {
+                inventaire_id: id
+              },
+              create: meteosMap
+            }
           }
-        }
-      }).then(normalizeInventaireComplete);
-
+        })
+        .then(normalizeInventaireComplete);
     } else {
       // Create a new inventaire
-      return prisma.inventaire.create({
-        data: {
-          ...restData,
-          coordinates_system: (restData?.altitude != null && restData?.latitude != null && restData?.longitude != null) ? CoordinatesSystemType.Gps : null,
-          date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), 'UTC'),
-          date_creation: new Date(),
-          inventaire_associe: {
-            create: associesMap
+      return prisma.inventaire
+        .create({
+          data: {
+            ...restData,
+            coordinates_system:
+              restData?.altitude != null && restData?.latitude != null && restData?.longitude != null
+                ? CoordinatesSystemType.Gps
+                : null,
+            date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), "UTC"),
+            date_creation: new Date(),
+            inventaire_associe: {
+              create: associesMap
+            },
+            inventaire_meteo: {
+              create: meteosMap
+            }
           },
-          inventaire_meteo: {
-            create: meteosMap
-          }
-        },
-        include: COMMON_INVENTAIRE_INCLUDE
-      }).then(normalizeInventaireComplete);
+          include: COMMON_INVENTAIRE_INCLUDE
+        })
+        .then(normalizeInventaireComplete);
     }
-
   }
 };

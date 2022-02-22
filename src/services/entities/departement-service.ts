@@ -34,7 +34,7 @@ export const findDepartement = async (id: number): Promise<Departement | null> =
   });
 };
 
-export const findDepartementOfCommuneId = async (communeId: number): Promise<Departement | null> => {
+export const findDepartementOfCommuneId = async (communeId: number | undefined): Promise<Departement | null> => {
   return prisma.commune
     .findUnique({
       where: {
@@ -67,28 +67,30 @@ export const findAllDepartements = async (
 ): Promise<DepartementWithCounts[]> => {
   const includeCounts = options.includeCounts ?? true;
 
-  const departements = await prisma.departement.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    include: {
-      _count: includeCounts && {
-        select: {
-          commune: true
-        }
-      },
-      commune: includeCounts && {
-        select: {
-          _count: {
-            select: {
-              lieudit: true
-            }
-          },
-          lieudit: {
-            select: {
-              inventaire: {
-                select: {
-                  _count: {
-                    select: {
-                      donnee: true
+  if (includeCounts) {
+    const departements = await prisma.departement.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      include: {
+        _count: {
+          select: {
+            commune: true
+          }
+        },
+        commune: {
+          select: {
+            _count: {
+              select: {
+                lieudit: true
+              }
+            },
+            lieudit: {
+              select: {
+                inventaire: {
+                  select: {
+                    _count: {
+                      select: {
+                        donnee: true
+                      }
                     }
                   }
                 }
@@ -97,15 +99,11 @@ export const findAllDepartements = async (
           }
         }
       }
-    }
-  });
+    });
 
-  return departements.map((departement) => {
-    let nbLieuxDits: number;
-    let nbDonnees: number;
-    if (includeCounts) {
-      nbLieuxDits = departement?.commune?.map((commune) => commune._count.lieudit).reduce(counterReducer, 0) ?? 0;
-      nbDonnees = departement?.commune
+    return departements.map((departement) => {
+      const nbLieuxDits = departement?.commune?.map((commune) => commune._count.lieudit).reduce(counterReducer, 0) ?? 0;
+      const nbDonnees = departement?.commune
         .map((commune) => {
           return commune.lieudit.map((lieudit) => {
             return lieudit.inventaire.map((inventaire) => {
@@ -115,19 +113,22 @@ export const findAllDepartements = async (
         })
         .flat(3)
         .reduce(counterReducer, 0);
-    }
-
-    return {
-      ...departement,
-      ...(includeCounts
-        ? {
-            nbCommunes: departement._count.commune,
-            nbLieuxDits,
-            nbDonnees
-          }
-        : {})
-    };
-  });
+      return {
+        ...departement,
+        ...(includeCounts
+          ? {
+              nbCommunes: departement._count.commune,
+              nbLieuxDits,
+              nbDonnees
+            }
+          : {})
+      };
+    });
+  } else {
+    return prisma.departement.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_CODE)
+    });
+  }
 };
 
 export const findPaginatedDepartements = async (
@@ -196,10 +197,11 @@ export const findPaginatedDepartements = async (
       const departement = departementsRq?.find((departement) => departement.id === departementInfo.id);
 
       return {
-        ...departement,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ...departement!,
         ...(includeCounts
           ? {
-              nbCommunes: departement._count.commune,
+              nbCommunes: departement?._count.commune,
               nbLieuxDits: departementInfo.nbLieuxDits,
               nbDonnees: departementInfo.nbDonnees
             }
@@ -207,48 +209,52 @@ export const findPaginatedDepartements = async (
       };
     });
   } else {
-    let orderBy: Prisma.Enumerable<Prisma.DepartementOrderByWithRelationInput>;
-    switch (orderByField) {
-      case "id":
-      case "code":
-        orderBy = {
-          [orderByField]: sortOrder
-        };
-        break;
-      case "nbCommunes":
-        orderBy = sortOrder && {
-          commune: {
-            _count: sortOrder
-          }
-        };
-        break;
-      default:
-        orderBy = {};
+    let orderBy: Prisma.Enumerable<Prisma.DepartementOrderByWithRelationInput> | undefined = undefined;
+    if (sortOrder) {
+      switch (orderByField) {
+        case "id":
+        case "code":
+          orderBy = {
+            [orderByField]: sortOrder
+          };
+          break;
+        case "nbCommunes":
+          orderBy = {
+            commune: {
+              _count: sortOrder
+            }
+          };
+          break;
+        default:
+          orderBy = {};
+      }
     }
 
-    const departementsRq = await prisma.departement.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      include: {
-        _count: includeCounts && {
-          select: {
-            commune: true
-          }
-        },
-        commune: includeCounts && {
-          select: {
-            _count: {
-              select: {
-                lieudit: true
-              }
-            },
-            lieudit: {
-              select: {
-                inventaire: {
-                  select: {
-                    _count: {
-                      select: {
-                        donnee: true
+    if (includeCounts) {
+      const departementsRq = await prisma.departement.findMany({
+        ...getPrismaPagination(searchParams),
+        orderBy,
+        include: {
+          _count: {
+            select: {
+              commune: true
+            }
+          },
+          commune: {
+            select: {
+              _count: {
+                select: {
+                  lieudit: true
+                }
+              },
+              lieudit: {
+                select: {
+                  inventaire: {
+                    select: {
+                      _count: {
+                        select: {
+                          donnee: true
+                        }
                       }
                     }
                   }
@@ -256,17 +262,14 @@ export const findPaginatedDepartements = async (
               }
             }
           }
-        }
-      },
-      where: getFilterClauseDepartement(searchParams?.q)
-    });
+        },
+        where: getFilterClauseDepartement(searchParams?.q)
+      });
 
-    departements = departementsRq.map((departement) => {
-      let nbLieuxDits: number;
-      let nbDonnees: number;
-      if (includeCounts) {
-        nbLieuxDits = departement?.commune?.map((commune) => commune._count.lieudit).reduce(counterReducer, 0) ?? 0;
-        nbDonnees = departement?.commune
+      departements = departementsRq.map((departement) => {
+        const nbLieuxDits =
+          departement?.commune?.map((commune) => commune._count.lieudit).reduce(counterReducer, 0) ?? 0;
+        const nbDonnees = departement?.commune
           .map((commune) => {
             return commune.lieudit.map((lieudit) => {
               return lieudit.inventaire.map((inventaire) => {
@@ -276,19 +279,21 @@ export const findPaginatedDepartements = async (
           })
           .flat(3)
           .reduce(counterReducer, 0);
-      }
 
-      return {
-        ...departement,
-        ...(includeCounts
-          ? {
-              nbCommunes: departement._count.commune,
-              nbLieuxDits,
-              nbDonnees
-            }
-          : {})
-      };
-    });
+        return {
+          ...departement,
+          nbCommunes: departement._count.commune,
+          nbLieuxDits,
+          nbDonnees
+        };
+      });
+    } else {
+      departements = await prisma.departement.findMany({
+        ...getPrismaPagination(searchParams),
+        orderBy,
+        where: getFilterClauseDepartement(searchParams?.q)
+      });
+    }
   }
 
   const count = await prisma.departement.count({

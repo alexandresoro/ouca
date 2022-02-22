@@ -160,9 +160,11 @@ export class ImportedDonnee {
           }
         : {};
 
+    const formattedDate = getFormattedDate(this.date);
+
     return {
       observateurId,
-      date: format(getFormattedDate(this.date), DATE_PATTERN),
+      date: formattedDate ? format(formattedDate, DATE_PATTERN) : "null",
       heure: getFormattedTime(this.heure),
       duree: getFormattedTime(this.duree),
       lieuDitId: lieuditId,

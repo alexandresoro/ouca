@@ -128,24 +128,26 @@ export const findPaginatedMilieux = async (
 ): Promise<MilieuxPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let orderBy: Prisma.Enumerable<Prisma.MilieuOrderByWithRelationInput>;
-  switch (orderByField) {
-    case "id":
-    case "code":
-    case "libelle":
-      orderBy = {
-        [orderByField]: sortOrder
-      };
-      break;
-    case "nbDonnees":
-      orderBy = sortOrder && {
-        donnee_milieu: {
-          _count: sortOrder
-        }
-      };
-      break;
-    default:
-      orderBy = {};
+  let orderBy: Prisma.Enumerable<Prisma.MilieuOrderByWithRelationInput> | undefined = undefined;
+  if (sortOrder) {
+    switch (orderByField) {
+      case "id":
+      case "code":
+      case "libelle":
+        orderBy = {
+          [orderByField]: sortOrder
+        };
+        break;
+      case "nbDonnees":
+        orderBy = {
+          donnee_milieu: {
+            _count: sortOrder
+          }
+        };
+        break;
+      default:
+        orderBy = {};
+    }
   }
 
   const milieux = await prisma.milieu.findMany({
@@ -175,7 +177,9 @@ export const findPaginatedMilieux = async (
       return {
         ...milieu,
         ...(includeCounts
-          ? { nbDonnees: donneesByMilieu.find((donneeByMilieu) => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0 }
+          ? {
+              nbDonnees: donneesByMilieu?.find((donneeByMilieu) => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0
+            }
           : {})
       };
     }),

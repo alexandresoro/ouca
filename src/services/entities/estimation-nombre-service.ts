@@ -45,23 +45,29 @@ export const findAllEstimationsNombre = async (
 ): Promise<EstimationNombreWithCounts[]> => {
   const includeCounts = options.includeCounts ?? true;
 
-  const estimationsDb = await prisma.estimationNombre.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    include: includeCounts && {
-      _count: {
-        select: {
-          donnee: true
+  if (includeCounts) {
+    const estimationsDb = await prisma.estimationNombre.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      include: {
+        _count: {
+          select: {
+            donnee: true
+          }
         }
       }
-    }
-  });
+    });
 
-  return estimationsDb.map((estimation) => {
-    return {
-      ...estimation,
-      ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
-    };
-  });
+    return estimationsDb.map((estimation) => {
+      return {
+        ...estimation,
+        nbDonnees: estimation._count.donnee
+      };
+    });
+  } else {
+    return prisma.estimationNombre.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
+    });
+  }
 };
 
 export const findPaginatedEstimationsNombre = async (
@@ -70,54 +76,69 @@ export const findPaginatedEstimationsNombre = async (
 ): Promise<EstimationsNombrePaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let orderBy: Prisma.Enumerable<Prisma.EstimationNombreOrderByWithRelationInput>;
-  switch (orderByField) {
-    case "id":
-    case "libelle":
-    case "nonCompte":
-      orderBy = {
-        [orderByField]: sortOrder
-      };
-      break;
-    case "nbDonnees":
-      {
-        orderBy = sortOrder && {
-          donnee: {
-            _count: sortOrder
-          }
+  let orderBy: Prisma.Enumerable<Prisma.EstimationNombreOrderByWithRelationInput> | undefined = undefined;
+  if (sortOrder) {
+    switch (orderByField) {
+      case "id":
+      case "libelle":
+      case "nonCompte":
+        orderBy = {
+          [orderByField]: sortOrder
         };
-      }
-      break;
-    default:
-      orderBy = {};
-  }
-
-  const estimationsNombre = await prisma.estimationNombre.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    include: includeCounts && {
-      _count: {
-        select: {
-          donnee: true
+        break;
+      case "nbDonnees":
+        {
+          orderBy = {
+            donnee: {
+              _count: sortOrder
+            }
+          };
         }
-      }
-    },
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-  });
+        break;
+      default:
+        orderBy = {};
+    }
+  }
 
   const count = await prisma.estimationNombre.count({
     where: getEntiteAvecLibelleFilterClause(searchParams?.q)
   });
 
-  return {
-    result: estimationsNombre.map((estimation) => {
-      return {
-        ...estimation,
-        ...(includeCounts ? { nbDonnees: estimation._count.donnee } : {})
-      };
-    }),
-    count
-  };
+  if (includeCounts) {
+    const estimationsNombre = await prisma.estimationNombre.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      include: {
+        _count: {
+          select: {
+            donnee: true
+          }
+        }
+      },
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
+
+    return {
+      result: estimationsNombre.map((estimation) => {
+        return {
+          ...estimation,
+          nbDonnees: estimation._count.donnee
+        };
+      }),
+      count
+    };
+  } else {
+    const estimationsNombre = await prisma.estimationNombre.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
+
+    return {
+      result: estimationsNombre,
+      count
+    };
+  }
 };
 
 export const upsertEstimationNombre = async (args: MutationUpsertEstimationNombreArgs): Promise<EstimationNombre> => {

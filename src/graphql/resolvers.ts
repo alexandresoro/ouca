@@ -237,7 +237,7 @@ const resolvers: Resolvers<Context> = {
       validateUserAuthentication(context);
       return findEstimationNombre(args.id);
     },
-    inventaire: async (_source, args, context): Promise<Omit<Inventaire, "lieuDit">> => {
+    inventaire: async (_source, args, context): Promise<Omit<Inventaire, "lieuDit"> | null> => {
       validateUserAuthentication(context);
       return findInventaire(args.id);
     },
@@ -760,22 +760,22 @@ const resolvers: Resolvers<Context> = {
     }
   },
   Commune: {
-    departement: async (parent): Promise<Departement> => {
+    departement: async (parent): Promise<Departement | null> => {
       return findDepartementOfCommuneId(parent?.id);
     }
   },
   Donnee: {
-    espece: async (parent): Promise<Omit<Espece, "classe">> => {
+    espece: async (parent): Promise<Omit<Espece, "classe"> | null> => {
       const espece = await findEspeceOfDonneeId(parent?.id);
       return findEspece(espece?.id);
     },
-    inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit">> => {
+    inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
       const inventaire = await findInventaireOfDonneeId(parent?.id);
       return findInventaire(inventaire?.id);
     }
   },
   DonneeResult: {
-    donnee: async (parent): Promise<Omit<Donnee, "inventaire" | "espece">> => {
+    donnee: async (parent): Promise<Omit<Donnee, "inventaire" | "espece"> | null> => {
       return findDonnee(parent?.id);
     },
     navigation: async (parent): Promise<DonneeNavigationData> => {
@@ -783,18 +783,18 @@ const resolvers: Resolvers<Context> = {
     }
   },
   Inventaire: {
-    lieuDit: async (parent): Promise<Omit<LieuDit, "commune">> => {
+    lieuDit: async (parent): Promise<Omit<LieuDit, "commune"> | null> => {
       const lieuDit = await findLieuDitOfInventaireId(parent?.id);
       return findLieuDit(lieuDit?.id);
     }
   },
   LieuDit: {
-    commune: async (parent): Promise<Omit<Commune, "departement">> => {
+    commune: async (parent): Promise<Omit<Commune, "departement"> | null> => {
       return findCommuneOfLieuDitId(parent?.id);
     }
   },
   Espece: {
-    classe: async (parent): Promise<Classe> => {
+    classe: async (parent): Promise<Classe | null> => {
       return findClasseOfEspeceId(parent?.id);
     }
   }

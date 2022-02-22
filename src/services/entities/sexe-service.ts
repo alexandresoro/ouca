@@ -45,23 +45,29 @@ export const findAllSexes = async (
 ): Promise<SexeWithCounts[]> => {
   const includeCounts = options.includeCounts ?? true;
 
-  const sexes = await prisma.sexe.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    include: includeCounts && {
-      _count: {
-        select: {
-          donnee: true // Add number of donnees that contains it
+  if (includeCounts) {
+    const sexes = await prisma.sexe.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      include: {
+        _count: {
+          select: {
+            donnee: true // Add number of donnees that contains it
+          }
         }
       }
-    }
-  });
+    });
 
-  return sexes.map((sexe) => {
-    return {
-      ...sexe,
-      ...(includeCounts ? { nbDonnees: sexe._count.donnee } : {})
-    };
-  });
+    return sexes.map((sexe) => {
+      return {
+        ...sexe,
+        nbDonnees: sexe._count.donnee
+      };
+    });
+  } else {
+    return prisma.sexe.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
+    });
+  }
 };
 
 export const findPaginatedSexes = async (
@@ -70,53 +76,68 @@ export const findPaginatedSexes = async (
 ): Promise<SexesPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let orderBy: Prisma.Enumerable<Prisma.SexeOrderByWithRelationInput>;
-  switch (orderByField) {
-    case "id":
-    case "libelle":
-      orderBy = {
-        [orderByField]: sortOrder
-      };
-      break;
-    case "nbDonnees":
-      {
-        orderBy = sortOrder && {
-          donnee: {
-            _count: sortOrder
-          }
+  let orderBy: Prisma.Enumerable<Prisma.SexeOrderByWithRelationInput> | undefined = undefined;
+  if (sortOrder) {
+    switch (orderByField) {
+      case "id":
+      case "libelle":
+        orderBy = {
+          [orderByField]: sortOrder
         };
-      }
-      break;
-    default:
-      orderBy = {};
-  }
-
-  const sexes = await prisma.sexe.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    include: includeCounts && {
-      _count: {
-        select: {
-          donnee: true
+        break;
+      case "nbDonnees":
+        {
+          orderBy = {
+            donnee: {
+              _count: sortOrder
+            }
+          };
         }
-      }
-    },
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-  });
+        break;
+      default:
+        orderBy = {};
+    }
+  }
 
   const count = await prisma.sexe.count({
     where: getEntiteAvecLibelleFilterClause(searchParams?.q)
   });
 
-  return {
-    result: sexes.map((sexe) => {
-      return {
-        ...sexe,
-        ...(includeCounts ? { nbDonnees: sexe._count.donnee } : {})
-      };
-    }),
-    count
-  };
+  if (includeCounts) {
+    const sexes = await prisma.sexe.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      include: {
+        _count: {
+          select: {
+            donnee: true
+          }
+        }
+      },
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
+
+    return {
+      result: sexes.map((sexe) => {
+        return {
+          ...sexe,
+          ...(includeCounts ? { nbDonnees: sexe._count.donnee } : {})
+        };
+      }),
+      count
+    };
+  } else {
+    const sexes = await prisma.sexe.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
+
+    return {
+      result: sexes,
+      count
+    };
+  }
 };
 
 export const upsertSexe = async (args: MutationUpsertSexeArgs): Promise<Sexe> => {

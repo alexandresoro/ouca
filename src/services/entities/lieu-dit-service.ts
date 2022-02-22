@@ -23,10 +23,6 @@ export type LieuDitWithCoordinatesAsNumber<T extends Lieudit = Lieudit> = Omit<T
 };
 
 const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWithCoordinatesAsNumber<T> => {
-  if (lieuditDb == null) {
-    return null;
-  }
-
   const { latitude, longitude, ...others } = lieuditDb;
 
   return {
@@ -36,17 +32,17 @@ const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWith
   };
 };
 
-export const findLieuDit = async (id: number): Promise<LieuDitWithCoordinatesAsNumber | null> => {
+export const findLieuDit = async (id: number | undefined): Promise<LieuDitWithCoordinatesAsNumber | null> => {
   return prisma.lieudit
     .findUnique({
       where: {
         id
       }
     })
-    .then(buildLieuditFromLieuditDb);
+    .then((lieudit) => (lieudit ? buildLieuditFromLieuditDb(lieudit) : null));
 };
 
-export const findLieuDitOfInventaireId = async (inventaireId: number): Promise<Lieudit | null> => {
+export const findLieuDitOfInventaireId = async (inventaireId: number | undefined): Promise<Lieudit | null> => {
   return prisma.inventaire
     .findUnique({
       where: {
@@ -254,90 +250,113 @@ export const findPaginatedLieuxDits = async (
       const lieudit = lieuxDitsRq?.find((lieudit) => lieudit.id === lieuditInfo.id);
 
       return {
-        ...buildLieuditFromLieuditDb(lieudit),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ...buildLieuditFromLieuditDb(lieudit!),
         nbDonnees: lieuditInfo.nbDonnees
       };
     });
   } else {
-    let orderBy: Prisma.Enumerable<Prisma.LieuditOrderByWithRelationInput>;
-    switch (orderByField) {
-      case "id":
-      case "nom":
-      case "altitude":
-      case "longitude":
-      case "latitude":
-        orderBy = {
-          [orderByField]: sortOrder
-        };
-        break;
-      case "codeCommune":
-        orderBy = sortOrder && {
-          commune: {
-            code: sortOrder
-          }
-        };
-        break;
-      case "nomCommune":
-        orderBy = sortOrder && {
-          commune: {
-            nom: sortOrder
-          }
-        };
-        break;
-      case "departement":
-        orderBy = sortOrder && {
-          commune: {
-            departement: {
+    let orderBy: Prisma.Enumerable<Prisma.LieuditOrderByWithRelationInput> | undefined = undefined;
+    if (sortOrder) {
+      switch (orderByField) {
+        case "id":
+        case "nom":
+        case "altitude":
+        case "longitude":
+        case "latitude":
+          orderBy = {
+            [orderByField]: sortOrder
+          };
+          break;
+        case "codeCommune":
+          orderBy = {
+            commune: {
               code: sortOrder
             }
-          }
-        };
-        break;
-      default:
-        orderBy = {};
+          };
+          break;
+        case "nomCommune":
+          orderBy = {
+            commune: {
+              nom: sortOrder
+            }
+          };
+          break;
+        case "departement":
+          orderBy = {
+            commune: {
+              departement: {
+                code: sortOrder
+              }
+            }
+          };
+          break;
+        default:
+          orderBy = {};
+      }
     }
 
-    const lieuxDitsRq = await prisma.lieudit.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      include: {
-        commune: {
-          include: {
-            departement: {
-              select: {
-                id: true,
-                code: true
+    if (includeCounts) {
+      const lieuxDitsRq = await prisma.lieudit.findMany({
+        ...getPrismaPagination(searchParams),
+        orderBy,
+        include: {
+          commune: {
+            include: {
+              departement: {
+                select: {
+                  id: true,
+                  code: true
+                }
+              }
+            }
+          },
+          inventaire: {
+            select: {
+              _count: {
+                select: {
+                  donnee: true
+                }
               }
             }
           }
         },
-        inventaire: includeCounts && {
-          select: {
-            _count: {
-              select: {
-                donnee: true
-              }
-            }
-          }
-        }
-      },
-      where: getFilterClause(searchParams?.q)
-    });
+        where: getFilterClause(searchParams?.q)
+      });
 
-    lieuxDits = lieuxDitsRq.map((lieudit) => {
-      const nbDonnees =
-        includeCounts &&
-        lieudit.inventaire
+      lieuxDits = lieuxDitsRq.map((lieudit) => {
+        const nbDonnees = lieudit.inventaire
           .map((inventaire) => {
             return inventaire._count.donnee;
           })
           .reduce(counterReducer, 0);
 
-      return {
-        ...buildLieuditFromLieuditDb(lieudit),
-        nbDonnees
-      };
-    });
+        return {
+          ...buildLieuditFromLieuditDb(lieudit),
+          nbDonnees
+        };
+      });
+    } else {
+      const lieuxDitsRq = await prisma.lieudit.findMany({
+        ...getPrismaPagination(searchParams),
+        orderBy,
+        include: {
+          commune: {
+            include: {
+              departement: {
+                select: {
+                  id: true,
+                  code: true
+                }
+              }
+            }
+          }
+        },
+        where: getFilterClause(searchParams?.q)
+      });
+
+      lieuxDits = lieuxDitsRq.map(buildLieuditFromLieuditDb);
+    }
   }
 
   const count = await prisma.lieudit.count({

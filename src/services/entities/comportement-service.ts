@@ -135,25 +135,27 @@ export const findPaginatedComportements = async (
 ): Promise<ComportementsPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let orderBy: Prisma.Enumerable<Prisma.ComportementOrderByWithRelationInput>;
-  switch (orderByField) {
-    case "id":
-    case "code":
-    case "libelle":
-    case "nicheur":
-      orderBy = {
-        [orderByField]: sortOrder
-      };
-      break;
-    case "nbDonnees":
-      orderBy = sortOrder && {
-        donnee_comportement: {
-          _count: sortOrder
-        }
-      };
-      break;
-    default:
-      orderBy = {};
+  let orderBy: Prisma.Enumerable<Prisma.ComportementOrderByWithRelationInput> | undefined = undefined;
+  if (sortOrder) {
+    switch (orderByField) {
+      case "id":
+      case "code":
+      case "libelle":
+      case "nicheur":
+        orderBy = {
+          [orderByField]: sortOrder
+        };
+        break;
+      case "nbDonnees":
+        orderBy = {
+          donnee_comportement: {
+            _count: sortOrder
+          }
+        };
+        break;
+      default:
+        orderBy = {};
+    }
   }
 
   const comportements = await prisma.comportement.findMany({
@@ -185,7 +187,7 @@ export const findPaginatedComportements = async (
         ...(includeCounts
           ? {
               nbDonnees:
-                donneesByComportement.find(
+                donneesByComportement?.find(
                   (donneeByComportement) => donneeByComportement.comportement_id === comportement.id
                 )?._count ?? 0
             }

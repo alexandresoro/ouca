@@ -17,7 +17,7 @@ import {
   queryParametersToFindAllEntities
 } from "./entities-utils";
 
-export const findClasseOfEspeceId = async (especeId: number): Promise<Classe | null> => {
+export const findClasseOfEspeceId = async (especeId: number | undefined): Promise<Classe | null> => {
   return prisma.espece
     .findUnique({
       where: {
@@ -124,25 +124,25 @@ export const findPaginatedClasses = async (
       (Classe & { nbEspeces: number; nbDonnees: number })[]
     >`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
   } else {
-    let orderBy: Prisma.Enumerable<Prisma.ClasseOrderByWithRelationInput>;
-    switch (orderByField) {
-      case "id":
-      case "libelle":
-        orderBy = {
-          [orderByField]: sortOrder
-        };
-        break;
-      case "nbEspeces":
-        orderBy = sortOrder
-          ? {
-              espece: {
-                _count: sortOrder
-              }
+    let orderBy: Prisma.Enumerable<Prisma.ClasseOrderByWithRelationInput> | undefined = undefined;
+    if (sortOrder) {
+      switch (orderByField) {
+        case "id":
+        case "libelle":
+          orderBy = {
+            [orderByField]: sortOrder
+          };
+          break;
+        case "nbEspeces":
+          orderBy = {
+            espece: {
+              _count: sortOrder
             }
-          : {};
-        break;
-      default:
-        orderBy = {};
+          };
+          break;
+        default:
+          orderBy = {};
+      }
     }
 
     if (includeCounts) {

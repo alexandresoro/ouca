@@ -24,7 +24,7 @@ export const findCommune = async (id: number): Promise<Commune | null> => {
   });
 };
 
-export const findCommuneOfLieuDitId = async (lieuDitId: number): Promise<Commune | null> => {
+export const findCommuneOfLieuDitId = async (lieuDitId: number | undefined): Promise<Commune | null> => {
   return prisma.lieudit
     .findUnique({
       where: {
@@ -44,7 +44,7 @@ export const findCommunes = async (options: {
   // Ugly workaround to search by commune code as they are stored as Int in database,
   // but we still want to search them as if they were Strings
   // e.g. we want a commune with id 773 to be returned if the user query is "077" for example
-  const qAsNumber = parseInt(q);
+  const qAsNumber = q ? parseInt(q) : NaN;
   const codeCommuneWhereClause =
     !isNaN(qAsNumber) && qAsNumber > 0
       ? {
@@ -252,87 +252,108 @@ export const findPaginatedCommunes = async (
     communes = nbDonneesForFilteredCommunes.map((communeInfo) => {
       const commune = communesRq?.find((commune) => commune.id === communeInfo.id);
       return {
-        ...commune,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ...commune!,
         nbLieuxDits: communeInfo.nbLieuxDits,
         nbDonnees: communeInfo.nbDonnees
       };
     });
   } else {
-    let orderBy: Prisma.Enumerable<Prisma.CommuneOrderByWithRelationInput>;
-    switch (orderByField) {
-      case "id":
-      case "code":
-      case "nom":
-        orderBy = {
-          [orderByField]: sortOrder
-        };
-        break;
-      case "departement":
-        orderBy = sortOrder && {
-          departement: {
-            code: sortOrder
-          }
-        };
-        break;
-      case "nbLieuxDits":
-        orderBy = sortOrder && {
-          lieudit: {
-            _count: sortOrder
-          }
-        };
-        break;
-      default:
-        orderBy = {};
+    let orderBy: Prisma.Enumerable<Prisma.CommuneOrderByWithRelationInput> | undefined = undefined;
+    if (sortOrder) {
+      switch (orderByField) {
+        case "id":
+        case "code":
+        case "nom":
+          orderBy = {
+            [orderByField]: sortOrder
+          };
+          break;
+        case "departement":
+          orderBy = {
+            departement: {
+              code: sortOrder
+            }
+          };
+          break;
+        case "nbLieuxDits":
+          orderBy = {
+            lieudit: {
+              _count: sortOrder
+            }
+          };
+          break;
+        default:
+          orderBy = {};
+      }
     }
 
-    const communesRq = await prisma.commune.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      include: {
-        departement: {
-          select: {
-            id: true,
-            code: true
-          }
-        },
-        _count: {
-          select: {
-            lieudit: true
-          }
-        },
-        lieudit: {
-          select: {
-            inventaire: includeCounts && {
-              select: {
-                _count: {
-                  select: {
-                    donnee: true
+    if (includeCounts) {
+      const communesRq = await prisma.commune.findMany({
+        ...getPrismaPagination(searchParams),
+        orderBy,
+        include: {
+          departement: {
+            select: {
+              id: true,
+              code: true
+            }
+          },
+          _count: {
+            select: {
+              lieudit: true
+            }
+          },
+          lieudit: {
+            select: {
+              inventaire: {
+                select: {
+                  _count: {
+                    select: {
+                      donnee: true
+                    }
                   }
                 }
               }
             }
           }
-        }
-      },
-      where: getFilterClauseCommune(searchParams?.q)
-    });
+        },
+        where: getFilterClauseCommune(searchParams?.q)
+      });
 
-    communes = communesRq.map((commune) => {
-      const nbDonnees = commune.lieudit
-        .map((lieudit) => {
-          return lieudit.inventaire.map((inventaire) => {
-            return inventaire._count.donnee;
-          });
-        })
-        .flat(2)
-        .reduce(counterReducer, 0);
+      communes = communesRq.map((commune) => {
+        const nbDonnees = commune.lieudit
+          .map((lieudit) => {
+            return lieudit.inventaire.map((inventaire) => {
+              return inventaire._count.donnee;
+            });
+          })
+          .flat(2)
+          .reduce(counterReducer, 0);
 
-      return {
-        ...commune,
-        nbLieuxDits: commune._count.lieudit,
-        nbDonnees
-      };
-    });
+        return {
+          ...commune,
+          nbLieuxDits: commune._count.lieudit,
+          nbDonnees
+        };
+      });
+    } else {
+      const communesRq = await prisma.commune.findMany({
+        ...getPrismaPagination(searchParams),
+        orderBy,
+        include: {
+          departement: {
+            select: {
+              id: true,
+              code: true
+            }
+          }
+        },
+        where: getFilterClauseCommune(searchParams?.q)
+      });
+
+      communes = communesRq;
+    }
   }
 
   const count = await prisma.commune.count({
