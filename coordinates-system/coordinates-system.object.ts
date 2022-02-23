@@ -22,4 +22,4 @@ export type CoordinatesSystem = {
   latitudeRange: { min: number; max: number };
 
   proj4Formula?: string;
-}
+};
