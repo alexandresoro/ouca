@@ -10,7 +10,7 @@ export type Nicheur = {
   code: NicheurCode;
   name: string;
   weight: number;
-}
+};
 
 export const NICHEUR_POSSIBLE: Nicheur = {
   code: POSSIBLE,

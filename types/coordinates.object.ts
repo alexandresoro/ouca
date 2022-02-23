@@ -10,4 +10,4 @@ export type Coordinates = {
   areTransformed?: boolean;
 
   areInvalid?: boolean;
-}
+};
