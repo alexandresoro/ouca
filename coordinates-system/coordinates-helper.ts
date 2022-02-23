@@ -11,22 +11,25 @@ export const getCoordinates = (
 };
 
 export const areCoordinatesCustomized = (
-  lieudit: Omit<Partial<LieuDit>, 'commune'>,
+  lieudit: Omit<Partial<LieuDit>, "commune">,
   altitude: number,
   longitude: number,
   latitude: number,
   system: CoordinatesSystemType
 ): boolean => {
   if (lieudit?.id) {
-    const lieuditCoordinates: Coordinates = getCoordinates({
-      coordinates: {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        latitude: lieudit.latitude as number,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        longitude: lieudit.longitude as number,
-        system: lieudit.coordinatesSystem as CoordinatesSystemType
-      }
-    }, system);
+    const lieuditCoordinates: Coordinates = getCoordinates(
+      {
+        coordinates: {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+          latitude: lieudit.latitude as number,
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+          longitude: lieudit.longitude as number,
+          system: lieudit.coordinatesSystem as CoordinatesSystemType
+        }
+      },
+      system
+    );
 
     if (
       lieudit.altitude !== altitude ||
@@ -40,20 +43,16 @@ export const areCoordinatesCustomized = (
   return false;
 };
 
-const isNil = (value: number) => {
-  return value === undefined || value === null;
-};
-
 export const getInventaireCoordinates = (
   inventaire: Inventaire
-): {latitude: number, longitude:number, altitude: number} => {
+): { latitude: number; longitude: number; altitude: number } => {
   // Customized coordinates are defined
-  if(inventaire.customizedCoordinates && !isNil(inventaire.customizedCoordinates.longitude)) {
+  if (inventaire.customizedCoordinates && inventaire.customizedCoordinates.longitude != null) {
     return {
       latitude: inventaire.customizedCoordinates.latitude,
       longitude: inventaire.customizedCoordinates.longitude,
       altitude: inventaire.customizedCoordinates.altitude
-    }
+    };
   }
 
   // Default lieu-dit coordinates are used
@@ -61,22 +60,19 @@ export const getInventaireCoordinates = (
     latitude: inventaire.lieuDit.latitude,
     longitude: inventaire.lieuDit.longitude,
     altitude: inventaire.lieuDit.altitude
-  }
+  };
 };
 
 export const areSameCoordinates = (
-  firstCoordinates: Coordinates,
-  secondCoordinates: Coordinates
+  firstCoordinates: Coordinates | null | undefined,
+  secondCoordinates: Coordinates | null | undefined
 ): boolean => {
   if (!firstCoordinates && !secondCoordinates) {
     return true;
   }
 
   if (firstCoordinates?.longitude && secondCoordinates?.longitude) {
-    const firstCoordinatesTransformed = getCoordinates(
-      { coordinates: firstCoordinates },
-      secondCoordinates.system
-    );
+    const firstCoordinatesTransformed = getCoordinates({ coordinates: firstCoordinates }, secondCoordinates.system);
 
     if (
       firstCoordinatesTransformed.longitude === secondCoordinates.longitude &&

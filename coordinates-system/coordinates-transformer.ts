@@ -3,11 +3,7 @@ import { Coordinates } from "../types/coordinates.object";
 import { COORDINATES_SYSTEMS_CONFIG } from "./coordinates-system-list.object";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 
-const areCoordinatesInvalid = (
-  longitude: number,
-  latitude: number,
-  system: CoordinatesSystemType
-): boolean => {
+const areCoordinatesInvalid = (longitude: number, latitude: number, system: CoordinatesSystemType): boolean => {
   const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[system];
   return (
     longitude < coordinatesSystem.longitudeRange.min ||
@@ -18,8 +14,8 @@ const areCoordinatesInvalid = (
 };
 
 export const transformCoordinates = (
-  inputCoordinates: Coordinates,
-  outputSystemType: CoordinatesSystemType
+  inputCoordinates: Coordinates | null | undefined,
+  outputSystemType: CoordinatesSystemType | null | undefined
 ): Coordinates => {
   if (!inputCoordinates || !inputCoordinates.system || !outputSystemType) {
     throw new Error("Wrong usage of method transformCoordinates");
@@ -39,30 +35,19 @@ export const transformCoordinates = (
     proj4.defs(outputSystem.epsgCode, outputSystem.proj4Formula);
   }
 
-  const [
-    transformedLongitude,
-    transformedLatitude
-  ] = proj4(inputSystem.epsgCode, outputSystem.epsgCode, [
+  const [transformedLongitude, transformedLatitude] = proj4(inputSystem.epsgCode, outputSystem.epsgCode, [
     inputCoordinates.longitude,
     inputCoordinates.latitude
   ]);
 
-  const outputLongitude = +transformedLongitude.toFixed(
-    outputSystem.decimalPlaces
-  );
-  const outputLatitude = +transformedLatitude.toFixed(
-    outputSystem.decimalPlaces
-  );
+  const outputLongitude = +transformedLongitude.toFixed(outputSystem.decimalPlaces);
+  const outputLatitude = +transformedLatitude.toFixed(outputSystem.decimalPlaces);
 
   return {
     system: outputSystemType,
     longitude: outputLongitude,
     latitude: outputLatitude,
     areTransformed: true,
-    areInvalid: areCoordinatesInvalid(
-      outputLongitude,
-      outputLatitude,
-      outputSystemType
-    )
+    areInvalid: areCoordinatesInvalid(outputLongitude, outputLatitude, outputSystemType)
   };
 };
