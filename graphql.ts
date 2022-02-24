@@ -211,7 +211,7 @@ export type DonneeResult = {
 };
 
 export type EditUserData = {
-  currentPassword: Scalars['String'];
+  currentPassword?: InputMaybe<Scalars['String']>;
   firstName?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   newPassword?: InputMaybe<Scalars['String']>;
