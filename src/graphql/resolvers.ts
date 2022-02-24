@@ -685,8 +685,6 @@ const resolvers: Resolvers<Context> = {
       }
 
       if (userInfo) {
-        await createAndAddSignedTokenAsCookie(context.reply, userInfo);
-
         logger.info(`User ${userInfo?.username} has been created`);
       }
       return userInfo;
