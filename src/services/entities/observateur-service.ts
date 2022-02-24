@@ -10,7 +10,7 @@ import prisma from "../../sql/prisma";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { OucaError } from "../../utils/errors";
-import { User } from "../../utils/user";
+import { LoggedUser } from "../../utils/user";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
@@ -147,16 +147,19 @@ export const findPaginatedObservateurs = async (
   };
 };
 
-export const upsertObservateur = async (args: MutationUpsertObservateurArgs, user: User): Promise<Observateur> => {
+export const upsertObservateur = async (
+  args: MutationUpsertObservateurArgs,
+  loggedUser: LoggedUser
+): Promise<Observateur> => {
   const { id, data } = args;
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (user?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.observateur.findFirst({
         where: { id }
       });
 
-      if (existingData?.ownerId !== user.id) {
+      if (existingData?.ownerId !== loggedUser.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -171,20 +174,20 @@ export const upsertObservateur = async (args: MutationUpsertObservateurArgs, use
     return prisma.observateur.create({
       data: {
         ...data,
-        ownerId: user.id
+        ownerId: loggedUser.id
       }
     });
   }
 };
 
-export const deleteObservateur = async (id: number, user: User): Promise<Observateur> => {
+export const deleteObservateur = async (id: number, loggedUser: LoggedUser): Promise<Observateur> => {
   // Check that the user is allowed to modify the existing data
-  if (user?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.observateur.findFirst({
       where: { id }
     });
 
-    if (existingData?.ownerId !== user.id) {
+    if (existingData?.ownerId !== loggedUser.id) {
       throw new OucaError("OUCA0001");
     }
   }

@@ -153,7 +153,7 @@ export default gql`
 
   input EditUserData {
     username: String
-    currentPassword: String!
+    currentPassword: String
     newPassword: String
     firstName: String
     lastName: String

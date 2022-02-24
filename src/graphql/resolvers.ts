@@ -173,7 +173,7 @@ import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/
 import { createUser, deleteUser, getUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
 import { logger } from "../utils/logger";
-import { User } from "../utils/user";
+import { LoggedUser } from "../utils/user";
 
 export type Context = {
   request: unknown;
@@ -183,7 +183,7 @@ export type Context = {
   role: DatabaseRole | null;
 };
 
-const validateUserAuthentication = (context: Context): User => {
+const validateUserAuthentication = (context: Context): LoggedUser => {
   if (!context?.userId || !context?.role) {
     throw new AuthenticationError("User is not authenticated.");
   }
@@ -722,39 +722,33 @@ const resolvers: Resolvers<Context> = {
       return true;
     },
     userEdit: async (_source, args, context): Promise<UserInfo> => {
-      validateUserAuthentication(context);
+      const user = validateUserAuthentication(context);
 
-      // Only a user can delete itself
-      if (context.userId === args?.id) {
-        const updatedUser = await updateUser(args.id, args.editUserData);
+      try {
+        const updatedUser = await updateUser(args.id, args.editUserData, user);
 
-        if (updatedUser) {
+        if (updatedUser?.id === user.id) {
           await createAndAddSignedTokenAsCookie(context.reply, updatedUser);
         }
-
         return updatedUser;
+      } catch (e) {
+        throw new ForbiddenError("User modification is only allowed from the user itself");
       }
-
-      throw new ForbiddenError("User modification is only allowed from the user itself");
     },
     userDelete: async (_source, args, context): Promise<boolean> => {
       const user = validateUserAuthentication(context);
 
-      // Only a user can delete itself
-      // With admin role, admin can delete anyone
-      if (user.id === args?.id || context.role === DatabaseRole.admin) {
-        await deleteUser(args.id);
-
-        if (context.userId === args?.id) {
-          await deleteTokenCookie(context.reply);
-        }
-
-        logger.info(`User with id ${args.id} has been deleted. Request has been initiated by ID ${user.id}`);
-
-        return true;
+      try {
+        await deleteUser(args.id, user);
+      } catch (e) {
+        throw new ApolloError("User deletion request failed");
       }
 
-      throw new ApolloError("User deletion request failed");
+      if (args?.id === user.id) {
+        await deleteTokenCookie(context.reply);
+      }
+
+      return true;
     }
   },
   Commune: {

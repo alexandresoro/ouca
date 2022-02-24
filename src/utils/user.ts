@@ -1,6 +1,6 @@
 import { DatabaseRole } from "@prisma/client";
 
-export type User = {
+export type LoggedUser = {
   id: string;
   role: DatabaseRole;
 };
