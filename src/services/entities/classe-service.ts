@@ -84,10 +84,9 @@ export const findAllClasses = async (): Promise<Classe[]> => {
 };
 
 export const findPaginatedClasses = async (
-  options: QueryPaginatedClassesArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedClassesArgs> = {}
 ): Promise<ClassesPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
 

@@ -343,47 +343,47 @@ const resolvers: Resolvers<Context> = {
     },
     paginatedAges: async (_source, args, context): Promise<AgesPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedAges(args, true);
+      return findPaginatedAges(args);
     },
     paginatedClasses: async (_source, args, context): Promise<ClassesPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedClasses(args, true);
+      return findPaginatedClasses(args);
     },
     paginatedCommunes: async (_source, args, context): Promise<CommunesPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedCommunes(args, true);
+      return findPaginatedCommunes(args);
     },
     paginatedComportements: async (_source, args, context): Promise<ComportementsPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedComportements(args, true);
+      return findPaginatedComportements(args);
     },
     paginatedDepartements: async (_source, args, context): Promise<DepartementsPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedDepartements(args, true);
+      return findPaginatedDepartements(args);
     },
     paginatedEspeces: async (_source, args, context): Promise<EspecesPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedEspeces(args, true);
+      return findPaginatedEspeces(args);
     },
     paginatedEstimationsDistance: async (_source, args, context): Promise<EstimationsDistancePaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedEstimationsDistance(args, true);
+      return findPaginatedEstimationsDistance(args);
     },
     paginatedEstimationsNombre: async (_source, args, context): Promise<EstimationsNombrePaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedEstimationsNombre(args, true);
+      return findPaginatedEstimationsNombre(args);
     },
     paginatedLieuxdits: async (_source, args, context): Promise<LieuxDitsPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedLieuxDits(args, true);
+      return findPaginatedLieuxDits(args);
     },
     paginatedMeteos: async (_source, args, context): Promise<MeteosPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedMeteos(args, true);
+      return findPaginatedMeteos(args);
     },
     paginatedMilieux: async (_source, args, context): Promise<MilieuxPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedMilieux(args, true);
+      return findPaginatedMilieux(args);
     },
     paginatedObservateurs: async (_source, args, context): Promise<ObservateursPaginatedResult> => {
       const user = validateUserAuthentication(context);
@@ -391,7 +391,7 @@ const resolvers: Resolvers<Context> = {
     },
     paginatedSexes: async (_source, args, context): Promise<SexesPaginatedResult> => {
       validateUserAuthentication(context);
-      return findPaginatedSexes(args, true);
+      return findPaginatedSexes(args);
     },
     paginatedSearchEspeces: async (
       _source,
@@ -402,7 +402,7 @@ const resolvers: Resolvers<Context> = {
     }> => {
       validateUserAuthentication(context);
       const { searchCriteria, ...rest } = args ?? {};
-      return findPaginatedEspeces(rest, true, searchCriteria);
+      return findPaginatedEspeces(rest, searchCriteria);
     },
     paginatedSearchDonnees: async (
       _source,

@@ -71,10 +71,9 @@ export const findAllSexes = async (
 };
 
 export const findPaginatedSexes = async (
-  options: QueryPaginatedSexesArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedSexesArgs> = {}
 ): Promise<SexesPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.SexeOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {

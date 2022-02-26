@@ -85,7 +85,7 @@ export const findObservateurs = async (
 };
 
 export const findPaginatedObservateurs = async (
-  options: QueryPaginatedObservateursArgs = {},
+  options: Partial<QueryPaginatedObservateursArgs> = {},
   loggedUser: LoggedUser | null = null
 ): Promise<ObservateursPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;

@@ -123,10 +123,9 @@ export const findAllMilieux = async (): Promise<MilieuWithCounts[]> => {
 };
 
 export const findPaginatedMilieux = async (
-  options: QueryPaginatedMilieuxArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedMilieuxArgs> = {}
 ): Promise<MilieuxPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.MilieuOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {

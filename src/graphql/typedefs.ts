@@ -604,7 +604,7 @@ export default gql`
   }
 
   type ObservateursPaginatedResult implements PaginatedResult {
-    result: [Observateur]
+    result: [Observateur!]
     count: Int!
   }
 
@@ -718,86 +718,86 @@ export default gql`
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): AgesPaginatedResult
     paginatedClasses(
       searchParams: SearchParams
       orderBy: ClassesOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): ClassesPaginatedResult
     paginatedCommunes(
       searchParams: SearchParams
       orderBy: CommunesOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): CommunesPaginatedResult
     paginatedComportements(
       searchParams: SearchParams
       orderBy: ComportementsOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): ComportementsPaginatedResult
     paginatedDepartements(
       searchParams: SearchParams
       orderBy: DepartementsOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): DepartementsPaginatedResult
     paginatedEspeces(
       searchParams: SearchParams
       orderBy: EspecesOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): EspecesPaginatedResult
     paginatedEstimationsDistance(
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): EstimationsDistancePaginatedResult
     paginatedEstimationsNombre(
       searchParams: SearchParams
       orderBy: EstimationNombreOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): EstimationsNombrePaginatedResult
     paginatedLieuxdits(
       searchParams: SearchParams
       orderBy: LieuxDitsOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): LieuxDitsPaginatedResult
     paginatedMeteos(
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): MeteosPaginatedResult
     paginatedMilieux(
       searchParams: SearchParams
       orderBy: MilieuxOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): MilieuxPaginatedResult
     paginatedObservateurs(
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): ObservateursPaginatedResult
     paginatedSexes(
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): SexesPaginatedResult
     paginatedSearchEspeces(
       searchCriteria: SearchDonneeCriteria
       searchParams: SearchDonneeParams
       orderBy: EspecesOrderBy
       sortOrder: SortOrder
-      includeCounts: Boolean
+      includeCounts: Boolean!
     ): EspecesPaginatedResult
     paginatedSearchDonnees(
       searchCriteria: SearchDonneeCriteria

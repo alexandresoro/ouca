@@ -178,7 +178,8 @@ test("should handle params when retrieving paginated observers ", async () => {
       q: "Bob",
       pageNumber: 0,
       pageSize: 10
-    }
+    },
+    includeCounts: false
   };
 
   prismaMock.observateur.findMany.mockResolvedValueOnce([observersData[0]]);

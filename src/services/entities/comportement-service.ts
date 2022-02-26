@@ -130,10 +130,9 @@ export const findAllComportements = async (): Promise<(ComportementWithCounts & 
 };
 
 export const findPaginatedComportements = async (
-  options: QueryPaginatedComportementsArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedComportementsArgs> = {}
 ): Promise<ComportementsPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.ComportementOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {

@@ -71,10 +71,9 @@ export const findAllEstimationsNombre = async (
 };
 
 export const findPaginatedEstimationsNombre = async (
-  options: QueryPaginatedEstimationsNombreArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedEstimationsNombreArgs> = {}
 ): Promise<EstimationsNombrePaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationNombreOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {

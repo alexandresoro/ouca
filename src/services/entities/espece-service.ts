@@ -161,11 +161,10 @@ export const findAllEspeces = async (
 };
 
 export const findPaginatedEspeces = async (
-  options: QueryPaginatedEspecesArgs = {},
-  includeCounts = true,
+  options: Partial<QueryPaginatedEspecesArgs> = {},
   searchCriteria: SearchDonneeCriteria | null | undefined = undefined
 ): Promise<EspecesPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EspeceOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {

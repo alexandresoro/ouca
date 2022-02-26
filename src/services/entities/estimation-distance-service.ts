@@ -59,10 +59,9 @@ export const findAllEstimationsDistance = async (): Promise<EstimationDistanceWi
 };
 
 export const findPaginatedEstimationsDistance = async (
-  options: QueryPaginatedEstimationsDistanceArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedEstimationsDistanceArgs> = {}
 ): Promise<EstimationsDistancePaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {

@@ -176,10 +176,9 @@ export const findAllLieuxDitsWithCounts = async (options?: {
 };
 
 export const findPaginatedLieuxDits = async (
-  options: QueryPaginatedLieuxditsArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedLieuxditsArgs> = {}
 ): Promise<LieuxDitsPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let lieuxDits: LieuDitWithCounts[];
 

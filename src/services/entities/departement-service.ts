@@ -132,10 +132,9 @@ export const findAllDepartements = async (
 };
 
 export const findPaginatedDepartements = async (
-  options: QueryPaginatedDepartementsArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedDepartementsArgs> = {}
 ): Promise<DepartementsPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let departements: DepartementWithCounts[];
 

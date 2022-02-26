@@ -185,10 +185,9 @@ export const findAllCommunesWithCounts = async (): Promise<Omit<Commune, "depart
 };
 
 export const findPaginatedCommunes = async (
-  options: QueryPaginatedCommunesArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedCommunesArgs> = {}
 ): Promise<CommunesPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let communes: CommuneWithCounts[];
 

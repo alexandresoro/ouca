@@ -1,20 +1,30 @@
 import { Meteo, Prisma } from "@prisma/client";
-import { MeteosPaginatedResult, MeteoWithCounts, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../model/graphql";
+import {
+  MeteosPaginatedResult,
+  MeteoWithCounts,
+  MutationUpsertMeteoArgs,
+  QueryPaginatedMeteosArgs
+} from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
-import { getEntiteAvecLibelleFilterClause, getPrismaPagination, getSqlPagination, getSqlSorting, queryParametersToFindAllEntities } from "./entities-utils";
+import {
+  getEntiteAvecLibelleFilterClause,
+  getPrismaPagination,
+  getSqlPagination,
+  getSqlSorting,
+  queryParametersToFindAllEntities
+} from "./entities-utils";
 
 export const findMeteo = async (id: number): Promise<Meteo | null> => {
   return prisma.meteo.findUnique({
     where: {
       id
-    },
+    }
   });
 };
 
 export const findMeteosByIds = async (ids: number[]): Promise<Meteo[]> => {
-
   return prisma.meteo.findMany({
     orderBy: {
       libelle: "asc"
@@ -23,7 +33,7 @@ export const findMeteosByIds = async (ids: number[]): Promise<Meteo[]> => {
       id: {
         in: ids
       }
-    },
+    }
   });
 };
 
@@ -56,32 +66,33 @@ export const findAllMeteos = async (): Promise<MeteoWithCounts[]> => {
   });
 
   return meteos.map((meteo) => {
-    const nbDonnees = meteo.inventaire_meteo.map(invMet => invMet?.inventaire._count?.donnee ?? 0).reduce(counterReducer, 0);
+    const nbDonnees = meteo.inventaire_meteo
+      .map((invMet) => invMet?.inventaire._count?.donnee ?? 0)
+      .reduce(counterReducer, 0);
     return {
       ...meteo,
       nbDonnees
-    }
+    };
   });
 };
 
 export const findPaginatedMeteos = async (
-  options: QueryPaginatedMeteosArgs = {},
-  includeCounts = true
+  options: Partial<QueryPaginatedMeteosArgs> = {}
 ): Promise<MeteosPaginatedResult> => {
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
-
-  const isNbDonneesNeeded = includeCounts || (orderByField === "nbDonnees");
+  const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
 
   let meteos: MeteoWithCounts[];
 
   if (isNbDonneesNeeded) {
-
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
-    const filterRequest = queryExpression ? Prisma.sql`
+    const filterRequest = queryExpression
+      ? Prisma.sql`
     WHERE
       libelle LIKE ${queryExpression}
-    ` : Prisma.empty;
+    `
+      : Prisma.empty;
 
     const donneesPerObservateurIdRequest = Prisma.sql`
     SELECT 
@@ -103,12 +114,12 @@ export const findPaginatedMeteos = async (
     ${filterRequest}
     GROUP BY 
       m.id
-    `
+    `;
 
-    meteos = await prisma.$queryRaw<(Meteo & { nbDonnees: number })[]>`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
-
+    meteos = await prisma.$queryRaw<
+      (Meteo & { nbDonnees: number })[]
+    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
   } else {
-
     const orderBy = orderByField ? { [orderByField]: sortOrder } : {};
 
     meteos = await prisma.meteo.findMany({
@@ -116,7 +127,6 @@ export const findPaginatedMeteos = async (
       orderBy,
       where: getEntiteAvecLibelleFilterClause(searchParams?.q)
     });
-
   }
 
   const count = await prisma.meteo.count({
@@ -126,19 +136,16 @@ export const findPaginatedMeteos = async (
   return {
     result: meteos,
     count
-  }
+  };
 };
 
-export const upsertMeteo = async (
-  args: MutationUpsertMeteoArgs
-): Promise<Meteo> => {
+export const upsertMeteo = async (args: MutationUpsertMeteoArgs): Promise<Meteo> => {
   const { id, data } = args;
   if (id) {
     return prisma.meteo.update({
       where: { id },
       data
     });
-
   } else {
     return prisma.meteo.create({ data });
   }
@@ -150,11 +157,9 @@ export const deleteMeteo = async (id: number): Promise<Meteo> => {
       id
     }
   });
-}
+};
 
-export const createMeteos = async (
-  meteos: Omit<Meteo, 'id'>[]
-): Promise<Prisma.BatchPayload> => {
+export const createMeteos = async (meteos: Omit<Meteo, "id">[]): Promise<Prisma.BatchPayload> => {
   return prisma.meteo.createMany({
     data: meteos
   });
