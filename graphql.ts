@@ -794,21 +794,14 @@ export type Observateur = {
   __typename?: 'Observateur';
   id: Scalars['Int'];
   libelle: Scalars['String'];
-  ownerId: Scalars['String'];
-};
-
-export type ObservateurWithCounts = {
-  __typename?: 'ObservateurWithCounts';
-  id: Scalars['Int'];
-  libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
-  ownerId: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type ObservateursPaginatedResult = PaginatedResult & {
   __typename?: 'ObservateursPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<ObservateurWithCounts>>>;
+  result?: Maybe<Array<Maybe<Observateur>>>;
 };
 
 export const OngoingSubStatus = {
@@ -885,8 +878,8 @@ export type Query = {
   milieux?: Maybe<Array<Maybe<Milieu>>>;
   nextRegroupement: Scalars['Int'];
   observateur?: Maybe<Observateur>;
-  observateurList?: Maybe<Array<Maybe<Observateur>>>;
-  observateurs?: Maybe<Array<Maybe<Observateur>>>;
+  observateurList?: Maybe<Array<Observateur>>;
+  observateurs?: Maybe<Array<Observateur>>;
   paginatedAges?: Maybe<AgesPaginatedResult>;
   paginatedClasses?: Maybe<ClassesPaginatedResult>;
   paginatedCommunes?: Maybe<CommunesPaginatedResult>;
@@ -1071,6 +1064,7 @@ export type QueryObservateursArgs = {
 
 
 export type QueryPaginatedAgesArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1078,6 +1072,7 @@ export type QueryPaginatedAgesArgs = {
 
 
 export type QueryPaginatedClassesArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<ClassesOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1085,6 +1080,7 @@ export type QueryPaginatedClassesArgs = {
 
 
 export type QueryPaginatedCommunesArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<CommunesOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1092,6 +1088,7 @@ export type QueryPaginatedCommunesArgs = {
 
 
 export type QueryPaginatedComportementsArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<ComportementsOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1099,6 +1096,7 @@ export type QueryPaginatedComportementsArgs = {
 
 
 export type QueryPaginatedDepartementsArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<DepartementsOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1106,6 +1104,7 @@ export type QueryPaginatedDepartementsArgs = {
 
 
 export type QueryPaginatedEspecesArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<EspecesOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1113,6 +1112,7 @@ export type QueryPaginatedEspecesArgs = {
 
 
 export type QueryPaginatedEstimationsDistanceArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1120,6 +1120,7 @@ export type QueryPaginatedEstimationsDistanceArgs = {
 
 
 export type QueryPaginatedEstimationsNombreArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<EstimationNombreOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1127,6 +1128,7 @@ export type QueryPaginatedEstimationsNombreArgs = {
 
 
 export type QueryPaginatedLieuxditsArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<LieuxDitsOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1134,6 +1136,7 @@ export type QueryPaginatedLieuxditsArgs = {
 
 
 export type QueryPaginatedMeteosArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1141,6 +1144,7 @@ export type QueryPaginatedMeteosArgs = {
 
 
 export type QueryPaginatedMilieuxArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<MilieuxOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1148,6 +1152,7 @@ export type QueryPaginatedMilieuxArgs = {
 
 
 export type QueryPaginatedObservateursArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1163,6 +1168,7 @@ export type QueryPaginatedSearchDonneesArgs = {
 
 
 export type QueryPaginatedSearchEspecesArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<EspecesOrderBy>;
   searchCriteria?: InputMaybe<SearchDonneeCriteria>;
   searchParams?: InputMaybe<SearchDonneeParams>;
@@ -1171,6 +1177,7 @@ export type QueryPaginatedSearchEspecesArgs = {
 
 
 export type QueryPaginatedSexesArgs = {
+  includeCounts?: InputMaybe<Scalars['Boolean']>;
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1498,7 +1505,6 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Nicheur: ResolverTypeWrapper<PartialDeep<Nicheur> | null>;
   Observateur: ResolverTypeWrapper<PartialDeep<Observateur> | null>;
-  ObservateurWithCounts: ResolverTypeWrapper<PartialDeep<ObservateurWithCounts> | null>;
   ObservateursPaginatedResult: ResolverTypeWrapper<PartialDeep<ObservateursPaginatedResult> | null>;
   OngoingSubStatus: ResolverTypeWrapper<PartialDeep<OngoingSubStatus> | null>;
   OngoingValidationStats: ResolverTypeWrapper<PartialDeep<OngoingValidationStats> | null>;
@@ -1592,7 +1598,6 @@ export type ResolversParentTypes = {
   MilieuxPaginatedResult: PartialDeep<MilieuxPaginatedResult> | null;
   Mutation: {};
   Observateur: PartialDeep<Observateur> | null;
-  ObservateurWithCounts: PartialDeep<ObservateurWithCounts> | null;
   ObservateursPaginatedResult: PartialDeep<ObservateursPaginatedResult> | null;
   OngoingValidationStats: PartialDeep<OngoingValidationStats> | null;
   PaginatedResult: ResolversParentTypes['AgesPaginatedResult'] | ResolversParentTypes['ClassesPaginatedResult'] | ResolversParentTypes['CommunesPaginatedResult'] | ResolversParentTypes['ComportementsPaginatedResult'] | ResolversParentTypes['DepartementsPaginatedResult'] | ResolversParentTypes['EspecesPaginatedResult'] | ResolversParentTypes['EstimationsDistancePaginatedResult'] | ResolversParentTypes['EstimationsNombrePaginatedResult'] | ResolversParentTypes['LieuxDitsPaginatedResult'] | ResolversParentTypes['MeteosPaginatedResult'] | ResolversParentTypes['MilieuxPaginatedResult'] | ResolversParentTypes['ObservateursPaginatedResult'] | ResolversParentTypes['PaginatedSearchDonneesResult'] | ResolversParentTypes['SexesPaginatedResult'];
@@ -1972,21 +1977,14 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type ObservateurResolvers<ContextType = any, ParentType extends ResolversParentTypes['Observateur'] = ResolversParentTypes['Observateur']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  ownerId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ObservateurWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ObservateurWithCounts'] = ResolversParentTypes['ObservateurWithCounts']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  ownerId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ObservateursPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ObservateursPaginatedResult'] = ResolversParentTypes['ObservateursPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['ObservateurWithCounts']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2056,8 +2054,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, Partial<QueryMilieuxArgs>>;
   nextRegroupement?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   observateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<QueryObservateurArgs, 'id'>>;
-  observateurList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, RequireFields<QueryObservateurListArgs, 'ids'>>;
-  observateurs?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType, Partial<QueryObservateursArgs>>;
+  observateurList?: Resolver<Maybe<Array<ResolversTypes['Observateur']>>, ParentType, ContextType, RequireFields<QueryObservateurListArgs, 'ids'>>;
+  observateurs?: Resolver<Maybe<Array<ResolversTypes['Observateur']>>, ParentType, ContextType, Partial<QueryObservateursArgs>>;
   paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedAgesArgs>>;
   paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedClassesArgs>>;
   paginatedCommunes?: Resolver<Maybe<ResolversTypes['CommunesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedCommunesArgs>>;
@@ -2199,7 +2197,6 @@ export type Resolvers<ContextType = any> = {
   MilieuxPaginatedResult?: MilieuxPaginatedResultResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Observateur?: ObservateurResolvers<ContextType>;
-  ObservateurWithCounts?: ObservateurWithCountsResolvers<ContextType>;
   ObservateursPaginatedResult?: ObservateursPaginatedResultResolvers<ContextType>;
   OngoingValidationStats?: OngoingValidationStatsResolvers<ContextType>;
   PaginatedResult?: PaginatedResultResolvers<ContextType>;
