@@ -33,12 +33,14 @@ const PAGINATED_SEARCH_ESPECES_QUERY = gql`
     $searchCriteria: SearchDonneeCriteria
     $orderBy: EspecesOrderBy
     $sortOrder: SortOrder
+    $includeCounts: Boolean!
   ) {
     paginatedSearchEspeces(
       searchParams: $searchParams
       searchCriteria: $searchCriteria
       orderBy: $orderBy
       sortOrder: $sortOrder
+      includeCounts: $includeCounts
     ) {
       count
       result {
@@ -100,7 +102,8 @@ const DonneesByEspeceTable: FunctionComponent = () => {
         },
         orderBy,
         sortOrder,
-        searchCriteria: null
+        searchCriteria: null,
+        includeCounts: true
       }
     }
   );

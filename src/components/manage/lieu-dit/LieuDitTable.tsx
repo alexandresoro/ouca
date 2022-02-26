@@ -40,8 +40,18 @@ type DeleteLieuDitMutationResult = {
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedLieuxDits($searchParams: SearchParams, $orderBy: LieuxDitsOrderBy, $sortOrder: SortOrder) {
-    paginatedLieuxdits(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedLieuxDits(
+    $searchParams: SearchParams
+    $orderBy: LieuxDitsOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedLieuxdits(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -121,7 +131,8 @@ const LieuDitTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

@@ -40,8 +40,18 @@ type DeleteMeteoMutationResult = {
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedMeteos($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    paginatedMeteos(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedMeteos(
+    $searchParams: SearchParams
+    $orderBy: EntitesAvecLibelleOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedMeteos(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -87,7 +97,8 @@ const MeteoTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

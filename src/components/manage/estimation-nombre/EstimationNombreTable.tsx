@@ -44,8 +44,14 @@ const PAGINATED_QUERY = gql`
     $searchParams: SearchParams
     $orderBy: EstimationNombreOrderBy
     $sortOrder: SortOrder
+    $includeCounts: Boolean!
   ) {
-    paginatedEstimationsNombre(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+    paginatedEstimationsNombre(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -98,7 +104,8 @@ const EstimationNombreTable: FunctionComponent = () => {
           q: query
         },
         orderBy,
-        sortOrder
+        sortOrder,
+        includeCounts: true
       }
     }
   );

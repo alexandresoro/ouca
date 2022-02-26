@@ -40,8 +40,18 @@ type DeleteEspeceMutationResult = {
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedEspeces($searchParams: SearchParams, $orderBy: EspecesOrderBy, $sortOrder: SortOrder) {
-    paginatedEspeces(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedEspeces(
+    $searchParams: SearchParams
+    $orderBy: EspecesOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedEspeces(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -104,7 +114,8 @@ const EspeceTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

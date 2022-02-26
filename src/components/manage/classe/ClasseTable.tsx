@@ -40,8 +40,18 @@ type DeleteClasseMutationResult = {
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedClasses($searchParams: SearchParams, $orderBy: ClassesOrderBy, $sortOrder: SortOrder) {
-    paginatedClasses(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedClasses(
+    $searchParams: SearchParams
+    $orderBy: ClassesOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedClasses(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -92,7 +102,8 @@ const ClasseTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

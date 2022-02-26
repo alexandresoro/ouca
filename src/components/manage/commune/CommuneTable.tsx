@@ -40,8 +40,18 @@ type DeleteCommuneMutationResult = {
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedCommunes($searchParams: SearchParams, $orderBy: CommunesOrderBy, $sortOrder: SortOrder) {
-    paginatedCommunes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedCommunes(
+    $searchParams: SearchParams
+    $orderBy: CommunesOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedCommunes(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         departement {
@@ -104,7 +114,8 @@ const CommuneTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

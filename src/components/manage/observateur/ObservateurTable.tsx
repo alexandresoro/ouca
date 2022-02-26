@@ -13,17 +13,16 @@ import {
   TableSortLabel
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import { FunctionComponent, useContext, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../../contexts/UserContext";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbarContent from "../../../hooks/useSnackbarContent";
 import {
   EntitesAvecLibelleOrderBy,
   MutationDeleteObservateurArgs,
+  Observateur,
   ObservateursPaginatedResult,
-  ObservateurWithCounts,
   QueryPaginatedObservateursArgs,
   SortOrder
 } from "../../../model/graphql";
@@ -41,14 +40,24 @@ type DeleteObservateurMutationResult = {
 };
 
 const PAGINATED_OBSERVATEURS_QUERY = gql`
-  query PaginatedObservateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    paginatedObservateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedObservateurs(
+    $searchParams: SearchParams
+    $orderBy: EntitesAvecLibelleOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedObservateurs(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
         libelle
-        ownerId
-        nbDonnees
+        readonly
+        nbDonnees @include(if: $includeCounts)
       }
     }
   }
@@ -75,12 +84,10 @@ const ObservateurTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { userInfo } = useContext(UserContext);
-
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
-  const [dialogObservateur, setDialogObservateur] = useState<ObservateurWithCounts | null>(null);
+  const [dialogObservateur, setDialogObservateur] = useState<Observateur | null>(null);
 
   const { data } = useQuery<PaginatedObservateursQueryResult, QueryPaginatedObservateursArgs>(
     PAGINATED_OBSERVATEURS_QUERY,
@@ -93,7 +100,8 @@ const ObservateurTable: FunctionComponent = () => {
           q: query
         },
         orderBy,
-        sortOrder
+        sortOrder,
+        includeCounts: true
       }
     }
   );
@@ -110,13 +118,13 @@ const ObservateurTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteObservateur = (observateur: ObservateurWithCounts | null) => {
+  const handleDeleteObservateur = (observateur: Observateur | null) => {
     if (observateur) {
       setDialogObservateur(observateur);
     }
   };
 
-  const handleDeleteObservateurConfirmation = async (observateur: ObservateurWithCounts | null) => {
+  const handleDeleteObservateurConfirmation = async (observateur: Observateur | null) => {
     if (observateur) {
       setDialogObservateur(null);
       await deleteObservateur({
@@ -201,7 +209,7 @@ const ObservateurTable: FunctionComponent = () => {
                   <TableCell>{observateur?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={userInfo?.role !== "admin" && userInfo?.id !== observateur?.ownerId}
+                      disabled={!!observateur?.readonly}
                       onEditClicked={() => handleEditObservateur(observateur?.id)}
                       onDeleteClicked={() => handleDeleteObservateur(observateur)}
                     />

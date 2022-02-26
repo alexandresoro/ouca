@@ -40,8 +40,18 @@ type DeleteMilieuMutationResult = {
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedMilieux($searchParams: SearchParams, $orderBy: MilieuxOrderBy, $sortOrder: SortOrder) {
-    paginatedMilieux(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedMilieux(
+    $searchParams: SearchParams
+    $orderBy: MilieuxOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedMilieux(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -92,7 +102,8 @@ const MilieuTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

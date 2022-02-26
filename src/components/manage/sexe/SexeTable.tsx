@@ -40,8 +40,18 @@ type DeleteSexeMutationResult = {
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedSexes($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    paginatedSexes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedSexes(
+    $searchParams: SearchParams
+    $orderBy: EntitesAvecLibelleOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedSexes(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -87,7 +97,8 @@ const SexeTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

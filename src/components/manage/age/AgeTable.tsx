@@ -40,8 +40,18 @@ type DeleteAgeMutationResult = {
 };
 
 const PAGINATED_AGES_QUERY = gql`
-  query PaginatedAges($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    paginatedAges(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedAges(
+    $searchParams: SearchParams
+    $orderBy: EntitesAvecLibelleOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedAges(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -87,7 +97,8 @@ const AgeTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

@@ -40,8 +40,18 @@ type DeleteDepartementMutationResult = {
 };
 
 const PAGINATED_QUERY = gql`
-  query PaginatedDepartements($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
-    paginatedDepartements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+  query PaginatedDepartements(
+    $searchParams: SearchParams
+    $orderBy: DepartementsOrderBy
+    $sortOrder: SortOrder
+    $includeCounts: Boolean!
+  ) {
+    paginatedDepartements(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -97,7 +107,8 @@ const DepartementTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder
+      sortOrder,
+      includeCounts: true
     }
   });
 

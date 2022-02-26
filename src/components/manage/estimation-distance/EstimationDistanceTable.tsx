@@ -44,8 +44,14 @@ const PAGINATED_QUERY = gql`
     $searchParams: SearchParams
     $orderBy: EntitesAvecLibelleOrderBy
     $sortOrder: SortOrder
+    $includeCounts: Boolean!
   ) {
-    paginatedEstimationsDistance(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+    paginatedEstimationsDistance(
+      searchParams: $searchParams
+      orderBy: $orderBy
+      sortOrder: $sortOrder
+      includeCounts: $includeCounts
+    ) {
       count
       result {
         id
@@ -93,7 +99,8 @@ const EstimationDistanceTable: FunctionComponent = () => {
           q: query
         },
         orderBy,
-        sortOrder
+        sortOrder,
+        includeCounts: true
       }
     }
   );
