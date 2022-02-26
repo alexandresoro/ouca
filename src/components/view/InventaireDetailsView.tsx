@@ -1,5 +1,6 @@
 import { CalendarToday, LightMode, People, Place } from "@mui/icons-material";
 import { Divider, List, Typography, useTheme } from "@mui/material";
+import { intlFormat, parseISO } from "date-fns";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { getInventaireCoordinates } from "../../model/coordinates-system/coordinates-helper";
@@ -45,7 +46,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         <ItemWithAvatar
           icon={<CalendarToday />}
           primary={t("observationDetails.dateTime", {
-            date: inventaire.date,
+            date: intlFormat(parseISO(inventaire.date)),
             time: inventaire.heure
           })}
           secondary={t("observationDetails.duration", {

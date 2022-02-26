@@ -1,5 +1,6 @@
 import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { Card, Collapse, IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
+import { intlFormat, parseISO } from "date-fns";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Donnee } from "../../model/graphql";
@@ -34,7 +35,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
           {donnee?.inventaire.lieuDit.commune.nom} ({donnee?.inventaire.lieuDit.commune.departement.code}),{" "}
           {donnee?.inventaire.lieuDit.nom}
         </TableCell>
-        <TableCell>{donnee?.inventaire.date}</TableCell>
+        <TableCell>{intlFormat(parseISO(donnee?.inventaire.date))}</TableCell>
         <TableCell>{donnee?.inventaire.observateur.libelle}</TableCell>
         <TableCell align="right">
           <Tooltip title={t("observationsTable.header.action.edit") as unknown as string}>
@@ -66,8 +67,8 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
               <Typography sx={{ marginTop: "5px", fontSize: "13px" }}>
                 {t("observationDetails.mainSubtitle", {
                   owner: donnee?.inventaire.observateur.libelle,
-                  creationDate: donnee?.inventaire.date,
-                  updatedDate: donnee?.inventaire.date,
+                  creationDate: intlFormat(parseISO(donnee?.inventaire.date)),
+                  updatedDate: intlFormat(parseISO(donnee?.inventaire.date)),
                   inventoryId: donnee?.inventaire?.id,
                   observationId: donnee?.id
                 })}
