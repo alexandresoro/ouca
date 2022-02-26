@@ -1,9 +1,9 @@
 import { DatabaseRole } from "@prisma/client";
 import { EditUserData, UserLoginInput } from "../model/graphql";
 import { prismaMock } from "../sql/prisma-mock";
+import { LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
 import { logger } from "../utils/logger";
-import { LoggedUser } from "../utils/user";
 import { deleteUser, getHashedPassword, loginUser, updateUser, validatePassword } from "./user-service";
 
 beforeAll(() => {

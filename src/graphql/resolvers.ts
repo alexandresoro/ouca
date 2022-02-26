@@ -172,8 +172,8 @@ import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
 import { createUser, deleteUser, getUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
+import { LoggedUser } from "../types/LoggedUser";
 import { logger } from "../utils/logger";
-import { LoggedUser } from "../utils/user";
 
 export type Context = {
   request: unknown;

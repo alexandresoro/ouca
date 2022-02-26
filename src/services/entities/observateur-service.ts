@@ -6,9 +6,9 @@ import {
   QueryPaginatedObservateursArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { LoggedUser } from "../../utils/user";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,

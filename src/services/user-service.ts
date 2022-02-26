@@ -2,10 +2,10 @@ import { DatabaseRole, User } from "@prisma/client";
 import { randomBytes, scryptSync } from "crypto";
 import { EditUserData, UserCreateInput, UserLoginInput } from "../model/graphql";
 import prisma from "../sql/prisma";
+import { LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
 import { SALT_AND_PWD_DELIMITER } from "../utils/keys";
 import { logger } from "../utils/logger";
-import { LoggedUser } from "../utils/user";
 
 const PASSWORD_KEY_LENGTH = 64;
 

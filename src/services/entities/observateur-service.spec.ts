@@ -1,9 +1,9 @@
 import { DatabaseRole, Observateur } from "@prisma/client";
 import { QueryPaginatedObservateursArgs } from "../../model/graphql";
 import { prismaMock } from "../../sql/prisma-mock";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { LoggedUser } from "../../utils/user";
 import * as entitiesUtils from "./entities-utils";
 import {
   deleteObservateur,

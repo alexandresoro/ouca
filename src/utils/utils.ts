@@ -33,30 +33,32 @@ export const getFormattedDate = (value: string): Date | null => {
 };
 
 export const getFormattedTime = (timeStr: string): string | null => {
-  if (timeStr) {
-    let value = timeStr;
-    const timeRegExp1 = new RegExp("^[0-9][0-9][0-9][0-9]$");
-    if (timeRegExp1.test(value)) {
-      value = value.charAt(0) + value.charAt(1) + ":" + value.charAt(2) + value.charAt(3);
-    }
-
-    const timeRegExp2 = new RegExp("^[0-9][0-9][h][0-9][0-9]$");
-    if (timeRegExp2.test(value)) {
-      value = value.replace("h", ":");
-    }
-
-    const timeRegExp3 = new RegExp("^[0-9][0-9][H][0-9][0-9]$");
-    if (timeRegExp3.test(value)) {
-      value = value.replace("H", ":");
-    }
-    return value;
+  const timeRegExpExpected = new RegExp("^[0-9][0-9]:[0-5][0-9]$");
+  if (timeRegExpExpected.test(timeStr)) {
+    return timeStr;
   }
+
+  const timeRegExp1 = new RegExp("^[0-9][0-9][0-5][0-9]$");
+  if (timeRegExp1.test(timeStr)) {
+    return timeStr.charAt(0) + timeStr.charAt(1) + ":" + timeStr.charAt(2) + timeStr.charAt(3);
+  }
+
+  const timeRegExp2 = new RegExp("^[0-9][0-9][h][0-5][0-9]$");
+  if (timeRegExp2.test(timeStr)) {
+    return timeStr.replace("h", ":");
+  }
+
+  const timeRegExp3 = new RegExp("^[0-9][0-9][H][0-5][0-9]$");
+  if (timeRegExp3.test(timeStr)) {
+    return timeStr.replace("H", ":");
+  }
+
   return null;
 };
 
 export const isTimeValid = (timeStr: string): boolean => {
   const value = getFormattedTime(timeStr);
 
-  const timeRegExp = new RegExp("^[0-9][0-9][:][0-9][0-9]$");
+  const timeRegExp = new RegExp("^[0-9][0-9][:][0-5][0-9]$");
   return !!value && timeRegExp.test(value);
 };
