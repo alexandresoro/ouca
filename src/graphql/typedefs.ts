@@ -216,13 +216,7 @@ export default gql`
   type Observateur {
     id: Int!
     libelle: String!
-    ownerId: String!
-  }
-
-  type ObservateurWithCounts {
-    id: Int!
-    libelle: String!
-    ownerId: String!
+    readonly: Boolean
     nbDonnees: Int
   }
 
@@ -610,7 +604,7 @@ export default gql`
   }
 
   type ObservateursPaginatedResult implements PaginatedResult {
-    result: [ObservateurWithCounts]
+    result: [Observateur]
     count: Int!
   }
 
@@ -701,7 +695,7 @@ export default gql`
     milieu(id: Int!): Milieu
     milieuList(ids: [Int!]!): [Milieu]
     observateur(id: Int!): Observateur
-    observateurList(ids: [Int!]!): [Observateur]
+    observateurList(ids: [Int!]!): [Observateur!]
     sexe(id: Int!): Sexe
     specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
     specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
@@ -716,7 +710,7 @@ export default gql`
     estimationsNombre(params: FindParams): [EstimationNombre]
     meteos: [Meteo]
     milieux(params: FindParams): [Milieu]
-    observateurs(params: FindParams): [Observateur]
+    observateurs(params: FindParams): [Observateur!]
     sexes(params: FindParams): [Sexe]
     nextRegroupement: Int!
     lastDonneeId: Int
@@ -724,60 +718,86 @@ export default gql`
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): AgesPaginatedResult
-    paginatedClasses(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
+    paginatedClasses(
+      searchParams: SearchParams
+      orderBy: ClassesOrderBy
+      sortOrder: SortOrder
+      includeCounts: Boolean
+    ): ClassesPaginatedResult
     paginatedCommunes(
       searchParams: SearchParams
       orderBy: CommunesOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): CommunesPaginatedResult
     paginatedComportements(
       searchParams: SearchParams
       orderBy: ComportementsOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): ComportementsPaginatedResult
     paginatedDepartements(
       searchParams: SearchParams
       orderBy: DepartementsOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): DepartementsPaginatedResult
-    paginatedEspeces(searchParams: SearchParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
+    paginatedEspeces(
+      searchParams: SearchParams
+      orderBy: EspecesOrderBy
+      sortOrder: SortOrder
+      includeCounts: Boolean
+    ): EspecesPaginatedResult
     paginatedEstimationsDistance(
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): EstimationsDistancePaginatedResult
     paginatedEstimationsNombre(
       searchParams: SearchParams
       orderBy: EstimationNombreOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): EstimationsNombrePaginatedResult
     paginatedLieuxdits(
       searchParams: SearchParams
       orderBy: LieuxDitsOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): LieuxDitsPaginatedResult
     paginatedMeteos(
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): MeteosPaginatedResult
-    paginatedMilieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
+    paginatedMilieux(
+      searchParams: SearchParams
+      orderBy: MilieuxOrderBy
+      sortOrder: SortOrder
+      includeCounts: Boolean
+    ): MilieuxPaginatedResult
     paginatedObservateurs(
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): ObservateursPaginatedResult
     paginatedSexes(
       searchParams: SearchParams
       orderBy: EntitesAvecLibelleOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): SexesPaginatedResult
     paginatedSearchEspeces(
       searchCriteria: SearchDonneeCriteria
       searchParams: SearchDonneeParams
       orderBy: EspecesOrderBy
       sortOrder: SortOrder
+      includeCounts: Boolean
     ): EspecesPaginatedResult
     paginatedSearchDonnees(
       searchCriteria: SearchDonneeCriteria

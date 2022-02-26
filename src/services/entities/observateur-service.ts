@@ -3,12 +3,10 @@ import {
   FindParams,
   MutationUpsertObservateurArgs,
   ObservateursPaginatedResult,
-  ObservateurWithCounts,
   QueryPaginatedObservateursArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { COLUMN_LIBELLE } from "../../utils/constants";
-import counterReducer from "../../utils/counterReducer";
 import { OucaError } from "../../utils/errors";
 import { LoggedUser } from "../../utils/user";
 import {
@@ -16,37 +14,60 @@ import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  queryParametersToFindAllEntities
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
 } from "./entities-utils";
 
-export const findObservateur = async (id: number): Promise<Observateur | null> => {
-  return prisma.observateur.findUnique({
+export const findObservateur = async (
+  id: number,
+  loggedUser: LoggedUser | null = null
+): Promise<(Observateur & ReadonlyStatus) | null> => {
+  const observateurEntity = await prisma.observateur.findUnique({
     where: {
       id
     }
   });
+
+  if (!observateurEntity) {
+    return null;
+  }
+
+  return {
+    ...observateurEntity,
+    readonly: isEntityReadOnly(observateurEntity, loggedUser)
+  };
 };
 
-export const findObservateursByIds = async (ids: number[]): Promise<Observateur[]> => {
-  return prisma.observateur.findMany({
-    orderBy: {
-      libelle: "asc"
-    },
+export const findObservateursByIds = async (
+  ids: number[],
+  loggedUser: LoggedUser | null = null
+): Promise<(Observateur & ReadonlyStatus)[]> => {
+  const observateurEntities = await prisma.observateur.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       id: {
         in: ids
       }
     }
   });
+
+  return observateurEntities?.map((observateur) => {
+    return {
+      ...observateur,
+      readonly: isEntityReadOnly(observateur, loggedUser)
+    };
+  });
 };
 
-export const findObservateurs = async (params?: FindParams | null): Promise<Observateur[]> => {
+export const findObservateurs = async (
+  params?: FindParams | null,
+  loggedUser: LoggedUser | null = null
+): Promise<(Observateur & ReadonlyStatus)[]> => {
   const { q, max } = params ?? {};
 
-  return prisma.observateur.findMany({
-    orderBy: {
-      libelle: "asc"
-    },
+  const observateurEntities = await prisma.observateur.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
         contains: q || undefined
@@ -54,48 +75,24 @@ export const findObservateurs = async (params?: FindParams | null): Promise<Obse
     },
     take: max || undefined
   });
-};
 
-export const findAllObservateurs = async (includeCounts = true): Promise<ObservateurWithCounts[]> => {
-  if (includeCounts) {
-    const observateurs = await prisma.observateur.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      include: {
-        inventaire: {
-          select: {
-            _count: {
-              select: {
-                donnee: true
-              }
-            }
-          }
-        }
-      }
-    });
-
-    return observateurs.map((observateur) => {
-      const nbDonnees = observateur?.inventaire?.map((espece) => espece._count?.donnee).reduce(counterReducer, 0) ?? 0;
-      return {
-        ...observateur,
-        ...(includeCounts ? { nbDonnees } : {})
-      };
-    });
-  } else {
-    return prisma.observateur.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
-    });
-  }
+  return observateurEntities?.map((observateur) => {
+    return {
+      ...observateur,
+      readonly: isEntityReadOnly(observateur, loggedUser)
+    };
+  });
 };
 
 export const findPaginatedObservateurs = async (
   options: QueryPaginatedObservateursArgs = {},
-  includeCounts = true
+  loggedUser: LoggedUser | null = null
 ): Promise<ObservateursPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
 
-  let observateurs: ObservateurWithCounts[];
+  let observateurEntities: Observateur[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
@@ -124,13 +121,13 @@ export const findPaginatedObservateurs = async (
       o.id
     `;
 
-    observateurs = await prisma.$queryRaw<
+    observateurEntities = await prisma.$queryRaw<
       (Observateur & { nbDonnees: number })[]
     >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
   } else {
     const orderBy = orderByField ? { [orderByField]: sortOrder } : {};
 
-    observateurs = await prisma.observateur.findMany({
+    observateurEntities = await prisma.observateur.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
       where: getEntiteAvecLibelleFilterClause(searchParams?.q)
@@ -139,6 +136,13 @@ export const findPaginatedObservateurs = async (
 
   const count = await prisma.observateur.count({
     where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+  });
+
+  const observateurs = observateurEntities?.map((observateur) => {
+    return {
+      ...observateur,
+      readonly: isEntityReadOnly(observateur, loggedUser)
+    };
   });
 
   return {
@@ -150,8 +154,11 @@ export const findPaginatedObservateurs = async (
 export const upsertObservateur = async (
   args: MutationUpsertObservateurArgs,
   loggedUser: LoggedUser
-): Promise<Observateur> => {
+): Promise<Observateur & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedObservateur: Observateur;
+
   if (id) {
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
@@ -165,19 +172,24 @@ export const upsertObservateur = async (
     }
 
     // Update an existing observer
-    return prisma.observateur.update({
+    upsertedObservateur = await prisma.observateur.update({
       where: { id },
       data
     });
   } else {
     // Create a new observer
-    return prisma.observateur.create({
+    upsertedObservateur = await prisma.observateur.create({
       data: {
         ...data,
         ownerId: loggedUser.id
       }
     });
   }
+
+  return {
+    ...upsertedObservateur,
+    readonly: false
+  };
 };
 
 export const deleteObservateur = async (id: number, loggedUser: LoggedUser): Promise<Observateur> => {

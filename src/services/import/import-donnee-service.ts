@@ -31,7 +31,7 @@ import { findAllInventaires, InventaireWithRelations, upsertInventaire } from ".
 import { findAllLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { findAllMeteos } from "../entities/meteo-service";
 import { findAllMilieux } from "../entities/milieu-service";
-import { findAllObservateurs } from "../entities/observateur-service";
+import { findObservateurs } from "../entities/observateur-service";
 import { findAllSexes } from "../entities/sexe-service";
 import { ImportService } from "./import-service";
 
@@ -71,7 +71,7 @@ export class ImportDonneeService extends ImportService {
       this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
     }
 
-    this.observateurs = await findAllObservateurs(false);
+    this.observateurs = await findObservateurs();
     this.departements = await findAllDepartements({ includeCounts: false });
     this.communes = await findAllCommunes();
     this.lieuxDits = await findAllLieuxDits();

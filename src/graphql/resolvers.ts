@@ -262,12 +262,12 @@ const resolvers: Resolvers<Context> = {
       return findMilieuxByIds(args.ids);
     },
     observateur: async (_source, args, context): Promise<Observateur | null> => {
-      validateUserAuthentication(context);
-      return findObservateur(args.id);
+      const user = validateUserAuthentication(context);
+      return findObservateur(args.id, user);
     },
     observateurList: async (_source, args, context): Promise<Observateur[]> => {
-      validateUserAuthentication(context);
-      return findObservateursByIds(args.ids);
+      const user = validateUserAuthentication(context);
+      return findObservateursByIds(args.ids, user);
     },
     sexe: async (_source, args, context): Promise<Sexe | null> => {
       validateUserAuthentication(context);
@@ -326,8 +326,8 @@ const resolvers: Resolvers<Context> = {
       return findMilieux(args?.params);
     },
     observateurs: async (_source, args, context): Promise<Observateur[]> => {
-      validateUserAuthentication(context);
-      return findObservateurs(args?.params);
+      const user = validateUserAuthentication(context);
+      return findObservateurs(args?.params, user);
     },
     sexes: async (_source, args, context): Promise<Sexe[]> => {
       validateUserAuthentication(context);
@@ -386,8 +386,8 @@ const resolvers: Resolvers<Context> = {
       return findPaginatedMilieux(args, true);
     },
     paginatedObservateurs: async (_source, args, context): Promise<ObservateursPaginatedResult> => {
-      validateUserAuthentication(context);
-      return findPaginatedObservateurs(args, true);
+      const user = validateUserAuthentication(context);
+      return findPaginatedObservateurs(args, user);
     },
     paginatedSexes: async (_source, args, context): Promise<SexesPaginatedResult> => {
       validateUserAuthentication(context);

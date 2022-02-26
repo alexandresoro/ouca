@@ -1,5 +1,6 @@
-import { Prisma } from ".prisma/client";
+import { DatabaseRole, Prisma } from ".prisma/client";
 import { SortOrder } from "../../model/graphql";
+import { LoggedUser } from "../../utils/user";
 
 type SortOptions = Partial<{
   orderBy: string | null;
@@ -10,6 +11,14 @@ type PaginationOptions = Partial<{
   pageNumber: number | null;
   pageSize: number | null;
 }>;
+
+export type ReadonlyStatus = {
+  readonly: boolean;
+};
+
+export const isEntityReadOnly = (entity: { ownerId: string }, user: LoggedUser | null): boolean => {
+  return !(user?.role === DatabaseRole.admin || entity.ownerId === user?.id);
+};
 
 // Utility method to compute the Prisma pagination from the API pagination
 // Page number is starting at index 0
