@@ -1,1 +1,2 @@
 src/model/graphql.ts
+src/setupProxy.js

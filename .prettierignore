@@ -5,6 +5,8 @@ build
 .github
 .vscode
 
+src/setupProxy.js
+
 # Ignore submodule formatting
 src/model
 .gitmodules
