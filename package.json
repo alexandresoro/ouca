@@ -25,7 +25,7 @@
     "@fontsource/lato": "^4.5.2",
     "@fontsource/yuji-hentaigana-akebono": "^4.5.2",
     "@mui/icons-material": "^5.4.2",
-    "@mui/lab": "^5.0.0-alpha.69",
+    "@mui/lab": "^5.0.0-alpha.70",
     "@mui/material": "^5.4.2",
     "date-fns": "^2.28.0",
     "date-fns-tz": "^1.2.2",
