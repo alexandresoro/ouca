@@ -3,9 +3,7 @@ name: CI/CD
 on:
   push:
     branches:
-      - master
-      - dev
-      - next
+      - '**'
     tags:
       - "v*.*.*"
   pull_request:
