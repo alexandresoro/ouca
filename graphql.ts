@@ -801,7 +801,7 @@ export type Observateur = {
 export type ObservateursPaginatedResult = PaginatedResult & {
   __typename?: 'ObservateursPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<Observateur>>>;
+  result?: Maybe<Array<Observateur>>;
 };
 
 export const OngoingSubStatus = {
@@ -1064,7 +1064,7 @@ export type QueryObservateursArgs = {
 
 
 export type QueryPaginatedAgesArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1072,7 +1072,7 @@ export type QueryPaginatedAgesArgs = {
 
 
 export type QueryPaginatedClassesArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<ClassesOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1080,7 +1080,7 @@ export type QueryPaginatedClassesArgs = {
 
 
 export type QueryPaginatedCommunesArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<CommunesOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1088,7 +1088,7 @@ export type QueryPaginatedCommunesArgs = {
 
 
 export type QueryPaginatedComportementsArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<ComportementsOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1096,7 +1096,7 @@ export type QueryPaginatedComportementsArgs = {
 
 
 export type QueryPaginatedDepartementsArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<DepartementsOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1104,7 +1104,7 @@ export type QueryPaginatedDepartementsArgs = {
 
 
 export type QueryPaginatedEspecesArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EspecesOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1112,7 +1112,7 @@ export type QueryPaginatedEspecesArgs = {
 
 
 export type QueryPaginatedEstimationsDistanceArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1120,7 +1120,7 @@ export type QueryPaginatedEstimationsDistanceArgs = {
 
 
 export type QueryPaginatedEstimationsNombreArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EstimationNombreOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1128,7 +1128,7 @@ export type QueryPaginatedEstimationsNombreArgs = {
 
 
 export type QueryPaginatedLieuxditsArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<LieuxDitsOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1136,7 +1136,7 @@ export type QueryPaginatedLieuxditsArgs = {
 
 
 export type QueryPaginatedMeteosArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1144,7 +1144,7 @@ export type QueryPaginatedMeteosArgs = {
 
 
 export type QueryPaginatedMilieuxArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<MilieuxOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1152,7 +1152,7 @@ export type QueryPaginatedMilieuxArgs = {
 
 
 export type QueryPaginatedObservateursArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1168,7 +1168,7 @@ export type QueryPaginatedSearchDonneesArgs = {
 
 
 export type QueryPaginatedSearchEspecesArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EspecesOrderBy>;
   searchCriteria?: InputMaybe<SearchDonneeCriteria>;
   searchParams?: InputMaybe<SearchDonneeParams>;
@@ -1177,7 +1177,7 @@ export type QueryPaginatedSearchEspecesArgs = {
 
 
 export type QueryPaginatedSexesArgs = {
-  includeCounts?: InputMaybe<Scalars['Boolean']>;
+  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -1984,7 +1984,7 @@ export type ObservateurResolvers<ContextType = any, ParentType extends Resolvers
 
 export type ObservateursPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ObservateursPaginatedResult'] = ResolversParentTypes['ObservateursPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['Observateur']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<ResolversTypes['Observateur']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2056,21 +2056,21 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   observateur?: Resolver<Maybe<ResolversTypes['Observateur']>, ParentType, ContextType, RequireFields<QueryObservateurArgs, 'id'>>;
   observateurList?: Resolver<Maybe<Array<ResolversTypes['Observateur']>>, ParentType, ContextType, RequireFields<QueryObservateurListArgs, 'ids'>>;
   observateurs?: Resolver<Maybe<Array<ResolversTypes['Observateur']>>, ParentType, ContextType, Partial<QueryObservateursArgs>>;
-  paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedAgesArgs>>;
-  paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedClassesArgs>>;
-  paginatedCommunes?: Resolver<Maybe<ResolversTypes['CommunesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedCommunesArgs>>;
-  paginatedComportements?: Resolver<Maybe<ResolversTypes['ComportementsPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedComportementsArgs>>;
-  paginatedDepartements?: Resolver<Maybe<ResolversTypes['DepartementsPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedDepartementsArgs>>;
-  paginatedEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedEspecesArgs>>;
-  paginatedEstimationsDistance?: Resolver<Maybe<ResolversTypes['EstimationsDistancePaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedEstimationsDistanceArgs>>;
-  paginatedEstimationsNombre?: Resolver<Maybe<ResolversTypes['EstimationsNombrePaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedEstimationsNombreArgs>>;
-  paginatedLieuxdits?: Resolver<Maybe<ResolversTypes['LieuxDitsPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedLieuxditsArgs>>;
-  paginatedMeteos?: Resolver<Maybe<ResolversTypes['MeteosPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedMeteosArgs>>;
-  paginatedMilieux?: Resolver<Maybe<ResolversTypes['MilieuxPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedMilieuxArgs>>;
-  paginatedObservateurs?: Resolver<Maybe<ResolversTypes['ObservateursPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedObservateursArgs>>;
+  paginatedAges?: Resolver<Maybe<ResolversTypes['AgesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedAgesArgs, 'includeCounts'>>;
+  paginatedClasses?: Resolver<Maybe<ResolversTypes['ClassesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedClassesArgs, 'includeCounts'>>;
+  paginatedCommunes?: Resolver<Maybe<ResolversTypes['CommunesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedCommunesArgs, 'includeCounts'>>;
+  paginatedComportements?: Resolver<Maybe<ResolversTypes['ComportementsPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedComportementsArgs, 'includeCounts'>>;
+  paginatedDepartements?: Resolver<Maybe<ResolversTypes['DepartementsPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedDepartementsArgs, 'includeCounts'>>;
+  paginatedEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedEspecesArgs, 'includeCounts'>>;
+  paginatedEstimationsDistance?: Resolver<Maybe<ResolversTypes['EstimationsDistancePaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedEstimationsDistanceArgs, 'includeCounts'>>;
+  paginatedEstimationsNombre?: Resolver<Maybe<ResolversTypes['EstimationsNombrePaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedEstimationsNombreArgs, 'includeCounts'>>;
+  paginatedLieuxdits?: Resolver<Maybe<ResolversTypes['LieuxDitsPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedLieuxditsArgs, 'includeCounts'>>;
+  paginatedMeteos?: Resolver<Maybe<ResolversTypes['MeteosPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedMeteosArgs, 'includeCounts'>>;
+  paginatedMilieux?: Resolver<Maybe<ResolversTypes['MilieuxPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedMilieuxArgs, 'includeCounts'>>;
+  paginatedObservateurs?: Resolver<Maybe<ResolversTypes['ObservateursPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedObservateursArgs, 'includeCounts'>>;
   paginatedSearchDonnees?: Resolver<Maybe<ResolversTypes['PaginatedSearchDonneesResult']>, ParentType, ContextType, Partial<QueryPaginatedSearchDonneesArgs>>;
-  paginatedSearchEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedSearchEspecesArgs>>;
-  paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, Partial<QueryPaginatedSexesArgs>>;
+  paginatedSearchEspeces?: Resolver<Maybe<ResolversTypes['EspecesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSearchEspecesArgs, 'includeCounts'>>;
+  paginatedSexes?: Resolver<Maybe<ResolversTypes['SexesPaginatedResult']>, ParentType, ContextType, RequireFields<QueryPaginatedSexesArgs, 'includeCounts'>>;
   settings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType>;
   sexe?: Resolver<Maybe<ResolversTypes['Sexe']>, ParentType, ContextType, RequireFields<QuerySexeArgs, 'id'>>;
   sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType, Partial<QuerySexesArgs>>;
