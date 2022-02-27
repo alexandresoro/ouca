@@ -3,7 +3,7 @@ import RouteManage from "../common/RouteManage";
 import MeteoPage from "./MeteoPage";
 
 const MeteoManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<MeteoPage />} createElement={<></>} />;
+  return <RouteManage pageElement={<MeteoPage />} createEditElement={<></>} />;
 };
 
 export default MeteoManage;

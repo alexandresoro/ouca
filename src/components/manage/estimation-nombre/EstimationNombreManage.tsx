@@ -3,7 +3,7 @@ import RouteManage from "../common/RouteManage";
 import EstimationNombrePage from "./EstimationNombrePage";
 
 const EstimationNombreManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<EstimationNombrePage />} createElement={<></>} />;
+  return <RouteManage pageElement={<EstimationNombrePage />} createEditElement={<></>} />;
 };
 
 export default EstimationNombreManage;

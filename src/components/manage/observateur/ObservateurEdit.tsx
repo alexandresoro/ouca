@@ -1,21 +1,27 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Cancel, Save } from "@mui/icons-material";
 import { Button, Card, CardActions, CardContent, CardHeader, Container, TextField } from "@mui/material";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { Observateur } from "../../../model/graphql";
+import { useNavigate, useParams } from "react-router-dom";
+import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import { MutationUpsertObservateurArgs, Observateur, QueryObservateurArgs } from "../../../model/graphql";
+import NotificationSnackbar from "../../common/NotificationSnackbar";
 import { EntityWithLibelleInputs } from "../common/entity-types";
 import ManageTopBar from "../common/ManageTopBar";
 
-type ObservateursQueryResult = {
-  observateurs: Observateur[];
+type ObservateurQueryResult = {
+  observateur: Pick<Observateur, "id" | "libelle">;
 };
 
-const OBSERVATEURS_QUERY = gql`
-  query {
-    observateurs {
+type ObservateurMutationResult = {
+  upsertObservateur: Pick<Observateur, "id" | "libelle">;
+};
+
+const OBSERVATEUR_QUERY = gql`
+  query GetObservateurIdInfo($id: Int!) {
+    observateur(id: $id) {
       id
       libelle
     }
@@ -35,10 +41,11 @@ type ObservateurEditProps = {
   isEditionMode: boolean;
 };
 
-type ObservateurEditInputs = EntityWithLibelleInputs;
+type ObservateurUpsertInputs = EntityWithLibelleInputs & { id?: number };
 
 const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
   const { isEditionMode } = props;
+  const { id: observateurId } = useParams();
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -46,27 +53,70 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
   const {
     control,
     formState: { errors },
+    setValue,
     handleSubmit
-  } = useForm<ObservateurEditInputs>();
+  } = useForm<ObservateurUpsertInputs>();
 
-  const { data, error, loading } = useQuery<ObservateursQueryResult>(OBSERVATEURS_QUERY, {
-    fetchPolicy: "network-only"
+  // Retrieve the existing observer info in edit mode
+  const { data, error, loading } = useQuery<ObservateurQueryResult, QueryObservateurArgs>(OBSERVATEUR_QUERY, {
+    fetchPolicy: "network-only",
+    variables: {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      id: parseInt(observateurId!)
+    },
+    skip: !observateurId
   });
+
+  const [upsertObservateur] = useMutation<ObservateurMutationResult, MutationUpsertObservateurArgs>(OBSERVATEUR_UPSERT);
+
+  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+
+  useEffect(() => {
+    if (data?.observateur) {
+      setValue("id", data?.observateur?.id);
+      setValue("libelle", data?.observateur?.libelle);
+    }
+  }, [data?.observateur, setValue]);
+
+  useEffect(() => {
+    if (error) {
+      setSnackbarContent({
+        type: "error",
+        message: t("retrieveGenericError")
+      });
+    }
+  }, [error, setSnackbarContent, t]);
 
   const title = isEditionMode ? t("observerEditionTitle") : t("observerCreationTitle");
 
-  const validateLibelle = async (libelle: string): Promise<string | undefined> => {
-    if (error || loading) {
-      return t("validationFailureError");
-    }
-
-    const matchingEntity = data?.observateurs?.find((observateur) => observateur?.libelle === libelle);
-
-    return matchingEntity ? t("observerAlreadyExistingError") : undefined;
-  };
-
-  const onSubmit: SubmitHandler<ObservateurEditInputs> = async (data) => {
-    // TODO
+  const onSubmit: SubmitHandler<ObservateurUpsertInputs> = async (data) => {
+    const { id, ...restData } = data;
+    await upsertObservateur({
+      variables: {
+        id: id ?? undefined,
+        data: restData
+      }
+    })
+      .then(({ errors }) => {
+        if (errors) {
+          setSnackbarContent({
+            type: "error",
+            message: t("retrieveGenericSaveError")
+          });
+        } else {
+          setSnackbarContent({
+            type: "success",
+            message: t("retrieveGenericSaveSuccess")
+          });
+          navigate(isEditionMode ? "../.." : "..");
+        }
+      })
+      .catch(() => {
+        setSnackbarContent({
+          type: "error",
+          message: t("retrieveGenericSaveError")
+        });
+      });
   };
 
   return (
@@ -109,13 +159,18 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
               <Button color="secondary" variant="contained" startIcon={<Cancel />} onClick={() => navigate("..")}>
                 {t("cancel")}
               </Button>
-              <Button variant="contained" startIcon={<Save />} type="submit">
+              <Button disabled={loading} variant="contained" startIcon={<Save />} type="submit">
                 {t("save")}
               </Button>
             </CardActions>
           </form>
         </Card>
       </Container>
+      <NotificationSnackbar
+        keyAlert={snackbarContent?.timestamp}
+        type={snackbarContent.type}
+        message={snackbarContent.message}
+      />
     </>
   );
 };

@@ -3,7 +3,7 @@ import RouteManage from "../common/RouteManage";
 import DepartementPage from "./DepartementPage";
 
 const DepartementManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<DepartementPage />} createElement={<></>} />;
+  return <RouteManage pageElement={<DepartementPage />} createEditElement={<></>} />;
 };
 
 export default DepartementManage;

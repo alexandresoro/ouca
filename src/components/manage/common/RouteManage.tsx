@@ -1,18 +1,19 @@
-import { FunctionComponent, ReactElement } from "react";
+import { cloneElement, FunctionComponent, ReactElement } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 
 type RouteManageProps = {
   pageElement: ReactElement;
-  createElement: ReactElement;
+  createEditElement: ReactElement;
 };
 
 const RouteManage: FunctionComponent<RouteManageProps> = (props) => {
-  const { pageElement, createElement } = props;
+  const { pageElement, createEditElement } = props;
   return (
     <Routes>
       <Route path="/" element={<Outlet />}>
         <Route index element={pageElement} />
-        <Route path="create" element={createElement} />
+        <Route path="edit/:id" element={cloneElement(createEditElement, { isEditionMode: true })} />
+        <Route path="create" element={cloneElement(createEditElement, { isEditionMode: false })} />
       </Route>
     </Routes>
   );
