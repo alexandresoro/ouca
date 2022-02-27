@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   EspecesOrderBy,
   EspecesPaginatedResult,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedEspecesArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -121,7 +120,7 @@ const EspeceTable: FunctionComponent = () => {
 
   const [deleteEspece] = useMutation<DeleteEspeceMutationResult, MutationDeleteEspeceArgs>(DELETE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditEspece = (id: number | undefined) => {
     if (id) {
@@ -256,11 +255,6 @@ const EspeceTable: FunctionComponent = () => {
         })}
         onCancelAction={() => setDialogEspece(null)}
         onConfirmAction={() => handleDeleteEspeceConfirmation(dialogEspece)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

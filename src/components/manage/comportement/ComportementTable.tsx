@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   ComportementsOrderBy,
   ComportementsPaginatedResult,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedComportementsArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -114,7 +113,7 @@ const ComportementTable: FunctionComponent = () => {
 
   const [deleteComportement] = useMutation<DeleteComportementMutationResult, MutationDeleteComportementArgs>(DELETE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditComportement = (id: number | undefined) => {
     if (id) {
@@ -245,11 +244,6 @@ const ComportementTable: FunctionComponent = () => {
         impactedItemsMessage={t("deleteBehaviorDialogMsgImpactedData")}
         onCancelAction={() => setDialogComportement(null)}
         onConfirmAction={() => handleDeleteComportementConfirmation(dialogComportement)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

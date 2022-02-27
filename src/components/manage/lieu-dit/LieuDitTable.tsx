@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   LieuDitWithCounts,
   LieuxDitsOrderBy,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedLieuxditsArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -138,7 +137,7 @@ const LieuDitTable: FunctionComponent = () => {
 
   const [deleteLieuDit] = useMutation<DeleteLieuDitMutationResult, MutationDeleteLieuDitArgs>(DELETE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditLieuDit = (id: number | undefined) => {
     if (id) {
@@ -277,11 +276,6 @@ const LieuDitTable: FunctionComponent = () => {
         })}
         onCancelAction={() => setDialogLieuDit(null)}
         onConfirmAction={() => handleDeleteLieuDitConfirmation(dialogLieuDit)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

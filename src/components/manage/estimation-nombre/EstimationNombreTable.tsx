@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   EstimationNombreOrderBy,
   EstimationNombreWithCounts,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedEstimationsNombreArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -115,7 +114,7 @@ const EstimationNombreTable: FunctionComponent = () => {
     MutationDeleteEstimationNombreArgs
   >(DELETE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditEstimationNombre = (id: number | undefined) => {
     if (id) {
@@ -247,11 +246,6 @@ const EstimationNombreTable: FunctionComponent = () => {
         })}
         onCancelAction={() => setDialogEstimationNombre(null)}
         onConfirmAction={() => handleDeleteEstimationNombreConfirmation(dialogEstimationNombre)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

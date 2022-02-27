@@ -16,7 +16,7 @@ import { visuallyHidden } from "@mui/utils";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../hooks/useSnackbarContent";
+import useSnackbar from "../../hooks/useSnackbar";
 import {
   Donnee,
   MutationDeleteDonneeArgs,
@@ -25,7 +25,6 @@ import {
   SearchDonneesOrderBy,
   SortOrder
 } from "../../model/graphql";
-import NotificationSnackbar from "../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
 
@@ -179,7 +178,7 @@ const DonneeTable: FunctionComponent = () => {
 
   const [deleteDialog, setDeleteDialog] = React.useState<Donnee | null>(null);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const { data: donneesResult } = useQuery<PaginatedDonneesQueryResult, QueryPaginatedSearchDonneesArgs>(
     PAGINATED_SEARCH_DONNEES_QUERY,
@@ -324,11 +323,6 @@ const DonneeTable: FunctionComponent = () => {
         })}
         onCancelAction={() => setDeleteDialog(null)}
         onConfirmAction={() => handleDeleteDonneeConfirmation(deleteDialog)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

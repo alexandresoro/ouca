@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   DepartementsOrderBy,
   DepartementsPaginatedResult,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedDepartementsArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -114,7 +113,7 @@ const DepartementTable: FunctionComponent = () => {
 
   const [deleteDepartement] = useMutation<DeleteDepartementMutationResult, MutationDeleteDepartementArgs>(DELETE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditDepartement = (id: number | undefined) => {
     if (id) {
@@ -249,11 +248,6 @@ const DepartementTable: FunctionComponent = () => {
         })}
         onCancelAction={() => setDialogDepartement(null)}
         onConfirmAction={() => handleDeleteDepartementConfirmation(dialogDepartement)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

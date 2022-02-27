@@ -4,7 +4,7 @@ import { FunctionComponent, useCallback, useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../contexts/UserContext";
-import useSnackbarContent from "../hooks/useSnackbarContent";
+import useSnackbar from "../hooks/useSnackbar";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import {
   Age,
@@ -16,7 +16,6 @@ import {
   Settings,
   Sexe
 } from "../model/graphql";
-import NotificationSnackbar from "./common/NotificationSnackbar";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
@@ -143,7 +142,7 @@ const SettingsPage: FunctionComponent = () => {
 
   const { userInfo } = useContext(UserContext);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   // TODO check fetch policies
   const { loading, error, data } = useQuery<SettingsQueryResult>(SETTINGS_QUERY);
@@ -472,12 +471,6 @@ const SettingsPage: FunctionComponent = () => {
           </Card>
         )}
       </Container>
-
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
-      />
     </>
   );
 };

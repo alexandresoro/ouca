@@ -5,9 +5,8 @@ import { FunctionComponent, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import { MutationUpsertObservateurArgs, Observateur, QueryObservateurArgs } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import { EntityWithLibelleInputs } from "../common/entity-types";
 import ManageTopBar from "../common/ManageTopBar";
 
@@ -69,7 +68,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   const [upsertObservateur] = useMutation<ObservateurMutationResult, MutationUpsertObservateurArgs>(OBSERVATEUR_UPSERT);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   useEffect(() => {
     if (data?.observateur) {
@@ -108,7 +107,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
             type: "success",
             message: t("retrieveGenericSaveSuccess")
           });
-          navigate(isEditionMode ? "../.." : "..");
+          navigate("..");
         }
       })
       .catch(() => {
@@ -166,11 +165,6 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
           </form>
         </Card>
       </Container>
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
-      />
     </>
   );
 };

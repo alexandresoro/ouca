@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   EntitesAvecLibelleOrderBy,
   MeteosPaginatedResult,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedMeteosArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -104,7 +103,7 @@ const MeteoTable: FunctionComponent = () => {
 
   const [deleteMeteo] = useMutation<DeleteMeteoMutationResult, MutationDeleteMeteoArgs>(DELETE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditMeteo = (id: number | undefined) => {
     if (id) {
@@ -233,11 +232,6 @@ const MeteoTable: FunctionComponent = () => {
         impactedItemsMessage={t("deleteWeatherDialogMsgImpactedData")}
         onCancelAction={() => setDialogMeteo(null)}
         onConfirmAction={() => handleDeleteMeteoConfirmation(dialogMeteo)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

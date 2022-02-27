@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   AgesPaginatedResult,
   AgeWithCounts,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedAgesArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -104,7 +103,7 @@ const AgeTable: FunctionComponent = () => {
 
   const [deleteAge] = useMutation<DeleteAgeMutationResult, MutationDeleteAgeArgs>(DELETE_AGE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditAge = (id: number | undefined) => {
     if (id) {
@@ -235,11 +234,6 @@ const AgeTable: FunctionComponent = () => {
         })}
         onCancelAction={() => setDialogAge(null)}
         onConfirmAction={() => handleDeleteAgeConfirmation(dialogAge)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

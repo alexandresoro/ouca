@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   EntitesAvecLibelleOrderBy,
   EstimationDistanceWithCounts,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedEstimationsDistanceArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -110,7 +109,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
     MutationDeleteEstimationDistanceArgs
   >(DELETE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditEstimationDistance = (id: number | undefined) => {
     if (id) {
@@ -243,11 +242,6 @@ const EstimationDistanceTable: FunctionComponent = () => {
         })}
         onCancelAction={() => setDialogEstimationDistance(null)}
         onConfirmAction={() => handleDeleteEstimationDistanceConfirmation(dialogEstimationDistance)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );

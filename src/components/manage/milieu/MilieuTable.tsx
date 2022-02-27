@@ -17,7 +17,7 @@ import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbarContent from "../../../hooks/useSnackbarContent";
+import useSnackbar from "../../../hooks/useSnackbar";
 import {
   MilieuWithCounts,
   MilieuxOrderBy,
@@ -26,7 +26,6 @@ import {
   QueryPaginatedMilieuxArgs,
   SortOrder
 } from "../../../model/graphql";
-import NotificationSnackbar from "../../common/NotificationSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -109,7 +108,7 @@ const MilieuTable: FunctionComponent = () => {
 
   const [deleteMilieu] = useMutation<DeleteMilieuMutationResult, MutationDeleteMilieuArgs>(DELETE);
 
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const { setSnackbarContent } = useSnackbar();
 
   const handleEditMilieu = (id: number | undefined) => {
     if (id) {
@@ -239,11 +238,6 @@ const MilieuTable: FunctionComponent = () => {
         impactedItemsMessage={t("deleteEnvironmentDialogMsgImpactedData")}
         onCancelAction={() => setDialogMilieu(null)}
         onConfirmAction={() => handleDeleteMilieuConfirmation(dialogMilieu)}
-      />
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
       />
     </>
   );
