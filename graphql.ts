@@ -19,6 +19,7 @@ export type Age = {
   __typename?: 'Age';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type AgeWithCounts = {
@@ -45,6 +46,7 @@ export type Classe = {
   __typename?: 'Classe';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type ClasseWithCounts = {
@@ -75,6 +77,7 @@ export type Commune = {
   departement: Departement;
   id: Scalars['Int'];
   nom: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type CommuneWithCounts = {
@@ -109,6 +112,7 @@ export type Comportement = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nicheur?: Maybe<Nicheur>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type ComportementWithCounts = {
@@ -153,6 +157,7 @@ export type Departement = {
   __typename?: 'Departement';
   code: Scalars['String'];
   id: Scalars['Int'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type DepartementWithCounts = {
@@ -232,6 +237,7 @@ export type Espece = {
   id: Scalars['Int'];
   nomFrancais: Scalars['String'];
   nomLatin: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type EspeceWithCounts = {
@@ -264,6 +270,7 @@ export type EstimationDistance = {
   __typename?: 'EstimationDistance';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type EstimationDistanceWithCounts = {
@@ -278,6 +285,7 @@ export type EstimationNombre = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nonCompte: Scalars['Boolean'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const EstimationNombreOrderBy = {
@@ -471,6 +479,7 @@ export type LieuDit = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   nom: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type LieuDitWithCounts = {
@@ -508,6 +517,7 @@ export type Meteo = {
   __typename?: 'Meteo';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type MeteoWithCounts = {
@@ -528,6 +538,7 @@ export type Milieu = {
   code: Scalars['String'];
   id: Scalars['Int'];
   libelle: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type MilieuWithCounts = {
@@ -1280,6 +1291,7 @@ export type Sexe = {
   __typename?: 'Sexe';
   id: Scalars['Int'];
   libelle: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type SexeWithCounts = {
@@ -1624,6 +1636,7 @@ export type ResolversParentTypes = {
 export type AgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Age'] = ResolversParentTypes['Age']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1650,6 +1663,7 @@ export type AgesPaginatedResultResolvers<ContextType = any, ParentType extends R
 export type ClasseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Classe'] = ResolversParentTypes['Classe']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1672,6 +1686,7 @@ export type CommuneResolvers<ContextType = any, ParentType extends ResolversPare
   departement?: Resolver<ResolversTypes['Departement'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nom?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1696,6 +1711,7 @@ export type ComportementResolvers<ContextType = any, ParentType extends Resolver
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nicheur?: Resolver<Maybe<ResolversTypes['Nicheur']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1725,6 +1741,7 @@ export type CoordinatesResolvers<ContextType = any, ParentType extends Resolvers
 export type DepartementResolvers<ContextType = any, ParentType extends ResolversParentTypes['Departement'] = ResolversParentTypes['Departement']> = {
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1780,6 +1797,7 @@ export type EspeceResolvers<ContextType = any, ParentType extends ResolversParen
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nomFrancais?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nomLatin?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1802,6 +1820,7 @@ export type EspecesPaginatedResultResolvers<ContextType = any, ParentType extend
 export type EstimationDistanceResolvers<ContextType = any, ParentType extends ResolversParentTypes['EstimationDistance'] = ResolversParentTypes['EstimationDistance']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1816,6 +1835,7 @@ export type EstimationNombreResolvers<ContextType = any, ParentType extends Reso
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nonCompte?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1871,6 +1891,7 @@ export type LieuDitResolvers<ContextType = any, ParentType extends ResolversPare
   latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   longitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   nom?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1895,6 +1916,7 @@ export type LieuxDitsPaginatedResultResolvers<ContextType = any, ParentType exte
 export type MeteoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Meteo'] = ResolversParentTypes['Meteo']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1915,6 +1937,7 @@ export type MilieuResolvers<ContextType = any, ParentType extends ResolversParen
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2098,6 +2121,7 @@ export type SettingsResolvers<ContextType = any, ParentType extends ResolversPar
 export type SexeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Sexe'] = ResolversParentTypes['Sexe']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
