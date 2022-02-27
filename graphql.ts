@@ -27,6 +27,7 @@ export type AgeWithCounts = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type AgeWithSpecimensCount = {
@@ -55,6 +56,7 @@ export type ClasseWithCounts = {
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nbEspeces?: Maybe<Scalars['Int']>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const ClassesOrderBy = {
@@ -88,6 +90,7 @@ export type CommuneWithCounts = {
   nbDonnees?: Maybe<Scalars['Int']>;
   nbLieuxDits?: Maybe<Scalars['Int']>;
   nom: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const CommunesOrderBy = {
@@ -122,6 +125,7 @@ export type ComportementWithCounts = {
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nicheur?: Maybe<Nicheur>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const ComportementsOrderBy = {
@@ -167,6 +171,7 @@ export type DepartementWithCounts = {
   nbCommunes?: Maybe<Scalars['Int']>;
   nbDonnees?: Maybe<Scalars['Int']>;
   nbLieuxDits?: Maybe<Scalars['Int']>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const DepartementsOrderBy = {
@@ -248,6 +253,7 @@ export type EspeceWithCounts = {
   nbDonnees?: Maybe<Scalars['Int']>;
   nomFrancais: Scalars['String'];
   nomLatin: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const EspecesOrderBy = {
@@ -278,6 +284,7 @@ export type EstimationDistanceWithCounts = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type EstimationNombre = {
@@ -302,6 +309,7 @@ export type EstimationNombreWithCounts = {
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nonCompte: Scalars['Boolean'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type EstimationsDistancePaginatedResult = PaginatedResult & {
@@ -492,6 +500,7 @@ export type LieuDitWithCounts = {
   longitude: Scalars['Float'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nom: Scalars['String'];
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const LieuxDitsOrderBy = {
@@ -525,6 +534,7 @@ export type MeteoWithCounts = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type MeteosPaginatedResult = PaginatedResult & {
@@ -547,6 +557,7 @@ export type MilieuWithCounts = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const MilieuxOrderBy = {
@@ -1299,6 +1310,7 @@ export type SexeWithCounts = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
+  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type SexeWithSpecimensCount = {
@@ -1644,6 +1656,7 @@ export type AgeWithCountsResolvers<ContextType = any, ParentType extends Resolve
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1672,6 +1685,7 @@ export type ClasseWithCountsResolvers<ContextType = any, ParentType extends Reso
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nbEspeces?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1697,6 +1711,7 @@ export type CommuneWithCountsResolvers<ContextType = any, ParentType extends Res
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nbLieuxDits?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nom?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1721,6 +1736,7 @@ export type ComportementWithCountsResolvers<ContextType = any, ParentType extend
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nicheur?: Resolver<Maybe<ResolversTypes['Nicheur']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1751,6 +1767,7 @@ export type DepartementWithCountsResolvers<ContextType = any, ParentType extends
   nbCommunes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nbLieuxDits?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1808,6 +1825,7 @@ export type EspeceWithCountsResolvers<ContextType = any, ParentType extends Reso
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nomFrancais?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nomLatin?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1828,6 +1846,7 @@ export type EstimationDistanceWithCountsResolvers<ContextType = any, ParentType 
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1844,6 +1863,7 @@ export type EstimationNombreWithCountsResolvers<ContextType = any, ParentType ex
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nonCompte?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1904,6 +1924,7 @@ export type LieuDitWithCountsResolvers<ContextType = any, ParentType extends Res
   longitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nom?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1924,6 +1945,7 @@ export type MeteoWithCountsResolvers<ContextType = any, ParentType extends Resol
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1946,6 +1968,7 @@ export type MilieuWithCountsResolvers<ContextType = any, ParentType extends Reso
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2129,6 +2152,7 @@ export type SexeWithCountsResolvers<ContextType = any, ParentType extends Resolv
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
