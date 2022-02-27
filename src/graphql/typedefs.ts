@@ -199,6 +199,7 @@ export default gql`
     libelle: String!
     nicheur: Nicheur
     nbDonnees: Int
+    readonly: Boolean
   }
 
   type Departement {
@@ -213,6 +214,7 @@ export default gql`
     nbCommunes: Int
     nbLieuxDits: Int
     nbDonnees: Int
+    readonly: Boolean
   }
 
   type Observateur {
@@ -233,6 +235,7 @@ export default gql`
     nbDonnees: Int
     nbEspeces: Int
     libelle: String!
+    readonly: Boolean
   }
 
   type Commune {
@@ -250,6 +253,7 @@ export default gql`
     departement: Departement!
     nbLieuxDits: Int
     nbDonnees: Int
+    readonly: Boolean
   }
 
   type Espece {
@@ -268,6 +272,7 @@ export default gql`
     nomFrancais: String!
     nomLatin: String!
     classe: Classe
+    readonly: Boolean
   }
 
   type EstimationDistance {
@@ -280,6 +285,7 @@ export default gql`
     id: Int!
     nbDonnees: Int
     libelle: String!
+    readonly: Boolean
   }
 
   type EstimationNombre {
@@ -294,6 +300,7 @@ export default gql`
     libelle: String!
     nonCompte: Boolean!
     nbDonnees: Int
+    readonly: Boolean
   }
 
   type Meteo {
@@ -306,6 +313,7 @@ export default gql`
     id: Int!
     nbDonnees: Int
     libelle: String!
+    readonly: Boolean
   }
 
   type LieuDit {
@@ -328,6 +336,7 @@ export default gql`
     coordinatesSystem: CoordinatesSystemType!
     commune: CommuneWithCounts!
     nbDonnees: Int
+    readonly: Boolean
   }
 
   type Milieu {
@@ -342,6 +351,7 @@ export default gql`
     nbDonnees: Int
     code: String!
     libelle: String!
+    readonly: Boolean
   }
 
   type Sexe {
@@ -354,6 +364,7 @@ export default gql`
     id: Int!
     libelle: String!
     nbDonnees: Int
+    readonly: Boolean
   }
 
   type SexeWithSpecimensCount {
@@ -372,6 +383,7 @@ export default gql`
     id: Int!
     libelle: String!
     nbDonnees: Int
+    readonly: Boolean
   }
 
   type AgeWithSpecimensCount {
