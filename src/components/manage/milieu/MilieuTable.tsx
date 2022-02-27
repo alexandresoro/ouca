@@ -208,6 +208,7 @@ const MilieuTable: FunctionComponent = () => {
                   <TableCell>{milieu?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!milieu?.readonly}
                       onEditClicked={() => handleEditMilieu(milieu?.id)}
                       onDeleteClicked={() => handleDeleteMilieu(milieu)}
                     />

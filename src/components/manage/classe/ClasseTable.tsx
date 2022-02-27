@@ -208,6 +208,7 @@ const ClasseTable: FunctionComponent = () => {
                   <TableCell>{classe?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!classe?.readonly}
                       onEditClicked={() => handleEditClasse(classe?.id)}
                       onDeleteClicked={() => handleDeleteClasse(classe)}
                     />

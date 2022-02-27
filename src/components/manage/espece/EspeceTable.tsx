@@ -222,6 +222,7 @@ const EspeceTable: FunctionComponent = () => {
                   <TableCell>{espece?.nbDonnees ? espece?.nbDonnees : "0"}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!espece?.readonly}
                       onEditClicked={() => handleEditEspece(espece?.id)}
                       onDeleteClicked={() => handleDeleteEspece(espece)}
                     />

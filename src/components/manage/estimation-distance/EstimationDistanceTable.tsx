@@ -210,6 +210,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
                   <TableCell>{estimationDistance?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!estimationDistance?.readonly}
                       onEditClicked={() => handleEditEstimationDistance(estimationDistance?.id)}
                       onDeleteClicked={() => handleDeleteEstimationDistance(estimationDistance)}
                     />

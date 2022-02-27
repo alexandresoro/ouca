@@ -202,6 +202,7 @@ const MeteoTable: FunctionComponent = () => {
                   <TableCell>{meteo?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!meteo?.readonly}
                       onEditClicked={() => handleEditMeteo(meteo?.id)}
                       onDeleteClicked={() => handleDeleteMeteo(meteo)}
                     />

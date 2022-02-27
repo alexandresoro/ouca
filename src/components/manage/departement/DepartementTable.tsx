@@ -214,6 +214,7 @@ const DepartementTable: FunctionComponent = () => {
                   <TableCell>{departement?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!departement?.readonly}
                       onEditClicked={() => handleEditDepartement(departement?.id)}
                       onDeleteClicked={() => handleDeleteDepartement(departement)}
                     />

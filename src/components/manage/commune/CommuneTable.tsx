@@ -222,6 +222,7 @@ const CommuneTable: FunctionComponent = () => {
                   <TableCell>{commune?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!commune?.readonly}
                       onEditClicked={() => handleEditCommune(commune?.id)}
                       onDeleteClicked={() => handleDeleteCommune(commune)}
                     />

@@ -202,6 +202,7 @@ const SexeTable: FunctionComponent = () => {
                   <TableCell>{sexe?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!sexe?.readonly}
                       onEditClicked={() => handleEditSexe(sexe?.id)}
                       onDeleteClicked={() => handleDeleteSexe(sexe)}
                     />

@@ -242,6 +242,7 @@ const LieuDitTable: FunctionComponent = () => {
                   <TableCell>{lieuDit?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!lieuDit?.readonly}
                       onEditClicked={() => handleEditLieuDit(lieuDit?.id)}
                       onDeleteClicked={() => handleDeleteLieuDit(lieuDit)}
                     />

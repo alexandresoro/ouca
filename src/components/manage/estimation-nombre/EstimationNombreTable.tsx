@@ -214,6 +214,7 @@ const EstimationNombreTable: FunctionComponent = () => {
                   <TableCell>{estimationNombre?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!estimationNombre?.readonly}
                       onEditClicked={() => handleEditEstimationNombre(estimationNombre?.id)}
                       onDeleteClicked={() => handleDeleteEstimationNombre(estimationNombre)}
                     />

@@ -214,6 +214,7 @@ const ComportementTable: FunctionComponent = () => {
                   <TableCell>{comportement?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!comportement?.readonly}
                       onEditClicked={() => handleEditComportement(comportement?.id)}
                       onDeleteClicked={() => handleDeleteComportement(comportement)}
                     />

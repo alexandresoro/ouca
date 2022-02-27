@@ -202,6 +202,7 @@ const AgeTable: FunctionComponent = () => {
                   <TableCell>{age?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
+                      disabled={!!age?.readonly}
                       onEditClicked={() => handleEditAge(age?.id)}
                       onDeleteClicked={() => handleDeleteAge(age)}
                     />
