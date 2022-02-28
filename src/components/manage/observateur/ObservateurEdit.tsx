@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { Cancel, Save } from "@mui/icons-material";
 import { Button, Card, CardActions, CardContent, CardHeader, Container, TextField } from "@mui/material";
 import { FunctionComponent, useEffect } from "react";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { MutationUpsertObservateurArgs, Observateur, QueryObservateurArgs } from "../../../model/graphql";
+import { getOucaError } from "../../../utils/ouca-error-extractor";
 import { EntityWithLibelleInputs } from "../common/entity-types";
 import ManageTopBar from "../common/ManageTopBar";
 
@@ -96,25 +97,25 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
         data: restData
       }
     })
-      .then(({ errors }) => {
-        if (errors) {
+      .then(() => {
+        setSnackbarContent({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess")
+        });
+        navigate("..");
+      })
+      .catch((e) => {
+        if (e instanceof ApolloError && getOucaError(e) === "OUCA0004") {
+          setSnackbarContent({
+            type: "error",
+            message: t("observerAlreadyExistingError")
+          });
+        } else {
           setSnackbarContent({
             type: "error",
             message: t("retrieveGenericSaveError")
           });
-        } else {
-          setSnackbarContent({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess")
-          });
-          navigate("..");
         }
-      })
-      .catch(() => {
-        setSnackbarContent({
-          type: "error",
-          message: t("retrieveGenericSaveError")
-        });
       });
   };
 
