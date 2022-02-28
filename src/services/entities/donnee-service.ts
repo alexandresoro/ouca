@@ -16,8 +16,6 @@ import {
   Prisma,
   Sexe
 } from "@prisma/client";
-import { parse } from "date-fns";
-import { zonedTimeToUtc } from "date-fns-tz";
 import {
   AgeWithSpecimensCount,
   DonneeNavigationData,
@@ -29,7 +27,7 @@ import {
   SortOrder
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
-import { DATE_PATTERN } from "../../utils/constants";
+import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 import { getPrismaPagination } from "./entities-utils";
 import { normalizeInventaire } from "./inventaire-service";
 
@@ -88,12 +86,8 @@ export const buildSearchDonneeCriteria = (
             : {}),
           temperature: searchCriteria?.temperature ?? undefined,
           date: {
-            gte: searchCriteria?.fromDate
-              ? zonedTimeToUtc(parse(searchCriteria.fromDate, DATE_PATTERN, new Date()), "UTC")
-              : undefined,
-            lte: searchCriteria?.toDate
-              ? zonedTimeToUtc(parse(searchCriteria.toDate, DATE_PATTERN, new Date()), "UTC")
-              : undefined
+            gte: searchCriteria?.fromDate ? parseISO8601AsUTCDate(searchCriteria.fromDate) : undefined,
+            lte: searchCriteria?.toDate ? parseISO8601AsUTCDate(searchCriteria.toDate) : undefined
           },
           heure: searchCriteria?.heure ?? undefined,
           duree: searchCriteria?.duree ?? undefined,

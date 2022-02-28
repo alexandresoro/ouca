@@ -1,6 +1,5 @@
 import { CoordinatesSystem, Inventaire, Meteo, Observateur } from "@prisma/client";
-import { format, parse } from "date-fns";
-import { zonedTimeToUtc } from "date-fns-tz";
+import { format } from "date-fns";
 import {
   CoordinatesSystemType,
   InputInventaire,
@@ -9,6 +8,7 @@ import {
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { DATE_PATTERN } from "../../utils/constants";
+import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 
 export type InventaireWithRelations = Omit<
   Inventaire,
@@ -125,7 +125,7 @@ export const findExistingInventaire = async (inventaire: InputInventaire): Promi
   const inventaireCandidates = await prisma.inventaire.findMany({
     where: {
       observateurId: inventaire.observateurId,
-      date: zonedTimeToUtc(parse(inventaire.date, DATE_PATTERN, new Date()), "UTC"),
+      date: parseISO8601AsUTCDate(inventaire.date),
       heure: inventaire.heure ?? null,
       duree: inventaire.duree ?? null,
       lieuDitId: inventaire.lieuDitId,
@@ -279,7 +279,7 @@ export const upsertInventaire = async (args: MutationUpsertInventaireArgs): Prom
               restData?.altitude != null && restData?.latitude != null && restData?.longitude != null
                 ? CoordinatesSystemType.Gps
                 : null,
-            date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), "UTC"),
+            date: parseISO8601AsUTCDate(date),
             inventaire_associe: {
               deleteMany: {
                 inventaire_id: id
@@ -305,7 +305,7 @@ export const upsertInventaire = async (args: MutationUpsertInventaireArgs): Prom
               restData?.altitude != null && restData?.latitude != null && restData?.longitude != null
                 ? CoordinatesSystemType.Gps
                 : null,
-            date: zonedTimeToUtc(parse(date, DATE_PATTERN, new Date()), "UTC"),
+            date: parseISO8601AsUTCDate(date),
             date_creation: new Date(),
             inventaire_associe: {
               create: associesMap
