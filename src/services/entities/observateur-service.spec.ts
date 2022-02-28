@@ -1,4 +1,4 @@
-import { DatabaseRole, Observateur } from "@prisma/client";
+import { DatabaseRole, Observateur, Prisma } from "@prisma/client";
 import { QueryPaginatedObservateursArgs } from "../../model/graphql";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -15,6 +15,19 @@ import {
 } from "./observateur-service";
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
+
+const prismaConstraintFailedError = {
+  code: "P2002",
+  message: "Prisma error message"
+};
+
+const prismaConstraintFailed = () => {
+  throw new Prisma.PrismaClientKnownRequestError(
+    prismaConstraintFailedError.message,
+    prismaConstraintFailedError.code,
+    ""
+  );
+};
 
 test("should call readonly status when retrieving one observer ", async () => {
   const observerData: Observateur = {
@@ -286,6 +299,34 @@ test("should throw an error when updating an existing observer and nor owner nor
   expect(prismaMock.observateur.update).toHaveBeenCalledTimes(0);
 });
 
+test("should throw an error when trying to update an observer that exists", async () => {
+  const observerData = {
+    id: 12,
+    data: {
+      libelle: "Bob"
+    }
+  };
+
+  const user = {
+    id: "a",
+    role: DatabaseRole.admin
+  };
+
+  prismaMock.observateur.update.mockImplementation(prismaConstraintFailed);
+
+  await expect(() => upsertObservateur(observerData, user)).rejects.toThrowError(
+    new OucaError("OUCA0004", prismaConstraintFailedError)
+  );
+
+  expect(prismaMock.observateur.update).toHaveBeenCalledTimes(1);
+  expect(prismaMock.observateur.update).toHaveBeenLastCalledWith({
+    data: observerData.data,
+    where: {
+      id: observerData.id
+    }
+  });
+});
+
 test("should create new observer ", async () => {
   const observerData = {
     data: {
@@ -299,6 +340,33 @@ test("should create new observer ", async () => {
   };
 
   await upsertObservateur(observerData, user);
+
+  expect(prismaMock.observateur.create).toHaveBeenCalledTimes(1);
+  expect(prismaMock.observateur.create).toHaveBeenLastCalledWith({
+    data: {
+      ...observerData.data,
+      ownerId: user.id
+    }
+  });
+});
+
+test("should throw an error when trying to create an observer that exists", async () => {
+  const observerData = {
+    data: {
+      libelle: "Bob"
+    }
+  };
+
+  const user = {
+    id: "a",
+    role: DatabaseRole.contributor
+  };
+
+  prismaMock.observateur.create.mockImplementation(prismaConstraintFailed);
+
+  await expect(() => upsertObservateur(observerData, user)).rejects.toThrowError(
+    new OucaError("OUCA0004", prismaConstraintFailedError)
+  );
 
   expect(prismaMock.observateur.create).toHaveBeenCalledTimes(1);
   expect(prismaMock.observateur.create).toHaveBeenLastCalledWith({

@@ -1,9 +1,17 @@
 import { ErrorCode, getErrorMessage } from "../types/ErrorCode";
 
+type SubError = {
+  code: string;
+  message: string;
+};
+
 export class OucaError extends Error {
-  constructor(name: ErrorCode) {
+  subError?: SubError;
+
+  constructor(code: ErrorCode, subError?: SubError) {
     super();
-    this.name = name;
-    this.message = getErrorMessage(name);
+    this.name = code;
+    this.message = subError?.message ?? getErrorMessage(code);
+    this.subError = subError;
   }
 }

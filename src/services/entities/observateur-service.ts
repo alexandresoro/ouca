@@ -172,18 +172,32 @@ export const upsertObservateur = async (
     }
 
     // Update an existing observer
-    upsertedObservateur = await prisma.observateur.update({
-      where: { id },
-      data
-    });
+    try {
+      upsertedObservateur = await prisma.observateur.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
     // Create a new observer
-    upsertedObservateur = await prisma.observateur.create({
-      data: {
-        ...data,
-        ownerId: loggedUser.id
+    try {
+      upsertedObservateur = await prisma.observateur.create({
+        data: {
+          ...data,
+          ownerId: loggedUser.id
+        }
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
       }
-    });
+      throw e;
+    }
   }
 
   return {
