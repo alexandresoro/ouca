@@ -493,8 +493,8 @@ const resolvers: Resolvers<Context> = {
   },
   Mutation: {
     deleteAge: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
-      return deleteAge(args.id).then(({ id }) => id);
+      const user = validateUserAuthentication(context);
+      return deleteAge(args.id, user).then(({ id }) => id);
     },
     deleteClasse: async (_source, args, context): Promise<number> => {
       validateUserAuthentication(context);
@@ -549,8 +549,8 @@ const resolvers: Resolvers<Context> = {
       return deleteSexe(args.id).then(({ id }) => id);
     },
     upsertAge: async (_source, args, context): Promise<Age> => {
-      validateUserAuthentication(context);
-      return upsertAge(args);
+      const user = validateUserAuthentication(context);
+      return upsertAge(args, user);
     },
     upsertClasse: async (_source, args, context): Promise<Classe> => {
       validateUserAuthentication(context);

@@ -18,7 +18,7 @@ import { InputDonnee } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
-import { findAllAges } from "../entities/age-service";
+import { findAges } from "../entities/age-service";
 import { findAllCommunes } from "../entities/commune-service";
 import { findAllComportements } from "../entities/comportement-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
@@ -78,7 +78,7 @@ export class ImportDonneeService extends ImportService {
     this.meteos = await findAllMeteos();
     this.especes = await findAllEspeces();
     this.sexes = await findAllSexes({ includeCounts: false });
-    this.ages = await findAllAges({ includeCounts: false });
+    this.ages = await findAges();
     this.estimationsNombre = await findAllEstimationsNombre({ includeCounts: false });
     this.estimationsDistance = await findAllEstimationsDistance();
     this.comportements = await findAllComportements();

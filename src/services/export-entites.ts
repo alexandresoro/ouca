@@ -6,7 +6,7 @@ import { getNicheurStatusToDisplay } from "../model/helpers/nicheur-helper";
 import { SEPARATOR_COMMA } from "../utils/constants";
 import { writeToExcelFile } from "../utils/export-excel-utils";
 import { PUBLIC_DIR } from "../utils/paths";
-import { findAllAges } from "./entities/age-service";
+import { findAges } from "./entities/age-service";
 import { findAllClasses } from "./entities/classe-service";
 import { findAllCommunesWithDepartements } from "./entities/commune-service";
 import { findAllComportements } from "./entities/comportement-service";
@@ -22,7 +22,7 @@ import { findObservateurs } from "./entities/observateur-service";
 import { findAllSexes } from "./entities/sexe-service";
 
 export const generateAgesExport = async (): Promise<string> => {
-  const agesDb = await findAllAges({ includeCounts: false });
+  const agesDb = await findAges();
 
   const agesToExport = agesDb.map((ageDb) => {
     return {
