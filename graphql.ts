@@ -19,13 +19,6 @@ export type Age = {
   __typename?: 'Age';
   id: Scalars['Int'];
   libelle: Scalars['String'];
-  readonly?: Maybe<Scalars['Boolean']>;
-};
-
-export type AgeWithCounts = {
-  __typename?: 'AgeWithCounts';
-  id: Scalars['Int'];
-  libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   readonly?: Maybe<Scalars['Boolean']>;
 };
@@ -40,7 +33,7 @@ export type AgeWithSpecimensCount = {
 export type AgesPaginatedResult = PaginatedResult & {
   __typename?: 'AgesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<AgeWithCounts>>>;
+  result?: Maybe<Array<Age>>;
 };
 
 export type Classe = {
@@ -1453,7 +1446,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Age: ResolverTypeWrapper<PartialDeep<Age> | null>;
-  AgeWithCounts: ResolverTypeWrapper<PartialDeep<AgeWithCounts> | null>;
   AgeWithSpecimensCount: ResolverTypeWrapper<PartialDeep<AgeWithSpecimensCount> | null>;
   AgesPaginatedResult: ResolverTypeWrapper<PartialDeep<AgesPaginatedResult> | null>;
   Boolean: ResolverTypeWrapper<PartialDeep<Scalars['Boolean']> | null>;
@@ -1559,7 +1551,6 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Age: PartialDeep<Age> | null;
-  AgeWithCounts: PartialDeep<AgeWithCounts> | null;
   AgeWithSpecimensCount: PartialDeep<AgeWithSpecimensCount> | null;
   AgesPaginatedResult: PartialDeep<AgesPaginatedResult> | null;
   Boolean: PartialDeep<Scalars['Boolean']> | null;
@@ -1648,13 +1639,6 @@ export type ResolversParentTypes = {
 export type AgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Age'] = ResolversParentTypes['Age']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AgeWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['AgeWithCounts'] = ResolversParentTypes['AgeWithCounts']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1669,7 +1653,7 @@ export type AgeWithSpecimensCountResolvers<ContextType = any, ParentType extends
 
 export type AgesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['AgesPaginatedResult'] = ResolversParentTypes['AgesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['AgeWithCounts']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<ResolversTypes['Age']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2204,7 +2188,6 @@ export type VersionResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type Resolvers<ContextType = any> = {
   Age?: AgeResolvers<ContextType>;
-  AgeWithCounts?: AgeWithCountsResolvers<ContextType>;
   AgeWithSpecimensCount?: AgeWithSpecimensCountResolvers<ContextType>;
   AgesPaginatedResult?: AgesPaginatedResultResolvers<ContextType>;
   Classe?: ClasseResolvers<ContextType>;
