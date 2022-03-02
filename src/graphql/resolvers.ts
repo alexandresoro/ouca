@@ -68,7 +68,11 @@ import {
   findPaginatedComportements,
   upsertComportement
 } from "../services/entities/comportement-service";
-import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
+import {
+  createInitialUserSettings,
+  findAppConfiguration,
+  persistUserSettings
+} from "../services/entities/configuration-service";
 import {
   deleteDepartement,
   findDepartement,
@@ -482,9 +486,8 @@ const resolvers: Resolvers<Context> = {
       return saveDatabaseRequest();
     },
     settings: async (_source, args, context): Promise<Settings | null> => {
-      validateUserAuthentication(context);
-      // TODO handle own user settings
-      return findAppConfiguration();
+      const user = validateUserAuthentication(context);
+      return findAppConfiguration(user);
     },
     version: async (_source, args, context): Promise<Version> => {
       validateUserAuthentication(context);
@@ -643,9 +646,8 @@ const resolvers: Resolvers<Context> = {
       return upsertSexe(args, user);
     },
     updateSettings: async (_source, { appConfiguration }, context): Promise<Settings> => {
-      validateUserAuthentication(context);
-      // TODO check to update own user settings
-      return persistUserSettings(appConfiguration);
+      const user = validateUserAuthentication(context);
+      return persistUserSettings(appConfiguration, user);
     },
     initializeDatabase: async (): Promise<boolean> => {
       await seedDatabase();
@@ -685,6 +687,8 @@ const resolvers: Resolvers<Context> = {
       }
 
       if (userInfo) {
+        // Create the settings for this user
+        await createInitialUserSettings(userInfo.id);
         logger.info(`User ${userInfo?.username} has been created`);
       }
       return userInfo;

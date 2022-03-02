@@ -241,6 +241,7 @@ enum CoordinatesSystem {
 
 model Settings {
   id                        Int               @id @default(autoincrement()) @db.UnsignedSmallInt
+  userId                    String            @unique(map: "unique_user_id") @map("default_user_id")
   defaultObservateurId      Int?              @map("default_observateur_id") @db.UnsignedSmallInt
   defaultDepartementId      Int?              @map("default_departement_id") @db.UnsignedSmallInt
   defaultAgeId              Int?              @map("default_age_id") @db.UnsignedSmallInt
@@ -252,6 +253,7 @@ model Settings {
   isDistanceDisplayed       Boolean           @default(true) @map("is_distance_displayed") @db.Bit(1)
   isRegroupementDisplayed   Boolean           @default(true) @map("is_regroupement_displayed") @db.Bit(1)
   coordinatesSystem         CoordinatesSystem @default(gps) @map("coordinates_system")
+  user                      User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_settings_user_id")
   defaultAge                Age?              @relation(fields: [defaultAgeId], references: [id], onUpdate: Restrict, map: "fk_settings_age_id")
   defaultDepartement        Departement?      @relation(fields: [defaultDepartementId], references: [id], onUpdate: Restrict, map: "fk_settings_departement_id")
   defaultEstimationNombre   EstimationNombre? @relation(fields: [defaultEstimationNombreId], references: [id], onUpdate: Restrict, map: "fk_settings_estimation_nombre_id")
@@ -290,6 +292,7 @@ model User {
   firstName String       @map("first_name") @db.VarChar(50)
   lastName  String?      @map("last_name") @db.VarChar(50)
 
+  Settings    Settings[]
   Age         Age[]
   observateur Observateur[]
   Sexe        Sexe[]

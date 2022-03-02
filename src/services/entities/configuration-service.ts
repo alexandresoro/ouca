@@ -1,6 +1,8 @@
 import { CoordinatesSystem, Settings as SettingsDb } from "@prisma/client";
 import { InputSettings, Settings } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
+import { OucaError } from "../../utils/errors";
 
 const includedElements = {
   defaultObservateur: true,
@@ -10,19 +12,21 @@ const includedElements = {
   defaultEstimationNombre: true
 };
 
-export const findAppConfiguration = async (): Promise<Settings | null> => {
-  const settingsDb = await prisma.settings.findFirst({
-    include: includedElements
+export const findAppConfiguration = async (loggedUser: LoggedUser): Promise<Settings | null> => {
+  return prisma.settings.findUnique({
+    include: includedElements,
+    where: {
+      userId: loggedUser.id
+    }
   });
-
-  return settingsDb;
 };
 
 export const findCoordinatesSystem = async (): Promise<CoordinatesSystem | undefined> => {
+  // TODO handle user here
   return prisma.settings.findFirst().then((settings) => settings?.coordinatesSystem);
 };
 
-const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): SettingsDb => {
+const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): Omit<SettingsDb, "userId"> => {
   return {
     id: appConfiguration.id,
     defaultObservateurId: appConfiguration.defaultObservateur,
@@ -40,19 +44,35 @@ const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): Sett
 };
 
 export const createInitialUserSettings = async (userId: string): Promise<Settings> => {
+  const existingUserSettings = await prisma.settings.findFirst({
+    where: {
+      userId
+    }
+  });
+
+  if (existingUserSettings) {
+    throw new OucaError("OUCA0005");
+  }
+
   return prisma.settings.create({
-    data: {}
+    data: {
+      userId
+    }
   });
 };
 
-export const persistUserSettings = async (appConfiguration: InputSettings): Promise<Settings> => {
+export const persistUserSettings = async (
+  appConfiguration: InputSettings,
+  loggedUser: LoggedUser
+): Promise<Settings> => {
   const { id, ...settings } = buildSettingsDbFromInputSettings(appConfiguration);
 
   const updatedSettingsDb = await prisma.settings.update({
     data: settings,
     include: includedElements,
     where: {
-      id
+      id,
+      userId: loggedUser.id
     }
   });
 
