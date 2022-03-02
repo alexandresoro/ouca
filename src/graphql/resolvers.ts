@@ -545,8 +545,8 @@ const resolvers: Resolvers<Context> = {
       return deleteObservateur(args.id, user).then(({ id }) => id);
     },
     deleteSexe: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
-      return deleteSexe(args.id).then(({ id }) => id);
+      const user = validateUserAuthentication(context);
+      return deleteSexe(args.id, user).then(({ id }) => id);
     },
     upsertAge: async (_source, args, context): Promise<Age> => {
       const user = validateUserAuthentication(context);
@@ -639,8 +639,8 @@ const resolvers: Resolvers<Context> = {
       return upsertObservateur(args, user);
     },
     upsertSexe: async (_source, args, context): Promise<Sexe> => {
-      validateUserAuthentication(context);
-      return upsertSexe(args);
+      const user = validateUserAuthentication(context);
+      return upsertSexe(args, user);
     },
     updateSettings: async (_source, { appConfiguration }, context): Promise<Settings> => {
       validateUserAuthentication(context);

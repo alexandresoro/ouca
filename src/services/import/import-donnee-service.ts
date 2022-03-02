@@ -32,7 +32,7 @@ import { findAllLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/li
 import { findAllMeteos } from "../entities/meteo-service";
 import { findAllMilieux } from "../entities/milieu-service";
 import { findObservateurs } from "../entities/observateur-service";
-import { findAllSexes } from "../entities/sexe-service";
+import { findSexes } from "../entities/sexe-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -77,7 +77,7 @@ export class ImportDonneeService extends ImportService {
     this.lieuxDits = await findAllLieuxDits();
     this.meteos = await findAllMeteos();
     this.especes = await findAllEspeces();
-    this.sexes = await findAllSexes({ includeCounts: false });
+    this.sexes = await findSexes();
     this.ages = await findAges();
     this.estimationsNombre = await findAllEstimationsNombre({ includeCounts: false });
     this.estimationsDistance = await findAllEstimationsDistance();

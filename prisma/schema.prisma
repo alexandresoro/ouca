@@ -269,7 +269,9 @@ model Settings {
 model Sexe {
   id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle  String     @unique(map: "unique_libelle") @db.VarChar(100)
+  ownerId  String     @map("owner_id")
   donnee   Donnee[]
+  owner    User       @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_sexe_owner_id")
   settings Settings[]
 
   @@map("sexe")
@@ -290,6 +292,7 @@ model User {
 
   Age         Age[]
   observateur Observateur[]
+  Sexe        Sexe[]
 
   @@map("user")
 }

@@ -358,13 +358,7 @@ export default gql`
     id: Int!
     libelle: String!
     readonly: Boolean
-  }
-
-  type SexeWithCounts {
-    id: Int!
-    libelle: String!
     nbDonnees: Int
-    readonly: Boolean
   }
 
   type SexeWithSpecimensCount {
@@ -627,7 +621,7 @@ export default gql`
   }
 
   type SexesPaginatedResult implements PaginatedResult {
-    result: [SexeWithCounts]
+    result: [Sexe!]
     count: Int!
   }
 

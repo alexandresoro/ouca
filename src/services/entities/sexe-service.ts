@@ -1,34 +1,45 @@
-import { Prisma, Sexe } from "@prisma/client";
-import {
-  FindParams,
-  MutationUpsertSexeArgs,
-  QueryPaginatedSexesArgs,
-  SexesPaginatedResult,
-  SexeWithCounts
-} from "../../model/graphql";
+import { DatabaseRole, Prisma, Sexe } from "@prisma/client";
+import { FindParams, MutationUpsertSexeArgs, QueryPaginatedSexesArgs, SexesPaginatedResult } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
+import { OucaError } from "../../utils/errors";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  queryParametersToFindAllEntities
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
 } from "./entities-utils";
 
-export const findSexe = async (id: number): Promise<Sexe | null> => {
-  return prisma.sexe.findUnique({
+export const findSexe = async (
+  id: number,
+  loggedUser: LoggedUser | null = null
+): Promise<(Sexe & ReadonlyStatus) | null> => {
+  const sexeEntity = await prisma.sexe.findUnique({
     where: {
       id
     }
   });
+
+  if (!sexeEntity) {
+    return null;
+  }
+
+  return {
+    ...sexeEntity,
+    readonly: isEntityReadOnly(sexeEntity, loggedUser)
+  };
 };
 
-export const findSexes = async (params?: FindParams | null): Promise<Sexe[]> => {
+export const findSexes = async (
+  params?: FindParams | null,
+  loggedUser: LoggedUser | null = null
+): Promise<(Sexe & ReadonlyStatus)[]> => {
   const { q, max } = params ?? {};
 
-  return prisma.sexe.findMany({
-    orderBy: {
-      libelle: "asc"
-    },
+  const sexeEntities = await prisma.sexe.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
         contains: q || undefined
@@ -36,42 +47,18 @@ export const findSexes = async (params?: FindParams | null): Promise<Sexe[]> => 
     },
     take: max || undefined
   });
-};
 
-export const findAllSexes = async (
-  options: {
-    includeCounts?: boolean;
-  } = {}
-): Promise<SexeWithCounts[]> => {
-  const includeCounts = options.includeCounts ?? true;
-
-  if (includeCounts) {
-    const sexes = await prisma.sexe.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      include: {
-        _count: {
-          select: {
-            donnee: true // Add number of donnees that contains it
-          }
-        }
-      }
-    });
-
-    return sexes.map((sexe) => {
-      return {
-        ...sexe,
-        nbDonnees: sexe._count.donnee
-      };
-    });
-  } else {
-    return prisma.sexe.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
-    });
-  }
+  return sexeEntities?.map((sexe) => {
+    return {
+      ...sexe,
+      readonly: isEntityReadOnly(sexe, loggedUser)
+    };
+  });
 };
 
 export const findPaginatedSexes = async (
-  options: Partial<QueryPaginatedSexesArgs> = {}
+  options: Partial<QueryPaginatedSexesArgs> = {},
+  loggedUser: LoggedUser | null = null
 ): Promise<SexesPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
@@ -98,9 +85,7 @@ export const findPaginatedSexes = async (
     }
   }
 
-  const count = await prisma.sexe.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-  });
+  let sexeEntities: (Sexe & { nbDonnees?: number })[];
 
   if (includeCounts) {
     const sexes = await prisma.sexe.findMany({
@@ -116,42 +101,102 @@ export const findPaginatedSexes = async (
       where: getEntiteAvecLibelleFilterClause(searchParams?.q)
     });
 
-    return {
-      result: sexes.map((sexe) => {
-        return {
-          ...sexe,
-          ...(includeCounts ? { nbDonnees: sexe._count.donnee } : {})
-        };
-      }),
-      count
-    };
+    sexeEntities = sexes.map((sexe) => {
+      return {
+        ...sexe,
+        nbDonnees: sexe._count.donnee
+      };
+    });
   } else {
-    const sexes = await prisma.sexe.findMany({
+    sexeEntities = await prisma.sexe.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
       where: getEntiteAvecLibelleFilterClause(searchParams?.q)
     });
+  }
 
+  const count = await prisma.sexe.count({
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+  });
+
+  const sexes = sexeEntities?.map((sexe) => {
     return {
-      result: sexes,
-      count
+      ...sexe,
+      readonly: isEntityReadOnly(sexe, loggedUser)
     };
-  }
+  });
+
+  return {
+    result: sexes,
+    count
+  };
 };
 
-export const upsertSexe = async (args: MutationUpsertSexeArgs): Promise<Sexe> => {
+export const upsertSexe = async (
+  args: MutationUpsertSexeArgs,
+  loggedUser: LoggedUser
+): Promise<Sexe & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedSexe: Sexe;
+
   if (id) {
-    return prisma.sexe.update({
-      where: { id },
-      data
-    });
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.sexe.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    try {
+      upsertedSexe = await prisma.sexe.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.sexe.create({ data });
+    try {
+      upsertedSexe = await prisma.sexe.create({
+        data: {
+          ...data,
+          ownerId: loggedUser.id
+        }
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedSexe,
+    readonly: false
+  };
 };
 
-export const deleteSexe = async (id: number): Promise<Sexe> => {
+export const deleteSexe = async (id: number, loggedUser: LoggedUser): Promise<Sexe> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.sexe.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.sexe.delete({
     where: {
       id
@@ -160,6 +205,7 @@ export const deleteSexe = async (id: number): Promise<Sexe> => {
 };
 
 export const createSexes = async (sexes: Omit<Sexe, "id">[]): Promise<Prisma.BatchPayload> => {
+  // TODO add user ownership
   return prisma.sexe.createMany({
     data: sexes
   });
