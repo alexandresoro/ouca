@@ -1295,13 +1295,6 @@ export type Sexe = {
   __typename?: 'Sexe';
   id: Scalars['Int'];
   libelle: Scalars['String'];
-  readonly?: Maybe<Scalars['Boolean']>;
-};
-
-export type SexeWithCounts = {
-  __typename?: 'SexeWithCounts';
-  id: Scalars['Int'];
-  libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   readonly?: Maybe<Scalars['Boolean']>;
 };
@@ -1316,7 +1309,7 @@ export type SexeWithSpecimensCount = {
 export type SexesPaginatedResult = PaginatedResult & {
   __typename?: 'SexesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<SexeWithCounts>>>;
+  result?: Maybe<Array<Sexe>>;
 };
 
 export const SortOrder = {
@@ -1533,7 +1526,6 @@ export type ResolversTypes = {
   SearchParams: ResolverTypeWrapper<PartialDeep<SearchParams> | null>;
   Settings: ResolverTypeWrapper<PartialDeep<Settings> | null>;
   Sexe: ResolverTypeWrapper<PartialDeep<Sexe> | null>;
-  SexeWithCounts: ResolverTypeWrapper<PartialDeep<SexeWithCounts> | null>;
   SexeWithSpecimensCount: ResolverTypeWrapper<PartialDeep<SexeWithSpecimensCount> | null>;
   SexesPaginatedResult: ResolverTypeWrapper<PartialDeep<SexesPaginatedResult> | null>;
   SortOrder: ResolverTypeWrapper<PartialDeep<SortOrder> | null>;
@@ -1623,7 +1615,6 @@ export type ResolversParentTypes = {
   SearchParams: PartialDeep<SearchParams> | null;
   Settings: PartialDeep<Settings> | null;
   Sexe: PartialDeep<Sexe> | null;
-  SexeWithCounts: PartialDeep<SexeWithCounts> | null;
   SexeWithSpecimensCount: PartialDeep<SexeWithSpecimensCount> | null;
   SexesPaginatedResult: PartialDeep<SexesPaginatedResult> | null;
   String: PartialDeep<Scalars['String']> | null;
@@ -2128,13 +2119,6 @@ export type SettingsResolvers<ContextType = any, ParentType extends ResolversPar
 export type SexeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Sexe'] = ResolversParentTypes['Sexe']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SexeWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['SexeWithCounts'] = ResolversParentTypes['SexeWithCounts']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2149,7 +2133,7 @@ export type SexeWithSpecimensCountResolvers<ContextType = any, ParentType extend
 
 export type SexesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['SexesPaginatedResult'] = ResolversParentTypes['SexesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['SexeWithCounts']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<ResolversTypes['Sexe']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2235,7 +2219,6 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Settings?: SettingsResolvers<ContextType>;
   Sexe?: SexeResolvers<ContextType>;
-  SexeWithCounts?: SexeWithCountsResolvers<ContextType>;
   SexeWithSpecimensCount?: SexeWithSpecimensCountResolvers<ContextType>;
   SexesPaginatedResult?: SexesPaginatedResultResolvers<ContextType>;
   UpsertDonneeResult?: UpsertDonneeResultResolvers<ContextType>;
