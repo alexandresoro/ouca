@@ -1,6 +1,6 @@
 import { Classe, Espece } from "@prisma/client";
 import { ImportedEspece } from "../../objects/import/imported-espece.object";
-import { findAllClasses } from "../entities/classe-service";
+import { findClasses } from "../entities/classe-service";
 import { createEspeces, findAllEspeces } from "../entities/espece-service";
 import { ImportService } from "./import-service";
 
@@ -16,7 +16,7 @@ export class ImportEspeceService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.especesToInsert = [];
-    this.classes = await findAllClasses();
+    this.classes = await findClasses();
     this.especes = await findAllEspeces();
   };
 

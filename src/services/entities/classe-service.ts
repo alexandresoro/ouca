@@ -1,96 +1,99 @@
-import { Classe, Prisma } from "@prisma/client";
+import { Classe, DatabaseRole, Prisma } from "@prisma/client";
 import {
   ClassesPaginatedResult,
-  ClasseWithCounts,
   FindParams,
   MutationUpsertClasseArgs,
   QueryPaginatedClassesArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
-import counterReducer from "../../utils/counterReducer";
+import { OucaError } from "../../utils/errors";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  queryParametersToFindAllEntities
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
 } from "./entities-utils";
 
-export const findClasseOfEspeceId = async (especeId: number | undefined): Promise<Classe | null> => {
-  return prisma.espece
+export const findClasseOfEspeceId = async (
+  especeId: number | undefined,
+  loggedUser: LoggedUser | null = null
+): Promise<(Classe & ReadonlyStatus) | null> => {
+  const classeEntity = await prisma.espece
     .findUnique({
       where: {
         id: especeId
       }
     })
     .classe();
+
+  if (!classeEntity) {
+    return null;
+  }
+
+  return {
+    ...classeEntity,
+    readonly: isEntityReadOnly(classeEntity, loggedUser)
+  };
 };
 
-export const findClasse = async (id: number): Promise<Classe | null> => {
-  return prisma.classe.findUnique({
+export const findClasse = async (
+  id: number,
+  loggedUser: LoggedUser | null = null
+): Promise<(Classe & ReadonlyStatus) | null> => {
+  const classeEntity = await prisma.classe.findUnique({
     where: {
       id
     }
   });
+
+  if (!classeEntity) {
+    return null;
+  }
+
+  return {
+    ...classeEntity,
+    readonly: isEntityReadOnly(classeEntity, loggedUser)
+  };
 };
 
-export const findClasses = async (params?: FindParams | null): Promise<Classe[]> => {
+export const findClasses = async (
+  params?: FindParams | null,
+  loggedUser: LoggedUser | null = null
+): Promise<(Classe & ReadonlyStatus)[]> => {
   const { q, max } = params ?? {};
 
-  return prisma.classe.findMany({
-    orderBy: {
-      libelle: "asc"
-    },
+  const classeEntities = await prisma.classe.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        startsWith: q || undefined
+        contains: q || undefined
       }
     },
     take: max || undefined
   });
-};
 
-export const findAllClasses = async (): Promise<Classe[]> => {
-  const classes = await prisma.classe.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    include: {
-      _count: {
-        select: {
-          espece: true
-        }
-      },
-      espece: {
-        select: {
-          id: true,
-          _count: {
-            select: {
-              donnee: true
-            }
-          }
-        }
-      }
-    }
-  });
-
-  return classes.map((classe) => {
-    const nbDonnees = classe?.espece?.map((espece) => espece._count.donnee).reduce(counterReducer, 0) ?? 0;
+  return classeEntities?.map((classe) => {
     return {
       ...classe,
-      nbEspeces: classe._count.espece,
-      nbDonnees
+      readonly: isEntityReadOnly(classe, loggedUser)
     };
   });
 };
 
 export const findPaginatedClasses = async (
-  options: Partial<QueryPaginatedClassesArgs> = {}
+  options: Partial<QueryPaginatedClassesArgs> = {},
+  loggedUser: LoggedUser | null = null
 ): Promise<ClassesPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
 
-  let classes: ClasseWithCounts[];
+  let classeEntities: (Classe & { nbEspeces?: number; nbDonnees?: number })[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
@@ -119,7 +122,7 @@ export const findPaginatedClasses = async (
       c.id
     `;
 
-    classes = await prisma.$queryRaw<
+    classeEntities = await prisma.$queryRaw<
       (Classe & { nbEspeces: number; nbDonnees: number })[]
     >`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
   } else {
@@ -144,37 +147,22 @@ export const findPaginatedClasses = async (
       }
     }
 
-    if (includeCounts) {
-      const classesRq = await prisma.classe.findMany({
-        ...getPrismaPagination(searchParams),
-        include: {
-          _count: {
-            select: {
-              espece: true
-            }
-          }
-        },
-        orderBy,
-        where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-      });
-
-      classes = classesRq.map((classe) => {
-        return {
-          ...classe,
-          nbEspeces: classe._count.espece
-        };
-      });
-    } else {
-      classes = await prisma.classe.findMany({
-        ...getPrismaPagination(searchParams),
-        orderBy,
-        where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-      });
-    }
+    classeEntities = await prisma.classe.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    });
   }
 
   const count = await prisma.classe.count({
     where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+  });
+
+  const classes = classeEntities?.map((classe) => {
+    return {
+      ...classe,
+      readonly: isEntityReadOnly(classe, loggedUser)
+    };
   });
 
   return {
@@ -183,19 +171,72 @@ export const findPaginatedClasses = async (
   };
 };
 
-export const upsertClasse = async (args: MutationUpsertClasseArgs): Promise<Classe> => {
+export const upsertClasse = async (
+  args: MutationUpsertClasseArgs,
+  loggedUser: LoggedUser
+): Promise<Classe & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedClasse: Classe;
+
   if (id) {
-    return prisma.classe.update({
-      where: { id },
-      data
-    });
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.classe.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    // Update an existing class
+    try {
+      upsertedClasse = await prisma.classe.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.classe.create({ data });
+    // Create a new class
+    try {
+      upsertedClasse = await prisma.classe.create({
+        data: {
+          ...data,
+          ownerId: loggedUser.id
+        }
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedClasse,
+    readonly: false
+  };
 };
 
-export const deleteClasse = async (id: number): Promise<Classe> => {
+export const deleteClasse = async (id: number, loggedUser: LoggedUser): Promise<Classe> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.classe.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
   return prisma.classe.delete({
     where: {
       id
@@ -204,6 +245,7 @@ export const deleteClasse = async (id: number): Promise<Classe> => {
 };
 
 export const createClasses = async (classes: Omit<Classe, "id">[]): Promise<Prisma.BatchPayload> => {
+  // TODO add user ownership
   return prisma.classe.createMany({
     data: classes
   });

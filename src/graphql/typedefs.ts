@@ -228,14 +228,8 @@ export default gql`
     id: Int!
     libelle: String!
     readonly: Boolean
-  }
-
-  type ClasseWithCounts {
-    id: Int!
-    nbDonnees: Int
     nbEspeces: Int
-    libelle: String!
-    readonly: Boolean
+    nbDonnees: Int
   }
 
   type Commune {
@@ -566,7 +560,7 @@ export default gql`
   }
 
   type ClassesPaginatedResult implements PaginatedResult {
-    result: [ClasseWithCounts]
+    result: [Classe!]
     count: Int!
   }
 

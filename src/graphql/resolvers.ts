@@ -500,8 +500,8 @@ const resolvers: Resolvers<Context> = {
       return deleteAge(args.id, user).then(({ id }) => id);
     },
     deleteClasse: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
-      return deleteClasse(args.id).then(({ id }) => id);
+      const user = validateUserAuthentication(context);
+      return deleteClasse(args.id, user).then(({ id }) => id);
     },
     deleteCommune: async (_source, args, context): Promise<number> => {
       validateUserAuthentication(context);
@@ -556,8 +556,8 @@ const resolvers: Resolvers<Context> = {
       return upsertAge(args, user);
     },
     upsertClasse: async (_source, args, context): Promise<Classe> => {
-      validateUserAuthentication(context);
-      return upsertClasse(args);
+      const user = validateUserAuthentication(context);
+      return upsertClasse(args, user);
     },
     upsertCommune: async (_source, args, context): Promise<CommuneEntity> => {
       validateUserAuthentication(context);

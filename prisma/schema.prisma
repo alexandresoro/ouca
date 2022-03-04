@@ -21,6 +21,8 @@ model Age {
 model Classe {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle String   @unique(map: "unique_libelle") @db.VarChar(100)
+  ownerId String   @map("owner_id")
+  owner   User     @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_classe_owner_id")
   espece  Espece[]
 
   @@map("classe")
@@ -294,6 +296,7 @@ model User {
 
   Settings    Settings[]
   Age         Age[]
+  Classe      Classe[]
   observateur Observateur[]
   Sexe        Sexe[]
 
