@@ -1,5 +1,6 @@
 import { Classe, DatabaseRole, Espece, Prisma } from "@prisma/client";
-import { QueryPaginatedClassesArgs } from "../../model/graphql";
+import { mock, mockDeep } from "jest-mock-extended";
+import { MutationUpsertClasseArgs, QueryPaginatedClassesArgs } from "../../model/graphql";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -30,11 +31,7 @@ const prismaConstraintFailed = () => {
 };
 
 test("should call readonly status when retrieving one class ", async () => {
-  const classData: Classe = {
-    id: 11,
-    libelle: "Batraciens",
-    ownerId: "abc"
-  };
+  const classData: Classe = mock<Classe>();
 
   prismaMock.classe.findUnique.mockResolvedValueOnce(classData);
 
@@ -64,22 +61,14 @@ test("should handle class not found ", async () => {
 });
 
 test("should call readonly status when retrieving class by species ID ", async () => {
-  const classeData: Partial<Classe> = {
-    id: 43
-  };
+  const classData = mock<Classe>({
+    id: 256
+  });
 
-  const species: Espece & { classe: () => Partial<Classe> } = {
-    id: 43,
-    classeId: 11,
-    code: "TROTRO",
-    nomFrancais: "Troglodyte mignon",
-    nomLatin: "Troglodytus mignonus",
-    classe: () => {
-      return classeData;
-    }
-  };
+  const species = mockDeep<Prisma.Prisma__EspeceClient<Espece>>();
+  species.classe.mockResolvedValueOnce(classData);
 
-  prismaMock.espece.findUnique.mockImplementationOnce(() => species as unknown as Prisma.Prisma__EspeceClient<Espece>);
+  prismaMock.espece.findUnique.mockReturnValueOnce(species);
 
   const classe = await findClasseOfEspeceId(43);
 
@@ -90,22 +79,14 @@ test("should call readonly status when retrieving class by species ID ", async (
     }
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-  expect(classe).toMatchObject(classeData);
+  expect(classe?.id).toEqual(256);
 });
 
 test("should handle class not found when retrieving class by species ID ", async () => {
-  const species: Espece & { classe: () => null } = {
-    id: 43,
-    classeId: 11,
-    code: "TROTRO",
-    nomFrancais: "Troglodyte mignon",
-    nomLatin: "Troglodytus mignonus",
-    classe: () => {
-      return null;
-    }
-  };
+  const species = mockDeep<Prisma.Prisma__EspeceClient<Espece>>();
+  species.classe.mockResolvedValueOnce(null);
 
-  prismaMock.espece.findUnique.mockImplementationOnce(() => species as unknown as Prisma.Prisma__EspeceClient<Espece>);
+  prismaMock.espece.findUnique.mockReturnValueOnce(species);
 
   const classe = await findClasseOfEspeceId(43);
 
@@ -120,23 +101,7 @@ test("should handle class not found when retrieving class by species ID ", async
 });
 
 test("should call readonly status when retrieving classes by params ", async () => {
-  const classesData: Classe[] = [
-    {
-      id: 11,
-      libelle: "Batraciens",
-      ownerId: "abc"
-    },
-    {
-      id: 12,
-      libelle: "Oiseaux",
-      ownerId: "abc"
-    },
-    {
-      id: 13,
-      libelle: "Reptiles",
-      ownerId: "abc"
-    }
-  ];
+  const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
 
   prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
 
@@ -155,23 +120,7 @@ test("should call readonly status when retrieving classes by params ", async () 
 });
 
 test("should call readonly status when retrieving paginated classes ", async () => {
-  const classesData: Classe[] = [
-    {
-      id: 11,
-      libelle: "Batraciens",
-      ownerId: "abc"
-    },
-    {
-      id: 12,
-      libelle: "Oiseaux",
-      ownerId: "abc"
-    },
-    {
-      id: 13,
-      libelle: "Reptiles",
-      ownerId: "abc"
-    }
-  ];
+  const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
 
   prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
 
@@ -187,25 +136,9 @@ test("should call readonly status when retrieving paginated classes ", async () 
 });
 
 test("should handle params when retrieving paginated classes ", async () => {
-  const classesData: Classe[] = [
-    {
-      id: 11,
-      libelle: "Batraciens",
-      ownerId: "abc"
-    },
-    {
-      id: 12,
-      libelle: "Oiseaux",
-      ownerId: "abc"
-    },
-    {
-      id: 13,
-      libelle: "Reptiles",
-      ownerId: "abc"
-    }
-  ];
+  const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
 
-  const searchParams: QueryPaginatedClassesArgs = {
+  const searchParams = mock<QueryPaginatedClassesArgs>({
     orderBy: "libelle",
     sortOrder: "desc",
     searchParams: {
@@ -214,9 +147,9 @@ test("should handle params when retrieving paginated classes ", async () => {
       pageSize: 10
     },
     includeCounts: false
-  };
+  });
 
-  prismaMock.classe.findMany.mockResolvedValueOnce([classesData[0]]);
+  prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
 
   await findPaginatedClasses(searchParams);
 
@@ -235,23 +168,15 @@ test("should handle params when retrieving paginated classes ", async () => {
       }
     }
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+  expect(isEntityReadOnly).toHaveBeenCalledTimes(classesData.length);
 });
 
 test("should update an existing class as an admin ", async () => {
-  const classData = {
-    id: 12,
-    data: {
-      libelle: "Batraciens"
-    }
-  };
+  const classData = mock<MutationUpsertClasseArgs>();
 
-  const user = {
-    id: "a",
-    role: DatabaseRole.admin
-  };
+  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertClasse(classData, user);
+  await upsertClasse(classData, loggedUser);
 
   expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
@@ -263,27 +188,17 @@ test("should update an existing class as an admin ", async () => {
 });
 
 test("should update an existing class if owner ", async () => {
-  const existingData = {
-    id: 12,
-    libelle: "Oiseaux",
+  const existingData = mock<Classe>({
     ownerId: "notAdmin"
-  };
+  });
 
-  const classData = {
-    id: 12,
-    data: {
-      libelle: "Batraciens"
-    }
-  };
+  const classData = mock<MutationUpsertClasseArgs>();
 
-  const user = {
-    id: "notAdmin",
-    role: DatabaseRole.contributor
-  };
+  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
   prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
 
-  await upsertClasse(classData, user);
+  await upsertClasse(classData, loggedUser);
 
   expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
@@ -295,47 +210,34 @@ test("should update an existing class if owner ", async () => {
 });
 
 test("should throw an error when updating an existing class and nor owner nor admin ", async () => {
-  const existingData = {
-    id: 12,
-    libelle: "Oiseaux",
+  const existingData = mock<Classe>({
     ownerId: "notAdmin"
-  };
+  });
 
-  const classData = {
-    id: 12,
-    data: {
-      libelle: "Batraciens"
-    }
-  };
+  const classData = mock<MutationUpsertClasseArgs>();
 
-  const user = {
+  const loggedUser = {
     id: "Bob",
     role: DatabaseRole.contributor
   };
 
   prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
 
-  await expect(upsertClasse(classData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+  await expect(upsertClasse(classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
 
   expect(prismaMock.classe.update).toHaveBeenCalledTimes(0);
 });
 
 test("should throw an error when trying to update a class that exists", async () => {
-  const classData = {
-    id: 12,
-    data: {
-      libelle: "Batraciens"
-    }
-  };
+  const classData = mock<MutationUpsertClasseArgs>({
+    id: 12
+  });
 
-  const user = {
-    id: "a",
-    role: DatabaseRole.admin
-  };
+  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
   prismaMock.classe.update.mockImplementation(prismaConstraintFailed);
 
-  await expect(() => upsertClasse(classData, user)).rejects.toThrowError(
+  await expect(() => upsertClasse(classData, loggedUser)).rejects.toThrowError(
     new OucaError("OUCA0004", prismaConstraintFailedError)
   );
 
@@ -349,43 +251,33 @@ test("should throw an error when trying to update a class that exists", async ()
 });
 
 test("should create new class ", async () => {
-  const classData = {
-    data: {
-      libelle: "Batraciens"
-    }
-  };
+  const classData = mock<MutationUpsertClasseArgs>({
+    id: undefined
+  });
 
-  const user = {
-    id: "a",
-    role: DatabaseRole.contributor
-  };
+  const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  await upsertClasse(classData, user);
+  await upsertClasse(classData, loggedUser);
 
   expect(prismaMock.classe.create).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
     data: {
       ...classData.data,
-      ownerId: user.id
+      ownerId: loggedUser.id
     }
   });
 });
 
 test("should throw an error when trying to create a class that exists", async () => {
-  const classData = {
-    data: {
-      libelle: "Batraciens"
-    }
-  };
+  const classData = mock<MutationUpsertClasseArgs>({
+    id: undefined
+  });
 
-  const user = {
-    id: "a",
-    role: DatabaseRole.contributor
-  };
+  const loggedUser = mock<LoggedUser>({ id: "a" });
 
   prismaMock.classe.create.mockImplementation(prismaConstraintFailed);
 
-  await expect(() => upsertClasse(classData, user)).rejects.toThrowError(
+  await expect(() => upsertClasse(classData, loggedUser)).rejects.toThrowError(
     new OucaError("OUCA0004", prismaConstraintFailedError)
   );
 
@@ -393,7 +285,7 @@ test("should throw an error when trying to create a class that exists", async ()
   expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
     data: {
       ...classData.data,
-      ownerId: user.id
+      ownerId: loggedUser.id
     }
   });
 });
@@ -404,11 +296,11 @@ test("should be able to delete an owned class", async () => {
     role: DatabaseRole.contributor
   };
 
-  prismaMock.classe.findFirst.mockResolvedValueOnce({
-    id: 11,
-    libelle: "Batraciens",
-    ownerId: "12"
+  const classe = mock<Classe>({
+    ownerId: loggedUser.id
   });
+
+  prismaMock.classe.findFirst.mockResolvedValueOnce(classe);
 
   await deleteClasse(11, loggedUser);
 
@@ -421,16 +313,11 @@ test("should be able to delete an owned class", async () => {
 });
 
 test("should be able to delete any class if admin", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
+  const loggedUser = mock<LoggedUser>({
     role: DatabaseRole.admin
-  };
-
-  prismaMock.classe.findFirst.mockResolvedValueOnce({
-    id: 11,
-    libelle: "Batraciens",
-    ownerId: "54"
   });
+
+  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
 
   await deleteClasse(11, loggedUser);
 
@@ -443,16 +330,11 @@ test("should be able to delete any class if admin", async () => {
 });
 
 test("should return an error when deleting a non-owned class as non-admin", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
+  const loggedUser = mock<LoggedUser>({
     role: DatabaseRole.contributor
-  };
-
-  prismaMock.classe.findFirst.mockResolvedValueOnce({
-    id: 11,
-    libelle: "Batraciens",
-    ownerId: "54"
   });
+
+  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
 
   await expect(deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

@@ -1,5 +1,6 @@
 import { Age, DatabaseRole, Prisma } from "@prisma/client";
-import { QueryPaginatedAgesArgs } from "../../model/graphql";
+import { mock } from "jest-mock-extended";
+import { MutationUpsertAgeArgs, QueryPaginatedAgesArgs } from "../../model/graphql";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -23,11 +24,7 @@ const prismaConstraintFailed = () => {
 };
 
 test("should call readonly status when retrieving one age ", async () => {
-  const ageData: Age = {
-    id: 11,
-    libelle: "+2A",
-    ownerId: "abc"
-  };
+  const ageData = mock<Age>();
 
   prismaMock.age.findUnique.mockResolvedValueOnce(ageData);
 
@@ -57,23 +54,7 @@ test("should handle age not found ", async () => {
 });
 
 test("should call readonly status when retrieving ages by params ", async () => {
-  const agesData: Age[] = [
-    {
-      id: 11,
-      libelle: "+2A",
-      ownerId: "abc"
-    },
-    {
-      id: 12,
-      libelle: "+1A",
-      ownerId: "abc"
-    },
-    {
-      id: 13,
-      libelle: "+3A",
-      ownerId: "abc"
-    }
-  ];
+  const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
 
   prismaMock.age.findMany.mockResolvedValueOnce(agesData);
 
@@ -92,23 +73,7 @@ test("should call readonly status when retrieving ages by params ", async () => 
 });
 
 test("should call readonly status when retrieving paginated ages", async () => {
-  const agesData: Age[] = [
-    {
-      id: 11,
-      libelle: "+2A",
-      ownerId: "abc"
-    },
-    {
-      id: 12,
-      libelle: "+1A",
-      ownerId: "abc"
-    },
-    {
-      id: 13,
-      libelle: "+3A",
-      ownerId: "abc"
-    }
-  ];
+  const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
 
   prismaMock.age.findMany.mockResolvedValueOnce(agesData);
 
@@ -124,23 +89,7 @@ test("should call readonly status when retrieving paginated ages", async () => {
 });
 
 test("should handle params when retrieving paginated ages ", async () => {
-  const agesData: Age[] = [
-    {
-      id: 11,
-      libelle: "+2A",
-      ownerId: "abc"
-    },
-    {
-      id: 12,
-      libelle: "+1A",
-      ownerId: "abc"
-    },
-    {
-      id: 13,
-      libelle: "+3A",
-      ownerId: "abc"
-    }
-  ];
+  const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
 
   const searchParams: QueryPaginatedAgesArgs = {
     orderBy: "libelle",
@@ -176,19 +125,11 @@ test("should handle params when retrieving paginated ages ", async () => {
 });
 
 test("should update an existing age as an admin ", async () => {
-  const ageData = {
-    id: 12,
-    data: {
-      libelle: "+2A"
-    }
-  };
+  const ageData = mock<MutationUpsertAgeArgs>();
 
-  const user = {
-    id: "a",
-    role: DatabaseRole.admin
-  };
+  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertAge(ageData, user);
+  await upsertAge(ageData, loggedUser);
 
   expect(prismaMock.age.update).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.update).toHaveBeenLastCalledWith({
@@ -200,27 +141,17 @@ test("should update an existing age as an admin ", async () => {
 });
 
 test("should update an existing age if owner ", async () => {
-  const existingData = {
-    id: 12,
-    libelle: "+1A",
+  const existingData = mock<Age>({
     ownerId: "notAdmin"
-  };
+  });
 
-  const ageData = {
-    id: 12,
-    data: {
-      libelle: "+2A"
-    }
-  };
+  const ageData = mock<MutationUpsertAgeArgs>();
 
-  const user = {
-    id: "notAdmin",
-    role: DatabaseRole.contributor
-  };
+  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
   prismaMock.age.findFirst.mockResolvedValueOnce(existingData);
 
-  await upsertAge(ageData, user);
+  await upsertAge(ageData, loggedUser);
 
   expect(prismaMock.age.update).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.update).toHaveBeenLastCalledWith({
@@ -232,18 +163,11 @@ test("should update an existing age if owner ", async () => {
 });
 
 test("should throw an error when updating an existing age and nor owner nor admin ", async () => {
-  const existingData = {
-    id: 12,
-    libelle: "+1A",
+  const existingData = mock<Age>({
     ownerId: "notAdmin"
-  };
+  });
 
-  const ageData = {
-    id: 12,
-    data: {
-      libelle: "+2A"
-    }
-  };
+  const ageData = mock<MutationUpsertAgeArgs>();
 
   const user = {
     id: "Bob",
@@ -258,21 +182,15 @@ test("should throw an error when updating an existing age and nor owner nor admi
 });
 
 test("should throw an error when trying to update an age that exists", async () => {
-  const ageData = {
-    id: 12,
-    data: {
-      libelle: "+2A"
-    }
-  };
+  const ageData = mock<MutationUpsertAgeArgs>({
+    id: 12
+  });
 
-  const user = {
-    id: "a",
-    role: DatabaseRole.admin
-  };
+  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
   prismaMock.age.update.mockImplementation(prismaConstraintFailed);
 
-  await expect(() => upsertAge(ageData, user)).rejects.toThrowError(
+  await expect(() => upsertAge(ageData, loggedUser)).rejects.toThrowError(
     new OucaError("OUCA0004", prismaConstraintFailedError)
   );
 
@@ -286,43 +204,33 @@ test("should throw an error when trying to update an age that exists", async () 
 });
 
 test("should create new age ", async () => {
-  const ageData = {
-    data: {
-      libelle: "+2A"
-    }
-  };
+  const ageData = mock<MutationUpsertAgeArgs>({
+    id: undefined
+  });
 
-  const user = {
-    id: "a",
-    role: DatabaseRole.contributor
-  };
+  const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  await upsertAge(ageData, user);
+  await upsertAge(ageData, loggedUser);
 
   expect(prismaMock.age.create).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.create).toHaveBeenLastCalledWith({
     data: {
       ...ageData.data,
-      ownerId: user.id
+      ownerId: loggedUser.id
     }
   });
 });
 
 test("should throw an error when trying to create an age that exists", async () => {
-  const ageData = {
-    data: {
-      libelle: "+2A"
-    }
-  };
+  const ageData = mock<MutationUpsertAgeArgs>({
+    id: undefined
+  });
 
-  const user = {
-    id: "a",
-    role: DatabaseRole.contributor
-  };
+  const loggedUser = mock<LoggedUser>({ id: "a" });
 
   prismaMock.age.create.mockImplementation(prismaConstraintFailed);
 
-  await expect(() => upsertAge(ageData, user)).rejects.toThrowError(
+  await expect(() => upsertAge(ageData, loggedUser)).rejects.toThrowError(
     new OucaError("OUCA0004", prismaConstraintFailedError)
   );
 
@@ -330,7 +238,7 @@ test("should throw an error when trying to create an age that exists", async () 
   expect(prismaMock.age.create).toHaveBeenLastCalledWith({
     data: {
       ...ageData.data,
-      ownerId: user.id
+      ownerId: loggedUser.id
     }
   });
 });
@@ -341,11 +249,11 @@ test("should be able to delete an owned age", async () => {
     role: DatabaseRole.contributor
   };
 
-  prismaMock.age.findFirst.mockResolvedValueOnce({
-    id: 11,
-    libelle: "+2A",
-    ownerId: "12"
+  const age = mock<Age>({
+    ownerId: loggedUser.id
   });
+
+  prismaMock.age.findFirst.mockResolvedValueOnce(age);
 
   await deleteAge(11, loggedUser);
 
@@ -358,16 +266,11 @@ test("should be able to delete an owned age", async () => {
 });
 
 test("should be able to delete any age if admin", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
+  const loggedUser = mock<LoggedUser>({
     role: DatabaseRole.admin
-  };
-
-  prismaMock.age.findFirst.mockResolvedValueOnce({
-    id: 11,
-    libelle: "+2A",
-    ownerId: "54"
   });
+
+  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Age>());
 
   await deleteAge(11, loggedUser);
 
@@ -380,16 +283,11 @@ test("should be able to delete any age if admin", async () => {
 });
 
 test("should return an error when deleting a non-owned age as non-admin", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
+  const loggedUser = mock<LoggedUser>({
     role: DatabaseRole.contributor
-  };
-
-  prismaMock.age.findFirst.mockResolvedValueOnce({
-    id: 11,
-    libelle: "+2A",
-    ownerId: "54"
   });
+
+  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Age>());
 
   await expect(deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

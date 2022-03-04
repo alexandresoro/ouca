@@ -1,11 +1,10 @@
 import { DatabaseRole } from "@prisma/client";
+import { mock } from "jest-mock-extended";
 import { LoggedUser } from "../../types/LoggedUser";
 import { isEntityReadOnly } from "./entities-utils";
 
 test("should return correct readonly status for non logged user", () => {
-  const entity = {
-    ownerId: "12"
-  };
+  const entity = mock<{ ownerId: string }>();
 
   expect(isEntityReadOnly(entity, null)).toBe(true);
 });
@@ -29,7 +28,7 @@ test("should return correct readonly status for owner", () => {
   };
 
   const user: LoggedUser = {
-    id: "12",
+    id: entity.ownerId,
     role: DatabaseRole.contributor
   };
 
