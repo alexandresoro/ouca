@@ -40,13 +40,6 @@ export type Classe = {
   __typename?: 'Classe';
   id: Scalars['Int'];
   libelle: Scalars['String'];
-  readonly?: Maybe<Scalars['Boolean']>;
-};
-
-export type ClasseWithCounts = {
-  __typename?: 'ClasseWithCounts';
-  id: Scalars['Int'];
-  libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nbEspeces?: Maybe<Scalars['Int']>;
   readonly?: Maybe<Scalars['Boolean']>;
@@ -63,7 +56,7 @@ export type ClassesOrderBy = typeof ClassesOrderBy[keyof typeof ClassesOrderBy];
 export type ClassesPaginatedResult = PaginatedResult & {
   __typename?: 'ClassesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Maybe<ClasseWithCounts>>>;
+  result?: Maybe<Array<Classe>>;
 };
 
 export type Commune = {
@@ -1443,7 +1436,6 @@ export type ResolversTypes = {
   AgesPaginatedResult: ResolverTypeWrapper<PartialDeep<AgesPaginatedResult> | null>;
   Boolean: ResolverTypeWrapper<PartialDeep<Scalars['Boolean']> | null>;
   Classe: ResolverTypeWrapper<PartialDeep<Classe> | null>;
-  ClasseWithCounts: ResolverTypeWrapper<PartialDeep<ClasseWithCounts> | null>;
   ClassesOrderBy: ResolverTypeWrapper<PartialDeep<ClassesOrderBy> | null>;
   ClassesPaginatedResult: ResolverTypeWrapper<PartialDeep<ClassesPaginatedResult> | null>;
   Commune: ResolverTypeWrapper<PartialDeep<Commune> | null>;
@@ -1547,7 +1539,6 @@ export type ResolversParentTypes = {
   AgesPaginatedResult: PartialDeep<AgesPaginatedResult> | null;
   Boolean: PartialDeep<Scalars['Boolean']> | null;
   Classe: PartialDeep<Classe> | null;
-  ClasseWithCounts: PartialDeep<ClasseWithCounts> | null;
   ClassesPaginatedResult: PartialDeep<ClassesPaginatedResult> | null;
   Commune: PartialDeep<Commune> | null;
   CommuneWithCounts: PartialDeep<CommuneWithCounts> | null;
@@ -1651,13 +1642,6 @@ export type AgesPaginatedResultResolvers<ContextType = any, ParentType extends R
 export type ClasseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Classe'] = ResolversParentTypes['Classe']> = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ClasseWithCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClasseWithCounts'] = ResolversParentTypes['ClasseWithCounts']> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  libelle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nbDonnees?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nbEspeces?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   readonly?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -1666,7 +1650,7 @@ export type ClasseWithCountsResolvers<ContextType = any, ParentType extends Reso
 
 export type ClassesPaginatedResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClassesPaginatedResult'] = ResolversParentTypes['ClassesPaginatedResult']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  result?: Resolver<Maybe<Array<Maybe<ResolversTypes['ClasseWithCounts']>>>, ParentType, ContextType>;
+  result?: Resolver<Maybe<Array<ResolversTypes['Classe']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2175,7 +2159,6 @@ export type Resolvers<ContextType = any> = {
   AgeWithSpecimensCount?: AgeWithSpecimensCountResolvers<ContextType>;
   AgesPaginatedResult?: AgesPaginatedResultResolvers<ContextType>;
   Classe?: ClasseResolvers<ContextType>;
-  ClasseWithCounts?: ClasseWithCountsResolvers<ContextType>;
   ClassesPaginatedResult?: ClassesPaginatedResultResolvers<ContextType>;
   Commune?: CommuneResolvers<ContextType>;
   CommuneWithCounts?: CommuneWithCountsResolvers<ContextType>;
