@@ -1,4 +1,5 @@
-import { DatabaseRole } from "@prisma/client";
+import { Settings } from "@prisma/client";
+import { mock } from "jest-mock-extended";
 import { InputSettings } from "../../model/graphql";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -6,10 +7,7 @@ import { OucaError } from "../../utils/errors";
 import { createInitialUserSettings, findAppConfiguration, persistUserSettings } from "./configuration-service";
 
 test("should query needed parameters for user", async () => {
-  const loggedUser: LoggedUser = {
-    id: "11",
-    role: DatabaseRole.contributor
-  };
+  const loggedUser = mock<LoggedUser>();
 
   await findAppConfiguration(loggedUser);
 
@@ -42,21 +40,9 @@ test("should create settings for a user", async () => {
 });
 
 test("should throw an error when creating settings for a user that already has settings", async () => {
-  prismaMock.settings.findFirst.mockResolvedValueOnce({
-    areAssociesDisplayed: true,
-    coordinatesSystem: "gps",
-    defaultAgeId: 1,
-    defaultDepartementId: 2,
-    defaultEstimationNombreId: 3,
-    defaultNombre: 4,
-    defaultObservateurId: 5,
-    defaultSexeId: 6,
-    id: 7,
-    isDistanceDisplayed: true,
-    isMeteoDisplayed: true,
-    isRegroupementDisplayed: true,
-    userId: "11"
-  });
+  const settings = mock<Settings>();
+
+  prismaMock.settings.findFirst.mockResolvedValueOnce(settings);
 
   await expect(() => createInitialUserSettings("12")).rejects.toThrowError(new OucaError("OUCA0005"));
 
@@ -79,10 +65,7 @@ test("should update settings with parameters  for user", async () => {
     isRegroupementDisplayed: true
   };
 
-  const loggedUser: LoggedUser = {
-    id: "11",
-    role: DatabaseRole.contributor
-  };
+  const loggedUser = mock<LoggedUser>();
 
   await persistUserSettings(updatedAppConfiguration, loggedUser);
 
