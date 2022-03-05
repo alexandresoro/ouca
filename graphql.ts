@@ -964,6 +964,11 @@ export type QueryMeteoListArgs = {
 };
 
 
+export type QueryMeteosArgs = {
+  params?: InputMaybe<FindParams>;
+};
+
+
 export type QueryMilieuArgs = {
   id: Scalars['Int'];
 };
@@ -1881,7 +1886,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   lieuxDits?: Resolver<Maybe<Array<Maybe<ResolversTypes['LieuDit']>>>, ParentType, ContextType, Partial<QueryLieuxDitsArgs>>;
   meteo?: Resolver<Maybe<ResolversTypes['Meteo']>, ParentType, ContextType, RequireFields<QueryMeteoArgs, 'id'>>;
   meteoList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType, RequireFields<QueryMeteoListArgs, 'ids'>>;
-  meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType>;
+  meteos?: Resolver<Maybe<Array<Maybe<ResolversTypes['Meteo']>>>, ParentType, ContextType, Partial<QueryMeteosArgs>>;
   milieu?: Resolver<Maybe<ResolversTypes['Milieu']>, ParentType, ContextType, RequireFields<QueryMilieuArgs, 'id'>>;
   milieuList?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, RequireFields<QueryMilieuListArgs, 'ids'>>;
   milieux?: Resolver<Maybe<Array<Maybe<ResolversTypes['Milieu']>>>, ParentType, ContextType, Partial<QueryMilieuxArgs>>;
