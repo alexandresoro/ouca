@@ -92,7 +92,7 @@ export const findPaginatedObservateurs = async (
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
 
-  let observateurEntities: Observateur[];
+  let observateurEntities: (Observateur & { nbDonnees?: number })[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;

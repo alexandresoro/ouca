@@ -1,59 +1,98 @@
-import { Meteo, Prisma } from "@prisma/client";
-import { MeteosPaginatedResult, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../model/graphql";
+import { DatabaseRole, Meteo, Prisma } from "@prisma/client";
+import {
+  FindParams,
+  MeteosPaginatedResult,
+  MutationUpsertMeteoArgs,
+  QueryPaginatedMeteosArgs
+} from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
+import { OucaError } from "../../utils/errors";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  queryParametersToFindAllEntities
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
 } from "./entities-utils";
 
-export const findMeteo = async (id: number): Promise<Meteo | null> => {
-  return prisma.meteo.findUnique({
+export const findMeteo = async (
+  id: number,
+  loggedUser: LoggedUser | null = null
+): Promise<(Meteo & ReadonlyStatus) | null> => {
+  const meteoEntity = await prisma.meteo.findUnique({
     where: {
       id
     }
   });
+
+  if (!meteoEntity) {
+    return null;
+  }
+
+  return {
+    ...meteoEntity,
+    readonly: isEntityReadOnly(meteoEntity, loggedUser)
+  };
 };
 
-export const findMeteosByIds = async (ids: number[]): Promise<Meteo[]> => {
-  return prisma.meteo.findMany({
-    orderBy: {
-      libelle: "asc"
-    },
+export const findMeteosByIds = async (
+  ids: number[],
+  loggedUser: LoggedUser | null = null
+): Promise<(Meteo & ReadonlyStatus)[]> => {
+  const meteoEntities = await prisma.meteo.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       id: {
         in: ids
       }
     }
   });
-};
 
-export const findMeteos = async (): Promise<Meteo[]> => {
-  return prisma.meteo.findMany({
-    orderBy: {
-      libelle: "asc"
-    }
+  return meteoEntities?.map((meteo) => {
+    return {
+      ...meteo,
+      readonly: isEntityReadOnly(meteo, loggedUser)
+    };
   });
 };
 
-export const findAllMeteos = async (): Promise<Meteo[]> => {
-  return prisma.meteo.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
+export const findMeteos = async (
+  params?: FindParams | null,
+  loggedUser: LoggedUser | null = null
+): Promise<(Meteo & ReadonlyStatus)[]> => {
+  const { q, max } = params ?? {};
+
+  const meteoEntities = await prisma.meteo.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    where: {
+      libelle: {
+        contains: q || undefined
+      }
+    },
+    take: max || undefined
+  });
+
+  return meteoEntities?.map((meteo) => {
+    return {
+      ...meteo,
+      readonly: isEntityReadOnly(meteo, loggedUser)
+    };
   });
 };
 
 export const findPaginatedMeteos = async (
-  options: Partial<QueryPaginatedMeteosArgs> = {}
+  options: Partial<QueryPaginatedMeteosArgs> = {},
+  loggedUser: LoggedUser | null = null
 ): Promise<MeteosPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
 
-  let meteos: (Meteo & { nbDonnees?: number })[];
+  let meteoEntities: (Meteo & { nbDonnees?: number })[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
@@ -66,7 +105,7 @@ export const findPaginatedMeteos = async (
 
     const donneesPerObservateurIdRequest = Prisma.sql`
     SELECT 
-      m.*, count(d.id) as nbDonnees
+      m.*, m.owner_id as ownerId, count(d.id) as nbDonnees
     FROM 
       donnee d 
     RIGHT JOIN 
@@ -86,13 +125,13 @@ export const findPaginatedMeteos = async (
       m.id
     `;
 
-    meteos = await prisma.$queryRaw<
+    meteoEntities = await prisma.$queryRaw<
       (Meteo & { nbDonnees: number })[]
     >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
   } else {
     const orderBy = orderByField ? { [orderByField]: sortOrder } : {};
 
-    meteos = await prisma.meteo.findMany({
+    meteoEntities = await prisma.meteo.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
       where: getEntiteAvecLibelleFilterClause(searchParams?.q)
@@ -103,25 +142,86 @@ export const findPaginatedMeteos = async (
     where: getEntiteAvecLibelleFilterClause(searchParams?.q)
   });
 
+  const meteos = meteoEntities?.map((meteo) => {
+    return {
+      ...meteo,
+      readonly: isEntityReadOnly(meteo, loggedUser)
+    };
+  });
+
   return {
     result: meteos,
     count
   };
 };
 
-export const upsertMeteo = async (args: MutationUpsertMeteoArgs, loggedUser: LoggedUser): Promise<Meteo> => {
+export const upsertMeteo = async (
+  args: MutationUpsertMeteoArgs,
+  loggedUser: LoggedUser
+): Promise<Meteo & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedMeteo: Meteo;
+
   if (id) {
-    return prisma.meteo.update({
-      where: { id },
-      data
-    });
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.meteo.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    // Update an existing observer
+    try {
+      upsertedMeteo = await prisma.meteo.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.meteo.create({ data: { ...data, ownerId: loggedUser.id } });
+    // Create a new meteo
+    try {
+      upsertedMeteo = await prisma.meteo.create({
+        data: {
+          ...data,
+          ownerId: loggedUser.id
+        }
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedMeteo,
+    readonly: false
+  };
 };
 
-export const deleteMeteo = async (id: number): Promise<Meteo> => {
+export const deleteMeteo = async (id: number, loggedUser: LoggedUser): Promise<Meteo> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.meteo.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.meteo.delete({
     where: {
       id

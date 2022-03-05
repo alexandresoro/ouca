@@ -1,12 +1,12 @@
 import { Meteo, Prisma } from "@prisma/client";
 import { LoggedUser } from "../../types/LoggedUser";
-import { createMeteos, findAllMeteos } from "../entities/meteo-service";
+import { createMeteos, findMeteos } from "../entities/meteo-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportMeteoService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findAllMeteos();
+    this.entities = await findMeteos();
   };
 
   protected getThisEntityName(): string {

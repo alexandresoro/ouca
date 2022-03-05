@@ -306,7 +306,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     meteos: async (_source, args, context): Promise<Meteo[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findMeteos();
+      return findMeteos(args?.params);
     },
     milieux: async (_source, args, context): Promise<Milieu[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -520,7 +520,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteMeteo: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteMeteo(args.id).then(({ id }) => id);
+      return deleteMeteo(args.id, context.user).then(({ id }) => id);
     },
     deleteMilieu: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);

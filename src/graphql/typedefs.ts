@@ -646,7 +646,7 @@ export default gql`
     lieuxDits(params: FindParams, communeId: Int, departementId: Int): [LieuDit]
     estimationsDistance(params: FindParams): [EstimationDistance]
     estimationsNombre(params: FindParams): [EstimationNombre]
-    meteos: [Meteo]
+    meteos(params: FindParams): [Meteo]
     milieux(params: FindParams): [Milieu]
     observateurs(params: FindParams): [Observateur!]
     sexes(params: FindParams): [Sexe]

@@ -106,7 +106,7 @@ export const findPaginatedClasses = async (
 
     const donneesPerClasseIdRequest = Prisma.sql`
     SELECT 
-      c.*, count(DISTINCT e.id) as nbEspeces, count(d.id) as nbDonnees
+      c.*, c.owner_id as ownerId, count(DISTINCT e.id) as nbEspeces, count(d.id) as nbDonnees
     FROM 
       donnee d 
     RIGHT JOIN 
