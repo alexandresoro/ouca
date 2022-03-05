@@ -1,7 +1,6 @@
 import { Comportement, Nicheur, Prisma } from "@prisma/client";
 import {
   ComportementsPaginatedResult,
-  ComportementWithCounts,
   FindParams,
   MutationUpsertComportementArgs,
   QueryPaginatedComportementsArgs
@@ -110,23 +109,8 @@ const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhere
     : {};
 };
 
-export const findAllComportements = async (): Promise<(ComportementWithCounts & { nicheur: Nicheur | null })[]> => {
-  const [comportementsDb, donneesByComportement] = await Promise.all([
-    prisma.comportement.findMany(queryParametersToFindAllEntities(COLUMN_CODE)),
-    prisma.donnee_comportement.groupBy({
-      by: ["comportement_id"],
-      _count: true
-    })
-  ]);
-
-  return comportementsDb.map((comportement) => {
-    return {
-      ...comportement,
-      nbDonnees:
-        donneesByComportement.find((donneeByComportement) => donneeByComportement.comportement_id === comportement.id)
-          ?._count ?? 0
-    };
-  });
+export const findAllComportements = async (): Promise<Comportement[]> => {
+  return prisma.comportement.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
 };
 
 export const findPaginatedComportements = async (

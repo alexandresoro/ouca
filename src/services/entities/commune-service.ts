@@ -1,7 +1,6 @@
 import { Commune, Departement, Prisma } from "@prisma/client";
 import {
   CommunesPaginatedResult,
-  CommuneWithCounts,
   FindParams,
   MutationUpsertCommuneArgs,
   QueryPaginatedCommunesArgs
@@ -189,7 +188,7 @@ export const findPaginatedCommunes = async (
 ): Promise<CommunesPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
-  let communes: CommuneWithCounts[];
+  let communes: (Commune & { departement: Departement; nbLieuxDits?: number; nbDonnees?: number })[];
 
   if (orderByField === "nbDonnees") {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;

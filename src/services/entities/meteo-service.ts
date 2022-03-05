@@ -1,13 +1,7 @@
 import { Meteo, Prisma } from "@prisma/client";
-import {
-  MeteosPaginatedResult,
-  MeteoWithCounts,
-  MutationUpsertMeteoArgs,
-  QueryPaginatedMeteosArgs
-} from "../../model/graphql";
+import { MeteosPaginatedResult, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { COLUMN_LIBELLE } from "../../utils/constants";
-import counterReducer from "../../utils/counterReducer";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
@@ -45,34 +39,9 @@ export const findMeteos = async (): Promise<Meteo[]> => {
   });
 };
 
-export const findAllMeteos = async (): Promise<MeteoWithCounts[]> => {
-  const meteos = await prisma.meteo.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    include: {
-      inventaire_meteo: {
-        select: {
-          inventaire: {
-            select: {
-              _count: {
-                select: {
-                  donnee: true
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  });
-
-  return meteos.map((meteo) => {
-    const nbDonnees = meteo.inventaire_meteo
-      .map((invMet) => invMet?.inventaire._count?.donnee ?? 0)
-      .reduce(counterReducer, 0);
-    return {
-      ...meteo,
-      nbDonnees
-    };
+export const findAllMeteos = async (): Promise<Meteo[]> => {
+  return prisma.meteo.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
   });
 };
 
@@ -83,7 +52,7 @@ export const findPaginatedMeteos = async (
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
 
-  let meteos: MeteoWithCounts[];
+  let meteos: (Meteo & { nbDonnees?: number })[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;

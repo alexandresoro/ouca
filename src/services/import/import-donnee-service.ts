@@ -72,14 +72,14 @@ export class ImportDonneeService extends ImportService {
     }
 
     this.observateurs = await findObservateurs();
-    this.departements = await findAllDepartements({ includeCounts: false });
+    this.departements = await findAllDepartements();
     this.communes = await findAllCommunes();
     this.lieuxDits = await findAllLieuxDits();
     this.meteos = await findAllMeteos();
     this.especes = await findAllEspeces();
     this.sexes = await findSexes();
     this.ages = await findAges();
-    this.estimationsNombre = await findAllEstimationsNombre({ includeCounts: false });
+    this.estimationsNombre = await findAllEstimationsNombre();
     this.estimationsDistance = await findAllEstimationsDistance();
     this.comportements = await findAllComportements();
     this.milieux = await findAllMilieux();

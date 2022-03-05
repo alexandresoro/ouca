@@ -25,7 +25,7 @@ export class ImportLieuxditService extends ImportService {
     let coordinatesSystemType: CoordinatesSystemType | undefined;
 
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
-      findAllDepartements({ includeCounts: false }),
+      findAllDepartements(),
       findAllCommunes(),
       findAllLieuxDits(),
       findCoordinatesSystem()

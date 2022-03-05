@@ -191,30 +191,16 @@ export default gql`
     libelle: String!
     nicheur: Nicheur
     readonly: Boolean
-  }
-
-  type ComportementWithCounts {
-    id: Int!
-    code: String!
-    libelle: String!
-    nicheur: Nicheur
     nbDonnees: Int
-    readonly: Boolean
   }
 
   type Departement {
     id: Int!
     code: String!
     readonly: Boolean
-  }
-
-  type DepartementWithCounts {
-    id: Int!
-    code: String!
     nbCommunes: Int
     nbLieuxDits: Int
     nbDonnees: Int
-    readonly: Boolean
   }
 
   type Observateur {
@@ -238,16 +224,8 @@ export default gql`
     nom: String!
     departement: Departement!
     readonly: Boolean
-  }
-
-  type CommuneWithCounts {
-    id: Int!
-    code: Int!
-    nom: String!
-    departement: Departement!
     nbLieuxDits: Int
     nbDonnees: Int
-    readonly: Boolean
   }
 
   type Espece {
@@ -257,29 +235,14 @@ export default gql`
     nomLatin: String!
     classe: Classe!
     readonly: Boolean
-  }
-
-  type EspeceWithCounts {
-    id: Int!
     nbDonnees: Int
-    code: String!
-    nomFrancais: String!
-    nomLatin: String!
-    classe: Classe
-    readonly: Boolean
   }
 
   type EstimationDistance {
     id: Int!
     libelle: String!
     readonly: Boolean
-  }
-
-  type EstimationDistanceWithCounts {
-    id: Int!
     nbDonnees: Int
-    libelle: String!
-    readonly: Boolean
   }
 
   type EstimationNombre {
@@ -287,27 +250,14 @@ export default gql`
     libelle: String!
     nonCompte: Boolean!
     readonly: Boolean
-  }
-
-  type EstimationNombreWithCounts {
-    id: Int!
-    libelle: String!
-    nonCompte: Boolean!
     nbDonnees: Int
-    readonly: Boolean
   }
 
   type Meteo {
     id: Int!
     libelle: String!
     readonly: Boolean
-  }
-
-  type MeteoWithCounts {
-    id: Int!
     nbDonnees: Int
-    libelle: String!
-    readonly: Boolean
   }
 
   type LieuDit {
@@ -319,18 +269,7 @@ export default gql`
     coordinatesSystem: CoordinatesSystemType!
     commune: Commune!
     readonly: Boolean
-  }
-
-  type LieuDitWithCounts {
-    id: Int!
-    nom: String!
-    altitude: Int!
-    longitude: Float!
-    latitude: Float!
-    coordinatesSystem: CoordinatesSystemType!
-    commune: CommuneWithCounts!
     nbDonnees: Int
-    readonly: Boolean
   }
 
   type Milieu {
@@ -338,14 +277,7 @@ export default gql`
     code: String!
     libelle: String!
     readonly: Boolean
-  }
-
-  type MilieuWithCounts {
-    id: Int!
     nbDonnees: Int
-    code: String!
-    libelle: String!
-    readonly: Boolean
   }
 
   type Sexe {
@@ -565,47 +497,47 @@ export default gql`
   }
 
   type CommunesPaginatedResult implements PaginatedResult {
-    result: [CommuneWithCounts]
+    result: [Commune!]
     count: Int!
   }
 
   type ComportementsPaginatedResult implements PaginatedResult {
-    result: [ComportementWithCounts]
+    result: [Comportement!]
     count: Int!
   }
 
   type DepartementsPaginatedResult implements PaginatedResult {
-    result: [DepartementWithCounts]
+    result: [Departement!]
     count: Int!
   }
 
   type EspecesPaginatedResult implements PaginatedResult {
-    result: [EspeceWithCounts]
+    result: [Espece!]
     count: Int!
   }
 
   type EstimationsDistancePaginatedResult implements PaginatedResult {
-    result: [EstimationDistanceWithCounts]
+    result: [EstimationDistance!]
     count: Int!
   }
 
   type EstimationsNombrePaginatedResult implements PaginatedResult {
-    result: [EstimationNombreWithCounts]
+    result: [EstimationNombre!]
     count: Int!
   }
 
   type LieuxDitsPaginatedResult implements PaginatedResult {
-    result: [LieuDitWithCounts]
+    result: [LieuDit!]
     count: Int!
   }
 
   type MeteosPaginatedResult implements PaginatedResult {
-    result: [MeteoWithCounts]
+    result: [Meteo!]
     count: Int!
   }
 
   type MilieuxPaginatedResult implements PaginatedResult {
-    result: [MilieuWithCounts]
+    result: [Milieu!]
     count: Int!
   }
 

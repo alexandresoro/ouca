@@ -1,6 +1,5 @@
 import { EstimationDistance, Prisma } from "@prisma/client";
 import {
-  EstimationDistanceWithCounts,
   EstimationsDistancePaginatedResult,
   FindParams,
   MutationUpsertEstimationDistanceArgs,
@@ -38,23 +37,9 @@ export const findEstimationsDistance = async (params?: FindParams | null): Promi
   });
 };
 
-export const findAllEstimationsDistance = async (): Promise<EstimationDistanceWithCounts[]> => {
-  const estimations = await prisma.estimationDistance.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    include: {
-      _count: {
-        select: {
-          donnee: true
-        }
-      }
-    }
-  });
-
-  return estimations.map((estimation) => {
-    return {
-      ...estimation,
-      nbDonnees: estimation._count.donnee
-    };
+export const findAllEstimationsDistance = async (): Promise<EstimationDistance[]> => {
+  return prisma.estimationDistance.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
   });
 };
 

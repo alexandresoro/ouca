@@ -1,7 +1,6 @@
 import { Classe, Espece, Prisma } from "@prisma/client";
 import {
   EspecesPaginatedResult,
-  EspeceWithCounts,
   FindParams,
   MutationUpsertEspeceArgs,
   QueryPaginatedEspecesArgs,
@@ -201,8 +200,6 @@ export const findPaginatedEspeces = async (
   const builtSearchCriteria = buildSearchDonneeCriteria(searchCriteria);
   const { especeId, espece, ...restSearchDonneeCriteria } = builtSearchCriteria ?? {};
 
-  let especesResult: EspeceWithCounts[];
-
   const especeFilterClause: Prisma.EspeceWhereInput = {
     AND: [
       getFilterClause(searchParams?.q),
@@ -219,6 +216,8 @@ export const findPaginatedEspeces = async (
         : {}
     ]
   };
+
+  let especesResult: (Espece & { classe: Classe; nbDonnees?: number })[];
 
   if (orderByField === "nbDonnees" && builtSearchCriteria) {
     // As the orderBy donnee _count will not work properly because it will compare with ALL donnees and not only the matching one, we need to do differently
@@ -247,7 +246,7 @@ export const findPaginatedEspeces = async (
     });
 
     // Once we have the proper especes_is, we can retrieve their corresponding data
-    const especesRq = await prisma.espece.findMany({
+    const especesRq = (await prisma.espece.findMany({
       include: {
         classe: {
           select: {
@@ -261,7 +260,7 @@ export const findPaginatedEspeces = async (
           in: donneesByMatchingEspece.map(({ especeId }) => especeId) // /!\ The IN clause could break if not paginated enough
         }
       }
-    });
+    })) as (Espece & { classe: Classe })[];
 
     especesResult = donneesByMatchingEspece.map(({ especeId, _count }) => {
       const espece = especesRq?.find(({ id }) => id === especeId);
@@ -272,7 +271,7 @@ export const findPaginatedEspeces = async (
       };
     });
   } else {
-    const especesDb = await prisma.espece.findMany({
+    const especesDb = (await prisma.espece.findMany({
       ...getPrismaPagination(searchParams),
       include: {
         classe: {
@@ -284,7 +283,7 @@ export const findPaginatedEspeces = async (
       },
       orderBy,
       where: especeFilterClause
-    });
+    })) as (Espece & { classe: Classe })[];
 
     // As we can also filter by donnees but want the filtered count, the _count cannot be calculated properly from the previous findMany => it would return the full count
     if (includeCounts) {

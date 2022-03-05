@@ -79,7 +79,7 @@ export const generateComportementsExport = async (): Promise<string> => {
 };
 
 export const generateDepartementsExport = async (): Promise<string> => {
-  const departementsDb = await findAllDepartements({ includeCounts: false });
+  const departementsDb = await findAllDepartements();
 
   const objectsToExport = departementsDb.map((object) => {
     return {
@@ -197,7 +197,7 @@ export const generateEstimationsDistanceExport = async (): Promise<string> => {
 };
 
 export const generateEstimationsNombreExport = async (): Promise<string> => {
-  const estimations = await findAllEstimationsNombre({ includeCounts: false });
+  const estimations = await findAllEstimationsNombre();
 
   const objectsToExport = estimations.map((object) => {
     return {

@@ -1,7 +1,6 @@
 import { Milieu, Prisma } from "@prisma/client";
 import {
   FindParams,
-  MilieuWithCounts,
   MilieuxPaginatedResult,
   MutationUpsertMilieuArgs,
   QueryPaginatedMilieuxArgs
@@ -105,21 +104,8 @@ const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput 
     : {};
 };
 
-export const findAllMilieux = async (): Promise<MilieuWithCounts[]> => {
-  const [milieux, donneesByMilieu] = await Promise.all([
-    prisma.milieu.findMany(queryParametersToFindAllEntities(COLUMN_CODE)),
-    prisma.donnee_milieu.groupBy({
-      by: ["milieu_id"],
-      _count: true
-    })
-  ]);
-
-  return milieux.map((milieu) => {
-    return {
-      ...milieu,
-      nbDonnees: donneesByMilieu.find((donneeByMilieu) => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0
-    };
-  });
+export const findAllMilieux = async (): Promise<Milieu[]> => {
+  return prisma.milieu.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
 };
 
 export const findPaginatedMilieux = async (

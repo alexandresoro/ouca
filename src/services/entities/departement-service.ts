@@ -1,7 +1,6 @@
 import { Departement, Prisma } from "@prisma/client";
 import {
   DepartementsPaginatedResult,
-  DepartementWithCounts,
   FindParams,
   MutationUpsertDepartementArgs,
   QueryPaginatedDepartementsArgs
@@ -60,75 +59,10 @@ export const findDepartements = async (params?: FindParams | null): Promise<Depa
   });
 };
 
-export const findAllDepartements = async (
-  options: {
-    includeCounts?: boolean;
-  } = {}
-): Promise<DepartementWithCounts[]> => {
-  const includeCounts = options.includeCounts ?? true;
-
-  if (includeCounts) {
-    const departements = await prisma.departement.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      include: {
-        _count: {
-          select: {
-            commune: true
-          }
-        },
-        commune: {
-          select: {
-            _count: {
-              select: {
-                lieudit: true
-              }
-            },
-            lieudit: {
-              select: {
-                inventaire: {
-                  select: {
-                    _count: {
-                      select: {
-                        donnee: true
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    });
-
-    return departements.map((departement) => {
-      const nbLieuxDits = departement?.commune?.map((commune) => commune._count.lieudit).reduce(counterReducer, 0) ?? 0;
-      const nbDonnees = departement?.commune
-        .map((commune) => {
-          return commune.lieudit.map((lieudit) => {
-            return lieudit.inventaire.map((inventaire) => {
-              return inventaire._count.donnee;
-            });
-          });
-        })
-        .flat(3)
-        .reduce(counterReducer, 0);
-      return {
-        ...departement,
-        ...(includeCounts
-          ? {
-              nbCommunes: departement._count.commune,
-              nbLieuxDits,
-              nbDonnees
-            }
-          : {})
-      };
-    });
-  } else {
-    return prisma.departement.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_CODE)
-    });
-  }
+export const findAllDepartements = async (): Promise<Departement[]> => {
+  return prisma.departement.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_CODE)
+  });
 };
 
 export const findPaginatedDepartements = async (
@@ -136,7 +70,7 @@ export const findPaginatedDepartements = async (
 ): Promise<DepartementsPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
-  let departements: DepartementWithCounts[];
+  let departements: (Departement & { nbLieuxDits?: number; nbDonnees?: number })[];
 
   if (orderByField === "nbDonnees" || orderByField === "nbLieuxDits") {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;

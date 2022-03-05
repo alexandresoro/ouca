@@ -1,6 +1,5 @@
 import { EstimationNombre, Prisma } from "@prisma/client";
 import {
-  EstimationNombreWithCounts,
   EstimationsNombrePaginatedResult,
   FindParams,
   MutationUpsertEstimationNombreArgs,
@@ -38,36 +37,10 @@ export const findEstimationsNombre = async (params?: FindParams | null): Promise
   });
 };
 
-export const findAllEstimationsNombre = async (
-  options: {
-    includeCounts?: boolean;
-  } = {}
-): Promise<EstimationNombreWithCounts[]> => {
-  const includeCounts = options.includeCounts ?? true;
-
-  if (includeCounts) {
-    const estimationsDb = await prisma.estimationNombre.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      include: {
-        _count: {
-          select: {
-            donnee: true
-          }
-        }
-      }
-    });
-
-    return estimationsDb.map((estimation) => {
-      return {
-        ...estimation,
-        nbDonnees: estimation._count.donnee
-      };
-    });
-  } else {
-    return prisma.estimationNombre.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
-    });
-  }
+export const findAllEstimationsNombre = async (): Promise<EstimationNombre[]> => {
+  return prisma.estimationNombre.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
+  });
 };
 
 export const findPaginatedEstimationsNombre = async (

@@ -14,7 +14,7 @@ export class ImportDepartementService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.departementsToInsert = [];
-    this.departements = await findAllDepartements({ includeCounts: false });
+    this.departements = await findAllDepartements();
   };
 
   protected validateAndPrepareEntity = (departementTab: string[]): string | null => {

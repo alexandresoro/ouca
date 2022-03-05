@@ -1,7 +1,6 @@
 import { Commune, Departement, Lieudit, Prisma } from "@prisma/client";
 import {
   FindParams,
-  LieuDitWithCounts,
   LieuxDitsPaginatedResult,
   MutationUpsertLieuDitArgs,
   QueryPaginatedLieuxditsArgs
@@ -180,7 +179,10 @@ export const findPaginatedLieuxDits = async (
 ): Promise<LieuxDitsPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
-  let lieuxDits: LieuDitWithCounts[];
+  let lieuxDits: (LieuDitWithCoordinatesAsNumber<Lieudit> & {
+    commune: Commune & { departement: Departement };
+    nbDonnees?: number;
+  })[];
 
   if (orderByField === "nbDonnees") {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;

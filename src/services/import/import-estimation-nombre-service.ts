@@ -4,10 +4,9 @@ import { createEstimationsNombre, findAllEstimationsNombre } from "../entities/e
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {
-
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findAllEstimationsNombre({ includeCounts: false });
+    this.entities = await findAllEstimationsNombre();
   };
 
   protected getThisEntityName(): string {
@@ -16,9 +15,9 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
 
   protected getImportedEntity = (entityTab: string[]): ImportedEstimationNombre => {
     return new ImportedEstimationNombre(entityTab);
-  }
+  };
 
-  protected saveEntities = (estimationsNombre: Omit<EstimationNombre, 'id'>[]): Promise<Prisma.BatchPayload> => {
+  protected saveEntities = (estimationsNombre: Omit<EstimationNombre, "id">[]): Promise<Prisma.BatchPayload> => {
     return createEstimationsNombre(estimationsNombre);
   };
 }
