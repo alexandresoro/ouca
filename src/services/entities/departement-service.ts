@@ -6,6 +6,7 @@ import {
   QueryPaginatedDepartementsArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import {
@@ -239,7 +240,10 @@ export const findPaginatedDepartements = async (
   };
 };
 
-export const upsertDepartement = async (args: MutationUpsertDepartementArgs): Promise<Departement> => {
+export const upsertDepartement = async (
+  args: MutationUpsertDepartementArgs,
+  loggedUser: LoggedUser
+): Promise<Departement> => {
   const { id, data } = args;
   if (id) {
     return prisma.departement.update({
@@ -247,7 +251,7 @@ export const upsertDepartement = async (args: MutationUpsertDepartementArgs): Pr
       data
     });
   } else {
-    return prisma.departement.create({ data });
+    return prisma.departement.create({ data: { ...data, ownerId: loggedUser.id } });
   }
 };
 
@@ -259,8 +263,13 @@ export const deleteDepartement = async (id: number): Promise<Departement> => {
   });
 };
 
-export const createDepartements = async (departements: Omit<Departement, "id">[]): Promise<Prisma.BatchPayload> => {
+export const createDepartements = async (
+  departements: Omit<Prisma.DepartementCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.departement.createMany({
-    data: departements
+    data: departements.map((departement) => {
+      return { ...departement, ownerId: loggedUser.id };
+    })
   });
 };

@@ -7,6 +7,7 @@ import {
   UpsertInventaireFailureReason
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { DATE_PATTERN } from "../../utils/constants";
 import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 
@@ -188,7 +189,10 @@ export const findAllInventaires = async (): Promise<InventaireWithRelations[]> =
     });
 };
 
-export const upsertInventaire = async (args: MutationUpsertInventaireArgs): Promise<InventaireWithRelations> => {
+export const upsertInventaire = async (
+  args: MutationUpsertInventaireArgs,
+  loggedUser: LoggedUser
+): Promise<InventaireWithRelations> => {
   const { id, data, migrateDonneesIfMatchesExistingInventaire = false } = args;
 
   // Check if an exact same inventaire already exists or not
@@ -312,7 +316,8 @@ export const upsertInventaire = async (args: MutationUpsertInventaireArgs): Prom
             },
             inventaire_meteo: {
               create: meteosMap
-            }
+            },
+            ownerId: loggedUser.id
           },
           include: COMMON_INVENTAIRE_INCLUDE
         })

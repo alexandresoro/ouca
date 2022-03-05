@@ -33,7 +33,9 @@ model Commune {
   departementId Int         @map("departement_id") @db.UnsignedSmallInt
   code          Int         @db.UnsignedSmallInt
   nom           String      @db.VarChar(100)
+  ownerId       String      @map("owner_id")
   departement   Departement @relation(fields: [departementId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_commune_departement_id")
+  owner         User        @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_commune_owner_id")
   lieudit       Lieudit[]
 
   @@unique([departementId, code], map: "unique_departement_code")
@@ -52,6 +54,8 @@ model Comportement {
   code                String                @unique(map: "unique_code") @db.VarChar(6)
   libelle             String                @unique(map: "unique_libelle") @db.VarChar(100)
   nicheur             Nicheur?
+  ownerId             String                @map("owner_id")
+  owner               User                  @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_comportement_owner_id")
   donnee_comportement donnee_comportement[]
 
   @@map("comportement")
@@ -60,6 +64,8 @@ model Comportement {
 model Departement {
   id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
   code     String     @unique(map: "unique_code") @db.VarChar(100)
+  ownerId  String     @map("owner_id")
+  owner    User       @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_departement_owner_id")
   commune  Commune[]
   settings Settings[]
 
@@ -123,7 +129,9 @@ model Espece {
   code        String   @unique(map: "unique_code") @db.VarChar(20)
   nomFrancais String   @unique(map: "unique_nom_francais") @map("nom_francais") @db.VarChar(100)
   nomLatin    String   @unique(map: "unique_nom_latin") @map("nom_latin") @db.VarChar(100)
+  ownerId     String   @map("owner_id")
   classe      Classe?  @relation(fields: [classeId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_espece_classe_id")
+  owner       User     @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_espece_owner_id")
   donnee      Donnee[]
 
   @@index([classeId], map: "fk_espece_classe_id")
@@ -133,6 +141,8 @@ model Espece {
 model EstimationDistance {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle String   @unique(map: "unique_libelle") @db.VarChar(100)
+  ownerId String   @map("owner_id")
+  owner   User     @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_estimation_distance_owner_id")
   donnee  Donnee[]
 
   @@map("estimation_distance")
@@ -142,6 +152,8 @@ model EstimationNombre {
   id        Int        @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle   String     @unique(map: "unique_libelle") @db.VarChar(100)
   nonCompte Boolean    @map("non_compte") @db.Bit(1)
+  ownerId   String     @map("owner_id")
+  owner     User       @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_estimation_nombre_owner_id")
   donnee    Donnee[]
   settings  Settings[]
 
@@ -161,8 +173,10 @@ model Inventaire {
   coordinates_system CoordinatesSystem?
   temperature        Int?                 @db.TinyInt
   date_creation      DateTime             @db.DateTime(0)
+  ownerId            String               @map("owner_id")
   lieuDit            Lieudit              @relation(fields: [lieuDitId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inventaire_lieudit_id")
   observateur        Observateur          @relation(fields: [observateurId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inventaire_observateur_id")
+  owner              User                 @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_inventaire_owner_id")
   donnee             Donnee[]
   inventaire_associe inventaire_associe[]
   inventaire_meteo   inventaire_meteo[]
@@ -200,7 +214,9 @@ model Lieudit {
   longitude         Decimal           @db.Decimal(13, 6)
   latitude          Decimal           @db.Decimal(16, 6)
   coordinatesSystem CoordinatesSystem @map("coordinates_system")
+  ownerId           String            @map("owner_id")
   commune           Commune           @relation(fields: [communeId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_lieudit_commune_id")
+  owner             User              @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_lieudit_owner_id")
   inventaire        Inventaire[]
 
   @@unique([communeId, nom], map: "unique_commune_nom")
@@ -210,6 +226,8 @@ model Lieudit {
 model Meteo {
   id               Int                @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle          String             @unique(map: "unique_libelle") @db.VarChar(100)
+  ownerId          String             @map("owner_id")
+  owner            User               @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_meteo_owner_id")
   inventaire_meteo inventaire_meteo[]
 
   @@map("meteo")
@@ -219,6 +237,8 @@ model Milieu {
   id            Int             @id @default(autoincrement()) @db.UnsignedSmallInt
   code          String          @unique(map: "unique_code") @db.VarChar(6)
   libelle       String          @unique(map: "unique_libelle") @db.VarChar(100)
+  ownerId       String          @map("owner_id")
+  owner         User            @relation(fields: [ownerId], references: [id], onUpdate: Restrict, map: "fk_milieu_owner_id")
   donnee_milieu donnee_milieu[]
 
   @@map("milieu")
@@ -294,11 +314,21 @@ model User {
   firstName String       @map("first_name") @db.VarChar(50)
   lastName  String?      @map("last_name") @db.VarChar(50)
 
-  Settings    Settings[]
-  Age         Age[]
-  Classe      Classe[]
-  observateur Observateur[]
-  Sexe        Sexe[]
+  Settings           Settings[]
+  Age                Age[]
+  Classe             Classe[]
+  Commune            Commune[]
+  Comportement       Comportement[]
+  Departement        Departement[]
+  Espece             Espece[]
+  EstimationDistance EstimationDistance[]
+  EstimationNombre   EstimationNombre[]
+  Inventaire         Inventaire[]
+  Lieudit            Lieudit[]
+  Meteo              Meteo[]
+  Milieu             Milieu[]
+  Observateur        Observateur[]
+  Sexe               Sexe[]
 
   @@map("user")
 }

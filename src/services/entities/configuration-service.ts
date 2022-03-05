@@ -21,9 +21,14 @@ export const findAppConfiguration = async (loggedUser: LoggedUser): Promise<Sett
   });
 };
 
-export const findCoordinatesSystem = async (): Promise<CoordinatesSystem | undefined> => {
-  // TODO handle user here
-  return prisma.settings.findFirst().then((settings) => settings?.coordinatesSystem);
+export const findCoordinatesSystem = async (loggedUser: LoggedUser): Promise<CoordinatesSystem | undefined> => {
+  return prisma.settings
+    .findUnique({
+      where: {
+        userId: loggedUser.id
+      }
+    })
+    .then((settings) => settings?.coordinatesSystem);
 };
 
 const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): Omit<SettingsDb, "userId"> => {

@@ -3,6 +3,7 @@ import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
 import { OngoingSubStatus } from "../../model/graphql";
 import { ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message";
+import { LoggedUser } from "../../types/LoggedUser";
 import { logger } from "../../utils/logger";
 
 const COMMENT_PREFIX = "###";
@@ -16,7 +17,7 @@ export const IMPORT_COMPLETE_EVENT = "importComplete";
 export const IMPORT_FAILED_EVENT = "importFailed";
 
 export abstract class ImportService extends EventEmitter {
-  public importFile = async (fileContent: string): Promise<void> => {
+  public importFile = async (fileContent: string, loggedUser: LoggedUser): Promise<void> => {
     this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.ProcessStarted });
 
     if (!fileContent) {
@@ -44,7 +45,7 @@ export abstract class ImportService extends EventEmitter {
     this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.RetrievingRequiredData });
 
     // Retrieve any initialization info needed before validation
-    await this.init();
+    await this.init(loggedUser);
 
     this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.ValidatingInputFile });
 
@@ -57,7 +58,7 @@ export abstract class ImportService extends EventEmitter {
             lineTab.length
           } colonne(s) au lieu de ${this.getNumberOfColumns()} attendue(s)`;
         } else {
-          errorMessage = await this.validateAndPrepareEntity(lineTab);
+          errorMessage = await this.validateAndPrepareEntity(lineTab, loggedUser);
         }
 
         if (errorMessage) {
@@ -80,7 +81,7 @@ export abstract class ImportService extends EventEmitter {
     this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.InsertingImportedData });
 
     // Insert the valid entries in the database
-    await this.persistAllValidEntities();
+    await this.persistAllValidEntities(loggedUser);
 
     logger.debug(
       `Résultat de l'import : ${numberOfLines - errors.length}/${numberOfLines} importées avec succès --> ${
@@ -97,11 +98,14 @@ export abstract class ImportService extends EventEmitter {
 
   protected abstract getNumberOfColumns(): number;
 
-  protected abstract init(): Promise<void>;
+  protected abstract init(loggedUser: LoggedUser): Promise<void>;
 
-  protected abstract persistAllValidEntities(): Promise<void>;
+  protected abstract persistAllValidEntities(loggedUser: LoggedUser): Promise<void>;
 
-  protected abstract validateAndPrepareEntity(entityTab: string[]): string | null | Promise<string | null>;
+  protected abstract validateAndPrepareEntity(
+    entityTab: string[],
+    loggedUser: LoggedUser
+  ): string | null | Promise<string | null>;
 
   private buildErrorObject = (entityTab: string[], errorMessage: string): string[] => {
     entityTab.push(errorMessage);

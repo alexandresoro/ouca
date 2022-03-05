@@ -6,6 +6,7 @@ import {
   QueryPaginatedLieuxditsArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { getFilterClauseCommune } from "./commune-service";
@@ -234,7 +235,8 @@ export const findPaginatedLieuxDits = async (
             departement: {
               select: {
                 id: true,
-                code: true
+                code: true,
+                ownerId: true
               }
             }
           }
@@ -307,7 +309,8 @@ export const findPaginatedLieuxDits = async (
               departement: {
                 select: {
                   id: true,
-                  code: true
+                  code: true,
+                  ownerId: true
                 }
               }
             }
@@ -347,7 +350,8 @@ export const findPaginatedLieuxDits = async (
               departement: {
                 select: {
                   id: true,
-                  code: true
+                  code: true,
+                  ownerId: true
                 }
               }
             }
@@ -370,7 +374,10 @@ export const findPaginatedLieuxDits = async (
   };
 };
 
-export const upsertLieuDit = async (args: MutationUpsertLieuDitArgs): Promise<LieuDitWithCoordinatesAsNumber> => {
+export const upsertLieuDit = async (
+  args: MutationUpsertLieuDitArgs,
+  loggedUser: LoggedUser
+): Promise<LieuDitWithCoordinatesAsNumber> => {
   const { id, data } = args;
   if (id) {
     return prisma.lieudit
@@ -380,7 +387,7 @@ export const upsertLieuDit = async (args: MutationUpsertLieuDitArgs): Promise<Li
       })
       .then(buildLieuditFromLieuditDb);
   } else {
-    return prisma.lieudit.create({ data }).then(buildLieuditFromLieuditDb);
+    return prisma.lieudit.create({ data: { ...data, ownerId: loggedUser.id } }).then(buildLieuditFromLieuditDb);
   }
 };
 
@@ -394,8 +401,13 @@ export const deleteLieuDit = async (id: number): Promise<LieuDitWithCoordinatesA
     .then(buildLieuditFromLieuditDb);
 };
 
-export const createLieuxDits = async (lieuxDits: Omit<Lieudit, "id">[]): Promise<Prisma.BatchPayload> => {
+export const createLieuxDits = async (
+  lieuxDits: Omit<Prisma.LieuditCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.lieudit.createMany({
-    data: lieuxDits
+    data: lieuxDits.map((lieuDit) => {
+      return { ...lieuDit, ownerId: loggedUser.id };
+    })
   });
 };

@@ -19,7 +19,7 @@ export class ImportedCommune {
     this.nom = communeTab[NOM_INDEX].trim();
   }
 
-  buildCommune = (departementId: number): Omit<Commune, "id"> => {
+  buildCommune = (departementId: number): Pick<Commune, "departementId" | "code" | "nom"> => {
     return {
       departementId,
       code: +this.code,

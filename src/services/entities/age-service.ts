@@ -201,9 +201,13 @@ export const deleteAge = async (id: number, loggedUser: LoggedUser): Promise<Age
   });
 };
 
-export const createAges = async (ages: Omit<Age, "id">[]): Promise<Prisma.BatchPayload> => {
-  // TODO add user ownership
+export const createAges = async (
+  ages: Omit<Prisma.AgeCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.age.createMany({
-    data: ages
+    data: ages.map((age) => {
+      return { ...age, ownerId: loggedUser.id };
+    })
   });
 };

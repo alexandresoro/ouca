@@ -2,6 +2,7 @@ import { Commune, Departement, Lieudit } from "@prisma/client";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
+import { LoggedUser } from "../../types/LoggedUser";
 import { findAllCommunes } from "../entities/commune-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findAllDepartements } from "../entities/departement-service";
@@ -11,16 +12,16 @@ import { ImportService } from "./import-service";
 export class ImportLieuxditService extends ImportService {
   private departements!: Departement[];
   private communes!: Commune[];
-  private lieuxDits!: (Omit<Lieudit, "id"> | LieuDitWithCoordinatesAsNumber)[];
+  private lieuxDits!: (Omit<Lieudit, "id" | "ownerId"> | LieuDitWithCoordinatesAsNumber)[];
 
-  private lieuxDitsToInsert!: Omit<Lieudit, "id">[];
+  private lieuxDitsToInsert!: Omit<Lieudit, "id" | "ownerId">[];
   private coordinatesSystem!: CoordinatesSystem;
 
   protected getNumberOfColumns = (): number => {
     return 6;
   };
 
-  protected init = async (): Promise<void> => {
+  protected init = async (loggedUser: LoggedUser): Promise<void> => {
     this.lieuxDitsToInsert = [];
     let coordinatesSystemType: CoordinatesSystemType | undefined;
 
@@ -28,7 +29,7 @@ export class ImportLieuxditService extends ImportService {
       findAllDepartements(),
       findAllCommunes(),
       findAllLieuxDits(),
-      findCoordinatesSystem()
+      findCoordinatesSystem(loggedUser)
     ]);
 
     if (!coordinatesSystemType) {
@@ -84,9 +85,9 @@ export class ImportLieuxditService extends ImportService {
     return null;
   };
 
-  protected persistAllValidEntities = async (): Promise<void> => {
+  protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.lieuxDitsToInsert.length) {
-      await createLieuxDits(this.lieuxDitsToInsert);
+      await createLieuxDits(this.lieuxDitsToInsert, loggedUser);
     }
   };
 }

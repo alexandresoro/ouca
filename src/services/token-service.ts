@@ -1,8 +1,9 @@
-import { User } from "@prisma/client";
+import { DatabaseRole, User } from "@prisma/client";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { CookieSerializeOptions } from "fastify-cookie";
 import { JWTPayload, jwtVerify, SignJWT } from "jose";
 import prisma from "../sql/prisma";
+import { LoggedUser } from "../types/LoggedUser";
 import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
 import options from "../utils/options";
 
@@ -13,6 +14,16 @@ const COOKIE_OPTIONS: CookieSerializeOptions = {
   sameSite: options.jwtCookieSameSite ? "strict" : "none",
   secure: options.jwtCookieSecure,
   maxAge: 60 * 60 * 24 // Let's keep it for 1 day for now
+};
+
+export const getLoggedUser = (tokenPayload: JWTPayload): LoggedUser | null => {
+  if (tokenPayload?.sub && tokenPayload.roles) {
+    return {
+      id: tokenPayload.sub,
+      role: tokenPayload.roles as DatabaseRole
+    };
+  }
+  return null;
 };
 
 export const validateAndExtractUserToken = async (

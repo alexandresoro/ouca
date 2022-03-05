@@ -4,7 +4,12 @@ import { InputSettings } from "../../model/graphql";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { OucaError } from "../../utils/errors";
-import { createInitialUserSettings, findAppConfiguration, persistUserSettings } from "./configuration-service";
+import {
+  createInitialUserSettings,
+  findAppConfiguration,
+  findCoordinatesSystem,
+  persistUserSettings
+} from "./configuration-service";
 
 test("should query needed parameters for user", async () => {
   const loggedUser = mock<LoggedUser>();
@@ -24,6 +29,25 @@ test("should query needed parameters for user", async () => {
       userId: loggedUser.id
     }
   });
+});
+
+test("should query coordinates system for user", async () => {
+  const settings = mock<Settings>({
+    coordinatesSystem: "gps"
+  });
+  const loggedUser = mock<LoggedUser>();
+
+  prismaMock.settings.findUnique.mockResolvedValueOnce(settings);
+
+  const coordinatesSystem = await findCoordinatesSystem(loggedUser);
+
+  expect(prismaMock.settings.findUnique).toHaveBeenCalledTimes(1);
+  expect(prismaMock.settings.findUnique).toHaveBeenCalledWith({
+    where: {
+      userId: loggedUser.id
+    }
+  });
+  expect(coordinatesSystem).toEqual(settings.coordinatesSystem);
 });
 
 test("should create settings for a user", async () => {

@@ -225,9 +225,13 @@ export const deleteObservateur = async (id: number, loggedUser: LoggedUser): Pro
   });
 };
 
-export const createObservateurs = async (observateurs: Omit<Observateur, "id">[]): Promise<Prisma.BatchPayload> => {
-  // TODO add user ownership
+export const createObservateurs = async (
+  observateurs: Omit<Prisma.ObservateurCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.observateur.createMany({
-    data: observateurs
+    data: observateurs.map((observateur) => {
+      return { ...observateur, ownerId: loggedUser.id };
+    })
   });
 };

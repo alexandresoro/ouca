@@ -1,14 +1,15 @@
 import { Classe, Espece } from "@prisma/client";
 import { ImportedEspece } from "../../objects/import/imported-espece.object";
+import { LoggedUser } from "../../types/LoggedUser";
 import { findClasses } from "../entities/classe-service";
 import { createEspeces, findAllEspeces } from "../entities/espece-service";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {
   private classes!: Classe[];
-  private especes!: (Espece | Omit<Espece, "id">)[];
+  private especes!: (Espece | Omit<Espece, "id" | "ownerId">)[];
 
-  private especesToInsert!: Omit<Espece, "id">[];
+  private especesToInsert!: Omit<Espece, "id" | "ownerId">[];
 
   protected getNumberOfColumns = (): number => {
     return 4;
@@ -68,9 +69,9 @@ export class ImportEspeceService extends ImportService {
     return null;
   };
 
-  protected persistAllValidEntities = async (): Promise<void> => {
+  protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.especesToInsert.length) {
-      await createEspeces(this.especesToInsert);
+      await createEspeces(this.especesToInsert, loggedUser);
     }
   };
 }

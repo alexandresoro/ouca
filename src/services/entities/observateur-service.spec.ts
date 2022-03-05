@@ -7,6 +7,7 @@ import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import * as entitiesUtils from "./entities-utils";
 import {
+  createObservateurs,
   deleteObservateur,
   findObservateur,
   findObservateurs,
@@ -318,4 +319,26 @@ test("should return an error when deleting a non-owned observer as non-admin", a
   await expect(deleteObservateur(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
   expect(prismaMock.observateur.delete).toHaveBeenCalledTimes(0);
+});
+
+test("should create new observers", async () => {
+  const observersData = [
+    mock<Omit<Prisma.ObservateurCreateManyInput, "ownerId">>(),
+    mock<Omit<Prisma.ObservateurCreateManyInput, "ownerId">>(),
+    mock<Omit<Prisma.ObservateurCreateManyInput, "ownerId">>()
+  ];
+
+  const loggedUser = mock<LoggedUser>();
+
+  await createObservateurs(observersData, loggedUser);
+
+  expect(prismaMock.observateur.createMany).toHaveBeenCalledTimes(1);
+  expect(prismaMock.observateur.createMany).toHaveBeenLastCalledWith({
+    data: observersData.map((observer) => {
+      return {
+        ...observer,
+        ownerId: loggedUser.id
+      };
+    })
+  });
 });

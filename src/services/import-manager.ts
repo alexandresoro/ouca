@@ -1,3 +1,4 @@
+import { DatabaseRole } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { stringify } from "csv-stringify/sync";
 import { writeFileSync } from "fs";
@@ -17,6 +18,7 @@ import {
   IMPORT_FAILED,
   VALIDATION_PROGRESS
 } from "../objects/import/import-update-message";
+import { LoggedUser } from "../types/LoggedUser";
 import { logger } from "../utils/logger";
 import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths";
 
@@ -25,12 +27,14 @@ const importStatuses: Map<string, ImportStatusStructure> = new Map();
 type ImportStatusStructure = {
   status: ImportStatusEnum;
   worker: Worker;
+  owner: LoggedUser;
   statusDetails?: unknown;
 };
 
 type ImportOngoingStructure = {
   status: typeof ImportStatusEnum.Ongoing;
   worker: Worker;
+  owner: LoggedUser;
   statusDetails?: {
     subStatus: OngoingSubStatus;
     ongoingValidationStats?: OngoingValidationStats;
@@ -40,6 +44,7 @@ type ImportOngoingStructure = {
 type ImportCompleteStructure = {
   status: typeof ImportStatusEnum.Complete;
   worker: Worker;
+  owner: LoggedUser;
   statusDetails?: {
     importErrorsReportFile?: string | undefined;
     nbErrors?: number | undefined;
@@ -49,20 +54,24 @@ type ImportCompleteStructure = {
 type ImportGlobalErrorStructure = {
   status: typeof ImportStatusEnum.Failed;
   worker: Worker;
+  owner: LoggedUser;
   statusDetails?: {
     type: ImportErrorType;
     description: number | string | undefined;
   };
 };
 
-export const startImportTask = (importId: string, importType: ImportType) => {
-  logger.debug(`Creating new worker for import id ${importId} and type ${importType}`);
+export const startImportTask = (importId: string, importType: ImportType, loggedUser: LoggedUser) => {
+  logger.debug(
+    `Creating new worker for import id ${importId} and type ${importType} initiatied by user ${loggedUser.id}`
+  );
 
   const worker = new Worker("./services/import-worker.js", {
     argv: process.argv.slice(2),
     workerData: {
       importId,
-      importType
+      importType,
+      loggedUser
     }
   });
 
@@ -180,17 +189,23 @@ export const startImportTask = (importId: string, importType: ImportType) => {
 
   importStatuses.set(importId, {
     status: ImportStatusEnum.NotStarted,
-    worker
+    worker,
+    owner: loggedUser
   });
 };
 
-export const getImportStatus = (importId: string): Promise<ImportStatus> | null => {
+export const getImportStatus = (importId: string, loggedUser: LoggedUser): Promise<ImportStatus> | null => {
   if (!importStatuses.has(importId)) {
     // No status found for this import
     return null;
   }
 
   const importStatus = importStatuses.get(importId);
+
+  // Check that the logged user is allowed to retrieve this status
+  if (importStatus?.owner.id !== loggedUser.id && loggedUser.role !== DatabaseRole.admin) {
+    return null;
+  }
 
   switch (importStatus?.status) {
     case ImportStatusEnum.NotStarted:

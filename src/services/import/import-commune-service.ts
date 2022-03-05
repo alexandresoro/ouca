@@ -1,14 +1,15 @@
 import { Commune, Departement } from "@prisma/client";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
+import { LoggedUser } from "../../types/LoggedUser";
 import { createCommunes, findAllCommunes } from "../entities/commune-service";
 import { findAllDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 
 export class ImportCommuneService extends ImportService {
   private departements!: Departement[];
-  private communes!: (Commune | Omit<Commune, "id">)[];
+  private communes!: (Commune | Omit<Commune, "id" | "ownerId">)[];
 
-  private communesToInsert!: Omit<Commune, "id">[];
+  private communesToInsert!: Omit<Commune, "id" | "ownerId">[];
 
   protected getNumberOfColumns = (): number => {
     return 3;
@@ -54,9 +55,9 @@ export class ImportCommuneService extends ImportService {
     return null;
   };
 
-  protected persistAllValidEntities = async (): Promise<void> => {
+  protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.communesToInsert.length) {
-      await createCommunes(this.communesToInsert);
+      await createCommunes(this.communesToInsert, loggedUser);
     }
   };
 }

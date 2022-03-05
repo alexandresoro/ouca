@@ -204,9 +204,13 @@ export const deleteSexe = async (id: number, loggedUser: LoggedUser): Promise<Se
   });
 };
 
-export const createSexes = async (sexes: Omit<Sexe, "id">[]): Promise<Prisma.BatchPayload> => {
-  // TODO add user ownership
+export const createSexes = async (
+  sexes: Omit<Prisma.SexeCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.sexe.createMany({
-    data: sexes
+    data: sexes.map((sexe) => {
+      return { ...sexe, ownerId: loggedUser.id };
+    })
   });
 };

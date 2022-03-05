@@ -10,7 +10,7 @@ export class ImportedDepartement {
     this.code = departementTab[CODE_INDEX].trim();
   }
 
-  buildDepartement = (): Omit<Departement, "id"> => {
+  buildDepartement = (): Pick<Departement, "code"> => {
     return {
       code: this.code
     };

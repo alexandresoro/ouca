@@ -1,4 +1,5 @@
 import { Observateur, Prisma } from "@prisma/client";
+import { LoggedUser } from "../../types/LoggedUser";
 import { createObservateurs, findObservateurs } from "../entities/observateur-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
@@ -12,7 +13,10 @@ export class ImportObservateurService extends ImportEntiteAvecLibelleService {
     return "Cet observateur";
   }
 
-  protected saveEntities = (observateurs: Omit<Observateur, "id">[]): Promise<Prisma.BatchPayload> => {
-    return createObservateurs(observateurs);
+  protected saveEntities = (
+    observateurs: Omit<Observateur, "id" | "ownerId">[],
+    loggedUser: LoggedUser
+  ): Promise<Prisma.BatchPayload> => {
+    return createObservateurs(observateurs, loggedUser);
   };
 }

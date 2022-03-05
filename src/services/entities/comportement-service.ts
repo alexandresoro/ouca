@@ -6,6 +6,7 @@ import {
   QueryPaginatedComportementsArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
@@ -181,7 +182,10 @@ export const findPaginatedComportements = async (
   };
 };
 
-export const upsertComportement = async (args: MutationUpsertComportementArgs): Promise<Comportement> => {
+export const upsertComportement = async (
+  args: MutationUpsertComportementArgs,
+  loggedUser: LoggedUser
+): Promise<Comportement> => {
   const { id, data } = args;
   if (id) {
     return prisma.comportement.update({
@@ -189,7 +193,7 @@ export const upsertComportement = async (args: MutationUpsertComportementArgs): 
       data
     });
   } else {
-    return prisma.comportement.create({ data });
+    return prisma.comportement.create({ data: { ...data, ownerId: loggedUser.id } });
   }
 };
 
@@ -201,8 +205,13 @@ export const deleteComportement = async (id: number): Promise<Comportement> => {
   });
 };
 
-export const createComportements = async (comportements: Omit<Comportement, "id">[]): Promise<Prisma.BatchPayload> => {
+export const createComportements = async (
+  comportements: Omit<Prisma.ComportementCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.comportement.createMany({
-    data: comportements
+    data: comportements.map((comportement) => {
+      return { ...comportement, ownerId: loggedUser.id };
+    })
   });
 };

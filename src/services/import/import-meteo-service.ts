@@ -1,9 +1,9 @@
 import { Meteo, Prisma } from "@prisma/client";
+import { LoggedUser } from "../../types/LoggedUser";
 import { createMeteos, findAllMeteos } from "../entities/meteo-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportMeteoService extends ImportEntiteAvecLibelleService {
-
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
     this.entities = await findAllMeteos();
@@ -13,7 +13,10 @@ export class ImportMeteoService extends ImportEntiteAvecLibelleService {
     return "Cette météo";
   }
 
-  protected saveEntities = (ages: Omit<Meteo, 'id'>[]): Promise<Prisma.BatchPayload> => {
-    return createMeteos(ages);
+  protected saveEntities = (
+    ages: Omit<Meteo, "id" | "ownerId">[],
+    loggedUser: LoggedUser
+  ): Promise<Prisma.BatchPayload> => {
+    return createMeteos(ages, loggedUser);
   };
 }

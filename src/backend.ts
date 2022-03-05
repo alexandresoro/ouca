@@ -1,5 +1,4 @@
-import { DatabaseRole } from "@prisma/client";
-import { ApolloServerPluginDrainHttpServer, AuthenticationError } from "apollo-server-core";
+import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { ApolloServer } from "apollo-server-fastify";
 import { randomUUID } from "crypto";
 import { fastify } from "fastify";
@@ -13,12 +12,12 @@ import path from "path";
 import { pipeline } from "stream";
 import { promisify } from "util";
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
-import resolvers, { Context } from "./graphql/resolvers";
+import { getGraphQLContext } from "./graphql/graphql-context";
+import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typedefs";
 import { ImportType, IMPORT_TYPE } from "./model/import-types";
 import { startImportTask } from "./services/import-manager";
-import { validateAndExtractUserToken } from "./services/token-service";
-import prisma from "./sql/prisma";
+import { getLoggedUser, validateAndExtractUserToken } from "./services/token-service";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
 import { checkAndCreateFolders, DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
@@ -35,34 +34,7 @@ const apolloServer = new ApolloServer({
     ApolloServerPluginDrainHttpServer({ httpServer: server.server }),
     apolloRequestLogger
   ],
-  context: async ({ request, reply }): Promise<Context> => {
-    // Extract the token from the authentication cookie, if any
-    const tokenPayload = await validateAndExtractUserToken(request, reply).catch((e) => {
-      throw new AuthenticationError(e as string);
-    });
-
-    return {
-      request,
-      reply,
-      userId: tokenPayload?.sub ?? null,
-      username: (tokenPayload?.name as string) ?? null,
-      role: (tokenPayload?.roles as DatabaseRole) ?? null
-    };
-  }
-});
-
-// Prisma queries logger
-prisma.$on("query", (e) => {
-  logger.trace(e);
-});
-prisma.$on("error", (e) => {
-  logger.error(e);
-});
-prisma.$on("warn", (e) => {
-  logger.warn(e);
-});
-prisma.$on("info", (e) => {
-  logger.info(e);
+  context: getGraphQLContext
 });
 
 checkAndCreateFolders();
@@ -106,7 +78,11 @@ checkAndCreateFolders();
   // Upload import path
   server.post<{ Params: { entityName: string } }>("/uploads/:entityName", async (req, reply) => {
     const tokenPayload = await validateAndExtractUserToken(req, reply);
-    if (!tokenPayload?.sub) {
+    if (!tokenPayload) {
+      return reply.code(401).send();
+    }
+    const loggedUser = getLoggedUser(tokenPayload);
+    if (!loggedUser) {
       return reply.code(401).send();
     }
 
@@ -126,7 +102,7 @@ checkAndCreateFolders();
 
     await promisify(pipeline)(data.file, fs.createWriteStream(path.join(IMPORTS_DIR_PATH, uploadId)));
 
-    startImportTask(uploadId, params.entityName as ImportType);
+    startImportTask(uploadId, params.entityName as ImportType, loggedUser);
 
     await reply.send(
       JSON.stringify({

@@ -6,6 +6,7 @@ import {
   QueryPaginatedEstimationsDistanceArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import {
   getEntiteAvecLibelleFilterClause,
@@ -113,7 +114,8 @@ export const findPaginatedEstimationsDistance = async (
 };
 
 export const upsertEstimationDistance = async (
-  args: MutationUpsertEstimationDistanceArgs
+  args: MutationUpsertEstimationDistanceArgs,
+  loggedUser: LoggedUser
 ): Promise<EstimationDistance> => {
   const { id, data } = args;
   if (id) {
@@ -122,7 +124,7 @@ export const upsertEstimationDistance = async (
       data
     });
   } else {
-    return prisma.estimationDistance.create({ data });
+    return prisma.estimationDistance.create({ data: { ...data, ownerId: loggedUser.id } });
   }
 };
 
@@ -135,9 +137,12 @@ export const deleteEstimationDistance = async (id: number): Promise<EstimationDi
 };
 
 export const createEstimationsDistance = async (
-  estimationsDistance: Omit<EstimationDistance, "id">[]
+  estimationsDistance: Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
 ): Promise<Prisma.BatchPayload> => {
   return prisma.estimationDistance.createMany({
-    data: estimationsDistance
+    data: estimationsDistance.map((estimationDistance) => {
+      return { ...estimationDistance, ownerId: loggedUser.id };
+    })
   });
 };

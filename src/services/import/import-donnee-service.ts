@@ -17,6 +17,7 @@ import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-sy
 import { InputDonnee } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
+import { LoggedUser } from "../../types/LoggedUser";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { findAges } from "../entities/age-service";
 import { findAllCommunes } from "../entities/commune-service";
@@ -59,10 +60,10 @@ export class ImportDonneeService extends ImportService {
     return 32;
   };
 
-  protected init = async (): Promise<void> => {
+  protected init = async (loggedUser: LoggedUser): Promise<void> => {
     this.newDonnees = [];
 
-    const coordinatesSystemType = await findCoordinatesSystem();
+    const coordinatesSystemType = await findCoordinatesSystem(loggedUser);
     if (!coordinatesSystemType) {
       return Promise.reject(
         "Veuillez choisir le système de coordonnées de l'application dans la page de configuration"
@@ -87,7 +88,7 @@ export class ImportDonneeService extends ImportService {
     this.existingDonnees = await findAllDonnees();
   };
 
-  protected validateAndPrepareEntity = async (donneeTab: string[]): Promise<string | null> => {
+  protected validateAndPrepareEntity = async (donneeTab: string[], loggedUser: LoggedUser): Promise<string | null> => {
     const importedDonnee: ImportedDonnee = new ImportedDonnee(donneeTab, this.coordinatesSystem);
 
     const dataValidity = importedDonnee.checkValidity();
@@ -332,9 +333,12 @@ export class ImportDonneeService extends ImportService {
 
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
-      const inventaire = await upsertInventaire({
-        data: inputInventaire
-      });
+      const inventaire = await upsertInventaire(
+        {
+          data: inputInventaire
+        },
+        loggedUser
+      );
       inventaireId = inventaire?.id;
 
       // Add the inventaire to the list

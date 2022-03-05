@@ -22,7 +22,7 @@ export class ImportedEspece {
     this.nomLatin = especeTab[NOM_LATIN_INDEX].trim();
   }
 
-  buildEspece = (classeId: number): Omit<Espece, "id"> => {
+  buildEspece = (classeId: number): Pick<Espece, "classeId" | "code" | "nomFrancais" | "nomLatin"> => {
     return {
       classeId,
       code: this.code,

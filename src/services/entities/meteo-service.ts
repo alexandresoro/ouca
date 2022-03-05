@@ -1,6 +1,7 @@
 import { Meteo, Prisma } from "@prisma/client";
 import { MeteosPaginatedResult, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import {
   getEntiteAvecLibelleFilterClause,
@@ -108,7 +109,7 @@ export const findPaginatedMeteos = async (
   };
 };
 
-export const upsertMeteo = async (args: MutationUpsertMeteoArgs): Promise<Meteo> => {
+export const upsertMeteo = async (args: MutationUpsertMeteoArgs, loggedUser: LoggedUser): Promise<Meteo> => {
   const { id, data } = args;
   if (id) {
     return prisma.meteo.update({
@@ -116,7 +117,7 @@ export const upsertMeteo = async (args: MutationUpsertMeteoArgs): Promise<Meteo>
       data
     });
   } else {
-    return prisma.meteo.create({ data });
+    return prisma.meteo.create({ data: { ...data, ownerId: loggedUser.id } });
   }
 };
 
@@ -128,8 +129,13 @@ export const deleteMeteo = async (id: number): Promise<Meteo> => {
   });
 };
 
-export const createMeteos = async (meteos: Omit<Meteo, "id">[]): Promise<Prisma.BatchPayload> => {
+export const createMeteos = async (
+  meteos: Omit<Prisma.MeteoCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.meteo.createMany({
-    data: meteos
+    data: meteos.map((meteo) => {
+      return { ...meteo, ownerId: loggedUser.id };
+    })
   });
 };

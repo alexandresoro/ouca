@@ -31,7 +31,9 @@ export class ImportedLieuDit {
     this.coordinatesSystem = coordinatesSystem;
   }
 
-  buildLieudit = (communeId: number): Omit<Lieudit, "id"> => {
+  buildLieudit = (
+    communeId: number
+  ): Pick<Lieudit, "communeId" | "nom" | "altitude" | "longitude" | "latitude" | "coordinatesSystem"> => {
     return {
       communeId,
       nom: this.nom,

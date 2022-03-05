@@ -5,7 +5,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "./age-service";
+import { createAges, deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "./age-service";
 import * as entitiesUtils from "./entities-utils";
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
@@ -292,4 +292,26 @@ test("should return an error when deleting a non-owned age as non-admin", async 
   await expect(deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
   expect(prismaMock.age.delete).toHaveBeenCalledTimes(0);
+});
+
+test("should create new ages", async () => {
+  const agesData = [
+    mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>(),
+    mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>(),
+    mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>()
+  ];
+
+  const loggedUser = mock<LoggedUser>();
+
+  await createAges(agesData, loggedUser);
+
+  expect(prismaMock.age.createMany).toHaveBeenCalledTimes(1);
+  expect(prismaMock.age.createMany).toHaveBeenLastCalledWith({
+    data: agesData.map((age) => {
+      return {
+        ...age,
+        ownerId: loggedUser.id
+      };
+    })
+  });
 });

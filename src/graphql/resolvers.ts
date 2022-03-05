@@ -1,6 +1,5 @@
 import { Commune as CommuneEntity, DatabaseRole, Espece as EspeceEntity } from "@prisma/client";
 import { ApolloError, AuthenticationError, ForbiddenError } from "apollo-server-core";
-import { FastifyReply } from "fastify";
 import {
   Age,
   AgesPaginatedResult,
@@ -176,225 +175,209 @@ import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
 import { createUser, deleteUser, getUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
 import { seedDatabase } from "../sql/seed";
-import { LoggedUser } from "../types/LoggedUser";
 import { logger } from "../utils/logger";
+import { GraphQLContext } from "./graphql-context";
 
-export type Context = {
-  request: unknown;
-  reply: FastifyReply;
-  userId: string | null;
-  username: string | null;
-  role: DatabaseRole | null;
-};
+const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 
-const validateUserAuthentication = (context: Context): LoggedUser => {
-  if (!context?.userId || !context?.role) {
-    throw new AuthenticationError("User is not authenticated.");
-  }
-  return {
-    id: context?.userId,
-    role: context.role
-  };
-};
-
-const resolvers: Resolvers<Context> = {
+const resolvers: Resolvers<GraphQLContext> = {
   Query: {
     age: async (_source, args, context): Promise<Age | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findAge(args.id);
     },
     classe: async (_source, args, context): Promise<Classe | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findClasse(args.id);
     },
     commune: async (_source, args, context): Promise<Omit<Commune, "departement"> | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findCommune(args.id);
     },
     comportement: async (_source, args, context): Promise<Comportement | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findComportement(args.id);
     },
     comportementList: async (_source, args, context): Promise<Comportement[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findComportementsByIds(args.ids);
     },
     departement: async (_source, args, context): Promise<Departement | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findDepartement(args.id);
     },
     donnee: (_source, args, context): { id: number } => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return {
         id: args.id
       };
     },
     espece: async (_source, args, context): Promise<Omit<Espece, "classe"> | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findEspece(args.id);
     },
     estimationDistance: async (_source, args, context): Promise<EstimationDistance | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findEstimationDistance(args.id);
     },
     estimationNombre: async (_source, args, context): Promise<EstimationNombre | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findEstimationNombre(args.id);
     },
     inventaire: async (_source, args, context): Promise<Omit<Inventaire, "lieuDit"> | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findInventaire(args.id);
     },
     lieuDit: async (_source, args, context): Promise<Omit<LieuDit, "commune"> | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findLieuDit(args.id);
     },
     meteo: async (_source, args, context): Promise<Meteo | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findMeteo(args.id);
     },
     meteoList: async (_source, args, context): Promise<Meteo[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findMeteosByIds(args.ids);
     },
     milieu: async (_source, args, context): Promise<Milieu | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findMilieu(args.id);
     },
     milieuList: async (_source, args, context): Promise<Milieu[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findMilieuxByIds(args.ids);
     },
     observateur: async (_source, args, context): Promise<Observateur | null> => {
-      const user = validateUserAuthentication(context);
-      return findObservateur(args.id, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return findObservateur(args.id, context.user);
     },
     observateurList: async (_source, args, context): Promise<Observateur[]> => {
-      const user = validateUserAuthentication(context);
-      return findObservateursByIds(args.ids, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return findObservateursByIds(args.ids, context.user);
     },
     sexe: async (_source, args, context): Promise<Sexe | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findSexe(args.id);
     },
     specimenCountByAge: (_source, args, context): Promise<AgeWithSpecimensCount[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return countSpecimensByAgeForEspeceId(args?.especeId);
     },
     specimenCountBySexe: (_source, args, context): Promise<SexeWithSpecimensCount[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return countSpecimensBySexeForEspeceId(args?.especeId);
     },
     ages: async (_source, args, context): Promise<Age[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findAges(args?.params);
     },
     classes: async (_source, args, context): Promise<Classe[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findClasses(args?.params);
     },
     communes: async (_source, args, context): Promise<Omit<Commune, "departement">[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findCommunes(args);
     },
     comportements: async (_source, args, context): Promise<Comportement[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findComportements(args?.params);
     },
     departements: async (_source, args, context): Promise<Departement[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findDepartements(args?.params);
     },
     especes: async (_source, args, context): Promise<Omit<Espece, "classe">[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findEspeces(args);
     },
     estimationsDistance: async (_source, args, context): Promise<EstimationDistance[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findEstimationsDistance(args?.params);
     },
     estimationsNombre: async (_source, args, context): Promise<EstimationNombre[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findEstimationsNombre(args?.params);
     },
     lieuxDits: async (_source, args, context): Promise<Omit<LieuDit, "commune">[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findLieuxDits(args);
     },
     meteos: async (_source, args, context): Promise<Meteo[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findMeteos();
     },
     milieux: async (_source, args, context): Promise<Milieu[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findMilieux(args?.params);
     },
     observateurs: async (_source, args, context): Promise<Observateur[]> => {
-      const user = validateUserAuthentication(context);
-      return findObservateurs(args?.params, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return findObservateurs(args?.params, context.user);
     },
     sexes: async (_source, args, context): Promise<Sexe[]> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findSexes(args?.params);
     },
     lastDonneeId: async (_source, args, context): Promise<number | null> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findLastDonneeId();
     },
     nextRegroupement: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findNextRegroupement();
     },
     paginatedAges: async (_source, args, context): Promise<AgesPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedAges(args);
     },
     paginatedClasses: async (_source, args, context): Promise<ClassesPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedClasses(args);
     },
     paginatedCommunes: async (_source, args, context): Promise<CommunesPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedCommunes(args);
     },
     paginatedComportements: async (_source, args, context): Promise<ComportementsPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedComportements(args);
     },
     paginatedDepartements: async (_source, args, context): Promise<DepartementsPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedDepartements(args);
     },
     paginatedEspeces: async (_source, args, context): Promise<EspecesPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedEspeces(args);
     },
     paginatedEstimationsDistance: async (_source, args, context): Promise<EstimationsDistancePaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedEstimationsDistance(args);
     },
     paginatedEstimationsNombre: async (_source, args, context): Promise<EstimationsNombrePaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedEstimationsNombre(args);
     },
     paginatedLieuxdits: async (_source, args, context): Promise<LieuxDitsPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedLieuxDits(args);
     },
     paginatedMeteos: async (_source, args, context): Promise<MeteosPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedMeteos(args);
     },
     paginatedMilieux: async (_source, args, context): Promise<MilieuxPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedMilieux(args);
     },
     paginatedObservateurs: async (_source, args, context): Promise<ObservateursPaginatedResult> => {
-      const user = validateUserAuthentication(context);
-      return findPaginatedObservateurs(args, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return findPaginatedObservateurs(args, context.user);
     },
     paginatedSexes: async (_source, args, context): Promise<SexesPaginatedResult> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedSexes(args);
     },
     paginatedSearchEspeces: async (
@@ -404,7 +387,7 @@ const resolvers: Resolvers<Context> = {
     ): Promise<{
       count: number;
     }> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       const { searchCriteria, ...rest } = args ?? {};
       return findPaginatedEspeces(rest, searchCriteria);
     },
@@ -415,161 +398,161 @@ const resolvers: Resolvers<Context> = {
     ): Promise<{
       count: number;
     }> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedDonneesByCriteria(args);
     },
     importStatus: async (_source, args, context): Promise<ImportStatus | null> => {
-      validateUserAuthentication(context);
-      return getImportStatus(args.importId);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return getImportStatus(args.importId, context.user);
     },
     exportAges: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateAgesExport();
     },
     exportClasses: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateClassesExport();
     },
     exportCommunes: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateCommunesExport();
     },
     exportComportements: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateComportementsExport();
     },
     exportDepartements: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateDepartementsExport();
     },
     exportEstimationsDistance: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateEstimationsDistanceExport();
     },
     exportEstimationsNombre: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateEstimationsNombreExport();
     },
     exportDonnees: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateDonneesExport(args?.searchCriteria);
     },
     exportEspeces: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateEspecesExport();
     },
     exportLieuxDits: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateLieuxDitsExport();
     },
     exportMeteos: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateMeteosExport();
     },
     exportMilieux: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateMilieuxExport();
     },
     exportObservateurs: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateObservateursExport();
     },
     exportSexes: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return generateSexesExport();
     },
     dumpDatabase: async (_source, args, context): Promise<string> => {
-      validateUserAuthentication(context);
-      if (context?.role !== DatabaseRole.admin) {
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      if (context.user.role !== DatabaseRole.admin) {
         throw new ForbiddenError("Database dump is not allowed for the current user");
       }
       return saveDatabaseRequest();
     },
     settings: async (_source, args, context): Promise<Settings | null> => {
-      const user = validateUserAuthentication(context);
-      return findAppConfiguration(user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return findAppConfiguration(context.user);
     },
     version: async (_source, args, context): Promise<Version> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findVersion();
     }
   },
   Mutation: {
     deleteAge: async (_source, args, context): Promise<number> => {
-      const user = validateUserAuthentication(context);
-      return deleteAge(args.id, user).then(({ id }) => id);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return deleteAge(args.id, context.user).then(({ id }) => id);
     },
     deleteClasse: async (_source, args, context): Promise<number> => {
-      const user = validateUserAuthentication(context);
-      return deleteClasse(args.id, user).then(({ id }) => id);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return deleteClasse(args.id, context.user).then(({ id }) => id);
     },
     deleteCommune: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteCommune(args.id).then(({ id }) => id);
     },
     deleteComportement: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteComportement(args.id).then(({ id }) => id);
     },
     deleteDepartement: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteDepartement(args.id).then(({ id }) => id);
     },
     deleteDonnee: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteDonnee(args.id).then(({ id }) => id);
     },
     deleteEspece: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteEspece(args.id).then(({ id }) => id);
     },
     deleteEstimationDistance: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteEstimationDistance(args.id).then(({ id }) => id);
     },
     deleteEstimationNombre: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteEstimationNombre(args.id).then(({ id }) => id);
     },
     deleteLieuDit: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteLieuDit(args.id).then(({ id }) => id);
     },
     deleteMeteo: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteMeteo(args.id).then(({ id }) => id);
     },
     deleteMilieu: async (_source, args, context): Promise<number> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return deleteMilieu(args.id).then(({ id }) => id);
     },
     deleteObservateur: async (_source, args, context): Promise<number> => {
-      const user = validateUserAuthentication(context);
-      return deleteObservateur(args.id, user).then(({ id }) => id);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return deleteObservateur(args.id, context.user).then(({ id }) => id);
     },
     deleteSexe: async (_source, args, context): Promise<number> => {
-      const user = validateUserAuthentication(context);
-      return deleteSexe(args.id, user).then(({ id }) => id);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return deleteSexe(args.id, context.user).then(({ id }) => id);
     },
     upsertAge: async (_source, args, context): Promise<Age> => {
-      const user = validateUserAuthentication(context);
-      return upsertAge(args, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertAge(args, context.user);
     },
     upsertClasse: async (_source, args, context): Promise<Classe> => {
-      const user = validateUserAuthentication(context);
-      return upsertClasse(args, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertClasse(args, context.user);
     },
     upsertCommune: async (_source, args, context): Promise<CommuneEntity> => {
-      validateUserAuthentication(context);
-      return upsertCommune(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertCommune(args, context.user);
     },
     upsertComportement: async (_source, args, context): Promise<Comportement> => {
-      validateUserAuthentication(context);
-      return upsertComportement(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertComportement(args, context.user);
     },
     upsertDepartement: async (_source, args, context): Promise<Departement> => {
-      validateUserAuthentication(context);
-      return upsertDepartement(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertDepartement(args, context.user);
     },
     upsertDonnee: async (
       _source,
@@ -579,7 +562,7 @@ const resolvers: Resolvers<Context> = {
       failureReason?: string;
       donnee?: DonneeWithRelations;
     }> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       try {
         const upsertedDonnee = await upsertDonnee(args);
         return {
@@ -593,16 +576,16 @@ const resolvers: Resolvers<Context> = {
       }
     },
     upsertEspece: async (_source, args, context): Promise<EspeceEntity> => {
-      validateUserAuthentication(context);
-      return upsertEspece(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertEspece(args, context.user);
     },
     upsertEstimationDistance: async (_source, args, context): Promise<EstimationDistance> => {
-      validateUserAuthentication(context);
-      return upsertEstimationDistance(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertEstimationDistance(args, context.user);
     },
     upsertEstimationNombre: async (_source, args, context): Promise<EstimationNombre> => {
-      validateUserAuthentication(context);
-      return upsertEstimationNombre(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertEstimationNombre(args, context.user);
     },
     upsertInventaire: async (
       _source,
@@ -612,9 +595,9 @@ const resolvers: Resolvers<Context> = {
       failureReason?: UpsertInventaireFailureReason;
       inventaire?: InventaireWithRelations;
     }> => {
-      validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       try {
-        const upsertedInventaire = await upsertInventaire(args);
+        const upsertedInventaire = await upsertInventaire(args, context.user);
         return {
           inventaire: upsertedInventaire
         };
@@ -626,44 +609,44 @@ const resolvers: Resolvers<Context> = {
       }
     },
     upsertLieuDit: async (_source, args, context): Promise<LieuDitWithCoordinatesAsNumber> => {
-      validateUserAuthentication(context);
-      return upsertLieuDit(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertLieuDit(args, context.user);
     },
     upsertMeteo: async (_source, args, context): Promise<Meteo> => {
-      validateUserAuthentication(context);
-      return upsertMeteo(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertMeteo(args, context.user);
     },
     upsertMilieu: async (_source, args, context): Promise<Milieu> => {
-      validateUserAuthentication(context);
-      return upsertMilieu(args);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertMilieu(args, context.user);
     },
     upsertObservateur: async (_source, args, context): Promise<Observateur> => {
-      const user = validateUserAuthentication(context);
-      return upsertObservateur(args, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertObservateur(args, context.user);
     },
     upsertSexe: async (_source, args, context): Promise<Sexe> => {
-      const user = validateUserAuthentication(context);
-      return upsertSexe(args, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return upsertSexe(args, context.user);
     },
     updateSettings: async (_source, { appConfiguration }, context): Promise<Settings> => {
-      const user = validateUserAuthentication(context);
-      return persistUserSettings(appConfiguration, user);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      return persistUserSettings(appConfiguration, context.user);
     },
     initializeDatabase: async (): Promise<boolean> => {
       await seedDatabase();
       return true;
     },
     resetDatabase: async (_source, args, context): Promise<boolean> => {
-      validateUserAuthentication(context);
-      if (context?.role !== DatabaseRole.admin) {
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      if (context.user.role !== DatabaseRole.admin) {
         throw new ForbiddenError("Database reset is not allowed for the current user");
       }
       await resetDatabase();
       return true;
     },
     updateDatabase: async (_source, args, context): Promise<boolean> => {
-      validateUserAuthentication(context);
-      if (context?.role !== DatabaseRole.admin) {
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+      if (context.user.role !== DatabaseRole.admin) {
         throw new ForbiddenError("Database update is not allowed for the current user");
       }
       await executeDatabaseMigration();
@@ -679,8 +662,8 @@ const resolvers: Resolvers<Context> = {
       if (usersCount === 0) {
         userInfo = await createUser(args.signupData, DatabaseRole.admin);
       } else {
-        validateUserAuthentication(context);
-        if (context?.role !== DatabaseRole.admin) {
+        if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
+        if (context.user.role !== DatabaseRole.admin) {
           throw new ForbiddenError("User account creation is not allowed for the current user");
         }
         userInfo = await createUser(args.signupData, args?.role ?? DatabaseRole.contributor);
@@ -707,9 +690,9 @@ const resolvers: Resolvers<Context> = {
       throw new AuthenticationError("Authentication failed");
     },
     userRefresh: async (_source, args, context): Promise<UserInfo | null> => {
-      const user = validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
 
-      const userInfo = await getUser(user.id);
+      const userInfo = await getUser(context.user.id);
       if (userInfo) {
         await createAndAddSignedTokenAsCookie(context.reply, userInfo);
         return userInfo;
@@ -718,20 +701,20 @@ const resolvers: Resolvers<Context> = {
       return null;
     },
     userLogout: async (_source, args, context): Promise<boolean> => {
-      const user = validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       await deleteTokenCookie(context.reply);
 
-      logger.debug(`User ID ${user.id} logged out`);
+      logger.debug(`User ID ${context.user.id} logged out`);
 
       return true;
     },
     userEdit: async (_source, args, context): Promise<UserInfo> => {
-      const user = validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
 
       try {
-        const updatedUser = await updateUser(args.id, args.editUserData, user);
+        const updatedUser = await updateUser(args.id, args.editUserData, context.user);
 
-        if (updatedUser?.id === user.id) {
+        if (updatedUser?.id === context.user?.id) {
           await createAndAddSignedTokenAsCookie(context.reply, updatedUser);
         }
         return updatedUser;
@@ -740,15 +723,15 @@ const resolvers: Resolvers<Context> = {
       }
     },
     userDelete: async (_source, args, context): Promise<boolean> => {
-      const user = validateUserAuthentication(context);
+      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
 
       try {
-        await deleteUser(args.id, user);
+        await deleteUser(args.id, context.user);
       } catch (e) {
         throw new ApolloError("User deletion request failed");
       }
 
-      if (args?.id === user.id) {
+      if (args?.id === context.user?.id) {
         await deleteTokenCookie(context.reply);
       }
 

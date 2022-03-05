@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { ImportedEntiteAvecLibelle } from "../../objects/import/imported-entite-avec-libelle.object";
+import { LoggedUser } from "../../types/LoggedUser";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleService extends ImportService {
@@ -38,13 +39,16 @@ export abstract class ImportEntiteAvecLibelleService extends ImportService {
     return null;
   };
 
-  protected persistAllValidEntities = async (): Promise<void> => {
+  protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.entitiesToInsert.length) {
-      await this.saveEntities(this.entitiesToInsert);
+      await this.saveEntities(this.entitiesToInsert, loggedUser);
     }
   };
 
-  protected abstract saveEntities(entities: { libelle: string }[]): Promise<Prisma.BatchPayload>;
+  protected abstract saveEntities(
+    entities: { libelle: string }[],
+    loggedUser: LoggedUser
+  ): Promise<Prisma.BatchPayload>;
 
   protected abstract getThisEntityName(): string;
 }

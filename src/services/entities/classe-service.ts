@@ -244,9 +244,13 @@ export const deleteClasse = async (id: number, loggedUser: LoggedUser): Promise<
   });
 };
 
-export const createClasses = async (classes: Omit<Classe, "id">[]): Promise<Prisma.BatchPayload> => {
-  // TODO add user ownership
+export const createClasses = async (
+  classes: Omit<Prisma.ClasseCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.classe.createMany({
-    data: classes
+    data: classes.map((classe) => {
+      return { ...classe, ownerId: loggedUser.id };
+    })
   });
 };

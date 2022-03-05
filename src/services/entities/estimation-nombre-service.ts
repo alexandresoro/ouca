@@ -6,6 +6,7 @@ import {
   QueryPaginatedEstimationsNombreArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import {
   getEntiteAvecLibelleFilterClause,
@@ -113,7 +114,10 @@ export const findPaginatedEstimationsNombre = async (
   }
 };
 
-export const upsertEstimationNombre = async (args: MutationUpsertEstimationNombreArgs): Promise<EstimationNombre> => {
+export const upsertEstimationNombre = async (
+  args: MutationUpsertEstimationNombreArgs,
+  loggedUser: LoggedUser
+): Promise<EstimationNombre> => {
   const { id, data } = args;
   if (id) {
     return prisma.estimationNombre.update({
@@ -121,7 +125,7 @@ export const upsertEstimationNombre = async (args: MutationUpsertEstimationNombr
       data
     });
   } else {
-    return prisma.estimationNombre.create({ data });
+    return prisma.estimationNombre.create({ data: { ...data, ownerId: loggedUser.id } });
   }
 };
 
@@ -134,9 +138,12 @@ export const deleteEstimationNombre = async (id: number): Promise<EstimationNomb
 };
 
 export const createEstimationsNombre = async (
-  estimationsNombre: Omit<EstimationNombre, "id">[]
+  estimationsNombre: Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
 ): Promise<Prisma.BatchPayload> => {
   return prisma.estimationNombre.createMany({
-    data: estimationsNombre
+    data: estimationsNombre.map((estimationNombre) => {
+      return { ...estimationNombre, ownerId: loggedUser.id };
+    })
   });
 };

@@ -6,7 +6,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import * as entitiesUtils from "./entities-utils";
-import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "./sexe-service";
+import { createSexes, deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "./sexe-service";
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
@@ -292,4 +292,26 @@ test("should return an error when deleting a non-owned sex as non-admin", async 
   await expect(deleteSexe(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
   expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
+});
+
+test("should create new sexes", async () => {
+  const sexesData = [
+    mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>(),
+    mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>(),
+    mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>()
+  ];
+
+  const loggedUser = mock<LoggedUser>();
+
+  await createSexes(sexesData, loggedUser);
+
+  expect(prismaMock.sexe.createMany).toHaveBeenCalledTimes(1);
+  expect(prismaMock.sexe.createMany).toHaveBeenLastCalledWith({
+    data: sexesData.map((sex) => {
+      return {
+        ...sex,
+        ownerId: loggedUser.id
+      };
+    })
+  });
 });

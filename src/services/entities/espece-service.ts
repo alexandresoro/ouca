@@ -7,6 +7,7 @@ import {
   SearchDonneeCriteria
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { buildSearchDonneeCriteria } from "./donnee-service";
 import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
@@ -330,7 +331,7 @@ export const findPaginatedEspeces = async (
   };
 };
 
-export const upsertEspece = async (args: MutationUpsertEspeceArgs): Promise<Espece> => {
+export const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser): Promise<Espece> => {
   const { id, data } = args;
   if (id) {
     return prisma.espece.update({
@@ -338,7 +339,7 @@ export const upsertEspece = async (args: MutationUpsertEspeceArgs): Promise<Espe
       data
     });
   } else {
-    return prisma.espece.create({ data });
+    return prisma.espece.create({ data: { ...data, ownerId: loggedUser.id } });
   }
 };
 
@@ -350,8 +351,13 @@ export const deleteEspece = async (id: number): Promise<Espece> => {
   });
 };
 
-export const createEspeces = async (especes: Omit<Espece, "id">[]): Promise<Prisma.BatchPayload> => {
+export const createEspeces = async (
+  especes: Omit<Prisma.EspeceCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.espece.createMany({
-    data: especes
+    data: especes.map((espece) => {
+      return { ...espece, ownerId: loggedUser.id };
+    })
   });
 };

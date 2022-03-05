@@ -13,6 +13,7 @@ import {
   IMPORT_FAILED,
   VALIDATION_PROGRESS
 } from "../objects/import/import-update-message";
+import { LoggedUser } from "../types/LoggedUser";
 import { IMPORT_DIR } from "../utils/paths";
 import {
   IMPORT_COMPLETE_EVENT,
@@ -22,7 +23,11 @@ import {
 } from "./import/import-service";
 import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type";
 
-const { importId, importType } = workerData as { importId: string; importType: ImportType };
+const { importId, importType, loggedUser } = workerData as {
+  importId: string;
+  importType: ImportType;
+  loggedUser: LoggedUser;
+};
 
 const serviceWorker = getNewImportServiceForRequestType(importType);
 
@@ -63,7 +68,7 @@ const IMPORTS_DIR_PATH = path.join(process.cwd(), IMPORT_DIR);
 promisify(readFile)(path.join(IMPORTS_DIR_PATH, importId))
   .then((data) => {
     // This is the 100% CPU intensive task
-    serviceWorker.importFile(data.toString()).catch((error) => {
+    serviceWorker.importFile(data.toString(), loggedUser).catch((error) => {
       throw error;
     });
   })

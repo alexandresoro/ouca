@@ -1,12 +1,13 @@
 import { Departement } from "@prisma/client";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
+import { LoggedUser } from "../../types/LoggedUser";
 import { createDepartements, findAllDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {
-  private departements!: (Departement | Omit<Departement, "id">)[];
+  private departements!: (Departement | Omit<Departement, "id" | "ownerId">)[];
 
-  private departementsToInsert!: Omit<Departement, "id">[];
+  private departementsToInsert!: Omit<Departement, "id" | "ownerId">[];
 
   protected getNumberOfColumns = (): number => {
     return 1;
@@ -41,9 +42,9 @@ export class ImportDepartementService extends ImportService {
     return null;
   };
 
-  protected persistAllValidEntities = async (): Promise<void> => {
+  protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.departementsToInsert.length) {
-      await createDepartements(this.departementsToInsert);
+      await createDepartements(this.departementsToInsert, loggedUser);
     }
   };
 }

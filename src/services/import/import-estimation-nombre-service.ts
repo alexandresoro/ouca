@@ -1,5 +1,6 @@
 import { EstimationNombre, Prisma } from "@prisma/client";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
+import { LoggedUser } from "../../types/LoggedUser";
 import { createEstimationsNombre, findAllEstimationsNombre } from "../entities/estimation-nombre-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
@@ -17,7 +18,10 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
     return new ImportedEstimationNombre(entityTab);
   };
 
-  protected saveEntities = (estimationsNombre: Omit<EstimationNombre, "id">[]): Promise<Prisma.BatchPayload> => {
-    return createEstimationsNombre(estimationsNombre);
+  protected saveEntities = (
+    estimationsNombre: Omit<EstimationNombre, "id" | "ownerId">[],
+    loggedUser: LoggedUser
+  ): Promise<Prisma.BatchPayload> => {
+    return createEstimationsNombre(estimationsNombre, loggedUser);
   };
 }

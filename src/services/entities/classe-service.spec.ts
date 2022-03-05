@@ -6,6 +6,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
+  createClasses,
   deleteClasse,
   findClasse,
   findClasseOfEspeceId,
@@ -339,4 +340,26 @@ test("should return an error when deleting a non-owned class as non-admin", asyn
   await expect(deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
   expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
+});
+
+test("should create new classes", async () => {
+  const classesData = [
+    mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),
+    mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),
+    mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>()
+  ];
+
+  const loggedUser = mock<LoggedUser>();
+
+  await createClasses(classesData, loggedUser);
+
+  expect(prismaMock.classe.createMany).toHaveBeenCalledTimes(1);
+  expect(prismaMock.classe.createMany).toHaveBeenLastCalledWith({
+    data: classesData.map((classe) => {
+      return {
+        ...classe,
+        ownerId: loggedUser.id
+      };
+    })
+  });
 });

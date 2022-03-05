@@ -6,6 +6,7 @@ import {
   QueryPaginatedMilieuxArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
@@ -172,7 +173,7 @@ export const findPaginatedMilieux = async (
   };
 };
 
-export const upsertMilieu = async (args: MutationUpsertMilieuArgs): Promise<Milieu> => {
+export const upsertMilieu = async (args: MutationUpsertMilieuArgs, loggedUser: LoggedUser): Promise<Milieu> => {
   const { id, data } = args;
   if (id) {
     return prisma.milieu.update({
@@ -180,7 +181,7 @@ export const upsertMilieu = async (args: MutationUpsertMilieuArgs): Promise<Mili
       data
     });
   } else {
-    return prisma.milieu.create({ data });
+    return prisma.milieu.create({ data: { ...data, ownerId: loggedUser.id } });
   }
 };
 
@@ -192,8 +193,13 @@ export const deleteMilieu = async (id: number): Promise<Milieu> => {
   });
 };
 
-export const createMilieux = async (milieux: Omit<Milieu, "id">[]): Promise<Prisma.BatchPayload> => {
+export const createMilieux = async (
+  milieux: Omit<Prisma.MilieuCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.milieu.createMany({
-    data: milieux
+    data: milieux.map((milieu) => {
+      return { ...milieu, ownerId: loggedUser.id };
+    })
   });
 };

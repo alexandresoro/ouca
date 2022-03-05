@@ -6,6 +6,7 @@ import {
   QueryPaginatedCommunesArgs
 } from "../../model/graphql";
 import prisma from "../../sql/prisma";
+import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import {
@@ -236,7 +237,8 @@ export const findPaginatedCommunes = async (
         departement: {
           select: {
             id: true,
-            code: true
+            code: true,
+            ownerId: true
           }
         }
       },
@@ -294,7 +296,8 @@ export const findPaginatedCommunes = async (
           departement: {
             select: {
               id: true,
-              code: true
+              code: true,
+              ownerId: true
             }
           },
           _count: {
@@ -343,7 +346,8 @@ export const findPaginatedCommunes = async (
           departement: {
             select: {
               id: true,
-              code: true
+              code: true,
+              ownerId: true
             }
           }
         },
@@ -364,7 +368,7 @@ export const findPaginatedCommunes = async (
   };
 };
 
-export const upsertCommune = async (args: MutationUpsertCommuneArgs): Promise<Commune> => {
+export const upsertCommune = async (args: MutationUpsertCommuneArgs, loggedUser: LoggedUser): Promise<Commune> => {
   const { id, data } = args;
   if (id) {
     return prisma.commune.update({
@@ -372,7 +376,7 @@ export const upsertCommune = async (args: MutationUpsertCommuneArgs): Promise<Co
       data
     });
   } else {
-    return prisma.commune.create({ data });
+    return prisma.commune.create({ data: { ...data, ownerId: loggedUser.id } });
   }
 };
 
@@ -384,8 +388,13 @@ export const deleteCommune = async (id: number): Promise<Commune> => {
   });
 };
 
-export const createCommunes = async (communes: Omit<Commune, "id">[]): Promise<Prisma.BatchPayload> => {
+export const createCommunes = async (
+  communes: Omit<Prisma.CommuneCreateManyInput, "ownerId">[],
+  loggedUser: LoggedUser
+): Promise<Prisma.BatchPayload> => {
   return prisma.commune.createMany({
-    data: communes
+    data: communes.map((commune) => {
+      return { ...commune, ownerId: loggedUser.id };
+    })
   });
 };
