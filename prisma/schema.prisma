@@ -263,7 +263,7 @@ enum CoordinatesSystem {
 
 model Settings {
   id                        Int               @id @default(autoincrement()) @db.UnsignedSmallInt
-  userId                    String            @unique(map: "unique_user_id") @map("default_user_id")
+  userId                    String            @unique(map: "unique_user_id") @map("user_id")
   defaultObservateurId      Int?              @map("default_observateur_id") @db.UnsignedSmallInt
   defaultDepartementId      Int?              @map("default_departement_id") @db.UnsignedSmallInt
   defaultAgeId              Int?              @map("default_age_id") @db.UnsignedSmallInt
