@@ -2,10 +2,10 @@ import { DatabaseRole, User } from "@prisma/client";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { CookieSerializeOptions } from "fastify-cookie";
 import { JWTPayload, jwtVerify, SignJWT } from "jose";
-import prisma from "../sql/prisma";
 import { LoggedUser } from "../types/LoggedUser";
 import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
 import options from "../utils/options";
+import { getUser } from "./user-service";
 
 const TOKEN_KEY = "token";
 
@@ -42,14 +42,13 @@ export const validateAndExtractUserToken = async (
     });
 
     // Check that the user still exists in the database and has a valid role
-    const matchingDbUser = await prisma.user.findFirst({
-      where: {
-        id: tokenVerifyResult.payload.sub
-      }
-    });
+    if (!tokenVerifyResult.payload?.sub) {
+      throw new Error("Authentication credentials are missing required information");
+    }
+    const matchingDbUser = await getUser(tokenVerifyResult.payload.sub);
 
     if (!matchingDbUser || matchingDbUser?.role !== tokenVerifyResult.payload.roles) {
-      return null;
+      throw new Error("Authentication credentials are invalid");
     }
 
     return tokenVerifyResult.payload;
