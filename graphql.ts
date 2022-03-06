@@ -831,7 +831,6 @@ export type Query = {
   sexes?: Maybe<Array<Maybe<Sexe>>>;
   specimenCountByAge?: Maybe<Array<Maybe<AgeWithSpecimensCount>>>;
   specimenCountBySexe?: Maybe<Array<Maybe<SexeWithSpecimensCount>>>;
-  version?: Maybe<Version>;
 };
 
 
@@ -1284,12 +1283,6 @@ export const UserRole = {
 } as const;
 
 export type UserRole = typeof UserRole[keyof typeof UserRole];
-export type Version = {
-  __typename?: 'Version';
-  application: Scalars['Int'];
-  database: Scalars['Int'];
-};
-
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -1448,7 +1441,6 @@ export type ResolversTypes = {
   UserInfo: ResolverTypeWrapper<PartialDeep<UserInfo> | null>;
   UserLoginInput: ResolverTypeWrapper<PartialDeep<UserLoginInput> | null>;
   UserRole: ResolverTypeWrapper<PartialDeep<UserRole> | null>;
-  Version: ResolverTypeWrapper<PartialDeep<Version> | null>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1525,7 +1517,6 @@ export type ResolversParentTypes = {
   UserCreateInput: PartialDeep<UserCreateInput> | null;
   UserInfo: PartialDeep<UserInfo> | null;
   UserLoginInput: PartialDeep<UserLoginInput> | null;
-  Version: PartialDeep<Version> | null;
 };
 
 export type AgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Age'] = ResolversParentTypes['Age']> = {
@@ -1914,7 +1905,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   sexes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Sexe']>>>, ParentType, ContextType, Partial<QuerySexesArgs>>;
   specimenCountByAge?: Resolver<Maybe<Array<Maybe<ResolversTypes['AgeWithSpecimensCount']>>>, ParentType, ContextType, RequireFields<QuerySpecimenCountByAgeArgs, 'especeId'>>;
   specimenCountBySexe?: Resolver<Maybe<Array<Maybe<ResolversTypes['SexeWithSpecimensCount']>>>, ParentType, ContextType, RequireFields<QuerySpecimenCountBySexeArgs, 'especeId'>>;
-  version?: Resolver<Maybe<ResolversTypes['Version']>, ParentType, ContextType>;
 };
 
 export type SettingsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Settings'] = ResolversParentTypes['Settings']> = {
@@ -1981,12 +1971,6 @@ export type UserInfoResolvers<ContextType = any, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type VersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Version'] = ResolversParentTypes['Version']> = {
-  application?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  database?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type Resolvers<ContextType = any> = {
   Age?: AgeResolvers<ContextType>;
   AgeWithSpecimensCount?: AgeWithSpecimensCountResolvers<ContextType>;
@@ -2032,6 +2016,5 @@ export type Resolvers<ContextType = any> = {
   UpsertInventaireFailureReason?: UpsertInventaireFailureReasonResolvers<ContextType>;
   UpsertInventaireResult?: UpsertInventaireResultResolvers<ContextType>;
   UserInfo?: UserInfoResolvers<ContextType>;
-  Version?: VersionResolvers<ContextType>;
 };
 
