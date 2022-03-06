@@ -18,7 +18,9 @@ export const getGraphQLContext = async ({
   reply: FastifyReply;
 }): Promise<GraphQLContext> => {
   // Extract the token from the authentication cookie, if any
-  const tokenPayload = await validateAndExtractUserToken(request, reply).catch((e) => {
+  const tokenPayload = await validateAndExtractUserToken(request).catch((e) => {
+    // If the validation has thrown an error
+    // Make sure that the cookie is deleted in order to avoid sending it again
     void deleteTokenCookie(reply);
     throw new AuthenticationError(e as string);
   });

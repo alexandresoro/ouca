@@ -57,7 +57,7 @@ checkAndCreateFolders();
 
   // Download files
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>("/download/:id", async (req, reply) => {
-    const tokenPayload = await validateAndExtractUserToken(req, reply);
+    const tokenPayload = await validateAndExtractUserToken(req);
     if (!tokenPayload?.sub) {
       return reply.code(401).send();
     }
@@ -66,7 +66,7 @@ checkAndCreateFolders();
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>(
     "/download/importReports/:id",
     async (req, reply) => {
-      const tokenPayload = await validateAndExtractUserToken(req, reply);
+      const tokenPayload = await validateAndExtractUserToken(req);
       if (!tokenPayload?.sub) {
         return reply.code(401).send();
       }
@@ -77,7 +77,7 @@ checkAndCreateFolders();
 
   // Upload import path
   server.post<{ Params: { entityName: string } }>("/uploads/:entityName", async (req, reply) => {
-    const tokenPayload = await validateAndExtractUserToken(req, reply);
+    const tokenPayload = await validateAndExtractUserToken(req);
     if (!tokenPayload) {
       return reply.code(401).send();
     }

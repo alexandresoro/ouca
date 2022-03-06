@@ -26,20 +26,12 @@ export const getLoggedUser = (tokenPayload: JWTPayload): LoggedUser | null => {
   return null;
 };
 
-export const validateAndExtractUserToken = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<JWTPayload | null> => {
+export const validateAndExtractUserToken = async (request: FastifyRequest): Promise<JWTPayload | null> => {
   // Extract the token from the authentication cookie, if any
   const token = request.cookies["token"];
   if (token) {
     const publicKey = await TokenKeys.getKey();
-    const tokenVerifyResult = await jwtVerify(token, publicKey).catch((e) => {
-      // If the user has sent a token that could not be validated,
-      // make sure that at least the cookie is deleted
-      void deleteTokenCookie(reply);
-      throw e;
-    });
+    const tokenVerifyResult = await jwtVerify(token, publicKey);
 
     // Check that the user still exists in the database and has a valid role
     if (!tokenVerifyResult.payload?.sub) {

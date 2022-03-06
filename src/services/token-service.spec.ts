@@ -1,5 +1,5 @@
 import { DatabaseRole, User } from "@prisma/client";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyRequest } from "fastify";
 import { mock, mockReset } from "jest-mock-extended";
 import * as jose from "jose";
 import { TextEncoder } from "util";
@@ -20,9 +20,8 @@ test("should handle validation and extraction when missing token", async () => {
       token: undefined
     }
   });
-  const reply = mock<FastifyReply>();
 
-  const tokenPayload = await validateAndExtractUserToken(request, reply);
+  const tokenPayload = await validateAndExtractUserToken(request);
 
   expect(tokenPayload).toBeNull();
 });
@@ -37,9 +36,8 @@ test("should throw error on validation and extraction of invalid token", async (
       token: "toto"
     }
   });
-  const reply = mock<FastifyReply>();
 
-  await expect(() => validateAndExtractUserToken(request, reply)).rejects.toThrowError();
+  await expect(() => validateAndExtractUserToken(request)).rejects.toThrowError();
 });
 
 test("should handle validation and extraction of valid token", async () => {
@@ -66,23 +64,18 @@ test("should handle validation and extraction of valid token", async () => {
       token: "toto"
     }
   });
-  const reply = mock<FastifyReply>();
 
-  const tokenPayload = await validateAndExtractUserToken(request, reply);
+  const tokenPayload = await validateAndExtractUserToken(request);
 
   expect(tokenPayload).toEqual<jose.JWTPayload>(result.payload);
 });
 
-test("should throw an error when validating and extracting a token with matching user not found", async () => {
+test("should throw an error when validating and extracting a token that has no sub", async () => {
   const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
     payload: {
-      sub: "toto",
+      sub: undefined,
       roles: "titi"
-    },
-    protectedHeader: {
-      alg: ""
-    },
-    key: new TextEncoder().encode("toto")
+    }
   });
   jwtVerify.mockResolvedValueOnce(result);
 
@@ -93,9 +86,28 @@ test("should throw an error when validating and extracting a token with matching
       token: "toto"
     }
   });
-  const reply = mock<FastifyReply>();
 
-  await expect(() => validateAndExtractUserToken(request, reply)).rejects.toThrowError();
+  await expect(() => validateAndExtractUserToken(request)).rejects.toThrowError();
+});
+
+test("should throw an error when validating and extracting a token with matching user not found", async () => {
+  const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
+    payload: {
+      sub: "toto",
+      roles: "titi"
+    }
+  });
+  jwtVerify.mockResolvedValueOnce(result);
+
+  getUser.mockResolvedValue(null);
+
+  const request = mock<FastifyRequest>({
+    cookies: {
+      token: "toto"
+    }
+  });
+
+  await expect(() => validateAndExtractUserToken(request)).rejects.toThrowError();
 });
 
 test("should throw an error when validating and extracting a token with user having different role", async () => {
@@ -118,7 +130,6 @@ test("should throw an error when validating and extracting a token with user hav
       token: "toto"
     }
   });
-  const reply = mock<FastifyReply>();
 
-  await expect(() => validateAndExtractUserToken(request, reply)).rejects.toThrowError();
+  await expect(() => validateAndExtractUserToken(request)).rejects.toThrowError();
 });
