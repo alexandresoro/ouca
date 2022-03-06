@@ -499,9 +499,7 @@ export type Mutation = {
   deleteMilieu?: Maybe<Scalars['Int']>;
   deleteObservateur?: Maybe<Scalars['Int']>;
   deleteSexe?: Maybe<Scalars['Int']>;
-  initializeDatabase?: Maybe<Scalars['Boolean']>;
   resetDatabase?: Maybe<Scalars['Boolean']>;
-  updateDatabase?: Maybe<Scalars['Boolean']>;
   updateSettings?: Maybe<Settings>;
   upsertAge?: Maybe<Age>;
   upsertClasse?: Maybe<Classe>;
@@ -1776,9 +1774,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteMilieu?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteMilieuArgs, 'id'>>;
   deleteObservateur?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteObservateurArgs, 'id'>>;
   deleteSexe?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<MutationDeleteSexeArgs, 'id'>>;
-  initializeDatabase?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   resetDatabase?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  updateDatabase?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   updateSettings?: Resolver<Maybe<ResolversTypes['Settings']>, ParentType, ContextType, RequireFields<MutationUpdateSettingsArgs, 'appConfiguration'>>;
   upsertAge?: Resolver<Maybe<ResolversTypes['Age']>, ParentType, ContextType, RequireFields<MutationUpsertAgeArgs, 'data'>>;
   upsertClasse?: Resolver<Maybe<ResolversTypes['Classe']>, ParentType, ContextType, RequireFields<MutationUpsertClasseArgs, 'data'>>;
