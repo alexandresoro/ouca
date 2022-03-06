@@ -348,11 +348,6 @@ export default gql`
     index: Int!
   }
 
-  type Version {
-    database: Int!
-    application: Int!
-  }
-
   #
   # Args
   #
@@ -760,7 +755,6 @@ export default gql`
     exportObservateurs: String
     exportSexes: String
     dumpDatabase: String
-    version: Version
   }
 
   type Mutation {
@@ -798,9 +792,7 @@ export default gql`
     upsertObservateur(id: Int, data: InputObservateur!): Observateur
     upsertSexe(id: Int, data: InputSexe!): Sexe
     updateSettings(appConfiguration: InputSettings!): Settings
-    initializeDatabase: Boolean
     resetDatabase: Boolean
-    updateDatabase: Boolean
     userSignup(signupData: UserCreateInput!, role: UserRole): UserInfo
     userLogin(loginData: UserLoginInput!): UserInfo
     userRefresh: UserInfo

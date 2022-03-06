@@ -36,10 +36,8 @@ import {
   SexesPaginatedResult,
   SexeWithSpecimensCount,
   UpsertInventaireFailureReason,
-  UserInfo,
-  Version
+  UserInfo
 } from "../model/graphql";
-import { executeDatabaseMigration } from "../services/database-migration/database-migration.service";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
@@ -154,7 +152,6 @@ import {
   upsertObservateur
 } from "../services/entities/observateur-service";
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
-import { findVersion } from "../services/entities/version-service";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -174,7 +171,6 @@ import {
 import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
 import { createUser, deleteUser, getUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
-import { seedDatabase } from "../sql/seed";
 import { logger } from "../utils/logger";
 import { GraphQLContext } from "./graphql-context";
 
@@ -471,10 +467,6 @@ const resolvers: Resolvers<GraphQLContext> = {
     settings: async (_source, args, context): Promise<Settings | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findAppConfiguration(context.user);
-    },
-    version: async (_source, args, context): Promise<Version> => {
-      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findVersion();
     }
   },
   Mutation: {
@@ -632,24 +624,12 @@ const resolvers: Resolvers<GraphQLContext> = {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return persistUserSettings(appConfiguration, context.user);
     },
-    initializeDatabase: async (): Promise<boolean> => {
-      await seedDatabase();
-      return true;
-    },
     resetDatabase: async (_source, args, context): Promise<boolean> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       if (context.user.role !== DatabaseRole.admin) {
         throw new ForbiddenError("Database reset is not allowed for the current user");
       }
       await resetDatabase();
-      return true;
-    },
-    updateDatabase: async (_source, args, context): Promise<boolean> => {
-      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      if (context.user.role !== DatabaseRole.admin) {
-        throw new ForbiddenError("Database update is not allowed for the current user");
-      }
-      await executeDatabaseMigration();
       return true;
     },
     userSignup: async (_source, args, context): Promise<UserInfo> => {

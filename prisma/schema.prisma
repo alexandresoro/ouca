@@ -332,9 +332,3 @@ model User {
 
   @@map("user")
 }
-
-model Version {
-  version Int @id @db.UnsignedSmallInt
-
-  @@map("version")
-}
