@@ -6,6 +6,7 @@ import { LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
 import { SALT_AND_PWD_DELIMITER } from "../utils/keys";
 import { logger } from "../utils/logger";
+import options from "../utils/options";
 
 const PASSWORD_KEY_LENGTH = 64;
 
@@ -43,10 +44,42 @@ export const getUser = async (userId: string): Promise<Omit<User, "password"> | 
   });
 };
 
-export const createUser = async (signupData: UserCreateInput, role: DatabaseRole): Promise<Omit<User, "password">> => {
+export const createUser = async (
+  signupData: UserCreateInput,
+  role: DatabaseRole,
+  loggedUser: LoggedUser | null
+): Promise<Omit<User, "password">> => {
+  if (!options.signupsAllowed) {
+    throw new OucaError("OUCA0005");
+  }
+
   const { password, ...otherUserInfo } = signupData;
 
-  return prisma.user.create({
+  // Only an administrator can create new accounts
+  // Except when no admin accounts at all exist:
+  // In that case, the first created account is an admin but needs to provide the correct password
+  const adminsCount = await prisma.user.count({
+    where: {
+      role: DatabaseRole.admin
+    }
+  });
+
+  let roleToSet = role;
+  if (adminsCount === 0) {
+    // Initial account creation
+    // Check that provided password matches
+    if (!options.defaultAdminPassword?.length || password !== options.defaultAdminPassword) {
+      throw new OucaError("OUCA0006");
+    }
+    roleToSet = DatabaseRole.admin;
+  } else {
+    // Check that the user requesting the account creation is authorized
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      throw new OucaError("OUCA0007");
+    }
+  }
+
+  const createdUser = await prisma.user.create({
     select: {
       id: true,
       username: true,
@@ -56,13 +89,19 @@ export const createUser = async (signupData: UserCreateInput, role: DatabaseRole
     },
     data: {
       ...otherUserInfo,
-      role,
+      role: roleToSet,
       password: getHashedPassword(password),
       Settings: {
         create: {}
       }
     }
   });
+
+  if (createdUser) {
+    logger.info(`User ${createdUser.username} has been created`);
+  }
+
+  return createdUser;
 };
 
 export const loginUser = async (loginData: UserLoginInput): Promise<Omit<User, "password">> => {
@@ -145,8 +184,4 @@ export const deleteUser = async (userId: string, loggedUser: LoggedUser): Promis
   } else {
     return Promise.reject(new OucaError("OUCA0001"));
   }
-};
-
-export const getUsersCount = async (): Promise<number> => {
-  return prisma.user.count();
 };

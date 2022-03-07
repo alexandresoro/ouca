@@ -1,11 +1,12 @@
 import { DatabaseRole, User } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { EditUserData, UserLoginInput } from "../model/graphql";
+import { EditUserData, UserCreateInput, UserLoginInput } from "../model/graphql";
 import { prismaMock } from "../sql/prisma-mock";
 import { LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
 import { logger } from "../utils/logger";
-import { deleteUser, getHashedPassword, loginUser, updateUser, validatePassword } from "./user-service";
+import options from "../utils/options";
+import { createUser, deleteUser, getHashedPassword, loginUser, updateUser, validatePassword } from "./user-service";
 
 beforeAll(() => {
   logger.level = "silent";
@@ -33,6 +34,97 @@ test("should not validate nil password", () => {
   const hashedPassword = getHashedPassword(password);
 
   expect(validatePassword(undefined, hashedPassword)).toBe(false);
+});
+
+test("should throw error when signups are disabled", async () => {
+  const signupData = mock<UserCreateInput>();
+  const loggedUser = mock<LoggedUser>();
+  options.signupsAllowed = false;
+
+  await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
+    new OucaError("OUCA0005")
+  );
+
+  expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+});
+
+test("should throw error when creating initial admin and no env password defined", async () => {
+  const signupData = mock<UserCreateInput>();
+  const loggedUser = mock<LoggedUser>();
+  options.signupsAllowed = true;
+  options.defaultAdminPassword = "";
+
+  prismaMock.user.count.mockResolvedValueOnce(0);
+
+  await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
+    new OucaError("OUCA0006")
+  );
+
+  expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+});
+
+test("should throw error when creating initial admin and incorrect password provided", async () => {
+  const signupData = mock<UserCreateInput>({
+    password: "wrong"
+  });
+  const loggedUser = mock<LoggedUser>();
+  options.signupsAllowed = true;
+  options.defaultAdminPassword = "right";
+
+  prismaMock.user.count.mockResolvedValueOnce(0);
+
+  await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
+    new OucaError("OUCA0006")
+  );
+
+  expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+});
+
+test("should handle creation of initial admin and correct password provided", async () => {
+  const signupData = mock<UserCreateInput>({
+    password: "right"
+  });
+  const loggedUser = mock<LoggedUser>();
+  options.signupsAllowed = true;
+  options.defaultAdminPassword = "right";
+
+  prismaMock.user.count.mockResolvedValueOnce(0);
+
+  await createUser(signupData, DatabaseRole.contributor, loggedUser);
+
+  expect(prismaMock.user.create).toHaveBeenCalledTimes(1);
+});
+
+test("should throw error when non admin tries to create a user", async () => {
+  const signupData = mock<UserCreateInput>();
+  const loggedUser = mock<LoggedUser>({
+    role: DatabaseRole.contributor
+  });
+  options.signupsAllowed = true;
+
+  prismaMock.user.count.mockResolvedValueOnce(1);
+
+  await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
+    new OucaError("OUCA0007")
+  );
+
+  expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+});
+
+test("should handle creation of user when requested by an admin", async () => {
+  const signupData = mock<UserCreateInput>({
+    password: "anything"
+  });
+  const loggedUser = mock<LoggedUser>({
+    role: DatabaseRole.admin
+  });
+  options.signupsAllowed = true;
+
+  prismaMock.user.count.mockResolvedValueOnce(2);
+
+  await createUser(signupData, DatabaseRole.contributor, loggedUser);
+
+  expect(prismaMock.user.create).toHaveBeenCalledTimes(1);
 });
 
 test("should rejects when log in with unknown account", async () => {

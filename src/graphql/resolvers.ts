@@ -166,7 +166,7 @@ import {
 } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
-import { createUser, deleteUser, getUser, getUsersCount, loginUser, updateUser } from "../services/user-service";
+import { createUser, deleteUser, getUser, loginUser, updateUser } from "../services/user-service";
 import { logger } from "../utils/logger";
 import { GraphQLContext } from "./graphql-context";
 
@@ -629,26 +629,7 @@ const resolvers: Resolvers<GraphQLContext> = {
       return true;
     },
     userSignup: async (_source, args, context): Promise<UserInfo> => {
-      // Only an administrator can create new accounts
-      // Except when no accounts at all exist:
-      // In that case, the first created account is an admin
-      const usersCount = await getUsersCount();
-
-      let userInfo;
-      if (usersCount === 0) {
-        userInfo = await createUser(args.signupData, DatabaseRole.admin);
-      } else {
-        if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-        if (context.user.role !== DatabaseRole.admin) {
-          throw new ForbiddenError("User account creation is not allowed for the current user");
-        }
-        userInfo = await createUser(args.signupData, args?.role ?? DatabaseRole.contributor);
-      }
-
-      if (userInfo) {
-        logger.info(`User ${userInfo?.username} has been created`);
-      }
-      return userInfo;
+      return createUser(args.signupData, DatabaseRole.admin, context.user);
     },
     userLogin: async (_source, args, context): Promise<UserInfo> => {
       const userInfo = await loginUser(args.loginData);
