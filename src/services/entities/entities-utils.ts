@@ -16,8 +16,8 @@ export type ReadonlyStatus = {
   readonly: boolean;
 };
 
-export const isEntityReadOnly = (entity: { ownerId: string }, user: LoggedUser | null): boolean => {
-  return !(user?.role === DatabaseRole.admin || entity.ownerId === user?.id);
+export const isEntityReadOnly = (entity: { ownerId?: string | null }, user: LoggedUser | null): boolean => {
+  return !(user?.role === DatabaseRole.admin || entity?.ownerId === user?.id);
 };
 
 // Utility method to compute the Prisma pagination from the API pagination

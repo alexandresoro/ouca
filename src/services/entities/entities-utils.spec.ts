@@ -47,3 +47,37 @@ test("should return correct readonly status for admin", () => {
 
   expect(isEntityReadOnly(entity, user)).toBe(false);
 });
+
+test("should return correct readonly status for non logged user and no entity owner", () => {
+  const entity = {
+    ownerId: null
+  };
+
+  expect(isEntityReadOnly(entity, null)).toBe(true);
+});
+
+test("should return correct readonly status for non-admin and no entity owner", () => {
+  const entity = {
+    ownerId: null
+  };
+
+  const user: LoggedUser = {
+    id: "22",
+    role: DatabaseRole.contributor
+  };
+
+  expect(isEntityReadOnly(entity, user)).toBe(true);
+});
+
+test("should return correct readonly status for admin and no entity owner", () => {
+  const entity = {
+    ownerId: null
+  };
+
+  const user: LoggedUser = {
+    id: "22",
+    role: DatabaseRole.admin
+  };
+
+  expect(isEntityReadOnly(entity, user)).toBe(false);
+});
