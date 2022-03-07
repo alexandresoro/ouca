@@ -200,7 +200,7 @@ export const findPaginatedLieuxDits = async (
 
     const donneesPerLieuDitRequest = Prisma.sql`
     SELECT 
-      l.id, count(d.id) as nbDonnees
+      l.id, l.owner_id as ownerId, count(d.id) as nbDonnees
     FROM 
       donnee d 
     RIGHT JOIN 

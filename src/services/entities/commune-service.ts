@@ -204,7 +204,7 @@ export const findPaginatedCommunes = async (
 
     const donneesPerCommuneRequest = Prisma.sql`
     SELECT 
-      c.id, count(DISTINCT l.id) as nbLieuxDits, count(d.id) as nbDonnees
+      c.id, c.owner_id as ownerId, count(DISTINCT l.id) as nbLieuxDits, count(d.id) as nbDonnees
     FROM 
       donnee d 
     RIGHT JOIN 

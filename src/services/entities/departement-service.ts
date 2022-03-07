@@ -84,7 +84,7 @@ export const findPaginatedDepartements = async (
 
     const donneesPerDepartementRequest = Prisma.sql`
     SELECT 
-      dpt.id, count(DISTINCT l.id) as nbLieuxDits, count(d.id) as nbDonnees
+      dpt.id, dpt.owner_id as ownerId, count(DISTINCT l.id) as nbLieuxDits, count(d.id) as nbDonnees
     FROM 
       donnee d 
     RIGHT JOIN 
