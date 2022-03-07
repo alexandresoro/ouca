@@ -65,11 +65,7 @@ import {
   findPaginatedComportements,
   upsertComportement
 } from "../services/entities/comportement-service";
-import {
-  createInitialUserSettings,
-  findAppConfiguration,
-  persistUserSettings
-} from "../services/entities/configuration-service";
+import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import {
   deleteDepartement,
   findDepartement,
@@ -650,8 +646,6 @@ const resolvers: Resolvers<GraphQLContext> = {
       }
 
       if (userInfo) {
-        // Create the settings for this user
-        await createInitialUserSettings(userInfo.id);
         logger.info(`User ${userInfo?.username} has been created`);
       }
       return userInfo;

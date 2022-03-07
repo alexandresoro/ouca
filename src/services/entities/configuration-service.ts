@@ -2,7 +2,6 @@ import { CoordinatesSystem, Settings as SettingsDb } from "@prisma/client";
 import { InputSettings, Settings } from "../../model/graphql";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
-import { OucaError } from "../../utils/errors";
 
 const includedElements = {
   defaultObservateur: true,
@@ -46,24 +45,6 @@ const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): Omit
     isRegroupementDisplayed: appConfiguration.isRegroupementDisplayed,
     coordinatesSystem: appConfiguration.coordinatesSystem
   };
-};
-
-export const createInitialUserSettings = async (userId: string): Promise<Settings> => {
-  const existingUserSettings = await prisma.settings.findFirst({
-    where: {
-      userId
-    }
-  });
-
-  if (existingUserSettings) {
-    throw new OucaError("OUCA0005");
-  }
-
-  return prisma.settings.create({
-    data: {
-      userId
-    }
-  });
 };
 
 export const persistUserSettings = async (

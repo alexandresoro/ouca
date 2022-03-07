@@ -3,13 +3,7 @@ import { mock } from "jest-mock-extended";
 import { InputSettings } from "../../model/graphql";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
-import { OucaError } from "../../utils/errors";
-import {
-  createInitialUserSettings,
-  findAppConfiguration,
-  findCoordinatesSystem,
-  persistUserSettings
-} from "./configuration-service";
+import { findAppConfiguration, findCoordinatesSystem, persistUserSettings } from "./configuration-service";
 
 test("should query needed parameters for user", async () => {
   const loggedUser = mock<LoggedUser>();
@@ -48,29 +42,6 @@ test("should query coordinates system for user", async () => {
     }
   });
   expect(coordinatesSystem).toEqual(settings.coordinatesSystem);
-});
-
-test("should create settings for a user", async () => {
-  prismaMock.settings.findFirst.mockResolvedValueOnce(null);
-
-  await createInitialUserSettings("12");
-
-  expect(prismaMock.settings.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.settings.create).toHaveBeenCalledWith({
-    data: {
-      userId: "12"
-    }
-  });
-});
-
-test("should throw an error when creating settings for a user that already has settings", async () => {
-  const settings = mock<Settings>();
-
-  prismaMock.settings.findFirst.mockResolvedValueOnce(settings);
-
-  await expect(() => createInitialUserSettings("12")).rejects.toThrowError(new OucaError("OUCA0005"));
-
-  expect(prismaMock.settings.create).toHaveBeenCalledTimes(0);
 });
 
 test("should update settings with parameters  for user", async () => {

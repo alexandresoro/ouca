@@ -57,7 +57,10 @@ export const createUser = async (signupData: UserCreateInput, role: DatabaseRole
     data: {
       ...otherUserInfo,
       role,
-      password: getHashedPassword(password)
+      password: getHashedPassword(password),
+      Settings: {
+        create: {}
+      }
     }
   });
 };
