@@ -76,5 +76,5 @@ export const createAndAddSignedTokenAsCookie = async (
 };
 
 export const deleteTokenCookie = async (reply: FastifyReply): Promise<void> => {
-  void reply.clearCookie(TOKEN_KEY);
+  void reply.clearCookie(TOKEN_KEY, COOKIE_OPTIONS);
 };
