@@ -176,11 +176,11 @@ const resolvers: Resolvers<GraphQLContext> = {
   Query: {
     age: async (_source, args, context): Promise<Age | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findAge(args.id);
+      return findAge(args.id, context.user);
     },
     classe: async (_source, args, context): Promise<Classe | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findClasse(args.id);
+      return findClasse(args.id, context.user);
     },
     commune: async (_source, args, context): Promise<Omit<Commune, "departement"> | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -226,11 +226,11 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     meteo: async (_source, args, context): Promise<Meteo | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findMeteo(args.id);
+      return findMeteo(args.id, context.user);
     },
     meteoList: async (_source, args, context): Promise<Meteo[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findMeteosByIds(args.ids);
+      return findMeteosByIds(args.ids, context.user);
     },
     milieu: async (_source, args, context): Promise<Milieu | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -250,7 +250,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     sexe: async (_source, args, context): Promise<Sexe | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findSexe(args.id);
+      return findSexe(args.id, context.user);
     },
     specimenCountByAge: (_source, args, context): Promise<AgeWithSpecimensCount[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -262,11 +262,11 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     ages: async (_source, args, context): Promise<Age[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findAges(args?.params);
+      return findAges(args?.params, context.user);
     },
     classes: async (_source, args, context): Promise<Classe[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findClasses(args?.params);
+      return findClasses(args?.params, context.user);
     },
     communes: async (_source, args, context): Promise<Omit<Commune, "departement">[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -298,7 +298,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     meteos: async (_source, args, context): Promise<Meteo[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findMeteos(args?.params);
+      return findMeteos(args?.params, context.user);
     },
     milieux: async (_source, args, context): Promise<Milieu[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -310,7 +310,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     sexes: async (_source, args, context): Promise<Sexe[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findSexes(args?.params);
+      return findSexes(args?.params, context.user);
     },
     lastDonneeId: async (_source, args, context): Promise<number | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -322,11 +322,11 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedAges: async (_source, args, context): Promise<AgesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedAges(args);
+      return findPaginatedAges(args, context.user);
     },
     paginatedClasses: async (_source, args, context): Promise<ClassesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedClasses(args);
+      return findPaginatedClasses(args, context.user);
     },
     paginatedCommunes: async (_source, args, context): Promise<CommunesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -358,7 +358,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedMeteos: async (_source, args, context): Promise<MeteosPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedMeteos(args);
+      return findPaginatedMeteos(args, context.user);
     },
     paginatedMilieux: async (_source, args, context): Promise<MilieuxPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -370,7 +370,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedSexes: async (_source, args, context): Promise<SexesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedSexes(args);
+      return findPaginatedSexes(args, context.user);
     },
     paginatedSearchEspeces: async (
       _source,
@@ -728,8 +728,8 @@ const resolvers: Resolvers<GraphQLContext> = {
     }
   },
   Espece: {
-    classe: async (parent): Promise<Classe | null> => {
-      return findClasseOfEspeceId(parent?.id);
+    classe: async (parent, args, context): Promise<Classe | null> => {
+      return findClasseOfEspeceId(parent?.id, context.user);
     }
   }
 };
