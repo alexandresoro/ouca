@@ -13,7 +13,7 @@ import { findAllComportements } from "./entities/comportement-service";
 import { findAllDepartements } from "./entities/departement-service";
 import { DonneeWithRelations, findDonneesByCriteria } from "./entities/donnee-service";
 import { findAllEspecesWithClasses } from "./entities/espece-service";
-import { findAllEstimationsDistance } from "./entities/estimation-distance-service";
+import { findEstimationsDistance } from "./entities/estimation-distance-service";
 import { findAllEstimationsNombre } from "./entities/estimation-nombre-service";
 import { findAllLieuxDitsWithCommuneAndDepartement } from "./entities/lieu-dit-service";
 import { findMeteos } from "./entities/meteo-service";
@@ -183,7 +183,7 @@ export const generateEspecesExport = async (): Promise<string> => {
 };
 
 export const generateEstimationsDistanceExport = async (): Promise<string> => {
-  const estimations = await findAllEstimationsDistance();
+  const estimations = await findEstimationsDistance();
 
   const objectsToExport = estimations.map((object) => {
     return {

@@ -1,12 +1,12 @@
 import { EstimationDistance, Prisma } from "@prisma/client";
 import { LoggedUser } from "../../types/LoggedUser";
-import { createEstimationsDistance, findAllEstimationsDistance } from "../entities/estimation-distance-service";
+import { createEstimationsDistance, findEstimationsDistance } from "../entities/estimation-distance-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findAllEstimationsDistance();
+    this.entities = await findEstimationsDistance();
   };
 
   protected getThisEntityName(): string {
