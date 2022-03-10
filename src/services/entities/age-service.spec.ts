@@ -270,7 +270,7 @@ test("should be able to delete any age if admin", async () => {
     role: DatabaseRole.admin
   });
 
-  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Age>());
+  prismaMock.age.findFirst.mockResolvedValueOnce(mock<Age>());
 
   await deleteAge(11, loggedUser);
 
@@ -287,7 +287,7 @@ test("should return an error when deleting a non-owned age as non-admin", async 
     role: DatabaseRole.contributor
   });
 
-  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Age>());
+  prismaMock.age.findFirst.mockResolvedValueOnce(mock<Age>());
 
   await expect(deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
