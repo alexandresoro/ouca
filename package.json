@@ -79,6 +79,9 @@
     "*": [
       "prettier --check"
     ],
-    "*.ts": "eslint"
+    "*.ts": [
+      "eslint",
+      "jest --bail --findRelatedTests"
+    ]
   }
 }
