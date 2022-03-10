@@ -4,7 +4,7 @@ import { deleteTokenCookie, getLoggedUser, validateAndExtractUserToken } from ".
 import { LoggedUser } from "../types/LoggedUser";
 
 export type GraphQLContext = Context<{
-  request: unknown;
+  request: FastifyRequest;
   reply: FastifyReply;
   user: LoggedUser | null;
   username: string | null;
