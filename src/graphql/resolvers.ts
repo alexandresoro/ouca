@@ -210,7 +210,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     estimationDistance: async (_source, args, context): Promise<EstimationDistance | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findEstimationDistance(args.id);
+      return findEstimationDistance(args.id, context.user);
     },
     estimationNombre: async (_source, args, context): Promise<EstimationNombre | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -286,7 +286,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     estimationsDistance: async (_source, args, context): Promise<EstimationDistance[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findEstimationsDistance(args?.params);
+      return findEstimationsDistance(args?.params, context.user);
     },
     estimationsNombre: async (_source, args, context): Promise<EstimationNombre[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -346,7 +346,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedEstimationsDistance: async (_source, args, context): Promise<EstimationsDistancePaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedEstimationsDistance(args);
+      return findPaginatedEstimationsDistance(args, context.user);
     },
     paginatedEstimationsNombre: async (_source, args, context): Promise<EstimationsNombrePaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -496,7 +496,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteEstimationDistance: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteEstimationDistance(args.id).then(({ id }) => id);
+      return deleteEstimationDistance(args.id, context.user).then(({ id }) => id);
     },
     deleteEstimationNombre: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
