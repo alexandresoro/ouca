@@ -27,7 +27,7 @@ import { findAllDepartements } from "../entities/departement-service";
 import { createDonnee, DonneeWithRelations, findAllDonnees } from "../entities/donnee-service";
 import { findAllEspeces } from "../entities/espece-service";
 import { findEstimationsDistance } from "../entities/estimation-distance-service";
-import { findAllEstimationsNombre } from "../entities/estimation-nombre-service";
+import { findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { findAllInventaires, InventaireWithRelations, upsertInventaire } from "../entities/inventaire-service";
 import { findAllLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { findMeteos } from "../entities/meteo-service";
@@ -80,7 +80,7 @@ export class ImportDonneeService extends ImportService {
     this.especes = await findAllEspeces();
     this.sexes = await findSexes();
     this.ages = await findAges();
-    this.estimationsNombre = await findAllEstimationsNombre();
+    this.estimationsNombre = await findEstimationsNombre();
     this.estimationsDistance = await findEstimationsDistance();
     this.comportements = await findAllComportements();
     this.milieux = await findAllMilieux();

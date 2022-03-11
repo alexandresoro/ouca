@@ -1,13 +1,13 @@
 import { EstimationNombre, Prisma } from "@prisma/client";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
 import { LoggedUser } from "../../types/LoggedUser";
-import { createEstimationsNombre, findAllEstimationsNombre } from "../entities/estimation-nombre-service";
+import { createEstimationsNombre, findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findAllEstimationsNombre();
+    this.entities = await findEstimationsNombre();
   };
 
   protected getThisEntityName(): string {

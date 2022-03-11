@@ -214,7 +214,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     estimationNombre: async (_source, args, context): Promise<EstimationNombre | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findEstimationNombre(args.id);
+      return findEstimationNombre(args.id, context.user);
     },
     inventaire: async (_source, args, context): Promise<Omit<Inventaire, "lieuDit"> | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -290,7 +290,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     estimationsNombre: async (_source, args, context): Promise<EstimationNombre[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findEstimationsNombre(args?.params);
+      return findEstimationsNombre(args?.params, context.user);
     },
     lieuxDits: async (_source, args, context): Promise<Omit<LieuDit, "commune">[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -350,7 +350,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedEstimationsNombre: async (_source, args, context): Promise<EstimationsNombrePaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedEstimationsNombre(args);
+      return findPaginatedEstimationsNombre(args, context.user);
     },
     paginatedLieuxdits: async (_source, args, context): Promise<LieuxDitsPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -500,7 +500,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteEstimationNombre: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteEstimationNombre(args.id).then(({ id }) => id);
+      return deleteEstimationNombre(args.id, context.user).then(({ id }) => id);
     },
     deleteLieuDit: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);

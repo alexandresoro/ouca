@@ -1,4 +1,4 @@
-import { EstimationNombre, Prisma } from "@prisma/client";
+import { DatabaseRole, EstimationNombre, Prisma } from "@prisma/client";
 import {
   EstimationsNombrePaginatedResult,
   FindParams,
@@ -8,27 +8,43 @@ import {
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
+import { OucaError } from "../../utils/errors";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  queryParametersToFindAllEntities
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
 } from "./entities-utils";
 
-export const findEstimationNombre = async (id: number): Promise<EstimationNombre | null> => {
-  return prisma.estimationNombre.findUnique({
+export const findEstimationNombre = async (
+  id: number,
+  loggedUser: LoggedUser | null = null
+): Promise<(EstimationNombre & ReadonlyStatus) | null> => {
+  const numberEstimateEntity = await prisma.estimationNombre.findUnique({
     where: {
       id
     }
   });
+
+  if (!numberEstimateEntity) {
+    return null;
+  }
+
+  return {
+    ...numberEstimateEntity,
+    readonly: isEntityReadOnly(numberEstimateEntity, loggedUser)
+  };
 };
 
-export const findEstimationsNombre = async (params?: FindParams | null): Promise<EstimationNombre[]> => {
+export const findEstimationsNombre = async (
+  params?: FindParams | null,
+  loggedUser: LoggedUser | null = null
+): Promise<(EstimationNombre & ReadonlyStatus)[]> => {
   const { q, max } = params ?? {};
 
-  return prisma.estimationNombre.findMany({
-    orderBy: {
-      libelle: "asc"
-    },
+  const numberEstimateEntities = await prisma.estimationNombre.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
         startsWith: q || undefined
@@ -36,16 +52,18 @@ export const findEstimationsNombre = async (params?: FindParams | null): Promise
     },
     take: max || undefined
   });
-};
 
-export const findAllEstimationsNombre = async (): Promise<EstimationNombre[]> => {
-  return prisma.estimationNombre.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE)
+  return numberEstimateEntities?.map((numberEstimate) => {
+    return {
+      ...numberEstimate,
+      readonly: isEntityReadOnly(numberEstimate, loggedUser)
+    };
   });
 };
 
 export const findPaginatedEstimationsNombre = async (
-  options: Partial<QueryPaginatedEstimationsNombreArgs> = {}
+  options: Partial<QueryPaginatedEstimationsNombreArgs> = {},
+  loggedUser: LoggedUser | null = null
 ): Promise<EstimationsNombrePaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
@@ -73,9 +91,7 @@ export const findPaginatedEstimationsNombre = async (
     }
   }
 
-  const count = await prisma.estimationNombre.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-  });
+  let numberEstimateEntities: (EstimationNombre & { nbDonnees?: number })[];
 
   if (includeCounts) {
     const estimationsNombre = await prisma.estimationNombre.findMany({
@@ -91,45 +107,99 @@ export const findPaginatedEstimationsNombre = async (
       where: getEntiteAvecLibelleFilterClause(searchParams?.q)
     });
 
-    return {
-      result: estimationsNombre.map((estimation) => {
-        return {
-          ...estimation,
-          nbDonnees: estimation._count.donnee
-        };
-      }),
-      count
-    };
+    numberEstimateEntities = estimationsNombre.map((estimation) => {
+      return {
+        ...estimation,
+        nbDonnees: estimation._count.donnee
+      };
+    });
   } else {
-    const estimationsNombre = await prisma.estimationNombre.findMany({
+    numberEstimateEntities = await prisma.estimationNombre.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
       where: getEntiteAvecLibelleFilterClause(searchParams?.q)
     });
-
-    return {
-      result: estimationsNombre,
-      count
-    };
   }
+
+  const count = await prisma.estimationNombre.count({
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+  });
+
+  const numberEstimates = numberEstimateEntities?.map((numberEstimate) => {
+    return {
+      ...numberEstimate,
+      readonly: isEntityReadOnly(numberEstimate, loggedUser)
+    };
+  });
+
+  return {
+    result: numberEstimates,
+    count
+  };
 };
 
 export const upsertEstimationNombre = async (
   args: MutationUpsertEstimationNombreArgs,
   loggedUser: LoggedUser
-): Promise<EstimationNombre> => {
+): Promise<EstimationNombre & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedEstimationNombre: EstimationNombre;
+
   if (id) {
-    return prisma.estimationNombre.update({
-      where: { id },
-      data
-    });
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.estimationNombre.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    try {
+      upsertedEstimationNombre = await prisma.estimationNombre.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.estimationNombre.create({ data: { ...data, ownerId: loggedUser.id } });
+    try {
+      upsertedEstimationNombre = await prisma.estimationNombre.create({
+        data: { ...data, ownerId: loggedUser.id }
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedEstimationNombre,
+    readonly: false
+  };
 };
 
-export const deleteEstimationNombre = async (id: number): Promise<EstimationNombre> => {
+export const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser): Promise<EstimationNombre> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.estimationNombre.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.estimationNombre.delete({
     where: {
       id
