@@ -1,8 +1,362 @@
-import { Prisma } from "@prisma/client";
+import { DatabaseRole, Milieu, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { MutationUpsertMilieuArgs, QueryPaginatedMilieuxArgs } from "../../model/graphql";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
-import { createMilieux } from "./milieu-service";
+import { COLUMN_CODE } from "../../utils/constants";
+import { OucaError } from "../../utils/errors";
+import * as entitiesUtils from "./entities-utils";
+import {
+  createMilieux,
+  deleteMilieu,
+  findMilieu,
+  findMilieux,
+  findMilieuxByIds,
+  findPaginatedMilieux,
+  upsertMilieu
+} from "./milieu-service";
+
+const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
+
+const prismaConstraintFailedError = {
+  code: "P2002",
+  message: "Prisma error message"
+};
+
+const prismaConstraintFailed = () => {
+  throw new Prisma.PrismaClientKnownRequestError(
+    prismaConstraintFailedError.message,
+    prismaConstraintFailedError.code,
+    ""
+  );
+};
+
+test("should call readonly status when retrieving one environment ", async () => {
+  const environmentData = mock<Milieu>();
+
+  prismaMock.milieu.findUnique.mockResolvedValueOnce(environmentData);
+
+  await findMilieu(environmentData.id);
+
+  expect(prismaMock.milieu.findUnique).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.findUnique).toHaveBeenLastCalledWith({
+    where: {
+      id: environmentData.id
+    }
+  });
+  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+test("should handle environment not found ", async () => {
+  prismaMock.milieu.findUnique.mockResolvedValueOnce(null);
+
+  await expect(findMilieu(10)).resolves.toBe(null);
+
+  expect(prismaMock.milieu.findUnique).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.findUnique).toHaveBeenLastCalledWith({
+    where: {
+      id: 10
+    }
+  });
+  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+});
+
+test("should call readonly status when retrieving environments by ID ", async () => {
+  const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+
+  prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsData);
+
+  await findMilieuxByIds(environmentsData.map((environment) => environment.id));
+
+  expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
+    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    where: {
+      id: {
+        in: environmentsData.map((environment) => environment.id)
+      }
+    }
+  });
+  expect(isEntityReadOnly).toHaveBeenCalledTimes(environmentsData.length);
+});
+
+test("should call readonly status when retrieving environments by params ", async () => {
+  const environmentsCodeData = [
+    mock<Milieu>({ id: 1, code: "0017" }),
+    mock<Milieu>({ id: 7, code: "0357" }),
+    mock<Milieu>({ id: 2, code: "22A0" })
+  ];
+  const environmentsLibelleData = [
+    mock<Milieu>({ id: 5, code: "7654" }),
+    mock<Milieu>({ id: 2, code: "22A0" }),
+    mock<Milieu>({ id: 6, code: "1177" })
+  ];
+
+  prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsCodeData);
+  prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsLibelleData);
+
+  const milieux = await findMilieux();
+
+  expect(milieux.length).toBe(5);
+  expect(milieux[0].code).toBe("0017");
+  expect(milieux[1].code).toBe("0357");
+  expect(milieux[2].code).toBe("1177");
+  expect(milieux[3].code).toBe("22A0");
+  expect(milieux[4].code).toBe("7654");
+
+  expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(2);
+  expect(prismaMock.milieu.findMany).toHaveBeenNthCalledWith(1, {
+    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE)
+  });
+  expect(prismaMock.milieu.findMany).toHaveBeenNthCalledWith(2, {
+    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    where: {
+      libelle: {
+        contains: undefined
+      }
+    }
+  });
+  expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
+    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    where: {
+      libelle: {
+        contains: undefined
+      }
+    }
+  });
+  expect(isEntityReadOnly).toHaveBeenCalledTimes(milieux.length);
+});
+
+test("should call readonly status when retrieving paginated environments", async () => {
+  const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+
+  prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsData);
+
+  await findPaginatedMilieux();
+
+  expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
+    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    orderBy: undefined,
+    where: {}
+  });
+  expect(isEntityReadOnly).toHaveBeenCalledTimes(environmentsData.length);
+});
+
+test("should handle params when retrieving paginated environments ", async () => {
+  const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+
+  const searchParams: QueryPaginatedMilieuxArgs = {
+    orderBy: "libelle",
+    sortOrder: "desc",
+    searchParams: {
+      q: "Bob",
+      pageNumber: 0,
+      pageSize: 10
+    },
+    includeCounts: false
+  };
+
+  prismaMock.milieu.findMany.mockResolvedValueOnce([environmentsData[0]]);
+
+  await findPaginatedMilieux(searchParams);
+
+  expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
+    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    orderBy: {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      [searchParams.orderBy!]: searchParams.sortOrder
+    },
+    skip: searchParams.searchParams?.pageNumber,
+    take: searchParams.searchParams?.pageSize,
+    where: {
+      OR: [
+        {
+          code: {
+            contains: searchParams.searchParams?.q
+          }
+        },
+        {
+          libelle: {
+            contains: searchParams.searchParams?.q
+          }
+        }
+      ]
+    }
+  });
+  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+test("should update an existing environment as an admin ", async () => {
+  const environmentData = mock<MutationUpsertMilieuArgs>();
+
+  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+  await upsertMilieu(environmentData, loggedUser);
+
+  expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
+    data: environmentData.data,
+    where: {
+      id: environmentData.id
+    }
+  });
+});
+
+test("should update an existing environment if owner ", async () => {
+  const existingData = mock<Milieu>({
+    ownerId: "notAdmin"
+  });
+
+  const environmentData = mock<MutationUpsertMilieuArgs>();
+
+  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+
+  prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
+
+  await upsertMilieu(environmentData, loggedUser);
+
+  expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
+    data: environmentData.data,
+    where: {
+      id: environmentData.id
+    }
+  });
+});
+
+test("should throw an error when updating an existing environment and nor owner nor admin ", async () => {
+  const existingData = mock<Milieu>({
+    ownerId: "notAdmin"
+  });
+
+  const environmentData = mock<MutationUpsertMilieuArgs>();
+
+  const user = {
+    id: "Bob",
+    role: DatabaseRole.contributor
+  };
+
+  prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
+
+  await expect(upsertMilieu(environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+  expect(prismaMock.milieu.update).toHaveBeenCalledTimes(0);
+});
+
+test("should throw an error when trying to update an environment that exists", async () => {
+  const environmentData = mock<MutationUpsertMilieuArgs>({
+    id: 12
+  });
+
+  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+  prismaMock.milieu.update.mockImplementation(prismaConstraintFailed);
+
+  await expect(() => upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
+    new OucaError("OUCA0004", prismaConstraintFailedError)
+  );
+
+  expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
+    data: environmentData.data,
+    where: {
+      id: environmentData.id
+    }
+  });
+});
+
+test("should create new environment ", async () => {
+  const environmentData = mock<MutationUpsertMilieuArgs>({
+    id: undefined
+  });
+
+  const loggedUser = mock<LoggedUser>({ id: "a" });
+
+  await upsertMilieu(environmentData, loggedUser);
+
+  expect(prismaMock.milieu.create).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.create).toHaveBeenLastCalledWith({
+    data: {
+      ...environmentData.data,
+      ownerId: loggedUser.id
+    }
+  });
+});
+
+test("should throw an error when trying to create an environment that exists", async () => {
+  const environmentData = mock<MutationUpsertMilieuArgs>({
+    id: undefined
+  });
+
+  const loggedUser = mock<LoggedUser>({ id: "a" });
+
+  prismaMock.milieu.create.mockImplementation(prismaConstraintFailed);
+
+  await expect(() => upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
+    new OucaError("OUCA0004", prismaConstraintFailedError)
+  );
+
+  expect(prismaMock.milieu.create).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.create).toHaveBeenLastCalledWith({
+    data: {
+      ...environmentData.data,
+      ownerId: loggedUser.id
+    }
+  });
+});
+
+test("should be able to delete an owned environment", async () => {
+  const loggedUser: LoggedUser = {
+    id: "12",
+    role: DatabaseRole.contributor
+  };
+
+  const environment = mock<Milieu>({
+    ownerId: loggedUser.id
+  });
+
+  prismaMock.milieu.findFirst.mockResolvedValueOnce(environment);
+
+  await deleteMilieu(11, loggedUser);
+
+  expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.delete).toHaveBeenLastCalledWith({
+    where: {
+      id: 11
+    }
+  });
+});
+
+test("should be able to delete any environment if admin", async () => {
+  const loggedUser = mock<LoggedUser>({
+    role: DatabaseRole.admin
+  });
+
+  prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
+
+  await deleteMilieu(11, loggedUser);
+
+  expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(1);
+  expect(prismaMock.milieu.delete).toHaveBeenLastCalledWith({
+    where: {
+      id: 11
+    }
+  });
+});
+
+test("should return an error when deleting a non-owned environment as non-admin", async () => {
+  const loggedUser = mock<LoggedUser>({
+    role: DatabaseRole.contributor
+  });
+
+  prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
+
+  await expect(deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+
+  expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
+});
 
 test("should create new environments", async () => {
   const environmentsData = [

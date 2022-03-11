@@ -17,7 +17,7 @@ import { findEstimationsDistance } from "./entities/estimation-distance-service"
 import { findEstimationsNombre } from "./entities/estimation-nombre-service";
 import { findAllLieuxDitsWithCommuneAndDepartement } from "./entities/lieu-dit-service";
 import { findMeteos } from "./entities/meteo-service";
-import { findAllMilieux } from "./entities/milieu-service";
+import { findMilieux } from "./entities/milieu-service";
 import { findObservateurs } from "./entities/observateur-service";
 import { findSexes } from "./entities/sexe-service";
 
@@ -245,7 +245,7 @@ export const generateMeteosExport = async (): Promise<string> => {
 };
 
 export const generateMilieuxExport = async (): Promise<string> => {
-  const milieuxDb = await findAllMilieux();
+  const milieuxDb = await findMilieux();
 
   const milieuxToExport = milieuxDb.map((object) => {
     return {

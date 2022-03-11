@@ -234,11 +234,11 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     milieu: async (_source, args, context): Promise<Milieu | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findMilieu(args.id);
+      return findMilieu(args.id, context.user);
     },
     milieuList: async (_source, args, context): Promise<Milieu[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findMilieuxByIds(args.ids);
+      return findMilieuxByIds(args.ids, context.user);
     },
     observateur: async (_source, args, context): Promise<Observateur | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -302,7 +302,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     milieux: async (_source, args, context): Promise<Milieu[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findMilieux(args?.params);
+      return findMilieux(args?.params, context.user);
     },
     observateurs: async (_source, args, context): Promise<Observateur[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -362,7 +362,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedMilieux: async (_source, args, context): Promise<MilieuxPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedMilieux(args);
+      return findPaginatedMilieux(args, context.user);
     },
     paginatedObservateurs: async (_source, args, context): Promise<ObservateursPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -512,7 +512,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteMilieu: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteMilieu(args.id).then(({ id }) => id);
+      return deleteMilieu(args.id, context.user).then(({ id }) => id);
     },
     deleteObservateur: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);

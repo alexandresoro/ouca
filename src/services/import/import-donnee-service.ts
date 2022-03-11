@@ -31,7 +31,7 @@ import { findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { findAllInventaires, InventaireWithRelations, upsertInventaire } from "../entities/inventaire-service";
 import { findAllLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { findMeteos } from "../entities/meteo-service";
-import { findAllMilieux } from "../entities/milieu-service";
+import { findMilieux } from "../entities/milieu-service";
 import { findObservateurs } from "../entities/observateur-service";
 import { findSexes } from "../entities/sexe-service";
 import { ImportService } from "./import-service";
@@ -83,7 +83,7 @@ export class ImportDonneeService extends ImportService {
     this.estimationsNombre = await findEstimationsNombre();
     this.estimationsDistance = await findEstimationsDistance();
     this.comportements = await findAllComportements();
-    this.milieux = await findAllMilieux();
+    this.milieux = await findMilieux();
     this.inventaires = await findAllInventaires();
     this.existingDonnees = await findAllDonnees();
   };
