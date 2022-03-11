@@ -136,10 +136,6 @@ const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput 
     : {};
 };
 
-export const findAllMilieux = async (): Promise<Milieu[]> => {
-  return prisma.milieu.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
-};
-
 export const findPaginatedMilieux = async (
   options: Partial<QueryPaginatedMilieuxArgs> = {},
   loggedUser: LoggedUser | null = null
