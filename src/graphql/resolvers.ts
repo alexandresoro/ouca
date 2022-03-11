@@ -188,11 +188,11 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     comportement: async (_source, args, context): Promise<Comportement | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findComportement(args.id);
+      return findComportement(args.id, context.user);
     },
     comportementList: async (_source, args, context): Promise<Comportement[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findComportementsByIds(args.ids);
+      return findComportementsByIds(args.ids, context.user);
     },
     departement: async (_source, args, context): Promise<Departement | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -274,7 +274,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     comportements: async (_source, args, context): Promise<Comportement[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findComportements(args?.params);
+      return findComportements(args?.params, context.user);
     },
     departements: async (_source, args, context): Promise<Departement[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -334,7 +334,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedComportements: async (_source, args, context): Promise<ComportementsPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedComportements(args);
+      return findPaginatedComportements(args, context.user);
     },
     paginatedDepartements: async (_source, args, context): Promise<DepartementsPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -480,7 +480,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteComportement: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteComportement(args.id).then(({ id }) => id);
+      return deleteComportement(args.id, context.user).then(({ id }) => id);
     },
     deleteDepartement: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);

@@ -21,7 +21,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { findAges } from "../entities/age-service";
 import { findAllCommunes } from "../entities/commune-service";
-import { findAllComportements } from "../entities/comportement-service";
+import { findComportements } from "../entities/comportement-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findAllDepartements } from "../entities/departement-service";
 import { createDonnee, DonneeWithRelations, findAllDonnees } from "../entities/donnee-service";
@@ -82,7 +82,7 @@ export class ImportDonneeService extends ImportService {
     this.ages = await findAges();
     this.estimationsNombre = await findEstimationsNombre();
     this.estimationsDistance = await findEstimationsDistance();
-    this.comportements = await findAllComportements();
+    this.comportements = await findComportements();
     this.milieux = await findMilieux();
     this.inventaires = await findAllInventaires();
     this.existingDonnees = await findAllDonnees();

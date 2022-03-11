@@ -1,4 +1,4 @@
-import { Comportement, Nicheur, Prisma } from "@prisma/client";
+import { Comportement, DatabaseRole, Nicheur, Prisma } from "@prisma/client";
 import {
   ComportementsPaginatedResult,
   FindParams,
@@ -8,31 +8,60 @@ import {
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
+import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
-import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+import {
+  getPrismaPagination,
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
+} from "./entities-utils";
 
-export const findComportement = async (id: number): Promise<Comportement | null> => {
-  return prisma.comportement.findUnique({
+export const findComportement = async (
+  id: number,
+  loggedUser: LoggedUser | null = null
+): Promise<(Comportement & ReadonlyStatus) | null> => {
+  const comportementEntity = await prisma.comportement.findUnique({
     where: {
       id
     }
   });
+
+  if (!comportementEntity) {
+    return null;
+  }
+
+  return {
+    ...comportementEntity,
+    readonly: isEntityReadOnly(comportementEntity, loggedUser)
+  };
 };
 
-export const findComportementsByIds = async (ids: number[]): Promise<Comportement[]> => {
-  return prisma.comportement.findMany({
-    orderBy: {
-      code: "asc"
-    },
+export const findComportementsByIds = async (
+  ids: number[],
+  loggedUser: LoggedUser | null = null
+): Promise<Comportement[]> => {
+  const comportementEntities = await prisma.comportement.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       id: {
         in: ids
       }
     }
   });
+
+  return comportementEntities?.map((comportement) => {
+    return {
+      ...comportement,
+      readonly: isEntityReadOnly(comportement, loggedUser)
+    };
+  });
 };
 
-export const findComportements = async (params?: FindParams | null): Promise<Comportement[]> => {
+export const findComportements = async (
+  params?: FindParams | null,
+  loggedUser: LoggedUser | null = null
+): Promise<Comportement[]> => {
   const { q, max } = params ?? {};
 
   const matchingCodesAsNumber = numberAsCodeSqlMatcher(q);
@@ -45,9 +74,7 @@ export const findComportements = async (params?: FindParams | null): Promise<Com
   });
 
   const matchingWithCode = await prisma.comportement.findMany({
-    orderBy: {
-      code: "asc"
-    },
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: q
       ? {
           OR: [
@@ -64,9 +91,7 @@ export const findComportements = async (params?: FindParams | null): Promise<Com
   });
 
   const matchingWithLibelle = await prisma.comportement.findMany({
-    orderBy: {
-      code: "asc"
-    },
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
         contains: q || undefined
@@ -81,7 +106,13 @@ export const findComportements = async (params?: FindParams | null): Promise<Com
   // However, to be consistent, we still need to sort them by code as it can still be mixed up
   const matchingEntries = [...matchingWithCode, ...matchingWithLibelle]
     .sort((a, b) => a.code.localeCompare(b.code))
-    .filter((element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id));
+    .filter((element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id))
+    .map((matchingEntry) => {
+      return {
+        ...matchingEntry,
+        readonly: isEntityReadOnly(matchingEntry, loggedUser)
+      };
+    });
 
   return max ? matchingEntries.slice(0, max) : matchingEntries;
 };
@@ -110,12 +141,9 @@ const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhere
     : {};
 };
 
-export const findAllComportements = async (): Promise<Comportement[]> => {
-  return prisma.comportement.findMany(queryParametersToFindAllEntities(COLUMN_CODE));
-};
-
 export const findPaginatedComportements = async (
-  options: Partial<QueryPaginatedComportementsArgs> = {}
+  options: Partial<QueryPaginatedComportementsArgs> = {},
+  loggedUser: LoggedUser | null = null
 ): Promise<ComportementsPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
@@ -168,6 +196,7 @@ export const findPaginatedComportements = async (
     result: comportements.map((comportement) => {
       return {
         ...comportement,
+        readonly: isEntityReadOnly(comportement, loggedUser),
         ...(includeCounts
           ? {
               nbDonnees:
@@ -185,19 +214,65 @@ export const findPaginatedComportements = async (
 export const upsertComportement = async (
   args: MutationUpsertComportementArgs,
   loggedUser: LoggedUser
-): Promise<Comportement> => {
+): Promise<Comportement & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedComportement: Comportement;
+
   if (id) {
-    return prisma.comportement.update({
-      where: { id },
-      data
-    });
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.comportement.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    // Update an existing comportement
+    try {
+      upsertedComportement = await prisma.comportement.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.comportement.create({ data: { ...data, ownerId: loggedUser.id } });
+    // Create a new comportement
+    try {
+      upsertedComportement = await prisma.comportement.create({ data: { ...data, ownerId: loggedUser.id } });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedComportement,
+    readonly: false
+  };
 };
 
-export const deleteComportement = async (id: number): Promise<Comportement> => {
+export const deleteComportement = async (id: number, loggedUser: LoggedUser): Promise<Comportement> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.comportement.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.comportement.delete({
     where: {
       id
