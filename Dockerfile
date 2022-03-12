@@ -28,6 +28,7 @@ COPY prisma/ /app/prisma/
 COPY package.json package-lock.json /app/ 
 
 RUN npm set-script prepare "" && \
+  npm set-script generate-graphql "" && \
   npm ci --production && \
   rm -f package.json package-lock.json
 
