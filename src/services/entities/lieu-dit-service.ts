@@ -142,39 +142,6 @@ export const findAllLieuxDits = async (options?: {
   return lieuxDitsDb.map(buildLieuditFromLieuditDb);
 };
 
-export const findAllLieuxDitsWithCounts = async (options?: {
-  where?: Prisma.LieuditWhereInput;
-}): Promise<Omit<LieuDitWithCoordinatesAsNumber, "commune">[]> => {
-  const lieuxDitsDb = await prisma.lieudit.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    include: {
-      inventaire: {
-        select: {
-          _count: {
-            select: {
-              donnee: true
-            }
-          }
-        }
-      }
-    },
-    where: options?.where ?? {}
-  });
-
-  return lieuxDitsDb.map((lieudit) => {
-    const nbDonnees = lieudit.inventaire
-      .map((inventaire) => {
-        return inventaire._count.donnee;
-      })
-      .reduce(counterReducer, 0);
-
-    return {
-      ...buildLieuditFromLieuditDb(lieudit),
-      nbDonnees
-    };
-  });
-};
-
 export const findPaginatedLieuxDits = async (
   options: Partial<QueryPaginatedLieuxditsArgs> = {}
 ): Promise<LieuxDitsPaginatedResult> => {

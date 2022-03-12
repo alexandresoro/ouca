@@ -141,49 +141,6 @@ export const findAllCommunesWithDepartements = async (): Promise<(Commune & { de
   });
 };
 
-export const findAllCommunesWithCounts = async (): Promise<Omit<Commune, "departement">[]> => {
-  const communesDb = await prisma.commune.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    include: {
-      _count: {
-        select: {
-          lieudit: true
-        }
-      },
-      lieudit: {
-        select: {
-          inventaire: {
-            select: {
-              _count: {
-                select: {
-                  donnee: true
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  });
-
-  return communesDb.map((commune) => {
-    const nbDonnees = commune.lieudit
-      .map((lieudit) => {
-        return lieudit.inventaire.map((inventaire) => {
-          return inventaire._count.donnee;
-        });
-      })
-      .flat(2)
-      .reduce(counterReducer, 0);
-
-    return {
-      ...commune,
-      nbLieuxdits: commune._count.lieudit,
-      nbDonnees
-    };
-  });
-};
-
 export const findPaginatedCommunes = async (
   options: Partial<QueryPaginatedCommunesArgs> = {}
 ): Promise<CommunesPaginatedResult> => {
