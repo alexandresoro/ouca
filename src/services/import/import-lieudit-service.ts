@@ -5,7 +5,7 @@ import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { LoggedUser } from "../../types/LoggedUser";
 import { findAllCommunes } from "../entities/commune-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
-import { findAllDepartements } from "../entities/departement-service";
+import { findDepartements } from "../entities/departement-service";
 import { createLieuxDits, findAllLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
@@ -26,7 +26,7 @@ export class ImportLieuxditService extends ImportService {
     let coordinatesSystemType: CoordinatesSystemType | undefined;
 
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
-      findAllDepartements(),
+      findDepartements(),
       findAllCommunes(),
       findAllLieuxDits(),
       findCoordinatesSystem(loggedUser)

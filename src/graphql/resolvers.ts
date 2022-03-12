@@ -196,7 +196,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     departement: async (_source, args, context): Promise<Departement | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findDepartement(args.id);
+      return findDepartement(args.id, context.user);
     },
     donnee: (_source, args, context): { id: number } => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -278,7 +278,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     departements: async (_source, args, context): Promise<Departement[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findDepartements(args?.params);
+      return findDepartements(args?.params, context.user);
     },
     especes: async (_source, args, context): Promise<Omit<Espece, "classe">[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -338,7 +338,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedDepartements: async (_source, args, context): Promise<DepartementsPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedDepartements(args);
+      return findPaginatedDepartements(args, context.user);
     },
     paginatedEspeces: async (_source, args, context): Promise<EspecesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -484,7 +484,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteDepartement: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteDepartement(args.id).then(({ id }) => id);
+      return deleteDepartement(args.id, context.user).then(({ id }) => id);
     },
     deleteDonnee: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -694,8 +694,8 @@ const resolvers: Resolvers<GraphQLContext> = {
     }
   },
   Commune: {
-    departement: async (parent): Promise<Departement | null> => {
-      return findDepartementOfCommuneId(parent?.id);
+    departement: async (parent, args, context): Promise<Departement | null> => {
+      return findDepartementOfCommuneId(parent?.id, context.user);
     }
   },
   Donnee: {

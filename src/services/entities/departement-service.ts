@@ -1,4 +1,4 @@
-import { Departement, Prisma } from "@prisma/client";
+import { DatabaseRole, Departement, Prisma } from "@prisma/client";
 import {
   DepartementsPaginatedResult,
   FindParams,
@@ -8,12 +8,14 @@ import {
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
-import counterReducer from "../../utils/counterReducer";
+import { OucaError } from "../../utils/errors";
 import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  queryParametersToFindAllEntities
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
 } from "./entities-utils";
 
 export const getFilterClauseDepartement = (q: string | null | undefined): Prisma.DepartementWhereInput => {
@@ -26,31 +28,56 @@ export const getFilterClauseDepartement = (q: string | null | undefined): Prisma
     : {};
 };
 
-export const findDepartement = async (id: number): Promise<Departement | null> => {
-  return prisma.departement.findUnique({
+export const findDepartement = async (
+  id: number,
+  loggedUser: LoggedUser | null = null
+): Promise<(Departement & ReadonlyStatus) | null> => {
+  const departementEntity = await prisma.departement.findUnique({
     where: {
       id
     }
   });
+
+  if (!departementEntity) {
+    return null;
+  }
+
+  return {
+    ...departementEntity,
+    readonly: isEntityReadOnly(departementEntity, loggedUser)
+  };
 };
 
-export const findDepartementOfCommuneId = async (communeId: number | undefined): Promise<Departement | null> => {
-  return prisma.commune
+export const findDepartementOfCommuneId = async (
+  communeId: number | undefined,
+  loggedUser: LoggedUser | null = null
+): Promise<(Departement & ReadonlyStatus) | null> => {
+  const departementEntity = await prisma.commune
     .findUnique({
       where: {
         id: communeId
       }
     })
     .departement();
+
+  if (!departementEntity) {
+    return null;
+  }
+
+  return {
+    ...departementEntity,
+    readonly: isEntityReadOnly(departementEntity, loggedUser)
+  };
 };
 
-export const findDepartements = async (params?: FindParams | null): Promise<Departement[]> => {
+export const findDepartements = async (
+  params?: FindParams | null,
+  loggedUser: LoggedUser | null = null
+): Promise<(Departement & ReadonlyStatus)[]> => {
   const { q, max } = params ?? {};
 
-  return prisma.departement.findMany({
-    orderBy: {
-      code: "asc"
-    },
+  const departementEntities = await prisma.departement.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       code: {
         startsWith: q || undefined
@@ -58,22 +85,28 @@ export const findDepartements = async (params?: FindParams | null): Promise<Depa
     },
     take: max || undefined
   });
-};
 
-export const findAllDepartements = async (): Promise<Departement[]> => {
-  return prisma.departement.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE)
+  return departementEntities?.map((departement) => {
+    return {
+      ...departement,
+      readonly: isEntityReadOnly(departement, loggedUser)
+    };
   });
 };
 
 export const findPaginatedDepartements = async (
-  options: Partial<QueryPaginatedDepartementsArgs> = {}
+  options: Partial<QueryPaginatedDepartementsArgs> = {},
+  loggedUser: LoggedUser | null = null
 ): Promise<DepartementsPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
-  let departements: (Departement & { nbLieuxDits?: number; nbDonnees?: number })[];
+  // We include case where we need to includeCounts as tehre seem to be issues when requesting inventaires that have a inventaire
+  // in a list of 1000+ elements
+  const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees" || orderByField === "nbLieuxDits";
 
-  if (orderByField === "nbDonnees" || orderByField === "nbLieuxDits") {
+  let departementEntities: (Departement & { nbLieuxDits?: number; nbDonnees?: number })[];
+
+  if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
     const filterRequest = queryExpression
       ? Prisma.sql`
@@ -109,7 +142,7 @@ export const findPaginatedDepartements = async (
     `;
 
     const nbDonneesForFilteredDepartements = await prisma.$queryRaw<
-      { id: number; nbLieuxDits: number; nbDonnees: number }[]
+      { id: number; ownerId: string; nbLieuxDits: number; nbDonnees: number }[]
     >`${donneesPerDepartementRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
 
     const departementsRq = await prisma.departement.findMany({
@@ -127,7 +160,7 @@ export const findPaginatedDepartements = async (
       }
     });
 
-    departements = nbDonneesForFilteredDepartements.map((departementInfo) => {
+    departementEntities = nbDonneesForFilteredDepartements.map((departementInfo) => {
       const departement = departementsRq?.find((departement) => departement.id === departementInfo.id);
 
       return {
@@ -164,74 +197,22 @@ export const findPaginatedDepartements = async (
       }
     }
 
-    if (includeCounts) {
-      const departementsRq = await prisma.departement.findMany({
-        ...getPrismaPagination(searchParams),
-        orderBy,
-        include: {
-          _count: {
-            select: {
-              commune: true
-            }
-          },
-          commune: {
-            select: {
-              _count: {
-                select: {
-                  lieudit: true
-                }
-              },
-              lieudit: {
-                select: {
-                  inventaire: {
-                    select: {
-                      _count: {
-                        select: {
-                          donnee: true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        where: getFilterClauseDepartement(searchParams?.q)
-      });
-
-      departements = departementsRq.map((departement) => {
-        const nbLieuxDits =
-          departement?.commune?.map((commune) => commune._count.lieudit).reduce(counterReducer, 0) ?? 0;
-        const nbDonnees = departement?.commune
-          .map((commune) => {
-            return commune.lieudit.map((lieudit) => {
-              return lieudit.inventaire.map((inventaire) => {
-                return inventaire._count.donnee;
-              });
-            });
-          })
-          .flat(3)
-          .reduce(counterReducer, 0);
-
-        return {
-          ...departement,
-          nbCommunes: departement._count.commune,
-          nbLieuxDits,
-          nbDonnees
-        };
-      });
-    } else {
-      departements = await prisma.departement.findMany({
-        ...getPrismaPagination(searchParams),
-        orderBy,
-        where: getFilterClauseDepartement(searchParams?.q)
-      });
-    }
+    departementEntities = await prisma.departement.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      where: getFilterClauseDepartement(searchParams?.q)
+    });
   }
 
   const count = await prisma.departement.count({
     where: getFilterClauseDepartement(searchParams?.q)
+  });
+
+  const departements = departementEntities?.map((departement) => {
+    return {
+      ...departement,
+      readonly: isEntityReadOnly(departement, loggedUser)
+    };
   });
 
   return {
@@ -243,19 +224,63 @@ export const findPaginatedDepartements = async (
 export const upsertDepartement = async (
   args: MutationUpsertDepartementArgs,
   loggedUser: LoggedUser
-): Promise<Departement> => {
+): Promise<Departement & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedDepartement: Departement;
+
   if (id) {
-    return prisma.departement.update({
-      where: { id },
-      data
-    });
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.departement.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    try {
+      upsertedDepartement = await prisma.departement.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.departement.create({ data: { ...data, ownerId: loggedUser.id } });
+    try {
+      upsertedDepartement = await prisma.departement.create({ data: { ...data, ownerId: loggedUser.id } });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedDepartement,
+    readonly: false
+  };
 };
 
-export const deleteDepartement = async (id: number): Promise<Departement> => {
+export const deleteDepartement = async (id: number, loggedUser: LoggedUser): Promise<Departement> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.departement.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.departement.delete({
     where: {
       id

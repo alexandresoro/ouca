@@ -10,7 +10,7 @@ import { findAges } from "./entities/age-service";
 import { findClasses } from "./entities/classe-service";
 import { findAllCommunesWithDepartements } from "./entities/commune-service";
 import { findComportements } from "./entities/comportement-service";
-import { findAllDepartements } from "./entities/departement-service";
+import { findDepartements } from "./entities/departement-service";
 import { DonneeWithRelations, findDonneesByCriteria } from "./entities/donnee-service";
 import { findAllEspecesWithClasses } from "./entities/espece-service";
 import { findEstimationsDistance } from "./entities/estimation-distance-service";
@@ -79,7 +79,7 @@ export const generateComportementsExport = async (): Promise<string> => {
 };
 
 export const generateDepartementsExport = async (): Promise<string> => {
-  const departementsDb = await findAllDepartements();
+  const departementsDb = await findDepartements();
 
   const objectsToExport = departementsDb.map((object) => {
     return {

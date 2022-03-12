@@ -1,7 +1,7 @@
 import { Departement } from "@prisma/client";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
 import { LoggedUser } from "../../types/LoggedUser";
-import { createDepartements, findAllDepartements } from "../entities/departement-service";
+import { createDepartements, findDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {
@@ -15,7 +15,7 @@ export class ImportDepartementService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.departementsToInsert = [];
-    this.departements = await findAllDepartements();
+    this.departements = await findDepartements();
   };
 
   protected validateAndPrepareEntity = (departementTab: string[]): string | null => {
