@@ -1,6 +1,6 @@
 import { DatabaseRole, Milieu, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertMilieuArgs, QueryPaginatedMilieuxArgs } from "../../model/graphql";
+import { MutationUpsertMilieuArgs, QueryPaginatedMilieuxArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";

@@ -1,6 +1,9 @@
 import { DatabaseRole, EstimationNombre, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertEstimationNombreArgs, QueryPaginatedEstimationsNombreArgs } from "../../model/graphql";
+import {
+  MutationUpsertEstimationNombreArgs,
+  QueryPaginatedEstimationsNombreArgs
+} from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";

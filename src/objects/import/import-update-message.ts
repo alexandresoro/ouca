@@ -1,4 +1,4 @@
-import { OngoingSubStatus } from "../../model/graphql";
+import { OngoingSubStatus } from "../../graphql/generated/graphql-types";
 
 export const VALIDATION_PROGRESS = "VALIDATION_PROGRESS";
 

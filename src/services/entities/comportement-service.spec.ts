@@ -1,6 +1,6 @@
 import { Comportement, DatabaseRole, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertComportementArgs, QueryPaginatedComportementsArgs } from "../../model/graphql";
+import { MutationUpsertComportementArgs, QueryPaginatedComportementsArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";

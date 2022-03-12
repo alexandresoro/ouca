@@ -1,6 +1,6 @@
 import { DatabaseRole, Observateur, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertObservateurArgs, QueryPaginatedObservateursArgs } from "../../model/graphql";
+import { MutationUpsertObservateurArgs, QueryPaginatedObservateursArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";

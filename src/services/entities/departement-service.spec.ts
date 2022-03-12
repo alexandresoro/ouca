@@ -1,6 +1,6 @@
 import { Commune, DatabaseRole, Departement, Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
-import { MutationUpsertDepartementArgs, QueryPaginatedDepartementsArgs } from "../../model/graphql";
+import { MutationUpsertDepartementArgs, QueryPaginatedDepartementsArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";

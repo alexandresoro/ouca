@@ -4,6 +4,9 @@ node_modules
 
 dist/
 
+# Generated files
+src/graphql/generated
+
 # Jest code coverage
 coverage
 

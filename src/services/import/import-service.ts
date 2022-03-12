@@ -1,7 +1,7 @@
 import { parse } from "csv-parse/sync";
 import { EventEmitter } from "events";
 import deburr from "lodash.deburr";
-import { OngoingSubStatus } from "../../model/graphql";
+import { OngoingSubStatus } from "../../graphql/generated/graphql-types";
 import { ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message";
 import { LoggedUser } from "../../types/LoggedUser";
 import { logger } from "../../utils/logger";

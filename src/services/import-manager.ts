@@ -10,7 +10,7 @@ import {
   ImportStatusEnum,
   OngoingSubStatus,
   OngoingValidationStats
-} from "../model/graphql";
+} from "../graphql/generated/graphql-types";
 import { ImportType } from "../model/import-types";
 import {
   ImportUpdateMessage,

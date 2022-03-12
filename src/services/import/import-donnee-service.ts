@@ -11,10 +11,10 @@ import {
   Observateur,
   Sexe
 } from "@prisma/client";
+import { InputDonnee } from "../../graphql/generated/graphql-types";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { InputDonnee } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
 import { LoggedUser } from "../../types/LoggedUser";

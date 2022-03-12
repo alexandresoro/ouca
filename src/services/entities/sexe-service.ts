@@ -1,5 +1,10 @@
 import { DatabaseRole, Prisma, Sexe } from "@prisma/client";
-import { FindParams, MutationUpsertSexeArgs, QueryPaginatedSexesArgs, SexesPaginatedResult } from "../../model/graphql";
+import {
+  FindParams,
+  MutationUpsertSexeArgs,
+  QueryPaginatedSexesArgs,
+  SexesPaginatedResult
+} from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";

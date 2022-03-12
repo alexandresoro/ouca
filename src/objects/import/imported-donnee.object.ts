@@ -1,6 +1,6 @@
 import { format } from "date-fns";
+import { InputDonnee, InputInventaire } from "../../graphql/generated/graphql-types";
 import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { InputDonnee, InputInventaire } from "../../model/graphql";
 import { Coordinates } from "../../model/types/coordinates.object";
 import { DATE_PATTERN } from "../../utils/constants";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils";

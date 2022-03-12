@@ -6,5 +6,6 @@ dist
 .vscode
 
 src/model/graphql.ts
+src/graphql/generated
 # Ignore submodule formatting
 .gitmodules

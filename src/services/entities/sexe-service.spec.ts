@@ -1,6 +1,6 @@
 import { DatabaseRole, Prisma, Sexe } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertSexeArgs, QueryPaginatedSexesArgs } from "../../model/graphql";
+import { MutationUpsertSexeArgs, QueryPaginatedSexesArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";

@@ -4,7 +4,7 @@ import {
   MeteosPaginatedResult,
   MutationUpsertMeteoArgs,
   QueryPaginatedMeteosArgs
-} from "../../model/graphql";
+} from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";

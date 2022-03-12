@@ -14,13 +14,17 @@ import { promisify } from "util";
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
 import { getGraphQLContext } from "./graphql/graphql-context";
 import resolvers from "./graphql/resolvers";
-import typeDefs from "./graphql/typedefs";
 import { ImportType, IMPORT_TYPE } from "./model/import-types";
 import { startImportTask } from "./services/import-manager";
 import { getLoggedUser, validateAndExtractUserToken } from "./services/token-service";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
 import { checkAndCreateFolders, DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
+
+logger.debug("Starting server");
+
+const typeDefs = fs.readFileSync(path.join(__dirname, "model/schema.graphql"), "utf-8").toString();
+logger.debug("GraphQL schema has been parsed");
 
 const server = fastify({
   logger

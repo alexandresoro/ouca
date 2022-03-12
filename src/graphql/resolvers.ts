@@ -1,43 +1,5 @@
 import { Commune as CommuneEntity, DatabaseRole, Espece as EspeceEntity } from "@prisma/client";
 import { ApolloError, AuthenticationError, ForbiddenError } from "apollo-server-core";
-import {
-  Age,
-  AgesPaginatedResult,
-  AgeWithSpecimensCount,
-  Classe,
-  ClassesPaginatedResult,
-  Commune,
-  CommunesPaginatedResult,
-  Comportement,
-  ComportementsPaginatedResult,
-  Departement,
-  DepartementsPaginatedResult,
-  Donnee,
-  DonneeNavigationData,
-  Espece,
-  EspecesPaginatedResult,
-  EstimationDistance,
-  EstimationNombre,
-  EstimationsDistancePaginatedResult,
-  EstimationsNombrePaginatedResult,
-  ImportStatus,
-  Inventaire,
-  LieuDit,
-  LieuxDitsPaginatedResult,
-  Meteo,
-  MeteosPaginatedResult,
-  Milieu,
-  MilieuxPaginatedResult,
-  Observateur,
-  ObservateursPaginatedResult,
-  Resolvers,
-  Settings,
-  Sexe,
-  SexesPaginatedResult,
-  SexeWithSpecimensCount,
-  UpsertInventaireFailureReason,
-  UserInfo
-} from "../model/graphql";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
@@ -168,6 +130,44 @@ import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
 import { createUser, deleteUser, getUser, loginUser, updateUser } from "../services/user-service";
 import { logger } from "../utils/logger";
+import {
+  Age,
+  AgesPaginatedResult,
+  AgeWithSpecimensCount,
+  Classe,
+  ClassesPaginatedResult,
+  Commune,
+  CommunesPaginatedResult,
+  Comportement,
+  ComportementsPaginatedResult,
+  Departement,
+  DepartementsPaginatedResult,
+  Donnee,
+  DonneeNavigationData,
+  Espece,
+  EspecesPaginatedResult,
+  EstimationDistance,
+  EstimationNombre,
+  EstimationsDistancePaginatedResult,
+  EstimationsNombrePaginatedResult,
+  ImportStatus,
+  Inventaire,
+  LieuDit,
+  LieuxDitsPaginatedResult,
+  Meteo,
+  MeteosPaginatedResult,
+  Milieu,
+  MilieuxPaginatedResult,
+  Observateur,
+  ObservateursPaginatedResult,
+  Resolvers,
+  Settings,
+  Sexe,
+  SexesPaginatedResult,
+  SexeWithSpecimensCount,
+  UpsertInventaireFailureReason,
+  UserInfo
+} from "./generated/graphql-types";
 import { GraphQLContext } from "./graphql-context";
 
 const USER_NOT_AUTHENTICATED = "User is not authenticated.";

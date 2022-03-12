@@ -1,5 +1,5 @@
 import { DatabaseRole, Prisma } from ".prisma/client";
-import { SortOrder } from "../../model/graphql";
+import { SortOrder } from "../../graphql/generated/graphql-types";
 import { LoggedUser } from "../../types/LoggedUser";
 
 type SortOptions = Partial<{

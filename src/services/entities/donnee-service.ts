@@ -25,7 +25,7 @@ import {
   SearchDonneeCriteria,
   SexeWithSpecimensCount,
   SortOrder
-} from "../../model/graphql";
+} from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 import { getPrismaPagination } from "./entities-utils";

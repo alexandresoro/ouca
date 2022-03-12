@@ -25,7 +25,7 @@ export default {
     "src/**",
     "!src/graphql/apollo-plugins.ts",
     "!src/graphql/resolvers.ts",
-    "!src/graphql/typedefs.ts",
+    "!src/graphql/generated/**",
     "!src/model/graphql.ts"
   ],
 

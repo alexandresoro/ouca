@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import path from "path";
+import { SearchDonneeCriteria } from "../graphql/generated/graphql-types";
 import { GPS_COORDINATES } from "../model/coordinates-system/gps.object";
-import { SearchDonneeCriteria } from "../model/graphql";
 import { getNicheurStatusToDisplay } from "../model/helpers/nicheur-helper";
 import { SEPARATOR_COMMA } from "../utils/constants";
 import { writeToExcelFile } from "../utils/export-excel-utils";

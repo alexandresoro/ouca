@@ -5,7 +5,7 @@ import {
   InputInventaire,
   MutationUpsertInventaireArgs,
   UpsertInventaireFailureReason
-} from "../../model/graphql";
+} from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { DATE_PATTERN } from "../../utils/constants";

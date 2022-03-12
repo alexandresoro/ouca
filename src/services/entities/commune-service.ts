@@ -4,7 +4,7 @@ import {
   FindParams,
   MutationUpsertCommuneArgs,
   QueryPaginatedCommunesArgs
-} from "../../model/graphql";
+} from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";

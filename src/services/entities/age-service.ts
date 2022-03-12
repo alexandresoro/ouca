@@ -1,5 +1,10 @@
 import { Age, DatabaseRole, Prisma } from "@prisma/client";
-import { AgesPaginatedResult, FindParams, MutationUpsertAgeArgs, QueryPaginatedAgesArgs } from "../../model/graphql";
+import {
+  AgesPaginatedResult,
+  FindParams,
+  MutationUpsertAgeArgs,
+  QueryPaginatedAgesArgs
+} from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
