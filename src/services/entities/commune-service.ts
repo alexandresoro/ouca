@@ -1,4 +1,4 @@
-import { Commune, Departement, Prisma } from "@prisma/client";
+import { Commune, DatabaseRole, Departement, Prisma } from "@prisma/client";
 import {
   CommunesPaginatedResult,
   FindParams,
@@ -9,36 +9,66 @@ import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
+import { OucaError } from "../../utils/errors";
 import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  queryParametersToFindAllEntities
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
 } from "./entities-utils";
 
-export const findCommune = async (id: number): Promise<Commune | null> => {
-  return prisma.commune.findUnique({
+export const findCommune = async (
+  id: number,
+  loggedUser: LoggedUser | null = null
+): Promise<(Commune & ReadonlyStatus) | null> => {
+  const communeEntity = await prisma.commune.findUnique({
     where: {
       id
     }
   });
+
+  if (!communeEntity) {
+    return null;
+  }
+
+  return {
+    ...communeEntity,
+    readonly: isEntityReadOnly(communeEntity, loggedUser)
+  };
 };
 
-export const findCommuneOfLieuDitId = async (lieuDitId: number | undefined): Promise<Commune | null> => {
-  return prisma.lieudit
+export const findCommuneOfLieuDitId = async (
+  lieuDitId: number | undefined,
+  loggedUser: LoggedUser | null = null
+): Promise<(Commune & ReadonlyStatus) | null> => {
+  const communeEntity = await prisma.lieudit
     .findUnique({
       where: {
         id: lieuDitId
       }
     })
     .commune();
+
+  if (!communeEntity) {
+    return null;
+  }
+
+  return {
+    ...communeEntity,
+    readonly: isEntityReadOnly(communeEntity, loggedUser)
+  };
 };
 
-export const findCommunes = async (options: {
-  params?: FindParams | null;
-  departementId?: number | null;
-}): Promise<Commune[]> => {
-  const { params, departementId } = options ?? {};
+export const findCommunes = async (
+  options: {
+    params?: FindParams | null;
+    departementId?: number | null;
+  } = {},
+  loggedUser: LoggedUser | null = null
+): Promise<(Commune & ReadonlyStatus)[]> => {
+  const { params, departementId } = options;
   const { q, max } = params ?? {};
 
   // Ugly workaround to search by commune code as they are stored as Int in database,
@@ -96,12 +126,17 @@ export const findCommunes = async (options: {
     ]
   };
 
-  return prisma.commune.findMany({
-    orderBy: {
-      nom: "asc"
-    },
+  const communeEntities = await prisma.commune.findMany({
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
     where: whereClause,
     take: max || undefined
+  });
+
+  return communeEntities?.map((commune) => {
+    return {
+      ...commune,
+      readonly: isEntityReadOnly(commune, loggedUser)
+    };
   });
 };
 
@@ -126,13 +161,7 @@ export const getFilterClauseCommune = (q: string | null | undefined): Prisma.Com
     : {};
 };
 
-export const findAllCommunes = async (): Promise<Commune[]> => {
-  return await prisma.commune.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_NOM)
-  });
-};
-
-export const findAllCommunesWithDepartements = async (): Promise<(Commune & { departement: Departement })[]> => {
+export const findCommunesWithDepartements = async (): Promise<(Commune & { departement: Departement })[]> => {
   return await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {
@@ -142,11 +171,14 @@ export const findAllCommunesWithDepartements = async (): Promise<(Commune & { de
 };
 
 export const findPaginatedCommunes = async (
-  options: Partial<QueryPaginatedCommunesArgs> = {}
-): Promise<CommunesPaginatedResult> => {
+  options: Partial<QueryPaginatedCommunesArgs> = {},
+  loggedUser: LoggedUser | null = null
+): Promise<
+  Omit<CommunesPaginatedResult, "result"> & { result?: (Commune & { nbLieuxDits?: number; nbDonnees?: number })[] }
+> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
-  let communes: (Commune & { departement: Departement; nbLieuxDits?: number; nbDonnees?: number })[];
+  let communeEntities: (Commune & { nbLieuxDits?: number; nbDonnees?: number })[];
 
   if (orderByField === "nbDonnees") {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
@@ -190,15 +222,6 @@ export const findPaginatedCommunes = async (
     >`${donneesPerCommuneRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
 
     const communesRq = await prisma.commune.findMany({
-      include: {
-        departement: {
-          select: {
-            id: true,
-            code: true,
-            ownerId: true
-          }
-        }
-      },
       where: {
         id: {
           in: nbDonneesForFilteredCommunes.map((communeInfo) => communeInfo.id) // /!\ The IN clause could break if not paginated enough
@@ -206,7 +229,7 @@ export const findPaginatedCommunes = async (
       }
     });
 
-    communes = nbDonneesForFilteredCommunes.map((communeInfo) => {
+    communeEntities = nbDonneesForFilteredCommunes.map((communeInfo) => {
       const commune = communesRq?.find((commune) => commune.id === communeInfo.id);
       return {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -250,13 +273,6 @@ export const findPaginatedCommunes = async (
         ...getPrismaPagination(searchParams),
         orderBy,
         include: {
-          departement: {
-            select: {
-              id: true,
-              code: true,
-              ownerId: true
-            }
-          },
           _count: {
             select: {
               lieudit: true
@@ -279,7 +295,7 @@ export const findPaginatedCommunes = async (
         where: getFilterClauseCommune(searchParams?.q)
       });
 
-      communes = communesRq.map((commune) => {
+      communeEntities = communesRq.map((commune) => {
         const nbDonnees = commune.lieudit
           .map((lieudit) => {
             return lieudit.inventaire.map((inventaire) => {
@@ -299,24 +315,22 @@ export const findPaginatedCommunes = async (
       const communesRq = await prisma.commune.findMany({
         ...getPrismaPagination(searchParams),
         orderBy,
-        include: {
-          departement: {
-            select: {
-              id: true,
-              code: true,
-              ownerId: true
-            }
-          }
-        },
         where: getFilterClauseCommune(searchParams?.q)
       });
 
-      communes = communesRq;
+      communeEntities = communesRq;
     }
   }
 
   const count = await prisma.commune.count({
     where: getFilterClauseCommune(searchParams?.q)
+  });
+
+  const communes = communeEntities?.map((commune) => {
+    return {
+      ...commune,
+      readonly: isEntityReadOnly(commune, loggedUser)
+    };
   });
 
   return {
@@ -325,19 +339,66 @@ export const findPaginatedCommunes = async (
   };
 };
 
-export const upsertCommune = async (args: MutationUpsertCommuneArgs, loggedUser: LoggedUser): Promise<Commune> => {
+export const upsertCommune = async (
+  args: MutationUpsertCommuneArgs,
+  loggedUser: LoggedUser
+): Promise<Commune & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedCommune: Commune;
+
   if (id) {
-    return prisma.commune.update({
-      where: { id },
-      data
-    });
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.commune.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    try {
+      upsertedCommune = await prisma.commune.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.commune.create({ data: { ...data, ownerId: loggedUser.id } });
+    try {
+      upsertedCommune = await prisma.commune.create({ data: { ...data, ownerId: loggedUser.id } });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedCommune,
+    readonly: false
+  };
 };
 
-export const deleteCommune = async (id: number): Promise<Commune> => {
+export const deleteCommune = async (id: number, loggedUser: LoggedUser): Promise<Commune> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.commune.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.commune.delete({
     where: {
       id

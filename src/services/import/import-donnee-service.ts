@@ -20,7 +20,7 @@ import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
 import { LoggedUser } from "../../types/LoggedUser";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { findAges } from "../entities/age-service";
-import { findAllCommunes } from "../entities/commune-service";
+import { findCommunes } from "../entities/commune-service";
 import { findComportements } from "../entities/comportement-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findDepartements } from "../entities/departement-service";
@@ -74,7 +74,7 @@ export class ImportDonneeService extends ImportService {
 
     this.observateurs = await findObservateurs();
     this.departements = await findDepartements();
-    this.communes = await findAllCommunes();
+    this.communes = await findCommunes();
     this.lieuxDits = await findAllLieuxDits();
     this.meteos = await findMeteos();
     this.especes = await findAllEspeces();

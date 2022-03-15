@@ -8,7 +8,7 @@ import { writeToExcelFile } from "../utils/export-excel-utils";
 import { PUBLIC_DIR } from "../utils/paths";
 import { findAges } from "./entities/age-service";
 import { findClasses } from "./entities/classe-service";
-import { findAllCommunesWithDepartements } from "./entities/commune-service";
+import { findCommunesWithDepartements } from "./entities/commune-service";
 import { findComportements } from "./entities/comportement-service";
 import { findDepartements } from "./entities/departement-service";
 import { DonneeWithRelations, findDonneesByCriteria } from "./entities/donnee-service";
@@ -48,7 +48,7 @@ export const generateClassesExport = async (): Promise<string> => {
 };
 
 export const generateCommunesExport = async (): Promise<string> => {
-  const communesDb = await findAllCommunesWithDepartements();
+  const communesDb = await findCommunesWithDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {
     return {

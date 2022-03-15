@@ -184,7 +184,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     commune: async (_source, args, context): Promise<Omit<Commune, "departement"> | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findCommune(args.id);
+      return findCommune(args.id, context.user);
     },
     comportement: async (_source, args, context): Promise<Comportement | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -270,7 +270,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     communes: async (_source, args, context): Promise<Omit<Commune, "departement">[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findCommunes(args);
+      return findCommunes(args, context.user);
     },
     comportements: async (_source, args, context): Promise<Comportement[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -328,9 +328,13 @@ const resolvers: Resolvers<GraphQLContext> = {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedClasses(args, context.user);
     },
-    paginatedCommunes: async (_source, args, context): Promise<CommunesPaginatedResult> => {
+    paginatedCommunes: async (
+      _source,
+      args,
+      context
+    ): Promise<Omit<CommunesPaginatedResult, "result"> & { result?: Omit<Commune, "departement">[] }> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedCommunes(args);
+      return findPaginatedCommunes(args, context.user);
     },
     paginatedComportements: async (_source, args, context): Promise<ComportementsPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -476,7 +480,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteCommune: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteCommune(args.id).then(({ id }) => id);
+      return deleteCommune(args.id, context.user).then(({ id }) => id);
     },
     deleteComportement: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -723,8 +727,8 @@ const resolvers: Resolvers<GraphQLContext> = {
     }
   },
   LieuDit: {
-    commune: async (parent): Promise<Omit<Commune, "departement"> | null> => {
-      return findCommuneOfLieuDitId(parent?.id);
+    commune: async (parent, args, context): Promise<Omit<Commune, "departement"> | null> => {
+      return findCommuneOfLieuDitId(parent?.id, context.user);
     }
   },
   Espece: {

@@ -3,7 +3,7 @@ import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coord
 import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { LoggedUser } from "../../types/LoggedUser";
-import { findAllCommunes } from "../entities/commune-service";
+import { findCommunes } from "../entities/commune-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findDepartements } from "../entities/departement-service";
 import { createLieuxDits, findAllLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
@@ -27,7 +27,7 @@ export class ImportLieuxditService extends ImportService {
 
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
       findDepartements(),
-      findAllCommunes(),
+      findCommunes(),
       findAllLieuxDits(),
       findCoordinatesSystem(loggedUser)
     ]);

@@ -1,7 +1,7 @@
 import { Commune, Departement } from "@prisma/client";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
 import { LoggedUser } from "../../types/LoggedUser";
-import { createCommunes, findAllCommunes } from "../entities/commune-service";
+import { createCommunes, findCommunes } from "../entities/commune-service";
 import { findDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 
@@ -17,7 +17,7 @@ export class ImportCommuneService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.communesToInsert = [];
-    [this.departements, this.communes] = await Promise.all([findDepartements(), findAllCommunes()]);
+    [this.departements, this.communes] = await Promise.all([findDepartements(), findCommunes()]);
   };
 
   protected validateAndPrepareEntity = (communeTab: string[]): string | null => {
