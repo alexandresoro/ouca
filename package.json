@@ -54,7 +54,7 @@
     "http-proxy-middleware": "^2.0.4",
     "husky": "^7.0.0",
     "lint-staged": "^12.3.7",
-    "prettier": "^2.6.0",
+    "prettier": "^2.6.1",
     "react-scripts": "^5.0.0",
     "typescript": "^4.6.2"
   },
