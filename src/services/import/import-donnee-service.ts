@@ -25,7 +25,7 @@ import { findComportements } from "../entities/comportement-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findDepartements } from "../entities/departement-service";
 import { createDonnee, DonneeWithRelations, findAllDonnees } from "../entities/donnee-service";
-import { findAllEspeces } from "../entities/espece-service";
+import { findEspeces } from "../entities/espece-service";
 import { findEstimationsDistance } from "../entities/estimation-distance-service";
 import { findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { findAllInventaires, InventaireWithRelations, upsertInventaire } from "../entities/inventaire-service";
@@ -77,7 +77,7 @@ export class ImportDonneeService extends ImportService {
     this.communes = await findCommunes();
     this.lieuxDits = await findAllLieuxDits();
     this.meteos = await findMeteos();
-    this.especes = await findAllEspeces();
+    this.especes = await findEspeces();
     this.sexes = await findSexes();
     this.ages = await findAges();
     this.estimationsNombre = await findEstimationsNombre();

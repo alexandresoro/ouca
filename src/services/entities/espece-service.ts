@@ -1,4 +1,4 @@
-import { Classe, Espece, Prisma } from "@prisma/client";
+import { Classe, DatabaseRole, Espece, Prisma } from "@prisma/client";
 import {
   EspecesPaginatedResult,
   FindParams,
@@ -9,32 +9,65 @@ import {
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
+import { OucaError } from "../../utils/errors";
 import { buildSearchDonneeCriteria } from "./donnee-service";
-import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+import {
+  getPrismaPagination,
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
+} from "./entities-utils";
 
-export const findEspece = async (id: number | undefined): Promise<Espece | null> => {
-  return prisma.espece.findUnique({
+export const findEspece = async (
+  id: number | undefined,
+  loggedUser: LoggedUser | null = null
+): Promise<(Espece & ReadonlyStatus) | null> => {
+  const especeEntity = await prisma.espece.findUnique({
     where: {
       id
     }
   });
+
+  if (!especeEntity) {
+    return null;
+  }
+
+  return {
+    ...especeEntity,
+    readonly: isEntityReadOnly(especeEntity, loggedUser)
+  };
 };
 
-export const findEspeceOfDonneeId = async (donneeId: number | undefined): Promise<Espece | null> => {
-  return prisma.donnee
+export const findEspeceOfDonneeId = async (
+  donneeId: number | undefined,
+  loggedUser: LoggedUser | null = null
+): Promise<(Espece & ReadonlyStatus) | null> => {
+  const especeEntity = await prisma.donnee
     .findUnique({
       where: {
         id: donneeId
       }
     })
     .espece();
+
+  if (!especeEntity) {
+    return null;
+  }
+
+  return {
+    ...especeEntity,
+    readonly: isEntityReadOnly(especeEntity, loggedUser)
+  };
 };
 
-export const findEspeces = async (options: {
-  params?: FindParams | null;
-  classeId?: number | null;
-}): Promise<Espece[]> => {
-  const { params, classeId } = options ?? {};
+export const findEspeces = async (
+  options: {
+    params?: FindParams | null;
+    classeId?: number | null;
+  } = {},
+  loggedUser: LoggedUser | null = null
+): Promise<(Espece & ReadonlyStatus)[]> => {
+  const { params, classeId } = options;
   const { q, max } = params ?? {};
 
   const classeIdClause = classeId
@@ -46,9 +79,7 @@ export const findEspeces = async (options: {
     : {};
 
   const matchingWithCode = await prisma.espece.findMany({
-    orderBy: {
-      code: "asc"
-    },
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       AND: [
         {
@@ -80,9 +111,7 @@ export const findEspeces = async (options: {
     : {};
 
   const matchingWithLibelle = await prisma.espece.findMany({
-    orderBy: {
-      code: "asc"
-    },
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       AND: [libelleClause, classeIdClause]
     },
@@ -101,7 +130,14 @@ export const findEspeces = async (options: {
     (element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id)
   );
 
-  return max ? matchingEntries.slice(0, max) : matchingEntries;
+  const matchingEntities = max ? matchingEntries.slice(0, max) : matchingEntries;
+
+  return matchingEntities?.map((espece) => {
+    return {
+      ...espece,
+      readonly: isEntityReadOnly(espece, loggedUser)
+    };
+  });
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput => {
@@ -137,32 +173,10 @@ export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: C
   });
 };
 
-export const findAllEspeces = async (
-  options?: Omit<Prisma.EspeceFindManyArgs, "include">
-): Promise<(Espece & { nbDonnees: number })[]> => {
-  const especesDb = await prisma.espece.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    include: {
-      _count: {
-        select: {
-          donnee: true
-        }
-      }
-    },
-    ...options
-  });
-
-  return especesDb.map((espece) => {
-    return {
-      ...espece,
-      nbDonnees: espece._count.donnee
-    };
-  });
-};
-
 export const findPaginatedEspeces = async (
   options: Partial<QueryPaginatedEspecesArgs> = {},
-  searchCriteria: SearchDonneeCriteria | null | undefined = undefined
+  searchCriteria: SearchDonneeCriteria | null | undefined = undefined,
+  loggedUser: LoggedUser | null = null
 ): Promise<EspecesPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
@@ -218,7 +232,7 @@ export const findPaginatedEspeces = async (
     ]
   };
 
-  let especesResult: (Espece & { classe: Classe; nbDonnees?: number })[];
+  let especesEntities: (Espece & { classe: Classe; nbDonnees?: number })[];
 
   if (orderByField === "nbDonnees" && builtSearchCriteria) {
     // As the orderBy donnee _count will not work properly because it will compare with ALL donnees and not only the matching one, we need to do differently
@@ -263,7 +277,7 @@ export const findPaginatedEspeces = async (
       }
     })) as (Espece & { classe: Classe })[];
 
-    especesResult = donneesByMatchingEspece.map(({ especeId, _count }) => {
+    especesEntities = donneesByMatchingEspece.map(({ especeId, _count }) => {
       const espece = especesRq?.find(({ id }) => id === especeId);
       return {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -308,7 +322,7 @@ export const findPaginatedEspeces = async (
         _count: true
       });
 
-      especesResult = especesDb.map((espece) => {
+      especesEntities = especesDb.map((espece) => {
         return {
           ...espece,
           ...(includeCounts
@@ -317,7 +331,7 @@ export const findPaginatedEspeces = async (
         };
       });
     } else {
-      especesResult = especesDb;
+      especesEntities = especesDb;
     }
   }
 
@@ -325,25 +339,79 @@ export const findPaginatedEspeces = async (
     where: especeFilterClause
   });
 
+  const especes = especesEntities?.map((espece) => {
+    return {
+      ...espece,
+      readonly: isEntityReadOnly(espece, loggedUser)
+    };
+  });
+
   return {
-    result: especesResult,
+    result: especes,
     count
   };
 };
 
-export const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser): Promise<Espece> => {
+export const upsertEspece = async (
+  args: MutationUpsertEspeceArgs,
+  loggedUser: LoggedUser
+): Promise<Espece & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedEspece: Espece;
+
   if (id) {
-    return prisma.espece.update({
-      where: { id },
-      data
-    });
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.espece.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    try {
+      upsertedEspece = await prisma.espece.update({
+        where: { id },
+        data
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.espece.create({ data: { ...data, ownerId: loggedUser.id } });
+    try {
+      upsertedEspece = await prisma.espece.create({ data: { ...data, ownerId: loggedUser.id } });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedEspece,
+    readonly: false
+  };
 };
 
-export const deleteEspece = async (id: number): Promise<Espece> => {
+export const deleteEspece = async (id: number, loggedUser: LoggedUser): Promise<Espece> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.espece.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.espece.delete({
     where: {
       id

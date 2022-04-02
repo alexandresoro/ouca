@@ -206,7 +206,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     espece: async (_source, args, context): Promise<Omit<Espece, "classe"> | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findEspece(args.id);
+      return findEspece(args.id, context.user);
     },
     estimationDistance: async (_source, args, context): Promise<EstimationDistance | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -282,7 +282,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     especes: async (_source, args, context): Promise<Omit<Espece, "classe">[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findEspeces(args);
+      return findEspeces(args, context.user);
     },
     estimationsDistance: async (_source, args, context): Promise<EstimationDistance[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -346,7 +346,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedEspeces: async (_source, args, context): Promise<EspecesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedEspeces(args);
+      return findPaginatedEspeces(args, null, context.user);
     },
     paginatedEstimationsDistance: async (_source, args, context): Promise<EstimationsDistancePaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -385,7 +385,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     }> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       const { searchCriteria, ...rest } = args ?? {};
-      return findPaginatedEspeces(rest, searchCriteria);
+      return findPaginatedEspeces(rest, searchCriteria, context.user);
     },
     paginatedSearchDonnees: async (
       _source,
@@ -496,7 +496,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteEspece: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteEspece(args.id).then(({ id }) => id);
+      return deleteEspece(args.id, context.user).then(({ id }) => id);
     },
     deleteEstimationDistance: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -703,8 +703,8 @@ const resolvers: Resolvers<GraphQLContext> = {
     }
   },
   Donnee: {
-    espece: async (parent): Promise<Omit<Espece, "classe"> | null> => {
-      const espece = await findEspeceOfDonneeId(parent?.id);
+    espece: async (parent, args, context): Promise<Omit<Espece, "classe"> | null> => {
+      const espece = await findEspeceOfDonneeId(parent?.id, context.user);
       return findEspece(espece?.id);
     },
     inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
