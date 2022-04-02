@@ -6,6 +6,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
+import * as donneeUtils from "./donnee-utils";
 import * as entitiesUtils from "./entities-utils";
 import {
   createEspeces,
@@ -16,6 +17,8 @@ import {
   findPaginatedEspeces,
   upsertEspece
 } from "./espece-service";
+
+const buildSearchDonneeCriteria = jest.spyOn(donneeUtils, "buildSearchDonneeCriteria");
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
@@ -238,37 +241,14 @@ test("should handle params and search criteria when retrieving paginated species
     includeCounts: false
   };
 
-  const searchCriteria: SearchDonneeCriteria = {
-    id: 3,
-    ages: [5, 7],
-    associes: [4, 6],
-    classes: [2],
-    commentaire: "Bob",
-    communes: [1, 2, 3],
-    comportements: [7, 9],
-    departements: [6],
-    distance: 4000,
-    duree: "00:12",
-    especes: [23, 8],
-    estimationsDistance: [5],
-    estimationsNombre: [9],
-    fromDate: "2022-04-02",
-    heure: "15:45",
-    lieuxdits: [3, 11, 67],
-    meteos: [6, 1],
-    milieux: [8, 22],
-    nicheurs: ["possible", "probable"],
-    nombre: 570,
-    observateurs: [3, 11],
-    regroupement: 5,
-    sexes: [3],
-    temperature: 37,
-    toDate: "2022-04-09"
-  };
-
   prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
 
-  await findPaginatedEspeces(searchParams, searchCriteria);
+  const whereInput = mock<Prisma.DonneeWhereInput>();
+  const { espece, especeId, ...restWhereInput } = whereInput;
+
+  buildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
+
+  await findPaginatedEspeces(searchParams, mock<SearchDonneeCriteria>());
 
   expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
@@ -309,92 +289,10 @@ test("should handle params and search criteria when retrieving paginated species
           ]
         },
         {
-          classeId: {
-            in: searchCriteria.classes
-          },
+          ...espece,
+          id: especeId,
           donnee: {
-            some: {
-              ageId: {
-                in: searchCriteria.ages
-              },
-              commentaire: {
-                contains: searchCriteria.commentaire
-              },
-              distance: searchCriteria.distance,
-              donnee_comportement: {
-                some: {
-                  comportement: {
-                    nicheur: {
-                      in: searchCriteria.nicheurs
-                    }
-                  },
-                  comportement_id: {
-                    in: searchCriteria.comportements
-                  }
-                }
-              },
-              donnee_milieu: {
-                some: {
-                  milieu_id: {
-                    in: searchCriteria.milieux
-                  }
-                }
-              },
-              estimationDistanceId: {
-                in: searchCriteria.estimationsDistance
-              },
-              estimationNombreId: {
-                in: searchCriteria.estimationsNombre
-              },
-              id: searchCriteria?.id,
-              inventaire: {
-                date: {
-                  gte: new Date(Date.UTC(2022, 3, 2)),
-                  lte: new Date(Date.UTC(2022, 3, 9))
-                },
-                duree: searchCriteria.duree,
-                heure: searchCriteria.heure,
-                inventaire_associe: {
-                  some: {
-                    observateur_id: {
-                      in: searchCriteria.associes
-                    }
-                  }
-                },
-                inventaire_meteo: {
-                  some: {
-                    meteo_id: {
-                      in: searchCriteria.meteos
-                    }
-                  }
-                },
-                lieuDit: {
-                  commune: {
-                    departementId: {
-                      in: searchCriteria.departements
-                    }
-                  },
-                  communeId: {
-                    in: searchCriteria.communes
-                  }
-                },
-                lieuDitId: {
-                  in: searchCriteria.lieuxdits
-                },
-                observateurId: {
-                  in: searchCriteria.observateurs
-                },
-                temperature: searchCriteria.temperature
-              },
-              nombre: searchCriteria.nombre,
-              regroupement: searchCriteria.regroupement,
-              sexeId: {
-                in: searchCriteria.sexes
-              }
-            }
-          },
-          id: {
-            in: searchCriteria.especes
+            some: restWhereInput
           }
         }
       ]

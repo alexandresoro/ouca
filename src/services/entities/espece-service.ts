@@ -10,7 +10,7 @@ import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { buildSearchDonneeCriteria } from "./donnee-service";
+import { buildSearchDonneeCriteria } from "./donnee-utils";
 import {
   getPrismaPagination,
   isEntityReadOnly,
