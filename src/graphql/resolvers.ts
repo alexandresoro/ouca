@@ -222,7 +222,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     lieuDit: async (_source, args, context): Promise<Omit<LieuDit, "commune"> | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findLieuDit(args.id);
+      return findLieuDit(args.id, context.user);
     },
     meteo: async (_source, args, context): Promise<Meteo | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -294,7 +294,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     lieuxDits: async (_source, args, context): Promise<Omit<LieuDit, "commune">[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findLieuxDits(args);
+      return findLieuxDits(args, context.user);
     },
     meteos: async (_source, args, context): Promise<Meteo[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -358,7 +358,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     paginatedLieuxdits: async (_source, args, context): Promise<LieuxDitsPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedLieuxDits(args);
+      return findPaginatedLieuxDits(args, context.user);
     },
     paginatedMeteos: async (_source, args, context): Promise<MeteosPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -508,7 +508,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     deleteLieuDit: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return deleteLieuDit(args.id).then(({ id }) => id);
+      return deleteLieuDit(args.id, context.user).then(({ id }) => id);
     },
     deleteMeteo: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -705,7 +705,7 @@ const resolvers: Resolvers<GraphQLContext> = {
   Donnee: {
     espece: async (parent, args, context): Promise<Omit<Espece, "classe"> | null> => {
       const espece = await findEspeceOfDonneeId(parent?.id, context.user);
-      return findEspece(espece?.id);
+      return findEspece(espece?.id, context.user);
     },
     inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
       const inventaire = await findInventaireOfDonneeId(parent?.id);
@@ -721,9 +721,9 @@ const resolvers: Resolvers<GraphQLContext> = {
     }
   },
   Inventaire: {
-    lieuDit: async (parent): Promise<Omit<LieuDit, "commune"> | null> => {
+    lieuDit: async (parent, args, context): Promise<Omit<LieuDit, "commune"> | null> => {
       const lieuDit = await findLieuDitOfInventaireId(parent?.id);
-      return findLieuDit(lieuDit?.id);
+      return findLieuDit(lieuDit?.id, context.user);
     }
   },
   LieuDit: {

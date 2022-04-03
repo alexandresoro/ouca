@@ -1,4 +1,4 @@
-import { Commune, Departement, Lieudit, Prisma } from "@prisma/client";
+import { Commune, DatabaseRole, Departement, Lieudit, Prisma } from "@prisma/client";
 import {
   FindParams,
   LieuxDitsPaginatedResult,
@@ -9,12 +9,15 @@ import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
+import { OucaError } from "../../utils/errors";
 import { getFilterClauseCommune } from "./commune-service";
 import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  queryParametersToFindAllEntities
+  isEntityReadOnly,
+  queryParametersToFindAllEntities,
+  ReadonlyStatus
 } from "./entities-utils";
 
 export type LieuDitWithCoordinatesAsNumber<T extends Lieudit = Lieudit> = Omit<T, "latitude" | "longitude"> & {
@@ -32,32 +35,59 @@ const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWith
   };
 };
 
-export const findLieuDit = async (id: number | undefined): Promise<LieuDitWithCoordinatesAsNumber | null> => {
-  return prisma.lieudit
+export const findLieuDit = async (
+  id: number | undefined,
+  loggedUser: LoggedUser | null = null
+): Promise<(LieuDitWithCoordinatesAsNumber & ReadonlyStatus) | null> => {
+  const lieuDitEntity = await prisma.lieudit
     .findUnique({
       where: {
         id
       }
     })
     .then((lieudit) => (lieudit ? buildLieuditFromLieuditDb(lieudit) : null));
+
+  if (!lieuDitEntity) {
+    return null;
+  }
+
+  return {
+    ...lieuDitEntity,
+    readonly: isEntityReadOnly(lieuDitEntity, loggedUser)
+  };
 };
 
-export const findLieuDitOfInventaireId = async (inventaireId: number | undefined): Promise<Lieudit | null> => {
-  return prisma.inventaire
+export const findLieuDitOfInventaireId = async (
+  inventaireId: number | undefined,
+  loggedUser: LoggedUser | null = null
+): Promise<(Lieudit & ReadonlyStatus) | null> => {
+  const lieuditEntity = await prisma.inventaire
     .findUnique({
       where: {
         id: inventaireId
       }
     })
     .lieuDit();
+
+  if (!lieuditEntity) {
+    return null;
+  }
+
+  return {
+    ...lieuditEntity,
+    readonly: isEntityReadOnly(lieuditEntity, loggedUser)
+  };
 };
 
-export const findLieuxDits = async (options: {
-  params?: FindParams | null;
-  communeId?: number | null;
-  departementId?: number | null;
-}): Promise<Omit<LieuDitWithCoordinatesAsNumber, "commune">[]> => {
-  const { params, communeId, departementId } = options ?? {};
+export const findLieuxDits = async (
+  options: {
+    params?: FindParams | null;
+    communeId?: number | null;
+    departementId?: number | null;
+  } = {},
+  loggedUser: LoggedUser | null = null
+): Promise<Omit<LieuDitWithCoordinatesAsNumber, "commune">[]> => {
+  const { params, communeId, departementId } = options;
   const { q, max } = params ?? {};
 
   const whereClause = {
@@ -86,15 +116,20 @@ export const findLieuxDits = async (options: {
     ]
   };
 
-  return prisma.lieudit
+  const lieuDitEntities = await prisma.lieudit
     .findMany({
-      orderBy: {
-        nom: "asc"
-      },
+      ...queryParametersToFindAllEntities(COLUMN_NOM),
       where: whereClause,
       take: max || undefined
     })
     .then((lieuxDits) => lieuxDits.map(buildLieuditFromLieuditDb));
+
+  return lieuDitEntities?.map((lieuDit) => {
+    return {
+      ...lieuDit,
+      readonly: isEntityReadOnly(lieuDit, loggedUser)
+    };
+  });
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput => {
@@ -131,23 +166,13 @@ export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
   return lieuxDitsDb.map(buildLieuditFromLieuditDb);
 };
 
-export const findAllLieuxDits = async (options?: {
-  where?: Prisma.LieuditWhereInput;
-}): Promise<LieuDitWithCoordinatesAsNumber[]> => {
-  const lieuxDitsDb = await prisma.lieudit.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    where: options?.where ?? {}
-  });
-
-  return lieuxDitsDb.map(buildLieuditFromLieuditDb);
-};
-
 export const findPaginatedLieuxDits = async (
-  options: Partial<QueryPaginatedLieuxditsArgs> = {}
+  options: Partial<QueryPaginatedLieuxditsArgs> = {},
+  loggedUser: LoggedUser | null = null
 ): Promise<LieuxDitsPaginatedResult> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
-  let lieuxDits: (LieuDitWithCoordinatesAsNumber<Lieudit> & {
+  let lieuxDitsEntities: (LieuDitWithCoordinatesAsNumber<Lieudit> & {
     commune: Commune & { departement: Departement };
     nbDonnees?: number;
   })[];
@@ -216,7 +241,7 @@ export const findPaginatedLieuxDits = async (
       }
     });
 
-    lieuxDits = nbDonneesForFilteredLieuxDits.map((lieuditInfo) => {
+    lieuxDitsEntities = nbDonneesForFilteredLieuxDits.map((lieuditInfo) => {
       const lieudit = lieuxDitsRq?.find((lieudit) => lieudit.id === lieuditInfo.id);
 
       return {
@@ -295,7 +320,7 @@ export const findPaginatedLieuxDits = async (
         where: getFilterClause(searchParams?.q)
       });
 
-      lieuxDits = lieuxDitsRq.map((lieudit) => {
+      lieuxDitsEntities = lieuxDitsRq.map((lieudit) => {
         const nbDonnees = lieudit.inventaire
           .map((inventaire) => {
             return inventaire._count.donnee;
@@ -327,12 +352,19 @@ export const findPaginatedLieuxDits = async (
         where: getFilterClause(searchParams?.q)
       });
 
-      lieuxDits = lieuxDitsRq.map(buildLieuditFromLieuditDb);
+      lieuxDitsEntities = lieuxDitsRq.map(buildLieuditFromLieuditDb);
     }
   }
 
   const count = await prisma.lieudit.count({
     where: getFilterClause(searchParams?.q)
+  });
+
+  const lieuxDits = lieuxDitsEntities?.map((lieuDit) => {
+    return {
+      ...lieuDit,
+      readonly: isEntityReadOnly(lieuDit, loggedUser)
+    };
   });
 
   return {
@@ -344,21 +376,67 @@ export const findPaginatedLieuxDits = async (
 export const upsertLieuDit = async (
   args: MutationUpsertLieuDitArgs,
   loggedUser: LoggedUser
-): Promise<LieuDitWithCoordinatesAsNumber> => {
+): Promise<LieuDitWithCoordinatesAsNumber & ReadonlyStatus> => {
   const { id, data } = args;
+
+  let upsertedLieuDit: LieuDitWithCoordinatesAsNumber;
+
   if (id) {
-    return prisma.lieudit
-      .update({
-        where: { id },
-        data
-      })
-      .then(buildLieuditFromLieuditDb);
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== DatabaseRole.admin) {
+      const existingData = await prisma.lieudit.findFirst({
+        where: { id }
+      });
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    try {
+      upsertedLieuDit = await prisma.lieudit
+        .update({
+          where: { id },
+          data
+        })
+        .then(buildLieuditFromLieuditDb);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   } else {
-    return prisma.lieudit.create({ data: { ...data, ownerId: loggedUser.id } }).then(buildLieuditFromLieuditDb);
+    try {
+      upsertedLieuDit = await prisma.lieudit
+        .create({ data: { ...data, ownerId: loggedUser.id } })
+        .then(buildLieuditFromLieuditDb);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   }
+
+  return {
+    ...upsertedLieuDit,
+    readonly: false
+  };
 };
 
-export const deleteLieuDit = async (id: number): Promise<LieuDitWithCoordinatesAsNumber> => {
+export const deleteLieuDit = async (id: number, loggedUser: LoggedUser): Promise<LieuDitWithCoordinatesAsNumber> => {
+  // Check that the user is allowed to modify the existing data
+  if (loggedUser?.role !== DatabaseRole.admin) {
+    const existingData = await prisma.lieudit.findFirst({
+      where: { id }
+    });
+
+    if (existingData?.ownerId !== loggedUser.id) {
+      throw new OucaError("OUCA0001");
+    }
+  }
+
   return prisma.lieudit
     .delete({
       where: {
