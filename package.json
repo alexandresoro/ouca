@@ -67,7 +67,7 @@
     "jest": "^27.5.1",
     "jest-mock-extended": "^2.0.4",
     "lint-staged": "^12.3.7",
-    "prettier": "^2.5.1",
+    "prettier": "^2.6.2",
     "prisma": "^3.10.0",
     "ts-jest": "^27.1.4",
     "type-fest": "^2.12.0",
