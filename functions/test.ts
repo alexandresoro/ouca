@@ -1,9 +1,7 @@
-export async function onRequest(context) {
-  const { request, env, next } = context;
-
+export const onRequest: PagesFunction<{ API_URLS?: KVNamespace }> = async ({ request, env, next }) => {
   const url = new URL(request.url);
 
-  const apiUrl = await env.API_URLS.get(url.hostname);
+  const apiUrl = await env.API_URLS?.get(url.hostname);
 
   if (!apiUrl) {
     const res = await next();
@@ -11,4 +9,4 @@ export async function onRequest(context) {
   } else {
     return Response.redirect(`${apiUrl}${url.pathname}`, 302);
   }
-}
+};
