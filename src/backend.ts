@@ -56,7 +56,8 @@ checkAndCreateFolders();
   // Static files server
   await server.register(fastifyStatic, {
     root: PUBLIC_DIR_PATH,
-    prefix: DOWNLOAD_ENDPOINT
+    prefix: DOWNLOAD_ENDPOINT,
+    maxAge: 3600
   });
 
   // Download files
