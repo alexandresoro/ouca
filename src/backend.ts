@@ -50,14 +50,14 @@ checkAndCreateFolders();
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {
     origin: true,
-    credentials: true
+    credentials: true,
+    maxAge: 3600
   });
 
   // Static files server
   await server.register(fastifyStatic, {
     root: PUBLIC_DIR_PATH,
-    prefix: DOWNLOAD_ENDPOINT,
-    maxAge: 3600
+    prefix: DOWNLOAD_ENDPOINT
   });
 
   // Download files
