@@ -1,12 +1,3 @@
-export const onRequest: PagesFunction<{ API_URLS?: KVNamespace }> = async ({ request, env, next }) => {
-  const url = new URL(request.url);
+import { onRequestCommon } from "./_common";
 
-  const apiUrl = await env.API_URLS?.get(url.hostname);
-
-  if (!apiUrl) {
-    const res = await next();
-    return res;
-  } else {
-    return Response.redirect(`${apiUrl}${url.pathname}`, 302);
-  }
-};
+export const onRequest = onRequestCommon;
