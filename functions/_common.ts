@@ -7,6 +7,6 @@ export const onRequestCommon: PagesFunction<{ API_URLS?: KVNamespace }> = async 
     const res = await next();
     return res;
   } else {
-    return Response.redirect(`${apiUrl}${url.pathname}`, 301);
+    return Response.redirect(`${apiUrl}${url.pathname}`, 308);
   }
 };
