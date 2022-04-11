@@ -42,7 +42,7 @@ jobs:
         run: npm run test -- --passWithNoTests
 
       - name: Build
-        run: GENERATE_SOURCEMAP=false REACT_APP_API_URL="" npm run build
+        run: GENERATE_SOURCEMAP=false npm run build
         
       - name: Compute the release name
         if: github.event_name == 'push'

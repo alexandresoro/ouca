@@ -2,6 +2,7 @@ import { gql, useApolloClient } from "@apollo/client";
 import { Container } from "@mui/material";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import useApiUrlContext from "../../../hooks/useApiUrlContext";
 import { DOWNLOAD_PATH, EXCEL_FILE_EXTENSION } from "../../../utils/constants";
 import { downloadFile } from "../../../utils/file-download-helper";
 import ManageTopBar from "../common/ManageTopBar";
@@ -22,13 +23,15 @@ const ComportementPage: FunctionComponent = () => {
 
   const client = useApolloClient();
 
+  const apiUrl = useApiUrlContext();
+
   const handleExportClick = async () => {
     const { data } = await client.query<ExportComportementsResult>({
       query: EXPORT_QUERY,
       fetchPolicy: "network-only"
     });
     if (data.exportComportements) {
-      downloadFile(DOWNLOAD_PATH + data.exportComportements, `${t("behaviors")}${EXCEL_FILE_EXTENSION}`);
+      downloadFile(apiUrl, DOWNLOAD_PATH + data.exportComportements, `${t("behaviors")}${EXCEL_FILE_EXTENSION}`);
     }
   };
 
