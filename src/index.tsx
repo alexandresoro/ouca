@@ -1,26 +1,22 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import "@fontsource/lato";
 import "@fontsource/yuji-hentaigana-akebono";
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./i18n";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
 const apolloClient = new ApolloClient({
-  uri: `${process.env.REACT_APP_API_URL ?? ""}/graphql`,
   cache: new InMemoryCache()
 });
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider client={apolloClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ApolloProvider>
+    <Suspense fallback={<></>}>
+      <App apolloClient={apolloClient} />
+    </Suspense>
   </React.StrictMode>,
   document.getElementById("root")
 );
