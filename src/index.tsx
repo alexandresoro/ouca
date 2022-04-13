@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import "@fontsource/lato";
 import "@fontsource/yuji-hentaigana-akebono";
 import React, { Suspense } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./i18n";
 import "./index.css";
@@ -12,13 +12,13 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-ReactDOM.render(
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Suspense fallback={<></>}>
       <App apolloClient={apolloClient} />
     </Suspense>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
