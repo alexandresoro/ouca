@@ -24,7 +24,7 @@
     "copy:assets": "cpy 'src/**/*.graphql' dist"
   },
   "dependencies": {
-    "@prisma/client": "^3.10.0",
+    "@prisma/client": "^3.12.0",
     "apollo-server-core": "^3.6.3",
     "apollo-server-fastify": "^3.6.4",
     "apollo-server-types": "^3.5.1",
