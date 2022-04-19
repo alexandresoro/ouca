@@ -38,7 +38,7 @@
     "fastify-cookie": "^5.6.0",
     "fastify-cors": "^6.0.3",
     "fastify-multipart": "^5.3.1",
-    "fastify-static": "^4.5.0",
+    "fastify-static": "^4.6.1",
     "graphql": "^15.5.3",
     "jose": "^4.6.1",
     "lodash.deburr": "^4.1.0",
