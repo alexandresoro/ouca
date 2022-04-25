@@ -42,7 +42,7 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^3.5.1",
+    "@cloudflare/workers-types": "^3.7.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.1.1",
     "@testing-library/user-event": "^14.1.1",
