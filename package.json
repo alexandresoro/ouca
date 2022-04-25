@@ -40,7 +40,7 @@
     "fastify-multipart": "^5.3.1",
     "fastify-static": "^4.6.1",
     "graphql": "^16.3.0",
-    "jose": "^4.6.1",
+    "jose": "^4.7.0",
     "lodash.deburr": "^4.1.0",
     "pino": "^7.10.0",
     "pino-pretty": "^7.6.1",
