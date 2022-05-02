@@ -55,7 +55,7 @@
     "@types/busboy": "^1.5.0",
     "@types/jest": "^27.4.1",
     "@types/lodash.deburr": "^4.1.7",
-    "@types/node": "^16.11.29",
+    "@types/node": "^16.11.33",
     "@types/proj4": "^2.5.2",
     "@types/yargs": "^17.0.10",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
@@ -71,7 +71,7 @@
     "prisma": "^3.12.0",
     "ts-jest": "^27.1.4",
     "type-fest": "^2.12.2",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.4"
   },
   "engines": {
     "node": ">=16"
