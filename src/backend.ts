@@ -1,12 +1,12 @@
+import fastifyCompress from "@fastify/compress";
+import fastifyCookie from "@fastify/cookie";
+import fastifyCors from "@fastify/cors";
+import fastifyMultipart from "@fastify/multipart";
+import fastifyStatic from "@fastify/static";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { ApolloServer } from "apollo-server-fastify";
 import { randomUUID } from "crypto";
 import { fastify } from "fastify";
-import fastifyCompress from "fastify-compress";
-import fastifyCookie from "fastify-cookie";
-import fastifyCors from "fastify-cors";
-import fastifyMultipart from "fastify-multipart";
-import fastifyStatic from "fastify-static";
 import fs from "fs";
 import path from "path";
 import { pipeline } from "stream";
