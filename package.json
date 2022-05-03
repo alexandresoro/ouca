@@ -59,7 +59,7 @@
     "@types/proj4": "^2.5.2",
     "@types/yargs": "^17.0.10",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
-    "@typescript-eslint/parser": "^5.20.0",
+    "@typescript-eslint/parser": "^5.22.0",
     "cpy-cli": "^4.1.0",
     "eslint": "^8.14.0",
     "eslint-plugin-jest": "^26.1.5",
