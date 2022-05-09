@@ -30,7 +30,7 @@
     "@fastify/multipart": "^6.0.0",
     "@fastify/static": "^5.0.1",
     "@prisma/client": "^3.13.0",
-    "apollo-server-core": "^3.6.7",
+    "apollo-server-core": "^3.7.0",
     "apollo-server-fastify": "^3.6.7",
     "apollo-server-types": "^3.5.2",
     "csv-parse": "^5.0.4",
