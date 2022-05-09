@@ -31,7 +31,7 @@
     "@fastify/static": "^5.0.2",
     "@prisma/client": "^3.13.0",
     "apollo-server-core": "^3.7.0",
-    "apollo-server-fastify": "^3.6.7",
+    "apollo-server-fastify": "^3.7.0",
     "apollo-server-types": "^3.5.2",
     "csv-parse": "^5.0.4",
     "csv-stringify": "^6.0.5",
