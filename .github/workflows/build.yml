@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-      - dev
-      - next
     tags:
       - "v*.*.*"
   pull_request:
@@ -21,7 +19,7 @@ jobs:
         include:
           - node-version: 16.x
             type: "build,lts"
-          - node-version: 17.x
+          - node-version: 18.x
             type: "next"
 
     steps:
