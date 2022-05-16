@@ -62,7 +62,7 @@
     "@typescript-eslint/parser": "^5.22.0",
     "cpy-cli": "^4.1.0",
     "eslint": "^8.15.0",
-    "eslint-plugin-jest": "^26.1.5",
+    "eslint-plugin-jest": "^26.2.2",
     "husky": "^8.0.1",
     "jest": "^27.5.1",
     "jest-mock-extended": "^2.0.6",
