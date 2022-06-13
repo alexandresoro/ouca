@@ -29,7 +29,7 @@
     "@fastify/cors": "^7.0.0",
     "@fastify/multipart": "^6.0.0",
     "@fastify/static": "^5.0.2",
-    "@prisma/client": "^3.14.0",
+    "@prisma/client": "^3.15.1",
     "apollo-server-core": "^3.7.0",
     "apollo-server-fastify": "^3.8.2",
     "apollo-server-types": "^3.6.0",
