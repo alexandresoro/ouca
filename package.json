@@ -19,7 +19,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@apollo/client": "^3.6.6",
+    "@apollo/client": "^3.6.8",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@fontsource/lato": "^4.5.8",
