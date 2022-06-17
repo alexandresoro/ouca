@@ -38,7 +38,8 @@ const apolloServer = new ApolloServer({
     ApolloServerPluginDrainHttpServer({ httpServer: server.server }),
     apolloRequestLogger
   ],
-  context: getGraphQLContext
+  context: getGraphQLContext,
+  cache: "bounded"
 });
 
 checkAndCreateFolders();
