@@ -7,6 +7,14 @@ import App from "./App";
 import "./i18n";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+import wrapPromise from "./utils/wrapPromise";
+
+// Retrieve app config as early as possible
+const appConfigFetch = fetch("/appconfig")
+  .then((res) => res.json() as Promise<AppConfig>)
+  .catch(() => {
+    return {} as AppConfig;
+  });
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache()
@@ -16,7 +24,7 @@ const apolloClient = new ApolloClient({
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Suspense fallback={<></>}>
-      <App apolloClient={apolloClient} />
+      <App apolloClient={apolloClient} appConfigWrapped={wrapPromise(appConfigFetch)} />
     </Suspense>
   </React.StrictMode>
 );

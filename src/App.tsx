@@ -1,7 +1,7 @@
 import { ApolloClient, ApolloProvider, HttpLink, NormalizedCacheObject } from "@apollo/client";
 import { Box, createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
 import { cyan, grey, pink } from "@mui/material/colors";
-import React, { FunctionComponent, lazy, Suspense, useMemo } from "react";
+import { FunctionComponent, lazy, Suspense, useMemo } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
@@ -9,7 +9,6 @@ import TempPage from "./components/TempPage";
 import RequireAuth from "./components/utils/RequireAuth";
 import { ApiUrlContext } from "./contexts/ApiUrlContext";
 import { UserProvider } from "./contexts/UserContext";
-import wrapPromise from "./utils/wrapPromise";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
@@ -28,23 +27,13 @@ const ComportementManage = lazy(() => import("./components/manage/comportement/C
 const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
-// Retrieve the API URL at launch on the dedicated endpoint so that
-// the API endpoint can be properly requested without the need for costly redirections
-// that can not be properly cached for Apollo (as they are POST)
-const appConfig = wrapPromise(
-  fetch("/appconfig")
-    .then((res) => res.json() as Promise<{ apiUrl: string }>)
-    .catch(() => {
-      return null;
-    })
-);
-
 type AppProps = {
   apolloClient: ApolloClient<NormalizedCacheObject>;
+  appConfigWrapped: { read: () => AppConfig };
 };
 
 const App: FunctionComponent<AppProps> = (props) => {
-  const { apolloClient } = props;
+  const { apolloClient, appConfigWrapped } = props;
 
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
@@ -98,7 +87,7 @@ const App: FunctionComponent<AppProps> = (props) => {
     [prefersDarkMode]
   );
 
-  const userDetails = appConfig.read();
+  const userDetails = appConfigWrapped.read();
 
   const apiUrl = userDetails?.apiUrl ?? "";
 
@@ -108,16 +97,16 @@ const App: FunctionComponent<AppProps> = (props) => {
     })
   );
 
-  const umamiUrl = process.env.REACT_APP_UMAMI_URL;
-  const umamiId = process.env.REACT_APP_UMAMI_ID;
-
   return (
     <ApiUrlContext.Provider value={apiUrl}>
       <ApolloProvider client={apolloClient}>
         <BrowserRouter>
           <HelmetProvider>
             <Helmet>
-              {umamiUrl && umamiId && <script async defer data-website-id={umamiId} src={umamiUrl}></script>}
+              {/* Umami analytics */}
+              {userDetails?.umami && (
+                <script async defer data-website-id={userDetails.umami.id} src={userDetails.umami.url}></script>
+              )}
             </Helmet>
             <ThemeProvider theme={theme}>
               <UserProvider>

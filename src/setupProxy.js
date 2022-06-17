@@ -16,4 +16,12 @@ module.exports = function(app) {
       changeOrigin: true,
     })
   );
+
+  // For localhost env, simulate the config
+  app.use(
+    '/appconfig',
+    (req, res) => {
+      res.json({})
+    }
+  );
 };
