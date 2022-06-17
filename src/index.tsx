@@ -1,12 +1,16 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import "@fontsource/lato";
 import "@fontsource/yuji-hentaigana-akebono";
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 import React, { Suspense } from "react";
 import { createRoot } from "react-dom/client";
+import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from "react-router-dom";
 import App from "./App";
 import "./i18n";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+import { AppConfig } from "./types/AppConfig";
 import wrapPromise from "./utils/wrapPromise";
 
 // Retrieve app config as early as possible
@@ -15,6 +19,29 @@ const appConfigFetch = fetch("/appconfig")
   .catch(() => {
     return {} as AppConfig;
   });
+
+// Sentry integration
+appConfigFetch
+  .then((config) => {
+    if (config?.sentry) {
+      Sentry.init({
+        ...config.sentry,
+        integrations: [
+          new BrowserTracing({
+            routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+              React.useEffect,
+              useLocation,
+              useNavigationType,
+              createRoutesFromChildren,
+              matchRoutes
+            )
+          })
+        ]
+      });
+    }
+  })
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  .catch(() => {});
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache()

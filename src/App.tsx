@@ -1,6 +1,7 @@
 import { ApolloClient, ApolloProvider, HttpLink, NormalizedCacheObject } from "@apollo/client";
 import { Box, createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
 import { cyan, grey, pink } from "@mui/material/colors";
+import * as Sentry from "@sentry/react";
 import { FunctionComponent, lazy, Suspense, useMemo } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
@@ -9,6 +10,7 @@ import TempPage from "./components/TempPage";
 import RequireAuth from "./components/utils/RequireAuth";
 import { ApiUrlContext } from "./contexts/ApiUrlContext";
 import { UserProvider } from "./contexts/UserContext";
+import { AppConfig } from "./types/AppConfig";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
@@ -26,6 +28,8 @@ const EstimationDistanceManage = lazy(() => import("./components/manage/estimati
 const ComportementManage = lazy(() => import("./components/manage/comportement/ComportementManage"));
 const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
+
+const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 type AppProps = {
   apolloClient: ApolloClient<NormalizedCacheObject>;
@@ -116,7 +120,7 @@ const App: FunctionComponent<AppProps> = (props) => {
                   }}
                 >
                   <Suspense fallback="">
-                    <Routes>
+                    <SentryRoutes>
                       <Route
                         path="/login"
                         element={
@@ -257,7 +261,7 @@ const App: FunctionComponent<AppProps> = (props) => {
                           }
                         ></Route>
                       </Route>
-                    </Routes>
+                    </SentryRoutes>
                   </Suspense>
                 </Box>
               </UserProvider>
