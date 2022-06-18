@@ -12,7 +12,7 @@ export const onRequestPost: PagesFunction = async ({ request }) => {
     // Project id is the part after the URL
     const projectId = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
 
-    const response = await fetch(`https://${host}/api/${projectId}/envelope/`, {
+    const response = await fetch(`https://${host}/api${projectId}/envelope/`, {
       method: "POST",
       headers: request.headers,
       body
