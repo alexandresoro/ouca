@@ -14,6 +14,9 @@ export const onRequestPost: PagesFunction = async ({ request }) => {
 
     const response = await fetch(`https://${host}/api/${projectId}/envelope/`, {
       method: "POST",
+      headers: {
+        "X-Forwarded-For": request.headers.get("CF-Connecting-IP")
+      },
       body
     });
 
