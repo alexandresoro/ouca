@@ -18,6 +18,11 @@
       "groupName": "all non-major dev dependencies",
       "groupSlug": "all-minor-patch-dev",
       "automerge": false
+    },
+    {
+       "matchPackagePatterns": ["fastify"],
+       "groupName": "fastify",
+       "groupSlug": "fastify"
     }
   ],
   "timezone": "Europe/Paris"
