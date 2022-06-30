@@ -9,14 +9,15 @@
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
-      "excludePackageNames": [ 
+      "excludePackageNames": [
+        "prisma",
         "typescript"
       ],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dev dependencies",
       "groupSlug": "all-minor-patch-dev",
-      "automerge": true
+      "automerge": false
     }
   ],
   "timezone": "Europe/Paris"
