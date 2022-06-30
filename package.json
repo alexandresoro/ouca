@@ -43,7 +43,7 @@
     "jose": "4.8.3",
     "lodash.deburr": "4.1.0",
     "pino": "8.1.0",
-    "pino-pretty": "8.0.0",
+    "pino-pretty": "8.1.0",
     "proj4": "2.8.0",
     "yargs": "17.5.1"
   },
