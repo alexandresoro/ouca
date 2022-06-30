@@ -28,7 +28,7 @@
     "@fastify/cookie": "6.0.0",
     "@fastify/cors": "7.0.0",
     "@fastify/multipart": "6.0.0",
-    "@fastify/static": "5.0.2",
+    "@fastify/static": "6.4.0",
     "@prisma/client": "3.15.2",
     "apollo-server-core": "3.9.0",
     "apollo-server-fastify": "3.9.0",
