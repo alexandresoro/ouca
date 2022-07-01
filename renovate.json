@@ -5,11 +5,19 @@
     "enabled": true,
     "automerge": true
   },
+  "labels": ["dependencies"],
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
-      "matchPackagePatterns": ["lint", "prettier"],
-      "automerge": true
+      "excludePackageNames": [
+        "typescript"
+      ],
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dev dependencies",
+      "groupSlug": "all-minor-patch-dev",
+      "automerge": false
     }
-  ]
+  ],
+  "timezone": "Europe/Paris"
 }
