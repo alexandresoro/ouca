@@ -9,9 +9,7 @@
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
-      "excludePackageNames": [
-        "typescript"
-      ],
+      "excludePackageNames": ["typescript"],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dev dependencies",
