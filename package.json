@@ -49,9 +49,9 @@
   },
   "devDependencies": {
     "@graphql-codegen/add": "3.1.1",
-    "@graphql-codegen/cli": "2.6.4",
-    "@graphql-codegen/typescript": "2.5.1",
-    "@graphql-codegen/typescript-resolvers": "2.6.6",
+    "@graphql-codegen/cli": "2.7.0",
+    "@graphql-codegen/typescript": "2.6.0",
+    "@graphql-codegen/typescript-resolvers": "2.6.7",
     "@types/busboy": "1.5.0",
     "@types/jest": "28.1.4",
     "@types/lodash.deburr": "4.1.7",
