@@ -16,7 +16,8 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
+  transformQueryRawResultsBigIntsToNumbers
 } from "./entities-utils";
 
 export const findCommune = async (
@@ -218,8 +219,10 @@ export const findPaginatedCommunes = async (
     `;
 
     const nbDonneesForFilteredCommunes = await prisma.$queryRaw<
-      { id: number; nbLieuxDits: number; nbDonnees: number }[]
-    >`${donneesPerCommuneRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+      { id: number; nbLieuxDits: bigint; nbDonnees: bigint }[]
+    >`${donneesPerCommuneRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+      transformQueryRawResultsBigIntsToNumbers
+    );
 
     const communesRq = await prisma.commune.findMany({
       where: {

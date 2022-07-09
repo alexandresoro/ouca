@@ -16,7 +16,8 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
+  transformQueryRawResultsBigIntsToNumbers
 } from "./entities-utils";
 
 export const findMeteo = async (
@@ -126,8 +127,10 @@ export const findPaginatedMeteos = async (
     `;
 
     meteoEntities = await prisma.$queryRaw<
-      (Meteo & { nbDonnees: number })[]
-    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+      (Meteo & { nbDonnees: bigint })[]
+    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+      transformQueryRawResultsBigIntsToNumbers
+    );
   } else {
     const orderBy = orderByField ? { [orderByField]: sortOrder } : {};
 
