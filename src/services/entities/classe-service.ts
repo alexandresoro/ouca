@@ -16,7 +16,8 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
+  transformQueryRawResultsBigIntsToNumbers
 } from "./entities-utils";
 
 export const findClasseOfEspeceId = async (
@@ -123,8 +124,10 @@ export const findPaginatedClasses = async (
     `;
 
     classeEntities = await prisma.$queryRaw<
-      (Classe & { nbEspeces: number; nbDonnees: number })[]
-    >`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+      (Classe & { nbEspeces: bigint; nbDonnees: bigint })[]
+    >`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+      transformQueryRawResultsBigIntsToNumbers
+    );
   } else {
     let orderBy: Prisma.Enumerable<Prisma.ClasseOrderByWithRelationInput> | undefined = undefined;
     if (sortOrder) {

@@ -15,7 +15,8 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
+  transformQueryRawResultsBigIntsToNumbers
 } from "./entities-utils";
 
 export const getFilterClauseDepartement = (q: string | null | undefined): Prisma.DepartementWhereInput => {
@@ -142,8 +143,10 @@ export const findPaginatedDepartements = async (
     `;
 
     const nbDonneesForFilteredDepartements = await prisma.$queryRaw<
-      { id: number; ownerId: string; nbLieuxDits: number; nbDonnees: number }[]
-    >`${donneesPerDepartementRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+      { id: number; ownerId: string; nbLieuxDits: bigint; nbDonnees: bigint }[]
+    >`${donneesPerDepartementRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+      transformQueryRawResultsBigIntsToNumbers
+    );
 
     const departementsRq = await prisma.departement.findMany({
       include: {

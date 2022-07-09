@@ -16,7 +16,8 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
+  transformQueryRawResultsBigIntsToNumbers
 } from "./entities-utils";
 
 export const findObservateur = async (
@@ -122,8 +123,10 @@ export const findPaginatedObservateurs = async (
     `;
 
     observateurEntities = await prisma.$queryRaw<
-      (Observateur & { nbDonnees: number })[]
-    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+      (Observateur & { nbDonnees: bigint })[]
+    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+      transformQueryRawResultsBigIntsToNumbers
+    );
   } else {
     const orderBy = orderByField ? { [orderByField]: sortOrder } : {};
 

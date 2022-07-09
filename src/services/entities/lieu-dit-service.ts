@@ -17,7 +17,8 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
+  transformQueryRawResultsBigIntsToNumbers
 } from "./entities-utils";
 
 export type LieuDitWithCoordinatesAsNumber<T extends Lieudit = Lieudit> = Omit<T, "latitude" | "longitude"> & {
@@ -217,8 +218,10 @@ export const findPaginatedLieuxDits = async (
     `;
 
     const nbDonneesForFilteredLieuxDits = await prisma.$queryRaw<
-      { id: number; nbDonnees: number }[]
-    >`${donneesPerLieuDitRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`;
+      { id: number; nbDonnees: bigint }[]
+    >`${donneesPerLieuDitRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+      transformQueryRawResultsBigIntsToNumbers
+    );
 
     const lieuxDitsRq = await prisma.lieudit.findMany({
       include: {

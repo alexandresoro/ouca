@@ -1,4 +1,5 @@
 import { DatabaseRole, Prisma } from ".prisma/client";
+import { ConditionalPick } from "type-fest";
 import { SortOrder } from "../../graphql/generated/graphql-types";
 import { LoggedUser } from "../../types/LoggedUser";
 
@@ -73,4 +74,20 @@ export const queryParametersToFindAllEntities = (
     };
   }
   return {};
+};
+
+export const transformQueryRawBigIntsToNumbers = <
+  T extends Record<string, unknown>,
+  U extends ConditionalPick<T, bigint>
+>(
+  result: T
+): Omit<T, keyof U> & Record<keyof U, number> => {
+  return Object.entries(result).reduce((obj, [key, value]) => {
+    obj[key] = typeof value === "bigint" ? Number(value) : value;
+    return obj;
+  }, {} as Record<string, unknown>) as Omit<T, keyof U> & Record<keyof U, number>;
+};
+
+export const transformQueryRawResultsBigIntsToNumbers = <T extends Record<string, unknown>>(results: T[]) => {
+  return results.map(transformQueryRawBigIntsToNumbers);
 };
