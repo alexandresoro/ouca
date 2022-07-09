@@ -41,7 +41,6 @@
     "fastify": "3.29.1",
     "graphql": "16.5.0",
     "jose": "4.8.3",
-    "lodash.deburr": "4.1.0",
     "pino": "8.1.0",
     "pino-pretty": "8.1.0",
     "proj4": "2.8.0",
@@ -54,7 +53,6 @@
     "@graphql-codegen/typescript-resolvers": "2.7.1",
     "@types/busboy": "1.5.0",
     "@types/jest": "28.1.4",
-    "@types/lodash.deburr": "4.1.7",
     "@types/node": "16.11.43",
     "@types/proj4": "2.5.2",
     "@types/yargs": "17.0.10",
@@ -83,7 +81,7 @@
     ],
     "*.ts": [
       "eslint",
-      "jest --bail --findRelatedTests"
+      "jest --bail --findRelatedTests --passWithNoTests"
     ]
   }
 }

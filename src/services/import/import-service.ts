@@ -1,6 +1,5 @@
 import { parse } from "csv-parse/sync";
 import { EventEmitter } from "events";
-import deburr from "lodash.deburr";
 import { OngoingSubStatus } from "../../graphql/generated/graphql-types";
 import { ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -121,6 +120,6 @@ export abstract class ImportService extends EventEmitter {
       return false;
     }
 
-    return deburr(string1.trim()).toLowerCase() === deburr(string2.trim()).toLowerCase();
+    return string1.trim().localeCompare(string2.trim(), "fr", { sensitivity: "base" }) === 0;
   };
 }
