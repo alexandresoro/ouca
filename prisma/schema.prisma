@@ -12,7 +12,7 @@ model Age {
   libelle  String     @unique(map: "unique_libelle") @db.VarChar(100)
   ownerId  String?    @map("owner_id")
   donnee   Donnee[]
-  owner    User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_age_owner_id")
+  owner    User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_age_owner_id")
   settings Settings[]
 
   @@map("age")
@@ -22,7 +22,7 @@ model Classe {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle String   @unique(map: "unique_libelle") @db.VarChar(100)
   ownerId String?  @map("owner_id")
-  owner   User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_classe_owner_id")
+  owner   User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_classe_owner_id")
   espece  Espece[]
 
   @@map("classe")
@@ -34,8 +34,8 @@ model Commune {
   code          Int         @db.UnsignedSmallInt
   nom           String      @db.VarChar(100)
   ownerId       String?     @map("owner_id")
-  departement   Departement @relation(fields: [departementId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_commune_departement_id")
-  owner         User?       @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_commune_owner_id")
+  departement   Departement @relation(fields: [departementId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_commune_departement_id")
+  owner         User?       @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_commune_owner_id")
   lieudit       Lieudit[]
 
   @@unique([departementId, code], map: "unique_departement_code")
@@ -55,7 +55,7 @@ model Comportement {
   libelle             String                @unique(map: "unique_libelle") @db.VarChar(100)
   nicheur             Nicheur?
   ownerId             String?               @map("owner_id")
-  owner               User?                 @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_comportement_owner_id")
+  owner               User?                 @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_comportement_owner_id")
   donnee_comportement donnee_comportement[]
 
   @@map("comportement")
@@ -65,7 +65,7 @@ model Departement {
   id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
   code     String     @unique(map: "unique_code") @db.VarChar(100)
   ownerId  String?    @map("owner_id")
-  owner    User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_departement_owner_id")
+  owner    User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_departement_owner_id")
   commune  Commune[]
   settings Settings[]
 
@@ -85,12 +85,12 @@ model Donnee {
   commentaire          String?               @db.Text
   regroupement         Int?                  @db.UnsignedSmallInt
   date_creation        DateTime              @db.DateTime(0)
-  age                  Age                   @relation(fields: [ageId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_age_id")
-  espece               Espece                @relation(fields: [especeId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_espece_id")
-  estimationDistance   EstimationDistance?   @relation(fields: [estimationDistanceId], references: [id], onUpdate: Restrict, map: "fk_donnee_estimation_distance_id")
-  estimationNombre     EstimationNombre      @relation(fields: [estimationNombreId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_estimation_nombre_id")
-  inventaire           Inventaire            @relation(fields: [inventaireId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_inventaire_id")
-  sexe                 Sexe                  @relation(fields: [sexeId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_sexe_id")
+  age                  Age                   @relation(fields: [ageId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_donnee_age_id")
+  espece               Espece                @relation(fields: [especeId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_donnee_espece_id")
+  estimationDistance   EstimationDistance?   @relation(fields: [estimationDistanceId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_donnee_estimation_distance_id")
+  estimationNombre     EstimationNombre      @relation(fields: [estimationNombreId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_donnee_estimation_nombre_id")
+  inventaire           Inventaire            @relation(fields: [inventaireId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_donnee_inventaire_id")
+  sexe                 Sexe                  @relation(fields: [sexeId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_donnee_sexe_id")
   donnee_comportement  donnee_comportement[]
   donnee_milieu        donnee_milieu[]
 
@@ -106,8 +106,8 @@ model Donnee {
 model donnee_comportement {
   donnee_id       Int          @db.UnsignedMediumInt
   comportement_id Int          @db.UnsignedSmallInt
-  comportement    Comportement @relation(fields: [comportement_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_comportement_comportement_id")
-  donnee          Donnee       @relation(fields: [donnee_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_comportement_donnee_id")
+  comportement    Comportement @relation(fields: [comportement_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_donnee_comportement_comportement_id")
+  donnee          Donnee       @relation(fields: [donnee_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_donnee_comportement_donnee_id")
 
   @@id([donnee_id, comportement_id])
   @@index([comportement_id], map: "fk_donnee_comportement_comportement_id")
@@ -116,8 +116,8 @@ model donnee_comportement {
 model donnee_milieu {
   donnee_id Int    @db.UnsignedMediumInt
   milieu_id Int    @db.UnsignedSmallInt
-  donnee    Donnee @relation(fields: [donnee_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_milieu_donnee_id")
-  milieu    Milieu @relation(fields: [milieu_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_donnee_milieu_milieu_id")
+  donnee    Donnee @relation(fields: [donnee_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_donnee_milieu_donnee_id")
+  milieu    Milieu @relation(fields: [milieu_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_donnee_milieu_milieu_id")
 
   @@id([donnee_id, milieu_id])
   @@index([milieu_id], map: "fk_donnee_milieu_milieu_id")
@@ -130,8 +130,8 @@ model Espece {
   nomFrancais String   @unique(map: "unique_nom_francais") @map("nom_francais") @db.VarChar(100)
   nomLatin    String   @unique(map: "unique_nom_latin") @map("nom_latin") @db.VarChar(100)
   ownerId     String?  @map("owner_id")
-  classe      Classe?  @relation(fields: [classeId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_espece_classe_id")
-  owner       User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_espece_owner_id")
+  classe      Classe?  @relation(fields: [classeId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_espece_classe_id")
+  owner       User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_espece_owner_id")
   donnee      Donnee[]
 
   @@index([classeId], map: "fk_espece_classe_id")
@@ -142,7 +142,7 @@ model EstimationDistance {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle String   @unique(map: "unique_libelle") @db.VarChar(100)
   ownerId String?  @map("owner_id")
-  owner   User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_estimation_distance_owner_id")
+  owner   User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_estimation_distance_owner_id")
   donnee  Donnee[]
 
   @@map("estimation_distance")
@@ -153,7 +153,7 @@ model EstimationNombre {
   libelle   String     @unique(map: "unique_libelle") @db.VarChar(100)
   nonCompte Boolean    @map("non_compte") @db.Bit(1)
   ownerId   String?    @map("owner_id")
-  owner     User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_estimation_nombre_owner_id")
+  owner     User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_estimation_nombre_owner_id")
   donnee    Donnee[]
   settings  Settings[]
 
@@ -174,9 +174,9 @@ model Inventaire {
   temperature        Int?                 @db.TinyInt
   date_creation      DateTime             @db.DateTime(0)
   ownerId            String?              @map("owner_id")
-  lieuDit            Lieudit              @relation(fields: [lieuDitId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inventaire_lieudit_id")
-  observateur        Observateur          @relation(fields: [observateurId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inventaire_observateur_id")
-  owner              User?                @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_inventaire_owner_id")
+  lieuDit            Lieudit              @relation(fields: [lieuDitId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_inventaire_lieudit_id")
+  observateur        Observateur          @relation(fields: [observateurId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_inventaire_observateur_id")
+  owner              User?                @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_inventaire_owner_id")
   donnee             Donnee[]
   inventaire_associe inventaire_associe[]
   inventaire_meteo   inventaire_meteo[]
@@ -189,8 +189,8 @@ model Inventaire {
 model inventaire_associe {
   inventaire_id  Int         @db.UnsignedMediumInt
   observateur_id Int         @db.UnsignedSmallInt
-  inventaire     Inventaire  @relation(fields: [inventaire_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inventaire_associe_inventaire_id")
-  observateur    Observateur @relation(fields: [observateur_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inventaire_associe_observateur_id")
+  inventaire     Inventaire  @relation(fields: [inventaire_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_inventaire_associe_inventaire_id")
+  observateur    Observateur @relation(fields: [observateur_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_inventaire_associe_observateur_id")
 
   @@id([inventaire_id, observateur_id])
   @@index([observateur_id], map: "fk_inventaire_associe_observateur_id")
@@ -199,8 +199,8 @@ model inventaire_associe {
 model inventaire_meteo {
   inventaire_id Int        @db.UnsignedMediumInt
   meteo_id      Int        @db.UnsignedSmallInt
-  inventaire    Inventaire @relation(fields: [inventaire_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inventaire_meteo_inventaire_id")
-  meteo         Meteo      @relation(fields: [meteo_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inventaire_meteo_meteo_id")
+  inventaire    Inventaire @relation(fields: [inventaire_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_inventaire_meteo_inventaire_id")
+  meteo         Meteo      @relation(fields: [meteo_id], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_inventaire_meteo_meteo_id")
 
   @@id([inventaire_id, meteo_id])
   @@index([meteo_id], map: "fk_inventaire_meteo_meteo_id")
@@ -215,8 +215,8 @@ model Lieudit {
   latitude          Decimal           @db.Decimal(16, 6)
   coordinatesSystem CoordinatesSystem @map("coordinates_system")
   ownerId           String?           @map("owner_id")
-  commune           Commune           @relation(fields: [communeId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_lieudit_commune_id")
-  owner             User?             @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_lieudit_owner_id")
+  commune           Commune           @relation(fields: [communeId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "fk_lieudit_commune_id")
+  owner             User?             @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_lieudit_owner_id")
   inventaire        Inventaire[]
 
   @@unique([communeId, nom], map: "unique_commune_nom")
@@ -227,7 +227,7 @@ model Meteo {
   id               Int                @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle          String             @unique(map: "unique_libelle") @db.VarChar(100)
   ownerId          String?            @map("owner_id")
-  owner            User?              @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_meteo_owner_id")
+  owner            User?              @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_meteo_owner_id")
   inventaire_meteo inventaire_meteo[]
 
   @@map("meteo")
@@ -238,7 +238,7 @@ model Milieu {
   code          String          @unique(map: "unique_code") @db.VarChar(6)
   libelle       String          @unique(map: "unique_libelle") @db.VarChar(100)
   ownerId       String?         @map("owner_id")
-  owner         User?           @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_milieu_owner_id")
+  owner         User?           @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_milieu_owner_id")
   donnee_milieu donnee_milieu[]
 
   @@map("milieu")
@@ -250,7 +250,7 @@ model Observateur {
   ownerId            String?              @map("owner_id")
   inventaire         Inventaire[]
   inventaire_associe inventaire_associe[]
-  owner              User?                @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_observateur_owner_id")
+  owner              User?                @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_observateur_owner_id")
   settings           Settings[]
 
   @@map("observateur")
@@ -275,12 +275,12 @@ model Settings {
   isDistanceDisplayed       Boolean           @default(true) @map("is_distance_displayed") @db.Bit(1)
   isRegroupementDisplayed   Boolean           @default(true) @map("is_regroupement_displayed") @db.Bit(1)
   coordinatesSystem         CoordinatesSystem @default(gps) @map("coordinates_system")
-  user                      User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_settings_user_id")
-  defaultAge                Age?              @relation(fields: [defaultAgeId], references: [id], onUpdate: Restrict, map: "fk_settings_age_id")
-  defaultDepartement        Departement?      @relation(fields: [defaultDepartementId], references: [id], onUpdate: Restrict, map: "fk_settings_departement_id")
-  defaultEstimationNombre   EstimationNombre? @relation(fields: [defaultEstimationNombreId], references: [id], onUpdate: Restrict, map: "fk_settings_estimation_nombre_id")
-  defaultObservateur        Observateur?      @relation(fields: [defaultObservateurId], references: [id], onUpdate: Restrict, map: "fk_settings_observateur_id")
-  defaultSexe               Sexe?             @relation(fields: [defaultSexeId], references: [id], onUpdate: Restrict, map: "fk_settings_sexe_id")
+  user                      User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "fk_settings_user_id")
+  defaultAge                Age?              @relation(fields: [defaultAgeId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_settings_age_id")
+  defaultDepartement        Departement?      @relation(fields: [defaultDepartementId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_settings_departement_id")
+  defaultEstimationNombre   EstimationNombre? @relation(fields: [defaultEstimationNombreId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_settings_estimation_nombre_id")
+  defaultObservateur        Observateur?      @relation(fields: [defaultObservateurId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_settings_observateur_id")
+  defaultSexe               Sexe?             @relation(fields: [defaultSexeId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_settings_sexe_id")
 
   @@index([defaultAgeId], map: "fk_settings_age_id")
   @@index([defaultDepartementId], map: "fk_settings_departement_id")
@@ -295,7 +295,7 @@ model Sexe {
   libelle  String     @unique(map: "unique_libelle") @db.VarChar(100)
   ownerId  String?    @map("owner_id")
   donnee   Donnee[]
-  owner    User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "fk_sexe_owner_id")
+  owner    User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade, map: "fk_sexe_owner_id")
   settings Settings[]
 
   @@map("sexe")
