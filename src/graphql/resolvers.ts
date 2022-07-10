@@ -109,6 +109,7 @@ import {
   findObservateurs,
   findObservateursByIds,
   findPaginatedObservateurs,
+  getNbDonneesOfObservateur,
   getNbObservateurs,
   upsertObservateur
 } from "../services/entities/observateur-service";
@@ -729,6 +730,14 @@ const resolvers: Resolvers<GraphQLContext> = {
   Espece: {
     classe: async (parent, args, context): Promise<Classe | null> => {
       return findClasseOfEspeceId(parent?.id, context.user);
+    }
+  },
+  Observateur: {
+    nbDonnees: async (parent, args, context): Promise<number | null> => {
+      if (!parent?.id) {
+        return null;
+      }
+      return getNbDonneesOfObservateur(parent.id, context.user);
     }
   },
   ObservateursPaginatedResult: {

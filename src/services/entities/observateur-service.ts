@@ -8,6 +8,7 @@ import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
+import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
@@ -37,6 +38,18 @@ export const findObservateur = async (
     ...observateurEntity,
     readonly: isEntityReadOnly(observateurEntity, loggedUser)
   };
+};
+
+export const getNbDonneesOfObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      inventaire: {
+        observateurId: id
+      }
+    }
+  });
 };
 
 export const findObservateursByIds = async (
@@ -86,15 +99,13 @@ export const findObservateurs = async (
 
 export const findPaginatedObservateurs = async (
   loggedUser: LoggedUser | null = null,
-  options: Partial<ObservateursPaginatedResultResultArgs> = {}
+  options: ObservateursPaginatedResultResultArgs = {}
 ): Promise<(Observateur & ReadonlyStatus)[]> => {
-  if (!loggedUser) {
-    throw new OucaError("OUCA0001");
-  }
+  validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
+  const isNbDonneesNeeded = orderByField === "nbDonnees";
 
   let observateurEntities: (Observateur & { nbDonnees?: number })[];
 
@@ -149,9 +160,7 @@ export const findPaginatedObservateurs = async (
 };
 
 export const getNbObservateurs = async (loggedUser: LoggedUser | null = null, q?: string | null): Promise<number> => {
-  if (!loggedUser) {
-    throw new OucaError("OUCA0001");
-  }
+  validateAuthorization(loggedUser);
 
   return prisma.observateur.count({
     where: getEntiteAvecLibelleFilterClause(q)

@@ -16,6 +16,7 @@ import {
   findObservateurs,
   findObservateursByIds,
   findPaginatedObservateurs,
+  getNbDonneesOfObservateur,
   getNbObservateurs,
   upsertObservateur
 } from "./observateur-service";
@@ -63,6 +64,27 @@ test("should handle observer not found ", async () => {
     }
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+});
+
+describe("Number of associated data", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getNbDonneesOfObservateur(12, loggedUser);
+
+    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith({
+      where: {
+        inventaire: {
+          observateurId: 12
+        }
+      }
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getNbDonneesOfObservateur(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should call readonly status when retrieving observers by ID ", async () => {
@@ -132,8 +154,7 @@ describe("Entities paginated find by search criteria", () => {
         q: "Bob",
         pageNumber: 0,
         pageSize: 10
-      },
-      includeCounts: false
+      }
     };
 
     prismaMock.observateur.findMany.mockResolvedValueOnce([observersData[0]]);
