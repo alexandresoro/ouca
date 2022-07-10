@@ -534,8 +534,13 @@ type MilieuxPaginatedResult implements PaginatedResult {
 }
 
 type ObservateursPaginatedResult implements PaginatedResult {
-  result: [Observateur!]
-  count: Int!
+  result(
+    searchParams: SearchParams
+    orderBy: EntitesAvecLibelleOrderBy
+    sortOrder: SortOrder
+    includeCounts: Boolean!
+  ): [Observateur!]
+  count(q: String): Int!
 }
 
 type SexesPaginatedResult implements PaginatedResult {
@@ -715,12 +720,7 @@ type Query {
     sortOrder: SortOrder
     includeCounts: Boolean!
   ): MilieuxPaginatedResult
-  paginatedObservateurs(
-    searchParams: SearchParams
-    orderBy: EntitesAvecLibelleOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): ObservateursPaginatedResult
+  paginatedObservateurs: ObservateursPaginatedResult
   paginatedSexes(
     searchParams: SearchParams
     orderBy: EntitesAvecLibelleOrderBy

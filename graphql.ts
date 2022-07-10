@@ -730,6 +730,19 @@ export type ObservateursPaginatedResult = PaginatedResult & {
   result?: Maybe<Array<Observateur>>;
 };
 
+
+export type ObservateursPaginatedResultCountArgs = {
+  q?: InputMaybe<Scalars['String']>;
+};
+
+
+export type ObservateursPaginatedResultResultArgs = {
+  includeCounts: Scalars['Boolean'];
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
+};
+
 export const OngoingSubStatus = {
   InsertingImportedData: 'INSERTING_IMPORTED_DATA',
   ProcessStarted: 'PROCESS_STARTED',
@@ -1089,14 +1102,6 @@ export type QueryPaginatedMeteosArgs = {
 export type QueryPaginatedMilieuxArgs = {
   includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<MilieuxOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedObservateursArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
 };
