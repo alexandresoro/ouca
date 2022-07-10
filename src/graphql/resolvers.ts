@@ -49,6 +49,7 @@ import {
   getNbDonneesByCriteria,
   upsertDonnee
 } from "../services/entities/donnee-service";
+import { ReadonlyStatus } from "../services/entities/entities-utils";
 import {
   deleteEspece,
   findEspece,
@@ -108,6 +109,7 @@ import {
   findObservateurs,
   findObservateursByIds,
   findPaginatedObservateurs,
+  getNbObservateurs,
   upsertObservateur
 } from "../services/entities/observateur-service";
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
@@ -160,7 +162,6 @@ import {
   Milieu,
   MilieuxPaginatedResult,
   Observateur,
-  ObservateursPaginatedResult,
   Resolvers,
   Settings,
   Sexe,
@@ -369,9 +370,8 @@ const resolvers: Resolvers<GraphQLContext> = {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedMilieux(args, context.user);
     },
-    paginatedObservateurs: async (_source, args, context): Promise<ObservateursPaginatedResult> => {
-      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedObservateurs(args, context.user);
+    paginatedObservateurs: (): Record<string, never> => {
+      return {};
     },
     paginatedSexes: async (_source, args, context): Promise<SexesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -729,6 +729,14 @@ const resolvers: Resolvers<GraphQLContext> = {
   Espece: {
     classe: async (parent, args, context): Promise<Classe | null> => {
       return findClasseOfEspeceId(parent?.id, context.user);
+    }
+  },
+  ObservateursPaginatedResult: {
+    result: async (_, args, context): Promise<(Observateur & ReadonlyStatus)[]> => {
+      return findPaginatedObservateurs(context.user, args);
+    },
+    count: async (_, { q }, context): Promise<number> => {
+      return getNbObservateurs(context.user, q);
     }
   },
   PaginatedSearchDonneesResult: {

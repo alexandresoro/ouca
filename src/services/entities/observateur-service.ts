@@ -2,8 +2,7 @@ import { DatabaseRole, Observateur, Prisma } from "@prisma/client";
 import {
   FindParams,
   MutationUpsertObservateurArgs,
-  ObservateursPaginatedResult,
-  QueryPaginatedObservateursArgs
+  ObservateursPaginatedResultResultArgs
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -86,9 +85,13 @@ export const findObservateurs = async (
 };
 
 export const findPaginatedObservateurs = async (
-  options: Partial<QueryPaginatedObservateursArgs> = {},
-  loggedUser: LoggedUser | null = null
-): Promise<ObservateursPaginatedResult> => {
+  loggedUser: LoggedUser | null = null,
+  options: Partial<ObservateursPaginatedResultResultArgs> = {}
+): Promise<(Observateur & ReadonlyStatus)[]> => {
+  if (!loggedUser) {
+    throw new OucaError("OUCA0001");
+  }
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
@@ -137,21 +140,22 @@ export const findPaginatedObservateurs = async (
     });
   }
 
-  const count = await prisma.observateur.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
-  });
-
-  const observateurs = observateurEntities?.map((observateur) => {
+  return observateurEntities?.map((observateur) => {
     return {
       ...observateur,
       readonly: isEntityReadOnly(observateur, loggedUser)
     };
   });
+};
 
-  return {
-    result: observateurs,
-    count
-  };
+export const getNbObservateurs = async (loggedUser: LoggedUser | null = null, q?: string | null): Promise<number> => {
+  if (!loggedUser) {
+    throw new OucaError("OUCA0001");
+  }
+
+  return prisma.observateur.count({
+    where: getEntiteAvecLibelleFilterClause(q)
+  });
 };
 
 export const upsertObservateur = async (

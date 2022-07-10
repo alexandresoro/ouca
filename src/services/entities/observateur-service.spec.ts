@@ -1,6 +1,9 @@
 import { DatabaseRole, Observateur, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertObservateurArgs, QueryPaginatedObservateursArgs } from "../../graphql/generated/graphql-types";
+import {
+  MutationUpsertObservateurArgs,
+  ObservateursPaginatedResultResultArgs
+} from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -13,6 +16,7 @@ import {
   findObservateurs,
   findObservateursByIds,
   findPaginatedObservateurs,
+  getNbObservateurs,
   upsertObservateur
 } from "./observateur-service";
 
@@ -99,56 +103,96 @@ test("should call readonly status when retrieving observers by params ", async (
   expect(isEntityReadOnly).toHaveBeenCalledTimes(observersData.length);
 });
 
-test("should call readonly status when retrieving paginated observers ", async () => {
-  const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should call readonly status when retrieving paginated observers ", async () => {
+    const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.observateur.findMany.mockResolvedValueOnce(observersData);
+    prismaMock.observateur.findMany.mockResolvedValueOnce(observersData);
 
-  await findPaginatedObservateurs();
+    await findPaginatedObservateurs(loggedUser);
 
-  expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: {},
-    where: {}
+    expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
+      ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: {},
+      where: {}
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(observersData.length);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(observersData.length);
+
+  test("should handle params when retrieving paginated observers ", async () => {
+    const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
+    const loggedUser = mock<LoggedUser>();
+
+    const searchParams: ObservateursPaginatedResultResultArgs = {
+      orderBy: "libelle",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10
+      },
+      includeCounts: false
+    };
+
+    prismaMock.observateur.findMany.mockResolvedValueOnce([observersData[0]]);
+
+    await findPaginatedObservateurs(loggedUser, searchParams);
+
+    expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
+      ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        libelle: {
+          contains: searchParams.searchParams?.q
+        }
+      }
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedObservateurs()).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
-test("should handle params when retrieving paginated observers ", async () => {
-  const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedObservateursArgs = {
-    orderBy: "libelle",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10
-    },
-    includeCounts: false
-  };
+    await getNbObservateurs(loggedUser);
 
-  prismaMock.observateur.findMany.mockResolvedValueOnce([observersData[0]]);
-
-  await findPaginatedObservateurs(searchParams);
-
-  expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      libelle: {
-        contains: searchParams.searchParams?.q
-      }
-    }
+    expect(prismaMock.observateur.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.observateur.count).toHaveBeenLastCalledWith({
+      where: {}
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getNbObservateurs(loggedUser, "test");
+
+    expect(prismaMock.observateur.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.observateur.count).toHaveBeenLastCalledWith({
+      where: {
+        libelle: {
+          contains: "test"
+        }
+      }
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getNbObservateurs()).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing observer as an admin ", async () => {
