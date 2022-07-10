@@ -21,7 +21,7 @@ import {
   DonneeNavigationData,
   InputDonnee,
   MutationUpsertDonneeArgs,
-  QueryPaginatedSearchDonneesArgs,
+  PaginatedSearchDonneesResultResultArgs,
   SearchDonneeCriteria,
   SexeWithSpecimensCount,
   SortOrder
@@ -169,11 +169,8 @@ export const findDonneesByCriteria = async (
 };
 
 export const findPaginatedDonneesByCriteria = async (
-  options: QueryPaginatedSearchDonneesArgs = {}
-): Promise<{
-  result: DonneeWithRelations[];
-  count: number;
-}> => {
+  options: PaginatedSearchDonneesResultResultArgs = {}
+): Promise<DonneeWithRelations[]> => {
   const { searchParams, searchCriteria, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.DonneeOrderByWithRelationInput> | undefined = undefined;
@@ -285,7 +282,7 @@ export const findPaginatedDonneesByCriteria = async (
     }
   }
 
-  const donnees = await prisma.donnee
+  return prisma.donnee
     .findMany({
       ...getPrismaPagination(searchParams),
       include: COMMON_DONNEE_INCLUDE,
@@ -295,15 +292,12 @@ export const findPaginatedDonneesByCriteria = async (
     .then((donnees) => {
       return donnees.map(normalizeDonnee);
     });
+};
 
-  const count = await prisma.donnee.count({
+export const getNbDonneesByCriteria = async (searchCriteria?: SearchDonneeCriteria | null): Promise<number> => {
+  return prisma.donnee.count({
     where: buildSearchDonneeCriteria(searchCriteria)
   });
-
-  return {
-    result: donnees,
-    count
-  };
 };
 
 export const findDonneeNavigationData = async (donneeId: number | undefined): Promise<DonneeNavigationData> => {

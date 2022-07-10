@@ -46,6 +46,7 @@ import {
   findLastDonneeId,
   findNextRegroupement,
   findPaginatedDonneesByCriteria,
+  getNbDonneesByCriteria,
   upsertDonnee
 } from "../services/entities/donnee-service";
 import {
@@ -387,15 +388,9 @@ const resolvers: Resolvers<GraphQLContext> = {
       const { searchCriteria, ...rest } = args ?? {};
       return findPaginatedEspeces(rest, searchCriteria, context.user);
     },
-    paginatedSearchDonnees: async (
-      _source,
-      args,
-      context
-    ): Promise<{
-      count: number;
-    }> => {
+    paginatedSearchDonnees: (_source, _args, context): Record<string, never> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedDonneesByCriteria(args);
+      return {};
     },
     importStatus: async (_source, args, context): Promise<ImportStatus | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -734,6 +729,14 @@ const resolvers: Resolvers<GraphQLContext> = {
   Espece: {
     classe: async (parent, args, context): Promise<Classe | null> => {
       return findClasseOfEspeceId(parent?.id, context.user);
+    }
+  },
+  PaginatedSearchDonneesResult: {
+    result: async (_, args): Promise<Omit<Donnee, "espece" | "inventaire">[]> => {
+      return findPaginatedDonneesByCriteria(args);
+    },
+    count: async (_, { searchCriteria }): Promise<number> => {
+      return getNbDonneesByCriteria(searchCriteria);
     }
   }
 };
