@@ -534,12 +534,7 @@ type MilieuxPaginatedResult implements PaginatedResult {
 }
 
 type ObservateursPaginatedResult implements PaginatedResult {
-  result(
-    searchParams: SearchParams
-    orderBy: EntitesAvecLibelleOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): [Observateur!]
+  result(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): [Observateur!]
   count(q: String): Int!
 }
 

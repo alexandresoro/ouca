@@ -737,7 +737,6 @@ export type ObservateursPaginatedResultCountArgs = {
 
 
 export type ObservateursPaginatedResultResultArgs = {
-  includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
