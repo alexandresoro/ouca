@@ -544,8 +544,13 @@ type SexesPaginatedResult implements PaginatedResult {
 }
 
 type PaginatedSearchDonneesResult implements PaginatedResult {
-  result: [Donnee]
-  count: Int!
+  result(
+    searchCriteria: SearchDonneeCriteria
+    searchParams: SearchDonneeParams
+    orderBy: SearchDonneesOrderBy
+    sortOrder: SortOrder
+  ): [Donnee]
+  count(searchCriteria: SearchDonneeCriteria): Int!
 }
 
 enum ImportStatusEnum {
@@ -729,12 +734,7 @@ type Query {
     sortOrder: SortOrder
     includeCounts: Boolean!
   ): EspecesPaginatedResult
-  paginatedSearchDonnees(
-    searchCriteria: SearchDonneeCriteria
-    searchParams: SearchDonneeParams
-    orderBy: SearchDonneesOrderBy
-    sortOrder: SortOrder
-  ): PaginatedSearchDonneesResult
+  paginatedSearchDonnees: PaginatedSearchDonneesResult
   settings: Settings
   importStatus(importId: String!): ImportStatus
   exportAges: String

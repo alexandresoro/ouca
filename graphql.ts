@@ -756,6 +756,19 @@ export type PaginatedSearchDonneesResult = PaginatedResult & {
   result?: Maybe<Array<Maybe<Donnee>>>;
 };
 
+
+export type PaginatedSearchDonneesResultCountArgs = {
+  searchCriteria?: InputMaybe<SearchDonneeCriteria>;
+};
+
+
+export type PaginatedSearchDonneesResultResultArgs = {
+  orderBy?: InputMaybe<SearchDonneesOrderBy>;
+  searchCriteria?: InputMaybe<SearchDonneeCriteria>;
+  searchParams?: InputMaybe<SearchDonneeParams>;
+  sortOrder?: InputMaybe<SortOrder>;
+};
+
 export type Query = {
   __typename?: 'Query';
   age?: Maybe<Age>;
@@ -1085,14 +1098,6 @@ export type QueryPaginatedObservateursArgs = {
   includeCounts: Scalars['Boolean'];
   orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedSearchDonneesArgs = {
-  orderBy?: InputMaybe<SearchDonneesOrderBy>;
-  searchCriteria?: InputMaybe<SearchDonneeCriteria>;
-  searchParams?: InputMaybe<SearchDonneeParams>;
   sortOrder?: InputMaybe<SortOrder>;
 };
 
