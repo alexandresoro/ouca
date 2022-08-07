@@ -22,7 +22,7 @@
     "@apollo/client": "3.6.9",
     "@emotion/react": "11.10.0",
     "@emotion/styled": "11.10.0",
-    "@fontsource/lato": "4.5.8",
+    "@fontsource/lato": "4.5.9",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
     "@mui/icons-material": "5.8.4",
     "@mui/lab": "5.0.0-alpha.93",
