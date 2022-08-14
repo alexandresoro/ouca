@@ -5,7 +5,6 @@ export const writeToExcelFile = async (
   worksheetName: string,
   fileName: string
 ): Promise<void> => {
-
   const workbook = new stream.xlsx.WorkbookWriter({
     filename: fileName,
     useStyles: true
@@ -14,21 +13,23 @@ export const writeToExcelFile = async (
   const sheet = workbook.addWorksheet(worksheetName);
 
   if (objects?.length) {
-    sheet.columns = Object.keys(objects[0]).map(column => {
+    sheet.columns = Object.keys(objects[0]).map((column) => {
       return {
         header: column,
         key: column,
-        ...(column === "Date" ? {
-          style: {
-            numFmt: 'dd/mm/yyyy'
-          }
-        } : {})
-      }
+        ...(column === "Date"
+          ? {
+              style: {
+                numFmt: "dd/mm/yyyy"
+              }
+            }
+          : {})
+      };
     });
 
-    objects.forEach(object => {
+    objects.forEach((object) => {
       sheet.addRow(object).commit();
-    })
+    });
   }
 
   sheet.commit();

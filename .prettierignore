@@ -5,7 +5,12 @@ dist
 .github
 .vscode
 
+# Ignore generated files
 src/model/graphql.ts
 src/graphql/generated
+
 # Ignore submodule formatting
 .gitmodules
+
+# Ignore coverage reports
+coverage
