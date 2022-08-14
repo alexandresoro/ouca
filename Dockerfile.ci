@@ -1,0 +1,34 @@
+ARG NODE_IMAGE_VERSION=16
+
+FROM node:${NODE_IMAGE_VERSION}-alpine
+
+ENV NODE_ENV=production
+
+WORKDIR /app
+
+# In the container, listen to outside localhost by default
+ENV OUCA_LISTEN_ADDRESS 0.0.0.0
+
+# Add MariaDB client libs used for export feature (for now...)
+RUN apk add --no-cache mariadb-client
+
+# Copy files from the built artifact
+COPY build/ /app/
+
+# Install production deps
+RUN npm set-script prepare "" && \
+  npm set-script generate-graphql "" && \
+  npm ci --production && \
+  # Cleanup files not needed anymore
+  rm -f package.json package-lock.json
+
+WORKDIR /app/dist
+
+# Create the necessary directories
+RUN mkdir public && \
+  mkdir uploads && \
+  mkdir logs
+
+ENTRYPOINT ["node", "backend.js"]
+
+EXPOSE 4000/tcp

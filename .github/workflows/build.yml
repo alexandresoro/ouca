@@ -125,6 +125,7 @@ jobs:
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.check-build.outputs.nodeVersion }}
           context: .
+          file: Dockerfile.ci
           platforms: |
             linux/amd64
           push: true
