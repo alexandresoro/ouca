@@ -54,11 +54,11 @@ jobs:
 
       - name: Set supported node version
         id: nodeVersion
-        if: ${{ matrix.published }} && github.event_name == 'push'
+        if: matrix.published && github.event_name == 'push'
         run: echo "::set-output name=version::${{ matrix.node-version }}"
 
       - name: Upload artifact
-        if: ${{ matrix.published }} && github.event_name == 'push'
+        if: matrix.published && github.event_name == 'push'
         uses: actions/upload-artifact@v3
         with:
           name: dist-node-lts
