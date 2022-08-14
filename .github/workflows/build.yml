@@ -19,8 +19,10 @@ jobs:
         include:
           - node-version: 16.x
             type: "build,lts"
+            published: true
           - node-version: 18.x
             type: "next"
+            published: false
 
     steps:
       - uses: actions/checkout@v3
@@ -46,6 +48,17 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Upload artifact
+        if: ${{ matrix.published }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-node-${{ matrix.node-version }}
+          path: | 
+            dist/
+            !dist/**/*.spec.js
+          retention-days: 1
+
 
   docker-publish:
     needs: check-build
