@@ -9,10 +9,7 @@
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
-      "excludePackageNames": [
-        "prisma",
-        "typescript"
-      ],
+      "excludePackageNames": ["prisma", "typescript", "jest-mock-extended"],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dev dependencies",
@@ -20,9 +17,9 @@
       "automerge": true
     },
     {
-       "matchPackagePatterns": ["fastify"],
-       "groupName": "fastify",
-       "groupSlug": "fastify"
+      "matchPackagePatterns": ["fastify"],
+      "groupName": "fastify",
+      "groupSlug": "fastify"
     }
   ],
   "timezone": "Europe/Paris"
