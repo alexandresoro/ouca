@@ -57,6 +57,9 @@ jobs:
           path: | 
             dist/
             !dist/**/*.spec.js
+            package.json
+            package-lock.json
+            prisma/
           retention-days: 1
 
 
