@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      nodeVersion: ${{ steps.step1.nodeVersion.version }}
+      nodeVersion: ${{ steps.nodeVersion.outputs.version }}
 
     strategy:
       matrix:
