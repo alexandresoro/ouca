@@ -25,8 +25,8 @@ export const areCoordinatesCustomized = (
           latitude: lieudit.latitude as number,
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
           longitude: lieudit.longitude as number,
-          system: lieudit.coordinatesSystem as CoordinatesSystemType
-        }
+          system: lieudit.coordinatesSystem as CoordinatesSystemType,
+        },
       },
       system
     );
@@ -51,7 +51,7 @@ export const getInventaireCoordinates = (
     return {
       latitude: inventaire.customizedCoordinates.latitude,
       longitude: inventaire.customizedCoordinates.longitude,
-      altitude: inventaire.customizedCoordinates.altitude
+      altitude: inventaire.customizedCoordinates.altitude,
     };
   }
 
@@ -59,7 +59,7 @@ export const getInventaireCoordinates = (
   return {
     latitude: inventaire.lieuDit.latitude,
     longitude: inventaire.lieuDit.longitude,
-    altitude: inventaire.lieuDit.altitude
+    altitude: inventaire.lieuDit.altitude,
   };
 };
 

@@ -27,7 +27,7 @@ export const IMPORT_TYPE = [
   IMPORT_ESTIMATION_DISTANCE,
   IMPORT_COMPORTEMENT,
   IMPORT_MILIEU,
-  IMPORT_DONNEE
+  IMPORT_DONNEE,
 ] as const;
 
 export type ImportType = typeof IMPORT_TYPE[number];

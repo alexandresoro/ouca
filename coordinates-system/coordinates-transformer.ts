@@ -37,7 +37,7 @@ export const transformCoordinates = (
 
   const [transformedLongitude, transformedLatitude] = proj4(inputSystem.epsgCode, outputSystem.epsgCode, [
     inputCoordinates.longitude,
-    inputCoordinates.latitude
+    inputCoordinates.latitude,
   ]);
 
   const outputLongitude = +transformedLongitude.toFixed(outputSystem.decimalPlaces);
@@ -48,6 +48,6 @@ export const transformCoordinates = (
     longitude: outputLongitude,
     latitude: outputLatitude,
     areTransformed: true,
-    areInvalid: areCoordinatesInvalid(outputLongitude, outputLatitude, outputSystemType)
+    areInvalid: areCoordinatesInvalid(outputLongitude, outputLatitude, outputSystemType),
   };
 };

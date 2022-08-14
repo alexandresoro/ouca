@@ -9,8 +9,8 @@ test("should return correct value when no nicheur code provided ", () => {
 test("should return correct value with one code provided ", () => {
   const comportementsSingle: { nicheur?: NicheurCode | null }[] = [
     {
-      nicheur: "certain"
-    }
+      nicheur: "certain",
+    },
   ];
   expect(getHighestNicheurStatus(comportementsSingle)).toBe<NicheurCode | null>("certain");
 });
@@ -18,11 +18,11 @@ test("should return correct value with one code provided ", () => {
 test("should return correct value with similar codes provided ", () => {
   const comportementsSimilar: { nicheur?: NicheurCode | null }[] = [
     {
-      nicheur: "probable"
+      nicheur: "probable",
     },
     {
-      nicheur: "probable"
-    }
+      nicheur: "probable",
+    },
   ];
   expect(getHighestNicheurStatus(comportementsSimilar)).toBe<NicheurCode | null>("probable");
 });
@@ -30,11 +30,11 @@ test("should return correct value with similar codes provided ", () => {
 test("should return correct value with different codes provided ", () => {
   const comportementsDifferent: { nicheur?: NicheurCode | null }[] = [
     {
-      nicheur: "possible"
+      nicheur: "possible",
     },
     {
-      nicheur: "certain"
-    }
+      nicheur: "certain",
+    },
   ];
   expect(getHighestNicheurStatus(comportementsDifferent)).toBe<NicheurCode | null>("certain");
 });
@@ -42,18 +42,18 @@ test("should return correct value with different codes provided ", () => {
 test("should return correct value with a complex case ", () => {
   const comportementsComplex: { nicheur?: NicheurCode | null }[] = [
     {
-      nicheur: "possible"
+      nicheur: "possible",
     },
     {
-      nicheur: "probable"
+      nicheur: "probable",
     },
     {
-      nicheur: "possible"
+      nicheur: "possible",
     },
     {},
     {
-      nicheur: "possible"
-    }
+      nicheur: "possible",
+    },
   ];
   expect(getHighestNicheurStatus(comportementsComplex)).toBe<NicheurCode | null>("probable");
 });
@@ -71,8 +71,8 @@ test("should return the default text when no code supplied", () => {
 test("should return correct value with one code provided ", () => {
   const comportementsSingle: { nicheur?: NicheurCode | null }[] = [
     {
-      nicheur: "certain"
-    }
+      nicheur: "certain",
+    },
   ];
   expect(getNicheurStatusToDisplay(comportementsSingle, "defaultText")).toBe<string>(NICHEUR_CERTAIN.name);
 });
@@ -80,11 +80,11 @@ test("should return correct value with one code provided ", () => {
 test("should return correct value with similar codes provided ", () => {
   const comportementsSimilar: { nicheur?: NicheurCode | null }[] = [
     {
-      nicheur: "probable"
+      nicheur: "probable",
     },
     {
-      nicheur: "probable"
-    }
+      nicheur: "probable",
+    },
   ];
   expect(getNicheurStatusToDisplay(comportementsSimilar, "defaultText")).toBe<string>(NICHEUR_PROBABLE.name);
 });
@@ -92,11 +92,11 @@ test("should return correct value with similar codes provided ", () => {
 test("should return correct value with different codes provided ", () => {
   const comportementsDifferent: { nicheur?: NicheurCode | null }[] = [
     {
-      nicheur: "possible"
+      nicheur: "possible",
     },
     {
-      nicheur: "certain"
-    }
+      nicheur: "certain",
+    },
   ];
   expect(getNicheurStatusToDisplay(comportementsDifferent, "defaultText")).toBe<string>(NICHEUR_CERTAIN.name);
 });
@@ -104,18 +104,18 @@ test("should return correct value with different codes provided ", () => {
 test("should return correct value with a complex case ", () => {
   const comportementsComplex: { nicheur?: NicheurCode | null }[] = [
     {
-      nicheur: "possible"
+      nicheur: "possible",
     },
     {
-      nicheur: "probable"
+      nicheur: "probable",
     },
     {
-      nicheur: "possible"
+      nicheur: "possible",
     },
     {},
     {
-      nicheur: "possible"
-    }
+      nicheur: "possible",
+    },
   ];
   expect(getNicheurStatusToDisplay(comportementsComplex, "defaultText")).toBe<string>(NICHEUR_PROBABLE.name);
 });

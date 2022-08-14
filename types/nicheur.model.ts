@@ -15,23 +15,23 @@ export type Nicheur = {
 export const NICHEUR_POSSIBLE: Nicheur = {
   code: POSSIBLE,
   name: "Nicheur possible",
-  weight: 1
+  weight: 1,
 };
 
 export const NICHEUR_PROBABLE: Nicheur = {
   code: PROBABLE,
   name: "Nicheur probable",
-  weight: 2
+  weight: 2,
 };
 
 export const NICHEUR_CERTAIN: Nicheur = {
   code: CERTAIN,
   name: "Nicheur certain",
-  weight: 3
+  weight: 3,
 };
 
 export const NICHEUR_VALUES: Record<NicheurCode, Nicheur> = {
   possible: NICHEUR_POSSIBLE,
   probable: NICHEUR_PROBABLE,
-  certain: NICHEUR_CERTAIN
+  certain: NICHEUR_CERTAIN,
 };
