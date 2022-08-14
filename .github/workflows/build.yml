@@ -93,6 +93,20 @@ jobs:
         run: |
           echo "DOCKER_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
+      - name: Docker meta
+        uses: docker/metadata-action@v4
+        images: |
+          ghcr.io/${{ github.repository }}
+        tags: |
+          # branch event
+          type=ref,event=branch
+          # tag event
+          type=ref,event=tag
+          # set latest tag for master branch
+          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+        flavor: |
+          latest=false
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -116,5 +130,5 @@ jobs:
           platforms: |
             linux/amd64
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
