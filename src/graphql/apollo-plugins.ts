@@ -9,7 +9,7 @@ export const apolloRequestLogger: ApolloServerPlugin<GraphQLContext> = {
     logger.debug({
       operationName: context.request.operationName,
       query: context.request.query,
-      variables: context.request.variables
+      variables: context.request.variables,
     });
 
     return {
@@ -21,9 +21,9 @@ export const apolloRequestLogger: ApolloServerPlugin<GraphQLContext> = {
       // eslint-disable-next-line @typescript-eslint/require-await
       async willSendResponse({ response }) {
         logger.trace(response);
-      }
+      },
     };
-  }
+  },
 };
 
 export const fastifyAppClosePlugin: (app: FastifyInstance) => ApolloServerPlugin = (app: FastifyInstance) => {
@@ -33,8 +33,8 @@ export const fastifyAppClosePlugin: (app: FastifyInstance) => ApolloServerPlugin
       return {
         async drainServer() {
           await app.close();
-        }
+        },
       };
-    }
+    },
   };
 };

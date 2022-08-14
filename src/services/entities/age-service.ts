@@ -3,7 +3,7 @@ import {
   AgesPaginatedResult,
   FindParams,
   MutationUpsertAgeArgs,
-  QueryPaginatedAgesArgs
+  QueryPaginatedAgesArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -14,7 +14,7 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findAge = async (
@@ -23,8 +23,8 @@ export const findAge = async (
 ): Promise<(Age & ReadonlyStatus) | null> => {
   const ageEntity = await prisma.age.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!ageEntity) {
@@ -33,7 +33,7 @@ export const findAge = async (
 
   return {
     ...ageEntity,
-    readonly: isEntityReadOnly(ageEntity, loggedUser)
+    readonly: isEntityReadOnly(ageEntity, loggedUser),
   };
 };
 
@@ -47,16 +47,16 @@ export const findAges = async (
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: q || undefined
-      }
+        contains: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   return ageEntities?.map((age) => {
     return {
       ...age,
-      readonly: isEntityReadOnly(age, loggedUser)
+      readonly: isEntityReadOnly(age, loggedUser),
     };
   });
 };
@@ -73,15 +73,15 @@ export const findPaginatedAges = async (
       case "id":
       case "libelle":
         orderBy = {
-          [orderByField]: sortOrder
+          [orderByField]: sortOrder,
         };
         break;
       case "nbDonnees":
         {
           orderBy = {
             donnee: {
-              _count: sortOrder
-            }
+              _count: sortOrder,
+            },
           };
         }
         break;
@@ -99,41 +99,41 @@ export const findPaginatedAges = async (
       include: {
         _count: {
           select: {
-            donnee: true
-          }
-        }
+            donnee: true,
+          },
+        },
       },
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
 
     ageEntities = ages.map((age) => {
       return {
         ...age,
-        nbDonnees: age._count.donnee
+        nbDonnees: age._count.donnee,
       };
     });
   } else {
     ageEntities = await prisma.age.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
   }
 
   const count = await prisma.age.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
   });
 
   const ages = ageEntities?.map((age) => {
     return {
       ...age,
-      readonly: isEntityReadOnly(age, loggedUser)
+      readonly: isEntityReadOnly(age, loggedUser),
     };
   });
 
   return {
     result: ages,
-    count
+    count,
   };
 };
 
@@ -146,7 +146,7 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.age.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -157,7 +157,7 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
     try {
       upsertedAge = await prisma.age.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -170,8 +170,8 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
       upsertedAge = await prisma.age.create({
         data: {
           ...data,
-          ownerId: loggedUser.id
-        }
+          ownerId: loggedUser.id,
+        },
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -183,7 +183,7 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
 
   return {
     ...upsertedAge,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -191,7 +191,7 @@ export const deleteAge = async (id: number, loggedUser: LoggedUser): Promise<Age
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.age.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -201,8 +201,8 @@ export const deleteAge = async (id: number, loggedUser: LoggedUser): Promise<Age
 
   return prisma.age.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -213,6 +213,6 @@ export const createAges = async (
   return prisma.age.createMany({
     data: ages.map((age) => {
       return { ...age, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

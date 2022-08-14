@@ -11,7 +11,7 @@ import {
   ImportPostCompleteMessage,
   IMPORT_COMPLETE,
   IMPORT_FAILED,
-  VALIDATION_PROGRESS
+  VALIDATION_PROGRESS,
 } from "../objects/import/import-update-message";
 import { LoggedUser } from "../types/LoggedUser";
 import { IMPORT_DIR } from "../utils/paths";
@@ -19,7 +19,7 @@ import {
   IMPORT_COMPLETE_EVENT,
   IMPORT_FAILED_EVENT,
   IMPORT_PROGRESS_UPDATE_EVENT,
-  IMPORT_STATUS_UPDATE_EVENT
+  IMPORT_STATUS_UPDATE_EVENT,
 } from "./import/import-service";
 import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type";
 
@@ -34,7 +34,7 @@ const serviceWorker = getNewImportServiceForRequestType(importType);
 serviceWorker.on(IMPORT_PROGRESS_UPDATE_EVENT, (progressContent: ImportNotifyProgressMessageContent) => {
   const messageContent: ImportNotifyProgressMessage = {
     type: VALIDATION_PROGRESS,
-    progress: progressContent
+    progress: progressContent,
   };
   parentPort?.postMessage(messageContent);
 });
@@ -46,7 +46,7 @@ serviceWorker.on(IMPORT_STATUS_UPDATE_EVENT, (statusUpdate: ImportNotifyStatusUp
 serviceWorker.on(IMPORT_FAILED_EVENT, (failureReason?: string) => {
   const messageContent: ImportFailureMessage = {
     type: IMPORT_FAILED,
-    failureReason
+    failureReason,
   };
 
   parentPort?.postMessage(messageContent);
@@ -56,7 +56,7 @@ serviceWorker.on(IMPORT_FAILED_EVENT, (failureReason?: string) => {
 serviceWorker.on(IMPORT_COMPLETE_EVENT, (importResult: string[][]) => {
   const messageContent: ImportPostCompleteMessage = {
     type: IMPORT_COMPLETE,
-    lineErrors: importResult
+    lineErrors: importResult,
   };
 
   parentPort?.postMessage(messageContent);

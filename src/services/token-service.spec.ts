@@ -18,8 +18,8 @@ describe("Token validation and extraction", () => {
   test("should handle validation and extraction when missing token", async () => {
     const request = mock<FastifyRequest>({
       cookies: {
-        token: undefined
-      }
+        token: undefined,
+      },
     });
 
     const tokenPayload = await validateAndExtractUserToken(request);
@@ -34,8 +34,8 @@ describe("Token validation and extraction", () => {
 
     const request = mock<FastifyRequest>({
       cookies: {
-        token: "toto"
-      }
+        token: "toto",
+      },
     });
 
     await expect(() => validateAndExtractUserToken(request)).rejects.toThrowError();
@@ -45,25 +45,25 @@ describe("Token validation and extraction", () => {
     const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
       payload: {
         sub: "toto",
-        roles: "titi"
+        roles: "titi",
       },
       protectedHeader: {
-        alg: ""
+        alg: "",
       },
-      key: new TextEncoder().encode("toto")
+      key: new TextEncoder().encode("toto"),
     });
     jwtVerify.mockResolvedValueOnce(result);
 
     const dbUser = mock<User>({
       id: result.payload.sub,
-      role: result.payload.roles as DatabaseRole
+      role: result.payload.roles as DatabaseRole,
     });
     getUser.mockResolvedValueOnce(dbUser);
 
     const request = mock<FastifyRequest>({
       cookies: {
-        token: "toto"
-      }
+        token: "toto",
+      },
     });
 
     const tokenPayload = await validateAndExtractUserToken(request);
@@ -75,8 +75,8 @@ describe("Token validation and extraction", () => {
     const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
       payload: {
         sub: undefined,
-        roles: "titi"
-      }
+        roles: "titi",
+      },
     });
     jwtVerify.mockResolvedValueOnce(result);
 
@@ -84,8 +84,8 @@ describe("Token validation and extraction", () => {
 
     const request = mock<FastifyRequest>({
       cookies: {
-        token: "toto"
-      }
+        token: "toto",
+      },
     });
 
     await expect(() => validateAndExtractUserToken(request)).rejects.toThrowError();
@@ -95,8 +95,8 @@ describe("Token validation and extraction", () => {
     const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
       payload: {
         sub: "toto",
-        roles: "titi"
-      }
+        roles: "titi",
+      },
     });
     jwtVerify.mockResolvedValueOnce(result);
 
@@ -104,8 +104,8 @@ describe("Token validation and extraction", () => {
 
     const request = mock<FastifyRequest>({
       cookies: {
-        token: "toto"
-      }
+        token: "toto",
+      },
     });
 
     await expect(() => validateAndExtractUserToken(request)).rejects.toThrowError();
@@ -115,21 +115,21 @@ describe("Token validation and extraction", () => {
     const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
       payload: {
         sub: "toto",
-        roles: "titi"
-      }
+        roles: "titi",
+      },
     });
     jwtVerify.mockResolvedValueOnce(result);
 
     const dbUser = mock<User>({
       id: result.payload.sub,
-      role: "differentRole" as DatabaseRole
+      role: "differentRole" as DatabaseRole,
     });
     getUser.mockResolvedValueOnce(dbUser);
 
     const request = mock<FastifyRequest>({
       cookies: {
-        token: "toto"
-      }
+        token: "toto",
+      },
     });
 
     await expect(() => validateAndExtractUserToken(request)).rejects.toThrowError();

@@ -3,7 +3,7 @@ import {
   FindParams,
   LieuxDitsPaginatedResult,
   MutationUpsertLieuDitArgs,
-  QueryPaginatedLieuxditsArgs
+  QueryPaginatedLieuxditsArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -18,7 +18,7 @@ import {
   isEntityReadOnly,
   queryParametersToFindAllEntities,
   ReadonlyStatus,
-  transformQueryRawResultsBigIntsToNumbers
+  transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
 export type LieuDitWithCoordinatesAsNumber<T extends Lieudit = Lieudit> = Omit<T, "latitude" | "longitude"> & {
@@ -32,7 +32,7 @@ const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWith
   return {
     ...others,
     longitude: longitude.toNumber(),
-    latitude: latitude.toNumber()
+    latitude: latitude.toNumber(),
   };
 };
 
@@ -43,8 +43,8 @@ export const findLieuDit = async (
   const lieuDitEntity = await prisma.lieudit
     .findUnique({
       where: {
-        id
-      }
+        id,
+      },
     })
     .then((lieudit) => (lieudit ? buildLieuditFromLieuditDb(lieudit) : null));
 
@@ -54,7 +54,7 @@ export const findLieuDit = async (
 
   return {
     ...lieuDitEntity,
-    readonly: isEntityReadOnly(lieuDitEntity, loggedUser)
+    readonly: isEntityReadOnly(lieuDitEntity, loggedUser),
   };
 };
 
@@ -65,8 +65,8 @@ export const findLieuDitOfInventaireId = async (
   const lieuditEntity = await prisma.inventaire
     .findUnique({
       where: {
-        id: inventaireId
-      }
+        id: inventaireId,
+      },
     })
     .lieuDit();
 
@@ -76,7 +76,7 @@ export const findLieuDitOfInventaireId = async (
 
   return {
     ...lieuditEntity,
-    readonly: isEntityReadOnly(lieuditEntity, loggedUser)
+    readonly: isEntityReadOnly(lieuditEntity, loggedUser),
   };
 };
 
@@ -95,40 +95,40 @@ export const findLieuxDits = async (
     AND: [
       {
         nom: {
-          contains: q || undefined
-        }
+          contains: q || undefined,
+        },
       },
       departementId
         ? {
             commune: {
               departementId: {
-                equals: departementId
-              }
-            }
+                equals: departementId,
+              },
+            },
           }
         : {},
       communeId
         ? {
             communeId: {
-              equals: communeId
-            }
+              equals: communeId,
+            },
           }
-        : {}
-    ]
+        : {},
+    ],
   };
 
   const lieuDitEntities = await prisma.lieudit
     .findMany({
       ...queryParametersToFindAllEntities(COLUMN_NOM),
       where: whereClause,
-      take: max || undefined
+      take: max || undefined,
     })
     .then((lieuxDits) => lieuxDits.map(buildLieuditFromLieuditDb));
 
   return lieuDitEntities?.map((lieuDit) => {
     return {
       ...lieuDit,
-      readonly: isEntityReadOnly(lieuDit, loggedUser)
+      readonly: isEntityReadOnly(lieuDit, loggedUser),
     };
   });
 };
@@ -139,13 +139,13 @@ const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput
         OR: [
           {
             nom: {
-              contains: q
-            }
+              contains: q,
+            },
           },
           {
-            commune: getFilterClauseCommune(q)
-          }
-        ]
+            commune: getFilterClauseCommune(q),
+          },
+        ],
       }
     : {};
 };
@@ -158,10 +158,10 @@ export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
     include: {
       commune: {
         include: {
-          departement: true
-        }
-      }
-    }
+          departement: true,
+        },
+      },
+    },
   });
 
   return lieuxDitsDb.map(buildLieuditFromLieuditDb);
@@ -231,17 +231,17 @@ export const findPaginatedLieuxDits = async (
               select: {
                 id: true,
                 code: true,
-                ownerId: true
-              }
-            }
-          }
-        }
+                ownerId: true,
+              },
+            },
+          },
+        },
       },
       where: {
         id: {
-          in: nbDonneesForFilteredLieuxDits.map((lieuditInfo) => lieuditInfo.id) // /!\ The IN clause could break if not paginated enough
-        }
-      }
+          in: nbDonneesForFilteredLieuxDits.map((lieuditInfo) => lieuditInfo.id), // /!\ The IN clause could break if not paginated enough
+        },
+      },
     });
 
     lieuxDitsEntities = nbDonneesForFilteredLieuxDits.map((lieuditInfo) => {
@@ -250,7 +250,7 @@ export const findPaginatedLieuxDits = async (
       return {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ...buildLieuditFromLieuditDb(lieudit!),
-        nbDonnees: lieuditInfo.nbDonnees
+        nbDonnees: lieuditInfo.nbDonnees,
       };
     });
   } else {
@@ -263,30 +263,30 @@ export const findPaginatedLieuxDits = async (
         case "longitude":
         case "latitude":
           orderBy = {
-            [orderByField]: sortOrder
+            [orderByField]: sortOrder,
           };
           break;
         case "codeCommune":
           orderBy = {
             commune: {
-              code: sortOrder
-            }
+              code: sortOrder,
+            },
           };
           break;
         case "nomCommune":
           orderBy = {
             commune: {
-              nom: sortOrder
-            }
+              nom: sortOrder,
+            },
           };
           break;
         case "departement":
           orderBy = {
             commune: {
               departement: {
-                code: sortOrder
-              }
-            }
+                code: sortOrder,
+              },
+            },
           };
           break;
         default:
@@ -305,22 +305,22 @@ export const findPaginatedLieuxDits = async (
                 select: {
                   id: true,
                   code: true,
-                  ownerId: true
-                }
-              }
-            }
+                  ownerId: true,
+                },
+              },
+            },
           },
           inventaire: {
             select: {
               _count: {
                 select: {
-                  donnee: true
-                }
-              }
-            }
-          }
+                  donnee: true,
+                },
+              },
+            },
+          },
         },
-        where: getFilterClause(searchParams?.q)
+        where: getFilterClause(searchParams?.q),
       });
 
       lieuxDitsEntities = lieuxDitsRq.map((lieudit) => {
@@ -332,7 +332,7 @@ export const findPaginatedLieuxDits = async (
 
         return {
           ...buildLieuditFromLieuditDb(lieudit),
-          nbDonnees
+          nbDonnees,
         };
       });
     } else {
@@ -346,13 +346,13 @@ export const findPaginatedLieuxDits = async (
                 select: {
                   id: true,
                   code: true,
-                  ownerId: true
-                }
-              }
-            }
-          }
+                  ownerId: true,
+                },
+              },
+            },
+          },
         },
-        where: getFilterClause(searchParams?.q)
+        where: getFilterClause(searchParams?.q),
       });
 
       lieuxDitsEntities = lieuxDitsRq.map(buildLieuditFromLieuditDb);
@@ -360,19 +360,19 @@ export const findPaginatedLieuxDits = async (
   }
 
   const count = await prisma.lieudit.count({
-    where: getFilterClause(searchParams?.q)
+    where: getFilterClause(searchParams?.q),
   });
 
   const lieuxDits = lieuxDitsEntities?.map((lieuDit) => {
     return {
       ...lieuDit,
-      readonly: isEntityReadOnly(lieuDit, loggedUser)
+      readonly: isEntityReadOnly(lieuDit, loggedUser),
     };
   });
 
   return {
     result: lieuxDits,
-    count
+    count,
   };
 };
 
@@ -388,7 +388,7 @@ export const upsertLieuDit = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.lieudit.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -400,7 +400,7 @@ export const upsertLieuDit = async (
       upsertedLieuDit = await prisma.lieudit
         .update({
           where: { id },
-          data
+          data,
         })
         .then(buildLieuditFromLieuditDb);
     } catch (e) {
@@ -424,7 +424,7 @@ export const upsertLieuDit = async (
 
   return {
     ...upsertedLieuDit,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -432,7 +432,7 @@ export const deleteLieuDit = async (id: number, loggedUser: LoggedUser): Promise
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.lieudit.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -443,8 +443,8 @@ export const deleteLieuDit = async (id: number, loggedUser: LoggedUser): Promise
   return prisma.lieudit
     .delete({
       where: {
-        id
-      }
+        id,
+      },
     })
     .then(buildLieuditFromLieuditDb);
 };
@@ -456,6 +456,6 @@ export const createLieuxDits = async (
   return prisma.lieudit.createMany({
     data: lieuxDits.map((lieuDit) => {
       return { ...lieuDit, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

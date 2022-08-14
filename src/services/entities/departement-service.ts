@@ -3,7 +3,7 @@ import {
   DepartementsPaginatedResult,
   FindParams,
   MutationUpsertDepartementArgs,
-  QueryPaginatedDepartementsArgs
+  QueryPaginatedDepartementsArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -16,15 +16,15 @@ import {
   isEntityReadOnly,
   queryParametersToFindAllEntities,
   ReadonlyStatus,
-  transformQueryRawResultsBigIntsToNumbers
+  transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
 export const getFilterClauseDepartement = (q: string | null | undefined): Prisma.DepartementWhereInput => {
   return q != null && q.length
     ? {
         code: {
-          contains: q
-        }
+          contains: q,
+        },
       }
     : {};
 };
@@ -35,8 +35,8 @@ export const findDepartement = async (
 ): Promise<(Departement & ReadonlyStatus) | null> => {
   const departementEntity = await prisma.departement.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!departementEntity) {
@@ -45,7 +45,7 @@ export const findDepartement = async (
 
   return {
     ...departementEntity,
-    readonly: isEntityReadOnly(departementEntity, loggedUser)
+    readonly: isEntityReadOnly(departementEntity, loggedUser),
   };
 };
 
@@ -56,8 +56,8 @@ export const findDepartementOfCommuneId = async (
   const departementEntity = await prisma.commune
     .findUnique({
       where: {
-        id: communeId
-      }
+        id: communeId,
+      },
     })
     .departement();
 
@@ -67,7 +67,7 @@ export const findDepartementOfCommuneId = async (
 
   return {
     ...departementEntity,
-    readonly: isEntityReadOnly(departementEntity, loggedUser)
+    readonly: isEntityReadOnly(departementEntity, loggedUser),
   };
 };
 
@@ -81,16 +81,16 @@ export const findDepartements = async (
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       code: {
-        startsWith: q || undefined
-      }
+        startsWith: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   return departementEntities?.map((departement) => {
     return {
       ...departement,
-      readonly: isEntityReadOnly(departement, loggedUser)
+      readonly: isEntityReadOnly(departement, loggedUser),
     };
   });
 };
@@ -152,15 +152,15 @@ export const findPaginatedDepartements = async (
       include: {
         _count: includeCounts && {
           select: {
-            commune: true
-          }
-        }
+            commune: true,
+          },
+        },
       },
       where: {
         id: {
-          in: nbDonneesForFilteredDepartements.map((departementInfo) => departementInfo.id) // /!\ The IN clause could break if not paginated enough
-        }
-      }
+          in: nbDonneesForFilteredDepartements.map((departementInfo) => departementInfo.id), // /!\ The IN clause could break if not paginated enough
+        },
+      },
     });
 
     departementEntities = nbDonneesForFilteredDepartements.map((departementInfo) => {
@@ -173,9 +173,9 @@ export const findPaginatedDepartements = async (
           ? {
               nbCommunes: departement?._count.commune,
               nbLieuxDits: departementInfo.nbLieuxDits,
-              nbDonnees: departementInfo.nbDonnees
+              nbDonnees: departementInfo.nbDonnees,
             }
-          : {})
+          : {}),
       };
     });
   } else {
@@ -185,14 +185,14 @@ export const findPaginatedDepartements = async (
         case "id":
         case "code":
           orderBy = {
-            [orderByField]: sortOrder
+            [orderByField]: sortOrder,
           };
           break;
         case "nbCommunes":
           orderBy = {
             commune: {
-              _count: sortOrder
-            }
+              _count: sortOrder,
+            },
           };
           break;
         default:
@@ -203,24 +203,24 @@ export const findPaginatedDepartements = async (
     departementEntities = await prisma.departement.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
-      where: getFilterClauseDepartement(searchParams?.q)
+      where: getFilterClauseDepartement(searchParams?.q),
     });
   }
 
   const count = await prisma.departement.count({
-    where: getFilterClauseDepartement(searchParams?.q)
+    where: getFilterClauseDepartement(searchParams?.q),
   });
 
   const departements = departementEntities?.map((departement) => {
     return {
       ...departement,
-      readonly: isEntityReadOnly(departement, loggedUser)
+      readonly: isEntityReadOnly(departement, loggedUser),
     };
   });
 
   return {
     result: departements,
-    count
+    count,
   };
 };
 
@@ -236,7 +236,7 @@ export const upsertDepartement = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.departement.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -247,7 +247,7 @@ export const upsertDepartement = async (
     try {
       upsertedDepartement = await prisma.departement.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -268,7 +268,7 @@ export const upsertDepartement = async (
 
   return {
     ...upsertedDepartement,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -276,7 +276,7 @@ export const deleteDepartement = async (id: number, loggedUser: LoggedUser): Pro
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.departement.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -286,8 +286,8 @@ export const deleteDepartement = async (id: number, loggedUser: LoggedUser): Pro
 
   return prisma.departement.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -298,6 +298,6 @@ export const createDepartements = async (
   return prisma.departement.createMany({
     data: departements.map((departement) => {
       return { ...departement, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

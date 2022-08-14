@@ -12,7 +12,7 @@ import {
   findClasseOfEspeceId,
   findClasses,
   findPaginatedClasses,
-  upsertClasse
+  upsertClasse,
 } from "./classe-service";
 import * as entitiesUtils from "./entities-utils";
 
@@ -20,7 +20,7 @@ const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -41,8 +41,8 @@ test("should call readonly status when retrieving one class ", async () => {
   expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: classData.id
-    }
+      id: classData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -55,15 +55,15 @@ test("should handle class not found ", async () => {
   expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
 
 test("should call readonly status when retrieving class by species ID ", async () => {
   const classData = mock<Classe>({
-    id: 256
+    id: 256,
   });
 
   const species = mockDeep<Prisma.Prisma__EspeceClient<Espece>>();
@@ -76,8 +76,8 @@ test("should call readonly status when retrieving class by species ID ", async (
   expect(prismaMock.espece.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   expect(classe?.id).toEqual(256);
@@ -94,8 +94,8 @@ test("should handle class not found when retrieving class by species ID ", async
   expect(prismaMock.espece.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   expect(classe).toBeNull();
@@ -113,9 +113,9 @@ test("should call readonly status when retrieving classes by params ", async () 
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: undefined
-      }
-    }
+        contains: undefined,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(classesData.length);
 });
@@ -131,7 +131,7 @@ test("should call readonly status when retrieving paginated classes ", async () 
   expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: undefined,
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(classesData.length);
 });
@@ -145,9 +145,9 @@ test("should handle params when retrieving paginated classes ", async () => {
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   });
 
   prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
@@ -159,15 +159,15 @@ test("should handle params when retrieving paginated classes ", async () => {
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
     where: {
       libelle: {
-        contains: searchParams.searchParams?.q
-      }
-    }
+        contains: searchParams.searchParams?.q,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(classesData.length);
 });
@@ -183,14 +183,14 @@ test("should update an existing class as an admin ", async () => {
   expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
     data: classData.data,
     where: {
-      id: classData.id
-    }
+      id: classData.id,
+    },
   });
 });
 
 test("should update an existing class if owner ", async () => {
   const existingData = mock<Classe>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const classData = mock<MutationUpsertClasseArgs>();
@@ -205,21 +205,21 @@ test("should update an existing class if owner ", async () => {
   expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
     data: classData.data,
     where: {
-      id: classData.id
-    }
+      id: classData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing class and nor owner nor admin ", async () => {
   const existingData = mock<Classe>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const classData = mock<MutationUpsertClasseArgs>();
 
   const loggedUser = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
@@ -231,7 +231,7 @@ test("should throw an error when updating an existing class and nor owner nor ad
 
 test("should throw an error when trying to update a class that exists", async () => {
   const classData = mock<MutationUpsertClasseArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -246,14 +246,14 @@ test("should throw an error when trying to update a class that exists", async ()
   expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
     data: classData.data,
     where: {
-      id: classData.id
-    }
+      id: classData.id,
+    },
   });
 });
 
 test("should create new class ", async () => {
   const classData = mock<MutationUpsertClasseArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -264,14 +264,14 @@ test("should create new class ", async () => {
   expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
     data: {
       ...classData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a class that exists", async () => {
   const classData = mock<MutationUpsertClasseArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -286,19 +286,19 @@ test("should throw an error when trying to create a class that exists", async ()
   expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
     data: {
       ...classData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned class", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const classe = mock<Classe>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.classe.findFirst.mockResolvedValueOnce(classe);
@@ -308,14 +308,14 @@ test("should be able to delete an owned class", async () => {
   expect(prismaMock.classe.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any class if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
@@ -325,14 +325,14 @@ test("should be able to delete any class if admin", async () => {
   expect(prismaMock.classe.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned class as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
@@ -346,7 +346,7 @@ test("should create new classes", async () => {
   const classesData = [
     mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -358,8 +358,8 @@ test("should create new classes", async () => {
     data: classesData.map((classe) => {
       return {
         ...classe,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

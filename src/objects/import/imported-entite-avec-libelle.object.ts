@@ -10,7 +10,7 @@ export class ImportedEntiteAvecLibelle {
   }
   buildEntiteAvecLibelle = (): { libelle: string } => {
     return {
-      libelle: this.libelle
+      libelle: this.libelle,
     };
   };
 

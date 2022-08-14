@@ -3,7 +3,7 @@ import {
   EstimationsNombrePaginatedResult,
   FindParams,
   MutationUpsertEstimationNombreArgs,
-  QueryPaginatedEstimationsNombreArgs
+  QueryPaginatedEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -14,7 +14,7 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findEstimationNombre = async (
@@ -23,8 +23,8 @@ export const findEstimationNombre = async (
 ): Promise<(EstimationNombre & ReadonlyStatus) | null> => {
   const numberEstimateEntity = await prisma.estimationNombre.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!numberEstimateEntity) {
@@ -33,7 +33,7 @@ export const findEstimationNombre = async (
 
   return {
     ...numberEstimateEntity,
-    readonly: isEntityReadOnly(numberEstimateEntity, loggedUser)
+    readonly: isEntityReadOnly(numberEstimateEntity, loggedUser),
   };
 };
 
@@ -47,16 +47,16 @@ export const findEstimationsNombre = async (
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        startsWith: q || undefined
-      }
+        startsWith: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   return numberEstimateEntities?.map((numberEstimate) => {
     return {
       ...numberEstimate,
-      readonly: isEntityReadOnly(numberEstimate, loggedUser)
+      readonly: isEntityReadOnly(numberEstimate, loggedUser),
     };
   });
 };
@@ -74,15 +74,15 @@ export const findPaginatedEstimationsNombre = async (
       case "libelle":
       case "nonCompte":
         orderBy = {
-          [orderByField]: sortOrder
+          [orderByField]: sortOrder,
         };
         break;
       case "nbDonnees":
         {
           orderBy = {
             donnee: {
-              _count: sortOrder
-            }
+              _count: sortOrder,
+            },
           };
         }
         break;
@@ -100,41 +100,41 @@ export const findPaginatedEstimationsNombre = async (
       include: {
         _count: {
           select: {
-            donnee: true
-          }
-        }
+            donnee: true,
+          },
+        },
       },
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
 
     numberEstimateEntities = estimationsNombre.map((estimation) => {
       return {
         ...estimation,
-        nbDonnees: estimation._count.donnee
+        nbDonnees: estimation._count.donnee,
       };
     });
   } else {
     numberEstimateEntities = await prisma.estimationNombre.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
   }
 
   const count = await prisma.estimationNombre.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
   });
 
   const numberEstimates = numberEstimateEntities?.map((numberEstimate) => {
     return {
       ...numberEstimate,
-      readonly: isEntityReadOnly(numberEstimate, loggedUser)
+      readonly: isEntityReadOnly(numberEstimate, loggedUser),
     };
   });
 
   return {
     result: numberEstimates,
-    count
+    count,
   };
 };
 
@@ -150,7 +150,7 @@ export const upsertEstimationNombre = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.estimationNombre.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -161,7 +161,7 @@ export const upsertEstimationNombre = async (
     try {
       upsertedEstimationNombre = await prisma.estimationNombre.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -172,7 +172,7 @@ export const upsertEstimationNombre = async (
   } else {
     try {
       upsertedEstimationNombre = await prisma.estimationNombre.create({
-        data: { ...data, ownerId: loggedUser.id }
+        data: { ...data, ownerId: loggedUser.id },
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -184,7 +184,7 @@ export const upsertEstimationNombre = async (
 
   return {
     ...upsertedEstimationNombre,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -192,7 +192,7 @@ export const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser)
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.estimationNombre.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -202,8 +202,8 @@ export const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser)
 
   return prisma.estimationNombre.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -214,6 +214,6 @@ export const createEstimationsNombre = async (
   return prisma.estimationNombre.createMany({
     data: estimationsNombre.map((estimationNombre) => {
       return { ...estimationNombre, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

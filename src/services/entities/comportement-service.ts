@@ -3,7 +3,7 @@ import {
   ComportementsPaginatedResult,
   FindParams,
   MutationUpsertComportementArgs,
-  QueryPaginatedComportementsArgs
+  QueryPaginatedComportementsArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -14,7 +14,7 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findComportement = async (
@@ -23,8 +23,8 @@ export const findComportement = async (
 ): Promise<(Comportement & ReadonlyStatus) | null> => {
   const comportementEntity = await prisma.comportement.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!comportementEntity) {
@@ -33,7 +33,7 @@ export const findComportement = async (
 
   return {
     ...comportementEntity,
-    readonly: isEntityReadOnly(comportementEntity, loggedUser)
+    readonly: isEntityReadOnly(comportementEntity, loggedUser),
   };
 };
 
@@ -45,15 +45,15 @@ export const findComportementsByIds = async (
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       id: {
-        in: ids
-      }
-    }
+        in: ids,
+      },
+    },
   });
 
   return comportementEntities?.map((comportement) => {
     return {
       ...comportement,
-      readonly: isEntityReadOnly(comportement, loggedUser)
+      readonly: isEntityReadOnly(comportement, loggedUser),
     };
   });
 };
@@ -68,8 +68,8 @@ export const findComportements = async (
   const matchingCodesAsNumberClause = matchingCodesAsNumber.map((matchingCode) => {
     return {
       code: {
-        startsWith: matchingCode
-      }
+        startsWith: matchingCode,
+      },
     };
   });
 
@@ -81,23 +81,23 @@ export const findComportements = async (
             ...matchingCodesAsNumberClause,
             {
               code: {
-                startsWith: q // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
-              }
-            }
-          ]
+                startsWith: q, // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
+              },
+            },
+          ],
         }
       : undefined,
-    take: max || undefined
+    take: max || undefined,
   });
 
   const matchingWithLibelle = await prisma.comportement.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
-        contains: q || undefined
-      }
+        contains: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   // Concatenate arrays and remove elements that could be present in several indexes, to keep a unique reference
@@ -110,7 +110,7 @@ export const findComportements = async (
     .map((matchingEntry) => {
       return {
         ...matchingEntry,
-        readonly: isEntityReadOnly(matchingEntry, loggedUser)
+        readonly: isEntityReadOnly(matchingEntry, loggedUser),
       };
     });
 
@@ -123,20 +123,20 @@ const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhere
         OR: [
           {
             code: {
-              contains: q
-            }
+              contains: q,
+            },
           },
           {
             libelle: {
-              contains: q
-            }
+              contains: q,
+            },
           },
           {
             nicheur: {
-              in: (Object.keys(Nicheur) as Nicheur[]).filter((nicheur) => nicheur.includes(q))
-            }
-          }
-        ]
+              in: (Object.keys(Nicheur) as Nicheur[]).filter((nicheur) => nicheur.includes(q)),
+            },
+          },
+        ],
       }
     : {};
 };
@@ -155,14 +155,14 @@ export const findPaginatedComportements = async (
       case "libelle":
       case "nicheur":
         orderBy = {
-          [orderByField]: sortOrder
+          [orderByField]: sortOrder,
         };
         break;
       case "nbDonnees":
         orderBy = {
           donnee_comportement: {
-            _count: sortOrder
-          }
+            _count: sortOrder,
+          },
         };
         break;
       default:
@@ -173,7 +173,7 @@ export const findPaginatedComportements = async (
   const comportements = await prisma.comportement.findMany({
     ...getPrismaPagination(searchParams),
     orderBy,
-    where: getFilterClause(searchParams?.q)
+    where: getFilterClause(searchParams?.q),
   });
 
   const donneesByComportement = includeCounts
@@ -181,15 +181,15 @@ export const findPaginatedComportements = async (
         by: ["comportement_id"],
         where: {
           comportement_id: {
-            in: comportements?.map((comportement) => comportement.id)
-          }
+            in: comportements?.map((comportement) => comportement.id),
+          },
         },
-        _count: true
+        _count: true,
       })
     : null;
 
   const count = await prisma.comportement.count({
-    where: getFilterClause(searchParams?.q)
+    where: getFilterClause(searchParams?.q),
   });
 
   return {
@@ -202,12 +202,12 @@ export const findPaginatedComportements = async (
               nbDonnees:
                 donneesByComportement?.find(
                   (donneeByComportement) => donneeByComportement.comportement_id === comportement.id
-                )?._count ?? 0
+                )?._count ?? 0,
             }
-          : {})
+          : {}),
       };
     }),
-    count
+    count,
   };
 };
 
@@ -223,7 +223,7 @@ export const upsertComportement = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.comportement.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -235,7 +235,7 @@ export const upsertComportement = async (
     try {
       upsertedComportement = await prisma.comportement.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -257,7 +257,7 @@ export const upsertComportement = async (
 
   return {
     ...upsertedComportement,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -265,7 +265,7 @@ export const deleteComportement = async (id: number, loggedUser: LoggedUser): Pr
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.comportement.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -275,8 +275,8 @@ export const deleteComportement = async (id: number, loggedUser: LoggedUser): Pr
 
   return prisma.comportement.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -287,6 +287,6 @@ export const createComportements = async (
   return prisma.comportement.createMany({
     data: comportements.map((comportement) => {
       return { ...comportement, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

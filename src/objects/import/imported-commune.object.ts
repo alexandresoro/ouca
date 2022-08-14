@@ -23,7 +23,7 @@ export class ImportedCommune {
     return {
       departementId,
       code: +this.code,
-      nom: this.nom
+      nom: this.nom,
     };
   };
 

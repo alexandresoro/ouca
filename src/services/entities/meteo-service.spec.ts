@@ -13,14 +13,14 @@ import {
   findMeteos,
   findMeteosByIds,
   findPaginatedMeteos,
-  upsertMeteo
+  upsertMeteo,
 } from "./meteo-service";
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -41,8 +41,8 @@ test("should call readonly status when retrieving one weather", async () => {
   expect(prismaMock.meteo.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.meteo.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: weatherData.id
-    }
+      id: weatherData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -55,8 +55,8 @@ test("should handle weather not found ", async () => {
   expect(prismaMock.meteo.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.meteo.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
@@ -73,9 +73,9 @@ test("should call readonly status when retrieving weathers by ID ", async () => 
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       id: {
-        in: weathersData.map((weather) => weather.id)
-      }
-    }
+        in: weathersData.map((weather) => weather.id),
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(weathersData.length);
 });
@@ -92,9 +92,9 @@ test("should call readonly status when retrieving weathers by params", async () 
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: undefined
-      }
-    }
+        contains: undefined,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(weathersData.length);
 });
@@ -110,7 +110,7 @@ test("should call readonly status when retrieving paginated weathers", async () 
   expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {},
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(weathersData.length);
 });
@@ -124,9 +124,9 @@ test("should handle params when retrieving paginated weathers", async () => {
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.meteo.findMany.mockResolvedValueOnce([weathersData[0]]);
@@ -138,15 +138,15 @@ test("should handle params when retrieving paginated weathers", async () => {
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
     where: {
       libelle: {
-        contains: searchParams.searchParams?.q
-      }
-    }
+        contains: searchParams.searchParams?.q,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -162,14 +162,14 @@ test("should update an existing weather as an admin ", async () => {
   expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
     data: weatherData.data,
     where: {
-      id: weatherData.id
-    }
+      id: weatherData.id,
+    },
   });
 });
 
 test("should update an existing weather if owner ", async () => {
   const existingData = mock<Meteo>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const weatherData = mock<MutationUpsertMeteoArgs>();
@@ -184,21 +184,21 @@ test("should update an existing weather if owner ", async () => {
   expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
     data: weatherData.data,
     where: {
-      id: weatherData.id
-    }
+      id: weatherData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing weather and nor owner nor admin ", async () => {
   const existingData = mock<Meteo>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const weatherData = mock<MutationUpsertMeteoArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.meteo.findFirst.mockResolvedValueOnce(existingData);
@@ -210,7 +210,7 @@ test("should throw an error when updating an existing weather and nor owner nor 
 
 test("should throw an error when trying to update a weather that exists", async () => {
   const weatherData = mock<MutationUpsertMeteoArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -225,14 +225,14 @@ test("should throw an error when trying to update a weather that exists", async 
   expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
     data: weatherData.data,
     where: {
-      id: weatherData.id
-    }
+      id: weatherData.id,
+    },
   });
 });
 
 test("should create new weather", async () => {
   const weatherData = mock<MutationUpsertMeteoArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -243,14 +243,14 @@ test("should create new weather", async () => {
   expect(prismaMock.meteo.create).toHaveBeenLastCalledWith({
     data: {
       ...weatherData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a weather that exists", async () => {
   const weatherData = mock<MutationUpsertMeteoArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -265,19 +265,19 @@ test("should throw an error when trying to create a weather that exists", async 
   expect(prismaMock.meteo.create).toHaveBeenLastCalledWith({
     data: {
       ...weatherData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned weather", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const meteo = mock<Meteo>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.meteo.findFirst.mockResolvedValueOnce(meteo);
@@ -287,14 +287,14 @@ test("should be able to delete an owned weather", async () => {
   expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.meteo.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any weather if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
@@ -304,14 +304,14 @@ test("should be able to delete any weather if admin", async () => {
   expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.meteo.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned weather as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
@@ -325,7 +325,7 @@ test("should create new weathers", async () => {
   const weathersData = [
     mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -337,8 +337,8 @@ test("should create new weathers", async () => {
     data: weathersData.map((weather) => {
       return {
         ...weather,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

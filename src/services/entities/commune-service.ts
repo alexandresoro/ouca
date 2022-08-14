@@ -3,7 +3,7 @@ import {
   CommunesPaginatedResult,
   FindParams,
   MutationUpsertCommuneArgs,
-  QueryPaginatedCommunesArgs
+  QueryPaginatedCommunesArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -17,7 +17,7 @@ import {
   isEntityReadOnly,
   queryParametersToFindAllEntities,
   ReadonlyStatus,
-  transformQueryRawResultsBigIntsToNumbers
+  transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
 export const findCommune = async (
@@ -26,8 +26,8 @@ export const findCommune = async (
 ): Promise<(Commune & ReadonlyStatus) | null> => {
   const communeEntity = await prisma.commune.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!communeEntity) {
@@ -36,7 +36,7 @@ export const findCommune = async (
 
   return {
     ...communeEntity,
-    readonly: isEntityReadOnly(communeEntity, loggedUser)
+    readonly: isEntityReadOnly(communeEntity, loggedUser),
   };
 };
 
@@ -47,8 +47,8 @@ export const findCommuneOfLieuDitId = async (
   const communeEntity = await prisma.lieudit
     .findUnique({
       where: {
-        id: lieuDitId
-      }
+        id: lieuDitId,
+      },
     })
     .commune();
 
@@ -58,7 +58,7 @@ export const findCommuneOfLieuDitId = async (
 
   return {
     ...communeEntity,
-    readonly: isEntityReadOnly(communeEntity, loggedUser)
+    readonly: isEntityReadOnly(communeEntity, loggedUser),
   };
 };
 
@@ -82,26 +82,26 @@ export const findCommunes = async (
           OR: [
             {
               code: {
-                equals: qAsNumber
-              }
+                equals: qAsNumber,
+              },
             },
             qAsNumber < 10
               ? {
                   code: {
                     gte: 100 * qAsNumber,
-                    lt: 100 * (qAsNumber + 1)
-                  }
+                    lt: 100 * (qAsNumber + 1),
+                  },
                 }
               : {},
             qAsNumber < 100
               ? {
                   code: {
                     gte: 10 * qAsNumber,
-                    lt: 10 * (qAsNumber + 1)
-                  }
+                    lt: 10 * (qAsNumber + 1),
+                  },
                 }
-              : {}
-          ]
+              : {},
+          ],
         }
       : {};
 
@@ -112,31 +112,31 @@ export const findCommunes = async (
           codeCommuneWhereClause,
           {
             nom: {
-              startsWith: q || undefined
-            }
-          }
-        ]
+              startsWith: q || undefined,
+            },
+          },
+        ],
       },
       departementId
         ? {
             departementId: {
-              equals: departementId
-            }
+              equals: departementId,
+            },
           }
-        : {}
-    ]
+        : {},
+    ],
   };
 
   const communeEntities = await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     where: whereClause,
-    take: max || undefined
+    take: max || undefined,
   });
 
   return communeEntities?.map((commune) => {
     return {
       ...commune,
-      readonly: isEntityReadOnly(commune, loggedUser)
+      readonly: isEntityReadOnly(commune, loggedUser),
     };
   });
 };
@@ -147,17 +147,17 @@ export const getFilterClauseCommune = (q: string | null | undefined): Prisma.Com
         OR: [
           {
             nom: {
-              contains: q
-            }
+              contains: q,
+            },
           },
           {
             departement: {
               code: {
-                contains: q
-              }
-            }
-          }
-        ]
+                contains: q,
+              },
+            },
+          },
+        ],
       }
     : {};
 };
@@ -166,8 +166,8 @@ export const findCommunesWithDepartements = async (): Promise<(Commune & { depar
   return await prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     include: {
-      departement: true
-    }
+      departement: true,
+    },
   });
 };
 
@@ -227,9 +227,9 @@ export const findPaginatedCommunes = async (
     const communesRq = await prisma.commune.findMany({
       where: {
         id: {
-          in: nbDonneesForFilteredCommunes.map((communeInfo) => communeInfo.id) // /!\ The IN clause could break if not paginated enough
-        }
-      }
+          in: nbDonneesForFilteredCommunes.map((communeInfo) => communeInfo.id), // /!\ The IN clause could break if not paginated enough
+        },
+      },
     });
 
     communeEntities = nbDonneesForFilteredCommunes.map((communeInfo) => {
@@ -238,7 +238,7 @@ export const findPaginatedCommunes = async (
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ...commune!,
         nbLieuxDits: communeInfo.nbLieuxDits,
-        nbDonnees: communeInfo.nbDonnees
+        nbDonnees: communeInfo.nbDonnees,
       };
     });
   } else {
@@ -249,21 +249,21 @@ export const findPaginatedCommunes = async (
         case "code":
         case "nom":
           orderBy = {
-            [orderByField]: sortOrder
+            [orderByField]: sortOrder,
           };
           break;
         case "departement":
           orderBy = {
             departement: {
-              code: sortOrder
-            }
+              code: sortOrder,
+            },
           };
           break;
         case "nbLieuxDits":
           orderBy = {
             lieudit: {
-              _count: sortOrder
-            }
+              _count: sortOrder,
+            },
           };
           break;
         default:
@@ -278,8 +278,8 @@ export const findPaginatedCommunes = async (
         include: {
           _count: {
             select: {
-              lieudit: true
-            }
+              lieudit: true,
+            },
           },
           lieudit: {
             select: {
@@ -287,15 +287,15 @@ export const findPaginatedCommunes = async (
                 select: {
                   _count: {
                     select: {
-                      donnee: true
-                    }
-                  }
-                }
-              }
-            }
-          }
+                      donnee: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
-        where: getFilterClauseCommune(searchParams?.q)
+        where: getFilterClauseCommune(searchParams?.q),
       });
 
       communeEntities = communesRq.map((commune) => {
@@ -311,14 +311,14 @@ export const findPaginatedCommunes = async (
         return {
           ...commune,
           nbLieuxDits: commune._count.lieudit,
-          nbDonnees
+          nbDonnees,
         };
       });
     } else {
       const communesRq = await prisma.commune.findMany({
         ...getPrismaPagination(searchParams),
         orderBy,
-        where: getFilterClauseCommune(searchParams?.q)
+        where: getFilterClauseCommune(searchParams?.q),
       });
 
       communeEntities = communesRq;
@@ -326,19 +326,19 @@ export const findPaginatedCommunes = async (
   }
 
   const count = await prisma.commune.count({
-    where: getFilterClauseCommune(searchParams?.q)
+    where: getFilterClauseCommune(searchParams?.q),
   });
 
   const communes = communeEntities?.map((commune) => {
     return {
       ...commune,
-      readonly: isEntityReadOnly(commune, loggedUser)
+      readonly: isEntityReadOnly(commune, loggedUser),
     };
   });
 
   return {
     result: communes,
-    count
+    count,
   };
 };
 
@@ -354,7 +354,7 @@ export const upsertCommune = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.commune.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -365,7 +365,7 @@ export const upsertCommune = async (
     try {
       upsertedCommune = await prisma.commune.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -386,7 +386,7 @@ export const upsertCommune = async (
 
   return {
     ...upsertedCommune,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -394,7 +394,7 @@ export const deleteCommune = async (id: number, loggedUser: LoggedUser): Promise
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.commune.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -404,8 +404,8 @@ export const deleteCommune = async (id: number, loggedUser: LoggedUser): Promise
 
   return prisma.commune.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -416,6 +416,6 @@ export const createCommunes = async (
   return prisma.commune.createMany({
     data: communes.map((commune) => {
       return { ...commune, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

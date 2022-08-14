@@ -12,7 +12,7 @@ export class ImportedDepartement {
 
   buildDepartement = (): Pick<Departement, "code"> => {
     return {
-      code: this.code
+      code: this.code,
     };
   };
 

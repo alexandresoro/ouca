@@ -27,7 +27,7 @@ export class ImportedEspece {
       classeId,
       code: this.code,
       nomFrancais: this.nomFrancais,
-      nomLatin: this.nomLatin
+      nomLatin: this.nomLatin,
     };
   };
 

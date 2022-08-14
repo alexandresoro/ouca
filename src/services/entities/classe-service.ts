@@ -3,7 +3,7 @@ import {
   ClassesPaginatedResult,
   FindParams,
   MutationUpsertClasseArgs,
-  QueryPaginatedClassesArgs
+  QueryPaginatedClassesArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -17,7 +17,7 @@ import {
   isEntityReadOnly,
   queryParametersToFindAllEntities,
   ReadonlyStatus,
-  transformQueryRawResultsBigIntsToNumbers
+  transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
 export const findClasseOfEspeceId = async (
@@ -27,8 +27,8 @@ export const findClasseOfEspeceId = async (
   const classeEntity = await prisma.espece
     .findUnique({
       where: {
-        id: especeId
-      }
+        id: especeId,
+      },
     })
     .classe();
 
@@ -38,7 +38,7 @@ export const findClasseOfEspeceId = async (
 
   return {
     ...classeEntity,
-    readonly: isEntityReadOnly(classeEntity, loggedUser)
+    readonly: isEntityReadOnly(classeEntity, loggedUser),
   };
 };
 
@@ -48,8 +48,8 @@ export const findClasse = async (
 ): Promise<(Classe & ReadonlyStatus) | null> => {
   const classeEntity = await prisma.classe.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!classeEntity) {
@@ -58,7 +58,7 @@ export const findClasse = async (
 
   return {
     ...classeEntity,
-    readonly: isEntityReadOnly(classeEntity, loggedUser)
+    readonly: isEntityReadOnly(classeEntity, loggedUser),
   };
 };
 
@@ -72,16 +72,16 @@ export const findClasses = async (
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: q || undefined
-      }
+        contains: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   return classeEntities?.map((classe) => {
     return {
       ...classe,
-      readonly: isEntityReadOnly(classe, loggedUser)
+      readonly: isEntityReadOnly(classe, loggedUser),
     };
   });
 };
@@ -135,14 +135,14 @@ export const findPaginatedClasses = async (
         case "id":
         case "libelle":
           orderBy = {
-            [orderByField]: sortOrder
+            [orderByField]: sortOrder,
           };
           break;
         case "nbEspeces":
           orderBy = {
             espece: {
-              _count: sortOrder
-            }
+              _count: sortOrder,
+            },
           };
           break;
         default:
@@ -153,24 +153,24 @@ export const findPaginatedClasses = async (
     classeEntities = await prisma.classe.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
   }
 
   const count = await prisma.classe.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
   });
 
   const classes = classeEntities?.map((classe) => {
     return {
       ...classe,
-      readonly: isEntityReadOnly(classe, loggedUser)
+      readonly: isEntityReadOnly(classe, loggedUser),
     };
   });
 
   return {
     result: classes,
-    count
+    count,
   };
 };
 
@@ -186,7 +186,7 @@ export const upsertClasse = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.classe.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -198,7 +198,7 @@ export const upsertClasse = async (
     try {
       upsertedClasse = await prisma.classe.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -212,8 +212,8 @@ export const upsertClasse = async (
       upsertedClasse = await prisma.classe.create({
         data: {
           ...data,
-          ownerId: loggedUser.id
-        }
+          ownerId: loggedUser.id,
+        },
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -225,7 +225,7 @@ export const upsertClasse = async (
 
   return {
     ...upsertedClasse,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -233,7 +233,7 @@ export const deleteClasse = async (id: number, loggedUser: LoggedUser): Promise<
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.classe.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -242,8 +242,8 @@ export const deleteClasse = async (id: number, loggedUser: LoggedUser): Promise<
   }
   return prisma.classe.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -254,6 +254,6 @@ export const createClasses = async (
   return prisma.classe.createMany({
     data: classes.map((classe) => {
       return { ...classe, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

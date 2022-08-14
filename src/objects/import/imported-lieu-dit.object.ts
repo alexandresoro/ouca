@@ -40,7 +40,7 @@ export class ImportedLieuDit {
       altitude: +this.altitude,
       longitude: new Decimal(+(+this.longitude).toFixed(this.coordinatesSystem.decimalPlaces)),
       latitude: new Decimal(+(+this.latitude).toFixed(this.coordinatesSystem.decimalPlaces)),
-      coordinatesSystem: this.coordinatesSystem.code
+      coordinatesSystem: this.coordinatesSystem.code,
     };
   };
 

@@ -13,14 +13,14 @@ const COOKIE_OPTIONS: CookieSerializeOptions = {
   httpOnly: true,
   sameSite: options.jwtCookieSameSite ? "strict" : "none",
   secure: options.jwtCookieSecure,
-  maxAge: 60 * 60 * 24 // Let's keep it for 1 day for now
+  maxAge: 60 * 60 * 24, // Let's keep it for 1 day for now
 };
 
 export const getLoggedUser = (tokenPayload: JWTPayload): LoggedUser | null => {
   if (tokenPayload?.sub && tokenPayload.roles) {
     return {
       id: tokenPayload.sub,
-      role: tokenPayload.roles as DatabaseRole
+      role: tokenPayload.roles as DatabaseRole,
     };
   }
   return null;
@@ -58,7 +58,7 @@ const createSignedTokenForUser = async (user: Omit<User, "password">): Promise<s
     name: username,
     given_name: firstName,
     family_name: lastName,
-    roles: role
+    roles: role,
   })
     .setProtectedHeader({ alg: SIGNING_TOKEN_ALGO })
     .setIssuedAt()

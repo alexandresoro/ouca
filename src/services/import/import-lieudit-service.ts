@@ -29,7 +29,7 @@ export class ImportLieuxditService extends ImportService {
       findDepartements(),
       findCommunes(),
       findLieuxDits(),
-      findCoordinatesSystem(loggedUser)
+      findCoordinatesSystem(loggedUser),
     ]);
 
     if (!coordinatesSystemType) {

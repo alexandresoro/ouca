@@ -9,7 +9,7 @@ import {
   findClasseOfEspeceId,
   findClasses,
   findPaginatedClasses,
-  upsertClasse
+  upsertClasse,
 } from "../services/entities/classe-service";
 import {
   deleteCommune,
@@ -17,7 +17,7 @@ import {
   findCommuneOfLieuDitId,
   findCommunes,
   findPaginatedCommunes,
-  upsertCommune
+  upsertCommune,
 } from "../services/entities/commune-service";
 import {
   deleteComportement,
@@ -25,7 +25,7 @@ import {
   findComportements,
   findComportementsByIds,
   findPaginatedComportements,
-  upsertComportement
+  upsertComportement,
 } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import {
@@ -34,7 +34,7 @@ import {
   findDepartementOfCommuneId,
   findDepartements,
   findPaginatedDepartements,
-  upsertDepartement
+  upsertDepartement,
 } from "../services/entities/departement-service";
 import {
   countSpecimensByAgeForEspeceId,
@@ -47,7 +47,7 @@ import {
   findNextRegroupement,
   findPaginatedDonneesByCriteria,
   getNbDonneesByCriteria,
-  upsertDonnee
+  upsertDonnee,
 } from "../services/entities/donnee-service";
 import { ReadonlyStatus } from "../services/entities/entities-utils";
 import {
@@ -56,27 +56,27 @@ import {
   findEspeceOfDonneeId,
   findEspeces,
   findPaginatedEspeces,
-  upsertEspece
+  upsertEspece,
 } from "../services/entities/espece-service";
 import {
   deleteEstimationDistance,
   findEstimationDistance,
   findEstimationsDistance,
   findPaginatedEstimationsDistance,
-  upsertEstimationDistance
+  upsertEstimationDistance,
 } from "../services/entities/estimation-distance-service";
 import {
   deleteEstimationNombre,
   findEstimationNombre,
   findEstimationsNombre,
   findPaginatedEstimationsNombre,
-  upsertEstimationNombre
+  upsertEstimationNombre,
 } from "../services/entities/estimation-nombre-service";
 import {
   findInventaire,
   findInventaireOfDonneeId,
   InventaireWithRelations,
-  upsertInventaire
+  upsertInventaire,
 } from "../services/entities/inventaire-service";
 import {
   deleteLieuDit,
@@ -85,7 +85,7 @@ import {
   findLieuxDits,
   findPaginatedLieuxDits,
   LieuDitWithCoordinatesAsNumber,
-  upsertLieuDit
+  upsertLieuDit,
 } from "../services/entities/lieu-dit-service";
 import {
   deleteMeteo,
@@ -93,7 +93,7 @@ import {
   findMeteos,
   findMeteosByIds,
   findPaginatedMeteos,
-  upsertMeteo
+  upsertMeteo,
 } from "../services/entities/meteo-service";
 import {
   deleteMilieu,
@@ -101,7 +101,7 @@ import {
   findMilieux,
   findMilieuxByIds,
   findPaginatedMilieux,
-  upsertMilieu
+  upsertMilieu,
 } from "../services/entities/milieu-service";
 import {
   deleteObservateur,
@@ -111,7 +111,7 @@ import {
   findPaginatedObservateurs,
   getNbDonneesOfObservateur,
   getNbObservateurs,
-  upsertObservateur
+  upsertObservateur,
 } from "../services/entities/observateur-service";
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
 import {
@@ -128,7 +128,7 @@ import {
   generateMeteosExport,
   generateMilieuxExport,
   generateObservateursExport,
-  generateSexesExport
+  generateSexesExport,
 } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
@@ -169,7 +169,7 @@ import {
   SexesPaginatedResult,
   SexeWithSpecimensCount,
   UpsertInventaireFailureReason,
-  UserInfo
+  UserInfo,
 } from "./generated/graphql-types";
 import { GraphQLContext } from "./graphql-context";
 
@@ -204,7 +204,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     donnee: (_source, args, context): { id: number } => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return {
-        id: args.id
+        id: args.id,
       };
     },
     espece: async (_source, args, context): Promise<Omit<Espece, "classe"> | null> => {
@@ -463,7 +463,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     settings: async (_source, args, context): Promise<Settings | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findAppConfiguration(context.user);
-    }
+    },
   },
   Mutation: {
     deleteAge: async (_source, args, context): Promise<number> => {
@@ -554,12 +554,12 @@ const resolvers: Resolvers<GraphQLContext> = {
       try {
         const upsertedDonnee = await upsertDonnee(args);
         return {
-          donnee: upsertedDonnee
+          donnee: upsertedDonnee,
         };
       } catch (error) {
         const failureReason = error as string;
         return {
-          failureReason
+          failureReason,
         };
       }
     },
@@ -587,12 +587,12 @@ const resolvers: Resolvers<GraphQLContext> = {
       try {
         const upsertedInventaire = await upsertInventaire(args, context.user);
         return {
-          inventaire: upsertedInventaire
+          inventaire: upsertedInventaire,
         };
       } catch (error) {
         const failureReason = error as UpsertInventaireFailureReason;
         return {
-          failureReason
+          failureReason,
         };
       }
     },
@@ -691,12 +691,12 @@ const resolvers: Resolvers<GraphQLContext> = {
       }
 
       return true;
-    }
+    },
   },
   Commune: {
     departement: async (parent, args, context): Promise<Departement | null> => {
       return findDepartementOfCommuneId(parent?.id, context.user);
-    }
+    },
   },
   Donnee: {
     espece: async (parent, args, context): Promise<Omit<Espece, "classe"> | null> => {
@@ -706,7 +706,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
       const inventaire = await findInventaireOfDonneeId(parent?.id);
       return findInventaire(inventaire?.id);
-    }
+    },
   },
   DonneeResult: {
     donnee: async (parent): Promise<Omit<Donnee, "inventaire" | "espece"> | null> => {
@@ -714,23 +714,23 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     navigation: async (parent): Promise<DonneeNavigationData> => {
       return findDonneeNavigationData(parent?.id);
-    }
+    },
   },
   Inventaire: {
     lieuDit: async (parent, args, context): Promise<Omit<LieuDit, "commune"> | null> => {
       const lieuDit = await findLieuDitOfInventaireId(parent?.id);
       return findLieuDit(lieuDit?.id, context.user);
-    }
+    },
   },
   LieuDit: {
     commune: async (parent, args, context): Promise<Omit<Commune, "departement"> | null> => {
       return findCommuneOfLieuDitId(parent?.id, context.user);
-    }
+    },
   },
   Espece: {
     classe: async (parent, args, context): Promise<Classe | null> => {
       return findClasseOfEspeceId(parent?.id, context.user);
-    }
+    },
   },
   Observateur: {
     nbDonnees: async (parent, args, context): Promise<number | null> => {
@@ -738,7 +738,7 @@ const resolvers: Resolvers<GraphQLContext> = {
         return null;
       }
       return getNbDonneesOfObservateur(parent.id, context.user);
-    }
+    },
   },
   ObservateursPaginatedResult: {
     result: async (_, args, context): Promise<(Observateur & ReadonlyStatus)[]> => {
@@ -746,7 +746,7 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     count: async (_, { q }, context): Promise<number> => {
       return getNbObservateurs(context.user, q);
-    }
+    },
   },
   PaginatedSearchDonneesResult: {
     result: async (_, args): Promise<Omit<Donnee, "espece" | "inventaire">[]> => {
@@ -754,8 +754,8 @@ const resolvers: Resolvers<GraphQLContext> = {
     },
     count: async (_, { searchCriteria }): Promise<number> => {
       return getNbDonneesByCriteria(searchCriteria);
-    }
-  }
+    },
+  },
 };
 
 export default resolvers;

@@ -27,7 +27,7 @@ export abstract class ImportService extends EventEmitter {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const content: string[][] = parse(fileContent, {
       delimiter: ";",
-      encoding: "utf-8"
+      encoding: "utf-8",
     });
 
     if (!content) {
@@ -71,7 +71,7 @@ export abstract class ImportService extends EventEmitter {
           totalEntries: content.length,
           entriesToBeValidated: numberOfLines,
           validatedEntries,
-          errors: errors.length
+          errors: errors.length,
         };
         this.emit(IMPORT_PROGRESS_UPDATE_EVENT, progressContent);
       }

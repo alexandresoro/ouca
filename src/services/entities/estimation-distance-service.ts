@@ -3,7 +3,7 @@ import {
   EstimationsDistancePaginatedResult,
   FindParams,
   MutationUpsertEstimationDistanceArgs,
-  QueryPaginatedEstimationsDistanceArgs
+  QueryPaginatedEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -14,7 +14,7 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findEstimationDistance = async (
@@ -23,8 +23,8 @@ export const findEstimationDistance = async (
 ): Promise<(EstimationDistance & ReadonlyStatus) | null> => {
   const distanceEstimateEntity = await prisma.estimationDistance.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!distanceEstimateEntity) {
@@ -33,7 +33,7 @@ export const findEstimationDistance = async (
 
   return {
     ...distanceEstimateEntity,
-    readonly: isEntityReadOnly(distanceEstimateEntity, loggedUser)
+    readonly: isEntityReadOnly(distanceEstimateEntity, loggedUser),
   };
 };
 
@@ -47,16 +47,16 @@ export const findEstimationsDistance = async (
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        startsWith: q || undefined
-      }
+        startsWith: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   return distanceEstimateEntities?.map((distanceEstimate) => {
     return {
       ...distanceEstimate,
-      readonly: isEntityReadOnly(distanceEstimate, loggedUser)
+      readonly: isEntityReadOnly(distanceEstimate, loggedUser),
     };
   });
 };
@@ -73,15 +73,15 @@ export const findPaginatedEstimationsDistance = async (
       case "id":
       case "libelle":
         orderBy = {
-          [orderByField]: sortOrder
+          [orderByField]: sortOrder,
         };
         break;
       case "nbDonnees":
         {
           orderBy = {
             donnee: {
-              _count: sortOrder
-            }
+              _count: sortOrder,
+            },
           };
         }
         break;
@@ -99,41 +99,41 @@ export const findPaginatedEstimationsDistance = async (
       include: {
         _count: {
           select: {
-            donnee: true
-          }
-        }
+            donnee: true,
+          },
+        },
       },
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
 
     distanceEstimateEntities = estimationsDistance.map((estimation) => {
       return {
         ...estimation,
-        nbDonnees: estimation._count.donnee
+        nbDonnees: estimation._count.donnee,
       };
     });
   } else {
     distanceEstimateEntities = await prisma.estimationDistance.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
   }
 
   const count = await prisma.estimationDistance.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
   });
 
   const distanceEstimates = distanceEstimateEntities?.map((distanceEstimate) => {
     return {
       ...distanceEstimate,
-      readonly: isEntityReadOnly(distanceEstimate, loggedUser)
+      readonly: isEntityReadOnly(distanceEstimate, loggedUser),
     };
   });
 
   return {
     result: distanceEstimates,
-    count
+    count,
   };
 };
 
@@ -149,7 +149,7 @@ export const upsertEstimationDistance = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.estimationDistance.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -160,7 +160,7 @@ export const upsertEstimationDistance = async (
     try {
       upsertedEstimationDistance = await prisma.estimationDistance.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -171,7 +171,7 @@ export const upsertEstimationDistance = async (
   } else {
     try {
       upsertedEstimationDistance = await prisma.estimationDistance.create({
-        data: { ...data, ownerId: loggedUser.id }
+        data: { ...data, ownerId: loggedUser.id },
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -183,7 +183,7 @@ export const upsertEstimationDistance = async (
 
   return {
     ...upsertedEstimationDistance,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -191,7 +191,7 @@ export const deleteEstimationDistance = async (id: number, loggedUser: LoggedUse
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.estimationDistance.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -201,8 +201,8 @@ export const deleteEstimationDistance = async (id: number, loggedUser: LoggedUse
 
   return prisma.estimationDistance.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -213,6 +213,6 @@ export const createEstimationsDistance = async (
   return prisma.estimationDistance.createMany({
     data: estimationsDistance.map((estimationDistance) => {
       return { ...estimationDistance, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

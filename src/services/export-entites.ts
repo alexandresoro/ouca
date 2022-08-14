@@ -26,7 +26,7 @@ export const generateAgesExport = async (): Promise<string> => {
 
   const agesToExport = agesDb.map((ageDb) => {
     return {
-      Âge: ageDb.libelle
+      Âge: ageDb.libelle,
     };
   });
 
@@ -54,7 +54,7 @@ export const generateCommunesExport = async (): Promise<string> => {
     return {
       Département: communeDb.departement.code,
       Code: communeDb.code,
-      Nom: communeDb.nom
+      Nom: communeDb.nom,
     };
   });
 
@@ -69,7 +69,7 @@ export const generateComportementsExport = async (): Promise<string> => {
   const comportementsToExport = comportementsDb.map((object) => {
     return {
       Code: object.code,
-      Libellé: object.libelle
+      Libellé: object.libelle,
     };
   });
 
@@ -83,7 +83,7 @@ export const generateDepartementsExport = async (): Promise<string> => {
 
   const objectsToExport = departementsDb.map((object) => {
     return {
-      Département: object.code
+      Département: object.code,
     };
   });
 
@@ -156,7 +156,7 @@ export const generateDonneesExport = async (
       "Milieu 2": getMilieu(donnee, 2),
       "Milieu 3": getMilieu(donnee, 3),
       "Milieu 4": getMilieu(donnee, 4),
-      Commentaires: donnee.commentaire
+      Commentaires: donnee.commentaire,
     };
   });
 
@@ -173,7 +173,7 @@ export const generateEspecesExport = async (): Promise<string> => {
       Classe: espece.classe?.libelle,
       Code: espece.code,
       "Nom français": espece.nomFrancais,
-      "Nom scientifique": espece.nomLatin
+      "Nom scientifique": espece.nomLatin,
     };
   });
 
@@ -187,7 +187,7 @@ export const generateEstimationsDistanceExport = async (): Promise<string> => {
 
   const objectsToExport = estimations.map((object) => {
     return {
-      "Estimation de la distance": object.libelle
+      "Estimation de la distance": object.libelle,
     };
   });
 
@@ -201,7 +201,7 @@ export const generateEstimationsNombreExport = async (): Promise<string> => {
 
   const objectsToExport = estimations.map((object) => {
     return {
-      "Estimation du nombre": object.libelle
+      "Estimation du nombre": object.libelle,
     };
   });
 
@@ -221,7 +221,7 @@ export const generateLieuxDitsExport = async (): Promise<string> => {
       "Lieu-dit": lieudit.nom,
       Latitude: lieudit.latitude,
       Longitude: lieudit.longitude,
-      Altitude: lieudit.altitude
+      Altitude: lieudit.altitude,
     };
   });
 
@@ -235,7 +235,7 @@ export const generateMeteosExport = async (): Promise<string> => {
 
   const objectsToExport = meteos.map((object) => {
     return {
-      Météo: object.libelle
+      Météo: object.libelle,
     };
   });
 
@@ -250,7 +250,7 @@ export const generateMilieuxExport = async (): Promise<string> => {
   const milieuxToExport = milieuxDb.map((object) => {
     return {
       Code: object.code,
-      Libellé: object.libelle
+      Libellé: object.libelle,
     };
   });
 
@@ -264,7 +264,7 @@ export const generateObservateursExport = async (): Promise<string> => {
 
   const objectsToExport = observateurs.map((object) => {
     return {
-      Observateur: object.libelle
+      Observateur: object.libelle,
     };
   });
 
@@ -278,7 +278,7 @@ export const generateSexesExport = async (): Promise<string> => {
 
   const objectsToExport = sexes.map((object) => {
     return {
-      Sexe: object.libelle
+      Sexe: object.libelle,
     };
   });
 

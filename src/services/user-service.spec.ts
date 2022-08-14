@@ -68,7 +68,7 @@ describe("User creation", () => {
 
   test("should throw error when creating initial admin and incorrect password provided", async () => {
     const signupData = mock<UserCreateInput>({
-      password: "wrong"
+      password: "wrong",
     });
     const loggedUser = mock<LoggedUser>();
     options.signupsAllowed = true;
@@ -85,7 +85,7 @@ describe("User creation", () => {
 
   test("should handle creation of initial admin and correct password provided", async () => {
     const signupData = mock<UserCreateInput>({
-      password: "right"
+      password: "right",
     });
     const loggedUser = mock<LoggedUser>();
     options.signupsAllowed = true;
@@ -101,7 +101,7 @@ describe("User creation", () => {
   test("should throw error when non admin tries to create a user", async () => {
     const signupData = mock<UserCreateInput>();
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor
+      role: DatabaseRole.contributor,
     });
     options.signupsAllowed = true;
 
@@ -116,10 +116,10 @@ describe("User creation", () => {
 
   test("should handle creation of user when requested by an admin", async () => {
     const signupData = mock<UserCreateInput>({
-      password: "anything"
+      password: "anything",
     });
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin
+      role: DatabaseRole.admin,
     });
     options.signupsAllowed = true;
 
@@ -143,7 +143,7 @@ describe("User login", () => {
   test("should rejects when log in with incorrect password", async () => {
     const loginData: UserLoginInput = {
       username: "bob",
-      password: "toto"
+      password: "toto",
     };
 
     const correctPassword = "mysupersafepassw0rd!";
@@ -151,7 +151,7 @@ describe("User login", () => {
 
     const matchingUser = mock<User>({
       username: loginData.username,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
@@ -165,12 +165,12 @@ describe("User login", () => {
 
     const loginData: UserLoginInput = {
       username: "bob",
-      password: correctPassword
+      password: correctPassword,
     };
 
     const matchingUser = mock<User>({
       username: loginData.username,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
@@ -184,7 +184,7 @@ describe("User update", () => {
   test("should be able to edit itself", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor
+      role: DatabaseRole.contributor,
     };
 
     const correctPassword = "mysupersafepassw0rd!";
@@ -192,11 +192,11 @@ describe("User update", () => {
 
     const editUserData = mock<EditUserData>({
       currentPassword: correctPassword,
-      newPassword: "xd"
+      newPassword: "xd",
     });
 
     const matchingUser = mock<User>({
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
@@ -209,7 +209,7 @@ describe("User update", () => {
   test("should not be able to edit an non existing user", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor
+      role: DatabaseRole.contributor,
     };
 
     const editUserData = mock<EditUserData>();
@@ -224,18 +224,18 @@ describe("User update", () => {
   test("should not be able to edit when incorrect password provided", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor
+      role: DatabaseRole.contributor,
     };
 
     const correctPassword = "mysupersafepassw0rd!";
     const hashedPassword = getHashedPassword(correctPassword);
 
     const editUserData = mock<EditUserData>({
-      currentPassword: "lol"
+      currentPassword: "lol",
     });
 
     const matchingUser = mock<User>({
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
@@ -248,18 +248,18 @@ describe("User update", () => {
   test("should not be able to edit when password missing", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor
+      role: DatabaseRole.contributor,
     };
 
     const correctPassword = "mysupersafepassw0rd!";
     const hashedPassword = getHashedPassword(correctPassword);
 
     const editUserData = mock<EditUserData>({
-      currentPassword: undefined
+      currentPassword: undefined,
     });
 
     const matchingUser = mock<User>({
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
@@ -272,18 +272,18 @@ describe("User update", () => {
   test("should be able to edit another user if admin", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.admin
+      role: DatabaseRole.admin,
     };
 
     const correctPassword = "mysupersafepassw0rd!";
     const hashedPassword = getHashedPassword(correctPassword);
 
     const editUserData: EditUserData = {
-      lastName: "xd"
+      lastName: "xd",
     };
 
     const matchingUser = mock<User>({
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
@@ -296,7 +296,7 @@ describe("User update", () => {
   test("should return an error when editing another user as non-admin", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor
+      role: DatabaseRole.contributor,
     };
 
     const editUserData = mock<EditUserData>();
@@ -311,7 +311,7 @@ describe("User deletion", () => {
   test("should be able to delete itself", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor
+      role: DatabaseRole.contributor,
     };
 
     await deleteUser(loggedUser.id, loggedUser);
@@ -319,15 +319,15 @@ describe("User deletion", () => {
     expect(prismaMock.user.delete).toHaveBeenCalledTimes(1);
     expect(prismaMock.user.delete).toHaveBeenLastCalledWith({
       where: {
-        id: loggedUser.id
-      }
+        id: loggedUser.id,
+      },
     });
   });
 
   test("should be able delete to another user if admin", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.admin
+      role: DatabaseRole.admin,
     };
 
     await deleteUser("11", loggedUser);
@@ -335,15 +335,15 @@ describe("User deletion", () => {
     expect(prismaMock.user.delete).toHaveBeenCalledTimes(1);
     expect(prismaMock.user.delete).toHaveBeenLastCalledWith({
       where: {
-        id: "11"
-      }
+        id: "11",
+      },
     });
   });
 
   test("should return an error when deleting another user as non-admin", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor
+      role: DatabaseRole.contributor,
     };
 
     await expect(deleteUser("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));

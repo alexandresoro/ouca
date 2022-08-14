@@ -32,7 +32,7 @@ export const getPrismaPagination = (
 
   return {
     skip: paginationOptions.pageNumber * paginationOptions.pageSize,
-    take: paginationOptions.pageSize
+    take: paginationOptions.pageSize,
   };
 };
 
@@ -42,8 +42,8 @@ export const getEntiteAvecLibelleFilterClause = (
   return q != null && q.length
     ? {
         libelle: {
-          contains: q
-        }
+          contains: q,
+        },
       }
     : {};
 };
@@ -69,8 +69,8 @@ export const queryParametersToFindAllEntities = (
   if (attributeForOrdering) {
     return {
       orderBy: {
-        [attributeForOrdering]: order ?? Prisma.SortOrder.asc
-      }
+        [attributeForOrdering]: order ?? Prisma.SortOrder.asc,
+      },
     };
   }
   return {};

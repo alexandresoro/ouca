@@ -13,7 +13,7 @@ import {
   IMPORT_METEO,
   IMPORT_MILIEU,
   IMPORT_OBSERVATEUR,
-  IMPORT_SEXE
+  IMPORT_SEXE,
 } from "../../model/import-types";
 import { ImportAgeService } from "./import-age-service";
 import { ImportClasseService } from "./import-classe-service";

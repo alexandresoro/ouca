@@ -2,7 +2,7 @@ import { DatabaseRole, EstimationNombre, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   MutationUpsertEstimationNombreArgs,
-  QueryPaginatedEstimationsNombreArgs
+  QueryPaginatedEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -15,14 +15,14 @@ import {
   findEstimationNombre,
   findEstimationsNombre,
   findPaginatedEstimationsNombre,
-  upsertEstimationNombre
+  upsertEstimationNombre,
 } from "./estimation-nombre-service";
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -43,8 +43,8 @@ test("should call readonly status when retrieving one number estimate ", async (
   expect(prismaMock.estimationNombre.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationNombre.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: numberEstimateData.id
-    }
+      id: numberEstimateData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -57,8 +57,8 @@ test("should handle number estimate not found ", async () => {
   expect(prismaMock.estimationNombre.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationNombre.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
@@ -75,9 +75,9 @@ test("should call readonly status when retrieving number estimates by params ", 
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: undefined
-      }
-    }
+        contains: undefined,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(numberEstimatesData.length);
 });
@@ -93,7 +93,7 @@ test("should call readonly status when retrieving paginated number estimates", a
   expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: undefined,
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(numberEstimatesData.length);
 });
@@ -107,9 +107,9 @@ test("should handle params when retrieving paginated number estimates ", async (
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.estimationNombre.findMany.mockResolvedValueOnce([numberEstimatesData[0]]);
@@ -121,15 +121,15 @@ test("should handle params when retrieving paginated number estimates ", async (
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
     where: {
       libelle: {
-        contains: searchParams.searchParams?.q
-      }
-    }
+        contains: searchParams.searchParams?.q,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -145,14 +145,14 @@ test("should update an existing number estimate as an admin ", async () => {
   expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
     data: numberEstimateData.data,
     where: {
-      id: numberEstimateData.id
-    }
+      id: numberEstimateData.id,
+    },
   });
 });
 
 test("should update an existing number estimate if owner ", async () => {
   const existingData = mock<EstimationNombre>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
@@ -167,21 +167,21 @@ test("should update an existing number estimate if owner ", async () => {
   expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
     data: numberEstimateData.data,
     where: {
-      id: numberEstimateData.id
-    }
+      id: numberEstimateData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing number estimate and nor owner nor admin ", async () => {
   const existingData = mock<EstimationNombre>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
@@ -193,7 +193,7 @@ test("should throw an error when updating an existing number estimate and nor ow
 
 test("should throw an error when trying to update a number estimate that exists", async () => {
   const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -208,14 +208,14 @@ test("should throw an error when trying to update a number estimate that exists"
   expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
     data: numberEstimateData.data,
     where: {
-      id: numberEstimateData.id
-    }
+      id: numberEstimateData.id,
+    },
   });
 });
 
 test("should create new number estimate ", async () => {
   const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -226,14 +226,14 @@ test("should create new number estimate ", async () => {
   expect(prismaMock.estimationNombre.create).toHaveBeenLastCalledWith({
     data: {
       ...numberEstimateData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a number estimate that exists", async () => {
   const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -248,19 +248,19 @@ test("should throw an error when trying to create a number estimate that exists"
   expect(prismaMock.estimationNombre.create).toHaveBeenLastCalledWith({
     data: {
       ...numberEstimateData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned number estimate", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const numberEstimate = mock<EstimationNombre>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(numberEstimate);
@@ -270,14 +270,14 @@ test("should be able to delete an owned number estimate", async () => {
   expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationNombre.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any number estimate if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
@@ -287,14 +287,14 @@ test("should be able to delete any number estimate if admin", async () => {
   expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationNombre.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned number estimate as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
@@ -308,7 +308,7 @@ test("should create new number estimates", async () => {
   const numberEstimatesData = [
     mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -320,8 +320,8 @@ test("should create new number estimates", async () => {
     data: numberEstimatesData.map((numberEstimate) => {
       return {
         ...numberEstimate,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

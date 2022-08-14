@@ -5,7 +5,7 @@ import yargs from "yargs";
 const ENV_OUCA_PREFIX = "OUCA";
 
 dotenv.config({
-  path: path.join(process.cwd(), "..", ".env")
+  path: path.join(process.cwd(), "..", ".env"),
 });
 
 export default yargs
@@ -24,6 +24,6 @@ export default yargs
     logToFile: { type: "boolean", default: false },
     jwtSigningKey: { type: "string" },
     jwtCookieSameSite: { type: "boolean", default: true },
-    jwtCookieSecure: { type: "boolean", default: true }
+    jwtCookieSecure: { type: "boolean", default: true },
   })
   .parseSync();

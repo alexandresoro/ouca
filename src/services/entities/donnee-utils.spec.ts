@@ -23,64 +23,64 @@ test("should build correct structure when input is empty", () => {
 
 test("should build correct structure when input is partially filled", () => {
   const searchCriteria: SearchDonneeCriteria = {
-    id: 3
+    id: 3,
   };
 
   const result = buildSearchDonneeCriteria(searchCriteria);
 
   expect(result).toEqual({
     ageId: {
-      in: undefined
+      in: undefined,
     },
     commentaire: {
-      contains: undefined
+      contains: undefined,
     },
     distance: undefined,
     espece: {
       classeId: {
-        in: undefined
-      }
+        in: undefined,
+      },
     },
     especeId: {
-      in: undefined
+      in: undefined,
     },
     estimationDistanceId: {
-      in: undefined
+      in: undefined,
     },
     estimationNombreId: {
-      in: undefined
+      in: undefined,
     },
     id: searchCriteria?.id,
     inventaire: {
       date: {
         gte: undefined,
-        lte: undefined
+        lte: undefined,
       },
       duree: undefined,
       heure: undefined,
       lieuDit: {
         commune: {
           departementId: {
-            in: undefined
-          }
+            in: undefined,
+          },
         },
         communeId: {
-          in: undefined
-        }
+          in: undefined,
+        },
       },
       lieuDitId: {
-        in: undefined
+        in: undefined,
       },
       observateurId: {
-        in: undefined
+        in: undefined,
       },
-      temperature: undefined
+      temperature: undefined,
     },
     nombre: undefined,
     regroupement: undefined,
     sexeId: {
-      in: undefined
-    }
+      in: undefined,
+    },
   });
 });
 
@@ -95,89 +95,89 @@ test("should build correct structure when input is complete", () => {
 
   expect(result).toEqual({
     ageId: {
-      in: searchCriteria.ages
+      in: searchCriteria.ages,
     },
     commentaire: {
-      contains: searchCriteria.commentaire
+      contains: searchCriteria.commentaire,
     },
     distance: searchCriteria.distance,
     donnee_comportement: {
       some: {
         comportement: {
           nicheur: {
-            in: searchCriteria.nicheurs
-          }
+            in: searchCriteria.nicheurs,
+          },
         },
         comportement_id: {
-          in: searchCriteria.comportements
-        }
-      }
+          in: searchCriteria.comportements,
+        },
+      },
     },
     donnee_milieu: {
       some: {
         milieu_id: {
-          in: searchCriteria.milieux
-        }
-      }
+          in: searchCriteria.milieux,
+        },
+      },
     },
     espece: {
       classeId: {
-        in: searchCriteria.classes
-      }
+        in: searchCriteria.classes,
+      },
     },
     especeId: {
-      in: searchCriteria.especes
+      in: searchCriteria.especes,
     },
     estimationDistanceId: {
-      in: searchCriteria.estimationsDistance
+      in: searchCriteria.estimationsDistance,
     },
     estimationNombreId: {
-      in: searchCriteria.estimationsNombre
+      in: searchCriteria.estimationsNombre,
     },
     id: searchCriteria?.id,
     inventaire: {
       date: {
         gte: fromDate,
-        lte: toDate
+        lte: toDate,
       },
       duree: searchCriteria.duree,
       heure: searchCriteria.heure,
       inventaire_associe: {
         some: {
           observateur_id: {
-            in: searchCriteria.associes
-          }
-        }
+            in: searchCriteria.associes,
+          },
+        },
       },
       inventaire_meteo: {
         some: {
           meteo_id: {
-            in: searchCriteria.meteos
-          }
-        }
+            in: searchCriteria.meteos,
+          },
+        },
       },
       lieuDit: {
         commune: {
           departementId: {
-            in: searchCriteria.departements
-          }
+            in: searchCriteria.departements,
+          },
         },
         communeId: {
-          in: searchCriteria.communes
-        }
+          in: searchCriteria.communes,
+        },
       },
       lieuDitId: {
-        in: searchCriteria.lieuxdits
+        in: searchCriteria.lieuxdits,
       },
       observateurId: {
-        in: searchCriteria.observateurs
+        in: searchCriteria.observateurs,
       },
-      temperature: searchCriteria.temperature
+      temperature: searchCriteria.temperature,
     },
     nombre: searchCriteria.nombre,
     regroupement: searchCriteria.regroupement,
     sexeId: {
-      in: searchCriteria.sexes
-    }
+      in: searchCriteria.sexes,
+    },
   });
 });

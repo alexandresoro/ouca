@@ -27,7 +27,7 @@ const typeDefs = fs.readFileSync(path.join(__dirname, "model/schema.graphql"), "
 logger.debug("GraphQL schema has been parsed");
 
 const server = fastify({
-  logger
+  logger,
 });
 
 const apolloServer = new ApolloServer({
@@ -36,10 +36,10 @@ const apolloServer = new ApolloServer({
   plugins: [
     fastifyAppClosePlugin(server),
     ApolloServerPluginDrainHttpServer({ httpServer: server.server }),
-    apolloRequestLogger
+    apolloRequestLogger,
   ],
   context: getGraphQLContext,
-  cache: "bounded"
+  cache: "bounded",
 });
 
 checkAndCreateFolders();
@@ -52,13 +52,13 @@ checkAndCreateFolders();
   await server.register(fastifyCors, {
     origin: true,
     credentials: true,
-    maxAge: 3600
+    maxAge: 3600,
   });
 
   // Static files server
   await server.register(fastifyStatic, {
     root: PUBLIC_DIR_PATH,
-    prefix: DOWNLOAD_ENDPOINT
+    prefix: DOWNLOAD_ENDPOINT,
   });
 
   // Download files
@@ -112,7 +112,7 @@ checkAndCreateFolders();
 
     await reply.send(
       JSON.stringify({
-        uploadId
+        uploadId,
       })
     );
   });
@@ -122,7 +122,7 @@ checkAndCreateFolders();
   void server.register(
     apolloServer.createHandler({
       path: "graphql",
-      cors: false // Need to set to false otherwise it conflicts with the one defined as middleware above
+      cors: false, // Need to set to false otherwise it conflicts with the one defined as middleware above
     })
   );
 

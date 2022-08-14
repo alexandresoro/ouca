@@ -136,7 +136,7 @@ export class ImportedDonnee {
       commentaire: this.commentaire ? this.commentaire : null,
       regroupement: this.regroupement ? +this.regroupement : null,
       comportementsIds: [...comportementsIds],
-      milieuxIds: [...milieuxIds]
+      milieuxIds: [...milieuxIds],
     };
   };
 
@@ -155,8 +155,8 @@ export class ImportedDonnee {
               altitude: customizedAltitude,
               latitude: customizedCoordinates?.latitude,
               longitude: customizedCoordinates?.longitude,
-              system: customizedCoordinates?.system
-            }
+              system: customizedCoordinates?.system,
+            },
           }
         : {};
 
@@ -171,7 +171,7 @@ export class ImportedDonnee {
       ...customizedCoordinatesStr,
       temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
       meteosIds: [...meteosIds],
-      associesIds: [...associesIds]
+      associesIds: [...associesIds],
     };
   };
 

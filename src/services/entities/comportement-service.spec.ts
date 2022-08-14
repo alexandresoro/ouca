@@ -12,7 +12,7 @@ import {
   findComportements,
   findComportementsByIds,
   findPaginatedComportements,
-  upsertComportement
+  upsertComportement,
 } from "./comportement-service";
 import * as entitiesUtils from "./entities-utils";
 
@@ -20,7 +20,7 @@ const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -41,8 +41,8 @@ test("should call readonly status when retrieving one behavior ", async () => {
   expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.comportement.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: behaviorData.id
-    }
+      id: behaviorData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -55,8 +55,8 @@ test("should handle behavior not found ", async () => {
   expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.comportement.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
@@ -73,9 +73,9 @@ test("should call readonly status when retrieving behaviors by ID ", async () =>
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       id: {
-        in: behaviorsData.map((behavior) => behavior.id)
-      }
-    }
+        in: behaviorsData.map((behavior) => behavior.id),
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(behaviorsData.length);
 });
@@ -84,12 +84,12 @@ test("should call readonly status when retrieving behaviors by params ", async (
   const behaviorsCodeData = [
     mock<Comportement>({ id: 1, code: "0017" }),
     mock<Comportement>({ id: 7, code: "0357" }),
-    mock<Comportement>({ id: 2, code: "22A0" })
+    mock<Comportement>({ id: 2, code: "22A0" }),
   ];
   const behaviorsLibelleData = [
     mock<Comportement>({ id: 5, code: "7654" }),
     mock<Comportement>({ id: 2, code: "22A0" }),
-    mock<Comportement>({ id: 6, code: "1177" })
+    mock<Comportement>({ id: 6, code: "1177" }),
   ];
 
   prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsCodeData);
@@ -106,23 +106,23 @@ test("should call readonly status when retrieving behaviors by params ", async (
 
   expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(2);
   expect(prismaMock.comportement.findMany).toHaveBeenNthCalledWith(1, {
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE)
+    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
   });
   expect(prismaMock.comportement.findMany).toHaveBeenNthCalledWith(2, {
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
-        contains: undefined
-      }
-    }
+        contains: undefined,
+      },
+    },
   });
   expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
-        contains: undefined
-      }
-    }
+        contains: undefined,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(behaviors.length);
 });
@@ -138,7 +138,7 @@ test("should call readonly status when retrieving paginated behaviors", async ()
   expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     orderBy: undefined,
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(behaviorsData.length);
 });
@@ -152,9 +152,9 @@ test("should handle params when retrieving paginated behaviors ", async () => {
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.comportement.findMany.mockResolvedValueOnce([behaviorsData[0]]);
@@ -166,7 +166,7 @@ test("should handle params when retrieving paginated behaviors ", async () => {
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
@@ -174,21 +174,21 @@ test("should handle params when retrieving paginated behaviors ", async () => {
       OR: [
         {
           code: {
-            contains: searchParams.searchParams?.q
-          }
+            contains: searchParams.searchParams?.q,
+          },
         },
         {
           libelle: {
-            contains: searchParams.searchParams?.q
-          }
+            contains: searchParams.searchParams?.q,
+          },
         },
         {
           nicheur: {
-            in: []
-          }
-        }
-      ]
-    }
+            in: [],
+          },
+        },
+      ],
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -204,14 +204,14 @@ test("should update an existing behavior as an admin ", async () => {
   expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
     data: behaviorData.data,
     where: {
-      id: behaviorData.id
-    }
+      id: behaviorData.id,
+    },
   });
 });
 
 test("should update an existing behavior if owner ", async () => {
   const existingData = mock<Comportement>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const behaviorData = mock<MutationUpsertComportementArgs>();
@@ -226,21 +226,21 @@ test("should update an existing behavior if owner ", async () => {
   expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
     data: behaviorData.data,
     where: {
-      id: behaviorData.id
-    }
+      id: behaviorData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing behavior and nor owner nor admin ", async () => {
   const existingData = mock<Comportement>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const behaviorData = mock<MutationUpsertComportementArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
@@ -252,7 +252,7 @@ test("should throw an error when updating an existing behavior and nor owner nor
 
 test("should throw an error when trying to update a behavior that exists", async () => {
   const behaviorData = mock<MutationUpsertComportementArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -267,14 +267,14 @@ test("should throw an error when trying to update a behavior that exists", async
   expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
     data: behaviorData.data,
     where: {
-      id: behaviorData.id
-    }
+      id: behaviorData.id,
+    },
   });
 });
 
 test("should create new behavior ", async () => {
   const behaviorData = mock<MutationUpsertComportementArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -285,14 +285,14 @@ test("should create new behavior ", async () => {
   expect(prismaMock.comportement.create).toHaveBeenLastCalledWith({
     data: {
       ...behaviorData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a behavior that exists", async () => {
   const behaviorData = mock<MutationUpsertComportementArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -307,19 +307,19 @@ test("should throw an error when trying to create a behavior that exists", async
   expect(prismaMock.comportement.create).toHaveBeenLastCalledWith({
     data: {
       ...behaviorData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned behavior", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const behavior = mock<Comportement>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.comportement.findFirst.mockResolvedValueOnce(behavior);
@@ -329,14 +329,14 @@ test("should be able to delete an owned behavior", async () => {
   expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.comportement.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any behavior if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
@@ -346,14 +346,14 @@ test("should be able to delete any behavior if admin", async () => {
   expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.comportement.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned behavior as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
@@ -367,7 +367,7 @@ test("should create new comportements", async () => {
   const comportementsData = [
     mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -379,8 +379,8 @@ test("should create new comportements", async () => {
     data: comportementsData.map((comportement) => {
       return {
         ...comportement,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

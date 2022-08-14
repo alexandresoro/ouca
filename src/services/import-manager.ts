@@ -9,14 +9,14 @@ import {
   ImportStatus,
   ImportStatusEnum,
   OngoingSubStatus,
-  OngoingValidationStats
+  OngoingValidationStats,
 } from "../graphql/generated/graphql-types";
 import { ImportType } from "../model/import-types";
 import {
   ImportUpdateMessage,
   IMPORT_COMPLETE,
   IMPORT_FAILED,
-  VALIDATION_PROGRESS
+  VALIDATION_PROGRESS,
 } from "../objects/import/import-update-message";
 import { LoggedUser } from "../types/LoggedUser";
 import { logger } from "../utils/logger";
@@ -71,8 +71,8 @@ export const startImportTask = (importId: string, importType: ImportType, logged
     workerData: {
       importId,
       importType,
-      loggedUser
-    }
+      loggedUser,
+    },
   });
 
   worker.on("message", (postMessage: ImportUpdateMessage) => {
@@ -83,7 +83,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
         importReportId = randomUUID();
         const csvString = stringify(postMessage.lineErrors, {
           delimiter: ";",
-          record_delimiter: "windows"
+          record_delimiter: "windows",
         });
         writeFileSync(path.join(PUBLIC_DIR_PATH, IMPORT_REPORTS_DIR, importReportId), csvString);
       }
@@ -97,10 +97,10 @@ export const startImportTask = (importId: string, importType: ImportType, logged
           ? {
               statusDetails: {
                 importErrorsReportFile: `${DOWNLOAD_ENDPOINT}${IMPORT_REPORTS_DIR}/${importReportId}`,
-                nbErrors: postMessage?.lineErrors?.length ?? 0
-              }
+                nbErrors: postMessage?.lineErrors?.length ?? 0,
+              },
             }
-          : ({} as never))
+          : ({} as never)),
       };
 
       importStatuses.set(importId, newStatus);
@@ -112,8 +112,8 @@ export const startImportTask = (importId: string, importType: ImportType, logged
         status: ImportStatusEnum.Failed,
         statusDetails: {
           type: ImportErrorType.ImportFailure,
-          description: postMessage?.failureReason
-        }
+          description: postMessage?.failureReason,
+        },
       };
       importStatuses.set(importId, newStatus);
     } else if (postMessage.type === VALIDATION_PROGRESS) {
@@ -128,9 +128,9 @@ export const startImportTask = (importId: string, importType: ImportType, logged
             totalLines: postMessage?.progress?.totalEntries,
             totalEntries: postMessage?.progress?.entriesToBeValidated,
             nbEntriesChecked: postMessage?.progress?.validatedEntries,
-            nbEntriesWithErrors: postMessage?.progress?.errors
-          }
-        }
+            nbEntriesWithErrors: postMessage?.progress?.errors,
+          },
+        },
       };
       importStatuses.set(importId, newStatus);
     } else if (Object.values(OngoingSubStatus).includes(postMessage.type)) {
@@ -140,8 +140,8 @@ export const startImportTask = (importId: string, importType: ImportType, logged
         ...currentStatus,
         status: ImportStatusEnum.Ongoing,
         statusDetails: {
-          subStatus: postMessage?.type
-        }
+          subStatus: postMessage?.type,
+        },
       };
       importStatuses.set(importId, newStatus);
     }
@@ -151,7 +151,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
     logger.warn({
       msgType: "Import error",
       importId,
-      errorMsg: error
+      errorMsg: error,
     });
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const currentStatus = importStatuses.get(importId)!;
@@ -160,8 +160,8 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       status: ImportStatusEnum.Failed,
       statusDetails: {
         type: ImportErrorType.ImportProcessError,
-        description: error?.message
-      }
+        description: error?.message,
+      },
     };
     importStatuses.set(importId, newStatus);
   });
@@ -171,7 +171,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       logger.warn({
         msgType: "Import thread error",
         importId,
-        exitCode
+        exitCode,
       });
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const currentStatus = importStatuses.get(importId)!;
@@ -180,8 +180,8 @@ export const startImportTask = (importId: string, importType: ImportType, logged
         status: ImportStatusEnum.Failed,
         statusDetails: {
           type: ImportErrorType.ImportProcessUnexpectedExit,
-          description: exitCode
-        }
+          description: exitCode,
+        },
       };
       importStatuses.set(importId, newStatus);
     }
@@ -190,7 +190,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
   importStatuses.set(importId, {
     status: ImportStatusEnum.NotStarted,
     worker,
-    owner: loggedUser
+    owner: loggedUser,
   });
 };
 
@@ -211,14 +211,14 @@ export const getImportStatus = (importId: string, loggedUser: LoggedUser): Promi
     case ImportStatusEnum.NotStarted:
       // If the import task exists but has not yet started
       return Promise.resolve({
-        status: importStatus.status
+        status: importStatus.status,
       });
     case ImportStatusEnum.Failed:
       // If the import task has failed due to an unexpected error or a failure to treat the inported file
       return Promise.resolve({
         status: importStatus.status,
         errorType: (importStatus as ImportGlobalErrorStructure)?.statusDetails?.type,
-        errorDescription: (importStatus as ImportGlobalErrorStructure)?.statusDetails?.description?.toString()
+        errorDescription: (importStatus as ImportGlobalErrorStructure)?.statusDetails?.description?.toString(),
       });
     case ImportStatusEnum.Complete:
       return Promise.resolve({
@@ -227,16 +227,16 @@ export const getImportStatus = (importId: string, loggedUser: LoggedUser): Promi
         ...((importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors
           ? {
               ongoingValidationStats: {
-                nbEntriesWithErrors: (importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors
-              }
+                nbEntriesWithErrors: (importStatus as ImportCompleteStructure)?.statusDetails?.nbErrors,
+              },
             }
-          : {})
+          : {}),
       });
     case ImportStatusEnum.Ongoing: {
       return Promise.resolve({
         status: importStatus.status,
         subStatus: (importStatus as ImportOngoingStructure)?.statusDetails?.subStatus,
-        ongoingValidationStats: (importStatus as ImportOngoingStructure)?.statusDetails?.ongoingValidationStats
+        ongoingValidationStats: (importStatus as ImportOngoingStructure)?.statusDetails?.ongoingValidationStats,
       });
     }
     default:

@@ -7,7 +7,7 @@ export const writeToExcelFile = async (
 ): Promise<void> => {
   const workbook = new stream.xlsx.WorkbookWriter({
     filename: fileName,
-    useStyles: true
+    useStyles: true,
   });
 
   const sheet = workbook.addWorksheet(worksheetName);
@@ -20,10 +20,10 @@ export const writeToExcelFile = async (
         ...(column === "Date"
           ? {
               style: {
-                numFmt: "dd/mm/yyyy"
-              }
+                numFmt: "dd/mm/yyyy",
+              },
             }
-          : {})
+          : {}),
       };
     });
 

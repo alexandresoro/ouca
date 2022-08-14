@@ -15,7 +15,7 @@ import {
   findEspeceOfDonneeId,
   findEspeces,
   findPaginatedEspeces,
-  upsertEspece
+  upsertEspece,
 } from "./espece-service";
 
 const buildSearchDonneeCriteria = jest.spyOn(donneeUtils, "buildSearchDonneeCriteria");
@@ -24,7 +24,7 @@ const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -45,8 +45,8 @@ test("should call readonly status when retrieving one species ", async () => {
   expect(prismaMock.espece.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: speciesData.id
-    }
+      id: speciesData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -59,15 +59,15 @@ test("should handle species not found ", async () => {
   expect(prismaMock.espece.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
 
 test("should call readonly status when retrieving species by data ID ", async () => {
   const speciesData = mock<Espece>({
-    id: 256
+    id: 256,
   });
 
   const data = mockDeep<Prisma.Prisma__DonneeClient<Donnee>>();
@@ -80,8 +80,8 @@ test("should call readonly status when retrieving species by data ID ", async ()
   expect(prismaMock.donnee.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.donnee.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   expect(species?.id).toEqual(256);
@@ -98,8 +98,8 @@ test("should handle species not found when retrieving species by data ID ", asyn
   expect(prismaMock.donnee.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.donnee.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   expect(species).toBeNull();
@@ -122,20 +122,20 @@ test("should call readonly status when retrieving species by params ", async () 
       AND: [
         {
           code: {
-            startsWith: undefined
-          }
+            startsWith: undefined,
+          },
         },
-        {}
-      ]
+        {},
+      ],
     },
-    take: undefined
+    take: undefined,
   });
   expect(prismaMock.espece.findMany).toHaveBeenNthCalledWith(2, {
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
-      AND: [{}, {}]
+      AND: [{}, {}],
     },
-    take: undefined
+    take: undefined,
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(codeSpeciesData.length + libelleSpeciesData.length - 1);
 });
@@ -154,12 +154,12 @@ test("should call readonly status when retrieving paginated species", async () =
       classe: {
         select: {
           id: true,
-          libelle: true
-        }
-      }
+          libelle: true,
+        },
+      },
     },
     orderBy: undefined,
-    where: { AND: [{}, {}] }
+    where: { AND: [{}, {}] },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(speciesData.length);
 });
@@ -173,9 +173,9 @@ test("should handle params when retrieving paginated species ", async () => {
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
@@ -189,13 +189,13 @@ test("should handle params when retrieving paginated species ", async () => {
       classe: {
         select: {
           id: true,
-          libelle: true
-        }
-      }
+          libelle: true,
+        },
+      },
     },
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
@@ -205,24 +205,24 @@ test("should handle params when retrieving paginated species ", async () => {
           OR: [
             {
               code: {
-                contains: searchParams.searchParams?.q
-              }
+                contains: searchParams.searchParams?.q,
+              },
             },
             {
               nomFrancais: {
-                contains: searchParams.searchParams?.q
-              }
+                contains: searchParams.searchParams?.q,
+              },
             },
             {
               nomLatin: {
-                contains: searchParams.searchParams?.q
-              }
-            }
-          ]
+                contains: searchParams.searchParams?.q,
+              },
+            },
+          ],
         },
-        {}
-      ]
-    }
+        {},
+      ],
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -236,9 +236,9 @@ test("should handle params and search criteria when retrieving paginated species
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
@@ -257,13 +257,13 @@ test("should handle params and search criteria when retrieving paginated species
       classe: {
         select: {
           id: true,
-          libelle: true
-        }
-      }
+          libelle: true,
+        },
+      },
     },
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
@@ -273,30 +273,30 @@ test("should handle params and search criteria when retrieving paginated species
           OR: [
             {
               code: {
-                contains: searchParams.searchParams?.q
-              }
+                contains: searchParams.searchParams?.q,
+              },
             },
             {
               nomFrancais: {
-                contains: searchParams.searchParams?.q
-              }
+                contains: searchParams.searchParams?.q,
+              },
             },
             {
               nomLatin: {
-                contains: searchParams.searchParams?.q
-              }
-            }
-          ]
+                contains: searchParams.searchParams?.q,
+              },
+            },
+          ],
         },
         {
           ...espece,
           id: especeId,
           donnee: {
-            some: restWhereInput
-          }
-        }
-      ]
-    }
+            some: restWhereInput,
+          },
+        },
+      ],
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -312,14 +312,14 @@ test("should update an existing species as an admin ", async () => {
   expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
     data: speciesData.data,
     where: {
-      id: speciesData.id
-    }
+      id: speciesData.id,
+    },
   });
 });
 
 test("should update an existing species if owner ", async () => {
   const existingData = mock<Espece>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const speciesData = mock<MutationUpsertEspeceArgs>();
@@ -334,21 +334,21 @@ test("should update an existing species if owner ", async () => {
   expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
     data: speciesData.data,
     where: {
-      id: speciesData.id
-    }
+      id: speciesData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing species and nor owner nor admin ", async () => {
   const existingData = mock<Espece>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const speciesData = mock<MutationUpsertEspeceArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
@@ -360,7 +360,7 @@ test("should throw an error when updating an existing species and nor owner nor 
 
 test("should throw an error when trying to update a species that exists", async () => {
   const speciesData = mock<MutationUpsertEspeceArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -375,14 +375,14 @@ test("should throw an error when trying to update a species that exists", async 
   expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
     data: speciesData.data,
     where: {
-      id: speciesData.id
-    }
+      id: speciesData.id,
+    },
   });
 });
 
 test("should create new species ", async () => {
   const speciesData = mock<MutationUpsertEspeceArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -393,14 +393,14 @@ test("should create new species ", async () => {
   expect(prismaMock.espece.create).toHaveBeenLastCalledWith({
     data: {
       ...speciesData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a species that exists", async () => {
   const speciesData = mock<MutationUpsertEspeceArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -415,19 +415,19 @@ test("should throw an error when trying to create a species that exists", async 
   expect(prismaMock.espece.create).toHaveBeenLastCalledWith({
     data: {
       ...speciesData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned species", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const species = mock<Espece>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.espece.findFirst.mockResolvedValueOnce(species);
@@ -437,14 +437,14 @@ test("should be able to delete an owned species", async () => {
   expect(prismaMock.espece.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any species if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
@@ -454,14 +454,14 @@ test("should be able to delete any species if admin", async () => {
   expect(prismaMock.espece.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned species as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
@@ -475,7 +475,7 @@ test("should create new species", async () => {
   const speciesData = [
     mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -487,8 +487,8 @@ test("should create new species", async () => {
     data: speciesData.map((species) => {
       return {
         ...species,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

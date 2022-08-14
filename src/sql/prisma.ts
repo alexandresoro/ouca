@@ -5,28 +5,28 @@ import options from "../utils/options";
 const prismaClient = new PrismaClient({
   datasources: {
     db: {
-      url: `mysql://${options.dbUser}:${options.dbPassword}@${options.dbHost}:${options.dbPort}/${options.dbName}`
-    }
+      url: `mysql://${options.dbUser}:${options.dbPassword}@${options.dbHost}:${options.dbPort}/${options.dbName}`,
+    },
   },
   errorFormat: "minimal",
   log: [
     {
       emit: "event",
-      level: "query"
+      level: "query",
     },
     {
       emit: "event",
-      level: "error"
+      level: "error",
     },
     {
       emit: "event",
-      level: "info"
+      level: "info",
     },
     {
       emit: "event",
-      level: "warn"
-    }
-  ]
+      level: "warn",
+    },
+  ],
 });
 
 // Prisma queries logger

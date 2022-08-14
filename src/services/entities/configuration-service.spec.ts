@@ -17,17 +17,17 @@ test("should query needed parameters for user", async () => {
       defaultDepartement: true,
       defaultAge: true,
       defaultSexe: true,
-      defaultEstimationNombre: true
+      defaultEstimationNombre: true,
     },
     where: {
-      userId: loggedUser.id
-    }
+      userId: loggedUser.id,
+    },
   });
 });
 
 test("should query coordinates system for user", async () => {
   const settings = mock<Settings>({
-    coordinatesSystem: "gps"
+    coordinatesSystem: "gps",
   });
   const loggedUser = mock<LoggedUser>();
 
@@ -38,8 +38,8 @@ test("should query coordinates system for user", async () => {
   expect(prismaMock.settings.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.settings.findUnique).toHaveBeenCalledWith({
     where: {
-      userId: loggedUser.id
-    }
+      userId: loggedUser.id,
+    },
   });
   expect(coordinatesSystem).toEqual(settings.coordinatesSystem);
 });
@@ -57,7 +57,7 @@ test("should update settings with parameters  for user", async () => {
     id: 7,
     isDistanceDisplayed: true,
     isMeteoDisplayed: true,
-    isRegroupementDisplayed: true
+    isRegroupementDisplayed: true,
   };
 
   const loggedUser = mock<LoggedUser>();
@@ -77,18 +77,18 @@ test("should update settings with parameters  for user", async () => {
       defaultSexeId: 6,
       isDistanceDisplayed: true,
       isMeteoDisplayed: true,
-      isRegroupementDisplayed: true
+      isRegroupementDisplayed: true,
     },
     include: {
       defaultObservateur: true,
       defaultDepartement: true,
       defaultAge: true,
       defaultSexe: true,
-      defaultEstimationNombre: true
+      defaultEstimationNombre: true,
     },
     where: {
       id: 7,
-      userId: loggedUser.id
-    }
+      userId: loggedUser.id,
+    },
   });
 });

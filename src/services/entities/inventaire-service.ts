@@ -4,7 +4,7 @@ import {
   CoordinatesSystemType,
   InputInventaire,
   MutationUpsertInventaireArgs,
-  UpsertInventaireFailureReason
+  UpsertInventaireFailureReason,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -31,14 +31,14 @@ const COMMON_INVENTAIRE_INCLUDE = {
   observateur: true,
   inventaire_associe: {
     select: {
-      observateur: true
-    }
+      observateur: true,
+    },
   },
   inventaire_meteo: {
     select: {
-      meteo: true
-    }
-  }
+      meteo: true,
+    },
+  },
 };
 
 type InventaireRelatedTablesFields = {
@@ -71,7 +71,7 @@ export const normalizeInventaire = <T extends InventaireRelatedTablesFields>(
   return {
     ...restInventaire,
     associes: associesArray,
-    meteos: meteosArray
+    meteos: meteosArray,
   };
 };
 
@@ -87,8 +87,8 @@ const normalizeInventaireComplete = <T extends Inventaire & InventaireRelatedTab
             altitude,
             latitude: latitude.toNumber(),
             longitude: longitude.toNumber(),
-            system: coordinates_system
-          }
+            system: coordinates_system,
+          },
         }
       : {};
 
@@ -97,7 +97,7 @@ const normalizeInventaireComplete = <T extends Inventaire & InventaireRelatedTab
   return {
     ...inventaireWithoutAssociesMeteos,
     ...customizedCoordinates,
-    date: format(date, DATE_PATTERN)
+    date: format(date, DATE_PATTERN),
   };
 };
 
@@ -106,8 +106,8 @@ export const findInventaire = async (id: number | undefined): Promise<Inventaire
     .findUnique({
       include: COMMON_INVENTAIRE_INCLUDE,
       where: {
-        id
-      }
+        id,
+      },
     })
     .then((inventaire) => (inventaire ? normalizeInventaireComplete(inventaire) : null));
 };
@@ -116,8 +116,8 @@ export const findInventaireOfDonneeId = async (donneeId: number | undefined): Pr
   return prisma.donnee
     .findUnique({
       where: {
-        id: donneeId
-      }
+        id: donneeId,
+      },
     })
     .inventaire();
 };
@@ -139,10 +139,10 @@ export const findExistingInventaire = async (inventaire: InputInventaire): Promi
             inventaire_associe: {
               every: {
                 observateur_id: {
-                  in: inventaire.associesIds
-                }
-              }
-            }
+                  in: inventaire.associesIds,
+                },
+              },
+            },
           }
         : {}),
       ...(inventaire.meteosIds != null
@@ -150,17 +150,17 @@ export const findExistingInventaire = async (inventaire: InputInventaire): Promi
             inventaire_meteo: {
               every: {
                 meteo_id: {
-                  in: inventaire.meteosIds
-                }
-              }
-            }
+                  in: inventaire.meteosIds,
+                },
+              },
+            },
           }
-        : {})
+        : {}),
     },
     include: {
       inventaire_associe: true,
-      inventaire_meteo: true
-    }
+      inventaire_meteo: true,
+    },
   });
 
   // At this point the candidates are the ones that match all parameters and for which each associe+meteo is in the required list
@@ -182,7 +182,7 @@ export const findExistingInventaire = async (inventaire: InputInventaire): Promi
 export const findAllInventaires = async (): Promise<InventaireWithRelations[]> => {
   return prisma.inventaire
     .findMany({
-      include: COMMON_INVENTAIRE_INCLUDE
+      include: COMMON_INVENTAIRE_INCLUDE,
     })
     .then((inventaires) => {
       return inventaires.map(normalizeInventaireComplete);
@@ -213,7 +213,7 @@ export const upsertInventaire = async (
       // but this is not up to this upsert method to take this initiave
       const upsertInventaireFailureReason: UpsertInventaireFailureReason = {
         inventaireExpectedToBeUpdated: id,
-        correspondingInventaireFound: existingInventaire.id
+        correspondingInventaireFound: existingInventaire.id,
       };
       return Promise.reject(upsertInventaireFailureReason);
     }
@@ -225,16 +225,16 @@ export const upsertInventaire = async (
       // We update the inventaire ID for the donnees and we delete the duplicated inventaire
       await prisma.donnee.updateMany({
         where: {
-          inventaireId: id
+          inventaireId: id,
         },
         data: {
-          inventaireId: existingInventaire?.id
-        }
+          inventaireId: existingInventaire?.id,
+        },
       });
       await prisma.inventaire.delete({
         where: {
-          id
-        }
+          id,
+        },
       });
     }
 
@@ -244,9 +244,9 @@ export const upsertInventaire = async (
       prisma.inventaire
         .findUnique({
           where: {
-            id: existingInventaire.id
+            id: existingInventaire.id,
           },
-          include: COMMON_INVENTAIRE_INCLUDE
+          include: COMMON_INVENTAIRE_INCLUDE,
         })
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         .then((inventaire) => normalizeInventaireComplete(inventaire!))
@@ -260,14 +260,14 @@ export const upsertInventaire = async (
     const associesMap =
       associesIds?.map((associeId) => {
         return {
-          observateur_id: associeId
+          observateur_id: associeId,
         };
       }) ?? [];
 
     const meteosMap =
       meteosIds?.map((meteoId) => {
         return {
-          meteo_id: meteoId
+          meteo_id: meteoId,
         };
       }) ?? [];
 
@@ -286,17 +286,17 @@ export const upsertInventaire = async (
             date: parseISO8601AsUTCDate(date),
             inventaire_associe: {
               deleteMany: {
-                inventaire_id: id
+                inventaire_id: id,
               },
-              create: associesMap
+              create: associesMap,
             },
             inventaire_meteo: {
               deleteMany: {
-                inventaire_id: id
+                inventaire_id: id,
               },
-              create: meteosMap
-            }
-          }
+              create: meteosMap,
+            },
+          },
         })
         .then(normalizeInventaireComplete);
     } else {
@@ -312,14 +312,14 @@ export const upsertInventaire = async (
             date: parseISO8601AsUTCDate(date),
             date_creation: new Date(),
             inventaire_associe: {
-              create: associesMap
+              create: associesMap,
             },
             inventaire_meteo: {
-              create: meteosMap
+              create: meteosMap,
             },
-            ownerId: loggedUser.id
+            ownerId: loggedUser.id,
           },
-          include: COMMON_INVENTAIRE_INCLUDE
+          include: COMMON_INVENTAIRE_INCLUDE,
         })
         .then(normalizeInventaireComplete);
     }

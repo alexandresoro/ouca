@@ -7,20 +7,20 @@ const getPinoTransportToUse = () => {
         target: "pino/file",
         options: {
           destination: "./logs/logfile.log",
-          mkdir: true
-        }
+          mkdir: true,
+        },
       }
     : {
         target: "pino-pretty",
         options: {
           colorize: true,
-          translateTime: true
-        }
+          translateTime: true,
+        },
       };
 };
 
 export const logger = pino({
   level: options.logLevel,
   base: undefined,
-  transport: getPinoTransportToUse()
+  transport: getPinoTransportToUse(),
 });

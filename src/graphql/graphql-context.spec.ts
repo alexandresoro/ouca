@@ -21,7 +21,7 @@ describe("GraphQL context", () => {
       request,
       reply,
       user: null,
-      username: null
+      username: null,
     });
   });
 
@@ -39,7 +39,7 @@ describe("GraphQL context", () => {
       request,
       reply,
       user: context.user,
-      username: context.username
+      username: context.username,
     });
   });
 

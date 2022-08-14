@@ -3,7 +3,7 @@ import {
   FindParams,
   MutationUpsertSexeArgs,
   QueryPaginatedSexesArgs,
-  SexesPaginatedResult
+  SexesPaginatedResult,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -14,7 +14,7 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findSexe = async (
@@ -23,8 +23,8 @@ export const findSexe = async (
 ): Promise<(Sexe & ReadonlyStatus) | null> => {
   const sexeEntity = await prisma.sexe.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!sexeEntity) {
@@ -33,7 +33,7 @@ export const findSexe = async (
 
   return {
     ...sexeEntity,
-    readonly: isEntityReadOnly(sexeEntity, loggedUser)
+    readonly: isEntityReadOnly(sexeEntity, loggedUser),
   };
 };
 
@@ -47,16 +47,16 @@ export const findSexes = async (
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: q || undefined
-      }
+        contains: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   return sexeEntities?.map((sexe) => {
     return {
       ...sexe,
-      readonly: isEntityReadOnly(sexe, loggedUser)
+      readonly: isEntityReadOnly(sexe, loggedUser),
     };
   });
 };
@@ -73,15 +73,15 @@ export const findPaginatedSexes = async (
       case "id":
       case "libelle":
         orderBy = {
-          [orderByField]: sortOrder
+          [orderByField]: sortOrder,
         };
         break;
       case "nbDonnees":
         {
           orderBy = {
             donnee: {
-              _count: sortOrder
-            }
+              _count: sortOrder,
+            },
           };
         }
         break;
@@ -99,41 +99,41 @@ export const findPaginatedSexes = async (
       include: {
         _count: {
           select: {
-            donnee: true
-          }
-        }
+            donnee: true,
+          },
+        },
       },
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
 
     sexeEntities = sexes.map((sexe) => {
       return {
         ...sexe,
-        nbDonnees: sexe._count.donnee
+        nbDonnees: sexe._count.donnee,
       };
     });
   } else {
     sexeEntities = await prisma.sexe.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
   }
 
   const count = await prisma.sexe.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
   });
 
   const sexes = sexeEntities?.map((sexe) => {
     return {
       ...sexe,
-      readonly: isEntityReadOnly(sexe, loggedUser)
+      readonly: isEntityReadOnly(sexe, loggedUser),
     };
   });
 
   return {
     result: sexes,
-    count
+    count,
   };
 };
 
@@ -149,7 +149,7 @@ export const upsertSexe = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.sexe.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -160,7 +160,7 @@ export const upsertSexe = async (
     try {
       upsertedSexe = await prisma.sexe.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -173,8 +173,8 @@ export const upsertSexe = async (
       upsertedSexe = await prisma.sexe.create({
         data: {
           ...data,
-          ownerId: loggedUser.id
-        }
+          ownerId: loggedUser.id,
+        },
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -186,7 +186,7 @@ export const upsertSexe = async (
 
   return {
     ...upsertedSexe,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -194,7 +194,7 @@ export const deleteSexe = async (id: number, loggedUser: LoggedUser): Promise<Se
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.sexe.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -204,8 +204,8 @@ export const deleteSexe = async (id: number, loggedUser: LoggedUser): Promise<Se
 
   return prisma.sexe.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -216,6 +216,6 @@ export const createSexes = async (
   return prisma.sexe.createMany({
     data: sexes.map((sexe) => {
       return { ...sexe, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

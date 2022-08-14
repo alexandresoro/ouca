@@ -12,7 +12,7 @@ export type GraphQLContext = Context<{
 
 export const getGraphQLContext = async ({
   request,
-  reply
+  reply,
 }: {
   request: FastifyRequest;
   reply: FastifyReply;
@@ -29,6 +29,6 @@ export const getGraphQLContext = async ({
     request,
     reply,
     user: tokenPayload ? getLoggedUser(tokenPayload) : null,
-    username: (tokenPayload?.name as string) ?? null
+    username: (tokenPayload?.name as string) ?? null,
   };
 };

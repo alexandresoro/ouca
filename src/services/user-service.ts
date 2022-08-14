@@ -36,11 +36,11 @@ export const getUser = async (userId: string): Promise<Omit<User, "password"> | 
       username: true,
       firstName: true,
       lastName: true,
-      role: true
+      role: true,
     },
     where: {
-      id: userId
-    }
+      id: userId,
+    },
   });
 };
 
@@ -60,8 +60,8 @@ export const createUser = async (
   // In that case, the first created account is an admin but needs to provide the correct password
   const adminsCount = await prisma.user.count({
     where: {
-      role: DatabaseRole.admin
-    }
+      role: DatabaseRole.admin,
+    },
   });
 
   let roleToSet = role;
@@ -85,16 +85,16 @@ export const createUser = async (
       username: true,
       firstName: true,
       lastName: true,
-      role: true
+      role: true,
     },
     data: {
       ...otherUserInfo,
       role: roleToSet,
       password: getHashedPassword(password),
       Settings: {
-        create: {}
-      }
-    }
+        create: {},
+      },
+    },
   });
 
   if (createdUser) {
@@ -110,8 +110,8 @@ export const loginUser = async (loginData: UserLoginInput): Promise<Omit<User, "
   // Try to find the matching profile
   const matchingUser = await prisma.user.findUnique({
     where: {
-      username
-    }
+      username,
+    },
   });
 
   if (!matchingUser) {
@@ -139,8 +139,8 @@ export const updateUser = async (
     // Try to find the matching profile
     const matchingUser = await prisma.user.findUnique({
       where: {
-        id: userId
-      }
+        id: userId,
+      },
     });
 
     if (!matchingUser) {
@@ -156,14 +156,14 @@ export const updateUser = async (
 
     return prisma.user.update({
       where: {
-        id: userId
+        id: userId,
       },
       data: {
         firstName: restUserUpdate.firstName ?? undefined,
         lastName: restUserUpdate.lastName ?? undefined,
         username: restUserUpdate.username ?? undefined,
-        password: newPassword ? getHashedPassword(newPassword) : undefined
-      }
+        password: newPassword ? getHashedPassword(newPassword) : undefined,
+      },
     });
   } else {
     return Promise.reject(new OucaError("OUCA0001"));
@@ -176,8 +176,8 @@ export const deleteUser = async (userId: string, loggedUser: LoggedUser): Promis
   if (loggedUser.id === userId || loggedUser.role === DatabaseRole.admin) {
     await prisma.user.delete({
       where: {
-        id: userId
-      }
+        id: userId,
+      },
     });
 
     logger.info(`User with id ${userId} has been deleted. Request has been initiated by ID ${loggedUser.id}`);

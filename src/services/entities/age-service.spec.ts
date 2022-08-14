@@ -12,7 +12,7 @@ const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -33,8 +33,8 @@ test("should call readonly status when retrieving one age ", async () => {
   expect(prismaMock.age.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: ageData.id
-    }
+      id: ageData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -47,8 +47,8 @@ test("should handle age not found ", async () => {
   expect(prismaMock.age.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
@@ -65,9 +65,9 @@ test("should call readonly status when retrieving ages by params ", async () => 
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: undefined
-      }
-    }
+        contains: undefined,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(agesData.length);
 });
@@ -83,7 +83,7 @@ test("should call readonly status when retrieving paginated ages", async () => {
   expect(prismaMock.age.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: undefined,
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(agesData.length);
 });
@@ -97,9 +97,9 @@ test("should handle params when retrieving paginated ages ", async () => {
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.age.findMany.mockResolvedValueOnce([agesData[0]]);
@@ -111,15 +111,15 @@ test("should handle params when retrieving paginated ages ", async () => {
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
     where: {
       libelle: {
-        contains: searchParams.searchParams?.q
-      }
-    }
+        contains: searchParams.searchParams?.q,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -135,14 +135,14 @@ test("should update an existing age as an admin ", async () => {
   expect(prismaMock.age.update).toHaveBeenLastCalledWith({
     data: ageData.data,
     where: {
-      id: ageData.id
-    }
+      id: ageData.id,
+    },
   });
 });
 
 test("should update an existing age if owner ", async () => {
   const existingData = mock<Age>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const ageData = mock<MutationUpsertAgeArgs>();
@@ -157,21 +157,21 @@ test("should update an existing age if owner ", async () => {
   expect(prismaMock.age.update).toHaveBeenLastCalledWith({
     data: ageData.data,
     where: {
-      id: ageData.id
-    }
+      id: ageData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing age and nor owner nor admin ", async () => {
   const existingData = mock<Age>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const ageData = mock<MutationUpsertAgeArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.age.findFirst.mockResolvedValueOnce(existingData);
@@ -183,7 +183,7 @@ test("should throw an error when updating an existing age and nor owner nor admi
 
 test("should throw an error when trying to update an age that exists", async () => {
   const ageData = mock<MutationUpsertAgeArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -198,14 +198,14 @@ test("should throw an error when trying to update an age that exists", async () 
   expect(prismaMock.age.update).toHaveBeenLastCalledWith({
     data: ageData.data,
     where: {
-      id: ageData.id
-    }
+      id: ageData.id,
+    },
   });
 });
 
 test("should create new age ", async () => {
   const ageData = mock<MutationUpsertAgeArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -216,14 +216,14 @@ test("should create new age ", async () => {
   expect(prismaMock.age.create).toHaveBeenLastCalledWith({
     data: {
       ...ageData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create an age that exists", async () => {
   const ageData = mock<MutationUpsertAgeArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -238,19 +238,19 @@ test("should throw an error when trying to create an age that exists", async () 
   expect(prismaMock.age.create).toHaveBeenLastCalledWith({
     data: {
       ...ageData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned age", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const age = mock<Age>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.age.findFirst.mockResolvedValueOnce(age);
@@ -260,14 +260,14 @@ test("should be able to delete an owned age", async () => {
   expect(prismaMock.age.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any age if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.age.findFirst.mockResolvedValueOnce(mock<Age>());
@@ -277,14 +277,14 @@ test("should be able to delete any age if admin", async () => {
   expect(prismaMock.age.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned age as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.age.findFirst.mockResolvedValueOnce(mock<Age>());
@@ -298,7 +298,7 @@ test("should create new ages", async () => {
   const agesData = [
     mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -310,8 +310,8 @@ test("should create new ages", async () => {
     data: agesData.map((age) => {
       return {
         ...age,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

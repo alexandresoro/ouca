@@ -14,7 +14,7 @@ import {
   Milieu,
   Observateur,
   Prisma,
-  Sexe
+  Sexe,
 } from "@prisma/client";
 import {
   AgeWithSpecimensCount,
@@ -24,7 +24,7 @@ import {
   PaginatedSearchDonneesResultResultArgs,
   SearchDonneeCriteria,
   SexeWithSpecimensCount,
-  SortOrder
+  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
@@ -70,14 +70,14 @@ const COMMON_DONNEE_INCLUDE = {
   estimationNombre: true,
   donnee_comportement: {
     select: {
-      comportement: true
-    }
+      comportement: true,
+    },
   },
   donnee_milieu: {
     select: {
-      milieu: true
-    }
-  }
+      milieu: true,
+    },
+  },
 };
 
 const normalizeDonnee = <T extends DonneeRelatedTablesFields>(
@@ -97,7 +97,7 @@ const normalizeDonnee = <T extends DonneeRelatedTablesFields>(
   return {
     ...restDonnee,
     comportements: comportementsArray,
-    milieux: milieuxArray
+    milieux: milieuxArray,
   };
 };
 
@@ -106,8 +106,8 @@ export const findDonnee = async (id: number | undefined): Promise<DonneeWithRela
     .findUnique({
       include: COMMON_DONNEE_INCLUDE,
       where: {
-        id
-      }
+        id,
+      },
     })
     .then((donnee) => (donnee ? normalizeDonnee(donnee) : null));
 };
@@ -124,35 +124,35 @@ export const findDonneesByCriteria = async (
             observateur: true,
             inventaire_associe: {
               select: {
-                observateur: true
-              }
+                observateur: true,
+              },
             },
             lieuDit: {
               include: {
                 commune: {
                   include: {
-                    departement: true
-                  }
-                }
-              }
+                    departement: true,
+                  },
+                },
+              },
             },
             inventaire_meteo: {
               select: {
-                meteo: true
-              }
-            }
-          }
+                meteo: true,
+              },
+            },
+          },
         },
         espece: {
           include: {
-            classe: true
-          }
-        }
+            classe: true,
+          },
+        },
       },
       orderBy: {
-        id: SortOrder.Asc
+        id: SortOrder.Asc,
       },
-      where: buildSearchDonneeCriteria(searchCriteria)
+      where: buildSearchDonneeCriteria(searchCriteria),
     })
     .then((donnees) => {
       return donnees.map((donnee) => {
@@ -160,7 +160,7 @@ export const findDonneesByCriteria = async (
         const normalizedInventaire = normalizeInventaire(inventaire);
         return {
           ...normalizeDonnee(restDonnee),
-          inventaire: normalizedInventaire
+          inventaire: normalizedInventaire,
         };
       });
     });
@@ -179,36 +179,36 @@ export const findPaginatedDonneesByCriteria = async (
       case "id":
       case "nombre":
         orderBy = {
-          [orderByField]: sortOrder
+          [orderByField]: sortOrder,
         };
         break;
       case "codeEspece":
         orderBy = {
           espece: {
-            code: sortOrder
-          }
+            code: sortOrder,
+          },
         };
 
         break;
       case "nomFrancais":
         orderBy = {
           espece: {
-            nomFrancais: sortOrder
-          }
+            nomFrancais: sortOrder,
+          },
         };
         break;
       case "sexe":
         orderBy = {
           sexe: {
-            libelle: sortOrder
-          }
+            libelle: sortOrder,
+          },
         };
         break;
       case "age":
         orderBy = {
           age: {
-            libelle: sortOrder
-          }
+            libelle: sortOrder,
+          },
         };
         break;
       case "departement":
@@ -217,11 +217,11 @@ export const findPaginatedDonneesByCriteria = async (
             lieuDit: {
               commune: {
                 departement: {
-                  code: sortOrder
-                }
-              }
-            }
-          }
+                  code: sortOrder,
+                },
+              },
+            },
+          },
         };
         break;
       case "codeCommune":
@@ -229,10 +229,10 @@ export const findPaginatedDonneesByCriteria = async (
           inventaire: {
             lieuDit: {
               commune: {
-                code: sortOrder
-              }
-            }
-          }
+                code: sortOrder,
+              },
+            },
+          },
         };
         break;
       case "nomCommune":
@@ -240,19 +240,19 @@ export const findPaginatedDonneesByCriteria = async (
           inventaire: {
             lieuDit: {
               commune: {
-                nom: sortOrder
-              }
-            }
-          }
+                nom: sortOrder,
+              },
+            },
+          },
         };
         break;
       case "lieuDit":
         orderBy = {
           inventaire: {
             lieuDit: {
-              nom: sortOrder
-            }
-          }
+              nom: sortOrder,
+            },
+          },
         };
         break;
       case "date":
@@ -260,8 +260,8 @@ export const findPaginatedDonneesByCriteria = async (
       case "duree":
         orderBy = {
           inventaire: {
-            [orderByField]: sortOrder
-          }
+            [orderByField]: sortOrder,
+          },
         };
         break;
       case "observateur":
@@ -269,15 +269,15 @@ export const findPaginatedDonneesByCriteria = async (
           orderBy = {
             inventaire: {
               observateur: {
-                libelle: sortOrder
-              }
-            }
+                libelle: sortOrder,
+              },
+            },
           };
         }
         break;
       default:
         orderBy = {
-          id: SortOrder.Desc
+          id: SortOrder.Desc,
         };
     }
   }
@@ -287,7 +287,7 @@ export const findPaginatedDonneesByCriteria = async (
       ...getPrismaPagination(searchParams),
       include: COMMON_DONNEE_INCLUDE,
       orderBy,
-      where: buildSearchDonneeCriteria(searchCriteria)
+      where: buildSearchDonneeCriteria(searchCriteria),
     })
     .then((donnees) => {
       return donnees.map(normalizeDonnee);
@@ -296,51 +296,51 @@ export const findPaginatedDonneesByCriteria = async (
 
 export const getNbDonneesByCriteria = async (searchCriteria?: SearchDonneeCriteria | null): Promise<number> => {
   return prisma.donnee.count({
-    where: buildSearchDonneeCriteria(searchCriteria)
+    where: buildSearchDonneeCriteria(searchCriteria),
   });
 };
 
 export const findDonneeNavigationData = async (donneeId: number | undefined): Promise<DonneeNavigationData> => {
   const previousDonnee = await prisma.donnee.findFirst({
     select: {
-      id: true
+      id: true,
     },
     where: {
       id: {
-        lt: donneeId
-      }
+        lt: donneeId,
+      },
     },
     orderBy: {
-      id: "desc"
-    }
+      id: "desc",
+    },
   });
 
   const nextDonnee = await prisma.donnee.findFirst({
     select: {
-      id: true
+      id: true,
     },
     where: {
       id: {
-        gt: donneeId
-      }
+        gt: donneeId,
+      },
     },
     orderBy: {
-      id: "asc"
-    }
+      id: "asc",
+    },
   });
 
   const index = await prisma.donnee.count({
     where: {
       id: {
-        lte: donneeId
-      }
-    }
+        lte: donneeId,
+      },
+    },
   });
 
   return {
     index,
     previousDonneeId: previousDonnee?.id,
-    nextDonneeId: nextDonnee?.id
+    nextDonneeId: nextDonnee?.id,
   };
 };
 
@@ -362,10 +362,10 @@ export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEnt
             donnee_comportement: {
               every: {
                 comportement_id: {
-                  in: donnee.comportementsIds
-                }
-              }
-            }
+                  in: donnee.comportementsIds,
+                },
+              },
+            },
           }
         : {}),
       ...(donnee.milieuxIds != null
@@ -373,17 +373,17 @@ export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEnt
             donnee_milieu: {
               every: {
                 milieu_id: {
-                  in: donnee.milieuxIds
-                }
-              }
-            }
+                  in: donnee.milieuxIds,
+                },
+              },
+            },
           }
-        : {})
+        : {}),
     },
     include: {
       donnee_comportement: true,
-      donnee_milieu: true
-    }
+      donnee_milieu: true,
+    },
   });
 
   // At this point the candidates are the ones that match all parameters and for which each comportement+milieu is in the required list
@@ -406,8 +406,8 @@ export const findLastDonneeId = async (): Promise<number | null> => {
   return prisma.donnee
     .findFirst({
       orderBy: {
-        id: Prisma.SortOrder.desc
-      }
+        id: Prisma.SortOrder.desc,
+      },
     })
     .then((donnee) => donnee?.id ?? null)
     .catch(() => Promise.resolve(null));
@@ -428,14 +428,14 @@ export const upsertDonnee = async (args: MutationUpsertDonneeArgs): Promise<Donn
     const comportementMap =
       comportementsIds?.map((comportementId) => {
         return {
-          comportement_id: comportementId
+          comportement_id: comportementId,
         };
       }) ?? [];
 
     const milieuMap =
       milieuxIds?.map((milieuId) => {
         return {
-          milieu_id: milieuId
+          milieu_id: milieuId,
         };
       }) ?? [];
 
@@ -448,17 +448,17 @@ export const upsertDonnee = async (args: MutationUpsertDonneeArgs): Promise<Donn
             ...restData,
             donnee_comportement: {
               deleteMany: {
-                donnee_id: id
+                donnee_id: id,
               },
-              create: comportementMap
+              create: comportementMap,
             },
             donnee_milieu: {
               deleteMany: {
-                donnee_id: id
+                donnee_id: id,
               },
-              create: milieuMap
-            }
-          }
+              create: milieuMap,
+            },
+          },
         })
         .then(normalizeDonnee);
     } else {
@@ -473,14 +473,14 @@ export const createDonnee = async (donnee: InputDonnee): Promise<DonneeWithRelat
   const comportementMap =
     comportementsIds?.map((comportementId) => {
       return {
-        comportement_id: comportementId
+        comportement_id: comportementId,
       };
     }) ?? [];
 
   const milieuMap =
     milieuxIds?.map((milieuId) => {
       return {
-        milieu_id: milieuId
+        milieu_id: milieuId,
       };
     }) ?? [];
 
@@ -490,13 +490,13 @@ export const createDonnee = async (donnee: InputDonnee): Promise<DonneeWithRelat
         ...restData,
         date_creation: new Date(),
         donnee_comportement: {
-          create: comportementMap
+          create: comportementMap,
         },
         donnee_milieu: {
-          create: milieuMap
-        }
+          create: milieuMap,
+        },
       },
-      include: COMMON_DONNEE_INCLUDE
+      include: COMMON_DONNEE_INCLUDE,
     })
     .then(normalizeDonnee);
 };
@@ -506,31 +506,31 @@ export const deleteDonnee = async (donneeId: number): Promise<DonneeEntity> => {
   const inventaire = await prisma.donnee
     .findUnique({
       where: {
-        id: donneeId
-      }
+        id: donneeId,
+      },
     })
     .inventaire();
 
   // Delete the actual donnee
   const deletedDonnee = await prisma.donnee.delete({
     where: {
-      id: donneeId
-    }
+      id: donneeId,
+    },
   });
 
   // Check how many donnees the inventaire has after the deletion
   const nbDonneesOfInventaire = await prisma.donnee.count({
     where: {
-      inventaireId: inventaire?.id
-    }
+      inventaireId: inventaire?.id,
+    },
   });
 
   if (nbDonneesOfInventaire === 0) {
     // If the inventaire has no more donnees then we remove the inventaire
     await prisma.inventaire.delete({
       where: {
-        id: inventaire?.id
-      }
+        id: inventaire?.id,
+      },
     });
   }
   return deletedDonnee;
@@ -539,7 +539,7 @@ export const deleteDonnee = async (donneeId: number): Promise<DonneeEntity> => {
 export const findAllDonnees = async (): Promise<DonneeWithRelations[]> => {
   return prisma.donnee
     .findMany({
-      include: COMMON_DONNEE_INCLUDE
+      include: COMMON_DONNEE_INCLUDE,
     })
     .then((donnees) => {
       return donnees.map(normalizeDonnee);
@@ -549,8 +549,8 @@ export const findAllDonnees = async (): Promise<DonneeWithRelations[]> => {
 export const findNextRegroupement = async (): Promise<number> => {
   const regroupementsAggr = await prisma.donnee.aggregate({
     _max: {
-      regroupement: true
-    }
+      regroupement: true,
+    },
   });
   const regroupementMax = regroupementsAggr?._max?.regroupement ?? 0;
   return regroupementMax + 1;
@@ -560,26 +560,26 @@ export const countSpecimensByAgeForEspeceId = async (especeId: number): Promise<
   const agesOfEspece = await prisma.donnee.groupBy({
     by: ["ageId"],
     where: {
-      especeId
+      especeId,
     },
     _sum: {
-      nombre: true
-    }
+      nombre: true,
+    },
   });
 
   const ages = await prisma.age.findMany({
     where: {
       id: {
-        in: agesOfEspece.map((ageOfEspece) => ageOfEspece.ageId)
-      }
-    }
+        in: agesOfEspece.map((ageOfEspece) => ageOfEspece.ageId),
+      },
+    },
   });
 
   return ages.map((age) => {
     const nbSpecimens = agesOfEspece?.find((ageOfEspece) => ageOfEspece?.ageId === age.id)?._sum?.nombre ?? 0;
     return {
       ...age,
-      nbSpecimens
+      nbSpecimens,
     };
   });
 };
@@ -588,26 +588,26 @@ export const countSpecimensBySexeForEspeceId = async (especeId: number): Promise
   const sexesOfEspece = await prisma.donnee.groupBy({
     by: ["sexeId"],
     where: {
-      especeId
+      especeId,
     },
     _sum: {
-      nombre: true
-    }
+      nombre: true,
+    },
   });
 
   const sexes = await prisma.sexe.findMany({
     where: {
       id: {
-        in: sexesOfEspece.map((sexeOfEspece) => sexeOfEspece.sexeId)
-      }
-    }
+        in: sexesOfEspece.map((sexeOfEspece) => sexeOfEspece.sexeId),
+      },
+    },
   });
 
   return sexes.map((sexe) => {
     const nbSpecimens = sexesOfEspece?.find((sexeOfEspece) => sexeOfEspece?.sexeId === sexe.id)?._sum?.nombre ?? 0;
     return {
       ...sexe,
-      nbSpecimens
+      nbSpecimens,
     };
   });
 };

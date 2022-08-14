@@ -10,72 +10,72 @@ export const buildSearchDonneeCriteria = (
         id: searchCriteria?.id ?? undefined,
         inventaire: {
           observateurId: {
-            in: searchCriteria?.observateurs ?? undefined
+            in: searchCriteria?.observateurs ?? undefined,
           },
           ...(searchCriteria?.associes
             ? {
                 inventaire_associe: {
                   some: {
                     observateur_id: {
-                      in: searchCriteria?.associes
-                    }
-                  }
-                }
+                      in: searchCriteria?.associes,
+                    },
+                  },
+                },
               }
             : {}),
           temperature: searchCriteria?.temperature ?? undefined,
           date: {
             gte: searchCriteria?.fromDate ? parseISO8601AsUTCDate(searchCriteria.fromDate) : undefined,
-            lte: searchCriteria?.toDate ? parseISO8601AsUTCDate(searchCriteria.toDate) : undefined
+            lte: searchCriteria?.toDate ? parseISO8601AsUTCDate(searchCriteria.toDate) : undefined,
           },
           heure: searchCriteria?.heure ?? undefined,
           duree: searchCriteria?.duree ?? undefined,
           lieuDitId: {
-            in: searchCriteria?.lieuxdits ?? undefined
+            in: searchCriteria?.lieuxdits ?? undefined,
           },
           lieuDit: {
             communeId: {
-              in: searchCriteria?.communes ?? undefined
+              in: searchCriteria?.communes ?? undefined,
             },
             commune: {
               departementId: {
-                in: searchCriteria?.departements ?? undefined
-              }
-            }
+                in: searchCriteria?.departements ?? undefined,
+              },
+            },
           },
           ...(searchCriteria?.meteos
             ? {
                 inventaire_meteo: {
                   some: {
                     meteo_id: {
-                      in: searchCriteria?.meteos
-                    }
-                  }
-                }
+                      in: searchCriteria?.meteos,
+                    },
+                  },
+                },
               }
-            : {})
+            : {}),
         },
         especeId: {
-          in: searchCriteria?.especes ?? undefined
+          in: searchCriteria?.especes ?? undefined,
         },
         espece: {
           classeId: {
-            in: searchCriteria?.classes ?? undefined
-          }
+            in: searchCriteria?.classes ?? undefined,
+          },
         },
         nombre: searchCriteria?.nombre ?? undefined,
         estimationNombreId: {
-          in: searchCriteria?.estimationsNombre ?? undefined
+          in: searchCriteria?.estimationsNombre ?? undefined,
         },
         sexeId: {
-          in: searchCriteria?.sexes ?? undefined
+          in: searchCriteria?.sexes ?? undefined,
         },
         ageId: {
-          in: searchCriteria?.ages ?? undefined
+          in: searchCriteria?.ages ?? undefined,
         },
         distance: searchCriteria?.distance ?? undefined,
         estimationDistanceId: {
-          in: searchCriteria?.estimationsDistance ?? undefined
+          in: searchCriteria?.estimationsDistance ?? undefined,
         },
         regroupement: searchCriteria?.regroupement ?? undefined,
         ...(searchCriteria?.comportements || searchCriteria?.nicheurs
@@ -85,21 +85,21 @@ export const buildSearchDonneeCriteria = (
                   ...(searchCriteria?.comportements
                     ? {
                         comportement_id: {
-                          in: searchCriteria?.comportements
-                        }
+                          in: searchCriteria?.comportements,
+                        },
                       }
                     : {}),
                   ...(searchCriteria?.nicheurs
                     ? {
                         comportement: {
                           nicheur: {
-                            in: searchCriteria?.nicheurs
-                          }
-                        }
+                            in: searchCriteria?.nicheurs,
+                          },
+                        },
                       }
-                    : {})
-                }
-              }
+                    : {}),
+                },
+              },
             }
           : {}),
         ...(searchCriteria?.milieux
@@ -107,15 +107,15 @@ export const buildSearchDonneeCriteria = (
               donnee_milieu: {
                 some: {
                   milieu_id: {
-                    in: searchCriteria?.milieux
-                  }
-                }
-              }
+                    in: searchCriteria?.milieux,
+                  },
+                },
+              },
             }
           : {}),
         commentaire: {
-          contains: searchCriteria?.commentaire ?? undefined
-        }
+          contains: searchCriteria?.commentaire ?? undefined,
+        },
       }
     : undefined;
 };

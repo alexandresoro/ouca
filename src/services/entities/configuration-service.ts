@@ -8,15 +8,15 @@ const includedElements = {
   defaultDepartement: true,
   defaultAge: true,
   defaultSexe: true,
-  defaultEstimationNombre: true
+  defaultEstimationNombre: true,
 };
 
 export const findAppConfiguration = async (loggedUser: LoggedUser): Promise<Settings | null> => {
   return prisma.settings.findUnique({
     include: includedElements,
     where: {
-      userId: loggedUser.id
-    }
+      userId: loggedUser.id,
+    },
   });
 };
 
@@ -24,8 +24,8 @@ export const findCoordinatesSystem = async (loggedUser: LoggedUser): Promise<Coo
   return prisma.settings
     .findUnique({
       where: {
-        userId: loggedUser.id
-      }
+        userId: loggedUser.id,
+      },
     })
     .then((settings) => settings?.coordinatesSystem);
 };
@@ -43,7 +43,7 @@ const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): Omit
     isMeteoDisplayed: appConfiguration.isMeteoDisplayed,
     isDistanceDisplayed: appConfiguration.isDistanceDisplayed,
     isRegroupementDisplayed: appConfiguration.isRegroupementDisplayed,
-    coordinatesSystem: appConfiguration.coordinatesSystem
+    coordinatesSystem: appConfiguration.coordinatesSystem,
   };
 };
 
@@ -58,8 +58,8 @@ export const persistUserSettings = async (
     include: includedElements,
     where: {
       id,
-      userId: loggedUser.id
-    }
+      userId: loggedUser.id,
+    },
   });
 
   return updatedSettingsDb;

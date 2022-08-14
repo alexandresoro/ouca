@@ -5,7 +5,7 @@ export class ImportedEstimationNombre extends ImportedEntiteAvecLibelle {
   buildEntiteAvecLibelle = (): Pick<EstimationNombre, "libelle" | "nonCompte"> => {
     return {
       libelle: this.libelle,
-      nonCompte: false
+      nonCompte: false,
     };
   };
 }

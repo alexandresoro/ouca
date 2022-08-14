@@ -2,7 +2,7 @@ import { DatabaseRole, Observateur, Prisma } from "@prisma/client";
 import {
   FindParams,
   MutationUpsertObservateurArgs,
-  ObservateursPaginatedResultResultArgs
+  ObservateursPaginatedResultResultArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -17,7 +17,7 @@ import {
   isEntityReadOnly,
   queryParametersToFindAllEntities,
   ReadonlyStatus,
-  transformQueryRawResultsBigIntsToNumbers
+  transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
 export const findObservateur = async (
@@ -26,8 +26,8 @@ export const findObservateur = async (
 ): Promise<(Observateur & ReadonlyStatus) | null> => {
   const observateurEntity = await prisma.observateur.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!observateurEntity) {
@@ -36,7 +36,7 @@ export const findObservateur = async (
 
   return {
     ...observateurEntity,
-    readonly: isEntityReadOnly(observateurEntity, loggedUser)
+    readonly: isEntityReadOnly(observateurEntity, loggedUser),
   };
 };
 
@@ -46,9 +46,9 @@ export const getNbDonneesOfObservateur = async (id: number, loggedUser: LoggedUs
   return prisma.donnee.count({
     where: {
       inventaire: {
-        observateurId: id
-      }
-    }
+        observateurId: id,
+      },
+    },
   });
 };
 
@@ -60,15 +60,15 @@ export const findObservateursByIds = async (
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       id: {
-        in: ids
-      }
-    }
+        in: ids,
+      },
+    },
   });
 
   return observateurEntities?.map((observateur) => {
     return {
       ...observateur,
-      readonly: isEntityReadOnly(observateur, loggedUser)
+      readonly: isEntityReadOnly(observateur, loggedUser),
     };
   });
 };
@@ -83,16 +83,16 @@ export const findObservateurs = async (
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: q || undefined
-      }
+        contains: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   return observateurEntities?.map((observateur) => {
     return {
       ...observateur,
-      readonly: isEntityReadOnly(observateur, loggedUser)
+      readonly: isEntityReadOnly(observateur, loggedUser),
     };
   });
 };
@@ -147,14 +147,14 @@ export const findPaginatedObservateurs = async (
     observateurEntities = await prisma.observateur.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q)
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
     });
   }
 
   return observateurEntities?.map((observateur) => {
     return {
       ...observateur,
-      readonly: isEntityReadOnly(observateur, loggedUser)
+      readonly: isEntityReadOnly(observateur, loggedUser),
     };
   });
 };
@@ -163,7 +163,7 @@ export const getNbObservateurs = async (loggedUser: LoggedUser | null = null, q?
   validateAuthorization(loggedUser);
 
   return prisma.observateur.count({
-    where: getEntiteAvecLibelleFilterClause(q)
+    where: getEntiteAvecLibelleFilterClause(q),
   });
 };
 
@@ -179,7 +179,7 @@ export const upsertObservateur = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.observateur.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -191,7 +191,7 @@ export const upsertObservateur = async (
     try {
       upsertedObservateur = await prisma.observateur.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -205,8 +205,8 @@ export const upsertObservateur = async (
       upsertedObservateur = await prisma.observateur.create({
         data: {
           ...data,
-          ownerId: loggedUser.id
-        }
+          ownerId: loggedUser.id,
+        },
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -218,7 +218,7 @@ export const upsertObservateur = async (
 
   return {
     ...upsertedObservateur,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -226,7 +226,7 @@ export const deleteObservateur = async (id: number, loggedUser: LoggedUser): Pro
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.observateur.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -236,8 +236,8 @@ export const deleteObservateur = async (id: number, loggedUser: LoggedUser): Pro
 
   return prisma.observateur.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -248,6 +248,6 @@ export const createObservateurs = async (
   return prisma.observateur.createMany({
     data: observateurs.map((observateur) => {
       return { ...observateur, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

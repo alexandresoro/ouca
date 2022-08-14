@@ -12,7 +12,7 @@ import {
   findDepartementOfCommuneId,
   findDepartements,
   findPaginatedDepartements,
-  upsertDepartement
+  upsertDepartement,
 } from "./departement-service";
 import * as entitiesUtils from "./entities-utils";
 
@@ -20,7 +20,7 @@ const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -41,8 +41,8 @@ test("should call readonly status when retrieving one department ", async () => 
   expect(prismaMock.departement.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.departement.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: departmentData.id
-    }
+      id: departmentData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -55,15 +55,15 @@ test("should handle department not found ", async () => {
   expect(prismaMock.departement.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.departement.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
 
 test("should call readonly status when retrieving department by city ID ", async () => {
   const departmentData = mock<Departement>({
-    id: 256
+    id: 256,
   });
 
   const city = mockDeep<Prisma.Prisma__CommuneClient<Commune>>();
@@ -76,8 +76,8 @@ test("should call readonly status when retrieving department by city ID ", async
   expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   expect(department?.id).toEqual(256);
@@ -94,8 +94,8 @@ test("should handle class not found when retrieving department by city ID ", asy
   expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   expect(department).toBeNull();
@@ -113,9 +113,9 @@ test("should call readonly status when retrieving departments by params ", async
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       code: {
-        contains: undefined
-      }
-    }
+        contains: undefined,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(departementsData.length);
 });
@@ -131,7 +131,7 @@ test("should call readonly status when retrieving paginated departments", async 
   expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     orderBy: undefined,
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(departementsData.length);
 });
@@ -145,9 +145,9 @@ test("should handle params when retrieving paginated departments ", async () => 
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.departement.findMany.mockResolvedValueOnce([departementsData[0]]);
@@ -159,15 +159,15 @@ test("should handle params when retrieving paginated departments ", async () => 
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
     where: {
       code: {
-        contains: searchParams.searchParams?.q
-      }
-    }
+        contains: searchParams.searchParams?.q,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -183,14 +183,14 @@ test("should update an existing department as an admin ", async () => {
   expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
     data: departmentData.data,
     where: {
-      id: departmentData.id
-    }
+      id: departmentData.id,
+    },
   });
 });
 
 test("should update an existing department if owner ", async () => {
   const existingData = mock<Departement>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const departmentData = mock<MutationUpsertDepartementArgs>();
@@ -205,21 +205,21 @@ test("should update an existing department if owner ", async () => {
   expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
     data: departmentData.data,
     where: {
-      id: departmentData.id
-    }
+      id: departmentData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing department and nor owner nor admin ", async () => {
   const existingData = mock<Departement>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const departmentData = mock<MutationUpsertDepartementArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
@@ -231,7 +231,7 @@ test("should throw an error when updating an existing department and nor owner n
 
 test("should throw an error when trying to update a department that exists", async () => {
   const departmentData = mock<MutationUpsertDepartementArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -246,14 +246,14 @@ test("should throw an error when trying to update a department that exists", asy
   expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
     data: departmentData.data,
     where: {
-      id: departmentData.id
-    }
+      id: departmentData.id,
+    },
   });
 });
 
 test("should create new department ", async () => {
   const departmentData = mock<MutationUpsertDepartementArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -264,14 +264,14 @@ test("should create new department ", async () => {
   expect(prismaMock.departement.create).toHaveBeenLastCalledWith({
     data: {
       ...departmentData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a department that exists", async () => {
   const departmentData = mock<MutationUpsertDepartementArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -286,19 +286,19 @@ test("should throw an error when trying to create a department that exists", asy
   expect(prismaMock.departement.create).toHaveBeenLastCalledWith({
     data: {
       ...departmentData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned department", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const department = mock<Departement>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.departement.findFirst.mockResolvedValueOnce(department);
@@ -308,14 +308,14 @@ test("should be able to delete an owned department", async () => {
   expect(prismaMock.departement.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.departement.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any department if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
@@ -325,14 +325,14 @@ test("should be able to delete any department if admin", async () => {
   expect(prismaMock.departement.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.departement.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned department as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
@@ -346,7 +346,7 @@ test("should create new departments", async () => {
   const departmentsData = [
     mock<Omit<Prisma.DepartementCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.DepartementCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.DepartementCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.DepartementCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -358,8 +358,8 @@ test("should create new departments", async () => {
     data: departmentsData.map((department) => {
       return {
         ...department,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

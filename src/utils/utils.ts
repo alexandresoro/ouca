@@ -16,7 +16,7 @@ export const getFormattedDate = (value: string): Date | null => {
   const dateFormat = "dd/MM/yyyy";
 
   const parsedDate = parse(value, dateFormat, new Date(), {
-    locale
+    locale,
   });
 
   // As date-fns parsing is not exact and could provide surprises, we check that we indeed parsed a proper year

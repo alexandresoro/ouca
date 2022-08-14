@@ -22,7 +22,7 @@ const executeSqlDump = async (): Promise<string> => {
       "--skip-triggers",
       `--host=${options.dbHost}`,
       `--port=${options.dbPort}`,
-      options.dbName
+      options.dbName,
     ];
 
     const dumpProcess: ChildProcess = spawn("mysqldump", dumpParams);

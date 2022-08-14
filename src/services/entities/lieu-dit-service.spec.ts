@@ -13,14 +13,14 @@ import {
   findLieuDitOfInventaireId,
   findLieuxDits,
   findPaginatedLieuxDits,
-  upsertLieuDit
+  upsertLieuDit,
 } from "./lieu-dit-service";
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -41,8 +41,8 @@ test("should call readonly status when retrieving one locality ", async () => {
   expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: localityData.id
-    }
+      id: localityData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -55,15 +55,15 @@ test("should handle locality not found ", async () => {
   expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
 
 test("should call readonly status when retrieving locality by inventary ID ", async () => {
   const localityData = mock<Lieudit>({
-    id: 256
+    id: 256,
   });
 
   const inventary = mockDeep<Prisma.Prisma__InventaireClient<Inventaire>>();
@@ -76,8 +76,8 @@ test("should call readonly status when retrieving locality by inventary ID ", as
   expect(prismaMock.inventaire.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.inventaire.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   expect(locality?.id).toEqual(256);
@@ -94,8 +94,8 @@ test("should handle class not found when retrieving locality by inventary ID ", 
   expect(prismaMock.inventaire.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.inventaire.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   expect(locality).toBeNull();
@@ -115,14 +115,14 @@ test("should call readonly status when retrieving localities by params ", async 
       AND: [
         {
           nom: {
-            contains: undefined
-          }
+            contains: undefined,
+          },
         },
         {},
-        {}
-      ]
+        {},
+      ],
     },
-    take: undefined
+    take: undefined,
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(localitiesData.length);
 });
@@ -145,13 +145,13 @@ test("should call readonly status when retrieving paginated localities", async (
             select: {
               id: true,
               code: true,
-              ownerId: true
-            }
-          }
-        }
-      }
+              ownerId: true,
+            },
+          },
+        },
+      },
     },
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(localitiesData.length);
 });
@@ -165,9 +165,9 @@ test("should handle params when retrieving paginated localities ", async () => {
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.lieudit.findMany.mockResolvedValueOnce([localitiesData[0]]);
@@ -179,7 +179,7 @@ test("should handle params when retrieving paginated localities ", async () => {
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     include: {
       commune: {
@@ -188,11 +188,11 @@ test("should handle params when retrieving paginated localities ", async () => {
             select: {
               id: true,
               code: true,
-              ownerId: true
-            }
-          }
-        }
-      }
+              ownerId: true,
+            },
+          },
+        },
+      },
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
@@ -200,29 +200,29 @@ test("should handle params when retrieving paginated localities ", async () => {
       OR: [
         {
           nom: {
-            contains: searchParams.searchParams?.q
-          }
+            contains: searchParams.searchParams?.q,
+          },
         },
         {
           commune: {
             OR: [
               {
                 nom: {
-                  contains: searchParams.searchParams?.q
-                }
+                  contains: searchParams.searchParams?.q,
+                },
               },
               {
                 departement: {
                   code: {
-                    contains: searchParams.searchParams?.q
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ]
-    }
+                    contains: searchParams.searchParams?.q,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -239,14 +239,14 @@ test("should update an existing locality as an admin ", async () => {
   expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
     data: localityData.data,
     where: {
-      id: localityData.id
-    }
+      id: localityData.id,
+    },
   });
 });
 
 test("should update an existing locality if owner ", async () => {
   const existingData = mock<Lieudit>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const localityData = mock<MutationUpsertLieuDitArgs>();
@@ -262,21 +262,21 @@ test("should update an existing locality if owner ", async () => {
   expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
     data: localityData.data,
     where: {
-      id: localityData.id
-    }
+      id: localityData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing locality and nor owner nor admin ", async () => {
   const existingData = mock<Lieudit>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const localityData = mock<MutationUpsertLieuDitArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
@@ -288,7 +288,7 @@ test("should throw an error when updating an existing locality and nor owner nor
 
 test("should throw an error when trying to update a locality that exists", async () => {
   const localityData = mock<MutationUpsertLieuDitArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -303,14 +303,14 @@ test("should throw an error when trying to update a locality that exists", async
   expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
     data: localityData.data,
     where: {
-      id: localityData.id
-    }
+      id: localityData.id,
+    },
   });
 });
 
 test("should create new locality ", async () => {
   const localityData = mock<MutationUpsertLieuDitArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -323,14 +323,14 @@ test("should create new locality ", async () => {
   expect(prismaMock.lieudit.create).toHaveBeenLastCalledWith({
     data: {
       ...localityData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a locality that exists", async () => {
   const localityData = mock<MutationUpsertLieuDitArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -345,19 +345,19 @@ test("should throw an error when trying to create a locality that exists", async
   expect(prismaMock.lieudit.create).toHaveBeenLastCalledWith({
     data: {
       ...localityData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned locality", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const locality = mock<Lieudit>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.lieudit.findFirst.mockResolvedValueOnce(locality);
@@ -368,14 +368,14 @@ test("should be able to delete an owned locality", async () => {
   expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any locality if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
@@ -386,14 +386,14 @@ test("should be able to delete any locality if admin", async () => {
   expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned locality as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
@@ -407,7 +407,7 @@ test("should create new lieudits", async () => {
   const lieuDitsData = [
     mock<Omit<Prisma.LieuditCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.LieuditCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.LieuditCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.LieuditCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -419,8 +419,8 @@ test("should create new lieudits", async () => {
     data: lieuDitsData.map((lieuDit) => {
       return {
         ...lieuDit,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

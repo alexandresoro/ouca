@@ -2,7 +2,7 @@ import { DatabaseRole, EstimationDistance, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   MutationUpsertEstimationDistanceArgs,
-  QueryPaginatedEstimationsDistanceArgs
+  QueryPaginatedEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -15,14 +15,14 @@ import {
   findEstimationDistance,
   findEstimationsDistance,
   findPaginatedEstimationsDistance,
-  upsertEstimationDistance
+  upsertEstimationDistance,
 } from "./estimation-distance-service";
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -43,8 +43,8 @@ test("should call readonly status when retrieving one distance estimate ", async
   expect(prismaMock.estimationDistance.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationDistance.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: distanceEstimateData.id
-    }
+      id: distanceEstimateData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -57,8 +57,8 @@ test("should handle distance estimate not found ", async () => {
   expect(prismaMock.estimationDistance.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationDistance.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
@@ -75,9 +75,9 @@ test("should call readonly status when retrieving distance estimates by params "
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
-        contains: undefined
-      }
-    }
+        contains: undefined,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(distanceEstimatesData.length);
 });
@@ -93,7 +93,7 @@ test("should call readonly status when retrieving paginated distance estimates",
   expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: undefined,
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(distanceEstimatesData.length);
 });
@@ -107,9 +107,9 @@ test("should handle params when retrieving paginated distance estimates ", async
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.estimationDistance.findMany.mockResolvedValueOnce([distanceEstimatesData[0]]);
@@ -121,15 +121,15 @@ test("should handle params when retrieving paginated distance estimates ", async
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
     where: {
       libelle: {
-        contains: searchParams.searchParams?.q
-      }
-    }
+        contains: searchParams.searchParams?.q,
+      },
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -145,14 +145,14 @@ test("should update an existing distance estimate as an admin ", async () => {
   expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
     data: distanceEstimateData.data,
     where: {
-      id: distanceEstimateData.id
-    }
+      id: distanceEstimateData.id,
+    },
   });
 });
 
 test("should update an existing distance estimate if owner ", async () => {
   const existingData = mock<EstimationDistance>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
@@ -167,21 +167,21 @@ test("should update an existing distance estimate if owner ", async () => {
   expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
     data: distanceEstimateData.data,
     where: {
-      id: distanceEstimateData.id
-    }
+      id: distanceEstimateData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing distance estimate and nor owner nor admin ", async () => {
   const existingData = mock<EstimationDistance>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(existingData);
@@ -193,7 +193,7 @@ test("should throw an error when updating an existing distance estimate and nor 
 
 test("should throw an error when trying to update a distance estimate that exists", async () => {
   const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -208,14 +208,14 @@ test("should throw an error when trying to update a distance estimate that exist
   expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
     data: distanceEstimateData.data,
     where: {
-      id: distanceEstimateData.id
-    }
+      id: distanceEstimateData.id,
+    },
   });
 });
 
 test("should create new distance estimate ", async () => {
   const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -226,14 +226,14 @@ test("should create new distance estimate ", async () => {
   expect(prismaMock.estimationDistance.create).toHaveBeenLastCalledWith({
     data: {
       ...distanceEstimateData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a distance estimate that exists", async () => {
   const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -248,19 +248,19 @@ test("should throw an error when trying to create a distance estimate that exist
   expect(prismaMock.estimationDistance.create).toHaveBeenLastCalledWith({
     data: {
       ...distanceEstimateData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned distance estimate", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const distanceEstimate = mock<EstimationDistance>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(distanceEstimate);
@@ -270,14 +270,14 @@ test("should be able to delete an owned distance estimate", async () => {
   expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationDistance.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any distance estimate if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
@@ -287,14 +287,14 @@ test("should be able to delete any distance estimate if admin", async () => {
   expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationDistance.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned distance estimate as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
@@ -308,7 +308,7 @@ test("should create new distance estimates", async () => {
   const distanceEstimatesData = [
     mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -320,8 +320,8 @@ test("should create new distance estimates", async () => {
     data: distanceEstimatesData.map((distanceEstimate) => {
       return {
         ...distanceEstimate,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

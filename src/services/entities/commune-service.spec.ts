@@ -12,7 +12,7 @@ import {
   findCommuneOfLieuDitId,
   findCommunes,
   findPaginatedCommunes,
-  upsertCommune
+  upsertCommune,
 } from "./commune-service";
 import * as entitiesUtils from "./entities-utils";
 
@@ -20,7 +20,7 @@ const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
-  message: "Prisma error message"
+  message: "Prisma error message",
 };
 
 const prismaConstraintFailed = () => {
@@ -41,8 +41,8 @@ test("should call readonly status when retrieving one city ", async () => {
   expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: cityData.id
-    }
+      id: cityData.id,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -55,15 +55,15 @@ test("should handle city not found ", async () => {
   expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 10
-    }
+      id: 10,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
 
 test("should call readonly status when retrieving city by zone ID ", async () => {
   const cityData = mock<Commune>({
-    id: 256
+    id: 256,
   });
 
   const zone = mockDeep<Prisma.Prisma__LieuditClient<Lieudit>>();
@@ -76,8 +76,8 @@ test("should call readonly status when retrieving city by zone ID ", async () =>
   expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   expect(city?.id).toEqual(256);
@@ -94,8 +94,8 @@ test("should handle class not found when retrieving city by zone ID ", async () 
   expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
     where: {
-      id: 43
-    }
+      id: 43,
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   expect(city).toBeNull();
@@ -118,14 +118,14 @@ test("should call readonly status when retrieving cities by params ", async () =
             {},
             {
               nom: {
-                startsWith: undefined
-              }
-            }
-          ]
+                startsWith: undefined,
+              },
+            },
+          ],
         },
-        {}
-      ]
-    }
+        {},
+      ],
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(citiesData.length);
 });
@@ -141,7 +141,7 @@ test("should call readonly status when retrieving paginated cities", async () =>
   expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
     orderBy: undefined,
-    where: {}
+    where: {},
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(citiesData.length);
 });
@@ -155,9 +155,9 @@ test("should handle params when retrieving paginated cities ", async () => {
     searchParams: {
       q: "Bob",
       pageNumber: 0,
-      pageSize: 10
+      pageSize: 10,
     },
-    includeCounts: false
+    includeCounts: false,
   };
 
   prismaMock.commune.findMany.mockResolvedValueOnce([citiesData[0]]);
@@ -169,7 +169,7 @@ test("should handle params when retrieving paginated cities ", async () => {
     ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder
+      [searchParams.orderBy!]: searchParams.sortOrder,
     },
     skip: searchParams.searchParams?.pageNumber,
     take: searchParams.searchParams?.pageSize,
@@ -177,18 +177,18 @@ test("should handle params when retrieving paginated cities ", async () => {
       OR: [
         {
           nom: {
-            contains: searchParams.searchParams?.q
-          }
+            contains: searchParams.searchParams?.q,
+          },
         },
         {
           departement: {
             code: {
-              contains: searchParams.searchParams?.q
-            }
-          }
-        }
-      ]
-    }
+              contains: searchParams.searchParams?.q,
+            },
+          },
+        },
+      ],
+    },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
@@ -204,14 +204,14 @@ test("should update an existing city as an admin ", async () => {
   expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
     data: cityData.data,
     where: {
-      id: cityData.id
-    }
+      id: cityData.id,
+    },
   });
 });
 
 test("should update an existing city if owner ", async () => {
   const existingData = mock<Commune>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const cityData = mock<MutationUpsertCommuneArgs>();
@@ -226,21 +226,21 @@ test("should update an existing city if owner ", async () => {
   expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
     data: cityData.data,
     where: {
-      id: cityData.id
-    }
+      id: cityData.id,
+    },
   });
 });
 
 test("should throw an error when updating an existing city and nor owner nor admin ", async () => {
   const existingData = mock<Commune>({
-    ownerId: "notAdmin"
+    ownerId: "notAdmin",
   });
 
   const cityData = mock<MutationUpsertCommuneArgs>();
 
   const user = {
     id: "Bob",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
@@ -252,7 +252,7 @@ test("should throw an error when updating an existing city and nor owner nor adm
 
 test("should throw an error when trying to update a city that exists", async () => {
   const cityData = mock<MutationUpsertCommuneArgs>({
-    id: 12
+    id: 12,
   });
 
   const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -267,14 +267,14 @@ test("should throw an error when trying to update a city that exists", async () 
   expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
     data: cityData.data,
     where: {
-      id: cityData.id
-    }
+      id: cityData.id,
+    },
   });
 });
 
 test("should create new city ", async () => {
   const cityData = mock<MutationUpsertCommuneArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -285,14 +285,14 @@ test("should create new city ", async () => {
   expect(prismaMock.commune.create).toHaveBeenLastCalledWith({
     data: {
       ...cityData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should throw an error when trying to create a city that exists", async () => {
   const cityData = mock<MutationUpsertCommuneArgs>({
-    id: undefined
+    id: undefined,
   });
 
   const loggedUser = mock<LoggedUser>({ id: "a" });
@@ -307,19 +307,19 @@ test("should throw an error when trying to create a city that exists", async () 
   expect(prismaMock.commune.create).toHaveBeenLastCalledWith({
     data: {
       ...cityData.data,
-      ownerId: loggedUser.id
-    }
+      ownerId: loggedUser.id,
+    },
   });
 });
 
 test("should be able to delete an owned city", async () => {
   const loggedUser: LoggedUser = {
     id: "12",
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   };
 
   const city = mock<Commune>({
-    ownerId: loggedUser.id
+    ownerId: loggedUser.id,
   });
 
   prismaMock.commune.findFirst.mockResolvedValueOnce(city);
@@ -329,14 +329,14 @@ test("should be able to delete an owned city", async () => {
   expect(prismaMock.commune.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should be able to delete any city if admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin
+    role: DatabaseRole.admin,
   });
 
   prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
@@ -346,14 +346,14 @@ test("should be able to delete any city if admin", async () => {
   expect(prismaMock.commune.delete).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.delete).toHaveBeenLastCalledWith({
     where: {
-      id: 11
-    }
+      id: 11,
+    },
   });
 });
 
 test("should return an error when deleting a non-owned city as non-admin", async () => {
   const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor
+    role: DatabaseRole.contributor,
   });
 
   prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
@@ -367,7 +367,7 @@ test("should create new communes", async () => {
   const communesData = [
     mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>()
+    mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
@@ -379,8 +379,8 @@ test("should create new communes", async () => {
     data: communesData.map((commune) => {
       return {
         ...commune,
-        ownerId: loggedUser.id
+        ownerId: loggedUser.id,
       };
-    })
+    }),
   });
 });

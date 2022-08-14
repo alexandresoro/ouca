@@ -19,7 +19,7 @@ export class ImportedEntiteAvecLibelleEtCode {
   } => {
     return {
       code: this.code,
-      libelle: this.libelle
+      libelle: this.libelle,
     };
   };
 

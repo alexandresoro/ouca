@@ -3,7 +3,7 @@ import {
   FindParams,
   MilieuxPaginatedResult,
   MutationUpsertMilieuArgs,
-  QueryPaginatedMilieuxArgs
+  QueryPaginatedMilieuxArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -14,7 +14,7 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus
+  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findMilieu = async (
@@ -23,8 +23,8 @@ export const findMilieu = async (
 ): Promise<(Milieu & ReadonlyStatus) | null> => {
   const milieuEntity = await prisma.milieu.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   });
 
   if (!milieuEntity) {
@@ -33,7 +33,7 @@ export const findMilieu = async (
 
   return {
     ...milieuEntity,
-    readonly: isEntityReadOnly(milieuEntity, loggedUser)
+    readonly: isEntityReadOnly(milieuEntity, loggedUser),
   };
 };
 
@@ -45,15 +45,15 @@ export const findMilieuxByIds = async (
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       id: {
-        in: ids
-      }
-    }
+        in: ids,
+      },
+    },
   });
 
   return milieuxEntities?.map((milieu) => {
     return {
       ...milieu,
-      readonly: isEntityReadOnly(milieu, loggedUser)
+      readonly: isEntityReadOnly(milieu, loggedUser),
     };
   });
 };
@@ -68,8 +68,8 @@ export const findMilieux = async (
   const matchingCodesAsNumberClause = matchingCodesAsNumber.map((matchingCode) => {
     return {
       code: {
-        startsWith: matchingCode
-      }
+        startsWith: matchingCode,
+      },
     };
   });
 
@@ -81,23 +81,23 @@ export const findMilieux = async (
             ...matchingCodesAsNumberClause,
             {
               code: {
-                startsWith: q // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
-              }
-            }
-          ]
+                startsWith: q, // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
+              },
+            },
+          ],
         }
       : undefined,
-    take: max || undefined
+    take: max || undefined,
   });
 
   const matchingWithLibelle = await prisma.milieu.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
-        contains: q || undefined
-      }
+        contains: q || undefined,
+      },
     },
-    take: max || undefined
+    take: max || undefined,
   });
 
   // Concatenate arrays and remove elements that could be present in several indexes, to keep a unique reference
@@ -110,7 +110,7 @@ export const findMilieux = async (
     .map((matchingEntry) => {
       return {
         ...matchingEntry,
-        readonly: isEntityReadOnly(matchingEntry, loggedUser)
+        readonly: isEntityReadOnly(matchingEntry, loggedUser),
       };
     });
 
@@ -123,15 +123,15 @@ const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput 
         OR: [
           {
             code: {
-              contains: q
-            }
+              contains: q,
+            },
           },
           {
             libelle: {
-              contains: q
-            }
-          }
-        ]
+              contains: q,
+            },
+          },
+        ],
       }
     : {};
 };
@@ -149,14 +149,14 @@ export const findPaginatedMilieux = async (
       case "code":
       case "libelle":
         orderBy = {
-          [orderByField]: sortOrder
+          [orderByField]: sortOrder,
         };
         break;
       case "nbDonnees":
         orderBy = {
           donnee_milieu: {
-            _count: sortOrder
-          }
+            _count: sortOrder,
+          },
         };
         break;
       default:
@@ -167,7 +167,7 @@ export const findPaginatedMilieux = async (
   const milieux = await prisma.milieu.findMany({
     ...getPrismaPagination(searchParams),
     orderBy,
-    where: getFilterClause(searchParams?.q)
+    where: getFilterClause(searchParams?.q),
   });
 
   const donneesByMilieu = includeCounts
@@ -175,15 +175,15 @@ export const findPaginatedMilieux = async (
         by: ["milieu_id"],
         where: {
           milieu_id: {
-            in: milieux?.map((milieu) => milieu.id)
-          }
+            in: milieux?.map((milieu) => milieu.id),
+          },
         },
-        _count: true
+        _count: true,
       })
     : null;
 
   const count = await prisma.milieu.count({
-    where: getFilterClause(searchParams?.q)
+    where: getFilterClause(searchParams?.q),
   });
 
   return {
@@ -193,12 +193,12 @@ export const findPaginatedMilieux = async (
         readonly: isEntityReadOnly(milieu, loggedUser),
         ...(includeCounts
           ? {
-              nbDonnees: donneesByMilieu?.find((donneeByMilieu) => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0
+              nbDonnees: donneesByMilieu?.find((donneeByMilieu) => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0,
             }
-          : {})
+          : {}),
       };
     }),
-    count
+    count,
   };
 };
 
@@ -214,7 +214,7 @@ export const upsertMilieu = async (
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== DatabaseRole.admin) {
       const existingData = await prisma.milieu.findFirst({
-        where: { id }
+        where: { id },
       });
 
       if (existingData?.ownerId !== loggedUser.id) {
@@ -226,7 +226,7 @@ export const upsertMilieu = async (
     try {
       upsertedMilieu = await prisma.milieu.update({
         where: { id },
-        data
+        data,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -248,7 +248,7 @@ export const upsertMilieu = async (
 
   return {
     ...upsertedMilieu,
-    readonly: false
+    readonly: false,
   };
 };
 
@@ -256,7 +256,7 @@ export const deleteMilieu = async (id: number, loggedUser: LoggedUser): Promise<
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.milieu.findFirst({
-      where: { id }
+      where: { id },
     });
 
     if (existingData?.ownerId !== loggedUser.id) {
@@ -266,8 +266,8 @@ export const deleteMilieu = async (id: number, loggedUser: LoggedUser): Promise<
 
   return prisma.milieu.delete({
     where: {
-      id
-    }
+      id,
+    },
   });
 };
 
@@ -278,6 +278,6 @@ export const createMilieux = async (
   return prisma.milieu.createMany({
     data: milieux.map((milieu) => {
       return { ...milieu, ownerId: loggedUser.id };
-    })
+    }),
   });
 };

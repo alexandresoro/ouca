@@ -9,7 +9,7 @@ import {
   Meteo,
   Milieu,
   Observateur,
-  Sexe
+  Sexe,
 } from "@prisma/client";
 import { InputDonnee } from "../../graphql/generated/graphql-types";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
@@ -140,7 +140,7 @@ export class ImportDonneeService extends ImportService {
     let coordinates: Coordinates | null = {
       longitude: +importedDonnee.longitude,
       latitude: +importedDonnee.latitude,
-      system: importedDonnee.coordinatesSystem.code
+      system: importedDonnee.coordinatesSystem.code,
     };
 
     // Round the coordinates
@@ -335,7 +335,7 @@ export class ImportDonneeService extends ImportService {
       // Create the inventaire if it does not exist yet
       const inventaire = await upsertInventaire(
         {
-          data: inputInventaire
+          data: inputInventaire,
         },
         loggedUser
       );
