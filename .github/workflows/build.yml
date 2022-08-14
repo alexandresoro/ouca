@@ -6,6 +6,7 @@ on:
       - master
     tags:
       - "v*.*.*"
+      - "*.*.*"
   pull_request:
     branches:
       - master
@@ -14,14 +15,16 @@ jobs:
   check-build:
     runs-on: ubuntu-latest
 
+    outputs:
+      nodeVersion: ${{ steps.step1.nodeVersion.version }}
+
     strategy:
       matrix:
         include:
-          - node-version: 16.x
+          - node-version: 16
             type: "build,lts"
             published: true
-          - node-version: 18.x
-            type: "next"
+          - node-version: latest
             published: false
 
     steps:
@@ -49,6 +52,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Set supported node version
+        id: nodeVersion
+        if: ${{ matrix.published }} && github.event_name == 'push'
+        run: echo "::set-output name=version::${{ matrix.node-version }}"
+
       - name: Upload artifact
         if: ${{ matrix.published }} && github.event_name == 'push'
         uses: actions/upload-artifact@v3
@@ -64,7 +72,7 @@ jobs:
           if-no-files-found: error
 
 
-  docker-publish:
+  publish-package:
     needs: check-build
 
     if: github.event_name == 'push'
@@ -73,27 +81,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Retrieve built artifact
+      - name: Retrieve artifact
         uses: actions/download-artifact@v3
         with:
           name: dist-node-lts
           path: build
 
-      - name: Set the default docker tag
-        run: |
-          echo "DOCKER_TAG=latest" >> $GITHUB_ENV
-
-      - name: Set docker tag as branch name if on a branch
-        if: startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/master'
-        run: |
-          echo "DOCKER_TAG=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-
-      - name: Retrieve docker label if this is a tag push
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          echo "DOCKER_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
       - name: Docker meta
+        id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
@@ -103,8 +98,8 @@ jobs:
             type=ref,event=branch
             # tag event
             type=ref,event=tag
-            # set latest tag for master branch
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
           flavor: |
             latest=false
 
@@ -127,6 +122,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           builder: ${{ steps.buildx.outputs.name }}
+          build-args: |
+            NODE_IMAGE_VERSION=${{ needs.check-build.outputs.nodeVersion }}
           context: .
           platforms: |
             linux/amd64
