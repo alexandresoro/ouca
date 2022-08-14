@@ -2,6 +2,7 @@ ARG NODE_IMAGE_VERSION=16
 
 FROM node:${NODE_IMAGE_VERSION}-alpine
 
+# Sets to production, it also sets the install script to install deps only
 ENV NODE_ENV=production
 
 WORKDIR /app
@@ -16,9 +17,9 @@ RUN apk add --no-cache mariadb-client
 COPY build/ /app/
 
 # Install production deps
-RUN npm set-script prepare "" && \
-  npm set-script generate-graphql "" && \
-  npm ci --production && \
+RUN npm pkg set scripts.prepare="" && \
+  npm pkg set scripts.generate-graphql="" && \
+  npm ci && \
   # Cleanup files not needed anymore
   rm -f package.json package-lock.json
 
