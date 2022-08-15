@@ -1,3 +1,9 @@
 src/model/graphql.ts
 src/graphql/generated
 jest.config.*
+
+# Exclude coverage files from linter
+coverage
+
+# Exclude build files from linter
+dist
