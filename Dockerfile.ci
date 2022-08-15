@@ -3,7 +3,7 @@ ARG NODE_IMAGE_VERSION=16
 FROM node:${NODE_IMAGE_VERSION}-alpine
 
 # Sets to production, it also sets the install script to install deps only
-ENV NODE_ENV=production
+ENV NODE_ENV production
 
 WORKDIR /app
 
