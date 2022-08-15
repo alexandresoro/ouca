@@ -17,8 +17,8 @@ RUN apk add --no-cache mariadb-client
 COPY build/ /app/
 
 # Install production deps
-RUN npm pkg set scripts.prepare="" && \
-  npm pkg set scripts.generate-graphql="" && \
+RUN npm set-script prepare "" && \
+  npm set-script generate-graphql "" && \
   npm ci && \
   # Cleanup files not needed anymore
   rm -f package.json package-lock.json
