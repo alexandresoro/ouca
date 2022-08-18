@@ -1,11 +1,9 @@
 # Build output dir
-build
+dist
 
 # Files that don't need to be perfect
 .github
 .vscode
-
-src/setupProxy.js
 
 # Ignore submodule formatting
 src/model

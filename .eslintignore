@@ -1,2 +1,7 @@
 src/model/graphql.ts
-src/setupProxy.js
+
+jest.config.*
+vite.config.ts
+
+dist/
+functions/

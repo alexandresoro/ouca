@@ -26,6 +26,7 @@ const DonneeFilter: FunctionComponent = () => {
             )}
             renderTags={(value: readonly string[], getTagProps) =>
               value.map((option: string, index: number) => (
+                // eslint-disable-next-line react/jsx-key
                 <Chip variant="outlined" label={option} {...getTagProps({ index })} />
               ))
             }

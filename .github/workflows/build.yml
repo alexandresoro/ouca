@@ -6,6 +6,7 @@ on:
       - master
     tags:
       - "v*.*.*"
+      - "*.*.*"
   pull_request:
     branches:
       - master
@@ -17,10 +18,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - node-version: 16.x
+          - node-version: 16
             type: "build,lts"
-          # - node-version: 17.x
-          #   type: "next"
+          # - node-version: latest
 
     steps:
       - uses: actions/checkout@v3
@@ -35,11 +35,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate formatting
-        run: npx prettier --check .
+      - name: Lint
+        run: npm run lint
 
-      - name: Tests
-        run: npm run test -- --passWithNoTests
+      - name: Prettier
+        run: npm run prettier:check
+
+      - name: Test
+        run: npm test
 
       - name: Build
         run: GENERATE_SOURCEMAP=false npm run build
@@ -57,7 +60,7 @@ jobs:
       - name: Prepare release content
         if: github.event_name == 'push'
         run: |
-          tar -cvzf ouca-web-${{env.release_tag}}.tar.gz -C build/ .
+          tar -cvzf ouca-web-${{env.release_tag}}.tar.gz -C dist/ .
       
       - name: Publish the release
         if: github.event_name == 'push'
