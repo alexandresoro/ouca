@@ -75,14 +75,5 @@
   },
   "engines": {
     "node": ">=16"
-  },
-  "lint-staged": {
-    "*": [
-      "prettier --check"
-    ],
-    "*.ts": [
-      "eslint",
-      "jest --bail --findRelatedTests --passWithNoTests"
-    ]
   }
 }
