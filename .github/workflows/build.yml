@@ -20,6 +20,7 @@ jobs:
         include:
           - node-version: 16
             type: "build,lts"
+            published: true
           # - node-version: latest
 
     steps:
@@ -45,7 +46,7 @@ jobs:
         run: npm test
 
       - name: Build
-        run: GENERATE_SOURCEMAP=false npm run build
+        run: npm run build
         
       - name: Compute the release name
         if: github.event_name == 'push'
@@ -58,12 +59,12 @@ jobs:
           echo "release_tag=v${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           
       - name: Prepare release content
-        if: github.event_name == 'push'
+        if: matrix.published && github.event_name == 'push'
         run: |
           tar -cvzf ouca-web-${{env.release_tag}}.tar.gz -C dist/ .
       
       - name: Publish the release
-        if: github.event_name == 'push'
+        if: matrix.published && github.event_name == 'push'
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
