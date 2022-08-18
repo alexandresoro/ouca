@@ -6,6 +6,16 @@ import { TextEncoder } from "util";
 import { validateAndExtractUserToken } from "./token-service";
 import * as userService from "./user-service";
 
+jest.mock("./user-service", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const actualModule = jest.requireActual("./user-service");
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return {
+    __esModule: true,
+    ...actualModule,
+  };
+});
+
 const jwtVerify = jest.spyOn(jose, "jwtVerify");
 const getUser = jest.spyOn(userService, "getUser");
 

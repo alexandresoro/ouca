@@ -18,6 +18,26 @@ import {
   upsertEspece,
 } from "./espece-service";
 
+jest.mock("./donnee-utils", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const actualModule = jest.requireActual("./donnee-utils");
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return {
+    __esModule: true,
+    ...actualModule,
+  };
+});
+
+jest.mock("./entities-utils", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const actualModule = jest.requireActual("./entities-utils");
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return {
+    __esModule: true,
+    ...actualModule,
+  };
+});
+
 const buildSearchDonneeCriteria = jest.spyOn(donneeUtils, "buildSearchDonneeCriteria");
 
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");

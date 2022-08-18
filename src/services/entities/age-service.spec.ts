@@ -8,6 +8,16 @@ import { OucaError } from "../../utils/errors";
 import { createAges, deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "./age-service";
 import * as entitiesUtils from "./entities-utils";
 
+jest.mock("./entities-utils", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const actualModule = jest.requireActual("./entities-utils");
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return {
+    __esModule: true,
+    ...actualModule,
+  };
+});
+
 const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {

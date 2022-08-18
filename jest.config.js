@@ -1,10 +1,12 @@
+/**
+ * @type {import('@jest/types').Config.ProjectConfig}
+ */
 /*
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/configuration
  */
 
-export default {
-  preset: "ts-jest",
+module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -180,7 +182,9 @@ export default {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  // transform: undefined,
+  transform: {
+    "^.+\\.(t|j)sx?$": "@swc/jest",
+  },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [

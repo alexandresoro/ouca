@@ -3,6 +3,16 @@ import { SearchDonneeCriteria } from "../../graphql/generated/graphql-types";
 import * as timeUtils from "../../utils/time-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 
+jest.mock("../../utils/time-utils", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const actualModule = jest.requireActual("../../utils/time-utils");
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return {
+    __esModule: true,
+    ...actualModule,
+  };
+});
+
 const parseISO8601AsUTCDate = jest.spyOn(timeUtils, "parseISO8601AsUTCDate");
 
 test("should build correct structure when input is null", () => {
