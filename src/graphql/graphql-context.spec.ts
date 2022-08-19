@@ -5,10 +5,8 @@ import { JWTPayload } from "jose";
 import { deleteTokenCookie, validateAndExtractUserToken } from "../services/token-service";
 import { getGraphQLContext, GraphQLContext } from "./graphql-context";
 
-jest.mock("../services/token-service", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("../services/token-service");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock<typeof import("../services/token-service")>("../services/token-service", () => {
+  const actualModule = jest.requireActual<typeof import("../services/token-service")>("../services/token-service");
   return {
     __esModule: true,
     ...actualModule,

@@ -3,10 +3,8 @@ import { SearchDonneeCriteria } from "../../graphql/generated/graphql-types";
 import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 
-jest.mock("../../utils/time-utils", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("../../utils/time-utils");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock<typeof import("../../utils/time-utils")>("../../utils/time-utils", () => {
+  const actualModule = jest.requireActual<typeof import("../../utils/time-utils")>("../../utils/time-utils");
   return {
     __esModule: true,
     ...actualModule,

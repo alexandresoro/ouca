@@ -18,10 +18,8 @@ import {
   upsertEspece,
 } from "./espece-service";
 
-jest.mock("./donnee-utils", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("./donnee-utils");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock<typeof import("./donnee-utils")>("./donnee-utils", () => {
+  const actualModule = jest.requireActual<typeof import("./donnee-utils")>("./donnee-utils");
   return {
     __esModule: true,
     ...actualModule,
@@ -29,10 +27,8 @@ jest.mock("./donnee-utils", () => {
   };
 });
 
-jest.mock("./entities-utils", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("./entities-utils");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
+  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
   return {
     __esModule: true,
     ...actualModule,

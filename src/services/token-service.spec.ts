@@ -6,10 +6,8 @@ import { TextEncoder } from "util";
 import { validateAndExtractUserToken } from "./token-service";
 import { getUser } from "./user-service";
 
-jest.mock("./user-service", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("./user-service");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock<typeof import("./user-service")>("./user-service", () => {
+  const actualModule = jest.requireActual<typeof import("./user-service")>("./user-service");
   return {
     __esModule: true,
     ...actualModule,
@@ -17,10 +15,8 @@ jest.mock("./user-service", () => {
   };
 });
 
-jest.mock("jose", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("jose");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock<typeof import("jose")>("jose", () => {
+  const actualModule = jest.requireActual<typeof import("jose")>("jose");
   return {
     __esModule: true,
     ...actualModule,

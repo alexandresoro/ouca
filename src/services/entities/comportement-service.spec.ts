@@ -16,10 +16,8 @@ import {
 } from "./comportement-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 
-jest.mock("./entities-utils", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("./entities-utils");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
+  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
   return {
     __esModule: true,
     ...actualModule,

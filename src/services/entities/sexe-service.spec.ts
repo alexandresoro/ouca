@@ -8,10 +8,8 @@ import { OucaError } from "../../utils/errors";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 import { createSexes, deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "./sexe-service";
 
-jest.mock("./entities-utils", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("./entities-utils");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
+  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
   return {
     __esModule: true,
     ...actualModule,
