@@ -14,7 +14,7 @@ import {
   findPaginatedClasses,
   upsertClasse,
 } from "./classe-service";
-import * as entitiesUtils from "./entities-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 
 jest.mock("./entities-utils", () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -23,10 +23,9 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -120,7 +119,7 @@ test("should call readonly status when retrieving classes by params ", async () 
 
   expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
         contains: undefined,
@@ -139,7 +138,7 @@ test("should call readonly status when retrieving paginated classes ", async () 
 
   expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: undefined,
     where: {},
   });
@@ -166,7 +165,7 @@ test("should handle params when retrieving paginated classes ", async () => {
 
   expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       [searchParams.orderBy!]: searchParams.sortOrder,

@@ -8,7 +8,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import * as entitiesUtils from "./entities-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createObservateurs,
   deleteObservateur,
@@ -28,10 +28,9 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -106,7 +105,7 @@ test("should call readonly status when retrieving observers by ID ", async () =>
 
   expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       id: {
         in: observersData.map((obs) => obs.id),
@@ -125,7 +124,7 @@ test("should call readonly status when retrieving observers by params ", async (
 
   expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
         contains: undefined,
@@ -146,7 +145,7 @@ describe("Entities paginated find by search criteria", () => {
 
     expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-      ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
       orderBy: {},
       where: {},
     });
@@ -173,7 +172,7 @@ describe("Entities paginated find by search criteria", () => {
 
     expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-      ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
       orderBy: {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         [searchParams.orderBy!]: searchParams.sortOrder,

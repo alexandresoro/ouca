@@ -5,7 +5,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import * as entitiesUtils from "./entities-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createLieuxDits,
   deleteLieuDit,
@@ -23,10 +23,9 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -120,7 +119,7 @@ test("should call readonly status when retrieving localities by params ", async 
 
   expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
     where: {
       AND: [
         {
@@ -146,7 +145,7 @@ test("should call readonly status when retrieving paginated localities", async (
 
   expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
     orderBy: undefined,
     include: {
       commune: {
@@ -186,7 +185,7 @@ test("should handle params when retrieving paginated localities ", async () => {
 
   expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       [searchParams.orderBy!]: searchParams.sortOrder,

@@ -5,7 +5,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import * as entitiesUtils from "./entities-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createMilieux,
   deleteMilieu,
@@ -23,10 +23,9 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -80,7 +79,7 @@ test("should call readonly status when retrieving environments by ID ", async ()
 
   expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       id: {
         in: environmentsData.map((environment) => environment.id),
@@ -116,10 +115,10 @@ test("should call readonly status when retrieving environments by params ", asyn
 
   expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(2);
   expect(prismaMock.milieu.findMany).toHaveBeenNthCalledWith(1, {
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
   });
   expect(prismaMock.milieu.findMany).toHaveBeenNthCalledWith(2, {
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
         contains: undefined,
@@ -127,7 +126,7 @@ test("should call readonly status when retrieving environments by params ", asyn
     },
   });
   expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
         contains: undefined,
@@ -146,7 +145,7 @@ test("should call readonly status when retrieving paginated environments", async
 
   expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     orderBy: undefined,
     where: {},
   });
@@ -173,7 +172,7 @@ test("should handle params when retrieving paginated environments ", async () =>
 
   expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       [searchParams.orderBy!]: searchParams.sortOrder,

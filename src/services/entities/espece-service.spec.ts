@@ -6,8 +6,8 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import * as donneeUtils from "./donnee-utils";
-import * as entitiesUtils from "./entities-utils";
+import { buildSearchDonneeCriteria } from "./donnee-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createEspeces,
   deleteEspece,
@@ -25,6 +25,7 @@ jest.mock("./donnee-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    buildSearchDonneeCriteria: jest.fn(),
   };
 });
 
@@ -35,12 +36,11 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
 
-const buildSearchDonneeCriteria = jest.spyOn(donneeUtils, "buildSearchDonneeCriteria");
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
+const mockedBuildSearchDonneeCriteria = jest.mocked(buildSearchDonneeCriteria, true);
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -137,7 +137,7 @@ test("should call readonly status when retrieving species by params ", async () 
 
   expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(2);
   expect(prismaMock.espece.findMany).toHaveBeenNthCalledWith(1, {
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       AND: [
         {
@@ -151,7 +151,7 @@ test("should call readonly status when retrieving species by params ", async () 
     take: undefined,
   });
   expect(prismaMock.espece.findMany).toHaveBeenNthCalledWith(2, {
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       AND: [{}, {}],
     },
@@ -169,7 +169,7 @@ test("should call readonly status when retrieving paginated species", async () =
 
   expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     include: {
       classe: {
         select: {
@@ -204,7 +204,7 @@ test("should handle params when retrieving paginated species ", async () => {
 
   expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     include: {
       classe: {
         select: {
@@ -266,13 +266,13 @@ test("should handle params and search criteria when retrieving paginated species
   const whereInput = mock<Prisma.DonneeWhereInput>();
   const { espece, especeId, ...restWhereInput } = whereInput;
 
-  buildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
+  mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
 
   await findPaginatedEspeces(searchParams, mock<SearchDonneeCriteria>());
 
   expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     include: {
       classe: {
         select: {

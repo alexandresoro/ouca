@@ -9,16 +9,6 @@ import {
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
-jest.mock("./entities-utils", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const actualModule = jest.requireActual("./entities-utils");
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return {
-    __esModule: true,
-    ...actualModule,
-  };
-});
-
 test("should return correct readonly status for non logged user", () => {
   const entity = mock<{ ownerId: string }>();
 

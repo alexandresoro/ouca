@@ -5,7 +5,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import * as entitiesUtils from "./entities-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 import { createSexes, deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "./sexe-service";
 
 jest.mock("./entities-utils", () => {
@@ -15,10 +15,9 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -72,7 +71,7 @@ test("should call readonly status when retrieving sexes by params ", async () =>
 
   expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
         contains: undefined,
@@ -91,7 +90,7 @@ test("should call readonly status when retrieving paginated sexes", async () => 
 
   expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: undefined,
     where: {},
   });
@@ -118,7 +117,7 @@ test("should handle params when retrieving paginated sexes ", async () => {
 
   expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       [searchParams.orderBy!]: searchParams.sortOrder,

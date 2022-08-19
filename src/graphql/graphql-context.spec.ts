@@ -2,7 +2,7 @@ import { AuthenticationError } from "apollo-server-core";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { mock } from "jest-mock-extended";
 import { JWTPayload } from "jose";
-import * as tokenService from "../services/token-service";
+import { deleteTokenCookie, validateAndExtractUserToken } from "../services/token-service";
 import { getGraphQLContext, GraphQLContext } from "./graphql-context";
 
 jest.mock("../services/token-service", () => {
@@ -12,18 +12,20 @@ jest.mock("../services/token-service", () => {
   return {
     __esModule: true,
     ...actualModule,
+    validateAndExtractUserToken: jest.fn(),
+    deleteTokenCookie: jest.fn(),
   };
 });
 
-const validateAndExtractUserToken = jest.spyOn(tokenService, "validateAndExtractUserToken");
-const deleteTokenCookie = jest.spyOn(tokenService, "deleteTokenCookie");
+const mockedValidateAndExtractUserToken = jest.mocked(validateAndExtractUserToken, true);
+const mockedDeleteTokenCookie = jest.mocked(deleteTokenCookie, true);
 
 describe("GraphQL context", () => {
   test("should return correct context when no token retrieved", async () => {
     const request = mock<FastifyRequest>();
     const reply = mock<FastifyReply>();
 
-    validateAndExtractUserToken.mockResolvedValueOnce(null);
+    mockedValidateAndExtractUserToken.mockResolvedValueOnce(null);
 
     const context = await getGraphQLContext({ request, reply });
 
@@ -41,7 +43,7 @@ describe("GraphQL context", () => {
 
     const tokenPayload = mock<JWTPayload>();
 
-    validateAndExtractUserToken.mockResolvedValueOnce(tokenPayload);
+    mockedValidateAndExtractUserToken.mockResolvedValueOnce(tokenPayload);
 
     const context = await getGraphQLContext({ request, reply });
 
@@ -59,9 +61,9 @@ describe("GraphQL context", () => {
 
     const rejection = mock<string>();
 
-    validateAndExtractUserToken.mockRejectedValueOnce(rejection);
+    mockedValidateAndExtractUserToken.mockRejectedValueOnce(rejection);
 
     await expect(() => getGraphQLContext({ request, reply })).rejects.toThrowError(new AuthenticationError(rejection));
-    expect(deleteTokenCookie).toHaveBeenCalledTimes(1);
+    expect(mockedDeleteTokenCookie).toHaveBeenCalledTimes(1);
   });
 });

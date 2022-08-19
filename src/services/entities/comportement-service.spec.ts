@@ -14,7 +14,7 @@ import {
   findPaginatedComportements,
   upsertComportement,
 } from "./comportement-service";
-import * as entitiesUtils from "./entities-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 
 jest.mock("./entities-utils", () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -23,10 +23,9 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -80,7 +79,7 @@ test("should call readonly status when retrieving behaviors by ID ", async () =>
 
   expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       id: {
         in: behaviorsData.map((behavior) => behavior.id),
@@ -116,10 +115,10 @@ test("should call readonly status when retrieving behaviors by params ", async (
 
   expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(2);
   expect(prismaMock.comportement.findMany).toHaveBeenNthCalledWith(1, {
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
   });
   expect(prismaMock.comportement.findMany).toHaveBeenNthCalledWith(2, {
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
         contains: undefined,
@@ -127,7 +126,7 @@ test("should call readonly status when retrieving behaviors by params ", async (
     },
   });
   expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       libelle: {
         contains: undefined,
@@ -146,7 +145,7 @@ test("should call readonly status when retrieving paginated behaviors", async ()
 
   expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     orderBy: undefined,
     where: {},
   });
@@ -173,7 +172,7 @@ test("should handle params when retrieving paginated behaviors ", async () => {
 
   expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_CODE),
+    ...queryParametersToFindAllEntities(COLUMN_CODE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       [searchParams.orderBy!]: searchParams.sortOrder,

@@ -8,7 +8,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import * as entitiesUtils from "./entities-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createEstimationsNombre,
   deleteEstimationNombre,
@@ -25,10 +25,9 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -82,7 +81,7 @@ test("should call readonly status when retrieving number estimates by params ", 
 
   expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
         contains: undefined,
@@ -101,7 +100,7 @@ test("should call readonly status when retrieving paginated number estimates", a
 
   expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: undefined,
     where: {},
   });
@@ -128,7 +127,7 @@ test("should handle params when retrieving paginated number estimates ", async (
 
   expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_LIBELLE),
+    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       [searchParams.orderBy!]: searchParams.sortOrder,

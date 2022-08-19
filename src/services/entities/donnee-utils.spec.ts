@@ -1,6 +1,6 @@
 import { mock } from "jest-mock-extended";
 import { SearchDonneeCriteria } from "../../graphql/generated/graphql-types";
-import * as timeUtils from "../../utils/time-utils";
+import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 
 jest.mock("../../utils/time-utils", () => {
@@ -10,10 +10,11 @@ jest.mock("../../utils/time-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    parseISO8601AsUTCDate: jest.fn(),
   };
 });
 
-const parseISO8601AsUTCDate = jest.spyOn(timeUtils, "parseISO8601AsUTCDate");
+const mockedParseISO8601AsUTCDate = jest.mocked(parseISO8601AsUTCDate, true);
 
 test("should build correct structure when input is null", () => {
   const searchCriteria: SearchDonneeCriteria | null = null;
@@ -99,7 +100,7 @@ test("should build correct structure when input is complete", () => {
   const fromDate = mock<Date>();
   const toDate = mock<Date>();
 
-  parseISO8601AsUTCDate.mockReturnValueOnce(fromDate).mockReturnValueOnce(toDate);
+  mockedParseISO8601AsUTCDate.mockReturnValueOnce(fromDate).mockReturnValueOnce(toDate);
 
   const result = buildSearchDonneeCriteria(searchCriteria);
 

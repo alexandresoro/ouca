@@ -14,7 +14,7 @@ import {
   findPaginatedCommunes,
   upsertCommune,
 } from "./commune-service";
-import * as entitiesUtils from "./entities-utils";
+import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 
 jest.mock("./entities-utils", () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -23,10 +23,9 @@ jest.mock("./entities-utils", () => {
   return {
     __esModule: true,
     ...actualModule,
+    isEntityReadOnly: jest.fn(),
   };
 });
-
-const isEntityReadOnly = jest.spyOn(entitiesUtils, "isEntityReadOnly");
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -120,7 +119,7 @@ test("should call readonly status when retrieving cities by params ", async () =
 
   expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
     where: {
       AND: [
         {
@@ -149,7 +148,7 @@ test("should call readonly status when retrieving paginated cities", async () =>
 
   expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
     orderBy: undefined,
     where: {},
   });
@@ -176,7 +175,7 @@ test("should handle params when retrieving paginated cities ", async () => {
 
   expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
-    ...entitiesUtils.queryParametersToFindAllEntities(COLUMN_NOM),
+    ...queryParametersToFindAllEntities(COLUMN_NOM),
     orderBy: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       [searchParams.orderBy!]: searchParams.sortOrder,

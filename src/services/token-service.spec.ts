@@ -1,10 +1,10 @@
 import { DatabaseRole, User } from "@prisma/client";
 import { FastifyRequest } from "fastify";
-import { mock, mockReset } from "jest-mock-extended";
-import * as jose from "jose";
+import { mock } from "jest-mock-extended";
+import { JWTPayload, jwtVerify, JWTVerifyResult, ResolvedKey } from "jose";
 import { TextEncoder } from "util";
 import { validateAndExtractUserToken } from "./token-service";
-import * as userService from "./user-service";
+import { getUser } from "./user-service";
 
 jest.mock("./user-service", () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -13,16 +13,23 @@ jest.mock("./user-service", () => {
   return {
     __esModule: true,
     ...actualModule,
+    getUser: jest.fn(),
   };
 });
 
-const jwtVerify = jest.spyOn(jose, "jwtVerify");
-const getUser = jest.spyOn(userService, "getUser");
-
-beforeEach(() => {
-  mockReset(jwtVerify);
-  mockReset(getUser);
+jest.mock("jose", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const actualModule = jest.requireActual("jose");
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return {
+    __esModule: true,
+    ...actualModule,
+    jwtVerify: jest.fn(),
+  };
 });
+
+const mockedGetUser = jest.mocked(getUser, true);
+const mockedJwtVerify = jest.mocked(jwtVerify, true);
 
 describe("Token validation and extraction", () => {
   test("should handle validation and extraction when missing token", async () => {
@@ -38,7 +45,7 @@ describe("Token validation and extraction", () => {
   });
 
   test("should throw error on validation and extraction of invalid token", async () => {
-    jwtVerify.mockImplementation(() => {
+    mockedJwtVerify.mockImplementation(() => {
       throw new Error();
     });
 
@@ -52,7 +59,7 @@ describe("Token validation and extraction", () => {
   });
 
   test("should handle validation and extraction of valid token", async () => {
-    const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
+    const result = mock<JWTVerifyResult & ResolvedKey>({
       payload: {
         sub: "toto",
         roles: "titi",
@@ -62,13 +69,13 @@ describe("Token validation and extraction", () => {
       },
       key: new TextEncoder().encode("toto"),
     });
-    jwtVerify.mockResolvedValueOnce(result);
+    mockedJwtVerify.mockResolvedValueOnce(result);
 
     const dbUser = mock<User>({
       id: result.payload.sub,
       role: result.payload.roles as DatabaseRole,
     });
-    getUser.mockResolvedValueOnce(dbUser);
+    mockedGetUser.mockResolvedValueOnce(dbUser);
 
     const request = mock<FastifyRequest>({
       cookies: {
@@ -78,19 +85,19 @@ describe("Token validation and extraction", () => {
 
     const tokenPayload = await validateAndExtractUserToken(request);
 
-    expect(tokenPayload).toEqual<jose.JWTPayload>(result.payload);
+    expect(tokenPayload).toEqual<JWTPayload>(result.payload);
   });
 
   test("should throw an error when validating and extracting a token that has no sub", async () => {
-    const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
+    const result = mock<JWTVerifyResult & ResolvedKey>({
       payload: {
         sub: undefined,
         roles: "titi",
       },
     });
-    jwtVerify.mockResolvedValueOnce(result);
+    mockedJwtVerify.mockResolvedValueOnce(result);
 
-    getUser.mockResolvedValue(null);
+    mockedGetUser.mockResolvedValue(null);
 
     const request = mock<FastifyRequest>({
       cookies: {
@@ -102,15 +109,15 @@ describe("Token validation and extraction", () => {
   });
 
   test("should throw an error when validating and extracting a token with matching user not found", async () => {
-    const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
+    const result = mock<JWTVerifyResult & ResolvedKey>({
       payload: {
         sub: "toto",
         roles: "titi",
       },
     });
-    jwtVerify.mockResolvedValueOnce(result);
+    mockedJwtVerify.mockResolvedValueOnce(result);
 
-    getUser.mockResolvedValue(null);
+    mockedGetUser.mockResolvedValue(null);
 
     const request = mock<FastifyRequest>({
       cookies: {
@@ -122,19 +129,19 @@ describe("Token validation and extraction", () => {
   });
 
   test("should throw an error when validating and extracting a token with user having different role", async () => {
-    const result = mock<jose.JWTVerifyResult & jose.ResolvedKey>({
+    const result = mock<JWTVerifyResult & ResolvedKey>({
       payload: {
         sub: "toto",
         roles: "titi",
       },
     });
-    jwtVerify.mockResolvedValueOnce(result);
+    mockedJwtVerify.mockResolvedValueOnce(result);
 
     const dbUser = mock<User>({
       id: result.payload.sub,
       role: "differentRole" as DatabaseRole,
     });
-    getUser.mockResolvedValueOnce(dbUser);
+    mockedGetUser.mockResolvedValueOnce(dbUser);
 
     const request = mock<FastifyRequest>({
       cookies: {
