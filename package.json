@@ -19,7 +19,7 @@
     "start": "npm run build && cd dist && node backend",
     "start:debug": "tsc --sourceMap true && cd dist && node backend",
     "test": "jest",
-    "lint": "eslint",
+    "lint": "eslint .",
     "prettier:check": "prettier -c .",
     "generate-graphql": "graphql-codegen",
     "copy:assets": "cpy 'src/**/*.graphql' dist"
@@ -63,6 +63,8 @@
     "@typescript-eslint/parser": "5.33.1",
     "cpy-cli": "4.1.0",
     "eslint": "8.22.0",
+    "eslint-import-resolver-typescript": "^3.4.2",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "26.8.3",
     "husky": "8.0.1",
     "jest": "28.1.3",
