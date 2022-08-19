@@ -64,7 +64,6 @@ jobs:
           name: dist-node-lts
           path: | 
             dist/
-            !dist/**/*.spec.js
             package.json
             package-lock.json
             prisma/

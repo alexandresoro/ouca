@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsc && npm run copy:assets",
+    "build": "tsc --project tsconfig.build.json && npm run copy:assets",
     "prepare": "husky install",
     "postinstall": "npm run generate-graphql",
     "start": "npm run build && cd dist && node backend",
