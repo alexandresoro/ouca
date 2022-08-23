@@ -61,7 +61,7 @@ jobs:
       - name: Prepare release content
         if: matrix.published && github.event_name == 'push'
         run: |
-          tar -cvzf ouca-web-${{env.release_tag}}.tar.gz -C dist/ .
+          tar -cvzf ouca-web-latest.tar.gz -C dist/ .
       
       - name: Publish the release
         if: matrix.published && github.event_name == 'push'
