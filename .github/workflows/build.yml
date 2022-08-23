@@ -68,7 +68,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
-          name: latest
+          tag_name: latest
           files: |
             ouca-web-*.tar.gz
         env:
