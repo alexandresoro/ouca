@@ -21,7 +21,7 @@ jobs:
           - node-version: 16
             type: "build,lts"
             published: true
-          # - node-version: latest
+          - node-version: latest
 
     steps:
       - uses: actions/checkout@v3
