@@ -12,7 +12,7 @@ on:
       - master
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
@@ -62,9 +62,35 @@ jobs:
         if: matrix.published && github.event_name == 'push'
         run: |
           tar -cvzf ouca-web-latest.tar.gz -C dist/ .
+      
+      - name: Upload release
+        if: matrix.published && github.event_name == 'push'
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: | 
+            dist/
+          retention-days: 1
+          if-no-files-found: error
+
+  publish-release:
+    needs: build
+
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Retrieve artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+
+      - name: Prepare release content
+        run: |
+          tar -cvzf ouca-web-latest.tar.gz -C dist/ .
 
       - name: Publish the release
-        if: matrix.published && github.event_name == 'push'
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
