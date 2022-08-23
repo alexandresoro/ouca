@@ -47,21 +47,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        
-      - name: Compute the release name
-        if: github.event_name == 'push'
-        run: |
-          echo "release_tag=v`date '+%Y-%m-%d_%H-%M-%S'`" >> $GITHUB_ENV
-          
-      - name: Compute the release name for tags
-        if: startsWith(github.ref, 'refs/tags/') && github.event_name == 'push'
-        run: |
-          echo "release_tag=v${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          
-      - name: Prepare release content
-        if: matrix.published && github.event_name == 'push'
-        run: |
-          tar -cvzf ouca-web-latest.tar.gz -C dist/ .
       
       - name: Upload release
         if: matrix.published && github.event_name == 'push'
