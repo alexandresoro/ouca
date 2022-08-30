@@ -37,7 +37,7 @@
     "csv-parse": "5.3.0",
     "csv-stringify": "6.2.0",
     "date-fns": "2.29.2",
-    "dotenv": "16.0.1",
+    "dotenv": "16.0.2",
     "exceljs": "4.3.0",
     "fastify": "3.29.1",
     "graphql": "16.6.0",
