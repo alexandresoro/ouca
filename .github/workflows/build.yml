@@ -24,6 +24,9 @@ jobs:
           - node-version: 16
             type: "build,lts"
             published: true
+          - node-version: 18
+            type: "next"
+            published: false
           - node-version: latest
             published: false
 
