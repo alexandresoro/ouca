@@ -6,7 +6,6 @@
     },
     "target": "es2021"
   },
-  "exclude": ".spec.ts$",
   "module": {
     "type": "commonjs"
   }
