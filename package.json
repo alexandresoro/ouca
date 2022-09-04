@@ -44,7 +44,7 @@
     "fastify": "3.29.2",
     "graphql": "16.6.0",
     "jose": "4.9.2",
-    "mercurius": "^9.8.0",
+    "mercurius": "9.8.0",
     "pino": "8.4.2",
     "pino-pretty": "9.1.0",
     "proj4": "2.8.0",
