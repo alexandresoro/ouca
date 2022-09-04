@@ -12,6 +12,7 @@ module.exports = {
   collectCoverageFrom: [
     "src/**",
     "!src/graphql/apollo-plugins.ts",
+    "!src/graphql/mercurius-logger.ts",
     "!src/graphql/resolvers.ts",
     "!src/graphql/generated/**",
     "!src/model/graphql.ts",

@@ -8,11 +8,14 @@ import { ApolloServer } from "apollo-server-fastify";
 import { randomUUID } from "crypto";
 import { fastify } from "fastify";
 import fs from "fs";
+import mercurius from "mercurius";
 import path from "path";
 import { pipeline } from "stream";
 import { promisify } from "util";
 import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
-import { getGraphQLContext } from "./graphql/graphql-context";
+import { Resolvers } from "./graphql/generated/graphql-types";
+import { buildGraphQLContext, getGraphQLContext } from "./graphql/graphql-context";
+import { logQueries, logResults } from "./graphql/mercurius-logger";
 import resolvers from "./graphql/resolvers";
 import { ImportType, IMPORT_TYPE } from "./model/import-types";
 import { startImportTask } from "./services/import-manager";
@@ -32,7 +35,7 @@ const server = fastify({
 
 const apolloServer = new ApolloServer({
   typeDefs,
-  resolvers,
+  resolvers: resolvers as unknown as Resolvers,
   plugins: [
     fastifyAppClosePlugin(server),
     ApolloServerPluginDrainHttpServer({ httpServer: server.server }),
@@ -60,6 +63,16 @@ checkAndCreateFolders();
     root: PUBLIC_DIR_PATH,
     prefix: DOWNLOAD_ENDPOINT,
   });
+
+  // Mercurius GraphQL adapter
+  await server.register(mercurius, {
+    path: "/test",
+    schema: typeDefs,
+    resolvers,
+    context: buildGraphQLContext,
+  });
+  server.graphql.addHook("preExecution", logQueries);
+  server.graphql.addHook("onResolution", logResults);
 
   // Download files
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>("/download/:id", async (req, reply) => {

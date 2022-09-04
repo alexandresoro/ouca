@@ -1,5 +1,6 @@
 import { Commune as CommuneEntity, DatabaseRole, Espece as EspeceEntity } from "@prisma/client";
 import { ApolloError, AuthenticationError, ForbiddenError } from "apollo-server-core";
+import { IResolvers } from "mercurius";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
@@ -171,11 +172,15 @@ import {
   UpsertInventaireFailureReason,
   UserInfo,
 } from "./generated/graphql-types";
-import { GraphQLContext } from "./graphql-context";
 
 const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 
-const resolvers: Resolvers<GraphQLContext> = {
+declare module "mercurius" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface IResolvers extends Resolvers<import("mercurius").MercuriusContext> {}
+}
+
+const resolvers: IResolvers = {
   Query: {
     age: async (_source, args, context): Promise<Age | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
