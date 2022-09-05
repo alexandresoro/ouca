@@ -45,7 +45,7 @@
     "graphql": "16.6.0",
     "jose": "4.9.2",
     "mercurius": "9.8.0",
-    "pino": "8.4.2",
+    "pino": "8.5.0",
     "pino-pretty": "9.1.0",
     "proj4": "2.8.0",
     "yargs": "17.5.1"
