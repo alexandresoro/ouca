@@ -14,6 +14,7 @@ export type Scalars = {
 
 export type Age = {
   __typename?: 'Age';
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -35,6 +36,7 @@ export type AgesPaginatedResult = PaginatedResult & {
 
 export type Classe = {
   __typename?: 'Classe';
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -60,6 +62,7 @@ export type Commune = {
   __typename?: 'Commune';
   code: Scalars['Int'];
   departement: Departement;
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nbLieuxDits?: Maybe<Scalars['Int']>;
@@ -86,6 +89,7 @@ export type CommunesPaginatedResult = PaginatedResult & {
 export type Comportement = {
   __typename?: 'Comportement';
   code: Scalars['String'];
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -125,6 +129,7 @@ export type CoordinatesSystemType = typeof CoordinatesSystemType[keyof typeof Co
 export type Departement = {
   __typename?: 'Departement';
   code: Scalars['String'];
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   nbCommunes?: Maybe<Scalars['Int']>;
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -197,6 +202,7 @@ export type Espece = {
   __typename?: 'Espece';
   classe: Classe;
   code: Scalars['String'];
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nomFrancais: Scalars['String'];
@@ -222,6 +228,7 @@ export type EspecesPaginatedResult = PaginatedResult & {
 
 export type EstimationDistance = {
   __typename?: 'EstimationDistance';
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -230,6 +237,7 @@ export type EstimationDistance = {
 
 export type EstimationNombre = {
   __typename?: 'EstimationNombre';
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -416,6 +424,7 @@ export type LieuDit = {
   altitude: Scalars['Int'];
   commune: Commune;
   coordinatesSystem: CoordinatesSystemType;
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
@@ -445,6 +454,7 @@ export type LieuxDitsPaginatedResult = PaginatedResult & {
 
 export type Meteo = {
   __typename?: 'Meteo';
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -460,6 +470,7 @@ export type MeteosPaginatedResult = PaginatedResult & {
 export type Milieu = {
   __typename?: 'Milieu';
   code: Scalars['String'];
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -718,6 +729,7 @@ export const Nicheur = {
 export type Nicheur = typeof Nicheur[keyof typeof Nicheur];
 export type Observateur = {
   __typename?: 'Observateur';
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
@@ -1217,6 +1229,7 @@ export type Settings = {
 
 export type Sexe = {
   __typename?: 'Sexe';
+  editable?: Maybe<Scalars['Boolean']>;
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
