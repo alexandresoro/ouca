@@ -304,7 +304,6 @@ type SexeWithSpecimensCount {
 type Age {
   id: Int!
   libelle: String!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
@@ -491,8 +490,8 @@ interface PaginatedResult {
 }
 
 type AgesPaginatedResult implements PaginatedResult {
-  result: [Age!]
-  count: Int!
+  result(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): [Age!]
+  count(q: String): Int!
 }
 
 type ClassesPaginatedResult implements PaginatedResult {
@@ -661,12 +660,7 @@ type Query {
   sexes(params: FindParams): [Sexe]
   nextRegroupement: Int!
   lastDonneeId: Int
-  paginatedAges(
-    searchParams: SearchParams
-    orderBy: EntitesAvecLibelleOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): AgesPaginatedResult
+  paginatedAges: AgesPaginatedResult
   paginatedClasses(
     searchParams: SearchParams
     orderBy: ClassesOrderBy

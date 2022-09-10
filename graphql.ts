@@ -18,7 +18,6 @@ export type Age = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type AgeWithSpecimensCount = {
@@ -32,6 +31,18 @@ export type AgesPaginatedResult = PaginatedResult & {
   __typename?: 'AgesPaginatedResult';
   count: Scalars['Int'];
   result?: Maybe<Array<Age>>;
+};
+
+
+export type AgesPaginatedResultCountArgs = {
+  q?: InputMaybe<Scalars['String']>;
+};
+
+
+export type AgesPaginatedResultResultArgs = {
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 export type Classe = {
@@ -1026,14 +1037,6 @@ export type QueryObservateurListArgs = {
 
 export type QueryObservateursArgs = {
   params?: InputMaybe<FindParams>;
-};
-
-
-export type QueryPaginatedAgesArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
