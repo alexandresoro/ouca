@@ -6,7 +6,6 @@ import { saveDatabaseRequest } from "../services/database/save-database";
 import {
   deleteAge,
   findAge,
-  findAges,
   findPaginatedAges,
   getNbAges,
   getNbDonneesOfAge,
@@ -115,7 +114,6 @@ import {
 import {
   deleteObservateur,
   findObservateur,
-  findObservateurs,
   findObservateursByIds,
   findPaginatedObservateurs,
   getNbDonneesOfObservateur,
@@ -193,6 +191,9 @@ const resolvers: IResolvers = {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findAge(args.id, context.user);
     },
+    ages: (): Record<string, never> => {
+      return {};
+    },
     classe: async (_source, args, context): Promise<Classe | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findClasse(args.id, context.user);
@@ -263,6 +264,9 @@ const resolvers: IResolvers = {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findObservateursByIds(args.ids, context.user);
     },
+    observateurs: (): Record<string, never> => {
+      return {};
+    },
     sexe: async (_source, args, context): Promise<Sexe | null> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findSexe(args.id, context.user);
@@ -274,10 +278,6 @@ const resolvers: IResolvers = {
     specimenCountBySexe: (_source, args, context): Promise<SexeWithSpecimensCount[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return countSpecimensBySexeForEspeceId(args?.especeId);
-    },
-    ages: async (_source, args, context): Promise<Age[]> => {
-      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findAges(context.user, args?.params);
     },
     classes: async (_source, args, context): Promise<Classe[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -319,10 +319,6 @@ const resolvers: IResolvers = {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findMilieux(args?.params, context.user);
     },
-    observateurs: async (_source, args, context): Promise<Observateur[]> => {
-      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findObservateurs(context.user, args?.params);
-    },
     sexes: async (_source, args, context): Promise<Sexe[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findSexes(args?.params, context.user);
@@ -334,9 +330,6 @@ const resolvers: IResolvers = {
     nextRegroupement: async (_source, args, context): Promise<number> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findNextRegroupement();
-    },
-    paginatedAges: (): Record<string, never> => {
-      return {};
     },
     paginatedClasses: async (_source, args, context): Promise<ClassesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -381,9 +374,6 @@ const resolvers: IResolvers = {
     paginatedMilieux: async (_source, args, context): Promise<MilieuxPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findPaginatedMilieux(args, context.user);
-    },
-    paginatedObservateurs: (): Record<string, never> => {
-      return {};
     },
     paginatedSexes: async (_source, args, context): Promise<SexesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
