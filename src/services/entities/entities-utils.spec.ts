@@ -4,6 +4,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import {
   getSqlPagination,
   getSqlSorting,
+  isEntityEditable,
   isEntityReadOnly,
   transformQueryRawBigIntsToNumbers,
   transformQueryRawResultsBigIntsToNumbers,
@@ -86,6 +87,96 @@ test("should return correct readonly status for admin and no entity owner", () =
   };
 
   expect(isEntityReadOnly(entity, user)).toBe(false);
+});
+
+describe("Entity editable status", () => {
+  test("should return correct status for non logged user", () => {
+    const entity = mock<{ ownerId: string }>();
+
+    expect(isEntityEditable(entity, null)).toBe(false);
+  });
+
+  test("should return correct status when no entity is provided", () => {
+    const user: LoggedUser = {
+      id: "22",
+      role: DatabaseRole.admin,
+    };
+
+    expect(isEntityEditable(null, user)).toBe(false);
+  });
+
+  test("should return correct status for non admin user and not owner", () => {
+    const entity = {
+      ownerId: "12",
+    };
+
+    const user: LoggedUser = {
+      id: "22",
+      role: DatabaseRole.contributor,
+    };
+
+    expect(isEntityEditable(entity, user)).toBe(false);
+  });
+
+  test("should return correct status for owner", () => {
+    const entity = {
+      ownerId: "12",
+    };
+
+    const user: LoggedUser = {
+      id: entity.ownerId,
+      role: DatabaseRole.contributor,
+    };
+
+    expect(isEntityEditable(entity, user)).toBe(true);
+  });
+
+  test("should return correct status for admin", () => {
+    const entity = {
+      ownerId: "12",
+    };
+
+    const user: LoggedUser = {
+      id: "22",
+      role: DatabaseRole.admin,
+    };
+
+    expect(isEntityEditable(entity, user)).toBe(true);
+  });
+
+  test("should return correct status for non logged user and no entity owner", () => {
+    const entity = {
+      ownerId: null,
+    };
+
+    expect(isEntityEditable(entity, null)).toBe(false);
+  });
+
+  test("should return correct status for non-admin and no entity owner", () => {
+    const entity = {
+      ownerId: null,
+    };
+
+    const user: LoggedUser = {
+      id: "22",
+      role: DatabaseRole.contributor,
+    };
+
+    expect(isEntityEditable(entity, user)).toBe(false);
+  });
+
+  test("should return correct status for admin and no entity owner", () => {
+    const entity = {
+      ownerId: null,
+    };
+
+    const user: LoggedUser = {
+      id: "22",
+      role: DatabaseRole.admin,
+    };
+
+    expect(isEntityEditable(entity, user)).toBe(true);
+  });
 });
 
 test("should return correct SQL pagination with null input", () => {

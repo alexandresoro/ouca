@@ -14,30 +14,18 @@ import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
-export const findObservateur = async (
-  id: number,
-  loggedUser: LoggedUser | null = null
-): Promise<(Observateur & ReadonlyStatus) | null> => {
-  const observateurEntity = await prisma.observateur.findUnique({
+export const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur | null> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.observateur.findUnique({
     where: {
       id,
     },
   });
-
-  if (!observateurEntity) {
-    return null;
-  }
-
-  return {
-    ...observateurEntity,
-    readonly: isEntityReadOnly(observateurEntity, loggedUser),
-  };
 };
 
 export const getNbDonneesOfObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -52,11 +40,10 @@ export const getNbDonneesOfObservateur = async (id: number, loggedUser: LoggedUs
   });
 };
 
-export const findObservateursByIds = async (
-  ids: number[],
-  loggedUser: LoggedUser | null = null
-): Promise<(Observateur & ReadonlyStatus)[]> => {
-  const observateurEntities = await prisma.observateur.findMany({
+export const findObservateursByIds = async (ids: number[], loggedUser: LoggedUser | null): Promise<Observateur[]> => {
+  validateAuthorization(loggedUser);
+
+  return await prisma.observateur.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       id: {
@@ -64,22 +51,17 @@ export const findObservateursByIds = async (
       },
     },
   });
-
-  return observateurEntities?.map((observateur) => {
-    return {
-      ...observateur,
-      readonly: isEntityReadOnly(observateur, loggedUser),
-    };
-  });
 };
 
 export const findObservateurs = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(Observateur & ReadonlyStatus)[]> => {
+  loggedUser: LoggedUser | null,
+  params?: FindParams | null
+): Promise<Observateur[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
-  const observateurEntities = await prisma.observateur.findMany({
+  return prisma.observateur.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
@@ -88,19 +70,12 @@ export const findObservateurs = async (
     },
     take: max || undefined,
   });
-
-  return observateurEntities?.map((observateur) => {
-    return {
-      ...observateur,
-      readonly: isEntityReadOnly(observateur, loggedUser),
-    };
-  });
 };
 
 export const findPaginatedObservateurs = async (
-  loggedUser: LoggedUser | null = null,
+  loggedUser: LoggedUser | null,
   options: ObservateursPaginatedResultResultArgs = {}
-): Promise<(Observateur & ReadonlyStatus)[]> => {
+): Promise<Observateur[]> => {
   validateAuthorization(loggedUser);
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;
@@ -151,15 +126,10 @@ export const findPaginatedObservateurs = async (
     });
   }
 
-  return observateurEntities?.map((observateur) => {
-    return {
-      ...observateur,
-      readonly: isEntityReadOnly(observateur, loggedUser),
-    };
-  });
+  return observateurEntities;
 };
 
-export const getNbObservateurs = async (loggedUser: LoggedUser | null = null, q?: string | null): Promise<number> => {
+export const getNbObservateurs = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
   validateAuthorization(loggedUser);
 
   return prisma.observateur.count({
@@ -170,7 +140,7 @@ export const getNbObservateurs = async (loggedUser: LoggedUser | null = null, q?
 export const upsertObservateur = async (
   args: MutationUpsertObservateurArgs,
   loggedUser: LoggedUser
-): Promise<Observateur & ReadonlyStatus> => {
+): Promise<Observateur> => {
   const { id, data } = args;
 
   let upsertedObservateur: Observateur;
@@ -216,10 +186,7 @@ export const upsertObservateur = async (
     }
   }
 
-  return {
-    ...upsertedObservateur,
-    readonly: false,
-  };
+  return upsertedObservateur;
 };
 
 export const deleteObservateur = async (id: number, loggedUser: LoggedUser): Promise<Observateur> => {

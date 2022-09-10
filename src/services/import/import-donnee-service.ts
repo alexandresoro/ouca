@@ -72,7 +72,7 @@ export class ImportDonneeService extends ImportService {
       this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
     }
 
-    this.observateurs = await findObservateurs();
+    this.observateurs = await findObservateurs(null);
     this.departements = await findDepartements();
     this.communes = await findCommunes();
     this.lieuxDits = await findLieuxDits();

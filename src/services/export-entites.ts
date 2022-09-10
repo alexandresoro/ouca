@@ -260,7 +260,7 @@ export const generateMilieuxExport = async (): Promise<string> => {
 };
 
 export const generateObservateursExport = async (): Promise<string> => {
-  const observateurs = await findObservateurs();
+  const observateurs = await findObservateurs(null);
 
   const objectsToExport = observateurs.map((object) => {
     return {

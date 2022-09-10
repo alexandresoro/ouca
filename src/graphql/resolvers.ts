@@ -50,7 +50,7 @@ import {
   getNbDonneesByCriteria,
   upsertDonnee,
 } from "../services/entities/donnee-service";
-import { ReadonlyStatus } from "../services/entities/entities-utils";
+import { isEntityEditable } from "../services/entities/entities-utils";
 import {
   deleteEspece,
   findEspece,
@@ -314,7 +314,7 @@ const resolvers: IResolvers = {
     },
     observateurs: async (_source, args, context): Promise<Observateur[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findObservateurs(args?.params, context.user);
+      return findObservateurs(context.user, args?.params);
     },
     sexes: async (_source, args, context): Promise<Sexe[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -738,6 +738,13 @@ const resolvers: IResolvers = {
     },
   },
   Observateur: {
+    editable: async (parent, args, context): Promise<boolean> => {
+      if (!parent?.id) {
+        return false;
+      }
+      const observateur = await findObservateur(parent.id, context.user);
+      return isEntityEditable(observateur, context.user);
+    },
     nbDonnees: async (parent, args, context): Promise<number | null> => {
       if (!parent?.id) {
         return null;
@@ -746,7 +753,7 @@ const resolvers: IResolvers = {
     },
   },
   ObservateursPaginatedResult: {
-    result: async (_, args, context): Promise<(Observateur & ReadonlyStatus)[]> => {
+    result: async (_, args, context): Promise<Observateur[]> => {
       return findPaginatedObservateurs(context.user, args);
     },
     count: async (_, { q }, context): Promise<number> => {

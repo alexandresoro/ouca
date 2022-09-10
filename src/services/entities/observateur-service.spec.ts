@@ -8,7 +8,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createObservateurs,
   deleteObservateur,
@@ -20,15 +20,6 @@ import {
   getNbObservateurs,
   upsertObservateur,
 } from "./observateur-service";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -45,10 +36,11 @@ const prismaConstraintFailed = () => {
 
 test("should call readonly status when retrieving one observer ", async () => {
   const observerData = mock<Observateur>();
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.observateur.findUnique.mockResolvedValueOnce(observerData);
 
-  await findObservateur(observerData.id);
+  await findObservateur(observerData.id, loggedUser);
 
   expect(prismaMock.observateur.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.observateur.findUnique).toHaveBeenLastCalledWith({
@@ -56,13 +48,13 @@ test("should call readonly status when retrieving one observer ", async () => {
       id: observerData.id,
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
 });
 
 test("should handle observer not found ", async () => {
   prismaMock.observateur.findUnique.mockResolvedValueOnce(null);
+  const loggedUser = mock<LoggedUser>();
 
-  await expect(findObservateur(10)).resolves.toBe(null);
+  await expect(findObservateur(10, loggedUser)).resolves.toBe(null);
 
   expect(prismaMock.observateur.findUnique).toHaveBeenCalledTimes(1);
   expect(prismaMock.observateur.findUnique).toHaveBeenLastCalledWith({
@@ -70,7 +62,6 @@ test("should handle observer not found ", async () => {
       id: 10,
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
 });
 
 describe("Number of associated data", () => {
@@ -96,10 +87,14 @@ describe("Number of associated data", () => {
 
 test("should call readonly status when retrieving observers by ID ", async () => {
   const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.observateur.findMany.mockResolvedValueOnce(observersData);
 
-  await findObservateursByIds(observersData.map((obs) => obs.id));
+  await findObservateursByIds(
+    observersData.map((obs) => obs.id),
+    loggedUser
+  );
 
   expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
@@ -110,15 +105,15 @@ test("should call readonly status when retrieving observers by ID ", async () =>
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(observersData.length);
 });
 
 test("should call readonly status when retrieving observers by params ", async () => {
   const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.observateur.findMany.mockResolvedValueOnce(observersData);
 
-  await findObservateurs();
+  await findObservateurs(loggedUser);
 
   expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
@@ -129,7 +124,6 @@ test("should call readonly status when retrieving observers by params ", async (
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(observersData.length);
 });
 
 describe("Entities paginated find by search criteria", () => {
@@ -147,7 +141,6 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: {},
       where: {},
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(observersData.length);
   });
 
   test("should handle params when retrieving paginated observers ", async () => {
@@ -183,11 +176,10 @@ describe("Entities paginated find by search criteria", () => {
         },
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedObservateurs()).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(findPaginatedObservateurs(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -219,7 +211,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getNbObservateurs()).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(getNbObservateurs(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

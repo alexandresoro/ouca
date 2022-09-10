@@ -21,6 +21,13 @@ export const isEntityReadOnly = (entity: { ownerId?: string | null }, user: Logg
   return !(user?.role === DatabaseRole.admin || entity?.ownerId === user?.id);
 };
 
+export const isEntityEditable = (entity: { ownerId?: string | null } | null, user: LoggedUser | null): boolean => {
+  if (!entity || !user) {
+    return false;
+  }
+  return user?.role === DatabaseRole.admin || entity?.ownerId === user?.id;
+};
+
 // Utility method to compute the Prisma pagination from the API pagination
 // Page number is starting at index 0
 export const getPrismaPagination = (
