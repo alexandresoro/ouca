@@ -11,7 +11,6 @@ module.exports = {
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   collectCoverageFrom: [
     "src/**",
-    "!src/graphql/apollo-plugins.ts",
     "!src/graphql/mercurius-logger.ts",
     "!src/graphql/resolvers.ts",
     "!src/graphql/generated/**",

@@ -3,8 +3,6 @@ import fastifyCookie from "@fastify/cookie";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
-import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
-import { ApolloServer } from "apollo-server-fastify";
 import { randomUUID } from "crypto";
 import { fastify } from "fastify";
 import fs from "fs";
@@ -12,9 +10,7 @@ import mercurius from "mercurius";
 import path from "path";
 import { pipeline } from "stream";
 import { promisify } from "util";
-import { apolloRequestLogger, fastifyAppClosePlugin } from "./graphql/apollo-plugins";
-import { Resolvers } from "./graphql/generated/graphql-types";
-import { buildGraphQLContext, getGraphQLContext } from "./graphql/graphql-context";
+import { buildGraphQLContext } from "./graphql/graphql-context";
 import { logQueries, logResults } from "./graphql/mercurius-logger";
 import resolvers from "./graphql/resolvers";
 import { ImportType, IMPORT_TYPE } from "./model/import-types";
@@ -26,23 +22,11 @@ import { checkAndCreateFolders, DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_
 
 logger.debug("Starting server");
 
-const typeDefs = fs.readFileSync(path.join(__dirname, "model/schema.graphql"), "utf-8").toString();
+const schema = fs.readFileSync(path.join(__dirname, "model/schema.graphql"), "utf-8").toString();
 logger.debug("GraphQL schema has been parsed");
 
 const server = fastify({
   logger,
-});
-
-const apolloServer = new ApolloServer({
-  typeDefs,
-  resolvers: resolvers as unknown as Resolvers,
-  plugins: [
-    fastifyAppClosePlugin(server),
-    ApolloServerPluginDrainHttpServer({ httpServer: server.server }),
-    apolloRequestLogger,
-  ],
-  context: getGraphQLContext,
-  cache: "bounded",
 });
 
 checkAndCreateFolders();
@@ -66,8 +50,7 @@ checkAndCreateFolders();
 
   // Mercurius GraphQL adapter
   await server.register(mercurius, {
-    path: "/test",
-    schema: typeDefs,
+    schema,
     resolvers,
     context: buildGraphQLContext,
   });
@@ -129,15 +112,6 @@ checkAndCreateFolders();
       })
     );
   });
-
-  // GraphQL server
-  await apolloServer.start();
-  void server.register(
-    apolloServer.createHandler({
-      path: "graphql",
-      cors: false, // Need to set to false otherwise it conflicts with the one defined as middleware above
-    })
-  );
 
   await server.listen(options.listenPort, options.listenAddress);
 
