@@ -806,7 +806,7 @@ export type PaginatedSearchDonneesResultResultArgs = {
 export type Query = {
   __typename?: 'Query';
   age?: Maybe<Age>;
-  ages?: Maybe<Array<Maybe<Age>>>;
+  ages?: Maybe<AgesPaginatedResult>;
   classe?: Maybe<Classe>;
   classes?: Maybe<Array<Maybe<Classe>>>;
   commune?: Maybe<Commune>;
@@ -852,8 +852,7 @@ export type Query = {
   nextRegroupement: Scalars['Int'];
   observateur?: Maybe<Observateur>;
   observateurList?: Maybe<Array<Observateur>>;
-  observateurs?: Maybe<Array<Observateur>>;
-  paginatedAges?: Maybe<AgesPaginatedResult>;
+  observateurs?: Maybe<ObservateursPaginatedResult>;
   paginatedClasses?: Maybe<ClassesPaginatedResult>;
   paginatedCommunes?: Maybe<CommunesPaginatedResult>;
   paginatedComportements?: Maybe<ComportementsPaginatedResult>;
@@ -864,7 +863,6 @@ export type Query = {
   paginatedLieuxdits?: Maybe<LieuxDitsPaginatedResult>;
   paginatedMeteos?: Maybe<MeteosPaginatedResult>;
   paginatedMilieux?: Maybe<MilieuxPaginatedResult>;
-  paginatedObservateurs?: Maybe<ObservateursPaginatedResult>;
   paginatedSearchDonnees?: Maybe<PaginatedSearchDonneesResult>;
   paginatedSearchEspeces?: Maybe<EspecesPaginatedResult>;
   paginatedSexes?: Maybe<SexesPaginatedResult>;
@@ -878,11 +876,6 @@ export type Query = {
 
 export type QueryAgeArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryAgesArgs = {
-  params?: InputMaybe<FindParams>;
 };
 
 
@@ -1032,11 +1025,6 @@ export type QueryObservateurArgs = {
 
 export type QueryObservateurListArgs = {
   ids: Array<Scalars['Int']>;
-};
-
-
-export type QueryObservateursArgs = {
-  params?: InputMaybe<FindParams>;
 };
 
 

@@ -625,6 +625,7 @@ type UserInfo {
 
 type Query {
   age(id: Int!): Age
+  ages: AgesPaginatedResult
   classe(id: Int!): Classe
   commune(id: Int!): Commune
   comportement(id: Int!): Comportement
@@ -642,10 +643,10 @@ type Query {
   milieuList(ids: [Int!]!): [Milieu]
   observateur(id: Int!): Observateur
   observateurList(ids: [Int!]!): [Observateur!]
+  observateurs: ObservateursPaginatedResult
   sexe(id: Int!): Sexe
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
-  ages(params: FindParams): [Age]
   classes(params: FindParams): [Classe]
   communes(params: FindParams, departementId: Int): [Commune]
   comportements(params: FindParams): [Comportement]
@@ -656,11 +657,9 @@ type Query {
   estimationsNombre(params: FindParams): [EstimationNombre]
   meteos(params: FindParams): [Meteo]
   milieux(params: FindParams): [Milieu]
-  observateurs(params: FindParams): [Observateur!]
   sexes(params: FindParams): [Sexe]
   nextRegroupement: Int!
   lastDonneeId: Int
-  paginatedAges: AgesPaginatedResult
   paginatedClasses(
     searchParams: SearchParams
     orderBy: ClassesOrderBy
@@ -721,7 +720,6 @@ type Query {
     sortOrder: SortOrder
     includeCounts: Boolean!
   ): MilieuxPaginatedResult
-  paginatedObservateurs: ObservateursPaginatedResult
   paginatedSexes(
     searchParams: SearchParams
     orderBy: EntitesAvecLibelleOrderBy
