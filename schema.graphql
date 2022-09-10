@@ -205,7 +205,6 @@ type Departement {
 type Observateur {
   id: Int!
   libelle: String!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }

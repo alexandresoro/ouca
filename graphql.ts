@@ -733,7 +733,6 @@ export type Observateur = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type ObservateursPaginatedResult = PaginatedResult & {
