@@ -17,15 +17,6 @@ import {
 } from "./age-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
-
 const prismaConstraintFailedError = {
   code: "P2002",
   message: "Prisma error message",
