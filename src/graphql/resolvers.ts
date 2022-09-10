@@ -3,7 +3,15 @@ import { ApolloError, AuthenticationError, ForbiddenError } from "apollo-server-
 import { IResolvers } from "mercurius";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
-import { deleteAge, findAge, findAges, findPaginatedAges, upsertAge } from "../services/entities/age-service";
+import {
+  deleteAge,
+  findAge,
+  findAges,
+  findPaginatedAges,
+  getNbAges,
+  getNbDonneesOfAge,
+  upsertAge,
+} from "../services/entities/age-service";
 import {
   deleteClasse,
   findClasse,
@@ -137,7 +145,6 @@ import { createUser, deleteUser, getUser, loginUser, updateUser } from "../servi
 import { logger } from "../utils/logger";
 import {
   Age,
-  AgesPaginatedResult,
   AgeWithSpecimensCount,
   Classe,
   ClassesPaginatedResult,
@@ -270,7 +277,7 @@ const resolvers: IResolvers = {
     },
     ages: async (_source, args, context): Promise<Age[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findAges(args?.params, context.user);
+      return findAges(context.user, args?.params);
     },
     classes: async (_source, args, context): Promise<Classe[]> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -328,9 +335,8 @@ const resolvers: IResolvers = {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
       return findNextRegroupement();
     },
-    paginatedAges: async (_source, args, context): Promise<AgesPaginatedResult> => {
-      if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
-      return findPaginatedAges(args, context.user);
+    paginatedAges: (): Record<string, never> => {
+      return {};
     },
     paginatedClasses: async (_source, args, context): Promise<ClassesPaginatedResult> => {
       if (!context?.user) throw new AuthenticationError(USER_NOT_AUTHENTICATED);
@@ -698,6 +704,21 @@ const resolvers: IResolvers = {
       return true;
     },
   },
+  Age: {
+    editable: async (parent, args, context): Promise<boolean> => {
+      if (!parent?.id) {
+        return false;
+      }
+      const age = await findAge(parent.id, context.user);
+      return isEntityEditable(age, context.user);
+    },
+    nbDonnees: async (parent, args, context): Promise<number | null> => {
+      if (!parent?.id) {
+        return null;
+      }
+      return getNbDonneesOfAge(parent.id, context.user);
+    },
+  },
   Commune: {
     departement: async (parent, args, context): Promise<Departement | null> => {
       return findDepartementOfCommuneId(parent?.id, context.user);
@@ -750,6 +771,14 @@ const resolvers: IResolvers = {
         return null;
       }
       return getNbDonneesOfObservateur(parent.id, context.user);
+    },
+  },
+  AgesPaginatedResult: {
+    result: async (_, args, context): Promise<Age[]> => {
+      return findPaginatedAges(context.user, args);
+    },
+    count: async (_, { q }, context): Promise<number> => {
+      return getNbAges(context.user, q);
     },
   },
   ObservateursPaginatedResult: {

@@ -79,7 +79,7 @@ export class ImportDonneeService extends ImportService {
     this.meteos = await findMeteos();
     this.especes = await findEspeces();
     this.sexes = await findSexes();
-    this.ages = await findAges();
+    this.ages = await findAges(null);
     this.estimationsNombre = await findEstimationsNombre();
     this.estimationsDistance = await findEstimationsDistance();
     this.comportements = await findComportements();

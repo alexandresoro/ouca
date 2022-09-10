@@ -22,7 +22,7 @@ import { findObservateurs } from "./entities/observateur-service";
 import { findSexes } from "./entities/sexe-service";
 
 export const generateAgesExport = async (): Promise<string> => {
-  const agesDb = await findAges();
+  const agesDb = await findAges(null);
 
   const agesToExport = agesDb.map((ageDb) => {
     return {

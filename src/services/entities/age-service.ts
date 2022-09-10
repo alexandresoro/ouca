@@ -1,49 +1,46 @@
 import { Age, DatabaseRole, Prisma } from "@prisma/client";
 import {
-  AgesPaginatedResult,
+  AgesPaginatedResultResultArgs,
   FindParams,
   MutationUpsertAgeArgs,
-  QueryPaginatedAgesArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
+import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
 } from "./entities-utils";
 
-export const findAge = async (
-  id: number,
-  loggedUser: LoggedUser | null = null
-): Promise<(Age & ReadonlyStatus) | null> => {
-  const ageEntity = await prisma.age.findUnique({
+export const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.age.findUnique({
     where: {
       id,
     },
   });
-
-  if (!ageEntity) {
-    return null;
-  }
-
-  return {
-    ...ageEntity,
-    readonly: isEntityReadOnly(ageEntity, loggedUser),
-  };
 };
 
-export const findAges = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(Age & ReadonlyStatus)[]> => {
+export const getNbDonneesOfAge = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      ageId: id,
+    },
+  });
+};
+
+export const findAges = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Age[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
-  const ageEntities = await prisma.age.findMany({
+  return prisma.age.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
@@ -52,20 +49,15 @@ export const findAges = async (
     },
     take: max || undefined,
   });
-
-  return ageEntities?.map((age) => {
-    return {
-      ...age,
-      readonly: isEntityReadOnly(age, loggedUser),
-    };
-  });
 };
 
 export const findPaginatedAges = async (
-  options: Partial<QueryPaginatedAgesArgs> = {},
-  loggedUser: LoggedUser | null = null
-): Promise<AgesPaginatedResult> => {
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  loggedUser: LoggedUser | null = null,
+  options: AgesPaginatedResultResultArgs = {}
+): Promise<Age[]> => {
+  validateAuthorization(loggedUser);
+
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.AgeOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {
@@ -90,54 +82,22 @@ export const findPaginatedAges = async (
     }
   }
 
-  let ageEntities: (Age & { nbDonnees?: number })[];
-
-  if (includeCounts) {
-    const ages = await prisma.age.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      include: {
-        _count: {
-          select: {
-            donnee: true,
-          },
-        },
-      },
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-
-    ageEntities = ages.map((age) => {
-      return {
-        ...age,
-        nbDonnees: age._count.donnee,
-      };
-    });
-  } else {
-    ageEntities = await prisma.age.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-  }
-
-  const count = await prisma.age.count({
+  return prisma.age.findMany({
+    ...getPrismaPagination(searchParams),
+    orderBy,
     where: getEntiteAvecLibelleFilterClause(searchParams?.q),
   });
-
-  const ages = ageEntities?.map((age) => {
-    return {
-      ...age,
-      readonly: isEntityReadOnly(age, loggedUser),
-    };
-  });
-
-  return {
-    result: ages,
-    count,
-  };
 };
 
-export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser): Promise<Age & ReadonlyStatus> => {
+export const getNbAges = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.age.count({
+    where: getEntiteAvecLibelleFilterClause(q),
+  });
+};
+
+export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser): Promise<Age> => {
   const { id, data } = args;
 
   let upsertedAge: Age;
@@ -181,10 +141,7 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
     }
   }
 
-  return {
-    ...upsertedAge,
-    readonly: false,
-  };
+  return upsertedAge;
 };
 
 export const deleteAge = async (id: number, loggedUser: LoggedUser): Promise<Age> => {
