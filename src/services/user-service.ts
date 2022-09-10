@@ -1,5 +1,5 @@
 import { DatabaseRole, User } from "@prisma/client";
-import { randomBytes, scryptSync } from "crypto";
+import { randomBytes, scryptSync } from "node:crypto";
 import { EditUserData, UserCreateInput, UserLoginInput } from "../graphql/generated/graphql-types";
 import prisma from "../sql/prisma";
 import { LoggedUser } from "../types/LoggedUser";

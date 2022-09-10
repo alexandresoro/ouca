@@ -1,5 +1,5 @@
-import { existsSync, mkdirSync } from "fs";
-import path from "path";
+import { existsSync, mkdirSync } from "node:fs";
+import path from "node:path";
 
 export const DOWNLOAD_ENDPOINT = "/download";
 

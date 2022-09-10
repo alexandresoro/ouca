@@ -2,7 +2,7 @@ import { DatabaseRole, User } from "@prisma/client";
 import { FastifyRequest } from "fastify";
 import { mock } from "jest-mock-extended";
 import { JWTPayload, jwtVerify, JWTVerifyResult, ResolvedKey } from "jose";
-import { TextEncoder } from "util";
+import { TextEncoder } from "node:util";
 import { validateAndExtractUserToken } from "./token-service";
 import { getUser } from "./user-service";
 

@@ -1,7 +1,7 @@
-import { ChildProcess, spawn } from "child_process";
 import { format } from "date-fns";
-import { promises } from "fs";
-import path from "path";
+import { ChildProcess, spawn } from "node:child_process";
+import { promises } from "node:fs";
+import path from "node:path";
 import { DATE_PATTERN } from "../../utils/constants";
 import { logger } from "../../utils/logger";
 import options from "../../utils/options";

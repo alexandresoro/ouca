@@ -1,7 +1,7 @@
-import { readFile } from "fs";
-import path from "path";
-import { promisify } from "util";
-import { parentPort, workerData } from "worker_threads";
+import { readFile } from "node:fs";
+import path from "node:path";
+import { promisify } from "node:util";
+import { parentPort, workerData } from "node:worker_threads";
 import { ImportType } from "../model/import-types";
 import {
   ImportFailureMessage,

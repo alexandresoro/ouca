@@ -1,5 +1,5 @@
-import { randomUUID } from "crypto";
-import path from "path";
+import { randomUUID } from "node:crypto";
+import path from "node:path";
 import { SearchDonneeCriteria } from "../graphql/generated/graphql-types";
 import { GPS_COORDINATES } from "../model/coordinates-system/gps.object";
 import { getNicheurStatusToDisplay } from "../model/helpers/nicheur-helper";

@@ -1,5 +1,5 @@
 import { generateSecret, KeyLike } from "jose";
-import { TextEncoder } from "util";
+import { TextEncoder } from "node:util";
 import options from "./options";
 
 export const SALT_AND_PWD_DELIMITER = ":";
