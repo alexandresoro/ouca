@@ -1,8 +1,8 @@
 import fastifyCompress from "@fastify/compress";
-import fastifyCookie from "@fastify/cookie";
+import { fastifyCookie } from "@fastify/cookie";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
-import fastifyStatic from "@fastify/static";
+import { fastifyStatic } from "@fastify/static";
 import { fastify } from "fastify";
 import mercurius from "mercurius";
 import { randomUUID } from "node:crypto";
