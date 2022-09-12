@@ -113,7 +113,7 @@ checkAndCreateFolders();
     );
   });
 
-  await server.listen(options.listenPort, options.listenAddress);
+  await server.listen({ port: options.listenPort, host: options.listenAddress });
 
   // Handle shutdown request gracefully
   // This is used when inside a container
