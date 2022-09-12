@@ -121,7 +121,7 @@ checkAndCreateFolders();
   // Alternative is to use --init flag
   const shutdown = () => {
     logger.info("Shutdown requested");
-    server.close(() => {
+    void server.close().then(() => {
       logger.info("Web server has been shut down");
       process.exit(0);
     });
