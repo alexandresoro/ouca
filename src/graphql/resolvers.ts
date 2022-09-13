@@ -16,6 +16,7 @@ import {
   findClasseOfEspeceId,
   findClasses,
   findPaginatedClasses,
+  getClassesCount,
   upsertClasse,
 } from "../services/entities/classe-service";
 import {
@@ -24,6 +25,7 @@ import {
   findCommuneOfLieuDitId,
   findCommunes,
   findPaginatedCommunes,
+  getCommunesCount,
   upsertCommune,
 } from "../services/entities/commune-service";
 import {
@@ -32,6 +34,7 @@ import {
   findComportements,
   findComportementsByIds,
   findPaginatedComportements,
+  getComportementsCount,
   upsertComportement,
 } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
@@ -41,6 +44,7 @@ import {
   findDepartementOfCommuneId,
   findDepartements,
   findPaginatedDepartements,
+  getDepartementsCount,
   upsertDepartement,
 } from "../services/entities/departement-service";
 import {
@@ -63,6 +67,7 @@ import {
   findEspeceOfDonneeId,
   findEspeces,
   findPaginatedEspeces,
+  getEspecesCount,
   upsertEspece,
 } from "../services/entities/espece-service";
 import {
@@ -70,6 +75,7 @@ import {
   findEstimationDistance,
   findEstimationsDistance,
   findPaginatedEstimationsDistance,
+  getEstimationsDistanceCount,
   upsertEstimationDistance,
 } from "../services/entities/estimation-distance-service";
 import {
@@ -77,6 +83,7 @@ import {
   findEstimationNombre,
   findEstimationsNombre,
   findPaginatedEstimationsNombre,
+  getEstimationsNombreCount,
   upsertEstimationNombre,
 } from "../services/entities/estimation-nombre-service";
 import {
@@ -91,6 +98,7 @@ import {
   findLieuDitOfInventaireId,
   findLieuxDits,
   findPaginatedLieuxDits,
+  getLieuxDitsCount,
   LieuDitWithCoordinatesAsNumber,
   upsertLieuDit,
 } from "../services/entities/lieu-dit-service";
@@ -100,6 +108,7 @@ import {
   findMeteos,
   findMeteosByIds,
   findPaginatedMeteos,
+  getMeteosCount,
   upsertMeteo,
 } from "../services/entities/meteo-service";
 import {
@@ -108,6 +117,7 @@ import {
   findMilieux,
   findMilieuxByIds,
   findPaginatedMilieux,
+  getMilieuxCount,
   upsertMilieu,
 } from "../services/entities/milieu-service";
 import {
@@ -119,7 +129,14 @@ import {
   getObservateursCount,
   upsertObservateur,
 } from "../services/entities/observateur-service";
-import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
+import {
+  deleteSexe,
+  findPaginatedSexes,
+  findSexe,
+  findSexes,
+  getSexesCount,
+  upsertSexe,
+} from "../services/entities/sexe-service";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -188,9 +205,9 @@ declare module "mercurius" {
 
 const resolvers: IResolvers = {
   Query: {
-    age: async (_source, args, context): Promise<Age | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findAge(args.id, context.user);
+    age: async (_source, args, { user }): Promise<Age | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findAge(args.id, user);
     },
     ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
       const [result, count] = await Promise.all([
@@ -202,75 +219,75 @@ const resolvers: IResolvers = {
         count,
       };
     },
-    classe: async (_source, args, context): Promise<Classe | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findClasse(args.id, context.user);
+    classe: async (_source, args, { user }): Promise<Classe | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findClasse(args.id, user);
     },
-    commune: async (_source, args, context): Promise<Omit<Commune, "departement"> | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findCommune(args.id, context.user);
+    commune: async (_source, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findCommune(args.id, user);
     },
-    comportement: async (_source, args, context): Promise<Comportement | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findComportement(args.id, context.user);
+    comportement: async (_source, args, { user }): Promise<Comportement | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findComportement(args.id, user);
     },
-    comportementList: async (_source, args, context): Promise<Comportement[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findComportementsByIds(args.ids, context.user);
+    comportementList: async (_source, args, { user }): Promise<Comportement[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findComportementsByIds(args.ids, user);
     },
-    departement: async (_source, args, context): Promise<Departement | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findDepartement(args.id, context.user);
+    departement: async (_source, args, { user }): Promise<Departement | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findDepartement(args.id, user);
     },
-    donnee: (_source, args, context): { id: number } => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    donnee: (_source, args, { user }): { id: number } => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return {
         id: args.id,
       };
     },
-    espece: async (_source, args, context): Promise<Omit<Espece, "classe"> | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEspece(args.id, context.user);
+    espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findEspece(args.id, user);
     },
-    estimationDistance: async (_source, args, context): Promise<EstimationDistance | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEstimationDistance(args.id, context.user);
+    estimationDistance: async (_source, args, { user }): Promise<EstimationDistance | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findEstimationDistance(args.id, user);
     },
-    estimationNombre: async (_source, args, context): Promise<EstimationNombre | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEstimationNombre(args.id, context.user);
+    estimationNombre: async (_source, args, { user }): Promise<EstimationNombre | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findEstimationNombre(args.id, user);
     },
-    inventaire: async (_source, args, context): Promise<Omit<Inventaire, "lieuDit"> | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    inventaire: async (_source, args, { user }): Promise<Omit<Inventaire, "lieuDit"> | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findInventaire(args.id);
     },
-    lieuDit: async (_source, args, context): Promise<Omit<LieuDit, "commune"> | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findLieuDit(args.id, context.user);
+    lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findLieuDit(args.id, user);
     },
-    meteo: async (_source, args, context): Promise<Meteo | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findMeteo(args.id, context.user);
+    meteo: async (_source, args, { user }): Promise<Meteo | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findMeteo(args.id, user);
     },
-    meteoList: async (_source, args, context): Promise<Meteo[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findMeteosByIds(args.ids, context.user);
+    meteoList: async (_source, args, { user }): Promise<Meteo[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findMeteosByIds(args.ids, user);
     },
-    milieu: async (_source, args, context): Promise<Milieu | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findMilieu(args.id, context.user);
+    milieu: async (_source, args, { user }): Promise<Milieu | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findMilieu(args.id, user);
     },
-    milieuList: async (_source, args, context): Promise<Milieu[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findMilieuxByIds(args.ids, context.user);
+    milieuList: async (_source, args, { user }): Promise<Milieu[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findMilieuxByIds(args.ids, user);
     },
-    observateur: async (_source, args, context): Promise<Observateur | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findObservateur(args.id, context.user);
+    observateur: async (_source, args, { user }): Promise<Observateur | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findObservateur(args.id, user);
     },
-    observateurList: async (_source, args, context): Promise<Observateur[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findObservateursByIds(args.ids, context.user);
+    observateurList: async (_source, args, { user }): Promise<Observateur[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findObservateursByIds(args.ids, user);
     },
     observateurs: async (_, args, { user }): Promise<ObservateursPaginatedResult> => {
       const [result, count] = await Promise.all([
@@ -282,291 +299,369 @@ const resolvers: IResolvers = {
         count,
       };
     },
-    sexe: async (_source, args, context): Promise<Sexe | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findSexe(args.id, context.user);
+    sexe: async (_source, args, { user }): Promise<Sexe | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findSexe(args.id, user);
     },
-    specimenCountByAge: (_source, args, context): Promise<AgeWithSpecimensCount[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    specimenCountByAge: (_source, args, { user }): Promise<AgeWithSpecimensCount[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return countSpecimensByAgeForEspeceId(args?.especeId);
     },
-    specimenCountBySexe: (_source, args, context): Promise<SexeWithSpecimensCount[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    specimenCountBySexe: (_source, args, { user }): Promise<SexeWithSpecimensCount[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return countSpecimensBySexeForEspeceId(args?.especeId);
     },
-    classes: async (_source, args, context): Promise<Classe[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findClasses(args?.params, context.user);
+    classes: async (_source, args, { user }): Promise<Classe[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findClasses(args?.params, user);
     },
-    communes: async (_source, args, context): Promise<Omit<Commune, "departement">[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findCommunes(args, context.user);
+    communes: async (_source, args, { user }): Promise<Omit<Commune, "departement">[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findCommunes(args, user);
     },
-    comportements: async (_source, args, context): Promise<Comportement[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findComportements(args?.params, context.user);
+    comportements: async (_source, args, { user }): Promise<Comportement[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findComportements(args?.params, user);
     },
-    departements: async (_source, args, context): Promise<Departement[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findDepartements(args?.params, context.user);
+    departements: async (_source, args, { user }): Promise<Departement[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findDepartements(args?.params, user);
     },
-    especes: async (_source, args, context): Promise<Omit<Espece, "classe">[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEspeces(args, context.user);
+    especes: async (_source, args, { user }): Promise<Omit<Espece, "classe">[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findEspeces(args, user);
     },
-    estimationsDistance: async (_source, args, context): Promise<EstimationDistance[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEstimationsDistance(args?.params, context.user);
+    estimationsDistance: async (_source, args, { user }): Promise<EstimationDistance[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findEstimationsDistance(args?.params, user);
     },
-    estimationsNombre: async (_source, args, context): Promise<EstimationNombre[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEstimationsNombre(args?.params, context.user);
+    estimationsNombre: async (_source, args, { user }): Promise<EstimationNombre[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findEstimationsNombre(args?.params, user);
     },
-    lieuxDits: async (_source, args, context): Promise<Omit<LieuDit, "commune">[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findLieuxDits(args, context.user);
+    lieuxDits: async (_source, args, { user }): Promise<Omit<LieuDit, "commune">[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findLieuxDits(args, user);
     },
-    meteos: async (_source, args, context): Promise<Meteo[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findMeteos(args?.params, context.user);
+    meteos: async (_source, args, { user }): Promise<Meteo[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findMeteos(args?.params, user);
     },
-    milieux: async (_source, args, context): Promise<Milieu[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findMilieux(args?.params, context.user);
+    milieux: async (_source, args, { user }): Promise<Milieu[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findMilieux(args?.params, user);
     },
-    sexes: async (_source, args, context): Promise<Sexe[]> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findSexes(args?.params, context.user);
+    sexes: async (_source, args, { user }): Promise<Sexe[]> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findSexes(args?.params, user);
     },
-    lastDonneeId: async (_source, args, context): Promise<number | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    lastDonneeId: async (_source, args, { user }): Promise<number | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findLastDonneeId();
     },
-    nextRegroupement: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    nextRegroupement: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findNextRegroupement();
     },
-    paginatedClasses: async (_source, args, context): Promise<ClassesPaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedClasses(args, context.user);
+    paginatedClasses: async (_source, args, { user }): Promise<ClassesPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedClasses(args, user),
+        getClassesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
     paginatedCommunes: async (
       _source,
       args,
-      context
+      { user }
     ): Promise<Omit<CommunesPaginatedResult, "result"> & { result?: Omit<Commune, "departement">[] }> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedCommunes(args, context.user);
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedCommunes(args, user),
+        getCommunesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedComportements: async (_source, args, context): Promise<ComportementsPaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedComportements(args, context.user);
+    paginatedComportements: async (_source, args, { user }): Promise<ComportementsPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedComportements(args, user),
+        getComportementsCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedDepartements: async (_source, args, context): Promise<DepartementsPaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedDepartements(args, context.user);
+    paginatedDepartements: async (_source, args, { user }): Promise<DepartementsPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedDepartements(args, user),
+        getDepartementsCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedEspeces: async (_source, args, context): Promise<EspecesPaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedEspeces(args, null, context.user);
+    paginatedEspeces: async (_source, args, { user }): Promise<EspecesPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedEspeces(args, null, user),
+        getEspecesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedEstimationsDistance: async (_source, args, context): Promise<EstimationsDistancePaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedEstimationsDistance(args, context.user);
+    paginatedEstimationsDistance: async (_source, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedEstimationsDistance(args, user),
+        getEstimationsDistanceCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedEstimationsNombre: async (_source, args, context): Promise<EstimationsNombrePaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedEstimationsNombre(args, context.user);
+    paginatedEstimationsNombre: async (_source, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedEstimationsNombre(args, user),
+        getEstimationsNombreCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedLieuxdits: async (_source, args, context): Promise<LieuxDitsPaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedLieuxDits(args, context.user);
+    paginatedLieuxdits: async (_source, args, { user }): Promise<LieuxDitsPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedLieuxDits(args, user),
+        getLieuxDitsCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedMeteos: async (_source, args, context): Promise<MeteosPaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedMeteos(args, context.user);
+    paginatedMeteos: async (_source, args, { user }): Promise<MeteosPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedMeteos(args, user),
+        getMeteosCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedMilieux: async (_source, args, context): Promise<MilieuxPaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedMilieux(args, context.user);
+    paginatedMilieux: async (_source, args, { user }): Promise<MilieuxPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedMilieux(args, user),
+        getMilieuxCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedSexes: async (_source, args, context): Promise<SexesPaginatedResult> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findPaginatedSexes(args, context.user);
+    paginatedSexes: async (_source, args, { user }): Promise<SexesPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedSexes(args, user),
+        getSexesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedSearchEspeces: async (
-      _source,
-      args,
-      context
-    ): Promise<{
-      count: number;
-    }> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    paginatedSearchEspeces: async (_source, args, { user }): Promise<EspecesPaginatedResult> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const { searchCriteria, ...rest } = args ?? {};
-      return findPaginatedEspeces(rest, searchCriteria, context.user);
+      const [{ result }, count] = await Promise.all([
+        findPaginatedEspeces(rest, searchCriteria, user),
+        getEspecesCount(user, null, searchCriteria),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
-    paginatedSearchDonnees: (_source, _args, context): Record<string, never> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    paginatedSearchDonnees: (_source, _args, { user }): Record<string, never> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return {};
     },
-    importStatus: async (_source, args, context): Promise<ImportStatus | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return getImportStatus(args.importId, context.user);
+    importStatus: async (_source, args, { user }): Promise<ImportStatus | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return getImportStatus(args.importId, user);
     },
-    exportAges: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportAges: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateAgesExport();
     },
-    exportClasses: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportClasses: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateClassesExport();
     },
-    exportCommunes: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportCommunes: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateCommunesExport();
     },
-    exportComportements: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportComportements: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateComportementsExport();
     },
-    exportDepartements: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportDepartements: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateDepartementsExport();
     },
-    exportEstimationsDistance: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportEstimationsDistance: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateEstimationsDistanceExport();
     },
-    exportEstimationsNombre: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportEstimationsNombre: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateEstimationsNombreExport();
     },
-    exportDonnees: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportDonnees: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateDonneesExport(args?.searchCriteria);
     },
-    exportEspeces: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportEspeces: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateEspecesExport();
     },
-    exportLieuxDits: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportLieuxDits: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateLieuxDitsExport();
     },
-    exportMeteos: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportMeteos: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateMeteosExport();
     },
-    exportMilieux: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportMilieux: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateMilieuxExport();
     },
-    exportObservateurs: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportObservateurs: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateObservateursExport();
     },
-    exportSexes: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    exportSexes: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return generateSexesExport();
     },
-    dumpDatabase: async (_source, args, context): Promise<string> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      if (context.user.role !== DatabaseRole.admin) {
+    dumpDatabase: async (_source, args, { user }): Promise<string> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      if (user.role !== DatabaseRole.admin) {
         throw new mercurius.ErrorWithProps("Database dump is not allowed for the current user");
       }
       return saveDatabaseRequest();
     },
-    settings: async (_source, args, context): Promise<Settings | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findAppConfiguration(context.user);
+    settings: async (_source, args, { user }): Promise<Settings | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return findAppConfiguration(user);
     },
   },
   Mutation: {
-    deleteAge: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteAge(args.id, context.user).then(({ id }) => id);
+    deleteAge: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteAge(args.id, user).then(({ id }) => id);
     },
-    deleteClasse: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteClasse(args.id, context.user).then(({ id }) => id);
+    deleteClasse: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteClasse(args.id, user).then(({ id }) => id);
     },
-    deleteCommune: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteCommune(args.id, context.user).then(({ id }) => id);
+    deleteCommune: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteCommune(args.id, user).then(({ id }) => id);
     },
-    deleteComportement: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteComportement(args.id, context.user).then(({ id }) => id);
+    deleteComportement: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteComportement(args.id, user).then(({ id }) => id);
     },
-    deleteDepartement: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteDepartement(args.id, context.user).then(({ id }) => id);
+    deleteDepartement: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteDepartement(args.id, user).then(({ id }) => id);
     },
-    deleteDonnee: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    deleteDonnee: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteDonnee(args.id).then(({ id }) => id);
     },
-    deleteEspece: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteEspece(args.id, context.user).then(({ id }) => id);
+    deleteEspece: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteEspece(args.id, user).then(({ id }) => id);
     },
-    deleteEstimationDistance: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteEstimationDistance(args.id, context.user).then(({ id }) => id);
+    deleteEstimationDistance: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteEstimationDistance(args.id, user).then(({ id }) => id);
     },
-    deleteEstimationNombre: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteEstimationNombre(args.id, context.user).then(({ id }) => id);
+    deleteEstimationNombre: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteEstimationNombre(args.id, user).then(({ id }) => id);
     },
-    deleteLieuDit: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteLieuDit(args.id, context.user).then(({ id }) => id);
+    deleteLieuDit: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteLieuDit(args.id, user).then(({ id }) => id);
     },
-    deleteMeteo: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteMeteo(args.id, context.user).then(({ id }) => id);
+    deleteMeteo: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteMeteo(args.id, user).then(({ id }) => id);
     },
-    deleteMilieu: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteMilieu(args.id, context.user).then(({ id }) => id);
+    deleteMilieu: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteMilieu(args.id, user).then(({ id }) => id);
     },
-    deleteObservateur: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteObservateur(args.id, context.user).then(({ id }) => id);
+    deleteObservateur: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteObservateur(args.id, user).then(({ id }) => id);
     },
-    deleteSexe: async (_source, args, context): Promise<number> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteSexe(args.id, context.user).then(({ id }) => id);
+    deleteSexe: async (_source, args, { user }): Promise<number> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return deleteSexe(args.id, user).then(({ id }) => id);
     },
-    upsertAge: async (_source, args, context): Promise<Age> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertAge(args, context.user);
+    upsertAge: async (_source, args, { user }): Promise<Age> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertAge(args, user);
     },
-    upsertClasse: async (_source, args, context): Promise<Classe> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertClasse(args, context.user);
+    upsertClasse: async (_source, args, { user }): Promise<Classe> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertClasse(args, user);
     },
-    upsertCommune: async (_source, args, context): Promise<CommuneEntity> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertCommune(args, context.user);
+    upsertCommune: async (_source, args, { user }): Promise<CommuneEntity> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertCommune(args, user);
     },
-    upsertComportement: async (_source, args, context): Promise<Comportement> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertComportement(args, context.user);
+    upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertComportement(args, user);
     },
-    upsertDepartement: async (_source, args, context): Promise<Departement> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertDepartement(args, context.user);
+    upsertDepartement: async (_source, args, { user }): Promise<Departement> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertDepartement(args, user);
     },
     upsertDonnee: async (
       _source,
       args,
-      context
+      { user }
     ): Promise<{
       failureReason?: string;
       donnee?: DonneeWithRelations;
     }> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       try {
         const upsertedDonnee = await upsertDonnee(args);
         return {
@@ -579,29 +674,29 @@ const resolvers: IResolvers = {
         };
       }
     },
-    upsertEspece: async (_source, args, context): Promise<EspeceEntity> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertEspece(args, context.user);
+    upsertEspece: async (_source, args, { user }): Promise<EspeceEntity> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertEspece(args, user);
     },
-    upsertEstimationDistance: async (_source, args, context): Promise<EstimationDistance> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertEstimationDistance(args, context.user);
+    upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertEstimationDistance(args, user);
     },
-    upsertEstimationNombre: async (_source, args, context): Promise<EstimationNombre> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertEstimationNombre(args, context.user);
+    upsertEstimationNombre: async (_source, args, { user }): Promise<EstimationNombre> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertEstimationNombre(args, user);
     },
     upsertInventaire: async (
       _source,
       args,
-      context
+      { user }
     ): Promise<{
       failureReason?: UpsertInventaireFailureReason;
       inventaire?: InventaireWithRelations;
     }> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       try {
-        const upsertedInventaire = await upsertInventaire(args, context.user);
+        const upsertedInventaire = await upsertInventaire(args, user);
         return {
           inventaire: upsertedInventaire,
         };
@@ -612,46 +707,46 @@ const resolvers: IResolvers = {
         };
       }
     },
-    upsertLieuDit: async (_source, args, context): Promise<LieuDitWithCoordinatesAsNumber> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertLieuDit(args, context.user);
+    upsertLieuDit: async (_source, args, { user }): Promise<LieuDitWithCoordinatesAsNumber> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertLieuDit(args, user);
     },
-    upsertMeteo: async (_source, args, context): Promise<Meteo> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertMeteo(args, context.user);
+    upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertMeteo(args, user);
     },
-    upsertMilieu: async (_source, args, context): Promise<Milieu> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertMilieu(args, context.user);
+    upsertMilieu: async (_source, args, { user }): Promise<Milieu> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertMilieu(args, user);
     },
-    upsertObservateur: async (_source, args, context): Promise<Observateur> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertObservateur(args, context.user);
+    upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertObservateur(args, user);
     },
-    upsertSexe: async (_source, args, context): Promise<Sexe> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return upsertSexe(args, context.user);
+    upsertSexe: async (_source, args, { user }): Promise<Sexe> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return upsertSexe(args, user);
     },
-    updateSettings: async (_source, { appConfiguration }, context): Promise<Settings> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return persistUserSettings(appConfiguration, context.user);
+    updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      return persistUserSettings(appConfiguration, user);
     },
-    resetDatabase: async (_source, args, context): Promise<boolean> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      if (context.user.role !== DatabaseRole.admin) {
+    resetDatabase: async (_source, args, { user }): Promise<boolean> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      if (user.role !== DatabaseRole.admin) {
         throw new mercurius.ErrorWithProps("Database reset is not allowed for the current user");
       }
       await resetDatabase();
       return true;
     },
-    userSignup: async (_source, args, context): Promise<UserInfo> => {
-      return createUser(args.signupData, DatabaseRole.admin, context.user);
+    userSignup: async (_source, args, { user }): Promise<UserInfo> => {
+      return createUser(args.signupData, DatabaseRole.admin, user);
     },
-    userLogin: async (_source, args, context): Promise<UserInfo> => {
+    userLogin: async (_source, args, { reply }): Promise<UserInfo> => {
       const userInfo = await loginUser(args.loginData);
 
       if (userInfo) {
-        await createAndAddSignedTokenAsCookie(context.reply, userInfo);
+        await createAndAddSignedTokenAsCookie(reply, userInfo);
 
         logger.debug(`User ${userInfo?.username} logged in`);
 
@@ -660,79 +755,79 @@ const resolvers: IResolvers = {
 
       throw new mercurius.ErrorWithProps("Authentication failed");
     },
-    userRefresh: async (_source, args, context): Promise<UserInfo | null> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    userRefresh: async (_source, args, { user, reply }): Promise<UserInfo | null> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
 
-      const userInfo = await getUser(context.user.id);
+      const userInfo = await getUser(user.id);
       if (userInfo) {
-        await createAndAddSignedTokenAsCookie(context.reply, userInfo);
+        await createAndAddSignedTokenAsCookie(reply, userInfo);
         return userInfo;
       }
 
       return null;
     },
-    userLogout: async (_source, args, context): Promise<boolean> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      await deleteTokenCookie(context.reply);
+    userLogout: async (_source, args, { user, reply }): Promise<boolean> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      await deleteTokenCookie(reply);
 
-      logger.debug(`User ID ${context.user.id} logged out`);
+      logger.debug(`User ID ${user.id} logged out`);
 
       return true;
     },
-    userEdit: async (_source, args, context): Promise<UserInfo> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    userEdit: async (_source, args, { user, reply }): Promise<UserInfo> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
 
       try {
-        const updatedUser = await updateUser(args.id, args.editUserData, context.user);
+        const updatedUser = await updateUser(args.id, args.editUserData, user);
 
-        if (updatedUser?.id === context.user?.id) {
-          await createAndAddSignedTokenAsCookie(context.reply, updatedUser);
+        if (updatedUser?.id === user?.id) {
+          await createAndAddSignedTokenAsCookie(reply, updatedUser);
         }
         return updatedUser;
       } catch (e) {
         throw new mercurius.ErrorWithProps("User modification is only allowed from the user itself");
       }
     },
-    userDelete: async (_source, args, context): Promise<boolean> => {
-      if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    userDelete: async (_source, args, { user, reply }): Promise<boolean> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
 
       try {
-        await deleteUser(args.id, context.user);
+        await deleteUser(args.id, user);
       } catch (e) {
         throw new mercurius.ErrorWithProps("User deletion request failed");
       }
 
-      if (args?.id === context.user?.id) {
-        await deleteTokenCookie(context.reply);
+      if (args?.id === user?.id) {
+        await deleteTokenCookie(reply);
       }
 
       return true;
     },
   },
   Age: {
-    editable: async (parent, args, context): Promise<boolean> => {
+    editable: async (parent, args, { user }): Promise<boolean> => {
       if (!parent?.id) {
         return false;
       }
-      const age = await findAge(parent.id, context.user);
-      return isEntityEditable(age, context.user);
+      const age = await findAge(parent.id, user);
+      return isEntityEditable(age, user);
     },
-    nbDonnees: async (parent, args, context): Promise<number | null> => {
+    nbDonnees: async (parent, args, { user }): Promise<number | null> => {
       if (!parent?.id) {
         return null;
       }
-      return getNbDonneesOfAge(parent.id, context.user);
+      return getNbDonneesOfAge(parent.id, user);
     },
   },
   Commune: {
-    departement: async (parent, args, context): Promise<Departement | null> => {
-      return findDepartementOfCommuneId(parent?.id, context.user);
+    departement: async (parent, args, { user }): Promise<Departement | null> => {
+      return findDepartementOfCommuneId(parent?.id, user);
     },
   },
   Donnee: {
-    espece: async (parent, args, context): Promise<Omit<Espece, "classe"> | null> => {
-      const espece = await findEspeceOfDonneeId(parent?.id, context.user);
-      return findEspece(espece?.id, context.user);
+    espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
+      const espece = await findEspeceOfDonneeId(parent?.id, user);
+      return findEspece(espece?.id, user);
     },
     inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
       const inventaire = await findInventaireOfDonneeId(parent?.id);
@@ -748,34 +843,34 @@ const resolvers: IResolvers = {
     },
   },
   Inventaire: {
-    lieuDit: async (parent, args, context): Promise<Omit<LieuDit, "commune"> | null> => {
+    lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
       const lieuDit = await findLieuDitOfInventaireId(parent?.id);
-      return findLieuDit(lieuDit?.id, context.user);
+      return findLieuDit(lieuDit?.id, user);
     },
   },
   LieuDit: {
-    commune: async (parent, args, context): Promise<Omit<Commune, "departement"> | null> => {
-      return findCommuneOfLieuDitId(parent?.id, context.user);
+    commune: async (parent, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
+      return findCommuneOfLieuDitId(parent?.id, user);
     },
   },
   Espece: {
-    classe: async (parent, args, context): Promise<Classe | null> => {
-      return findClasseOfEspeceId(parent?.id, context.user);
+    classe: async (parent, args, { user }): Promise<Classe | null> => {
+      return findClasseOfEspeceId(parent?.id, user);
     },
   },
   Observateur: {
-    editable: async (parent, args, context): Promise<boolean> => {
+    editable: async (parent, args, { user }): Promise<boolean> => {
       if (!parent?.id) {
         return false;
       }
-      const observateur = await findObservateur(parent.id, context.user);
-      return isEntityEditable(observateur, context.user);
+      const observateur = await findObservateur(parent.id, user);
+      return isEntityEditable(observateur, user);
     },
-    nbDonnees: async (parent, args, context): Promise<number | null> => {
+    nbDonnees: async (parent, args, { user }): Promise<number | null> => {
       if (!parent?.id) {
         return null;
       }
-      return getNbDonneesOfObservateur(parent.id, context.user);
+      return getNbDonneesOfObservateur(parent.id, user);
     },
   },
   PaginatedSearchDonneesResult: {
