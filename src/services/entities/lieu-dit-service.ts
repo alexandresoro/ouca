@@ -1,7 +1,7 @@
 import { Commune, DatabaseRole, Departement, Lieudit, Prisma } from "@prisma/client";
 import {
   FindParams,
-  LieuxDitsPaginatedResult,
+  LieuDit,
   MutationUpsertLieuDitArgs,
   QueryPaginatedLieuxditsArgs,
 } from "../../graphql/generated/graphql-types";
@@ -171,7 +171,7 @@ export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
 export const findPaginatedLieuxDits = async (
   options: Partial<QueryPaginatedLieuxditsArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<LieuxDitsPaginatedResult> => {
+): Promise<LieuDit[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let lieuxDitsEntities: (LieuDitWithCoordinatesAsNumber<Lieudit> & {
@@ -360,21 +360,12 @@ export const findPaginatedLieuxDits = async (
     }
   }
 
-  const count = await prisma.lieudit.count({
-    where: getFilterClause(searchParams?.q),
-  });
-
-  const lieuxDits = lieuxDitsEntities?.map((lieuDit) => {
+  return lieuxDitsEntities?.map((lieuDit) => {
     return {
       ...lieuDit,
       readonly: isEntityReadOnly(lieuDit, loggedUser),
     };
   });
-
-  return {
-    result: lieuxDits,
-    count,
-  };
 };
 
 export const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

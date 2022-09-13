@@ -1,10 +1,5 @@
 import { Classe, DatabaseRole, Prisma } from "@prisma/client";
-import {
-  ClassesPaginatedResult,
-  FindParams,
-  MutationUpsertClasseArgs,
-  QueryPaginatedClassesArgs,
-} from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertClasseArgs, QueryPaginatedClassesArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -90,7 +85,7 @@ export const findClasses = async (
 export const findPaginatedClasses = async (
   options: Partial<QueryPaginatedClassesArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<ClassesPaginatedResult> => {
+): Promise<Classe[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
@@ -158,21 +153,12 @@ export const findPaginatedClasses = async (
     });
   }
 
-  const count = await prisma.classe.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-
-  const classes = classeEntities?.map((classe) => {
+  return classeEntities?.map((classe) => {
     return {
       ...classe,
       readonly: isEntityReadOnly(classe, loggedUser),
     };
   });
-
-  return {
-    result: classes,
-    count,
-  };
 };
 
 export const getClassesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

@@ -1,6 +1,5 @@
 import { Comportement, DatabaseRole, Nicheur, Prisma } from "@prisma/client";
 import {
-  ComportementsPaginatedResult,
   FindParams,
   MutationUpsertComportementArgs,
   QueryPaginatedComportementsArgs,
@@ -145,7 +144,7 @@ const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhere
 export const findPaginatedComportements = async (
   options: Partial<QueryPaginatedComportementsArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<ComportementsPaginatedResult> => {
+): Promise<Comportement[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.ComportementOrderByWithRelationInput> | undefined = undefined;
@@ -189,27 +188,20 @@ export const findPaginatedComportements = async (
       })
     : null;
 
-  const count = await prisma.comportement.count({
-    where: getFilterClause(searchParams?.q),
+  return comportements.map((comportement) => {
+    return {
+      ...comportement,
+      readonly: isEntityReadOnly(comportement, loggedUser),
+      ...(includeCounts
+        ? {
+            nbDonnees:
+              donneesByComportement?.find(
+                (donneeByComportement) => donneeByComportement.comportement_id === comportement.id
+              )?._count ?? 0,
+          }
+        : {}),
+    };
   });
-
-  return {
-    result: comportements.map((comportement) => {
-      return {
-        ...comportement,
-        readonly: isEntityReadOnly(comportement, loggedUser),
-        ...(includeCounts
-          ? {
-              nbDonnees:
-                donneesByComportement?.find(
-                  (donneeByComportement) => donneeByComportement.comportement_id === comportement.id
-                )?._count ?? 0,
-            }
-          : {}),
-      };
-    }),
-    count,
-  };
 };
 
 export const getComportementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

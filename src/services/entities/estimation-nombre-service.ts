@@ -1,6 +1,5 @@
 import { DatabaseRole, EstimationNombre, Prisma } from "@prisma/client";
 import {
-  EstimationsNombrePaginatedResult,
   FindParams,
   MutationUpsertEstimationNombreArgs,
   QueryPaginatedEstimationsNombreArgs,
@@ -65,7 +64,7 @@ export const findEstimationsNombre = async (
 export const findPaginatedEstimationsNombre = async (
   options: Partial<QueryPaginatedEstimationsNombreArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<EstimationsNombrePaginatedResult> => {
+): Promise<EstimationNombre[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationNombreOrderByWithRelationInput> | undefined = undefined;
@@ -122,21 +121,12 @@ export const findPaginatedEstimationsNombre = async (
     });
   }
 
-  const count = await prisma.estimationNombre.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-
-  const numberEstimates = numberEstimateEntities?.map((numberEstimate) => {
+  return numberEstimateEntities?.map((numberEstimate) => {
     return {
       ...numberEstimate,
       readonly: isEntityReadOnly(numberEstimate, loggedUser),
     };
   });
-
-  return {
-    result: numberEstimates,
-    count,
-  };
 };
 
 export const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

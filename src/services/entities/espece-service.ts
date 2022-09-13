@@ -1,6 +1,5 @@
 import { Classe, DatabaseRole, Espece, Prisma } from "@prisma/client";
 import {
-  EspecesPaginatedResult,
   FindParams,
   MutationUpsertEspeceArgs,
   QueryPaginatedEspecesArgs,
@@ -199,7 +198,7 @@ export const findPaginatedEspeces = async (
   options: Partial<QueryPaginatedEspecesArgs> = {},
   searchCriteria: SearchDonneeCriteria | null | undefined = undefined,
   loggedUser: LoggedUser | null = null
-): Promise<EspecesPaginatedResult> => {
+): Promise<Espece[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EspeceOrderByWithRelationInput> | undefined = undefined;
@@ -344,21 +343,12 @@ export const findPaginatedEspeces = async (
     }
   }
 
-  const count = await prisma.espece.count({
-    where: especeFilterClause,
-  });
-
-  const especes = especesEntities?.map((espece) => {
+  return especesEntities?.map((espece) => {
     return {
       ...espece,
       readonly: isEntityReadOnly(espece, loggedUser),
     };
   });
-
-  return {
-    result: especes,
-    count,
-  };
 };
 
 export const getEspecesCount = async (

@@ -1,10 +1,5 @@
 import { DatabaseRole, Prisma, Sexe } from "@prisma/client";
-import {
-  FindParams,
-  MutationUpsertSexeArgs,
-  QueryPaginatedSexesArgs,
-  SexesPaginatedResult,
-} from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertSexeArgs, QueryPaginatedSexesArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -65,7 +60,7 @@ export const findSexes = async (
 export const findPaginatedSexes = async (
   options: Partial<QueryPaginatedSexesArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<SexesPaginatedResult> => {
+): Promise<Sexe[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.SexeOrderByWithRelationInput> | undefined = undefined;
@@ -121,21 +116,12 @@ export const findPaginatedSexes = async (
     });
   }
 
-  const count = await prisma.sexe.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-
-  const sexes = sexeEntities?.map((sexe) => {
+  return sexeEntities?.map((sexe) => {
     return {
       ...sexe,
       readonly: isEntityReadOnly(sexe, loggedUser),
     };
   });
-
-  return {
-    result: sexes,
-    count,
-  };
 };
 
 export const getSexesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

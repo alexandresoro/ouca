@@ -1,10 +1,5 @@
 import { DatabaseRole, Meteo, Prisma } from "@prisma/client";
-import {
-  FindParams,
-  MeteosPaginatedResult,
-  MutationUpsertMeteoArgs,
-  QueryPaginatedMeteosArgs,
-} from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -89,7 +84,7 @@ export const findMeteos = async (
 export const findPaginatedMeteos = async (
   options: Partial<QueryPaginatedMeteosArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<MeteosPaginatedResult> => {
+): Promise<Meteo[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
@@ -142,21 +137,12 @@ export const findPaginatedMeteos = async (
     });
   }
 
-  const count = await prisma.meteo.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-
-  const meteos = meteoEntities?.map((meteo) => {
+  return meteoEntities?.map((meteo) => {
     return {
       ...meteo,
       readonly: isEntityReadOnly(meteo, loggedUser),
     };
   });
-
-  return {
-    result: meteos,
-    count,
-  };
 };
 
 export const getMeteosCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

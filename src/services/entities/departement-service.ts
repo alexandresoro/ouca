@@ -1,6 +1,5 @@
 import { DatabaseRole, Departement, Prisma } from "@prisma/client";
 import {
-  DepartementsPaginatedResult,
   FindParams,
   MutationUpsertDepartementArgs,
   QueryPaginatedDepartementsArgs,
@@ -99,7 +98,7 @@ export const findDepartements = async (
 export const findPaginatedDepartements = async (
   options: Partial<QueryPaginatedDepartementsArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<DepartementsPaginatedResult> => {
+): Promise<Departement[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   // We include case where we need to includeCounts as tehre seem to be issues when requesting inventaires that have a inventaire
@@ -208,21 +207,12 @@ export const findPaginatedDepartements = async (
     });
   }
 
-  const count = await prisma.departement.count({
-    where: getFilterClauseDepartement(searchParams?.q),
-  });
-
-  const departements = departementEntities?.map((departement) => {
+  return departementEntities?.map((departement) => {
     return {
       ...departement,
       readonly: isEntityReadOnly(departement, loggedUser),
     };
   });
-
-  return {
-    result: departements,
-    count,
-  };
 };
 
 export const getDepartementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

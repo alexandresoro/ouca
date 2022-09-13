@@ -1,6 +1,5 @@
 import { Commune, DatabaseRole, Departement, Prisma } from "@prisma/client";
 import {
-  CommunesPaginatedResult,
   FindParams,
   MutationUpsertCommuneArgs,
   QueryPaginatedCommunesArgs,
@@ -175,9 +174,7 @@ export const findCommunesWithDepartements = async (): Promise<(Commune & { depar
 export const findPaginatedCommunes = async (
   options: Partial<QueryPaginatedCommunesArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<
-  Omit<CommunesPaginatedResult, "result"> & { result?: (Commune & { nbLieuxDits?: number; nbDonnees?: number })[] }
-> => {
+): Promise<(Commune & { nbLieuxDits?: number; nbDonnees?: number })[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let communeEntities: (Commune & { nbLieuxDits?: number; nbDonnees?: number })[];
@@ -326,21 +323,12 @@ export const findPaginatedCommunes = async (
     }
   }
 
-  const count = await prisma.commune.count({
-    where: getFilterClauseCommune(searchParams?.q),
-  });
-
-  const communes = communeEntities?.map((commune) => {
+  return communeEntities?.map((commune) => {
     return {
       ...commune,
       readonly: isEntityReadOnly(commune, loggedUser),
     };
   });
-
-  return {
-    result: communes,
-    count,
-  };
 };
 
 export const getCommunesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

@@ -1,6 +1,5 @@
 import { DatabaseRole, EstimationDistance, Prisma } from "@prisma/client";
 import {
-  EstimationsDistancePaginatedResult,
   FindParams,
   MutationUpsertEstimationDistanceArgs,
   QueryPaginatedEstimationsDistanceArgs,
@@ -65,7 +64,7 @@ export const findEstimationsDistance = async (
 export const findPaginatedEstimationsDistance = async (
   options: Partial<QueryPaginatedEstimationsDistanceArgs> = {},
   loggedUser: LoggedUser | null = null
-): Promise<EstimationsDistancePaginatedResult> => {
+): Promise<EstimationDistance[]> => {
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput> | undefined = undefined;
@@ -121,21 +120,12 @@ export const findPaginatedEstimationsDistance = async (
     });
   }
 
-  const count = await prisma.estimationDistance.count({
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-
-  const distanceEstimates = distanceEstimateEntities?.map((distanceEstimate) => {
+  return distanceEstimateEntities?.map((distanceEstimate) => {
     return {
       ...distanceEstimate,
       readonly: isEntityReadOnly(distanceEstimate, loggedUser),
     };
   });
-
-  return {
-    result: distanceEstimates,
-    count,
-  };
 };
 
 export const getEstimationsDistanceCount = async (
