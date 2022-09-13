@@ -10,6 +10,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
+import { validateAuthorization } from "./authorization-utils";
 import {
   getPrismaPagination,
   isEntityReadOnly,
@@ -200,6 +201,14 @@ export const findPaginatedMilieux = async (
     }),
     count,
   };
+};
+
+export const getMilieuxCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.milieu.count({
+    where: getFilterClause(q),
+  });
 };
 
 export const upsertMilieu = async (

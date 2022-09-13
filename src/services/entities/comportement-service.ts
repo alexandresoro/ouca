@@ -10,6 +10,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
+import { validateAuthorization } from "./authorization-utils";
 import {
   getPrismaPagination,
   isEntityReadOnly,
@@ -209,6 +210,14 @@ export const findPaginatedComportements = async (
     }),
     count,
   };
+};
+
+export const getComportementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.comportement.count({
+    where: getFilterClause(q),
+  });
 };
 
 export const upsertComportement = async (

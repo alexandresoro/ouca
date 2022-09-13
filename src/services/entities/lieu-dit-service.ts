@@ -10,6 +10,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { OucaError } from "../../utils/errors";
+import { validateAuthorization } from "./authorization-utils";
 import { getFilterClauseCommune } from "./commune-service";
 import {
   getPrismaPagination,
@@ -374,6 +375,14 @@ export const findPaginatedLieuxDits = async (
     result: lieuxDits,
     count,
   };
+};
+
+export const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.lieudit.count({
+    where: getFilterClause(q),
+  });
 };
 
 export const upsertLieuDit = async (

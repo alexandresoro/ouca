@@ -9,6 +9,7 @@ import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
+import { validateAuthorization } from "./authorization-utils";
 import {
   getPrismaPagination,
   getSqlPagination,
@@ -224,6 +225,13 @@ export const findPaginatedDepartements = async (
   };
 };
 
+export const getDepartementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.departement.count({
+    where: getFilterClauseDepartement(q),
+  });
+};
 export const upsertDepartement = async (
   args: MutationUpsertDepartementArgs,
   loggedUser: LoggedUser

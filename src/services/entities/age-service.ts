@@ -1,9 +1,5 @@
 import { Age, DatabaseRole, Prisma } from "@prisma/client";
-import {
-  AgesPaginatedResultResultArgs,
-  FindParams,
-  MutationUpsertAgeArgs,
-} from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertAgeArgs, QueryAgesArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -53,7 +49,7 @@ export const findAges = async (loggedUser: LoggedUser | null, params?: FindParam
 
 export const findPaginatedAges = async (
   loggedUser: LoggedUser | null = null,
-  options: AgesPaginatedResultResultArgs = {}
+  options: QueryAgesArgs = {}
 ): Promise<Age[]> => {
   validateAuthorization(loggedUser);
 
@@ -89,7 +85,7 @@ export const findPaginatedAges = async (
   });
 };
 
-export const getNbAges = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+export const getAgesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
   validateAuthorization(loggedUser);
 
   return prisma.age.count({

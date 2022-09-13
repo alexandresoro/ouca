@@ -12,6 +12,7 @@ import {
   findClasseOfEspeceId,
   findClasses,
   findPaginatedClasses,
+  getClassesCount,
   upsertClasse,
 } from "./classe-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
@@ -177,6 +178,38 @@ test("should handle params when retrieving paginated classes ", async () => {
     },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(classesData.length);
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getClassesCount(loggedUser);
+
+    expect(prismaMock.classe.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.count).toHaveBeenLastCalledWith({
+      where: {},
+    });
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getClassesCount(loggedUser, "test");
+
+    expect(prismaMock.classe.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.count).toHaveBeenLastCalledWith({
+      where: {
+        libelle: {
+          contains: "test",
+        },
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getClassesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing class as an admin ", async () => {

@@ -1,6 +1,6 @@
 import { Age, DatabaseRole, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { AgesPaginatedResultResultArgs, MutationUpsertAgeArgs } from "../../graphql/generated/graphql-types";
+import { MutationUpsertAgeArgs, QueryAgesArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -11,7 +11,7 @@ import {
   findAge,
   findAges,
   findPaginatedAges,
-  getNbAges,
+  getAgesCount,
   getNbDonneesOfAge,
   upsertAge,
 } from "./age-service";
@@ -121,7 +121,7 @@ describe("Entities paginated find by search criteria", () => {
     const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: AgesPaginatedResultResultArgs = {
+    const searchParams: QueryAgesArgs = {
       orderBy: "libelle",
       sortOrder: "desc",
       searchParams: {
@@ -161,7 +161,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getNbAges(loggedUser);
+    await getAgesCount(loggedUser);
 
     expect(prismaMock.age.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.count).toHaveBeenLastCalledWith({
@@ -172,7 +172,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getNbAges(loggedUser, "test");
+    await getAgesCount(loggedUser, "test");
 
     expect(prismaMock.age.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.count).toHaveBeenLastCalledWith({
@@ -185,7 +185,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getNbAges(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(getAgesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

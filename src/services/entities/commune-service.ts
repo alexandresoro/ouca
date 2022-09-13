@@ -10,6 +10,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import counterReducer from "../../utils/counterReducer";
 import { OucaError } from "../../utils/errors";
+import { validateAuthorization } from "./authorization-utils";
 import {
   getPrismaPagination,
   getSqlPagination,
@@ -340,6 +341,14 @@ export const findPaginatedCommunes = async (
     result: communes,
     count,
   };
+};
+
+export const getCommunesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.commune.count({
+    where: getFilterClauseCommune(q),
+  });
 };
 
 export const upsertCommune = async (

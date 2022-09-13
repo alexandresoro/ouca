@@ -13,6 +13,7 @@ import {
   findLieuDitOfInventaireId,
   findLieuxDits,
   findPaginatedLieuxDits,
+  getLieuxDitsCount,
   upsertLieuDit,
 } from "./lieu-dit-service";
 
@@ -232,6 +233,60 @@ test("should handle params when retrieving paginated localities ", async () => {
     },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getLieuxDitsCount(loggedUser);
+
+    expect(prismaMock.lieudit.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.count).toHaveBeenLastCalledWith({
+      where: {},
+    });
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getLieuxDitsCount(loggedUser, "test");
+
+    expect(prismaMock.lieudit.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.count).toHaveBeenLastCalledWith({
+      where: {
+        OR: [
+          {
+            nom: {
+              contains: "test",
+            },
+          },
+          {
+            commune: {
+              OR: [
+                {
+                  nom: {
+                    contains: "test",
+                  },
+                },
+                {
+                  departement: {
+                    code: {
+                      contains: "test",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getLieuxDitsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing locality as an admin ", async () => {

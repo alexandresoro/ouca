@@ -9,6 +9,7 @@ import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
+import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
@@ -136,6 +137,14 @@ export const findPaginatedEstimationsNombre = async (
     result: numberEstimates,
     count,
   };
+};
+
+export const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.estimationNombre.count({
+    where: getEntiteAvecLibelleFilterClause(q),
+  });
 };
 
 export const upsertEstimationNombre = async (

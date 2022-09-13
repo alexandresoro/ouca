@@ -10,6 +10,7 @@ import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
+import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 import {
   getPrismaPagination,
@@ -164,6 +165,27 @@ const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput 
     : {};
 };
 
+const getFilterClauseSearchDonnee = (
+  searchCriteria: SearchDonneeCriteria | null | undefined = undefined
+): Prisma.EspeceWhereInput => {
+  if (!searchCriteria || !Object.entries(searchCriteria).length) {
+    return {};
+  }
+  const { especeId, espece, ...restSearchDonneeCriteria } = buildSearchDonneeCriteria(searchCriteria) ?? {};
+
+  return Object.entries(restSearchDonneeCriteria).length
+    ? {
+        id: especeId,
+        ...espece,
+        donnee: {
+          some: {
+            ...restSearchDonneeCriteria,
+          },
+        },
+      }
+    : {};
+};
+
 export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: Classe | null })[]> => {
   return prisma.espece.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
@@ -216,20 +238,7 @@ export const findPaginatedEspeces = async (
   const { especeId, espece, ...restSearchDonneeCriteria } = builtSearchCriteria ?? {};
 
   const especeFilterClause: Prisma.EspeceWhereInput = {
-    AND: [
-      getFilterClause(searchParams?.q),
-      builtSearchCriteria
-        ? {
-            id: especeId,
-            ...espece,
-            donnee: {
-              some: {
-                ...restSearchDonneeCriteria,
-              },
-            },
-          }
-        : {},
-    ],
+    AND: [getFilterClause(searchParams?.q), getFilterClauseSearchDonnee(searchCriteria)],
   };
 
   let especesEntities: (Espece & { classe: Classe; nbDonnees?: number })[];
@@ -350,6 +359,18 @@ export const findPaginatedEspeces = async (
     result: especes,
     count,
   };
+};
+
+export const getEspecesCount = async (
+  loggedUser: LoggedUser | null,
+  q?: string | null,
+  searchCriteria: SearchDonneeCriteria | null | undefined = undefined
+): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.espece.count({
+    where: { AND: [getFilterClause(q), getFilterClauseSearchDonnee(searchCriteria)] },
+  });
 };
 
 export const upsertEspece = async (

@@ -2,7 +2,7 @@ import { DatabaseRole, Observateur, Prisma } from "@prisma/client";
 import {
   FindParams,
   MutationUpsertObservateurArgs,
-  ObservateursPaginatedResultResultArgs,
+  QueryObservateursArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -74,7 +74,7 @@ export const findObservateurs = async (
 
 export const findPaginatedObservateurs = async (
   loggedUser: LoggedUser | null,
-  options: ObservateursPaginatedResultResultArgs = {}
+  options: QueryObservateursArgs = {}
 ): Promise<Observateur[]> => {
   validateAuthorization(loggedUser);
 
@@ -129,7 +129,7 @@ export const findPaginatedObservateurs = async (
   return observateurEntities;
 };
 
-export const getNbObservateurs = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+export const getObservateursCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
   validateAuthorization(loggedUser);
 
   return prisma.observateur.count({

@@ -12,6 +12,7 @@ import {
   findCommuneOfLieuDitId,
   findCommunes,
   findPaginatedCommunes,
+  getCommunesCount,
   upsertCommune,
 } from "./commune-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
@@ -198,6 +199,49 @@ test("should handle params when retrieving paginated cities ", async () => {
     },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getCommunesCount(loggedUser);
+
+    expect(prismaMock.commune.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.count).toHaveBeenLastCalledWith({
+      where: {},
+    });
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getCommunesCount(loggedUser, "test");
+
+    expect(prismaMock.commune.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.count).toHaveBeenLastCalledWith({
+      where: {
+        OR: [
+          {
+            nom: {
+              contains: "test",
+            },
+          },
+          {
+            departement: {
+              code: {
+                contains: "test",
+              },
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getCommunesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing city as an admin ", async () => {

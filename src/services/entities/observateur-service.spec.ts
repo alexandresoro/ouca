@@ -1,9 +1,6 @@
 import { DatabaseRole, Observateur, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import {
-  MutationUpsertObservateurArgs,
-  ObservateursPaginatedResultResultArgs,
-} from "../../graphql/generated/graphql-types";
+import { MutationUpsertObservateurArgs, QueryObservateursArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -17,7 +14,7 @@ import {
   findObservateursByIds,
   findPaginatedObservateurs,
   getNbDonneesOfObservateur,
-  getNbObservateurs,
+  getObservateursCount,
   upsertObservateur,
 } from "./observateur-service";
 
@@ -149,7 +146,7 @@ describe("Entities paginated find by search criteria", () => {
     const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: ObservateursPaginatedResultResultArgs = {
+    const searchParams: QueryObservateursArgs = {
       orderBy: "libelle",
       sortOrder: "desc",
       searchParams: {
@@ -189,7 +186,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getNbObservateurs(loggedUser);
+    await getObservateursCount(loggedUser);
 
     expect(prismaMock.observateur.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.observateur.count).toHaveBeenLastCalledWith({
@@ -200,7 +197,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getNbObservateurs(loggedUser, "test");
+    await getObservateursCount(loggedUser, "test");
 
     expect(prismaMock.observateur.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.observateur.count).toHaveBeenLastCalledWith({
@@ -213,7 +210,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getNbObservateurs(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(getObservateursCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

@@ -6,7 +6,7 @@ import {
   deleteAge,
   findAge,
   findPaginatedAges,
-  getNbAges,
+  getAgesCount,
   getNbDonneesOfAge,
   upsertAge,
 } from "../services/entities/age-service";
@@ -116,7 +116,7 @@ import {
   findObservateursByIds,
   findPaginatedObservateurs,
   getNbDonneesOfObservateur,
-  getNbObservateurs,
+  getObservateursCount,
   upsertObservateur,
 } from "../services/entities/observateur-service";
 import { deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "../services/entities/sexe-service";
@@ -142,6 +142,7 @@ import { createUser, deleteUser, getUser, loginUser, updateUser } from "../servi
 import { logger } from "../utils/logger";
 import {
   Age,
+  AgesPaginatedResult,
   AgeWithSpecimensCount,
   Classe,
   ClassesPaginatedResult,
@@ -168,6 +169,7 @@ import {
   Milieu,
   MilieuxPaginatedResult,
   Observateur,
+  ObservateursPaginatedResult,
   Resolvers,
   Settings,
   Sexe,
@@ -190,8 +192,15 @@ const resolvers: IResolvers = {
       if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findAge(args.id, context.user);
     },
-    ages: (): Record<string, never> => {
-      return {};
+    ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedAges(user, args),
+        getAgesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
     classe: async (_source, args, context): Promise<Classe | null> => {
       if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -263,8 +272,15 @@ const resolvers: IResolvers = {
       if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findObservateursByIds(args.ids, context.user);
     },
-    observateurs: (): Record<string, never> => {
-      return {};
+    observateurs: async (_, args, { user }): Promise<ObservateursPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedObservateurs(user, args),
+        getObservateursCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
     sexe: async (_source, args, context): Promise<Sexe | null> => {
       if (!context?.user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -760,22 +776,6 @@ const resolvers: IResolvers = {
         return null;
       }
       return getNbDonneesOfObservateur(parent.id, context.user);
-    },
-  },
-  AgesPaginatedResult: {
-    result: async (_, args, context): Promise<Age[]> => {
-      return findPaginatedAges(context.user, args);
-    },
-    count: async (_, { q }, context): Promise<number> => {
-      return getNbAges(context.user, q);
-    },
-  },
-  ObservateursPaginatedResult: {
-    result: async (_, args, context): Promise<Observateur[]> => {
-      return findPaginatedObservateurs(context.user, args);
-    },
-    count: async (_, { q }, context): Promise<number> => {
-      return getNbObservateurs(context.user, q);
     },
   },
   PaginatedSearchDonneesResult: {

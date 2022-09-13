@@ -15,6 +15,7 @@ import {
   findEspeceOfDonneeId,
   findEspeces,
   findPaginatedEspeces,
+  getEspecesCount,
   upsertEspece,
 } from "./espece-service";
 
@@ -259,9 +260,13 @@ test("should handle params and search criteria when retrieving paginated species
 
   prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
 
-  const whereInput = mock<Prisma.DonneeWhereInput>();
+  const whereInput = mock<Prisma.DonneeWhereInput>({
+    ageId: 12,
+  });
   const { espece, especeId, ...restWhereInput } = whereInput;
 
+  // Need to be mocked twice, as we to two calls to buildSearchDonneeCriteria
+  mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
   mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
 
   await findPaginatedEspeces(searchParams, mock<SearchDonneeCriteria>());
@@ -315,6 +320,133 @@ test("should handle params and search criteria when retrieving paginated species
     },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getEspecesCount(loggedUser);
+
+    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.count).toHaveBeenLastCalledWith({
+      where: {
+        AND: [{}, {}],
+      },
+    });
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getEspecesCount(loggedUser, "test");
+
+    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.count).toHaveBeenLastCalledWith({
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                code: {
+                  contains: "test",
+                },
+              },
+              {
+                nomFrancais: {
+                  contains: "test",
+                },
+              },
+              {
+                nomLatin: {
+                  contains: "test",
+                },
+              },
+            ],
+          },
+          {},
+        ],
+      },
+    });
+  });
+
+  test("should handle to be called with some donnee criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    const mockedSearchDonneeCriteriaResult = mock<Prisma.DonneeWhereInput>({
+      ageId: 12,
+    });
+    const { espece, especeId, ...restMockedSearchDonneeCriteriaResult } = mockedSearchDonneeCriteriaResult;
+    mockedBuildSearchDonneeCriteria.mockReturnValueOnce(mockedSearchDonneeCriteriaResult);
+
+    await getEspecesCount(loggedUser, null, mock<SearchDonneeCriteria>());
+
+    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.count).toHaveBeenLastCalledWith({
+      where: {
+        AND: [
+          {},
+          {
+            ...espece,
+            id: especeId,
+            donnee: {
+              some: restMockedSearchDonneeCriteriaResult,
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test("should handle to be called with both espece and donnee criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    const mockedSearchDonneeCriteriaResult = mock<Prisma.DonneeWhereInput>({
+      ageId: 12,
+    });
+    const { espece, especeId, ...restMockedSearchDonneeCriteriaResult } = mockedSearchDonneeCriteriaResult;
+    mockedBuildSearchDonneeCriteria.mockReturnValueOnce(mockedSearchDonneeCriteriaResult);
+
+    await getEspecesCount(loggedUser, "test", mock<SearchDonneeCriteria>());
+
+    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.count).toHaveBeenLastCalledWith({
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                code: {
+                  contains: "test",
+                },
+              },
+              {
+                nomFrancais: {
+                  contains: "test",
+                },
+              },
+              {
+                nomLatin: {
+                  contains: "test",
+                },
+              },
+            ],
+          },
+          {
+            ...espece,
+            id: especeId,
+            donnee: {
+              some: restMockedSearchDonneeCriteriaResult,
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getEspecesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing species as an admin ", async () => {

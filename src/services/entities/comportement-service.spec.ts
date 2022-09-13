@@ -12,6 +12,7 @@ import {
   findComportements,
   findComportementsByIds,
   findPaginatedComportements,
+  getComportementsCount,
   upsertComportement,
 } from "./comportement-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
@@ -198,6 +199,81 @@ test("should handle params when retrieving paginated behaviors ", async () => {
     },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getComportementsCount(loggedUser);
+
+    expect(prismaMock.comportement.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.count).toHaveBeenLastCalledWith({
+      where: {},
+    });
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getComportementsCount(loggedUser, "test");
+
+    expect(prismaMock.comportement.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.count).toHaveBeenLastCalledWith({
+      where: {
+        OR: [
+          {
+            code: {
+              contains: "test",
+            },
+          },
+          {
+            libelle: {
+              contains: "test",
+            },
+          },
+          {
+            nicheur: {
+              in: [],
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test("should handle to be called with criteria matching a nicheur status provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getComportementsCount(loggedUser, "certain");
+
+    expect(prismaMock.comportement.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.count).toHaveBeenLastCalledWith({
+      where: {
+        OR: [
+          {
+            code: {
+              contains: "certain",
+            },
+          },
+          {
+            libelle: {
+              contains: "certain",
+            },
+          },
+          {
+            nicheur: {
+              in: ["certain"],
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getComportementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing behavior as an admin ", async () => {

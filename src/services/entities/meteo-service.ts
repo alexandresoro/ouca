@@ -9,6 +9,7 @@ import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
+import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
@@ -156,6 +157,14 @@ export const findPaginatedMeteos = async (
     result: meteos,
     count,
   };
+};
+
+export const getMeteosCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.meteo.count({
+    where: getEntiteAvecLibelleFilterClause(q),
+  });
 };
 
 export const upsertMeteo = async (

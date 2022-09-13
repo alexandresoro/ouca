@@ -6,7 +6,15 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
-import { createSexes, deleteSexe, findPaginatedSexes, findSexe, findSexes, upsertSexe } from "./sexe-service";
+import {
+  createSexes,
+  deleteSexe,
+  findPaginatedSexes,
+  findSexe,
+  findSexes,
+  getSexesCount,
+  upsertSexe,
+} from "./sexe-service";
 
 jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
   const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
@@ -129,6 +137,38 @@ test("should handle params when retrieving paginated sexes ", async () => {
     },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getSexesCount(loggedUser);
+
+    expect(prismaMock.sexe.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.count).toHaveBeenLastCalledWith({
+      where: {},
+    });
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getSexesCount(loggedUser, "test");
+
+    expect(prismaMock.sexe.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.count).toHaveBeenLastCalledWith({
+      where: {
+        libelle: {
+          contains: "test",
+        },
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getSexesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing sex as an admin ", async () => {

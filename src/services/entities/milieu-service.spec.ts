@@ -13,6 +13,7 @@ import {
   findMilieux,
   findMilieuxByIds,
   findPaginatedMilieux,
+  getMilieuxCount,
   upsertMilieu,
 } from "./milieu-service";
 
@@ -193,6 +194,47 @@ test("should handle params when retrieving paginated environments ", async () =>
     },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getMilieuxCount(loggedUser);
+
+    expect(prismaMock.milieu.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.count).toHaveBeenLastCalledWith({
+      where: {},
+    });
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getMilieuxCount(loggedUser, "test");
+
+    expect(prismaMock.milieu.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.count).toHaveBeenLastCalledWith({
+      where: {
+        OR: [
+          {
+            code: {
+              contains: "test",
+            },
+          },
+          {
+            libelle: {
+              contains: "test",
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getMilieuxCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing environment as an admin ", async () => {

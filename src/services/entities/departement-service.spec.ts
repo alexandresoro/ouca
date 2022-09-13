@@ -12,6 +12,7 @@ import {
   findDepartementOfCommuneId,
   findDepartements,
   findPaginatedDepartements,
+  getDepartementsCount,
   upsertDepartement,
 } from "./departement-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
@@ -177,6 +178,38 @@ test("should handle params when retrieving paginated departments ", async () => 
     },
   });
   expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getDepartementsCount(loggedUser);
+
+    expect(prismaMock.departement.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.count).toHaveBeenLastCalledWith({
+      where: {},
+    });
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getDepartementsCount(loggedUser, "test");
+
+    expect(prismaMock.departement.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.count).toHaveBeenLastCalledWith({
+      where: {
+        code: {
+          contains: "test",
+        },
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getDepartementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 test("should update an existing department as an admin ", async () => {
