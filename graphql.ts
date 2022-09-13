@@ -33,18 +33,6 @@ export type AgesPaginatedResult = PaginatedResult & {
   result?: Maybe<Array<Age>>;
 };
 
-
-export type AgesPaginatedResultCountArgs = {
-  q?: InputMaybe<Scalars['String']>;
-};
-
-
-export type AgesPaginatedResultResultArgs = {
-  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
 export type Classe = {
   __typename?: 'Classe';
   editable?: Maybe<Scalars['Boolean']>;
@@ -752,18 +740,6 @@ export type ObservateursPaginatedResult = PaginatedResult & {
   result?: Maybe<Array<Observateur>>;
 };
 
-
-export type ObservateursPaginatedResultCountArgs = {
-  q?: InputMaybe<Scalars['String']>;
-};
-
-
-export type ObservateursPaginatedResultResultArgs = {
-  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
 export const OngoingSubStatus = {
   InsertingImportedData: 'INSERTING_IMPORTED_DATA',
   ProcessStarted: 'PROCESS_STARTED',
@@ -876,6 +852,13 @@ export type Query = {
 
 export type QueryAgeArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryAgesArgs = {
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
@@ -1025,6 +1008,13 @@ export type QueryObservateurArgs = {
 
 export type QueryObservateurListArgs = {
   ids: Array<Scalars['Int']>;
+};
+
+
+export type QueryObservateursArgs = {
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 

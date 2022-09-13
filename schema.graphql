@@ -490,8 +490,8 @@ interface PaginatedResult {
 }
 
 type AgesPaginatedResult implements PaginatedResult {
-  result(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): [Age!]
-  count(q: String): Int!
+  result: [Age!]
+  count: Int!
 }
 
 type ClassesPaginatedResult implements PaginatedResult {
@@ -545,8 +545,8 @@ type MilieuxPaginatedResult implements PaginatedResult {
 }
 
 type ObservateursPaginatedResult implements PaginatedResult {
-  result(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): [Observateur!]
-  count(q: String): Int!
+  result: [Observateur!]
+  count: Int!
 }
 
 type SexesPaginatedResult implements PaginatedResult {
@@ -625,7 +625,7 @@ type UserInfo {
 
 type Query {
   age(id: Int!): Age
-  ages: AgesPaginatedResult
+  ages(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
   classe(id: Int!): Classe
   commune(id: Int!): Commune
   comportement(id: Int!): Comportement
@@ -643,7 +643,11 @@ type Query {
   milieuList(ids: [Int!]!): [Milieu]
   observateur(id: Int!): Observateur
   observateurList(ids: [Int!]!): [Observateur!]
-  observateurs: ObservateursPaginatedResult
+  observateurs(
+    searchParams: SearchParams
+    orderBy: EntitesAvecLibelleOrderBy
+    sortOrder: SortOrder
+  ): ObservateursPaginatedResult
   sexe(id: Int!): Sexe
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
