@@ -331,60 +331,62 @@ test("should throw an error when trying to create a department that exists", asy
   });
 });
 
-test("should be able to delete an owned department", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a department", () => {
+  test("hould handle the deletion of an owned department", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const department = mock<Departement>({
-    ownerId: loggedUser.id,
+    const department = mock<Departement>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.departement.findFirst.mockResolvedValueOnce(department);
+
+    await deleteDepartement(11, loggedUser);
+
+    expect(prismaMock.departement.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.departement.findFirst.mockResolvedValueOnce(department);
+  test("should handle the deletion of any department if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteDepartement(11, loggedUser);
+    prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
 
-  expect(prismaMock.departement.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteDepartement(11, loggedUser);
 
-test("should be able to delete any department if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
-
-  await deleteDepartement(11, loggedUser);
-
-  expect(prismaMock.departement.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned department as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.departement.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
+  test("should return an error when deleting a non-owned department as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
 
-  expect(prismaMock.departement.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.departement.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.departement.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.departement.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple departments", async () => {

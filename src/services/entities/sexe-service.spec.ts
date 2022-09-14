@@ -290,60 +290,62 @@ test("should throw an error when trying to create a sex that exists", async () =
   });
 });
 
-test("should be able to delete an owned sex", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a sex", () => {
+  test("sshould handle the deletion of an owned sex", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const sex = mock<Sexe>({
-    ownerId: loggedUser.id,
+    const sex = mock<Sexe>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.sexe.findFirst.mockResolvedValueOnce(sex);
+
+    await deleteSexe(11, loggedUser);
+
+    expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.sexe.findFirst.mockResolvedValueOnce(sex);
+  test("should handle the deletion of any sex if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteSexe(11, loggedUser);
+    prismaMock.sexe.findFirst.mockResolvedValueOnce(mock<Sexe>());
 
-  expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteSexe(11, loggedUser);
 
-test("should be able to delete any sex if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.sexe.findFirst.mockResolvedValueOnce(mock<Sexe>());
-
-  await deleteSexe(11, loggedUser);
-
-  expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned sex as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.sexe.findFirst.mockResolvedValueOnce(mock<Sexe>());
+  test("should return an error when deleting a non-owned sex as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteSexe(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.sexe.findFirst.mockResolvedValueOnce(mock<Sexe>());
 
-  expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteSexe(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple sexes", async () => {

@@ -412,62 +412,64 @@ test("should throw an error when trying to create a locality that exists", async
   });
 });
 
-test("should be able to delete an owned locality", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a locality", () => {
+  test("should handle the deletion of an owned locality", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const locality = mock<Lieudit>({
-    ownerId: loggedUser.id,
+    const locality = mock<Lieudit>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.lieudit.findFirst.mockResolvedValueOnce(locality);
+    prismaMock.lieudit.delete.mockResolvedValueOnce(mockDeep<Lieudit>());
+
+    await deleteLieuDit(11, loggedUser);
+
+    expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.lieudit.findFirst.mockResolvedValueOnce(locality);
-  prismaMock.lieudit.delete.mockResolvedValueOnce(mockDeep<Lieudit>());
+  test("should handle the deletion of any locality if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteLieuDit(11, loggedUser);
+    prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
+    prismaMock.lieudit.delete.mockResolvedValueOnce(mockDeep<Lieudit>());
 
-  expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteLieuDit(11, loggedUser);
 
-test("should be able to delete any locality if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
-  prismaMock.lieudit.delete.mockResolvedValueOnce(mockDeep<Lieudit>());
-
-  await deleteLieuDit(11, loggedUser);
-
-  expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned locality as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
+  test("should return an error when deleting a non-owned locality as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteLieuDit(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
 
-  expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteLieuDit(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple localities", async () => {

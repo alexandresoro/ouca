@@ -293,60 +293,62 @@ test("should throw an error when trying to create a distance estimate that exist
   });
 });
 
-test("should be able to delete an owned distance estimate", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a distance exstimate", () => {
+  test("should handle the deletion of an owned distance estimate", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const distanceEstimate = mock<EstimationDistance>({
-    ownerId: loggedUser.id,
+    const distanceEstimate = mock<EstimationDistance>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(distanceEstimate);
+
+    await deleteEstimationDistance(11, loggedUser);
+
+    expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(distanceEstimate);
+  test("should handle the deletion of any distance estimate if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteEstimationDistance(11, loggedUser);
+    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
 
-  expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteEstimationDistance(11, loggedUser);
 
-test("should be able to delete any distance estimate if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
-
-  await deleteEstimationDistance(11, loggedUser);
-
-  expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned distance estimate as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
+  test("should return an error when deleting a non-owned distance estimate as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteEstimationDistance(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
 
-  expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteEstimationDistance(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple distance estimates", async () => {

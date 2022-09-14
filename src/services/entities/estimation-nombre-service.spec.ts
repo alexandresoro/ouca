@@ -293,60 +293,62 @@ test("should throw an error when trying to create a number estimate that exists"
   });
 });
 
-test("should be able to delete an owned number estimate", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a number estimate", () => {
+  test("should handle the deletion of an owned number estimate", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const numberEstimate = mock<EstimationNombre>({
-    ownerId: loggedUser.id,
+    const numberEstimate = mock<EstimationNombre>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(numberEstimate);
+
+    await deleteEstimationNombre(11, loggedUser);
+
+    expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(numberEstimate);
+  test("should handle the deletion of any number estimate if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteEstimationNombre(11, loggedUser);
+    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
 
-  expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteEstimationNombre(11, loggedUser);
 
-test("should be able to delete any number estimate if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
-
-  await deleteEstimationNombre(11, loggedUser);
-
-  expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned number estimate as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
+  test("should return an error when deleting a non-owned number estimate as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteEstimationNombre(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
 
-  expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteEstimationNombre(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple number estimates", async () => {

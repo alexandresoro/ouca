@@ -395,60 +395,62 @@ test("should throw an error when trying to create a behavior that exists", async
   });
 });
 
-test("should be able to delete an owned behavior", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a behavior", () => {
+  test("should handle the deletion of an owned behavior", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const behavior = mock<Comportement>({
-    ownerId: loggedUser.id,
+    const behavior = mock<Comportement>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.comportement.findFirst.mockResolvedValueOnce(behavior);
+
+    await deleteComportement(11, loggedUser);
+
+    expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.comportement.findFirst.mockResolvedValueOnce(behavior);
+  test("should handle the deletion of any behavior if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteComportement(11, loggedUser);
+    prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
 
-  expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteComportement(11, loggedUser);
 
-test("should be able to delete any behavior if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
-
-  await deleteComportement(11, loggedUser);
-
-  expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned behavior as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
+  test("should return an error when deleting a non-owned behavior as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteComportement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
 
-  expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteComportement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple comportements", async () => {

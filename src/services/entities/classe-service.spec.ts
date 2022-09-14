@@ -331,60 +331,62 @@ test("should throw an error when trying to create a class that exists", async ()
   });
 });
 
-test("should be able to delete an owned class", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a class", () => {
+  test("should handle the deletion of an owned class", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const classe = mock<Classe>({
-    ownerId: loggedUser.id,
+    const classe = mock<Classe>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.classe.findFirst.mockResolvedValueOnce(classe);
+
+    await deleteClasse(11, loggedUser);
+
+    expect(prismaMock.classe.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.classe.findFirst.mockResolvedValueOnce(classe);
+  test("should handle the deletion of any class if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteClasse(11, loggedUser);
+    prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
 
-  expect(prismaMock.classe.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteClasse(11, loggedUser);
 
-test("should be able to delete any class if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
-
-  await deleteClasse(11, loggedUser);
-
-  expect(prismaMock.classe.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned class as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.classe.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
+  test("should return an error when deleting a non-owned class as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
 
-  expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple classes", async () => {

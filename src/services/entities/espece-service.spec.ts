@@ -568,60 +568,62 @@ test("should throw an error when trying to create a species that exists", async 
   });
 });
 
-test("should be able to delete an owned species", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a species", () => {
+  test("should handle the deletion of an owned species", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const species = mock<Espece>({
-    ownerId: loggedUser.id,
+    const species = mock<Espece>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.espece.findFirst.mockResolvedValueOnce(species);
+
+    await deleteEspece(11, loggedUser);
+
+    expect(prismaMock.espece.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.espece.findFirst.mockResolvedValueOnce(species);
+  test("should handle the deletion of any species if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteEspece(11, loggedUser);
+    prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
 
-  expect(prismaMock.espece.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteEspece(11, loggedUser);
 
-test("should be able to delete any species if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
-
-  await deleteEspece(11, loggedUser);
-
-  expect(prismaMock.espece.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned species as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.espece.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
+  test("should return an error when deleting a non-owned species as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteEspece(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
 
-  expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteEspece(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple species", async () => {

@@ -356,60 +356,62 @@ test("should throw an error when trying to create an environment that exists", a
   });
 });
 
-test("should be able to delete an owned environment", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of an environment", () => {
+  test("should handle the deletion of an owned environment", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const environment = mock<Milieu>({
-    ownerId: loggedUser.id,
+    const environment = mock<Milieu>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.milieu.findFirst.mockResolvedValueOnce(environment);
+
+    await deleteMilieu(11, loggedUser);
+
+    expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.milieu.findFirst.mockResolvedValueOnce(environment);
+  test("hould handle the deletion of any environment if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteMilieu(11, loggedUser);
+    prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
 
-  expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteMilieu(11, loggedUser);
 
-test("should be able to delete any environment if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
-
-  await deleteMilieu(11, loggedUser);
-
-  expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned environment as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
+  test("should return an error when deleting a non-owned environment as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
 
-  expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple environments", async () => {

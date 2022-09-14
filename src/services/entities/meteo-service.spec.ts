@@ -310,60 +310,62 @@ test("should throw an error when trying to create a weather that exists", async 
   });
 });
 
-test("should be able to delete an owned weather", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a weather", () => {
+  test("should handle the deletion of an owned weather", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const meteo = mock<Meteo>({
-    ownerId: loggedUser.id,
+    const meteo = mock<Meteo>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.meteo.findFirst.mockResolvedValueOnce(meteo);
+
+    await deleteMeteo(11, loggedUser);
+
+    expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.meteo.findFirst.mockResolvedValueOnce(meteo);
+  test("should handle the deletion of any weather if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteMeteo(11, loggedUser);
+    prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
 
-  expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteMeteo(11, loggedUser);
 
-test("should be able to delete any weather if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
-
-  await deleteMeteo(11, loggedUser);
-
-  expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned weather as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
+  test("should return an error when deleting a non-owned weather as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
 
-  expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple weathers", async () => {

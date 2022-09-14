@@ -363,60 +363,62 @@ test("should throw an error when trying to create a city that exists", async () 
   });
 });
 
-test("should be able to delete an owned city", async () => {
-  const loggedUser: LoggedUser = {
-    id: "12",
-    role: DatabaseRole.contributor,
-  };
+describe("Deletion of a city", () => {
+  test("should handle the deletion of an owned city", async () => {
+    const loggedUser: LoggedUser = {
+      id: "12",
+      role: DatabaseRole.contributor,
+    };
 
-  const city = mock<Commune>({
-    ownerId: loggedUser.id,
+    const city = mock<Commune>({
+      ownerId: loggedUser.id,
+    });
+
+    prismaMock.commune.findFirst.mockResolvedValueOnce(city);
+
+    await deleteCommune(11, loggedUser);
+
+    expect(prismaMock.commune.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.commune.findFirst.mockResolvedValueOnce(city);
+  test("should handle the deletion of any city if admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.admin,
+    });
 
-  await deleteCommune(11, loggedUser);
+    prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
 
-  expect(prismaMock.commune.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
+    await deleteCommune(11, loggedUser);
 
-test("should be able to delete any city if admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.admin,
-  });
-
-  prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
-
-  await deleteCommune(11, loggedUser);
-
-  expect(prismaMock.commune.delete).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.delete).toHaveBeenLastCalledWith({
-    where: {
-      id: 11,
-    },
-  });
-});
-
-test("should return an error when deleting a non-owned city as non-admin", async () => {
-  const loggedUser = mock<LoggedUser>({
-    role: DatabaseRole.contributor,
+    expect(prismaMock.commune.delete).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.delete).toHaveBeenLastCalledWith({
+      where: {
+        id: 11,
+      },
+    });
   });
 
-  prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
+  test("should return an error when deleting a non-owned city as non-admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: DatabaseRole.contributor,
+    });
 
-  await expect(deleteCommune(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
 
-  expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
-});
+    await expect(deleteCommune(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-test("should throw an error when the requester is not logged", async () => {
-  await expect(deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple cities", async () => {
