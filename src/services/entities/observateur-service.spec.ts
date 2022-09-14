@@ -13,7 +13,7 @@ import {
   findObservateurs,
   findObservateursByIds,
   findPaginatedObservateurs,
-  getNbDonneesOfObservateur,
+  getDonneesCountByObservateur,
   getObservateursCount,
   upsertObservateur,
 } from "./observateur-service";
@@ -68,11 +68,11 @@ describe("Find observer", () => {
   });
 });
 
-describe("Number of associated data", () => {
+describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getNbDonneesOfObservateur(12, loggedUser);
+    await getDonneesCountByObservateur(12, loggedUser);
 
     expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.donnee.count).toHaveBeenLastCalledWith({
@@ -85,7 +85,7 @@ describe("Number of associated data", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getNbDonneesOfObservateur(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(getDonneesCountByObservateur(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

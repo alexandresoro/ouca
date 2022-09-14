@@ -7,7 +7,7 @@ import {
   findAge,
   findPaginatedAges,
   getAgesCount,
-  getNbDonneesOfAge,
+  getDonneesCountByAge,
   upsertAge,
 } from "../services/entities/age-service";
 import {
@@ -125,7 +125,7 @@ import {
   findObservateur,
   findObservateursByIds,
   findPaginatedObservateurs,
-  getNbDonneesOfObservateur,
+  getDonneesCountByObservateur,
   getObservateursCount,
   upsertObservateur,
 } from "../services/entities/observateur-service";
@@ -789,7 +789,7 @@ const resolvers: IResolvers = {
       if (!parent?.id) {
         return null;
       }
-      return getNbDonneesOfAge(parent.id, user);
+      return getDonneesCountByAge(parent.id, user);
     },
   },
   Commune: {
@@ -843,7 +843,7 @@ const resolvers: IResolvers = {
       if (!parent?.id) {
         return null;
       }
-      return getNbDonneesOfObservateur(parent.id, user);
+      return getDonneesCountByObservateur(parent.id, user);
     },
   },
   PaginatedSearchDonneesResult: {

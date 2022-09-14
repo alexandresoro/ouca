@@ -21,7 +21,7 @@ export const findAge = async (id: number, loggedUser: LoggedUser | null): Promis
   });
 };
 
-export const getNbDonneesOfAge = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+export const getDonneesCountByAge = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
   validateAuthorization(loggedUser);
 
   return prisma.donnee.count({

@@ -12,7 +12,7 @@ import {
   findAges,
   findPaginatedAges,
   getAgesCount,
-  getNbDonneesOfAge,
+  getDonneesCountByAge,
   upsertAge,
 } from "./age-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
@@ -67,11 +67,11 @@ describe("Find age", () => {
   });
 });
 
-describe("Number of associated data", () => {
+describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getNbDonneesOfAge(12, loggedUser);
+    await getDonneesCountByAge(12, loggedUser);
 
     expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.donnee.count).toHaveBeenLastCalledWith({
@@ -82,7 +82,7 @@ describe("Number of associated data", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getNbDonneesOfAge(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(getDonneesCountByAge(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

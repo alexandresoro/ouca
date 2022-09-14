@@ -28,7 +28,7 @@ export const findObservateur = async (id: number, loggedUser: LoggedUser | null)
   });
 };
 
-export const getNbDonneesOfObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+export const getDonneesCountByObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
   validateAuthorization(loggedUser);
 
   return prisma.donnee.count({
