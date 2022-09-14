@@ -302,7 +302,7 @@ describe("Creation of a sex", () => {
 });
 
 describe("Deletion of a sex", () => {
-  test("sshould handle the deletion of an owned sex", async () => {
+  test("should handle the deletion of an owned sex", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
       role: DatabaseRole.contributor,
