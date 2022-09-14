@@ -38,7 +38,7 @@
     "date-fns": "2.29.3",
     "dotenv": "16.0.2",
     "exceljs": "4.3.0",
-    "fastify": "4.5.3",
+    "fastify": "4.6.0",
     "graphql": "16.6.0",
     "jose": "4.9.2",
     "mercurius": "11.0.0",
