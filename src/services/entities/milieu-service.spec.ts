@@ -407,7 +407,7 @@ test("should return an error when deleting a non-owned environment as non-admin"
   expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
 });
 
-test("should create new environments", async () => {
+test("Create multiple environments", async () => {
   const environmentsData = [
     mock<Omit<Prisma.MilieuCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.MilieuCreateManyInput, "ownerId">>(),

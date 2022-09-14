@@ -344,7 +344,7 @@ test("should return an error when deleting a non-owned number estimate as non-ad
   expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(0);
 });
 
-test("should create new number estimates", async () => {
+test("Create multiple number estimates", async () => {
   const numberEstimatesData = [
     mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>(),

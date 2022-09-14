@@ -619,7 +619,7 @@ test("should return an error when deleting a non-owned species as non-admin", as
   expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
 });
 
-test("should create new species", async () => {
+test("Create multiple species", async () => {
   const speciesData = [
     mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),

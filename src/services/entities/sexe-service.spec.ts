@@ -341,7 +341,7 @@ test("should return an error when deleting a non-owned sex as non-admin", async 
   expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
 });
 
-test("should create new sexes", async () => {
+test("Create multiple sexes", async () => {
   const sexesData = [
     mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>(),

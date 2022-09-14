@@ -414,7 +414,7 @@ test("should return an error when deleting a non-owned city as non-admin", async
   expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
 });
 
-test("should create new communes", async () => {
+test("Create multiple cities", async () => {
   const communesData = [
     mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),

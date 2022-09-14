@@ -446,7 +446,7 @@ test("should return an error when deleting a non-owned behavior as non-admin", a
   expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(0);
 });
 
-test("should create new comportements", async () => {
+test("Create multiple comportements", async () => {
   const comportementsData = [
     mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>(),

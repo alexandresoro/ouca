@@ -344,7 +344,7 @@ test("should return an error when deleting a non-owned distance estimate as non-
   expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(0);
 });
 
-test("should create new distance estimates", async () => {
+test("Create multiple distance estimates", async () => {
   const distanceEstimatesData = [
     mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>(),

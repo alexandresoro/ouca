@@ -361,7 +361,7 @@ test("should return an error when deleting a non-owned weather as non-admin", as
   expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(0);
 });
 
-test("should create new weathers", async () => {
+test("Create multiple weathers", async () => {
   const weathersData = [
     mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>(),
     mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>(),
