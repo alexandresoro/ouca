@@ -558,7 +558,6 @@ const resolvers: IResolvers = {
       return saveDatabaseRequest();
     },
     settings: async (_source, args, { user }): Promise<Settings | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findAppConfiguration(user);
     },
   },

@@ -3,25 +3,33 @@ import { mock } from "jest-mock-extended";
 import { InputSettings } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
+import { OucaError } from "../../utils/errors";
 import { findAppConfiguration, findCoordinatesSystem, persistUserSettings } from "./configuration-service";
 
-test("should query needed parameters for user", async () => {
-  const loggedUser = mock<LoggedUser>();
+describe("Fetch app configuration for user", () => {
+  test("should query needed parameters for user", async () => {
+    const loggedUser = mock<LoggedUser>();
 
-  await findAppConfiguration(loggedUser);
+    await findAppConfiguration(loggedUser);
 
-  expect(prismaMock.settings.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.settings.findUnique).toHaveBeenCalledWith({
-    include: {
-      defaultObservateur: true,
-      defaultDepartement: true,
-      defaultAge: true,
-      defaultSexe: true,
-      defaultEstimationNombre: true,
-    },
-    where: {
-      userId: loggedUser.id,
-    },
+    expect(prismaMock.settings.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.settings.findUnique).toHaveBeenCalledWith({
+      include: {
+        defaultObservateur: true,
+        defaultDepartement: true,
+        defaultAge: true,
+        defaultSexe: true,
+        defaultEstimationNombre: true,
+      },
+      where: {
+        userId: loggedUser.id,
+      },
+    });
+  });
+
+  test("should throw an error when no logged user provided", async () => {
+    await expect(findAppConfiguration(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.settings.findUnique).not.toHaveBeenCalled();
   });
 });
 

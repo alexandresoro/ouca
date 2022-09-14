@@ -2,6 +2,7 @@ import { CoordinatesSystem, Settings as SettingsDb } from "@prisma/client";
 import { InputSettings, Settings } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
+import { validateAuthorization } from "./authorization-utils";
 
 const includedElements = {
   defaultObservateur: true,
@@ -11,11 +12,13 @@ const includedElements = {
   defaultEstimationNombre: true,
 };
 
-export const findAppConfiguration = async (loggedUser: LoggedUser): Promise<Settings | null> => {
+export const findAppConfiguration = async (loggedUser: LoggedUser | null): Promise<Settings | null> => {
+  validateAuthorization(loggedUser);
+
   return prisma.settings.findUnique({
     include: includedElements,
     where: {
-      userId: loggedUser.id,
+      userId: loggedUser?.id,
     },
   });
 };
@@ -49,7 +52,7 @@ const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): Omit
 
 export const persistUserSettings = async (
   appConfiguration: InputSettings,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Settings> => {
   const { id, ...settings } = buildSettingsDbFromInputSettings(appConfiguration);
 
@@ -58,7 +61,7 @@ export const persistUserSettings = async (
     include: includedElements,
     where: {
       id,
-      userId: loggedUser.id,
+      userId: loggedUser?.id,
     },
   });
 
