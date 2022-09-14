@@ -262,43 +262,45 @@ test("should throw an error when trying to update a distance estimate that exist
   });
 });
 
-test("should create new distance estimate ", async () => {
-  const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-    id: undefined,
+describe("Creation of a distance estimate", () => {
+  test("should create new distance estimate", async () => {
+    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertEstimationDistance(distanceEstimateData, loggedUser);
+
+    expect(prismaMock.estimationDistance.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.create).toHaveBeenLastCalledWith({
+      data: {
+        ...distanceEstimateData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a distance estimate that already exists", async () => {
+    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
+      id: undefined,
+    });
 
-  await upsertEstimationDistance(distanceEstimateData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.estimationDistance.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.create).toHaveBeenLastCalledWith({
-    data: {
-      ...distanceEstimateData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.estimationDistance.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a distance estimate that exists", async () => {
-  const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertEstimationDistance(distanceEstimateData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.estimationDistance.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertEstimationDistance(distanceEstimateData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.estimationDistance.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.create).toHaveBeenLastCalledWith({
-    data: {
-      ...distanceEstimateData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.estimationDistance.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.create).toHaveBeenLastCalledWith({
+      data: {
+        ...distanceEstimateData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

@@ -325,43 +325,45 @@ test("should throw an error when trying to update an environment that exists", a
   });
 });
 
-test("should create new environment ", async () => {
-  const environmentData = mock<MutationUpsertMilieuArgs>({
-    id: undefined,
+describe("Creation of an environment", () => {
+  test("should create new environment", async () => {
+    const environmentData = mock<MutationUpsertMilieuArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertMilieu(environmentData, loggedUser);
+
+    expect(prismaMock.milieu.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.create).toHaveBeenLastCalledWith({
+      data: {
+        ...environmentData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create an environment that already exists", async () => {
+    const environmentData = mock<MutationUpsertMilieuArgs>({
+      id: undefined,
+    });
 
-  await upsertMilieu(environmentData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.milieu.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.create).toHaveBeenLastCalledWith({
-    data: {
-      ...environmentData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.milieu.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create an environment that exists", async () => {
-  const environmentData = mock<MutationUpsertMilieuArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.milieu.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.milieu.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.create).toHaveBeenLastCalledWith({
-    data: {
-      ...environmentData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.milieu.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.create).toHaveBeenLastCalledWith({
+      data: {
+        ...environmentData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

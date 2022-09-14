@@ -279,43 +279,45 @@ test("should throw an error when trying to update a weather that exists", async 
   });
 });
 
-test("should create new weather", async () => {
-  const weatherData = mock<MutationUpsertMeteoArgs>({
-    id: undefined,
+describe("Creation of a weather", () => {
+  test("should create new weather", async () => {
+    const weatherData = mock<MutationUpsertMeteoArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertMeteo(weatherData, loggedUser);
+
+    expect(prismaMock.meteo.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.create).toHaveBeenLastCalledWith({
+      data: {
+        ...weatherData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a weather that already exists", async () => {
+    const weatherData = mock<MutationUpsertMeteoArgs>({
+      id: undefined,
+    });
 
-  await upsertMeteo(weatherData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.meteo.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.create).toHaveBeenLastCalledWith({
-    data: {
-      ...weatherData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.meteo.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a weather that exists", async () => {
-  const weatherData = mock<MutationUpsertMeteoArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.meteo.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.meteo.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.create).toHaveBeenLastCalledWith({
-    data: {
-      ...weatherData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.meteo.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.create).toHaveBeenLastCalledWith({
+      data: {
+        ...weatherData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

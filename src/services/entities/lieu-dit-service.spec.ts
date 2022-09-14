@@ -379,45 +379,47 @@ test("should throw an error when trying to update a locality that exists", async
   });
 });
 
-test("should create new locality ", async () => {
-  const localityData = mock<MutationUpsertLieuDitArgs>({
-    id: undefined,
+describe("Creation of a locality", () => {
+  test("should create new locality", async () => {
+    const localityData = mock<MutationUpsertLieuDitArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    prismaMock.lieudit.create.mockResolvedValueOnce(mockDeep<Lieudit>());
+
+    await upsertLieuDit(localityData, loggedUser);
+
+    expect(prismaMock.lieudit.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.create).toHaveBeenLastCalledWith({
+      data: {
+        ...localityData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a locality that already exists", async () => {
+    const localityData = mock<MutationUpsertLieuDitArgs>({
+      id: undefined,
+    });
 
-  prismaMock.lieudit.create.mockResolvedValueOnce(mockDeep<Lieudit>());
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  await upsertLieuDit(localityData, loggedUser);
+    prismaMock.lieudit.create.mockImplementation(prismaConstraintFailed);
 
-  expect(prismaMock.lieudit.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.create).toHaveBeenLastCalledWith({
-    data: {
-      ...localityData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    await expect(() => upsertLieuDit(localityData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-test("should throw an error when trying to create a locality that exists", async () => {
-  const localityData = mock<MutationUpsertLieuDitArgs>({
-    id: undefined,
-  });
-
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.lieudit.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertLieuDit(localityData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.lieudit.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.create).toHaveBeenLastCalledWith({
-    data: {
-      ...localityData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.lieudit.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.create).toHaveBeenLastCalledWith({
+      data: {
+        ...localityData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

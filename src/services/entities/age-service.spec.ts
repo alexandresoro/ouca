@@ -276,7 +276,7 @@ describe("Update of an age", () => {
 });
 
 describe("Creation of an age", () => {
-  test("should create new age ", async () => {
+  test("should create new age", async () => {
     const ageData = mock<MutationUpsertAgeArgs>({
       id: undefined,
     });

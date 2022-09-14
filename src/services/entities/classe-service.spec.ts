@@ -300,43 +300,45 @@ test("should throw an error when trying to update a class that exists", async ()
   });
 });
 
-test("should create new class ", async () => {
-  const classData = mock<MutationUpsertClasseArgs>({
-    id: undefined,
+describe("Creation of a class", () => {
+  test("should create new class", async () => {
+    const classData = mock<MutationUpsertClasseArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertClasse(classData, loggedUser);
+
+    expect(prismaMock.classe.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
+      data: {
+        ...classData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a class that already exists", async () => {
+    const classData = mock<MutationUpsertClasseArgs>({
+      id: undefined,
+    });
 
-  await upsertClasse(classData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.classe.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
-    data: {
-      ...classData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.classe.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a class that exists", async () => {
-  const classData = mock<MutationUpsertClasseArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertClasse(classData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.classe.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertClasse(classData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.classe.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
-    data: {
-      ...classData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.classe.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
+      data: {
+        ...classData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

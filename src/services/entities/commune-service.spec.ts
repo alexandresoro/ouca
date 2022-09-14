@@ -332,43 +332,45 @@ test("should throw an error when trying to update a city that exists", async () 
   });
 });
 
-test("should create new city ", async () => {
-  const cityData = mock<MutationUpsertCommuneArgs>({
-    id: undefined,
+describe("Creation of a city", () => {
+  test("should create new city", async () => {
+    const cityData = mock<MutationUpsertCommuneArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertCommune(cityData, loggedUser);
+
+    expect(prismaMock.commune.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.create).toHaveBeenLastCalledWith({
+      data: {
+        ...cityData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a city that already exists", async () => {
+    const cityData = mock<MutationUpsertCommuneArgs>({
+      id: undefined,
+    });
 
-  await upsertCommune(cityData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.commune.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.create).toHaveBeenLastCalledWith({
-    data: {
-      ...cityData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.commune.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a city that exists", async () => {
-  const cityData = mock<MutationUpsertCommuneArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertCommune(cityData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.commune.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertCommune(cityData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.commune.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.create).toHaveBeenLastCalledWith({
-    data: {
-      ...cityData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.commune.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.create).toHaveBeenLastCalledWith({
+      data: {
+        ...cityData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

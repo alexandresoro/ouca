@@ -262,43 +262,45 @@ test("should throw an error when trying to update a number estimate that exists"
   });
 });
 
-test("should create new number estimate ", async () => {
-  const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-    id: undefined,
+describe("Creation of a number estimate", () => {
+  test("should create new number estimate", async () => {
+    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertEstimationNombre(numberEstimateData, loggedUser);
+
+    expect(prismaMock.estimationNombre.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.create).toHaveBeenLastCalledWith({
+      data: {
+        ...numberEstimateData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a number estimate that already exists", async () => {
+    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
+      id: undefined,
+    });
 
-  await upsertEstimationNombre(numberEstimateData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.estimationNombre.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.create).toHaveBeenLastCalledWith({
-    data: {
-      ...numberEstimateData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.estimationNombre.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a number estimate that exists", async () => {
-  const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertEstimationNombre(numberEstimateData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.estimationNombre.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertEstimationNombre(numberEstimateData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.estimationNombre.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.create).toHaveBeenLastCalledWith({
-    data: {
-      ...numberEstimateData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.estimationNombre.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.create).toHaveBeenLastCalledWith({
+      data: {
+        ...numberEstimateData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

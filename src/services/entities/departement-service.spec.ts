@@ -300,43 +300,45 @@ test("should throw an error when trying to update a department that exists", asy
   });
 });
 
-test("should create new department ", async () => {
-  const departmentData = mock<MutationUpsertDepartementArgs>({
-    id: undefined,
+describe("Creation of a department", () => {
+  test("should create new department", async () => {
+    const departmentData = mock<MutationUpsertDepartementArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertDepartement(departmentData, loggedUser);
+
+    expect(prismaMock.departement.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.create).toHaveBeenLastCalledWith({
+      data: {
+        ...departmentData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a department that already exists", async () => {
+    const departmentData = mock<MutationUpsertDepartementArgs>({
+      id: undefined,
+    });
 
-  await upsertDepartement(departmentData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.departement.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.create).toHaveBeenLastCalledWith({
-    data: {
-      ...departmentData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.departement.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a department that exists", async () => {
-  const departmentData = mock<MutationUpsertDepartementArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.departement.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.departement.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.create).toHaveBeenLastCalledWith({
-    data: {
-      ...departmentData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.departement.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.create).toHaveBeenLastCalledWith({
+      data: {
+        ...departmentData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

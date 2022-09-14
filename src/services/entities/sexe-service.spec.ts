@@ -259,43 +259,45 @@ test("should throw an error when trying to update a sex that exists", async () =
   });
 });
 
-test("should create new sex ", async () => {
-  const sexData = mock<MutationUpsertSexeArgs>({
-    id: undefined,
+describe("Creation of a sex", () => {
+  test("should create new sex", async () => {
+    const sexData = mock<MutationUpsertSexeArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertSexe(sexData, loggedUser);
+
+    expect(prismaMock.sexe.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.create).toHaveBeenLastCalledWith({
+      data: {
+        ...sexData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a sex that already exists", async () => {
+    const sexData = mock<MutationUpsertSexeArgs>({
+      id: undefined,
+    });
 
-  await upsertSexe(sexData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.sexe.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.create).toHaveBeenLastCalledWith({
-    data: {
-      ...sexData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.sexe.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a sex that exists", async () => {
-  const sexData = mock<MutationUpsertSexeArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertSexe(sexData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.sexe.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertSexe(sexData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.sexe.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.create).toHaveBeenLastCalledWith({
-    data: {
-      ...sexData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.sexe.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.create).toHaveBeenLastCalledWith({
+      data: {
+        ...sexData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

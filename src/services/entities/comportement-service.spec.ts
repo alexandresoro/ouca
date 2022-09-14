@@ -364,43 +364,45 @@ test("should throw an error when trying to update a behavior that exists", async
   });
 });
 
-test("should create new behavior ", async () => {
-  const behaviorData = mock<MutationUpsertComportementArgs>({
-    id: undefined,
+describe("Creation of a behavior", () => {
+  test("should create new behavior", async () => {
+    const behaviorData = mock<MutationUpsertComportementArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertComportement(behaviorData, loggedUser);
+
+    expect(prismaMock.comportement.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.create).toHaveBeenLastCalledWith({
+      data: {
+        ...behaviorData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a behavior that already exists", async () => {
+    const behaviorData = mock<MutationUpsertComportementArgs>({
+      id: undefined,
+    });
 
-  await upsertComportement(behaviorData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.comportement.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.create).toHaveBeenLastCalledWith({
-    data: {
-      ...behaviorData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.comportement.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a behavior that exists", async () => {
-  const behaviorData = mock<MutationUpsertComportementArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.comportement.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.comportement.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.create).toHaveBeenLastCalledWith({
-    data: {
-      ...behaviorData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.comportement.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.create).toHaveBeenLastCalledWith({
+      data: {
+        ...behaviorData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 

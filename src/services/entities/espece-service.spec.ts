@@ -537,43 +537,45 @@ test("should throw an error when trying to update a species that exists", async 
   });
 });
 
-test("should create new species ", async () => {
-  const speciesData = mock<MutationUpsertEspeceArgs>({
-    id: undefined,
+describe("Creation of a species", () => {
+  test("should create new species", async () => {
+    const speciesData = mock<MutationUpsertEspeceArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    await upsertEspece(speciesData, loggedUser);
+
+    expect(prismaMock.espece.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.create).toHaveBeenLastCalledWith({
+      data: {
+        ...speciesData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
+  test("should throw an error when trying to create a species that already exists", async () => {
+    const speciesData = mock<MutationUpsertEspeceArgs>({
+      id: undefined,
+    });
 
-  await upsertEspece(speciesData, loggedUser);
+    const loggedUser = mock<LoggedUser>({ id: "a" });
 
-  expect(prismaMock.espece.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.create).toHaveBeenLastCalledWith({
-    data: {
-      ...speciesData.data,
-      ownerId: loggedUser.id,
-    },
-  });
-});
+    prismaMock.espece.create.mockImplementation(prismaConstraintFailed);
 
-test("should throw an error when trying to create a species that exists", async () => {
-  const speciesData = mock<MutationUpsertEspeceArgs>({
-    id: undefined,
-  });
+    await expect(() => upsertEspece(speciesData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
 
-  const loggedUser = mock<LoggedUser>({ id: "a" });
-
-  prismaMock.espece.create.mockImplementation(prismaConstraintFailed);
-
-  await expect(() => upsertEspece(speciesData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
-
-  expect(prismaMock.espece.create).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.create).toHaveBeenLastCalledWith({
-    data: {
-      ...speciesData.data,
-      ownerId: loggedUser.id,
-    },
+    expect(prismaMock.espece.create).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.create).toHaveBeenLastCalledWith({
+      data: {
+        ...speciesData.data,
+        ownerId: loggedUser.id,
+      },
+    });
   });
 });
 
