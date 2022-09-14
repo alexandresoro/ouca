@@ -69,12 +69,12 @@ describe("Find behavior", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(findComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(0);
+    expect(prismaMock.comportement.findUnique).not.toHaveBeenCalled();
   });
 });
 
@@ -339,7 +339,7 @@ test("should throw an error when updating an existing behavior and nor owner nor
 
   await expect(upsertComportement(behaviorData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.comportement.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.comportement.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a behavior that exists", async () => {
@@ -455,12 +455,12 @@ describe("Deletion of a behavior", () => {
 
     await expect(deleteComportement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.comportement.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.comportement.delete).not.toHaveBeenCalled();
   });
 });
 

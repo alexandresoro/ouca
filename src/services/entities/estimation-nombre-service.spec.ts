@@ -71,7 +71,7 @@ describe("Find number estimate", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
@@ -237,7 +237,7 @@ test("should throw an error when updating an existing number estimate and nor ow
 
   await expect(upsertEstimationNombre(numberEstimateData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.estimationNombre.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a number estimate that exists", async () => {
@@ -353,12 +353,12 @@ describe("Deletion of a number estimate", () => {
 
     await expect(deleteEstimationNombre(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.estimationNombre.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.estimationNombre.delete).not.toHaveBeenCalled();
   });
 });
 

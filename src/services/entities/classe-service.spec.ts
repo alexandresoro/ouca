@@ -69,12 +69,12 @@ describe("Find class", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(findClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(0);
+    expect(prismaMock.classe.findUnique).not.toHaveBeenCalled();
   });
 });
 
@@ -114,7 +114,7 @@ test("should handle class not found when retrieving class by species ID ", async
       id: 43,
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+  expect(isEntityReadOnly).not.toHaveBeenCalled();
   expect(classe).toBeNull();
 });
 
@@ -275,7 +275,7 @@ test("should throw an error when updating an existing class and nor owner nor ad
 
   await expect(upsertClasse(classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.classe.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.classe.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a class that exists", async () => {
@@ -391,12 +391,12 @@ describe("Deletion of a class", () => {
 
     await expect(deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.classe.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.classe.delete).not.toHaveBeenCalled();
   });
 });
 

@@ -71,7 +71,7 @@ describe("Find distance estimate", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
@@ -237,7 +237,7 @@ test("should throw an error when updating an existing distance estimate and nor 
 
   await expect(upsertEstimationDistance(distanceEstimateData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.estimationDistance.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a distance estimate that exists", async () => {
@@ -353,12 +353,12 @@ describe("Deletion of a distance exstimate", () => {
 
     await expect(deleteEstimationDistance(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.estimationDistance.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.estimationDistance.delete).not.toHaveBeenCalled();
   });
 });
 

@@ -64,7 +64,7 @@ describe("Find observer", () => {
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(findObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.observateur.findUnique).toHaveBeenCalledTimes(0);
+    expect(prismaMock.observateur.findUnique).not.toHaveBeenCalled();
   });
 });
 
@@ -274,7 +274,7 @@ describe("Update of an observer", () => {
 
     await expect(upsertObservateur(observerData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.observateur.update).toHaveBeenCalledTimes(0);
+    expect(prismaMock.observateur.update).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to an observer that exists", async () => {
@@ -391,12 +391,12 @@ describe("Deletion of an observer", () => {
 
     await expect(deleteObservateur(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.observateur.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.observateur.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.observateur.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.observateur.delete).not.toHaveBeenCalled();
   });
 });
 

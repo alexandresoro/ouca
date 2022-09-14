@@ -249,7 +249,7 @@ describe("Update of an age", () => {
 
     await expect(upsertAge(ageData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.age.update).toHaveBeenCalledTimes(0);
+    expect(prismaMock.age.update).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to an age that exists", async () => {
@@ -366,12 +366,12 @@ describe("Deletion of an age", () => {
 
     await expect(deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.age.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.age.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.age.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.age.delete).not.toHaveBeenCalled();
   });
 });
 

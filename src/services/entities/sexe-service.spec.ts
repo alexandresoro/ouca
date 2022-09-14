@@ -68,12 +68,12 @@ describe("Find sex", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(findSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.sexe.findUnique).toHaveBeenCalledTimes(0);
+    expect(prismaMock.sexe.findUnique).not.toHaveBeenCalled();
   });
 });
 
@@ -234,7 +234,7 @@ test("should throw an error when updating an existing sex and nor owner nor admi
 
   await expect(upsertSexe(sexData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.sexe.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.sexe.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a sex that exists", async () => {
@@ -350,12 +350,12 @@ describe("Deletion of a sex", () => {
 
     await expect(deleteSexe(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.sexe.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.sexe.delete).not.toHaveBeenCalled();
   });
 });
 

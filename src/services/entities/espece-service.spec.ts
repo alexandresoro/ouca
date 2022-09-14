@@ -82,7 +82,7 @@ describe("Find species", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
@@ -127,7 +127,7 @@ test("should handle species not found when retrieving species by data ID ", asyn
       id: 43,
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+  expect(isEntityReadOnly).not.toHaveBeenCalled();
   expect(species).toBeNull();
 });
 
@@ -512,7 +512,7 @@ test("should throw an error when updating an existing species and nor owner nor 
 
   await expect(upsertEspece(speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.espece.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.espece.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a species that exists", async () => {
@@ -628,12 +628,12 @@ describe("Deletion of a species", () => {
 
     await expect(deleteEspece(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.espece.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.espece.delete).not.toHaveBeenCalled();
   });
 });
 

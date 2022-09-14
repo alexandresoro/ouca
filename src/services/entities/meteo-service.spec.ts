@@ -69,7 +69,7 @@ describe("Find weather", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
@@ -254,7 +254,7 @@ test("should throw an error when updating an existing weather and nor owner nor 
 
   await expect(upsertMeteo(weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.meteo.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.meteo.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a weather that exists", async () => {
@@ -370,12 +370,12 @@ describe("Deletion of a weather", () => {
 
     await expect(deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.meteo.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.meteo.delete).not.toHaveBeenCalled();
   });
 });
 

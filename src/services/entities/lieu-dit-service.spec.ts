@@ -69,7 +69,7 @@ describe("Find locality", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
@@ -114,7 +114,7 @@ test("should handle class not found when retrieving locality by inventary ID ", 
       id: 43,
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+  expect(isEntityReadOnly).not.toHaveBeenCalled();
   expect(locality).toBeNull();
 });
 
@@ -354,7 +354,7 @@ test("should throw an error when updating an existing locality and nor owner nor
 
   await expect(upsertLieuDit(localityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.lieudit.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a locality that exists", async () => {
@@ -474,12 +474,12 @@ describe("Deletion of a locality", () => {
 
     await expect(deleteLieuDit(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.lieudit.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.lieudit.delete).not.toHaveBeenCalled();
   });
 });
 

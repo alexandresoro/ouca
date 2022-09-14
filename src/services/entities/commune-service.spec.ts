@@ -69,12 +69,12 @@ describe("Find city", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(findCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(0);
+    expect(prismaMock.commune.findUnique).not.toHaveBeenCalled();
   });
 });
 
@@ -114,7 +114,7 @@ test("should handle class not found when retrieving city by zone ID ", async () 
       id: 43,
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+  expect(isEntityReadOnly).not.toHaveBeenCalled();
   expect(city).toBeNull();
 });
 
@@ -307,7 +307,7 @@ test("should throw an error when updating an existing city and nor owner nor adm
 
   await expect(upsertCommune(cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.commune.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.commune.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update a city that exists", async () => {
@@ -423,12 +423,12 @@ describe("Deletion of a city", () => {
 
     await expect(deleteCommune(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.commune.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.commune.delete).not.toHaveBeenCalled();
   });
 });
 

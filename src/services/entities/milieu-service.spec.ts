@@ -69,7 +69,7 @@ describe("Find environment", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
@@ -300,7 +300,7 @@ test("should throw an error when updating an existing environment and nor owner 
 
   await expect(upsertMilieu(environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-  expect(prismaMock.milieu.update).toHaveBeenCalledTimes(0);
+  expect(prismaMock.milieu.update).not.toHaveBeenCalled();
 });
 
 test("should throw an error when trying to update an environment that exists", async () => {
@@ -416,12 +416,12 @@ describe("Deletion of an environment", () => {
 
     await expect(deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.milieu.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.milieu.delete).not.toHaveBeenCalled();
   });
 });
 

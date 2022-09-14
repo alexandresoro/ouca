@@ -48,7 +48,7 @@ describe("User creation", () => {
       new OucaError("OUCA0005")
     );
 
-    expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.create).not.toHaveBeenCalled();
   });
 
   test("should throw error when creating initial admin and no env password defined", async () => {
@@ -63,7 +63,7 @@ describe("User creation", () => {
       new OucaError("OUCA0006")
     );
 
-    expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.create).not.toHaveBeenCalled();
   });
 
   test("should throw error when creating initial admin and incorrect password provided", async () => {
@@ -80,7 +80,7 @@ describe("User creation", () => {
       new OucaError("OUCA0006")
     );
 
-    expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.create).not.toHaveBeenCalled();
   });
 
   test("should handle creation of initial admin and correct password provided", async () => {
@@ -111,7 +111,7 @@ describe("User creation", () => {
       new OucaError("OUCA0007")
     );
 
-    expect(prismaMock.user.create).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.create).not.toHaveBeenCalled();
   });
 
   test("should handle creation of user when requested by an admin", async () => {
@@ -218,7 +218,7 @@ describe("User update", () => {
 
     await expect(updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0002"));
 
-    expect(prismaMock.user.update).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.update).not.toHaveBeenCalled();
   });
 
   test("should not be able to edit when incorrect password provided", async () => {
@@ -242,7 +242,7 @@ describe("User update", () => {
 
     await expect(updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0003"));
 
-    expect(prismaMock.user.update).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.update).not.toHaveBeenCalled();
   });
 
   test("should not be able to edit when password missing", async () => {
@@ -266,7 +266,7 @@ describe("User update", () => {
 
     await expect(updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0003"));
 
-    expect(prismaMock.user.update).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.update).not.toHaveBeenCalled();
   });
 
   test("should be able to edit another user if admin", async () => {
@@ -303,7 +303,7 @@ describe("User update", () => {
 
     await expect(updateUser("11", editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.user.update).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.update).not.toHaveBeenCalled();
   });
 });
 
@@ -348,6 +348,6 @@ describe("User deletion", () => {
 
     await expect(deleteUser("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.user.delete).toHaveBeenCalledTimes(0);
+    expect(prismaMock.user.delete).not.toHaveBeenCalled();
   });
 });
