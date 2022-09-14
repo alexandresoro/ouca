@@ -216,8 +216,10 @@ export const getComportementsCount = async (loggedUser: LoggedUser | null, q?: s
 
 export const upsertComportement = async (
   args: MutationUpsertComportementArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Comportement & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedComportement: Comportement;
@@ -229,7 +231,7 @@ export const upsertComportement = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -249,7 +251,7 @@ export const upsertComportement = async (
   } else {
     // Create a new comportement
     try {
-      upsertedComportement = await prisma.comportement.create({ data: { ...data, ownerId: loggedUser.id } });
+      upsertedComportement = await prisma.comportement.create({ data: { ...data, ownerId: loggedUser?.id } });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
         throw new OucaError("OUCA0004", e);

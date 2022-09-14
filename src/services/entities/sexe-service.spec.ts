@@ -259,6 +259,15 @@ test("should throw an error when trying to update a sex that exists", async () =
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const sexData = mock<MutationUpsertSexeArgs>({
+    id: 12,
+  });
+
+  await expect(upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.sexe.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a sex", () => {
   test("should create new sex", async () => {
     const sexData = mock<MutationUpsertSexeArgs>({
@@ -298,6 +307,15 @@ describe("Creation of a sex", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const sexData = mock<MutationUpsertSexeArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.sexe.create).not.toHaveBeenCalled();
   });
 });
 

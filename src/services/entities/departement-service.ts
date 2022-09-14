@@ -226,8 +226,10 @@ export const getDepartementsCount = async (loggedUser: LoggedUser | null, q?: st
 };
 export const upsertDepartement = async (
   args: MutationUpsertDepartementArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Departement & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedDepartement: Departement;
@@ -239,7 +241,7 @@ export const upsertDepartement = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -257,7 +259,7 @@ export const upsertDepartement = async (
     }
   } else {
     try {
-      upsertedDepartement = await prisma.departement.create({ data: { ...data, ownerId: loggedUser.id } });
+      upsertedDepartement = await prisma.departement.create({ data: { ...data, ownerId: loggedUser?.id } });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
         throw new OucaError("OUCA0004", e);

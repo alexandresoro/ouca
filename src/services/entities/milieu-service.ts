@@ -203,8 +203,10 @@ export const getMilieuxCount = async (loggedUser: LoggedUser | null, q?: string 
 
 export const upsertMilieu = async (
   args: MutationUpsertMilieuArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Milieu & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedMilieu: Milieu;
@@ -216,7 +218,7 @@ export const upsertMilieu = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -236,7 +238,7 @@ export const upsertMilieu = async (
   } else {
     // Create a new milieu
     try {
-      upsertedMilieu = await prisma.milieu.create({ data: { ...data, ownerId: loggedUser.id } });
+      upsertedMilieu = await prisma.milieu.create({ data: { ...data, ownerId: loggedUser?.id } });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
         throw new OucaError("OUCA0004", e);

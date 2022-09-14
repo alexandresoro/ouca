@@ -141,8 +141,10 @@ export const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q
 
 export const upsertEstimationNombre = async (
   args: MutationUpsertEstimationNombreArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<EstimationNombre & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedEstimationNombre: EstimationNombre;
@@ -154,7 +156,7 @@ export const upsertEstimationNombre = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -173,7 +175,7 @@ export const upsertEstimationNombre = async (
   } else {
     try {
       upsertedEstimationNombre = await prisma.estimationNombre.create({
-        data: { ...data, ownerId: loggedUser.id },
+        data: { ...data, ownerId: loggedUser?.id },
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {

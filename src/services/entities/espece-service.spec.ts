@@ -537,6 +537,15 @@ test("should throw an error when trying to update a species that exists", async 
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const speciesData = mock<MutationUpsertEspeceArgs>({
+    id: 12,
+  });
+
+  await expect(upsertEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.espece.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a species", () => {
   test("should create new species", async () => {
     const speciesData = mock<MutationUpsertEspeceArgs>({
@@ -576,6 +585,15 @@ describe("Creation of a species", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const speciesData = mock<MutationUpsertEspeceArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.espece.create).not.toHaveBeenCalled();
   });
 });
 

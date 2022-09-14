@@ -300,6 +300,15 @@ test("should throw an error when trying to update a department that exists", asy
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const departmentData = mock<MutationUpsertDepartementArgs>({
+    id: 12,
+  });
+
+  await expect(upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.departement.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a department", () => {
   test("should create new department", async () => {
     const departmentData = mock<MutationUpsertDepartementArgs>({
@@ -339,6 +348,15 @@ describe("Creation of a department", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const departmentData = mock<MutationUpsertDepartementArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.departement.create).not.toHaveBeenCalled();
   });
 });
 

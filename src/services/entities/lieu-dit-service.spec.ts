@@ -379,6 +379,15 @@ test("should throw an error when trying to update a locality that exists", async
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const localityData = mock<MutationUpsertLieuDitArgs>({
+    id: 12,
+  });
+
+  await expect(upsertLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.lieudit.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a locality", () => {
   test("should create new locality", async () => {
     const localityData = mock<MutationUpsertLieuDitArgs>({
@@ -420,6 +429,15 @@ describe("Creation of a locality", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const localityData = mock<MutationUpsertLieuDitArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.lieudit.create).not.toHaveBeenCalled();
   });
 });
 

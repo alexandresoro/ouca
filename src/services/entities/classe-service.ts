@@ -173,8 +173,10 @@ export const getClassesCount = async (loggedUser: LoggedUser | null, q?: string 
 
 export const upsertClasse = async (
   args: MutationUpsertClasseArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Classe & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedClasse: Classe;
@@ -186,7 +188,7 @@ export const upsertClasse = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -209,7 +211,7 @@ export const upsertClasse = async (
       upsertedClasse = await prisma.classe.create({
         data: {
           ...data,
-          ownerId: loggedUser.id,
+          ownerId: loggedUser?.id,
         },
       });
     } catch (e) {

@@ -607,23 +607,18 @@ const resolvers: IResolvers = {
       return deleteSexe(args.id, user).then(({ id }) => id);
     },
     upsertAge: async (_source, args, { user }): Promise<Age> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertAge(args, user);
     },
     upsertClasse: async (_source, args, { user }): Promise<Classe> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertClasse(args, user);
     },
     upsertCommune: async (_source, args, { user }): Promise<CommuneEntity> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertCommune(args, user);
     },
     upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertComportement(args, user);
     },
     upsertDepartement: async (_source, args, { user }): Promise<Departement> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertDepartement(args, user);
     },
     upsertDonnee: async (
@@ -648,15 +643,12 @@ const resolvers: IResolvers = {
       }
     },
     upsertEspece: async (_source, args, { user }): Promise<EspeceEntity> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertEspece(args, user);
     },
     upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertEstimationDistance(args, user);
     },
     upsertEstimationNombre: async (_source, args, { user }): Promise<EstimationNombre> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertEstimationNombre(args, user);
     },
     upsertInventaire: async (
@@ -681,23 +673,18 @@ const resolvers: IResolvers = {
       }
     },
     upsertLieuDit: async (_source, args, { user }): Promise<LieuDitWithCoordinatesAsNumber> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertLieuDit(args, user);
     },
     upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertMeteo(args, user);
     },
     upsertMilieu: async (_source, args, { user }): Promise<Milieu> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertMilieu(args, user);
     },
     upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertObservateur(args, user);
     },
     upsertSexe: async (_source, args, { user }): Promise<Sexe> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return upsertSexe(args, user);
     },
     updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {

@@ -343,8 +343,10 @@ export const getCommunesCount = async (loggedUser: LoggedUser | null, q?: string
 
 export const upsertCommune = async (
   args: MutationUpsertCommuneArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Commune & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedCommune: Commune;
@@ -356,7 +358,7 @@ export const upsertCommune = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -374,7 +376,7 @@ export const upsertCommune = async (
     }
   } else {
     try {
-      upsertedCommune = await prisma.commune.create({ data: { ...data, ownerId: loggedUser.id } });
+      upsertedCommune = await prisma.commune.create({ data: { ...data, ownerId: loggedUser?.id } });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
         throw new OucaError("OUCA0004", e);

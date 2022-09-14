@@ -157,8 +157,10 @@ export const getMeteosCount = async (loggedUser: LoggedUser | null, q?: string |
 
 export const upsertMeteo = async (
   args: MutationUpsertMeteoArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Meteo & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedMeteo: Meteo;
@@ -170,7 +172,7 @@ export const upsertMeteo = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -193,7 +195,7 @@ export const upsertMeteo = async (
       upsertedMeteo = await prisma.meteo.create({
         data: {
           ...data,
-          ownerId: loggedUser.id,
+          ownerId: loggedUser?.id,
         },
       });
     } catch (e) {

@@ -279,6 +279,15 @@ test("should throw an error when trying to update a weather that exists", async 
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const weatherData = mock<MutationUpsertMeteoArgs>({
+    id: 12,
+  });
+
+  await expect(upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.meteo.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a weather", () => {
   test("should create new weather", async () => {
     const weatherData = mock<MutationUpsertMeteoArgs>({
@@ -318,6 +327,15 @@ describe("Creation of a weather", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const weatherData = mock<MutationUpsertMeteoArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.meteo.create).not.toHaveBeenCalled();
   });
 });
 

@@ -139,8 +139,10 @@ export const getObservateursCount = async (loggedUser: LoggedUser | null, q?: st
 
 export const upsertObservateur = async (
   args: MutationUpsertObservateurArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Observateur> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedObservateur: Observateur;
@@ -152,7 +154,7 @@ export const upsertObservateur = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -175,7 +177,7 @@ export const upsertObservateur = async (
       upsertedObservateur = await prisma.observateur.create({
         data: {
           ...data,
-          ownerId: loggedUser.id,
+          ownerId: loggedUser?.id,
         },
       });
     } catch (e) {

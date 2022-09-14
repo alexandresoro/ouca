@@ -332,6 +332,15 @@ test("should throw an error when trying to update a city that exists", async () 
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const cityData = mock<MutationUpsertCommuneArgs>({
+    id: 12,
+  });
+
+  await expect(upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.commune.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a city", () => {
   test("should create new city", async () => {
     const cityData = mock<MutationUpsertCommuneArgs>({
@@ -371,6 +380,15 @@ describe("Creation of a city", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const cityData = mock<MutationUpsertCommuneArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.commune.create).not.toHaveBeenCalled();
   });
 });
 

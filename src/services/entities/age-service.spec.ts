@@ -273,6 +273,15 @@ describe("Update of an age", () => {
       },
     });
   });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const ageData = mock<MutationUpsertAgeArgs>({
+      id: 12,
+    });
+
+    await expect(upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.age.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of an age", () => {
@@ -314,6 +323,15 @@ describe("Creation of an age", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const ageData = mock<MutationUpsertAgeArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.age.create).not.toHaveBeenCalled();
   });
 });
 

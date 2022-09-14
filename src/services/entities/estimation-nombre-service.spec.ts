@@ -262,6 +262,15 @@ test("should throw an error when trying to update a number estimate that exists"
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
+    id: 12,
+  });
+
+  await expect(upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.estimationNombre.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a number estimate", () => {
   test("should create new number estimate", async () => {
     const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
@@ -301,6 +310,15 @@ describe("Creation of a number estimate", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.estimationNombre.create).not.toHaveBeenCalled();
   });
 });
 

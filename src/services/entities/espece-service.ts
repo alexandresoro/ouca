@@ -367,8 +367,10 @@ export const getEspecesCount = async (
 
 export const upsertEspece = async (
   args: MutationUpsertEspeceArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Espece & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedEspece: Espece;
@@ -380,7 +382,7 @@ export const upsertEspece = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -398,7 +400,7 @@ export const upsertEspece = async (
     }
   } else {
     try {
-      upsertedEspece = await prisma.espece.create({ data: { ...data, ownerId: loggedUser.id } });
+      upsertedEspece = await prisma.espece.create({ data: { ...data, ownerId: loggedUser?.id } });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
         throw new OucaError("OUCA0004", e);

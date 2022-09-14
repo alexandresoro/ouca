@@ -300,6 +300,15 @@ test("should throw an error when trying to update a class that exists", async ()
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const classData = mock<MutationUpsertClasseArgs>({
+    id: 12,
+  });
+
+  await expect(upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.classe.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a class", () => {
   test("should create new class", async () => {
     const classData = mock<MutationUpsertClasseArgs>({
@@ -339,6 +348,15 @@ describe("Creation of a class", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const classData = mock<MutationUpsertClasseArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.classe.create).not.toHaveBeenCalled();
   });
 });
 

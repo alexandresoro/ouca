@@ -133,8 +133,10 @@ export const getSexesCount = async (loggedUser: LoggedUser | null, q?: string | 
 
 export const upsertSexe = async (
   args: MutationUpsertSexeArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<Sexe & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedSexe: Sexe;
@@ -146,7 +148,7 @@ export const upsertSexe = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -167,7 +169,7 @@ export const upsertSexe = async (
       upsertedSexe = await prisma.sexe.create({
         data: {
           ...data,
-          ownerId: loggedUser.id,
+          ownerId: loggedUser?.id,
         },
       });
     } catch (e) {

@@ -380,8 +380,10 @@ export const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: strin
 
 export const upsertLieuDit = async (
   args: MutationUpsertLieuDitArgs,
-  loggedUser: LoggedUser
+  loggedUser: LoggedUser | null
 ): Promise<LieuDitWithCoordinatesAsNumber & ReadonlyStatus> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedLieuDit: LieuDitWithCoordinatesAsNumber;
@@ -393,7 +395,7 @@ export const upsertLieuDit = async (
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -414,7 +416,7 @@ export const upsertLieuDit = async (
   } else {
     try {
       upsertedLieuDit = await prisma.lieudit
-        .create({ data: { ...data, ownerId: loggedUser.id } })
+        .create({ data: { ...data, ownerId: loggedUser?.id } })
         .then(buildLieuditFromLieuditDb);
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {

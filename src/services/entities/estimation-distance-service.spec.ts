@@ -262,6 +262,15 @@ test("should throw an error when trying to update a distance estimate that exist
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
+    id: 12,
+  });
+
+  await expect(upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.estimationDistance.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a distance estimate", () => {
   test("should create new distance estimate", async () => {
     const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
@@ -301,6 +310,15 @@ describe("Creation of a distance estimate", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.estimationDistance.create).not.toHaveBeenCalled();
   });
 });
 

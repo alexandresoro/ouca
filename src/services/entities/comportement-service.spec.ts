@@ -364,6 +364,15 @@ test("should throw an error when trying to update a behavior that exists", async
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const behaviorData = mock<MutationUpsertComportementArgs>({
+    id: 12,
+  });
+
+  await expect(upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.comportement.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of a behavior", () => {
   test("should create new behavior", async () => {
     const behaviorData = mock<MutationUpsertComportementArgs>({
@@ -403,6 +412,15 @@ describe("Creation of a behavior", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const behaviorData = mock<MutationUpsertComportementArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.comportement.create).not.toHaveBeenCalled();
   });
 });
 

@@ -298,6 +298,15 @@ describe("Update of an observer", () => {
       },
     });
   });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const observerData = mock<MutationUpsertObservateurArgs>({
+      id: 12,
+    });
+
+    await expect(upsertObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.observateur.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of an observer", () => {
@@ -339,6 +348,15 @@ describe("Creation of an observer", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const observerData = mock<MutationUpsertObservateurArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.observateur.create).not.toHaveBeenCalled();
   });
 });
 

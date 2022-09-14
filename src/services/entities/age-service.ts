@@ -93,7 +93,9 @@ export const getAgesCount = async (loggedUser: LoggedUser | null, q?: string | n
   });
 };
 
-export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser): Promise<Age> => {
+export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser | null): Promise<Age> => {
+  validateAuthorization(loggedUser);
+
   const { id, data } = args;
 
   let upsertedAge: Age;
@@ -105,7 +107,7 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
         where: { id },
       });
 
-      if (existingData?.ownerId !== loggedUser.id) {
+      if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
@@ -126,7 +128,7 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
       upsertedAge = await prisma.age.create({
         data: {
           ...data,
-          ownerId: loggedUser.id,
+          ownerId: loggedUser?.id,
         },
       });
     } catch (e) {

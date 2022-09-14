@@ -325,6 +325,15 @@ test("should throw an error when trying to update an environment that exists", a
   });
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  const environmentData = mock<MutationUpsertMilieuArgs>({
+    id: 12,
+  });
+
+  await expect(upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.milieu.update).not.toHaveBeenCalled();
+});
+
 describe("Creation of an environment", () => {
   test("should create new environment", async () => {
     const environmentData = mock<MutationUpsertMilieuArgs>({
@@ -364,6 +373,15 @@ describe("Creation of an environment", () => {
         ownerId: loggedUser.id,
       },
     });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const environmentData = mock<MutationUpsertMilieuArgs>({
+      id: undefined,
+    });
+
+    await expect(upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.milieu.create).not.toHaveBeenCalled();
   });
 });
 
