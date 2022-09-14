@@ -363,6 +363,11 @@ describe("Deletion of an age", () => {
 
     expect(prismaMock.age.delete).toHaveBeenCalledTimes(0);
   });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(deleteAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.age.delete).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("Create multiple ages", async () => {

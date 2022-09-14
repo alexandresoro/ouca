@@ -465,6 +465,11 @@ test("should return an error when deleting a non-owned locality as non-admin", a
   expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(0);
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  await expect(deleteLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(0);
+});
+
 test("Create multiple localities", async () => {
   const lieuDitsData = [
     mock<Omit<Prisma.LieuditCreateManyInput, "ownerId">>(),

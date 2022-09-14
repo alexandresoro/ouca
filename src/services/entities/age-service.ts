@@ -140,14 +140,16 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
   return upsertedAge;
 };
 
-export const deleteAge = async (id: number, loggedUser: LoggedUser): Promise<Age> => {
+export const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age> => {
+  validateAuthorization(loggedUser);
+
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.age.findFirst({
       where: { id },
     });
 
-    if (existingData?.ownerId !== loggedUser.id) {
+    if (existingData?.ownerId !== loggedUser?.id) {
       throw new OucaError("OUCA0001");
     }
   }

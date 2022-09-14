@@ -341,6 +341,11 @@ test("should return an error when deleting a non-owned sex as non-admin", async 
   expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  await expect(deleteSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(0);
+});
+
 test("Create multiple sexes", async () => {
   const sexesData = [
     mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>(),

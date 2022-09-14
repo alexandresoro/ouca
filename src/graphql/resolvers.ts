@@ -577,23 +577,18 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     deleteAge: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteAge(args.id, user).then(({ id }) => id);
     },
     deleteClasse: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteClasse(args.id, user).then(({ id }) => id);
     },
     deleteCommune: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteCommune(args.id, user).then(({ id }) => id);
     },
     deleteComportement: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteComportement(args.id, user).then(({ id }) => id);
     },
     deleteDepartement: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteDepartement(args.id, user).then(({ id }) => id);
     },
     deleteDonnee: async (_source, args, { user }): Promise<number> => {
@@ -601,35 +596,27 @@ const resolvers: IResolvers = {
       return deleteDonnee(args.id).then(({ id }) => id);
     },
     deleteEspece: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteEspece(args.id, user).then(({ id }) => id);
     },
     deleteEstimationDistance: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteEstimationDistance(args.id, user).then(({ id }) => id);
     },
     deleteEstimationNombre: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteEstimationNombre(args.id, user).then(({ id }) => id);
     },
     deleteLieuDit: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteLieuDit(args.id, user).then(({ id }) => id);
     },
     deleteMeteo: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteMeteo(args.id, user).then(({ id }) => id);
     },
     deleteMilieu: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteMilieu(args.id, user).then(({ id }) => id);
     },
     deleteObservateur: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteObservateur(args.id, user).then(({ id }) => id);
     },
     deleteSexe: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return deleteSexe(args.id, user).then(({ id }) => id);
     },
     upsertAge: async (_source, args, { user }): Promise<Age> => {

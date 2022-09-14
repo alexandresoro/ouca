@@ -224,14 +224,16 @@ export const upsertClasse = async (
   };
 };
 
-export const deleteClasse = async (id: number, loggedUser: LoggedUser): Promise<Classe> => {
+export const deleteClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe> => {
+  validateAuthorization(loggedUser);
+
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.classe.findFirst({
       where: { id },
     });
 
-    if (existingData?.ownerId !== loggedUser.id) {
+    if (existingData?.ownerId !== loggedUser?.id) {
       throw new OucaError("OUCA0001");
     }
   }

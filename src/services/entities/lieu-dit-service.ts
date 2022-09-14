@@ -428,14 +428,19 @@ export const upsertLieuDit = async (
   };
 };
 
-export const deleteLieuDit = async (id: number, loggedUser: LoggedUser): Promise<LieuDitWithCoordinatesAsNumber> => {
+export const deleteLieuDit = async (
+  id: number,
+  loggedUser: LoggedUser | null
+): Promise<LieuDitWithCoordinatesAsNumber> => {
+  validateAuthorization(loggedUser);
+
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.lieudit.findFirst({
       where: { id },
     });
 
-    if (existingData?.ownerId !== loggedUser.id) {
+    if (existingData?.ownerId !== loggedUser?.id) {
       throw new OucaError("OUCA0001");
     }
   }

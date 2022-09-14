@@ -249,14 +249,16 @@ export const upsertMilieu = async (
   };
 };
 
-export const deleteMilieu = async (id: number, loggedUser: LoggedUser): Promise<Milieu> => {
+export const deleteMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Milieu> => {
+  validateAuthorization(loggedUser);
+
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.milieu.findFirst({
       where: { id },
     });
 
-    if (existingData?.ownerId !== loggedUser.id) {
+    if (existingData?.ownerId !== loggedUser?.id) {
       throw new OucaError("OUCA0001");
     }
   }

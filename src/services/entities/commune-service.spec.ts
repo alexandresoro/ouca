@@ -414,6 +414,11 @@ test("should return an error when deleting a non-owned city as non-admin", async
   expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  await expect(deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.commune.delete).toHaveBeenCalledTimes(0);
+});
+
 test("Create multiple cities", async () => {
   const communesData = [
     mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),

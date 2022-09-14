@@ -407,6 +407,11 @@ test("should return an error when deleting a non-owned environment as non-admin"
   expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  await expect(deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(0);
+});
+
 test("Create multiple environments", async () => {
   const environmentsData = [
     mock<Omit<Prisma.MilieuCreateManyInput, "ownerId">>(),

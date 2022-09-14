@@ -208,14 +208,16 @@ export const upsertMeteo = async (
   };
 };
 
-export const deleteMeteo = async (id: number, loggedUser: LoggedUser): Promise<Meteo> => {
+export const deleteMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Meteo> => {
+  validateAuthorization(loggedUser);
+
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.meteo.findFirst({
       where: { id },
     });
 
-    if (existingData?.ownerId !== loggedUser.id) {
+    if (existingData?.ownerId !== loggedUser?.id) {
       throw new OucaError("OUCA0001");
     }
   }

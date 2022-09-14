@@ -382,6 +382,11 @@ test("should return an error when deleting a non-owned class as non-admin", asyn
   expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  await expect(deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.classe.delete).toHaveBeenCalledTimes(0);
+});
+
 test("Create multiple classes", async () => {
   const classesData = [
     mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),

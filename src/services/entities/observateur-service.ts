@@ -189,14 +189,16 @@ export const upsertObservateur = async (
   return upsertedObservateur;
 };
 
-export const deleteObservateur = async (id: number, loggedUser: LoggedUser): Promise<Observateur> => {
+export const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur> => {
+  validateAuthorization(loggedUser);
+
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.observateur.findFirst({
       where: { id },
     });
 
-    if (existingData?.ownerId !== loggedUser.id) {
+    if (existingData?.ownerId !== loggedUser?.id) {
       throw new OucaError("OUCA0001");
     }
   }

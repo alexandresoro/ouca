@@ -262,14 +262,16 @@ export const upsertComportement = async (
   };
 };
 
-export const deleteComportement = async (id: number, loggedUser: LoggedUser): Promise<Comportement> => {
+export const deleteComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement> => {
+  validateAuthorization(loggedUser);
+
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.comportement.findFirst({
       where: { id },
     });
 
-    if (existingData?.ownerId !== loggedUser.id) {
+    if (existingData?.ownerId !== loggedUser?.id) {
       throw new OucaError("OUCA0001");
     }
   }

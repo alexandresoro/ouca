@@ -189,14 +189,19 @@ export const upsertEstimationDistance = async (
   };
 };
 
-export const deleteEstimationDistance = async (id: number, loggedUser: LoggedUser): Promise<EstimationDistance> => {
+export const deleteEstimationDistance = async (
+  id: number,
+  loggedUser: LoggedUser | null
+): Promise<EstimationDistance> => {
+  validateAuthorization(loggedUser);
+
   // Check that the user is allowed to modify the existing data
   if (loggedUser?.role !== DatabaseRole.admin) {
     const existingData = await prisma.estimationDistance.findFirst({
       where: { id },
     });
 
-    if (existingData?.ownerId !== loggedUser.id) {
+    if (existingData?.ownerId !== loggedUser?.id) {
       throw new OucaError("OUCA0001");
     }
   }

@@ -619,6 +619,11 @@ test("should return an error when deleting a non-owned species as non-admin", as
   expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  await expect(deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.espece.delete).toHaveBeenCalledTimes(0);
+});
+
 test("Create multiple species", async () => {
   const speciesData = [
     mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),

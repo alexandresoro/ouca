@@ -382,6 +382,11 @@ test("should return an error when deleting a non-owned department as non-admin",
   expect(prismaMock.departement.delete).toHaveBeenCalledTimes(0);
 });
 
+test("should throw an error when the requester is not logged", async () => {
+  await expect(deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  expect(prismaMock.departement.delete).toHaveBeenCalledTimes(0);
+});
+
 test("Create multiple departments", async () => {
   const departmentsData = [
     mock<Omit<Prisma.DepartementCreateManyInput, "ownerId">>(),
