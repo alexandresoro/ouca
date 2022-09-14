@@ -16,11 +16,18 @@ const COOKIE_OPTIONS: CookieSerializeOptions = {
   maxAge: 60 * 60 * 24, // Let's keep it for 1 day for now
 };
 
-export const getLoggedUser = (tokenPayload: JWTPayload): LoggedUser | null => {
+type AdditionalUserInfo = {
+  name: string;
+};
+
+export type LoggedUserInfo = LoggedUser & AdditionalUserInfo;
+
+export const getLoggedUserInfo = (tokenPayload: JWTPayload): LoggedUserInfo | null => {
   if (tokenPayload?.sub && tokenPayload.roles) {
     return {
       id: tokenPayload.sub,
       role: tokenPayload.roles as DatabaseRole,
+      name: tokenPayload.name as string,
     };
   }
   return null;

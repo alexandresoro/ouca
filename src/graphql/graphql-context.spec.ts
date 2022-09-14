@@ -1,3 +1,4 @@
+import { DatabaseRole } from "@prisma/client";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { mock } from "jest-mock-extended";
 import { JWTPayload } from "jose";
@@ -31,7 +32,6 @@ describe("GraphQL context", () => {
       request,
       reply,
       user: null,
-      username: null,
     });
   });
 
@@ -48,8 +48,12 @@ describe("GraphQL context", () => {
     expect(context).toEqual<GraphQLContext>({
       request,
       reply,
-      user: context.user,
-      username: context.username,
+      user: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        id: tokenPayload.sub!,
+        role: tokenPayload.roles as DatabaseRole,
+        name: tokenPayload.name as string,
+      },
     });
   });
 

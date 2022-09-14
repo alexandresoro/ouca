@@ -756,7 +756,7 @@ const resolvers: IResolvers = {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       await deleteTokenCookie(reply);
 
-      logger.debug(`User ID ${user.id} logged out`);
+      logger.debug(`User ${user.name} ( ID ${user.id} )logged out`);
 
       return true;
     },

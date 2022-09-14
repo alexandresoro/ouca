@@ -15,7 +15,7 @@ import { logQueries, logResults } from "./graphql/mercurius-logger";
 import resolvers from "./graphql/resolvers";
 import { ImportType, IMPORT_TYPE } from "./model/import-types";
 import { startImportTask } from "./services/import-manager";
-import { getLoggedUser, validateAndExtractUserToken } from "./services/token-service";
+import { getLoggedUserInfo, validateAndExtractUserToken } from "./services/token-service";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
 import { checkAndCreateFolders, DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
@@ -83,7 +83,7 @@ checkAndCreateFolders();
     if (!tokenPayload) {
       return reply.code(401).send();
     }
-    const loggedUser = getLoggedUser(tokenPayload);
+    const loggedUser = getLoggedUserInfo(tokenPayload);
     if (!loggedUser) {
       return reply.code(401).send();
     }

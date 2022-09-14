@@ -1,7 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import mercurius from "mercurius";
-import { deleteTokenCookie, getLoggedUser, validateAndExtractUserToken } from "../services/token-service";
-import { LoggedUser } from "../types/LoggedUser";
+import {
+  deleteTokenCookie,
+  getLoggedUserInfo,
+  LoggedUserInfo,
+  validateAndExtractUserToken,
+} from "../services/token-service";
 
 type PromiseType<T> = T extends PromiseLike<infer U> ? U : T;
 
@@ -13,8 +17,7 @@ declare module "mercurius" {
 export type GraphQLContext = {
   request: FastifyRequest;
   reply: FastifyReply;
-  user: LoggedUser | null;
-  username: string | null;
+  user: LoggedUserInfo | null;
 };
 
 export const buildGraphQLContext = async (request: FastifyRequest, reply: FastifyReply): Promise<GraphQLContext> => {
@@ -29,7 +32,6 @@ export const buildGraphQLContext = async (request: FastifyRequest, reply: Fastif
   return {
     request,
     reply,
-    user: tokenPayload ? getLoggedUser(tokenPayload) : null,
-    username: (tokenPayload?.name as string) ?? null,
+    user: tokenPayload ? getLoggedUserInfo(tokenPayload) : null,
   };
 };
