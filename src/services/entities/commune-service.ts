@@ -22,8 +22,10 @@ import {
 
 export const findCommune = async (
   id: number,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(Commune & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const communeEntity = await prisma.commune.findUnique({
     where: {
       id,

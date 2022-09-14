@@ -41,34 +41,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one distance estimate ", async () => {
-  const distanceEstimateData = mock<EstimationDistance>();
+describe("Find distance estimate", () => {
+  test("should handle a matching distance estimate", async () => {
+    const distanceEstimateData = mock<EstimationDistance>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.estimationDistance.findUnique.mockResolvedValueOnce(distanceEstimateData);
+    prismaMock.estimationDistance.findUnique.mockResolvedValueOnce(distanceEstimateData);
 
-  await findEstimationDistance(distanceEstimateData.id);
+    await findEstimationDistance(distanceEstimateData.id, loggedUser);
 
-  expect(prismaMock.estimationDistance.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: distanceEstimateData.id,
-    },
+    expect(prismaMock.estimationDistance.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: distanceEstimateData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle distance estimate not found ", async () => {
-  prismaMock.estimationDistance.findUnique.mockResolvedValueOnce(null);
+  test("should handle distance estimate not found", async () => {
+    prismaMock.estimationDistance.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findEstimationDistance(10)).resolves.toBe(null);
+    await expect(findEstimationDistance(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.estimationDistance.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.estimationDistance.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.estimationDistance.findUnique).not.toHaveBeenCalled();
+  });
 });
 
 test("should call readonly status when retrieving distance estimates by params ", async () => {

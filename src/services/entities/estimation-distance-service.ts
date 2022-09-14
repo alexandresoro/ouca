@@ -19,8 +19,10 @@ import {
 
 export const findEstimationDistance = async (
   id: number,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(EstimationDistance & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const distanceEstimateEntity = await prisma.estimationDistance.findUnique({
     where: {
       id,

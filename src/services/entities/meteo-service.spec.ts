@@ -39,34 +39,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one weather", async () => {
-  const weatherData = mock<Meteo>();
+describe("Find weather", () => {
+  test("should handle a matching weather", async () => {
+    const weatherData = mock<Meteo>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.meteo.findUnique.mockResolvedValueOnce(weatherData);
+    prismaMock.meteo.findUnique.mockResolvedValueOnce(weatherData);
 
-  await findMeteo(weatherData.id);
+    await findMeteo(weatherData.id, loggedUser);
 
-  expect(prismaMock.meteo.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: weatherData.id,
-    },
+    expect(prismaMock.meteo.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: weatherData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle weather not found ", async () => {
-  prismaMock.meteo.findUnique.mockResolvedValueOnce(null);
+  test("should handle weather not found", async () => {
+    prismaMock.meteo.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findMeteo(10)).resolves.toBe(null);
+    await expect(findMeteo(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.meteo.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.meteo.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.meteo.findUnique).not.toHaveBeenCalled();
+  });
 });
 
 test("should call readonly status when retrieving weathers by ID ", async () => {

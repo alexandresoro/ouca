@@ -41,34 +41,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one number estimate ", async () => {
-  const numberEstimateData = mock<EstimationNombre>();
+describe("Find number estimate", () => {
+  test("should handle a matching number estimate", async () => {
+    const numberEstimateData = mock<EstimationNombre>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.estimationNombre.findUnique.mockResolvedValueOnce(numberEstimateData);
+    prismaMock.estimationNombre.findUnique.mockResolvedValueOnce(numberEstimateData);
 
-  await findEstimationNombre(numberEstimateData.id);
+    await findEstimationNombre(numberEstimateData.id, loggedUser);
 
-  expect(prismaMock.estimationNombre.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: numberEstimateData.id,
-    },
+    expect(prismaMock.estimationNombre.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: numberEstimateData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle number estimate not found ", async () => {
-  prismaMock.estimationNombre.findUnique.mockResolvedValueOnce(null);
+  test("should handle number estimate not found", async () => {
+    prismaMock.estimationNombre.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findEstimationNombre(10)).resolves.toBe(null);
+    await expect(findEstimationNombre(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.estimationNombre.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.estimationNombre.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.estimationNombre.findUnique).not.toHaveBeenCalled();
+  });
 });
 
 test("should call readonly status when retrieving number estimates by params ", async () => {

@@ -30,7 +30,7 @@ const prismaConstraintFailed = () => {
   );
 };
 
-describe("Find ages", () => {
+describe("Find age", () => {
   test("should handle a matching age", async () => {
     const ageData = mock<Age>();
     const loggedUser = mock<LoggedUser>();
@@ -47,7 +47,7 @@ describe("Find ages", () => {
     });
   });
 
-  test("should handle age not found ", async () => {
+  test("should handle age not found", async () => {
     prismaMock.age.findUnique.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
@@ -59,6 +59,11 @@ describe("Find ages", () => {
         id: 10,
       },
     });
+  });
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.age.findUnique).not.toHaveBeenCalled();
   });
 });
 

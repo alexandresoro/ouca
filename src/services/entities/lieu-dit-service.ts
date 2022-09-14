@@ -39,8 +39,10 @@ const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWith
 
 export const findLieuDit = async (
   id: number | undefined,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(LieuDitWithCoordinatesAsNumber & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const lieuDitEntity = await prisma.lieudit
     .findUnique({
       where: {

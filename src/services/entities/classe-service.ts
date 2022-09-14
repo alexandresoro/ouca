@@ -40,8 +40,10 @@ export const findClasseOfEspeceId = async (
 
 export const findClasse = async (
   id: number,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(Classe & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const classeEntity = await prisma.classe.findUnique({
     where: {
       id,

@@ -39,34 +39,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one environment ", async () => {
-  const environmentData = mock<Milieu>();
+describe("Find environment", () => {
+  test("should handle a matching environment", async () => {
+    const environmentData = mock<Milieu>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.milieu.findUnique.mockResolvedValueOnce(environmentData);
+    prismaMock.milieu.findUnique.mockResolvedValueOnce(environmentData);
 
-  await findMilieu(environmentData.id);
+    await findMilieu(environmentData.id, loggedUser);
 
-  expect(prismaMock.milieu.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: environmentData.id,
-    },
+    expect(prismaMock.milieu.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: environmentData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle environment not found ", async () => {
-  prismaMock.milieu.findUnique.mockResolvedValueOnce(null);
+  test("should handle environment not found", async () => {
+    prismaMock.milieu.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findMilieu(10)).resolves.toBe(null);
+    await expect(findMilieu(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.milieu.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.milieu.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.milieu.findUnique).not.toHaveBeenCalled();
+  });
 });
 
 test("should call readonly status when retrieving environments by ID ", async () => {

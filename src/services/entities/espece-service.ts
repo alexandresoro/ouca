@@ -20,8 +20,10 @@ import {
 
 export const findEspece = async (
   id: number | undefined,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(Espece & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const especeEntity = await prisma.espece.findUnique({
     where: {
       id,

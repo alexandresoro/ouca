@@ -39,34 +39,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one city ", async () => {
-  const cityData = mock<Commune>();
+describe("Find city", () => {
+  test("should handle a matching city", async () => {
+    const cityData = mock<Commune>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.commune.findUnique.mockResolvedValueOnce(cityData);
+    prismaMock.commune.findUnique.mockResolvedValueOnce(cityData);
 
-  await findCommune(cityData.id);
+    await findCommune(cityData.id, loggedUser);
 
-  expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: cityData.id,
-    },
+    expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: cityData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle city not found ", async () => {
-  prismaMock.commune.findUnique.mockResolvedValueOnce(null);
+  test("should handle city not found", async () => {
+    prismaMock.commune.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findCommune(10)).resolves.toBe(null);
+    await expect(findCommune(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("should call readonly status when retrieving city by zone ID ", async () => {

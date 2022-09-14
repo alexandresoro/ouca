@@ -19,8 +19,10 @@ import {
 
 export const findComportement = async (
   id: number,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(Comportement & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const comportementEntity = await prisma.comportement.findUnique({
     where: {
       id,

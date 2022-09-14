@@ -19,8 +19,10 @@ import {
 
 export const findEstimationNombre = async (
   id: number,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(EstimationNombre & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const numberEstimateEntity = await prisma.estimationNombre.findUnique({
     where: {
       id,

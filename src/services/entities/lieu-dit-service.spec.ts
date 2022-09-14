@@ -39,34 +39,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one locality ", async () => {
-  const localityData = mockDeep<Lieudit>();
+describe("Find locality", () => {
+  test("should handle a matching locality", async () => {
+    const localityData = mockDeep<Lieudit>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.lieudit.findUnique.mockResolvedValueOnce(localityData);
+    prismaMock.lieudit.findUnique.mockResolvedValueOnce(localityData);
 
-  await findLieuDit(localityData.id);
+    await findLieuDit(localityData.id, loggedUser);
 
-  expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: localityData.id,
-    },
+    expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: localityData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle locality not found ", async () => {
-  prismaMock.lieudit.findUnique.mockResolvedValueOnce(null);
+  test("should handle locality not found", async () => {
+    prismaMock.lieudit.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findLieuDit(10)).resolves.toBe(null);
+    await expect(findLieuDit(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.lieudit.findUnique).not.toHaveBeenCalled();
+  });
 });
 
 test("should call readonly status when retrieving locality by inventary ID ", async () => {

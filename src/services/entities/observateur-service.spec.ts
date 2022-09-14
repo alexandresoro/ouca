@@ -31,7 +31,7 @@ const prismaConstraintFailed = () => {
   );
 };
 
-describe("Find observers", () => {
+describe("Find observer", () => {
   test("should handle a matching observer", async () => {
     const observerData = mock<Observateur>();
     const loggedUser = mock<LoggedUser>();
@@ -48,7 +48,7 @@ describe("Find observers", () => {
     });
   });
 
-  test("should handle observer not found ", async () => {
+  test("should handle observer not found", async () => {
     prismaMock.observateur.findUnique.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
@@ -60,6 +60,11 @@ describe("Find observers", () => {
         id: 10,
       },
     });
+  });
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.observateur.findUnique).toHaveBeenCalledTimes(0);
   });
 });
 

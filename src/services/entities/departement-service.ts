@@ -31,8 +31,10 @@ export const getFilterClauseDepartement = (q: string | null | undefined): Prisma
 
 export const findDepartement = async (
   id: number,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(Departement & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const departementEntity = await prisma.departement.findUnique({
     where: {
       id,

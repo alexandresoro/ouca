@@ -205,7 +205,6 @@ declare module "mercurius" {
 const resolvers: IResolvers = {
   Query: {
     age: async (_source, args, { user }): Promise<Age | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findAge(args.id, user);
     },
     ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
@@ -219,15 +218,12 @@ const resolvers: IResolvers = {
       };
     },
     classe: async (_source, args, { user }): Promise<Classe | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findClasse(args.id, user);
     },
     commune: async (_source, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findCommune(args.id, user);
     },
     comportement: async (_source, args, { user }): Promise<Comportement | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findComportement(args.id, user);
     },
     comportementList: async (_source, args, { user }): Promise<Comportement[]> => {
@@ -235,7 +231,6 @@ const resolvers: IResolvers = {
       return findComportementsByIds(args.ids, user);
     },
     departement: async (_source, args, { user }): Promise<Departement | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findDepartement(args.id, user);
     },
     donnee: (_source, args, { user }): { id: number } => {
@@ -245,15 +240,12 @@ const resolvers: IResolvers = {
       };
     },
     espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findEspece(args.id, user);
     },
     estimationDistance: async (_source, args, { user }): Promise<EstimationDistance | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findEstimationDistance(args.id, user);
     },
     estimationNombre: async (_source, args, { user }): Promise<EstimationNombre | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findEstimationNombre(args.id, user);
     },
     inventaire: async (_source, args, { user }): Promise<Omit<Inventaire, "lieuDit"> | null> => {
@@ -261,11 +253,9 @@ const resolvers: IResolvers = {
       return findInventaire(args.id);
     },
     lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findLieuDit(args.id, user);
     },
     meteo: async (_source, args, { user }): Promise<Meteo | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findMeteo(args.id, user);
     },
     meteoList: async (_source, args, { user }): Promise<Meteo[]> => {
@@ -273,7 +263,6 @@ const resolvers: IResolvers = {
       return findMeteosByIds(args.ids, user);
     },
     milieu: async (_source, args, { user }): Promise<Milieu | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findMilieu(args.id, user);
     },
     milieuList: async (_source, args, { user }): Promise<Milieu[]> => {
@@ -281,7 +270,6 @@ const resolvers: IResolvers = {
       return findMilieuxByIds(args.ids, user);
     },
     observateur: async (_source, args, { user }): Promise<Observateur | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findObservateur(args.id, user);
     },
     observateurList: async (_source, args, { user }): Promise<Observateur[]> => {
@@ -299,7 +287,6 @@ const resolvers: IResolvers = {
       };
     },
     sexe: async (_source, args, { user }): Promise<Sexe | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findSexe(args.id, user);
     },
     specimenCountByAge: (_source, args, { user }): Promise<AgeWithSpecimensCount[]> => {

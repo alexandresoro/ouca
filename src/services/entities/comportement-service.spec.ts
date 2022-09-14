@@ -39,34 +39,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one behavior ", async () => {
-  const behaviorData = mock<Comportement>();
+describe("Find behavior", () => {
+  test("should handle a matching behavior ", async () => {
+    const behaviorData = mock<Comportement>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.comportement.findUnique.mockResolvedValueOnce(behaviorData);
+    prismaMock.comportement.findUnique.mockResolvedValueOnce(behaviorData);
 
-  await findComportement(behaviorData.id);
+    await findComportement(behaviorData.id, loggedUser);
 
-  expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: behaviorData.id,
-    },
+    expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: behaviorData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle behavior not found ", async () => {
-  prismaMock.comportement.findUnique.mockResolvedValueOnce(null);
+  test("should handle behavior not found", async () => {
+    prismaMock.comportement.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findComportement(10)).resolves.toBe(null);
+    await expect(findComportement(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("should call readonly status when retrieving behaviors by ID ", async () => {

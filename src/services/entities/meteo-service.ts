@@ -18,8 +18,10 @@ import {
 
 export const findMeteo = async (
   id: number,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(Meteo & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const meteoEntity = await prisma.meteo.findUnique({
     where: {
       id,

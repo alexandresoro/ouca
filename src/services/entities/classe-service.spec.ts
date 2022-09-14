@@ -39,34 +39,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one class ", async () => {
-  const classData: Classe = mock<Classe>();
+describe("Find class", () => {
+  test("should handle a matching class", async () => {
+    const classData: Classe = mock<Classe>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.classe.findUnique.mockResolvedValueOnce(classData);
+    prismaMock.classe.findUnique.mockResolvedValueOnce(classData);
 
-  await findClasse(classData.id);
+    await findClasse(classData.id, loggedUser);
 
-  expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: classData.id,
-    },
+    expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: classData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle class not found ", async () => {
-  prismaMock.classe.findUnique.mockResolvedValueOnce(null);
+  test("should handle class not found", async () => {
+    prismaMock.classe.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findClasse(10)).resolves.toBe(null);
+    await expect(findClasse(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("should call readonly status when retrieving class by species ID ", async () => {

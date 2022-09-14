@@ -38,34 +38,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one sex ", async () => {
-  const sexData = mock<Sexe>();
+describe("Find sex", () => {
+  test("should handle a matching sex", async () => {
+    const sexData = mock<Sexe>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.sexe.findUnique.mockResolvedValueOnce(sexData);
+    prismaMock.sexe.findUnique.mockResolvedValueOnce(sexData);
 
-  await findSexe(sexData.id);
+    await findSexe(sexData.id, loggedUser);
 
-  expect(prismaMock.sexe.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: sexData.id,
-    },
+    expect(prismaMock.sexe.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: sexData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle sex not found ", async () => {
-  prismaMock.sexe.findUnique.mockResolvedValueOnce(null);
+  test("should handle sex not found", async () => {
+    prismaMock.sexe.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findSexe(10)).resolves.toBe(null);
+    await expect(findSexe(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.sexe.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.sexe.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.sexe.findUnique).toHaveBeenCalledTimes(0);
+  });
 });
 
 test("should call readonly status when retrieving sexes by params ", async () => {

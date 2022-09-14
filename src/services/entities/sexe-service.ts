@@ -13,10 +13,9 @@ import {
   ReadonlyStatus,
 } from "./entities-utils";
 
-export const findSexe = async (
-  id: number,
-  loggedUser: LoggedUser | null = null
-): Promise<(Sexe & ReadonlyStatus) | null> => {
+export const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<(Sexe & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const sexeEntity = await prisma.sexe.findUnique({
     where: {
       id,

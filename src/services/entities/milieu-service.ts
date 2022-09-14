@@ -15,8 +15,10 @@ import {
 
 export const findMilieu = async (
   id: number,
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null
 ): Promise<(Milieu & ReadonlyStatus) | null> => {
+  validateAuthorization(loggedUser);
+
   const milieuEntity = await prisma.milieu.findUnique({
     where: {
       id,

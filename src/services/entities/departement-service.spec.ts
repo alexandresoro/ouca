@@ -39,34 +39,43 @@ const prismaConstraintFailed = () => {
   );
 };
 
-test("should call readonly status when retrieving one department ", async () => {
-  const departmentData = mock<Departement>();
+describe("Find department", () => {
+  test("hould handle a matching department", async () => {
+    const departmentData = mock<Departement>();
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.departement.findUnique.mockResolvedValueOnce(departmentData);
+    prismaMock.departement.findUnique.mockResolvedValueOnce(departmentData);
 
-  await findDepartement(departmentData.id);
+    await findDepartement(departmentData.id, loggedUser);
 
-  expect(prismaMock.departement.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: departmentData.id,
-    },
+    expect(prismaMock.departement.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: departmentData.id,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
 
-test("should handle department not found ", async () => {
-  prismaMock.departement.findUnique.mockResolvedValueOnce(null);
+  test("should handle department not found", async () => {
+    prismaMock.departement.findUnique.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
 
-  await expect(findDepartement(10)).resolves.toBe(null);
+    await expect(findDepartement(10, loggedUser)).resolves.toBe(null);
 
-  expect(prismaMock.departement.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 10,
-    },
+    expect(prismaMock.departement.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 10,
+      },
+    });
+    expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(0);
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.departement.findUnique).not.toHaveBeenCalled();
+  });
 });
 
 test("should call readonly status when retrieving department by city ID ", async () => {
