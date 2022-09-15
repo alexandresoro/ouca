@@ -17,7 +17,7 @@ export class ImportCommuneService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.communesToInsert = [];
-    [this.departements, this.communes] = await Promise.all([findDepartements(), findCommunes()]);
+    [this.departements, this.communes] = await Promise.all([findDepartements(null), findCommunes(null)]);
   };
 
   protected validateAndPrepareEntity = (communeTab: string[]): string | null => {

@@ -121,7 +121,7 @@ test("should call readonly status when retrieving behaviors by ID ", async () =>
   expect(isEntityReadOnly).toHaveBeenCalledTimes(behaviorsData.length);
 });
 
-test("should call readonly status when retrieving behaviors by params ", async () => {
+test("Find all behaviors", async () => {
   const behaviorsCodeData = [
     mock<Comportement>({ id: 1, code: "0017" }),
     mock<Comportement>({ id: 7, code: "0357" }),
@@ -132,11 +132,12 @@ test("should call readonly status when retrieving behaviors by params ", async (
     mock<Comportement>({ id: 2, code: "22A0" }),
     mock<Comportement>({ id: 6, code: "1177" }),
   ];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsCodeData);
   prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsLibelleData);
 
-  const behaviors = await findComportements();
+  const behaviors = await findComportements(loggedUser);
 
   expect(behaviors.length).toBe(5);
   expect(behaviors[0].code).toBe("0017");
@@ -165,7 +166,6 @@ test("should call readonly status when retrieving behaviors by params ", async (
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(behaviors.length);
 });
 
 test("should call readonly status when retrieving paginated behaviors", async () => {

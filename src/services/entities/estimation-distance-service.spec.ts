@@ -100,12 +100,13 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving distance estimates by params ", async () => {
+test("Find all distance estimates", async () => {
   const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.estimationDistance.findMany.mockResolvedValueOnce(distanceEstimatesData);
 
-  await findEstimationsDistance();
+  await findEstimationsDistance(loggedUser);
 
   expect(prismaMock.estimationDistance.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
@@ -116,7 +117,6 @@ test("should call readonly status when retrieving distance estimates by params "
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(distanceEstimatesData.length);
 });
 
 test("should call readonly status when retrieving paginated distance estimates", async () => {

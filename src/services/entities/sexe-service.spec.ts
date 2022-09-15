@@ -97,12 +97,13 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving sexes by params ", async () => {
+test("Find all sexes", async () => {
   const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.sexe.findMany.mockResolvedValueOnce(sexesData);
 
-  await findSexes();
+  await findSexes(loggedUser);
 
   expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
@@ -113,7 +114,6 @@ test("should call readonly status when retrieving sexes by params ", async () =>
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(sexesData.length);
 });
 
 test("should call readonly status when retrieving paginated sexes", async () => {

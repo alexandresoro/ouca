@@ -75,13 +75,12 @@ export const findMeteosByIds = async (
   });
 };
 
-export const findMeteos = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(Meteo & ReadonlyStatus)[]> => {
+export const findMeteos = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Meteo[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
-  const meteoEntities = await prisma.meteo.findMany({
+  return prisma.meteo.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
@@ -89,13 +88,6 @@ export const findMeteos = async (
       },
     },
     take: max || undefined,
-  });
-
-  return meteoEntities?.map((meteo) => {
-    return {
-      ...meteo,
-      readonly: isEntityReadOnly(meteo, loggedUser),
-    };
   });
 };
 

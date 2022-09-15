@@ -96,13 +96,15 @@ export const findLieuDitOfInventaireId = async (
 };
 
 export const findLieuxDits = async (
+  loggedUser: LoggedUser | null,
   options: {
     params?: FindParams | null;
     communeId?: number | null;
     departementId?: number | null;
-  } = {},
-  loggedUser: LoggedUser | null = null
+  } = {}
 ): Promise<Omit<LieuDitWithCoordinatesAsNumber, "commune">[]> => {
+  validateAuthorization(loggedUser);
+
   const { params, communeId, departementId } = options;
   const { q, max } = params ?? {};
 
@@ -132,20 +134,13 @@ export const findLieuxDits = async (
     ],
   };
 
-  const lieuDitEntities = await prisma.lieudit
+  return prisma.lieudit
     .findMany({
       ...queryParametersToFindAllEntities(COLUMN_NOM),
       where: whereClause,
       take: max || undefined,
     })
     .then((lieuxDits) => lieuxDits.map(buildLieuditFromLieuditDb));
-
-  return lieuDitEntities?.map((lieuDit) => {
-    return {
-      ...lieuDit,
-      readonly: isEntityReadOnly(lieuDit, loggedUser),
-    };
-  });
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput => {

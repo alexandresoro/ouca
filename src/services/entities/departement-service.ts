@@ -90,12 +90,14 @@ export const findDepartementOfCommuneId = async (
 };
 
 export const findDepartements = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(Departement & ReadonlyStatus)[]> => {
+  loggedUser: LoggedUser | null,
+  params?: FindParams | null
+): Promise<Departement[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
-  const departementEntities = await prisma.departement.findMany({
+  return prisma.departement.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       code: {
@@ -103,13 +105,6 @@ export const findDepartements = async (
       },
     },
     take: max || undefined,
-  });
-
-  return departementEntities?.map((departement) => {
-    return {
-      ...departement,
-      readonly: isEntityReadOnly(departement, loggedUser),
-    };
   });
 };
 

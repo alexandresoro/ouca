@@ -140,12 +140,13 @@ test("should handle class not found when retrieving locality by inventary ID ", 
   expect(locality).toBeNull();
 });
 
-test("should call readonly status when retrieving localities by params ", async () => {
+test("Find all localities", async () => {
   const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.lieudit.findMany.mockResolvedValueOnce(localitiesData);
 
-  await findLieuxDits();
+  await findLieuxDits(loggedUser);
 
   expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
@@ -163,7 +164,6 @@ test("should call readonly status when retrieving localities by params ", async 
     },
     take: undefined,
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(localitiesData.length);
 });
 
 test("should call readonly status when retrieving paginated localities", async () => {

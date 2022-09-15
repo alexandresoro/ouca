@@ -6,7 +6,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportMeteoService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findMeteos();
+    this.entities = await findMeteos(null);
   };
 
   protected getThisEntityName(): string {

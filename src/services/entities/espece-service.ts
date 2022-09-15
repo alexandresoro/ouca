@@ -73,12 +73,14 @@ export const findEspeceOfDonneeId = async (
 };
 
 export const findEspeces = async (
+  loggedUser: LoggedUser | null,
   options: {
     params?: FindParams | null;
     classeId?: number | null;
-  } = {},
-  loggedUser: LoggedUser | null = null
-): Promise<(Espece & ReadonlyStatus)[]> => {
+  } = {}
+): Promise<Espece[]> => {
+  validateAuthorization(loggedUser);
+
   const { params, classeId } = options;
   const { q, max } = params ?? {};
 
@@ -142,14 +144,7 @@ export const findEspeces = async (
     (element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id)
   );
 
-  const matchingEntities = max ? matchingEntries.slice(0, max) : matchingEntries;
-
-  return matchingEntities?.map((espece) => {
-    return {
-      ...espece,
-      readonly: isEntityReadOnly(espece, loggedUser),
-    };
-  });
+  return max ? matchingEntries.slice(0, max) : matchingEntries;
 };
 
 const getFilterClause = (q: string | null | undefined): Prisma.EspeceWhereInput => {

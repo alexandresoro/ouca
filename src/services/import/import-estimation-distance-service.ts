@@ -6,7 +6,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findEstimationsDistance();
+    this.entities = await findEstimationsDistance(null);
   };
 
   protected getThisEntityName(): string {

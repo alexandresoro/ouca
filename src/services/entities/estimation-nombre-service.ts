@@ -50,12 +50,14 @@ export const getDonneesCountByEstimationNombre = async (id: number, loggedUser: 
 };
 
 export const findEstimationsNombre = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(EstimationNombre & ReadonlyStatus)[]> => {
+  loggedUser: LoggedUser | null,
+  params?: FindParams | null
+): Promise<EstimationNombre[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
-  const numberEstimateEntities = await prisma.estimationNombre.findMany({
+  return prisma.estimationNombre.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
@@ -63,13 +65,6 @@ export const findEstimationsNombre = async (
       },
     },
     take: max || undefined,
-  });
-
-  return numberEstimateEntities?.map((numberEstimate) => {
-    return {
-      ...numberEstimate,
-      readonly: isEntityReadOnly(numberEstimate, loggedUser),
-    };
   });
 };
 

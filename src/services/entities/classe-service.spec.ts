@@ -140,12 +140,13 @@ test("should handle class not found when retrieving class by species ID ", async
   expect(classe).toBeNull();
 });
 
-test("should call readonly status when retrieving classes by params ", async () => {
+test("Find all classes", async () => {
   const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
 
-  await findClasses();
+  await findClasses(loggedUser);
 
   expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
@@ -156,7 +157,6 @@ test("should call readonly status when retrieving classes by params ", async () 
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(classesData.length);
 });
 
 test("should call readonly status when retrieving paginated classes ", async () => {

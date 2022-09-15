@@ -36,7 +36,7 @@ export const generateAgesExport = async (): Promise<string> => {
 };
 
 export const generateClassesExport = async (): Promise<string> => {
-  const classes = await findClasses();
+  const classes = await findClasses(null);
 
   const objectsToExport = classes.map((object) => {
     return { Classe: object.libelle };
@@ -64,7 +64,7 @@ export const generateCommunesExport = async (): Promise<string> => {
 };
 
 export const generateComportementsExport = async (): Promise<string> => {
-  const comportementsDb = await findComportements();
+  const comportementsDb = await findComportements(null);
 
   const comportementsToExport = comportementsDb.map((object) => {
     return {
@@ -79,7 +79,7 @@ export const generateComportementsExport = async (): Promise<string> => {
 };
 
 export const generateDepartementsExport = async (): Promise<string> => {
-  const departementsDb = await findDepartements();
+  const departementsDb = await findDepartements(null);
 
   const objectsToExport = departementsDb.map((object) => {
     return {
@@ -183,7 +183,7 @@ export const generateEspecesExport = async (): Promise<string> => {
 };
 
 export const generateEstimationsDistanceExport = async (): Promise<string> => {
-  const estimations = await findEstimationsDistance();
+  const estimations = await findEstimationsDistance(null);
 
   const objectsToExport = estimations.map((object) => {
     return {
@@ -197,7 +197,7 @@ export const generateEstimationsDistanceExport = async (): Promise<string> => {
 };
 
 export const generateEstimationsNombreExport = async (): Promise<string> => {
-  const estimations = await findEstimationsNombre();
+  const estimations = await findEstimationsNombre(null);
 
   const objectsToExport = estimations.map((object) => {
     return {
@@ -231,7 +231,7 @@ export const generateLieuxDitsExport = async (): Promise<string> => {
 };
 
 export const generateMeteosExport = async (): Promise<string> => {
-  const meteos = await findMeteos();
+  const meteos = await findMeteos(null);
 
   const objectsToExport = meteos.map((object) => {
     return {
@@ -245,7 +245,7 @@ export const generateMeteosExport = async (): Promise<string> => {
 };
 
 export const generateMilieuxExport = async (): Promise<string> => {
-  const milieuxDb = await findMilieux();
+  const milieuxDb = await findMilieux(null);
 
   const milieuxToExport = milieuxDb.map((object) => {
     return {
@@ -274,7 +274,7 @@ export const generateObservateursExport = async (): Promise<string> => {
 };
 
 export const generateSexesExport = async (): Promise<string> => {
-  const sexes = await findSexes();
+  const sexes = await findSexes(null);
 
   const objectsToExport = sexes.map((object) => {
     return {

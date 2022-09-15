@@ -73,17 +73,17 @@ export class ImportDonneeService extends ImportService {
     }
 
     this.observateurs = await findObservateurs(null);
-    this.departements = await findDepartements();
-    this.communes = await findCommunes();
-    this.lieuxDits = await findLieuxDits();
-    this.meteos = await findMeteos();
-    this.especes = await findEspeces();
-    this.sexes = await findSexes();
+    this.departements = await findDepartements(null);
+    this.communes = await findCommunes(null);
+    this.lieuxDits = await findLieuxDits(null);
+    this.meteos = await findMeteos(null);
+    this.especes = await findEspeces(null);
+    this.sexes = await findSexes(null);
     this.ages = await findAges(null);
-    this.estimationsNombre = await findEstimationsNombre();
-    this.estimationsDistance = await findEstimationsDistance();
-    this.comportements = await findComportements();
-    this.milieux = await findMilieux();
+    this.estimationsNombre = await findEstimationsNombre(null);
+    this.estimationsDistance = await findEstimationsDistance(null);
+    this.comportements = await findComportements(null);
+    this.milieux = await findMilieux(null);
     this.inventaires = await findAllInventaires();
     this.existingDonnees = await findAllDonnees();
   };

@@ -14,7 +14,6 @@ import {
   deleteClasse,
   findClasse,
   findClasseOfEspeceId,
-  findClasses,
   findPaginatedClasses,
   getClassesCount,
   upsertClasse,
@@ -23,7 +22,6 @@ import {
   deleteCommune,
   findCommune,
   findCommuneOfLieuDitId,
-  findCommunes,
   findPaginatedCommunes,
   getCommunesCount,
   upsertCommune,
@@ -31,7 +29,6 @@ import {
 import {
   deleteComportement,
   findComportement,
-  findComportements,
   findComportementsByIds,
   findPaginatedComportements,
   getComportementsCount,
@@ -42,7 +39,6 @@ import {
   deleteDepartement,
   findDepartement,
   findDepartementOfCommuneId,
-  findDepartements,
   findPaginatedDepartements,
   getDepartementsCount,
   upsertDepartement,
@@ -65,7 +61,6 @@ import {
   deleteEspece,
   findEspece,
   findEspeceOfDonneeId,
-  findEspeces,
   findPaginatedEspeces,
   getEspecesCount,
   upsertEspece,
@@ -73,7 +68,6 @@ import {
 import {
   deleteEstimationDistance,
   findEstimationDistance,
-  findEstimationsDistance,
   findPaginatedEstimationsDistance,
   getEstimationsDistanceCount,
   upsertEstimationDistance,
@@ -81,7 +75,6 @@ import {
 import {
   deleteEstimationNombre,
   findEstimationNombre,
-  findEstimationsNombre,
   findPaginatedEstimationsNombre,
   getEstimationsNombreCount,
   upsertEstimationNombre,
@@ -96,7 +89,6 @@ import {
   deleteLieuDit,
   findLieuDit,
   findLieuDitOfInventaireId,
-  findLieuxDits,
   findPaginatedLieuxDits,
   getLieuxDitsCount,
   LieuDitWithCoordinatesAsNumber,
@@ -105,7 +97,6 @@ import {
 import {
   deleteMeteo,
   findMeteo,
-  findMeteos,
   findMeteosByIds,
   findPaginatedMeteos,
   getMeteosCount,
@@ -114,7 +105,6 @@ import {
 import {
   deleteMilieu,
   findMilieu,
-  findMilieux,
   findMilieuxByIds,
   findPaginatedMilieux,
   getMilieuxCount,
@@ -129,14 +119,7 @@ import {
   getObservateursCount,
   upsertObservateur,
 } from "../services/entities/observateur-service";
-import {
-  deleteSexe,
-  findPaginatedSexes,
-  findSexe,
-  findSexes,
-  getSexesCount,
-  upsertSexe,
-} from "../services/entities/sexe-service";
+import { deleteSexe, findPaginatedSexes, findSexe, getSexesCount, upsertSexe } from "../services/entities/sexe-service";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -296,50 +279,6 @@ const resolvers: IResolvers = {
     specimenCountBySexe: (_source, args, { user }): Promise<SexeWithSpecimensCount[]> => {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return countSpecimensBySexeForEspeceId(args?.especeId);
-    },
-    classes: async (_source, args, { user }): Promise<Classe[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findClasses(args?.params, user);
-    },
-    communes: async (_source, args, { user }): Promise<Omit<Commune, "departement">[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findCommunes(args, user);
-    },
-    comportements: async (_source, args, { user }): Promise<Comportement[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findComportements(args?.params, user);
-    },
-    departements: async (_source, args, { user }): Promise<Departement[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findDepartements(args?.params, user);
-    },
-    especes: async (_source, args, { user }): Promise<Omit<Espece, "classe">[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEspeces(args, user);
-    },
-    estimationsDistance: async (_source, args, { user }): Promise<EstimationDistance[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEstimationsDistance(args?.params, user);
-    },
-    estimationsNombre: async (_source, args, { user }): Promise<EstimationNombre[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findEstimationsNombre(args?.params, user);
-    },
-    lieuxDits: async (_source, args, { user }): Promise<Omit<LieuDit, "commune">[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findLieuxDits(args, user);
-    },
-    meteos: async (_source, args, { user }): Promise<Meteo[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findMeteos(args?.params, user);
-    },
-    milieux: async (_source, args, { user }): Promise<Milieu[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findMilieux(args?.params, user);
-    },
-    sexes: async (_source, args, { user }): Promise<Sexe[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findSexes(args?.params, user);
     },
     lastDonneeId: async (_source, args, { user }): Promise<number | null> => {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);

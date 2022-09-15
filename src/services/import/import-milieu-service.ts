@@ -6,7 +6,7 @@ import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libel
 export class ImportMilieuService extends ImportEntiteAvecLibelleEtCodeService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findMilieux();
+    this.entities = await findMilieux(null);
   };
 
   protected getAnEntityName(): string {

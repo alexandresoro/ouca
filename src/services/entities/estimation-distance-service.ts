@@ -53,12 +53,14 @@ export const getDonneesCountByEstimationDistance = async (
 };
 
 export const findEstimationsDistance = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(EstimationDistance & ReadonlyStatus)[]> => {
+  loggedUser: LoggedUser | null,
+  params?: FindParams | null
+): Promise<EstimationDistance[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
-  const distanceEstimateEntities = await prisma.estimationDistance.findMany({
+  return prisma.estimationDistance.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
@@ -66,13 +68,6 @@ export const findEstimationsDistance = async (
       },
     },
     take: max || undefined,
-  });
-
-  return distanceEstimateEntities?.map((distanceEstimate) => {
-    return {
-      ...distanceEstimate,
-      readonly: isEntityReadOnly(distanceEstimate, loggedUser),
-    };
   });
 };
 

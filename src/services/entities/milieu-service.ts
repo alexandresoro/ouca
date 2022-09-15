@@ -70,10 +70,9 @@ export const findMilieuxByIds = async (
   });
 };
 
-export const findMilieux = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(Milieu & ReadonlyStatus)[]> => {
+export const findMilieux = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Milieu[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
   const matchingCodesAsNumber = numberAsCodeSqlMatcher(q);
@@ -118,13 +117,7 @@ export const findMilieux = async (
   // However, to be consistent, we still need to sort them by code as it can still be mixed up
   const matchingEntries = [...matchingWithCode, ...matchingWithLibelle]
     .sort((a, b) => a.code.localeCompare(b.code))
-    .filter((element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id))
-    .map((matchingEntry) => {
-      return {
-        ...matchingEntry,
-        readonly: isEntityReadOnly(matchingEntry, loggedUser),
-      };
-    });
+    .filter((element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id));
 
   return max ? matchingEntries.slice(0, max) : matchingEntries;
 };

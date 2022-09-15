@@ -121,7 +121,7 @@ test("should call readonly status when retrieving environments by ID ", async ()
   expect(isEntityReadOnly).toHaveBeenCalledTimes(environmentsData.length);
 });
 
-test("should call readonly status when retrieving environments by params ", async () => {
+test("Find all environments", async () => {
   const environmentsCodeData = [
     mock<Milieu>({ id: 1, code: "0017" }),
     mock<Milieu>({ id: 7, code: "0357" }),
@@ -132,11 +132,12 @@ test("should call readonly status when retrieving environments by params ", asyn
     mock<Milieu>({ id: 2, code: "22A0" }),
     mock<Milieu>({ id: 6, code: "1177" }),
   ];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsCodeData);
   prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsLibelleData);
 
-  const milieux = await findMilieux();
+  const milieux = await findMilieux(loggedUser);
 
   expect(milieux.length).toBe(5);
   expect(milieux[0].code).toBe("0017");
@@ -165,7 +166,6 @@ test("should call readonly status when retrieving environments by params ", asyn
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(milieux.length);
 });
 
 test("should call readonly status when retrieving paginated environments", async () => {

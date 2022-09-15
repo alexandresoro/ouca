@@ -123,12 +123,13 @@ test("should call readonly status when retrieving weathers by ID ", async () => 
   expect(isEntityReadOnly).toHaveBeenCalledTimes(weathersData.length);
 });
 
-test("should call readonly status when retrieving weathers by params", async () => {
+test("Find all weathers", async () => {
   const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.meteo.findMany.mockResolvedValueOnce(weathersData);
 
-  await findMeteos();
+  await findMeteos(loggedUser);
 
   expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
@@ -139,7 +140,6 @@ test("should call readonly status when retrieving weathers by params", async () 
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(weathersData.length);
 });
 
 test("should call readonly status when retrieving paginated weathers", async () => {

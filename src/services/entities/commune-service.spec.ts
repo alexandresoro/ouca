@@ -142,12 +142,13 @@ test("should handle class not found when retrieving city by zone ID ", async () 
   expect(city).toBeNull();
 });
 
-test("should call readonly status when retrieving cities by params ", async () => {
+test("Find all cities", async () => {
   const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.commune.findMany.mockResolvedValueOnce(citiesData);
 
-  await findCommunes();
+  await findCommunes(loggedUser);
 
   expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
@@ -168,7 +169,6 @@ test("should call readonly status when retrieving cities by params ", async () =
       ],
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(citiesData.length);
 });
 
 test("should call readonly status when retrieving paginated cities", async () => {

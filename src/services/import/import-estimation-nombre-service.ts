@@ -7,7 +7,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findEstimationsNombre();
+    this.entities = await findEstimationsNombre(null);
   };
 
   protected getThisEntityName(): string {

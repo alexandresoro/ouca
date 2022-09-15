@@ -6,7 +6,7 @@ import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libel
 export class ImportComportementService extends ImportEntiteAvecLibelleEtCodeService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findComportements();
+    this.entities = await findComportements(null);
   };
 
   protected getAnEntityName(): string {

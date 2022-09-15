@@ -42,13 +42,12 @@ export const getDonneesCountBySexe = async (id: number, loggedUser: LoggedUser |
   });
 };
 
-export const findSexes = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(Sexe & ReadonlyStatus)[]> => {
+export const findSexes = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Sexe[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
-  const sexeEntities = await prisma.sexe.findMany({
+  return prisma.sexe.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
@@ -56,13 +55,6 @@ export const findSexes = async (
       },
     },
     take: max || undefined,
-  });
-
-  return sexeEntities?.map((sexe) => {
-    return {
-      ...sexe,
-      readonly: isEntityReadOnly(sexe, loggedUser),
-    };
   });
 };
 

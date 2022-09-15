@@ -100,12 +100,13 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving number estimates by params ", async () => {
+test("Find all number estimates", async () => {
   const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.estimationNombre.findMany.mockResolvedValueOnce(numberEstimatesData);
 
-  await findEstimationsNombre();
+  await findEstimationsNombre(loggedUser);
 
   expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
@@ -116,7 +117,6 @@ test("should call readonly status when retrieving number estimates by params ", 
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(numberEstimatesData.length);
 });
 
 test("should call readonly status when retrieving paginated number estimates", async () => {

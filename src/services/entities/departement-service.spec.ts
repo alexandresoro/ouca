@@ -144,12 +144,13 @@ test("should handle class not found when retrieving department by city ID ", asy
   expect(department).toBeNull();
 });
 
-test("should call readonly status when retrieving departments by params ", async () => {
+test("Find all departments", async () => {
   const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.departement.findMany.mockResolvedValueOnce(departementsData);
 
-  await findDepartements();
+  await findDepartements(loggedUser);
 
   expect(prismaMock.departement.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
@@ -160,7 +161,6 @@ test("should call readonly status when retrieving departments by params ", async
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(departementsData.length);
 });
 
 test("should call readonly status when retrieving paginated departments", async () => {

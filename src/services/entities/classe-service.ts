@@ -72,13 +72,12 @@ export const getDonneesCountByClasse = async (id: number, loggedUser: LoggedUser
   });
 };
 
-export const findClasses = async (
-  params?: FindParams | null,
-  loggedUser: LoggedUser | null = null
-): Promise<(Classe & ReadonlyStatus)[]> => {
+export const findClasses = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Classe[]> => {
+  validateAuthorization(loggedUser);
+
   const { q, max } = params ?? {};
 
-  const classeEntities = await prisma.classe.findMany({
+  return prisma.classe.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       libelle: {
@@ -86,13 +85,6 @@ export const findClasses = async (
       },
     },
     take: max || undefined,
-  });
-
-  return classeEntities?.map((classe) => {
-    return {
-      ...classe,
-      readonly: isEntityReadOnly(classe, loggedUser),
-    };
   });
 };
 

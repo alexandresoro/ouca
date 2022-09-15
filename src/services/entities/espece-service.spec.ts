@@ -151,15 +151,16 @@ test("should handle species not found when retrieving species by data ID ", asyn
   expect(species).toBeNull();
 });
 
-test("should call readonly status when retrieving species by params ", async () => {
+test("Find all species", async () => {
   const commonResultEspece = mock<Espece>();
   const codeSpeciesData = [mock<Espece>(), mock<Espece>(), commonResultEspece];
   const libelleSpeciesData = [mock<Espece>(), commonResultEspece];
+  const loggedUser = mock<LoggedUser>();
 
   prismaMock.espece.findMany.mockResolvedValueOnce(codeSpeciesData);
   prismaMock.espece.findMany.mockResolvedValueOnce(libelleSpeciesData);
 
-  await findEspeces();
+  await findEspeces(loggedUser);
 
   expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(2);
   expect(prismaMock.espece.findMany).toHaveBeenNthCalledWith(1, {
@@ -183,7 +184,6 @@ test("should call readonly status when retrieving species by params ", async () 
     },
     take: undefined,
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(codeSpeciesData.length + libelleSpeciesData.length - 1);
 });
 
 test("should call readonly status when retrieving paginated species", async () => {

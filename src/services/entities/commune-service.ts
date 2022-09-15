@@ -79,12 +79,14 @@ export const findCommuneOfLieuDitId = async (
 };
 
 export const findCommunes = async (
+  loggedUser: LoggedUser | null,
   options: {
     params?: FindParams | null;
     departementId?: number | null;
-  } = {},
-  loggedUser: LoggedUser | null = null
-): Promise<(Commune & ReadonlyStatus)[]> => {
+  } = {}
+): Promise<Commune[]> => {
+  validateAuthorization(loggedUser);
+
   const { params, departementId } = options;
   const { q, max } = params ?? {};
 
@@ -143,17 +145,10 @@ export const findCommunes = async (
     ],
   };
 
-  const communeEntities = await prisma.commune.findMany({
+  return prisma.commune.findMany({
     ...queryParametersToFindAllEntities(COLUMN_NOM),
     where: whereClause,
     take: max || undefined,
-  });
-
-  return communeEntities?.map((commune) => {
-    return {
-      ...commune,
-      readonly: isEntityReadOnly(commune, loggedUser),
-    };
   });
 };
 
