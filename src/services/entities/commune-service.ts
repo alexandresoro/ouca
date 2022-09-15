@@ -46,24 +46,17 @@ export const getDonneesCountByCommune = async (id: number, loggedUser: LoggedUse
 
 export const findCommuneOfLieuDitId = async (
   lieuDitId: number | undefined,
-  loggedUser: LoggedUser | null = null
-): Promise<(Commune & ReadonlyStatus) | null> => {
-  const communeEntity = await prisma.lieudit
+  loggedUser: LoggedUser | null
+): Promise<Commune | null> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.lieudit
     .findUnique({
       where: {
         id: lieuDitId,
       },
     })
     .commune();
-
-  if (!communeEntity) {
-    return null;
-  }
-
-  return {
-    ...communeEntity,
-    readonly: isEntityReadOnly(communeEntity, loggedUser),
-  };
 };
 
 export const findCommunes = async (

@@ -57,24 +57,17 @@ export const getDonneesCountByDepartement = async (id: number, loggedUser: Logge
 
 export const findDepartementOfCommuneId = async (
   communeId: number | undefined,
-  loggedUser: LoggedUser | null = null
-): Promise<(Departement & ReadonlyStatus) | null> => {
-  const departementEntity = await prisma.commune
+  loggedUser: LoggedUser | null
+): Promise<Departement | null> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.commune
     .findUnique({
       where: {
         id: communeId,
       },
     })
     .departement();
-
-  if (!departementEntity) {
-    return null;
-  }
-
-  return {
-    ...departementEntity,
-    readonly: isEntityReadOnly(departementEntity, loggedUser),
-  };
 };
 
 export const findDepartements = async (

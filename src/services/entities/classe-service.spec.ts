@@ -98,44 +98,32 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving class by species ID ", async () => {
-  const classData = mock<Classe>({
-    id: 256,
+describe("Find class by species ID", () => {
+  test("should handle a found class", async () => {
+    const classData = mock<Classe>({
+      id: 256,
+    });
+    const loggedUser = mock<LoggedUser>();
+
+    const species = mockDeep<Prisma.Prisma__EspeceClient<Espece>>();
+    species.classe.mockResolvedValueOnce(classData);
+
+    prismaMock.espece.findUnique.mockReturnValueOnce(species);
+
+    const classe = await findClasseOfEspeceId(43, loggedUser);
+
+    expect(prismaMock.espece.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 43,
+      },
+    });
+    expect(classe?.id).toEqual(256);
   });
 
-  const species = mockDeep<Prisma.Prisma__EspeceClient<Espece>>();
-  species.classe.mockResolvedValueOnce(classData);
-
-  prismaMock.espece.findUnique.mockReturnValueOnce(species);
-
-  const classe = await findClasseOfEspeceId(43);
-
-  expect(prismaMock.espece.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findClasseOfEspeceId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-  expect(classe?.id).toEqual(256);
-});
-
-test("should handle class not found when retrieving class by species ID ", async () => {
-  const species = mockDeep<Prisma.Prisma__EspeceClient<Espece>>();
-  species.classe.mockResolvedValueOnce(null);
-
-  prismaMock.espece.findUnique.mockReturnValueOnce(species);
-
-  const classe = await findClasseOfEspeceId(43);
-
-  expect(prismaMock.espece.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
-  });
-  expect(isEntityReadOnly).not.toHaveBeenCalled();
-  expect(classe).toBeNull();
 });
 
 test("Find all classes", async () => {

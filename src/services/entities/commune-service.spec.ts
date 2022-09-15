@@ -100,44 +100,32 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving city by zone ID ", async () => {
-  const cityData = mock<Commune>({
-    id: 256,
+describe("Find city by locality ID", () => {
+  test("should handle a found city", async () => {
+    const cityData = mock<Commune>({
+      id: 256,
+    });
+    const loggedUser = mock<LoggedUser>();
+
+    const zone = mockDeep<Prisma.Prisma__LieuditClient<Lieudit>>();
+    zone.commune.mockResolvedValueOnce(cityData);
+
+    prismaMock.lieudit.findUnique.mockReturnValueOnce(zone);
+
+    const city = await findCommuneOfLieuDitId(43, loggedUser);
+
+    expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 43,
+      },
+    });
+    expect(city?.id).toEqual(256);
   });
 
-  const zone = mockDeep<Prisma.Prisma__LieuditClient<Lieudit>>();
-  zone.commune.mockResolvedValueOnce(cityData);
-
-  prismaMock.lieudit.findUnique.mockReturnValueOnce(zone);
-
-  const city = await findCommuneOfLieuDitId(43);
-
-  expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findCommuneOfLieuDitId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-  expect(city?.id).toEqual(256);
-});
-
-test("should handle class not found when retrieving city by zone ID ", async () => {
-  const zone = mockDeep<Prisma.Prisma__LieuditClient<Lieudit>>();
-  zone.commune.mockResolvedValueOnce(null);
-
-  prismaMock.lieudit.findUnique.mockReturnValueOnce(zone);
-
-  const city = await findCommuneOfLieuDitId(43);
-
-  expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
-  });
-  expect(isEntityReadOnly).not.toHaveBeenCalled();
-  expect(city).toBeNull();
 });
 
 test("Find all cities", async () => {

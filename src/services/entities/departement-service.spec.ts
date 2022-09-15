@@ -102,44 +102,32 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving department by city ID ", async () => {
-  const departmentData = mock<Departement>({
-    id: 256,
+describe("Find department by city ID", () => {
+  test("should handle a found department", async () => {
+    const departmentData = mock<Departement>({
+      id: 256,
+    });
+    const loggedUser = mock<LoggedUser>();
+
+    const city = mockDeep<Prisma.Prisma__CommuneClient<Commune>>();
+    city.departement.mockResolvedValueOnce(departmentData);
+
+    prismaMock.commune.findUnique.mockReturnValueOnce(city);
+
+    const department = await findDepartementOfCommuneId(43, loggedUser);
+
+    expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 43,
+      },
+    });
+    expect(department?.id).toEqual(256);
   });
 
-  const city = mockDeep<Prisma.Prisma__CommuneClient<Commune>>();
-  city.departement.mockResolvedValueOnce(departmentData);
-
-  prismaMock.commune.findUnique.mockReturnValueOnce(city);
-
-  const department = await findDepartementOfCommuneId(43);
-
-  expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findDepartementOfCommuneId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-  expect(department?.id).toEqual(256);
-});
-
-test("should handle class not found when retrieving department by city ID ", async () => {
-  const city = mockDeep<Prisma.Prisma__CommuneClient<Commune>>();
-  city.departement.mockResolvedValueOnce(null);
-
-  prismaMock.commune.findUnique.mockReturnValueOnce(city);
-
-  const department = await findDepartementOfCommuneId(43);
-
-  expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
-  });
-  expect(isEntityReadOnly).not.toHaveBeenCalled();
-  expect(department).toBeNull();
 });
 
 test("Find all departments", async () => {

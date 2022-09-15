@@ -16,28 +16,6 @@ import {
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
-export const findClasseOfEspeceId = async (
-  especeId: number | undefined,
-  loggedUser: LoggedUser | null = null
-): Promise<(Classe & ReadonlyStatus) | null> => {
-  const classeEntity = await prisma.espece
-    .findUnique({
-      where: {
-        id: especeId,
-      },
-    })
-    .classe();
-
-  if (!classeEntity) {
-    return null;
-  }
-
-  return {
-    ...classeEntity,
-    readonly: isEntityReadOnly(classeEntity, loggedUser),
-  };
-};
-
 export const findClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe | null> => {
   validateAuthorization(loggedUser);
 
@@ -58,6 +36,21 @@ export const getDonneesCountByClasse = async (id: number, loggedUser: LoggedUser
       },
     },
   });
+};
+
+export const findClasseOfEspeceId = async (
+  especeId: number | undefined,
+  loggedUser: LoggedUser | null
+): Promise<Classe | null> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.espece
+    .findUnique({
+      where: {
+        id: especeId,
+      },
+    })
+    .classe();
 };
 
 export const findClasses = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Classe[]> => {
