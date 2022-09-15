@@ -651,17 +651,6 @@ type Query {
   sexe(id: Int!): Sexe
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
-  classes(params: FindParams): [Classe]
-  communes(params: FindParams, departementId: Int): [Commune]
-  comportements(params: FindParams): [Comportement]
-  departements(params: FindParams): [Departement]
-  especes(params: FindParams, classeId: Int): [Espece]
-  lieuxDits(params: FindParams, communeId: Int, departementId: Int): [LieuDit]
-  estimationsDistance(params: FindParams): [EstimationDistance]
-  estimationsNombre(params: FindParams): [EstimationNombre]
-  meteos(params: FindParams): [Meteo]
-  milieux(params: FindParams): [Milieu]
-  sexes(params: FindParams): [Sexe]
   nextRegroupement: Int!
   lastDonneeId: Int
   paginatedClasses(

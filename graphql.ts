@@ -784,22 +784,15 @@ export type Query = {
   age?: Maybe<Age>;
   ages?: Maybe<AgesPaginatedResult>;
   classe?: Maybe<Classe>;
-  classes?: Maybe<Array<Maybe<Classe>>>;
   commune?: Maybe<Commune>;
-  communes?: Maybe<Array<Maybe<Commune>>>;
   comportement?: Maybe<Comportement>;
   comportementList?: Maybe<Array<Maybe<Comportement>>>;
-  comportements?: Maybe<Array<Maybe<Comportement>>>;
   departement?: Maybe<Departement>;
-  departements?: Maybe<Array<Maybe<Departement>>>;
   donnee?: Maybe<DonneeResult>;
   dumpDatabase?: Maybe<Scalars['String']>;
   espece?: Maybe<Espece>;
-  especes?: Maybe<Array<Maybe<Espece>>>;
   estimationDistance?: Maybe<EstimationDistance>;
   estimationNombre?: Maybe<EstimationNombre>;
-  estimationsDistance?: Maybe<Array<Maybe<EstimationDistance>>>;
-  estimationsNombre?: Maybe<Array<Maybe<EstimationNombre>>>;
   exportAges?: Maybe<Scalars['String']>;
   exportClasses?: Maybe<Scalars['String']>;
   exportCommunes?: Maybe<Scalars['String']>;
@@ -818,13 +811,10 @@ export type Query = {
   inventaire?: Maybe<Inventaire>;
   lastDonneeId?: Maybe<Scalars['Int']>;
   lieuDit?: Maybe<LieuDit>;
-  lieuxDits?: Maybe<Array<Maybe<LieuDit>>>;
   meteo?: Maybe<Meteo>;
   meteoList?: Maybe<Array<Maybe<Meteo>>>;
-  meteos?: Maybe<Array<Maybe<Meteo>>>;
   milieu?: Maybe<Milieu>;
   milieuList?: Maybe<Array<Maybe<Milieu>>>;
-  milieux?: Maybe<Array<Maybe<Milieu>>>;
   nextRegroupement: Scalars['Int'];
   observateur?: Maybe<Observateur>;
   observateurList?: Maybe<Array<Observateur>>;
@@ -844,7 +834,6 @@ export type Query = {
   paginatedSexes?: Maybe<SexesPaginatedResult>;
   settings?: Maybe<Settings>;
   sexe?: Maybe<Sexe>;
-  sexes?: Maybe<Array<Maybe<Sexe>>>;
   specimenCountByAge?: Maybe<Array<Maybe<AgeWithSpecimensCount>>>;
   specimenCountBySexe?: Maybe<Array<Maybe<SexeWithSpecimensCount>>>;
 };
@@ -867,19 +856,8 @@ export type QueryClasseArgs = {
 };
 
 
-export type QueryClassesArgs = {
-  params?: InputMaybe<FindParams>;
-};
-
-
 export type QueryCommuneArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryCommunesArgs = {
-  departementId?: InputMaybe<Scalars['Int']>;
-  params?: InputMaybe<FindParams>;
 };
 
 
@@ -893,18 +871,8 @@ export type QueryComportementListArgs = {
 };
 
 
-export type QueryComportementsArgs = {
-  params?: InputMaybe<FindParams>;
-};
-
-
 export type QueryDepartementArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryDepartementsArgs = {
-  params?: InputMaybe<FindParams>;
 };
 
 
@@ -918,12 +886,6 @@ export type QueryEspeceArgs = {
 };
 
 
-export type QueryEspecesArgs = {
-  classeId?: InputMaybe<Scalars['Int']>;
-  params?: InputMaybe<FindParams>;
-};
-
-
 export type QueryEstimationDistanceArgs = {
   id: Scalars['Int'];
 };
@@ -931,16 +893,6 @@ export type QueryEstimationDistanceArgs = {
 
 export type QueryEstimationNombreArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryEstimationsDistanceArgs = {
-  params?: InputMaybe<FindParams>;
-};
-
-
-export type QueryEstimationsNombreArgs = {
-  params?: InputMaybe<FindParams>;
 };
 
 
@@ -964,13 +916,6 @@ export type QueryLieuDitArgs = {
 };
 
 
-export type QueryLieuxDitsArgs = {
-  communeId?: InputMaybe<Scalars['Int']>;
-  departementId?: InputMaybe<Scalars['Int']>;
-  params?: InputMaybe<FindParams>;
-};
-
-
 export type QueryMeteoArgs = {
   id: Scalars['Int'];
 };
@@ -981,11 +926,6 @@ export type QueryMeteoListArgs = {
 };
 
 
-export type QueryMeteosArgs = {
-  params?: InputMaybe<FindParams>;
-};
-
-
 export type QueryMilieuArgs = {
   id: Scalars['Int'];
 };
@@ -993,11 +933,6 @@ export type QueryMilieuArgs = {
 
 export type QueryMilieuListArgs = {
   ids: Array<Scalars['Int']>;
-};
-
-
-export type QueryMilieuxArgs = {
-  params?: InputMaybe<FindParams>;
 };
 
 
@@ -1117,11 +1052,6 @@ export type QueryPaginatedSexesArgs = {
 
 export type QuerySexeArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QuerySexesArgs = {
-  params?: InputMaybe<FindParams>;
 };
 
 
