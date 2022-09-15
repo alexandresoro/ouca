@@ -203,92 +203,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing distance estimate as an admin ", async () => {
-  const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
+describe("Update of a distance estimate", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertEstimationDistance(distanceEstimateData, loggedUser);
+    await upsertEstimationDistance(distanceEstimateData, loggedUser);
 
-  expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
-    data: distanceEstimateData.data,
-    where: {
-      id: distanceEstimateData.id,
-    },
-  });
-});
-
-test("should update an existing distance estimate if owner ", async () => {
-  const existingData = mock<EstimationDistance>({
-    ownerId: "notAdmin",
+    expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
+      data: distanceEstimateData.data,
+      where: {
+        id: distanceEstimateData.id,
+      },
+    });
   });
 
-  const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<EstimationDistance>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
 
-  prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertEstimationDistance(distanceEstimateData, loggedUser);
+    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
-    data: distanceEstimateData.data,
-    where: {
-      id: distanceEstimateData.id,
-    },
-  });
-});
+    await upsertEstimationDistance(distanceEstimateData, loggedUser);
 
-test("should throw an error when updating an existing distance estimate and nor owner nor admin ", async () => {
-  const existingData = mock<EstimationDistance>({
-    ownerId: "notAdmin",
-  });
-
-  const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertEstimationDistance(distanceEstimateData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.estimationDistance.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a distance estimate that exists", async () => {
-  const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-    id: 12,
+    expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
+      data: distanceEstimateData.data,
+      where: {
+        id: distanceEstimateData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<EstimationDistance>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.estimationDistance.update.mockImplementation(prismaConstraintFailed);
+    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
 
-  await expect(() => upsertEstimationDistance(distanceEstimateData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
-    data: distanceEstimateData.data,
-    where: {
-      id: distanceEstimateData.id,
-    },
-  });
-});
+    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-    id: 12,
+    await expect(upsertEstimationDistance(distanceEstimateData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.estimationDistance.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.estimationDistance.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a distance estimate that exists", async () => {
+    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.estimationDistance.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertEstimationDistance(distanceEstimateData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
+      data: distanceEstimateData.data,
+      where: {
+        id: distanceEstimateData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
+      id: 12,
+    });
+
+    await expect(upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.estimationDistance.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a distance estimate", () => {

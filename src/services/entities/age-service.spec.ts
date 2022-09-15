@@ -195,7 +195,7 @@ describe("Entities count by search criteria", () => {
 });
 
 describe("Update of an age", () => {
-  test("should be allowed when requested by an admin ", async () => {
+  test("should be allowed when requested by an admin", async () => {
     const ageData = mock<MutationUpsertAgeArgs>();
 
     const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
@@ -233,7 +233,7 @@ describe("Update of an age", () => {
     });
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin ", async () => {
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
     const existingData = mock<Age>({
       ownerId: "notAdmin",
     });

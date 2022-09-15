@@ -258,7 +258,7 @@ describe("Update of an observer", () => {
     });
   });
 
-  test("should throw an error when requested by an use that is nor owner nor admin ", async () => {
+  test("should throw an error when requested by an use that is nor owner nor admin", async () => {
     const existingData = mock<Observateur>({
       ownerId: "notAdmin",
     });

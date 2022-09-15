@@ -243,92 +243,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing class as an admin ", async () => {
-  const classData = mock<MutationUpsertClasseArgs>();
+describe("Update of a class", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const classData = mock<MutationUpsertClasseArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertClasse(classData, loggedUser);
+    await upsertClasse(classData, loggedUser);
 
-  expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
-    data: classData.data,
-    where: {
-      id: classData.id,
-    },
-  });
-});
-
-test("should update an existing class if owner ", async () => {
-  const existingData = mock<Classe>({
-    ownerId: "notAdmin",
+    expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
+      data: classData.data,
+      where: {
+        id: classData.id,
+      },
+    });
   });
 
-  const classData = mock<MutationUpsertClasseArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<Classe>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const classData = mock<MutationUpsertClasseArgs>();
 
-  prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertClasse(classData, loggedUser);
+    prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
-    data: classData.data,
-    where: {
-      id: classData.id,
-    },
-  });
-});
+    await upsertClasse(classData, loggedUser);
 
-test("should throw an error when updating an existing class and nor owner nor admin ", async () => {
-  const existingData = mock<Classe>({
-    ownerId: "notAdmin",
-  });
-
-  const classData = mock<MutationUpsertClasseArgs>();
-
-  const loggedUser = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertClasse(classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.classe.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a class that exists", async () => {
-  const classData = mock<MutationUpsertClasseArgs>({
-    id: 12,
+    expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
+      data: classData.data,
+      where: {
+        id: classData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Classe>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.classe.update.mockImplementation(prismaConstraintFailed);
+    const classData = mock<MutationUpsertClasseArgs>();
 
-  await expect(() => upsertClasse(classData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const loggedUser = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
-    data: classData.data,
-    where: {
-      id: classData.id,
-    },
-  });
-});
+    prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const classData = mock<MutationUpsertClasseArgs>({
-    id: 12,
+    await expect(upsertClasse(classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.classe.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.classe.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a class that exists", async () => {
+    const classData = mock<MutationUpsertClasseArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.classe.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertClasse(classData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
+      data: classData.data,
+      where: {
+        id: classData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const classData = mock<MutationUpsertClasseArgs>({
+      id: 12,
+    });
+
+    await expect(upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.classe.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a class", () => {

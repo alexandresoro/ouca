@@ -320,94 +320,96 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing locality as an admin ", async () => {
-  const localityData = mock<MutationUpsertLieuDitArgs>();
+describe("Update of a locality", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const localityData = mock<MutationUpsertLieuDitArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
-  prismaMock.lieudit.update.mockResolvedValueOnce(mockDeep<Lieudit>());
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    prismaMock.lieudit.update.mockResolvedValueOnce(mockDeep<Lieudit>());
 
-  await upsertLieuDit(localityData, loggedUser);
+    await upsertLieuDit(localityData, loggedUser);
 
-  expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
-    data: localityData.data,
-    where: {
-      id: localityData.id,
-    },
-  });
-});
-
-test("should update an existing locality if owner ", async () => {
-  const existingData = mock<Lieudit>({
-    ownerId: "notAdmin",
+    expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
+      data: localityData.data,
+      where: {
+        id: localityData.id,
+      },
+    });
   });
 
-  const localityData = mock<MutationUpsertLieuDitArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<Lieudit>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const localityData = mock<MutationUpsertLieuDitArgs>();
 
-  prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
-  prismaMock.lieudit.update.mockResolvedValueOnce(mockDeep<Lieudit>());
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertLieuDit(localityData, loggedUser);
+    prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
+    prismaMock.lieudit.update.mockResolvedValueOnce(mockDeep<Lieudit>());
 
-  expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
-    data: localityData.data,
-    where: {
-      id: localityData.id,
-    },
-  });
-});
+    await upsertLieuDit(localityData, loggedUser);
 
-test("should throw an error when updating an existing locality and nor owner nor admin ", async () => {
-  const existingData = mock<Lieudit>({
-    ownerId: "notAdmin",
-  });
-
-  const localityData = mock<MutationUpsertLieuDitArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertLieuDit(localityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.lieudit.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a locality that exists", async () => {
-  const localityData = mock<MutationUpsertLieuDitArgs>({
-    id: 12,
+    expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
+      data: localityData.data,
+      where: {
+        id: localityData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Lieudit>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.lieudit.update.mockImplementation(prismaConstraintFailed);
+    const localityData = mock<MutationUpsertLieuDitArgs>();
 
-  await expect(() => upsertLieuDit(localityData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
-    data: localityData.data,
-    where: {
-      id: localityData.id,
-    },
-  });
-});
+    prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const localityData = mock<MutationUpsertLieuDitArgs>({
-    id: 12,
+    await expect(upsertLieuDit(localityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.lieudit.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.lieudit.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a locality that exists", async () => {
+    const localityData = mock<MutationUpsertLieuDitArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.lieudit.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertLieuDit(localityData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
+      data: localityData.data,
+      where: {
+        id: localityData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const localityData = mock<MutationUpsertLieuDitArgs>({
+      id: 12,
+    });
+
+    await expect(upsertLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.lieudit.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a locality", () => {

@@ -277,92 +277,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing city as an admin ", async () => {
-  const cityData = mock<MutationUpsertCommuneArgs>();
+describe("Update of a city", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const cityData = mock<MutationUpsertCommuneArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertCommune(cityData, loggedUser);
+    await upsertCommune(cityData, loggedUser);
 
-  expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
-    data: cityData.data,
-    where: {
-      id: cityData.id,
-    },
-  });
-});
-
-test("should update an existing city if owner ", async () => {
-  const existingData = mock<Commune>({
-    ownerId: "notAdmin",
+    expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
+      data: cityData.data,
+      where: {
+        id: cityData.id,
+      },
+    });
   });
 
-  const cityData = mock<MutationUpsertCommuneArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<Commune>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const cityData = mock<MutationUpsertCommuneArgs>();
 
-  prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertCommune(cityData, loggedUser);
+    prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
-    data: cityData.data,
-    where: {
-      id: cityData.id,
-    },
-  });
-});
+    await upsertCommune(cityData, loggedUser);
 
-test("should throw an error when updating an existing city and nor owner nor admin ", async () => {
-  const existingData = mock<Commune>({
-    ownerId: "notAdmin",
-  });
-
-  const cityData = mock<MutationUpsertCommuneArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertCommune(cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.commune.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a city that exists", async () => {
-  const cityData = mock<MutationUpsertCommuneArgs>({
-    id: 12,
+    expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
+      data: cityData.data,
+      where: {
+        id: cityData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Commune>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.commune.update.mockImplementation(prismaConstraintFailed);
+    const cityData = mock<MutationUpsertCommuneArgs>();
 
-  await expect(() => upsertCommune(cityData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
-    data: cityData.data,
-    where: {
-      id: cityData.id,
-    },
-  });
-});
+    prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const cityData = mock<MutationUpsertCommuneArgs>({
-    id: 12,
+    await expect(upsertCommune(cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.commune.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.commune.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a city that exists", async () => {
+    const cityData = mock<MutationUpsertCommuneArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.commune.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertCommune(cityData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
+      data: cityData.data,
+      where: {
+        id: cityData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const cityData = mock<MutationUpsertCommuneArgs>({
+      id: 12,
+    });
+
+    await expect(upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.commune.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a city", () => {

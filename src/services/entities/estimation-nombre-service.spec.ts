@@ -203,92 +203,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing number estimate as an admin ", async () => {
-  const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
+describe("Update of a number estimate", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertEstimationNombre(numberEstimateData, loggedUser);
+    await upsertEstimationNombre(numberEstimateData, loggedUser);
 
-  expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
-    data: numberEstimateData.data,
-    where: {
-      id: numberEstimateData.id,
-    },
-  });
-});
-
-test("should update an existing number estimate if owner ", async () => {
-  const existingData = mock<EstimationNombre>({
-    ownerId: "notAdmin",
+    expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
+      data: numberEstimateData.data,
+      where: {
+        id: numberEstimateData.id,
+      },
+    });
   });
 
-  const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<EstimationNombre>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
 
-  prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertEstimationNombre(numberEstimateData, loggedUser);
+    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
-    data: numberEstimateData.data,
-    where: {
-      id: numberEstimateData.id,
-    },
-  });
-});
+    await upsertEstimationNombre(numberEstimateData, loggedUser);
 
-test("should throw an error when updating an existing number estimate and nor owner nor admin ", async () => {
-  const existingData = mock<EstimationNombre>({
-    ownerId: "notAdmin",
-  });
-
-  const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertEstimationNombre(numberEstimateData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.estimationNombre.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a number estimate that exists", async () => {
-  const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-    id: 12,
+    expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
+      data: numberEstimateData.data,
+      where: {
+        id: numberEstimateData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<EstimationNombre>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.estimationNombre.update.mockImplementation(prismaConstraintFailed);
+    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
 
-  await expect(() => upsertEstimationNombre(numberEstimateData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
-    data: numberEstimateData.data,
-    where: {
-      id: numberEstimateData.id,
-    },
-  });
-});
+    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-    id: 12,
+    await expect(upsertEstimationNombre(numberEstimateData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.estimationNombre.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.estimationNombre.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a number estimate that exists", async () => {
+    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.estimationNombre.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertEstimationNombre(numberEstimateData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
+      data: numberEstimateData.data,
+      where: {
+        id: numberEstimateData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
+      id: 12,
+    });
+
+    await expect(upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.estimationNombre.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a number estimate", () => {

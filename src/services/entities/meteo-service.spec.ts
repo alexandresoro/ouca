@@ -226,92 +226,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing weather as an admin ", async () => {
-  const weatherData = mock<MutationUpsertMeteoArgs>();
+describe("Update of a weather", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const weatherData = mock<MutationUpsertMeteoArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertMeteo(weatherData, loggedUser);
+    await upsertMeteo(weatherData, loggedUser);
 
-  expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
-    data: weatherData.data,
-    where: {
-      id: weatherData.id,
-    },
-  });
-});
-
-test("should update an existing weather if owner ", async () => {
-  const existingData = mock<Meteo>({
-    ownerId: "notAdmin",
+    expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
+      data: weatherData.data,
+      where: {
+        id: weatherData.id,
+      },
+    });
   });
 
-  const weatherData = mock<MutationUpsertMeteoArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<Meteo>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const weatherData = mock<MutationUpsertMeteoArgs>();
 
-  prismaMock.meteo.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertMeteo(weatherData, loggedUser);
+    prismaMock.meteo.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
-    data: weatherData.data,
-    where: {
-      id: weatherData.id,
-    },
-  });
-});
+    await upsertMeteo(weatherData, loggedUser);
 
-test("should throw an error when updating an existing weather and nor owner nor admin ", async () => {
-  const existingData = mock<Meteo>({
-    ownerId: "notAdmin",
-  });
-
-  const weatherData = mock<MutationUpsertMeteoArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.meteo.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertMeteo(weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.meteo.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a weather that exists", async () => {
-  const weatherData = mock<MutationUpsertMeteoArgs>({
-    id: 12,
+    expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
+      data: weatherData.data,
+      where: {
+        id: weatherData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Meteo>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.meteo.update.mockImplementation(prismaConstraintFailed);
+    const weatherData = mock<MutationUpsertMeteoArgs>();
 
-  await expect(() => upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
-    data: weatherData.data,
-    where: {
-      id: weatherData.id,
-    },
-  });
-});
+    prismaMock.meteo.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const weatherData = mock<MutationUpsertMeteoArgs>({
-    id: 12,
+    await expect(upsertMeteo(weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.meteo.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.meteo.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a weather that exists", async () => {
+    const weatherData = mock<MutationUpsertMeteoArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.meteo.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
+      data: weatherData.data,
+      where: {
+        id: weatherData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const weatherData = mock<MutationUpsertMeteoArgs>({
+      id: 12,
+    });
+
+    await expect(upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.meteo.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a weather", () => {

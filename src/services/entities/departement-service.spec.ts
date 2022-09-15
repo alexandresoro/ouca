@@ -247,92 +247,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing department as an admin ", async () => {
-  const departmentData = mock<MutationUpsertDepartementArgs>();
+describe("Update of a department", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const departmentData = mock<MutationUpsertDepartementArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertDepartement(departmentData, loggedUser);
+    await upsertDepartement(departmentData, loggedUser);
 
-  expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
-    data: departmentData.data,
-    where: {
-      id: departmentData.id,
-    },
-  });
-});
-
-test("should update an existing department if owner ", async () => {
-  const existingData = mock<Departement>({
-    ownerId: "notAdmin",
+    expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
+      data: departmentData.data,
+      where: {
+        id: departmentData.id,
+      },
+    });
   });
 
-  const departmentData = mock<MutationUpsertDepartementArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<Departement>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const departmentData = mock<MutationUpsertDepartementArgs>();
 
-  prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertDepartement(departmentData, loggedUser);
+    prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
-    data: departmentData.data,
-    where: {
-      id: departmentData.id,
-    },
-  });
-});
+    await upsertDepartement(departmentData, loggedUser);
 
-test("should throw an error when updating an existing department and nor owner nor admin ", async () => {
-  const existingData = mock<Departement>({
-    ownerId: "notAdmin",
-  });
-
-  const departmentData = mock<MutationUpsertDepartementArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertDepartement(departmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.departement.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a department that exists", async () => {
-  const departmentData = mock<MutationUpsertDepartementArgs>({
-    id: 12,
+    expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
+      data: departmentData.data,
+      where: {
+        id: departmentData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Departement>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.departement.update.mockImplementation(prismaConstraintFailed);
+    const departmentData = mock<MutationUpsertDepartementArgs>();
 
-  await expect(() => upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
-    data: departmentData.data,
-    where: {
-      id: departmentData.id,
-    },
-  });
-});
+    prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const departmentData = mock<MutationUpsertDepartementArgs>({
-    id: 12,
+    await expect(upsertDepartement(departmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.departement.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.departement.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a department that exists", async () => {
+    const departmentData = mock<MutationUpsertDepartementArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.departement.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
+      data: departmentData.data,
+      where: {
+        id: departmentData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const departmentData = mock<MutationUpsertDepartementArgs>({
+      id: 12,
+    });
+
+    await expect(upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.departement.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a department", () => {

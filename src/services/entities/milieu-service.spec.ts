@@ -270,92 +270,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing environment as an admin ", async () => {
-  const environmentData = mock<MutationUpsertMilieuArgs>();
+describe("Update of an environment", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const environmentData = mock<MutationUpsertMilieuArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertMilieu(environmentData, loggedUser);
+    await upsertMilieu(environmentData, loggedUser);
 
-  expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
-    data: environmentData.data,
-    where: {
-      id: environmentData.id,
-    },
-  });
-});
-
-test("should update an existing environment if owner ", async () => {
-  const existingData = mock<Milieu>({
-    ownerId: "notAdmin",
+    expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
+      data: environmentData.data,
+      where: {
+        id: environmentData.id,
+      },
+    });
   });
 
-  const environmentData = mock<MutationUpsertMilieuArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<Milieu>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const environmentData = mock<MutationUpsertMilieuArgs>();
 
-  prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertMilieu(environmentData, loggedUser);
+    prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
-    data: environmentData.data,
-    where: {
-      id: environmentData.id,
-    },
-  });
-});
+    await upsertMilieu(environmentData, loggedUser);
 
-test("should throw an error when updating an existing environment and nor owner nor admin ", async () => {
-  const existingData = mock<Milieu>({
-    ownerId: "notAdmin",
-  });
-
-  const environmentData = mock<MutationUpsertMilieuArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertMilieu(environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.milieu.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update an environment that exists", async () => {
-  const environmentData = mock<MutationUpsertMilieuArgs>({
-    id: 12,
+    expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
+      data: environmentData.data,
+      where: {
+        id: environmentData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Milieu>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.milieu.update.mockImplementation(prismaConstraintFailed);
+    const environmentData = mock<MutationUpsertMilieuArgs>();
 
-  await expect(() => upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
-    data: environmentData.data,
-    where: {
-      id: environmentData.id,
-    },
-  });
-});
+    prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const environmentData = mock<MutationUpsertMilieuArgs>({
-    id: 12,
+    await expect(upsertMilieu(environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.milieu.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.milieu.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to an environment that exists", async () => {
+    const environmentData = mock<MutationUpsertMilieuArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.milieu.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
+      data: environmentData.data,
+      where: {
+        id: environmentData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const environmentData = mock<MutationUpsertMilieuArgs>({
+      id: 12,
+    });
+
+    await expect(upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.milieu.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of an environment", () => {

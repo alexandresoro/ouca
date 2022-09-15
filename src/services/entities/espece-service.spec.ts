@@ -478,92 +478,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing species as an admin ", async () => {
-  const speciesData = mock<MutationUpsertEspeceArgs>();
+describe("Update of a species", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const speciesData = mock<MutationUpsertEspeceArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertEspece(speciesData, loggedUser);
+    await upsertEspece(speciesData, loggedUser);
 
-  expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
-    data: speciesData.data,
-    where: {
-      id: speciesData.id,
-    },
-  });
-});
-
-test("should update an existing species if owner ", async () => {
-  const existingData = mock<Espece>({
-    ownerId: "notAdmin",
+    expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
+      data: speciesData.data,
+      where: {
+        id: speciesData.id,
+      },
+    });
   });
 
-  const speciesData = mock<MutationUpsertEspeceArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<Espece>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const speciesData = mock<MutationUpsertEspeceArgs>();
 
-  prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertEspece(speciesData, loggedUser);
+    prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
-    data: speciesData.data,
-    where: {
-      id: speciesData.id,
-    },
-  });
-});
+    await upsertEspece(speciesData, loggedUser);
 
-test("should throw an error when updating an existing species and nor owner nor admin ", async () => {
-  const existingData = mock<Espece>({
-    ownerId: "notAdmin",
-  });
-
-  const speciesData = mock<MutationUpsertEspeceArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertEspece(speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.espece.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a species that exists", async () => {
-  const speciesData = mock<MutationUpsertEspeceArgs>({
-    id: 12,
+    expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
+      data: speciesData.data,
+      where: {
+        id: speciesData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Espece>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.espece.update.mockImplementation(prismaConstraintFailed);
+    const speciesData = mock<MutationUpsertEspeceArgs>();
 
-  await expect(() => upsertEspece(speciesData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
-    data: speciesData.data,
-    where: {
-      id: speciesData.id,
-    },
-  });
-});
+    prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const speciesData = mock<MutationUpsertEspeceArgs>({
-    id: 12,
+    await expect(upsertEspece(speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.espece.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.espece.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a species that exists", async () => {
+    const speciesData = mock<MutationUpsertEspeceArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.espece.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertEspece(speciesData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
+      data: speciesData.data,
+      where: {
+        id: speciesData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const speciesData = mock<MutationUpsertEspeceArgs>({
+      id: 12,
+    });
+
+    await expect(upsertEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.espece.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a species", () => {

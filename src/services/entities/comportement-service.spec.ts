@@ -309,92 +309,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing behavior as an admin ", async () => {
-  const behaviorData = mock<MutationUpsertComportementArgs>();
+describe("Update of a behavior", () => {
+  test("should be allowed when requested by an admin", async () => {
+    const behaviorData = mock<MutationUpsertComportementArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertComportement(behaviorData, loggedUser);
+    await upsertComportement(behaviorData, loggedUser);
 
-  expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
-    data: behaviorData.data,
-    where: {
-      id: behaviorData.id,
-    },
-  });
-});
-
-test("should update an existing behavior if owner ", async () => {
-  const existingData = mock<Comportement>({
-    ownerId: "notAdmin",
+    expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
+      data: behaviorData.data,
+      where: {
+        id: behaviorData.id,
+      },
+    });
   });
 
-  const behaviorData = mock<MutationUpsertComportementArgs>();
+  test("should be allowed when requested by the owner", async () => {
+    const existingData = mock<Comportement>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const behaviorData = mock<MutationUpsertComportementArgs>();
 
-  prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertComportement(behaviorData, loggedUser);
+    prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
-    data: behaviorData.data,
-    where: {
-      id: behaviorData.id,
-    },
-  });
-});
+    await upsertComportement(behaviorData, loggedUser);
 
-test("should throw an error when updating an existing behavior and nor owner nor admin ", async () => {
-  const existingData = mock<Comportement>({
-    ownerId: "notAdmin",
-  });
-
-  const behaviorData = mock<MutationUpsertComportementArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertComportement(behaviorData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.comportement.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a behavior that exists", async () => {
-  const behaviorData = mock<MutationUpsertComportementArgs>({
-    id: 12,
+    expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
+      data: behaviorData.data,
+      where: {
+        id: behaviorData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Comportement>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.comportement.update.mockImplementation(prismaConstraintFailed);
+    const behaviorData = mock<MutationUpsertComportementArgs>();
 
-  await expect(() => upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
-    data: behaviorData.data,
-    where: {
-      id: behaviorData.id,
-    },
-  });
-});
+    prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const behaviorData = mock<MutationUpsertComportementArgs>({
-    id: 12,
+    await expect(upsertComportement(behaviorData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.comportement.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.comportement.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a behavior that exists", async () => {
+    const behaviorData = mock<MutationUpsertComportementArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.comportement.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
+      data: behaviorData.data,
+      where: {
+        id: behaviorData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const behaviorData = mock<MutationUpsertComportementArgs>({
+      id: 12,
+    });
+
+    await expect(upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.comportement.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a behavior", () => {

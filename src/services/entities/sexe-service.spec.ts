@@ -200,92 +200,94 @@ describe("Entities count by search criteria", () => {
   });
 });
 
-test("should update an existing sex as an admin ", async () => {
-  const sexData = mock<MutationUpsertSexeArgs>();
+describe("Update of a sex", () => {
+  test("should be allowed when requested by an admin ", async () => {
+    const sexData = mock<MutationUpsertSexeArgs>();
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
 
-  await upsertSexe(sexData, loggedUser);
+    await upsertSexe(sexData, loggedUser);
 
-  expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
-    data: sexData.data,
-    where: {
-      id: sexData.id,
-    },
-  });
-});
-
-test("should update an existing sex if owner ", async () => {
-  const existingData = mock<Sexe>({
-    ownerId: "notAdmin",
+    expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
+      data: sexData.data,
+      where: {
+        id: sexData.id,
+      },
+    });
   });
 
-  const sexData = mock<MutationUpsertSexeArgs>();
+  test("should be allowed when requested by the owner ", async () => {
+    const existingData = mock<Sexe>({
+      ownerId: "notAdmin",
+    });
 
-  const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
+    const sexData = mock<MutationUpsertSexeArgs>();
 
-  prismaMock.sexe.findFirst.mockResolvedValueOnce(existingData);
+    const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-  await upsertSexe(sexData, loggedUser);
+    prismaMock.sexe.findFirst.mockResolvedValueOnce(existingData);
 
-  expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
-    data: sexData.data,
-    where: {
-      id: sexData.id,
-    },
-  });
-});
+    await upsertSexe(sexData, loggedUser);
 
-test("should throw an error when updating an existing sex and nor owner nor admin ", async () => {
-  const existingData = mock<Sexe>({
-    ownerId: "notAdmin",
-  });
-
-  const sexData = mock<MutationUpsertSexeArgs>();
-
-  const user = {
-    id: "Bob",
-    role: DatabaseRole.contributor,
-  };
-
-  prismaMock.sexe.findFirst.mockResolvedValueOnce(existingData);
-
-  await expect(upsertSexe(sexData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
-
-  expect(prismaMock.sexe.update).not.toHaveBeenCalled();
-});
-
-test("should throw an error when trying to update a sex that exists", async () => {
-  const sexData = mock<MutationUpsertSexeArgs>({
-    id: 12,
+    expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
+      data: sexData.data,
+      where: {
+        id: sexData.id,
+      },
+    });
   });
 
-  const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+    const existingData = mock<Sexe>({
+      ownerId: "notAdmin",
+    });
 
-  prismaMock.sexe.update.mockImplementation(prismaConstraintFailed);
+    const sexData = mock<MutationUpsertSexeArgs>();
 
-  await expect(() => upsertSexe(sexData, loggedUser)).rejects.toThrowError(
-    new OucaError("OUCA0004", prismaConstraintFailedError)
-  );
+    const user = {
+      id: "Bob",
+      role: DatabaseRole.contributor,
+    };
 
-  expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
-    data: sexData.data,
-    where: {
-      id: sexData.id,
-    },
-  });
-});
+    prismaMock.sexe.findFirst.mockResolvedValueOnce(existingData);
 
-test("should throw an error when the requester is not logged", async () => {
-  const sexData = mock<MutationUpsertSexeArgs>({
-    id: 12,
+    await expect(upsertSexe(sexData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+
+    expect(prismaMock.sexe.update).not.toHaveBeenCalled();
   });
 
-  await expect(upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  expect(prismaMock.sexe.update).not.toHaveBeenCalled();
+  test("should throw an error when trying to update to a sex that exists", async () => {
+    const sexData = mock<MutationUpsertSexeArgs>({
+      id: 12,
+    });
+
+    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+
+    prismaMock.sexe.update.mockImplementation(prismaConstraintFailed);
+
+    await expect(() => upsertSexe(sexData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", prismaConstraintFailedError)
+    );
+
+    expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
+      data: sexData.data,
+      where: {
+        id: sexData.id,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const sexData = mock<MutationUpsertSexeArgs>({
+      id: 12,
+    });
+
+    await expect(upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(prismaMock.sexe.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("Creation of a sex", () => {
