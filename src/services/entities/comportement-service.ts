@@ -17,26 +17,14 @@ import {
   ReadonlyStatus,
 } from "./entities-utils";
 
-export const findComportement = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<(Comportement & ReadonlyStatus) | null> => {
+export const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement | null> => {
   validateAuthorization(loggedUser);
 
-  const comportementEntity = await prisma.comportement.findUnique({
+  return prisma.comportement.findUnique({
     where: {
       id,
     },
   });
-
-  if (!comportementEntity) {
-    return null;
-  }
-
-  return {
-    ...comportementEntity,
-    readonly: isEntityReadOnly(comportementEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByComportement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

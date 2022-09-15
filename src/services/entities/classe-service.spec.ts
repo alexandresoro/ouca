@@ -55,7 +55,6 @@ describe("Find class", () => {
         id: classData.id,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
 
   test("should handle class not found", async () => {
@@ -70,7 +69,6 @@ describe("Find class", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {

@@ -40,25 +40,16 @@ const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWith
 export const findLieuDit = async (
   id: number | undefined,
   loggedUser: LoggedUser | null
-): Promise<(LieuDitWithCoordinatesAsNumber & ReadonlyStatus) | null> => {
+): Promise<LieuDitWithCoordinatesAsNumber | null> => {
   validateAuthorization(loggedUser);
 
-  const lieuDitEntity = await prisma.lieudit
+  return prisma.lieudit
     .findUnique({
       where: {
         id,
       },
     })
     .then((lieudit) => (lieudit ? buildLieuditFromLieuditDb(lieudit) : null));
-
-  if (!lieuDitEntity) {
-    return null;
-  }
-
-  return {
-    ...lieuDitEntity,
-    readonly: isEntityReadOnly(lieuDitEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

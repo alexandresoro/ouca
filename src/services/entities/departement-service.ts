@@ -29,26 +29,14 @@ export const getFilterClauseDepartement = (q: string | null | undefined): Prisma
     : {};
 };
 
-export const findDepartement = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<(Departement & ReadonlyStatus) | null> => {
+export const findDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<Departement | null> => {
   validateAuthorization(loggedUser);
 
-  const departementEntity = await prisma.departement.findUnique({
+  return prisma.departement.findUnique({
     where: {
       id,
     },
   });
-
-  if (!departementEntity) {
-    return null;
-  }
-
-  return {
-    ...departementEntity,
-    readonly: isEntityReadOnly(departementEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

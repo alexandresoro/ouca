@@ -20,23 +20,14 @@ import {
 export const findEstimationNombre = async (
   id: number,
   loggedUser: LoggedUser | null
-): Promise<(EstimationNombre & ReadonlyStatus) | null> => {
+): Promise<EstimationNombre | null> => {
   validateAuthorization(loggedUser);
 
-  const numberEstimateEntity = await prisma.estimationNombre.findUnique({
+  return prisma.estimationNombre.findUnique({
     where: {
       id,
     },
   });
-
-  if (!numberEstimateEntity) {
-    return null;
-  }
-
-  return {
-    ...numberEstimateEntity,
-    readonly: isEntityReadOnly(numberEstimateEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

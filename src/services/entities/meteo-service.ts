@@ -16,26 +16,14 @@ import {
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
-export const findMeteo = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<(Meteo & ReadonlyStatus) | null> => {
+export const findMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Meteo | null> => {
   validateAuthorization(loggedUser);
 
-  const meteoEntity = await prisma.meteo.findUnique({
+  return prisma.meteo.findUnique({
     where: {
       id,
     },
   });
-
-  if (!meteoEntity) {
-    return null;
-  }
-
-  return {
-    ...meteoEntity,
-    readonly: isEntityReadOnly(meteoEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

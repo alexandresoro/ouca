@@ -38,26 +38,14 @@ export const findClasseOfEspeceId = async (
   };
 };
 
-export const findClasse = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<(Classe & ReadonlyStatus) | null> => {
+export const findClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe | null> => {
   validateAuthorization(loggedUser);
 
-  const classeEntity = await prisma.classe.findUnique({
+  return prisma.classe.findUnique({
     where: {
       id,
     },
   });
-
-  if (!classeEntity) {
-    return null;
-  }
-
-  return {
-    ...classeEntity,
-    readonly: isEntityReadOnly(classeEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByClasse = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

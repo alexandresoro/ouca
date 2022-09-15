@@ -20,26 +20,14 @@ import {
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
-export const findCommune = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<(Commune & ReadonlyStatus) | null> => {
+export const findCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Commune | null> => {
   validateAuthorization(loggedUser);
 
-  const communeEntity = await prisma.commune.findUnique({
+  return prisma.commune.findUnique({
     where: {
       id,
     },
   });
-
-  if (!communeEntity) {
-    return null;
-  }
-
-  return {
-    ...communeEntity,
-    readonly: isEntityReadOnly(communeEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByCommune = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

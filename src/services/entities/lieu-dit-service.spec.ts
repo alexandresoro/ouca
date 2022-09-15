@@ -55,7 +55,6 @@ describe("Find locality", () => {
         id: localityData.id,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
 
   test("should handle locality not found", async () => {
@@ -70,7 +69,6 @@ describe("Find locality", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {

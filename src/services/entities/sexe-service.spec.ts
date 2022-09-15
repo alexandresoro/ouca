@@ -54,7 +54,6 @@ describe("Find sex", () => {
         id: sexData.id,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
 
   test("should handle sex not found", async () => {
@@ -69,7 +68,6 @@ describe("Find sex", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {

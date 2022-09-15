@@ -13,26 +13,14 @@ import {
   ReadonlyStatus,
 } from "./entities-utils";
 
-export const findMilieu = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<(Milieu & ReadonlyStatus) | null> => {
+export const findMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Milieu | null> => {
   validateAuthorization(loggedUser);
 
-  const milieuEntity = await prisma.milieu.findUnique({
+  return prisma.milieu.findUnique({
     where: {
       id,
     },
   });
-
-  if (!milieuEntity) {
-    return null;
-  }
-
-  return {
-    ...milieuEntity,
-    readonly: isEntityReadOnly(milieuEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

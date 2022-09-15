@@ -18,26 +18,14 @@ import {
   ReadonlyStatus,
 } from "./entities-utils";
 
-export const findEspece = async (
-  id: number | undefined,
-  loggedUser: LoggedUser | null
-): Promise<(Espece & ReadonlyStatus) | null> => {
+export const findEspece = async (id: number | undefined, loggedUser: LoggedUser | null): Promise<Espece | null> => {
   validateAuthorization(loggedUser);
 
-  const especeEntity = await prisma.espece.findUnique({
+  return prisma.espece.findUnique({
     where: {
       id,
     },
   });
-
-  if (!especeEntity) {
-    return null;
-  }
-
-  return {
-    ...especeEntity,
-    readonly: isEntityReadOnly(especeEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByEspece = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

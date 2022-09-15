@@ -55,7 +55,6 @@ describe("Find weather", () => {
         id: weatherData.id,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
 
   test("should handle weather not found", async () => {
@@ -70,7 +69,6 @@ describe("Find weather", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {

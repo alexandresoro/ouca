@@ -68,7 +68,6 @@ describe("Find species", () => {
         id: speciesData.id,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
 
   test("should handle species not found", async () => {
@@ -83,7 +82,6 @@ describe("Find species", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {

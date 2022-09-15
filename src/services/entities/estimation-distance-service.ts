@@ -20,23 +20,14 @@ import {
 export const findEstimationDistance = async (
   id: number,
   loggedUser: LoggedUser | null
-): Promise<(EstimationDistance & ReadonlyStatus) | null> => {
+): Promise<EstimationDistance | null> => {
   validateAuthorization(loggedUser);
 
-  const distanceEstimateEntity = await prisma.estimationDistance.findUnique({
+  return prisma.estimationDistance.findUnique({
     where: {
       id,
     },
   });
-
-  if (!distanceEstimateEntity) {
-    return null;
-  }
-
-  return {
-    ...distanceEstimateEntity,
-    readonly: isEntityReadOnly(distanceEstimateEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountByEstimationDistance = async (

@@ -41,7 +41,7 @@ const prismaConstraintFailed = () => {
 };
 
 describe("Find department", () => {
-  test("hould handle a matching department", async () => {
+  test("should handle a matching department", async () => {
     const departmentData = mock<Departement>();
     const loggedUser = mock<LoggedUser>();
 
@@ -55,7 +55,6 @@ describe("Find department", () => {
         id: departmentData.id,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
 
   test("should handle department not found", async () => {
@@ -70,7 +69,6 @@ describe("Find department", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {

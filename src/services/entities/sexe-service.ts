@@ -13,23 +13,14 @@ import {
   ReadonlyStatus,
 } from "./entities-utils";
 
-export const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<(Sexe & ReadonlyStatus) | null> => {
+export const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe | null> => {
   validateAuthorization(loggedUser);
 
-  const sexeEntity = await prisma.sexe.findUnique({
+  return prisma.sexe.findUnique({
     where: {
       id,
     },
   });
-
-  if (!sexeEntity) {
-    return null;
-  }
-
-  return {
-    ...sexeEntity,
-    readonly: isEntityReadOnly(sexeEntity, loggedUser),
-  };
 };
 
 export const getDonneesCountBySexe = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {

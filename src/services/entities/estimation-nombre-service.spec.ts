@@ -57,7 +57,6 @@ describe("Find number estimate", () => {
         id: numberEstimateData.id,
       },
     });
-    expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   });
 
   test("should handle number estimate not found", async () => {
@@ -72,7 +71,6 @@ describe("Find number estimate", () => {
         id: 10,
       },
     });
-    expect(isEntityReadOnly).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the no login details are provided", async () => {
