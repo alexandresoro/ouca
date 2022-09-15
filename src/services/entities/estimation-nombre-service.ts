@@ -39,6 +39,16 @@ export const findEstimationNombre = async (
   };
 };
 
+export const getDonneesCountByEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      estimationNombreId: id,
+    },
+  });
+};
+
 export const findEstimationsNombre = async (
   params?: FindParams | null,
   loggedUser: LoggedUser | null = null

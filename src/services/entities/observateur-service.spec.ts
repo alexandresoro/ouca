@@ -75,7 +75,7 @@ describe("Data count per entity", () => {
     await getDonneesCountByObservateur(12, loggedUser);
 
     expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith({
+    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
       where: {
         inventaire: {
           observateurId: 12,

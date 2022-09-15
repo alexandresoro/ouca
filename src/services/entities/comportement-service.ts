@@ -39,6 +39,20 @@ export const findComportement = async (
   };
 };
 
+export const getDonneesCountByComportement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      donnee_comportement: {
+        some: {
+          comportement_id: id,
+        },
+      },
+    },
+  });
+};
+
 export const findComportementsByIds = async (
   ids: number[],
   loggedUser: LoggedUser | null = null

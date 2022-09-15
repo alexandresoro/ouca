@@ -13,6 +13,7 @@ import {
   findMilieux,
   findMilieuxByIds,
   findPaginatedMilieux,
+  getDonneesCountByMilieu,
   getMilieuxCount,
   upsertMilieu,
 } from "./milieu-service";
@@ -75,6 +76,29 @@ describe("Find environment", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(findMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.milieu.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("Data count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getDonneesCountByMilieu(12, loggedUser);
+
+    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
+      where: {
+        donnee_milieu: {
+          some: {
+            milieu_id: 12,
+          },
+        },
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getDonneesCountByMilieu(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

@@ -60,6 +60,18 @@ export const findClasse = async (
   };
 };
 
+export const getDonneesCountByClasse = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      espece: {
+        classeId: id,
+      },
+    },
+  });
+};
+
 export const findClasses = async (
   params?: FindParams | null,
   loggedUser: LoggedUser | null = null

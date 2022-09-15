@@ -35,6 +35,20 @@ export const findMilieu = async (
   };
 };
 
+export const getDonneesCountByMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      donnee_milieu: {
+        some: {
+          milieu_id: id,
+        },
+      },
+    },
+  });
+};
+
 export const findMilieuxByIds = async (
   ids: number[],
   loggedUser: LoggedUser | null = null

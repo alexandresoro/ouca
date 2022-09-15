@@ -13,6 +13,7 @@ import {
   findDepartements,
   findPaginatedDepartements,
   getDepartementsCount,
+  getDonneesCountByDepartement,
   upsertDepartement,
 } from "./departement-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
@@ -75,6 +76,31 @@ describe("Find department", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.departement.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("Data count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getDonneesCountByDepartement(12, loggedUser);
+
+    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
+      where: {
+        inventaire: {
+          lieuDit: {
+            commune: {
+              departementId: 12,
+            },
+          },
+        },
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getDonneesCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

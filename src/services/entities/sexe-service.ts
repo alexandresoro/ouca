@@ -32,6 +32,16 @@ export const findSexe = async (id: number, loggedUser: LoggedUser | null): Promi
   };
 };
 
+export const getDonneesCountBySexe = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      sexeId: id,
+    },
+  });
+};
+
 export const findSexes = async (
   params?: FindParams | null,
   loggedUser: LoggedUser | null = null

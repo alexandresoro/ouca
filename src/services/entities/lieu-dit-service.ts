@@ -61,6 +61,18 @@ export const findLieuDit = async (
   };
 };
 
+export const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      inventaire: {
+        lieuDitId: id,
+      },
+    },
+  });
+};
+
 export const findLieuDitOfInventaireId = async (
   inventaireId: number | undefined,
   loggedUser: LoggedUser | null = null

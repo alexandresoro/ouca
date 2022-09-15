@@ -40,6 +40,16 @@ export const findEspece = async (
   };
 };
 
+export const getDonneesCountByEspece = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      especeId: id,
+    },
+  });
+};
+
 export const findEspeceOfDonneeId = async (
   donneeId: number | undefined,
   loggedUser: LoggedUser | null = null

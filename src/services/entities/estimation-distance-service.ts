@@ -39,6 +39,19 @@ export const findEstimationDistance = async (
   };
 };
 
+export const getDonneesCountByEstimationDistance = async (
+  id: number,
+  loggedUser: LoggedUser | null
+): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      estimationDistanceId: id,
+    },
+  });
+};
+
 export const findEstimationsDistance = async (
   params?: FindParams | null,
   loggedUser: LoggedUser | null = null

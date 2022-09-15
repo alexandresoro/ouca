@@ -15,6 +15,7 @@ import {
   findEstimationDistance,
   findEstimationsDistance,
   findPaginatedEstimationsDistance,
+  getDonneesCountByEstimationDistance,
   getEstimationsDistanceCount,
   upsertEstimationDistance,
 } from "./estimation-distance-service";
@@ -77,6 +78,25 @@ describe("Find distance estimate", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(findEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.estimationDistance.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("Data count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getDonneesCountByEstimationDistance(12, loggedUser);
+
+    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
+      where: {
+        estimationDistanceId: 12,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getDonneesCountByEstimationDistance(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

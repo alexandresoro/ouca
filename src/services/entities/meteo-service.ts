@@ -38,6 +38,22 @@ export const findMeteo = async (
   };
 };
 
+export const getDonneesCountByMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.donnee.count({
+    where: {
+      inventaire: {
+        inventaire_meteo: {
+          some: {
+            meteo_id: id,
+          },
+        },
+      },
+    },
+  });
+};
+
 export const findMeteosByIds = async (
   ids: number[],
   loggedUser: LoggedUser | null = null

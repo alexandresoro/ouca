@@ -15,6 +15,7 @@ import {
   findEstimationNombre,
   findEstimationsNombre,
   findPaginatedEstimationsNombre,
+  getDonneesCountByEstimationNombre,
   getEstimationsNombreCount,
   upsertEstimationNombre,
 } from "./estimation-nombre-service";
@@ -77,6 +78,25 @@ describe("Find number estimate", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(findEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.estimationNombre.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("Data count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getDonneesCountByEstimationNombre(12, loggedUser);
+
+    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
+      where: {
+        estimationNombreId: 12,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getDonneesCountByEstimationNombre(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

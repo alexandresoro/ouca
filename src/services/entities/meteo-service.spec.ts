@@ -13,6 +13,7 @@ import {
   findMeteos,
   findMeteosByIds,
   findPaginatedMeteos,
+  getDonneesCountByMeteo,
   getMeteosCount,
   upsertMeteo,
 } from "./meteo-service";
@@ -75,6 +76,31 @@ describe("Find weather", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(findMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.meteo.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("Data count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getDonneesCountByMeteo(12, loggedUser);
+
+    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
+      where: {
+        inventaire: {
+          inventaire_meteo: {
+            some: {
+              meteo_id: 12,
+            },
+          },
+        },
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getDonneesCountByMeteo(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
