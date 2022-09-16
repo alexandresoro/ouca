@@ -40,7 +40,6 @@ export type Classe = {
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nbEspeces?: Maybe<Scalars['Int']>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const ClassesOrderBy = {
@@ -66,7 +65,6 @@ export type Commune = {
   nbDonnees?: Maybe<Scalars['Int']>;
   nbLieuxDits?: Maybe<Scalars['Int']>;
   nom: Scalars['String'];
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const CommunesOrderBy = {
@@ -93,7 +91,6 @@ export type Comportement = {
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nicheur?: Maybe<Nicheur>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const ComportementsOrderBy = {
@@ -133,7 +130,6 @@ export type Departement = {
   nbCommunes?: Maybe<Scalars['Int']>;
   nbDonnees?: Maybe<Scalars['Int']>;
   nbLieuxDits?: Maybe<Scalars['Int']>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const DepartementsOrderBy = {
@@ -206,7 +202,6 @@ export type Espece = {
   nbDonnees?: Maybe<Scalars['Int']>;
   nomFrancais: Scalars['String'];
   nomLatin: Scalars['String'];
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const EspecesOrderBy = {
@@ -231,7 +226,6 @@ export type EstimationDistance = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type EstimationNombre = {
@@ -241,7 +235,6 @@ export type EstimationNombre = {
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nonCompte: Scalars['Boolean'];
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const EstimationNombreOrderBy = {
@@ -429,7 +422,6 @@ export type LieuDit = {
   longitude: Scalars['Float'];
   nbDonnees?: Maybe<Scalars['Int']>;
   nom: Scalars['String'];
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const LieuxDitsOrderBy = {
@@ -457,7 +449,6 @@ export type Meteo = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type MeteosPaginatedResult = PaginatedResult & {
@@ -473,7 +464,6 @@ export type Milieu = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export const MilieuxOrderBy = {
@@ -1143,7 +1133,6 @@ export type Sexe = {
   id: Scalars['Int'];
   libelle: Scalars['String'];
   nbDonnees?: Maybe<Scalars['Int']>;
-  readonly?: Maybe<Scalars['Boolean']>;
 };
 
 export type SexeWithSpecimensCount = {

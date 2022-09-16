@@ -187,7 +187,6 @@ type Comportement {
   code: String!
   libelle: String!
   nicheur: Nicheur
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
@@ -195,7 +194,6 @@ type Comportement {
 type Departement {
   id: Int!
   code: String!
-  readonly: Boolean
   editable: Boolean
   nbCommunes: Int
   nbLieuxDits: Int
@@ -212,7 +210,6 @@ type Observateur {
 type Classe {
   id: Int!
   libelle: String!
-  readonly: Boolean
   editable: Boolean
   nbEspeces: Int
   nbDonnees: Int
@@ -223,7 +220,6 @@ type Commune {
   code: Int!
   nom: String!
   departement: Departement!
-  readonly: Boolean
   editable: Boolean
   nbLieuxDits: Int
   nbDonnees: Int
@@ -235,7 +231,6 @@ type Espece {
   nomFrancais: String!
   nomLatin: String!
   classe: Classe!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
@@ -243,7 +238,6 @@ type Espece {
 type EstimationDistance {
   id: Int!
   libelle: String!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
@@ -252,7 +246,6 @@ type EstimationNombre {
   id: Int!
   libelle: String!
   nonCompte: Boolean!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
@@ -260,7 +253,6 @@ type EstimationNombre {
 type Meteo {
   id: Int!
   libelle: String!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
@@ -273,7 +265,6 @@ type LieuDit {
   latitude: Float!
   coordinatesSystem: CoordinatesSystemType!
   commune: Commune!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
@@ -282,7 +273,6 @@ type Milieu {
   id: Int!
   code: String!
   libelle: String!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
@@ -290,7 +280,6 @@ type Milieu {
 type Sexe {
   id: Int!
   libelle: String!
-  readonly: Boolean
   editable: Boolean
   nbDonnees: Int
 }
