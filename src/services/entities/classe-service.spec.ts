@@ -14,6 +14,7 @@ import {
   findPaginatedClasses,
   getClassesCount,
   getDonneesCountByClasse,
+  getEspecesCountByClasse,
   upsertClasse,
 } from "./classe-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
@@ -74,6 +75,25 @@ describe("Find class", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(findClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.classe.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("Species count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getEspecesCountByClasse(12, loggedUser);
+
+    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.count).toHaveBeenLastCalledWith<[Prisma.EspeceCountArgs]>({
+      where: {
+        classeId: 12,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getEspecesCountByClasse(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

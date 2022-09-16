@@ -16,6 +16,8 @@ import {
   findClasseOfEspeceId,
   findPaginatedClasses,
   getClassesCount,
+  getDonneesCountByClasse,
+  getEspecesCountByClasse,
   upsertClasse,
 } from "../services/entities/classe-service";
 import {
@@ -24,6 +26,8 @@ import {
   findCommuneOfLieuDitId,
   findPaginatedCommunes,
   getCommunesCount,
+  getDonneesCountByCommune,
+  getLieuxDitsCountByCommune,
   upsertCommune,
 } from "../services/entities/commune-service";
 import {
@@ -32,6 +36,7 @@ import {
   findComportementsByIds,
   findPaginatedComportements,
   getComportementsCount,
+  getDonneesCountByComportement,
   upsertComportement,
 } from "../services/entities/comportement-service";
 import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
@@ -40,7 +45,10 @@ import {
   findDepartement,
   findDepartementOfCommuneId,
   findPaginatedDepartements,
+  getCommunesCountByDepartement,
   getDepartementsCount,
+  getDonneesCountByDepartement,
+  getLieuxDitsCountByDepartement,
   upsertDepartement,
 } from "../services/entities/departement-service";
 import {
@@ -56,12 +64,12 @@ import {
   getNbDonneesByCriteria,
   upsertDonnee,
 } from "../services/entities/donnee-service";
-import { isEntityEditable } from "../services/entities/entities-utils";
 import {
   deleteEspece,
   findEspece,
   findEspeceOfDonneeId,
   findPaginatedEspeces,
+  getDonneesCountByEspece,
   getEspecesCount,
   upsertEspece,
 } from "../services/entities/espece-service";
@@ -69,6 +77,7 @@ import {
   deleteEstimationDistance,
   findEstimationDistance,
   findPaginatedEstimationsDistance,
+  getDonneesCountByEstimationDistance,
   getEstimationsDistanceCount,
   upsertEstimationDistance,
 } from "../services/entities/estimation-distance-service";
@@ -76,6 +85,7 @@ import {
   deleteEstimationNombre,
   findEstimationNombre,
   findPaginatedEstimationsNombre,
+  getDonneesCountByEstimationNombre,
   getEstimationsNombreCount,
   upsertEstimationNombre,
 } from "../services/entities/estimation-nombre-service";
@@ -90,6 +100,7 @@ import {
   findLieuDit,
   findLieuDitOfInventaireId,
   findPaginatedLieuxDits,
+  getDonneesCountByLieuDit,
   getLieuxDitsCount,
   LieuDitWithCoordinatesAsNumber,
   upsertLieuDit,
@@ -99,6 +110,7 @@ import {
   findMeteo,
   findMeteosByIds,
   findPaginatedMeteos,
+  getDonneesCountByMeteo,
   getMeteosCount,
   upsertMeteo,
 } from "../services/entities/meteo-service";
@@ -107,6 +119,7 @@ import {
   findMilieu,
   findMilieuxByIds,
   findPaginatedMilieux,
+  getDonneesCountByMilieu,
   getMilieuxCount,
   upsertMilieu,
 } from "../services/entities/milieu-service";
@@ -119,7 +132,14 @@ import {
   getObservateursCount,
   upsertObservateur,
 } from "../services/entities/observateur-service";
-import { deleteSexe, findPaginatedSexes, findSexe, getSexesCount, upsertSexe } from "../services/entities/sexe-service";
+import {
+  deleteSexe,
+  findPaginatedSexes,
+  findSexe,
+  getDonneesCountBySexe,
+  getSexesCount,
+  upsertSexe,
+} from "../services/entities/sexe-service";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -177,6 +197,7 @@ import {
   UpsertInventaireFailureReason,
   UserInfo,
 } from "./generated/graphql-types";
+import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper";
 
 const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 
@@ -703,58 +724,51 @@ const resolvers: IResolvers = {
     },
   },
   Age: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const age = await findAge(parent.id, user);
-      return isEntityEditable(age, user);
-    },
-    nbDonnees: async (parent, args, { user }): Promise<number | null> => {
+    editable: isEntityEditableResolver(findAge),
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByAge),
+  },
+  Classe: {
+    editable: isEntityEditableResolver(findClasse),
+    nbEspeces: async (parent, args, { user }): Promise<number | null> => {
       if (!parent?.id) {
         return null;
       }
-      return getDonneesCountByAge(parent.id, user);
+      return getEspecesCountByClasse(parent.id, user);
     },
-  },
-  Classe: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const classe = await findClasse(parent.id, user);
-      return isEntityEditable(classe, user);
-    },
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByClasse),
   },
   Commune: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
+    editable: isEntityEditableResolver(findCommune),
+    nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
       if (!parent?.id) {
-        return false;
+        return null;
       }
-      const commune = await findCommune(parent.id, user);
-      return isEntityEditable(commune, user);
+      return getLieuxDitsCountByCommune(parent.id, user);
     },
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByCommune),
     departement: async (parent, args, { user }): Promise<Departement | null> => {
       return findDepartementOfCommuneId(parent?.id, user);
     },
   },
   Comportement: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const comportement = await findComportement(parent.id, user);
-      return isEntityEditable(comportement, user);
-    },
+    editable: isEntityEditableResolver(findComportement),
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByComportement),
   },
   Departement: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
+    editable: isEntityEditableResolver(findDepartement),
+    nbCommunes: async (parent, args, { user }): Promise<number | null> => {
       if (!parent?.id) {
-        return false;
+        return null;
       }
-      const departement = await findDepartement(parent.id, user);
-      return isEntityEditable(departement, user);
+      return getCommunesCountByDepartement(parent.id, user);
     },
+    nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
+      if (!parent?.id) {
+        return null;
+      }
+      return getLieuxDitsCountByDepartement(parent.id, user);
+    },
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByDepartement),
   },
   Donnee: {
     espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
@@ -775,34 +789,19 @@ const resolvers: IResolvers = {
     },
   },
   Espece: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const espece = await findEspece(parent.id, user);
-      return isEntityEditable(espece, user);
-    },
+    editable: isEntityEditableResolver(findEspece),
     classe: async (parent, args, { user }): Promise<Classe | null> => {
       return findClasseOfEspeceId(parent?.id, user);
     },
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByEspece),
   },
   EstimationDistance: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const estimationDistance = await findEstimationDistance(parent.id, user);
-      return isEntityEditable(estimationDistance, user);
-    },
+    editable: isEntityEditableResolver(findEstimationDistance),
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByEstimationDistance),
   },
   EstimationNombre: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const estimationNombre = await findEstimationNombre(parent.id, user);
-      return isEntityEditable(estimationNombre, user);
-    },
+    editable: isEntityEditableResolver(findEstimationNombre),
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByEstimationNombre),
   },
   Inventaire: {
     lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
@@ -811,49 +810,23 @@ const resolvers: IResolvers = {
     },
   },
   LieuDit: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const lieuDit = await findLieuDit(parent.id, user);
-      return isEntityEditable(lieuDit, user);
-    },
+    editable: isEntityEditableResolver(findLieuDit),
     commune: async (parent, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
       return findCommuneOfLieuDitId(parent?.id, user);
     },
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByLieuDit),
   },
   Meteo: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const meteo = await findMeteo(parent.id, user);
-      return isEntityEditable(meteo, user);
-    },
+    editable: isEntityEditableResolver(findMeteo),
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByMeteo),
   },
   Milieu: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const milieu = await findMilieu(parent.id, user);
-      return isEntityEditable(milieu, user);
-    },
+    editable: isEntityEditableResolver(findMilieu),
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByMilieu),
   },
   Observateur: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const observateur = await findObservateur(parent.id, user);
-      return isEntityEditable(observateur, user);
-    },
-    nbDonnees: async (parent, args, { user }): Promise<number | null> => {
-      if (!parent?.id) {
-        return null;
-      }
-      return getDonneesCountByObservateur(parent.id, user);
-    },
+    editable: isEntityEditableResolver(findObservateur),
+    nbDonnees: entityNbDonneesResolver(getDonneesCountByObservateur),
   },
   PaginatedSearchDonneesResult: {
     result: async (_, args): Promise<Omit<Donnee, "espece" | "inventaire">[]> => {
@@ -864,13 +837,8 @@ const resolvers: IResolvers = {
     },
   },
   Sexe: {
-    editable: async (parent, args, { user }): Promise<boolean> => {
-      if (!parent?.id) {
-        return false;
-      }
-      const sexe = await findSexe(parent.id, user);
-      return isEntityEditable(sexe, user);
-    },
+    editable: isEntityEditableResolver(findSexe),
+    nbDonnees: entityNbDonneesResolver(getDonneesCountBySexe),
   },
 };
 

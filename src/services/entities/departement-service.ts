@@ -39,6 +39,28 @@ export const findDepartement = async (id: number, loggedUser: LoggedUser | null)
   });
 };
 
+export const getCommunesCountByDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.commune.count({
+    where: {
+      departementId: id,
+    },
+  });
+};
+
+export const getLieuxDitsCountByDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.lieudit.count({
+    where: {
+      commune: {
+        departementId: id,
+      },
+    },
+  });
+};
+
 export const getDonneesCountByDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
   validateAuthorization(loggedUser);
 

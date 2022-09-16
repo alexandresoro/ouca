@@ -12,8 +12,10 @@ import {
   findDepartementOfCommuneId,
   findDepartements,
   findPaginatedDepartements,
+  getCommunesCountByDepartement,
   getDepartementsCount,
   getDonneesCountByDepartement,
+  getLieuxDitsCountByDepartement,
   upsertDepartement,
 } from "./departement-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
@@ -74,6 +76,46 @@ describe("Find department", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.departement.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("Cities count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getCommunesCountByDepartement(12, loggedUser);
+
+    expect(prismaMock.commune.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.count).toHaveBeenLastCalledWith<[Prisma.CommuneCountArgs]>({
+      where: {
+        departementId: 12,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getCommunesCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
+describe("Localities count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getLieuxDitsCountByDepartement(12, loggedUser);
+
+    expect(prismaMock.lieudit.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.count).toHaveBeenLastCalledWith<[Prisma.LieuditCountArgs]>({
+      where: {
+        commune: {
+          departementId: 12,
+        },
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getLieuxDitsCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

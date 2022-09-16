@@ -26,6 +26,16 @@ export const findClasse = async (id: number, loggedUser: LoggedUser | null): Pro
   });
 };
 
+export const getEspecesCountByClasse = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.espece.count({
+    where: {
+      classeId: id,
+    },
+  });
+};
+
 export const getDonneesCountByClasse = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
   validateAuthorization(loggedUser);
 

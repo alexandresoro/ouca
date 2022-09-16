@@ -30,6 +30,16 @@ export const findCommune = async (id: number, loggedUser: LoggedUser | null): Pr
   });
 };
 
+export const getLieuxDitsCountByCommune = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  validateAuthorization(loggedUser);
+
+  return prisma.lieudit.count({
+    where: {
+      communeId: id,
+    },
+  });
+};
+
 export const getDonneesCountByCommune = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
   validateAuthorization(loggedUser);
 

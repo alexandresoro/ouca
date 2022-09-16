@@ -14,6 +14,7 @@ import {
   findPaginatedCommunes,
   getCommunesCount,
   getDonneesCountByCommune,
+  getLieuxDitsCountByCommune,
   upsertCommune,
 } from "./commune-service";
 import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
@@ -74,6 +75,25 @@ describe("Find city", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(findCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.commune.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("Localities count per entity", () => {
+  test("should request the correct parameters", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await getLieuxDitsCountByCommune(12, loggedUser);
+
+    expect(prismaMock.lieudit.count).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.count).toHaveBeenLastCalledWith<[Prisma.LieuditCountArgs]>({
+      where: {
+        communeId: 12,
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(getLieuxDitsCountByCommune(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
