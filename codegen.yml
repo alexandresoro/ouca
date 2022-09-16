@@ -12,5 +12,5 @@ generates:
       - add:
           content: "import {PartialDeep} from 'type-fest';"
     config:
-      enumsAsConst: true
+      allowEnumStringTypes: true
       defaultMapper: PartialDeep<{T}> | null
