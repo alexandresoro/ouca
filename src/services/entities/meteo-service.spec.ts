@@ -5,7 +5,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createMeteos,
   deleteMeteo,
@@ -17,15 +17,6 @@ import {
   getMeteosCount,
   upsertMeteo,
 } from "./meteo-service";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -139,56 +130,62 @@ test("Find all weathers", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated weathers", async () => {
-  const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.meteo.findMany.mockResolvedValueOnce(weathersData);
+    prismaMock.meteo.findMany.mockResolvedValueOnce(weathersData);
 
-  await findPaginatedMeteos();
+    await findPaginatedMeteos(loggedUser);
 
-  expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: {},
-    where: {},
+    expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: {},
+      where: {},
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(weathersData.length);
-});
 
-test("should handle params when retrieving paginated weathers", async () => {
-  const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+  test("should handle params when retrieving paginated weathers", async () => {
+    const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedMeteosArgs = {
-    orderBy: "libelle",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
-
-  prismaMock.meteo.findMany.mockResolvedValueOnce([weathersData[0]]);
-
-  await findPaginatedMeteos(searchParams);
-
-  expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      libelle: {
-        contains: searchParams.searchParams?.q,
+    const searchParams: QueryPaginatedMeteosArgs = {
+      orderBy: "libelle",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
       },
-    },
+      includeCounts: false,
+    };
+
+    prismaMock.meteo.findMany.mockResolvedValueOnce([weathersData[0]]);
+
+    await findPaginatedMeteos(loggedUser, searchParams);
+
+    expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        libelle: {
+          contains: searchParams.searchParams?.q,
+        },
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedMeteos(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

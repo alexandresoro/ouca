@@ -5,7 +5,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createSexes,
   deleteSexe,
@@ -16,15 +16,6 @@ import {
   getSexesCount,
   upsertSexe,
 } from "./sexe-service";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -114,56 +105,62 @@ test("Find all sexes", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated sexes", async () => {
-  const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.sexe.findMany.mockResolvedValueOnce(sexesData);
+    prismaMock.sexe.findMany.mockResolvedValueOnce(sexesData);
 
-  await findPaginatedSexes();
+    await findPaginatedSexes(loggedUser);
 
-  expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: undefined,
-    where: {},
+    expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: undefined,
+      where: {},
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(sexesData.length);
-});
 
-test("should handle params when retrieving paginated sexes ", async () => {
-  const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
+  test("should handle params when retrieving paginated sexes ", async () => {
+    const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedSexesArgs = {
-    orderBy: "libelle",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
-
-  prismaMock.sexe.findMany.mockResolvedValueOnce([sexesData[0]]);
-
-  await findPaginatedSexes(searchParams);
-
-  expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      libelle: {
-        contains: searchParams.searchParams?.q,
+    const searchParams: QueryPaginatedSexesArgs = {
+      orderBy: "libelle",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
       },
-    },
+      includeCounts: false,
+    };
+
+    prismaMock.sexe.findMany.mockResolvedValueOnce([sexesData[0]]);
+
+    await findPaginatedSexes(loggedUser, searchParams);
+
+    expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        libelle: {
+          contains: searchParams.searchParams?.q,
+        },
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedSexes(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

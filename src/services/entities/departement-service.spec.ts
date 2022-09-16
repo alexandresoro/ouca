@@ -18,16 +18,7 @@ import {
   getLieuxDitsCountByDepartement,
   upsertDepartement,
 } from "./departement-service";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
+import { queryParametersToFindAllEntities } from "./entities-utils";
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -191,56 +182,62 @@ test("Find all departments", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated departments", async () => {
-  const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.departement.findMany.mockResolvedValueOnce(departementsData);
+    prismaMock.departement.findMany.mockResolvedValueOnce(departementsData);
 
-  await findPaginatedDepartements();
+    await findPaginatedDepartements(loggedUser);
 
-  expect(prismaMock.departement.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    orderBy: undefined,
-    where: {},
+    expect(prismaMock.departement.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      orderBy: undefined,
+      where: {},
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(departementsData.length);
-});
 
-test("should handle params when retrieving paginated departments ", async () => {
-  const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
+  test("should handle params when retrieving paginated departments ", async () => {
+    const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedDepartementsArgs = {
-    orderBy: "code",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
-
-  prismaMock.departement.findMany.mockResolvedValueOnce([departementsData[0]]);
-
-  await findPaginatedDepartements(searchParams);
-
-  expect(prismaMock.departement.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      code: {
-        contains: searchParams.searchParams?.q,
+    const searchParams: QueryPaginatedDepartementsArgs = {
+      orderBy: "code",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
       },
-    },
+      includeCounts: false,
+    };
+
+    prismaMock.departement.findMany.mockResolvedValueOnce([departementsData[0]]);
+
+    await findPaginatedDepartements(loggedUser, searchParams);
+
+    expect(prismaMock.departement.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        code: {
+          contains: searchParams.searchParams?.q,
+        },
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedDepartements(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

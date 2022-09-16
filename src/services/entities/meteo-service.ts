@@ -10,7 +10,6 @@ import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
@@ -69,9 +68,11 @@ export const findMeteos = async (loggedUser: LoggedUser | null, params?: FindPar
 };
 
 export const findPaginatedMeteos = async (
-  options: Partial<QueryPaginatedMeteosArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedMeteosArgs> = {}
 ): Promise<Meteo[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
@@ -124,12 +125,7 @@ export const findPaginatedMeteos = async (
     });
   }
 
-  return meteoEntities?.map((meteo) => {
-    return {
-      ...meteo,
-      readonly: isEntityReadOnly(meteo, loggedUser),
-    };
-  });
+  return meteoEntities;
 };
 
 export const getMeteosCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

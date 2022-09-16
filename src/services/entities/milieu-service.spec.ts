@@ -5,7 +5,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createMilieux,
   deleteMilieu,
@@ -17,15 +17,6 @@ import {
   getMilieuxCount,
   upsertMilieu,
 } from "./milieu-service";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -165,65 +156,71 @@ test("Find all environments", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated environments", async () => {
-  const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsData);
+    prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsData);
 
-  await findPaginatedMilieux();
+    await findPaginatedMilieux(loggedUser);
 
-  expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    orderBy: undefined,
-    where: {},
+    expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      orderBy: undefined,
+      where: {},
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(environmentsData.length);
-});
 
-test("should handle params when retrieving paginated environments ", async () => {
-  const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+  test("should handle params when retrieving paginated environments ", async () => {
+    const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedMilieuxArgs = {
-    orderBy: "libelle",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
+    const searchParams: QueryPaginatedMilieuxArgs = {
+      orderBy: "libelle",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
+      },
+      includeCounts: false,
+    };
 
-  prismaMock.milieu.findMany.mockResolvedValueOnce([environmentsData[0]]);
+    prismaMock.milieu.findMany.mockResolvedValueOnce([environmentsData[0]]);
 
-  await findPaginatedMilieux(searchParams);
+    await findPaginatedMilieux(loggedUser, searchParams);
 
-  expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      OR: [
-        {
-          code: {
-            contains: searchParams.searchParams?.q,
+    expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        OR: [
+          {
+            code: {
+              contains: searchParams.searchParams?.q,
+            },
           },
-        },
-        {
-          libelle: {
-            contains: searchParams.searchParams?.q,
+          {
+            libelle: {
+              contains: searchParams.searchParams?.q,
+            },
           },
-        },
-      ],
-    },
+        ],
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedMilieux(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

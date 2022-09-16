@@ -10,7 +10,6 @@ import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
@@ -79,9 +78,11 @@ export const findClasses = async (loggedUser: LoggedUser | null, params?: FindPa
 };
 
 export const findPaginatedClasses = async (
-  options: Partial<QueryPaginatedClassesArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedClassesArgs> = {}
 ): Promise<Classe[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
@@ -149,12 +150,7 @@ export const findPaginatedClasses = async (
     });
   }
 
-  return classeEntities?.map((classe) => {
-    return {
-      ...classe,
-      readonly: isEntityReadOnly(classe, loggedUser),
-    };
-  });
+  return classeEntities;
 };
 
 export const getClassesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

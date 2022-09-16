@@ -10,7 +10,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { validateAuthorization } from "./authorization-utils";
-import { getPrismaPagination, isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement | null> => {
   validateAuthorization(loggedUser);
@@ -40,20 +40,13 @@ export const findComportementsByIds = async (
   ids: number[],
   loggedUser: LoggedUser | null = null
 ): Promise<Comportement[]> => {
-  const comportementEntities = await prisma.comportement.findMany({
+  return prisma.comportement.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       id: {
         in: ids,
       },
     },
-  });
-
-  return comportementEntities?.map((comportement) => {
-    return {
-      ...comportement,
-      readonly: isEntityReadOnly(comportement, loggedUser),
-    };
   });
 };
 
@@ -137,9 +130,11 @@ const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhere
 };
 
 export const findPaginatedComportements = async (
-  options: Partial<QueryPaginatedComportementsArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedComportementsArgs> = {}
 ): Promise<Comportement[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.ComportementOrderByWithRelationInput> | undefined = undefined;
@@ -186,7 +181,6 @@ export const findPaginatedComportements = async (
   return comportements.map((comportement) => {
     return {
       ...comportement,
-      readonly: isEntityReadOnly(comportement, loggedUser),
       ...(includeCounts
         ? {
             nbDonnees:

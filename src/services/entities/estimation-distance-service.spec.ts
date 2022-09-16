@@ -8,7 +8,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createEstimationsDistance,
   deleteEstimationDistance,
@@ -19,15 +19,6 @@ import {
   getEstimationsDistanceCount,
   upsertEstimationDistance,
 } from "./estimation-distance-service";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -117,56 +108,62 @@ test("Find all distance estimates", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated distance estimates", async () => {
-  const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.estimationDistance.findMany.mockResolvedValueOnce(distanceEstimatesData);
+    prismaMock.estimationDistance.findMany.mockResolvedValueOnce(distanceEstimatesData);
 
-  await findPaginatedEstimationsDistance();
+    await findPaginatedEstimationsDistance(loggedUser);
 
-  expect(prismaMock.estimationDistance.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: undefined,
-    where: {},
+    expect(prismaMock.estimationDistance.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: undefined,
+      where: {},
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(distanceEstimatesData.length);
-});
 
-test("should handle params when retrieving paginated distance estimates ", async () => {
-  const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
+  test("should handle params when retrieving paginated distance estimates ", async () => {
+    const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedEstimationsDistanceArgs = {
-    orderBy: "libelle",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
-
-  prismaMock.estimationDistance.findMany.mockResolvedValueOnce([distanceEstimatesData[0]]);
-
-  await findPaginatedEstimationsDistance(searchParams);
-
-  expect(prismaMock.estimationDistance.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      libelle: {
-        contains: searchParams.searchParams?.q,
+    const searchParams: QueryPaginatedEstimationsDistanceArgs = {
+      orderBy: "libelle",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
       },
-    },
+      includeCounts: false,
+    };
+
+    prismaMock.estimationDistance.findMany.mockResolvedValueOnce([distanceEstimatesData[0]]);
+
+    await findPaginatedEstimationsDistance(loggedUser, searchParams);
+
+    expect(prismaMock.estimationDistance.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        libelle: {
+          contains: searchParams.searchParams?.q,
+        },
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedEstimationsDistance(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

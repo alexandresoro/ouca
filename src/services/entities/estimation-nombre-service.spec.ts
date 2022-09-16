@@ -8,7 +8,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createEstimationsNombre,
   deleteEstimationNombre,
@@ -19,15 +19,6 @@ import {
   getEstimationsNombreCount,
   upsertEstimationNombre,
 } from "./estimation-nombre-service";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -117,56 +108,62 @@ test("Find all number estimates", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated number estimates", async () => {
-  const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.estimationNombre.findMany.mockResolvedValueOnce(numberEstimatesData);
+    prismaMock.estimationNombre.findMany.mockResolvedValueOnce(numberEstimatesData);
 
-  await findPaginatedEstimationsNombre();
+    await findPaginatedEstimationsNombre(loggedUser);
 
-  expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: undefined,
-    where: {},
+    expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: undefined,
+      where: {},
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(numberEstimatesData.length);
-});
 
-test("should handle params when retrieving paginated number estimates ", async () => {
-  const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
+  test("should handle params when retrieving paginated number estimates ", async () => {
+    const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedEstimationsNombreArgs = {
-    orderBy: "libelle",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
-
-  prismaMock.estimationNombre.findMany.mockResolvedValueOnce([numberEstimatesData[0]]);
-
-  await findPaginatedEstimationsNombre(searchParams);
-
-  expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      libelle: {
-        contains: searchParams.searchParams?.q,
+    const searchParams: QueryPaginatedEstimationsNombreArgs = {
+      orderBy: "libelle",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
       },
-    },
+      includeCounts: false,
+    };
+
+    prismaMock.estimationNombre.findMany.mockResolvedValueOnce([numberEstimatesData[0]]);
+
+    await findPaginatedEstimationsNombre(loggedUser, searchParams);
+
+    expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        libelle: {
+          contains: searchParams.searchParams?.q,
+        },
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedEstimationsNombre(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

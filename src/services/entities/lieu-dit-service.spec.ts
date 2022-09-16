@@ -5,7 +5,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createLieuxDits,
   deleteLieuDit,
@@ -17,15 +17,6 @@ import {
   getLieuxDitsCount,
   upsertLieuDit,
 } from "./lieu-dit-service";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -98,43 +89,44 @@ describe("Data count per entity", () => {
   });
 });
 
-test("Find locality by inventary ID", async () => {
-  const localityData = mock<Lieudit>({
-    id: 256,
+describe("Find locality by inventary ID", () => {
+  test("should handle locality found", async () => {
+    const localityData = mock<Lieudit>({
+      id: 256,
+    });
+
+    const inventary = mockDeep<Prisma.Prisma__InventaireClient<Inventaire>>();
+    inventary.lieuDit.mockResolvedValueOnce(localityData);
+
+    prismaMock.inventaire.findUnique.mockReturnValueOnce(inventary);
+
+    const locality = await findLieuDitOfInventaireId(43);
+
+    expect(prismaMock.inventaire.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.inventaire.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 43,
+      },
+    });
+    expect(locality?.id).toEqual(256);
   });
 
-  const inventary = mockDeep<Prisma.Prisma__InventaireClient<Inventaire>>();
-  inventary.lieuDit.mockResolvedValueOnce(localityData);
+  test("should handle locality not found", async () => {
+    const inventary = mockDeep<Prisma.Prisma__InventaireClient<Inventaire>>();
+    inventary.lieuDit.mockResolvedValueOnce(null);
 
-  prismaMock.inventaire.findUnique.mockReturnValueOnce(inventary);
+    prismaMock.inventaire.findUnique.mockReturnValueOnce(inventary);
 
-  const locality = await findLieuDitOfInventaireId(43);
+    const locality = await findLieuDitOfInventaireId(43);
 
-  expect(prismaMock.inventaire.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.inventaire.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
+    expect(prismaMock.inventaire.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.inventaire.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 43,
+      },
+    });
+    expect(locality).toBeNull();
   });
-  expect(locality?.id).toEqual(256);
-});
-
-test("should handle class not found when retrieving locality by inventary ID ", async () => {
-  const inventary = mockDeep<Prisma.Prisma__InventaireClient<Inventaire>>();
-  inventary.lieuDit.mockResolvedValueOnce(null);
-
-  prismaMock.inventaire.findUnique.mockReturnValueOnce(inventary);
-
-  const locality = await findLieuDitOfInventaireId(43);
-
-  expect(prismaMock.inventaire.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.inventaire.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
-  });
-  expect(isEntityReadOnly).not.toHaveBeenCalled();
-  expect(locality).toBeNull();
 });
 
 test("Find all localities", async () => {
@@ -163,104 +155,110 @@ test("Find all localities", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated localities", async () => {
-  const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.lieudit.findMany.mockResolvedValueOnce(localitiesData);
+    prismaMock.lieudit.findMany.mockResolvedValueOnce(localitiesData);
 
-  await findPaginatedLieuxDits();
+    await findPaginatedLieuxDits(loggedUser);
 
-  expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    orderBy: undefined,
-    include: {
-      commune: {
-        include: {
-          departement: {
-            select: {
-              id: true,
-              code: true,
-              ownerId: true,
-            },
-          },
-        },
-      },
-    },
-    where: {},
-  });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(localitiesData.length);
-});
-
-test("should handle params when retrieving paginated localities ", async () => {
-  const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
-
-  const searchParams: QueryPaginatedLieuxditsArgs = {
-    orderBy: "nom",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
-
-  prismaMock.lieudit.findMany.mockResolvedValueOnce([localitiesData[0]]);
-
-  await findPaginatedLieuxDits(searchParams);
-
-  expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    include: {
-      commune: {
-        include: {
-          departement: {
-            select: {
-              id: true,
-              code: true,
-              ownerId: true,
-            },
-          },
-        },
-      },
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      OR: [
-        {
-          nom: {
-            contains: searchParams.searchParams?.q,
-          },
-        },
-        {
-          commune: {
-            OR: [
-              {
-                nom: {
-                  contains: searchParams.searchParams?.q,
-                },
+    expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_NOM),
+      orderBy: undefined,
+      include: {
+        commune: {
+          include: {
+            departement: {
+              select: {
+                id: true,
+                code: true,
+                ownerId: true,
               },
-              {
-                departement: {
-                  code: {
+            },
+          },
+        },
+      },
+      where: {},
+    });
+  });
+
+  test("should handle params when retrieving paginated localities ", async () => {
+    const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
+    const loggedUser = mock<LoggedUser>();
+
+    const searchParams: QueryPaginatedLieuxditsArgs = {
+      orderBy: "nom",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
+      },
+      includeCounts: false,
+    };
+
+    prismaMock.lieudit.findMany.mockResolvedValueOnce([localitiesData[0]]);
+
+    await findPaginatedLieuxDits(loggedUser, searchParams);
+
+    expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_NOM),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      include: {
+        commune: {
+          include: {
+            departement: {
+              select: {
+                id: true,
+                code: true,
+                ownerId: true,
+              },
+            },
+          },
+        },
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        OR: [
+          {
+            nom: {
+              contains: searchParams.searchParams?.q,
+            },
+          },
+          {
+            commune: {
+              OR: [
+                {
+                  nom: {
                     contains: searchParams.searchParams?.q,
                   },
                 },
-              },
-            ],
+                {
+                  departement: {
+                    code: {
+                      contains: searchParams.searchParams?.q,
+                    },
+                  },
+                },
+              ],
+            },
           },
-        },
-      ],
-    },
+        ],
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedLieuxDits(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

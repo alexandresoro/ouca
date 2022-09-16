@@ -11,7 +11,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
-import { getPrismaPagination, isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findEspece = async (id: number | undefined, loggedUser: LoggedUser | null): Promise<Espece | null> => {
   validateAuthorization(loggedUser);
@@ -176,10 +176,12 @@ export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: C
 };
 
 export const findPaginatedEspeces = async (
+  loggedUser: LoggedUser | null,
   options: Partial<QueryPaginatedEspecesArgs> = {},
-  searchCriteria: SearchDonneeCriteria | null | undefined = undefined,
-  loggedUser: LoggedUser | null = null
+  searchCriteria: SearchDonneeCriteria | null | undefined = undefined
 ): Promise<Espece[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EspeceOrderByWithRelationInput> | undefined = undefined;
@@ -324,12 +326,7 @@ export const findPaginatedEspeces = async (
     }
   }
 
-  return especesEntities?.map((espece) => {
-    return {
-      ...espece,
-      readonly: isEntityReadOnly(espece, loggedUser),
-    };
-  });
+  return especesEntities;
 };
 
 export const getEspecesCount = async (

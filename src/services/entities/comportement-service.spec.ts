@@ -16,16 +16,7 @@ import {
   getDonneesCountByComportement,
   upsertComportement,
 } from "./comportement-service";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
+import { queryParametersToFindAllEntities } from "./entities-utils";
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -100,7 +91,7 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving behaviors by ID ", async () => {
+test("Find behaviors by IDs", async () => {
   const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
 
   prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsData);
@@ -116,7 +107,6 @@ test("should call readonly status when retrieving behaviors by ID ", async () =>
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(behaviorsData.length);
 });
 
 test("Find all behaviors", async () => {
@@ -166,70 +156,76 @@ test("Find all behaviors", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated behaviors", async () => {
-  const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsData);
+    prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsData);
 
-  await findPaginatedComportements();
+    await findPaginatedComportements(loggedUser);
 
-  expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    orderBy: undefined,
-    where: {},
+    expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      orderBy: undefined,
+      where: {},
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(behaviorsData.length);
-});
 
-test("should handle params when retrieving paginated behaviors ", async () => {
-  const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+  test("should handle params when retrieving paginated behaviors ", async () => {
+    const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedComportementsArgs = {
-    orderBy: "libelle",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
+    const searchParams: QueryPaginatedComportementsArgs = {
+      orderBy: "libelle",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
+      },
+      includeCounts: false,
+    };
 
-  prismaMock.comportement.findMany.mockResolvedValueOnce([behaviorsData[0]]);
+    prismaMock.comportement.findMany.mockResolvedValueOnce([behaviorsData[0]]);
 
-  await findPaginatedComportements(searchParams);
+    await findPaginatedComportements(loggedUser, searchParams);
 
-  expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      OR: [
-        {
-          code: {
-            contains: searchParams.searchParams?.q,
+    expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        OR: [
+          {
+            code: {
+              contains: searchParams.searchParams?.q,
+            },
           },
-        },
-        {
-          libelle: {
-            contains: searchParams.searchParams?.q,
+          {
+            libelle: {
+              contains: searchParams.searchParams?.q,
+            },
           },
-        },
-        {
-          nicheur: {
-            in: [],
+          {
+            nicheur: {
+              in: [],
+            },
           },
-        },
-      ],
-    },
+        ],
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedComportements(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

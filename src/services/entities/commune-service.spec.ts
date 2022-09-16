@@ -17,16 +17,7 @@ import {
   getLieuxDitsCountByCommune,
   upsertCommune,
 } from "./commune-service";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
+import { queryParametersToFindAllEntities } from "./entities-utils";
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -177,67 +168,73 @@ test("Find all cities", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated cities", async () => {
-  const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.commune.findMany.mockResolvedValueOnce(citiesData);
+    prismaMock.commune.findMany.mockResolvedValueOnce(citiesData);
 
-  await findPaginatedCommunes();
+    await findPaginatedCommunes(loggedUser);
 
-  expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    orderBy: undefined,
-    where: {},
+    expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_NOM),
+      orderBy: undefined,
+      where: {},
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(citiesData.length);
-});
 
-test("should handle params when retrieving paginated cities ", async () => {
-  const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
+  test("should handle params when retrieving paginated cities ", async () => {
+    const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
+    const loggedUser = mock<LoggedUser>();
 
-  const searchParams: QueryPaginatedCommunesArgs = {
-    orderBy: "code",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
+    const searchParams: QueryPaginatedCommunesArgs = {
+      orderBy: "code",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
+      },
+      includeCounts: false,
+    };
 
-  prismaMock.commune.findMany.mockResolvedValueOnce([citiesData[0]]);
+    prismaMock.commune.findMany.mockResolvedValueOnce([citiesData[0]]);
 
-  await findPaginatedCommunes(searchParams);
+    await findPaginatedCommunes(loggedUser, searchParams);
 
-  expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      OR: [
-        {
-          nom: {
-            contains: searchParams.searchParams?.q,
-          },
-        },
-        {
-          departement: {
-            code: {
+    expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_NOM),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        OR: [
+          {
+            nom: {
               contains: searchParams.searchParams?.q,
             },
           },
-        },
-      ],
-    },
+          {
+            departement: {
+              code: {
+                contains: searchParams.searchParams?.q,
+              },
+            },
+          },
+        ],
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedCommunes(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

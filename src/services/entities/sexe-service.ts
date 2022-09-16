@@ -8,7 +8,6 @@ import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
 } from "./entities-utils";
 
@@ -49,9 +48,11 @@ export const findSexes = async (loggedUser: LoggedUser | null, params?: FindPara
 };
 
 export const findPaginatedSexes = async (
-  options: Partial<QueryPaginatedSexesArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedSexesArgs> = {}
 ): Promise<Sexe[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.SexeOrderByWithRelationInput> | undefined = undefined;
@@ -107,12 +108,7 @@ export const findPaginatedSexes = async (
     });
   }
 
-  return sexeEntities?.map((sexe) => {
-    return {
-      ...sexe,
-      readonly: isEntityReadOnly(sexe, loggedUser),
-    };
-  });
+  return sexeEntities;
 };
 
 export const getSexesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

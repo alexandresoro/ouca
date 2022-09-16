@@ -12,7 +12,6 @@ import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
 } from "./entities-utils";
 
@@ -59,9 +58,11 @@ export const findEstimationsNombre = async (
 };
 
 export const findPaginatedEstimationsNombre = async (
-  options: Partial<QueryPaginatedEstimationsNombreArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedEstimationsNombreArgs> = {}
 ): Promise<EstimationNombre[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationNombreOrderByWithRelationInput> | undefined = undefined;
@@ -118,12 +119,7 @@ export const findPaginatedEstimationsNombre = async (
     });
   }
 
-  return numberEstimateEntities?.map((numberEstimate) => {
-    return {
-      ...numberEstimate,
-      readonly: isEntityReadOnly(numberEstimate, loggedUser),
-    };
-  });
+  return numberEstimateEntities;
 };
 
 export const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

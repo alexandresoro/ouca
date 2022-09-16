@@ -13,7 +13,6 @@ import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
@@ -111,9 +110,11 @@ export const findDepartements = async (
 };
 
 export const findPaginatedDepartements = async (
-  options: Partial<QueryPaginatedDepartementsArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedDepartementsArgs> = {}
 ): Promise<Departement[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   // We include case where we need to includeCounts as tehre seem to be issues when requesting inventaires that have a inventaire
@@ -222,12 +223,7 @@ export const findPaginatedDepartements = async (
     });
   }
 
-  return departementEntities?.map((departement) => {
-    return {
-      ...departement,
-      readonly: isEntityReadOnly(departement, loggedUser),
-    };
-  });
+  return departementEntities;
 };
 
 export const getDepartementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

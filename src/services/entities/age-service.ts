@@ -47,10 +47,7 @@ export const findAges = async (loggedUser: LoggedUser | null, params?: FindParam
   });
 };
 
-export const findPaginatedAges = async (
-  loggedUser: LoggedUser | null = null,
-  options: QueryAgesArgs = {}
-): Promise<Age[]> => {
+export const findPaginatedAges = async (loggedUser: LoggedUser | null, options: QueryAgesArgs = {}): Promise<Age[]> => {
   validateAuthorization(loggedUser);
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;

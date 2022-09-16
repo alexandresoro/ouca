@@ -13,13 +13,6 @@ type PaginationOptions = Partial<{
   pageSize: number | null;
 }>;
 
-/**
- * @deprecated
- */
-export const isEntityReadOnly = (entity: { ownerId?: string | null }, user: LoggedUser | null): boolean => {
-  return !(user?.role === DatabaseRole.admin || entity?.ownerId === user?.id);
-};
-
 export const isEntityEditable = (entity: { ownerId?: string | null } | null, user: LoggedUser | null): boolean => {
   if (!entity || !user) {
     return false;

@@ -14,7 +14,6 @@ import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
@@ -173,9 +172,11 @@ export const findCommunesWithDepartements = async (): Promise<(Commune & { depar
 };
 
 export const findPaginatedCommunes = async (
-  options: Partial<QueryPaginatedCommunesArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedCommunesArgs> = {}
 ): Promise<(Commune & { nbLieuxDits?: number; nbDonnees?: number })[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let communeEntities: (Commune & { nbLieuxDits?: number; nbDonnees?: number })[];
@@ -324,12 +325,7 @@ export const findPaginatedCommunes = async (
     }
   }
 
-  return communeEntities?.map((commune) => {
-    return {
-      ...commune,
-      readonly: isEntityReadOnly(commune, loggedUser),
-    };
-  });
+  return communeEntities;
 };
 
 export const getCommunesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

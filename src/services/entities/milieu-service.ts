@@ -6,7 +6,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { validateAuthorization } from "./authorization-utils";
-import { getPrismaPagination, isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Milieu | null> => {
   validateAuthorization(loggedUser);
@@ -115,9 +115,11 @@ const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput 
 };
 
 export const findPaginatedMilieux = async (
-  options: Partial<QueryPaginatedMilieuxArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedMilieuxArgs> = {}
 ): Promise<Milieu[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.MilieuOrderByWithRelationInput> | undefined = undefined;
@@ -163,7 +165,6 @@ export const findPaginatedMilieux = async (
   return milieux.map((milieu) => {
     return {
       ...milieu,
-      readonly: isEntityReadOnly(milieu, loggedUser),
       ...(includeCounts
         ? {
             nbDonnees: donneesByMilieu?.find((donneeByMilieu) => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0,

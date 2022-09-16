@@ -17,16 +17,7 @@ import {
   getEspecesCountByClasse,
   upsertClasse,
 } from "./classe-service";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
-  };
-});
+import { queryParametersToFindAllEntities } from "./entities-utils";
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -165,56 +156,62 @@ test("Find all classes", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated classes ", async () => {
-  const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
+    prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
 
-  await findPaginatedClasses();
+    await findPaginatedClasses(loggedUser);
 
-  expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: undefined,
-    where: {},
-  });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(classesData.length);
-});
-
-test("should handle params when retrieving paginated classes ", async () => {
-  const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
-
-  const searchParams = mock<QueryPaginatedClassesArgs>({
-    orderBy: "libelle",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
+    expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: undefined,
+      where: {},
+    });
   });
 
-  prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
+  test("should handle params when retrieving paginated classes ", async () => {
+    const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
+    const loggedUser = mock<LoggedUser>();
 
-  await findPaginatedClasses(searchParams);
-
-  expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      libelle: {
-        contains: searchParams.searchParams?.q,
+    const searchParams = mock<QueryPaginatedClassesArgs>({
+      orderBy: "libelle",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
       },
-    },
+      includeCounts: false,
+    });
+
+    prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
+
+    await findPaginatedClasses(loggedUser, searchParams);
+
+    expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        libelle: {
+          contains: searchParams.searchParams?.q,
+        },
+      },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(classesData.length);
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedClasses(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {

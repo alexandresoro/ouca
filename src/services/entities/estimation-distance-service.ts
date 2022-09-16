@@ -12,7 +12,6 @@ import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
 } from "./entities-utils";
 
@@ -62,9 +61,11 @@ export const findEstimationsDistance = async (
 };
 
 export const findPaginatedEstimationsDistance = async (
-  options: Partial<QueryPaginatedEstimationsDistanceArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedEstimationsDistanceArgs> = {}
 ): Promise<EstimationDistance[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput> | undefined = undefined;
@@ -120,12 +121,7 @@ export const findPaginatedEstimationsDistance = async (
     });
   }
 
-  return distanceEstimateEntities?.map((distanceEstimate) => {
-    return {
-      ...distanceEstimate,
-      readonly: isEntityReadOnly(distanceEstimate, loggedUser),
-    };
-  });
+  return distanceEstimateEntities;
 };
 
 export const getEstimationsDistanceCount = async (

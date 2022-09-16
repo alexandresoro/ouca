@@ -16,7 +16,6 @@ import {
   getPrismaPagination,
   getSqlPagination,
   getSqlSorting,
-  isEntityReadOnly,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
@@ -159,9 +158,11 @@ export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
 };
 
 export const findPaginatedLieuxDits = async (
-  options: Partial<QueryPaginatedLieuxditsArgs> = {},
-  loggedUser: LoggedUser | null = null
+  loggedUser: LoggedUser | null,
+  options: Partial<QueryPaginatedLieuxditsArgs> = {}
 ): Promise<LieuDit[]> => {
+  validateAuthorization(loggedUser);
+
   const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
 
   let lieuxDitsEntities: (LieuDitWithCoordinatesAsNumber<Lieudit> & {
@@ -350,12 +351,7 @@ export const findPaginatedLieuxDits = async (
     }
   }
 
-  return lieuxDitsEntities?.map((lieuDit) => {
-    return {
-      ...lieuDit,
-      readonly: isEntityReadOnly(lieuDit, loggedUser),
-    };
-  });
+  return lieuxDitsEntities;
 };
 
 export const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

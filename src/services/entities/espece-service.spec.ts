@@ -7,7 +7,7 @@ import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
-import { isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
+import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
   createEspeces,
   deleteEspece,
@@ -26,15 +26,6 @@ jest.mock<typeof import("./donnee-utils")>("./donnee-utils", () => {
     __esModule: true,
     ...actualModule,
     buildSearchDonneeCriteria: jest.fn(),
-  };
-});
-
-jest.mock<typeof import("./entities-utils")>("./entities-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./entities-utils")>("./entities-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    isEntityReadOnly: jest.fn(),
   };
 });
 
@@ -109,43 +100,44 @@ describe("Data count per entity", () => {
   });
 });
 
-test("Find species by dataId", async () => {
-  const speciesData = mock<Espece>({
-    id: 256,
+describe("Find species by data ID", () => {
+  test("should handle species found", async () => {
+    const speciesData = mock<Espece>({
+      id: 256,
+    });
+
+    const data = mockDeep<Prisma.Prisma__DonneeClient<Donnee>>();
+    data.espece.mockResolvedValueOnce(speciesData);
+
+    prismaMock.donnee.findUnique.mockReturnValueOnce(data);
+
+    const species = await findEspeceOfDonneeId(43);
+
+    expect(prismaMock.donnee.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.donnee.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 43,
+      },
+    });
+    expect(species?.id).toEqual(256);
   });
 
-  const data = mockDeep<Prisma.Prisma__DonneeClient<Donnee>>();
-  data.espece.mockResolvedValueOnce(speciesData);
+  test("should handle species not found", async () => {
+    const data = mockDeep<Prisma.Prisma__DonneeClient<Donnee>>();
+    data.espece.mockResolvedValueOnce(null);
 
-  prismaMock.donnee.findUnique.mockReturnValueOnce(data);
+    prismaMock.donnee.findUnique.mockReturnValueOnce(data);
 
-  const species = await findEspeceOfDonneeId(43);
+    const species = await findEspeceOfDonneeId(43);
 
-  expect(prismaMock.donnee.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.donnee.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
+    expect(prismaMock.donnee.findUnique).toHaveBeenCalledTimes(1);
+    expect(prismaMock.donnee.findUnique).toHaveBeenLastCalledWith({
+      where: {
+        id: 43,
+      },
+    });
+    expect(species).toBeNull();
   });
-  expect(species?.id).toEqual(256);
-});
-
-test("should handle species not found when retrieving species by data ID ", async () => {
-  const data = mockDeep<Prisma.Prisma__DonneeClient<Donnee>>();
-  data.espece.mockResolvedValueOnce(null);
-
-  prismaMock.donnee.findUnique.mockReturnValueOnce(data);
-
-  const species = await findEspeceOfDonneeId(43);
-
-  expect(prismaMock.donnee.findUnique).toHaveBeenCalledTimes(1);
-  expect(prismaMock.donnee.findUnique).toHaveBeenLastCalledWith({
-    where: {
-      id: 43,
-    },
-  });
-  expect(isEntityReadOnly).not.toHaveBeenCalled();
-  expect(species).toBeNull();
 });
 
 test("Find all species", async () => {
@@ -183,169 +175,175 @@ test("Find all species", async () => {
   });
 });
 
-test("should call readonly status when retrieving paginated species", async () => {
-  const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
+describe("Entities paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
+    const loggedUser = mock<LoggedUser>();
 
-  prismaMock.espece.findMany.mockResolvedValueOnce(speciesData);
+    prismaMock.espece.findMany.mockResolvedValueOnce(speciesData);
 
-  await findPaginatedEspeces();
+    await findPaginatedEspeces(loggedUser);
 
-  expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    include: {
-      classe: {
-        select: {
-          id: true,
-          libelle: true,
-        },
-      },
-    },
-    orderBy: undefined,
-    where: { AND: [{}, {}] },
-  });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(speciesData.length);
-});
-
-test("should handle params when retrieving paginated species ", async () => {
-  const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
-
-  const searchParams: QueryPaginatedEspecesArgs = {
-    orderBy: "code",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
-
-  prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
-
-  await findPaginatedEspeces(searchParams);
-
-  expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    include: {
-      classe: {
-        select: {
-          id: true,
-          libelle: true,
-        },
-      },
-    },
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      AND: [
-        {
-          OR: [
-            {
-              code: {
-                contains: searchParams.searchParams?.q,
-              },
-            },
-            {
-              nomFrancais: {
-                contains: searchParams.searchParams?.q,
-              },
-            },
-            {
-              nomLatin: {
-                contains: searchParams.searchParams?.q,
-              },
-            },
-          ],
-        },
-        {},
-      ],
-    },
-  });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
-});
-
-test("should handle params and search criteria when retrieving paginated species ", async () => {
-  const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
-
-  const searchParams: QueryPaginatedEspecesArgs = {
-    orderBy: "code",
-    sortOrder: "desc",
-    searchParams: {
-      q: "Bob",
-      pageNumber: 0,
-      pageSize: 10,
-    },
-    includeCounts: false,
-  };
-
-  prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
-
-  const whereInput = mock<Prisma.DonneeWhereInput>({
-    ageId: 12,
-  });
-  const { espece, especeId, ...restWhereInput } = whereInput;
-
-  // Need to be mocked twice, as we to two calls to buildSearchDonneeCriteria
-  mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
-  mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
-
-  await findPaginatedEspeces(searchParams, mock<SearchDonneeCriteria>());
-
-  expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    include: {
-      classe: {
-        select: {
-          id: true,
-          libelle: true,
-        },
-      },
-    },
-    orderBy: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      [searchParams.orderBy!]: searchParams.sortOrder,
-    },
-    skip: searchParams.searchParams?.pageNumber,
-    take: searchParams.searchParams?.pageSize,
-    where: {
-      AND: [
-        {
-          OR: [
-            {
-              code: {
-                contains: searchParams.searchParams?.q,
-              },
-            },
-            {
-              nomFrancais: {
-                contains: searchParams.searchParams?.q,
-              },
-            },
-            {
-              nomLatin: {
-                contains: searchParams.searchParams?.q,
-              },
-            },
-          ],
-        },
-        {
-          ...espece,
-          id: especeId,
-          donnee: {
-            some: restWhereInput,
+    expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      include: {
+        classe: {
+          select: {
+            id: true,
+            libelle: true,
           },
         },
-      ],
-    },
+      },
+      orderBy: undefined,
+      where: { AND: [{}, {}] },
+    });
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
+
+  test("should handle params when retrieving paginated species ", async () => {
+    const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
+    const loggedUser = mock<LoggedUser>();
+
+    const searchParams: QueryPaginatedEspecesArgs = {
+      orderBy: "code",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
+      },
+      includeCounts: false,
+    };
+
+    prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
+
+    await findPaginatedEspeces(loggedUser, searchParams);
+
+    expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      include: {
+        classe: {
+          select: {
+            id: true,
+            libelle: true,
+          },
+        },
+      },
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                code: {
+                  contains: searchParams.searchParams?.q,
+                },
+              },
+              {
+                nomFrancais: {
+                  contains: searchParams.searchParams?.q,
+                },
+              },
+              {
+                nomLatin: {
+                  contains: searchParams.searchParams?.q,
+                },
+              },
+            ],
+          },
+          {},
+        ],
+      },
+    });
+  });
+
+  test("should handle params and search criteria when retrieving paginated species ", async () => {
+    const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
+    const loggedUser = mock<LoggedUser>();
+
+    const searchParams: QueryPaginatedEspecesArgs = {
+      orderBy: "code",
+      sortOrder: "desc",
+      searchParams: {
+        q: "Bob",
+        pageNumber: 0,
+        pageSize: 10,
+      },
+      includeCounts: false,
+    };
+
+    prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
+
+    const whereInput = mock<Prisma.DonneeWhereInput>({
+      ageId: 12,
+    });
+    const { espece, especeId, ...restWhereInput } = whereInput;
+
+    // Need to be mocked twice, as we to two calls to buildSearchDonneeCriteria
+    mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
+    mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
+
+    await findPaginatedEspeces(loggedUser, searchParams, mock<SearchDonneeCriteria>());
+
+    expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
+      ...queryParametersToFindAllEntities(COLUMN_CODE),
+      include: {
+        classe: {
+          select: {
+            id: true,
+            libelle: true,
+          },
+        },
+      },
+      orderBy: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        [searchParams.orderBy!]: searchParams.sortOrder,
+      },
+      skip: searchParams.searchParams?.pageNumber,
+      take: searchParams.searchParams?.pageSize,
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                code: {
+                  contains: searchParams.searchParams?.q,
+                },
+              },
+              {
+                nomFrancais: {
+                  contains: searchParams.searchParams?.q,
+                },
+              },
+              {
+                nomLatin: {
+                  contains: searchParams.searchParams?.q,
+                },
+              },
+            ],
+          },
+          {
+            ...espece,
+            id: especeId,
+            donnee: {
+              some: restWhereInput,
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(findPaginatedEspeces(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
 });
 
 describe("Entities count by search criteria", () => {
