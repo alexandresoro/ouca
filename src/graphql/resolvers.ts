@@ -310,7 +310,6 @@ const resolvers: IResolvers = {
       return findNextRegroupement();
     },
     paginatedClasses: async (_source, args, { user }): Promise<ClassesPaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedClasses(user, args),
         getClassesCount(user, args?.searchParams?.q),
@@ -325,7 +324,6 @@ const resolvers: IResolvers = {
       args,
       { user }
     ): Promise<Omit<CommunesPaginatedResult, "result"> & { result?: Omit<Commune, "departement">[] }> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedCommunes(user, args),
         getCommunesCount(user, args?.searchParams?.q),
@@ -336,7 +334,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedComportements: async (_source, args, { user }): Promise<ComportementsPaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedComportements(user, args),
         getComportementsCount(user, args?.searchParams?.q),
@@ -347,7 +344,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedDepartements: async (_source, args, { user }): Promise<DepartementsPaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedDepartements(user, args),
         getDepartementsCount(user, args?.searchParams?.q),
@@ -369,7 +365,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedEstimationsDistance: async (_source, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedEstimationsDistance(user, args),
         getEstimationsDistanceCount(user, args?.searchParams?.q),
@@ -380,7 +375,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedEstimationsNombre: async (_source, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedEstimationsNombre(user, args),
         getEstimationsNombreCount(user, args?.searchParams?.q),
@@ -391,7 +385,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedLieuxdits: async (_source, args, { user }): Promise<LieuxDitsPaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedLieuxDits(user, args),
         getLieuxDitsCount(user, args?.searchParams?.q),
@@ -402,7 +395,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedMeteos: async (_source, args, { user }): Promise<MeteosPaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedMeteos(user, args),
         getMeteosCount(user, args?.searchParams?.q),
@@ -413,7 +405,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedMilieux: async (_source, args, { user }): Promise<MilieuxPaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedMilieux(user, args),
         getMilieuxCount(user, args?.searchParams?.q),
@@ -424,7 +415,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedSexes: async (_source, args, { user }): Promise<SexesPaginatedResult> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const [result, count] = await Promise.all([
         findPaginatedSexes(user, args),
         getSexesCount(user, args?.searchParams?.q),
@@ -435,7 +425,6 @@ const resolvers: IResolvers = {
       };
     },
     paginatedSearchEspeces: async (_source, args, { user }): Promise<{ result: EspeceEntity[]; count: number }> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       const { searchCriteria, ...rest } = args ?? {};
       const [result, count] = await Promise.all([
         findPaginatedEspeces(user, rest, searchCriteria),
