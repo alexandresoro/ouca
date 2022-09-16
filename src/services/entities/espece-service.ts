@@ -11,12 +11,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
-import {
-  getPrismaPagination,
-  isEntityReadOnly,
-  queryParametersToFindAllEntities,
-  ReadonlyStatus,
-} from "./entities-utils";
+import { getPrismaPagination, isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findEspece = async (id: number | undefined, loggedUser: LoggedUser | null): Promise<Espece | null> => {
   validateAuthorization(loggedUser);
@@ -41,23 +36,14 @@ export const getDonneesCountByEspece = async (id: number, loggedUser: LoggedUser
 export const findEspeceOfDonneeId = async (
   donneeId: number | undefined,
   loggedUser: LoggedUser | null = null
-): Promise<(Espece & ReadonlyStatus) | null> => {
-  const especeEntity = await prisma.donnee
+): Promise<Espece | null> => {
+  return prisma.donnee
     .findUnique({
       where: {
         id: donneeId,
       },
     })
     .espece();
-
-  if (!especeEntity) {
-    return null;
-  }
-
-  return {
-    ...especeEntity,
-    readonly: isEntityReadOnly(especeEntity, loggedUser),
-  };
 };
 
 export const findEspeces = async (
@@ -358,10 +344,7 @@ export const getEspecesCount = async (
   });
 };
 
-export const upsertEspece = async (
-  args: MutationUpsertEspeceArgs,
-  loggedUser: LoggedUser | null
-): Promise<Espece & ReadonlyStatus> => {
+export const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -402,10 +385,7 @@ export const upsertEspece = async (
     }
   }
 
-  return {
-    ...upsertedEspece,
-    readonly: false,
-  };
+  return upsertedEspece;
 };
 
 export const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece> => {

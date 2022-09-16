@@ -18,7 +18,6 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
@@ -67,23 +66,14 @@ export const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUse
 export const findLieuDitOfInventaireId = async (
   inventaireId: number | undefined,
   loggedUser: LoggedUser | null = null
-): Promise<(Lieudit & ReadonlyStatus) | null> => {
-  const lieuditEntity = await prisma.inventaire
+): Promise<Lieudit | null> => {
+  return prisma.inventaire
     .findUnique({
       where: {
         id: inventaireId,
       },
     })
     .lieuDit();
-
-  if (!lieuditEntity) {
-    return null;
-  }
-
-  return {
-    ...lieuditEntity,
-    readonly: isEntityReadOnly(lieuditEntity, loggedUser),
-  };
 };
 
 export const findLieuxDits = async (
@@ -379,7 +369,7 @@ export const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: strin
 export const upsertLieuDit = async (
   args: MutationUpsertLieuDitArgs,
   loggedUser: LoggedUser | null
-): Promise<LieuDitWithCoordinatesAsNumber & ReadonlyStatus> => {
+): Promise<LieuDitWithCoordinatesAsNumber> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -424,10 +414,7 @@ export const upsertLieuDit = async (
     }
   }
 
-  return {
-    ...upsertedLieuDit,
-    readonly: false,
-  };
+  return upsertedLieuDit;
 };
 
 export const deleteLieuDit = async (

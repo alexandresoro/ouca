@@ -102,7 +102,7 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving weathers by ID ", async () => {
+test("Find list of weathers by IDs", async () => {
   const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
 
   prismaMock.meteo.findMany.mockResolvedValueOnce(weathersData);
@@ -118,7 +118,6 @@ test("should call readonly status when retrieving weathers by ID ", async () => 
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(weathersData.length);
 });
 
 test("Find all weathers", async () => {

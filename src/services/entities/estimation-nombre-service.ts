@@ -14,7 +14,6 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findEstimationNombre = async (
@@ -138,7 +137,7 @@ export const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q
 export const upsertEstimationNombre = async (
   args: MutationUpsertEstimationNombreArgs,
   loggedUser: LoggedUser | null
-): Promise<EstimationNombre & ReadonlyStatus> => {
+): Promise<EstimationNombre> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -181,10 +180,7 @@ export const upsertEstimationNombre = async (
     }
   }
 
-  return {
-    ...upsertedEstimationNombre,
-    readonly: false,
-  };
+  return upsertedEstimationNombre;
 };
 
 export const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationNombre> => {

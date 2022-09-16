@@ -98,7 +98,7 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving locality by inventary ID ", async () => {
+test("Find locality by inventary ID", async () => {
   const localityData = mock<Lieudit>({
     id: 256,
   });
@@ -116,7 +116,6 @@ test("should call readonly status when retrieving locality by inventary ID ", as
       id: 43,
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   expect(locality?.id).toEqual(256);
 });
 

@@ -109,7 +109,7 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving species by data ID ", async () => {
+test("Find species by dataId", async () => {
   const speciesData = mock<Espece>({
     id: 256,
   });
@@ -127,7 +127,6 @@ test("should call readonly status when retrieving species by data ID ", async ()
       id: 43,
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(1);
   expect(species?.id).toEqual(256);
 });
 

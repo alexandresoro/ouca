@@ -16,13 +16,6 @@ type PaginationOptions = Partial<{
 /**
  * @deprecated
  */
-export type ReadonlyStatus = {
-  readonly: boolean;
-};
-
-/**
- * @deprecated
- */
 export const isEntityReadOnly = (entity: { ownerId?: string | null }, user: LoggedUser | null): boolean => {
   return !(user?.role === DatabaseRole.admin || entity?.ownerId === user?.id);
 };

@@ -14,7 +14,6 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findEstimationDistance = async (
@@ -143,7 +142,7 @@ export const getEstimationsDistanceCount = async (
 export const upsertEstimationDistance = async (
   args: MutationUpsertEstimationDistanceArgs,
   loggedUser: LoggedUser | null
-): Promise<EstimationDistance & ReadonlyStatus> => {
+): Promise<EstimationDistance> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -186,10 +185,7 @@ export const upsertEstimationDistance = async (
     }
   }
 
-  return {
-    ...upsertedEstimationDistance,
-    readonly: false,
-  };
+  return upsertedEstimationDistance;
 };
 
 export const deleteEstimationDistance = async (

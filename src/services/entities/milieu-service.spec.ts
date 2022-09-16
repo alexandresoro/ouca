@@ -100,7 +100,7 @@ describe("Data count per entity", () => {
   });
 });
 
-test("should call readonly status when retrieving environments by ID ", async () => {
+test("Find list of environments by IDs", async () => {
   const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
 
   prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsData);
@@ -116,7 +116,6 @@ test("should call readonly status when retrieving environments by ID ", async ()
       },
     },
   });
-  expect(isEntityReadOnly).toHaveBeenCalledTimes(environmentsData.length);
 });
 
 test("Find all environments", async () => {

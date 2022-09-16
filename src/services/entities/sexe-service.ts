@@ -10,7 +10,6 @@ import {
   getPrismaPagination,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
 } from "./entities-utils";
 
 export const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe | null> => {
@@ -124,10 +123,7 @@ export const getSexesCount = async (loggedUser: LoggedUser | null, q?: string | 
   });
 };
 
-export const upsertSexe = async (
-  args: MutationUpsertSexeArgs,
-  loggedUser: LoggedUser | null
-): Promise<Sexe & ReadonlyStatus> => {
+export const upsertSexe = async (args: MutationUpsertSexeArgs, loggedUser: LoggedUser | null): Promise<Sexe> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -173,10 +169,7 @@ export const upsertSexe = async (
     }
   }
 
-  return {
-    ...upsertedSexe,
-    readonly: false,
-  };
+  return upsertedSexe;
 };
 
 export const deleteSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe> => {

@@ -6,12 +6,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { validateAuthorization } from "./authorization-utils";
-import {
-  getPrismaPagination,
-  isEntityReadOnly,
-  queryParametersToFindAllEntities,
-  ReadonlyStatus,
-} from "./entities-utils";
+import { getPrismaPagination, isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Milieu | null> => {
   validateAuthorization(loggedUser);
@@ -37,24 +32,14 @@ export const getDonneesCountByMilieu = async (id: number, loggedUser: LoggedUser
   });
 };
 
-export const findMilieuxByIds = async (
-  ids: number[],
-  loggedUser: LoggedUser | null = null
-): Promise<(Milieu & ReadonlyStatus)[]> => {
-  const milieuxEntities = await prisma.milieu.findMany({
+export const findMilieuxByIds = async (ids: number[], loggedUser: LoggedUser | null = null): Promise<Milieu[]> => {
+  return prisma.milieu.findMany({
     ...queryParametersToFindAllEntities(COLUMN_CODE),
     where: {
       id: {
         in: ids,
       },
     },
-  });
-
-  return milieuxEntities?.map((milieu) => {
-    return {
-      ...milieu,
-      readonly: isEntityReadOnly(milieu, loggedUser),
-    };
   });
 };
 
@@ -196,10 +181,7 @@ export const getMilieuxCount = async (loggedUser: LoggedUser | null, q?: string 
   });
 };
 
-export const upsertMilieu = async (
-  args: MutationUpsertMilieuArgs,
-  loggedUser: LoggedUser | null
-): Promise<Milieu & ReadonlyStatus> => {
+export const upsertMilieu = async (args: MutationUpsertMilieuArgs, loggedUser: LoggedUser | null): Promise<Milieu> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -242,10 +224,7 @@ export const upsertMilieu = async (
     }
   }
 
-  return {
-    ...upsertedMilieu,
-    readonly: false,
-  };
+  return upsertedMilieu;
 };
 
 export const deleteMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Milieu> => {

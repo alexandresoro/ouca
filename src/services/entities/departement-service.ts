@@ -15,7 +15,6 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
@@ -241,7 +240,7 @@ export const getDepartementsCount = async (loggedUser: LoggedUser | null, q?: st
 export const upsertDepartement = async (
   args: MutationUpsertDepartementArgs,
   loggedUser: LoggedUser | null
-): Promise<Departement & ReadonlyStatus> => {
+): Promise<Departement> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -282,10 +281,7 @@ export const upsertDepartement = async (
     }
   }
 
-  return {
-    ...upsertedDepartement,
-    readonly: false,
-  };
+  return upsertedDepartement;
 };
 
 export const deleteDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<Departement> => {

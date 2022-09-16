@@ -12,7 +12,6 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
@@ -42,24 +41,14 @@ export const getDonneesCountByMeteo = async (id: number, loggedUser: LoggedUser 
   });
 };
 
-export const findMeteosByIds = async (
-  ids: number[],
-  loggedUser: LoggedUser | null = null
-): Promise<(Meteo & ReadonlyStatus)[]> => {
-  const meteoEntities = await prisma.meteo.findMany({
+export const findMeteosByIds = async (ids: number[], loggedUser: LoggedUser | null = null): Promise<Meteo[]> => {
+  return prisma.meteo.findMany({
     ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
     where: {
       id: {
         in: ids,
       },
     },
-  });
-
-  return meteoEntities?.map((meteo) => {
-    return {
-      ...meteo,
-      readonly: isEntityReadOnly(meteo, loggedUser),
-    };
   });
 };
 
@@ -151,10 +140,7 @@ export const getMeteosCount = async (loggedUser: LoggedUser | null, q?: string |
   });
 };
 
-export const upsertMeteo = async (
-  args: MutationUpsertMeteoArgs,
-  loggedUser: LoggedUser | null
-): Promise<Meteo & ReadonlyStatus> => {
+export const upsertMeteo = async (args: MutationUpsertMeteoArgs, loggedUser: LoggedUser | null): Promise<Meteo> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -202,10 +188,7 @@ export const upsertMeteo = async (
     }
   }
 
-  return {
-    ...upsertedMeteo,
-    readonly: false,
-  };
+  return upsertedMeteo;
 };
 
 export const deleteMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Meteo> => {

@@ -12,7 +12,6 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
@@ -166,10 +165,7 @@ export const getClassesCount = async (loggedUser: LoggedUser | null, q?: string 
   });
 };
 
-export const upsertClasse = async (
-  args: MutationUpsertClasseArgs,
-  loggedUser: LoggedUser | null
-): Promise<Classe & ReadonlyStatus> => {
+export const upsertClasse = async (args: MutationUpsertClasseArgs, loggedUser: LoggedUser | null): Promise<Classe> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -217,10 +213,7 @@ export const upsertClasse = async (
     }
   }
 
-  return {
-    ...upsertedClasse,
-    readonly: false,
-  };
+  return upsertedClasse;
 };
 
 export const deleteClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe> => {

@@ -16,7 +16,6 @@ import {
   getSqlSorting,
   isEntityReadOnly,
   queryParametersToFindAllEntities,
-  ReadonlyStatus,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
 
@@ -344,7 +343,7 @@ export const getCommunesCount = async (loggedUser: LoggedUser | null, q?: string
 export const upsertCommune = async (
   args: MutationUpsertCommuneArgs,
   loggedUser: LoggedUser | null
-): Promise<Commune & ReadonlyStatus> => {
+): Promise<Commune> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -385,10 +384,7 @@ export const upsertCommune = async (
     }
   }
 
-  return {
-    ...upsertedCommune,
-    readonly: false,
-  };
+  return upsertedCommune;
 };
 
 export const deleteCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Commune> => {

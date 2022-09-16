@@ -10,12 +10,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { validateAuthorization } from "./authorization-utils";
-import {
-  getPrismaPagination,
-  isEntityReadOnly,
-  queryParametersToFindAllEntities,
-  ReadonlyStatus,
-} from "./entities-utils";
+import { getPrismaPagination, isEntityReadOnly, queryParametersToFindAllEntities } from "./entities-utils";
 
 export const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement | null> => {
   validateAuthorization(loggedUser);
@@ -215,7 +210,7 @@ export const getComportementsCount = async (loggedUser: LoggedUser | null, q?: s
 export const upsertComportement = async (
   args: MutationUpsertComportementArgs,
   loggedUser: LoggedUser | null
-): Promise<Comportement & ReadonlyStatus> => {
+): Promise<Comportement> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -258,10 +253,7 @@ export const upsertComportement = async (
     }
   }
 
-  return {
-    ...upsertedComportement,
-    readonly: false,
-  };
+  return upsertedComportement;
 };
 
 export const deleteComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement> => {
