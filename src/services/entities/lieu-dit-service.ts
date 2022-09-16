@@ -166,7 +166,6 @@ export const findPaginatedLieuxDits = async (
 
   let lieuxDitsEntities: (LieuDitWithCoordinatesAsNumber<Lieudit> & {
     commune: Commune & { departement: Departement };
-    nbDonnees?: number;
   })[];
 
   if (orderByField === "nbDonnees") {
@@ -237,12 +236,8 @@ export const findPaginatedLieuxDits = async (
 
     lieuxDitsEntities = nbDonneesForFilteredLieuxDits.map((lieuditInfo) => {
       const lieudit = lieuxDitsRq?.find((lieudit) => lieudit.id === lieuditInfo.id);
-
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ...buildLieuditFromLieuditDb(lieudit!),
-        nbDonnees: lieuditInfo.nbDonnees,
-      };
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return buildLieuditFromLieuditDb(lieudit!);
     });
   } else {
     let orderBy: Prisma.Enumerable<Prisma.LieuditOrderByWithRelationInput> | undefined = undefined;

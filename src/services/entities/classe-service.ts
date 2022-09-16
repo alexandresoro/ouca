@@ -87,7 +87,7 @@ export const findPaginatedClasses = async (
 
   const isNbDonneesNeeded = orderByField === "nbDonnees";
 
-  let classeEntities: (Classe & { nbEspeces?: number; nbDonnees?: number })[];
+  let classeEntities: (Classe & { nbEspeces?: number })[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;

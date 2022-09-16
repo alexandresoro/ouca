@@ -77,7 +77,7 @@ export const findPaginatedMeteos = async (
 
   const isNbDonneesNeeded = orderByField === "nbDonnees";
 
-  let meteoEntities: (Meteo & { nbDonnees?: number })[];
+  let meteoEntities: Meteo[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;

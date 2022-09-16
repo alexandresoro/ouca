@@ -119,7 +119,7 @@ export const findPaginatedDepartements = async (
 
   const isNbDonneesNeeded = orderByField === "nbDonnees" || orderByField === "nbLieuxDits";
 
-  let departementEntities: (Departement & { nbLieuxDits?: number; nbDonnees?: number })[];
+  let departementEntities: (Departement & { nbLieuxDits?: number })[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;

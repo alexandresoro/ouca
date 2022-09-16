@@ -169,12 +169,12 @@ export const findCommunesWithDepartements = async (): Promise<(Commune & { depar
 export const findPaginatedCommunes = async (
   loggedUser: LoggedUser | null,
   options: Partial<QueryCommunesArgs> = {}
-): Promise<(Commune & { nbLieuxDits?: number; nbDonnees?: number })[]> => {
+): Promise<(Commune & { nbLieuxDits?: number })[]> => {
   validateAuthorization(loggedUser);
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let communeEntities: (Commune & { nbLieuxDits?: number; nbDonnees?: number })[];
+  let communeEntities: (Commune & { nbLieuxDits?: number })[];
 
   if (orderByField === "nbDonnees") {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
@@ -233,7 +233,6 @@ export const findPaginatedCommunes = async (
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ...commune!,
         nbLieuxDits: communeInfo.nbLieuxDits,
-        nbDonnees: communeInfo.nbDonnees,
       };
     });
   } else {

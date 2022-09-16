@@ -223,7 +223,7 @@ export const findPaginatedEspeces = async (
     AND: [getFilterClause(searchParams?.q), getFilterClauseSearchDonnee(searchCriteria)],
   };
 
-  let especesEntities: (Espece & { classe: Classe; nbDonnees?: number })[];
+  let especesEntities: (Espece & { classe: Classe })[];
 
   if (orderByField === "nbDonnees" && builtSearchCriteria) {
     // As the orderBy donnee _count will not work properly because it will compare with ALL donnees and not only the matching one, we need to do differently
@@ -268,13 +268,10 @@ export const findPaginatedEspeces = async (
       },
     })) as (Espece & { classe: Classe })[];
 
-    especesEntities = donneesByMatchingEspece.map(({ especeId, _count }) => {
+    especesEntities = donneesByMatchingEspece.map(({ especeId }) => {
       const espece = especesRq?.find(({ id }) => id === especeId);
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ...espece!,
-        nbDonnees: _count,
-      };
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return espece!;
     });
   } else {
     especesEntities = (await prisma.espece.findMany({
