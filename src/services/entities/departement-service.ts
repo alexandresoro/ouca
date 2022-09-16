@@ -2,7 +2,7 @@ import { DatabaseRole, Departement, Prisma } from "@prisma/client";
 import {
   FindParams,
   MutationUpsertDepartementArgs,
-  QueryPaginatedDepartementsArgs,
+  QueryDepartementsArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -111,15 +111,13 @@ export const findDepartements = async (
 
 export const findPaginatedDepartements = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedDepartementsArgs> = {}
+  options: Partial<QueryDepartementsArgs> = {}
 ): Promise<Departement[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  // We include case where we need to includeCounts as tehre seem to be issues when requesting inventaires that have a inventaire
-  // in a list of 1000+ elements
-  const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees" || orderByField === "nbLieuxDits";
+  const isNbDonneesNeeded = orderByField === "nbDonnees" || orderByField === "nbLieuxDits";
 
   let departementEntities: (Departement & { nbLieuxDits?: number; nbDonnees?: number })[];
 
@@ -165,13 +163,6 @@ export const findPaginatedDepartements = async (
     );
 
     const departementsRq = await prisma.departement.findMany({
-      include: {
-        _count: includeCounts && {
-          select: {
-            commune: true,
-          },
-        },
-      },
       where: {
         id: {
           in: nbDonneesForFilteredDepartements.map((departementInfo) => departementInfo.id), // /!\ The IN clause could break if not paginated enough
@@ -180,19 +171,8 @@ export const findPaginatedDepartements = async (
     });
 
     departementEntities = nbDonneesForFilteredDepartements.map((departementInfo) => {
-      const departement = departementsRq?.find((departement) => departement.id === departementInfo.id);
-
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ...departement!,
-        ...(includeCounts
-          ? {
-              nbCommunes: departement?._count.commune,
-              nbLieuxDits: departementInfo.nbLieuxDits,
-              nbDonnees: departementInfo.nbDonnees,
-            }
-          : {}),
-      };
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return departementsRq.find((departement) => departement.id === departementInfo.id)!;
     });
   } else {
     let orderBy: Prisma.Enumerable<Prisma.DepartementOrderByWithRelationInput> | undefined = undefined;

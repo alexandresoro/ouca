@@ -1,5 +1,5 @@
 import { DatabaseRole, Prisma, Sexe } from "@prisma/client";
-import { FindParams, MutationUpsertSexeArgs, QueryPaginatedSexesArgs } from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertSexeArgs, QuerySexesArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -49,11 +49,11 @@ export const findSexes = async (loggedUser: LoggedUser | null, params?: FindPara
 
 export const findPaginatedSexes = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedSexesArgs> = {}
+  options: Partial<QuerySexesArgs> = {}
 ): Promise<Sexe[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.SexeOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {
@@ -78,37 +78,11 @@ export const findPaginatedSexes = async (
     }
   }
 
-  let sexeEntities: (Sexe & { nbDonnees?: number })[];
-
-  if (includeCounts) {
-    const sexes = await prisma.sexe.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      include: {
-        _count: {
-          select: {
-            donnee: true,
-          },
-        },
-      },
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-
-    sexeEntities = sexes.map((sexe) => {
-      return {
-        ...sexe,
-        nbDonnees: sexe._count.donnee,
-      };
-    });
-  } else {
-    sexeEntities = await prisma.sexe.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-  }
-
-  return sexeEntities;
+  return prisma.sexe.findMany({
+    ...getPrismaPagination(searchParams),
+    orderBy,
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+  });
 };
 
 export const getSexesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

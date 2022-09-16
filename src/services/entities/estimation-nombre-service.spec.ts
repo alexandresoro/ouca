@@ -1,9 +1,6 @@
 import { DatabaseRole, EstimationNombre, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import {
-  MutationUpsertEstimationNombreArgs,
-  QueryPaginatedEstimationsNombreArgs,
-} from "../../graphql/generated/graphql-types";
+import { MutationUpsertEstimationNombreArgs, QueryEstimationsNombreArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -129,7 +126,7 @@ describe("Entities paginated find by search criteria", () => {
     const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryPaginatedEstimationsNombreArgs = {
+    const searchParams: QueryEstimationsNombreArgs = {
       orderBy: "libelle",
       sortOrder: "desc",
       searchParams: {
@@ -137,7 +134,6 @@ describe("Entities paginated find by search criteria", () => {
         pageNumber: 0,
         pageSize: 10,
       },
-      includeCounts: false,
     };
 
     prismaMock.estimationNombre.findMany.mockResolvedValueOnce([numberEstimatesData[0]]);

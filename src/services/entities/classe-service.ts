@@ -1,5 +1,5 @@
 import { Classe, DatabaseRole, Prisma } from "@prisma/client";
-import { FindParams, MutationUpsertClasseArgs, QueryPaginatedClassesArgs } from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertClasseArgs, QueryClassesArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -79,13 +79,13 @@ export const findClasses = async (loggedUser: LoggedUser | null, params?: FindPa
 
 export const findPaginatedClasses = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedClassesArgs> = {}
+  options: Partial<QueryClassesArgs> = {}
 ): Promise<Classe[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
+  const isNbDonneesNeeded = orderByField === "nbDonnees";
 
   let classeEntities: (Classe & { nbEspeces?: number; nbDonnees?: number })[];
 

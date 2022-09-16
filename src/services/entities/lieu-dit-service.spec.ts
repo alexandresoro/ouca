@@ -1,6 +1,6 @@
 import { DatabaseRole, Inventaire, Lieudit, Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
-import { MutationUpsertLieuDitArgs, QueryPaginatedLieuxditsArgs } from "../../graphql/generated/graphql-types";
+import { MutationUpsertLieuDitArgs, QueryLieuxditsArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
@@ -189,7 +189,7 @@ describe("Entities paginated find by search criteria", () => {
     const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryPaginatedLieuxditsArgs = {
+    const searchParams: QueryLieuxditsArgs = {
       orderBy: "nom",
       sortOrder: "desc",
       searchParams: {
@@ -197,7 +197,6 @@ describe("Entities paginated find by search criteria", () => {
         pageNumber: 0,
         pageSize: 10,
       },
-      includeCounts: false,
     };
 
     prismaMock.lieudit.findMany.mockResolvedValueOnce([localitiesData[0]]);

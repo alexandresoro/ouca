@@ -2,7 +2,7 @@ import { DatabaseRole, EstimationDistance, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   MutationUpsertEstimationDistanceArgs,
-  QueryPaginatedEstimationsDistanceArgs,
+  QueryEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -129,7 +129,7 @@ describe("Entities paginated find by search criteria", () => {
     const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryPaginatedEstimationsDistanceArgs = {
+    const searchParams: QueryEstimationsDistanceArgs = {
       orderBy: "libelle",
       sortOrder: "desc",
       searchParams: {
@@ -137,7 +137,6 @@ describe("Entities paginated find by search criteria", () => {
         pageNumber: 0,
         pageSize: 10,
       },
-      includeCounts: false,
     };
 
     prismaMock.estimationDistance.findMany.mockResolvedValueOnce([distanceEstimatesData[0]]);

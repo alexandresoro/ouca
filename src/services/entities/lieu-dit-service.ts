@@ -3,12 +3,11 @@ import {
   FindParams,
   LieuDit,
   MutationUpsertLieuDitArgs,
-  QueryPaginatedLieuxditsArgs,
+  QueryLieuxditsArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
-import counterReducer from "../../utils/counterReducer";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import { getFilterClauseCommune } from "./commune-service";
@@ -159,11 +158,11 @@ export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
 
 export const findPaginatedLieuxDits = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedLieuxditsArgs> = {}
+  options: Partial<QueryLieuxditsArgs> = {}
 ): Promise<LieuDit[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let lieuxDitsEntities: (LieuDitWithCoordinatesAsNumber<Lieudit> & {
     commune: Commune & { departement: Departement };
@@ -286,69 +285,26 @@ export const findPaginatedLieuxDits = async (
       }
     }
 
-    if (includeCounts) {
-      const lieuxDitsRq = await prisma.lieudit.findMany({
-        ...getPrismaPagination(searchParams),
-        orderBy,
-        include: {
-          commune: {
-            include: {
-              departement: {
-                select: {
-                  id: true,
-                  code: true,
-                  ownerId: true,
-                },
-              },
-            },
-          },
-          inventaire: {
-            select: {
-              _count: {
-                select: {
-                  donnee: true,
-                },
+    const lieuxDitsRq = await prisma.lieudit.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      include: {
+        commune: {
+          include: {
+            departement: {
+              select: {
+                id: true,
+                code: true,
+                ownerId: true,
               },
             },
           },
         },
-        where: getFilterClause(searchParams?.q),
-      });
+      },
+      where: getFilterClause(searchParams?.q),
+    });
 
-      lieuxDitsEntities = lieuxDitsRq.map((lieudit) => {
-        const nbDonnees = lieudit.inventaire
-          .map((inventaire) => {
-            return inventaire._count.donnee;
-          })
-          .reduce(counterReducer, 0);
-
-        return {
-          ...buildLieuditFromLieuditDb(lieudit),
-          nbDonnees,
-        };
-      });
-    } else {
-      const lieuxDitsRq = await prisma.lieudit.findMany({
-        ...getPrismaPagination(searchParams),
-        orderBy,
-        include: {
-          commune: {
-            include: {
-              departement: {
-                select: {
-                  id: true,
-                  code: true,
-                  ownerId: true,
-                },
-              },
-            },
-          },
-        },
-        where: getFilterClause(searchParams?.q),
-      });
-
-      lieuxDitsEntities = lieuxDitsRq.map(buildLieuditFromLieuditDb);
-    }
+    lieuxDitsEntities = lieuxDitsRq.map(buildLieuditFromLieuditDb);
   }
 
   return lieuxDitsEntities;

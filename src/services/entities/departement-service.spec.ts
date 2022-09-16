@@ -1,6 +1,6 @@
 import { Commune, DatabaseRole, Departement, Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
-import { MutationUpsertDepartementArgs, QueryPaginatedDepartementsArgs } from "../../graphql/generated/graphql-types";
+import { MutationUpsertDepartementArgs, QueryDepartementsArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
@@ -203,7 +203,7 @@ describe("Entities paginated find by search criteria", () => {
     const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryPaginatedDepartementsArgs = {
+    const searchParams: QueryDepartementsArgs = {
       orderBy: "code",
       sortOrder: "desc",
       searchParams: {
@@ -211,7 +211,6 @@ describe("Entities paginated find by search criteria", () => {
         pageNumber: 0,
         pageSize: 10,
       },
-      includeCounts: false,
     };
 
     prismaMock.departement.findMany.mockResolvedValueOnce([departementsData[0]]);

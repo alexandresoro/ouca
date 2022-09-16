@@ -1,6 +1,6 @@
 import { DatabaseRole, Meteo, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../graphql/generated/graphql-types";
+import { MutationUpsertMeteoArgs, QueryMeteosArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -151,7 +151,7 @@ describe("Entities paginated find by search criteria", () => {
     const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryPaginatedMeteosArgs = {
+    const searchParams: QueryMeteosArgs = {
       orderBy: "libelle",
       sortOrder: "desc",
       searchParams: {
@@ -159,7 +159,6 @@ describe("Entities paginated find by search criteria", () => {
         pageNumber: 0,
         pageSize: 10,
       },
-      includeCounts: false,
     };
 
     prismaMock.meteo.findMany.mockResolvedValueOnce([weathersData[0]]);

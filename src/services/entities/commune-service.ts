@@ -1,13 +1,8 @@
 import { Commune, DatabaseRole, Departement, Prisma } from "@prisma/client";
-import {
-  FindParams,
-  MutationUpsertCommuneArgs,
-  QueryPaginatedCommunesArgs,
-} from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertCommuneArgs, QueryCommunesArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
-import counterReducer from "../../utils/counterReducer";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import {
@@ -173,11 +168,11 @@ export const findCommunesWithDepartements = async (): Promise<(Commune & { depar
 
 export const findPaginatedCommunes = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedCommunesArgs> = {}
+  options: Partial<QueryCommunesArgs> = {}
 ): Promise<(Commune & { nbLieuxDits?: number; nbDonnees?: number })[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let communeEntities: (Commune & { nbLieuxDits?: number; nbDonnees?: number })[];
 
@@ -271,58 +266,11 @@ export const findPaginatedCommunes = async (
       }
     }
 
-    if (includeCounts) {
-      const communesRq = await prisma.commune.findMany({
-        ...getPrismaPagination(searchParams),
-        orderBy,
-        include: {
-          _count: {
-            select: {
-              lieudit: true,
-            },
-          },
-          lieudit: {
-            select: {
-              inventaire: {
-                select: {
-                  _count: {
-                    select: {
-                      donnee: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-        where: getFilterClauseCommune(searchParams?.q),
-      });
-
-      communeEntities = communesRq.map((commune) => {
-        const nbDonnees = commune.lieudit
-          .map((lieudit) => {
-            return lieudit.inventaire.map((inventaire) => {
-              return inventaire._count.donnee;
-            });
-          })
-          .flat(2)
-          .reduce(counterReducer, 0);
-
-        return {
-          ...commune,
-          nbLieuxDits: commune._count.lieudit,
-          nbDonnees,
-        };
-      });
-    } else {
-      const communesRq = await prisma.commune.findMany({
-        ...getPrismaPagination(searchParams),
-        orderBy,
-        where: getFilterClauseCommune(searchParams?.q),
-      });
-
-      communeEntities = communesRq;
-    }
+    communeEntities = await prisma.commune.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      where: getFilterClauseCommune(searchParams?.q),
+    });
   }
 
   return communeEntities;

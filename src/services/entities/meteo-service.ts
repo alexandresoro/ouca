@@ -1,5 +1,5 @@
 import { DatabaseRole, Meteo, Prisma } from "@prisma/client";
-import { FindParams, MutationUpsertMeteoArgs, QueryPaginatedMeteosArgs } from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertMeteoArgs, QueryMeteosArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -69,13 +69,13 @@ export const findMeteos = async (loggedUser: LoggedUser | null, params?: FindPar
 
 export const findPaginatedMeteos = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedMeteosArgs> = {}
+  options: Partial<QueryMeteosArgs> = {}
 ): Promise<Meteo[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  const isNbDonneesNeeded = includeCounts || orderByField === "nbDonnees";
+  const isNbDonneesNeeded = orderByField === "nbDonnees";
 
   let meteoEntities: (Meteo & { nbDonnees?: number })[];
 

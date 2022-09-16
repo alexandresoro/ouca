@@ -1,6 +1,6 @@
 import { Commune, DatabaseRole, Lieudit, Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
-import { MutationUpsertCommuneArgs, QueryPaginatedCommunesArgs } from "../../graphql/generated/graphql-types";
+import { MutationUpsertCommuneArgs, QueryCommunesArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
@@ -189,7 +189,7 @@ describe("Entities paginated find by search criteria", () => {
     const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryPaginatedCommunesArgs = {
+    const searchParams: QueryCommunesArgs = {
       orderBy: "code",
       sortOrder: "desc",
       searchParams: {
@@ -197,7 +197,6 @@ describe("Entities paginated find by search criteria", () => {
         pageNumber: 0,
         pageSize: 10,
       },
-      includeCounts: false,
     };
 
     prismaMock.commune.findMany.mockResolvedValueOnce([citiesData[0]]);

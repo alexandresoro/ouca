@@ -1,6 +1,6 @@
 import { DatabaseRole, Prisma, Sexe } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertSexeArgs, QueryPaginatedSexesArgs } from "../../graphql/generated/graphql-types";
+import { MutationUpsertSexeArgs, QuerySexesArgs } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -126,7 +126,7 @@ describe("Entities paginated find by search criteria", () => {
     const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryPaginatedSexesArgs = {
+    const searchParams: QuerySexesArgs = {
       orderBy: "libelle",
       sortOrder: "desc",
       searchParams: {
@@ -134,7 +134,6 @@ describe("Entities paginated find by search criteria", () => {
         pageNumber: 0,
         pageSize: 10,
       },
-      includeCounts: false,
     };
 
     prismaMock.sexe.findMany.mockResolvedValueOnce([sexesData[0]]);

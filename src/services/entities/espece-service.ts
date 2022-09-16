@@ -2,7 +2,7 @@ import { Classe, DatabaseRole, Espece, Prisma } from "@prisma/client";
 import {
   FindParams,
   MutationUpsertEspeceArgs,
-  QueryPaginatedEspecesArgs,
+  QueryEspecesArgs,
   SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
@@ -177,12 +177,12 @@ export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: C
 
 export const findPaginatedEspeces = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedEspecesArgs> = {},
+  options: Partial<QueryEspecesArgs> = {},
   searchCriteria: SearchDonneeCriteria | null | undefined = undefined
 ): Promise<Espece[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EspeceOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {
@@ -277,7 +277,7 @@ export const findPaginatedEspeces = async (
       };
     });
   } else {
-    const especesDb = (await prisma.espece.findMany({
+    especesEntities = (await prisma.espece.findMany({
       ...getPrismaPagination(searchParams),
       include: {
         classe: {
@@ -290,40 +290,6 @@ export const findPaginatedEspeces = async (
       orderBy,
       where: especeFilterClause,
     })) as (Espece & { classe: Classe })[];
-
-    // As we can also filter by donnees but want the filtered count, the _count cannot be calculated properly from the previous findMany => it would return the full count
-    if (includeCounts) {
-      const donneesByMatchingEspece = await prisma.donnee.groupBy({
-        by: ["especeId"],
-        where: {
-          AND: [
-            {
-              especeId: {
-                in: especesDb.map((espece) => espece?.id), // /!\ The IN clause could break if not paginated enough
-              },
-            },
-            builtSearchCriteria
-              ? {
-                  espece,
-                  ...restSearchDonneeCriteria,
-                }
-              : {},
-          ],
-        },
-        _count: true,
-      });
-
-      especesEntities = especesDb.map((espece) => {
-        return {
-          ...espece,
-          ...(includeCounts
-            ? { nbDonnees: donneesByMatchingEspece.find(({ especeId }) => especeId === espece.id)?._count }
-            : {}),
-        };
-      });
-    } else {
-      especesEntities = especesDb;
-    }
   }
 
   return especesEntities;

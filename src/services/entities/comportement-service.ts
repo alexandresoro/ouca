@@ -2,7 +2,7 @@ import { Comportement, DatabaseRole, Nicheur, Prisma } from "@prisma/client";
 import {
   FindParams,
   MutationUpsertComportementArgs,
-  QueryPaginatedComportementsArgs,
+  QueryComportementsArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -131,11 +131,11 @@ const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhere
 
 export const findPaginatedComportements = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedComportementsArgs> = {}
+  options: Partial<QueryComportementsArgs> = {}
 ): Promise<Comportement[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.ComportementOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {
@@ -160,36 +160,10 @@ export const findPaginatedComportements = async (
     }
   }
 
-  const comportements = await prisma.comportement.findMany({
+  return prisma.comportement.findMany({
     ...getPrismaPagination(searchParams),
     orderBy,
     where: getFilterClause(searchParams?.q),
-  });
-
-  const donneesByComportement = includeCounts
-    ? await prisma.donnee_comportement.groupBy({
-        by: ["comportement_id"],
-        where: {
-          comportement_id: {
-            in: comportements?.map((comportement) => comportement.id),
-          },
-        },
-        _count: true,
-      })
-    : null;
-
-  return comportements.map((comportement) => {
-    return {
-      ...comportement,
-      ...(includeCounts
-        ? {
-            nbDonnees:
-              donneesByComportement?.find(
-                (donneeByComportement) => donneeByComportement.comportement_id === comportement.id
-              )?._count ?? 0,
-          }
-        : {}),
-    };
   });
 };
 

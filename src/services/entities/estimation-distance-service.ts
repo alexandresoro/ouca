@@ -2,7 +2,7 @@ import { DatabaseRole, EstimationDistance, Prisma } from "@prisma/client";
 import {
   FindParams,
   MutationUpsertEstimationDistanceArgs,
-  QueryPaginatedEstimationsDistanceArgs,
+  QueryEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -62,11 +62,11 @@ export const findEstimationsDistance = async (
 
 export const findPaginatedEstimationsDistance = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedEstimationsDistanceArgs> = {}
+  options: Partial<QueryEstimationsDistanceArgs> = {}
 ): Promise<EstimationDistance[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {
@@ -91,37 +91,11 @@ export const findPaginatedEstimationsDistance = async (
     }
   }
 
-  let distanceEstimateEntities: (EstimationDistance & { nbDonnees?: number })[];
-
-  if (includeCounts) {
-    const estimationsDistance = await prisma.estimationDistance.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      include: {
-        _count: {
-          select: {
-            donnee: true,
-          },
-        },
-      },
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-
-    distanceEstimateEntities = estimationsDistance.map((estimation) => {
-      return {
-        ...estimation,
-        nbDonnees: estimation._count.donnee,
-      };
-    });
-  } else {
-    distanceEstimateEntities = await prisma.estimationDistance.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-  }
-
-  return distanceEstimateEntities;
+  return prisma.estimationDistance.findMany({
+    ...getPrismaPagination(searchParams),
+    orderBy,
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+  });
 };
 
 export const getEstimationsDistanceCount = async (

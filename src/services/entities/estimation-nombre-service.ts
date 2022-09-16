@@ -2,7 +2,7 @@ import { DatabaseRole, EstimationNombre, Prisma } from "@prisma/client";
 import {
   FindParams,
   MutationUpsertEstimationNombreArgs,
-  QueryPaginatedEstimationsNombreArgs,
+  QueryEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
@@ -59,11 +59,11 @@ export const findEstimationsNombre = async (
 
 export const findPaginatedEstimationsNombre = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedEstimationsNombreArgs> = {}
+  options: Partial<QueryEstimationsNombreArgs> = {}
 ): Promise<EstimationNombre[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.EstimationNombreOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {
@@ -89,37 +89,11 @@ export const findPaginatedEstimationsNombre = async (
     }
   }
 
-  let numberEstimateEntities: (EstimationNombre & { nbDonnees?: number })[];
-
-  if (includeCounts) {
-    const estimationsNombre = await prisma.estimationNombre.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      include: {
-        _count: {
-          select: {
-            donnee: true,
-          },
-        },
-      },
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-
-    numberEstimateEntities = estimationsNombre.map((estimation) => {
-      return {
-        ...estimation,
-        nbDonnees: estimation._count.donnee,
-      };
-    });
-  } else {
-    numberEstimateEntities = await prisma.estimationNombre.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-  }
-
-  return numberEstimateEntities;
+  return prisma.estimationNombre.findMany({
+    ...getPrismaPagination(searchParams),
+    orderBy,
+    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+  });
 };
 
 export const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {

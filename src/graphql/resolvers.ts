@@ -224,8 +224,32 @@ const resolvers: IResolvers = {
     classe: async (_source, args, { user }): Promise<Classe | null> => {
       return findClasse(args.id, user);
     },
+    classes: async (_, args, { user }): Promise<ClassesPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedClasses(user, args),
+        getClassesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
+    },
     commune: async (_source, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
       return findCommune(args.id, user);
+    },
+    communes: async (
+      _,
+      args,
+      { user }
+    ): Promise<Omit<CommunesPaginatedResult, "result"> & { result?: Omit<Commune, "departement">[] }> => {
+      const [result, count] = await Promise.all([
+        findPaginatedCommunes(user, args),
+        getCommunesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
     comportement: async (_source, args, { user }): Promise<Comportement | null> => {
       return findComportement(args.id, user);
@@ -234,8 +258,28 @@ const resolvers: IResolvers = {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findComportementsByIds(args.ids, user);
     },
+    comportements: async (_, args, { user }): Promise<ComportementsPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedComportements(user, args),
+        getComportementsCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
+    },
     departement: async (_source, args, { user }): Promise<Departement | null> => {
       return findDepartement(args.id, user);
+    },
+    departements: async (_, args, { user }): Promise<DepartementsPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedDepartements(user, args),
+        getDepartementsCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
     donnee: (_source, args, { user }): { id: number } => {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -246,11 +290,42 @@ const resolvers: IResolvers = {
     espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
       return findEspece(args.id, user);
     },
+    especes: async (_, args, { user }): Promise<{ result: EspeceEntity[]; count: number }> => {
+      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      const [result, count] = await Promise.all([
+        findPaginatedEspeces(user, args, null),
+        getEspecesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
+    },
     estimationDistance: async (_source, args, { user }): Promise<EstimationDistance | null> => {
       return findEstimationDistance(args.id, user);
     },
+    estimationsDistance: async (_, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedEstimationsDistance(user, args),
+        getEstimationsDistanceCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
+    },
     estimationNombre: async (_source, args, { user }): Promise<EstimationNombre | null> => {
       return findEstimationNombre(args.id, user);
+    },
+    estimationsNombre: async (_, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedEstimationsNombre(user, args),
+        getEstimationsNombreCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
     inventaire: async (_source, args, { user }): Promise<Omit<Inventaire, "lieuDit"> | null> => {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -259,6 +334,16 @@ const resolvers: IResolvers = {
     lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
       return findLieuDit(args.id, user);
     },
+    lieuxdits: async (_, args, { user }): Promise<LieuxDitsPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedLieuxDits(user, args),
+        getLieuxDitsCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
+    },
     meteo: async (_source, args, { user }): Promise<Meteo | null> => {
       return findMeteo(args.id, user);
     },
@@ -266,12 +351,32 @@ const resolvers: IResolvers = {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findMeteosByIds(args.ids, user);
     },
+    meteos: async (_, args, { user }): Promise<MeteosPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedMeteos(user, args),
+        getMeteosCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
+    },
     milieu: async (_source, args, { user }): Promise<Milieu | null> => {
       return findMilieu(args.id, user);
     },
     milieuList: async (_source, args, { user }): Promise<Milieu[]> => {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findMilieuxByIds(args.ids, user);
+    },
+    milieux: async (_, args, { user }): Promise<MilieuxPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedMilieux(user, args),
+        getMilieuxCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
     },
     observateur: async (_source, args, { user }): Promise<Observateur | null> => {
       return findObservateur(args.id, user);
@@ -293,6 +398,16 @@ const resolvers: IResolvers = {
     sexe: async (_source, args, { user }): Promise<Sexe | null> => {
       return findSexe(args.id, user);
     },
+    sexes: async (_, args, { user }): Promise<SexesPaginatedResult> => {
+      const [result, count] = await Promise.all([
+        findPaginatedSexes(user, args),
+        getSexesCount(user, args?.searchParams?.q),
+      ]);
+      return {
+        result,
+        count,
+      };
+    },
     specimenCountByAge: (_source, args, { user }): Promise<AgeWithSpecimensCount[]> => {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return countSpecimensByAgeForEspeceId(args?.especeId);
@@ -309,122 +424,7 @@ const resolvers: IResolvers = {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findNextRegroupement();
     },
-    paginatedClasses: async (_source, args, { user }): Promise<ClassesPaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedClasses(user, args),
-        getClassesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedCommunes: async (
-      _source,
-      args,
-      { user }
-    ): Promise<Omit<CommunesPaginatedResult, "result"> & { result?: Omit<Commune, "departement">[] }> => {
-      const [result, count] = await Promise.all([
-        findPaginatedCommunes(user, args),
-        getCommunesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedComportements: async (_source, args, { user }): Promise<ComportementsPaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedComportements(user, args),
-        getComportementsCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedDepartements: async (_source, args, { user }): Promise<DepartementsPaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedDepartements(user, args),
-        getDepartementsCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedEspeces: async (_source, args, { user }): Promise<{ result: EspeceEntity[]; count: number }> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      const [result, count] = await Promise.all([
-        findPaginatedEspeces(user, args, null),
-        getEspecesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedEstimationsDistance: async (_source, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedEstimationsDistance(user, args),
-        getEstimationsDistanceCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedEstimationsNombre: async (_source, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedEstimationsNombre(user, args),
-        getEstimationsNombreCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedLieuxdits: async (_source, args, { user }): Promise<LieuxDitsPaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedLieuxDits(user, args),
-        getLieuxDitsCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedMeteos: async (_source, args, { user }): Promise<MeteosPaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedMeteos(user, args),
-        getMeteosCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedMilieux: async (_source, args, { user }): Promise<MilieuxPaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedMilieux(user, args),
-        getMilieuxCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedSexes: async (_source, args, { user }): Promise<SexesPaginatedResult> => {
-      const [result, count] = await Promise.all([
-        findPaginatedSexes(user, args),
-        getSexesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        result,
-        count,
-      };
-    },
-    paginatedSearchEspeces: async (_source, args, { user }): Promise<{ result: EspeceEntity[]; count: number }> => {
+    searchEspeces: async (_, args, { user }): Promise<{ result: EspeceEntity[]; count: number }> => {
       const { searchCriteria, ...rest } = args ?? {};
       const [result, count] = await Promise.all([
         findPaginatedEspeces(user, rest, searchCriteria),

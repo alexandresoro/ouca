@@ -1,5 +1,5 @@
 import { DatabaseRole, Milieu, Prisma } from "@prisma/client";
-import { FindParams, MutationUpsertMilieuArgs, QueryPaginatedMilieuxArgs } from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertMilieuArgs, QueryMilieuxArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
@@ -116,11 +116,11 @@ const getFilterClause = (q: string | null | undefined): Prisma.MilieuWhereInput 
 
 export const findPaginatedMilieux = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryPaginatedMilieuxArgs> = {}
+  options: Partial<QueryMilieuxArgs> = {}
 ): Promise<Milieu[]> => {
   validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder, includeCounts } = options;
+  const { searchParams, orderBy: orderByField, sortOrder } = options;
 
   let orderBy: Prisma.Enumerable<Prisma.MilieuOrderByWithRelationInput> | undefined = undefined;
   if (sortOrder) {
@@ -144,33 +144,10 @@ export const findPaginatedMilieux = async (
     }
   }
 
-  const milieux = await prisma.milieu.findMany({
+  return prisma.milieu.findMany({
     ...getPrismaPagination(searchParams),
     orderBy,
     where: getFilterClause(searchParams?.q),
-  });
-
-  const donneesByMilieu = includeCounts
-    ? await prisma.donnee_milieu.groupBy({
-        by: ["milieu_id"],
-        where: {
-          milieu_id: {
-            in: milieux?.map((milieu) => milieu.id),
-          },
-        },
-        _count: true,
-      })
-    : null;
-
-  return milieux.map((milieu) => {
-    return {
-      ...milieu,
-      ...(includeCounts
-        ? {
-            nbDonnees: donneesByMilieu?.find((donneeByMilieu) => donneeByMilieu.milieu_id === milieu.id)?._count ?? 0,
-          }
-        : {}),
-    };
   });
 };
 
