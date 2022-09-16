@@ -774,15 +774,22 @@ export type Query = {
   age?: Maybe<Age>;
   ages?: Maybe<AgesPaginatedResult>;
   classe?: Maybe<Classe>;
+  classes?: Maybe<ClassesPaginatedResult>;
   commune?: Maybe<Commune>;
+  communes?: Maybe<CommunesPaginatedResult>;
   comportement?: Maybe<Comportement>;
   comportementList?: Maybe<Array<Maybe<Comportement>>>;
+  comportements?: Maybe<ComportementsPaginatedResult>;
   departement?: Maybe<Departement>;
+  departements?: Maybe<DepartementsPaginatedResult>;
   donnee?: Maybe<DonneeResult>;
   dumpDatabase?: Maybe<Scalars['String']>;
   espece?: Maybe<Espece>;
+  especes?: Maybe<EspecesPaginatedResult>;
   estimationDistance?: Maybe<EstimationDistance>;
   estimationNombre?: Maybe<EstimationNombre>;
+  estimationsDistance?: Maybe<EstimationsDistancePaginatedResult>;
+  estimationsNombre?: Maybe<EstimationsNombrePaginatedResult>;
   exportAges?: Maybe<Scalars['String']>;
   exportClasses?: Maybe<Scalars['String']>;
   exportCommunes?: Maybe<Scalars['String']>;
@@ -801,29 +808,22 @@ export type Query = {
   inventaire?: Maybe<Inventaire>;
   lastDonneeId?: Maybe<Scalars['Int']>;
   lieuDit?: Maybe<LieuDit>;
+  lieuxdits?: Maybe<LieuxDitsPaginatedResult>;
   meteo?: Maybe<Meteo>;
   meteoList?: Maybe<Array<Maybe<Meteo>>>;
+  meteos?: Maybe<MeteosPaginatedResult>;
   milieu?: Maybe<Milieu>;
   milieuList?: Maybe<Array<Maybe<Milieu>>>;
+  milieux?: Maybe<MilieuxPaginatedResult>;
   nextRegroupement: Scalars['Int'];
   observateur?: Maybe<Observateur>;
   observateurList?: Maybe<Array<Observateur>>;
   observateurs?: Maybe<ObservateursPaginatedResult>;
-  paginatedClasses?: Maybe<ClassesPaginatedResult>;
-  paginatedCommunes?: Maybe<CommunesPaginatedResult>;
-  paginatedComportements?: Maybe<ComportementsPaginatedResult>;
-  paginatedDepartements?: Maybe<DepartementsPaginatedResult>;
-  paginatedEspeces?: Maybe<EspecesPaginatedResult>;
-  paginatedEstimationsDistance?: Maybe<EstimationsDistancePaginatedResult>;
-  paginatedEstimationsNombre?: Maybe<EstimationsNombrePaginatedResult>;
-  paginatedLieuxdits?: Maybe<LieuxDitsPaginatedResult>;
-  paginatedMeteos?: Maybe<MeteosPaginatedResult>;
-  paginatedMilieux?: Maybe<MilieuxPaginatedResult>;
   paginatedSearchDonnees?: Maybe<PaginatedSearchDonneesResult>;
-  paginatedSearchEspeces?: Maybe<EspecesPaginatedResult>;
-  paginatedSexes?: Maybe<SexesPaginatedResult>;
+  searchEspeces?: Maybe<EspecesPaginatedResult>;
   settings?: Maybe<Settings>;
   sexe?: Maybe<Sexe>;
+  sexes?: Maybe<SexesPaginatedResult>;
   specimenCountByAge?: Maybe<Array<Maybe<AgeWithSpecimensCount>>>;
   specimenCountBySexe?: Maybe<Array<Maybe<SexeWithSpecimensCount>>>;
 };
@@ -846,8 +846,22 @@ export type QueryClasseArgs = {
 };
 
 
+export type QueryClassesArgs = {
+  orderBy?: InputMaybe<ClassesOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
+};
+
+
 export type QueryCommuneArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryCommunesArgs = {
+  orderBy?: InputMaybe<CommunesOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
@@ -861,8 +875,22 @@ export type QueryComportementListArgs = {
 };
 
 
+export type QueryComportementsArgs = {
+  orderBy?: InputMaybe<ComportementsOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
+};
+
+
 export type QueryDepartementArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryDepartementsArgs = {
+  orderBy?: InputMaybe<DepartementsOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
@@ -876,6 +904,13 @@ export type QueryEspeceArgs = {
 };
 
 
+export type QueryEspecesArgs = {
+  orderBy?: InputMaybe<EspecesOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
+};
+
+
 export type QueryEstimationDistanceArgs = {
   id: Scalars['Int'];
 };
@@ -883,6 +918,20 @@ export type QueryEstimationDistanceArgs = {
 
 export type QueryEstimationNombreArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryEstimationsDistanceArgs = {
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
+};
+
+
+export type QueryEstimationsNombreArgs = {
+  orderBy?: InputMaybe<EstimationNombreOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
@@ -906,6 +955,13 @@ export type QueryLieuDitArgs = {
 };
 
 
+export type QueryLieuxditsArgs = {
+  orderBy?: InputMaybe<LieuxDitsOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
+};
+
+
 export type QueryMeteoArgs = {
   id: Scalars['Int'];
 };
@@ -916,6 +972,13 @@ export type QueryMeteoListArgs = {
 };
 
 
+export type QueryMeteosArgs = {
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
+};
+
+
 export type QueryMilieuArgs = {
   id: Scalars['Int'];
 };
@@ -923,6 +986,13 @@ export type QueryMilieuArgs = {
 
 export type QueryMilieuListArgs = {
   ids: Array<Scalars['Int']>;
+};
+
+
+export type QueryMilieuxArgs = {
+  orderBy?: InputMaybe<MilieuxOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 
@@ -943,88 +1013,7 @@ export type QueryObservateursArgs = {
 };
 
 
-export type QueryPaginatedClassesArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<ClassesOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedCommunesArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<CommunesOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedComportementsArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<ComportementsOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedDepartementsArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<DepartementsOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedEspecesArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<EspecesOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedEstimationsDistanceArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedEstimationsNombreArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<EstimationNombreOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedLieuxditsArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<LieuxDitsOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedMeteosArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedMilieuxArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<MilieuxOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
-};
-
-
-export type QueryPaginatedSearchEspecesArgs = {
-  includeCounts: Scalars['Boolean'];
+export type QuerySearchEspecesArgs = {
   orderBy?: InputMaybe<EspecesOrderBy>;
   searchCriteria?: InputMaybe<SearchDonneeCriteria>;
   searchParams?: InputMaybe<SearchDonneeParams>;
@@ -1032,16 +1021,15 @@ export type QueryPaginatedSearchEspecesArgs = {
 };
 
 
-export type QueryPaginatedSexesArgs = {
-  includeCounts: Scalars['Boolean'];
-  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
-  searchParams?: InputMaybe<SearchParams>;
-  sortOrder?: InputMaybe<SortOrder>;
+export type QuerySexeArgs = {
+  id: Scalars['Int'];
 };
 
 
-export type QuerySexeArgs = {
-  id: Scalars['Int'];
+export type QuerySexesArgs = {
+  orderBy?: InputMaybe<EntitesAvecLibelleOrderBy>;
+  searchParams?: InputMaybe<SearchParams>;
+  sortOrder?: InputMaybe<SortOrder>;
 };
 
 

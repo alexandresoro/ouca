@@ -616,20 +616,46 @@ type Query {
   age(id: Int!): Age
   ages(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
   classe(id: Int!): Classe
+  classes(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
   commune(id: Int!): Commune
+  communes(searchParams: SearchParams, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
   comportement(id: Int!): Comportement
   comportementList(ids: [Int!]!): [Comportement]
+  comportements(
+    searchParams: SearchParams
+    orderBy: ComportementsOrderBy
+    sortOrder: SortOrder
+  ): ComportementsPaginatedResult
   departement(id: Int!): Departement
+  departements(
+    searchParams: SearchParams
+    orderBy: DepartementsOrderBy
+    sortOrder: SortOrder
+  ): DepartementsPaginatedResult
   donnee(id: Int!): DonneeResult
   espece(id: Int!): Espece
+  especes(searchParams: SearchParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
   estimationDistance(id: Int!): EstimationDistance
+  estimationsDistance(
+    searchParams: SearchParams
+    orderBy: EntitesAvecLibelleOrderBy
+    sortOrder: SortOrder
+  ): EstimationsDistancePaginatedResult
   estimationNombre(id: Int!): EstimationNombre
+  estimationsNombre(
+    searchParams: SearchParams
+    orderBy: EstimationNombreOrderBy
+    sortOrder: SortOrder
+  ): EstimationsNombrePaginatedResult
   inventaire(id: Int!): Inventaire
   lieuDit(id: Int!): LieuDit
+  lieuxdits(searchParams: SearchParams, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
   meteo(id: Int!): Meteo
   meteoList(ids: [Int!]!): [Meteo]
+  meteos(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): MeteosPaginatedResult
   milieu(id: Int!): Milieu
   milieuList(ids: [Int!]!): [Milieu]
+  milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
   observateur(id: Int!): Observateur
   observateurList(ids: [Int!]!): [Observateur!]
   observateurs(
@@ -638,82 +664,16 @@ type Query {
     sortOrder: SortOrder
   ): ObservateursPaginatedResult
   sexe(id: Int!): Sexe
+  sexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
   nextRegroupement: Int!
   lastDonneeId: Int
-  paginatedClasses(
-    searchParams: SearchParams
-    orderBy: ClassesOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): ClassesPaginatedResult
-  paginatedCommunes(
-    searchParams: SearchParams
-    orderBy: CommunesOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): CommunesPaginatedResult
-  paginatedComportements(
-    searchParams: SearchParams
-    orderBy: ComportementsOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): ComportementsPaginatedResult
-  paginatedDepartements(
-    searchParams: SearchParams
-    orderBy: DepartementsOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): DepartementsPaginatedResult
-  paginatedEspeces(
-    searchParams: SearchParams
-    orderBy: EspecesOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): EspecesPaginatedResult
-  paginatedEstimationsDistance(
-    searchParams: SearchParams
-    orderBy: EntitesAvecLibelleOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): EstimationsDistancePaginatedResult
-  paginatedEstimationsNombre(
-    searchParams: SearchParams
-    orderBy: EstimationNombreOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): EstimationsNombrePaginatedResult
-  paginatedLieuxdits(
-    searchParams: SearchParams
-    orderBy: LieuxDitsOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): LieuxDitsPaginatedResult
-  paginatedMeteos(
-    searchParams: SearchParams
-    orderBy: EntitesAvecLibelleOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): MeteosPaginatedResult
-  paginatedMilieux(
-    searchParams: SearchParams
-    orderBy: MilieuxOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): MilieuxPaginatedResult
-  paginatedSexes(
-    searchParams: SearchParams
-    orderBy: EntitesAvecLibelleOrderBy
-    sortOrder: SortOrder
-    includeCounts: Boolean!
-  ): SexesPaginatedResult
-  paginatedSearchEspeces(
+  searchEspeces(
     searchCriteria: SearchDonneeCriteria
     searchParams: SearchDonneeParams
     orderBy: EspecesOrderBy
     sortOrder: SortOrder
-    includeCounts: Boolean!
   ): EspecesPaginatedResult
   paginatedSearchDonnees: PaginatedSearchDonneesResult
   settings: Settings
