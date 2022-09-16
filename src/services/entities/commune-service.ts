@@ -169,12 +169,12 @@ export const findCommunesWithDepartements = async (): Promise<(Commune & { depar
 export const findPaginatedCommunes = async (
   loggedUser: LoggedUser | null,
   options: Partial<QueryCommunesArgs> = {}
-): Promise<(Commune & { nbLieuxDits?: number })[]> => {
+): Promise<Commune[]> => {
   validateAuthorization(loggedUser);
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let communeEntities: (Commune & { nbLieuxDits?: number })[];
+  let communeEntities: Commune[];
 
   if (orderByField === "nbDonnees") {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
@@ -189,7 +189,7 @@ export const findPaginatedCommunes = async (
 
     const donneesPerCommuneRequest = Prisma.sql`
     SELECT 
-      c.id, c.owner_id as ownerId, count(DISTINCT l.id) as nbLieuxDits, count(d.id) as nbDonnees
+      c.id, c.owner_id as ownerId, count(d.id) as nbDonnees
     FROM 
       donnee d 
     RIGHT JOIN 
@@ -214,7 +214,7 @@ export const findPaginatedCommunes = async (
     `;
 
     const nbDonneesForFilteredCommunes = await prisma.$queryRaw<
-      { id: number; nbLieuxDits: bigint; nbDonnees: bigint }[]
+      { id: number; nbDonnees: bigint }[]
     >`${donneesPerCommuneRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
       transformQueryRawResultsBigIntsToNumbers
     );
@@ -229,11 +229,8 @@ export const findPaginatedCommunes = async (
 
     communeEntities = nbDonneesForFilteredCommunes.map((communeInfo) => {
       const commune = communesRq?.find((commune) => commune.id === communeInfo.id);
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ...commune!,
-        nbLieuxDits: communeInfo.nbLieuxDits,
-      };
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return commune!;
     });
   } else {
     let orderBy: Prisma.Enumerable<Prisma.CommuneOrderByWithRelationInput> | undefined = undefined;

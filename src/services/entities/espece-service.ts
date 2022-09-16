@@ -223,7 +223,7 @@ export const findPaginatedEspeces = async (
     AND: [getFilterClause(searchParams?.q), getFilterClauseSearchDonnee(searchCriteria)],
   };
 
-  let especesEntities: (Espece & { classe: Classe })[];
+  let especesEntities: Espece[];
 
   if (orderByField === "nbDonnees" && builtSearchCriteria) {
     // As the orderBy donnee _count will not work properly because it will compare with ALL donnees and not only the matching one, we need to do differently
@@ -252,7 +252,7 @@ export const findPaginatedEspeces = async (
     });
 
     // Once we have the proper especes_is, we can retrieve their corresponding data
-    const especesRq = (await prisma.espece.findMany({
+    const especesRq = await prisma.espece.findMany({
       include: {
         classe: {
           select: {
@@ -266,7 +266,7 @@ export const findPaginatedEspeces = async (
           in: donneesByMatchingEspece.map(({ especeId }) => especeId), // /!\ The IN clause could break if not paginated enough
         },
       },
-    })) as (Espece & { classe: Classe })[];
+    });
 
     especesEntities = donneesByMatchingEspece.map(({ especeId }) => {
       const espece = especesRq?.find(({ id }) => id === especeId);
@@ -274,19 +274,11 @@ export const findPaginatedEspeces = async (
       return espece!;
     });
   } else {
-    especesEntities = (await prisma.espece.findMany({
+    especesEntities = await prisma.espece.findMany({
       ...getPrismaPagination(searchParams),
-      include: {
-        classe: {
-          select: {
-            id: true,
-            libelle: true,
-          },
-        },
-      },
       orderBy,
       where: especeFilterClause,
-    })) as (Espece & { classe: Classe })[];
+    });
   }
 
   return especesEntities;

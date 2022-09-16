@@ -168,19 +168,6 @@ describe("Entities paginated find by search criteria", () => {
     expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
       ...queryParametersToFindAllEntities(COLUMN_NOM),
       orderBy: undefined,
-      include: {
-        commune: {
-          include: {
-            departement: {
-              select: {
-                id: true,
-                code: true,
-                ownerId: true,
-              },
-            },
-          },
-        },
-      },
       where: {},
     });
   });
@@ -209,19 +196,6 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      include: {
-        commune: {
-          include: {
-            departement: {
-              select: {
-                id: true,
-                code: true,
-                ownerId: true,
-              },
-            },
-          },
-        },
       },
       skip: searchParams.searchParams?.pageNumber,
       take: searchParams.searchParams?.pageSize,

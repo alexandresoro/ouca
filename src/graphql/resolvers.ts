@@ -334,7 +334,11 @@ const resolvers: IResolvers = {
     lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
       return findLieuDit(args.id, user);
     },
-    lieuxdits: async (_, args, { user }): Promise<LieuxDitsPaginatedResult> => {
+    lieuxdits: async (
+      _,
+      args,
+      { user }
+    ): Promise<Omit<LieuxDitsPaginatedResult, "result"> & { result?: Omit<LieuDit, "commune">[] }> => {
       const [result, count] = await Promise.all([
         findPaginatedLieuxDits(user, args),
         getLieuxDitsCount(user, args?.searchParams?.q),

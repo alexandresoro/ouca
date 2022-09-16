@@ -1,10 +1,5 @@
 import { Commune, DatabaseRole, Departement, Lieudit, Prisma } from "@prisma/client";
-import {
-  FindParams,
-  LieuDit,
-  MutationUpsertLieuDitArgs,
-  QueryLieuxditsArgs,
-} from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertLieuDitArgs, QueryLieuxditsArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
@@ -159,14 +154,12 @@ export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
 export const findPaginatedLieuxDits = async (
   loggedUser: LoggedUser | null,
   options: Partial<QueryLieuxditsArgs> = {}
-): Promise<LieuDit[]> => {
+): Promise<LieuDitWithCoordinatesAsNumber<Lieudit>[]> => {
   validateAuthorization(loggedUser);
 
   const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  let lieuxDitsEntities: (LieuDitWithCoordinatesAsNumber<Lieudit> & {
-    commune: Commune & { departement: Departement };
-  })[];
+  let lieuxDitsEntities: LieuDitWithCoordinatesAsNumber<Lieudit>[];
 
   if (orderByField === "nbDonnees") {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
@@ -214,19 +207,6 @@ export const findPaginatedLieuxDits = async (
     );
 
     const lieuxDitsRq = await prisma.lieudit.findMany({
-      include: {
-        commune: {
-          include: {
-            departement: {
-              select: {
-                id: true,
-                code: true,
-                ownerId: true,
-              },
-            },
-          },
-        },
-      },
       where: {
         id: {
           in: nbDonneesForFilteredLieuxDits.map((lieuditInfo) => lieuditInfo.id), // /!\ The IN clause could break if not paginated enough
@@ -283,19 +263,6 @@ export const findPaginatedLieuxDits = async (
     const lieuxDitsRq = await prisma.lieudit.findMany({
       ...getPrismaPagination(searchParams),
       orderBy,
-      include: {
-        commune: {
-          include: {
-            departement: {
-              select: {
-                id: true,
-                code: true,
-                ownerId: true,
-              },
-            },
-          },
-        },
-      },
       where: getFilterClause(searchParams?.q),
     });
 

@@ -187,14 +187,6 @@ describe("Entities paginated find by search criteria", () => {
     expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
       ...queryParametersToFindAllEntities(COLUMN_CODE),
-      include: {
-        classe: {
-          select: {
-            id: true,
-            libelle: true,
-          },
-        },
-      },
       orderBy: undefined,
       where: { AND: [{}, {}] },
     });
@@ -221,14 +213,6 @@ describe("Entities paginated find by search criteria", () => {
     expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
       ...queryParametersToFindAllEntities(COLUMN_CODE),
-      include: {
-        classe: {
-          select: {
-            id: true,
-            libelle: true,
-          },
-        },
-      },
       orderBy: {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         [searchParams.orderBy!]: searchParams.sortOrder,
@@ -292,14 +276,6 @@ describe("Entities paginated find by search criteria", () => {
     expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
       ...queryParametersToFindAllEntities(COLUMN_CODE),
-      include: {
-        classe: {
-          select: {
-            id: true,
-            libelle: true,
-          },
-        },
-      },
       orderBy: {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         [searchParams.orderBy!]: searchParams.sortOrder,

@@ -87,7 +87,7 @@ export const findPaginatedClasses = async (
 
   const isNbDonneesNeeded = orderByField === "nbDonnees";
 
-  let classeEntities: (Classe & { nbEspeces?: number })[];
+  let classeEntities: Classe[];
 
   if (isNbDonneesNeeded) {
     const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
@@ -100,7 +100,7 @@ export const findPaginatedClasses = async (
 
     const donneesPerClasseIdRequest = Prisma.sql`
     SELECT 
-      c.*, c.owner_id as ownerId, count(DISTINCT e.id) as nbEspeces, count(d.id) as nbDonnees
+      c.*, c.owner_id as ownerId, count(d.id) as nbDonnees
     FROM 
       donnee d 
     RIGHT JOIN 
@@ -117,7 +117,7 @@ export const findPaginatedClasses = async (
     `;
 
     classeEntities = await prisma.$queryRaw<
-      (Classe & { nbEspeces: bigint; nbDonnees: bigint })[]
+      (Classe & { nbDonnees: bigint })[]
     >`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
       transformQueryRawResultsBigIntsToNumbers
     );
