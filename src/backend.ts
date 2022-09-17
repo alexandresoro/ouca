@@ -100,6 +100,10 @@ checkAndCreateFolders();
     }
 
     const data = await req.file();
+    if (!data) {
+      return reply.code(400).send();
+    }
+
     const uploadId = randomUUID();
 
     await promisify(pipeline)(data.file, fs.createWriteStream(path.join(IMPORTS_DIR_PATH, uploadId)));
