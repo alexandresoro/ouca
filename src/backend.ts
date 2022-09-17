@@ -4,6 +4,7 @@ import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import { fastifyStatic } from "@fastify/static";
 import { fastify } from "fastify";
+import { NoSchemaIntrospectionCustomRule } from "graphql";
 import mercurius from "mercurius";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
@@ -53,6 +54,7 @@ checkAndCreateFolders();
     schema,
     resolvers,
     context: buildGraphQLContext,
+    validationRules: process.env.NODE_ENV === "production" ? [NoSchemaIntrospectionCustomRule] : [],
   });
   server.graphql.addHook("preExecution", logQueries);
   server.graphql.addHook("onResolution", logResults);
