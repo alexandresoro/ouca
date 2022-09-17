@@ -9,7 +9,7 @@
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
-      "excludePackageNames": ["prisma", "typescript", "jest-mock-extended"],
+      "excludePackageNames": ["prisma", "typescript"],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non-major dev dependencies",
