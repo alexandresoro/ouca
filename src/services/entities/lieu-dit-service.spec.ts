@@ -3,7 +3,7 @@ import { mock, mockDeep } from "jest-mock-extended";
 import {
   LieuxDitsOrderBy,
   MutationUpsertLieuDitArgs,
-  QueryLieuxditsArgs,
+  QueryLieuxDitsArgs,
   SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
@@ -181,7 +181,7 @@ describe("Entities paginated find by search criteria", () => {
     const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryLieuxditsArgs = {
+    const searchParams: QueryLieuxDitsArgs = {
       orderBy: LieuxDitsOrderBy.Nom,
       sortOrder: SortOrder.Desc,
       searchParams: {
