@@ -30,7 +30,7 @@ export type AgeWithSpecimensCount = {
 export type AgesPaginatedResult = PaginatedResult & {
   __typename?: 'AgesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Age>>;
+  data?: Maybe<Array<Age>>;
 };
 
 export type Classe = {
@@ -53,7 +53,7 @@ export type ClassesOrderBy = typeof ClassesOrderBy[keyof typeof ClassesOrderBy];
 export type ClassesPaginatedResult = PaginatedResult & {
   __typename?: 'ClassesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Classe>>;
+  data?: Maybe<Array<Classe>>;
 };
 
 export type Commune = {
@@ -80,7 +80,7 @@ export type CommunesOrderBy = typeof CommunesOrderBy[keyof typeof CommunesOrderB
 export type CommunesPaginatedResult = PaginatedResult & {
   __typename?: 'CommunesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Commune>>;
+  data?: Maybe<Array<Commune>>;
 };
 
 export type Comportement = {
@@ -105,7 +105,7 @@ export type ComportementsOrderBy = typeof ComportementsOrderBy[keyof typeof Comp
 export type ComportementsPaginatedResult = PaginatedResult & {
   __typename?: 'ComportementsPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Comportement>>;
+  data?: Maybe<Array<Comportement>>;
 };
 
 export type Coordinates = {
@@ -144,7 +144,7 @@ export type DepartementsOrderBy = typeof DepartementsOrderBy[keyof typeof Depart
 export type DepartementsPaginatedResult = PaginatedResult & {
   __typename?: 'DepartementsPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Departement>>;
+  data?: Maybe<Array<Departement>>;
 };
 
 export type Donnee = {
@@ -217,7 +217,7 @@ export type EspecesOrderBy = typeof EspecesOrderBy[keyof typeof EspecesOrderBy];
 export type EspecesPaginatedResult = PaginatedResult & {
   __typename?: 'EspecesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Espece>>;
+  data?: Maybe<Array<Espece>>;
 };
 
 export type EstimationDistance = {
@@ -248,13 +248,13 @@ export type EstimationNombreOrderBy = typeof EstimationNombreOrderBy[keyof typeo
 export type EstimationsDistancePaginatedResult = PaginatedResult & {
   __typename?: 'EstimationsDistancePaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<EstimationDistance>>;
+  data?: Maybe<Array<EstimationDistance>>;
 };
 
 export type EstimationsNombrePaginatedResult = PaginatedResult & {
   __typename?: 'EstimationsNombrePaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<EstimationNombre>>;
+  data?: Maybe<Array<EstimationNombre>>;
 };
 
 export type FindParams = {
@@ -440,7 +440,7 @@ export type LieuxDitsOrderBy = typeof LieuxDitsOrderBy[keyof typeof LieuxDitsOrd
 export type LieuxDitsPaginatedResult = PaginatedResult & {
   __typename?: 'LieuxDitsPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<LieuDit>>;
+  data?: Maybe<Array<LieuDit>>;
 };
 
 export type Meteo = {
@@ -454,7 +454,7 @@ export type Meteo = {
 export type MeteosPaginatedResult = PaginatedResult & {
   __typename?: 'MeteosPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Meteo>>;
+  data?: Maybe<Array<Meteo>>;
 };
 
 export type Milieu = {
@@ -477,7 +477,7 @@ export type MilieuxOrderBy = typeof MilieuxOrderBy[keyof typeof MilieuxOrderBy];
 export type MilieuxPaginatedResult = PaginatedResult & {
   __typename?: 'MilieuxPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Milieu>>;
+  data?: Maybe<Array<Milieu>>;
 };
 
 export type Mutation = {
@@ -727,7 +727,7 @@ export type Observateur = {
 export type ObservateursPaginatedResult = PaginatedResult & {
   __typename?: 'ObservateursPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Observateur>>;
+  data?: Maybe<Array<Observateur>>;
 };
 
 export const OngoingSubStatus = {
@@ -1109,7 +1109,7 @@ export type SexeWithSpecimensCount = {
 export type SexesPaginatedResult = PaginatedResult & {
   __typename?: 'SexesPaginatedResult';
   count: Scalars['Int'];
-  result?: Maybe<Array<Sexe>>;
+  data?: Maybe<Array<Sexe>>;
 };
 
 export const SortOrder = {

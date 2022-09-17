@@ -479,67 +479,67 @@ interface PaginatedResult {
 }
 
 type AgesPaginatedResult implements PaginatedResult {
-  result: [Age!]
+  data: [Age!]
   count: Int!
 }
 
 type ClassesPaginatedResult implements PaginatedResult {
-  result: [Classe!]
+  data: [Classe!]
   count: Int!
 }
 
 type CommunesPaginatedResult implements PaginatedResult {
-  result: [Commune!]
+  data: [Commune!]
   count: Int!
 }
 
 type ComportementsPaginatedResult implements PaginatedResult {
-  result: [Comportement!]
+  data: [Comportement!]
   count: Int!
 }
 
 type DepartementsPaginatedResult implements PaginatedResult {
-  result: [Departement!]
+  data: [Departement!]
   count: Int!
 }
 
 type EspecesPaginatedResult implements PaginatedResult {
-  result: [Espece!]
+  data: [Espece!]
   count: Int!
 }
 
 type EstimationsDistancePaginatedResult implements PaginatedResult {
-  result: [EstimationDistance!]
+  data: [EstimationDistance!]
   count: Int!
 }
 
 type EstimationsNombrePaginatedResult implements PaginatedResult {
-  result: [EstimationNombre!]
+  data: [EstimationNombre!]
   count: Int!
 }
 
 type LieuxDitsPaginatedResult implements PaginatedResult {
-  result: [LieuDit!]
+  data: [LieuDit!]
   count: Int!
 }
 
 type MeteosPaginatedResult implements PaginatedResult {
-  result: [Meteo!]
+  data: [Meteo!]
   count: Int!
 }
 
 type MilieuxPaginatedResult implements PaginatedResult {
-  result: [Milieu!]
+  data: [Milieu!]
   count: Int!
 }
 
 type ObservateursPaginatedResult implements PaginatedResult {
-  result: [Observateur!]
+  data: [Observateur!]
   count: Int!
 }
 
 type SexesPaginatedResult implements PaginatedResult {
-  result: [Sexe!]
+  data: [Sexe!]
   count: Int!
 }
 
