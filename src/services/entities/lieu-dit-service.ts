@@ -1,5 +1,5 @@
 import { Commune, DatabaseRole, Departement, Lieudit, Prisma } from "@prisma/client";
-import { FindParams, MutationUpsertLieuDitArgs, QueryLieuxditsArgs } from "../../graphql/generated/graphql-types";
+import { FindParams, MutationUpsertLieuDitArgs, QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
@@ -153,7 +153,7 @@ export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
 
 export const findPaginatedLieuxDits = async (
   loggedUser: LoggedUser | null,
-  options: Partial<QueryLieuxditsArgs> = {}
+  options: Partial<QueryLieuxDitsArgs> = {}
 ): Promise<LieuDitWithCoordinatesAsNumber<Lieudit>[]> => {
   validateAuthorization(loggedUser);
 

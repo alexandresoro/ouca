@@ -40,17 +40,6 @@ export const getDonneesCountByMeteo = async (id: number, loggedUser: LoggedUser 
   });
 };
 
-export const findMeteosByIds = async (ids: number[], loggedUser: LoggedUser | null = null): Promise<Meteo[]> => {
-  return prisma.meteo.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      id: {
-        in: ids,
-      },
-    },
-  });
-};
-
 export const findMeteos = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Meteo[]> => {
   validateAuthorization(loggedUser);
 

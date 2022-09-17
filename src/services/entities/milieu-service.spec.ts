@@ -16,7 +16,6 @@ import {
   deleteMilieu,
   findMilieu,
   findMilieux,
-  findMilieuxByIds,
   findPaginatedMilieux,
   getDonneesCountByMilieu,
   getMilieuxCount,
@@ -93,24 +92,6 @@ describe("Data count per entity", () => {
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(getDonneesCountByMilieu(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  });
-});
-
-test("Find list of environments by IDs", async () => {
-  const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
-
-  prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsData);
-
-  await findMilieuxByIds(environmentsData.map((environment) => environment.id));
-
-  expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      id: {
-        in: environmentsData.map((environment) => environment.id),
-      },
-    },
   });
 });
 

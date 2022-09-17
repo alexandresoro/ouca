@@ -54,6 +54,8 @@ export const persistUserSettings = async (
   appConfiguration: InputSettings,
   loggedUser: LoggedUser | null
 ): Promise<Settings> => {
+  validateAuthorization(loggedUser);
+
   const { id, ...settings } = buildSettingsDbFromInputSettings(appConfiguration);
 
   const updatedSettingsDb = await prisma.settings.update({

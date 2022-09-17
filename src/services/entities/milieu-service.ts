@@ -32,17 +32,6 @@ export const getDonneesCountByMilieu = async (id: number, loggedUser: LoggedUser
   });
 };
 
-export const findMilieuxByIds = async (ids: number[], loggedUser: LoggedUser | null = null): Promise<Milieu[]> => {
-  return prisma.milieu.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      id: {
-        in: ids,
-      },
-    },
-  });
-};
-
 export const findMilieux = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Milieu[]> => {
   validateAuthorization(loggedUser);
 

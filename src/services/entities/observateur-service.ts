@@ -40,19 +40,6 @@ export const getDonneesCountByObservateur = async (id: number, loggedUser: Logge
   });
 };
 
-export const findObservateursByIds = async (ids: number[], loggedUser: LoggedUser | null): Promise<Observateur[]> => {
-  validateAuthorization(loggedUser);
-
-  return await prisma.observateur.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      id: {
-        in: ids,
-      },
-    },
-  });
-};
-
 export const findObservateurs = async (
   loggedUser: LoggedUser | null,
   params?: FindParams | null

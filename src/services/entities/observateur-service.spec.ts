@@ -16,7 +16,6 @@ import {
   deleteObservateur,
   findObservateur,
   findObservateurs,
-  findObservateursByIds,
   findPaginatedObservateurs,
   getDonneesCountByObservateur,
   getObservateursCount,
@@ -91,28 +90,6 @@ describe("Data count per entity", () => {
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(getDonneesCountByObservateur(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  });
-});
-
-test("Find observers by IDs", async () => {
-  const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
-  const loggedUser = mock<LoggedUser>();
-
-  prismaMock.observateur.findMany.mockResolvedValueOnce(observersData);
-
-  await findObservateursByIds(
-    observersData.map((obs) => obs.id),
-    loggedUser
-  );
-
-  expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      id: {
-        in: observersData.map((obs) => obs.id),
-      },
-    },
   });
 });
 

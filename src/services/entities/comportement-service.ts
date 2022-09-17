@@ -36,20 +36,6 @@ export const getDonneesCountByComportement = async (id: number, loggedUser: Logg
   });
 };
 
-export const findComportementsByIds = async (
-  ids: number[],
-  loggedUser: LoggedUser | null = null
-): Promise<Comportement[]> => {
-  return prisma.comportement.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      id: {
-        in: ids,
-      },
-    },
-  });
-};
-
 export const findComportements = async (
   loggedUser: LoggedUser | null,
   params?: FindParams | null

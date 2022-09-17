@@ -15,7 +15,6 @@ import {
   deleteComportement,
   findComportement,
   findComportements,
-  findComportementsByIds,
   findPaginatedComportements,
   getComportementsCount,
   getDonneesCountByComportement,
@@ -93,24 +92,6 @@ describe("Data count per entity", () => {
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(getDonneesCountByComportement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  });
-});
-
-test("Find behaviors by IDs", async () => {
-  const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
-
-  prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsData);
-
-  await findComportementsByIds(behaviorsData.map((behavior) => behavior.id));
-
-  expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      id: {
-        in: behaviorsData.map((behavior) => behavior.id),
-      },
-    },
   });
 });
 

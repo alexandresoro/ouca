@@ -16,7 +16,6 @@ import {
   deleteMeteo,
   findMeteo,
   findMeteos,
-  findMeteosByIds,
   findPaginatedMeteos,
   getDonneesCountByMeteo,
   getMeteosCount,
@@ -95,24 +94,6 @@ describe("Data count per entity", () => {
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(getDonneesCountByMeteo(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
-  });
-});
-
-test("Find list of weathers by IDs", async () => {
-  const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
-
-  prismaMock.meteo.findMany.mockResolvedValueOnce(weathersData);
-
-  await findMeteosByIds(weathersData.map((weather) => weather.id));
-
-  expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      id: {
-        in: weathersData.map((weather) => weather.id),
-      },
-    },
   });
 });
 
