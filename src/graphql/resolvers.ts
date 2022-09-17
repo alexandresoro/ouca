@@ -208,12 +208,12 @@ const resolvers: IResolvers = {
       return findAge(args.id, user);
     },
     ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedAges(user, args),
         getAgesCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -221,12 +221,12 @@ const resolvers: IResolvers = {
       return findClasse(args.id, user);
     },
     classes: async (_, args, { user }): Promise<ClassesPaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedClasses(user, args),
         getClassesCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -237,13 +237,13 @@ const resolvers: IResolvers = {
       _,
       args,
       { user }
-    ): Promise<Omit<CommunesPaginatedResult, "result"> & { result?: Omit<Commune, "departement">[] }> => {
-      const [result, count] = await Promise.all([
+    ): Promise<Omit<CommunesPaginatedResult, "data"> & { data?: Omit<Commune, "departement">[] }> => {
+      const [data, count] = await Promise.all([
         findPaginatedCommunes(user, args),
         getCommunesCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -251,12 +251,12 @@ const resolvers: IResolvers = {
       return findComportement(args.id, user);
     },
     comportements: async (_, args, { user }): Promise<ComportementsPaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedComportements(user, args),
         getComportementsCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -264,12 +264,12 @@ const resolvers: IResolvers = {
       return findDepartement(args.id, user);
     },
     departements: async (_, args, { user }): Promise<DepartementsPaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedDepartements(user, args),
         getDepartementsCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -282,13 +282,13 @@ const resolvers: IResolvers = {
     espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
       return findEspece(args.id, user);
     },
-    especes: async (_, args, { user }): Promise<{ result: EspeceEntity[]; count: number }> => {
-      const [result, count] = await Promise.all([
+    especes: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
+      const [data, count] = await Promise.all([
         findPaginatedEspeces(user, args, null),
         getEspecesCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -296,12 +296,12 @@ const resolvers: IResolvers = {
       return findEstimationDistance(args.id, user);
     },
     estimationsDistance: async (_, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedEstimationsDistance(user, args),
         getEstimationsDistanceCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -309,12 +309,12 @@ const resolvers: IResolvers = {
       return findEstimationNombre(args.id, user);
     },
     estimationsNombre: async (_, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedEstimationsNombre(user, args),
         getEstimationsNombreCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -329,13 +329,13 @@ const resolvers: IResolvers = {
       _,
       args,
       { user }
-    ): Promise<Omit<LieuxDitsPaginatedResult, "result"> & { result?: Omit<LieuDit, "commune">[] }> => {
-      const [result, count] = await Promise.all([
+    ): Promise<Omit<LieuxDitsPaginatedResult, "data"> & { data?: Omit<LieuDit, "commune">[] }> => {
+      const [data, count] = await Promise.all([
         findPaginatedLieuxDits(user, args),
         getLieuxDitsCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -343,12 +343,12 @@ const resolvers: IResolvers = {
       return findMeteo(args.id, user);
     },
     meteos: async (_, args, { user }): Promise<MeteosPaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedMeteos(user, args),
         getMeteosCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -356,12 +356,12 @@ const resolvers: IResolvers = {
       return findMilieu(args.id, user);
     },
     milieux: async (_, args, { user }): Promise<MilieuxPaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedMilieux(user, args),
         getMilieuxCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -369,12 +369,12 @@ const resolvers: IResolvers = {
       return findObservateur(args.id, user);
     },
     observateurs: async (_, args, { user }): Promise<ObservateursPaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedObservateurs(user, args),
         getObservateursCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -382,12 +382,12 @@ const resolvers: IResolvers = {
       return findSexe(args.id, user);
     },
     sexes: async (_, args, { user }): Promise<SexesPaginatedResult> => {
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedSexes(user, args),
         getSexesCount(user, args?.searchParams?.q),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
@@ -407,14 +407,14 @@ const resolvers: IResolvers = {
       if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
       return findNextRegroupement();
     },
-    searchEspeces: async (_, args, { user }): Promise<{ result: EspeceEntity[]; count: number }> => {
+    searchEspeces: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
       const { searchCriteria, ...rest } = args ?? {};
-      const [result, count] = await Promise.all([
+      const [data, count] = await Promise.all([
         findPaginatedEspeces(user, rest, searchCriteria),
         getEspecesCount(user, null, searchCriteria),
       ]);
       return {
-        result,
+        data,
         count,
       };
     },
