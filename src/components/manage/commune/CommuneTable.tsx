@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
+  Commune,
   CommunesOrderBy,
   CommunesPaginatedResult,
-  CommuneWithCounts,
   MutationDeleteCommuneArgs,
-  QueryPaginatedCommunesArgs,
+  QueryCommunesArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -102,9 +102,9 @@ const CommuneTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<CommunesOrderBy>();
 
-  const [dialogCommune, setDialogCommune] = useState<CommuneWithCounts | null>(null);
+  const [dialogCommune, setDialogCommune] = useState<Commune | null>(null);
 
-  const { data } = useQuery<PaginatedCommunesQueryResult, QueryPaginatedCommunesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedCommunesQueryResult, QueryCommunesArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -113,8 +113,7 @@ const CommuneTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -128,13 +127,13 @@ const CommuneTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteCommune = (commune: CommuneWithCounts | null) => {
+  const handleDeleteCommune = (commune: Commune | null) => {
     if (commune) {
       setDialogCommune(commune);
     }
   };
 
-  const handleDeleteCommuneConfirmation = async (commune: CommuneWithCounts | null) => {
+  const handleDeleteCommuneConfirmation = async (commune: Commune | null) => {
     if (commune) {
       setDialogCommune(null);
       await deleteCommune({
@@ -212,7 +211,7 @@ const CommuneTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedCommunes?.result?.map((commune) => {
+            {data?.paginatedCommunes?.data?.map((commune) => {
               return (
                 <TableRow hover key={commune?.id}>
                   <TableCell>{commune?.departement?.code}</TableCell>
@@ -222,7 +221,7 @@ const CommuneTable: FunctionComponent = () => {
                   <TableCell>{commune?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!commune?.readonly}
+                      disabled={!commune.editable}
                       onEditClicked={() => handleEditCommune(commune?.id)}
                       onDeleteClicked={() => handleDeleteCommune(commune)}
                     />

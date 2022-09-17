@@ -21,9 +21,9 @@ import useSnackbar from "../../../hooks/useSnackbar";
 import {
   EntitesAvecLibelleOrderBy,
   MutationDeleteSexeArgs,
-  QueryPaginatedSexesArgs,
+  QuerySexesArgs,
+  Sexe,
   SexesPaginatedResult,
-  SexeWithCounts,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -85,9 +85,9 @@ const SexeTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
-  const [dialogSexe, setDialogSexe] = useState<SexeWithCounts | null>(null);
+  const [dialogSexe, setDialogSexe] = useState<Sexe | null>(null);
 
-  const { data } = useQuery<PaginatedSexesQueryResult, QueryPaginatedSexesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedSexesQueryResult, QuerySexesArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -96,8 +96,7 @@ const SexeTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -111,13 +110,13 @@ const SexeTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteSexe = (sexe: SexeWithCounts | null) => {
+  const handleDeleteSexe = (sexe: Sexe | null) => {
     if (sexe) {
       setDialogSexe(sexe);
     }
   };
 
-  const handleDeleteSexeConfirmation = async (sexe: SexeWithCounts | null) => {
+  const handleDeleteSexeConfirmation = async (sexe: Sexe | null) => {
     if (sexe) {
       setDialogSexe(null);
       await deleteSexe({
@@ -195,14 +194,14 @@ const SexeTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedSexes?.result?.map((sexe) => {
+            {data?.paginatedSexes?.data?.map((sexe) => {
               return (
                 <TableRow hover key={sexe?.id}>
                   <TableCell>{sexe?.libelle}</TableCell>
                   <TableCell>{sexe?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!sexe?.readonly}
+                      disabled={!sexe.editable}
                       onEditClicked={() => handleEditSexe(sexe?.id)}
                       onDeleteClicked={() => handleDeleteSexe(sexe)}
                     />

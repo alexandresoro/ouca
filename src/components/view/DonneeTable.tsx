@@ -21,7 +21,6 @@ import {
   Donnee,
   MutationDeleteDonneeArgs,
   PaginatedSearchDonneesResult,
-  QueryPaginatedSearchDonneesArgs,
   SearchDonneesOrderBy,
   SortOrder
 } from "../../model/graphql";
@@ -180,21 +179,18 @@ const DonneeTable: FunctionComponent = () => {
 
   const { setSnackbarContent } = useSnackbar();
 
-  const { data: donneesResult } = useQuery<PaginatedDonneesQueryResult, QueryPaginatedSearchDonneesArgs>(
-    PAGINATED_SEARCH_DONNEES_QUERY,
-    {
-      fetchPolicy: "cache-and-network",
-      variables: {
-        searchParams: {
-          pageNumber: page,
-          pageSize: rowsPerPage
-        },
-        orderBy,
-        sortOrder,
-        searchCriteria: null
-      }
+  const { data: donneesResult } = useQuery<PaginatedDonneesQueryResult, any>(PAGINATED_SEARCH_DONNEES_QUERY, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      searchParams: {
+        pageNumber: page,
+        pageSize: rowsPerPage
+      },
+      orderBy,
+      sortOrder,
+      searchCriteria: null
     }
-  );
+  });
 
   const [deleteDonnee] = useMutation<DeleteDonneeMutationResult, MutationDeleteDonneeArgs>(DELETE_QUERY);
 

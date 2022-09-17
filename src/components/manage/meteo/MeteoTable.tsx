@@ -20,10 +20,10 @@ import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
   EntitesAvecLibelleOrderBy,
+  Meteo,
   MeteosPaginatedResult,
-  MeteoWithCounts,
   MutationDeleteMeteoArgs,
-  QueryPaginatedMeteosArgs,
+  QueryMeteosArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -85,9 +85,9 @@ const MeteoTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
-  const [dialogMeteo, setDialogMeteo] = useState<MeteoWithCounts | null>(null);
+  const [dialogMeteo, setDialogMeteo] = useState<Meteo | null>(null);
 
-  const { data } = useQuery<PaginatedMeteosQueryResult, QueryPaginatedMeteosArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedMeteosQueryResult, QueryMeteosArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -96,8 +96,7 @@ const MeteoTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -111,13 +110,13 @@ const MeteoTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteMeteo = (meteo: MeteoWithCounts | null) => {
+  const handleDeleteMeteo = (meteo: Meteo | null) => {
     if (meteo) {
       setDialogMeteo(meteo);
     }
   };
 
-  const handleDeleteMeteoConfirmation = async (meteo: MeteoWithCounts | null) => {
+  const handleDeleteMeteoConfirmation = async (meteo: Meteo | null) => {
     if (meteo) {
       setDialogMeteo(null);
       await deleteMeteo({
@@ -195,14 +194,14 @@ const MeteoTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedMeteos?.result?.map((meteo) => {
+            {data?.paginatedMeteos?.data?.map((meteo) => {
               return (
                 <TableRow hover key={meteo?.id}>
                   <TableCell>{meteo?.libelle}</TableCell>
                   <TableCell>{meteo?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!meteo?.readonly}
+                      disabled={!meteo.editable}
                       onEditClicked={() => handleEditMeteo(meteo?.id)}
                       onDeleteClicked={() => handleDeleteMeteo(meteo)}
                     />

@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
-  LieuDitWithCounts,
+  LieuDit,
   LieuxDitsOrderBy,
   LieuxDitsPaginatedResult,
   MutationDeleteLieuDitArgs,
-  QueryPaginatedLieuxditsArgs,
+  QueryLieuxDitsArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -119,9 +119,9 @@ const LieuDitTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<LieuxDitsOrderBy>();
 
-  const [dialogLieuDit, setDialogLieuDit] = useState<LieuDitWithCounts | null>(null);
+  const [dialogLieuDit, setDialogLieuDit] = useState<LieuDit | null>(null);
 
-  const { data } = useQuery<PaginatedLieuxDitsQueryResult, QueryPaginatedLieuxditsArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedLieuxDitsQueryResult, QueryLieuxDitsArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -130,8 +130,7 @@ const LieuDitTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -145,13 +144,13 @@ const LieuDitTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteLieuDit = (lieuDit: LieuDitWithCounts | null) => {
+  const handleDeleteLieuDit = (lieuDit: LieuDit | null) => {
     if (lieuDit) {
       setDialogLieuDit(lieuDit);
     }
   };
 
-  const handleDeleteLieuDitConfirmation = async (lieuDit: LieuDitWithCounts | null) => {
+  const handleDeleteLieuDitConfirmation = async (lieuDit: LieuDit | null) => {
     if (lieuDit) {
       setDialogLieuDit(null);
       await deleteLieuDit({
@@ -229,7 +228,7 @@ const LieuDitTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedLieuxdits?.result?.map((lieuDit) => {
+            {data?.paginatedLieuxdits?.data?.map((lieuDit) => {
               return (
                 <TableRow hover key={lieuDit?.id}>
                   <TableCell>{lieuDit?.commune?.departement?.code}</TableCell>
@@ -242,7 +241,7 @@ const LieuDitTable: FunctionComponent = () => {
                   <TableCell>{lieuDit?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!lieuDit?.readonly}
+                      disabled={!lieuDit.editable}
                       onEditClicked={() => handleEditLieuDit(lieuDit?.id)}
                       onDeleteClicked={() => handleDeleteLieuDit(lieuDit)}
                     />

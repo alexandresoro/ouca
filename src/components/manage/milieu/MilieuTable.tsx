@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
-  MilieuWithCounts,
+  Milieu,
   MilieuxOrderBy,
   MilieuxPaginatedResult,
   MutationDeleteMilieuArgs,
-  QueryPaginatedMilieuxArgs,
+  QueryMilieuxArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -90,9 +90,9 @@ const MilieuTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<MilieuxOrderBy>();
 
-  const [dialogMilieu, setDialogMilieu] = useState<MilieuWithCounts | null>(null);
+  const [dialogMilieu, setDialogMilieu] = useState<Milieu | null>(null);
 
-  const { data } = useQuery<PaginatedMilieuxQueryResult, QueryPaginatedMilieuxArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedMilieuxQueryResult, QueryMilieuxArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -101,8 +101,7 @@ const MilieuTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -116,13 +115,13 @@ const MilieuTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteMilieu = (milieu: MilieuWithCounts | null) => {
+  const handleDeleteMilieu = (milieu: Milieu | null) => {
     if (milieu) {
       setDialogMilieu(milieu);
     }
   };
 
-  const handleDeleteMilieuConfirmation = async (milieu: MilieuWithCounts | null) => {
+  const handleDeleteMilieuConfirmation = async (milieu: Milieu | null) => {
     if (milieu) {
       setDialogMilieu(null);
       await deleteMilieu({
@@ -200,7 +199,7 @@ const MilieuTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedMilieux?.result?.map((milieu) => {
+            {data?.paginatedMilieux?.data?.map((milieu) => {
               return (
                 <TableRow hover key={milieu?.id}>
                   <TableCell>{milieu?.code}</TableCell>
@@ -208,7 +207,7 @@ const MilieuTable: FunctionComponent = () => {
                   <TableCell>{milieu?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!milieu?.readonly}
+                      disabled={!milieu.editable}
                       onEditClicked={() => handleEditMilieu(milieu?.id)}
                       onDeleteClicked={() => handleDeleteMilieu(milieu)}
                     />

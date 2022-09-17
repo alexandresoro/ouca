@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
+  Espece,
   EspecesOrderBy,
   EspecesPaginatedResult,
-  EspeceWithCounts,
   MutationDeleteEspeceArgs,
-  QueryPaginatedEspecesArgs,
+  QueryEspecesArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -102,9 +102,9 @@ const EspeceTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EspecesOrderBy>();
 
-  const [dialogEspece, setDialogEspece] = useState<EspeceWithCounts | null>(null);
+  const [dialogEspece, setDialogEspece] = useState<Espece | null>(null);
 
-  const { data } = useQuery<PaginatedEspecesQueryResult, QueryPaginatedEspecesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedEspecesQueryResult, QueryEspecesArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -113,8 +113,7 @@ const EspeceTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -128,13 +127,13 @@ const EspeceTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteEspece = (espece: EspeceWithCounts | null) => {
+  const handleDeleteEspece = (espece: Espece | null) => {
     if (espece) {
       setDialogEspece(espece);
     }
   };
 
-  const handleDeleteEspeceConfirmation = async (espece: EspeceWithCounts | null) => {
+  const handleDeleteEspeceConfirmation = async (espece: Espece | null) => {
     if (espece) {
       setDialogEspece(null);
       await deleteEspece({
@@ -212,7 +211,7 @@ const EspeceTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedEspeces?.result?.map((espece) => {
+            {data?.paginatedEspeces?.data?.map((espece) => {
               return (
                 <TableRow hover key={espece?.id}>
                   <TableCell>{espece?.classe?.libelle}</TableCell>
@@ -222,7 +221,7 @@ const EspeceTable: FunctionComponent = () => {
                   <TableCell>{espece?.nbDonnees ? espece?.nbDonnees : "0"}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!espece?.readonly}
+                      disabled={!espece.editable}
                       onEditClicked={() => handleEditEspece(espece?.id)}
                       onDeleteClicked={() => handleDeleteEspece(espece)}
                     />

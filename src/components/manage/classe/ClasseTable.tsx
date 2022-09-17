@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
+  Classe,
   ClassesOrderBy,
   ClassesPaginatedResult,
-  ClasseWithCounts,
   MutationDeleteClasseArgs,
-  QueryPaginatedClassesArgs,
+  QueryClassesArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -90,9 +90,9 @@ const ClasseTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<ClassesOrderBy>();
 
-  const [dialogClasse, setDialogClasse] = useState<ClasseWithCounts | null>(null);
+  const [dialogClasse, setDialogClasse] = useState<Classe | null>(null);
 
-  const { data } = useQuery<PaginatedClassesQueryResult, QueryPaginatedClassesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedClassesQueryResult, QueryClassesArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -101,8 +101,7 @@ const ClasseTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -116,13 +115,13 @@ const ClasseTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteClasse = (classe: ClasseWithCounts | null) => {
+  const handleDeleteClasse = (classe: Classe | null) => {
     if (classe) {
       setDialogClasse(classe);
     }
   };
 
-  const handleDeleteClasseConfirmation = async (classe: ClasseWithCounts | null) => {
+  const handleDeleteClasseConfirmation = async (classe: Classe | null) => {
     if (classe) {
       setDialogClasse(null);
       await deleteClasse({
@@ -200,7 +199,7 @@ const ClasseTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedClasses?.result?.map((classe) => {
+            {data?.paginatedClasses?.data?.map((classe) => {
               return (
                 <TableRow hover key={classe?.id}>
                   <TableCell>{classe?.libelle}</TableCell>
@@ -208,7 +207,7 @@ const ClasseTable: FunctionComponent = () => {
                   <TableCell>{classe?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!classe?.readonly}
+                      disabled={!classe.editable}
                       onEditClicked={() => handleEditClasse(classe?.id)}
                       onDeleteClicked={() => handleDeleteClasse(classe)}
                     />

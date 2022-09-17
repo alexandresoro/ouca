@@ -23,7 +23,7 @@ import {
   MutationDeleteObservateurArgs,
   Observateur,
   ObservateursPaginatedResult,
-  QueryPaginatedObservateursArgs,
+  QueryObservateursArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -31,7 +31,7 @@ import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type PaginatedObservateursQueryResult = {
-  paginatedObservateurs: ObservateursPaginatedResult;
+  observateurs: ObservateursPaginatedResult;
 };
 
 type DeleteObservateurMutationResult = {
@@ -39,24 +39,14 @@ type DeleteObservateurMutationResult = {
 };
 
 const PAGINATED_OBSERVATEURS_QUERY = gql`
-  query PaginatedObservateurs(
-    $searchParams: SearchParams
-    $orderBy: EntitesAvecLibelleOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedObservateurs(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+  query Observateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+    observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         libelle
-        readonly
-        nbDonnees @include(if: $includeCounts)
+        editable
+        nbDonnees
       }
     }
   }
@@ -88,22 +78,18 @@ const ObservateurTable: FunctionComponent = () => {
 
   const [dialogObservateur, setDialogObservateur] = useState<Observateur | null>(null);
 
-  const { data } = useQuery<PaginatedObservateursQueryResult, QueryPaginatedObservateursArgs>(
-    PAGINATED_OBSERVATEURS_QUERY,
-    {
-      fetchPolicy: "cache-and-network",
-      variables: {
-        searchParams: {
-          pageNumber: page,
-          pageSize: rowsPerPage,
-          q: query
-        },
-        orderBy,
-        sortOrder,
-        includeCounts: true
-      }
+  const { data } = useQuery<PaginatedObservateursQueryResult, QueryObservateursArgs>(PAGINATED_OBSERVATEURS_QUERY, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      searchParams: {
+        pageNumber: page,
+        pageSize: rowsPerPage,
+        q: query
+      },
+      orderBy,
+      sortOrder
     }
-  );
+  });
 
   const [deleteObservateur] = useMutation<DeleteObservateurMutationResult, MutationDeleteObservateurArgs>(
     DELETE_OBSERVATEUR
@@ -201,14 +187,14 @@ const ObservateurTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedObservateurs?.result?.map((observateur) => {
+            {data?.observateurs?.data?.map((observateur) => {
               return (
                 <TableRow hover key={observateur?.id}>
                   <TableCell>{observateur?.libelle}</TableCell>
                   <TableCell>{observateur?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!observateur?.readonly}
+                      disabled={!observateur.editable}
                       onEditClicked={() => handleEditObservateur(observateur?.id)}
                       onDeleteClicked={() => handleDeleteObservateur(observateur)}
                     />
@@ -221,7 +207,7 @@ const ObservateurTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedObservateurs?.count ?? 0}
+                count={data?.observateurs?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

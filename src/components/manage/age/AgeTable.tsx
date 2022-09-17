@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
+  Age,
   AgesPaginatedResult,
-  AgeWithCounts,
   EntitesAvecLibelleOrderBy,
   MutationDeleteAgeArgs,
-  QueryPaginatedAgesArgs,
+  QueryAgesArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -31,7 +31,7 @@ import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type PaginatedAgesQueryResult = {
-  paginatedAges: AgesPaginatedResult;
+  ages: AgesPaginatedResult;
 };
 
 type DeleteAgeMutationResult = {
@@ -39,22 +39,13 @@ type DeleteAgeMutationResult = {
 };
 
 const PAGINATED_AGES_QUERY = gql`
-  query PaginatedAges(
-    $searchParams: SearchParams
-    $orderBy: EntitesAvecLibelleOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedAges(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+  query Ages($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+    ages(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         libelle
+        editable
         nbDonnees
       }
     }
@@ -85,9 +76,9 @@ const AgeTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
-  const [dialogAge, setDialogAge] = useState<AgeWithCounts | null>(null);
+  const [dialogAge, setDialogAge] = useState<Age | null>(null);
 
-  const { data } = useQuery<PaginatedAgesQueryResult, QueryPaginatedAgesArgs>(PAGINATED_AGES_QUERY, {
+  const { data } = useQuery<PaginatedAgesQueryResult, QueryAgesArgs>(PAGINATED_AGES_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -96,8 +87,7 @@ const AgeTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -111,13 +101,13 @@ const AgeTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteAge = (age: AgeWithCounts | null) => {
+  const handleDeleteAge = (age: Age | null) => {
     if (age) {
       setDialogAge(age);
     }
   };
 
-  const handleDeleteAgeConfirmation = async (age: AgeWithCounts | null) => {
+  const handleDeleteAgeConfirmation = async (age: Age | null) => {
     if (age) {
       setDialogAge(null);
       await deleteAge({
@@ -195,14 +185,14 @@ const AgeTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedAges?.result?.map((age) => {
+            {data?.ages?.data?.map((age) => {
               return (
                 <TableRow hover key={age?.id}>
                   <TableCell>{age?.libelle}</TableCell>
                   <TableCell>{age?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!age?.readonly}
+                      disabled={!age.editable}
                       onEditClicked={() => handleEditAge(age?.id)}
                       onDeleteClicked={() => handleDeleteAge(age)}
                     />
@@ -215,7 +205,7 @@ const AgeTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedAges?.count ?? 0}
+                count={data?.ages?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

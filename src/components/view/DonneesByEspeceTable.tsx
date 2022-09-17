@@ -16,12 +16,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
-import {
-  EspecesOrderBy,
-  EspecesPaginatedResult,
-  QueryPaginatedSearchEspecesArgs,
-  SortOrder
-} from "../../model/graphql";
+import { EspecesOrderBy, EspecesPaginatedResult, QuerySearchEspecesArgs, SortOrder } from "../../model/graphql";
 
 type PaginatedSearchEspecesQueryResult = {
   paginatedSearchEspeces: EspecesPaginatedResult;
@@ -91,22 +86,18 @@ const DonneesByEspeceTable: FunctionComponent = () => {
   //setOrderBy("nbDonnees");
   //setSortOrder("desc");
 
-  const { data } = useQuery<PaginatedSearchEspecesQueryResult, QueryPaginatedSearchEspecesArgs>(
-    PAGINATED_SEARCH_ESPECES_QUERY,
-    {
-      fetchPolicy: "cache-and-network",
-      variables: {
-        searchParams: {
-          pageNumber: page,
-          pageSize: rowsPerPage
-        },
-        orderBy,
-        sortOrder,
-        searchCriteria: null,
-        includeCounts: true
-      }
+  const { data } = useQuery<PaginatedSearchEspecesQueryResult, QuerySearchEspecesArgs>(PAGINATED_SEARCH_ESPECES_QUERY, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      searchParams: {
+        pageNumber: page,
+        pageSize: rowsPerPage
+      },
+      orderBy,
+      sortOrder,
+      searchCriteria: null
     }
-  );
+  });
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -153,7 +144,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedSearchEspeces?.result?.map((espece) => {
+            {data?.paginatedSearchEspeces?.data?.map((espece) => {
               return (
                 <TableRow hover key={espece?.id}>
                   <TableCell>{espece?.classe?.libelle}</TableCell>

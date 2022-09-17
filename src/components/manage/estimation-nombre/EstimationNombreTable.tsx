@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
+  EstimationNombre,
   EstimationNombreOrderBy,
-  EstimationNombreWithCounts,
   EstimationsNombrePaginatedResult,
   MutationDeleteEstimationNombreArgs,
-  QueryPaginatedEstimationsNombreArgs,
+  QueryEstimationsNombreArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -90,24 +90,20 @@ const EstimationNombreTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EstimationNombreOrderBy>();
 
-  const [dialogEstimationNombre, setDialogEstimationNombre] = useState<EstimationNombreWithCounts | null>(null);
+  const [dialogEstimationNombre, setDialogEstimationNombre] = useState<EstimationNombre | null>(null);
 
-  const { data } = useQuery<PaginatedEstimationsNombreQueryResult, QueryPaginatedEstimationsNombreArgs>(
-    PAGINATED_QUERY,
-    {
-      fetchPolicy: "cache-and-network",
-      variables: {
-        searchParams: {
-          pageNumber: page,
-          pageSize: rowsPerPage,
-          q: query
-        },
-        orderBy,
-        sortOrder,
-        includeCounts: true
-      }
+  const { data } = useQuery<PaginatedEstimationsNombreQueryResult, QueryEstimationsNombreArgs>(PAGINATED_QUERY, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      searchParams: {
+        pageNumber: page,
+        pageSize: rowsPerPage,
+        q: query
+      },
+      orderBy,
+      sortOrder
     }
-  );
+  });
 
   const [deleteEstimationNombre] = useMutation<
     DeleteEstimationNombreMutationResult,
@@ -122,13 +118,13 @@ const EstimationNombreTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteEstimationNombre = (estimationNombre: EstimationNombreWithCounts | null) => {
+  const handleDeleteEstimationNombre = (estimationNombre: EstimationNombre | null) => {
     if (estimationNombre) {
       setDialogEstimationNombre(estimationNombre);
     }
   };
 
-  const handleDeleteEstimationNombreConfirmation = async (estimationNombre: EstimationNombreWithCounts | null) => {
+  const handleDeleteEstimationNombreConfirmation = async (estimationNombre: EstimationNombre | null) => {
     if (estimationNombre) {
       setDialogEstimationNombre(null);
       await deleteEstimationNombre({
@@ -206,7 +202,7 @@ const EstimationNombreTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedEstimationsNombre?.result?.map((estimationNombre) => {
+            {data?.paginatedEstimationsNombre?.data?.map((estimationNombre) => {
               return (
                 <TableRow hover key={estimationNombre?.id}>
                   <TableCell>{estimationNombre?.libelle}</TableCell>
@@ -214,7 +210,7 @@ const EstimationNombreTable: FunctionComponent = () => {
                   <TableCell>{estimationNombre?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!estimationNombre?.readonly}
+                      disabled={!estimationNombre.editable}
                       onEditClicked={() => handleEditEstimationNombre(estimationNombre?.id)}
                       onDeleteClicked={() => handleDeleteEstimationNombre(estimationNombre)}
                     />

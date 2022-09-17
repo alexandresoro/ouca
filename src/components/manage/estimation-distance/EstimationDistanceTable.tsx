@@ -20,10 +20,10 @@ import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
   EntitesAvecLibelleOrderBy,
-  EstimationDistanceWithCounts,
+  EstimationDistance,
   EstimationsDistancePaginatedResult,
   MutationDeleteEstimationDistanceArgs,
-  QueryPaginatedEstimationsDistanceArgs,
+  QueryEstimationsDistanceArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -85,24 +85,20 @@ const EstimationDistanceTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
-  const [dialogEstimationDistance, setDialogEstimationDistance] = useState<EstimationDistanceWithCounts | null>(null);
+  const [dialogEstimationDistance, setDialogEstimationDistance] = useState<EstimationDistance | null>(null);
 
-  const { data } = useQuery<PaginatedEstimationsDistanceQueryResult, QueryPaginatedEstimationsDistanceArgs>(
-    PAGINATED_QUERY,
-    {
-      fetchPolicy: "cache-and-network",
-      variables: {
-        searchParams: {
-          pageNumber: page,
-          pageSize: rowsPerPage,
-          q: query
-        },
-        orderBy,
-        sortOrder,
-        includeCounts: true
-      }
+  const { data } = useQuery<PaginatedEstimationsDistanceQueryResult, QueryEstimationsDistanceArgs>(PAGINATED_QUERY, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      searchParams: {
+        pageNumber: page,
+        pageSize: rowsPerPage,
+        q: query
+      },
+      orderBy,
+      sortOrder
     }
-  );
+  });
 
   const [deleteEstimationDistance] = useMutation<
     DeleteEstimationDistanceMutationResult,
@@ -117,15 +113,13 @@ const EstimationDistanceTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteEstimationDistance = (estimationDistance: EstimationDistanceWithCounts | null) => {
+  const handleDeleteEstimationDistance = (estimationDistance: EstimationDistance | null) => {
     if (estimationDistance) {
       setDialogEstimationDistance(estimationDistance);
     }
   };
 
-  const handleDeleteEstimationDistanceConfirmation = async (
-    estimationDistance: EstimationDistanceWithCounts | null
-  ) => {
+  const handleDeleteEstimationDistanceConfirmation = async (estimationDistance: EstimationDistance | null) => {
     if (estimationDistance) {
       setDialogEstimationDistance(null);
       await deleteEstimationDistance({
@@ -203,14 +197,14 @@ const EstimationDistanceTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedEstimationsDistance?.result?.map((estimationDistance) => {
+            {data?.paginatedEstimationsDistance?.data?.map((estimationDistance) => {
               return (
                 <TableRow hover key={estimationDistance?.id}>
                   <TableCell>{estimationDistance?.libelle}</TableCell>
                   <TableCell>{estimationDistance?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!estimationDistance?.readonly}
+                      disabled={!estimationDistance.editable}
                       onEditClicked={() => handleEditEstimationDistance(estimationDistance?.id)}
                       onDeleteClicked={() => handleDeleteEstimationDistance(estimationDistance)}
                     />

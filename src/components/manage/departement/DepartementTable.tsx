@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
+  Departement,
   DepartementsOrderBy,
   DepartementsPaginatedResult,
-  DepartementWithCounts,
   MutationDeleteDepartementArgs,
-  QueryPaginatedDepartementsArgs,
+  QueryDepartementsArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -95,9 +95,9 @@ const DepartementTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<DepartementsOrderBy>();
 
-  const [dialogDepartement, setDialogDepartement] = useState<DepartementWithCounts | null>(null);
+  const [dialogDepartement, setDialogDepartement] = useState<Departement | null>(null);
 
-  const { data } = useQuery<PaginatedDepartementsQueryResult, QueryPaginatedDepartementsArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedDepartementsQueryResult, QueryDepartementsArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -106,8 +106,7 @@ const DepartementTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -121,13 +120,13 @@ const DepartementTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteDepartement = (departement: DepartementWithCounts | null) => {
+  const handleDeleteDepartement = (departement: Departement | null) => {
     if (departement) {
       setDialogDepartement(departement);
     }
   };
 
-  const handleDeleteDepartementConfirmation = async (departement: DepartementWithCounts | null) => {
+  const handleDeleteDepartementConfirmation = async (departement: Departement | null) => {
     if (departement) {
       setDialogDepartement(null);
       await deleteDepartement({
@@ -205,7 +204,7 @@ const DepartementTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedDepartements?.result?.map((departement) => {
+            {data?.paginatedDepartements?.data?.map((departement) => {
               return (
                 <TableRow hover key={departement?.id}>
                   <TableCell>{departement?.code}</TableCell>
@@ -214,7 +213,7 @@ const DepartementTable: FunctionComponent = () => {
                   <TableCell>{departement?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!departement?.readonly}
+                      disabled={!departement.editable}
                       onEditClicked={() => handleEditDepartement(departement?.id)}
                       onDeleteClicked={() => handleDeleteDepartement(departement)}
                     />

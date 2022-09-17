@@ -19,11 +19,11 @@ import { useNavigate } from "react-router-dom";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
+  Comportement,
   ComportementsOrderBy,
   ComportementsPaginatedResult,
-  ComportementWithCounts,
   MutationDeleteComportementArgs,
-  QueryPaginatedComportementsArgs,
+  QueryComportementsArgs,
   SortOrder
 } from "../../../model/graphql";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -95,9 +95,9 @@ const ComportementTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<ComportementsOrderBy>();
 
-  const [dialogComportement, setDialogComportement] = useState<ComportementWithCounts | null>(null);
+  const [dialogComportement, setDialogComportement] = useState<Comportement | null>(null);
 
-  const { data } = useQuery<PaginatedComportementsQueryResult, QueryPaginatedComportementsArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery<PaginatedComportementsQueryResult, QueryComportementsArgs>(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -106,8 +106,7 @@ const ComportementTable: FunctionComponent = () => {
         q: query
       },
       orderBy,
-      sortOrder,
-      includeCounts: true
+      sortOrder
     }
   });
 
@@ -121,13 +120,13 @@ const ComportementTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteComportement = (comportement: ComportementWithCounts | null) => {
+  const handleDeleteComportement = (comportement: Comportement | null) => {
     if (comportement) {
       setDialogComportement(comportement);
     }
   };
 
-  const handleDeleteComportementConfirmation = async (comportement: ComportementWithCounts | null) => {
+  const handleDeleteComportementConfirmation = async (comportement: Comportement | null) => {
     if (comportement) {
       setDialogComportement(null);
       await deleteComportement({
@@ -205,7 +204,7 @@ const ComportementTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedComportements?.result?.map((comportement) => {
+            {data?.paginatedComportements?.data?.map((comportement) => {
               return (
                 <TableRow hover key={comportement?.id}>
                   <TableCell>{comportement?.code}</TableCell>
@@ -214,7 +213,7 @@ const ComportementTable: FunctionComponent = () => {
                   <TableCell>{comportement?.nbDonnees}</TableCell>
                   <TableCell align="right">
                     <TableCellActionButtons
-                      disabled={!!comportement?.readonly}
+                      disabled={!comportement.editable}
                       onEditClicked={() => handleEditComportement(comportement?.id)}
                       onDeleteClicked={() => handleDeleteComportement(comportement)}
                     />
