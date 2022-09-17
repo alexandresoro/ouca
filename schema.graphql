@@ -620,7 +620,6 @@ type Query {
   commune(id: Int!): Commune
   communes(searchParams: SearchParams, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
   comportement(id: Int!): Comportement
-  comportementList(ids: [Int!]!): [Comportement]
   comportements(
     searchParams: SearchParams
     orderBy: ComportementsOrderBy
@@ -649,15 +648,12 @@ type Query {
   ): EstimationsNombrePaginatedResult
   inventaire(id: Int!): Inventaire
   lieuDit(id: Int!): LieuDit
-  lieuxdits(searchParams: SearchParams, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
+  lieuxDits(searchParams: SearchParams, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
   meteo(id: Int!): Meteo
-  meteoList(ids: [Int!]!): [Meteo]
   meteos(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): MeteosPaginatedResult
   milieu(id: Int!): Milieu
-  milieuList(ids: [Int!]!): [Milieu]
   milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
   observateur(id: Int!): Observateur
-  observateurList(ids: [Int!]!): [Observateur!]
   observateurs(
     searchParams: SearchParams
     orderBy: EntitesAvecLibelleOrderBy
@@ -669,13 +665,13 @@ type Query {
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
   nextRegroupement: Int!
   lastDonneeId: Int
+  searchDonnees: PaginatedSearchDonneesResult
   searchEspeces(
     searchCriteria: SearchDonneeCriteria
     searchParams: SearchDonneeParams
     orderBy: EspecesOrderBy
     sortOrder: SortOrder
   ): EspecesPaginatedResult
-  paginatedSearchDonnees: PaginatedSearchDonneesResult
   settings: Settings
   importStatus(importId: String!): ImportStatus
   exportAges: String

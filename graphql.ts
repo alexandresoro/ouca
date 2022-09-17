@@ -778,7 +778,6 @@ export type Query = {
   commune?: Maybe<Commune>;
   communes?: Maybe<CommunesPaginatedResult>;
   comportement?: Maybe<Comportement>;
-  comportementList?: Maybe<Array<Maybe<Comportement>>>;
   comportements?: Maybe<ComportementsPaginatedResult>;
   departement?: Maybe<Departement>;
   departements?: Maybe<DepartementsPaginatedResult>;
@@ -808,18 +807,15 @@ export type Query = {
   inventaire?: Maybe<Inventaire>;
   lastDonneeId?: Maybe<Scalars['Int']>;
   lieuDit?: Maybe<LieuDit>;
-  lieuxdits?: Maybe<LieuxDitsPaginatedResult>;
+  lieuxDits?: Maybe<LieuxDitsPaginatedResult>;
   meteo?: Maybe<Meteo>;
-  meteoList?: Maybe<Array<Maybe<Meteo>>>;
   meteos?: Maybe<MeteosPaginatedResult>;
   milieu?: Maybe<Milieu>;
-  milieuList?: Maybe<Array<Maybe<Milieu>>>;
   milieux?: Maybe<MilieuxPaginatedResult>;
   nextRegroupement: Scalars['Int'];
   observateur?: Maybe<Observateur>;
-  observateurList?: Maybe<Array<Observateur>>;
   observateurs?: Maybe<ObservateursPaginatedResult>;
-  paginatedSearchDonnees?: Maybe<PaginatedSearchDonneesResult>;
+  searchDonnees?: Maybe<PaginatedSearchDonneesResult>;
   searchEspeces?: Maybe<EspecesPaginatedResult>;
   settings?: Maybe<Settings>;
   sexe?: Maybe<Sexe>;
@@ -867,11 +863,6 @@ export type QueryCommunesArgs = {
 
 export type QueryComportementArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryComportementListArgs = {
-  ids: Array<Scalars['Int']>;
 };
 
 
@@ -955,7 +946,7 @@ export type QueryLieuDitArgs = {
 };
 
 
-export type QueryLieuxditsArgs = {
+export type QueryLieuxDitsArgs = {
   orderBy?: InputMaybe<LieuxDitsOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
   sortOrder?: InputMaybe<SortOrder>;
@@ -964,11 +955,6 @@ export type QueryLieuxditsArgs = {
 
 export type QueryMeteoArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryMeteoListArgs = {
-  ids: Array<Scalars['Int']>;
 };
 
 
@@ -984,11 +970,6 @@ export type QueryMilieuArgs = {
 };
 
 
-export type QueryMilieuListArgs = {
-  ids: Array<Scalars['Int']>;
-};
-
-
 export type QueryMilieuxArgs = {
   orderBy?: InputMaybe<MilieuxOrderBy>;
   searchParams?: InputMaybe<SearchParams>;
@@ -998,11 +979,6 @@ export type QueryMilieuxArgs = {
 
 export type QueryObservateurArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryObservateurListArgs = {
-  ids: Array<Scalars['Int']>;
 };
 
 
