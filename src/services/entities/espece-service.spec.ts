@@ -1,7 +1,12 @@
 import { DatabaseRole, Donnee, Espece, Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
-import { SearchDonneeCriteria } from "../../graphql/generated/graphql-types";
-import { MutationUpsertEspeceArgs, QueryEspecesArgs } from "../../model/graphql";
+import {
+  EspecesOrderBy,
+  MutationUpsertEspeceArgs,
+  QueryEspecesArgs,
+  SearchDonneeCriteria,
+  SortOrder,
+} from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
@@ -197,8 +202,8 @@ describe("Entities paginated find by search criteria", () => {
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: QueryEspecesArgs = {
-      orderBy: "code",
-      sortOrder: "desc",
+      orderBy: EspecesOrderBy.Code,
+      sortOrder: SortOrder.Desc,
       searchParams: {
         q: "Bob",
         pageNumber: 0,
@@ -251,8 +256,8 @@ describe("Entities paginated find by search criteria", () => {
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: QueryEspecesArgs = {
-      orderBy: "code",
-      sortOrder: "desc",
+      orderBy: EspecesOrderBy.Code,
+      sortOrder: SortOrder.Desc,
       searchParams: {
         q: "Bob",
         pageNumber: 0,

@@ -1,6 +1,11 @@
 import { DatabaseRole, Meteo, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertMeteoArgs, QueryMeteosArgs } from "../../graphql/generated/graphql-types";
+import {
+  EntitesAvecLibelleOrderBy,
+  MutationUpsertMeteoArgs,
+  QueryMeteosArgs,
+  SortOrder,
+} from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -152,8 +157,8 @@ describe("Entities paginated find by search criteria", () => {
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: QueryMeteosArgs = {
-      orderBy: "libelle",
-      sortOrder: "desc",
+      orderBy: EntitesAvecLibelleOrderBy.Libelle,
+      sortOrder: SortOrder.Desc,
       searchParams: {
         q: "Bob",
         pageNumber: 0,

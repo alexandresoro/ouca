@@ -1,5 +1,6 @@
 import { DatabaseRole, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { SortOrder } from "../../graphql/generated/graphql-types";
 import { LoggedUser } from "../../types/LoggedUser";
 import {
   getSqlPagination,
@@ -149,7 +150,7 @@ test("should return correct SQL sorting with empty object input", () => {
 test("should return correct SQL sorting with missing order in input", () => {
   expect(
     getSqlSorting({
-      sortOrder: "asc",
+      sortOrder: SortOrder.Asc,
     })
   ).toBe(Prisma.empty);
 });
@@ -166,7 +167,7 @@ test("should return correct SQL sorting with all fields in input", () => {
   expect(
     getSqlSorting({
       orderBy: "toto",
-      sortOrder: "desc",
+      sortOrder: SortOrder.Desc,
     }).text
   ).toEqual("ORDER BY toto desc");
 });

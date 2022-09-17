@@ -1,6 +1,11 @@
 import { DatabaseRole, Milieu, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { MutationUpsertMilieuArgs, QueryMilieuxArgs } from "../../graphql/generated/graphql-types";
+import {
+  MilieuxOrderBy,
+  MutationUpsertMilieuArgs,
+  QueryMilieuxArgs,
+  SortOrder,
+} from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
@@ -178,8 +183,8 @@ describe("Entities paginated find by search criteria", () => {
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: QueryMilieuxArgs = {
-      orderBy: "libelle",
-      sortOrder: "desc",
+      orderBy: MilieuxOrderBy.Libelle,
+      sortOrder: SortOrder.Desc,
       searchParams: {
         q: "Bob",
         pageNumber: 0,
