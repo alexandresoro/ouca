@@ -13,4 +13,4 @@ generates:
           content: "import {PartialDeep} from 'type-fest';"
     config:
       allowEnumStringTypes: true
-      defaultMapper: PartialDeep<{T}> | null
+      defaultMapper: "PartialDeep<{T}, {recurseIntoArrays: true}> | null"
