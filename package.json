@@ -45,7 +45,7 @@
     "pino": "8.6.0",
     "pino-pretty": "9.1.0",
     "proj4": "2.8.0",
-    "yargs": "17.5.1"
+    "yargs": "17.6.0"
   },
   "devDependencies": {
     "@graphql-codegen/add": "3.2.1",
