@@ -1,6 +1,7 @@
 import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { Card, Collapse, IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import { intlFormat, parseISO } from "date-fns";
+import { TFuncKey } from "i18next";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Donnee } from "../../model/graphql";
@@ -25,7 +26,11 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
     <>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell>
-          <IconButton aria-label={t("expand-data-row")} size="small" onClick={() => setOpen(!open)}>
+          <IconButton
+            aria-label={t("expand-data-row" as unknown as TFuncKey) as string}
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
             {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>

@@ -33,6 +33,7 @@ import {
   Typography,
   useTheme
 } from "@mui/material";
+import { TFuncKey } from "i18next";
 import { FunctionComponent, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
@@ -53,67 +54,67 @@ const USER_LOGOUT_MUTATION = gql`
 
 const DATABASE_MENU_OPTIONS = [
   {
-    localizationKey: "observers",
+    localizationKey: "observers" as TFuncKey,
     Icon: Person,
     to: "/manage/observateur"
   },
   {
-    localizationKey: "departments",
+    localizationKey: "departments" as TFuncKey,
     Icon: Place,
     to: "/manage/departement"
   },
   {
-    localizationKey: "cities",
+    localizationKey: "cities" as TFuncKey,
     Icon: Place,
     to: "/manage/commune"
   },
   {
-    localizationKey: "localities",
+    localizationKey: "localities" as TFuncKey,
     Icon: Place,
     to: "/manage/lieudit"
   },
   {
-    localizationKey: "weathers",
+    localizationKey: "weathers" as TFuncKey,
     Icon: WbSunny,
     to: "/manage/meteo"
   },
   {
-    localizationKey: "speciesClasses",
+    localizationKey: "speciesClasses" as TFuncKey,
     Icon: EmojiNature,
     to: "/manage/classe"
   },
   {
-    localizationKey: "species",
+    localizationKey: "species" as TFuncKey,
     Icon: EmojiNature,
     to: "/manage/espece"
   },
   {
-    localizationKey: "genders",
+    localizationKey: "genders" as TFuncKey,
     Icon: Male,
     to: "/manage/sexe"
   },
   {
-    localizationKey: "ages",
+    localizationKey: "ages" as TFuncKey,
     Icon: PlusOne,
     to: "/manage/age"
   },
   {
-    localizationKey: "numberPrecisions",
+    localizationKey: "numberPrecisions" as TFuncKey,
     Icon: Filter1,
     to: "/manage/estimation-nombre"
   },
   {
-    localizationKey: "distancePrecisions",
+    localizationKey: "distancePrecisions" as TFuncKey,
     Icon: SpaceBar,
     to: "/manage/estimation-distance"
   },
   {
-    localizationKey: "behaviors",
+    localizationKey: "behaviors" as TFuncKey,
     Icon: Pets,
     to: "/manage/comportement"
   },
   {
-    localizationKey: "environments",
+    localizationKey: "environments" as TFuncKey,
     Icon: Park,
     to: "/manage/milieu"
   }
@@ -121,17 +122,17 @@ const DATABASE_MENU_OPTIONS = [
 
 const OPTIONS_MENU_OPTIONS = [
   {
-    localizationKey: "profile",
+    localizationKey: "profile" as TFuncKey,
     Icon: AccountBox,
     to: "/profile"
   },
   {
-    localizationKey: "settings",
+    localizationKey: "settings" as TFuncKey,
     Icon: Settings,
     to: "/configuration"
   },
   {
-    localizationKey: "importFromFile",
+    localizationKey: "importFromFile" as TFuncKey,
     Icon: FileDownload,
     to: "/import"
   }
@@ -250,7 +251,7 @@ const Header: FunctionComponent = () => {
                   <ListItemIcon>
                     <Icon fontSize="small" />
                   </ListItemIcon>
-                  {t(localizationKey)}
+                  {t(localizationKey) as string}
                 </MenuItem>
               );
 
@@ -296,7 +297,7 @@ const Header: FunctionComponent = () => {
                   <ListItemIcon>
                     <Icon fontSize="small" />
                   </ListItemIcon>
-                  {t(localizationKey)}
+                  {t(localizationKey) as string}
                 </MenuItem>
               );
 

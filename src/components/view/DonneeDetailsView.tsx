@@ -1,6 +1,7 @@
 import { Comment, EmojiNature, Filter1, Link, Park, Pets } from "@mui/icons-material";
 import { Chip, Divider, List, Typography, useTheme } from "@mui/material";
-import React, { FunctionComponent } from "react";
+import { TFuncKey } from "i18next";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Comportement, Donnee } from "../../model/graphql";
 import { getHighestNicheurStatus } from "../../model/helpers/nicheur-helper";
@@ -52,23 +53,27 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
 
         <ItemWithAvatar
           icon={<Filter1 />}
-          primary={t("observationDetails.number", {
-            context: donnee?.estimationNombre?.nonCompte ? "undefined" : "defined",
-            number: donnee?.nombre,
-            numberPrecision: donnee?.estimationNombre?.libelle
-          })}
-          secondary={t("observationDetails.distance", {
-            context:
-              donnee?.distance && donnee?.estimationDistance
-                ? "both"
-                : donnee?.distance
-                ? "valueOnly"
-                : donnee?.estimationDistance
-                ? "precisionOnly"
-                : "none",
-            distance: donnee?.distance,
-            distancePrecision: donnee?.estimationDistance?.libelle
-          })}
+          primary={
+            t("observationDetails.number" as unknown as TFuncKey, {
+              context: donnee?.estimationNombre?.nonCompte ? "undefined" : "defined",
+              number: donnee?.nombre,
+              numberPrecision: donnee?.estimationNombre?.libelle
+            }) as string
+          }
+          secondary={
+            t("observationDetails.distance" as unknown as TFuncKey, {
+              context:
+                donnee?.distance && donnee?.estimationDistance
+                  ? "both"
+                  : donnee?.distance
+                  ? "valueOnly"
+                  : donnee?.estimationDistance
+                  ? "precisionOnly"
+                  : "none",
+              distance: donnee?.distance,
+              distancePrecision: donnee?.estimationDistance?.libelle
+            }) as string
+          }
         ></ItemWithAvatar>
         <Divider />
 
