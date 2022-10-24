@@ -16,12 +16,12 @@ const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (
 
   return (
     <>
-      <Tooltip title={t("aria-editButton") as unknown as string}>
+      <Tooltip title={t("aria-editButton")}>
         <PrimaryIconButton disabled={disabled} aria-label={t("aria-editButton")} onClick={onEditClicked}>
           <Edit />
         </PrimaryIconButton>
       </Tooltip>
-      <Tooltip title={t("aria-deleteButton") as unknown as string}>
+      <Tooltip title={t("aria-deleteButton")}>
         <PrimaryIconButton disabled={disabled} aria-label={t("aria-deleteButton")} onClick={onDeleteClicked}>
           <Delete />
         </PrimaryIconButton>

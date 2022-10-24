@@ -117,7 +117,7 @@ const LoginPage: FunctionComponent = () => {
             name="username"
             control={control}
             rules={{
-              required: t("loginRequiredLabel") as unknown as string
+              required: t("loginRequiredLabel")
             }}
             render={({ field }) => (
               <CenteredFlexBox>
@@ -137,7 +137,7 @@ const LoginPage: FunctionComponent = () => {
             name="password"
             control={control}
             rules={{
-              required: t("passwordRequiredLabel") as unknown as string
+              required: t("passwordRequiredLabel")
             }}
             render={({ field }) => (
               <CenteredFlexBox>

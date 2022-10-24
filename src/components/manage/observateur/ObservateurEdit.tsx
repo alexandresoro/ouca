@@ -138,7 +138,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: t("requiredFieldError") as unknown as string
+                  required: t("requiredFieldError")
                 }}
                 render={({ field }) => (
                   <TextField

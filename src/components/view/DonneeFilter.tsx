@@ -31,10 +31,7 @@ const DonneeFilter: FunctionComponent = () => {
               ))
             }
           />
-          <FormControlLabel
-            control={<Switch />}
-            label={t("observationFilter.displayOnlyMyObservations") as unknown as string}
-          />
+          <FormControlLabel control={<Switch />} label={t("observationFilter.displayOnlyMyObservations")} />
           <Button variant="outlined">{t("observationFilter.exportToExcel")}</Button>
         </FormGroup>
       </Card>

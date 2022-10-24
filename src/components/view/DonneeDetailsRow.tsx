@@ -38,12 +38,12 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
         <TableCell>{intlFormat(parseISO(donnee?.inventaire.date))}</TableCell>
         <TableCell>{donnee?.inventaire.observateur.libelle}</TableCell>
         <TableCell align="right">
-          <Tooltip title={t("observationsTable.header.action.edit") as unknown as string}>
+          <Tooltip title={t("observationsTable.header.action.edit")}>
             <PrimaryIconButton aria-label={t("observationsTable.header.action.edit")} onClick={onEditAction}>
               <Edit />
             </PrimaryIconButton>
           </Tooltip>
-          <Tooltip title={t("observationsTable.header.action.delete") as unknown as string}>
+          <Tooltip title={t("observationsTable.header.action.delete")}>
             <PrimaryIconButton aria-label={t("observationsTable.header.action.delete")} onClick={onDeleteAction}>
               <Delete />
             </PrimaryIconButton>
