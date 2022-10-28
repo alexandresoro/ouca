@@ -10,8 +10,8 @@ This API is structured as a stateless microservice. It exposes a GraphQL and a s
 
 ## Prerequisites
 
-- This project expects to be connected to a database instance. For now, only _MariaDB >10.5_ is supported.
-- _Node.js 8_ or later
+- This project expects to be connected to a database instance. For now, only _MariaDB >= 10.6.9_ is supported.
+- _Node.js 18_ or later
 - _npm 8_ or later
 
 ## Deployment
