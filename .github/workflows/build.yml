@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - node-version: 16
+          - node-version: 18
             type: "build,lts"
             published: true
           - node-version: latest
