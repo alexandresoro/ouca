@@ -56,7 +56,7 @@ jobs:
       - name: Set supported node version
         id: nodeVersion
         if: matrix.published && github.event_name == 'push'
-        run: echo "::set-output name=version::${{ matrix.node-version }}"
+        run: echo "version=${{ matrix.node-version }}" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
         if: matrix.published && github.event_name == 'push'
