@@ -1,5 +1,5 @@
 # 1. Transpile the project
-FROM node:16-alpine as build
+FROM node:18-alpine as build
 
 WORKDIR /app/backend
 
@@ -14,7 +14,7 @@ RUN npm ci
 RUN npm run build
 
 # 2. Run the NodeJS backend
-FROM node:16-alpine
+FROM node:18-alpine
 ENV NODE_ENV=production
 
 # Install only the dependencies that are required at runtime

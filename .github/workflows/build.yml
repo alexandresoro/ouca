@@ -21,13 +21,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - node-version: 16
+          - node-version: 18
             type: "build,lts"
             published: true
-          - node-version: 18
-            type: "next"
-            published: false
           - node-version: latest
+            type: "next"
             published: false
 
     steps:
