@@ -5,7 +5,6 @@ CREATE TABLE `age` (
     `owner_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_age_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -16,7 +15,6 @@ CREATE TABLE `classe` (
     `owner_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_classe_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -28,7 +26,6 @@ CREATE TABLE `commune` (
     `nom` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    INDEX `fk_commune_owner_id`(`owner_id`),
     UNIQUE INDEX `unique_departement_code`(`departement_id`, `code`),
     UNIQUE INDEX `unique_departement_nom`(`departement_id`, `nom`),
     PRIMARY KEY (`id`)
@@ -44,7 +41,6 @@ CREATE TABLE `comportement` (
 
     UNIQUE INDEX `unique_code`(`code`),
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_comportement_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -55,7 +51,6 @@ CREATE TABLE `departement` (
     `owner_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `unique_code`(`code`),
-    INDEX `fk_departement_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -74,12 +69,6 @@ CREATE TABLE `donnee` (
     `regroupement` SMALLINT UNSIGNED NULL,
     `date_creation` DATETIME(0) NOT NULL,
 
-    INDEX `fk_donnee_age_id`(`age_id`),
-    INDEX `fk_donnee_espece_id`(`espece_id`),
-    INDEX `fk_donnee_estimation_distance_id`(`estimation_distance_id`),
-    INDEX `fk_donnee_estimation_nombre_id`(`estimation_nombre_id`),
-    INDEX `fk_donnee_inventaire_id`(`inventaire_id`),
-    INDEX `fk_donnee_sexe_id`(`sexe_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -88,7 +77,6 @@ CREATE TABLE `donnee_comportement` (
     `comportement_id` SMALLINT UNSIGNED NOT NULL,
     `donnee_id` MEDIUMINT UNSIGNED NOT NULL,
 
-    INDEX `fk_donnee_comportement_comportement_id`(`comportement_id`),
     PRIMARY KEY (`donnee_id`, `comportement_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -97,7 +85,6 @@ CREATE TABLE `donnee_milieu` (
     `milieu_id` SMALLINT UNSIGNED NOT NULL,
     `donnee_id` MEDIUMINT UNSIGNED NOT NULL,
 
-    INDEX `fk_donnee_milieu_milieu_id`(`milieu_id`),
     PRIMARY KEY (`donnee_id`, `milieu_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -113,8 +100,6 @@ CREATE TABLE `espece` (
     UNIQUE INDEX `unique_code`(`code`),
     UNIQUE INDEX `unique_nom_francais`(`nom_francais`),
     UNIQUE INDEX `unique_nom_latin`(`nom_latin`),
-    INDEX `fk_espece_classe_id`(`classe_id`),
-    INDEX `fk_espece_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -125,7 +110,6 @@ CREATE TABLE `estimation_distance` (
     `owner_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_estimation_distance_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -137,7 +121,6 @@ CREATE TABLE `estimation_nombre` (
     `owner_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_estimation_nombre_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -157,9 +140,6 @@ CREATE TABLE `inventaire` (
     `date_creation` DATETIME(0) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    INDEX `fk_inventaire_lieudit_id`(`lieudit_id`),
-    INDEX `fk_inventaire_observateur_id`(`observateur_id`),
-    INDEX `fk_inventaire_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -168,7 +148,6 @@ CREATE TABLE `inventaire_associe` (
     `inventaire_id` MEDIUMINT UNSIGNED NOT NULL,
     `observateur_id` SMALLINT UNSIGNED NOT NULL,
 
-    INDEX `fk_inventaire_associe_observateur_id`(`observateur_id`),
     PRIMARY KEY (`inventaire_id`, `observateur_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -177,7 +156,6 @@ CREATE TABLE `inventaire_meteo` (
     `meteo_id` SMALLINT UNSIGNED NOT NULL,
     `inventaire_id` MEDIUMINT UNSIGNED NOT NULL,
 
-    INDEX `fk_inventaire_meteo_meteo_id`(`meteo_id`),
     PRIMARY KEY (`inventaire_id`, `meteo_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -192,7 +170,6 @@ CREATE TABLE `lieudit` (
     `coordinates_system` ENUM('gps', 'lambert93') NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    INDEX `fk_lieudit_owner_id`(`owner_id`),
     UNIQUE INDEX `unique_commune_nom`(`commune_id`, `nom`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -204,7 +181,6 @@ CREATE TABLE `meteo` (
     `owner_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_meteo_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -217,7 +193,6 @@ CREATE TABLE `milieu` (
 
     UNIQUE INDEX `unique_code`(`code`),
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_milieu_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -228,7 +203,6 @@ CREATE TABLE `observateur` (
     `owner_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_observateur_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -249,11 +223,6 @@ CREATE TABLE `settings` (
     `user_id` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `unique_user_id`(`user_id`),
-    INDEX `fk_settings_age_id`(`default_age_id`),
-    INDEX `fk_settings_departement_id`(`default_departement_id`),
-    INDEX `fk_settings_estimation_nombre_id`(`default_estimation_nombre_id`),
-    INDEX `fk_settings_observateur_id`(`default_observateur_id`),
-    INDEX `fk_settings_sexe_id`(`default_sexe_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -264,7 +233,6 @@ CREATE TABLE `sexe` (
     `owner_id` VARCHAR(191) NULL,
 
     UNIQUE INDEX `unique_libelle`(`libelle`),
-    INDEX `fk_sexe_owner_id`(`owner_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
