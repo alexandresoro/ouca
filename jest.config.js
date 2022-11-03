@@ -14,7 +14,6 @@ module.exports = {
     "!src/graphql/mercurius-logger.ts",
     "!src/graphql/resolvers.ts",
     "!src/graphql/generated/**",
-    "!src/model/graphql.ts",
   ],
 
   // The directory where Jest should output its coverage files

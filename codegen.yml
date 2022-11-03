@@ -1,10 +1,5 @@
 schema: src/model/schema.graphql
 generates:
-  src/model/graphql.ts:
-    plugins:
-      - typescript
-    config:
-      enumsAsConst: true
   src/graphql/generated/graphql-types.ts:
     plugins:
       - typescript

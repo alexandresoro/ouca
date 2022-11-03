@@ -1,4 +1,3 @@
-src/model/graphql.ts
 src/graphql/generated
 jest.config.*
 
