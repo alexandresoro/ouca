@@ -4,7 +4,7 @@ import { intlFormat, parseISO } from "date-fns";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Inventaire } from "../../graphql/generated/graphql-types";
-import { getInventaireCoordinates } from "../../model/coordinates-system/coordinates-helper";
+import { getInventaireCoordinates } from "../../utils/coordinates-helper";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 
 type InventaireDetailsViewProps = {
