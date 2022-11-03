@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -13,9 +13,11 @@ import {
   TableSortLabel
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import { FunctionComponent, useState } from "react";
+import { gql as gql2 } from "graphql-request";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useGraphQLRequestContext from "../../../hooks/useGraphQLRequestContext";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import {
@@ -39,6 +41,20 @@ type DeleteObservateurMutationResult = {
 };
 
 const PAGINATED_OBSERVATEURS_QUERY = gql`
+  query Observateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+    observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+      count
+      data {
+        id
+        libelle
+        editable
+        nbDonnees
+      }
+    }
+  }
+`;
+
+const PAGINATED_OBSERVATEURS_QUERY_RQ = gql2`
   query Observateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
@@ -78,24 +94,44 @@ const ObservateurTable: FunctionComponent = () => {
 
   const [dialogObservateur, setDialogObservateur] = useState<Observateur | null>(null);
 
-  const { data } = useQuery<PaginatedObservateursQueryResult, QueryObservateursArgs>(PAGINATED_OBSERVATEURS_QUERY, {
-    fetchPolicy: "cache-and-network",
-    variables: {
-      searchParams: {
-        pageNumber: page,
-        pageSize: rowsPerPage,
-        q: query
-      },
-      orderBy,
-      sortOrder
-    }
-  });
+  const [data, setData] = useState<PaginatedObservateursQueryResult | null>(null);
+
+  // const { data } = useQuery<PaginatedObservateursQueryResult, QueryObservateursArgs>(PAGINATED_OBSERVATEURS_QUERY, {
+  //   fetchPolicy: "cache-and-network",
+  //   variables: {
+  //     searchParams: {
+  //       pageNumber: page,
+  //       pageSize: rowsPerPage,
+  //       q: query
+  //     },
+  //     orderBy,
+  //     sortOrder
+  //   }
+  // });
+
+  const client = useGraphQLRequestContext();
 
   const [deleteObservateur] = useMutation<DeleteObservateurMutationResult, MutationDeleteObservateurArgs>(
     DELETE_OBSERVATEUR
   );
 
   const { setSnackbarContent } = useSnackbar();
+
+  useEffect(() => {
+    void client
+      .request<PaginatedObservateursQueryResult, QueryObservateursArgs>(PAGINATED_OBSERVATEURS_QUERY_RQ, {
+        searchParams: {
+          pageNumber: page,
+          pageSize: rowsPerPage,
+          q: query
+        },
+        orderBy,
+        sortOrder
+      })
+      .then((data) => {
+        setData(data);
+      });
+  }, [page, rowsPerPage, query, orderBy, sortOrder]);
 
   const handleEditObservateur = (id: number | undefined) => {
     if (id) {
