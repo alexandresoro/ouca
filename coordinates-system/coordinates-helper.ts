@@ -1,7 +1,8 @@
-import { LieuDit } from "../graphql";
 import { Coordinates } from "../types/coordinates.object";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
+
+type LieuDitForCoordinates = {id?: unknown; latitude?: number; longitude?: number; altitude?: number; coordinatesSystem?: CoordinatesSystemType;};
 
 export const getCoordinates = (
   object: { coordinates: Coordinates },
@@ -11,7 +12,7 @@ export const getCoordinates = (
 };
 
 export const areCoordinatesCustomized = (
-  lieudit: Omit<Partial<LieuDit>, "commune">,
+  lieudit: LieuDitForCoordinates,
   altitude: number,
   longitude: number,
   latitude: number,
@@ -21,11 +22,12 @@ export const areCoordinatesCustomized = (
     const lieuditCoordinates: Coordinates = getCoordinates(
       {
         coordinates: {
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-          latitude: lieudit.latitude as number,
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-          longitude: lieudit.longitude as number,
-          system: lieudit.coordinatesSystem as CoordinatesSystemType,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          latitude: lieudit.latitude!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          longitude: lieudit.longitude!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          system: lieudit.coordinatesSystem!,
         },
       },
       system

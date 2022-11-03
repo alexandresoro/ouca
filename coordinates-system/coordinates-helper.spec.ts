@@ -1,11 +1,11 @@
-import { LieuDit } from "../graphql";
 import { Coordinates } from "../types/coordinates.object";
 import { areCoordinatesCustomized, areSameCoordinates } from "./coordinates-helper";
+import { CoordinatesSystemType } from "./coordinates-system.object";
 
 test("should correctly validate non-customized coordinated", () => {
-  const lieudit: Omit<Partial<LieuDit>, "commune"> = {
+  const lieudit = {
     id: 1,
-    coordinatesSystem: "gps",
+    coordinatesSystem: "gps" as CoordinatesSystemType,
     longitude: 10,
     latitude: -4,
     altitude: 45,
@@ -15,9 +15,9 @@ test("should correctly validate non-customized coordinated", () => {
 });
 
 test("should correctly validate customized coordinated", () => {
-  const lieudit: Omit<Partial<LieuDit>, "commune"> = {
+  const lieudit = {
     id: 1,
-    coordinatesSystem: "gps",
+    coordinatesSystem: "gps" as CoordinatesSystemType,
     longitude: 10,
     latitude: -4,
     altitude: 45,
