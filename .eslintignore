@@ -1,8 +1,9 @@
 src/model/graphql.ts
-src/graphql/generated
+src/gql
 
 jest.config.*
 vite.config.ts
+codegen.ts
 
 dist/
 functions/

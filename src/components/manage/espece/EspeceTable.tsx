@@ -21,9 +21,8 @@ import {
   EspecesOrderBy,
   EspecesPaginatedResult,
   MutationDeleteEspeceArgs,
-  QueryEspecesArgs,
-  SortOrder
-} from "../../../graphql/generated/graphql-types";
+  QueryEspecesArgs
+} from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -201,7 +200,7 @@ const EspeceTable: FunctionComponent = () => {
                     {t(column.locKey)}
                     {orderBy === column.key ? (
                       <Box component="span" sx={visuallyHidden}>
-                        {sortOrder === SortOrder.Desc ? t("aria-descendingSort") : t("aria-ascendingSort")}
+                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
                       </Box>
                     ) : null}
                   </TableSortLabel>

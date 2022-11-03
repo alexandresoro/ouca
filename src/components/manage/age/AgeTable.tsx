@@ -21,9 +21,8 @@ import {
   AgesPaginatedResult,
   EntitesAvecLibelleOrderBy,
   MutationDeleteAgeArgs,
-  QueryAgesArgs,
-  SortOrder
-} from "../../../graphql/generated/graphql-types";
+  QueryAgesArgs
+} from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -175,7 +174,7 @@ const AgeTable: FunctionComponent = () => {
                     {t(column.locKey)}
                     {orderBy === column.key ? (
                       <Box component="span" sx={visuallyHidden}>
-                        {sortOrder === SortOrder.Desc ? t("aria-descendingSort") : t("aria-ascendingSort")}
+                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
                       </Box>
                     ) : null}
                   </TableSortLabel>

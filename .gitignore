@@ -25,4 +25,4 @@ yarn-error.log*
 .env
 
 # Generated files
-src/graphql/generated
+src/gql

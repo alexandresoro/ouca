@@ -13,28 +13,22 @@ import {
   TableSortLabel
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import { gql as gql2 } from "graphql-request";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { graphql } from "../../../gql";
 import {
   EntitesAvecLibelleOrderBy,
   MutationDeleteObservateurArgs,
   Observateur,
-  ObservateursPaginatedResult,
-  QueryObservateursArgs,
-  SortOrder
-} from "../../../graphql/generated/graphql-types";
+  ObservateursQuery
+} from "../../../gql/graphql";
 import useGraphQLRequestContext from "../../../hooks/useGraphQLRequestContext";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-type PaginatedObservateursQueryResult = {
-  observateurs: ObservateursPaginatedResult;
-};
 
 type DeleteObservateurMutationResult = {
   deleteObservateur: number | null;
@@ -54,7 +48,7 @@ const PAGINATED_OBSERVATEURS_QUERY = gql`
   }
 `;
 
-const PAGINATED_OBSERVATEURS_QUERY_RQ = gql2`
+const PAGINATED_OBSERVATEURS_QUERY_RQ = graphql(`
   query Observateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
@@ -66,7 +60,7 @@ const PAGINATED_OBSERVATEURS_QUERY_RQ = gql2`
       }
     }
   }
-`;
+`);
 
 const DELETE_OBSERVATEUR = gql`
   mutation DeleteObservateur($id: Int!) {
@@ -94,7 +88,7 @@ const ObservateurTable: FunctionComponent = () => {
 
   const [dialogObservateur, setDialogObservateur] = useState<Observateur | null>(null);
 
-  const [data, setData] = useState<PaginatedObservateursQueryResult | null>(null);
+  const [data, setData] = useState<ObservateursQuery | null>(null);
 
   // const { data } = useQuery<PaginatedObservateursQueryResult, QueryObservateursArgs>(PAGINATED_OBSERVATEURS_QUERY, {
   //   fetchPolicy: "cache-and-network",
@@ -119,7 +113,7 @@ const ObservateurTable: FunctionComponent = () => {
 
   useEffect(() => {
     void client
-      .request<PaginatedObservateursQueryResult, QueryObservateursArgs>(PAGINATED_OBSERVATEURS_QUERY_RQ, {
+      .request(PAGINATED_OBSERVATEURS_QUERY_RQ, {
         searchParams: {
           pageNumber: page,
           pageSize: rowsPerPage,
@@ -213,7 +207,7 @@ const ObservateurTable: FunctionComponent = () => {
                     {t(column.locKey)}
                     {orderBy === column.key ? (
                       <Box component="span" sx={visuallyHidden}>
-                        {sortOrder === SortOrder.Desc ? t("aria-descendingSort") : t("aria-ascendingSort")}
+                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
                       </Box>
                     ) : null}
                   </TableSortLabel>

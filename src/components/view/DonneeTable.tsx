@@ -19,9 +19,8 @@ import {
   Donnee,
   MutationDeleteDonneeArgs,
   PaginatedSearchDonneesResult,
-  SearchDonneesOrderBy,
-  SortOrder
-} from "../../graphql/generated/graphql-types";
+  SearchDonneesOrderBy
+} from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
@@ -269,7 +268,7 @@ const DonneeTable: FunctionComponent = () => {
                     {t(column.locKey)}
                     {orderBy === column.key ? (
                       <Box component="span" sx={visuallyHidden}>
-                        {sortOrder === SortOrder.Desc ? t("aria-descendingSort") : t("aria-ascendingSort")}
+                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
                       </Box>
                     ) : null}
                   </TableSortLabel>

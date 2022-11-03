@@ -15,12 +15,7 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  EspecesOrderBy,
-  EspecesPaginatedResult,
-  QuerySearchEspecesArgs,
-  SortOrder
-} from "../../graphql/generated/graphql-types";
+import { EspecesOrderBy, EspecesPaginatedResult, QuerySearchEspecesArgs } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 
 type PaginatedSearchEspecesQueryResult = {
@@ -140,7 +135,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
                     {t(column.locKey)}
                     {orderBy === column.key ? (
                       <Box component="span" sx={visuallyHidden}>
-                        {sortOrder === SortOrder.Desc ? t("aria-descendingSort") : t("aria-ascendingSort")}
+                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
                       </Box>
                     ) : null}
                   </TableSortLabel>

@@ -5,11 +5,7 @@ import { FunctionComponent, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  MutationUpsertObservateurArgs,
-  Observateur,
-  QueryObservateurArgs
-} from "../../../graphql/generated/graphql-types";
+import { MutationUpsertObservateurArgs, Observateur, QueryObservateurArgs } from "../../../gql/graphql";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { getOucaError } from "../../../utils/ouca-error-extractor";
 import { EntityWithLibelleInputs } from "../common/entity-types";

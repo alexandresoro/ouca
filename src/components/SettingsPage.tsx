@@ -13,7 +13,7 @@ import {
   Observateur,
   Settings,
   Sexe
-} from "../graphql/generated/graphql-types";
+} from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";

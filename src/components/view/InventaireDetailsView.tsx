@@ -3,7 +3,7 @@ import { Divider, List, Typography, useTheme } from "@mui/material";
 import { intlFormat, parseISO } from "date-fns";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Inventaire } from "../../graphql/generated/graphql-types";
+import { Inventaire } from "../../gql/graphql";
 import { getInventaireCoordinates } from "../../utils/coordinates-helper";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 

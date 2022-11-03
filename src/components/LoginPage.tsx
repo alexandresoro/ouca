@@ -6,7 +6,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
-import { MutationUserLoginArgs, UserInfo } from "../graphql/generated/graphql-types";
+import { MutationUserLoginArgs, UserInfo } from "../gql/graphql";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
 
 const LOGO_SIZE = "250px";

@@ -21,9 +21,8 @@ import {
   ComportementsOrderBy,
   ComportementsPaginatedResult,
   MutationDeleteComportementArgs,
-  QueryComportementsArgs,
-  SortOrder
-} from "../../../graphql/generated/graphql-types";
+  QueryComportementsArgs
+} from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -194,7 +193,7 @@ const ComportementTable: FunctionComponent = () => {
                     {t(column.locKey)}
                     {orderBy === column.key ? (
                       <Box component="span" sx={visuallyHidden}>
-                        {sortOrder === SortOrder.Desc ? t("aria-descendingSort") : t("aria-ascendingSort")}
+                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
                       </Box>
                     ) : null}
                   </TableSortLabel>

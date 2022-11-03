@@ -10,4 +10,4 @@ src/model
 .gitmodules
 
 # Ignore generated files
-src/graphql/generated
+src/gql
