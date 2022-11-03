@@ -2,7 +2,13 @@ import { Coordinates } from "../types/coordinates.object";
 import { CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
-type LieuDitForCoordinates = {id?: unknown; latitude?: number; longitude?: number; altitude?: number; coordinatesSystem?: CoordinatesSystemType;};
+type LieuDitForCoordinates = {
+  id?: unknown;
+  latitude?: number;
+  longitude?: number;
+  altitude?: number;
+  coordinatesSystem?: CoordinatesSystemType;
+};
 
 export const getCoordinates = (
   object: { coordinates: Coordinates },
