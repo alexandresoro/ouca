@@ -4,7 +4,7 @@ import { intlFormat, parseISO } from "date-fns";
 import { TFuncKey } from "i18next";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Donnee } from "../../model/graphql";
+import { Donnee } from "../../graphql/generated/graphql-types";
 import PrimaryIconButton from "../utils/PrimaryIconButton";
 import DonneeDetailsView from "./DonneeDetailsView";
 import InventaireDetailsView from "./InventaireDetailsView";

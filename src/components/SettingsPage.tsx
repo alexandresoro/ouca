@@ -4,8 +4,6 @@ import { FunctionComponent, useCallback, useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../contexts/UserContext";
-import useSnackbar from "../hooks/useSnackbar";
-import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import {
   Age,
   CoordinatesSystemType,
@@ -15,7 +13,9 @@ import {
   Observateur,
   Settings,
   Sexe
-} from "../model/graphql";
+} from "../graphql/generated/graphql-types";
+import useSnackbar from "../hooks/useSnackbar";
+import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
 import CenteredFlexBox from "./utils/CenteredFlexBox";

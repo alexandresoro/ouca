@@ -15,15 +15,15 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
-import useSnackbar from "../../hooks/useSnackbar";
 import {
   Donnee,
   MutationDeleteDonneeArgs,
   PaginatedSearchDonneesResult,
   SearchDonneesOrderBy,
   SortOrder
-} from "../../model/graphql";
+} from "../../graphql/generated/graphql-types";
+import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
+import useSnackbar from "../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
 

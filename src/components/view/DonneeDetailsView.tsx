@@ -3,7 +3,7 @@ import { Chip, Divider, List, Typography, useTheme } from "@mui/material";
 import { TFuncKey } from "i18next";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Comportement, Donnee } from "../../model/graphql";
+import { Comportement, Donnee } from "../../graphql/generated/graphql-types";
 import { getHighestNicheurStatus } from "../../model/helpers/nicheur-helper";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 

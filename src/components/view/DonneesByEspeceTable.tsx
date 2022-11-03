@@ -15,8 +15,13 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  EspecesOrderBy,
+  EspecesPaginatedResult,
+  QuerySearchEspecesArgs,
+  SortOrder
+} from "../../graphql/generated/graphql-types";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
-import { EspecesOrderBy, EspecesPaginatedResult, QuerySearchEspecesArgs, SortOrder } from "../../model/graphql";
 
 type PaginatedSearchEspecesQueryResult = {
   paginatedSearchEspeces: EspecesPaginatedResult;

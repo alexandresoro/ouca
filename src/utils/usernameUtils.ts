@@ -1,4 +1,4 @@
-import { UserInfo } from "../model/graphql";
+import { UserInfo } from "../graphql/generated/graphql-types";
 
 export const getFullName = (userInfo: UserInfo | null): string | null => {
   if (!userInfo) {

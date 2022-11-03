@@ -16,8 +16,6 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import {
   Classe,
   ClassesOrderBy,
@@ -25,7 +23,9 @@ import {
   MutationDeleteClasseArgs,
   QueryClassesArgs,
   SortOrder
-} from "../../../model/graphql";
+} from "../../../graphql/generated/graphql-types";
+import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
+import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";

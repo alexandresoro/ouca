@@ -17,9 +17,6 @@ import { gql as gql2 } from "graphql-request";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import useGraphQLRequestContext from "../../../hooks/useGraphQLRequestContext";
-import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import {
   EntitesAvecLibelleOrderBy,
   MutationDeleteObservateurArgs,
@@ -27,7 +24,10 @@ import {
   ObservateursPaginatedResult,
   QueryObservateursArgs,
   SortOrder
-} from "../../../model/graphql";
+} from "../../../graphql/generated/graphql-types";
+import useGraphQLRequestContext from "../../../hooks/useGraphQLRequestContext";
+import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
+import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";

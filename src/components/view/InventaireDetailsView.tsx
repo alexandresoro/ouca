@@ -3,8 +3,8 @@ import { Divider, List, Typography, useTheme } from "@mui/material";
 import { intlFormat, parseISO } from "date-fns";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { Inventaire } from "../../graphql/generated/graphql-types";
 import { getInventaireCoordinates } from "../../model/coordinates-system/coordinates-helper";
-import { Inventaire } from "../../model/graphql";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 
 type InventaireDetailsViewProps = {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SortOrder } from "../model/graphql";
+import { SortOrder } from "../graphql/generated/graphql-types";
 
 export default function usePaginatedTableParams<T>() {
   const [query, setQuery] = useState("");

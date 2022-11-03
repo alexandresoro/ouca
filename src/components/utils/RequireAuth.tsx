@@ -3,7 +3,7 @@ import { CircularProgress } from "@mui/material";
 import { FunctionComponent, ReactElement, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
-import { UserInfo } from "../../model/graphql";
+import { UserInfo } from "../../graphql/generated/graphql-types";
 import CenteredFlexBox from "./CenteredFlexBox";
 
 type RefreshTokenResult = {

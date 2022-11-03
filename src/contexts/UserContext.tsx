@@ -1,5 +1,5 @@
-import React, { createContext, ReactElement, useState } from "react";
-import { UserInfo } from "../model/graphql";
+import { createContext, ReactElement, useState } from "react";
+import { UserInfo } from "../graphql/generated/graphql-types";
 
 export const UserContext = createContext<{
   userInfo: UserInfo | null;
