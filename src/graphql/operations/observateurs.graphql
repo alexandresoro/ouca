@@ -1,0 +1,11 @@
+query Observateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+  observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+    count
+    data {
+      id
+      libelle
+      editable
+      nbDonnees
+    }
+  }
+}
