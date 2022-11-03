@@ -14,6 +14,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
+    "postinstall": "npm run generate-graphql",
     "serve": "vite preview",
     "test": "jest",
     "lint": "eslint .",
