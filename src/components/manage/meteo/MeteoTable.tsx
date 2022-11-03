@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   Meteo,
   MeteosPaginatedResult,
   MutationDeleteMeteoArgs,
-  QueryMeteosArgs
+  QueryMeteosArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -69,12 +69,12 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const MeteoTable: FunctionComponent = () => {
@@ -92,11 +92,11 @@ const MeteoTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteMeteo] = useMutation<DeleteMeteoMutationResult, MutationDeleteMeteoArgs>(DELETE);
@@ -120,22 +120,22 @@ const MeteoTable: FunctionComponent = () => {
       setDialogMeteo(null);
       await deleteMeteo({
         variables: {
-          id: meteo.id
+          id: meteo.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteMeteo) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -167,7 +167,7 @@ const MeteoTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -226,7 +226,7 @@ const MeteoTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogMeteo}
         messageContent={t("deleteWeatherDialogMsg", {
-          name: dialogMeteo?.libelle
+          name: dialogMeteo?.libelle,
         })}
         impactedItemsMessage={t("deleteWeatherDialogMsgImpactedData")}
         onCancelAction={() => setDialogMeteo(null)}

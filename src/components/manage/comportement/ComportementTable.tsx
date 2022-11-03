@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   ComportementsOrderBy,
   ComportementsPaginatedResult,
   MutationDeleteComportementArgs,
-  QueryComportementsArgs
+  QueryComportementsArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -71,20 +71,20 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "code",
-    locKey: "code"
+    locKey: "code",
   },
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nicheur",
-    locKey: "breeding"
+    locKey: "breeding",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const ComportementTable: FunctionComponent = () => {
@@ -102,11 +102,11 @@ const ComportementTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteComportement] = useMutation<DeleteComportementMutationResult, MutationDeleteComportementArgs>(DELETE);
@@ -130,22 +130,22 @@ const ComportementTable: FunctionComponent = () => {
       setDialogComportement(null);
       await deleteComportement({
         variables: {
-          id: comportement.id
+          id: comportement.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteComportement) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -177,7 +177,7 @@ const ComportementTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -238,7 +238,7 @@ const ComportementTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogComportement}
         messageContent={t("deleteBehaviorDialogMsg", {
-          name: dialogComportement?.libelle
+          name: dialogComportement?.libelle,
         })}
         impactedItemsMessage={t("deleteBehaviorDialogMsgImpactedData")}
         onCancelAction={() => setDialogComportement(null)}

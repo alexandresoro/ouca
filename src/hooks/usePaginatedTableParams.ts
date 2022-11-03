@@ -18,6 +18,6 @@ export default function usePaginatedTableParams<T>() {
     orderBy,
     setOrderBy,
     sortOrder,
-    setSortOrder
+    setSortOrder,
   };
 }

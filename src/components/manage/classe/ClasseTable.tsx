@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   ClassesOrderBy,
   ClassesPaginatedResult,
   MutationDeleteClasseArgs,
-  QueryClassesArgs
+  QueryClassesArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -70,16 +70,16 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nbEspeces",
-    locKey: "numberOfSpecies"
+    locKey: "numberOfSpecies",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const ClasseTable: FunctionComponent = () => {
@@ -97,11 +97,11 @@ const ClasseTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteClasse] = useMutation<DeleteClasseMutationResult, MutationDeleteClasseArgs>(DELETE);
@@ -125,22 +125,22 @@ const ClasseTable: FunctionComponent = () => {
       setDialogClasse(null);
       await deleteClasse({
         variables: {
-          id: classe.id
+          id: classe.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteClasse) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -172,7 +172,7 @@ const ClasseTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -232,11 +232,11 @@ const ClasseTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogClasse}
         messageContent={t("deleteClassDialogMsg", {
-          name: dialogClasse?.libelle
+          name: dialogClasse?.libelle,
         })}
         impactedItemsMessage={t("deleteClassDialogMsgImpactedData", {
           nbOfObservations: dialogClasse?.nbDonnees,
-          nbOfSpecies: dialogClasse?.nbEspeces
+          nbOfSpecies: dialogClasse?.nbEspeces,
         })}
         onCancelAction={() => setDialogClasse(null)}
         onConfirmAction={() => handleDeleteClasseConfirmation(dialogClasse)}

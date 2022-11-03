@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   CommunesOrderBy,
   CommunesPaginatedResult,
   MutationDeleteCommuneArgs,
-  QueryCommunesArgs
+  QueryCommunesArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -74,24 +74,24 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "departement",
-    locKey: "department"
+    locKey: "department",
   },
   {
     key: "code",
-    locKey: "code"
+    locKey: "code",
   },
   {
     key: "nom",
-    locKey: "name"
+    locKey: "name",
   },
   {
     key: "nbLieuxDits",
-    locKey: "numberOfLocalities"
+    locKey: "numberOfLocalities",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const CommuneTable: FunctionComponent = () => {
@@ -109,11 +109,11 @@ const CommuneTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteCommune] = useMutation<DeleteCommuneMutationResult, MutationDeleteCommuneArgs>(DELETE);
@@ -137,22 +137,22 @@ const CommuneTable: FunctionComponent = () => {
       setDialogCommune(null);
       await deleteCommune({
         variables: {
-          id: commune.id
+          id: commune.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteCommune) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -184,7 +184,7 @@ const CommuneTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -247,11 +247,11 @@ const CommuneTable: FunctionComponent = () => {
         open={!!dialogCommune}
         messageContent={t("deleteCityDialogMsg", {
           name: dialogCommune?.nom,
-          department: dialogCommune?.departement?.code
+          department: dialogCommune?.departement?.code,
         })}
         impactedItemsMessage={t("deleteCityDialogMsgImpactedData", {
           nbOfObservations: dialogCommune?.nbDonnees ?? 0,
-          nbOfLocalities: dialogCommune?.nbLieuxDits ?? 0
+          nbOfLocalities: dialogCommune?.nbLieuxDits ?? 0,
         })}
         onCancelAction={() => setDialogCommune(null)}
         onConfirmAction={() => handleDeleteCommuneConfirmation(dialogCommune)}

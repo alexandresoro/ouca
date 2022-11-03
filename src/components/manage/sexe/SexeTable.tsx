@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   MutationDeleteSexeArgs,
   QuerySexesArgs,
   Sexe,
-  SexesPaginatedResult
+  SexesPaginatedResult,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -69,12 +69,12 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const SexeTable: FunctionComponent = () => {
@@ -92,11 +92,11 @@ const SexeTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteSexe] = useMutation<DeleteSexeMutationResult, MutationDeleteSexeArgs>(DELETE);
@@ -120,22 +120,22 @@ const SexeTable: FunctionComponent = () => {
       setDialogSexe(null);
       await deleteSexe({
         variables: {
-          id: sexe.id
+          id: sexe.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteSexe) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -167,7 +167,7 @@ const SexeTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -226,10 +226,10 @@ const SexeTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogSexe}
         messageContent={t("deleteGenderDialogMsg", {
-          name: dialogSexe?.libelle
+          name: dialogSexe?.libelle,
         })}
         impactedItemsMessage={t("deleteGenderDialogMsgImpactedData", {
-          nbOfObservations: dialogSexe?.nbDonnees
+          nbOfObservations: dialogSexe?.nbDonnees,
         })}
         onCancelAction={() => setDialogSexe(null)}
         onConfirmAction={() => handleDeleteSexeConfirmation(dialogSexe)}

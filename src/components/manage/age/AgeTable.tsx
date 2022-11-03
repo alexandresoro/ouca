@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   AgesPaginatedResult,
   EntitesAvecLibelleOrderBy,
   MutationDeleteAgeArgs,
-  QueryAgesArgs
+  QueryAgesArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -60,12 +60,12 @@ const DELETE_AGE = gql`
 const COLUMNS = [
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const AgeTable: FunctionComponent = () => {
@@ -83,11 +83,11 @@ const AgeTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteAge] = useMutation<DeleteAgeMutationResult, MutationDeleteAgeArgs>(DELETE_AGE);
@@ -111,22 +111,22 @@ const AgeTable: FunctionComponent = () => {
       setDialogAge(null);
       await deleteAge({
         variables: {
-          id: age.id
+          id: age.id,
         },
-        refetchQueries: [PAGINATED_AGES_QUERY]
+        refetchQueries: [PAGINATED_AGES_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteAge) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -158,7 +158,7 @@ const AgeTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -217,10 +217,10 @@ const AgeTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogAge}
         messageContent={t("deleteAgeDialogMsg", {
-          name: dialogAge?.libelle
+          name: dialogAge?.libelle,
         })}
         impactedItemsMessage={t("deleteAgeDialogMsgImpactedData", {
-          nbOfObservations: dialogAge?.nbDonnees ?? 0
+          nbOfObservations: dialogAge?.nbDonnees ?? 0,
         })}
         onCancelAction={() => setDialogAge(null)}
         onConfirmAction={() => handleDeleteAgeConfirmation(dialogAge)}

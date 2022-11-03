@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   MilieuxOrderBy,
   MilieuxPaginatedResult,
   MutationDeleteMilieuArgs,
-  QueryMilieuxArgs
+  QueryMilieuxArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -70,16 +70,16 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "code",
-    locKey: "code"
+    locKey: "code",
   },
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const MilieuTable: FunctionComponent = () => {
@@ -97,11 +97,11 @@ const MilieuTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteMilieu] = useMutation<DeleteMilieuMutationResult, MutationDeleteMilieuArgs>(DELETE);
@@ -125,22 +125,22 @@ const MilieuTable: FunctionComponent = () => {
       setDialogMilieu(null);
       await deleteMilieu({
         variables: {
-          id: milieu.id
+          id: milieu.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteMilieu) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -172,7 +172,7 @@ const MilieuTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -232,7 +232,7 @@ const MilieuTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogMilieu}
         messageContent={t("deleteEnvironmentDialogMsg", {
-          name: dialogMilieu?.libelle
+          name: dialogMilieu?.libelle,
         })}
         impactedItemsMessage={t("deleteEnvironmentDialogMsgImpactedData")}
         onCancelAction={() => setDialogMilieu(null)}

@@ -28,7 +28,7 @@ const ComportementPage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportComportementsResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportComportements) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportComportements, `${t("behaviors")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const ComportementPage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <ComportementTable />

@@ -28,7 +28,7 @@ const EstimationNombrePage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportEstimationsNombreResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportEstimationsNombre) {
       downloadFile(
@@ -45,7 +45,7 @@ const EstimationNombrePage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <EstimationNombreTable />

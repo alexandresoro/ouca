@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   EstimationDistance,
   EstimationsDistancePaginatedResult,
   MutationDeleteEstimationDistanceArgs,
-  QueryEstimationsDistanceArgs
+  QueryEstimationsDistanceArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -69,12 +69,12 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const EstimationDistanceTable: FunctionComponent = () => {
@@ -92,11 +92,11 @@ const EstimationDistanceTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteEstimationDistance] = useMutation<
@@ -123,22 +123,22 @@ const EstimationDistanceTable: FunctionComponent = () => {
       setDialogEstimationDistance(null);
       await deleteEstimationDistance({
         variables: {
-          id: estimationDistance.id
+          id: estimationDistance.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteEstimationDistance) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -170,7 +170,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -229,10 +229,10 @@ const EstimationDistanceTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogEstimationDistance}
         messageContent={t("deleteDistancePrecisionDialogMsg", {
-          name: dialogEstimationDistance?.libelle
+          name: dialogEstimationDistance?.libelle,
         })}
         impactedItemsMessage={t("deleteDistancePrecisionDialogMsgImpactedData", {
-          nbOfObservations: dialogEstimationDistance?.nbDonnees
+          nbOfObservations: dialogEstimationDistance?.nbDonnees,
         })}
         onCancelAction={() => setDialogEstimationDistance(null)}
         onConfirmAction={() => handleDeleteEstimationDistanceConfirmation(dialogEstimationDistance)}

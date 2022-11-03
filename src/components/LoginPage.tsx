@@ -32,7 +32,7 @@ const USER_LOGIN_MUTATION = gql`
 `;
 
 const LoginTextField = styled(TextField)(() => ({
-  width: "32ch"
+  width: "32ch",
 }));
 
 type LocationState = {
@@ -56,13 +56,13 @@ const LoginPage: FunctionComponent = () => {
     control,
     setError,
     formState: { errors },
-    handleSubmit
+    handleSubmit,
   } = useForm<LoginInputs>({
     defaultValues: {
       username: "",
-      password: ""
+      password: "",
     },
-    mode: "all"
+    mode: "all",
   });
 
   const [sendUserLogin, { loading }] = useMutation<UserLoginResult, MutationUserLoginArgs>(USER_LOGIN_MUTATION);
@@ -71,8 +71,8 @@ const LoginPage: FunctionComponent = () => {
     try {
       const loginResult = await sendUserLogin({
         variables: {
-          loginData: data
-        }
+          loginData: data,
+        },
       });
       // Successful login
       setUserInfo(loginResult?.data?.userLogin ?? null);
@@ -82,7 +82,7 @@ const LoginPage: FunctionComponent = () => {
     } catch (error) {
       setError("username", {
         type: "manual",
-        message: t("loginFailedMessage")
+        message: t("loginFailedMessage"),
       });
     }
   };
@@ -93,7 +93,7 @@ const LoginPage: FunctionComponent = () => {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
-        paddingTop: 5
+        paddingTop: 5,
       }}
     >
       <CenteredFlexBox>
@@ -109,7 +109,7 @@ const LoginPage: FunctionComponent = () => {
       <Card
         sx={{
           marginTop: 3,
-          padding: 2
+          padding: 2,
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -117,7 +117,7 @@ const LoginPage: FunctionComponent = () => {
             name="username"
             control={control}
             rules={{
-              required: t("loginRequiredLabel")
+              required: t("loginRequiredLabel"),
             }}
             render={({ field }) => (
               <CenteredFlexBox>
@@ -137,7 +137,7 @@ const LoginPage: FunctionComponent = () => {
             name="password"
             control={control}
             rules={{
-              required: t("passwordRequiredLabel")
+              required: t("passwordRequiredLabel"),
             }}
             render={({ field }) => (
               <CenteredFlexBox>
@@ -160,7 +160,7 @@ const LoginPage: FunctionComponent = () => {
               loading={loading}
               variant="contained"
               sx={{
-                margin: 2
+                margin: 2,
               }}
             >
               {t("loginButton")}

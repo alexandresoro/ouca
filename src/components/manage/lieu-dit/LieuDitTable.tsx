@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   LieuxDitsOrderBy,
   LieuxDitsPaginatedResult,
   MutationDeleteLieuDitArgs,
-  QueryLieuxDitsArgs
+  QueryLieuxDitsArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -79,36 +79,36 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "departement",
-    locKey: "department"
+    locKey: "department",
   },
   {
     key: "codeCommune",
-    locKey: "cityCode"
+    locKey: "cityCode",
   },
   {
     key: "nomCommune",
-    locKey: "cityName"
+    locKey: "cityName",
   },
   {
     key: "nom",
-    locKey: "name"
+    locKey: "name",
   },
   {
     key: "latitude",
-    locKey: "latitude"
+    locKey: "latitude",
   },
   {
     key: "longitude",
-    locKey: "longitude"
+    locKey: "longitude",
   },
   {
     key: "altitude",
-    locKey: "altitude"
+    locKey: "altitude",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const LieuDitTable: FunctionComponent = () => {
@@ -126,11 +126,11 @@ const LieuDitTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteLieuDit] = useMutation<DeleteLieuDitMutationResult, MutationDeleteLieuDitArgs>(DELETE);
@@ -154,22 +154,22 @@ const LieuDitTable: FunctionComponent = () => {
       setDialogLieuDit(null);
       await deleteLieuDit({
         variables: {
-          id: lieuDit.id
+          id: lieuDit.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteLieuDit) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -201,7 +201,7 @@ const LieuDitTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -268,10 +268,10 @@ const LieuDitTable: FunctionComponent = () => {
         messageContent={t("deleteLieuDitDialogMsg", {
           name: dialogLieuDit?.nom,
           city: dialogLieuDit?.commune?.nom,
-          department: dialogLieuDit?.commune?.departement?.code
+          department: dialogLieuDit?.commune?.departement?.code,
         })}
         impactedItemsMessage={t("deleteLieuDitDialogMsgImpactedData", {
-          nbOfObservations: dialogLieuDit?.nbDonnees ?? 0
+          nbOfObservations: dialogLieuDit?.nbDonnees ?? 0,
         })}
         onCancelAction={() => setDialogLieuDit(null)}
         onConfirmAction={() => handleDeleteLieuDitConfirmation(dialogLieuDit)}

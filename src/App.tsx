@@ -49,46 +49,46 @@ const App: FunctionComponent<AppProps> = (props) => {
         palette: {
           mode: prefersDarkMode ? "dark" : "light",
           primary: {
-            main: cyan[800]
+            main: cyan[800],
           },
           secondary: {
-            main: pink["A200"]
+            main: pink["A200"],
           },
           ...(prefersDarkMode
             ? {}
             : {
                 background: {
-                  default: grey[50]
-                }
-              })
+                  default: grey[50],
+                },
+              }),
         },
         typography: {
           fontFamily: "Lato",
           button: {
-            textTransform: "none"
-          }
+            textTransform: "none",
+          },
         },
         components: {
           MuiCard: {
             defaultProps: {
-              elevation: 0
+              elevation: 0,
             },
             styleOverrides: {
               root: {
                 borderStyle: "solid",
                 borderWidth: "2px",
-                borderColor: cyan[800]
-              }
-            }
+                borderColor: cyan[800],
+              },
+            },
           },
           MuiTableCell: {
             styleOverrides: {
               head: {
-                fontWeight: "700"
-              }
-            }
-          }
-        }
+                fontWeight: "700",
+              },
+            },
+          },
+        },
       }),
     [prefersDarkMode]
   );
@@ -101,7 +101,7 @@ const App: FunctionComponent<AppProps> = (props) => {
 
   apolloClient.setLink(
     new HttpLink({
-      uri: `${apiUrl}/graphql`
+      uri: `${apiUrl}/graphql`,
     })
   );
 
@@ -121,7 +121,7 @@ const App: FunctionComponent<AppProps> = (props) => {
                 <UserProvider>
                   <Box
                     sx={{
-                      backgroundColor: theme?.palette?.background?.default
+                      backgroundColor: theme?.palette?.background?.default,
                     }}
                   >
                     <Suspense fallback="">

@@ -18,7 +18,7 @@ const config: CodegenConfig = {
     "!src/components/manage/milieu/*.tsx",
     "!src/components/manage/sexe/*.tsx",
     "!src/components/view/DonneeTable.tsx",
-    "!src/components/view/DonneesByEspeceTable.tsx"
+    "!src/components/view/DonneesByEspeceTable.tsx",
   ],
   ignoreNoDocuments: true,
   generates: {
@@ -27,10 +27,10 @@ const config: CodegenConfig = {
       plugins: [],
       config: {
         useTypeImports: true,
-        enumsAsTypes: true
-      }
-    }
-  }
+        enumsAsTypes: true,
+      },
+    },
+  },
 };
 
 export default config;

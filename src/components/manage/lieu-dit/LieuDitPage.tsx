@@ -28,7 +28,7 @@ const LieuDitPage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportLieuxDitsResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportLieuxDits) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportLieuxDits, `${t("localities")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const LieuDitPage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <LieuDitTable />

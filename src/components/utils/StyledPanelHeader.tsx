@@ -9,12 +9,12 @@ export default styled(Paper)(({ theme }) => {
     lineHeight: "76px",
     h1: {
       lineHeight: "inherit",
-      color: "white"
+      color: "white",
     },
     width: "100%",
     boxSizing: "border-box",
     paddingLeft: "50px",
     paddingRight: "50px",
-    borderRadius: "0"
+    borderRadius: "0",
   };
 });

@@ -56,7 +56,7 @@ const RequireAuth: FunctionComponent<{ children: ReactElement }> = (props) => {
   return (
     <CenteredFlexBox
       sx={{
-        height: "100vh"
+        height: "100vh",
       }}
     >
       <CircularProgress />

@@ -61,12 +61,12 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Card
               sx={{
-                padding: 3
+                padding: 3,
               }}
             >
               <Typography component="h2" variant="h5">
                 {t("observationDetails.mainTitle", {
-                  speciesName: donnee?.espece.nomFrancais
+                  speciesName: donnee?.espece.nomFrancais,
                 })}
               </Typography>
               <Typography sx={{ marginTop: "5px", fontSize: "13px" }}>
@@ -75,7 +75,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
                   creationDate: intlFormat(parseISO(donnee?.inventaire.date)),
                   updatedDate: intlFormat(parseISO(donnee?.inventaire.date)),
                   inventoryId: donnee?.inventaire?.id,
-                  observationId: donnee?.id
+                  observationId: donnee?.id,
                 })}
               </Typography>
 
@@ -86,7 +86,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
                 spacing={{
                   xs: 0,
                   sm: 5,
-                  md: 8
+                  md: 8,
                 }}
                 sx={{ marginTop: "30px" }}
               >
@@ -94,8 +94,8 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
                   sx={{
                     flex: "auto",
                     width: {
-                      xs: "100%"
-                    }
+                      xs: "100%",
+                    },
                   }}
                 >
                   <InventaireDetailsView inventaire={donnee.inventaire}></InventaireDetailsView>
@@ -105,8 +105,8 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
                   sx={{
                     flex: "auto",
                     width: {
-                      xs: "100%"
-                    }
+                      xs: "100%",
+                    },
                   }}
                 >
                   <DonneeDetailsView donnee={donnee}></DonneeDetailsView>

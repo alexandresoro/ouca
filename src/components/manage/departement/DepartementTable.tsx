@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   DepartementsOrderBy,
   DepartementsPaginatedResult,
   MutationDeleteDepartementArgs,
-  QueryDepartementsArgs
+  QueryDepartementsArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -71,20 +71,20 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "code",
-    locKey: "code"
+    locKey: "code",
   },
   {
     key: "nbCommunes",
-    locKey: "numberOfCities"
+    locKey: "numberOfCities",
   },
   {
     key: "nbLieuxDits",
-    locKey: "numberOfLocalities"
+    locKey: "numberOfLocalities",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const DepartementTable: FunctionComponent = () => {
@@ -102,11 +102,11 @@ const DepartementTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteDepartement] = useMutation<DeleteDepartementMutationResult, MutationDeleteDepartementArgs>(DELETE);
@@ -130,22 +130,22 @@ const DepartementTable: FunctionComponent = () => {
       setDialogDepartement(null);
       await deleteDepartement({
         variables: {
-          id: departement.id
+          id: departement.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteDepartement) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -177,7 +177,7 @@ const DepartementTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -238,12 +238,12 @@ const DepartementTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogDepartement}
         messageContent={t("deleteDepartmentDialogMsg", {
-          code: dialogDepartement?.code
+          code: dialogDepartement?.code,
         })}
         impactedItemsMessage={t("deleteDepartmentDialogMsgImpactedData", {
           nbOfObservations: dialogDepartement?.nbDonnees ?? 0,
           nbOfCities: dialogDepartement?.nbCommunes ?? 0,
-          nbOfLocalities: dialogDepartement?.nbLieuxDits ?? 0
+          nbOfLocalities: dialogDepartement?.nbLieuxDits ?? 0,
         })}
         onCancelAction={() => setDialogDepartement(null)}
         onConfirmAction={() => handleDeleteDepartementConfirmation(dialogDepartement)}

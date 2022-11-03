@@ -30,7 +30,7 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: 3
+                gap: 3,
               }}
             >
               <Button component={Link} to="create" variant="contained" color="secondary" startIcon={<Add />}>
@@ -48,7 +48,7 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
 };
 
 ManageTopBar.defaultProps = {
-  showButtons: true
+  showButtons: true,
 };
 
 export default ManageTopBar;

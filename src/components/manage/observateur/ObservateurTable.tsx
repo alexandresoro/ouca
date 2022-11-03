@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -21,7 +21,7 @@ import {
   EntitesAvecLibelleOrderBy,
   MutationDeleteObservateurArgs,
   Observateur,
-  ObservateursQuery
+  ObservateursQuery,
 } from "../../../gql/graphql";
 import useGraphQLRequestContext from "../../../hooks/useGraphQLRequestContext";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -71,12 +71,12 @@ const DELETE_OBSERVATEUR = gql`
 const COLUMNS = [
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const ObservateurTable: FunctionComponent = () => {
@@ -117,10 +117,10 @@ const ObservateurTable: FunctionComponent = () => {
         searchParams: {
           pageNumber: page,
           pageSize: rowsPerPage,
-          q: query
+          q: query,
         },
         orderBy,
-        sortOrder
+        sortOrder,
       })
       .then((data) => {
         setData(data);
@@ -144,22 +144,22 @@ const ObservateurTable: FunctionComponent = () => {
       setDialogObservateur(null);
       await deleteObservateur({
         variables: {
-          id: observateur.id
+          id: observateur.id,
         },
-        refetchQueries: [PAGINATED_OBSERVATEURS_QUERY]
+        refetchQueries: [PAGINATED_OBSERVATEURS_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteObservateur) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -191,7 +191,7 @@ const ObservateurTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -250,10 +250,10 @@ const ObservateurTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogObservateur}
         messageContent={t("deleteObserverDialogMsg", {
-          name: dialogObservateur?.libelle
+          name: dialogObservateur?.libelle,
         })}
         impactedItemsMessage={t("deleteObserverDialogMsgImpactedData", {
-          nbOfObservations: dialogObservateur?.nbDonnees ?? 0
+          nbOfObservations: dialogObservateur?.nbDonnees ?? 0,
         })}
         onCancelAction={() => setDialogObservateur(null)}
         onConfirmAction={() => handleDeleteObservateurConfirmation(dialogObservateur)}

@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent } from "react";
@@ -56,24 +56,24 @@ const PAGINATED_SEARCH_ESPECES_QUERY = gql`
 const COLUMNS = [
   {
     key: "nomClasse",
-    locKey: "speciesClass"
+    locKey: "speciesClass",
   },
   {
     key: "code",
-    locKey: "code"
+    locKey: "code",
   },
   {
     key: "nomFrancais",
-    locKey: "frenchName"
+    locKey: "frenchName",
   },
   {
     key: "nomLatin",
-    locKey: "scientificName"
+    locKey: "scientificName",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const DonneesByEspeceTable: FunctionComponent = () => {
@@ -91,12 +91,12 @@ const DonneesByEspeceTable: FunctionComponent = () => {
     variables: {
       searchParams: {
         pageNumber: page,
-        pageSize: rowsPerPage
+        pageSize: rowsPerPage,
       },
       orderBy,
       sortOrder,
-      searchCriteria: null
-    }
+      searchCriteria: null,
+    },
   });
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -119,7 +119,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">

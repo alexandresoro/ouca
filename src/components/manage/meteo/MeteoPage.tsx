@@ -28,7 +28,7 @@ const MeteoPage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportMeteosResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportMeteos) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportMeteos, `${t("weathers")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const MeteoPage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <MeteoTable />

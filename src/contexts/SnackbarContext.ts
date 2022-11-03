@@ -14,5 +14,5 @@ export const SnackbarContext = createContext<{
   snackbarContent: {},
   setSnackbarContent: () => {
     /**/
-  }
+  },
 });

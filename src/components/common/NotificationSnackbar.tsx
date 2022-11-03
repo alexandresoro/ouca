@@ -39,7 +39,7 @@ const NotificationSnackbar: FunctionComponent<NotificationSnackbarProps> = (prop
 
 NotificationSnackbar.defaultProps = {
   type: "success",
-  message: ""
+  message: "",
 };
 
 export default NotificationSnackbar;

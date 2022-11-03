@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   EstimationNombreOrderBy,
   EstimationsNombrePaginatedResult,
   MutationDeleteEstimationNombreArgs,
-  QueryEstimationsNombreArgs
+  QueryEstimationsNombreArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -70,16 +70,16 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "libelle",
-    locKey: "label"
+    locKey: "label",
   },
   {
     key: "nonCompte",
-    locKey: "undefinedNumber"
+    locKey: "undefinedNumber",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const EstimationNombreTable: FunctionComponent = () => {
@@ -97,11 +97,11 @@ const EstimationNombreTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteEstimationNombre] = useMutation<
@@ -128,22 +128,22 @@ const EstimationNombreTable: FunctionComponent = () => {
       setDialogEstimationNombre(null);
       await deleteEstimationNombre({
         variables: {
-          id: estimationNombre.id
+          id: estimationNombre.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteEstimationNombre) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -175,7 +175,7 @@ const EstimationNombreTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -235,10 +235,10 @@ const EstimationNombreTable: FunctionComponent = () => {
       <DeletionConfirmationDialog
         open={!!dialogEstimationNombre}
         messageContent={t("deleteNumberPrecisionDialogMsg", {
-          name: dialogEstimationNombre?.libelle
+          name: dialogEstimationNombre?.libelle,
         })}
         impactedItemsMessage={t("deleteNumberPrecisionDialogMsgImpactedData", {
-          nbOfObservations: dialogEstimationNombre?.nbDonnees ?? 0
+          nbOfObservations: dialogEstimationNombre?.nbDonnees ?? 0,
         })}
         onCancelAction={() => setDialogEstimationNombre(null)}
         onConfirmAction={() => handleDeleteEstimationNombreConfirmation(dialogEstimationNombre)}

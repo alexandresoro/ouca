@@ -54,7 +54,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     control,
     formState: { errors },
     setValue,
-    handleSubmit
+    handleSubmit,
   } = useForm<ObservateurUpsertInputs>();
 
   // Retrieve the existing observer info in edit mode
@@ -62,9 +62,9 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     fetchPolicy: "network-only",
     variables: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(observateurId!)
+      id: parseInt(observateurId!),
     },
-    skip: !observateurId
+    skip: !observateurId,
   });
 
   const [upsertObservateur] = useMutation<ObservateurMutationResult, MutationUpsertObservateurArgs>(OBSERVATEUR_UPSERT);
@@ -82,7 +82,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     if (error) {
       setSnackbarContent({
         type: "error",
-        message: t("retrieveGenericError")
+        message: t("retrieveGenericError"),
       });
     }
   }, [error, setSnackbarContent, t]);
@@ -94,13 +94,13 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     await upsertObservateur({
       variables: {
         id: id ?? undefined,
-        data: restData
-      }
+        data: restData,
+      },
     })
       .then(() => {
         setSnackbarContent({
           type: "success",
-          message: t("retrieveGenericSaveSuccess")
+          message: t("retrieveGenericSaveSuccess"),
         });
         navigate("..");
       })
@@ -108,12 +108,12 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
         if (e instanceof ApolloError && getOucaError(e) === "OUCA0004") {
           setSnackbarContent({
             type: "error",
-            message: t("observerAlreadyExistingError")
+            message: t("observerAlreadyExistingError"),
           });
         } else {
           setSnackbarContent({
             type: "error",
-            message: t("retrieveGenericSaveError")
+            message: t("retrieveGenericSaveError"),
           });
         }
       });
@@ -125,7 +125,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <Card>
@@ -138,7 +138,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: t("requiredFieldError")
+                  required: t("requiredFieldError"),
                 }}
                 render={({ field }) => (
                   <TextField

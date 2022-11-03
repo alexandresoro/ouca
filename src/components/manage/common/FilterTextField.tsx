@@ -11,7 +11,7 @@ const FilterTextField: FunctionComponent<TextFieldProps> = (props) => {
         label={t("filter")}
         variant="standard"
         sx={{
-          width: "40ch"
+          width: "40ch",
         }}
         margin="dense"
         {...props}

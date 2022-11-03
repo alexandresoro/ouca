@@ -28,7 +28,7 @@ const AgePage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportAgesResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportAges) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportAges, `${t("age")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const AgePage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <AgeTable />

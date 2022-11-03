@@ -28,7 +28,7 @@ const SexePage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportSexesResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportSexes) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportSexes, `${t("genders")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const SexePage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <SexeTable />

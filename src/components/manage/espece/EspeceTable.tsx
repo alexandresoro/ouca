@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
@@ -21,7 +21,7 @@ import {
   EspecesOrderBy,
   EspecesPaginatedResult,
   MutationDeleteEspeceArgs,
-  QueryEspecesArgs
+  QueryEspecesArgs,
 } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -74,24 +74,24 @@ const DELETE = gql`
 const COLUMNS = [
   {
     key: "nomClasse",
-    locKey: "speciesClass"
+    locKey: "speciesClass",
   },
   {
     key: "code",
-    locKey: "code"
+    locKey: "code",
   },
   {
     key: "nomFrancais",
-    locKey: "frenchName"
+    locKey: "frenchName",
   },
   {
     key: "nomLatin",
-    locKey: "scientificName"
+    locKey: "scientificName",
   },
   {
     key: "nbDonnees",
-    locKey: "numberOfObservations"
-  }
+    locKey: "numberOfObservations",
+  },
 ] as const;
 
 const EspeceTable: FunctionComponent = () => {
@@ -109,11 +109,11 @@ const EspeceTable: FunctionComponent = () => {
       searchParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query
+        q: query,
       },
       orderBy,
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
   const [deleteEspece] = useMutation<DeleteEspeceMutationResult, MutationDeleteEspeceArgs>(DELETE);
@@ -137,22 +137,22 @@ const EspeceTable: FunctionComponent = () => {
       setDialogEspece(null);
       await deleteEspece({
         variables: {
-          id: espece.id
+          id: espece.id,
         },
-        refetchQueries: [PAGINATED_QUERY]
+        refetchQueries: [PAGINATED_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteEspece) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -184,7 +184,7 @@ const EspeceTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -247,10 +247,10 @@ const EspeceTable: FunctionComponent = () => {
         open={!!dialogEspece}
         messageContent={t("deleteSpeciesDialogMsg", {
           name: dialogEspece?.nomFrancais,
-          code: dialogEspece?.code
+          code: dialogEspece?.code,
         })}
         impactedItemsMessage={t("deleteSpeciesDialogMsgImpactedData", {
-          nbOfObservations: dialogEspece?.nbDonnees ? dialogEspece?.nbDonnees : 0
+          nbOfObservations: dialogEspece?.nbDonnees ? dialogEspece?.nbDonnees : 0,
         })}
         onCancelAction={() => setDialogEspece(null)}
         onConfirmAction={() => handleDeleteEspeceConfirmation(dialogEspece)}

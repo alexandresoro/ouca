@@ -9,7 +9,7 @@ import DonneeTable from "./DonneeTable";
 
 const ViewTabsValues = {
   Donnees: "donnees",
-  Especes: "especes"
+  Especes: "especes",
 } as const;
 
 type ViewTabsKeys = keyof typeof ViewTabsValues;
@@ -36,7 +36,7 @@ const ViewDonneesPage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <DonneeFilter></DonneeFilter>

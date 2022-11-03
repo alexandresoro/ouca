@@ -32,13 +32,13 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         <ItemWithAvatar
           icon={<People />}
           primary={t("observationDetails.observer", {
-            name: inventaire.observateur.libelle
+            name: inventaire.observateur.libelle,
           })}
           secondary={t("observationDetails.secondaryObservers", {
             count: inventaire.associes.length,
             names: inventaire.associes.map((i) => {
               return i?.libelle;
-            })
+            }),
           })}
         ></ItemWithAvatar>
         <Divider />
@@ -47,11 +47,11 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
           icon={<CalendarToday />}
           primary={t("observationDetails.dateTime", {
             date: intlFormat(parseISO(inventaire.date)),
-            time: inventaire.heure
+            time: inventaire.heure,
           })}
           secondary={t("observationDetails.duration", {
             context: inventaire.duree ? "" : "undefined",
-            duration: inventaire.duree
+            duration: inventaire.duree,
           })}
         ></ItemWithAvatar>
         <Divider />
@@ -59,18 +59,18 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         <ItemWithAvatar
           icon={<Place />}
           primary={t("observationDetails.locality", {
-            locality: inventaire.lieuDit
+            locality: inventaire.lieuDit,
           })}
           secondary={
             <>
               <span>
                 {t("observationDetails.coordinates", {
-                  coordinates: getInventaireCoordinates(inventaire)
+                  coordinates: getInventaireCoordinates(inventaire),
                 })}
               </span>
               <span>
                 {t("observationDetails.altitude", {
-                  altitude: getInventaireCoordinates(inventaire).altitude
+                  altitude: getInventaireCoordinates(inventaire).altitude,
                 })}
               </span>
             </>
@@ -84,11 +84,11 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
             count: inventaire.meteos.length,
             weathers: inventaire.meteos.map((m) => {
               return m?.libelle;
-            })
+            }),
           })}
           secondary={t("observationDetails.temperature", {
             context: inventaire.temperature ? "" : "undefined",
-            temperature: inventaire.temperature
+            temperature: inventaire.temperature,
           })}
         ></ItemWithAvatar>
       </List>

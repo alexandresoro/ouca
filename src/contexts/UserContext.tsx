@@ -8,7 +8,7 @@ export const UserContext = createContext<{
   userInfo: null,
   setUserInfo: () => {
     /**/
-  }
+  },
 });
 
 export const UserProvider = ({ children }: { children: ReactElement }): ReactElement => {
@@ -18,7 +18,7 @@ export const UserProvider = ({ children }: { children: ReactElement }): ReactEle
     <UserContext.Provider
       value={{
         userInfo,
-        setUserInfo
+        setUserInfo,
       }}
     >
       {children}

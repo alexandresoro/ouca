@@ -28,7 +28,7 @@ const EspecePage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportEspecesResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportEspeces) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportEspeces, `${t("species")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const EspecePage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <EspeceTable />

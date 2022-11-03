@@ -20,9 +20,9 @@ const useSnackbarContent = (): [SnackbarContentType, Dispatch<Omit<SnackbarConte
     {
       timestamp,
       type,
-      message
+      message,
     },
-    setSnackbarContent
+    setSnackbarContent,
   ];
 };
 
@@ -36,14 +36,14 @@ const Layout: FunctionComponent = () => {
           sx={{
             height: "100vh",
             display: "flex",
-            flexDirection: "column"
+            flexDirection: "column",
           }}
         >
           <Header />
           <Box
             sx={{
               flex: "1 1 auto",
-              overflowY: "auto"
+              overflowY: "auto",
             }}
           >
             <Outlet />

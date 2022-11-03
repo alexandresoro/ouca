@@ -36,7 +36,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
                     <Chip
                       icon={<Link sx={{ paddingLeft: "5px" }} />}
                       label={t("observationDetails.group", {
-                        group: donnee?.regroupement
+                        group: donnee?.regroupement,
                       })}
                       variant="outlined"
                       sx={{ marginLeft: "10px", borderColor: theme.palette.grey[300] }}
@@ -57,7 +57,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             t("observationDetails.number" as unknown as TFuncKey, {
               context: donnee?.estimationNombre?.nonCompte ? "undefined" : "defined",
               number: donnee?.nombre,
-              numberPrecision: donnee?.estimationNombre?.libelle
+              numberPrecision: donnee?.estimationNombre?.libelle,
             }) as string
           }
           secondary={
@@ -71,7 +71,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
                   ? "precisionOnly"
                   : "none",
               distance: donnee?.distance,
-              distancePrecision: donnee?.estimationDistance?.libelle
+              distancePrecision: donnee?.estimationDistance?.libelle,
             }) as string
           }
         ></ItemWithAvatar>
@@ -83,12 +83,12 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             <>
               <div>
                 {t("observationDetails.gender", {
-                  gender: donnee?.sexe.libelle
+                  gender: donnee?.sexe.libelle,
                 })}
               </div>
               <div>
                 {t("observationDetails.age", {
-                  age: donnee?.age.libelle
+                  age: donnee?.age.libelle,
                 })}
               </div>
             </>
@@ -102,7 +102,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             count: donnee?.comportements.length,
             behaviors: donnee?.comportements.map((c) => {
               return c?.libelle;
-            })
+            }),
           })}
           secondary={getNicheurStatusStr(donnee.comportements)}
         ></ItemWithAvatar>
@@ -114,7 +114,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             count: donnee?.milieux.length,
             environments: donnee?.milieux.map((m) => {
               return m?.libelle;
-            })
+            }),
           })}
         ></ItemWithAvatar>
         <Divider />
@@ -123,7 +123,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
           icon={<Comment />}
           primary={t("observationDetails.comment", {
             context: donnee?.commentaire ? "" : "undefined",
-            comment: donnee?.commentaire
+            comment: donnee?.commentaire,
           })}
         ></ItemWithAvatar>
       </List>

@@ -16,7 +16,7 @@ import {
   Search,
   Settings,
   SpaceBar,
-  WbSunny
+  WbSunny,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -31,7 +31,7 @@ import {
   MenuItem,
   Toolbar,
   Typography,
-  useTheme
+  useTheme,
 } from "@mui/material";
 import { TFuncKey } from "i18next";
 import { FunctionComponent, useContext, useState } from "react";
@@ -56,86 +56,86 @@ const DATABASE_MENU_OPTIONS = [
   {
     localizationKey: "observers" as TFuncKey,
     Icon: Person,
-    to: "/manage/observateur"
+    to: "/manage/observateur",
   },
   {
     localizationKey: "departments" as TFuncKey,
     Icon: Place,
-    to: "/manage/departement"
+    to: "/manage/departement",
   },
   {
     localizationKey: "cities" as TFuncKey,
     Icon: Place,
-    to: "/manage/commune"
+    to: "/manage/commune",
   },
   {
     localizationKey: "localities" as TFuncKey,
     Icon: Place,
-    to: "/manage/lieudit"
+    to: "/manage/lieudit",
   },
   {
     localizationKey: "weathers" as TFuncKey,
     Icon: WbSunny,
-    to: "/manage/meteo"
+    to: "/manage/meteo",
   },
   {
     localizationKey: "speciesClasses" as TFuncKey,
     Icon: EmojiNature,
-    to: "/manage/classe"
+    to: "/manage/classe",
   },
   {
     localizationKey: "species" as TFuncKey,
     Icon: EmojiNature,
-    to: "/manage/espece"
+    to: "/manage/espece",
   },
   {
     localizationKey: "genders" as TFuncKey,
     Icon: Male,
-    to: "/manage/sexe"
+    to: "/manage/sexe",
   },
   {
     localizationKey: "ages" as TFuncKey,
     Icon: PlusOne,
-    to: "/manage/age"
+    to: "/manage/age",
   },
   {
     localizationKey: "numberPrecisions" as TFuncKey,
     Icon: Filter1,
-    to: "/manage/estimation-nombre"
+    to: "/manage/estimation-nombre",
   },
   {
     localizationKey: "distancePrecisions" as TFuncKey,
     Icon: SpaceBar,
-    to: "/manage/estimation-distance"
+    to: "/manage/estimation-distance",
   },
   {
     localizationKey: "behaviors" as TFuncKey,
     Icon: Pets,
-    to: "/manage/comportement"
+    to: "/manage/comportement",
   },
   {
     localizationKey: "environments" as TFuncKey,
     Icon: Park,
-    to: "/manage/milieu"
-  }
+    to: "/manage/milieu",
+  },
 ];
 
 const OPTIONS_MENU_OPTIONS = [
   {
     localizationKey: "profile" as TFuncKey,
     Icon: AccountBox,
-    to: "/profile"
+    to: "/profile",
   },
   {
     localizationKey: "settings" as TFuncKey,
     Icon: Settings,
-    to: "/configuration"
+    to: "/configuration",
   },
   {
     localizationKey: "importFromFile" as TFuncKey,
     Icon: FileDownload,
-    to: "/import"
-  }
+    to: "/import",
+  },
 ];
 
 const Header: FunctionComponent = () => {
@@ -199,7 +199,7 @@ const Header: FunctionComponent = () => {
             height="60px"
             width="70px"
             style={{
-              marginBottom: "-12px"
+              marginBottom: "-12px",
             }}
           />
           <Box
@@ -207,7 +207,7 @@ const Header: FunctionComponent = () => {
               marginLeft: "10px",
               fontFamily: "Showcard Gothic",
               fontSize: "26px",
-              textShadow: "2px 2px rgba(0, 0, 0, 0.4)"
+              textShadow: "2px 2px rgba(0, 0, 0, 0.4)",
             }}
           >
             <Typography
@@ -215,7 +215,7 @@ const Header: FunctionComponent = () => {
               component="h1"
               sx={{
                 fontFamily: "Yuji Hentaigana Akebono",
-                fontWeight: "bold"
+                fontWeight: "bold",
               }}
             >
               oùça?
@@ -226,7 +226,7 @@ const Header: FunctionComponent = () => {
         <Box
           sx={{
             display: "flex",
-            gap: theme.spacing(3)
+            gap: theme.spacing(3),
           }}
         >
           <Button component={Link} to="/creation" color="inherit" startIcon={<Add />}>
@@ -267,18 +267,18 @@ const Header: FunctionComponent = () => {
             onClick={handleClickOptions}
             aria-label={t("aria-userMenuButton")}
             sx={{
-              p: 0
+              p: 0,
             }}
           >
             <Avatar
               sx={{
                 ...(fullName
                   ? {
-                      bgcolor: theme.palette.secondary.main
+                      bgcolor: theme.palette.secondary.main,
                     }
                   : {}),
                 width: 32,
-                height: 32
+                height: 32,
               }}
             >
               {initials}

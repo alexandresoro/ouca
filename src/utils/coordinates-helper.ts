@@ -8,7 +8,7 @@ export const getInventaireCoordinates = (
     return {
       latitude: inventaire.customizedCoordinates.latitude,
       longitude: inventaire.customizedCoordinates.longitude,
-      altitude: inventaire.customizedCoordinates.altitude
+      altitude: inventaire.customizedCoordinates.altitude,
     };
   }
 
@@ -16,6 +16,6 @@ export const getInventaireCoordinates = (
   return {
     latitude: inventaire.lieuDit.latitude,
     longitude: inventaire.lieuDit.longitude,
-    altitude: inventaire.lieuDit.altitude
+    altitude: inventaire.lieuDit.altitude,
   };
 };

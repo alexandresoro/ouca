@@ -10,7 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel
+  TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import React, { FunctionComponent } from "react";
@@ -19,7 +19,7 @@ import {
   Donnee,
   MutationDeleteDonneeArgs,
   PaginatedSearchDonneesResult,
-  SearchDonneesOrderBy
+  SearchDonneesOrderBy,
 } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
@@ -148,24 +148,24 @@ const DELETE_QUERY = gql`
 const COLUMNS = [
   {
     key: "nomFrancais",
-    locKey: "observationsTable.header.species"
+    locKey: "observationsTable.header.species",
   },
   {
     key: "nombre",
-    locKey: "observationsTable.header.number"
+    locKey: "observationsTable.header.number",
   },
   {
     key: "lieuDit",
-    locKey: "observationsTable.header.locality"
+    locKey: "observationsTable.header.locality",
   },
   {
     key: "date",
-    locKey: "observationsTable.header.date"
+    locKey: "observationsTable.header.date",
   },
   {
     key: "observateur",
-    locKey: "observationsTable.header.observer"
-  }
+    locKey: "observationsTable.header.observer",
+  },
 ] as const;
 
 const DonneeTable: FunctionComponent = () => {
@@ -183,12 +183,12 @@ const DonneeTable: FunctionComponent = () => {
     variables: {
       searchParams: {
         pageNumber: page,
-        pageSize: rowsPerPage
+        pageSize: rowsPerPage,
       },
       orderBy,
       sortOrder,
-      searchCriteria: null
-    }
+      searchCriteria: null,
+    },
   });
 
   const [deleteDonnee] = useMutation<DeleteDonneeMutationResult, MutationDeleteDonneeArgs>(DELETE_QUERY);
@@ -210,22 +210,22 @@ const DonneeTable: FunctionComponent = () => {
       setDeleteDialog(null);
       await deleteDonnee({
         variables: {
-          id: donnee.id
+          id: donnee.id,
         },
-        refetchQueries: [PAGINATED_SEARCH_DONNEES_QUERY]
+        refetchQueries: [PAGINATED_SEARCH_DONNEES_QUERY],
       })
         .then(({ data, errors }) => {
           if (!errors && data?.deleteDonnee) {
             setSnackbarContent({
               type: "success",
-              message: t("deleteConfirmationMessage")
+              message: t("deleteConfirmationMessage"),
             });
           }
         })
         .catch(() => {
           setSnackbarContent({
             type: "error",
-            message: t("deleteErrorMessage")
+            message: t("deleteErrorMessage"),
           });
         });
     }
@@ -251,7 +251,7 @@ const DonneeTable: FunctionComponent = () => {
       <TableContainer
         component={Paper}
         sx={{
-          mt: 2
+          mt: 2,
         }}
       >
         <Table stickyHeader size="small">
@@ -314,7 +314,7 @@ const DonneeTable: FunctionComponent = () => {
           locality: deleteDialog?.inventaire.lieuDit.nom,
           city: deleteDialog?.inventaire.lieuDit.commune.nom,
           department: deleteDialog?.inventaire.lieuDit.commune.departement.code,
-          date: deleteDialog?.inventaire.date
+          date: deleteDialog?.inventaire.date,
         })}
         onCancelAction={() => setDeleteDialog(null)}
         onConfirmAction={() => handleDeleteDonneeConfirmation(deleteDialog)}

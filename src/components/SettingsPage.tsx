@@ -12,7 +12,7 @@ import {
   MutationUpdateSettingsArgs,
   Observateur,
   Settings,
-  Sexe
+  Sexe,
 } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
@@ -156,7 +156,7 @@ const SettingsPage: FunctionComponent = () => {
     formState: { errors },
     handleSubmit,
     reset,
-    watch
+    watch,
   } = useForm<SettingsInputs>();
 
   // Reset the form with the user preferences, when they are retrieved
@@ -173,7 +173,7 @@ const SettingsPage: FunctionComponent = () => {
         isMeteoDisplayed: !!data.settings.isMeteoDisplayed,
         isDistanceDisplayed: !!data.settings.isDistanceDisplayed,
         isRegroupementDisplayed: !!data.settings.isRegroupementDisplayed,
-        coordinatesSystem: data?.settings?.coordinatesSystem
+        coordinatesSystem: data?.settings?.coordinatesSystem,
       });
     }
   }, [data, reset]);
@@ -181,14 +181,14 @@ const SettingsPage: FunctionComponent = () => {
   const displaySuccessNotification = useCallback(() => {
     setSnackbarContent({
       type: "success",
-      message: t("saveSettingsSuccess")
+      message: t("saveSettingsSuccess"),
     });
   }, [t, setSnackbarContent]);
 
   const displayErrorNotification = useCallback(() => {
     setSnackbarContent({
       type: "error",
-      message: t("saveSettingsError")
+      message: t("saveSettingsError"),
     });
   }, [t, setSnackbarContent]);
 
@@ -208,9 +208,9 @@ const SettingsPage: FunctionComponent = () => {
           appConfiguration: {
             id: data.settings.id,
             defaultNombre: typeof defaultNombre === "string" ? parseInt(defaultNombre) : defaultNombre,
-            ...otherValues
-          }
-        }
+            ...otherValues,
+          },
+        },
       }).then(({ errors }) => {
         if (!errors) {
           displaySuccessNotification();
@@ -237,7 +237,7 @@ const SettingsPage: FunctionComponent = () => {
     if (error) {
       setSnackbarContent({
         type: "error",
-        message: t("retrieveSettingsError")
+        message: t("retrieveSettingsError"),
       });
     }
   }, [t, setSnackbarContent, error]);
@@ -252,7 +252,7 @@ const SettingsPage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         {loading && (
@@ -263,7 +263,7 @@ const SettingsPage: FunctionComponent = () => {
         {!(loading || error) && (
           <Card
             sx={{
-              padding: 3
+              padding: 3,
             }}
           >
             <form>
@@ -274,15 +274,15 @@ const SettingsPage: FunctionComponent = () => {
                 spacing={{
                   xs: 0,
                   sm: 5,
-                  md: 8
+                  md: 8,
                 }}
               >
                 <Stack
                   sx={{
                     flex: "auto",
                     width: {
-                      xs: "100%"
-                    }
+                      xs: "100%",
+                    },
                   }}
                 >
                   <ReactHookFormSelect
@@ -291,11 +291,11 @@ const SettingsPage: FunctionComponent = () => {
                     control={control}
                     defaultValue=""
                     rules={{
-                      required: true
+                      required: true,
                     }}
                     formControlProps={{
                       margin: "normal",
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                   >
                     {data?.observateurs?.map((observateur) => (
@@ -311,11 +311,11 @@ const SettingsPage: FunctionComponent = () => {
                     control={control}
                     defaultValue=""
                     rules={{
-                      required: true
+                      required: true,
                     }}
                     formControlProps={{
                       margin: "normal",
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                   >
                     {data?.departements?.map((departement) => (
@@ -331,11 +331,11 @@ const SettingsPage: FunctionComponent = () => {
                     control={control}
                     defaultValue=""
                     rules={{
-                      required: true
+                      required: true,
                     }}
                     formControlProps={{
                       margin: "normal",
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                   >
                     {data?.estimationsNombre?.map((estimationNombre) => (
@@ -353,7 +353,7 @@ const SettingsPage: FunctionComponent = () => {
                       required: true,
                       min: 1,
                       max: 65535,
-                      validate: (v) => !isNaN(v as unknown as number)
+                      validate: (v) => !isNaN(v as unknown as number),
                     }}
                     render={({ field }) => (
                       <TextField
@@ -375,11 +375,11 @@ const SettingsPage: FunctionComponent = () => {
                     control={control}
                     defaultValue=""
                     rules={{
-                      required: true
+                      required: true,
                     }}
                     formControlProps={{
                       margin: "normal",
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                   >
                     {data?.sexes?.map((sexe) => (
@@ -395,11 +395,11 @@ const SettingsPage: FunctionComponent = () => {
                     control={control}
                     defaultValue=""
                     rules={{
-                      required: true
+                      required: true,
                     }}
                     formControlProps={{
                       margin: "normal",
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                   >
                     {data?.ages?.map((age) => (
@@ -414,8 +414,8 @@ const SettingsPage: FunctionComponent = () => {
                   sx={{
                     flex: "auto",
                     width: {
-                      xs: "100%"
-                    }
+                      xs: "100%",
+                    },
                   }}
                 >
                   <ReactHookFormSwitch
@@ -452,11 +452,11 @@ const SettingsPage: FunctionComponent = () => {
                     control={control}
                     defaultValue=""
                     rules={{
-                      required: true
+                      required: true,
                     }}
                     formControlProps={{
                       margin: "normal",
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                   >
                     {COORDINATES_SYSTEMS.map((coordinateSystem) => (

@@ -36,9 +36,9 @@ appConfigFetch
               useNavigationType,
               createRoutesFromChildren,
               matchRoutes
-            )
-          })
-        ]
+            ),
+          }),
+        ],
       });
     }
   })
@@ -46,7 +46,7 @@ appConfigFetch
   .catch(() => {});
 
 const apolloClient = new ApolloClient({
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

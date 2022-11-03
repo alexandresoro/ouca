@@ -28,7 +28,7 @@ const ClassePage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportClassesResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportClasses) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportClasses, `${t("speciesClasses")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const ClassePage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <ClasseTable />

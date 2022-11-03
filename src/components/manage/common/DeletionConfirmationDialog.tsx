@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Typography
+  Typography,
 } from "@mui/material";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -52,7 +52,7 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
           autoFocus
           variant="outlined"
           sx={{
-            textTransform: "uppercase"
+            textTransform: "uppercase",
           }}
         >
           {t("deleteConfirmationDialogConfirmAction")}

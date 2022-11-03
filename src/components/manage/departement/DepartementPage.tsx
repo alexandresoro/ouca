@@ -28,7 +28,7 @@ const DepartementPage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportDepartementsResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportDepartements) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportDepartements, `${t("departments")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const DepartementPage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <DepartementTable />

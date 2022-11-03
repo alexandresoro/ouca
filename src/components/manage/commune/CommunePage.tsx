@@ -28,7 +28,7 @@ const CommunePage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportCommunesResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportCommunes) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportCommunes, `${t("cities")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const CommunePage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <CommuneTable />

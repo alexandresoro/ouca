@@ -12,7 +12,7 @@ const DonneeFilter: FunctionComponent = () => {
     <>
       <Card
         sx={{
-          padding: 3
+          padding: 3,
         }}
       >
         <FormGroup>

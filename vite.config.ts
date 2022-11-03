@@ -13,16 +13,16 @@ export default defineConfig(({ command, mode }) => {
       open: true,
       proxy: {
         "/graphql": API_SERVER_URL,
-        "/download": API_SERVER_URL
-      }
+        "/download": API_SERVER_URL,
+      },
     },
     plugins: [
       react(),
       svgrPlugin({
         svgrOptions: {
-          icon: true
-        }
-      })
-    ]
+          icon: true,
+        },
+      }),
+    ],
   };
 });

@@ -28,7 +28,7 @@ const EstimationDistancePage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportEstimationsDistanceResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportEstimationsDistance) {
       downloadFile(
@@ -45,7 +45,7 @@ const EstimationDistancePage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <EstimationDistanceTable />

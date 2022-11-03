@@ -28,7 +28,7 @@ const MilieuPage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportMilieuxResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportMilieux) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportMilieux, `${t("environments")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const MilieuPage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <MilieuTable />

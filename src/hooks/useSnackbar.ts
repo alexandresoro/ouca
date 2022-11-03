@@ -4,6 +4,6 @@ import { SnackbarContext } from "../contexts/SnackbarContext";
 export default function useSnackbar() {
   const snackbarContext = useContext(SnackbarContext);
   return {
-    setSnackbarContent: snackbarContext.setSnackbarContent
+    setSnackbarContent: snackbarContext.setSnackbarContent,
   };
 }

@@ -28,7 +28,7 @@ const ObservateurPage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query<ExportObservateursResult>({
       query: EXPORT_QUERY,
-      fetchPolicy: "network-only"
+      fetchPolicy: "network-only",
     });
     if (data.exportObservateurs) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportObservateurs, `${t("observer")}${EXCEL_FILE_EXTENSION}`);
@@ -41,7 +41,7 @@ const ObservateurPage: FunctionComponent = () => {
       <Container
         maxWidth="xl"
         sx={{
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <ObservateurTable />
