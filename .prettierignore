@@ -8,3 +8,6 @@ dist
 # Ignore submodule formatting
 src/model
 .gitmodules
+
+# Ignore generated files
+src/graphql/generated

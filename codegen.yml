@@ -1,0 +1,7 @@
+schema: src/model/schema.graphql
+generates:
+  src/graphql/generated/graphql-types.ts:
+    plugins:
+      - typescript
+    config:
+      allowEnumStringTypes: true
