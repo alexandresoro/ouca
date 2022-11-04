@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,55 +16,33 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  EntitesAvecLibelleOrderBy,
-  MutationDeleteSexeArgs,
-  QuerySexesArgs,
-  Sexe,
-  SexesPaginatedResult,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { EntitesAvecLibelleOrderBy, Sexe } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedSexesQueryResult = {
-  paginatedSexes: SexesPaginatedResult;
-};
-
-type DeleteSexeMutationResult = {
-  deleteSexe: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedSexes(
-    $searchParams: SearchParams
-    $orderBy: EntitesAvecLibelleOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedSexes(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query SexesTable($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+    sexes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         libelle
+        editable
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteSexe($id: Int!) {
     deleteSexe(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -86,7 +64,7 @@ const SexeTable: FunctionComponent = () => {
 
   const [dialogSexe, setDialogSexe] = useState<Sexe | null>(null);
 
-  const { data } = useQuery<PaginatedSexesQueryResult, QuerySexesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -99,7 +77,7 @@ const SexeTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteSexe] = useMutation<DeleteSexeMutationResult, MutationDeleteSexeArgs>(DELETE);
+  const [deleteSexe] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -193,7 +171,7 @@ const SexeTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedSexes?.data?.map((sexe) => {
+            {data?.sexes?.data?.map((sexe) => {
               return (
                 <TableRow hover key={sexe?.id}>
                   <TableCell>{sexe?.libelle}</TableCell>
@@ -213,7 +191,7 @@ const SexeTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedSexes?.count ?? 0}
+                count={data?.sexes?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

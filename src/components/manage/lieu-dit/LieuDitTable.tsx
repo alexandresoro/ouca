@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,45 +16,24 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  LieuDit,
-  LieuxDitsOrderBy,
-  LieuxDitsPaginatedResult,
-  MutationDeleteLieuDitArgs,
-  QueryLieuxDitsArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { LieuDit, LieuxDitsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedLieuxDitsQueryResult = {
-  paginatedLieuxdits: LieuxDitsPaginatedResult;
-};
-
-type DeleteLieuDitMutationResult = {
-  deleteLieuDit: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedLieuxDits(
-    $searchParams: SearchParams
-    $orderBy: LieuxDitsOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedLieuxdits(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query LieuxDitsTable($searchParams: SearchParams, $orderBy: LieuxDitsOrderBy, $sortOrder: SortOrder) {
+    lieuxDits(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         commune {
+          id
           departement {
+            id
             code
           }
           code
@@ -64,17 +43,18 @@ const PAGINATED_QUERY = gql`
         altitude
         longitude
         latitude
+        editable
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteLieuDit($id: Int!) {
     deleteLieuDit(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -118,9 +98,11 @@ const LieuDitTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<LieuxDitsOrderBy>();
 
-  const [dialogLieuDit, setDialogLieuDit] = useState<LieuDit | null>(null);
+  const [dialogLieuDit, setDialogLieuDit] = useState<Pick<LieuDit, "id" | "nom" | "commune" | "nbDonnees"> | null>(
+    null
+  );
 
-  const { data } = useQuery<PaginatedLieuxDitsQueryResult, QueryLieuxDitsArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -133,7 +115,7 @@ const LieuDitTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteLieuDit] = useMutation<DeleteLieuDitMutationResult, MutationDeleteLieuDitArgs>(DELETE);
+  const [deleteLieuDit] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -143,13 +125,13 @@ const LieuDitTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteLieuDit = (lieuDit: LieuDit | null) => {
+  const handleDeleteLieuDit = (lieuDit: Pick<LieuDit, "id" | "nom" | "commune" | "nbDonnees"> | null) => {
     if (lieuDit) {
       setDialogLieuDit(lieuDit);
     }
   };
 
-  const handleDeleteLieuDitConfirmation = async (lieuDit: LieuDit | null) => {
+  const handleDeleteLieuDitConfirmation = async (lieuDit: Pick<LieuDit, "id"> | null) => {
     if (lieuDit) {
       setDialogLieuDit(null);
       await deleteLieuDit({
@@ -227,7 +209,7 @@ const LieuDitTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedLieuxdits?.data?.map((lieuDit) => {
+            {data?.lieuxDits?.data?.map((lieuDit) => {
               return (
                 <TableRow hover key={lieuDit?.id}>
                   <TableCell>{lieuDit?.commune?.departement?.code}</TableCell>
@@ -253,7 +235,7 @@ const LieuDitTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedLieuxdits?.count ?? 0}
+                count={data?.lieuxDits?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

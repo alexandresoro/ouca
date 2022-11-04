@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,55 +16,37 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  EntitesAvecLibelleOrderBy,
-  EstimationDistance,
-  EstimationsDistancePaginatedResult,
-  MutationDeleteEstimationDistanceArgs,
-  QueryEstimationsDistanceArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { EntitesAvecLibelleOrderBy, EstimationDistance } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedEstimationsDistanceQueryResult = {
-  paginatedEstimationsDistance: EstimationsDistancePaginatedResult;
-};
-
-type DeleteEstimationDistanceMutationResult = {
-  deleteEstimationDistance: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedEstimationsDistance(
+const PAGINATED_QUERY = graphql(`
+  query EstimationsDistanceTable(
     $searchParams: SearchParams
     $orderBy: EntitesAvecLibelleOrderBy
     $sortOrder: SortOrder
-    $includeCounts: Boolean!
   ) {
-    paginatedEstimationsDistance(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+    estimationsDistance(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         libelle
+        editable
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteEstimationDistance($id: Int!) {
     deleteEstimationDistance(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -86,7 +68,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
 
   const [dialogEstimationDistance, setDialogEstimationDistance] = useState<EstimationDistance | null>(null);
 
-  const { data } = useQuery<PaginatedEstimationsDistanceQueryResult, QueryEstimationsDistanceArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -99,10 +81,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteEstimationDistance] = useMutation<
-    DeleteEstimationDistanceMutationResult,
-    MutationDeleteEstimationDistanceArgs
-  >(DELETE);
+  const [deleteEstimationDistance] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -196,7 +175,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedEstimationsDistance?.data?.map((estimationDistance) => {
+            {data?.estimationsDistance?.data?.map((estimationDistance) => {
               return (
                 <TableRow hover key={estimationDistance?.id}>
                   <TableCell>{estimationDistance?.libelle}</TableCell>
@@ -216,7 +195,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedEstimationsDistance?.count ?? 0}
+                count={data?.estimationsDistance?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

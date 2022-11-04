@@ -25,7 +25,7 @@ import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 const PAGINATED_AGES_QUERY = graphql(`
-  query Ages($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+  query AgesTable($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     ages(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
       data {

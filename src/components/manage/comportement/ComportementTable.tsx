@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,57 +16,35 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  Comportement,
-  ComportementsOrderBy,
-  ComportementsPaginatedResult,
-  MutationDeleteComportementArgs,
-  QueryComportementsArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { Comportement, ComportementsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedComportementsQueryResult = {
-  paginatedComportements: ComportementsPaginatedResult;
-};
-
-type DeleteComportementMutationResult = {
-  deleteComportement: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedComportements(
-    $searchParams: SearchParams
-    $orderBy: ComportementsOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedComportements(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query ComportementsTable($searchParams: SearchParams, $orderBy: ComportementsOrderBy, $sortOrder: SortOrder) {
+    comportements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         code
         libelle
         nicheur
+        editable
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteComportement($id: Int!) {
     deleteComportement(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -96,7 +74,7 @@ const ComportementTable: FunctionComponent = () => {
 
   const [dialogComportement, setDialogComportement] = useState<Comportement | null>(null);
 
-  const { data } = useQuery<PaginatedComportementsQueryResult, QueryComportementsArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -109,7 +87,7 @@ const ComportementTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteComportement] = useMutation<DeleteComportementMutationResult, MutationDeleteComportementArgs>(DELETE);
+  const [deleteComportement] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -203,7 +181,7 @@ const ComportementTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedComportements?.data?.map((comportement) => {
+            {data?.comportements?.data?.map((comportement) => {
               return (
                 <TableRow hover key={comportement?.id}>
                   <TableCell>{comportement?.code}</TableCell>
@@ -225,7 +203,7 @@ const ComportementTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedComportements?.count ?? 0}
+                count={data?.comportements?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

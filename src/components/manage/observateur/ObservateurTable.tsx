@@ -17,7 +17,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { graphql } from "../../../gql";
-import { EntitesAvecLibelleOrderBy, Observateur, ObservateursQuery } from "../../../gql/graphql";
+import { EntitesAvecLibelleOrderBy, Observateur, ObservateursTableQuery } from "../../../gql/graphql";
 import useGraphQLRequestContext from "../../../hooks/useGraphQLRequestContext";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -26,7 +26,7 @@ import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 const PAGINATED_OBSERVATEURS_QUERY = graphql(`
-  query Observateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+  query ObservateursTable($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
       data {
@@ -65,7 +65,7 @@ const ObservateurTable: FunctionComponent = () => {
 
   const [dialogObservateur, setDialogObservateur] = useState<Observateur | null>(null);
 
-  const [data, setData] = useState<ObservateursQuery | null>(null);
+  const [data, setData] = useState<ObservateursTableQuery | null>(null);
 
   // const { data } = useQuery<PaginatedObservateursQueryResult, QueryObservateursArgs>(PAGINATED_OBSERVATEURS_QUERY, {
   //   fetchPolicy: "cache-and-network",

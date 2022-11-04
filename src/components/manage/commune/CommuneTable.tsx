@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,60 +16,39 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  Commune,
-  CommunesOrderBy,
-  CommunesPaginatedResult,
-  MutationDeleteCommuneArgs,
-  QueryCommunesArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { Commune, CommunesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedCommunesQueryResult = {
-  paginatedCommunes: CommunesPaginatedResult;
-};
-
-type DeleteCommuneMutationResult = {
-  deleteCommune: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedCommunes(
-    $searchParams: SearchParams
-    $orderBy: CommunesOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedCommunes(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query CommunesTable($searchParams: SearchParams, $orderBy: CommunesOrderBy, $sortOrder: SortOrder) {
+    communes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         departement {
+          id
           code
         }
         id
         code
         nom
+        editable
         nbLieuxDits
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteCommune($id: Int!) {
     deleteCommune(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -103,7 +82,7 @@ const CommuneTable: FunctionComponent = () => {
 
   const [dialogCommune, setDialogCommune] = useState<Commune | null>(null);
 
-  const { data } = useQuery<PaginatedCommunesQueryResult, QueryCommunesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -116,7 +95,7 @@ const CommuneTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteCommune] = useMutation<DeleteCommuneMutationResult, MutationDeleteCommuneArgs>(DELETE);
+  const [deleteCommune] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -210,7 +189,7 @@ const CommuneTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedCommunes?.data?.map((commune) => {
+            {data?.communes?.data?.map((commune) => {
               return (
                 <TableRow hover key={commune?.id}>
                   <TableCell>{commune?.departement?.code}</TableCell>
@@ -233,7 +212,7 @@ const CommuneTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedCommunes?.count ?? 0}
+                count={data?.communes?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

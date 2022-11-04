@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,56 +16,34 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  Classe,
-  ClassesOrderBy,
-  ClassesPaginatedResult,
-  MutationDeleteClasseArgs,
-  QueryClassesArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { Classe, ClassesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedClassesQueryResult = {
-  paginatedClasses: ClassesPaginatedResult;
-};
-
-type DeleteClasseMutationResult = {
-  deleteClasse: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedClasses(
-    $searchParams: SearchParams
-    $orderBy: ClassesOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedClasses(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query ClassesTable($searchParams: SearchParams, $orderBy: ClassesOrderBy, $sortOrder: SortOrder) {
+    classes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         libelle
+        editable
         nbEspeces
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteClasse($id: Int!) {
     deleteClasse(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -91,7 +69,7 @@ const ClasseTable: FunctionComponent = () => {
 
   const [dialogClasse, setDialogClasse] = useState<Classe | null>(null);
 
-  const { data } = useQuery<PaginatedClassesQueryResult, QueryClassesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -104,7 +82,7 @@ const ClasseTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteClasse] = useMutation<DeleteClasseMutationResult, MutationDeleteClasseArgs>(DELETE);
+  const [deleteClasse] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -198,7 +176,7 @@ const ClasseTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedClasses?.data?.map((classe) => {
+            {data?.classes?.data?.map((classe) => {
               return (
                 <TableRow hover key={classe?.id}>
                   <TableCell>{classe?.libelle}</TableCell>
@@ -219,7 +197,7 @@ const ClasseTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedClasses?.count ?? 0}
+                count={data?.classes?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

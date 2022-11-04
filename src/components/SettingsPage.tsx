@@ -1,19 +1,11 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Card, CircularProgress, Container, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { FunctionComponent, useCallback, useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { UserContext } from "../contexts/UserContext";
-import {
-  Age,
-  CoordinatesSystemType,
-  Departement,
-  EstimationNombre,
-  MutationUpdateSettingsArgs,
-  Observateur,
-  Settings,
-  Sexe,
-} from "../gql/graphql";
+import { graphql } from "../gql";
+import { CoordinatesSystemType, MutationUpdateSettingsArgs, Settings } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
@@ -21,16 +13,7 @@ import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
 import StyledPanelHeader from "./utils/StyledPanelHeader";
 
-type SettingsQueryResult = {
-  settings: Settings;
-  ages: Age[];
-  observateurs: Observateur[];
-  departements: Departement[];
-  estimationsNombre: EstimationNombre[];
-  sexes: Sexe[];
-};
-
-const SETTINGS_QUERY = gql`
+const SETTINGS_QUERY = graphql(`
   query GetUserSettings {
     settings {
       id
@@ -63,30 +46,39 @@ const SETTINGS_QUERY = gql`
       defaultNombre
     }
     ages {
-      id
-      libelle
+      data {
+        id
+        libelle
+      }
     }
     departements {
-      id
-      code
+      data {
+        id
+        code
+      }
     }
     estimationsNombre {
-      id
-      libelle
-      nonCompte
+      data {
+        id
+        libelle
+      }
     }
     observateurs {
-      id
-      libelle
+      data {
+        id
+        libelle
+      }
     }
     sexes {
-      id
-      libelle
+      data {
+        id
+        libelle
+      }
     }
   }
-`;
+`);
 
-const USER_SETTINGS_MUTATION = gql`
+const USER_SETTINGS_MUTATION = graphql(`
   mutation UpdateUserSettings($appConfiguration: InputSettings!) {
     updateSettings(appConfiguration: $appConfiguration) {
       id
@@ -119,7 +111,7 @@ const USER_SETTINGS_MUTATION = gql`
       }
     }
   }
-`;
+`);
 
 type SettingsInputs = {
   defaultObservateur: number;
@@ -145,7 +137,7 @@ const SettingsPage: FunctionComponent = () => {
   const { setSnackbarContent } = useSnackbar();
 
   // TODO check fetch policies
-  const { loading, error, data } = useQuery<SettingsQueryResult>(SETTINGS_QUERY);
+  const { loading, error, data } = useQuery(SETTINGS_QUERY);
 
   const [sendUserSettingsUpdate] = useMutation<{ settings: Settings }, MutationUpdateSettingsArgs>(
     USER_SETTINGS_MUTATION
@@ -298,7 +290,7 @@ const SettingsPage: FunctionComponent = () => {
                       fullWidth: true,
                     }}
                   >
-                    {data?.observateurs?.map((observateur) => (
+                    {data?.observateurs?.data?.map((observateur) => (
                       <MenuItem key={observateur.id} value={observateur.id}>
                         {observateur.libelle}
                       </MenuItem>
@@ -318,7 +310,7 @@ const SettingsPage: FunctionComponent = () => {
                       fullWidth: true,
                     }}
                   >
-                    {data?.departements?.map((departement) => (
+                    {data?.departements?.data?.map((departement) => (
                       <MenuItem key={departement.id} value={departement.id}>
                         {departement.code}
                       </MenuItem>
@@ -338,7 +330,7 @@ const SettingsPage: FunctionComponent = () => {
                       fullWidth: true,
                     }}
                   >
-                    {data?.estimationsNombre?.map((estimationNombre) => (
+                    {data?.estimationsNombre?.data?.map((estimationNombre) => (
                       <MenuItem key={estimationNombre.id} value={estimationNombre.id}>
                         {estimationNombre.libelle}
                       </MenuItem>
@@ -382,7 +374,7 @@ const SettingsPage: FunctionComponent = () => {
                       fullWidth: true,
                     }}
                   >
-                    {data?.sexes?.map((sexe) => (
+                    {data?.sexes?.data?.map((sexe) => (
                       <MenuItem key={sexe.id} value={sexe.id}>
                         {sexe.libelle}
                       </MenuItem>
@@ -402,7 +394,7 @@ const SettingsPage: FunctionComponent = () => {
                       fullWidth: true,
                     }}
                   >
-                    {data?.ages?.map((age) => (
+                    {data?.ages?.data?.map((age) => (
                       <MenuItem key={age.id} value={age.id}>
                         {age.libelle}
                       </MenuItem>

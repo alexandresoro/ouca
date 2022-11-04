@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -15,40 +15,23 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Donnee,
-  MutationDeleteDonneeArgs,
-  PaginatedSearchDonneesResult,
-  SearchDonneesOrderBy,
-} from "../../gql/graphql";
+import { graphql } from "../../gql";
+import { Donnee, SearchDonneesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
 
-type PaginatedDonneesQueryResult = {
-  paginatedSearchDonnees: PaginatedSearchDonneesResult;
-};
-
-type DeleteDonneeMutationResult = {
-  deleteDonnee: number | null;
-};
-
-const PAGINATED_SEARCH_DONNEES_QUERY = gql`
+const PAGINATED_SEARCH_DONNEES_QUERY = graphql(`
   query PaginatedSearchDonnees(
     $sortOrder: SortOrder
     $orderBy: SearchDonneesOrderBy
     $searchParams: SearchDonneeParams
     $searchCriteria: SearchDonneeCriteria
   ) {
-    paginatedSearchDonnees(
-      sortOrder: $sortOrder
-      orderBy: $orderBy
-      searchParams: $searchParams
-      searchCriteria: $searchCriteria
-    ) {
-      count
-      result {
+    searchDonnees {
+      count(searchCriteria: $searchCriteria)
+      result(sortOrder: $sortOrder, orderBy: $orderBy, searchParams: $searchParams, searchCriteria: $searchCriteria) {
         id
         inventaire {
           id
@@ -137,13 +120,13 @@ const PAGINATED_SEARCH_DONNEES_QUERY = gql`
       }
     }
   }
-`;
+`);
 
-const DELETE_QUERY = gql`
+const DELETE_QUERY = graphql(`
   mutation DeleteDonnee($id: Int!) {
     deleteDonnee(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -178,7 +161,7 @@ const DonneeTable: FunctionComponent = () => {
 
   const { setSnackbarContent } = useSnackbar();
 
-  const { data: donneesResult } = useQuery<PaginatedDonneesQueryResult, any>(PAGINATED_SEARCH_DONNEES_QUERY, {
+  const { data: donneesResult } = useQuery(PAGINATED_SEARCH_DONNEES_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -191,7 +174,7 @@ const DonneeTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteDonnee] = useMutation<DeleteDonneeMutationResult, MutationDeleteDonneeArgs>(DELETE_QUERY);
+  const [deleteDonnee] = useMutation(DELETE_QUERY);
 
   const handleEditDonnee = (donnee: Donnee | null) => {
     if (donnee) {
@@ -278,7 +261,7 @@ const DonneeTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {donneesResult?.paginatedSearchDonnees?.result?.map((donnee) => {
+            {donneesResult?.searchDonnees?.result?.map((donnee) => {
               return donnee ? (
                 <DonneeDetailsRow
                   key={donnee.id}
@@ -296,7 +279,7 @@ const DonneeTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={donneesResult?.paginatedSearchDonnees?.count ?? 0}
+                count={donneesResult?.searchDonnees?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

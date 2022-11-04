@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,57 +16,35 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  Departement,
-  DepartementsOrderBy,
-  DepartementsPaginatedResult,
-  MutationDeleteDepartementArgs,
-  QueryDepartementsArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { Departement, DepartementsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedDepartementsQueryResult = {
-  paginatedDepartements: DepartementsPaginatedResult;
-};
-
-type DeleteDepartementMutationResult = {
-  deleteDepartement: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedDepartements(
-    $searchParams: SearchParams
-    $orderBy: DepartementsOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedDepartements(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query DepartementsTable($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
+    departements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         code
+        editable
         nbCommunes
         nbLieuxDits
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteDepartement($id: Int!) {
     deleteDepartement(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -96,7 +74,7 @@ const DepartementTable: FunctionComponent = () => {
 
   const [dialogDepartement, setDialogDepartement] = useState<Departement | null>(null);
 
-  const { data } = useQuery<PaginatedDepartementsQueryResult, QueryDepartementsArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -109,7 +87,7 @@ const DepartementTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteDepartement] = useMutation<DeleteDepartementMutationResult, MutationDeleteDepartementArgs>(DELETE);
+  const [deleteDepartement] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -203,7 +181,7 @@ const DepartementTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedDepartements?.data?.map((departement) => {
+            {data?.departements?.data?.map((departement) => {
               return (
                 <TableRow hover key={departement?.id}>
                   <TableCell>{departement?.code}</TableCell>
@@ -225,7 +203,7 @@ const DepartementTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedDepartements?.count ?? 0}
+                count={data?.departements?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

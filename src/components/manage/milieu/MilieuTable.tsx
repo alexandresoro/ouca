@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,56 +16,34 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  Milieu,
-  MilieuxOrderBy,
-  MilieuxPaginatedResult,
-  MutationDeleteMilieuArgs,
-  QueryMilieuxArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { Milieu, MilieuxOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedMilieuxQueryResult = {
-  paginatedMilieux: MilieuxPaginatedResult;
-};
-
-type DeleteMilieuMutationResult = {
-  deleteMilieu: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedMilieux(
-    $searchParams: SearchParams
-    $orderBy: MilieuxOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedMilieux(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query MilieuxTable($searchParams: SearchParams, $orderBy: MilieuxOrderBy, $sortOrder: SortOrder) {
+    milieux(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         code
         libelle
+        editable
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteMilieu($id: Int!) {
     deleteMilieu(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -91,7 +69,7 @@ const MilieuTable: FunctionComponent = () => {
 
   const [dialogMilieu, setDialogMilieu] = useState<Milieu | null>(null);
 
-  const { data } = useQuery<PaginatedMilieuxQueryResult, QueryMilieuxArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -104,7 +82,7 @@ const MilieuTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteMilieu] = useMutation<DeleteMilieuMutationResult, MutationDeleteMilieuArgs>(DELETE);
+  const [deleteMilieu] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -198,7 +176,7 @@ const MilieuTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedMilieux?.data?.map((milieu) => {
+            {data?.milieux?.data?.map((milieu) => {
               return (
                 <TableRow hover key={milieu?.id}>
                   <TableCell>{milieu?.code}</TableCell>
@@ -219,7 +197,7 @@ const MilieuTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedMilieux?.count ?? 0}
+                count={data?.milieux?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

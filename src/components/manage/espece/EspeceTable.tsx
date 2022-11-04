@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,60 +16,39 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  Espece,
-  EspecesOrderBy,
-  EspecesPaginatedResult,
-  MutationDeleteEspeceArgs,
-  QueryEspecesArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { Espece, EspecesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedEspecesQueryResult = {
-  paginatedEspeces: EspecesPaginatedResult;
-};
-
-type DeleteEspeceMutationResult = {
-  deleteEspece: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedEspeces(
-    $searchParams: SearchParams
-    $orderBy: EspecesOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedEspeces(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query EspecesTable($searchParams: SearchParams, $orderBy: EspecesOrderBy, $sortOrder: SortOrder) {
+    especes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         classe {
+          id
           libelle
         }
         code
+        editable
         nomFrancais
         nomLatin
         nbDonnees
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteEspece($id: Int!) {
     deleteEspece(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -103,7 +82,7 @@ const EspeceTable: FunctionComponent = () => {
 
   const [dialogEspece, setDialogEspece] = useState<Espece | null>(null);
 
-  const { data } = useQuery<PaginatedEspecesQueryResult, QueryEspecesArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -116,7 +95,7 @@ const EspeceTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteEspece] = useMutation<DeleteEspeceMutationResult, MutationDeleteEspeceArgs>(DELETE);
+  const [deleteEspece] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -210,7 +189,7 @@ const EspeceTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedEspeces?.data?.map((espece) => {
+            {data?.especes?.data?.map((espece) => {
               return (
                 <TableRow hover key={espece?.id}>
                   <TableCell>{espece?.classe?.libelle}</TableCell>
@@ -233,7 +212,7 @@ const EspeceTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedEspeces?.count ?? 0}
+                count={data?.especes?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

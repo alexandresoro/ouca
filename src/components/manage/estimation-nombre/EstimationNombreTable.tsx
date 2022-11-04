@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,56 +16,34 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  EstimationNombre,
-  EstimationNombreOrderBy,
-  EstimationsNombrePaginatedResult,
-  MutationDeleteEstimationNombreArgs,
-  QueryEstimationsNombreArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { EstimationNombre, EstimationNombreOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedEstimationsNombreQueryResult = {
-  paginatedEstimationsNombre: EstimationsNombrePaginatedResult;
-};
-
-type DeleteEstimationNombreMutationResult = {
-  deleteEstimationNombre: number | null;
-};
-
-const PAGINATED_QUERY = gql`
-  query PaginatedEstimationsNombre(
-    $searchParams: SearchParams
-    $orderBy: EstimationNombreOrderBy
-    $sortOrder: SortOrder
-    $includeCounts: Boolean!
-  ) {
-    paginatedEstimationsNombre(
-      searchParams: $searchParams
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-      includeCounts: $includeCounts
-    ) {
+const PAGINATED_QUERY = graphql(`
+  query EstimationsNombreTable($searchParams: SearchParams, $orderBy: EstimationNombreOrderBy, $sortOrder: SortOrder) {
+    estimationsNombre(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
-      result {
+      data {
         id
         libelle
+        editable
         nbDonnees
         nonCompte
       }
     }
   }
-`;
+`);
 
-const DELETE = gql`
+const DELETE = graphql(`
   mutation DeleteEstimationNombre($id: Int!) {
     deleteEstimationNombre(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -91,7 +69,7 @@ const EstimationNombreTable: FunctionComponent = () => {
 
   const [dialogEstimationNombre, setDialogEstimationNombre] = useState<EstimationNombre | null>(null);
 
-  const { data } = useQuery<PaginatedEstimationsNombreQueryResult, QueryEstimationsNombreArgs>(PAGINATED_QUERY, {
+  const { data } = useQuery(PAGINATED_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -104,10 +82,7 @@ const EstimationNombreTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteEstimationNombre] = useMutation<
-    DeleteEstimationNombreMutationResult,
-    MutationDeleteEstimationNombreArgs
-  >(DELETE);
+  const [deleteEstimationNombre] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -201,7 +176,7 @@ const EstimationNombreTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedEstimationsNombre?.data?.map((estimationNombre) => {
+            {data?.estimationsNombre?.data?.map((estimationNombre) => {
               return (
                 <TableRow hover key={estimationNombre?.id}>
                   <TableCell>{estimationNombre?.libelle}</TableCell>
@@ -222,7 +197,7 @@ const EstimationNombreTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedEstimationsNombre?.count ?? 0}
+                count={data?.estimationsNombre?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

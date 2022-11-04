@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -15,30 +15,25 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { EspecesOrderBy, EspecesPaginatedResult, QuerySearchEspecesArgs } from "../../gql/graphql";
+import { graphql } from "../../gql";
+import { EspecesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 
-type PaginatedSearchEspecesQueryResult = {
-  paginatedSearchEspeces: EspecesPaginatedResult;
-};
-
-const PAGINATED_SEARCH_ESPECES_QUERY = gql`
+const PAGINATED_SEARCH_ESPECES_QUERY = graphql(`
   query PaginatedSearchEspeces(
     $searchParams: SearchDonneeParams
     $searchCriteria: SearchDonneeCriteria
     $orderBy: EspecesOrderBy
     $sortOrder: SortOrder
-    $includeCounts: Boolean!
   ) {
-    paginatedSearchEspeces(
+    searchEspeces(
       searchParams: $searchParams
       searchCriteria: $searchCriteria
       orderBy: $orderBy
       sortOrder: $sortOrder
-      includeCounts: $includeCounts
     ) {
       count
-      result {
+      data {
         id
         code
         nomFrancais
@@ -51,7 +46,7 @@ const PAGINATED_SEARCH_ESPECES_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -86,7 +81,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
   //setOrderBy("nbDonnees");
   //setSortOrder("desc");
 
-  const { data } = useQuery<PaginatedSearchEspecesQueryResult, QuerySearchEspecesArgs>(PAGINATED_SEARCH_ESPECES_QUERY, {
+  const { data } = useQuery(PAGINATED_SEARCH_ESPECES_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -144,7 +139,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.paginatedSearchEspeces?.data?.map((espece) => {
+            {data?.searchEspeces?.data?.map((espece) => {
               return (
                 <TableRow hover key={espece?.id}>
                   <TableCell>{espece?.classe?.libelle}</TableCell>
@@ -161,7 +156,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.paginatedSearchEspeces?.count ?? 0}
+                count={data?.searchEspeces?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}
