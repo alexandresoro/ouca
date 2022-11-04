@@ -2,15 +2,15 @@ import { ApolloClient, ApolloProvider, HttpLink, NormalizedCacheObject } from "@
 import { Box, createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
 import { cyan, grey, pink } from "@mui/material/colors";
 import * as Sentry from "@sentry/react";
-import { GraphQLClient } from "graphql-request";
+import { refocusExchange } from "@urql/exchange-refocus";
 import { FunctionComponent, lazy, Suspense, useMemo } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { cacheExchange, createClient, dedupExchange, fetchExchange, Provider as UrqlProvider } from "urql";
 import Layout from "./components/Layout";
 import TempPage from "./components/TempPage";
 import RequireAuth from "./components/utils/RequireAuth";
 import { ApiUrlContext } from "./contexts/ApiUrlContext";
-import { GraphQLRequestContext } from "./contexts/GraphQLRequestContext";
 import { UserProvider } from "./contexts/UserContext";
 import { AppConfig } from "./types/AppConfig";
 
@@ -97,7 +97,15 @@ const App: FunctionComponent<AppProps> = (props) => {
 
   const apiUrl = userDetails?.apiUrl ?? "";
 
-  const graphQLRequestClient = useMemo(() => new GraphQLClient(`${apiUrl}/graphql`, { fetch }), [apiUrl]);
+  const urqlClient = useMemo(
+    () =>
+      createClient({
+        url: `${apiUrl}/graphql`,
+        exchanges: [dedupExchange, refocusExchange(), cacheExchange, fetchExchange],
+        requestPolicy: "cache-and-network",
+      }),
+    [apiUrl]
+  );
 
   apolloClient.setLink(
     new HttpLink({
@@ -108,7 +116,7 @@ const App: FunctionComponent<AppProps> = (props) => {
   return (
     <ApiUrlContext.Provider value={apiUrl}>
       <ApolloProvider client={apolloClient}>
-        <GraphQLRequestContext.Provider value={graphQLRequestClient}>
+        <UrqlProvider value={urqlClient}>
           <BrowserRouter>
             <HelmetProvider>
               <Helmet>
@@ -273,7 +281,7 @@ const App: FunctionComponent<AppProps> = (props) => {
               </ThemeProvider>
             </HelmetProvider>
           </BrowserRouter>
-        </GraphQLRequestContext.Provider>
+        </UrqlProvider>
       </ApolloProvider>
     </ApiUrlContext.Provider>
   );

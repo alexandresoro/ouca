@@ -13,12 +13,12 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "urql";
 import { graphql } from "../../../gql";
-import { EntitesAvecLibelleOrderBy, Observateur, ObservateursTableQuery } from "../../../gql/graphql";
-import useGraphQLRequestContext from "../../../hooks/useGraphQLRequestContext";
+import { EntitesAvecLibelleOrderBy, Observateur } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -65,42 +65,22 @@ const ObservateurTable: FunctionComponent = () => {
 
   const [dialogObservateur, setDialogObservateur] = useState<Observateur | null>(null);
 
-  const [data, setData] = useState<ObservateursTableQuery | null>(null);
-
-  // const { data } = useQuery<PaginatedObservateursQueryResult, QueryObservateursArgs>(PAGINATED_OBSERVATEURS_QUERY, {
-  //   fetchPolicy: "cache-and-network",
-  //   variables: {
-  //     searchParams: {
-  //       pageNumber: page,
-  //       pageSize: rowsPerPage,
-  //       q: query
-  //     },
-  //     orderBy,
-  //     sortOrder
-  //   }
-  // });
-
-  const client = useGraphQLRequestContext();
+  const [{ data }] = useQuery({
+    query: PAGINATED_OBSERVATEURS_QUERY,
+    variables: {
+      searchParams: {
+        pageNumber: page,
+        pageSize: rowsPerPage,
+        q: query,
+      },
+      orderBy,
+      sortOrder,
+    },
+  });
 
   const [deleteObservateur] = useMutation(DELETE_OBSERVATEUR);
 
   const { setSnackbarContent } = useSnackbar();
-
-  useEffect(() => {
-    void client
-      .request(PAGINATED_OBSERVATEURS_QUERY, {
-        searchParams: {
-          pageNumber: page,
-          pageSize: rowsPerPage,
-          q: query,
-        },
-        orderBy,
-        sortOrder,
-      })
-      .then((data) => {
-        setData(data);
-      });
-  }, [page, rowsPerPage, query, orderBy, sortOrder]);
 
   const handleEditObservateur = (id: number | undefined) => {
     if (id) {
