@@ -1,4 +1,4 @@
-import { ApolloError, gql, useMutation } from "@apollo/client";
+import { ApolloError, useMutation } from "@apollo/client";
 import {
   AccountBox,
   Add,
@@ -39,18 +39,15 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as Logo } from "../assets/img/logo.svg";
 import { UserContext } from "../contexts/UserContext";
+import { graphql } from "../gql";
 import { getFullName, getInitials } from "../utils/usernameUtils";
 import FlexSpacer from "./utils/FlexSpacer";
 
-type UserLogoutResult = {
-  userLogout: boolean;
-};
-
-const USER_LOGOUT_MUTATION = gql`
+const USER_LOGOUT_MUTATION = graphql(`
   mutation Logout {
     userLogout
   }
-`;
+`);
 
 const DATABASE_MENU_OPTIONS = [
   {
@@ -147,7 +144,7 @@ const Header: FunctionComponent = () => {
   const fullName = getFullName(userInfo);
   const initials = getInitials(userInfo);
 
-  const [sendUserLogout] = useMutation<UserLogoutResult>(USER_LOGOUT_MUTATION);
+  const [sendUserLogout] = useMutation(USER_LOGOUT_MUTATION);
 
   const [anchorElDatabase, setAnchorElDatabase] = useState<null | HTMLElement>(null);
   const openDatabaseMenu = Boolean(anchorElDatabase);
