@@ -1,17 +1,13 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { CircularProgress } from "@mui/material";
 import { FunctionComponent, ReactElement, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContext";
-import { UserInfo } from "../../gql/graphql";
+import { graphql } from "../../gql";
 import CenteredFlexBox from "./CenteredFlexBox";
 
-type RefreshTokenResult = {
-  userRefresh: UserInfo | null;
-};
-
-const REFRESH_TOKEN_MUTATION = gql`
-  mutation RefreskToken {
+const REFRESH_TOKEN_MUTATION = graphql(`
+  mutation RefreshToken {
     userRefresh {
       id
       username
@@ -20,7 +16,7 @@ const REFRESH_TOKEN_MUTATION = gql`
       role
     }
   }
-`;
+`);
 const RequireAuth: FunctionComponent<{ children: ReactElement }> = (props) => {
   const { children } = props;
 
@@ -29,7 +25,7 @@ const RequireAuth: FunctionComponent<{ children: ReactElement }> = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [refreshToken] = useMutation<RefreshTokenResult>(REFRESH_TOKEN_MUTATION);
+  const [refreshToken] = useMutation(REFRESH_TOKEN_MUTATION);
 
   useEffect(() => {
     // If the user context is not defined, try to retrieve a valid token

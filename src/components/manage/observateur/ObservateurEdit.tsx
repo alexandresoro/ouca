@@ -1,41 +1,33 @@
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { Cancel, Save } from "@mui/icons-material";
 import { Button, Card, CardActions, CardContent, CardHeader, Container, TextField } from "@mui/material";
 import { FunctionComponent, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { MutationUpsertObservateurArgs, Observateur, QueryObservateurArgs } from "../../../gql/graphql";
+import { graphql } from "../../../gql";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { getOucaError } from "../../../utils/ouca-error-extractor";
 import { EntityWithLibelleInputs } from "../common/entity-types";
 import ManageTopBar from "../common/ManageTopBar";
 
-type ObservateurQueryResult = {
-  observateur: Pick<Observateur, "id" | "libelle">;
-};
-
-type ObservateurMutationResult = {
-  upsertObservateur: Pick<Observateur, "id" | "libelle">;
-};
-
-const OBSERVATEUR_QUERY = gql`
+const OBSERVATEUR_QUERY = graphql(`
   query GetObservateurIdInfo($id: Int!) {
     observateur(id: $id) {
       id
       libelle
     }
   }
-`;
+`);
 
-const OBSERVATEUR_UPSERT = gql`
+const OBSERVATEUR_UPSERT = graphql(`
   mutation ObservateurUpsert($id: Int, $data: InputObservateur!) {
     upsertObservateur(id: $id, data: $data) {
       id
       libelle
     }
   }
-`;
+`);
 
 type ObservateurEditProps = {
   isEditionMode: boolean;
@@ -58,7 +50,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
   } = useForm<ObservateurUpsertInputs>();
 
   // Retrieve the existing observer info in edit mode
-  const { data, error, loading } = useQuery<ObservateurQueryResult, QueryObservateurArgs>(OBSERVATEUR_QUERY, {
+  const { data, error, loading } = useQuery(OBSERVATEUR_QUERY, {
     fetchPolicy: "network-only",
     variables: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -67,7 +59,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     skip: !observateurId,
   });
 
-  const [upsertObservateur] = useMutation<ObservateurMutationResult, MutationUpsertObservateurArgs>(OBSERVATEUR_UPSERT);
+  const [upsertObservateur] = useMutation(OBSERVATEUR_UPSERT);
 
   const { setSnackbarContent } = useSnackbar();
 

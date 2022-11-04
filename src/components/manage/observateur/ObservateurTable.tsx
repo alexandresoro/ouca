@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -17,12 +17,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { graphql } from "../../../gql";
-import {
-  EntitesAvecLibelleOrderBy,
-  MutationDeleteObservateurArgs,
-  Observateur,
-  ObservateursQuery,
-} from "../../../gql/graphql";
+import { EntitesAvecLibelleOrderBy, Observateur, ObservateursQuery } from "../../../gql/graphql";
 import useGraphQLRequestContext from "../../../hooks/useGraphQLRequestContext";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -30,25 +25,7 @@ import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type DeleteObservateurMutationResult = {
-  deleteObservateur: number | null;
-};
-
-const PAGINATED_OBSERVATEURS_QUERY = gql`
-  query Observateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        libelle
-        editable
-        nbDonnees
-      }
-    }
-  }
-`;
-
-const PAGINATED_OBSERVATEURS_QUERY_RQ = graphql(`
+const PAGINATED_OBSERVATEURS_QUERY = graphql(`
   query Observateurs($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
@@ -62,11 +39,11 @@ const PAGINATED_OBSERVATEURS_QUERY_RQ = graphql(`
   }
 `);
 
-const DELETE_OBSERVATEUR = gql`
+const DELETE_OBSERVATEUR = graphql(`
   mutation DeleteObservateur($id: Int!) {
     deleteObservateur(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -105,15 +82,13 @@ const ObservateurTable: FunctionComponent = () => {
 
   const client = useGraphQLRequestContext();
 
-  const [deleteObservateur] = useMutation<DeleteObservateurMutationResult, MutationDeleteObservateurArgs>(
-    DELETE_OBSERVATEUR
-  );
+  const [deleteObservateur] = useMutation(DELETE_OBSERVATEUR);
 
   const { setSnackbarContent } = useSnackbar();
 
   useEffect(() => {
     void client
-      .request(PAGINATED_OBSERVATEURS_QUERY_RQ, {
+      .request(PAGINATED_OBSERVATEURS_QUERY, {
         searchParams: {
           pageNumber: page,
           pageSize: rowsPerPage,

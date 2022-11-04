@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,28 +16,15 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  Age,
-  AgesPaginatedResult,
-  EntitesAvecLibelleOrderBy,
-  MutationDeleteAgeArgs,
-  QueryAgesArgs,
-} from "../../../gql/graphql";
+import { graphql } from "../../../gql";
+import { Age, EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import FilterTextField from "../common/FilterTextField";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
-type PaginatedAgesQueryResult = {
-  ages: AgesPaginatedResult;
-};
-
-type DeleteAgeMutationResult = {
-  deleteAge: number | null;
-};
-
-const PAGINATED_AGES_QUERY = gql`
+const PAGINATED_AGES_QUERY = graphql(`
   query Ages($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     ages(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
@@ -49,13 +36,13 @@ const PAGINATED_AGES_QUERY = gql`
       }
     }
   }
-`;
+`);
 
-const DELETE_AGE = gql`
+const DELETE_AGE = graphql(`
   mutation DeleteAge($id: Int!) {
     deleteAge(id: $id)
   }
-`;
+`);
 
 const COLUMNS = [
   {
@@ -77,7 +64,7 @@ const AgeTable: FunctionComponent = () => {
 
   const [dialogAge, setDialogAge] = useState<Age | null>(null);
 
-  const { data } = useQuery<PaginatedAgesQueryResult, QueryAgesArgs>(PAGINATED_AGES_QUERY, {
+  const { data } = useQuery(PAGINATED_AGES_QUERY, {
     fetchPolicy: "cache-and-network",
     variables: {
       searchParams: {
@@ -90,7 +77,7 @@ const AgeTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteAge] = useMutation<DeleteAgeMutationResult, MutationDeleteAgeArgs>(DELETE_AGE);
+  const [deleteAge] = useMutation(DELETE_AGE);
 
   const { setSnackbarContent } = useSnackbar();
 

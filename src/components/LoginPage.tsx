@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { LoadingButton } from "@mui/lab";
 import { Box, Card, Container, styled, TextField, Typography } from "@mui/material";
 import { FunctionComponent, lazy, Suspense, useContext } from "react";
@@ -6,7 +6,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
-import { MutationUserLoginArgs, UserInfo } from "../gql/graphql";
+import { graphql } from "../gql";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
 
 const LOGO_SIZE = "250px";
@@ -15,11 +15,7 @@ const LoginLogo = lazy(() =>
   import("../assets/img/green-bird.svg").then(({ ReactComponent }) => ({ default: ReactComponent }))
 );
 
-type UserLoginResult = {
-  userLogin: UserInfo | null;
-};
-
-const USER_LOGIN_MUTATION = gql`
+const USER_LOGIN_MUTATION = graphql(`
   mutation UserLogin($loginData: UserLoginInput!) {
     userLogin(loginData: $loginData) {
       id
@@ -29,7 +25,7 @@ const USER_LOGIN_MUTATION = gql`
       role
     }
   }
-`;
+`);
 
 const LoginTextField = styled(TextField)(() => ({
   width: "32ch",
@@ -65,7 +61,7 @@ const LoginPage: FunctionComponent = () => {
     mode: "all",
   });
 
-  const [sendUserLogin, { loading }] = useMutation<UserLoginResult, MutationUserLoginArgs>(USER_LOGIN_MUTATION);
+  const [sendUserLogin, { loading }] = useMutation(USER_LOGIN_MUTATION);
 
   const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
     try {
