@@ -9,5 +9,6 @@
     "source.fixAll.eslint": true,
     "source.organizeImports": true
   },
-  "git.pullTags": false
+  "git.pullTags": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
