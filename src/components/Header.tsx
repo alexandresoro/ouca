@@ -1,4 +1,3 @@
-import { ApolloError, useMutation } from "@apollo/client";
 import {
   AccountBox,
   Add,
@@ -37,6 +36,7 @@ import { TFuncKey } from "i18next";
 import { FunctionComponent, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "urql";
 import Logo from "../assets/img/logo.svg";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
@@ -144,7 +144,7 @@ const Header: FunctionComponent = () => {
   const fullName = getFullName(userInfo);
   const initials = getInitials(userInfo);
 
-  const [sendUserLogout] = useMutation(USER_LOGOUT_MUTATION);
+  const [_, sendUserLogout] = useMutation(USER_LOGOUT_MUTATION);
 
   const [anchorElDatabase, setAnchorElDatabase] = useState<null | HTMLElement>(null);
   const openDatabaseMenu = Boolean(anchorElDatabase);
@@ -166,25 +166,22 @@ const Header: FunctionComponent = () => {
     setAnchorElOptions(null);
   };
 
-  const handleLogoutAction = async (event: React.MouseEvent<HTMLElement>) => {
+  const handleLogoutAction = async () => {
     try {
-      const logoutResult = await sendUserLogout();
-      if (logoutResult?.data?.userLogout) {
+      const logoutResult = await sendUserLogout({});
+      if (logoutResult.data?.userLogout) {
         // Successful logout
         setUserInfo(null);
 
         // Navigate to login page
         navigate("/login", { replace: true });
-      }
-    } catch (error) {
-      const apolloError = error as ApolloError;
-
-      // If we have an error because the user is not considered as authenticated,
-      // reset anyway
-      if (apolloError?.graphQLErrors?.[0]?.extensions?.code === "UNAUTHENTICATED") {
+      } else if (logoutResult.error?.graphQLErrors?.length) {
         setUserInfo(null);
         navigate("/login", { replace: true });
       }
+    } catch (error) {
+      setUserInfo(null);
+      navigate("/login", { replace: true });
     }
   };
 

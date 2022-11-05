@@ -1,10 +1,10 @@
-import { useMutation } from "@apollo/client";
 import { LoadingButton } from "@mui/lab";
 import { Card, Container, styled, TextField, Typography } from "@mui/material";
 import { FunctionComponent, useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "urql";
 import GreenBird from "../assets/img/green-bird.svg";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
@@ -58,14 +58,12 @@ const LoginPage: FunctionComponent = () => {
     mode: "all",
   });
 
-  const [sendUserLogin, { loading }] = useMutation(USER_LOGIN_MUTATION);
+  const [{ fetching }, sendUserLogin] = useMutation(USER_LOGIN_MUTATION);
 
-  const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
+  const onSubmit: SubmitHandler<LoginInputs> = async (loginData) => {
     try {
       const loginResult = await sendUserLogin({
-        variables: {
-          loginData: data,
-        },
+        loginData,
       });
       // Successful login
       setUserInfo(loginResult?.data?.userLogin ?? null);
@@ -148,7 +146,7 @@ const LoginPage: FunctionComponent = () => {
           <CenteredFlexBox>
             <LoadingButton
               type="submit"
-              loading={loading}
+              loading={fetching}
               variant="contained"
               sx={{
                 margin: 2,

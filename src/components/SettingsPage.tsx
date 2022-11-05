@@ -1,11 +1,11 @@
-import { useMutation, useQuery } from "@apollo/client";
 import { Card, CircularProgress, Container, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { FunctionComponent, useCallback, useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "urql";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
-import { CoordinatesSystemType, MutationUpdateSettingsArgs, Settings } from "../gql/graphql";
+import { CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
 import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
@@ -137,11 +137,9 @@ const SettingsPage: FunctionComponent = () => {
   const { setSnackbarContent } = useSnackbar();
 
   // TODO check fetch policies
-  const { loading, error, data } = useQuery(SETTINGS_QUERY);
+  const [{ fetching, error, data }, refetchSettings] = useQuery({ query: SETTINGS_QUERY });
 
-  const [sendUserSettingsUpdate] = useMutation<{ settings: Settings }, MutationUpdateSettingsArgs>(
-    USER_SETTINGS_MUTATION
-  );
+  const [_, sendUserSettingsUpdate] = useMutation(USER_SETTINGS_MUTATION);
 
   const {
     control,
@@ -196,35 +194,34 @@ const SettingsPage: FunctionComponent = () => {
       console.log(userInfo);
 
       await sendUserSettingsUpdate({
-        variables: {
-          appConfiguration: {
-            id: data.settings.id,
-            defaultNombre: typeof defaultNombre === "string" ? parseInt(defaultNombre) : defaultNombre,
-            ...otherValues,
-          },
+        appConfiguration: {
+          id: data.settings.id,
+          defaultNombre: typeof defaultNombre === "string" ? parseInt(defaultNombre) : defaultNombre,
+          ...otherValues,
         },
-      }).then(({ errors }) => {
-        if (!errors) {
+      }).then(({ error }) => {
+        if (!error) {
           displaySuccessNotification();
         } else {
           displayErrorNotification();
+          refetchSettings();
         }
       });
     },
-    [sendUserSettingsUpdate, data, displaySuccessNotification, displayErrorNotification, userInfo]
+    [sendUserSettingsUpdate, data, displaySuccessNotification, displayErrorNotification, userInfo, refetchSettings]
   );
 
   // Watch inputs for changes, and submit the form if any
   useEffect(() => {
     const subscription = watch(() => {
-      if (!loading) {
+      if (!fetching) {
         void handleSubmit(sendUpdatedSettings)();
       }
     });
     return () => subscription.unsubscribe();
-  }, [watch, handleSubmit, sendUpdatedSettings, loading]);
+  }, [watch, handleSubmit, sendUpdatedSettings, fetching]);
 
-  // Display a generic error message when somthing wrong happened while retrieving the settings
+  // Display a generic error message when something wrong happened while retrieving the settings
   useEffect(() => {
     if (error) {
       setSnackbarContent({
@@ -247,12 +244,12 @@ const SettingsPage: FunctionComponent = () => {
           marginTop: 5,
         }}
       >
-        {loading && (
+        {fetching && (
           <CenteredFlexBox>
             <CircularProgress size={100} />
           </CenteredFlexBox>
         )}
-        {!(loading || error) && (
+        {!(fetching || error) && (
           <Card
             sx={{
               padding: 3,
