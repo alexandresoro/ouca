@@ -15,14 +15,16 @@ const executeSqlDump = async (): Promise<string> => {
     let stdout = "";
     let stderr = "";
 
+    const dbUrl = new URL(options.database.url);
+
     const dumpParams: string[] = [
-      `--user=${options.dbUser}`,
-      `--password=${options.dbPassword}`,
+      `--user=${dbUrl.username}`,
+      `--password=${dbUrl.password}`,
       "--default-character-set=utf8",
       "--skip-triggers",
-      `--host=${options.dbHost}`,
-      `--port=${options.dbPort}`,
-      options.dbName,
+      `--host=${dbUrl.hostname}`,
+      `--port=${dbUrl.port}`,
+      dbUrl.pathname.slice(1),
     ];
 
     const dumpProcess: ChildProcess = spawn("mysqldump", dumpParams);

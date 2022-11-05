@@ -5,7 +5,7 @@ import options from "../utils/options";
 const prismaClient = new PrismaClient({
   datasources: {
     db: {
-      url: `mysql://${options.dbUser}:${options.dbPassword}@${options.dbHost}:${options.dbPort}/${options.dbName}`,
+      url: options.database.url,
     },
   },
   errorFormat: "minimal",

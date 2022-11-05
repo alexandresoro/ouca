@@ -1,29 +1,35 @@
 import dotenv from "dotenv";
+import { get } from "env-var";
 import path from "node:path";
-import yargs from "yargs";
-
-const ENV_OUCA_PREFIX = "OUCA";
 
 dotenv.config({
-  path: path.join(process.cwd(), "..", ".env"),
+  path: path.join(process.cwd(), "../.env"),
 });
 
-export default yargs
-  .env(ENV_OUCA_PREFIX)
-  .options({
-    dbHost: { type: "string", default: "127.0.0.1" },
-    dbPort: { type: "number", default: 3306 },
-    dbUser: { type: "string", default: "basenaturaliste" },
-    dbPassword: { type: "string", default: "basenaturaliste" },
-    dbName: { type: "string", default: "basenaturaliste" },
-    signupsAllowed: { type: "boolean", default: false },
-    defaultAdminPassword: { type: "string" },
-    listenAddress: { type: "string", default: "127.0.0.1" },
-    listenPort: { type: "number", default: 4000 },
-    logLevel: { type: "string", default: "warn" },
-    logToFile: { type: "boolean", default: false },
-    jwtSigningKey: { type: "string" },
-    jwtCookieSameSite: { type: "boolean", default: true },
-    jwtCookieSecure: { type: "boolean", default: true },
-  })
-  .parseSync();
+export default {
+  server: {
+    host: get("OUCA_SERVER_HOST").default("127.0.0.1").asString(),
+    port: get("OUCA_SERVER_PORT").default("4000").asPortNumber(),
+  },
+  database: {
+    url: get("DATABASE_URL")
+      .default("mysql://basenaturaliste:basenaturaliste@127.0.0.1:3306/basenaturaliste")
+      .asString(),
+  },
+  admin: {
+    signupsAllowed: get("OUCA_SIGNUPS_ALLOWED").default("false").asBoolStrict(),
+    defaultAdminPassword: get("OUCA_DEFAULT_ADMIN_PASSWORD").asString(),
+  },
+  log: {
+    level: get("OUCA_LOG_LEVEL").default("warn").asEnum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
+    logToFile: get("OUCA_LOG_TO_FILE").default("false").asBoolStrict(),
+  },
+  jwt: {
+    signingKey: get("OUCA_JWT_SIGNING_KEY").asString(),
+    cookie: {
+      sameSite: get("OUCA_JWT_COOKIE_SAME_SITE").default("true").asBoolStrict(),
+      secure: get("OUCA_JWT_COOKIE_SECURE").default("true").asBoolStrict(),
+    },
+  },
+  isProduction: get("NODE_ENV").asString() === "production",
+};

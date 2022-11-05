@@ -49,7 +49,7 @@ export const createUser = async (
   role: DatabaseRole,
   loggedUser: LoggedUser | null
 ): Promise<Omit<User, "password">> => {
-  if (!options.signupsAllowed) {
+  if (!options.admin.signupsAllowed) {
     throw new OucaError("OUCA0005");
   }
 
@@ -68,7 +68,7 @@ export const createUser = async (
   if (adminsCount === 0) {
     // Initial account creation
     // Check that provided password matches
-    if (!options.defaultAdminPassword?.length || password !== options.defaultAdminPassword) {
+    if (!options.admin.defaultAdminPassword?.length || password !== options.admin.defaultAdminPassword) {
       throw new OucaError("OUCA0006");
     }
     roleToSet = DatabaseRole.admin;

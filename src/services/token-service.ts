@@ -11,8 +11,8 @@ const TOKEN_KEY = "token";
 
 const COOKIE_OPTIONS: CookieSerializeOptions = {
   httpOnly: true,
-  sameSite: options.jwtCookieSameSite ? "strict" : "none",
-  secure: options.jwtCookieSecure,
+  sameSite: options.jwt.cookie.sameSite ? "strict" : "none",
+  secure: options.jwt.cookie.secure,
   maxAge: 60 * 60 * 24, // Let's keep it for 1 day for now
 };
 

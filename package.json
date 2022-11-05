@@ -37,6 +37,7 @@
     "csv-stringify": "6.2.0",
     "date-fns": "2.29.3",
     "dotenv": "16.0.3",
+    "env-var": "^7.3.0",
     "exceljs": "4.3.0",
     "fastify": "4.9.2",
     "graphql": "16.6.0",
@@ -44,8 +45,7 @@
     "mercurius": "11.3.0",
     "pino": "8.7.0",
     "pino-pretty": "9.1.1",
-    "proj4": "2.8.0",
-    "yargs": "17.6.2"
+    "proj4": "2.8.0"
   },
   "devDependencies": {
     "@graphql-codegen/add": "3.2.1",
@@ -58,7 +58,6 @@
     "@types/jest": "29.2.2",
     "@types/node": "^18.11.7",
     "@types/proj4": "2.5.2",
-    "@types/yargs": "17.0.13",
     "@typescript-eslint/eslint-plugin": "5.42.0",
     "@typescript-eslint/parser": "5.42.0",
     "cpy-cli": "4.2.0",

@@ -7,14 +7,12 @@ const executeResetDatabase = async (): Promise<void> => {
     let stdout = "";
     let stderr = "";
 
-    const DATABASE_URL = `mysql://${options.dbUser}:${options.dbPassword}@${options.dbHost}:${options.dbPort}/${options.dbName}`;
-
     // TODO check what happens on docker build with the schema path
     const resetProcess = spawn(
       "npx",
       ["prisma", "migrate", "reset", "--skip-generate", "--schema=../prisma/schema.prisma", "--force"],
       {
-        env: { ...process.env, DATABASE_URL },
+        env: { ...process.env, DATABASE_URL: options.database.url },
       }
     );
 

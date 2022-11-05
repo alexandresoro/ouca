@@ -16,9 +16,9 @@ class TokenKeysClass {
 
   public getKey = async (): Promise<KeyLike | Uint8Array> => {
     if (!this.key) {
-      if (options.jwtSigningKey) {
+      if (options.jwt.signingKey) {
         // JWS signing key is provided by config
-        this.key = new TextEncoder().encode(options.jwtSigningKey);
+        this.key = new TextEncoder().encode(options.jwt.signingKey);
       } else {
         // JWS signing key is generated
         this.key = await generateSecret(SIGNING_TOKEN_ALGO);

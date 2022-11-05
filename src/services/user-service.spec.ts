@@ -42,7 +42,7 @@ describe("User creation", () => {
   test("should throw error when signups are disabled", async () => {
     const signupData = mock<UserCreateInput>();
     const loggedUser = mock<LoggedUser>();
-    options.signupsAllowed = false;
+    options.admin.signupsAllowed = false;
 
     await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0005")
@@ -54,8 +54,8 @@ describe("User creation", () => {
   test("should throw error when creating initial admin and no env password defined", async () => {
     const signupData = mock<UserCreateInput>();
     const loggedUser = mock<LoggedUser>();
-    options.signupsAllowed = true;
-    options.defaultAdminPassword = "";
+    options.admin.signupsAllowed = true;
+    options.admin.defaultAdminPassword = "";
 
     prismaMock.user.count.mockResolvedValueOnce(0);
 
@@ -71,8 +71,8 @@ describe("User creation", () => {
       password: "wrong",
     });
     const loggedUser = mock<LoggedUser>();
-    options.signupsAllowed = true;
-    options.defaultAdminPassword = "right";
+    options.admin.signupsAllowed = true;
+    options.admin.defaultAdminPassword = "right";
 
     prismaMock.user.count.mockResolvedValueOnce(0);
 
@@ -88,8 +88,8 @@ describe("User creation", () => {
       password: "right",
     });
     const loggedUser = mock<LoggedUser>();
-    options.signupsAllowed = true;
-    options.defaultAdminPassword = "right";
+    options.admin.signupsAllowed = true;
+    options.admin.defaultAdminPassword = "right";
 
     prismaMock.user.count.mockResolvedValueOnce(0);
 
@@ -103,7 +103,7 @@ describe("User creation", () => {
     const loggedUser = mock<LoggedUser>({
       role: DatabaseRole.contributor,
     });
-    options.signupsAllowed = true;
+    options.admin.signupsAllowed = true;
 
     prismaMock.user.count.mockResolvedValueOnce(1);
 
@@ -121,7 +121,7 @@ describe("User creation", () => {
     const loggedUser = mock<LoggedUser>({
       role: DatabaseRole.admin,
     });
-    options.signupsAllowed = true;
+    options.admin.signupsAllowed = true;
 
     prismaMock.user.count.mockResolvedValueOnce(2);
 
