@@ -1,19 +1,16 @@
 import { useMutation } from "@apollo/client";
 import { LoadingButton } from "@mui/lab";
-import { Box, Card, Container, styled, TextField, Typography } from "@mui/material";
-import { FunctionComponent, lazy, Suspense, useContext } from "react";
+import { Card, Container, styled, TextField, Typography } from "@mui/material";
+import { FunctionComponent, useContext } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
+import GreenBird from "../assets/img/green-bird.svg";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import CenteredFlexBox from "./utils/CenteredFlexBox";
 
 const LOGO_SIZE = "250px";
-
-const LoginLogo = lazy(() =>
-  import("../assets/img/green-bird.svg").then(({ ReactComponent }) => ({ default: ReactComponent }))
-);
 
 const USER_LOGIN_MUTATION = graphql(`
   mutation UserLogin($loginData: UserLoginInput!) {
@@ -93,9 +90,7 @@ const LoginPage: FunctionComponent = () => {
       }}
     >
       <CenteredFlexBox>
-        <Suspense fallback={<Box width={LOGO_SIZE} height={LOGO_SIZE} />}>
-          <LoginLogo width={LOGO_SIZE} height={LOGO_SIZE} />
-        </Suspense>
+        <img src={GreenBird} width={LOGO_SIZE} height={LOGO_SIZE} loading="lazy" />
       </CenteredFlexBox>
       <CenteredFlexBox>
         <Typography color="textPrimary" fontSize={"32px"}>

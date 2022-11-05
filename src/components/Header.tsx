@@ -37,7 +37,7 @@ import { TFuncKey } from "i18next";
 import { FunctionComponent, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { ReactComponent as Logo } from "../assets/img/logo.svg";
+import Logo from "../assets/img/logo.svg";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { getFullName, getInitials } from "../utils/usernameUtils";
@@ -192,13 +192,14 @@ const Header: FunctionComponent = () => {
     <AppBar position="sticky">
       <Toolbar variant="dense">
         <ButtonBase component={Link} to="/">
-          <Logo
+          <img
+            src={Logo}
             height="60px"
             width="70px"
             style={{
               marginBottom: "-12px",
             }}
-          />
+          ></img>
           <Box
             sx={{
               marginLeft: "10px",
