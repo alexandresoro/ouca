@@ -1,5 +1,5 @@
-import { ApolloError } from "@apollo/client";
+import { CombinedError } from "urql";
 
-export const getOucaError = (e: ApolloError): string | undefined => {
-  return (e.graphQLErrors?.[0]?.extensions?.exception as { name?: string })?.name;
+export const getOucaError = (error: CombinedError): string | undefined => {
+  return (error.graphQLErrors?.[0]?.extensions as { code?: string } | undefined)?.code;
 };

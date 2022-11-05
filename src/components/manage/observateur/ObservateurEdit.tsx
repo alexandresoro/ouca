@@ -1,10 +1,10 @@
-import { ApolloError, useMutation, useQuery } from "@apollo/client";
 import { Cancel, Save } from "@mui/icons-material";
 import { Button, Card, CardActions, CardContent, CardHeader, Container, TextField } from "@mui/material";
 import { FunctionComponent, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { getOucaError } from "../../../utils/ouca-error-extractor";
@@ -50,16 +50,17 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
   } = useForm<ObservateurUpsertInputs>();
 
   // Retrieve the existing observer info in edit mode
-  const { data, error, loading } = useQuery(OBSERVATEUR_QUERY, {
-    fetchPolicy: "network-only",
+  const [{ data, error, fetching }] = useQuery({
+    query: OBSERVATEUR_QUERY,
+    requestPolicy: "network-only",
     variables: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       id: parseInt(observateurId!),
     },
-    skip: !observateurId,
+    pause: !observateurId,
   });
 
-  const [upsertObservateur] = useMutation(OBSERVATEUR_UPSERT);
+  const [_, upsertObservateur] = useMutation(OBSERVATEUR_UPSERT);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -81,33 +82,39 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   const title = isEditionMode ? t("observerEditionTitle") : t("observerCreationTitle");
 
-  const onSubmit: SubmitHandler<ObservateurUpsertInputs> = async (data) => {
+  const onSubmit: SubmitHandler<ObservateurUpsertInputs> = (data) => {
     const { id, ...restData } = data;
-    await upsertObservateur({
-      variables: {
-        id: id ?? undefined,
-        data: restData,
-      },
+    upsertObservateur({
+      id: id ?? undefined,
+      data: restData,
     })
-      .then(() => {
-        setSnackbarContent({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        navigate("..");
-      })
-      .catch((e) => {
-        if (e instanceof ApolloError && getOucaError(e) === "OUCA0004") {
+      .then(({ data, error }) => {
+        if (data?.upsertObservateur) {
           setSnackbarContent({
-            type: "error",
-            message: t("observerAlreadyExistingError"),
+            type: "success",
+            message: t("retrieveGenericSaveSuccess"),
           });
-        } else {
-          setSnackbarContent({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
+          navigate("..");
         }
+        if (error) {
+          if (getOucaError(error) === "OUCA0004") {
+            setSnackbarContent({
+              type: "error",
+              message: t("observerAlreadyExistingError"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("retrieveGenericSaveError"),
+            });
+          }
+        }
+      })
+      .catch(() => {
+        setSnackbarContent({
+          type: "error",
+          message: t("retrieveGenericSaveError"),
+        });
       });
   };
 
@@ -151,7 +158,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
               <Button color="secondary" variant="contained" startIcon={<Cancel />} onClick={() => navigate("..")}>
                 {t("cancel")}
               </Button>
-              <Button disabled={loading} variant="contained" startIcon={<Save />} type="submit">
+              <Button disabled={fetching} variant="contained" startIcon={<Save />} type="submit">
                 {t("save")}
               </Button>
             </CardActions>

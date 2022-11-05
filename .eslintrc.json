@@ -36,7 +36,10 @@
         }
       }
     ],
-    "@typescript-eslint/no-unused-vars": ["warn", { "ignoreRestSiblings": true }],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "ignoreRestSiblings": true, "destructuredArrayIgnorePattern": "^_" }
+    ],
     "@typescript-eslint/prefer-for-of": "error"
   },
   "overrides": [
