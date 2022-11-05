@@ -1,5 +1,4 @@
 /// <reference types="vite/client" />
-/// <reference types="vite-plugin-svgr/client" />
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import "@fontsource/lato";
 import "@fontsource/yuji-hentaigana-akebono";

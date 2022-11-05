@@ -75,8 +75,7 @@
     "lint-staged": "13.0.3",
     "prettier": "2.7.1",
     "typescript": "4.7.4",
-    "vite": "3.2.2",
-    "vite-plugin-svgr": "2.2.2"
+    "vite": "3.2.2"
   },
   "engines": {
     "node": ">=14"
