@@ -8,7 +8,7 @@ ENV NODE_ENV production
 WORKDIR /app
 
 # In the container, listen to outside localhost by default
-ENV OUCA_LISTEN_ADDRESS 0.0.0.0
+ENV OUCA_SERVER_HOST 0.0.0.0
 
 # Add MariaDB client libs used for export feature (for now...)
 RUN apk add --no-cache mariadb-client

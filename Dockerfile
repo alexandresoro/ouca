@@ -20,7 +20,7 @@ ENV NODE_ENV=production
 # Install only the dependencies that are required at runtime
 WORKDIR /app
 
-ENV OUCA_LISTEN_ADDRESS 0.0.0.0
+ENV OUCA_SERVER_HOST 0.0.0.0
 
 RUN apk add --no-cache mariadb-client
 
