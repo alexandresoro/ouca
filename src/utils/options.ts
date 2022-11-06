@@ -8,7 +8,7 @@ dotenv.config({
 
 export default {
   server: {
-    host: get("OUCA_SERVER_HOST").default("127.0.0.1").asString(),
+    host: get("OUCA_SERVER_HOST").default("localhost").asString(),
     port: get("OUCA_SERVER_PORT").default("4000").asPortNumber(),
   },
   database: {
