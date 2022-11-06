@@ -60,22 +60,30 @@ const LoginPage: FunctionComponent = () => {
 
   const [{ fetching }, sendUserLogin] = useMutation(USER_LOGIN_MUTATION);
 
-  const onSubmit: SubmitHandler<LoginInputs> = async (loginData) => {
-    try {
-      const loginResult = await sendUserLogin({
-        loginData,
-      });
-      // Successful login
-      setUserInfo(loginResult?.data?.userLogin ?? null);
+  const onSubmit: SubmitHandler<LoginInputs> = (loginData) => {
+    sendUserLogin({
+      loginData,
+    })
+      .then(({ data, error }) => {
+        if (data?.userLogin && !error) {
+          // Successful login
+          setUserInfo(data.userLogin);
 
-      // Navigate to home page
-      navigate(from, { replace: true });
-    } catch (error) {
-      setError("username", {
-        type: "manual",
-        message: t("loginFailedMessage"),
+          // Navigate to home page
+          navigate(from, { replace: true });
+        } else {
+          setError("username", {
+            type: "manual",
+            message: t("loginFailedMessage"),
+          });
+        }
+      })
+      .catch(() => {
+        setError("username", {
+          type: "manual",
+          message: t("loginFailedMessage"),
+        });
       });
-    }
   };
 
   return (
