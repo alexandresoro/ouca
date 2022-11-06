@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { EntitesAvecLibelleOrderBy, Meteo } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -64,8 +64,8 @@ const MeteoTable: FunctionComponent = () => {
 
   const [dialogMeteo, setDialogMeteo] = useState<Meteo | null>(null);
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteMeteos] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -77,7 +77,7 @@ const MeteoTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteMeteo] = useMutation(DELETE);
+  const [_, deleteMeteo] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -93,20 +93,23 @@ const MeteoTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteMeteoConfirmation = async (meteo: Meteo | null) => {
+  const handleDeleteMeteoConfirmation = (meteo: Meteo | null) => {
     if (meteo) {
       setDialogMeteo(null);
-      await deleteMeteo({
-        variables: {
-          id: meteo.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteMeteo({
+        id: meteo.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteMeteo) {
+        .then(({ data, error }) => {
+          reexecuteMeteos();
+          if (!error && data?.deleteMeteo) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

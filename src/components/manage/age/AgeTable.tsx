@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { Age, EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -64,8 +64,8 @@ const AgeTable: FunctionComponent = () => {
 
   const [dialogAge, setDialogAge] = useState<Age | null>(null);
 
-  const { data } = useQuery(PAGINATED_AGES_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteAges] = useQuery({
+    query: PAGINATED_AGES_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -77,7 +77,7 @@ const AgeTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteAge] = useMutation(DELETE_AGE);
+  const [_, deleteAge] = useMutation(DELETE_AGE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -93,20 +93,23 @@ const AgeTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteAgeConfirmation = async (age: Age | null) => {
+  const handleDeleteAgeConfirmation = (age: Age | null) => {
     if (age) {
       setDialogAge(null);
-      await deleteAge({
-        variables: {
-          id: age.id,
-        },
-        refetchQueries: [PAGINATED_AGES_QUERY],
+      deleteAge({
+        id: age.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteAge) {
+        .then(({ data, error }) => {
+          reexecuteAges();
+          if (!error && data?.deleteAge) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

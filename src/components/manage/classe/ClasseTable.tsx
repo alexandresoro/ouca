@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { Classe, ClassesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -69,8 +69,8 @@ const ClasseTable: FunctionComponent = () => {
 
   const [dialogClasse, setDialogClasse] = useState<Classe | null>(null);
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteClasses] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -82,7 +82,7 @@ const ClasseTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteClasse] = useMutation(DELETE);
+  const [_, deleteClasse] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -98,20 +98,23 @@ const ClasseTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteClasseConfirmation = async (classe: Classe | null) => {
+  const handleDeleteClasseConfirmation = (classe: Classe | null) => {
     if (classe) {
       setDialogClasse(null);
-      await deleteClasse({
-        variables: {
-          id: classe.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteClasse({
+        id: classe.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteClasse) {
+        .then(({ data, error }) => {
+          reexecuteClasses();
+          if (!error && data?.deleteClasse) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

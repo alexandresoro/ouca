@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { EntitesAvecLibelleOrderBy, Sexe } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -64,8 +64,8 @@ const SexeTable: FunctionComponent = () => {
 
   const [dialogSexe, setDialogSexe] = useState<Sexe | null>(null);
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteSexes] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -77,7 +77,7 @@ const SexeTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteSexe] = useMutation(DELETE);
+  const [_, deleteSexe] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -93,20 +93,23 @@ const SexeTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteSexeConfirmation = async (sexe: Sexe | null) => {
+  const handleDeleteSexeConfirmation = (sexe: Sexe | null) => {
     if (sexe) {
       setDialogSexe(null);
-      await deleteSexe({
-        variables: {
-          id: sexe.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteSexe({
+        id: sexe.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteSexe) {
+        .then(({ data, error }) => {
+          reexecuteSexes();
+          if (!error && data?.deleteSexe) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

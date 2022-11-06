@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { LieuDit, LieuxDitsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -102,8 +102,8 @@ const LieuDitTable: FunctionComponent = () => {
     null
   );
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteLieuxDits] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -115,7 +115,7 @@ const LieuDitTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteLieuDit] = useMutation(DELETE);
+  const [_, deleteLieuDit] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -131,20 +131,23 @@ const LieuDitTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteLieuDitConfirmation = async (lieuDit: Pick<LieuDit, "id"> | null) => {
+  const handleDeleteLieuDitConfirmation = (lieuDit: Pick<LieuDit, "id"> | null) => {
     if (lieuDit) {
       setDialogLieuDit(null);
-      await deleteLieuDit({
-        variables: {
-          id: lieuDit.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteLieuDit({
+        id: lieuDit.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteLieuDit) {
+        .then(({ data, error }) => {
+          reexecuteLieuxDits();
+          if (!error && data?.deleteLieuDit) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

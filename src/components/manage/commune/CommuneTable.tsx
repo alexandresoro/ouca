@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { Commune, CommunesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -82,8 +82,8 @@ const CommuneTable: FunctionComponent = () => {
 
   const [dialogCommune, setDialogCommune] = useState<Commune | null>(null);
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteCommunes] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -95,7 +95,7 @@ const CommuneTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteCommune] = useMutation(DELETE);
+  const [_, deleteCommune] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -111,20 +111,23 @@ const CommuneTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteCommuneConfirmation = async (commune: Commune | null) => {
+  const handleDeleteCommuneConfirmation = (commune: Commune | null) => {
     if (commune) {
       setDialogCommune(null);
-      await deleteCommune({
-        variables: {
-          id: commune.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteCommune({
+        id: commune.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteCommune) {
+        .then(({ data, error }) => {
+          reexecuteCommunes();
+          if (!error && data?.deleteCommune) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

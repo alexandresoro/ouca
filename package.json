@@ -23,7 +23,6 @@
     "generate-graphql": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
-    "@apollo/client": "3.7.1",
     "@emotion/react": "11.10.5",
     "@emotion/styled": "11.10.5",
     "@fontsource/lato": "4.5.10",

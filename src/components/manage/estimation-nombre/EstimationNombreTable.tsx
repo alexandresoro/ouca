@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { EstimationNombre, EstimationNombreOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -69,8 +69,8 @@ const EstimationNombreTable: FunctionComponent = () => {
 
   const [dialogEstimationNombre, setDialogEstimationNombre] = useState<EstimationNombre | null>(null);
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteEstimationsNombre] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -82,7 +82,7 @@ const EstimationNombreTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteEstimationNombre] = useMutation(DELETE);
+  const [_, deleteEstimationNombre] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -98,20 +98,23 @@ const EstimationNombreTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteEstimationNombreConfirmation = async (estimationNombre: EstimationNombre | null) => {
+  const handleDeleteEstimationNombreConfirmation = (estimationNombre: EstimationNombre | null) => {
     if (estimationNombre) {
       setDialogEstimationNombre(null);
-      await deleteEstimationNombre({
-        variables: {
-          id: estimationNombre.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteEstimationNombre({
+        id: estimationNombre.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteEstimationNombre) {
+        .then(({ data, error }) => {
+          reexecuteEstimationsNombre();
+          if (!error && data?.deleteEstimationNombre) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

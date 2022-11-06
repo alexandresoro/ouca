@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { EntitesAvecLibelleOrderBy, EstimationDistance } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -68,8 +68,8 @@ const EstimationDistanceTable: FunctionComponent = () => {
 
   const [dialogEstimationDistance, setDialogEstimationDistance] = useState<EstimationDistance | null>(null);
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecutEstimationsDistance] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -81,7 +81,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteEstimationDistance] = useMutation(DELETE);
+  const [_, deleteEstimationDistance] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -97,20 +97,23 @@ const EstimationDistanceTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteEstimationDistanceConfirmation = async (estimationDistance: EstimationDistance | null) => {
+  const handleDeleteEstimationDistanceConfirmation = (estimationDistance: EstimationDistance | null) => {
     if (estimationDistance) {
       setDialogEstimationDistance(null);
-      await deleteEstimationDistance({
-        variables: {
-          id: estimationDistance.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteEstimationDistance({
+        id: estimationDistance.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteEstimationDistance) {
+        .then(({ data, error }) => {
+          reexecutEstimationsDistance();
+          if (!error && data?.deleteEstimationDistance) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

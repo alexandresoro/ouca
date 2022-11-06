@@ -1,5 +1,4 @@
 /// <reference types="vite/client" />
-import { ApolloClient, InMemoryCache } from "@apollo/client";
 import "@fontsource/lato";
 import "@fontsource/yuji-hentaigana-akebono";
 import * as Sentry from "@sentry/react";
@@ -44,15 +43,11 @@ appConfigFetch
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   .catch(() => {});
 
-const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
-});
-
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Suspense fallback={<></>}>
-      <App apolloClient={apolloClient} appConfigWrapped={wrapPromise(appConfigFetch)} />
+      <App appConfigWrapped={wrapPromise(appConfigFetch)} />
     </Suspense>
   </React.StrictMode>
 );

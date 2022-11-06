@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { Comportement, ComportementsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -74,8 +74,8 @@ const ComportementTable: FunctionComponent = () => {
 
   const [dialogComportement, setDialogComportement] = useState<Comportement | null>(null);
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteComportements] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -87,7 +87,7 @@ const ComportementTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteComportement] = useMutation(DELETE);
+  const [_, deleteComportement] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -103,20 +103,23 @@ const ComportementTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteComportementConfirmation = async (comportement: Comportement | null) => {
+  const handleDeleteComportementConfirmation = (comportement: Comportement | null) => {
     if (comportement) {
       setDialogComportement(null);
-      await deleteComportement({
-        variables: {
-          id: comportement.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteComportement({
+        id: comportement.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteComportement) {
+        .then(({ data, error }) => {
+          reexecuteComportements();
+          if (!error && data?.deleteComportement) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })

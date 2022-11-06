@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -16,6 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import { Espece, EspecesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -82,8 +82,8 @@ const EspeceTable: FunctionComponent = () => {
 
   const [dialogEspece, setDialogEspece] = useState<Espece | null>(null);
 
-  const { data } = useQuery(PAGINATED_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }, reexecuteEspeces] = useQuery({
+    query: PAGINATED_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -95,7 +95,7 @@ const EspeceTable: FunctionComponent = () => {
     },
   });
 
-  const [deleteEspece] = useMutation(DELETE);
+  const [_, deleteEspece] = useMutation(DELETE);
 
   const { setSnackbarContent } = useSnackbar();
 
@@ -111,20 +111,23 @@ const EspeceTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteEspeceConfirmation = async (espece: Espece | null) => {
+  const handleDeleteEspeceConfirmation = (espece: Espece | null) => {
     if (espece) {
       setDialogEspece(null);
-      await deleteEspece({
-        variables: {
-          id: espece.id,
-        },
-        refetchQueries: [PAGINATED_QUERY],
+      deleteEspece({
+        id: espece.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteEspece) {
+        .then(({ data, error }) => {
+          reexecuteEspeces();
+          if (!error && data?.deleteEspece) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
+            });
+          } else {
+            setSnackbarContent({
+              type: "error",
+              message: t("deleteErrorMessage"),
             });
           }
         })
