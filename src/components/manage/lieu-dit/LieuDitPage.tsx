@@ -1,7 +1,7 @@
-import { useApolloClient } from "@apollo/client";
 import { Container } from "@mui/material";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { useClient } from "urql";
 import { graphql } from "../../../gql";
 import useApiUrlContext from "../../../hooks/useApiUrlContext";
 import { DOWNLOAD_PATH, EXCEL_FILE_EXTENSION } from "../../../utils/constants";
@@ -18,16 +18,13 @@ const EXPORT_QUERY = graphql(`
 const LieuDitPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const client = useApolloClient();
+  const client = useClient();
 
   const apiUrl = useApiUrlContext();
 
   const handleExportClick = async () => {
-    const { data } = await client.query({
-      query: EXPORT_QUERY,
-      fetchPolicy: "network-only",
-    });
-    if (data.exportLieuxDits) {
+    const { data } = await client.query(EXPORT_QUERY, {}, { requestPolicy: "network-only" }).toPromise();
+    if (data?.exportLieuxDits) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportLieuxDits, `${t("localities")}${EXCEL_FILE_EXTENSION}`);
     }
   };

@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -15,6 +14,7 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "urql";
 import { graphql } from "../../gql";
 import { Donnee, SearchDonneesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
@@ -161,8 +161,8 @@ const DonneeTable: FunctionComponent = () => {
 
   const { setSnackbarContent } = useSnackbar();
 
-  const { data: donneesResult } = useQuery(PAGINATED_SEARCH_DONNEES_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data: donneesResult }, reexecuteSearchDonneesQuery] = useQuery({
+    query: PAGINATED_SEARCH_DONNEES_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -172,9 +172,10 @@ const DonneeTable: FunctionComponent = () => {
       sortOrder,
       searchCriteria: null,
     },
+    requestPolicy: "cache-and-network",
   });
 
-  const [deleteDonnee] = useMutation(DELETE_QUERY);
+  const [_, deleteDonnee] = useMutation(DELETE_QUERY);
 
   const handleEditDonnee = (donnee: Donnee | null) => {
     if (donnee) {
@@ -192,18 +193,16 @@ const DonneeTable: FunctionComponent = () => {
     if (donnee) {
       setDeleteDialog(null);
       await deleteDonnee({
-        variables: {
-          id: donnee.id,
-        },
-        refetchQueries: [PAGINATED_SEARCH_DONNEES_QUERY],
+        id: donnee.id,
       })
-        .then(({ data, errors }) => {
-          if (!errors && data?.deleteDonnee) {
+        .then(({ data, error }) => {
+          if (!error && data?.deleteDonnee) {
             setSnackbarContent({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           }
+          reexecuteSearchDonneesQuery();
         })
         .catch(() => {
           setSnackbarContent({

@@ -23,7 +23,7 @@ const ObservateurPage: FunctionComponent = () => {
   const apiUrl = useApiUrlContext();
 
   const handleExportClick = async () => {
-    const { data } = await client.query(EXPORT_QUERY, {}).toPromise();
+    const { data } = await client.query(EXPORT_QUERY, {}, { requestPolicy: "network-only" }).toPromise();
     if (data?.exportObservateurs) {
       downloadFile(apiUrl, DOWNLOAD_PATH + data.exportObservateurs, `${t("observer")}${EXCEL_FILE_EXTENSION}`);
     }

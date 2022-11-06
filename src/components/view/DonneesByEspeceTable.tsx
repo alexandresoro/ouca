@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client";
 import {
   Box,
   Paper,
@@ -15,6 +14,7 @@ import {
 import { visuallyHidden } from "@mui/utils";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "urql";
 import { graphql } from "../../gql";
 import { EspecesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
@@ -81,8 +81,8 @@ const DonneesByEspeceTable: FunctionComponent = () => {
   //setOrderBy("nbDonnees");
   //setSortOrder("desc");
 
-  const { data } = useQuery(PAGINATED_SEARCH_ESPECES_QUERY, {
-    fetchPolicy: "cache-and-network",
+  const [{ data }] = useQuery({
+    query: PAGINATED_SEARCH_ESPECES_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -92,6 +92,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
       sortOrder,
       searchCriteria: null,
     },
+    requestPolicy: "cache-and-network",
   });
 
   const handleChangePage = (event: unknown, newPage: number) => {

@@ -1,7 +1,7 @@
-import { useMutation } from "@apollo/client";
 import { CircularProgress } from "@mui/material";
 import { FunctionComponent, ReactElement, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "urql";
 import { UserContext } from "../../contexts/UserContext";
 import { graphql } from "../../gql";
 import CenteredFlexBox from "./CenteredFlexBox";
@@ -25,14 +25,14 @@ const RequireAuth: FunctionComponent<{ children: ReactElement }> = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [refreshToken] = useMutation(REFRESH_TOKEN_MUTATION);
+  const [_, refreshToken] = useMutation(REFRESH_TOKEN_MUTATION);
 
   useEffect(() => {
     // If the user context is not defined, try to retrieve a valid token
     if (!userInfo) {
-      refreshToken()
-        .then(({ data, errors }) => {
-          if (data?.userRefresh && !errors) {
+      refreshToken({})
+        .then(({ data, error }) => {
+          if (data?.userRefresh && !error) {
             setUserInfo(data.userRefresh);
           } else {
             navigate("/login", { replace: true, state: { from: location } });
