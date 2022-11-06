@@ -62,8 +62,8 @@ export const persistUserSettings = async (
     data: settings,
     include: includedElements,
     where: {
-      id,
-      userId: loggedUser?.id,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      userId: loggedUser!.id,
     },
   });
 

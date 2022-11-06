@@ -95,7 +95,6 @@ test("should update settings with parameters  for user", async () => {
       defaultEstimationNombre: true,
     },
     where: {
-      id: 7,
       userId: loggedUser.id,
     },
   });
