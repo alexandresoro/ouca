@@ -9,7 +9,7 @@ datasource db {
 
 model Age {
   id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle  String     @unique(map: "unique_libelle") @db.VarChar(100)
+  libelle  String     @unique() @db.VarChar(100)
   ownerId  String?    @map("owner_id")
   owner    User?      @relation(fields: [ownerId], references: [id], map: "fk_age_owner_id")
   donnee   Donnee[]
@@ -20,7 +20,7 @@ model Age {
 
 model Classe {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle String   @unique(map: "unique_libelle") @db.VarChar(100)
+  libelle String   @unique() @db.VarChar(100)
   ownerId String?  @map("owner_id")
   owner   User?    @relation(fields: [ownerId], references: [id], map: "fk_classe_owner_id")
   espece  Espece[]
@@ -38,15 +38,15 @@ model Commune {
   owner         User?       @relation(fields: [ownerId], references: [id], map: "fk_commune_owner_id")
   lieudit       Lieudit[]
 
-  @@unique([departementId, code], map: "unique_departement_code")
-  @@unique([departementId, nom], map: "unique_departement_nom")
+  @@unique([departementId, code])
+  @@unique([departementId, nom])
   @@map("commune")
 }
 
 model Comportement {
   id                  Int                   @id @default(autoincrement()) @db.UnsignedSmallInt
-  code                String                @unique(map: "unique_code") @db.VarChar(6)
-  libelle             String                @unique(map: "unique_libelle") @db.VarChar(100)
+  code                String                @unique() @db.VarChar(6)
+  libelle             String                @unique() @db.VarChar(100)
   nicheur             Nicheur?
   ownerId             String?               @map("owner_id")
   owner               User?                 @relation(fields: [ownerId], references: [id], map: "fk_comportement_owner_id")
@@ -57,7 +57,7 @@ model Comportement {
 
 model Departement {
   id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  code     String     @unique(map: "unique_code") @db.VarChar(100)
+  code     String     @unique() @db.VarChar(100)
   ownerId  String?    @map("owner_id")
   owner    User?      @relation(fields: [ownerId], references: [id], map: "fk_departement_owner_id")
   commune  Commune[]
@@ -112,9 +112,9 @@ model donnee_milieu {
 model Espece {
   id          Int      @id @default(autoincrement()) @db.UnsignedMediumInt
   classeId    Int?     @map("classe_id") @db.UnsignedSmallInt
-  code        String   @unique(map: "unique_code") @db.VarChar(20)
-  nomFrancais String   @unique(map: "unique_nom_francais") @map("nom_francais") @db.VarChar(100)
-  nomLatin    String   @unique(map: "unique_nom_latin") @map("nom_latin") @db.VarChar(100)
+  code        String   @unique() @db.VarChar(20)
+  nomFrancais String   @unique() @map("nom_francais") @db.VarChar(100)
+  nomLatin    String   @unique() @map("nom_latin") @db.VarChar(100)
   ownerId     String?  @map("owner_id")
   classe      Classe?  @relation(fields: [classeId], references: [id], onDelete: Restrict, map: "fk_espece_classe_id")
   owner       User?    @relation(fields: [ownerId], references: [id], map: "fk_espece_owner_id")
@@ -125,7 +125,7 @@ model Espece {
 
 model EstimationDistance {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle String   @unique(map: "unique_libelle") @db.VarChar(100)
+  libelle String   @unique() @db.VarChar(100)
   ownerId String?  @map("owner_id")
   owner   User?    @relation(fields: [ownerId], references: [id], map: "fk_estimation_distance_owner_id")
   donnee  Donnee[]
@@ -135,7 +135,7 @@ model EstimationDistance {
 
 model EstimationNombre {
   id        Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle   String     @unique(map: "unique_libelle") @db.VarChar(100)
+  libelle   String     @unique() @db.VarChar(100)
   nonCompte Boolean    @map("non_compte") @db.Bit(1)
   ownerId   String?    @map("owner_id")
   owner     User?      @relation(fields: [ownerId], references: [id], map: "fk_estimation_nombre_owner_id")
@@ -200,13 +200,13 @@ model Lieudit {
   owner             User?             @relation(fields: [ownerId], references: [id], map: "fk_lieudit_owner_id")
   inventaire        Inventaire[]
 
-  @@unique([communeId, nom], map: "unique_commune_nom")
+  @@unique([communeId, nom])
   @@map("lieudit")
 }
 
 model Meteo {
   id               Int                @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle          String             @unique(map: "unique_libelle") @db.VarChar(100)
+  libelle          String             @unique() @db.VarChar(100)
   ownerId          String?            @map("owner_id")
   owner            User?              @relation(fields: [ownerId], references: [id], map: "fk_meteo_owner_id")
   inventaire_meteo inventaire_meteo[]
@@ -216,8 +216,8 @@ model Meteo {
 
 model Milieu {
   id            Int             @id @default(autoincrement()) @db.UnsignedSmallInt
-  code          String          @unique(map: "unique_code") @db.VarChar(6)
-  libelle       String          @unique(map: "unique_libelle") @db.VarChar(100)
+  code          String          @unique() @db.VarChar(6)
+  libelle       String          @unique() @db.VarChar(100)
   ownerId       String?         @map("owner_id")
   owner         User?           @relation(fields: [ownerId], references: [id], map: "fk_milieu_owner_id")
   donnee_milieu donnee_milieu[]
@@ -227,7 +227,7 @@ model Milieu {
 
 model Observateur {
   id                 Int                  @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle            String               @unique(map: "unique_libelle") @db.VarChar(100)
+  libelle            String               @unique() @db.VarChar(100)
   ownerId            String?              @map("owner_id")
   owner              User?                @relation(fields: [ownerId], references: [id], map: "fk_observateur_owner_id")
   inventaire         Inventaire[]
@@ -250,7 +250,7 @@ model Settings {
   isDistanceDisplayed       Boolean           @default(dbgenerated("(b'1')")) @map("is_distance_displayed") @db.Bit(1)
   isRegroupementDisplayed   Boolean           @default(dbgenerated("(b'1')")) @map("is_regroupement_displayed") @db.Bit(1)
   coordinatesSystem         CoordinatesSystem @default(gps) @map("coordinates_system")
-  userId                    String            @unique(map: "unique_user_id") @map("user_id")
+  userId                    String            @unique() @map("user_id")
   defaultAge                Age?              @relation(fields: [defaultAgeId], references: [id], map: "fk_settings_age_id")
   defaultDepartement        Departement?      @relation(fields: [defaultDepartementId], references: [id], map: "fk_settings_departement_id")
   defaultEstimationNombre   EstimationNombre? @relation(fields: [defaultEstimationNombreId], references: [id], map: "fk_settings_estimation_nombre_id")
@@ -263,7 +263,7 @@ model Settings {
 
 model Sexe {
   id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle  String     @unique(map: "unique_libelle") @db.VarChar(100)
+  libelle  String     @unique() @db.VarChar(100)
   ownerId  String?    @map("owner_id")
   owner    User?      @relation(fields: [ownerId], references: [id], map: "fk_sexe_owner_id")
   donnee   Donnee[]
@@ -274,7 +274,7 @@ model Sexe {
 
 model User {
   id                 String               @id @default(uuid())
-  username           String               @unique(map: "unique_username") @db.VarChar(50)
+  username           String               @unique() @db.VarChar(50)
   password           String               @db.VarChar(161)
   role               DatabaseRole
   firstName          String               @map("first_name") @db.VarChar(50)

@@ -4,7 +4,7 @@ CREATE TABLE `age` (
     `libelle` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `age_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -14,7 +14,7 @@ CREATE TABLE `classe` (
     `libelle` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `classe_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -26,8 +26,8 @@ CREATE TABLE `commune` (
     `nom` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_departement_code`(`departement_id`, `code`),
-    UNIQUE INDEX `unique_departement_nom`(`departement_id`, `nom`),
+    UNIQUE INDEX `commune_departement_id_code_key`(`departement_id`, `code`),
+    UNIQUE INDEX `commune_departement_id_nom_key`(`departement_id`, `nom`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -39,8 +39,8 @@ CREATE TABLE `comportement` (
     `nicheur` ENUM('possible', 'probable', 'certain') NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_code`(`code`),
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `comportement_code_key`(`code`),
+    UNIQUE INDEX `comportement_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -50,7 +50,7 @@ CREATE TABLE `departement` (
     `code` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_code`(`code`),
+    UNIQUE INDEX `departement_code_key`(`code`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -97,9 +97,9 @@ CREATE TABLE `espece` (
     `nom_latin` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_code`(`code`),
-    UNIQUE INDEX `unique_nom_francais`(`nom_francais`),
-    UNIQUE INDEX `unique_nom_latin`(`nom_latin`),
+    UNIQUE INDEX `espece_code_key`(`code`),
+    UNIQUE INDEX `espece_nom_francais_key`(`nom_francais`),
+    UNIQUE INDEX `espece_nom_latin_key`(`nom_latin`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -109,7 +109,7 @@ CREATE TABLE `estimation_distance` (
     `libelle` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `estimation_distance_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -120,7 +120,7 @@ CREATE TABLE `estimation_nombre` (
     `non_compte` BIT(1) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `estimation_nombre_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -170,7 +170,7 @@ CREATE TABLE `lieudit` (
     `coordinates_system` ENUM('gps', 'lambert93') NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_commune_nom`(`commune_id`, `nom`),
+    UNIQUE INDEX `lieudit_commune_id_nom_key`(`commune_id`, `nom`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -180,7 +180,7 @@ CREATE TABLE `meteo` (
     `libelle` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `meteo_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -191,8 +191,8 @@ CREATE TABLE `milieu` (
     `libelle` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_code`(`code`),
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `milieu_code_key`(`code`),
+    UNIQUE INDEX `milieu_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -202,7 +202,7 @@ CREATE TABLE `observateur` (
     `libelle` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `observateur_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -222,7 +222,7 @@ CREATE TABLE `settings` (
     `coordinates_system` ENUM('gps', 'lambert93') NOT NULL DEFAULT 'gps',
     `user_id` VARCHAR(191) NOT NULL,
 
-    UNIQUE INDEX `unique_user_id`(`user_id`),
+    UNIQUE INDEX `settings_user_id_key`(`user_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -232,7 +232,7 @@ CREATE TABLE `sexe` (
     `libelle` VARCHAR(100) NOT NULL,
     `owner_id` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `unique_libelle`(`libelle`),
+    UNIQUE INDEX `sexe_libelle_key`(`libelle`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -245,7 +245,7 @@ CREATE TABLE `user` (
     `first_name` VARCHAR(50) NOT NULL,
     `last_name` VARCHAR(50) NULL,
 
-    UNIQUE INDEX `unique_username`(`username`),
+    UNIQUE INDEX `user_username_key`(`username`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
