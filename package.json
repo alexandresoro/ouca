@@ -34,7 +34,7 @@
     "@fastify/static": "6.5.0",
     "@prisma/client": "4.6.0",
     "csv-parse": "5.3.2",
-    "csv-stringify": "6.2.0",
+    "csv-stringify": "6.2.1",
     "date-fns": "2.29.3",
     "dotenv": "16.0.3",
     "env-var": "^7.3.0",
