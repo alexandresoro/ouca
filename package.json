@@ -39,7 +39,7 @@
     "dotenv": "16.0.3",
     "env-var": "^7.3.0",
     "exceljs": "4.3.0",
-    "fastify": "4.10.0",
+    "fastify": "4.10.2",
     "graphql": "16.6.0",
     "jose": "4.11.0",
     "mercurius": "11.3.0",
