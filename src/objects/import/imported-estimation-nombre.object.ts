@@ -1,4 +1,4 @@
-import { EstimationNombre } from "@prisma/client";
+import { type EstimationNombre } from "@prisma/client";
 import { ImportedEntiteAvecLibelle } from "./imported-entite-avec-libelle.object";
 
 export class ImportedEstimationNombre extends ImportedEntiteAvecLibelle {

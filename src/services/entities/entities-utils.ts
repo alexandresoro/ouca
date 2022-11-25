@@ -1,7 +1,7 @@
 import { DatabaseRole, Prisma } from ".prisma/client";
-import { ConditionalPick } from "type-fest";
-import { SortOrder } from "../../graphql/generated/graphql-types";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type ConditionalPick } from "type-fest";
+import { type SortOrder } from "../../graphql/generated/graphql-types";
+import { type LoggedUser } from "../../types/LoggedUser";
 
 type SortOptions = Partial<{
   orderBy: string | null;

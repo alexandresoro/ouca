@@ -1,6 +1,6 @@
-import { Departement } from "@prisma/client";
+import { type Departement } from "@prisma/client";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { createDepartements, findDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 

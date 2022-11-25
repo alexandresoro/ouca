@@ -1,7 +1,7 @@
-import { Age, DatabaseRole, Prisma } from "@prisma/client";
-import { FindParams, MutationUpsertAgeArgs, QueryAgesArgs } from "../../graphql/generated/graphql-types";
+import { type Age, DatabaseRole, Prisma } from "@prisma/client";
+import { type FindParams, type MutationUpsertAgeArgs, type QueryAgesArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

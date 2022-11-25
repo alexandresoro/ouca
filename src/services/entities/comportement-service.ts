@@ -1,11 +1,11 @@
-import { Comportement, DatabaseRole, Nicheur, Prisma } from "@prisma/client";
+import { type Comportement, DatabaseRole, Nicheur, Prisma } from "@prisma/client";
 import {
-  FindParams,
-  MutationUpsertComportementArgs,
-  QueryComportementsArgs,
+  type FindParams,
+  type MutationUpsertComportementArgs,
+  type QueryComportementsArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";

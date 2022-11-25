@@ -1,6 +1,6 @@
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { ImportService } from "./import-service";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {

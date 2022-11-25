@@ -1,11 +1,11 @@
-import { DatabaseRole, User } from "@prisma/client";
+import { DatabaseRole, type User } from "@prisma/client";
 import { randomBytes, scryptSync } from "node:crypto";
 import type { CamelCasedProperties, Except } from "type-fest";
-import { EditUserData, UserCreateInput } from "../graphql/generated/graphql-types";
+import { type EditUserData, type UserCreateInput } from "../graphql/generated/graphql-types";
 import { type UserRepository } from "../repositories/user/user-repository";
 import { type FindByUserNameResult, type UserInfo } from "../repositories/user/user-repository-types";
 import prisma from "../sql/prisma";
-import { LoggedUser } from "../types/LoggedUser";
+import { type LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
 import { SALT_AND_PWD_DELIMITER } from "../utils/keys";
 import { logger } from "../utils/logger";

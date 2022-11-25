@@ -1,35 +1,35 @@
 import {
-  Age,
-  Commune,
-  Comportement,
-  Departement,
-  Espece,
-  EstimationDistance,
-  EstimationNombre,
-  Meteo,
-  Milieu,
-  Observateur,
-  Sexe,
+  type Age,
+  type Commune,
+  type Comportement,
+  type Departement,
+  type Espece,
+  type EstimationDistance,
+  type EstimationNombre,
+  type Meteo,
+  type Milieu,
+  type Observateur,
+  type Sexe,
 } from "@prisma/client";
-import { InputDonnee } from "../../graphql/generated/graphql-types";
+import { type InputDonnee } from "../../graphql/generated/graphql-types";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
-import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { Coordinates } from "../../model/types/coordinates.object";
+import { type CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
+import { type Coordinates } from "../../model/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { findAges } from "../entities/age-service";
 import { findCommunes } from "../entities/commune-service";
 import { findComportements } from "../entities/comportement-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findDepartements } from "../entities/departement-service";
-import { createDonnee, DonneeWithRelations, findAllDonnees } from "../entities/donnee-service";
+import { createDonnee, type DonneeWithRelations, findAllDonnees } from "../entities/donnee-service";
 import { findEspeces } from "../entities/espece-service";
 import { findEstimationsDistance } from "../entities/estimation-distance-service";
 import { findEstimationsNombre } from "../entities/estimation-nombre-service";
-import { findAllInventaires, InventaireWithRelations, upsertInventaire } from "../entities/inventaire-service";
-import { findLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
+import { findAllInventaires, type InventaireWithRelations, upsertInventaire } from "../entities/inventaire-service";
+import { findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { findMeteos } from "../entities/meteo-service";
 import { findMilieux } from "../entities/milieu-service";
 import { findObservateurs } from "../entities/observateur-service";

@@ -2,18 +2,18 @@ import { readFile } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 import { parentPort, workerData } from "node:worker_threads";
-import { ImportType } from "../model/import-types";
+import { type ImportType } from "../model/import-types";
 import {
-  ImportFailureMessage,
-  ImportNotifyProgressMessage,
-  ImportNotifyProgressMessageContent,
-  ImportNotifyStatusUpdateMessage,
-  ImportPostCompleteMessage,
+  type ImportFailureMessage,
+  type ImportNotifyProgressMessage,
+  type ImportNotifyProgressMessageContent,
+  type ImportNotifyStatusUpdateMessage,
+  type ImportPostCompleteMessage,
   IMPORT_COMPLETE,
   IMPORT_FAILED,
   VALIDATION_PROGRESS,
 } from "../objects/import/import-update-message";
-import { LoggedUser } from "../types/LoggedUser";
+import { type LoggedUser } from "../types/LoggedUser";
 import { IMPORT_DIR } from "../utils/paths";
 import {
   IMPORT_COMPLETE_EVENT,

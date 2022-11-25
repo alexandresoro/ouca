@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client";
-import { SearchDonneeCriteria } from "../../graphql/generated/graphql-types";
+import { type Prisma } from "@prisma/client";
+import { type SearchDonneeCriteria } from "../../graphql/generated/graphql-types";
 import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 
 export const buildSearchDonneeCriteria = (

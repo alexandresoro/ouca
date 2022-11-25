@@ -1,9 +1,9 @@
-import { DatabaseRole, User } from "@prisma/client";
+import { DatabaseRole, type User } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { EditUserData, UserCreateInput, UserLoginInput } from "../graphql/generated/graphql-types";
+import { type EditUserData, type UserCreateInput, type UserLoginInput } from "../graphql/generated/graphql-types";
 import { type UserRepository } from "../repositories/user/user-repository";
 import { prismaMock } from "../sql/prisma-mock";
-import { LoggedUser } from "../types/LoggedUser";
+import { type LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
 import { logger } from "../utils/logger";
 import options from "../utils/options";

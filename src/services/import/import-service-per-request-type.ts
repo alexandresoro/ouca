@@ -1,5 +1,5 @@
 import {
-  ImportType,
+  type ImportType,
   IMPORT_AGE,
   IMPORT_CLASSE,
   IMPORT_COMMUNE,
@@ -28,7 +28,7 @@ import { ImportLieuxditService } from "./import-lieudit-service";
 import { ImportMeteoService } from "./import-meteo-service";
 import { ImportMilieuService } from "./import-milieu-service";
 import { ImportObservateurService } from "./import-observateur-service";
-import { ImportService } from "./import-service";
+import { type ImportService } from "./import-service";
 import { ImportSexeService } from "./import-sexe-service";
 
 export const getNewImportServiceForRequestType = (requestType: ImportType): ImportService => {

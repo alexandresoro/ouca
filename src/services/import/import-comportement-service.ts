@@ -1,5 +1,5 @@
-import { Comportement, Prisma } from "@prisma/client";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type Comportement, type Prisma } from "@prisma/client";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { createComportements, findComportements } from "../entities/comportement-service";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
 

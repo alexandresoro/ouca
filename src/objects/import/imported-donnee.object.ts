@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import { InputDonnee, InputInventaire } from "../../graphql/generated/graphql-types";
-import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
-import { Coordinates } from "../../model/types/coordinates.object";
+import { type InputDonnee, type InputInventaire } from "../../graphql/generated/graphql-types";
+import { type CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
+import { type Coordinates } from "../../model/types/coordinates.object";
 import { DATE_PATTERN } from "../../utils/constants";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";

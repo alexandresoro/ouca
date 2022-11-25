@@ -1,7 +1,11 @@
-import { DatabaseRole, Meteo, Prisma } from "@prisma/client";
-import { FindParams, MutationUpsertMeteoArgs, QueryMeteosArgs } from "../../graphql/generated/graphql-types";
+import { DatabaseRole, type Meteo, Prisma } from "@prisma/client";
+import {
+  type FindParams,
+  type MutationUpsertMeteoArgs,
+  type QueryMeteosArgs,
+} from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

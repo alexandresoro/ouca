@@ -1,8 +1,8 @@
-import { Settings } from "@prisma/client";
+import { type Settings } from "@prisma/client";
 import { mock } from "jest-mock-extended";
-import { InputSettings } from "../../graphql/generated/graphql-types";
+import { type InputSettings } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { OucaError } from "../../utils/errors";
 import { findAppConfiguration, findCoordinatesSystem, persistUserSettings } from "./configuration-service";
 

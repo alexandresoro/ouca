@@ -1,5 +1,5 @@
-import { Age, Prisma } from "@prisma/client";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type Age, type Prisma } from "@prisma/client";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { createAges, findAges } from "../entities/age-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 

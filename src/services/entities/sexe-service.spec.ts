@@ -1,13 +1,13 @@
-import { DatabaseRole, Prisma, Sexe } from "@prisma/client";
+import { DatabaseRole, Prisma, type Sexe } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
-  MutationUpsertSexeArgs,
-  QuerySexesArgs,
+  type MutationUpsertSexeArgs,
+  type QuerySexesArgs,
   SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";

@@ -1,7 +1,11 @@
-import { Commune, DatabaseRole, Departement, Lieudit, Prisma } from "@prisma/client";
-import { FindParams, MutationUpsertLieuDitArgs, QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types";
+import { type Commune, DatabaseRole, type Departement, type Lieudit, Prisma } from "@prisma/client";
+import {
+  type FindParams,
+  type MutationUpsertLieuDitArgs,
+  type QueryLieuxDitsArgs,
+} from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

@@ -1,6 +1,6 @@
-import { Commune, Departement } from "@prisma/client";
+import { type Commune, type Departement } from "@prisma/client";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { createCommunes, findCommunes } from "../entities/commune-service";
 import { findDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";

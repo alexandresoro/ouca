@@ -1,4 +1,4 @@
-import { Commune } from "@prisma/client";
+import { type Commune } from "@prisma/client";
 
 const DEPARTEMENT_INDEX = 0;
 const CODE_INDEX = 1;

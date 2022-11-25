@@ -1,12 +1,15 @@
-import { Commune, Departement, Lieudit } from "@prisma/client";
+import { type Commune, type Departement, type Lieudit } from "@prisma/client";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
-import { CoordinatesSystem, CoordinatesSystemType } from "../../model/coordinates-system/coordinates-system.object";
+import {
+  type CoordinatesSystem,
+  type CoordinatesSystemType,
+} from "../../model/coordinates-system/coordinates-system.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { findCommunes } from "../entities/commune-service";
 import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findDepartements } from "../entities/departement-service";
-import { createLieuxDits, findLieuxDits, LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
+import { createLieuxDits, findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {

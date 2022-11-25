@@ -1,11 +1,11 @@
-import { DatabaseRole, Departement, Prisma } from "@prisma/client";
+import { DatabaseRole, type Departement, Prisma } from "@prisma/client";
 import {
-  FindParams,
-  MutationUpsertDepartementArgs,
-  QueryDepartementsArgs,
+  type FindParams,
+  type MutationUpsertDepartementArgs,
+  type QueryDepartementsArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

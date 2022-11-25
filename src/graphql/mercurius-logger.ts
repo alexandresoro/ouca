@@ -1,5 +1,11 @@
-import { DocumentNode, ExecutionResult, FieldNode, GraphQLSchema, OperationDefinitionNode } from "graphql";
-import { MercuriusContext } from "mercurius";
+import {
+  type DocumentNode,
+  type ExecutionResult,
+  type FieldNode,
+  type GraphQLSchema,
+  type OperationDefinitionNode,
+} from "graphql";
+import { type MercuriusContext } from "mercurius";
 
 const readOps = (document: DocumentNode, operation: string): string[] => {
   return document.definitions

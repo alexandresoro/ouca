@@ -1,13 +1,13 @@
-import { Commune, DatabaseRole, Lieudit, Prisma } from "@prisma/client";
+import { type Commune, DatabaseRole, type Lieudit, Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   CommunesOrderBy,
-  MutationUpsertCommuneArgs,
-  QueryCommunesArgs,
+  type MutationUpsertCommuneArgs,
+  type QueryCommunesArgs,
   SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {

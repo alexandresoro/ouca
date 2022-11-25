@@ -1,5 +1,5 @@
-import { Classe, Prisma } from "@prisma/client";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type Classe, type Prisma } from "@prisma/client";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { createClasses, findClasses } from "../entities/classe-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 

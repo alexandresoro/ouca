@@ -1,6 +1,6 @@
-import { Lieudit } from "@prisma/client";
+import { type Lieudit } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime";
-import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
+import { type CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";
 
 const DEPARTEMENT_INDEX = 0;

@@ -1,13 +1,13 @@
-import { Classe, DatabaseRole, Espece, Prisma } from "@prisma/client";
+import { type Classe, DatabaseRole, type Espece, Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   ClassesOrderBy,
-  MutationUpsertClasseArgs,
-  QueryClassesArgs,
+  type MutationUpsertClasseArgs,
+  type QueryClassesArgs,
   SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {

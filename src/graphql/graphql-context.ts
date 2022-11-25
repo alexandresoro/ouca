@@ -1,6 +1,11 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { type FastifyReply, type FastifyRequest } from "fastify";
 import mercurius from "mercurius";
-import { deleteTokenCookie, getLoggedUserInfo, LoggedUserInfo, type TokenService } from "../services/token-service";
+import {
+  deleteTokenCookie,
+  getLoggedUserInfo,
+  type LoggedUserInfo,
+  type TokenService,
+} from "../services/token-service";
 
 type PromiseType<T> = T extends PromiseLike<infer U> ? U : T;
 

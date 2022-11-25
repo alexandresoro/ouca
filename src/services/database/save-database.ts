@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { ChildProcess, spawn } from "node:child_process";
+import { type ChildProcess, spawn } from "node:child_process";
 import { promises } from "node:fs";
 import path from "node:path";
 import { DATE_PATTERN } from "../../utils/constants";

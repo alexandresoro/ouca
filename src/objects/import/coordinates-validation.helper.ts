@@ -1,4 +1,4 @@
-import { CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
+import { type CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 
 const ALTITUDE_MIN_VALUE = 0;
 const ALTITUDE_MAX_VALUE = 65535;

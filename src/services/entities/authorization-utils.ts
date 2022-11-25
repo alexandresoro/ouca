@@ -1,4 +1,4 @@
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { OucaError } from "../../utils/errors";
 
 export const validateAuthorization = (loggedUser: LoggedUser | null | undefined): void => {

@@ -1,11 +1,11 @@
-import { DatabaseRole, EstimationNombre, Prisma } from "@prisma/client";
+import { DatabaseRole, type EstimationNombre, Prisma } from "@prisma/client";
 import {
-  FindParams,
-  MutationUpsertEstimationNombreArgs,
-  QueryEstimationsNombreArgs,
+  type FindParams,
+  type MutationUpsertEstimationNombreArgs,
+  type QueryEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

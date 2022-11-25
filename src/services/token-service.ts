@@ -1,8 +1,8 @@
-import { CookieSerializeOptions } from "@fastify/cookie";
-import { DatabaseRole, User } from "@prisma/client";
-import { FastifyReply, FastifyRequest } from "fastify";
-import { JWTPayload, jwtVerify, SignJWT } from "jose";
-import { LoggedUser } from "../types/LoggedUser";
+import { type CookieSerializeOptions } from "@fastify/cookie";
+import { type DatabaseRole, type User } from "@prisma/client";
+import { type FastifyReply, type FastifyRequest } from "fastify";
+import { type JWTPayload, jwtVerify, SignJWT } from "jose";
+import { type LoggedUser } from "../types/LoggedUser";
 import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
 import options from "../utils/options";
 import { type UserService } from "./user-service";

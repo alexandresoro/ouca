@@ -1,4 +1,4 @@
-import { Espece } from "@prisma/client";
+import { type Espece } from "@prisma/client";
 
 const CLASSE_INDEX = 0;
 const CODE_INDEX = 1;

@@ -1,4 +1,4 @@
-import { Departement } from "@prisma/client";
+import { type Departement } from "@prisma/client";
 
 const CODE_INDEX = 0;
 const CODE_MAX_LENGTH = 100;

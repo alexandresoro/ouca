@@ -1,13 +1,13 @@
-import { DatabaseRole, Milieu, Prisma } from "@prisma/client";
+import { DatabaseRole, type Milieu, Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   MilieuxOrderBy,
-  MutationUpsertMilieuArgs,
-  QueryMilieuxArgs,
+  type MutationUpsertMilieuArgs,
+  type QueryMilieuxArgs,
   SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";

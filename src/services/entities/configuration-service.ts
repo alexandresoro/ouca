@@ -1,7 +1,7 @@
-import { CoordinatesSystem, Settings as SettingsDb } from "@prisma/client";
-import { InputSettings, Settings } from "../../graphql/generated/graphql-types";
+import { type CoordinatesSystem, type Settings as SettingsDb } from "@prisma/client";
+import { type InputSettings, type Settings } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { validateAuthorization } from "./authorization-utils";
 
 const includedElements = {

@@ -1,4 +1,4 @@
-import { SchemaValidationError, SerializableValue, type Interceptor, type QueryResultRow } from "slonik";
+import { SchemaValidationError, type SerializableValue, type Interceptor, type QueryResultRow } from "slonik";
 
 export const createResultParserInterceptor = (): Interceptor => {
   return {

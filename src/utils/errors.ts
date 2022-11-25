@@ -1,4 +1,4 @@
-import { ErrorCode, getErrorMessage } from "../types/ErrorCode";
+import { type ErrorCode, getErrorMessage } from "../types/ErrorCode";
 
 type SubError = {
   code: string;

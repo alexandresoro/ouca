@@ -1,11 +1,11 @@
-import { DatabaseRole, Observateur, Prisma } from "@prisma/client";
+import { DatabaseRole, type Observateur, Prisma } from "@prisma/client";
 import {
-  FindParams,
-  MutationUpsertObservateurArgs,
-  QueryObservateursArgs,
+  type FindParams,
+  type MutationUpsertObservateurArgs,
+  type QueryObservateursArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

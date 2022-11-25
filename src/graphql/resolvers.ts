@@ -1,5 +1,5 @@
-import { Commune as CommuneEntity, DatabaseRole, Espece as EspeceEntity } from "@prisma/client";
-import mercurius, { IResolvers } from "mercurius";
+import { DatabaseRole, type Commune as CommuneEntity, type Espece as EspeceEntity } from "@prisma/client";
+import mercurius, { type IResolvers } from "mercurius";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import {
@@ -54,7 +54,6 @@ import {
   countSpecimensByAgeForEspeceId,
   countSpecimensBySexeForEspeceId,
   deleteDonnee,
-  DonneeWithRelations,
   findDonnee,
   findDonneeNavigationData,
   findLastDonneeId,
@@ -62,6 +61,7 @@ import {
   findPaginatedDonneesByCriteria,
   getNbDonneesByCriteria,
   upsertDonnee,
+  type DonneeWithRelations,
 } from "../services/entities/donnee-service";
 import {
   deleteEspece,
@@ -91,8 +91,8 @@ import {
 import {
   findInventaire,
   findInventaireOfDonneeId,
-  InventaireWithRelations,
   upsertInventaire,
+  type InventaireWithRelations,
 } from "../services/entities/inventaire-service";
 import {
   deleteLieuDit,
@@ -101,8 +101,8 @@ import {
   findPaginatedLieuxDits,
   getDonneesCountByLieuDit,
   getLieuxDitsCount,
-  LieuDitWithCoordinatesAsNumber,
   upsertLieuDit,
+  type LieuDitWithCoordinatesAsNumber,
 } from "../services/entities/lieu-dit-service";
 import {
   deleteMeteo,
@@ -158,48 +158,48 @@ import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/
 import { createUser, updateUser } from "../services/user-service";
 import { logger } from "../utils/logger";
 import {
-  Age,
-  AgesPaginatedResult,
-  AgeWithSpecimensCount,
-  Classe,
-  ClassesPaginatedResult,
-  Commune,
-  CommunesPaginatedResult,
-  Comportement,
-  ComportementsPaginatedResult,
-  Departement,
-  DepartementsPaginatedResult,
-  Donnee,
-  DonneeNavigationData,
-  Espece,
-  EstimationDistance,
-  EstimationNombre,
-  EstimationsDistancePaginatedResult,
-  EstimationsNombrePaginatedResult,
-  ImportStatus,
-  Inventaire,
-  LieuDit,
-  LieuxDitsPaginatedResult,
-  Meteo,
-  MeteosPaginatedResult,
-  Milieu,
-  MilieuxPaginatedResult,
-  Observateur,
-  ObservateursPaginatedResult,
-  Resolvers,
-  Settings,
-  Sexe,
-  SexesPaginatedResult,
-  SexeWithSpecimensCount,
-  UpsertInventaireFailureReason,
-  UserInfo,
+  type Age,
+  type AgesPaginatedResult,
+  type AgeWithSpecimensCount,
+  type Classe,
+  type ClassesPaginatedResult,
+  type Commune,
+  type CommunesPaginatedResult,
+  type Comportement,
+  type ComportementsPaginatedResult,
+  type Departement,
+  type DepartementsPaginatedResult,
+  type Donnee,
+  type DonneeNavigationData,
+  type Espece,
+  type EstimationDistance,
+  type EstimationNombre,
+  type EstimationsDistancePaginatedResult,
+  type EstimationsNombrePaginatedResult,
+  type ImportStatus,
+  type Inventaire,
+  type LieuDit,
+  type LieuxDitsPaginatedResult,
+  type Meteo,
+  type MeteosPaginatedResult,
+  type Milieu,
+  type MilieuxPaginatedResult,
+  type Observateur,
+  type ObservateursPaginatedResult,
+  type Resolvers,
+  type Settings,
+  type Sexe,
+  type SexesPaginatedResult,
+  type SexeWithSpecimensCount,
+  type UpsertInventaireFailureReason,
+  type UserInfo,
 } from "./generated/graphql-types";
 import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper";
 
 const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 
 declare module "mercurius" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/consistent-type-imports
   interface IResolvers extends Resolvers<import("mercurius").MercuriusContext> {}
 }
 

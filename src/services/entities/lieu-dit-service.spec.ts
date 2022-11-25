@@ -1,13 +1,13 @@
-import { DatabaseRole, Inventaire, Lieudit, Prisma } from "@prisma/client";
+import { DatabaseRole, type Inventaire, type Lieudit, Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   LieuxDitsOrderBy,
-  MutationUpsertLieuDitArgs,
-  QueryLieuxDitsArgs,
+  type MutationUpsertLieuDitArgs,
+  type QueryLieuxDitsArgs,
   SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";

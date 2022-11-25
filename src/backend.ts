@@ -16,7 +16,7 @@ import { createFieldNameTransformationInterceptor } from "slonik-interceptor-fie
 import { buildGraphQLContext } from "./graphql/graphql-context";
 import { logQueries, logResults } from "./graphql/mercurius-logger";
 import { buildResolvers } from "./graphql/resolvers";
-import { ImportType, IMPORT_TYPE } from "./model/import-types";
+import { type ImportType, IMPORT_TYPE } from "./model/import-types";
 import { startImportTask } from "./services/import-manager";
 import { buildServices, type Services } from "./services/services";
 import { getLoggedUserInfo } from "./services/token-service";

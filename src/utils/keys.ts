@@ -1,4 +1,4 @@
-import { generateSecret, KeyLike } from "jose";
+import { generateSecret, type KeyLike } from "jose";
 import { TextEncoder } from "node:util";
 import options from "./options";
 

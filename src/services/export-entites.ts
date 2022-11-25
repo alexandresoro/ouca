@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import { SearchDonneeCriteria } from "../graphql/generated/graphql-types";
+import { type SearchDonneeCriteria } from "../graphql/generated/graphql-types";
 import { GPS_COORDINATES } from "../model/coordinates-system/gps.object";
 import { getNicheurStatusToDisplay } from "../model/helpers/nicheur-helper";
 import { SEPARATOR_COMMA } from "../utils/constants";
@@ -11,7 +11,7 @@ import { findClasses } from "./entities/classe-service";
 import { findCommunesWithDepartements } from "./entities/commune-service";
 import { findComportements } from "./entities/comportement-service";
 import { findDepartements } from "./entities/departement-service";
-import { DonneeWithRelations, findDonneesByCriteria } from "./entities/donnee-service";
+import { type DonneeWithRelations, findDonneesByCriteria } from "./entities/donnee-service";
 import { findAllEspecesWithClasses } from "./entities/espece-service";
 import { findEstimationsDistance } from "./entities/estimation-distance-service";
 import { findEstimationsNombre } from "./entities/estimation-nombre-service";

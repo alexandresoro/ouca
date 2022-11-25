@@ -6,19 +6,19 @@ import path from "node:path";
 import { Worker } from "node:worker_threads";
 import {
   ImportErrorType,
-  ImportStatus,
+  type ImportStatus,
   ImportStatusEnum,
   OngoingSubStatus,
-  OngoingValidationStats,
+  type OngoingValidationStats,
 } from "../graphql/generated/graphql-types";
-import { ImportType } from "../model/import-types";
+import { type ImportType } from "../model/import-types";
 import {
-  ImportUpdateMessage,
+  type ImportUpdateMessage,
   IMPORT_COMPLETE,
   IMPORT_FAILED,
   VALIDATION_PROGRESS,
 } from "../objects/import/import-update-message";
-import { LoggedUser } from "../types/LoggedUser";
+import { type LoggedUser } from "../types/LoggedUser";
 import { logger } from "../utils/logger";
 import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths";
 

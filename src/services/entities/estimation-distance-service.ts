@@ -1,11 +1,11 @@
-import { DatabaseRole, EstimationDistance, Prisma } from "@prisma/client";
+import { DatabaseRole, type EstimationDistance, Prisma } from "@prisma/client";
 import {
-  FindParams,
-  MutationUpsertEstimationDistanceArgs,
-  QueryEstimationsDistanceArgs,
+  type FindParams,
+  type MutationUpsertEstimationDistanceArgs,
+  type QueryEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
-import { LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/LoggedUser";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

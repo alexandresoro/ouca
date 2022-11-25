@@ -1,4 +1,4 @@
-import { pino, TransportTargetOptions } from "pino";
+import { pino, type TransportTargetOptions } from "pino";
 import options from "./options";
 
 const getPinoTransportsToUse = () => {
