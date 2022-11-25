@@ -1,22 +1,15 @@
 import { DatabaseRole, User } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { EditUserData, UserCreateInput, UserLoginInput } from "../graphql/generated/graphql-types";
-import { type buildUserRepository } from "../repositories/user/user-repository";
+import { type UserRepository } from "../repositories/user/user-repository";
 import { prismaMock } from "../sql/prisma-mock";
 import { LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
 import { logger } from "../utils/logger";
 import options from "../utils/options";
-import {
-  buildUserService,
-  createUser,
-  deleteUser,
-  getHashedPassword,
-  updateUser,
-  validatePassword,
-} from "./user-service";
+import { buildUserService, createUser, getHashedPassword, updateUser, validatePassword } from "./user-service";
 
-const userRepository = mock<ReturnType<typeof buildUserRepository>>();
+const userRepository = mock<UserRepository>();
 const userService = buildUserService({
   userRepository,
 });
@@ -327,14 +320,13 @@ describe("User deletion", () => {
       role: DatabaseRole.contributor,
     };
 
-    await deleteUser(loggedUser.id, loggedUser);
+    userRepository.deleteUserById.mockResolvedValueOnce(true);
 
-    expect(prismaMock.user.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.user.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: loggedUser.id,
-      },
-    });
+    const result = await userService.deleteUser(loggedUser.id, loggedUser);
+
+    expect(userRepository.deleteUserById).toHaveBeenCalledTimes(1);
+    expect(userRepository.deleteUserById).toHaveBeenLastCalledWith(loggedUser.id);
+    expect(result).toBe(true);
   });
 
   test("should be able delete to another user if admin", async () => {
@@ -343,14 +335,13 @@ describe("User deletion", () => {
       role: DatabaseRole.admin,
     };
 
-    await deleteUser("11", loggedUser);
+    userRepository.deleteUserById.mockResolvedValueOnce(true);
 
-    expect(prismaMock.user.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.user.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: "11",
-      },
-    });
+    const result = await userService.deleteUser("11", loggedUser);
+
+    expect(userRepository.deleteUserById).toHaveBeenCalledTimes(1);
+    expect(userRepository.deleteUserById).toHaveBeenLastCalledWith("11");
+    expect(result).toBe(true);
   });
 
   test("should return an error when deleting another user as non-admin", async () => {
@@ -359,8 +350,10 @@ describe("User deletion", () => {
       role: DatabaseRole.contributor,
     };
 
-    await expect(deleteUser("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    userRepository.deleteUserById.mockResolvedValueOnce(false);
 
-    expect(prismaMock.user.delete).not.toHaveBeenCalled();
+    await expect(userService.deleteUser("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+
+    expect(userRepository.deleteUserById).not.toHaveBeenCalled();
   });
 });

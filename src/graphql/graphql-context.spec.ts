@@ -1,10 +1,18 @@
-import { DatabaseRole } from "@prisma/client";
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import { mock } from "jest-mock-extended";
-import { JWTPayload } from "jose";
+import { type JWTPayload } from "jose";
 import mercurius from "mercurius";
-import { deleteTokenCookie, validateAndExtractUserToken } from "../services/token-service";
-import { buildGraphQLContext, GraphQLContext } from "./graphql-context";
+import type { DatabaseRole } from "../repositories/user/user-repository-types";
+import { deleteTokenCookie, type TokenService } from "../services/token-service";
+import { buildGraphQLContext, type GraphQLContext } from "./graphql-context";
+
+const tokenService = mock<TokenService>({
+  validateAndExtractUserToken: jest.fn(),
+});
+
+const graphQLContext = buildGraphQLContext({
+  tokenService,
+});
 
 jest.mock<typeof import("../services/token-service")>("../services/token-service", () => {
   const actualModule = jest.requireActual<typeof import("../services/token-service")>("../services/token-service");
@@ -16,7 +24,6 @@ jest.mock<typeof import("../services/token-service")>("../services/token-service
   };
 });
 
-const mockedValidateAndExtractUserToken = jest.mocked(validateAndExtractUserToken, true);
 const mockedDeleteTokenCookie = jest.mocked(deleteTokenCookie, true);
 
 describe("GraphQL context", () => {
@@ -24,9 +31,9 @@ describe("GraphQL context", () => {
     const request = mock<FastifyRequest>();
     const reply = mock<FastifyReply>();
 
-    mockedValidateAndExtractUserToken.mockResolvedValueOnce(null);
+    tokenService.validateAndExtractUserToken.mockResolvedValueOnce(null);
 
-    const context = await buildGraphQLContext(request, reply);
+    const context = await graphQLContext(request, reply);
 
     expect(context).toEqual<GraphQLContext>({
       request,
@@ -41,9 +48,9 @@ describe("GraphQL context", () => {
 
     const tokenPayload = mock<JWTPayload>();
 
-    mockedValidateAndExtractUserToken.mockResolvedValueOnce(tokenPayload);
+    tokenService.validateAndExtractUserToken.mockResolvedValueOnce(tokenPayload);
 
-    const context = await buildGraphQLContext(request, reply);
+    const context = await graphQLContext(request, reply);
 
     expect(context).toEqual<GraphQLContext>({
       request,
@@ -63,11 +70,9 @@ describe("GraphQL context", () => {
 
     const rejection = mock<string>();
 
-    mockedValidateAndExtractUserToken.mockRejectedValueOnce(rejection);
+    tokenService.validateAndExtractUserToken.mockRejectedValueOnce(rejection);
 
-    await expect(() => buildGraphQLContext(request, reply)).rejects.toThrowError(
-      new mercurius.ErrorWithProps(rejection)
-    );
+    await expect(() => graphQLContext(request, reply)).rejects.toThrowError(new mercurius.ErrorWithProps(rejection));
     expect(mockedDeleteTokenCookie).toHaveBeenCalledTimes(1);
   });
 });

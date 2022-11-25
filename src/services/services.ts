@@ -1,13 +1,15 @@
 import { type DatabasePool } from "slonik";
 import { buildUserRepository } from "../repositories/user/user-repository";
-import { buildUserService } from "./user-service";
+import { buildTokenService, type TokenService } from "./token-service";
+import { buildUserService, type UserService } from "./user-service";
 
 type Dependencies = {
   slonik: DatabasePool;
 };
 
 export type Services = {
-  userService: ReturnType<typeof buildUserService>;
+  tokenService: TokenService;
+  userService: UserService;
 };
 
 export const buildServices = ({ slonik }: Dependencies): Services => {
@@ -17,7 +19,12 @@ export const buildServices = ({ slonik }: Dependencies): Services => {
     userRepository,
   });
 
+  const tokenService = buildTokenService({
+    userService,
+  });
+
   return {
+    tokenService,
     userService,
   };
 };

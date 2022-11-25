@@ -155,7 +155,7 @@ import {
 import { getImportStatus } from "../services/import-manager";
 import { type Services } from "../services/services";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
-import { createUser, deleteUser, getUser, updateUser } from "../services/user-service";
+import { createUser, updateUser } from "../services/user-service";
 import { logger } from "../utils/logger";
 import {
   Age,
@@ -650,7 +650,7 @@ export const buildResolvers = ({ userService }: Services): IResolvers => {
       userRefresh: async (_source, args, { user, reply }): Promise<UserInfo | null> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
 
-        const userInfo = await getUser(user.id);
+        const userInfo = await userService.getUser(user.id);
         if (userInfo) {
           await createAndAddSignedTokenAsCookie(reply, userInfo);
           return userInfo;
@@ -684,16 +684,16 @@ export const buildResolvers = ({ userService }: Services): IResolvers => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
 
         try {
-          await deleteUser(args.id, user);
+          const isUserDeleted = await userService.deleteUser(args.id, user);
+
+          if (args?.id === user?.id && isUserDeleted) {
+            await deleteTokenCookie(reply);
+          }
+
+          return isUserDeleted;
         } catch (e) {
           throw new mercurius.ErrorWithProps("User deletion request failed");
         }
-
-        if (args?.id === user?.id) {
-          await deleteTokenCookie(reply);
-        }
-
-        return true;
       },
     },
     Age: {

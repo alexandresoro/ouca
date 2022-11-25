@@ -2,8 +2,8 @@ import { DatabaseRole, User } from "@prisma/client";
 import { randomBytes, scryptSync } from "node:crypto";
 import type { CamelCasedProperties, Except } from "type-fest";
 import { EditUserData, UserCreateInput } from "../graphql/generated/graphql-types";
-import { type buildUserRepository } from "../repositories/user/user-repository";
-import { type FindByUserNameResult } from "../repositories/user/user-repository-types";
+import { type UserRepository } from "../repositories/user/user-repository";
+import { type FindByUserNameResult, type UserInfo } from "../repositories/user/user-repository-types";
 import prisma from "../sql/prisma";
 import { LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
@@ -11,13 +11,36 @@ import { SALT_AND_PWD_DELIMITER } from "../utils/keys";
 import { logger } from "../utils/logger";
 import options from "../utils/options";
 
-type UserServiceDependencies = {
-  userRepository: ReturnType<typeof buildUserRepository>;
-};
-
 const PASSWORD_KEY_LENGTH = 64;
 
+// Make sure that the password is properly encrypted :-)
+export const getHashedPassword = (plaintextPassword: string): string => {
+  const salt = randomBytes(16);
+  const encryptedPasswordBuffer = scryptSync(plaintextPassword, salt, PASSWORD_KEY_LENGTH);
+
+  return `${salt.toString("hex")}${SALT_AND_PWD_DELIMITER}${encryptedPasswordBuffer.toString("hex")}`;
+};
+
+export const validatePassword = (password: string | null | undefined, hashedPasswordWithSalt: string): boolean => {
+  if (!password) {
+    return false;
+  }
+
+  const [saltAsHex, storedSaltedPassword] = hashedPasswordWithSalt.split(SALT_AND_PWD_DELIMITER);
+  const inputSaltedPassword = scryptSync(password, Buffer.from(saltAsHex, "hex"), PASSWORD_KEY_LENGTH).toString("hex");
+
+  return storedSaltedPassword === inputSaltedPassword;
+};
+
+type UserServiceDependencies = {
+  userRepository: UserRepository;
+};
+
 export const buildUserService = ({ userRepository }: UserServiceDependencies) => {
+  const getUser = async (userId: string): Promise<UserInfo | null> => {
+    return userRepository.getUserInfoById(userId);
+  };
+
   const loginUser = async ({
     username,
     password,
@@ -44,44 +67,30 @@ export const buildUserService = ({ userRepository }: UserServiceDependencies) =>
     };
   };
 
+  const deleteUser = async (userId: string, loggedUser: LoggedUser): Promise<boolean> => {
+    // Only a user can delete itself
+    // With admin role, admin can delete anyone
+    if (loggedUser.id === userId || loggedUser.role === DatabaseRole.admin) {
+      const isSuccess = await userRepository.deleteUserById(userId);
+
+      if (isSuccess) {
+        logger.info(`User with id ${userId} has been deleted. Request has been initiated by ID ${loggedUser.id}`);
+      }
+
+      return isSuccess;
+    } else {
+      return Promise.reject(new OucaError("OUCA0001"));
+    }
+  };
+
   return {
+    getUser,
     loginUser,
+    deleteUser,
   };
 };
 
-// Make sure that the password is properly encrypted :-)
-export const getHashedPassword = (plaintextPassword: string): string => {
-  const salt = randomBytes(16);
-  const encryptedPasswordBuffer = scryptSync(plaintextPassword, salt, PASSWORD_KEY_LENGTH);
-
-  return `${salt.toString("hex")}${SALT_AND_PWD_DELIMITER}${encryptedPasswordBuffer.toString("hex")}`;
-};
-
-export const validatePassword = (password: string | null | undefined, hashedPasswordWithSalt: string): boolean => {
-  if (!password) {
-    return false;
-  }
-
-  const [saltAsHex, storedSaltedPassword] = hashedPasswordWithSalt.split(SALT_AND_PWD_DELIMITER);
-  const inputSaltedPassword = scryptSync(password, Buffer.from(saltAsHex, "hex"), PASSWORD_KEY_LENGTH).toString("hex");
-
-  return storedSaltedPassword === inputSaltedPassword;
-};
-
-export const getUser = async (userId: string): Promise<Omit<User, "password"> | null> => {
-  return prisma.user.findUnique({
-    select: {
-      id: true,
-      username: true,
-      firstName: true,
-      lastName: true,
-      role: true,
-    },
-    where: {
-      id: userId,
-    },
-  });
-};
+export type UserService = ReturnType<typeof buildUserService>;
 
 export const createUser = async (
   signupData: UserCreateInput,
@@ -180,22 +189,6 @@ export const updateUser = async (
         password: newPassword ? getHashedPassword(newPassword) : undefined,
       },
     });
-  } else {
-    return Promise.reject(new OucaError("OUCA0001"));
-  }
-};
-
-export const deleteUser = async (userId: string, loggedUser: LoggedUser): Promise<void> => {
-  // Only a user can delete itself
-  // With admin role, admin can delete anyone
-  if (loggedUser.id === userId || loggedUser.role === DatabaseRole.admin) {
-    await prisma.user.delete({
-      where: {
-        id: userId,
-      },
-    });
-
-    logger.info(`User with id ${userId} has been deleted. Request has been initiated by ID ${loggedUser.id}`);
   } else {
     return Promise.reject(new OucaError("OUCA0001"));
   }

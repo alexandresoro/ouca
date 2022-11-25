@@ -19,7 +19,7 @@ import { buildResolvers } from "./graphql/resolvers";
 import { ImportType, IMPORT_TYPE } from "./model/import-types";
 import { startImportTask } from "./services/import-manager";
 import { buildServices, type Services } from "./services/services";
-import { getLoggedUserInfo, validateAndExtractUserToken } from "./services/token-service";
+import { getLoggedUserInfo } from "./services/token-service";
 import { createQueryLoggingInterceptor } from "./slonik/slonik-pino-interceptor";
 import { createResultParserInterceptor } from "./slonik/slonik-zod-interceptor";
 import { logger } from "./utils/logger";
@@ -54,6 +54,9 @@ checkAndCreateFolders();
     services = buildServices({ slonik });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const { tokenService } = services!;
+
   // Middlewares
   await server.register(fastifyMultipart);
   await server.register(fastifyCookie);
@@ -75,7 +78,7 @@ checkAndCreateFolders();
     schema,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     resolvers: buildResolvers(services!),
-    context: buildGraphQLContext,
+    context: buildGraphQLContext({ tokenService }),
     validationRules: process.env.NODE_ENV === "production" ? [NoSchemaIntrospectionCustomRule] : [],
   });
   server.graphql.addHook("preExecution", logQueries);
@@ -83,7 +86,7 @@ checkAndCreateFolders();
 
   // Download files
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>("/download/:id", async (req, reply) => {
-    const tokenPayload = await validateAndExtractUserToken(req);
+    const tokenPayload = await tokenService.validateAndExtractUserToken(req);
     if (!tokenPayload?.sub) {
       return reply.code(401).send();
     }
@@ -92,7 +95,7 @@ checkAndCreateFolders();
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>(
     "/download/importReports/:id",
     async (req, reply) => {
-      const tokenPayload = await validateAndExtractUserToken(req);
+      const tokenPayload = await tokenService.validateAndExtractUserToken(req);
       if (!tokenPayload?.sub) {
         return reply.code(401).send();
       }
@@ -103,7 +106,7 @@ checkAndCreateFolders();
 
   // Upload import path
   server.post<{ Params: { entityName: string } }>("/uploads/:entityName", async (req, reply) => {
-    const tokenPayload = await validateAndExtractUserToken(req);
+    const tokenPayload = await tokenService.validateAndExtractUserToken(req);
     if (!tokenPayload) {
       return reply.code(401).send();
     }

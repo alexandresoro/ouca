@@ -5,7 +5,7 @@ import { JWTPayload, jwtVerify, SignJWT } from "jose";
 import { LoggedUser } from "../types/LoggedUser";
 import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
 import options from "../utils/options";
-import { getUser } from "./user-service";
+import { type UserService } from "./user-service";
 
 const TOKEN_KEY = "token";
 
@@ -22,6 +22,41 @@ type AdditionalUserInfo = {
 
 export type LoggedUserInfo = LoggedUser & AdditionalUserInfo;
 
+export type TokenServiceDependencies = {
+  userService: UserService;
+};
+
+export const buildTokenService = ({ userService }: TokenServiceDependencies) => {
+  const validateAndExtractUserToken = async (request: FastifyRequest): Promise<JWTPayload | null> => {
+    // Extract the token from the authentication cookie, if any
+    const token = request.cookies["token"];
+    if (token) {
+      const publicKey = await TokenKeys.getKey();
+      const tokenVerifyResult = await jwtVerify(token, publicKey);
+
+      // Check that the user still exists in the database and has a valid role
+      if (!tokenVerifyResult.payload?.sub) {
+        throw new Error("Authentication credentials are missing required information");
+      }
+      const matchingDbUser = await userService.getUser(tokenVerifyResult.payload.sub);
+
+      if (!matchingDbUser || matchingDbUser?.role !== tokenVerifyResult.payload.roles) {
+        throw new Error("Authentication credentials are invalid");
+      }
+
+      return tokenVerifyResult.payload;
+    }
+
+    return null;
+  };
+
+  return {
+    validateAndExtractUserToken,
+  };
+};
+
+export type TokenService = ReturnType<typeof buildTokenService>;
+
 export const getLoggedUserInfo = (tokenPayload: JWTPayload): LoggedUserInfo | null => {
   if (tokenPayload?.sub && tokenPayload.roles) {
     return {
@@ -30,29 +65,6 @@ export const getLoggedUserInfo = (tokenPayload: JWTPayload): LoggedUserInfo | nu
       name: tokenPayload.name as string,
     };
   }
-  return null;
-};
-
-export const validateAndExtractUserToken = async (request: FastifyRequest): Promise<JWTPayload | null> => {
-  // Extract the token from the authentication cookie, if any
-  const token = request.cookies["token"];
-  if (token) {
-    const publicKey = await TokenKeys.getKey();
-    const tokenVerifyResult = await jwtVerify(token, publicKey);
-
-    // Check that the user still exists in the database and has a valid role
-    if (!tokenVerifyResult.payload?.sub) {
-      throw new Error("Authentication credentials are missing required information");
-    }
-    const matchingDbUser = await getUser(tokenVerifyResult.payload.sub);
-
-    if (!matchingDbUser || matchingDbUser?.role !== tokenVerifyResult.payload.roles) {
-      throw new Error("Authentication credentials are invalid");
-    }
-
-    return tokenVerifyResult.payload;
-  }
-
   return null;
 };
 
