@@ -1,12 +1,25 @@
 import { DatabaseRole, User } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { EditUserData, UserCreateInput, UserLoginInput } from "../graphql/generated/graphql-types";
+import { type buildUserRepository } from "../repositories/user/user-repository";
 import { prismaMock } from "../sql/prisma-mock";
 import { LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
 import { logger } from "../utils/logger";
 import options from "../utils/options";
-import { createUser, deleteUser, getHashedPassword, loginUser, updateUser, validatePassword } from "./user-service";
+import {
+  buildUserService,
+  createUser,
+  deleteUser,
+  getHashedPassword,
+  updateUser,
+  validatePassword,
+} from "./user-service";
+
+const userRepository = mock<ReturnType<typeof buildUserRepository>>();
+const userService = buildUserService({
+  userRepository,
+});
 
 beforeAll(() => {
   logger.level = "silent";
@@ -135,9 +148,9 @@ describe("User login", () => {
   test("should rejects when log in with unknown account", async () => {
     const loginData = mock<UserLoginInput>();
 
-    prismaMock.user.findUnique.mockResolvedValueOnce(null);
+    userRepository.findUserByUsername.mockResolvedValueOnce(null);
 
-    await expect(loginUser(loginData)).rejects.toEqual(new OucaError("OUCA0002"));
+    await expect(userService.loginUser(loginData)).rejects.toEqual(new OucaError("OUCA0002"));
   });
 
   test("should rejects when log in with incorrect password", async () => {
@@ -154,9 +167,9 @@ describe("User login", () => {
       password: hashedPassword,
     });
 
-    prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
+    userRepository.findUserByUsername.mockResolvedValueOnce(matchingUser);
 
-    await expect(loginUser(loginData)).rejects.toEqual(new OucaError("OUCA0003"));
+    await expect(userService.loginUser(loginData)).rejects.toEqual(new OucaError("OUCA0003"));
   });
 
   test("should return userinfo when log in correctly", async () => {
@@ -173,10 +186,10 @@ describe("User login", () => {
       password: hashedPassword,
     });
 
-    prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
+    userRepository.findUserByUsername.mockResolvedValueOnce(matchingUser);
 
     const { password, ...userInfo } = matchingUser;
-    await expect(loginUser(loginData)).resolves.toEqual(userInfo);
+    await expect(userService.loginUser(loginData)).resolves.toEqual(userInfo);
   });
 });
 

@@ -11,12 +11,17 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
+import { createPool, type DatabasePool } from "slonik";
+import { createFieldNameTransformationInterceptor } from "slonik-interceptor-field-name-transformation";
 import { buildGraphQLContext } from "./graphql/graphql-context";
 import { logQueries, logResults } from "./graphql/mercurius-logger";
-import resolvers from "./graphql/resolvers";
+import { buildResolvers } from "./graphql/resolvers";
 import { ImportType, IMPORT_TYPE } from "./model/import-types";
 import { startImportTask } from "./services/import-manager";
+import { buildServices, type Services } from "./services/services";
 import { getLoggedUserInfo, validateAndExtractUserToken } from "./services/token-service";
+import { createQueryLoggingInterceptor } from "./slonik/slonik-pino-interceptor";
+import { createResultParserInterceptor } from "./slonik/slonik-zod-interceptor";
 import { logger } from "./utils/logger";
 import options from "./utils/options";
 import { checkAndCreateFolders, DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
@@ -33,6 +38,22 @@ const server = fastify({
 checkAndCreateFolders();
 
 (async () => {
+  // Database connection
+  let services: Services;
+  let slonik: DatabasePool;
+  if (options.database.usePg) {
+    slonik = await createPool(options.database.pgUrl, {
+      interceptors: [
+        createFieldNameTransformationInterceptor({ format: "CAMEL_CASE" }),
+        createResultParserInterceptor(),
+        createQueryLoggingInterceptor(logger),
+      ],
+    });
+    logger.debug("Connection to database successful");
+
+    services = buildServices({ slonik });
+  }
+
   // Middlewares
   await server.register(fastifyMultipart);
   await server.register(fastifyCookie);
@@ -52,7 +73,8 @@ checkAndCreateFolders();
   // Mercurius GraphQL adapter
   await server.register(mercurius, {
     schema,
-    resolvers,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    resolvers: buildResolvers(services!),
     context: buildGraphQLContext,
     validationRules: process.env.NODE_ENV === "production" ? [NoSchemaIntrospectionCustomRule] : [],
   });
@@ -127,8 +149,14 @@ checkAndCreateFolders();
   // Alternative is to use --init flag
   const shutdown = () => {
     logger.info("Shutdown requested");
-    void server.close().then(() => {
-      logger.info("Web server has been shut down");
+    Promise.all([
+      slonik.end().then(() => {
+        logger.info("Database connector has been shut down");
+      }),
+      server.close().then(() => {
+        logger.info("Web server has been shut down");
+      }),
+    ]).finally(() => {
       process.exit(0);
     });
   };

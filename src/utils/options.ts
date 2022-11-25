@@ -15,6 +15,10 @@ export default {
     url: get("DATABASE_URL")
       .default("mysql://basenaturaliste:basenaturaliste@127.0.0.1:3306/basenaturaliste")
       .asString(),
+    usePg: get("OUCA_TMP_USE_PG").default("false").asBoolStrict(),
+    pgUrl: get("OUCA_DATABASE_URL")
+      .default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste")
+      .asString(),
   },
   admin: {
     signupsAllowed: get("OUCA_SIGNUPS_ALLOWED").default("false").asBoolStrict(),

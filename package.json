@@ -45,7 +45,9 @@
     "mercurius": "11.3.0",
     "pino": "8.7.0",
     "pino-pretty": "9.1.1",
-    "proj4": "2.8.0"
+    "proj4": "2.8.0",
+    "slonik": "^33.0.3",
+    "slonik-interceptor-field-name-transformation": "^1.6.5"
   },
   "devDependencies": {
     "@graphql-codegen/add": "3.2.1",

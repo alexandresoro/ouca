@@ -153,8 +153,9 @@ import {
   generateSexesExport,
 } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
+import { type Services } from "../services/services";
 import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
-import { createUser, deleteUser, getUser, loginUser, updateUser } from "../services/user-service";
+import { createUser, deleteUser, getUser, updateUser } from "../services/user-service";
 import { logger } from "../utils/logger";
 import {
   Age,
@@ -202,615 +203,617 @@ declare module "mercurius" {
   interface IResolvers extends Resolvers<import("mercurius").MercuriusContext> {}
 }
 
-const resolvers: IResolvers = {
-  Query: {
-    age: async (_source, args, { user }): Promise<Age | null> => {
-      return findAge(args.id, user);
-    },
-    ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedAges(user, args),
-        getAgesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    classe: async (_source, args, { user }): Promise<Classe | null> => {
-      return findClasse(args.id, user);
-    },
-    classes: async (_, args, { user }): Promise<ClassesPaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedClasses(user, args),
-        getClassesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    commune: async (_source, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
-      return findCommune(args.id, user);
-    },
-    communes: async (
-      _,
-      args,
-      { user }
-    ): Promise<Omit<CommunesPaginatedResult, "data"> & { data?: Omit<Commune, "departement">[] }> => {
-      const [data, count] = await Promise.all([
-        findPaginatedCommunes(user, args),
-        getCommunesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    comportement: async (_source, args, { user }): Promise<Comportement | null> => {
-      return findComportement(args.id, user);
-    },
-    comportements: async (_, args, { user }): Promise<ComportementsPaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedComportements(user, args),
-        getComportementsCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    departement: async (_source, args, { user }): Promise<Departement | null> => {
-      return findDepartement(args.id, user);
-    },
-    departements: async (_, args, { user }): Promise<DepartementsPaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedDepartements(user, args),
-        getDepartementsCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    donnee: (_source, args, { user }): { id: number } => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return {
-        id: args.id,
-      };
-    },
-    espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
-      return findEspece(args.id, user);
-    },
-    especes: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
-      const [data, count] = await Promise.all([
-        findPaginatedEspeces(user, args, null),
-        getEspecesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    estimationDistance: async (_source, args, { user }): Promise<EstimationDistance | null> => {
-      return findEstimationDistance(args.id, user);
-    },
-    estimationsDistance: async (_, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedEstimationsDistance(user, args),
-        getEstimationsDistanceCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    estimationNombre: async (_source, args, { user }): Promise<EstimationNombre | null> => {
-      return findEstimationNombre(args.id, user);
-    },
-    estimationsNombre: async (_, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedEstimationsNombre(user, args),
-        getEstimationsNombreCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    inventaire: async (_source, args, { user }): Promise<Omit<Inventaire, "lieuDit"> | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findInventaire(args.id);
-    },
-    lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
-      return findLieuDit(args.id, user);
-    },
-    lieuxDits: async (
-      _,
-      args,
-      { user }
-    ): Promise<Omit<LieuxDitsPaginatedResult, "data"> & { data?: Omit<LieuDit, "commune">[] }> => {
-      const [data, count] = await Promise.all([
-        findPaginatedLieuxDits(user, args),
-        getLieuxDitsCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    meteo: async (_source, args, { user }): Promise<Meteo | null> => {
-      return findMeteo(args.id, user);
-    },
-    meteos: async (_, args, { user }): Promise<MeteosPaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedMeteos(user, args),
-        getMeteosCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    milieu: async (_source, args, { user }): Promise<Milieu | null> => {
-      return findMilieu(args.id, user);
-    },
-    milieux: async (_, args, { user }): Promise<MilieuxPaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedMilieux(user, args),
-        getMilieuxCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    observateur: async (_source, args, { user }): Promise<Observateur | null> => {
-      return findObservateur(args.id, user);
-    },
-    observateurs: async (_, args, { user }): Promise<ObservateursPaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedObservateurs(user, args),
-        getObservateursCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    sexe: async (_source, args, { user }): Promise<Sexe | null> => {
-      return findSexe(args.id, user);
-    },
-    sexes: async (_, args, { user }): Promise<SexesPaginatedResult> => {
-      const [data, count] = await Promise.all([
-        findPaginatedSexes(user, args),
-        getSexesCount(user, args?.searchParams?.q),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    specimenCountByAge: (_source, args, { user }): Promise<AgeWithSpecimensCount[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return countSpecimensByAgeForEspeceId(args?.especeId);
-    },
-    specimenCountBySexe: (_source, args, { user }): Promise<SexeWithSpecimensCount[]> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return countSpecimensBySexeForEspeceId(args?.especeId);
-    },
-    lastDonneeId: async (_source, args, { user }): Promise<number | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findLastDonneeId();
-    },
-    nextRegroupement: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return findNextRegroupement();
-    },
-    searchEspeces: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
-      const { searchCriteria, ...rest } = args ?? {};
-      const [data, count] = await Promise.all([
-        findPaginatedEspeces(user, rest, searchCriteria),
-        getEspecesCount(user, null, searchCriteria),
-      ]);
-      return {
-        data,
-        count,
-      };
-    },
-    searchDonnees: (_source, _args, { user }): Record<string, never> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return {};
-    },
-    importStatus: async (_source, args, { user }): Promise<ImportStatus | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return getImportStatus(args.importId, user);
-    },
-    exportAges: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateAgesExport();
-    },
-    exportClasses: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateClassesExport();
-    },
-    exportCommunes: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateCommunesExport();
-    },
-    exportComportements: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateComportementsExport();
-    },
-    exportDepartements: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateDepartementsExport();
-    },
-    exportEstimationsDistance: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateEstimationsDistanceExport();
-    },
-    exportEstimationsNombre: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateEstimationsNombreExport();
-    },
-    exportDonnees: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateDonneesExport(args?.searchCriteria);
-    },
-    exportEspeces: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateEspecesExport();
-    },
-    exportLieuxDits: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateLieuxDitsExport();
-    },
-    exportMeteos: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateMeteosExport();
-    },
-    exportMilieux: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateMilieuxExport();
-    },
-    exportObservateurs: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateObservateursExport();
-    },
-    exportSexes: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return generateSexesExport();
-    },
-    dumpDatabase: async (_source, args, { user }): Promise<string> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      if (user.role !== DatabaseRole.admin) {
-        throw new mercurius.ErrorWithProps("Database dump is not allowed for the current user");
-      }
-      return saveDatabaseRequest();
-    },
-    settings: async (_source, args, { user }): Promise<Settings | null> => {
-      return findAppConfiguration(user);
-    },
-  },
-  Mutation: {
-    deleteAge: async (_source, args, { user }): Promise<number> => {
-      return deleteAge(args.id, user).then(({ id }) => id);
-    },
-    deleteClasse: async (_source, args, { user }): Promise<number> => {
-      return deleteClasse(args.id, user).then(({ id }) => id);
-    },
-    deleteCommune: async (_source, args, { user }): Promise<number> => {
-      return deleteCommune(args.id, user).then(({ id }) => id);
-    },
-    deleteComportement: async (_source, args, { user }): Promise<number> => {
-      return deleteComportement(args.id, user).then(({ id }) => id);
-    },
-    deleteDepartement: async (_source, args, { user }): Promise<number> => {
-      return deleteDepartement(args.id, user).then(({ id }) => id);
-    },
-    deleteDonnee: async (_source, args, { user }): Promise<number> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      return deleteDonnee(args.id).then(({ id }) => id);
-    },
-    deleteEspece: async (_source, args, { user }): Promise<number> => {
-      return deleteEspece(args.id, user).then(({ id }) => id);
-    },
-    deleteEstimationDistance: async (_source, args, { user }): Promise<number> => {
-      return deleteEstimationDistance(args.id, user).then(({ id }) => id);
-    },
-    deleteEstimationNombre: async (_source, args, { user }): Promise<number> => {
-      return deleteEstimationNombre(args.id, user).then(({ id }) => id);
-    },
-    deleteLieuDit: async (_source, args, { user }): Promise<number> => {
-      return deleteLieuDit(args.id, user).then(({ id }) => id);
-    },
-    deleteMeteo: async (_source, args, { user }): Promise<number> => {
-      return deleteMeteo(args.id, user).then(({ id }) => id);
-    },
-    deleteMilieu: async (_source, args, { user }): Promise<number> => {
-      return deleteMilieu(args.id, user).then(({ id }) => id);
-    },
-    deleteObservateur: async (_source, args, { user }): Promise<number> => {
-      return deleteObservateur(args.id, user).then(({ id }) => id);
-    },
-    deleteSexe: async (_source, args, { user }): Promise<number> => {
-      return deleteSexe(args.id, user).then(({ id }) => id);
-    },
-    upsertAge: async (_source, args, { user }): Promise<Age> => {
-      return upsertAge(args, user);
-    },
-    upsertClasse: async (_source, args, { user }): Promise<Classe> => {
-      return upsertClasse(args, user);
-    },
-    upsertCommune: async (_source, args, { user }): Promise<CommuneEntity> => {
-      return upsertCommune(args, user);
-    },
-    upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
-      return upsertComportement(args, user);
-    },
-    upsertDepartement: async (_source, args, { user }): Promise<Departement> => {
-      return upsertDepartement(args, user);
-    },
-    upsertDonnee: async (
-      _source,
-      args,
-      { user }
-    ): Promise<{
-      failureReason?: string;
-      donnee?: DonneeWithRelations;
-    }> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      try {
-        const upsertedDonnee = await upsertDonnee(args);
+export const buildResolvers = ({ userService }: Services): IResolvers => {
+  const resolvers: IResolvers = {
+    Query: {
+      age: async (_source, args, { user }): Promise<Age | null> => {
+        return findAge(args.id, user);
+      },
+      ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedAges(user, args),
+          getAgesCount(user, args?.searchParams?.q),
+        ]);
         return {
-          donnee: upsertedDonnee,
+          data,
+          count,
         };
-      } catch (error) {
-        const failureReason = error as string;
+      },
+      classe: async (_source, args, { user }): Promise<Classe | null> => {
+        return findClasse(args.id, user);
+      },
+      classes: async (_, args, { user }): Promise<ClassesPaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedClasses(user, args),
+          getClassesCount(user, args?.searchParams?.q),
+        ]);
         return {
-          failureReason,
+          data,
+          count,
         };
-      }
-    },
-    upsertEspece: async (_source, args, { user }): Promise<EspeceEntity> => {
-      return upsertEspece(args, user);
-    },
-    upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
-      return upsertEstimationDistance(args, user);
-    },
-    upsertEstimationNombre: async (_source, args, { user }): Promise<EstimationNombre> => {
-      return upsertEstimationNombre(args, user);
-    },
-    upsertInventaire: async (
-      _source,
-      args,
-      { user }
-    ): Promise<{
-      failureReason?: UpsertInventaireFailureReason;
-      inventaire?: InventaireWithRelations;
-    }> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      try {
-        const upsertedInventaire = await upsertInventaire(args, user);
+      },
+      commune: async (_source, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
+        return findCommune(args.id, user);
+      },
+      communes: async (
+        _,
+        args,
+        { user }
+      ): Promise<Omit<CommunesPaginatedResult, "data"> & { data?: Omit<Commune, "departement">[] }> => {
+        const [data, count] = await Promise.all([
+          findPaginatedCommunes(user, args),
+          getCommunesCount(user, args?.searchParams?.q),
+        ]);
         return {
-          inventaire: upsertedInventaire,
+          data,
+          count,
         };
-      } catch (error) {
-        const failureReason = error as UpsertInventaireFailureReason;
+      },
+      comportement: async (_source, args, { user }): Promise<Comportement | null> => {
+        return findComportement(args.id, user);
+      },
+      comportements: async (_, args, { user }): Promise<ComportementsPaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedComportements(user, args),
+          getComportementsCount(user, args?.searchParams?.q),
+        ]);
         return {
-          failureReason,
+          data,
+          count,
         };
-      }
-    },
-    upsertLieuDit: async (_source, args, { user }): Promise<LieuDitWithCoordinatesAsNumber> => {
-      return upsertLieuDit(args, user);
-    },
-    upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
-      return upsertMeteo(args, user);
-    },
-    upsertMilieu: async (_source, args, { user }): Promise<Milieu> => {
-      return upsertMilieu(args, user);
-    },
-    upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
-      return upsertObservateur(args, user);
-    },
-    upsertSexe: async (_source, args, { user }): Promise<Sexe> => {
-      return upsertSexe(args, user);
-    },
-    updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
-      return persistUserSettings(appConfiguration, user);
-    },
-    resetDatabase: async (_source, args, { user }): Promise<boolean> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      if (user.role !== DatabaseRole.admin) {
-        throw new mercurius.ErrorWithProps("Database reset is not allowed for the current user");
-      }
-      await resetDatabase();
-      return true;
-    },
-    userSignup: async (_source, args, { user }): Promise<UserInfo> => {
-      return createUser(args.signupData, DatabaseRole.admin, user);
-    },
-    userLogin: async (_source, args, { reply }): Promise<UserInfo> => {
-      const userInfo = await loginUser(args.loginData);
-
-      if (userInfo) {
-        await createAndAddSignedTokenAsCookie(reply, userInfo);
-
-        logger.debug(`User ${userInfo?.username} logged in`);
-
-        return userInfo;
-      }
-
-      throw new mercurius.ErrorWithProps("Authentication failed");
-    },
-    userRefresh: async (_source, args, { user, reply }): Promise<UserInfo | null> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-
-      const userInfo = await getUser(user.id);
-      if (userInfo) {
-        await createAndAddSignedTokenAsCookie(reply, userInfo);
-        return userInfo;
-      }
-
-      return null;
-    },
-    userLogout: async (_source, args, { user, reply }): Promise<boolean> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-      await deleteTokenCookie(reply);
-
-      logger.debug(`User ${user.name} ( ID ${user.id} )logged out`);
-
-      return true;
-    },
-    userEdit: async (_source, args, { user, reply }): Promise<UserInfo> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-
-      try {
-        const updatedUser = await updateUser(args.id, args.editUserData, user);
-
-        if (updatedUser?.id === user?.id) {
-          await createAndAddSignedTokenAsCookie(reply, updatedUser);
+      },
+      departement: async (_source, args, { user }): Promise<Departement | null> => {
+        return findDepartement(args.id, user);
+      },
+      departements: async (_, args, { user }): Promise<DepartementsPaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedDepartements(user, args),
+          getDepartementsCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      donnee: (_source, args, { user }): { id: number } => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return {
+          id: args.id,
+        };
+      },
+      espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
+        return findEspece(args.id, user);
+      },
+      especes: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
+        const [data, count] = await Promise.all([
+          findPaginatedEspeces(user, args, null),
+          getEspecesCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      estimationDistance: async (_source, args, { user }): Promise<EstimationDistance | null> => {
+        return findEstimationDistance(args.id, user);
+      },
+      estimationsDistance: async (_, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedEstimationsDistance(user, args),
+          getEstimationsDistanceCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      estimationNombre: async (_source, args, { user }): Promise<EstimationNombre | null> => {
+        return findEstimationNombre(args.id, user);
+      },
+      estimationsNombre: async (_, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedEstimationsNombre(user, args),
+          getEstimationsNombreCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      inventaire: async (_source, args, { user }): Promise<Omit<Inventaire, "lieuDit"> | null> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return findInventaire(args.id);
+      },
+      lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
+        return findLieuDit(args.id, user);
+      },
+      lieuxDits: async (
+        _,
+        args,
+        { user }
+      ): Promise<Omit<LieuxDitsPaginatedResult, "data"> & { data?: Omit<LieuDit, "commune">[] }> => {
+        const [data, count] = await Promise.all([
+          findPaginatedLieuxDits(user, args),
+          getLieuxDitsCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      meteo: async (_source, args, { user }): Promise<Meteo | null> => {
+        return findMeteo(args.id, user);
+      },
+      meteos: async (_, args, { user }): Promise<MeteosPaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedMeteos(user, args),
+          getMeteosCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      milieu: async (_source, args, { user }): Promise<Milieu | null> => {
+        return findMilieu(args.id, user);
+      },
+      milieux: async (_, args, { user }): Promise<MilieuxPaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedMilieux(user, args),
+          getMilieuxCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      observateur: async (_source, args, { user }): Promise<Observateur | null> => {
+        return findObservateur(args.id, user);
+      },
+      observateurs: async (_, args, { user }): Promise<ObservateursPaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedObservateurs(user, args),
+          getObservateursCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      sexe: async (_source, args, { user }): Promise<Sexe | null> => {
+        return findSexe(args.id, user);
+      },
+      sexes: async (_, args, { user }): Promise<SexesPaginatedResult> => {
+        const [data, count] = await Promise.all([
+          findPaginatedSexes(user, args),
+          getSexesCount(user, args?.searchParams?.q),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      specimenCountByAge: (_source, args, { user }): Promise<AgeWithSpecimensCount[]> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return countSpecimensByAgeForEspeceId(args?.especeId);
+      },
+      specimenCountBySexe: (_source, args, { user }): Promise<SexeWithSpecimensCount[]> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return countSpecimensBySexeForEspeceId(args?.especeId);
+      },
+      lastDonneeId: async (_source, args, { user }): Promise<number | null> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return findLastDonneeId();
+      },
+      nextRegroupement: async (_source, args, { user }): Promise<number> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return findNextRegroupement();
+      },
+      searchEspeces: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
+        const { searchCriteria, ...rest } = args ?? {};
+        const [data, count] = await Promise.all([
+          findPaginatedEspeces(user, rest, searchCriteria),
+          getEspecesCount(user, null, searchCriteria),
+        ]);
+        return {
+          data,
+          count,
+        };
+      },
+      searchDonnees: (_source, _args, { user }): Record<string, never> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return {};
+      },
+      importStatus: async (_source, args, { user }): Promise<ImportStatus | null> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return getImportStatus(args.importId, user);
+      },
+      exportAges: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateAgesExport();
+      },
+      exportClasses: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateClassesExport();
+      },
+      exportCommunes: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateCommunesExport();
+      },
+      exportComportements: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateComportementsExport();
+      },
+      exportDepartements: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateDepartementsExport();
+      },
+      exportEstimationsDistance: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateEstimationsDistanceExport();
+      },
+      exportEstimationsNombre: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateEstimationsNombreExport();
+      },
+      exportDonnees: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateDonneesExport(args?.searchCriteria);
+      },
+      exportEspeces: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateEspecesExport();
+      },
+      exportLieuxDits: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateLieuxDitsExport();
+      },
+      exportMeteos: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateMeteosExport();
+      },
+      exportMilieux: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateMilieuxExport();
+      },
+      exportObservateurs: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateObservateursExport();
+      },
+      exportSexes: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return generateSexesExport();
+      },
+      dumpDatabase: async (_source, args, { user }): Promise<string> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        if (user.role !== DatabaseRole.admin) {
+          throw new mercurius.ErrorWithProps("Database dump is not allowed for the current user");
         }
-        return updatedUser;
-      } catch (e) {
-        throw new mercurius.ErrorWithProps("User modification is only allowed from the user itself");
-      }
+        return saveDatabaseRequest();
+      },
+      settings: async (_source, args, { user }): Promise<Settings | null> => {
+        return findAppConfiguration(user);
+      },
     },
-    userDelete: async (_source, args, { user, reply }): Promise<boolean> => {
-      if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+    Mutation: {
+      deleteAge: async (_source, args, { user }): Promise<number> => {
+        return deleteAge(args.id, user).then(({ id }) => id);
+      },
+      deleteClasse: async (_source, args, { user }): Promise<number> => {
+        return deleteClasse(args.id, user).then(({ id }) => id);
+      },
+      deleteCommune: async (_source, args, { user }): Promise<number> => {
+        return deleteCommune(args.id, user).then(({ id }) => id);
+      },
+      deleteComportement: async (_source, args, { user }): Promise<number> => {
+        return deleteComportement(args.id, user).then(({ id }) => id);
+      },
+      deleteDepartement: async (_source, args, { user }): Promise<number> => {
+        return deleteDepartement(args.id, user).then(({ id }) => id);
+      },
+      deleteDonnee: async (_source, args, { user }): Promise<number> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        return deleteDonnee(args.id).then(({ id }) => id);
+      },
+      deleteEspece: async (_source, args, { user }): Promise<number> => {
+        return deleteEspece(args.id, user).then(({ id }) => id);
+      },
+      deleteEstimationDistance: async (_source, args, { user }): Promise<number> => {
+        return deleteEstimationDistance(args.id, user).then(({ id }) => id);
+      },
+      deleteEstimationNombre: async (_source, args, { user }): Promise<number> => {
+        return deleteEstimationNombre(args.id, user).then(({ id }) => id);
+      },
+      deleteLieuDit: async (_source, args, { user }): Promise<number> => {
+        return deleteLieuDit(args.id, user).then(({ id }) => id);
+      },
+      deleteMeteo: async (_source, args, { user }): Promise<number> => {
+        return deleteMeteo(args.id, user).then(({ id }) => id);
+      },
+      deleteMilieu: async (_source, args, { user }): Promise<number> => {
+        return deleteMilieu(args.id, user).then(({ id }) => id);
+      },
+      deleteObservateur: async (_source, args, { user }): Promise<number> => {
+        return deleteObservateur(args.id, user).then(({ id }) => id);
+      },
+      deleteSexe: async (_source, args, { user }): Promise<number> => {
+        return deleteSexe(args.id, user).then(({ id }) => id);
+      },
+      upsertAge: async (_source, args, { user }): Promise<Age> => {
+        return upsertAge(args, user);
+      },
+      upsertClasse: async (_source, args, { user }): Promise<Classe> => {
+        return upsertClasse(args, user);
+      },
+      upsertCommune: async (_source, args, { user }): Promise<CommuneEntity> => {
+        return upsertCommune(args, user);
+      },
+      upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
+        return upsertComportement(args, user);
+      },
+      upsertDepartement: async (_source, args, { user }): Promise<Departement> => {
+        return upsertDepartement(args, user);
+      },
+      upsertDonnee: async (
+        _source,
+        args,
+        { user }
+      ): Promise<{
+        failureReason?: string;
+        donnee?: DonneeWithRelations;
+      }> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        try {
+          const upsertedDonnee = await upsertDonnee(args);
+          return {
+            donnee: upsertedDonnee,
+          };
+        } catch (error) {
+          const failureReason = error as string;
+          return {
+            failureReason,
+          };
+        }
+      },
+      upsertEspece: async (_source, args, { user }): Promise<EspeceEntity> => {
+        return upsertEspece(args, user);
+      },
+      upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
+        return upsertEstimationDistance(args, user);
+      },
+      upsertEstimationNombre: async (_source, args, { user }): Promise<EstimationNombre> => {
+        return upsertEstimationNombre(args, user);
+      },
+      upsertInventaire: async (
+        _source,
+        args,
+        { user }
+      ): Promise<{
+        failureReason?: UpsertInventaireFailureReason;
+        inventaire?: InventaireWithRelations;
+      }> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        try {
+          const upsertedInventaire = await upsertInventaire(args, user);
+          return {
+            inventaire: upsertedInventaire,
+          };
+        } catch (error) {
+          const failureReason = error as UpsertInventaireFailureReason;
+          return {
+            failureReason,
+          };
+        }
+      },
+      upsertLieuDit: async (_source, args, { user }): Promise<LieuDitWithCoordinatesAsNumber> => {
+        return upsertLieuDit(args, user);
+      },
+      upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
+        return upsertMeteo(args, user);
+      },
+      upsertMilieu: async (_source, args, { user }): Promise<Milieu> => {
+        return upsertMilieu(args, user);
+      },
+      upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
+        return upsertObservateur(args, user);
+      },
+      upsertSexe: async (_source, args, { user }): Promise<Sexe> => {
+        return upsertSexe(args, user);
+      },
+      updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
+        return persistUserSettings(appConfiguration, user);
+      },
+      resetDatabase: async (_source, args, { user }): Promise<boolean> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+        if (user.role !== DatabaseRole.admin) {
+          throw new mercurius.ErrorWithProps("Database reset is not allowed for the current user");
+        }
+        await resetDatabase();
+        return true;
+      },
+      userSignup: async (_source, args, { user }): Promise<UserInfo> => {
+        return createUser(args.signupData, DatabaseRole.admin, user);
+      },
+      userLogin: async (_source, args, { reply }): Promise<UserInfo> => {
+        const userInfo = await userService.loginUser(args.loginData);
 
-      try {
-        await deleteUser(args.id, user);
-      } catch (e) {
-        throw new mercurius.ErrorWithProps("User deletion request failed");
-      }
+        if (userInfo) {
+          await createAndAddSignedTokenAsCookie(reply, userInfo);
 
-      if (args?.id === user?.id) {
+          logger.debug(`User ${userInfo?.username} logged in`);
+
+          return userInfo;
+        }
+
+        throw new mercurius.ErrorWithProps("Authentication failed");
+      },
+      userRefresh: async (_source, args, { user, reply }): Promise<UserInfo | null> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+
+        const userInfo = await getUser(user.id);
+        if (userInfo) {
+          await createAndAddSignedTokenAsCookie(reply, userInfo);
+          return userInfo;
+        }
+
+        return null;
+      },
+      userLogout: async (_source, args, { user, reply }): Promise<boolean> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
         await deleteTokenCookie(reply);
-      }
 
-      return true;
+        logger.debug(`User ${user.name} ( ID ${user.id} )logged out`);
+
+        return true;
+      },
+      userEdit: async (_source, args, { user, reply }): Promise<UserInfo> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+
+        try {
+          const updatedUser = await updateUser(args.id, args.editUserData, user);
+
+          if (updatedUser?.id === user?.id) {
+            await createAndAddSignedTokenAsCookie(reply, updatedUser);
+          }
+          return updatedUser;
+        } catch (e) {
+          throw new mercurius.ErrorWithProps("User modification is only allowed from the user itself");
+        }
+      },
+      userDelete: async (_source, args, { user, reply }): Promise<boolean> => {
+        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+
+        try {
+          await deleteUser(args.id, user);
+        } catch (e) {
+          throw new mercurius.ErrorWithProps("User deletion request failed");
+        }
+
+        if (args?.id === user?.id) {
+          await deleteTokenCookie(reply);
+        }
+
+        return true;
+      },
     },
-  },
-  Age: {
-    editable: isEntityEditableResolver(findAge),
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByAge),
-  },
-  Classe: {
-    editable: isEntityEditableResolver(findClasse),
-    nbEspeces: async (parent, args, { user }): Promise<number | null> => {
-      if (!parent?.id) {
-        return null;
-      }
-      return getEspecesCountByClasse(parent.id, user);
+    Age: {
+      editable: isEntityEditableResolver(findAge),
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByAge),
     },
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByClasse),
-  },
-  Commune: {
-    editable: isEntityEditableResolver(findCommune),
-    nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
-      if (!parent?.id) {
-        return null;
-      }
-      return getLieuxDitsCountByCommune(parent.id, user);
+    Classe: {
+      editable: isEntityEditableResolver(findClasse),
+      nbEspeces: async (parent, args, { user }): Promise<number | null> => {
+        if (!parent?.id) {
+          return null;
+        }
+        return getEspecesCountByClasse(parent.id, user);
+      },
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByClasse),
     },
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByCommune),
-    departement: async (parent, args, { user }): Promise<Departement | null> => {
-      return findDepartementOfCommuneId(parent?.id, user);
+    Commune: {
+      editable: isEntityEditableResolver(findCommune),
+      nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
+        if (!parent?.id) {
+          return null;
+        }
+        return getLieuxDitsCountByCommune(parent.id, user);
+      },
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByCommune),
+      departement: async (parent, args, { user }): Promise<Departement | null> => {
+        return findDepartementOfCommuneId(parent?.id, user);
+      },
     },
-  },
-  Comportement: {
-    editable: isEntityEditableResolver(findComportement),
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByComportement),
-  },
-  Departement: {
-    editable: isEntityEditableResolver(findDepartement),
-    nbCommunes: async (parent, args, { user }): Promise<number | null> => {
-      if (!parent?.id) {
-        return null;
-      }
-      return getCommunesCountByDepartement(parent.id, user);
+    Comportement: {
+      editable: isEntityEditableResolver(findComportement),
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByComportement),
     },
-    nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
-      if (!parent?.id) {
-        return null;
-      }
-      return getLieuxDitsCountByDepartement(parent.id, user);
+    Departement: {
+      editable: isEntityEditableResolver(findDepartement),
+      nbCommunes: async (parent, args, { user }): Promise<number | null> => {
+        if (!parent?.id) {
+          return null;
+        }
+        return getCommunesCountByDepartement(parent.id, user);
+      },
+      nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
+        if (!parent?.id) {
+          return null;
+        }
+        return getLieuxDitsCountByDepartement(parent.id, user);
+      },
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByDepartement),
     },
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByDepartement),
-  },
-  Donnee: {
-    espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
-      const espece = await findEspeceOfDonneeId(parent?.id, user);
-      return findEspece(espece?.id, user);
+    Donnee: {
+      espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
+        const espece = await findEspeceOfDonneeId(parent?.id, user);
+        return findEspece(espece?.id, user);
+      },
+      inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
+        const inventaire = await findInventaireOfDonneeId(parent?.id);
+        return findInventaire(inventaire?.id);
+      },
     },
-    inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
-      const inventaire = await findInventaireOfDonneeId(parent?.id);
-      return findInventaire(inventaire?.id);
+    DonneeResult: {
+      donnee: async (parent): Promise<Omit<Donnee, "inventaire" | "espece"> | null> => {
+        return findDonnee(parent?.id);
+      },
+      navigation: async (parent): Promise<DonneeNavigationData> => {
+        return findDonneeNavigationData(parent?.id);
+      },
     },
-  },
-  DonneeResult: {
-    donnee: async (parent): Promise<Omit<Donnee, "inventaire" | "espece"> | null> => {
-      return findDonnee(parent?.id);
+    Espece: {
+      editable: isEntityEditableResolver(findEspece),
+      classe: async (parent, args, { user }): Promise<Classe | null> => {
+        return findClasseOfEspeceId(parent?.id, user);
+      },
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByEspece),
     },
-    navigation: async (parent): Promise<DonneeNavigationData> => {
-      return findDonneeNavigationData(parent?.id);
+    EstimationDistance: {
+      editable: isEntityEditableResolver(findEstimationDistance),
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByEstimationDistance),
     },
-  },
-  Espece: {
-    editable: isEntityEditableResolver(findEspece),
-    classe: async (parent, args, { user }): Promise<Classe | null> => {
-      return findClasseOfEspeceId(parent?.id, user);
+    EstimationNombre: {
+      editable: isEntityEditableResolver(findEstimationNombre),
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByEstimationNombre),
     },
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByEspece),
-  },
-  EstimationDistance: {
-    editable: isEntityEditableResolver(findEstimationDistance),
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByEstimationDistance),
-  },
-  EstimationNombre: {
-    editable: isEntityEditableResolver(findEstimationNombre),
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByEstimationNombre),
-  },
-  Inventaire: {
-    lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
-      const lieuDit = await findLieuDitOfInventaireId(parent?.id);
-      return findLieuDit(lieuDit?.id, user);
+    Inventaire: {
+      lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
+        const lieuDit = await findLieuDitOfInventaireId(parent?.id);
+        return findLieuDit(lieuDit?.id, user);
+      },
     },
-  },
-  LieuDit: {
-    editable: isEntityEditableResolver(findLieuDit),
-    commune: async (parent, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
-      return findCommuneOfLieuDitId(parent?.id, user);
+    LieuDit: {
+      editable: isEntityEditableResolver(findLieuDit),
+      commune: async (parent, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
+        return findCommuneOfLieuDitId(parent?.id, user);
+      },
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByLieuDit),
     },
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByLieuDit),
-  },
-  Meteo: {
-    editable: isEntityEditableResolver(findMeteo),
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByMeteo),
-  },
-  Milieu: {
-    editable: isEntityEditableResolver(findMilieu),
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByMilieu),
-  },
-  Observateur: {
-    editable: isEntityEditableResolver(findObservateur),
-    nbDonnees: entityNbDonneesResolver(getDonneesCountByObservateur),
-  },
-  PaginatedSearchDonneesResult: {
-    result: async (_, args): Promise<Omit<Donnee, "espece" | "inventaire">[]> => {
-      return findPaginatedDonneesByCriteria(args);
+    Meteo: {
+      editable: isEntityEditableResolver(findMeteo),
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByMeteo),
     },
-    count: async (_, { searchCriteria }): Promise<number> => {
-      return getNbDonneesByCriteria(searchCriteria);
+    Milieu: {
+      editable: isEntityEditableResolver(findMilieu),
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByMilieu),
     },
-  },
-  Sexe: {
-    editable: isEntityEditableResolver(findSexe),
-    nbDonnees: entityNbDonneesResolver(getDonneesCountBySexe),
-  },
+    Observateur: {
+      editable: isEntityEditableResolver(findObservateur),
+      nbDonnees: entityNbDonneesResolver(getDonneesCountByObservateur),
+    },
+    PaginatedSearchDonneesResult: {
+      result: async (_, args): Promise<Omit<Donnee, "espece" | "inventaire">[]> => {
+        return findPaginatedDonneesByCriteria(args);
+      },
+      count: async (_, { searchCriteria }): Promise<number> => {
+        return getNbDonneesByCriteria(searchCriteria);
+      },
+    },
+    Sexe: {
+      editable: isEntityEditableResolver(findSexe),
+      nbDonnees: entityNbDonneesResolver(getDonneesCountBySexe),
+    },
+  };
+
+  return resolvers;
 };
-
-export default resolvers;

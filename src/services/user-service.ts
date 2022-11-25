@@ -1,6 +1,9 @@
 import { DatabaseRole, User } from "@prisma/client";
 import { randomBytes, scryptSync } from "node:crypto";
-import { EditUserData, UserCreateInput, UserLoginInput } from "../graphql/generated/graphql-types";
+import type { CamelCasedProperties, Except } from "type-fest";
+import { EditUserData, UserCreateInput } from "../graphql/generated/graphql-types";
+import { type buildUserRepository } from "../repositories/user/user-repository";
+import { type FindByUserNameResult } from "../repositories/user/user-repository-types";
 import prisma from "../sql/prisma";
 import { LoggedUser } from "../types/LoggedUser";
 import { OucaError } from "../utils/errors";
@@ -8,7 +11,43 @@ import { SALT_AND_PWD_DELIMITER } from "../utils/keys";
 import { logger } from "../utils/logger";
 import options from "../utils/options";
 
+type UserServiceDependencies = {
+  userRepository: ReturnType<typeof buildUserRepository>;
+};
+
 const PASSWORD_KEY_LENGTH = 64;
+
+export const buildUserService = ({ userRepository }: UserServiceDependencies) => {
+  const loginUser = async ({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<CamelCasedProperties<Except<FindByUserNameResult, "password">>> => {
+    // Try to find the matching profile
+    const matchingUser = await userRepository.findUserByUsername(username);
+
+    if (!matchingUser) {
+      return Promise.reject(new OucaError("OUCA0002"));
+    }
+
+    // Check that the password matches
+    if (!validatePassword(password, matchingUser.password)) {
+      return Promise.reject(new OucaError("OUCA0003"));
+    }
+
+    const { password: userPassword, ...userInfo } = matchingUser;
+
+    return {
+      ...userInfo,
+    };
+  };
+
+  return {
+    loginUser,
+  };
+};
 
 // Make sure that the password is properly encrypted :-)
 export const getHashedPassword = (plaintextPassword: string): string => {
@@ -102,30 +141,6 @@ export const createUser = async (
   }
 
   return createdUser;
-};
-
-export const loginUser = async (loginData: UserLoginInput): Promise<Omit<User, "password">> => {
-  const { username, password } = loginData;
-
-  // Try to find the matching profile
-  const matchingUser = await prisma.user.findUnique({
-    where: {
-      username,
-    },
-  });
-
-  if (!matchingUser) {
-    return Promise.reject(new OucaError("OUCA0002"));
-  }
-
-  // Check that the password matches
-  if (!validatePassword(password, matchingUser.password)) {
-    return Promise.reject(new OucaError("OUCA0003"));
-  }
-
-  const { password: userPassword, ...userInfo } = matchingUser;
-
-  return userInfo;
 };
 
 export const updateUser = async (
