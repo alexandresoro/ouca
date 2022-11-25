@@ -1,4 +1,4 @@
-import { NicheurCode, NICHEUR_VALUES } from "../types/nicheur.model";
+import { type NicheurCode, NICHEUR_VALUES } from "../types/nicheur.model";
 
 export const getHighestNicheurStatus = (comportements: { nicheur?: NicheurCode | null }[]): NicheurCode | null => {
   // Compute nicheur status for the Donnée (i.e. highest nicheur status of the comportements)

@@ -1,4 +1,4 @@
-import { Coordinates } from "../types/coordinates.object";
+import { type Coordinates } from "../types/coordinates.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
 test("should throw an error if coordinates are missing", () => {

@@ -1,6 +1,6 @@
-import { Coordinates } from "../types/coordinates.object";
+import { type Coordinates } from "../types/coordinates.object";
 import { areCoordinatesCustomized, areSameCoordinates } from "./coordinates-helper";
-import { CoordinatesSystemType } from "./coordinates-system.object";
+import { type CoordinatesSystemType } from "./coordinates-system.object";
 
 test("should correctly validate non-customized coordinated", () => {
   const lieudit = {

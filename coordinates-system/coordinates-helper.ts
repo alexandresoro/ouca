@@ -1,5 +1,5 @@
-import { Coordinates } from "../types/coordinates.object";
-import { CoordinatesSystemType } from "./coordinates-system.object";
+import { type Coordinates } from "../types/coordinates.object";
+import { type CoordinatesSystemType } from "./coordinates-system.object";
 import { transformCoordinates } from "./coordinates-transformer";
 
 type LieuDitForCoordinates = {

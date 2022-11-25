@@ -1,4 +1,4 @@
-import { CoordinatesSystem, CoordinatesSystemType } from "./coordinates-system.object";
+import { type CoordinatesSystem, type CoordinatesSystemType } from "./coordinates-system.object";
 import { GPS_COORDINATES } from "./gps.object";
 import { LAMBERT_93_COORDINATES } from "./lambert-93.object";
 
