@@ -12,7 +12,7 @@ const executeResetDatabase = async (): Promise<void> => {
       "npx",
       ["prisma", "migrate", "reset", "--skip-generate", "--schema=../prisma/schema.prisma", "--force"],
       {
-        env: { ...process.env, DATABASE_URL: options.database.url },
+        env: { ...process.env, DATABASE_URL: options.database.prismaUrl },
       }
     );
 

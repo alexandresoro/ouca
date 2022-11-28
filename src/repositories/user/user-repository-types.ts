@@ -1,20 +1,13 @@
 import { z } from "zod";
+import { databaseRoles } from "../../types/User";
 
-const databaseRoles = ["admin", "contributor"] as const;
-export type DatabaseRole = typeof databaseRoles[number];
-
-export const getUserInfoByIdSchema = z.object({
+export const userWithPasswordSchema = z.object({
   id: z.string(),
   username: z.string(),
+  password: z.string(),
   role: z.enum(databaseRoles),
   firstName: z.string(),
   lastName: z.string().nullable(),
 });
 
-export type UserInfo = z.infer<typeof getUserInfoByIdSchema>;
-
-export const findByUserNameSchema = getUserInfoByIdSchema.extend({
-  password: z.string(),
-});
-
-export type FindByUserNameResult = z.infer<typeof findByUserNameSchema>;
+export type UserWithPasswordResult = z.infer<typeof userWithPasswordSchema>;

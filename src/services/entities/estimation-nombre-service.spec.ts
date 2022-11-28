@@ -1,10 +1,10 @@
-import { DatabaseRole, type EstimationNombre, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type EstimationNombre } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EstimationNombreOrderBy,
+  SortOrder,
   type MutationUpsertEstimationNombreArgs,
   type QueryEstimationsNombreArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -203,7 +203,7 @@ describe("Update of a number estimate", () => {
   test("should be allowed when requested by an admin", async () => {
     const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertEstimationNombre(numberEstimateData, loggedUser);
 
@@ -247,7 +247,7 @@ describe("Update of a number estimate", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
@@ -262,7 +262,7 @@ describe("Update of a number estimate", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.estimationNombre.update.mockImplementation(prismaConstraintFailed);
 
@@ -344,7 +344,7 @@ describe("Deletion of a number estimate", () => {
   test("should handle the deletion of an owned number estimate", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const numberEstimate = mock<EstimationNombre>({
@@ -365,7 +365,7 @@ describe("Deletion of a number estimate", () => {
 
   test("should handle the deletion of any number estimate if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
@@ -382,7 +382,7 @@ describe("Deletion of a number estimate", () => {
 
   test("should return an error when deleting a non-owned number estimate as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());

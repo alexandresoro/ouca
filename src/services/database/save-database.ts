@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { type ChildProcess, spawn } from "node:child_process";
+import { spawn, type ChildProcess } from "node:child_process";
 import { promises } from "node:fs";
 import path from "node:path";
 import { DATE_PATTERN } from "../../utils/constants";
@@ -15,7 +15,7 @@ const executeSqlDump = async (): Promise<string> => {
     let stdout = "";
     let stderr = "";
 
-    const dbUrl = new URL(options.database.url);
+    const dbUrl = new URL(options.database.prismaUrl);
 
     const dumpParams: string[] = [
       `--user=${dbUrl.username}`,

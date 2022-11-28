@@ -1,4 +1,4 @@
-import { type Classe, DatabaseRole, Prisma } from "@prisma/client";
+import { Prisma, type Classe } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertClasseArgs,
@@ -174,7 +174,7 @@ export const upsertClasse = async (args: MutationUpsertClasseArgs, loggedUser: L
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.classe.findFirst({
         where: { id },
       });
@@ -220,7 +220,7 @@ export const deleteClasse = async (id: number, loggedUser: LoggedUser | null): P
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.classe.findFirst({
       where: { id },
     });

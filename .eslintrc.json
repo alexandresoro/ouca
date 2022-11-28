@@ -26,7 +26,8 @@
     "@typescript-eslint/array-type": "error",
     "@typescript-eslint/consistent-type-imports": ["warn", { "fixStyle": "inline-type-imports" }],
     "@typescript-eslint/no-unused-vars": ["warn", { "ignoreRestSiblings": true }],
-    "@typescript-eslint/prefer-for-of": "error"
+    "@typescript-eslint/prefer-for-of": "error",
+    "@typescript-eslint/restrict-template-expressions": ["error", { "allowNumber": true, "allowBoolean": true }]
   },
   "overrides": [
     {

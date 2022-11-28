@@ -1,10 +1,10 @@
-import { DatabaseRole, type EstimationDistance, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type EstimationDistance } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
+  SortOrder,
   type MutationUpsertEstimationDistanceArgs,
   type QueryEstimationsDistanceArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -203,7 +203,7 @@ describe("Update of a distance estimate", () => {
   test("should be allowed when requested by an admin", async () => {
     const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertEstimationDistance(distanceEstimateData, loggedUser);
 
@@ -247,7 +247,7 @@ describe("Update of a distance estimate", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(existingData);
@@ -262,7 +262,7 @@ describe("Update of a distance estimate", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.estimationDistance.update.mockImplementation(prismaConstraintFailed);
 
@@ -344,7 +344,7 @@ describe("Deletion of a distance exstimate", () => {
   test("should handle the deletion of an owned distance estimate", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const distanceEstimate = mock<EstimationDistance>({
@@ -365,7 +365,7 @@ describe("Deletion of a distance exstimate", () => {
 
   test("should handle the deletion of any distance estimate if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
@@ -382,7 +382,7 @@ describe("Deletion of a distance exstimate", () => {
 
   test("should return an error when deleting a non-owned distance estimate as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());

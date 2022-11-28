@@ -1,10 +1,10 @@
-import { DatabaseRole, type Meteo, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Meteo } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
+  SortOrder,
   type MutationUpsertMeteoArgs,
   type QueryMeteosArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -209,7 +209,7 @@ describe("Update of a weather", () => {
   test("should be allowed when requested by an admin", async () => {
     const weatherData = mock<MutationUpsertMeteoArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertMeteo(weatherData, loggedUser);
 
@@ -253,7 +253,7 @@ describe("Update of a weather", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.meteo.findFirst.mockResolvedValueOnce(existingData);
@@ -268,7 +268,7 @@ describe("Update of a weather", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.meteo.update.mockImplementation(prismaConstraintFailed);
 
@@ -350,7 +350,7 @@ describe("Deletion of a weather", () => {
   test("should handle the deletion of an owned weather", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const meteo = mock<Meteo>({
@@ -371,7 +371,7 @@ describe("Deletion of a weather", () => {
 
   test("should handle the deletion of any weather if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
@@ -388,7 +388,7 @@ describe("Deletion of a weather", () => {
 
   test("should return an error when deleting a non-owned weather as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());

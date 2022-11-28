@@ -11,15 +11,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
-import { createPool, type DatabasePool } from "slonik";
+import { createPool } from "slonik";
 import { createFieldNameTransformationInterceptor } from "slonik-interceptor-field-name-transformation";
 import { buildGraphQLContext } from "./graphql/graphql-context";
 import { logQueries, logResults } from "./graphql/mercurius-logger";
 import { buildResolvers } from "./graphql/resolvers";
-import { type ImportType, IMPORT_TYPE } from "./model/import-types";
+import { IMPORT_TYPE, type ImportType } from "./model/import-types";
 import { startImportTask } from "./services/import-manager";
-import { buildServices, type Services } from "./services/services";
-import { getLoggedUserInfo } from "./services/token-service";
+import { buildServices } from "./services/services";
 import { createQueryLoggingInterceptor } from "./slonik/slonik-pino-interceptor";
 import { createResultParserInterceptor } from "./slonik/slonik-zod-interceptor";
 import { logger } from "./utils/logger";
@@ -39,23 +38,20 @@ checkAndCreateFolders();
 
 (async () => {
   // Database connection
-  let services: Services;
-  let slonik: DatabasePool;
-  if (options.database.usePg) {
-    slonik = await createPool(options.database.pgUrl, {
-      interceptors: [
-        createFieldNameTransformationInterceptor({ format: "CAMEL_CASE" }),
-        createResultParserInterceptor(),
-        createQueryLoggingInterceptor(logger),
-      ],
-    });
-    logger.debug("Connection to database successful");
+  const slonik = await createPool(options.database.url, {
+    interceptors: [
+      createFieldNameTransformationInterceptor({ format: "CAMEL_CASE" }),
+      createResultParserInterceptor(),
+      createQueryLoggingInterceptor(logger),
+    ],
+  });
+  logger.debug("Connection to database successful");
 
-    services = buildServices({ slonik });
-  }
+  // Build services
+  const services = buildServices({ logger, slonik });
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const { tokenService } = services!;
+  const { tokenService } = services;
 
   // Middlewares
   await server.register(fastifyMultipart);
@@ -76,8 +72,7 @@ checkAndCreateFolders();
   // Mercurius GraphQL adapter
   await server.register(mercurius, {
     schema,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    resolvers: buildResolvers(services!),
+    resolvers: buildResolvers(services),
     context: buildGraphQLContext({ tokenService }),
     validationRules: process.env.NODE_ENV === "production" ? [NoSchemaIntrospectionCustomRule] : [],
   });
@@ -110,7 +105,7 @@ checkAndCreateFolders();
     if (!tokenPayload) {
       return reply.code(401).send();
     }
-    const loggedUser = getLoggedUserInfo(tokenPayload);
+    const loggedUser = tokenService.getLoggedUserInfo(tokenPayload);
     if (!loggedUser) {
       return reply.code(401).send();
     }

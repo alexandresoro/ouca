@@ -1,4 +1,4 @@
-import { type Comportement, DatabaseRole, Nicheur, Prisma } from "@prisma/client";
+import { Nicheur, Prisma, type Comportement } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertComportementArgs,
@@ -173,7 +173,7 @@ export const upsertComportement = async (
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.comportement.findFirst({
         where: { id },
       });
@@ -214,7 +214,7 @@ export const deleteComportement = async (id: number, loggedUser: LoggedUser | nu
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.comportement.findFirst({
       where: { id },
     });

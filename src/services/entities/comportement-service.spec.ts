@@ -1,10 +1,10 @@
-import { type Comportement, DatabaseRole, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Comportement } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   ComportementsOrderBy,
+  SortOrder,
   type MutationUpsertComportementArgs,
   type QueryComportementsArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -292,7 +292,7 @@ describe("Update of a behavior", () => {
   test("should be allowed when requested by an admin", async () => {
     const behaviorData = mock<MutationUpsertComportementArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertComportement(behaviorData, loggedUser);
 
@@ -336,7 +336,7 @@ describe("Update of a behavior", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
@@ -351,7 +351,7 @@ describe("Update of a behavior", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.comportement.update.mockImplementation(prismaConstraintFailed);
 
@@ -433,7 +433,7 @@ describe("Deletion of a behavior", () => {
   test("should handle the deletion of an owned behavior", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const behavior = mock<Comportement>({
@@ -454,7 +454,7 @@ describe("Deletion of a behavior", () => {
 
   test("should handle the deletion of any behavior if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
@@ -471,7 +471,7 @@ describe("Deletion of a behavior", () => {
 
   test("should return an error when deleting a non-owned behavior as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());

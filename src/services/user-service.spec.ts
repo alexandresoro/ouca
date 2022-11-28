@@ -1,21 +1,22 @@
-import { DatabaseRole, type User } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import { type EditUserData, type UserCreateInput, type UserLoginInput } from "../graphql/generated/graphql-types";
 import { type UserRepository } from "../repositories/user/user-repository";
-import { prismaMock } from "../sql/prisma-mock";
-import { type LoggedUser } from "../types/LoggedUser";
+import { type LoggedUser, type UserWithPassword } from "../types/User";
 import { OucaError } from "../utils/errors";
-import { logger } from "../utils/logger";
 import options from "../utils/options";
-import { buildUserService, createUser, getHashedPassword, updateUser, validatePassword } from "./user-service";
+import { buildUserService, getHashedPassword, validatePassword } from "./user-service";
 
-const userRepository = mock<UserRepository>();
-const userService = buildUserService({
-  userRepository,
+const userRepository = mock<UserRepository>({
+  getAdminsCount: jest.fn(),
+  createUser: jest.fn(),
+  updateUser: jest.fn(),
 });
+const logger = mock<Logger>();
 
-beforeAll(() => {
-  logger.level = "silent";
+const userService = buildUserService({
+  logger,
+  userRepository,
 });
 
 describe("Password validator", () => {
@@ -50,11 +51,11 @@ describe("User creation", () => {
     const loggedUser = mock<LoggedUser>();
     options.admin.signupsAllowed = false;
 
-    await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
+    await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0005")
     );
 
-    expect(prismaMock.user.create).not.toHaveBeenCalled();
+    expect(userRepository.createUser).not.toHaveBeenCalled();
   });
 
   test("should throw error when creating initial admin and no env password defined", async () => {
@@ -63,13 +64,13 @@ describe("User creation", () => {
     options.admin.signupsAllowed = true;
     options.admin.defaultAdminPassword = "";
 
-    prismaMock.user.count.mockResolvedValueOnce(0);
+    userRepository.getAdminsCount.mockResolvedValueOnce(0);
 
-    await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
+    await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0006")
     );
 
-    expect(prismaMock.user.create).not.toHaveBeenCalled();
+    expect(userRepository.createUser).not.toHaveBeenCalled();
   });
 
   test("should throw error when creating initial admin and incorrect password provided", async () => {
@@ -80,13 +81,13 @@ describe("User creation", () => {
     options.admin.signupsAllowed = true;
     options.admin.defaultAdminPassword = "right";
 
-    prismaMock.user.count.mockResolvedValueOnce(0);
+    userRepository.getAdminsCount.mockResolvedValueOnce(0);
 
-    await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
+    await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0006")
     );
 
-    expect(prismaMock.user.create).not.toHaveBeenCalled();
+    expect(userRepository.createUser).not.toHaveBeenCalled();
   });
 
   test("should handle creation of initial admin and correct password provided", async () => {
@@ -97,27 +98,28 @@ describe("User creation", () => {
     options.admin.signupsAllowed = true;
     options.admin.defaultAdminPassword = "right";
 
-    prismaMock.user.count.mockResolvedValueOnce(0);
+    userRepository.getAdminsCount.mockResolvedValueOnce(0);
+    userRepository.createUser.mockResolvedValueOnce(mock());
 
-    await createUser(signupData, DatabaseRole.contributor, loggedUser);
+    await userService.createUser(signupData, "contributor", loggedUser);
 
-    expect(prismaMock.user.create).toHaveBeenCalledTimes(1);
+    expect(userRepository.createUser).toHaveBeenCalledTimes(1);
   });
 
   test("should throw error when non admin tries to create a user", async () => {
     const signupData = mock<UserCreateInput>();
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
     options.admin.signupsAllowed = true;
 
-    prismaMock.user.count.mockResolvedValueOnce(1);
+    userRepository.getAdminsCount.mockResolvedValueOnce(1);
 
-    await expect(() => createUser(signupData, DatabaseRole.contributor, loggedUser)).rejects.toThrowError(
+    await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0007")
     );
 
-    expect(prismaMock.user.create).not.toHaveBeenCalled();
+    expect(userRepository.createUser).not.toHaveBeenCalled();
   });
 
   test("should handle creation of user when requested by an admin", async () => {
@@ -125,15 +127,16 @@ describe("User creation", () => {
       password: "anything",
     });
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
     options.admin.signupsAllowed = true;
 
-    prismaMock.user.count.mockResolvedValueOnce(2);
+    userRepository.getAdminsCount.mockResolvedValueOnce(2);
+    userRepository.createUser.mockResolvedValueOnce(mock());
 
-    await createUser(signupData, DatabaseRole.contributor, loggedUser);
+    await userService.createUser(signupData, "contributor", loggedUser);
 
-    expect(prismaMock.user.create).toHaveBeenCalledTimes(1);
+    expect(userRepository.createUser).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -155,7 +158,7 @@ describe("User login", () => {
     const correctPassword = "mysupersafepassw0rd!";
     const hashedPassword = getHashedPassword(correctPassword);
 
-    const matchingUser = mock<User>({
+    const matchingUser = mock<UserWithPassword>({
       username: loginData.username,
       password: hashedPassword,
     });
@@ -174,7 +177,7 @@ describe("User login", () => {
       password: correctPassword,
     };
 
-    const matchingUser = mock<User>({
+    const matchingUser = mock<UserWithPassword>({
       username: loginData.username,
       password: hashedPassword,
     });
@@ -190,7 +193,7 @@ describe("User update", () => {
   test("should be able to edit itself", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const correctPassword = "mysupersafepassw0rd!";
@@ -201,36 +204,39 @@ describe("User update", () => {
       newPassword: "xd",
     });
 
-    const matchingUser = mock<User>({
+    const matchingUser = mock<UserWithPassword>({
       password: hashedPassword,
     });
 
-    prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
+    userRepository.getUserInfoById.mockResolvedValueOnce(matchingUser);
+    userRepository.updateUser.mockResolvedValueOnce(mock());
 
-    await updateUser(loggedUser.id, editUserData, loggedUser);
+    await userService.updateUser(loggedUser.id, editUserData, loggedUser);
 
-    expect(prismaMock.user.update).toHaveBeenCalledTimes(1);
+    expect(userRepository.updateUser).toHaveBeenCalledTimes(1);
   });
 
   test("should not be able to edit an non existing user", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const editUserData = mock<EditUserData>();
 
-    prismaMock.user.findUnique.mockResolvedValueOnce(null);
+    userRepository.getUserInfoById.mockResolvedValueOnce(null);
 
-    await expect(updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0002"));
+    await expect(userService.updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(
+      new OucaError("OUCA0002")
+    );
 
-    expect(prismaMock.user.update).not.toHaveBeenCalled();
+    expect(userRepository.updateUser).not.toHaveBeenCalled();
   });
 
   test("should not be able to edit when incorrect password provided", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const correctPassword = "mysupersafepassw0rd!";
@@ -240,21 +246,23 @@ describe("User update", () => {
       currentPassword: "lol",
     });
 
-    const matchingUser = mock<User>({
+    const matchingUser = mock<UserWithPassword>({
       password: hashedPassword,
     });
 
-    prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
+    userRepository.getUserInfoById.mockResolvedValueOnce(matchingUser);
 
-    await expect(updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0003"));
+    await expect(userService.updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(
+      new OucaError("OUCA0003")
+    );
 
-    expect(prismaMock.user.update).not.toHaveBeenCalled();
+    expect(userRepository.updateUser).not.toHaveBeenCalled();
   });
 
   test("should not be able to edit when password missing", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const correctPassword = "mysupersafepassw0rd!";
@@ -264,21 +272,23 @@ describe("User update", () => {
       currentPassword: undefined,
     });
 
-    const matchingUser = mock<User>({
+    const matchingUser = mock<UserWithPassword>({
       password: hashedPassword,
     });
 
-    prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
+    userRepository.getUserInfoById.mockResolvedValueOnce(matchingUser);
 
-    await expect(updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0003"));
+    await expect(userService.updateUser(loggedUser.id, editUserData, loggedUser)).rejects.toEqual(
+      new OucaError("OUCA0003")
+    );
 
-    expect(prismaMock.user.update).not.toHaveBeenCalled();
+    expect(userRepository.updateUser).not.toHaveBeenCalled();
   });
 
   test("should be able to edit another user if admin", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.admin,
+      role: "admin",
     };
 
     const correctPassword = "mysupersafepassw0rd!";
@@ -288,28 +298,29 @@ describe("User update", () => {
       lastName: "xd",
     };
 
-    const matchingUser = mock<User>({
+    const matchingUser = mock<UserWithPassword>({
       password: hashedPassword,
     });
 
-    prismaMock.user.findUnique.mockResolvedValueOnce(matchingUser);
+    userRepository.getUserInfoById.mockResolvedValueOnce(matchingUser);
+    userRepository.updateUser.mockResolvedValueOnce(mock());
 
-    await updateUser("11", editUserData, loggedUser);
+    await userService.updateUser("11", editUserData, loggedUser);
 
-    expect(prismaMock.user.update).toHaveBeenCalledTimes(1);
+    expect(userRepository.updateUser).toHaveBeenCalledTimes(1);
   });
 
   test("should return an error when editing another user as non-admin", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const editUserData = mock<EditUserData>();
 
-    await expect(updateUser("11", editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(userService.updateUser("11", editUserData, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.user.update).not.toHaveBeenCalled();
+    expect(userRepository.updateUser).not.toHaveBeenCalled();
   });
 });
 
@@ -317,7 +328,7 @@ describe("User deletion", () => {
   test("should be able to delete itself", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     userRepository.deleteUserById.mockResolvedValueOnce(true);
@@ -332,7 +343,7 @@ describe("User deletion", () => {
   test("should be able delete to another user if admin", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.admin,
+      role: "admin",
     };
 
     userRepository.deleteUserById.mockResolvedValueOnce(true);
@@ -347,7 +358,7 @@ describe("User deletion", () => {
   test("should return an error when deleting another user as non-admin", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     userRepository.deleteUserById.mockResolvedValueOnce(false);

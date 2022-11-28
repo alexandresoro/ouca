@@ -1,11 +1,6 @@
 import { type FastifyReply, type FastifyRequest } from "fastify";
 import mercurius from "mercurius";
-import {
-  deleteTokenCookie,
-  getLoggedUserInfo,
-  type LoggedUserInfo,
-  type TokenService,
-} from "../services/token-service";
+import { type LoggedUserInfo, type TokenService } from "../services/token-service";
 
 type PromiseType<T> = T extends PromiseLike<infer U> ? U : T;
 
@@ -31,13 +26,13 @@ export const buildGraphQLContext =
     const tokenPayload = await tokenService.validateAndExtractUserToken(request).catch((e) => {
       // If the validation has thrown an error
       // Make sure that the cookie is deleted in order to avoid sending it again
-      void deleteTokenCookie(reply);
+      void tokenService.deleteTokenCookie(reply);
       throw new mercurius.ErrorWithProps(e as string);
     });
 
     return {
       request,
       reply,
-      user: tokenPayload ? getLoggedUserInfo(tokenPayload) : null,
+      user: tokenPayload ? tokenService.getLoggedUserInfo(tokenPayload) : null,
     };
   };

@@ -1,4 +1,4 @@
-import { DatabaseRole, type Milieu, Prisma } from "@prisma/client";
+import { Prisma, type Milieu } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertMilieuArgs,
@@ -161,7 +161,7 @@ export const upsertMilieu = async (args: MutationUpsertMilieuArgs, loggedUser: L
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.milieu.findFirst({
         where: { id },
       });
@@ -202,7 +202,7 @@ export const deleteMilieu = async (id: number, loggedUser: LoggedUser | null): P
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.milieu.findFirst({
       where: { id },
     });

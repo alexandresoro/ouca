@@ -1,6 +1,6 @@
-import { type DatabaseRole } from "@prisma/client";
+import { type User } from "./User";
 
-export type LoggedUser = {
-  id: string;
-  role: DatabaseRole;
-};
+/**
+ * @deprecated
+ */
+export type LoggedUser = Pick<User, "id" | "role">;

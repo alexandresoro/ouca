@@ -12,11 +12,10 @@ export default {
     port: get("OUCA_SERVER_PORT").default("4000").asPortNumber(),
   },
   database: {
-    url: get("DATABASE_URL")
+    prismaUrl: get("DATABASE_URL")
       .default("mysql://basenaturaliste:basenaturaliste@127.0.0.1:3306/basenaturaliste")
       .asString(),
-    usePg: get("OUCA_TMP_USE_PG").default("false").asBoolStrict(),
-    pgUrl: get("OUCA_DATABASE_URL")
+    url: get("OUCA_DATABASE_URL")
       .default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste")
       .asString(),
   },

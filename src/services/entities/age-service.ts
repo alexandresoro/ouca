@@ -1,4 +1,4 @@
-import { type Age, DatabaseRole, Prisma } from "@prisma/client";
+import { Prisma, type Age } from "@prisma/client";
 import { type FindParams, type MutationUpsertAgeArgs, type QueryAgesArgs } from "../../graphql/generated/graphql-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -99,7 +99,7 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.age.findFirst({
         where: { id },
       });
@@ -143,7 +143,7 @@ export const deleteAge = async (id: number, loggedUser: LoggedUser | null): Prom
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.age.findFirst({
       where: { id },
     });

@@ -1,4 +1,4 @@
-import { DatabaseRole, type Observateur, Prisma } from "@prisma/client";
+import { Prisma, type Observateur } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertObservateurArgs,
@@ -136,7 +136,7 @@ export const upsertObservateur = async (
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.observateur.findFirst({
         where: { id },
       });
@@ -182,7 +182,7 @@ export const deleteObservateur = async (id: number, loggedUser: LoggedUser | nul
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.observateur.findFirst({
       where: { id },
     });

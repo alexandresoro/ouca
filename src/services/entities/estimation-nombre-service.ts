@@ -1,4 +1,4 @@
-import { DatabaseRole, type EstimationNombre, Prisma } from "@prisma/client";
+import { Prisma, type EstimationNombre } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertEstimationNombreArgs,
@@ -116,7 +116,7 @@ export const upsertEstimationNombre = async (
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.estimationNombre.findFirst({
         where: { id },
       });
@@ -157,7 +157,7 @@ export const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser 
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.estimationNombre.findFirst({
       where: { id },
     });

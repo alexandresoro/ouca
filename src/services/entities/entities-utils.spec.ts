@@ -20,7 +20,7 @@ describe("Entity editable status", () => {
   test("should return correct status when no entity is provided", () => {
     const user: LoggedUser = {
       id: "22",
-      role: DatabaseRole.admin,
+      role: "admin",
     };
 
     expect(isEntityEditable(null, user)).toBe(false);
@@ -33,7 +33,7 @@ describe("Entity editable status", () => {
 
     const user: LoggedUser = {
       id: "22",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     expect(isEntityEditable(entity, user)).toBe(false);
@@ -46,7 +46,7 @@ describe("Entity editable status", () => {
 
     const user: LoggedUser = {
       id: entity.ownerId,
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     expect(isEntityEditable(entity, user)).toBe(true);
@@ -59,7 +59,7 @@ describe("Entity editable status", () => {
 
     const user: LoggedUser = {
       id: "22",
-      role: DatabaseRole.admin,
+      role: "admin",
     };
 
     expect(isEntityEditable(entity, user)).toBe(true);
@@ -80,7 +80,7 @@ describe("Entity editable status", () => {
 
     const user: LoggedUser = {
       id: "22",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     expect(isEntityEditable(entity, user)).toBe(false);
@@ -93,7 +93,7 @@ describe("Entity editable status", () => {
 
     const user: LoggedUser = {
       id: "22",
-      role: DatabaseRole.admin,
+      role: "admin",
     };
 
     expect(isEntityEditable(entity, user)).toBe(true);

@@ -1,4 +1,3 @@
-import { DatabaseRole } from "@prisma/client";
 import { stringify } from "csv-stringify/sync";
 import { randomUUID } from "node:crypto";
 import { writeFileSync } from "node:fs";
@@ -6,17 +5,17 @@ import path from "node:path";
 import { Worker } from "node:worker_threads";
 import {
   ImportErrorType,
-  type ImportStatus,
   ImportStatusEnum,
   OngoingSubStatus,
+  type ImportStatus,
   type OngoingValidationStats,
 } from "../graphql/generated/graphql-types";
 import { type ImportType } from "../model/import-types";
 import {
-  type ImportUpdateMessage,
   IMPORT_COMPLETE,
   IMPORT_FAILED,
   VALIDATION_PROGRESS,
+  type ImportUpdateMessage,
 } from "../objects/import/import-update-message";
 import { type LoggedUser } from "../types/LoggedUser";
 import { logger } from "../utils/logger";
@@ -203,7 +202,7 @@ export const getImportStatus = (importId: string, loggedUser: LoggedUser): Promi
   const importStatus = importStatuses.get(importId);
 
   // Check that the logged user is allowed to retrieve this status
-  if (importStatus?.owner.id !== loggedUser.id && loggedUser.role !== DatabaseRole.admin) {
+  if (importStatus?.owner.id !== loggedUser.id && loggedUser.role !== "admin") {
     return null;
   }
 

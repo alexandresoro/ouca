@@ -1,10 +1,10 @@
-import { type Commune, DatabaseRole, type Departement, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Commune, type Departement } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   DepartementsOrderBy,
+  SortOrder,
   type MutationUpsertDepartementArgs,
   type QueryDepartementsArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -280,7 +280,7 @@ describe("Update of a department", () => {
   test("should be allowed when requested by an admin", async () => {
     const departmentData = mock<MutationUpsertDepartementArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertDepartement(departmentData, loggedUser);
 
@@ -324,7 +324,7 @@ describe("Update of a department", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
@@ -339,7 +339,7 @@ describe("Update of a department", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.departement.update.mockImplementation(prismaConstraintFailed);
 
@@ -421,7 +421,7 @@ describe("Deletion of a department", () => {
   test("hould handle the deletion of an owned department", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const department = mock<Departement>({
@@ -442,7 +442,7 @@ describe("Deletion of a department", () => {
 
   test("should handle the deletion of any department if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
@@ -459,7 +459,7 @@ describe("Deletion of a department", () => {
 
   test("should return an error when deleting a non-owned department as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());

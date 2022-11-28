@@ -1,4 +1,4 @@
-import { type Commune, DatabaseRole, type Departement, Prisma } from "@prisma/client";
+import { Prisma, type Commune, type Departement } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertCommuneArgs,
@@ -296,7 +296,7 @@ export const upsertCommune = async (
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.commune.findFirst({
         where: { id },
       });
@@ -335,7 +335,7 @@ export const deleteCommune = async (id: number, loggedUser: LoggedUser | null): 
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.commune.findFirst({
       where: { id },
     });

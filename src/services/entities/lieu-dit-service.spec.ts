@@ -1,10 +1,10 @@
-import { DatabaseRole, type Inventaire, type Lieudit, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Inventaire, type Lieudit } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   LieuxDitsOrderBy,
+  SortOrder,
   type MutationUpsertLieuDitArgs,
   type QueryLieuxDitsArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -297,7 +297,7 @@ describe("Update of a locality", () => {
   test("should be allowed when requested by an admin", async () => {
     const localityData = mock<MutationUpsertLieuDitArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
     prismaMock.lieudit.update.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await upsertLieuDit(localityData, loggedUser);
@@ -343,7 +343,7 @@ describe("Update of a locality", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
@@ -358,7 +358,7 @@ describe("Update of a locality", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.lieudit.update.mockImplementation(prismaConstraintFailed);
 
@@ -442,7 +442,7 @@ describe("Deletion of a locality", () => {
   test("should handle the deletion of an owned locality", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const locality = mock<Lieudit>({
@@ -464,7 +464,7 @@ describe("Deletion of a locality", () => {
 
   test("should handle the deletion of any locality if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
@@ -482,7 +482,7 @@ describe("Deletion of a locality", () => {
 
   test("should return an error when deleting a non-owned locality as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());

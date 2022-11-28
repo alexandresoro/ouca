@@ -1,10 +1,10 @@
-import { type Classe, DatabaseRole, type Espece, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Classe, type Espece } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   ClassesOrderBy,
+  SortOrder,
   type MutationUpsertClasseArgs,
   type QueryClassesArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -254,7 +254,7 @@ describe("Update of a class", () => {
   test("should be allowed when requested by an admin", async () => {
     const classData = mock<MutationUpsertClasseArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertClasse(classData, loggedUser);
 
@@ -298,7 +298,7 @@ describe("Update of a class", () => {
 
     const loggedUser = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
@@ -313,7 +313,7 @@ describe("Update of a class", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.classe.update.mockImplementation(prismaConstraintFailed);
 
@@ -395,7 +395,7 @@ describe("Deletion of a class", () => {
   test("should handle the deletion of an owned class", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const classe = mock<Classe>({
@@ -416,7 +416,7 @@ describe("Deletion of a class", () => {
 
   test("should handle the deletion of any class if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
@@ -433,7 +433,7 @@ describe("Deletion of a class", () => {
 
   test("should return an error when deleting a non-owned class as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());

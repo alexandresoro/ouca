@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Sexe } from "@prisma/client";
+import { Prisma, type Sexe } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertSexeArgs,
@@ -106,7 +106,7 @@ export const upsertSexe = async (args: MutationUpsertSexeArgs, loggedUser: Logge
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.sexe.findFirst({
         where: { id },
       });
@@ -150,7 +150,7 @@ export const deleteSexe = async (id: number, loggedUser: LoggedUser | null): Pro
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.sexe.findFirst({
       where: { id },
     });

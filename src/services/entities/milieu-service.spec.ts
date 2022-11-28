@@ -1,10 +1,10 @@
-import { DatabaseRole, type Milieu, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Milieu } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   MilieuxOrderBy,
+  SortOrder,
   type MutationUpsertMilieuArgs,
   type QueryMilieuxArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -253,7 +253,7 @@ describe("Update of an environment", () => {
   test("should be allowed when requested by an admin", async () => {
     const environmentData = mock<MutationUpsertMilieuArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertMilieu(environmentData, loggedUser);
 
@@ -297,7 +297,7 @@ describe("Update of an environment", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
@@ -312,7 +312,7 @@ describe("Update of an environment", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.milieu.update.mockImplementation(prismaConstraintFailed);
 
@@ -394,7 +394,7 @@ describe("Deletion of an environment", () => {
   test("should handle the deletion of an owned environment", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const environment = mock<Milieu>({
@@ -415,7 +415,7 @@ describe("Deletion of an environment", () => {
 
   test("hould handle the deletion of any environment if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
@@ -432,7 +432,7 @@ describe("Deletion of an environment", () => {
 
   test("should return an error when deleting a non-owned environment as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());

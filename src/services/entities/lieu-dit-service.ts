@@ -1,4 +1,4 @@
-import { type Commune, DatabaseRole, type Departement, type Lieudit, Prisma } from "@prisma/client";
+import { Prisma, type Commune, type Departement, type Lieudit } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertLieuDitArgs,
@@ -296,7 +296,7 @@ export const upsertLieuDit = async (
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.lieudit.findFirst({
         where: { id },
       });
@@ -342,7 +342,7 @@ export const deleteLieuDit = async (
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.lieudit.findFirst({
       where: { id },
     });

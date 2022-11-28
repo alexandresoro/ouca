@@ -1,10 +1,10 @@
-import { DatabaseRole, type Observateur, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Observateur } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
+  SortOrder,
   type MutationUpsertObservateurArgs,
   type QueryObservateursArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -205,7 +205,7 @@ describe("Update of an observer", () => {
   test("should be allowed when requested by an admin", async () => {
     const observerData = mock<MutationUpsertObservateurArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertObservateur(observerData, loggedUser);
 
@@ -249,7 +249,7 @@ describe("Update of an observer", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.observateur.findFirst.mockResolvedValueOnce(existingData);
@@ -264,7 +264,7 @@ describe("Update of an observer", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.observateur.update.mockImplementation(prismaConstraintFailed);
 
@@ -346,7 +346,7 @@ describe("Deletion of an observer", () => {
   test("should handle the deletion of an owned observer", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const observer = mock<Observateur>({
@@ -367,7 +367,7 @@ describe("Deletion of an observer", () => {
 
   test("should handle the deletion of any observer if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.observateur.findFirst.mockResolvedValueOnce(mock<Observateur>());
@@ -384,7 +384,7 @@ describe("Deletion of an observer", () => {
 
   test("should return an error when trying to delete a non-owned observer as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.observateur.findFirst.mockResolvedValueOnce(mock<Observateur>());

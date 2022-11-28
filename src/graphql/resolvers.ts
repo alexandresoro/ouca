@@ -1,4 +1,4 @@
-import { DatabaseRole, type Commune as CommuneEntity, type Espece as EspeceEntity } from "@prisma/client";
+import { type Commune as CommuneEntity, type Espece as EspeceEntity } from "@prisma/client";
 import mercurius, { type IResolvers } from "mercurius";
 import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
@@ -154,8 +154,7 @@ import {
 } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
 import { type Services } from "../services/services";
-import { createAndAddSignedTokenAsCookie, deleteTokenCookie } from "../services/token-service";
-import { createUser, updateUser } from "../services/user-service";
+import { type User } from "../types/User";
 import { logger } from "../utils/logger";
 import {
   type Age,
@@ -203,7 +202,7 @@ declare module "mercurius" {
   interface IResolvers extends Resolvers<import("mercurius").MercuriusContext> {}
 }
 
-export const buildResolvers = ({ userService }: Services): IResolvers => {
+export const buildResolvers = ({ tokenService, userService }: Services): IResolvers => {
   const resolvers: IResolvers = {
     Query: {
       age: async (_source, args, { user }): Promise<Age | null> => {
@@ -486,7 +485,7 @@ export const buildResolvers = ({ userService }: Services): IResolvers => {
       },
       dumpDatabase: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        if (user.role !== DatabaseRole.admin) {
+        if (user.role !== "admin") {
           throw new mercurius.ErrorWithProps("Database dump is not allowed for the current user");
         }
         return saveDatabaseRequest();
@@ -625,20 +624,20 @@ export const buildResolvers = ({ userService }: Services): IResolvers => {
       },
       resetDatabase: async (_source, args, { user }): Promise<boolean> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        if (user.role !== DatabaseRole.admin) {
+        if (user.role !== "admin") {
           throw new mercurius.ErrorWithProps("Database reset is not allowed for the current user");
         }
         await resetDatabase();
         return true;
       },
-      userSignup: async (_source, args, { user }): Promise<UserInfo> => {
-        return createUser(args.signupData, DatabaseRole.admin, user);
+      userSignup: async (_source, args, { user }): Promise<User> => {
+        return userService.createUser(args.signupData, "admin", user);
       },
-      userLogin: async (_source, args, { reply }): Promise<UserInfo> => {
+      userLogin: async (_source, args, { reply }): Promise<User> => {
         const userInfo = await userService.loginUser(args.loginData);
 
         if (userInfo) {
-          await createAndAddSignedTokenAsCookie(reply, userInfo);
+          await tokenService.createAndAddSignedTokenAsCookie(reply, userInfo);
 
           logger.debug(`User ${userInfo?.username} logged in`);
 
@@ -652,7 +651,7 @@ export const buildResolvers = ({ userService }: Services): IResolvers => {
 
         const userInfo = await userService.getUser(user.id);
         if (userInfo) {
-          await createAndAddSignedTokenAsCookie(reply, userInfo);
+          await tokenService.createAndAddSignedTokenAsCookie(reply, userInfo);
           return userInfo;
         }
 
@@ -660,20 +659,20 @@ export const buildResolvers = ({ userService }: Services): IResolvers => {
       },
       userLogout: async (_source, args, { user, reply }): Promise<boolean> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        await deleteTokenCookie(reply);
+        await tokenService.deleteTokenCookie(reply);
 
         logger.debug(`User ${user.name} ( ID ${user.id} )logged out`);
 
         return true;
       },
-      userEdit: async (_source, args, { user, reply }): Promise<UserInfo> => {
+      userEdit: async (_source, args, { user, reply }): Promise<User> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
 
         try {
-          const updatedUser = await updateUser(args.id, args.editUserData, user);
+          const updatedUser = await userService.updateUser(args.id, args.editUserData, user);
 
           if (updatedUser?.id === user?.id) {
-            await createAndAddSignedTokenAsCookie(reply, updatedUser);
+            await tokenService.createAndAddSignedTokenAsCookie(reply, updatedUser);
           }
           return updatedUser;
         } catch (e) {
@@ -687,7 +686,7 @@ export const buildResolvers = ({ userService }: Services): IResolvers => {
           const isUserDeleted = await userService.deleteUser(args.id, user);
 
           if (args?.id === user?.id && isUserDeleted) {
-            await deleteTokenCookie(reply);
+            await tokenService.deleteTokenCookie(reply);
           }
 
           return isUserDeleted;

@@ -2,7 +2,7 @@ import type { FastifyRequest } from "fastify";
 import { mock } from "jest-mock-extended";
 import { jwtVerify, type JWTPayload, type JWTVerifyResult, type ResolvedKey } from "jose";
 import { TextEncoder } from "node:util";
-import type { DatabaseRole, UserInfo } from "../repositories/user/user-repository-types";
+import { type DatabaseRole, type User } from "../types/User";
 import { buildTokenService } from "./token-service";
 import { type UserService } from "./user-service";
 
@@ -14,7 +14,9 @@ const tokenService = buildTokenService({
   userService,
 });
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 jest.mock<typeof import("jose")>("jose", () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const actualModule = jest.requireActual<typeof import("jose")>("jose");
   return {
     __esModule: true,
@@ -23,7 +25,7 @@ jest.mock<typeof import("jose")>("jose", () => {
   };
 });
 
-const mockedJwtVerify = jest.mocked(jwtVerify, true);
+const mockedJwtVerify = jest.mocked(jwtVerify, { shallow: true });
 
 describe("Token validation and extraction", () => {
   test("should handle validation and extraction when missing token", async () => {
@@ -65,7 +67,7 @@ describe("Token validation and extraction", () => {
     });
     mockedJwtVerify.mockResolvedValueOnce(result);
 
-    const dbUser = mock<UserInfo>({
+    const dbUser = mock<User>({
       id: result.payload.sub,
       role: result.payload.roles as DatabaseRole,
     });
@@ -131,7 +133,7 @@ describe("Token validation and extraction", () => {
     });
     mockedJwtVerify.mockResolvedValueOnce(result);
 
-    const dbUser = mock<UserInfo>({
+    const dbUser = mock<User>({
       id: result.payload.sub,
       role: "differentRole" as DatabaseRole,
     });

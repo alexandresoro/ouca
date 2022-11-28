@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma } from ".prisma/client";
+import { Prisma } from ".prisma/client";
 import { type ConditionalPick } from "type-fest";
 import { type SortOrder } from "../../graphql/generated/graphql-types";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -17,7 +17,7 @@ export const isEntityEditable = (entity: { ownerId?: string | null } | null, use
   if (!entity || !user) {
     return false;
   }
-  return user?.role === DatabaseRole.admin || entity?.ownerId === user?.id;
+  return user?.role === "admin" || entity?.ownerId === user?.id;
 };
 
 // Utility method to compute the Prisma pagination from the API pagination

@@ -2,29 +2,18 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { mock } from "jest-mock-extended";
 import { type JWTPayload } from "jose";
 import mercurius from "mercurius";
-import type { DatabaseRole } from "../repositories/user/user-repository-types";
-import { deleteTokenCookie, type TokenService } from "../services/token-service";
+import { type LoggedUserInfo, type TokenService } from "../services/token-service";
 import { buildGraphQLContext, type GraphQLContext } from "./graphql-context";
 
 const tokenService = mock<TokenService>({
+  getLoggedUserInfo: jest.fn(),
   validateAndExtractUserToken: jest.fn(),
+  deleteTokenCookie: jest.fn(),
 });
 
 const graphQLContext = buildGraphQLContext({
   tokenService,
 });
-
-jest.mock<typeof import("../services/token-service")>("../services/token-service", () => {
-  const actualModule = jest.requireActual<typeof import("../services/token-service")>("../services/token-service");
-  return {
-    __esModule: true,
-    ...actualModule,
-    validateAndExtractUserToken: jest.fn(),
-    deleteTokenCookie: jest.fn(),
-  };
-});
-
-const mockedDeleteTokenCookie = jest.mocked(deleteTokenCookie, true);
 
 describe("GraphQL context", () => {
   test("should return correct context when no token retrieved", async () => {
@@ -47,20 +36,18 @@ describe("GraphQL context", () => {
     const reply = mock<FastifyReply>();
 
     const tokenPayload = mock<JWTPayload>();
+    const userInfo = mock<LoggedUserInfo>();
 
     tokenService.validateAndExtractUserToken.mockResolvedValueOnce(tokenPayload);
+    tokenService.getLoggedUserInfo.mockReturnValueOnce(userInfo);
 
     const context = await graphQLContext(request, reply);
 
+    expect(tokenService.getLoggedUserInfo).toHaveBeenLastCalledWith(tokenPayload);
     expect(context).toEqual<GraphQLContext>({
       request,
       reply,
-      user: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        id: tokenPayload.sub!,
-        role: tokenPayload.roles as DatabaseRole,
-        name: tokenPayload.name as string,
-      },
+      user: userInfo,
     });
   });
 
@@ -73,6 +60,6 @@ describe("GraphQL context", () => {
     tokenService.validateAndExtractUserToken.mockRejectedValueOnce(rejection);
 
     await expect(() => graphQLContext(request, reply)).rejects.toThrowError(new mercurius.ErrorWithProps(rejection));
-    expect(mockedDeleteTokenCookie).toHaveBeenCalledTimes(1);
+    expect(tokenService.deleteTokenCookie).toHaveBeenCalledTimes(1);
   });
 });

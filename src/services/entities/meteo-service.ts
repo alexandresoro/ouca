@@ -1,4 +1,4 @@
-import { DatabaseRole, type Meteo, Prisma } from "@prisma/client";
+import { Prisma, type Meteo } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertMeteoArgs,
@@ -138,7 +138,7 @@ export const upsertMeteo = async (args: MutationUpsertMeteoArgs, loggedUser: Log
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.meteo.findFirst({
         where: { id },
       });
@@ -184,7 +184,7 @@ export const deleteMeteo = async (id: number, loggedUser: LoggedUser | null): Pr
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.meteo.findFirst({
       where: { id },
     });

@@ -2,9 +2,9 @@ import { DatabaseRole, Prisma, type Sexe } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
+  SortOrder,
   type MutationUpsertSexeArgs,
   type QuerySexesArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -203,7 +203,7 @@ describe("Update of a sex", () => {
   test("should be allowed when requested by an admin ", async () => {
     const sexData = mock<MutationUpsertSexeArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertSexe(sexData, loggedUser);
 
@@ -247,7 +247,7 @@ describe("Update of a sex", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.sexe.findFirst.mockResolvedValueOnce(existingData);
@@ -262,7 +262,7 @@ describe("Update of a sex", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.sexe.update.mockImplementation(prismaConstraintFailed);
 
@@ -344,7 +344,7 @@ describe("Deletion of a sex", () => {
   test("should handle the deletion of an owned sex", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const sex = mock<Sexe>({
@@ -365,7 +365,7 @@ describe("Deletion of a sex", () => {
 
   test("should handle the deletion of any sex if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.sexe.findFirst.mockResolvedValueOnce(mock<Sexe>());
@@ -382,7 +382,7 @@ describe("Deletion of a sex", () => {
 
   test("should return an error when deleting a non-owned sex as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.sexe.findFirst.mockResolvedValueOnce(mock<Sexe>());

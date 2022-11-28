@@ -1,4 +1,4 @@
-import { DatabaseRole, type EstimationDistance, Prisma } from "@prisma/client";
+import { Prisma, type EstimationDistance } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertEstimationDistanceArgs,
@@ -121,7 +121,7 @@ export const upsertEstimationDistance = async (
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.estimationDistance.findFirst({
         where: { id },
       });
@@ -165,7 +165,7 @@ export const deleteEstimationDistance = async (
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.estimationDistance.findFirst({
       where: { id },
     });

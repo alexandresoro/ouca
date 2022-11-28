@@ -1,11 +1,11 @@
-import { DatabaseRole, type Donnee, type Espece, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Donnee, type Espece } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   EspecesOrderBy,
+  SortOrder,
   type MutationUpsertEspeceArgs,
   type QueryEspecesArgs,
   type SearchDonneeCriteria,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -456,7 +456,7 @@ describe("Update of a species", () => {
   test("should be allowed when requested by an admin", async () => {
     const speciesData = mock<MutationUpsertEspeceArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertEspece(speciesData, loggedUser);
 
@@ -500,7 +500,7 @@ describe("Update of a species", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
@@ -515,7 +515,7 @@ describe("Update of a species", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.espece.update.mockImplementation(prismaConstraintFailed);
 
@@ -597,7 +597,7 @@ describe("Deletion of a species", () => {
   test("should handle the deletion of an owned species", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const species = mock<Espece>({
@@ -618,7 +618,7 @@ describe("Deletion of a species", () => {
 
   test("should handle the deletion of any species if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
@@ -635,7 +635,7 @@ describe("Deletion of a species", () => {
 
   test("should return an error when deleting a non-owned species as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());

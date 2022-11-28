@@ -1,4 +1,4 @@
-import { DatabaseRole, type Departement, Prisma } from "@prisma/client";
+import { Prisma, type Departement } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertDepartementArgs,
@@ -225,7 +225,7 @@ export const upsertDepartement = async (
 
   if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== DatabaseRole.admin) {
+    if (loggedUser?.role !== "admin") {
       const existingData = await prisma.departement.findFirst({
         where: { id },
       });
@@ -264,7 +264,7 @@ export const deleteDepartement = async (id: number, loggedUser: LoggedUser | nul
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== DatabaseRole.admin) {
+  if (loggedUser?.role !== "admin") {
     const existingData = await prisma.departement.findFirst({
       where: { id },
     });

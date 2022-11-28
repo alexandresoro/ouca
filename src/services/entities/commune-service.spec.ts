@@ -1,10 +1,10 @@
-import { type Commune, DatabaseRole, type Lieudit, Prisma } from "@prisma/client";
+import { DatabaseRole, Prisma, type Commune, type Lieudit } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   CommunesOrderBy,
+  SortOrder,
   type MutationUpsertCommuneArgs,
   type QueryCommunesArgs,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/LoggedUser";
@@ -288,7 +288,7 @@ describe("Update of a city", () => {
   test("should be allowed when requested by an admin", async () => {
     const cityData = mock<MutationUpsertCommuneArgs>();
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await upsertCommune(cityData, loggedUser);
 
@@ -332,7 +332,7 @@ describe("Update of a city", () => {
 
     const user = {
       id: "Bob",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
@@ -347,7 +347,7 @@ describe("Update of a city", () => {
       id: 12,
     });
 
-    const loggedUser = mock<LoggedUser>({ role: DatabaseRole.admin });
+    const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     prismaMock.commune.update.mockImplementation(prismaConstraintFailed);
 
@@ -429,7 +429,7 @@ describe("Deletion of a city", () => {
   test("should handle the deletion of an owned city", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
-      role: DatabaseRole.contributor,
+      role: "contributor",
     };
 
     const city = mock<Commune>({
@@ -450,7 +450,7 @@ describe("Deletion of a city", () => {
 
   test("should handle the deletion of any city if admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.admin,
+      role: "admin",
     });
 
     prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
@@ -467,7 +467,7 @@ describe("Deletion of a city", () => {
 
   test("should return an error when deleting a non-owned city as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
-      role: DatabaseRole.contributor,
+      role: "contributor",
     });
 
     prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
