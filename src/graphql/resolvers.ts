@@ -1,6 +1,5 @@
 import { type Commune as CommuneEntity, type Espece as EspeceEntity } from "@prisma/client";
 import mercurius, { type IResolvers } from "mercurius";
-import { resetDatabase } from "../services/database/reset-database";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import {
   deleteAge,
@@ -621,14 +620,6 @@ export const buildResolvers = ({ tokenService, userService }: Services): IResolv
       },
       updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
         return persistUserSettings(appConfiguration, user);
-      },
-      resetDatabase: async (_source, args, { user }): Promise<boolean> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        if (user.role !== "admin") {
-          throw new mercurius.ErrorWithProps("Database reset is not allowed for the current user");
-        }
-        await resetDatabase();
-        return true;
       },
       userSignup: async (_source, args, { user }): Promise<User> => {
         return userService.createUser(args.signupData, "admin", user);
