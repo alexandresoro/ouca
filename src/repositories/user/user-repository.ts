@@ -1,4 +1,4 @@
-import { sql, type DatabasePool } from "slonik";
+import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { z } from "zod";
 import { type DatabaseRole } from "../../types/User";
 import { objectToKeyValueInsert, objectToKeyValueSet } from "../../utils/slonik-utils";
@@ -48,38 +48,25 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
     return slonik.oneFirst(query);
   };
 
-  const createUser = async (create: {
-    first_name: string;
-    last_name?: string | undefined | null;
-    username: string;
-    password: string;
-    role: DatabaseRole;
-  }): Promise<UserWithPasswordResult> => {
-    const userCreationTransactionResult = await slonik.transaction(async (transactionConnection) => {
-      // Create the user
-      const createUserQuery = sql.type(userWithPasswordSchema)`
-        INSERT INTO
-          basenaturaliste.user
-          ${objectToKeyValueInsert(create)}
-        RETURNING
-          *
-      `;
-      const createUserQueryResult = await transactionConnection.one(createUserQuery);
+  const createUser = async (
+    create: {
+      first_name: string;
+      last_name?: string | undefined | null;
+      username: string;
+      password: string;
+      role: DatabaseRole;
+    },
+    transaction?: DatabaseTransactionConnection
+  ): Promise<UserWithPasswordResult> => {
+    const createUserQuery = sql.type(userWithPasswordSchema)`
+      INSERT INTO
+        basenaturaliste.user
+        ${objectToKeyValueInsert(create)}
+      RETURNING
+        *
+    `;
 
-      // Create its default settings
-      const createSettingsQuery = sql.type(z.void())`
-        INSERT INTO
-          basenaturaliste.settings
-          (user_id)
-        VALUES
-          (${createUserQueryResult.id})
-      `;
-      await transactionConnection.query(createSettingsQuery);
-
-      return createUserQueryResult;
-    });
-
-    return userCreationTransactionResult;
+    return (transaction ?? slonik).one(createUserQuery);
   };
 
   const updateUser = async (

@@ -21,7 +21,9 @@ export const buildServices = ({ logger, slonik }: Dependencies): Services => {
 
   const userService = buildUserService({
     logger,
+    slonik,
     userRepository,
+    settingsRepository,
   });
 
   const tokenService = buildTokenService({

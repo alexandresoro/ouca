@@ -1,7 +1,9 @@
 import { randomBytes, scryptSync } from "node:crypto";
 import { type Logger } from "pino";
+import { type DatabasePool } from "slonik";
 import type { CamelCasedProperties, Except } from "type-fest";
 import { type EditUserData, type UserCreateInput } from "../graphql/generated/graphql-types";
+import { type SettingsRepository } from "../repositories/settings/settings-repository";
 import { type UserRepository } from "../repositories/user/user-repository";
 import { type DatabaseRole, type LoggedUser, type User } from "../types/User";
 import { OucaError } from "../utils/errors";
@@ -31,10 +33,12 @@ export const validatePassword = (password: string | null | undefined, hashedPass
 
 type UserServiceDependencies = {
   logger: Logger;
+  slonik: DatabasePool;
   userRepository: UserRepository;
+  settingsRepository: SettingsRepository;
 };
 
-export const buildUserService = ({ logger, userRepository }: UserServiceDependencies) => {
+export const buildUserService = ({ logger, slonik, userRepository, settingsRepository }: UserServiceDependencies) => {
   const getUser = async (userId: string): Promise<User | null> => {
     const userWithPassword = await userRepository.getUserInfoById(userId);
 
@@ -103,12 +107,21 @@ export const buildUserService = ({ logger, userRepository }: UserServiceDependen
       }
     }
 
-    const createdUser = await userRepository.createUser({
-      first_name: otherUserInfo.firstName,
-      last_name: otherUserInfo.lastName ?? undefined,
-      password: getHashedPassword(password),
-      username: otherUserInfo.username,
-      role: roleToSet,
+    const createdUser = await slonik.transaction(async (transactionConnction) => {
+      const createdUserQueryResult = await userRepository.createUser(
+        {
+          first_name: otherUserInfo.firstName,
+          last_name: otherUserInfo.lastName ?? undefined,
+          password: getHashedPassword(password),
+          username: otherUserInfo.username,
+          role: roleToSet,
+        },
+        transactionConnction
+      );
+
+      await settingsRepository.createDefaultSettings(createdUserQueryResult.id, transactionConnction);
+
+      return createdUserQueryResult;
     });
 
     if (createdUser) {

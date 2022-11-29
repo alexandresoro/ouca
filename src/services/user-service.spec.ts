@@ -1,6 +1,8 @@
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { createMockPool } from "slonik";
 import { type EditUserData, type UserCreateInput, type UserLoginInput } from "../graphql/generated/graphql-types";
+import { type SettingsRepository } from "../repositories/settings/settings-repository";
 import { type UserRepository } from "../repositories/user/user-repository";
 import { type LoggedUser, type UserWithPassword } from "../types/User";
 import { OucaError } from "../utils/errors";
@@ -12,11 +14,19 @@ const userRepository = mock<UserRepository>({
   createUser: jest.fn(),
   updateUser: jest.fn(),
 });
+const settingsRepository = mock<SettingsRepository>({
+  createDefaultSettings: jest.fn(),
+});
 const logger = mock<Logger>();
+const slonik = createMockPool({
+  query: jest.fn(),
+});
 
 const userService = buildUserService({
   logger,
+  slonik,
   userRepository,
+  settingsRepository,
 });
 
 describe("Password validator", () => {
@@ -104,6 +114,7 @@ describe("User creation", () => {
     await userService.createUser(signupData, "contributor", loggedUser);
 
     expect(userRepository.createUser).toHaveBeenCalledTimes(1);
+    expect(settingsRepository.createDefaultSettings).toHaveBeenCalledTimes(1);
   });
 
   test("should throw error when non admin tries to create a user", async () => {
@@ -137,6 +148,7 @@ describe("User creation", () => {
     await userService.createUser(signupData, "contributor", loggedUser);
 
     expect(userRepository.createUser).toHaveBeenCalledTimes(1);
+    expect(settingsRepository.createDefaultSettings).toHaveBeenCalledTimes(1);
   });
 });
 
