@@ -4,14 +4,14 @@ import { promisify } from "node:util";
 import { parentPort, workerData } from "node:worker_threads";
 import { type ImportType } from "../model/import-types";
 import {
+  IMPORT_COMPLETE,
+  IMPORT_FAILED,
+  VALIDATION_PROGRESS,
   type ImportFailureMessage,
   type ImportNotifyProgressMessage,
   type ImportNotifyProgressMessageContent,
   type ImportNotifyStatusUpdateMessage,
   type ImportPostCompleteMessage,
-  IMPORT_COMPLETE,
-  IMPORT_FAILED,
-  VALIDATION_PROGRESS,
 } from "../objects/import/import-update-message";
 import { type LoggedUser } from "../types/LoggedUser";
 import { IMPORT_DIR } from "../utils/paths";

@@ -22,18 +22,18 @@ import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { findAges } from "../entities/age-service";
 import { findCommunes } from "../entities/commune-service";
 import { findComportements } from "../entities/comportement-service";
-import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findDepartements } from "../entities/departement-service";
-import { createDonnee, type DonneeWithRelations, findAllDonnees } from "../entities/donnee-service";
+import { createDonnee, findAllDonnees, type DonneeWithRelations } from "../entities/donnee-service";
 import { findEspeces } from "../entities/espece-service";
 import { findEstimationsDistance } from "../entities/estimation-distance-service";
 import { findEstimationsNombre } from "../entities/estimation-nombre-service";
-import { findAllInventaires, type InventaireWithRelations, upsertInventaire } from "../entities/inventaire-service";
+import { findAllInventaires, upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
 import { findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { findMeteos } from "../entities/meteo-service";
 import { findMilieux } from "../entities/milieu-service";
 import { findObservateurs } from "../entities/observateur-service";
 import { findSexes } from "../entities/sexe-service";
+import { findCoordinatesSystem } from "../settings-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {

@@ -37,7 +37,6 @@ import {
   getDonneesCountByComportement,
   upsertComportement,
 } from "../services/entities/comportement-service";
-import { findAppConfiguration, persistUserSettings } from "../services/entities/configuration-service";
 import {
   deleteDepartement,
   findDepartement,
@@ -153,6 +152,7 @@ import {
 } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
 import { type Services } from "../services/services";
+import { persistUserSettings } from "../services/settings-service";
 import { type User } from "../types/User";
 import { logger } from "../utils/logger";
 import {
@@ -201,7 +201,7 @@ declare module "mercurius" {
   interface IResolvers extends Resolvers<import("mercurius").MercuriusContext> {}
 }
 
-export const buildResolvers = ({ tokenService, userService }: Services): IResolvers => {
+export const buildResolvers = ({ settingsService, tokenService, userService }: Services): IResolvers => {
   const resolvers: IResolvers = {
     Query: {
       age: async (_source, args, { user }): Promise<Age | null> => {
@@ -490,7 +490,7 @@ export const buildResolvers = ({ tokenService, userService }: Services): IResolv
         return saveDatabaseRequest();
       },
       settings: async (_source, args, { user }): Promise<Settings | null> => {
-        return findAppConfiguration(user);
+        return settingsService.findAppConfiguration(user);
       },
     },
     Mutation: {

@@ -7,9 +7,9 @@ import {
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { type LoggedUser } from "../../types/LoggedUser";
 import { findCommunes } from "../entities/commune-service";
-import { findCoordinatesSystem } from "../entities/configuration-service";
 import { findDepartements } from "../entities/departement-service";
 import { createLieuxDits, findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
+import { findCoordinatesSystem } from "../settings-service";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
