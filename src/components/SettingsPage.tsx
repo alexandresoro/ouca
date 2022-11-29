@@ -21,28 +21,12 @@ const SETTINGS_QUERY = graphql(`
       isDistanceDisplayed
       isMeteoDisplayed
       isRegroupementDisplayed
-      defaultDepartement {
-        id
-        code
-      }
-      defaultObservateur {
-        id
-        libelle
-      }
+      defaultDepartementId
+      defaultObservateurId
       coordinatesSystem
-      defaultEstimationNombre {
-        id
-        libelle
-        nonCompte
-      }
-      defaultSexe {
-        id
-        libelle
-      }
-      defaultAge {
-        id
-        libelle
-      }
+      defaultEstimationNombreId
+      defaultSexeId
+      defaultAgeId
       defaultNombre
     }
     ages {
@@ -86,29 +70,13 @@ const USER_SETTINGS_MUTATION = graphql(`
       isMeteoDisplayed
       isDistanceDisplayed
       isRegroupementDisplayed
-      defaultAge {
-        id
-        libelle
-      }
-      defaultSexe {
-        id
-        libelle
-      }
+      defaultAgeId
+      defaultSexeId
       defaultNombre
-      defaultEstimationNombre {
-        id
-        libelle
-        nonCompte
-      }
+      defaultEstimationNombreId
       coordinatesSystem
-      defaultObservateur {
-        id
-        libelle
-      }
-      defaultDepartement {
-        id
-        code
-      }
+      defaultObservateurId
+      defaultDepartementId
     }
   }
 `);
@@ -153,12 +121,12 @@ const SettingsPage: FunctionComponent = () => {
   useEffect(() => {
     if (data?.settings) {
       reset({
-        defaultObservateur: data.settings.defaultObservateur?.id,
-        defaultDepartement: data.settings.defaultDepartement?.id,
-        defaultEstimationNombre: data.settings.defaultEstimationNombre?.id,
+        defaultObservateur: data.settings.defaultObservateurId ?? undefined,
+        defaultDepartement: data.settings.defaultDepartementId ?? undefined,
+        defaultEstimationNombre: data.settings.defaultEstimationNombreId ?? undefined,
         defaultNombre: data.settings.defaultNombre ?? "",
-        defaultSexe: data.settings.defaultSexe?.id,
-        defaultAge: data.settings.defaultAge?.id,
+        defaultSexe: data.settings.defaultSexeId ?? undefined,
+        defaultAge: data.settings.defaultAgeId ?? undefined,
         areAssociesDisplayed: !!data.settings.areAssociesDisplayed,
         isMeteoDisplayed: !!data.settings.isMeteoDisplayed,
         isDistanceDisplayed: !!data.settings.isDistanceDisplayed,
