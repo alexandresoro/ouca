@@ -726,7 +726,6 @@ type Mutation {
   upsertObservateur(id: Int, data: InputObservateur!): Observateur
   upsertSexe(id: Int, data: InputSexe!): Sexe
   updateSettings(appConfiguration: InputSettings!): Settings
-  resetDatabase: Boolean
   userSignup(signupData: UserCreateInput!, role: UserRole): UserInfo
   userLogin(loginData: UserLoginInput!): UserInfo
   userRefresh: UserInfo
