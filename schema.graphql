@@ -162,13 +162,13 @@ type Settings {
   isMeteoDisplayed: Boolean!
   isDistanceDisplayed: Boolean!
   isRegroupementDisplayed: Boolean!
-  defaultDepartement: Departement
-  defaultObservateur: Observateur
+  defaultDepartementId: Int
+  defaultObservateurId: Int
   coordinatesSystem: CoordinatesSystemType!
-  defaultEstimationNombre: EstimationNombre
+  defaultEstimationNombreId: Int
   defaultNombre: Int
-  defaultSexe: Sexe
-  defaultAge: Age
+  defaultSexeId: Int
+  defaultAgeId: Int
 }
 
 enum Nicheur {
