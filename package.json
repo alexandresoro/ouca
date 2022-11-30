@@ -27,7 +27,7 @@
     "copy:assets": "cpy 'src/**/*.graphql' dist"
   },
   "dependencies": {
-    "@fastify/compress": "6.1.1",
+    "@fastify/compress": "6.2.0",
     "@fastify/cookie": "8.3.0",
     "@fastify/cors": "8.2.0",
     "@fastify/multipart": "7.3.0",
