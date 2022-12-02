@@ -1,9 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base", ":pinAllExceptPeerDependencies", ":pinVersions"],
+  "extends": ["config:base", ":semanticCommits", ":pinVersions", ":automergePatch"],
   "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
+    "enabled": true
   },
   "labels": ["dependencies"],
   "packageRules": [
@@ -11,10 +10,12 @@
       "matchDepTypes": ["devDependencies"],
       "excludePackageNames": ["prisma", "typescript"],
       "matchPackagePatterns": ["*"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "all non-major dev dependencies",
-      "groupSlug": "all-minor-patch-dev",
+      "matchUpdateTypes": ["minor"],
       "automerge": true
+    },
+    {
+      "matchPackageNames": ["prisma", "@prisma/client"],
+      "automerge": false
     },
     {
       "matchPackagePatterns": ["fastify", "mercurius"],
