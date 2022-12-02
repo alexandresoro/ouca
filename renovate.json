@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base", ":semanticCommits", ":pinVersions", ":automergePatch"],
+  "extends": ["config:base", ":semanticCommits", ":pinAllExceptPeerDependencies", ":automergePatch"],
   "lockFileMaintenance": {
     "enabled": true
   },
