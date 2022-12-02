@@ -6,3 +6,6 @@ coverage
 
 # Exclude build files from linter
 dist
+
+# Exclude scripts
+scripts/

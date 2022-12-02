@@ -24,7 +24,7 @@
     "lint": "eslint .",
     "prettier:check": "prettier -c .",
     "generate-graphql": "graphql-codegen",
-    "copy:assets": "cpy 'src/**/*.graphql' dist"
+    "copy:assets": "node scripts/copy-graphql-schemas-to-dist.mjs"
   },
   "dependencies": {
     "@fastify/compress": "6.2.0",
@@ -62,7 +62,7 @@
     "@types/proj4": "2.5.2",
     "@typescript-eslint/eslint-plugin": "5.45.0",
     "@typescript-eslint/parser": "5.45.0",
-    "cpy-cli": "4.2.0",
+    "cpy": "^9.0.1",
     "eslint": "8.28.0",
     "eslint-import-resolver-typescript": "3.5.2",
     "eslint-plugin-import": "2.26.0",
