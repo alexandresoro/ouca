@@ -1,5 +1,5 @@
 import { type Prisma, type Sexe } from "@prisma/client";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { createSexes, findSexes } from "../entities/sexe-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 

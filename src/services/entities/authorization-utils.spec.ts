@@ -1,5 +1,5 @@
 import { mock } from "jest-mock-extended";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 

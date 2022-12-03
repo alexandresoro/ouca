@@ -17,7 +17,7 @@ import {
   VALIDATION_PROGRESS,
   type ImportUpdateMessage,
 } from "../objects/import/import-update-message";
-import { type LoggedUser } from "../types/LoggedUser";
+import { type LoggedUser } from "../types/User";
 import { logger } from "../utils/logger";
 import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths";
 

@@ -1,5 +1,5 @@
 import { type Observateur, type Prisma } from "@prisma/client";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { createObservateurs, findObservateurs } from "../entities/observateur-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 

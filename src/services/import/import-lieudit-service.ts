@@ -5,7 +5,7 @@ import {
   type CoordinatesSystemType,
 } from "../../model/coordinates-system/coordinates-system.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { findCommunes } from "../entities/commune-service";
 import { findDepartements } from "../entities/departement-service";
 import { createLieuxDits, findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";

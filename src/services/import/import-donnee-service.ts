@@ -17,7 +17,7 @@ import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coord
 import { type CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 import { type Coordinates } from "../../model/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { findAges } from "../entities/age-service";
 import { findCommunes } from "../entities/commune-service";

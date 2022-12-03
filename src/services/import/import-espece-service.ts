@@ -1,6 +1,6 @@
 import { type Classe, type Espece } from "@prisma/client";
 import { ImportedEspece } from "../../objects/import/imported-espece.object";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { findClasses } from "../entities/classe-service";
 import { createEspeces, findEspeces } from "../entities/espece-service";
 import { ImportService } from "./import-service";

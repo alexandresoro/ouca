@@ -13,7 +13,7 @@ import {
   type ImportNotifyStatusUpdateMessage,
   type ImportPostCompleteMessage,
 } from "../objects/import/import-update-message";
-import { type LoggedUser } from "../types/LoggedUser";
+import { type LoggedUser } from "../types/User";
 import { IMPORT_DIR } from "../utils/paths";
 import {
   IMPORT_COMPLETE_EVENT,

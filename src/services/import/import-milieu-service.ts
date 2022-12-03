@@ -1,5 +1,5 @@
 import { type Milieu, type Prisma } from "@prisma/client";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { createMilieux, findMilieux } from "../entities/milieu-service";
 import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
 
