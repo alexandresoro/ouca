@@ -5,7 +5,7 @@ export const objectToKeyValueSet = (
 ): ListSqlToken => {
   return sql.join(
     Object.entries(obj)
-      .filter((entry): entry is [string, string | number | boolean] => !!entry[1])
+      .filter((entry): entry is [string, string | number | boolean] => entry[1] != null)
       .map(([key, value]) => {
         return sql.fragment`${sql.identifier([key])} = ${value}`;
       }),
@@ -27,7 +27,7 @@ export const objectToKeyValueInsert = (
   )})
     VALUES
   (${sql.join(
-    entries.filter((entry): entry is [string, string | number | boolean] => !!entry[1]).map((entry) => entry[1]),
+    entries.filter((entry): entry is [string, string | number | boolean] => entry[1] != null).map((entry) => entry[1]),
     sql.fragment`, `
   )})
   `;

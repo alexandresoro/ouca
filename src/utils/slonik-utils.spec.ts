@@ -35,6 +35,7 @@ describe("objectToKeyValueSet function", () => {
       key: "value",
       numberKey: 12,
       booleanKey: true,
+      falsyValue: false,
     };
 
     expect(objectToKeyValueSet(obj)).toEqual<ListSqlToken>({
@@ -54,6 +55,11 @@ describe("objectToKeyValueSet function", () => {
           sql: '"booleanKey" = $1',
           type: "SLONIK_TOKEN_FRAGMENT",
           values: [true],
+        },
+        {
+          sql: '"falsyValue" = $1',
+          type: "SLONIK_TOKEN_FRAGMENT",
+          values: [false],
         },
       ],
       type: "SLONIK_TOKEN_LIST",
