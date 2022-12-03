@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { COORDINATES_SYSTEMS } from "../../model/coordinates-system/coordinates-system.object";
+import {
+  COORDINATES_SYSTEMS,
+  type CoordinatesSystemType,
+} from "../../model/coordinates-system/coordinates-system.object";
 
 export const settingsSchema = z.object({
   id: z.number(),
@@ -18,3 +21,17 @@ export const settingsSchema = z.object({
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
+
+export type UpdateSettingsInput = Partial<{
+  default_observateur_id: number;
+  default_departement_id: number;
+  default_age_id: number;
+  default_sexe_id: number;
+  default_estimation_nombre_id: number;
+  default_nombre: number;
+  are_associes_displayed: boolean;
+  is_meteo_displayed: boolean;
+  is_distance_displayed: boolean;
+  is_regroupement_displayed: boolean;
+  coordinates_system: CoordinatesSystemType;
+}>;

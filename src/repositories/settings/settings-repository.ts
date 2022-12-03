@@ -1,6 +1,7 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { z } from "zod";
-import { settingsSchema, type Settings } from "./settings-repository-types";
+import { objectToKeyValueSet } from "../../utils/slonik-utils";
+import { settingsSchema, type Settings, type UpdateSettingsInput } from "./settings-repository-types";
 
 export type SettingsRepositoryDependencies = {
   slonik: DatabasePool;
@@ -20,6 +21,21 @@ export const buildSettingsRepository = ({ slonik }: SettingsRepositoryDependenci
     return slonik.maybeOne(query);
   };
 
+  const updateUserSettings = async (user_id: string, updateSettingsInput: UpdateSettingsInput): Promise<Settings> => {
+    const query = sql.type(settingsSchema)`
+      UPDATE
+        basenaturaliste.settings
+      SET
+      ${objectToKeyValueSet(updateSettingsInput)}
+      WHERE
+        user_id = ${user_id}
+      RETURNING
+        *
+    `;
+
+    return slonik.one(query);
+  };
+
   const createDefaultSettings = async (userId: string, transaction?: DatabaseTransactionConnection): Promise<void> => {
     const query = sql.type(z.void())`
       INSERT INTO
@@ -34,6 +50,7 @@ export const buildSettingsRepository = ({ slonik }: SettingsRepositoryDependenci
 
   return {
     getUserSettings,
+    updateUserSettings,
     createDefaultSettings,
   };
 };

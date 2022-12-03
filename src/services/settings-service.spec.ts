@@ -3,13 +3,13 @@ import { type Logger } from "pino";
 import { type InputSettings } from "../graphql/generated/graphql-types";
 import { type SettingsRepository } from "../repositories/settings/settings-repository";
 import { type Settings } from "../repositories/settings/settings-repository-types";
-import { prismaMock } from "../sql/prisma-mock";
 import { type LoggedUser } from "../types/User";
 import { OucaError } from "../utils/errors";
-import { buildSettingsService, persistUserSettings } from "./settings-service";
+import { buildSettingsService } from "./settings-service";
 
 const settingsRepository = mock<SettingsRepository>({
   getUserSettings: jest.fn(),
+  updateUserSettings: jest.fn(),
 });
 const logger = mock<Logger>();
 
@@ -67,25 +67,20 @@ test("should update settings with parameters  for user", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
-  await persistUserSettings(updatedAppConfiguration, loggedUser);
+  await settingsService.persistUserSettings(updatedAppConfiguration, loggedUser);
 
-  expect(prismaMock.settings.update).toHaveBeenCalledTimes(1);
-  expect(prismaMock.settings.update).toHaveBeenCalledWith({
-    data: {
-      areAssociesDisplayed: true,
-      coordinatesSystem: "gps",
-      defaultAgeId: 1,
-      defaultDepartementId: 2,
-      defaultEstimationNombreId: 3,
-      defaultNombre: 4,
-      defaultObservateurId: 5,
-      defaultSexeId: 6,
-      isDistanceDisplayed: true,
-      isMeteoDisplayed: true,
-      isRegroupementDisplayed: true,
-    },
-    where: {
-      userId: loggedUser.id,
-    },
+  expect(settingsRepository.updateUserSettings).toHaveBeenCalledTimes(1);
+  expect(settingsRepository.updateUserSettings).toHaveBeenCalledWith(loggedUser.id, {
+    are_associes_displayed: true,
+    coordinates_system: "gps",
+    default_age_id: 1,
+    default_departement_id: 2,
+    default_estimation_nombre_id: 3,
+    default_nombre: 4,
+    default_observateur_id: 5,
+    default_sexe_id: 6,
+    is_distance_displayed: true,
+    is_meteo_displayed: true,
+    is_regroupement_displayed: true,
   });
 });

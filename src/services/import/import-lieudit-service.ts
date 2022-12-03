@@ -9,7 +9,6 @@ import { type LoggedUser } from "../../types/User";
 import { findCommunes } from "../entities/commune-service";
 import { findDepartements } from "../entities/departement-service";
 import { createLieuxDits, findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
-import { findCoordinatesSystem } from "../settings-service";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
@@ -32,7 +31,7 @@ export class ImportLieuxditService extends ImportService {
       findDepartements(null),
       findCommunes(null),
       findLieuxDits(null),
-      findCoordinatesSystem(loggedUser),
+      this.services.settingsService.findCoordinatesSystem(loggedUser),
     ]);
 
     if (!coordinatesSystemType) {

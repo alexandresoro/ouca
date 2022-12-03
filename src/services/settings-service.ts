@@ -1,10 +1,8 @@
-import { type Settings as SettingsDb } from "@prisma/client";
 import { type Logger } from "pino";
 import { type InputSettings } from "../graphql/generated/graphql-types";
 import { type CoordinatesSystemType } from "../model/coordinates-system/coordinates-system.object";
 import { type SettingsRepository } from "../repositories/settings/settings-repository";
-import { type Settings } from "../repositories/settings/settings-repository-types";
-import prisma from "../sql/prisma";
+import { type Settings, type UpdateSettingsInput } from "../repositories/settings/settings-repository-types";
 import { type LoggedUser } from "../types/User";
 import { validateAuthorization } from "./entities/authorization-utils";
 
@@ -24,59 +22,48 @@ export const buildSettingsService = ({ logger, settingsRepository }: SettingsSer
     return findAppConfiguration(loggedUser).then((settings) => settings?.coordinatesSystem);
   };
 
+  const persistUserSettings = async (
+    appConfiguration: InputSettings,
+    loggedUser: LoggedUser | null
+  ): Promise<Settings> => {
+    validateAuthorization(loggedUser);
+
+    const updateSettingsInput = buildSettingsDbFromInputSettings(appConfiguration);
+
+    logger.trace(
+      {
+        id: appConfiguration.id,
+        updateSettingsInput,
+      },
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      `Saving user settings of User=${loggedUser!.id} for ID=${appConfiguration.id}`
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return settingsRepository.updateUserSettings(loggedUser!.id, updateSettingsInput);
+  };
+
   return {
     findAppConfiguration,
     findCoordinatesSystem,
+    persistUserSettings,
   };
 };
 
 export type SettingsService = ReturnType<typeof buildSettingsService>;
 
-/**
- * @deprecated
- */
-export const findCoordinatesSystem = async (loggedUser: LoggedUser): Promise<CoordinatesSystemType | undefined> => {
-  return prisma.settings
-    .findUnique({
-      where: {
-        userId: loggedUser.id,
-      },
-    })
-    .then((settings) => settings?.coordinatesSystem);
-};
-
-const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): Omit<SettingsDb, "userId"> => {
+const buildSettingsDbFromInputSettings = (appConfiguration: InputSettings): UpdateSettingsInput => {
   return {
-    id: appConfiguration.id,
-    defaultObservateurId: appConfiguration.defaultObservateur,
-    defaultDepartementId: appConfiguration.defaultDepartement,
-    defaultAgeId: appConfiguration.defaultAge,
-    defaultSexeId: appConfiguration.defaultSexe,
-    defaultEstimationNombreId: appConfiguration.defaultEstimationNombre,
-    defaultNombre: appConfiguration.defaultNombre,
-    areAssociesDisplayed: appConfiguration.areAssociesDisplayed,
-    isMeteoDisplayed: appConfiguration.isMeteoDisplayed,
-    isDistanceDisplayed: appConfiguration.isDistanceDisplayed,
-    isRegroupementDisplayed: appConfiguration.isRegroupementDisplayed,
-    coordinatesSystem: appConfiguration.coordinatesSystem,
+    default_observateur_id: appConfiguration.defaultObservateur,
+    default_departement_id: appConfiguration.defaultDepartement,
+    default_age_id: appConfiguration.defaultAge,
+    default_sexe_id: appConfiguration.defaultSexe,
+    default_estimation_nombre_id: appConfiguration.defaultEstimationNombre,
+    default_nombre: appConfiguration.defaultNombre,
+    are_associes_displayed: appConfiguration.areAssociesDisplayed,
+    is_meteo_displayed: appConfiguration.isMeteoDisplayed,
+    is_distance_displayed: appConfiguration.isDistanceDisplayed,
+    is_regroupement_displayed: appConfiguration.isRegroupementDisplayed,
+    coordinates_system: appConfiguration.coordinatesSystem,
   };
-};
-
-export const persistUserSettings = async (
-  appConfiguration: InputSettings,
-  loggedUser: LoggedUser | null
-): Promise<Settings> => {
-  validateAuthorization(loggedUser);
-
-  const { id, ...settings } = buildSettingsDbFromInputSettings(appConfiguration);
-
-  const updatedSettingsDb = await prisma.settings.update({
-    data: settings,
-    where: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      userId: loggedUser!.id,
-    },
-  });
-
-  return updatedSettingsDb;
 };

@@ -8,12 +8,11 @@ datasource db {
 }
 
 model Age {
-  id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle  String     @unique() @db.VarChar(100)
-  ownerId  String?    @map("owner_id")
-  owner    User?      @relation(fields: [ownerId], references: [id], map: "fk_age_owner_id")
-  donnee   Donnee[]
-  settings Settings[]
+  id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle String   @unique() @db.VarChar(100)
+  ownerId String?  @map("owner_id")
+  owner   User?    @relation(fields: [ownerId], references: [id], map: "fk_age_owner_id")
+  donnee  Donnee[]
 
   @@map("age")
 }
@@ -56,12 +55,11 @@ model Comportement {
 }
 
 model Departement {
-  id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  code     String     @unique() @db.VarChar(100)
-  ownerId  String?    @map("owner_id")
-  owner    User?      @relation(fields: [ownerId], references: [id], map: "fk_departement_owner_id")
-  commune  Commune[]
-  settings Settings[]
+  id      Int       @id @default(autoincrement()) @db.UnsignedSmallInt
+  code    String    @unique() @db.VarChar(100)
+  ownerId String?   @map("owner_id")
+  owner   User?     @relation(fields: [ownerId], references: [id], map: "fk_departement_owner_id")
+  commune Commune[]
 
   @@map("departement")
 }
@@ -134,13 +132,12 @@ model EstimationDistance {
 }
 
 model EstimationNombre {
-  id        Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle   String     @unique() @db.VarChar(100)
-  nonCompte Boolean    @map("non_compte") @db.Bit(1)
-  ownerId   String?    @map("owner_id")
-  owner     User?      @relation(fields: [ownerId], references: [id], map: "fk_estimation_nombre_owner_id")
+  id        Int      @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle   String   @unique() @db.VarChar(100)
+  nonCompte Boolean  @map("non_compte") @db.Bit(1)
+  ownerId   String?  @map("owner_id")
+  owner     User?    @relation(fields: [ownerId], references: [id], map: "fk_estimation_nombre_owner_id")
   donnee    Donnee[]
-  settings  Settings[]
 
   @@map("estimation_nombre")
 }
@@ -232,42 +229,16 @@ model Observateur {
   owner              User?                @relation(fields: [ownerId], references: [id], map: "fk_observateur_owner_id")
   inventaire         Inventaire[]
   inventaire_associe inventaire_associe[]
-  settings           Settings[]
 
   @@map("observateur")
 }
 
-model Settings {
-  id                        Int               @id @default(autoincrement()) @db.UnsignedSmallInt
-  defaultObservateurId      Int?              @map("default_observateur_id") @db.UnsignedSmallInt
-  defaultDepartementId      Int?              @map("default_departement_id") @db.UnsignedSmallInt
-  defaultAgeId              Int?              @map("default_age_id") @db.UnsignedSmallInt
-  defaultSexeId             Int?              @map("default_sexe_id") @db.UnsignedSmallInt
-  defaultEstimationNombreId Int?              @map("default_estimation_nombre_id") @db.UnsignedSmallInt
-  defaultNombre             Int?              @map("default_nombre") @db.UnsignedSmallInt
-  areAssociesDisplayed      Boolean           @default(dbgenerated("(b'1')")) @map("are_associes_displayed") @db.Bit(1)
-  isMeteoDisplayed          Boolean           @default(dbgenerated("(b'1')")) @map("is_meteo_displayed") @db.Bit(1)
-  isDistanceDisplayed       Boolean           @default(dbgenerated("(b'1')")) @map("is_distance_displayed") @db.Bit(1)
-  isRegroupementDisplayed   Boolean           @default(dbgenerated("(b'1')")) @map("is_regroupement_displayed") @db.Bit(1)
-  coordinatesSystem         CoordinatesSystem @default(gps) @map("coordinates_system")
-  userId                    String            @unique() @map("user_id")
-  defaultAge                Age?              @relation(fields: [defaultAgeId], references: [id], map: "fk_settings_age_id")
-  defaultDepartement        Departement?      @relation(fields: [defaultDepartementId], references: [id], map: "fk_settings_departement_id")
-  defaultEstimationNombre   EstimationNombre? @relation(fields: [defaultEstimationNombreId], references: [id], map: "fk_settings_estimation_nombre_id")
-  defaultObservateur        Observateur?      @relation(fields: [defaultObservateurId], references: [id], map: "fk_settings_observateur_id")
-  defaultSexe               Sexe?             @relation(fields: [defaultSexeId], references: [id], map: "fk_settings_sexe_id")
-  user                      User              @relation(fields: [userId], references: [id], onDelete: Cascade, map: "fk_settings_user_id")
-
-  @@map("settings")
-}
-
 model Sexe {
-  id       Int        @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle  String     @unique() @db.VarChar(100)
-  ownerId  String?    @map("owner_id")
-  owner    User?      @relation(fields: [ownerId], references: [id], map: "fk_sexe_owner_id")
-  donnee   Donnee[]
-  settings Settings[]
+  id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
+  libelle String   @unique() @db.VarChar(100)
+  ownerId String?  @map("owner_id")
+  owner   User?    @relation(fields: [ownerId], references: [id], map: "fk_sexe_owner_id")
+  donnee  Donnee[]
 
   @@map("sexe")
 }
@@ -287,7 +258,6 @@ model User {
   Meteo              Meteo[]
   Milieu             Milieu[]
   Observateur        Observateur[]
-  Settings           Settings?
   Sexe               Sexe[]
 
   @@map("user")

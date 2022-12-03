@@ -152,7 +152,6 @@ import {
 } from "../services/export-entites";
 import { getImportStatus } from "../services/import-manager";
 import { type Services } from "../services/services";
-import { persistUserSettings } from "../services/settings-service";
 import { type User } from "../types/User";
 import { logger } from "../utils/logger";
 import {
@@ -619,7 +618,7 @@ export const buildResolvers = ({ settingsService, tokenService, userService }: S
         return upsertSexe(args, user);
       },
       updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
-        return persistUserSettings(appConfiguration, user);
+        return settingsService.persistUserSettings(appConfiguration, user);
       },
       userSignup: async (_source, args, { user }): Promise<User> => {
         return userService.createUser(args.signupData, "admin", user);

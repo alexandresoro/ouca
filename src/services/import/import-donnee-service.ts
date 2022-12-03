@@ -33,7 +33,6 @@ import { findMeteos } from "../entities/meteo-service";
 import { findMilieux } from "../entities/milieu-service";
 import { findObservateurs } from "../entities/observateur-service";
 import { findSexes } from "../entities/sexe-service";
-import { findCoordinatesSystem } from "../settings-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -63,7 +62,7 @@ export class ImportDonneeService extends ImportService {
   protected init = async (loggedUser: LoggedUser): Promise<void> => {
     this.newDonnees = [];
 
-    const coordinatesSystemType = await findCoordinatesSystem(loggedUser);
+    const coordinatesSystemType = await this.services.settingsService.findCoordinatesSystem(loggedUser);
     if (!coordinatesSystemType) {
       return Promise.reject(
         "Veuillez choisir le système de coordonnées de l'application dans la page de configuration"
