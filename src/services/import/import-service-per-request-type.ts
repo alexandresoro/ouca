@@ -1,5 +1,4 @@
 import {
-  type ImportType,
   IMPORT_AGE,
   IMPORT_CLASSE,
   IMPORT_COMMUNE,
@@ -14,7 +13,9 @@ import {
   IMPORT_MILIEU,
   IMPORT_OBSERVATEUR,
   IMPORT_SEXE,
+  type ImportType,
 } from "../../model/import-types";
+import { type Services } from "../services";
 import { ImportAgeService } from "./import-age-service";
 import { ImportClasseService } from "./import-classe-service";
 import { ImportCommuneService } from "./import-commune-service";
@@ -31,37 +32,37 @@ import { ImportObservateurService } from "./import-observateur-service";
 import { type ImportService } from "./import-service";
 import { ImportSexeService } from "./import-sexe-service";
 
-export const getNewImportServiceForRequestType = (requestType: ImportType): ImportService => {
+export const getNewImportServiceForRequestType = (requestType: ImportType, services: Services): ImportService => {
   switch (requestType) {
     case IMPORT_OBSERVATEUR:
-      return new ImportObservateurService();
+      return new ImportObservateurService(services);
     case IMPORT_DEPARTEMENT:
-      return new ImportDepartementService();
+      return new ImportDepartementService(services);
     case IMPORT_COMMUNE:
-      return new ImportCommuneService();
+      return new ImportCommuneService(services);
     case IMPORT_LIEUDIT:
-      return new ImportLieuxditService();
+      return new ImportLieuxditService(services);
     case IMPORT_METEO:
-      return new ImportMeteoService();
+      return new ImportMeteoService(services);
     case IMPORT_CLASSE:
-      return new ImportClasseService();
+      return new ImportClasseService(services);
     case IMPORT_ESPECE:
-      return new ImportEspeceService();
+      return new ImportEspeceService(services);
     case IMPORT_AGE:
-      return new ImportAgeService();
+      return new ImportAgeService(services);
     case IMPORT_SEXE:
-      return new ImportSexeService();
+      return new ImportSexeService(services);
     case IMPORT_ESTIMATION_NOMBRE:
-      return new ImportEstimationNombreService();
+      return new ImportEstimationNombreService(services);
     case IMPORT_ESTIMATION_DISTANCE:
-      return new ImportEstimationDistanceService();
+      return new ImportEstimationDistanceService(services);
     case IMPORT_COMPORTEMENT:
-      return new ImportComportementService();
+      return new ImportComportementService(services);
     case IMPORT_MILIEU:
-      return new ImportMilieuService();
+      return new ImportMilieuService(services);
     case IMPORT_DONNEE:
-      return new ImportDonneeService();
+      return new ImportDonneeService(services);
     default:
-      return null as unknown as ImportService;
+      throw new Error("I,port of unknown type requested");
   }
 };

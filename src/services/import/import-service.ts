@@ -4,6 +4,7 @@ import { OngoingSubStatus } from "../../graphql/generated/graphql-types";
 import { type ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message";
 import { type LoggedUser } from "../../types/User";
 import { logger } from "../../utils/logger";
+import { type Services } from "../services";
 
 const COMMENT_PREFIX = "###";
 
@@ -16,6 +17,13 @@ export const IMPORT_COMPLETE_EVENT = "importComplete";
 export const IMPORT_FAILED_EVENT = "importFailed";
 
 export abstract class ImportService extends EventEmitter {
+  protected services: Services;
+
+  constructor(services: Services) {
+    super();
+    this.services = services;
+  }
+
   public importFile = async (fileContent: string, loggedUser: LoggedUser): Promise<void> => {
     this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.ProcessStarted });
 
