@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Commune, type Departement } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   DepartementsOrderBy,
@@ -6,8 +6,10 @@ import {
   type MutationUpsertDepartementArgs,
   type QueryDepartementsArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Commune } from "../../repositories/commune/commune-repository-types";
+import { type Departement } from "../../repositories/departement/departement-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
@@ -325,7 +327,7 @@ describe("Update of a department", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
 

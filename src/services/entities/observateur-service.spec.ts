@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Observateur } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
@@ -6,8 +6,9 @@ import {
   type MutationUpsertObservateurArgs,
   type QueryObservateursArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
@@ -250,7 +251,7 @@ describe("Update of an observer", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.observateur.findFirst.mockResolvedValueOnce(existingData);
 

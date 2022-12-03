@@ -1,22 +1,6 @@
+import { Prisma, type Donnee as DonneeEntity, type Inventaire, type Lieudit } from "@prisma/client";
 import {
-  type Age,
-  type Classe,
-  type Commune,
-  type Comportement,
-  type Departement,
-  type Donnee as DonneeEntity,
-  type Espece,
-  type EstimationDistance,
-  type EstimationNombre,
-  type Inventaire,
-  type Lieudit,
-  type Meteo,
-  type Milieu,
-  type Observateur,
-  Prisma,
-  type Sexe,
-} from "@prisma/client";
-import {
+  SortOrder,
   type AgeWithSpecimensCount,
   type DonneeNavigationData,
   type InputDonnee,
@@ -24,8 +8,19 @@ import {
   type PaginatedSearchDonneesResultResultArgs,
   type SearchDonneeCriteria,
   type SexeWithSpecimensCount,
-  SortOrder,
 } from "../../graphql/generated/graphql-types";
+import { type Age } from "../../repositories/age/age-repository-types";
+import { type Classe } from "../../repositories/classe/classe-repository-types";
+import { type Commune } from "../../repositories/commune/commune-repository-types";
+import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
+import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { type Espece } from "../../repositories/espece/espece-repository-types";
+import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
+import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
+import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
+import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
+import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
+import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import prisma from "../../sql/prisma";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { getPrismaPagination } from "./entities-utils";

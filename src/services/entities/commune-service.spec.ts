@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Commune, type Lieudit } from "@prisma/client";
+import { Prisma, type Lieudit } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   CommunesOrderBy,
@@ -6,8 +6,9 @@ import {
   type MutationUpsertCommuneArgs,
   type QueryCommunesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
@@ -333,7 +334,7 @@ describe("Update of a city", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
 

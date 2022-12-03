@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Classe, type Espece } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   ClassesOrderBy,
@@ -6,8 +6,10 @@ import {
   type MutationUpsertClasseArgs,
   type QueryClassesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Classe } from "../../repositories/classe/classe-repository-types";
+import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
@@ -299,7 +301,7 @@ describe("Update of a class", () => {
     const loggedUser = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
 

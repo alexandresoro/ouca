@@ -1,11 +1,12 @@
-import { Prisma, type Milieu } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertMilieuArgs,
   type QueryMilieuxArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
 import prisma from "../../sql/prisma";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";

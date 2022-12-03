@@ -1,7 +1,7 @@
-import { DatabaseRole, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { SortOrder } from "../../graphql/generated/graphql-types";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import {
   getSqlPagination,
   getSqlSorting,

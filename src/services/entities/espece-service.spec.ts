@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Donnee, type Espece } from "@prisma/client";
+import { Prisma, type Donnee } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   EspecesOrderBy,
@@ -7,8 +7,9 @@ import {
   type QueryEspecesArgs,
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
+import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
@@ -129,7 +130,7 @@ describe("Find species by data ID", () => {
 
   test("should handle species not found", async () => {
     const data = mockDeep<Prisma.Prisma__DonneeClient<Donnee>>();
-    data.espece.mockResolvedValueOnce(null);
+    data.espece.mockResolvedValueOnce(null as unknown as Espece);
 
     prismaMock.donnee.findUnique.mockReturnValueOnce(data);
 
@@ -501,7 +502,7 @@ describe("Update of a species", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
 

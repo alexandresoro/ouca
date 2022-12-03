@@ -1,12 +1,14 @@
-import { Prisma, type Classe, type Espece } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertEspeceArgs,
   type QueryEspecesArgs,
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
+import { type Classe } from "../../repositories/classe/classe-repository-types";
+import { type Espece } from "../../repositories/espece/espece-repository-types";
 import prisma from "../../sql/prisma";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

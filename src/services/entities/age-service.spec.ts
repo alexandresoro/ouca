@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Age } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
@@ -6,8 +6,9 @@ import {
   type MutationUpsertAgeArgs,
   type QueryAgesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Age } from "../../repositories/age/age-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
@@ -248,7 +249,7 @@ describe("Update of an age", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.age.findFirst.mockResolvedValueOnce(existingData);
 

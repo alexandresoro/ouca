@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Comportement } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   ComportementsOrderBy,
@@ -6,8 +6,9 @@ import {
   type MutationUpsertComportementArgs,
   type QueryComportementsArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
@@ -337,7 +338,7 @@ describe("Update of a behavior", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
 

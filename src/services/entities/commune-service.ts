@@ -1,11 +1,13 @@
-import { Prisma, type Commune, type Departement } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import {
   type FindParams,
   type MutationUpsertCommuneArgs,
   type QueryCommunesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Commune } from "../../repositories/commune/commune-repository-types";
+import { type Departement } from "../../repositories/departement/departement-repository-types";
 import prisma from "../../sql/prisma";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";

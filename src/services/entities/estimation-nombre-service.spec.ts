@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type EstimationNombre } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   EstimationNombreOrderBy,
@@ -6,8 +6,9 @@ import {
   type MutationUpsertEstimationNombreArgs,
   type QueryEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
+import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
@@ -248,7 +249,7 @@ describe("Update of a number estimate", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
 

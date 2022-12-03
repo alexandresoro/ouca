@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Milieu } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import {
   MilieuxOrderBy,
@@ -6,8 +6,9 @@ import {
   type MutationUpsertMilieuArgs,
   type QueryMilieuxArgs,
 } from "../../graphql/generated/graphql-types";
+import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
@@ -298,7 +299,7 @@ describe("Update of an environment", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
 

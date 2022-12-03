@@ -1,4 +1,4 @@
-import { type CoordinatesSystem, type Inventaire, type Meteo, type Observateur } from "@prisma/client";
+import { type CoordinatesSystem, type Inventaire } from "@prisma/client";
 import { format } from "date-fns";
 import {
   CoordinatesSystemType,
@@ -6,8 +6,10 @@ import {
   type MutationUpsertInventaireArgs,
   type UpsertInventaireFailureReason,
 } from "../../graphql/generated/graphql-types";
+import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
+import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import prisma from "../../sql/prisma";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { DATE_PATTERN } from "../../utils/constants";
 import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 

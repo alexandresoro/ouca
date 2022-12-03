@@ -1,4 +1,4 @@
-import { DatabaseRole, Prisma, type Inventaire, type Lieudit } from "@prisma/client";
+import { Prisma, type Inventaire, type Lieudit } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import {
   LieuxDitsOrderBy,
@@ -7,7 +7,7 @@ import {
   type QueryLieuxDitsArgs,
 } from "../../graphql/generated/graphql-types";
 import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/LoggedUser";
+import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
@@ -118,7 +118,7 @@ describe("Find locality by inventary ID", () => {
 
   test("should handle locality not found", async () => {
     const inventary = mockDeep<Prisma.Prisma__InventaireClient<Inventaire>>();
-    inventary.lieuDit.mockResolvedValueOnce(null);
+    inventary.lieuDit.mockResolvedValueOnce(null as unknown as Lieudit);
 
     prismaMock.inventaire.findUnique.mockReturnValueOnce(inventary);
 
@@ -344,7 +344,7 @@ describe("Update of a locality", () => {
     const user = {
       id: "Bob",
       role: "contributor",
-    };
+    } as const;
 
     prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
 
