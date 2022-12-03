@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const departementSchema = z.object({
   id: z.number(),
-  libelle: z.string(),
+  code: z.string(),
   ownerId: z.string().uuid().nullable(),
 });
 
