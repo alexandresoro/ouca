@@ -15,7 +15,7 @@ export const buildSettingsService = ({ logger, settingsRepository }: SettingsSer
   const findAppConfiguration = async (loggedUser: LoggedUser | null): Promise<Settings | null> => {
     validateAuthorization(loggedUser);
 
-    return settingsRepository.getUserSettings(loggedUser!.id);
+    return settingsRepository.getUserSettings(loggedUser.id);
   };
 
   const findCoordinatesSystem = async (loggedUser: LoggedUser | null): Promise<CoordinatesSystemType | undefined> => {
@@ -35,12 +35,10 @@ export const buildSettingsService = ({ logger, settingsRepository }: SettingsSer
         id: appConfiguration.id,
         updateSettingsInput,
       },
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      `Saving user settings of User=${loggedUser!.id} for ID=${appConfiguration.id}`
+      `Saving user settings of User=${loggedUser.id} for ID=${appConfiguration.id}`
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return settingsRepository.updateUserSettings(loggedUser!.id, updateSettingsInput);
+    return settingsRepository.updateUserSettings(loggedUser.id, updateSettingsInput);
   };
 
   return {
