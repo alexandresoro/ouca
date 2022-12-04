@@ -40,9 +40,24 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
     return slonik.oneFirst(query);
   };
 
+  const deleteAgeById = async (ageId: number): Promise<Age> => {
+    const query = sql.type(ageSchema)`
+      DELETE
+      FROM
+        basenaturaliste.age
+      WHERE
+        id = ${ageId}
+      RETURNING
+        *
+    `;
+
+    return slonik.one(query);
+  };
+
   return {
     findAgeById,
     getCount,
+    deleteAgeById,
   };
 };
 

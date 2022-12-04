@@ -150,11 +150,7 @@ export const buildAgeService = ({ logger, ageRepository, donneeRepository }: Age
       }
     }
 
-    return prisma.age.delete({
-      where: {
-        id,
-      },
-    });
+    return ageRepository.deleteAgeById(id);
   };
 
   const createAges = async (

@@ -340,12 +340,8 @@ describe("Deletion of an age", () => {
 
     await ageService.deleteAge(11, loggedUser);
 
-    expect(prismaMock.age.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(ageRepository.deleteAgeById).toHaveBeenCalledTimes(1);
+    expect(ageRepository.deleteAgeById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any age if admin", async () => {
@@ -357,12 +353,8 @@ describe("Deletion of an age", () => {
 
     await ageService.deleteAge(11, loggedUser);
 
-    expect(prismaMock.age.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(ageRepository.deleteAgeById).toHaveBeenCalledTimes(1);
+    expect(ageRepository.deleteAgeById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned age as non-admin", async () => {
@@ -374,12 +366,12 @@ describe("Deletion of an age", () => {
 
     await expect(ageService.deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.age.delete).not.toHaveBeenCalled();
+    expect(ageRepository.deleteAgeById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(ageService.deleteAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.age.delete).not.toHaveBeenCalled();
+    expect(ageRepository.deleteAgeById).not.toHaveBeenCalled();
   });
 });
 
