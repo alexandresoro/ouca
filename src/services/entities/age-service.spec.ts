@@ -210,7 +210,7 @@ describe("Update of an age", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.age.findFirst.mockResolvedValueOnce(existingData);
+    ageRepository.findAgeById.mockResolvedValueOnce(existingData);
 
     await ageService.upsertAge(ageData, loggedUser);
 
@@ -235,7 +235,7 @@ describe("Update of an age", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.age.findFirst.mockResolvedValueOnce(existingData);
+    ageRepository.findAgeById.mockResolvedValueOnce(existingData);
 
     await expect(ageService.upsertAge(ageData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
@@ -336,7 +336,7 @@ describe("Deletion of an age", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.age.findFirst.mockResolvedValueOnce(age);
+    ageRepository.findAgeById.mockResolvedValueOnce(age);
 
     await ageService.deleteAge(11, loggedUser);
 
@@ -353,7 +353,7 @@ describe("Deletion of an age", () => {
       role: "admin",
     });
 
-    prismaMock.age.findFirst.mockResolvedValueOnce(mock<Age>());
+    ageRepository.findAgeById.mockResolvedValueOnce(mock<Age>());
 
     await ageService.deleteAge(11, loggedUser);
 
@@ -370,7 +370,7 @@ describe("Deletion of an age", () => {
       role: "contributor",
     });
 
-    prismaMock.age.findFirst.mockResolvedValueOnce(mock<Age>());
+    ageRepository.findAgeById.mockResolvedValueOnce(mock<Age>());
 
     await expect(ageService.deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

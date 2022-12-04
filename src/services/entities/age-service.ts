@@ -101,9 +101,7 @@ export const buildAgeService = ({ logger, ageRepository, donneeRepository }: Age
     if (id) {
       // Check that the user is allowed to modify the existing data
       if (loggedUser?.role !== "admin") {
-        const existingData = await prisma.age.findFirst({
-          where: { id },
-        });
+        const existingData = await ageRepository.findAgeById(id);
 
         if (existingData?.ownerId !== loggedUser?.id) {
           throw new OucaError("OUCA0001");
@@ -145,9 +143,7 @@ export const buildAgeService = ({ logger, ageRepository, donneeRepository }: Age
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.age.findFirst({
-        where: { id },
-      });
+      const existingData = await ageRepository.findAgeById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
