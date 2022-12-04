@@ -13,17 +13,7 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import {
-  buildAgeService,
-  createAges,
-  deleteAge,
-  findAge,
-  findAges,
-  findPaginatedAges,
-  getAgesCount,
-  getDonneesCountByAge,
-  upsertAge,
-} from "./age-service";
+import { buildAgeService } from "./age-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 
 const ageRepository = mock<AgeRepository>({});
@@ -54,7 +44,7 @@ describe("Find age", () => {
 
     prismaMock.age.findUnique.mockResolvedValueOnce(ageData);
 
-    await findAge(ageData.id, loggedUser);
+    await ageService.findAge(ageData.id, loggedUser);
 
     expect(prismaMock.age.findUnique).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.findUnique).toHaveBeenLastCalledWith({
@@ -68,7 +58,7 @@ describe("Find age", () => {
     prismaMock.age.findUnique.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findAge(10, loggedUser)).resolves.toBe(null);
+    await expect(ageService.findAge(10, loggedUser)).resolves.toBe(null);
 
     expect(prismaMock.age.findUnique).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.findUnique).toHaveBeenLastCalledWith({
@@ -79,7 +69,7 @@ describe("Find age", () => {
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.findAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.age.findUnique).not.toHaveBeenCalled();
   });
 });
@@ -88,7 +78,7 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByAge(12, loggedUser);
+    await ageService.getDonneesCountByAge(12, loggedUser);
 
     expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
@@ -99,7 +89,7 @@ describe("Data count per entity", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByAge(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.getDonneesCountByAge(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -109,7 +99,7 @@ test("Find all ages", async () => {
 
   prismaMock.age.findMany.mockResolvedValueOnce(agesData);
 
-  await findAges(loggedUser);
+  await ageService.findAges(loggedUser);
 
   expect(prismaMock.age.findMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.findMany).toHaveBeenLastCalledWith({
@@ -129,7 +119,7 @@ describe("Entities paginated find by search criteria", () => {
 
     prismaMock.age.findMany.mockResolvedValueOnce(agesData);
 
-    await findPaginatedAges(loggedUser);
+    await ageService.findPaginatedAges(loggedUser);
 
     expect(prismaMock.age.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.findMany).toHaveBeenLastCalledWith({
@@ -155,7 +145,7 @@ describe("Entities paginated find by search criteria", () => {
 
     prismaMock.age.findMany.mockResolvedValueOnce([agesData[0]]);
 
-    await findPaginatedAges(loggedUser, searchParams);
+    await ageService.findPaginatedAges(loggedUser, searchParams);
 
     expect(prismaMock.age.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.findMany).toHaveBeenLastCalledWith({
@@ -175,7 +165,7 @@ describe("Entities paginated find by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedAges(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.findPaginatedAges(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -183,7 +173,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getAgesCount(loggedUser);
+    await ageService.getAgesCount(loggedUser);
 
     expect(prismaMock.age.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.count).toHaveBeenLastCalledWith({
@@ -194,7 +184,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getAgesCount(loggedUser, "test");
+    await ageService.getAgesCount(loggedUser, "test");
 
     expect(prismaMock.age.count).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.count).toHaveBeenLastCalledWith({
@@ -207,7 +197,7 @@ describe("Entities count by search criteria", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getAgesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.getAgesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -217,7 +207,7 @@ describe("Update of an age", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertAge(ageData, loggedUser);
+    await ageService.upsertAge(ageData, loggedUser);
 
     expect(prismaMock.age.update).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.update).toHaveBeenLastCalledWith({
@@ -239,7 +229,7 @@ describe("Update of an age", () => {
 
     prismaMock.age.findFirst.mockResolvedValueOnce(existingData);
 
-    await upsertAge(ageData, loggedUser);
+    await ageService.upsertAge(ageData, loggedUser);
 
     expect(prismaMock.age.update).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.update).toHaveBeenLastCalledWith({
@@ -264,7 +254,7 @@ describe("Update of an age", () => {
 
     prismaMock.age.findFirst.mockResolvedValueOnce(existingData);
 
-    await expect(upsertAge(ageData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(ageService.upsertAge(ageData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(prismaMock.age.update).not.toHaveBeenCalled();
   });
@@ -278,7 +268,7 @@ describe("Update of an age", () => {
 
     prismaMock.age.update.mockImplementation(prismaConstraintFailed);
 
-    await expect(() => upsertAge(ageData, loggedUser)).rejects.toThrowError(
+    await expect(() => ageService.upsertAge(ageData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", prismaConstraintFailedError)
     );
 
@@ -296,7 +286,7 @@ describe("Update of an age", () => {
       id: 12,
     });
 
-    await expect(upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.age.update).not.toHaveBeenCalled();
   });
 });
@@ -309,7 +299,7 @@ describe("Creation of an age", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertAge(ageData, loggedUser);
+    await ageService.upsertAge(ageData, loggedUser);
 
     expect(prismaMock.age.create).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.create).toHaveBeenLastCalledWith({
@@ -329,7 +319,7 @@ describe("Creation of an age", () => {
 
     prismaMock.age.create.mockImplementation(prismaConstraintFailed);
 
-    await expect(() => upsertAge(ageData, loggedUser)).rejects.toThrowError(
+    await expect(() => ageService.upsertAge(ageData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", prismaConstraintFailedError)
     );
 
@@ -347,7 +337,7 @@ describe("Creation of an age", () => {
       id: undefined,
     });
 
-    await expect(upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.age.create).not.toHaveBeenCalled();
   });
 });
@@ -365,7 +355,7 @@ describe("Deletion of an age", () => {
 
     prismaMock.age.findFirst.mockResolvedValueOnce(age);
 
-    await deleteAge(11, loggedUser);
+    await ageService.deleteAge(11, loggedUser);
 
     expect(prismaMock.age.delete).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.delete).toHaveBeenLastCalledWith({
@@ -382,7 +372,7 @@ describe("Deletion of an age", () => {
 
     prismaMock.age.findFirst.mockResolvedValueOnce(mock<Age>());
 
-    await deleteAge(11, loggedUser);
+    await ageService.deleteAge(11, loggedUser);
 
     expect(prismaMock.age.delete).toHaveBeenCalledTimes(1);
     expect(prismaMock.age.delete).toHaveBeenLastCalledWith({
@@ -399,13 +389,13 @@ describe("Deletion of an age", () => {
 
     prismaMock.age.findFirst.mockResolvedValueOnce(mock<Age>());
 
-    await expect(deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.deleteAge(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
     expect(prismaMock.age.delete).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.deleteAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(prismaMock.age.delete).not.toHaveBeenCalled();
   });
 });
@@ -419,7 +409,7 @@ test("Create multiple ages", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
-  await createAges(agesData, loggedUser);
+  await ageService.createAges(agesData, loggedUser);
 
   expect(prismaMock.age.createMany).toHaveBeenCalledTimes(1);
   expect(prismaMock.age.createMany).toHaveBeenLastCalledWith({

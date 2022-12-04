@@ -6,12 +6,12 @@ import { getNicheurStatusToDisplay } from "../model/helpers/nicheur-helper";
 import { SEPARATOR_COMMA } from "../utils/constants";
 import { writeToExcelFile } from "../utils/export-excel-utils";
 import { PUBLIC_DIR } from "../utils/paths";
-import { findAges } from "./entities/age-service";
+import { type AgeService } from "./entities/age-service";
 import { findClasses } from "./entities/classe-service";
 import { findCommunesWithDepartements } from "./entities/commune-service";
 import { findComportements } from "./entities/comportement-service";
 import { findDepartements } from "./entities/departement-service";
-import { type DonneeWithRelations, findDonneesByCriteria } from "./entities/donnee-service";
+import { findDonneesByCriteria, type DonneeWithRelations } from "./entities/donnee-service";
 import { findAllEspecesWithClasses } from "./entities/espece-service";
 import { findEstimationsDistance } from "./entities/estimation-distance-service";
 import { findEstimationsNombre } from "./entities/estimation-nombre-service";
@@ -21,8 +21,8 @@ import { findMilieux } from "./entities/milieu-service";
 import { findObservateurs } from "./entities/observateur-service";
 import { findSexes } from "./entities/sexe-service";
 
-export const generateAgesExport = async (): Promise<string> => {
-  const agesDb = await findAges(null);
+export const generateAgesExport = async (ageService: AgeService): Promise<string> => {
+  const agesDb = await ageService.findAges(null);
 
   const agesToExport = agesDb.map((ageDb) => {
     return {

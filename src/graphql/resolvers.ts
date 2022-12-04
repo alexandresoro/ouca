@@ -2,14 +2,6 @@ import { type Commune as CommuneEntity, type Espece as EspeceEntity } from "@pri
 import mercurius, { type IResolvers } from "mercurius";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import {
-  deleteAge,
-  findAge,
-  findPaginatedAges,
-  getAgesCount,
-  getDonneesCountByAge,
-  upsertAge,
-} from "../services/entities/age-service";
-import {
   deleteClasse,
   findClasse,
   findClasseOfEspeceId,
@@ -200,16 +192,16 @@ declare module "mercurius" {
   interface IResolvers extends Resolvers<import("mercurius").MercuriusContext> {}
 }
 
-export const buildResolvers = ({ settingsService, tokenService, userService }: Services): IResolvers => {
+export const buildResolvers = ({ ageService, settingsService, tokenService, userService }: Services): IResolvers => {
   const resolvers: IResolvers = {
     Query: {
       age: async (_source, args, { user }): Promise<Age | null> => {
-        return findAge(args.id, user);
+        return ageService.findAge(args.id, user);
       },
       ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedAges(user, args),
-          getAgesCount(user, args?.searchParams?.q),
+          ageService.findPaginatedAges(user, args),
+          ageService.getAgesCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -427,7 +419,7 @@ export const buildResolvers = ({ settingsService, tokenService, userService }: S
       },
       exportAges: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateAgesExport();
+        return generateAgesExport(ageService);
       },
       exportClasses: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -494,7 +486,7 @@ export const buildResolvers = ({ settingsService, tokenService, userService }: S
     },
     Mutation: {
       deleteAge: async (_source, args, { user }): Promise<number> => {
-        return deleteAge(args.id, user).then(({ id }) => id);
+        return ageService.deleteAge(args.id, user).then(({ id }) => id);
       },
       deleteClasse: async (_source, args, { user }): Promise<number> => {
         return deleteClasse(args.id, user).then(({ id }) => id);
@@ -537,7 +529,7 @@ export const buildResolvers = ({ settingsService, tokenService, userService }: S
         return deleteSexe(args.id, user).then(({ id }) => id);
       },
       upsertAge: async (_source, args, { user }): Promise<Age> => {
-        return upsertAge(args, user);
+        return ageService.upsertAge(args, user);
       },
       upsertClasse: async (_source, args, { user }): Promise<Classe> => {
         return upsertClasse(args, user);
@@ -686,8 +678,8 @@ export const buildResolvers = ({ settingsService, tokenService, userService }: S
       },
     },
     Age: {
-      editable: isEntityEditableResolver(findAge),
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByAge),
+      editable: isEntityEditableResolver(ageService.findAge),
+      nbDonnees: entityNbDonneesResolver(ageService.getDonneesCountByAge),
     },
     Classe: {
       editable: isEntityEditableResolver(findClasse),

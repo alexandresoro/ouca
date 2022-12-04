@@ -20,98 +20,137 @@ type AgeServiceDependencies = {
 };
 
 export const buildAgeService = ({ logger, ageRepository }: AgeServiceDependencies) => {
-  return {};
-};
+  const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
+    validateAuthorization(loggedUser);
 
-export type AgeService = ReturnType<typeof buildAgeService>;
-
-export const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.age.findUnique({
-    where: {
-      id,
-    },
-  });
-};
-
-export const getDonneesCountByAge = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.donnee.count({
-    where: {
-      ageId: id,
-    },
-  });
-};
-
-export const findAges = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Age[]> => {
-  validateAuthorization(loggedUser);
-
-  const { q, max } = params ?? {};
-
-  return prisma.age.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: q || undefined,
+    return prisma.age.findUnique({
+      where: {
+        id,
       },
-    },
-    take: max || undefined,
-  });
-};
+    });
+  };
 
-export const findPaginatedAges = async (loggedUser: LoggedUser | null, options: QueryAgesArgs = {}): Promise<Age[]> => {
-  validateAuthorization(loggedUser);
+  const getDonneesCountByAge = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+    return prisma.donnee.count({
+      where: {
+        ageId: id,
+      },
+    });
+  };
 
-  let orderBy: Prisma.Enumerable<Prisma.AgeOrderByWithRelationInput> | undefined = undefined;
-  if (sortOrder) {
-    switch (orderByField) {
-      case "id":
-      case "libelle":
-        orderBy = {
-          [orderByField]: sortOrder,
-        };
-        break;
-      case "nbDonnees":
-        {
+  const findAges = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Age[]> => {
+    validateAuthorization(loggedUser);
+
+    const { q, max } = params ?? {};
+
+    return prisma.age.findMany({
+      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
+      where: {
+        libelle: {
+          contains: q || undefined,
+        },
+      },
+      take: max || undefined,
+    });
+  };
+
+  const findPaginatedAges = async (loggedUser: LoggedUser | null, options: QueryAgesArgs = {}): Promise<Age[]> => {
+    validateAuthorization(loggedUser);
+
+    const { searchParams, orderBy: orderByField, sortOrder } = options;
+
+    let orderBy: Prisma.Enumerable<Prisma.AgeOrderByWithRelationInput> | undefined = undefined;
+    if (sortOrder) {
+      switch (orderByField) {
+        case "id":
+        case "libelle":
           orderBy = {
-            donnee: {
-              _count: sortOrder,
-            },
+            [orderByField]: sortOrder,
           };
-        }
-        break;
-      default:
-        orderBy = {};
+          break;
+        case "nbDonnees":
+          {
+            orderBy = {
+              donnee: {
+                _count: sortOrder,
+              },
+            };
+          }
+          break;
+        default:
+          orderBy = {};
+      }
     }
-  }
 
-  return prisma.age.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-};
+    return prisma.age.findMany({
+      ...getPrismaPagination(searchParams),
+      orderBy,
+      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+    });
+  };
 
-export const getAgesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const getAgesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.age.count({
-    where: getEntiteAvecLibelleFilterClause(q),
-  });
-};
+    return prisma.age.count({
+      where: getEntiteAvecLibelleFilterClause(q),
+    });
+  };
 
-export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser | null): Promise<Age> => {
-  validateAuthorization(loggedUser);
+  const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser | null): Promise<Age> => {
+    validateAuthorization(loggedUser);
 
-  const { id, data } = args;
+    const { id, data } = args;
 
-  let upsertedAge: Age;
+    let upsertedAge: Age;
 
-  if (id) {
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser?.role !== "admin") {
+        const existingData = await prisma.age.findFirst({
+          where: { id },
+        });
+
+        if (existingData?.ownerId !== loggedUser?.id) {
+          throw new OucaError("OUCA0001");
+        }
+      }
+
+      try {
+        upsertedAge = await prisma.age.update({
+          where: { id },
+          data,
+        });
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      try {
+        upsertedAge = await prisma.age.create({
+          data: {
+            ...data,
+            ownerId: loggedUser?.id,
+          },
+        });
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    }
+
+    return upsertedAge;
+  };
+
+  const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age> => {
+    validateAuthorization(loggedUser);
+
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
       const existingData = await prisma.age.findFirst({
@@ -123,64 +162,34 @@ export const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedU
       }
     }
 
-    try {
-      upsertedAge = await prisma.age.update({
-        where: { id },
-        data,
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    try {
-      upsertedAge = await prisma.age.create({
-        data: {
-          ...data,
-          ownerId: loggedUser?.id,
-        },
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
-
-  return upsertedAge;
-};
-
-export const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.age.findFirst({
-      where: { id },
+    return prisma.age.delete({
+      where: {
+        id,
+      },
     });
+  };
 
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
+  const createAges = async (
+    ages: Omit<Prisma.AgeCreateManyInput, "ownerId">[],
+    loggedUser: LoggedUser
+  ): Promise<Prisma.BatchPayload> => {
+    return prisma.age.createMany({
+      data: ages.map((age) => {
+        return { ...age, ownerId: loggedUser.id };
+      }),
+    });
+  };
 
-  return prisma.age.delete({
-    where: {
-      id,
-    },
-  });
+  return {
+    findAge,
+    getDonneesCountByAge,
+    findAges,
+    findPaginatedAges,
+    getAgesCount,
+    upsertAge,
+    deleteAge,
+    createAges,
+  };
 };
 
-export const createAges = async (
-  ages: Omit<Prisma.AgeCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.age.createMany({
-    data: ages.map((age) => {
-      return { ...age, ownerId: loggedUser.id };
-    }),
-  });
-};
+export type AgeService = ReturnType<typeof buildAgeService>;
