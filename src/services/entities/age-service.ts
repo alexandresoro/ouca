@@ -3,6 +3,7 @@ import { type Logger } from "pino";
 import { type FindParams, type MutationUpsertAgeArgs, type QueryAgesArgs } from "../../graphql/generated/graphql-types";
 import { type AgeRepository } from "../../repositories/age/age-repository";
 import { type Age } from "../../repositories/age/age-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -17,27 +18,20 @@ import {
 type AgeServiceDependencies = {
   logger: Logger;
   ageRepository: AgeRepository;
+  donneeRepository: DonneeRepository;
 };
 
-export const buildAgeService = ({ logger, ageRepository }: AgeServiceDependencies) => {
+export const buildAgeService = ({ logger, ageRepository, donneeRepository }: AgeServiceDependencies) => {
   const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
     validateAuthorization(loggedUser);
 
-    return prisma.age.findUnique({
-      where: {
-        id,
-      },
-    });
+    return ageRepository.findAgeById(id);
   };
 
   const getDonneesCountByAge = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return prisma.donnee.count({
-      where: {
-        ageId: id,
-      },
-    });
+    return donneeRepository.getCountByAgeId(id);
   };
 
   const findAges = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Age[]> => {
@@ -94,9 +88,7 @@ export const buildAgeService = ({ logger, ageRepository }: AgeServiceDependencie
   const getAgesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return prisma.age.count({
-      where: getEntiteAvecLibelleFilterClause(q),
-    });
+    return ageRepository.getCount(q);
   };
 
   const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser | null): Promise<Age> => {

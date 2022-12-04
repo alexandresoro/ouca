@@ -95,6 +95,7 @@ export const buildServices = async (): Promise<Services> => {
   const ageService = buildAgeService({
     logger,
     ageRepository,
+    donneeRepository,
   });
 
   const classeService = buildClasseService({

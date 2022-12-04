@@ -9,6 +9,7 @@ import {
 } from "../../graphql/generated/graphql-types";
 import { type AgeRepository } from "../../repositories/age/age-repository";
 import { type Age } from "../../repositories/age/age-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
@@ -17,11 +18,13 @@ import { buildAgeService } from "./age-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 
 const ageRepository = mock<AgeRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const ageService = buildAgeService({
   logger,
   ageRepository,
+  donneeRepository,
 });
 
 const prismaConstraintFailedError = {
@@ -42,30 +45,22 @@ describe("Find age", () => {
     const ageData = mock<Age>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.age.findUnique.mockResolvedValueOnce(ageData);
+    ageRepository.findAgeById.mockResolvedValueOnce(ageData);
 
     await ageService.findAge(ageData.id, loggedUser);
 
-    expect(prismaMock.age.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: ageData.id,
-      },
-    });
+    expect(ageRepository.findAgeById).toHaveBeenCalledTimes(1);
+    expect(ageRepository.findAgeById).toHaveBeenLastCalledWith(ageData.id);
   });
 
   test("should handle age not found", async () => {
-    prismaMock.age.findUnique.mockResolvedValueOnce(null);
+    ageRepository.findAgeById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     await expect(ageService.findAge(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.age.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(ageRepository.findAgeById).toHaveBeenCalledTimes(1);
+    expect(ageRepository.findAgeById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
@@ -80,12 +75,8 @@ describe("Data count per entity", () => {
 
     await ageService.getDonneesCountByAge(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        ageId: 12,
-      },
-    });
+    expect(donneeRepository.getCountByAgeId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByAgeId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -175,10 +166,8 @@ describe("Entities count by search criteria", () => {
 
     await ageService.getAgesCount(loggedUser);
 
-    expect(prismaMock.age.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(ageRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(ageRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -186,14 +175,8 @@ describe("Entities count by search criteria", () => {
 
     await ageService.getAgesCount(loggedUser, "test");
 
-    expect(prismaMock.age.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.count).toHaveBeenLastCalledWith({
-      where: {
-        libelle: {
-          contains: "test",
-        },
-      },
-    });
+    expect(ageRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(ageRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
