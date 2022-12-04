@@ -65,7 +65,7 @@ describe("Find age", () => {
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(ageService.findAge(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.age.findUnique).not.toHaveBeenCalled();
+    expect(ageRepository.findAgeById).not.toHaveBeenCalled();
   });
 });
 
