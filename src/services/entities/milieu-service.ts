@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertMilieuArgs,
   type QueryMilieuxArgs,
 } from "../../graphql/generated/graphql-types";
+import { type MilieuRepository } from "../../repositories/milieu/milieu-repository";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -12,6 +14,17 @@ import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { validateAuthorization } from "./authorization-utils";
 import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+
+type MilieuServiceDependencies = {
+  logger: Logger;
+  milieuRepository: MilieuRepository;
+};
+
+export const buildMilieuService = ({ logger, milieuRepository }: MilieuServiceDependencies) => {
+  return {};
+};
+
+export type MilieuService = ReturnType<typeof buildMilieuService>;
 
 export const findMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Milieu | null> => {
   validateAuthorization(loggedUser);

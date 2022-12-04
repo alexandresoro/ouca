@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertEstimationDistanceArgs,
   type QueryEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
+import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -15,6 +17,20 @@ import {
   getPrismaPagination,
   queryParametersToFindAllEntities,
 } from "./entities-utils";
+
+type EstimationDistanceServiceDependencies = {
+  logger: Logger;
+  estimationDistanceRepository: EstimationDistanceRepository;
+};
+
+export const buildEstimationDistanceService = ({
+  logger,
+  estimationDistanceRepository,
+}: EstimationDistanceServiceDependencies) => {
+  return {};
+};
+
+export type EstimationDistanceService = ReturnType<typeof buildEstimationDistanceService>;
 
 export const findEstimationDistance = async (
   id: number,

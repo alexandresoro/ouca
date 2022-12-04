@@ -1,4 +1,5 @@
 import { Prisma, type Donnee as DonneeEntity, type Inventaire, type Lieudit } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   SortOrder,
   type AgeWithSpecimensCount,
@@ -14,6 +15,7 @@ import { type Classe } from "../../repositories/classe/classe-repository-types";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
@@ -25,6 +27,17 @@ import prisma from "../../sql/prisma";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { getPrismaPagination } from "./entities-utils";
 import { normalizeInventaire } from "./inventaire-service";
+
+type DonneeServiceDependencies = {
+  logger: Logger;
+  donneeRepository: DonneeRepository;
+};
+
+export const buildDonneeService = ({ logger, donneeRepository }: DonneeServiceDependencies) => {
+  return {};
+};
+
+export type DonneeService = ReturnType<typeof buildDonneeService>;
 
 export type DonneeWithRelations = DonneeEntity & {
   age: Age;

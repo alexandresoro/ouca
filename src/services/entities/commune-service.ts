@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertCommuneArgs,
   type QueryCommunesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type CommuneRepository } from "../../repositories/commune/commune-repository";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
 import prisma from "../../sql/prisma";
@@ -18,6 +20,17 @@ import {
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
+
+type CommuneServiceDependencies = {
+  logger: Logger;
+  communeRepository: CommuneRepository;
+};
+
+export const buildCommuneService = ({ logger, communeRepository }: CommuneServiceDependencies) => {
+  return {};
+};
+
+export type CommuneService = ReturnType<typeof buildCommuneService>;
 
 export const findCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Commune | null> => {
   validateAuthorization(loggedUser);

@@ -1,9 +1,11 @@
 import { Nicheur, Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertComportementArgs,
   type QueryComportementsArgs,
 } from "../../graphql/generated/graphql-types";
+import { type ComportementRepository } from "../../repositories/comportement/comportement-repository";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -12,6 +14,17 @@ import { OucaError } from "../../utils/errors";
 import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { validateAuthorization } from "./authorization-utils";
 import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+
+type ComportementServiceDependencies = {
+  logger: Logger;
+  comportementRepository: ComportementRepository;
+};
+
+export const buildComportementService = ({ logger, comportementRepository }: ComportementServiceDependencies) => {
+  return {};
+};
+
+export type ComportementService = ReturnType<typeof buildComportementService>;
 
 export const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement | null> => {
   validateAuthorization(loggedUser);

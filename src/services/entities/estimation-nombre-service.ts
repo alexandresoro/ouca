@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertEstimationNombreArgs,
   type QueryEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
+import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -15,6 +17,20 @@ import {
   getPrismaPagination,
   queryParametersToFindAllEntities,
 } from "./entities-utils";
+
+type EstimationNombreServiceDependencies = {
+  logger: Logger;
+  estimationNombreRepository: EstimationNombreRepository;
+};
+
+export const buildEstimationNombreService = ({
+  logger,
+  estimationNombreRepository,
+}: EstimationNombreServiceDependencies) => {
+  return {};
+};
+
+export type EstimationNombreService = ReturnType<typeof buildEstimationNombreService>;
 
 export const findEstimationNombre = async (
   id: number,

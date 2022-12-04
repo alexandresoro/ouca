@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertSexeArgs,
   type QuerySexesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type SexeRepository } from "../../repositories/sexe/sexe-repository";
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -15,6 +17,17 @@ import {
   getPrismaPagination,
   queryParametersToFindAllEntities,
 } from "./entities-utils";
+
+type SexeServiceDependencies = {
+  logger: Logger;
+  sexeRepository: SexeRepository;
+};
+
+export const buildSexeService = ({ logger, sexeRepository }: SexeServiceDependencies) => {
+  return {};
+};
+
+export type SexeService = ReturnType<typeof buildSexeService>;
 
 export const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe | null> => {
   validateAuthorization(loggedUser);

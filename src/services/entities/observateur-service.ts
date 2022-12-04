@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertObservateurArgs,
   type QueryObservateursArgs,
 } from "../../graphql/generated/graphql-types";
+import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -18,6 +20,17 @@ import {
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
+
+type ObservateurServiceDependencies = {
+  logger: Logger;
+  observateurRepository: ObservateurRepository;
+};
+
+export const buildObservateurService = ({ logger, observateurRepository }: ObservateurServiceDependencies) => {
+  return {};
+};
+
+export type ObservateurService = ReturnType<typeof buildObservateurService>;
 
 export const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur | null> => {
   validateAuthorization(loggedUser);

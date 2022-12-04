@@ -1,17 +1,30 @@
 import { type CoordinatesSystem, type Inventaire } from "@prisma/client";
 import { format } from "date-fns";
+import { type Logger } from "pino";
 import {
   CoordinatesSystemType,
   type InputInventaire,
   type MutationUpsertInventaireArgs,
   type UpsertInventaireFailureReason,
 } from "../../graphql/generated/graphql-types";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { DATE_PATTERN } from "../../utils/constants";
 import { parseISO8601AsUTCDate } from "../../utils/time-utils";
+
+type InventaireServiceDependencies = {
+  logger: Logger;
+  inventaireRepository: InventaireRepository;
+};
+
+export const buildInventaireService = ({ logger, inventaireRepository }: InventaireServiceDependencies) => {
+  return {};
+};
+
+export type InventaireService = ReturnType<typeof buildInventaireService>;
 
 export type InventaireWithRelations = Omit<
   Inventaire,

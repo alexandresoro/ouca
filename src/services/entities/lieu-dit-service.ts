@@ -1,4 +1,5 @@
 import { Prisma, type Lieudit } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertLieuDitArgs,
@@ -6,6 +7,7 @@ import {
 } from "../../graphql/generated/graphql-types";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
@@ -19,6 +21,17 @@ import {
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
+
+type LieuditServiceDependencies = {
+  logger: Logger;
+  lieuditRepository: LieuditRepository;
+};
+
+export const buildLieuditService = ({ logger, lieuditRepository }: LieuditServiceDependencies) => {
+  return {};
+};
+
+export type LieuditService = ReturnType<typeof buildLieuditService>;
 
 export type LieuDitWithCoordinatesAsNumber<T extends Lieudit = Lieudit> = Omit<T, "latitude" | "longitude"> & {
   latitude: number;

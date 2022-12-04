@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertDepartementArgs,
   type QueryDepartementsArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DepartementRepository } from "../../repositories/departement/departement-repository";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -17,6 +19,17 @@ import {
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
+
+type DepartementServiceDependencies = {
+  logger: Logger;
+  departementRepository: DepartementRepository;
+};
+
+export const buildDepartementService = ({ logger, departementRepository }: DepartementServiceDependencies) => {
+  return {};
+};
+
+export type DepartementService = ReturnType<typeof buildDepartementService>;
 
 export const getFilterClauseDepartement = (q: string | null | undefined): Prisma.DepartementWhereInput => {
   return q != null && q.length

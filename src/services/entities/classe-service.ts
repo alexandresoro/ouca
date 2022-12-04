@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertClasseArgs,
   type QueryClassesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type ClasseRepository } from "../../repositories/classe/classe-repository";
 import { type Classe } from "../../repositories/classe/classe-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -18,6 +20,17 @@ import {
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
+
+type ClasseServiceDependencies = {
+  logger: Logger;
+  classeRepository: ClasseRepository;
+};
+
+export const buildClasseService = ({ logger, classeRepository }: ClasseServiceDependencies) => {
+  return {};
+};
+
+export type ClasseService = ReturnType<typeof buildClasseService>;
 
 export const findClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe | null> => {
   validateAuthorization(loggedUser);

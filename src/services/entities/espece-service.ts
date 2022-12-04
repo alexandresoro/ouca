@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertEspeceArgs,
@@ -6,6 +7,7 @@ import {
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
 import { type Classe } from "../../repositories/classe/classe-repository-types";
+import { type EspeceRepository } from "../../repositories/espece/espece-repository";
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -14,6 +16,17 @@ import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+
+type EspeceServiceDependencies = {
+  logger: Logger;
+  especeRepository: EspeceRepository;
+};
+
+export const buildEspeceService = ({ logger, especeRepository }: EspeceServiceDependencies) => {
+  return {};
+};
+
+export type EspeceService = ReturnType<typeof buildEspeceService>;
 
 export const findEspece = async (id: number | undefined, loggedUser: LoggedUser | null): Promise<Espece | null> => {
   validateAuthorization(loggedUser);

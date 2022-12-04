@@ -1,9 +1,11 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import {
   type FindParams,
   type MutationUpsertMeteoArgs,
   type QueryMeteosArgs,
 } from "../../graphql/generated/graphql-types";
+import { type MeteoRepository } from "../../repositories/meteo/meteo-repository";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -18,6 +20,17 @@ import {
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
 } from "./entities-utils";
+
+type MeteoServiceDependencies = {
+  logger: Logger;
+  meteoRepository: MeteoRepository;
+};
+
+export const buildMeteoService = ({ logger, meteoRepository }: MeteoServiceDependencies) => {
+  return {};
+};
+
+export type MeteoService = ReturnType<typeof buildMeteoService>;
 
 export const findMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Meteo | null> => {
   validateAuthorization(loggedUser);

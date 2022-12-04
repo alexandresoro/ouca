@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
+import { type Logger } from "pino";
 import { type FindParams, type MutationUpsertAgeArgs, type QueryAgesArgs } from "../../graphql/generated/graphql-types";
+import { type AgeRepository } from "../../repositories/age/age-repository";
 import { type Age } from "../../repositories/age/age-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -11,6 +13,17 @@ import {
   getPrismaPagination,
   queryParametersToFindAllEntities,
 } from "./entities-utils";
+
+type AgeServiceDependencies = {
+  logger: Logger;
+  ageRepository: AgeRepository;
+};
+
+export const buildAgeService = ({ logger, ageRepository }: AgeServiceDependencies) => {
+  return {};
+};
+
+export type AgeService = ReturnType<typeof buildAgeService>;
 
 export const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
   validateAuthorization(loggedUser);

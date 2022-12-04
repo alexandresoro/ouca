@@ -22,6 +22,21 @@ import { createQueryLoggingInterceptor } from "../slonik/slonik-pino-interceptor
 import { createResultParserInterceptor } from "../slonik/slonik-zod-interceptor";
 import { logger } from "../utils/logger";
 import options from "../utils/options";
+import { buildAgeService, type AgeService } from "./entities/age-service";
+import { buildClasseService, type ClasseService } from "./entities/classe-service";
+import { buildCommuneService, type CommuneService } from "./entities/commune-service";
+import { buildComportementService, type ComportementService } from "./entities/comportement-service";
+import { buildDepartementService, type DepartementService } from "./entities/departement-service";
+import { buildDonneeService, type DonneeService } from "./entities/donnee-service";
+import { buildEspeceService, type EspeceService } from "./entities/espece-service";
+import { buildEstimationDistanceService, type EstimationDistanceService } from "./entities/estimation-distance-service";
+import { buildEstimationNombreService, type EstimationNombreService } from "./entities/estimation-nombre-service";
+import { buildInventaireService, type InventaireService } from "./entities/inventaire-service";
+import { buildLieuditService, type LieuditService } from "./entities/lieu-dit-service";
+import { buildMeteoService, type MeteoService } from "./entities/meteo-service";
+import { buildMilieuService, type MilieuService } from "./entities/milieu-service";
+import { buildObservateurService, type ObservateurService } from "./entities/observateur-service";
+import { buildSexeService, type SexeService } from "./entities/sexe-service";
 import { buildSettingsService, type SettingsService } from "./settings-service";
 import { buildTokenService, type TokenService } from "./token-service";
 import { buildUserService, type UserService } from "./user-service";
@@ -29,6 +44,21 @@ import { buildUserService, type UserService } from "./user-service";
 export type Services = {
   logger: Logger;
   slonik: DatabasePool;
+  ageService: AgeService;
+  classeService: ClasseService;
+  communeService: CommuneService;
+  comportementService: ComportementService;
+  departementService: DepartementService;
+  donneeService: DonneeService;
+  especeService: EspeceService;
+  estimationDistanceService: EstimationDistanceService;
+  estimationNombreService: EstimationNombreService;
+  inventaireService: InventaireService;
+  lieuditService: LieuditService;
+  meteoService: MeteoService;
+  milieuService: MilieuService;
+  observateurService: ObservateurService;
+  sexeService: SexeService;
   settingsService: SettingsService;
   tokenService: TokenService;
   userService: UserService;
@@ -62,6 +92,81 @@ export const buildServices = async (): Promise<Services> => {
   const sexeRepository = buildSexeRepository({ slonik });
   const userRepository = buildUserRepository({ slonik });
 
+  const ageService = buildAgeService({
+    logger,
+    ageRepository,
+  });
+
+  const classeService = buildClasseService({
+    logger,
+    classeRepository,
+  });
+
+  const communeService = buildCommuneService({
+    logger,
+    communeRepository,
+  });
+
+  const comportementService = buildComportementService({
+    logger,
+    comportementRepository,
+  });
+
+  const departementService = buildDepartementService({
+    logger,
+    departementRepository,
+  });
+
+  const donneeService = buildDonneeService({
+    logger,
+    donneeRepository,
+  });
+
+  const especeService = buildEspeceService({
+    logger,
+    especeRepository,
+  });
+
+  const estimationDistanceService = buildEstimationDistanceService({
+    logger,
+    estimationDistanceRepository,
+  });
+
+  const estimationNombreService = buildEstimationNombreService({
+    logger,
+    estimationNombreRepository,
+  });
+
+  const inventaireService = buildInventaireService({
+    logger,
+    inventaireRepository,
+  });
+
+  const lieuditService = buildLieuditService({
+    logger,
+    lieuditRepository,
+  });
+
+  const meteoService = buildMeteoService({
+    logger,
+    meteoRepository,
+  });
+
+  const milieuService = buildMilieuService({
+    logger,
+    milieuRepository,
+  });
+
+  const observateurService = buildObservateurService({
+    logger,
+    observateurRepository,
+  });
+
+  const sexeService = buildSexeService({
+    logger,
+    sexeRepository,
+  });
+
   const userService = buildUserService({
     logger,
     slonik,
@@ -81,6 +186,21 @@ export const buildServices = async (): Promise<Services> => {
   return {
     logger,
     slonik,
+    ageService,
+    classeService,
+    communeService,
+    comportementService,
+    departementService,
+    donneeService,
+    especeService,
+    estimationDistanceService,
+    estimationNombreService,
+    inventaireService,
+    lieuditService,
+    meteoService,
+    milieuService,
+    observateurService,
+    sexeService,
     settingsService,
     tokenService,
     userService,
