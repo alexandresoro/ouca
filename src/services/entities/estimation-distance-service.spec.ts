@@ -1,11 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
   type MutationUpsertEstimationDistanceArgs,
   type QueryEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
+import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
@@ -13,6 +15,7 @@ import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
+  buildEstimationDistanceService,
   createEstimationsDistance,
   deleteEstimationDistance,
   findEstimationDistance,
@@ -22,6 +25,14 @@ import {
   getEstimationsDistanceCount,
   upsertEstimationDistance,
 } from "./estimation-distance-service";
+
+const estimationDistanceRepository = mock<EstimationDistanceRepository>({});
+const logger = mock<Logger>();
+
+const estimationDistanceService = buildEstimationDistanceService({
+  logger,
+  estimationDistanceRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

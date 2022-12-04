@@ -1,11 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   EstimationNombreOrderBy,
   SortOrder,
   type MutationUpsertEstimationNombreArgs,
   type QueryEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
+import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
@@ -13,6 +15,7 @@ import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
+  buildEstimationNombreService,
   createEstimationsNombre,
   deleteEstimationNombre,
   findEstimationNombre,
@@ -22,6 +25,14 @@ import {
   getEstimationsNombreCount,
   upsertEstimationNombre,
 } from "./estimation-nombre-service";
+
+const estimationNombreRepository = mock<EstimationNombreRepository>({});
+const logger = mock<Logger>();
+
+const estimationNombreService = buildEstimationNombreService({
+  logger,
+  estimationNombreRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

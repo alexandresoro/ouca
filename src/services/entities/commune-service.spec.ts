@@ -1,17 +1,20 @@
 import { Prisma, type Lieudit } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   CommunesOrderBy,
   SortOrder,
   type MutationUpsertCommuneArgs,
   type QueryCommunesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type CommuneRepository } from "../../repositories/commune/commune-repository";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
+  buildCommuneService,
   createCommunes,
   deleteCommune,
   findCommune,
@@ -24,6 +27,14 @@ import {
   upsertCommune,
 } from "./commune-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
+
+const communeRepository = mock<CommuneRepository>({});
+const logger = mock<Logger>();
+
+const communeService = buildCommuneService({
+  logger,
+  communeRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

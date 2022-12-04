@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   DepartementsOrderBy,
   SortOrder,
@@ -7,12 +8,14 @@ import {
   type QueryDepartementsArgs,
 } from "../../graphql/generated/graphql-types";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
+import { type DepartementRepository } from "../../repositories/departement/departement-repository";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
+  buildDepartementService,
   createDepartements,
   deleteDepartement,
   findDepartement,
@@ -26,6 +29,14 @@ import {
   upsertDepartement,
 } from "./departement-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
+
+const departementRepository = mock<DepartementRepository>({});
+const logger = mock<Logger>();
+
+const departementService = buildDepartementService({
+  logger,
+  departementRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

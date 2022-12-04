@@ -1,17 +1,20 @@
 import { Prisma, type Inventaire, type Lieudit } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   LieuxDitsOrderBy,
   SortOrder,
   type MutationUpsertLieuDitArgs,
   type QueryLieuxDitsArgs,
 } from "../../graphql/generated/graphql-types";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
+  buildLieuditService,
   createLieuxDits,
   deleteLieuDit,
   findLieuDit,
@@ -22,6 +25,14 @@ import {
   getLieuxDitsCount,
   upsertLieuDit,
 } from "./lieu-dit-service";
+
+const lieuditRepository = mock<LieuditRepository>({});
+const logger = mock<Logger>();
+
+const lieuditService = buildLieuditService({
+  logger,
+  lieuditRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

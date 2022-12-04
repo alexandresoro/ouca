@@ -1,11 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
   type MutationUpsertObservateurArgs,
   type QueryObservateursArgs,
 } from "../../graphql/generated/graphql-types";
+import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
@@ -13,6 +15,7 @@ import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
+  buildObservateurService,
   createObservateurs,
   deleteObservateur,
   findObservateur,
@@ -22,6 +25,14 @@ import {
   getObservateursCount,
   upsertObservateur,
 } from "./observateur-service";
+
+const observateurRepository = mock<ObservateurRepository>({});
+const logger = mock<Logger>();
+
+const observateurService = buildObservateurService({
+  logger,
+  observateurRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

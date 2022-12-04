@@ -1,17 +1,20 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
   type MutationUpsertAgeArgs,
   type QueryAgesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type AgeRepository } from "../../repositories/age/age-repository";
 import { type Age } from "../../repositories/age/age-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
+  buildAgeService,
   createAges,
   deleteAge,
   findAge,
@@ -22,6 +25,14 @@ import {
   upsertAge,
 } from "./age-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
+
+const ageRepository = mock<AgeRepository>({});
+const logger = mock<Logger>();
+
+const ageService = buildAgeService({
+  logger,
+  ageRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

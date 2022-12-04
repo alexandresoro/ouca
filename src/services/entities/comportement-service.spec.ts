@@ -1,17 +1,20 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   ComportementsOrderBy,
   SortOrder,
   type MutationUpsertComportementArgs,
   type QueryComportementsArgs,
 } from "../../graphql/generated/graphql-types";
+import { type ComportementRepository } from "../../repositories/comportement/comportement-repository";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
+  buildComportementService,
   createComportements,
   deleteComportement,
   findComportement,
@@ -22,6 +25,14 @@ import {
   upsertComportement,
 } from "./comportement-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
+
+const comportementRepository = mock<ComportementRepository>({});
+const logger = mock<Logger>();
+
+const comportementService = buildComportementService({
+  logger,
+  comportementRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

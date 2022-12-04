@@ -1,5 +1,6 @@
 import { Prisma, type Donnee } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   EspecesOrderBy,
   SortOrder,
@@ -7,6 +8,7 @@ import {
   type QueryEspecesArgs,
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
+import { type EspeceRepository } from "../../repositories/espece/espece-repository";
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
@@ -15,6 +17,7 @@ import { OucaError } from "../../utils/errors";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
+  buildEspeceService,
   createEspeces,
   deleteEspece,
   findEspece,
@@ -25,6 +28,14 @@ import {
   getEspecesCount,
   upsertEspece,
 } from "./espece-service";
+
+const especeRepository = mock<EspeceRepository>({});
+const logger = mock<Logger>();
+
+const especeService = buildEspeceService({
+  logger,
+  especeRepository,
+});
 
 jest.mock<typeof import("./donnee-utils")>("./donnee-utils", () => {
   const actualModule = jest.requireActual<typeof import("./donnee-utils")>("./donnee-utils");

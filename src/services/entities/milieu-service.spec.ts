@@ -1,11 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   MilieuxOrderBy,
   SortOrder,
   type MutationUpsertMilieuArgs,
   type QueryMilieuxArgs,
 } from "../../graphql/generated/graphql-types";
+import { type MilieuRepository } from "../../repositories/milieu/milieu-repository";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
@@ -13,6 +15,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
+  buildMilieuService,
   createMilieux,
   deleteMilieu,
   findMilieu,
@@ -22,6 +25,14 @@ import {
   getMilieuxCount,
   upsertMilieu,
 } from "./milieu-service";
+
+const milieuRepository = mock<MilieuRepository>({});
+const logger = mock<Logger>();
+
+const milieuService = buildMilieuService({
+  logger,
+  milieuRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

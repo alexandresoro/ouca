@@ -1,11 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
   type MutationUpsertSexeArgs,
   type QuerySexesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type SexeRepository } from "../../repositories/sexe/sexe-repository";
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
@@ -13,6 +15,7 @@ import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
+  buildSexeService,
   createSexes,
   deleteSexe,
   findPaginatedSexes,
@@ -22,6 +25,14 @@ import {
   getSexesCount,
   upsertSexe,
 } from "./sexe-service";
+
+const sexeRepository = mock<SexeRepository>({});
+const logger = mock<Logger>();
+
+const sexeService = buildSexeService({
+  logger,
+  sexeRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",

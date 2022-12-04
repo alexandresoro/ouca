@@ -1,11 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
   type MutationUpsertMeteoArgs,
   type QueryMeteosArgs,
 } from "../../graphql/generated/graphql-types";
+import { type MeteoRepository } from "../../repositories/meteo/meteo-repository";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
@@ -13,6 +15,7 @@ import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import {
+  buildMeteoService,
   createMeteos,
   deleteMeteo,
   findMeteo,
@@ -22,6 +25,14 @@ import {
   getMeteosCount,
   upsertMeteo,
 } from "./meteo-service";
+
+const meteoRepository = mock<MeteoRepository>({});
+const logger = mock<Logger>();
+
+const meteoService = buildMeteoService({
+  logger,
+  meteoRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",
@@ -375,7 +386,7 @@ describe("Deletion of a weather", () => {
       role: "admin",
     });
 
-    prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
+    prismaMock.meteo.findFirst.mockResolvedValueOnce(mock<Meteo>());
 
     await deleteMeteo(11, loggedUser);
 
@@ -392,7 +403,7 @@ describe("Deletion of a weather", () => {
       role: "contributor",
     });
 
-    prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Meteo>());
+    prismaMock.meteo.findFirst.mockResolvedValueOnce(mock<Meteo>());
 
     await expect(deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 

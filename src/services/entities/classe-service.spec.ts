@@ -1,11 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
+import { type Logger } from "pino";
 import {
   ClassesOrderBy,
   SortOrder,
   type MutationUpsertClasseArgs,
   type QueryClassesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type ClasseRepository } from "../../repositories/classe/classe-repository";
 import { type Classe } from "../../repositories/classe/classe-repository-types";
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
@@ -13,6 +15,7 @@ import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import {
+  buildClasseService,
   createClasses,
   deleteClasse,
   findClasse,
@@ -25,6 +28,14 @@ import {
   upsertClasse,
 } from "./classe-service";
 import { queryParametersToFindAllEntities } from "./entities-utils";
+
+const classeRepository = mock<ClasseRepository>({});
+const logger = mock<Logger>();
+
+const classeService = buildClasseService({
+  logger,
+  classeRepository,
+});
 
 const prismaConstraintFailedError = {
   code: "P2002",
