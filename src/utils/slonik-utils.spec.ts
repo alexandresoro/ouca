@@ -91,6 +91,7 @@ describe("objectToKeyValueInsert function", () => {
       key: "value",
       numberKey: 12,
       booleanKey: true,
+      nullValue: null,
     };
 
     expect(objectToKeyValueInsert(obj)).toEqual<SqlFragment & { type: string }>({

@@ -22,7 +22,9 @@ export const objectToKeyValueInsert = (
   }
   return sql.fragment`
   (${sql.join(
-    entries.map((entry) => sql.identifier([entry[0]])),
+    entries
+      .filter((entry): entry is [string, string | number | boolean] => entry[1] != null)
+      .map((entry) => sql.identifier([entry[0]])),
     sql.fragment`, `
   )})
     VALUES
