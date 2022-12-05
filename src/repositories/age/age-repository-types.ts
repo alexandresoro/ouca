@@ -7,3 +7,8 @@ export const ageSchema = z.object({
 });
 
 export type Age = z.infer<typeof ageSchema>;
+
+export type AgeCreateInput = {
+  libelle: string;
+  owner_id?: string | null;
+};

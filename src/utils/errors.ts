@@ -1,9 +1,14 @@
-import { type ErrorCode, getErrorMessage } from "../types/ErrorCode";
+import { getErrorMessage, type ErrorCode } from "../types/ErrorCode";
 
-type SubError = {
-  code: string;
-  message: string;
-};
+type SubError =
+  | {
+      code: string;
+      message: string;
+    }
+  | {
+      readonly message: string;
+      readonly originalError: Error;
+    };
 
 export class OucaError extends Error {
   subError?: SubError;

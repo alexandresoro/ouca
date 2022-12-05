@@ -1,6 +1,6 @@
-import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
@@ -8,7 +8,7 @@ import {
   type QueryAgesArgs,
 } from "../../graphql/generated/graphql-types";
 import { type AgeRepository } from "../../repositories/age/age-repository";
-import { type Age } from "../../repositories/age/age-repository-types";
+import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
@@ -27,17 +27,13 @@ const ageService = buildAgeService({
   donneeRepository,
 });
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
+const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
+  new Error("errorMessage"),
+  "constraint"
+);
 
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
+const uniqueConstraintFailed = () => {
+  throw uniqueConstraintFailedError;
 };
 
 describe("Find age", () => {
@@ -192,13 +188,8 @@ describe("Update of an age", () => {
 
     await ageService.upsertAge(ageData, loggedUser);
 
-    expect(prismaMock.age.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.update).toHaveBeenLastCalledWith({
-      data: ageData.data,
-      where: {
-        id: ageData.id,
-      },
-    });
+    expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
+    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(ageData.id, ageData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -214,13 +205,8 @@ describe("Update of an age", () => {
 
     await ageService.upsertAge(ageData, loggedUser);
 
-    expect(prismaMock.age.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.update).toHaveBeenLastCalledWith({
-      data: ageData.data,
-      where: {
-        id: ageData.id,
-      },
-    });
+    expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
+    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(ageData.id, ageData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -239,7 +225,7 @@ describe("Update of an age", () => {
 
     await expect(ageService.upsertAge(ageData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.age.update).not.toHaveBeenCalled();
+    expect(ageRepository.updateAge).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to an age that exists", async () => {
@@ -249,19 +235,14 @@ describe("Update of an age", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.age.update.mockImplementation(prismaConstraintFailed);
+    ageRepository.updateAge.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => ageService.upsertAge(ageData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.age.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.update).toHaveBeenLastCalledWith({
-      data: ageData.data,
-      where: {
-        id: ageData.id,
-      },
-    });
+    expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
+    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(ageData.id, ageData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -270,7 +251,7 @@ describe("Update of an age", () => {
     });
 
     await expect(ageService.upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.age.update).not.toHaveBeenCalled();
+    expect(ageRepository.updateAge).not.toHaveBeenCalled();
   });
 });
 
@@ -284,12 +265,10 @@ describe("Creation of an age", () => {
 
     await ageService.upsertAge(ageData, loggedUser);
 
-    expect(prismaMock.age.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.create).toHaveBeenLastCalledWith({
-      data: {
-        ...ageData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(ageRepository.createAge).toHaveBeenCalledTimes(1);
+    expect(ageRepository.createAge).toHaveBeenLastCalledWith({
+      ...ageData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -300,18 +279,16 @@ describe("Creation of an age", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.age.create.mockImplementation(prismaConstraintFailed);
+    ageRepository.createAge.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => ageService.upsertAge(ageData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.age.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.create).toHaveBeenLastCalledWith({
-      data: {
-        ...ageData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(ageRepository.createAge).toHaveBeenCalledTimes(1);
+    expect(ageRepository.createAge).toHaveBeenLastCalledWith({
+      ...ageData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -321,7 +298,7 @@ describe("Creation of an age", () => {
     });
 
     await expect(ageService.upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.age.create).not.toHaveBeenCalled();
+    expect(ageRepository.createAge).not.toHaveBeenCalled();
   });
 });
 
@@ -377,22 +354,22 @@ describe("Deletion of an age", () => {
 
 test("Create multiple ages", async () => {
   const agesData = [
-    mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.AgeCreateManyInput, "ownerId">>(),
+    mock<Omit<AgeCreateInput, "ownerId">>(),
+    mock<Omit<AgeCreateInput, "ownerId">>(),
+    mock<Omit<AgeCreateInput, "ownerId">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
   await ageService.createAges(agesData, loggedUser);
 
-  expect(prismaMock.age.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.age.createMany).toHaveBeenLastCalledWith({
-    data: agesData.map((age) => {
+  expect(ageRepository.createAges).toHaveBeenCalledTimes(1);
+  expect(ageRepository.createAges).toHaveBeenLastCalledWith(
+    agesData.map((age) => {
       return {
         ...age,
         ownerId: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

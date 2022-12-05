@@ -1,5 +1,5 @@
 import { sql, type ListSqlToken, type SqlFragment } from "slonik";
-import { objectToKeyValueInsert, objectToKeyValueSet } from "./slonik-utils";
+import { objectsToKeyValueInsert, objectToKeyValueInsert, objectToKeyValueSet } from "./slonik-utils";
 
 describe("objectToKeyValueSet function", () => {
   test("should return an empty string when an empty object is provided", () => {
@@ -98,6 +98,58 @@ describe("objectToKeyValueInsert function", () => {
       sql: '\n  ("key", "numberKey", "booleanKey")\n    VALUES\n  ($1, $2, $3)\n  ',
       type: "SLONIK_TOKEN_FRAGMENT",
       values: ["value", 12, true],
+    });
+  });
+});
+
+describe("objectsToKeyValueInsert function", () => {
+  test("should return an empty fragment when an empty list is provided", () => {
+    const objs = [] as Record<string, string | number | boolean | undefined | null>[];
+
+    expect(objectsToKeyValueInsert(objs)).toEqual<SqlFragment & { type: string }>(sql.fragment``);
+  });
+
+  test("should handle a single object with multiple properties of various types", () => {
+    const objs = [
+      {
+        key: "value",
+        numberKey: 12,
+        booleanKey: true,
+        nullValue: null,
+      },
+    ];
+
+    expect(objectsToKeyValueInsert(objs)).toEqual<SqlFragment & { type: string }>({
+      sql: '\n  ("key", "numberKey", "booleanKey")\n    VALUES\n  ($1, $2, $3)\n  ',
+      type: "SLONIK_TOKEN_FRAGMENT",
+      values: ["value", 12, true],
+    });
+  });
+
+  test("should handle multiple objects with different properties of various types", () => {
+    const objs = [
+      {
+        key: "value",
+        numberKey: 12,
+        booleanKey: true,
+        sometimesNullValue: null,
+        nullishValue: null,
+        nullValue: null,
+      },
+      {
+        key: "value2",
+        numberKey: 123,
+        booleanKey: false,
+        sometimesNullValue: "notsoNull",
+        hello: "there",
+        nullishValue: undefined,
+      },
+    ];
+
+    expect(objectsToKeyValueInsert(objs)).toEqual<SqlFragment & { type: string }>({
+      sql: '\n  ("key", "numberKey", "booleanKey", "sometimesNullValue", "hello")\n    VALUES\n  ($1, $2, $3, $4, $5), ($6, $7, $8, $9, $10)\n  ',
+      type: "SLONIK_TOKEN_FRAGMENT",
+      values: ["value", 12, true, null, null, "value2", 123, false, "notsoNull", "there"],
     });
   });
 });

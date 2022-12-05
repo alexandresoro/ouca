@@ -34,3 +34,38 @@ export const objectToKeyValueInsert = (
   )})
   `;
 };
+
+export const objectsToKeyValueInsert = <T extends string>(
+  objects: Partial<Record<T, string | number | boolean | undefined | null>>[]
+): SqlFragment => {
+  const columnsToInsert = [
+    ...new Set(
+      objects
+        .map((object) => {
+          return Object.entries(object)
+            .filter((entry): entry is [T, string | number | boolean] => entry[1] != null)
+            .map((entry) => entry[0]);
+        })
+        .flat()
+    ),
+  ];
+  if (!columnsToInsert?.length) {
+    return sql.fragment``;
+  }
+  return sql.fragment`
+  (${sql.join(
+    columnsToInsert.map((entry) => sql.identifier([entry])),
+    sql.fragment`, `
+  )})
+    VALUES
+  (${sql.join(
+    objects.map((object) => {
+      return sql.join(
+        columnsToInsert.map((column) => object?.[column] ?? null),
+        sql.fragment`, `
+      );
+    }),
+    sql.fragment`), (`
+  )})
+  `;
+};

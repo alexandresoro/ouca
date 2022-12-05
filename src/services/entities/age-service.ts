@@ -1,8 +1,9 @@
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type FindParams, type MutationUpsertAgeArgs, type QueryAgesArgs } from "../../graphql/generated/graphql-types";
 import { type AgeRepository } from "../../repositories/age/age-repository";
-import { type Age } from "../../repositories/age/age-repository-types";
+import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -21,7 +22,7 @@ type AgeServiceDependencies = {
   donneeRepository: DonneeRepository;
 };
 
-export const buildAgeService = ({ logger, ageRepository, donneeRepository }: AgeServiceDependencies) => {
+export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceDependencies) => {
   const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
     validateAuthorization(loggedUser);
 
@@ -109,26 +110,21 @@ export const buildAgeService = ({ logger, ageRepository, donneeRepository }: Age
       }
 
       try {
-        upsertedAge = await prisma.age.update({
-          where: { id },
-          data,
-        });
+        upsertedAge = await ageRepository.updateAge(id, data);
       } catch (e) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
           throw new OucaError("OUCA0004", e);
         }
         throw e;
       }
     } else {
       try {
-        upsertedAge = await prisma.age.create({
-          data: {
-            ...data,
-            ownerId: loggedUser?.id,
-          },
+        upsertedAge = await ageRepository.createAge({
+          ...data,
+          owner_id: loggedUser.id,
         });
       } catch (e) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
           throw new OucaError("OUCA0004", e);
         }
         throw e;
@@ -154,14 +150,14 @@ export const buildAgeService = ({ logger, ageRepository, donneeRepository }: Age
   };
 
   const createAges = async (
-    ages: Omit<Prisma.AgeCreateManyInput, "ownerId">[],
+    ages: Omit<AgeCreateInput[], "owner_id">,
     loggedUser: LoggedUser
-  ): Promise<Prisma.BatchPayload> => {
-    return prisma.age.createMany({
-      data: ages.map((age) => {
+  ): Promise<readonly Age[]> => {
+    return ageRepository.createAges(
+      ages.map((age) => {
         return { ...age, ownerId: loggedUser.id };
-      }),
-    });
+      })
+    );
   };
 
   return {
