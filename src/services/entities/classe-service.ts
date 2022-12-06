@@ -15,7 +15,7 @@ import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  getSqlPagination,
+  getPrismaSqlPagination,
   getSqlSorting,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
@@ -136,7 +136,7 @@ export const findPaginatedClasses = async (
 
     classeEntities = await prisma.$queryRaw<
       (Classe & { nbDonnees: bigint })[]
-    >`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+    >`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getPrismaSqlPagination(searchParams)}`.then(
       transformQueryRawResultsBigIntsToNumbers
     );
   } else {

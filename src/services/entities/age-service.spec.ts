@@ -10,12 +10,10 @@ import {
 import { type AgeRepository } from "../../repositories/age/age-repository";
 import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { buildAgeService } from "./age-service";
-import { queryParametersToFindAllEntities } from "./entities-utils";
 
 const ageRepository = mock<AgeRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
@@ -82,20 +80,14 @@ describe("Data count per entity", () => {
 
 test("Find all ages", async () => {
   const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
-  const loggedUser = mock<LoggedUser>();
 
-  prismaMock.age.findMany.mockResolvedValueOnce(agesData);
+  ageRepository.findAges.mockResolvedValueOnce(agesData);
 
-  await ageService.findAges(loggedUser);
+  await ageService.findAllAges();
 
-  expect(prismaMock.age.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.age.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
+  expect(ageRepository.findAges).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_LIBELLE,
   });
 });
 
@@ -104,16 +96,12 @@ describe("Entities paginated find by search criteria", () => {
     const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.age.findMany.mockResolvedValueOnce(agesData);
+    ageRepository.findAges.mockResolvedValueOnce(agesData);
 
     await ageService.findPaginatedAges(loggedUser);
 
-    expect(prismaMock.age.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
+    expect(ageRepository.findAges).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated ages ", async () => {
@@ -130,24 +118,17 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.age.findMany.mockResolvedValueOnce([agesData[0]]);
+    ageRepository.findAges.mockResolvedValueOnce([agesData[0]]);
 
     await ageService.findPaginatedAges(loggedUser, searchParams);
 
-    expect(prismaMock.age.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.age.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        libelle: {
-          contains: searchParams.searchParams?.q,
-        },
-      },
+    expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
+    expect(ageRepository.findAges).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 

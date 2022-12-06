@@ -5,7 +5,7 @@ import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-ser
 export class ImportAgeService extends ImportEntiteAvecLibelleService<Age> {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await this.services.ageService.findAges(null);
+    this.entities = await this.services.ageService.findAllAges();
   };
 
   protected getThisEntityName(): string {

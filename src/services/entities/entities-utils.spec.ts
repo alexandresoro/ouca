@@ -3,7 +3,7 @@ import { mock } from "jest-mock-extended";
 import { SortOrder } from "../../graphql/generated/graphql-types";
 import { type LoggedUser } from "../../types/User";
 import {
-  getSqlPagination,
+  getPrismaSqlPagination,
   getSqlSorting,
   isEntityEditable,
   transformQueryRawBigIntsToNumbers,
@@ -101,20 +101,20 @@ describe("Entity editable status", () => {
 });
 
 test("should return correct SQL pagination with null input", () => {
-  expect(getSqlPagination(null)).toBe(Prisma.empty);
+  expect(getPrismaSqlPagination(null)).toBe(Prisma.empty);
 });
 
 test("should return correct SQL pagination with undefined input", () => {
-  expect(getSqlPagination(undefined)).toBe(Prisma.empty);
+  expect(getPrismaSqlPagination(undefined)).toBe(Prisma.empty);
 });
 
 test("should return correct SQL pagination with empty object input", () => {
-  expect(getSqlPagination({})).toBe(Prisma.empty);
+  expect(getPrismaSqlPagination({})).toBe(Prisma.empty);
 });
 
 test("should return correct SQL pagination with missing page size input", () => {
   expect(
-    getSqlPagination({
+    getPrismaSqlPagination({
       pageNumber: 1,
     })
   ).toBe(Prisma.empty);
@@ -122,7 +122,7 @@ test("should return correct SQL pagination with missing page size input", () => 
 
 test("should return correct SQL pagination with missing page number input", () => {
   expect(
-    getSqlPagination({
+    getPrismaSqlPagination({
       pageSize: 20,
     })
   ).toBe(Prisma.empty);
@@ -130,13 +130,13 @@ test("should return correct SQL pagination with missing page number input", () =
 
 test("should return correct SQL pagination with valid input", () => {
   expect(
-    getSqlPagination({
+    getPrismaSqlPagination({
       pageNumber: 3,
       pageSize: 20,
     }).text
   ).toEqual("LIMIT $1 OFFSET $2");
   expect(
-    getSqlPagination({
+    getPrismaSqlPagination({
       pageNumber: 3,
       pageSize: 20,
     }).values

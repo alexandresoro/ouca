@@ -15,7 +15,7 @@ import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  getSqlPagination,
+  getPrismaSqlPagination,
   getSqlSorting,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
@@ -114,7 +114,7 @@ export const findPaginatedObservateurs = async (
 
     observateurEntities = await prisma.$queryRaw<
       (Observateur & { nbDonnees: bigint })[]
-    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getPrismaSqlPagination(searchParams)}`.then(
       transformQueryRawResultsBigIntsToNumbers
     );
   } else {

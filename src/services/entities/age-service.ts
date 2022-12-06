@@ -1,20 +1,14 @@
-import { type Prisma } from "@prisma/client";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type FindParams, type MutationUpsertAgeArgs, type QueryAgesArgs } from "../../graphql/generated/graphql-types";
+import { type MutationUpsertAgeArgs, type QueryAgesArgs } from "../../graphql/generated/graphql-types";
 import { type AgeRepository } from "../../repositories/age/age-repository";
 import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
-import {
-  getEntiteAvecLibelleFilterClause,
-  getPrismaPagination,
-  queryParametersToFindAllEntities,
-} from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
 
 type AgeServiceDependencies = {
   logger: Logger;
@@ -35,20 +29,12 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     return donneeRepository.getCountByAgeId(id);
   };
 
-  const findAges = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Age[]> => {
-    validateAuthorization(loggedUser);
-
-    const { q, max } = params ?? {};
-
-    return prisma.age.findMany({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      where: {
-        libelle: {
-          contains: q || undefined,
-        },
-      },
-      take: max || undefined,
+  const findAllAges = async (): Promise<Age[]> => {
+    const ages = await ageRepository.findAges({
+      orderBy: COLUMN_LIBELLE,
     });
+
+    return [...ages];
   };
 
   const findPaginatedAges = async (loggedUser: LoggedUser | null, options: QueryAgesArgs = {}): Promise<Age[]> => {
@@ -56,34 +42,14 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
 
     const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-    let orderBy: Prisma.Enumerable<Prisma.AgeOrderByWithRelationInput> | undefined = undefined;
-    if (sortOrder) {
-      switch (orderByField) {
-        case "id":
-        case "libelle":
-          orderBy = {
-            [orderByField]: sortOrder,
-          };
-          break;
-        case "nbDonnees":
-          {
-            orderBy = {
-              donnee: {
-                _count: sortOrder,
-              },
-            };
-          }
-          break;
-        default:
-          orderBy = {};
-      }
-    }
-
-    return prisma.age.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+    const ages = await ageRepository.findAges({
+      q: searchParams?.q,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
     });
+
+    return [...ages];
   };
 
   const getAgesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -163,7 +129,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   return {
     findAge,
     getDonneesCountByAge,
-    findAges,
+    findAllAges,
     findPaginatedAges,
     getAgesCount,
     upsertAge,

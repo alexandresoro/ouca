@@ -15,7 +15,7 @@ import { validateAuthorization } from "./authorization-utils";
 import {
   getEntiteAvecLibelleFilterClause,
   getPrismaPagination,
-  getSqlPagination,
+  getPrismaSqlPagination,
   getSqlSorting,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
@@ -119,7 +119,7 @@ export const findPaginatedMeteos = async (
 
     meteoEntities = await prisma.$queryRaw<
       (Meteo & { nbDonnees: bigint })[]
-    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getPrismaSqlPagination(searchParams)}`.then(
       transformQueryRawResultsBigIntsToNumbers
     );
   } else {

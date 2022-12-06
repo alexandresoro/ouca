@@ -14,7 +14,7 @@ import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import {
   getPrismaPagination,
-  getSqlPagination,
+  getPrismaSqlPagination,
   getSqlSorting,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
@@ -172,7 +172,7 @@ export const findPaginatedDepartements = async (
 
     const nbDonneesForFilteredDepartements = await prisma.$queryRaw<
       { id: number; ownerId: string; nbLieuxDits: bigint; nbDonnees: bigint }[]
-    >`${donneesPerDepartementRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+    >`${donneesPerDepartementRequest} ${getSqlSorting(options)} ${getPrismaSqlPagination(searchParams)}`.then(
       transformQueryRawResultsBigIntsToNumbers
     );
 

@@ -16,7 +16,7 @@ import { validateAuthorization } from "./authorization-utils";
 import { getFilterClauseCommune } from "./commune-service";
 import {
   getPrismaPagination,
-  getSqlPagination,
+  getPrismaSqlPagination,
   getSqlSorting,
   queryParametersToFindAllEntities,
   transformQueryRawResultsBigIntsToNumbers,
@@ -221,7 +221,7 @@ export const findPaginatedLieuxDits = async (
 
     const nbDonneesForFilteredLieuxDits = await prisma.$queryRaw<
       { id: number; nbDonnees: bigint }[]
-    >`${donneesPerLieuDitRequest} ${getSqlSorting(options)} ${getSqlPagination(searchParams)}`.then(
+    >`${donneesPerLieuDitRequest} ${getSqlSorting(options)} ${getPrismaSqlPagination(searchParams)}`.then(
       transformQueryRawResultsBigIntsToNumbers
     );
 
