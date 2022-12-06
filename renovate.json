@@ -1,9 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": ["config:base", ":semanticCommits", ":pinAllExceptPeerDependencies", ":automergePatch"],
   "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
+    "enabled": true
   },
   "labels": ["dependencies"],
   "packageRules": [
@@ -11,9 +10,7 @@
       "matchDepTypes": ["devDependencies"],
       "excludePackageNames": ["typescript"],
       "matchPackagePatterns": ["*"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "all non-major dev dependencies",
-      "groupSlug": "all-minor-patch-dev",
+      "matchUpdateTypes": ["minor"],
       "automerge": true
     }
   ],
