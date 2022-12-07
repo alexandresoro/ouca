@@ -11,7 +11,6 @@ model Age {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle String   @unique() @db.VarChar(100)
   ownerId String?  @map("owner_id")
-  owner   User?    @relation(fields: [ownerId], references: [id], map: "fk_age_owner_id")
   donnee  Donnee[]
 
   @@map("age")
@@ -237,7 +236,6 @@ model Sexe {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle String   @unique() @db.VarChar(100)
   ownerId String?  @map("owner_id")
-  owner   User?    @relation(fields: [ownerId], references: [id], map: "fk_sexe_owner_id")
   donnee  Donnee[]
 
   @@map("sexe")
@@ -245,7 +243,6 @@ model Sexe {
 
 model User {
   id                 String               @id @default(uuid())
-  Age                Age[]
   Classe             Classe[]
   Commune            Commune[]
   Comportement       Comportement[]
@@ -258,7 +255,6 @@ model User {
   Meteo              Meteo[]
   Milieu             Milieu[]
   Observateur        Observateur[]
-  Sexe               Sexe[]
 
   @@map("user")
 }
