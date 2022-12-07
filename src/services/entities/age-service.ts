@@ -121,7 +121,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   ): Promise<readonly Age[]> => {
     return ageRepository.createAges(
       ages.map((age) => {
-        return { ...age, ownerId: loggedUser.id };
+        return { ...age, owner_id: loggedUser.id };
       })
     );
   };

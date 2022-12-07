@@ -349,7 +349,7 @@ test("Create multiple ages", async () => {
     agesData.map((age) => {
       return {
         ...age,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
     })
   );

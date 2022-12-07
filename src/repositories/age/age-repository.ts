@@ -30,6 +30,13 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
       FROM
         basenaturaliste.age
       ${isSortByNbDonnees ? sql.fragment`LEFT JOIN basenaturaliste.donnee ON age.id = donnee.age_id` : sql.fragment``}
+      ${
+        libelleLike
+          ? sql.fragment`
+      WHERE libelle ILIKE ${libelleLike}
+      `
+          : sql.fragment``
+      }
       ${isSortByNbDonnees ? sql.fragment`GROUP BY age."id"` : sql.fragment``}
       ${isSortByNbDonnees ? sql.fragment`ORDER BY COUNT(donnee."id")` : sql.fragment``}
       ${
@@ -38,13 +45,6 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
       orderBy,
       sortOrder,
     })}
-      ${
-        libelleLike
-          ? sql.fragment`
-      WHERE libelle ILIKE ${libelleLike}
-      `
-          : sql.fragment``
-      }
       ${buildPaginationFragment({ offset, limit })}
     `;
 
