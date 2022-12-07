@@ -1,193 +1,141 @@
-import { Prisma } from "@prisma/client";
 import { type Logger } from "pino";
-import {
-  type FindParams,
-  type MutationUpsertSexeArgs,
-  type QuerySexesArgs,
-} from "../../graphql/generated/graphql-types";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { type MutationUpsertSexeArgs, type QuerySexesArgs } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository";
-import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
-import prisma from "../../sql/prisma";
+import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
-import {
-  getEntiteAvecLibelleFilterClause,
-  getPrismaPagination,
-  queryParametersToFindAllEntities,
-} from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
 
 type SexeServiceDependencies = {
   logger: Logger;
   sexeRepository: SexeRepository;
+  donneeRepository: DonneeRepository;
 };
 
-export const buildSexeService = ({ logger, sexeRepository }: SexeServiceDependencies) => {
-  return {};
-};
+export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServiceDependencies) => {
+  const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe | null> => {
+    validateAuthorization(loggedUser);
 
-export type SexeService = ReturnType<typeof buildSexeService>;
+    return sexeRepository.findSexeById(id);
+  };
 
-export const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe | null> => {
-  validateAuthorization(loggedUser);
+  const getDonneesCountBySexe = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.sexe.findUnique({
-    where: {
-      id,
-    },
-  });
-};
+    return donneeRepository.getCountBySexeId(id);
+  };
 
-export const getDonneesCountBySexe = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const findAllSexes = async (): Promise<Sexe[]> => {
+    const sexes = await sexeRepository.findSexes({
+      orderBy: COLUMN_LIBELLE,
+    });
 
-  return prisma.donnee.count({
-    where: {
-      sexeId: id,
-    },
-  });
-};
+    return [...sexes];
+  };
 
-export const findSexes = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Sexe[]> => {
-  validateAuthorization(loggedUser);
+  const findPaginatedSexes = async (loggedUser: LoggedUser | null, options: QuerySexesArgs = {}): Promise<Sexe[]> => {
+    validateAuthorization(loggedUser);
 
-  const { q, max } = params ?? {};
+    const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  return prisma.sexe.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: q || undefined,
-      },
-    },
-    take: max || undefined,
-  });
-};
+    const sexes = await sexeRepository.findSexes({
+      q: searchParams?.q,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
+    });
 
-export const findPaginatedSexes = async (
-  loggedUser: LoggedUser | null,
-  options: Partial<QuerySexesArgs> = {}
-): Promise<Sexe[]> => {
-  validateAuthorization(loggedUser);
+    return [...sexes];
+  };
 
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const getSexesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  let orderBy: Prisma.Enumerable<Prisma.SexeOrderByWithRelationInput> | undefined = undefined;
-  if (sortOrder) {
-    switch (orderByField) {
-      case "id":
-      case "libelle":
-        orderBy = {
-          [orderByField]: sortOrder,
-        };
-        break;
-      case "nbDonnees":
-        {
-          orderBy = {
-            donnee: {
-              _count: sortOrder,
-            },
-          };
+    return sexeRepository.getCount(q);
+  };
+
+  const upsertSexe = async (args: MutationUpsertSexeArgs, loggedUser: LoggedUser | null): Promise<Sexe> => {
+    validateAuthorization(loggedUser);
+
+    const { id, data } = args;
+
+    let upsertedSexe: Sexe;
+
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser?.role !== "admin") {
+        const existingData = await sexeRepository.findSexeById(id);
+
+        if (existingData?.ownerId !== loggedUser?.id) {
+          throw new OucaError("OUCA0001");
         }
-        break;
-      default:
-        orderBy = {};
+      }
+
+      try {
+        upsertedSexe = await sexeRepository.updateSexe(id, data);
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      try {
+        upsertedSexe = await sexeRepository.createSexe({
+          ...data,
+          owner_id: loggedUser.id,
+        });
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
     }
-  }
 
-  return prisma.sexe.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-};
+    return upsertedSexe;
+  };
 
-export const getSexesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const deleteSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.sexe.count({
-    where: getEntiteAvecLibelleFilterClause(q),
-  });
-};
-
-export const upsertSexe = async (args: MutationUpsertSexeArgs, loggedUser: LoggedUser | null): Promise<Sexe> => {
-  validateAuthorization(loggedUser);
-
-  const { id, data } = args;
-
-  let upsertedSexe: Sexe;
-
-  if (id) {
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.sexe.findFirst({
-        where: { id },
-      });
+      const existingData = await sexeRepository.findSexeById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    try {
-      upsertedSexe = await prisma.sexe.update({
-        where: { id },
-        data,
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    try {
-      upsertedSexe = await prisma.sexe.create({
-        data: {
-          ...data,
-          ownerId: loggedUser?.id,
-        },
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
+    return sexeRepository.deleteSexeById(id);
+  };
 
-  return upsertedSexe;
+  const createSexes = async (
+    sexes: Omit<SexeCreateInput[], "owner_id">,
+    loggedUser: LoggedUser
+  ): Promise<readonly Sexe[]> => {
+    return sexeRepository.createSexes(
+      sexes.map((sexe) => {
+        return { ...sexe, owner_id: loggedUser.id };
+      })
+    );
+  };
+
+  return {
+    findSexe,
+    getDonneesCountBySexe,
+    findAllSexes,
+    findPaginatedSexes,
+    getSexesCount,
+    upsertSexe,
+    deleteSexe,
+    createSexes,
+  };
 };
 
-export const deleteSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.sexe.findFirst({
-      where: { id },
-    });
-
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
-
-  return prisma.sexe.delete({
-    where: {
-      id,
-    },
-  });
-};
-
-export const createSexes = async (
-  sexes: Omit<Prisma.SexeCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.sexe.createMany({
-    data: sexes.map((sexe) => {
-      return { ...sexe, ownerId: loggedUser.id };
-    }),
-  });
-};
+export type SexeService = ReturnType<typeof buildSexeService>;

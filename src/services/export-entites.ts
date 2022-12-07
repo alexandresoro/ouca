@@ -19,7 +19,7 @@ import { findAllLieuxDitsWithCommuneAndDepartement } from "./entities/lieu-dit-s
 import { findMeteos } from "./entities/meteo-service";
 import { findMilieux } from "./entities/milieu-service";
 import { findObservateurs } from "./entities/observateur-service";
-import { findSexes } from "./entities/sexe-service";
+import { type SexeService } from "./entities/sexe-service";
 
 export const generateAgesExport = async (ageService: AgeService): Promise<string> => {
   const agesDb = await ageService.findAllAges();
@@ -273,8 +273,8 @@ export const generateObservateursExport = async (): Promise<string> => {
   return fileName;
 };
 
-export const generateSexesExport = async (): Promise<string> => {
-  const sexes = await findSexes(null);
+export const generateSexesExport = async (sexeService: SexeService): Promise<string> => {
+  const sexes = await sexeService.findAllSexes();
 
   const objectsToExport = sexes.map((object) => {
     return {

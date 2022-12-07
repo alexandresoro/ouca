@@ -166,6 +166,7 @@ export const buildServices = async (): Promise<Services> => {
   const sexeService = buildSexeService({
     logger,
     sexeRepository,
+    donneeRepository,
   });
 
   const userService = buildUserService({

@@ -119,14 +119,6 @@ import {
   upsertObservateur,
 } from "../services/entities/observateur-service";
 import {
-  deleteSexe,
-  findPaginatedSexes,
-  findSexe,
-  getDonneesCountBySexe,
-  getSexesCount,
-  upsertSexe,
-} from "../services/entities/sexe-service";
-import {
   generateAgesExport,
   generateClassesExport,
   generateCommunesExport,
@@ -192,7 +184,13 @@ declare module "mercurius" {
   interface IResolvers extends Resolvers<import("mercurius").MercuriusContext> {}
 }
 
-export const buildResolvers = ({ ageService, settingsService, tokenService, userService }: Services): IResolvers => {
+export const buildResolvers = ({
+  ageService,
+  sexeService,
+  settingsService,
+  tokenService,
+  userService,
+}: Services): IResolvers => {
   const resolvers: IResolvers = {
     Query: {
       age: async (_source, args, { user }): Promise<Age | null> => {
@@ -370,12 +368,12 @@ export const buildResolvers = ({ ageService, settingsService, tokenService, user
         };
       },
       sexe: async (_source, args, { user }): Promise<Sexe | null> => {
-        return findSexe(args.id, user);
+        return sexeService.findSexe(args.id, user);
       },
       sexes: async (_, args, { user }): Promise<SexesPaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedSexes(user, args),
-          getSexesCount(user, args?.searchParams?.q),
+          sexeService.findPaginatedSexes(user, args),
+          sexeService.getSexesCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -471,7 +469,7 @@ export const buildResolvers = ({ ageService, settingsService, tokenService, user
       },
       exportSexes: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateSexesExport();
+        return generateSexesExport(sexeService);
       },
       dumpDatabase: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -526,7 +524,7 @@ export const buildResolvers = ({ ageService, settingsService, tokenService, user
         return deleteObservateur(args.id, user).then(({ id }) => id);
       },
       deleteSexe: async (_source, args, { user }): Promise<number> => {
-        return deleteSexe(args.id, user).then(({ id }) => id);
+        return sexeService.deleteSexe(args.id, user).then(({ id }) => id);
       },
       upsertAge: async (_source, args, { user }): Promise<Age> => {
         return ageService.upsertAge(args, user);
@@ -607,7 +605,7 @@ export const buildResolvers = ({ ageService, settingsService, tokenService, user
         return upsertObservateur(args, user);
       },
       upsertSexe: async (_source, args, { user }): Promise<Sexe> => {
-        return upsertSexe(args, user);
+        return sexeService.upsertSexe(args, user);
       },
       updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
         return settingsService.persistUserSettings(appConfiguration, user);
@@ -791,8 +789,8 @@ export const buildResolvers = ({ ageService, settingsService, tokenService, user
       },
     },
     Sexe: {
-      editable: isEntityEditableResolver(findSexe),
-      nbDonnees: entityNbDonneesResolver(getDonneesCountBySexe),
+      editable: isEntityEditableResolver(sexeService.findSexe),
+      nbDonnees: entityNbDonneesResolver(sexeService.getDonneesCountBySexe),
     },
   };
 

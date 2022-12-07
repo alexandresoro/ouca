@@ -1,5 +1,4 @@
 import {
-  type Age,
   type Commune,
   type Comportement,
   type Departement,
@@ -9,7 +8,6 @@ import {
   type Meteo,
   type Milieu,
   type Observateur,
-  type Sexe,
 } from "@prisma/client";
 import { type InputDonnee } from "../../graphql/generated/graphql-types";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
@@ -17,6 +15,8 @@ import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coord
 import { type CoordinatesSystem } from "../../model/coordinates-system/coordinates-system.object";
 import { type Coordinates } from "../../model/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
+import { type Age } from "../../repositories/age/age-repository-types";
+import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { findCommunes } from "../entities/commune-service";
@@ -31,7 +31,6 @@ import { findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/
 import { findMeteos } from "../entities/meteo-service";
 import { findMilieux } from "../entities/milieu-service";
 import { findObservateurs } from "../entities/observateur-service";
-import { findSexes } from "../entities/sexe-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -76,7 +75,7 @@ export class ImportDonneeService extends ImportService {
     this.lieuxDits = await findLieuxDits(null);
     this.meteos = await findMeteos(null);
     this.especes = await findEspeces(null);
-    this.sexes = await findSexes(null);
+    this.sexes = await this.services.sexeService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
     this.estimationsNombre = await findEstimationsNombre(null);
     this.estimationsDistance = await findEstimationsDistance(null);

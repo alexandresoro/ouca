@@ -1,50 +1,37 @@
-import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
   type MutationUpsertSexeArgs,
   type QuerySexesArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository";
-import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { queryParametersToFindAllEntities } from "./entities-utils";
-import {
-  buildSexeService,
-  createSexes,
-  deleteSexe,
-  findPaginatedSexes,
-  findSexe,
-  findSexes,
-  getDonneesCountBySexe,
-  getSexesCount,
-  upsertSexe,
-} from "./sexe-service";
+import { buildSexeService } from "./sexe-service";
 
 const sexeRepository = mock<SexeRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const sexeService = buildSexeService({
   logger,
   sexeRepository,
+  donneeRepository,
 });
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
+const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
+  new Error("errorMessage"),
+  "constraint"
+);
 
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
+const uniqueConstraintFailed = () => {
+  throw uniqueConstraintFailedError;
 };
 
 describe("Find sex", () => {
@@ -52,35 +39,27 @@ describe("Find sex", () => {
     const sexData = mock<Sexe>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.sexe.findUnique.mockResolvedValueOnce(sexData);
+    sexeRepository.findSexeById.mockResolvedValueOnce(sexData);
 
-    await findSexe(sexData.id, loggedUser);
+    await sexeService.findSexe(sexData.id, loggedUser);
 
-    expect(prismaMock.sexe.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: sexData.id,
-      },
-    });
+    expect(sexeRepository.findSexeById).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.findSexeById).toHaveBeenLastCalledWith(sexData.id);
   });
 
   test("should handle sex not found", async () => {
-    prismaMock.sexe.findUnique.mockResolvedValueOnce(null);
+    sexeRepository.findSexeById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findSexe(10, loggedUser)).resolves.toBe(null);
+    await expect(sexeService.findSexe(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.sexe.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(sexeRepository.findSexeById).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.findSexeById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.sexe.findUnique).not.toHaveBeenCalled();
+    await expect(sexeService.findSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(sexeRepository.findSexeById).not.toHaveBeenCalled();
   });
 });
 
@@ -88,37 +67,27 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountBySexe(12, loggedUser);
+    await sexeService.getDonneesCountBySexe(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        sexeId: 12,
-      },
-    });
+    expect(donneeRepository.getCountBySexeId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountBySexeId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountBySexe(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.getDonneesCountBySexe(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 test("Find all sexes", async () => {
   const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
-  const loggedUser = mock<LoggedUser>();
 
-  prismaMock.sexe.findMany.mockResolvedValueOnce(sexesData);
+  sexeRepository.findSexes.mockResolvedValueOnce(sexesData);
 
-  await findSexes(loggedUser);
+  await sexeService.findAllSexes();
 
-  expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(sexeRepository.findSexes).toHaveBeenCalledTimes(1);
+  expect(sexeRepository.findSexes).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_LIBELLE,
   });
 });
 
@@ -127,16 +96,12 @@ describe("Entities paginated find by search criteria", () => {
     const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.sexe.findMany.mockResolvedValueOnce(sexesData);
+    sexeRepository.findSexes.mockResolvedValueOnce(sexesData);
 
-    await findPaginatedSexes(loggedUser);
+    await sexeService.findPaginatedSexes(loggedUser);
 
-    expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(sexeRepository.findSexes).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.findSexes).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated sexes ", async () => {
@@ -153,29 +118,22 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.sexe.findMany.mockResolvedValueOnce([sexesData[0]]);
+    sexeRepository.findSexes.mockResolvedValueOnce([sexesData[0]]);
 
-    await findPaginatedSexes(loggedUser, searchParams);
+    await sexeService.findPaginatedSexes(loggedUser, searchParams);
 
-    expect(prismaMock.sexe.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        libelle: {
-          contains: searchParams.searchParams?.q,
-        },
-      },
+    expect(sexeRepository.findSexes).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.findSexes).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedSexes(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.findPaginatedSexes(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -183,31 +141,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getSexesCount(loggedUser);
+    await sexeService.getSexesCount(loggedUser);
 
-    expect(prismaMock.sexe.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(sexeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getSexesCount(loggedUser, "test");
+    await sexeService.getSexesCount(loggedUser, "test");
 
-    expect(prismaMock.sexe.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.count).toHaveBeenLastCalledWith({
-      where: {
-        libelle: {
-          contains: "test",
-        },
-      },
-    });
+    expect(sexeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getSexesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.getSexesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -217,15 +167,10 @@ describe("Update of a sex", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertSexe(sexData, loggedUser);
+    await sexeService.upsertSexe(sexData, loggedUser);
 
-    expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
-      data: sexData.data,
-      where: {
-        id: sexData.id,
-      },
-    });
+    expect(sexeRepository.updateSexe).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(sexData.id, sexData.data);
   });
 
   test("should be allowed when requested by the owner ", async () => {
@@ -237,17 +182,12 @@ describe("Update of a sex", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.sexe.findFirst.mockResolvedValueOnce(existingData);
+    sexeRepository.findSexeById.mockResolvedValueOnce(existingData);
 
-    await upsertSexe(sexData, loggedUser);
+    await sexeService.upsertSexe(sexData, loggedUser);
 
-    expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
-      data: sexData.data,
-      where: {
-        id: sexData.id,
-      },
-    });
+    expect(sexeRepository.updateSexe).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(sexData.id, sexData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -262,11 +202,11 @@ describe("Update of a sex", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.sexe.findFirst.mockResolvedValueOnce(existingData);
+    sexeRepository.findSexeById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertSexe(sexData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(sexeService.upsertSexe(sexData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.sexe.update).not.toHaveBeenCalled();
+    expect(sexeRepository.updateSexe).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a sex that exists", async () => {
@@ -276,19 +216,14 @@ describe("Update of a sex", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.sexe.update.mockImplementation(prismaConstraintFailed);
+    sexeRepository.updateSexe.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertSexe(sexData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => sexeService.upsertSexe(sexData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.sexe.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.update).toHaveBeenLastCalledWith({
-      data: sexData.data,
-      where: {
-        id: sexData.id,
-      },
-    });
+    expect(sexeRepository.updateSexe).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(sexData.id, sexData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -296,8 +231,8 @@ describe("Update of a sex", () => {
       id: 12,
     });
 
-    await expect(upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.sexe.update).not.toHaveBeenCalled();
+    await expect(sexeService.upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(sexeRepository.updateSexe).not.toHaveBeenCalled();
   });
 });
 
@@ -309,14 +244,12 @@ describe("Creation of a sex", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertSexe(sexData, loggedUser);
+    await sexeService.upsertSexe(sexData, loggedUser);
 
-    expect(prismaMock.sexe.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.create).toHaveBeenLastCalledWith({
-      data: {
-        ...sexData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(sexeRepository.createSexe).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.createSexe).toHaveBeenLastCalledWith({
+      ...sexData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -327,18 +260,16 @@ describe("Creation of a sex", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.sexe.create.mockImplementation(prismaConstraintFailed);
+    sexeRepository.createSexe.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertSexe(sexData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => sexeService.upsertSexe(sexData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.sexe.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.create).toHaveBeenLastCalledWith({
-      data: {
-        ...sexData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(sexeRepository.createSexe).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.createSexe).toHaveBeenLastCalledWith({
+      ...sexData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -347,8 +278,8 @@ describe("Creation of a sex", () => {
       id: undefined,
     });
 
-    await expect(upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.sexe.create).not.toHaveBeenCalled();
+    await expect(sexeService.upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(sexeRepository.createSexe).not.toHaveBeenCalled();
   });
 });
 
@@ -363,16 +294,12 @@ describe("Deletion of a sex", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.sexe.findFirst.mockResolvedValueOnce(sex);
+    sexeRepository.findSexeById.mockResolvedValueOnce(sex);
 
-    await deleteSexe(11, loggedUser);
+    await sexeService.deleteSexe(11, loggedUser);
 
-    expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(sexeRepository.deleteSexeById).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.deleteSexeById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any sex if admin", async () => {
@@ -380,16 +307,12 @@ describe("Deletion of a sex", () => {
       role: "admin",
     });
 
-    prismaMock.sexe.findFirst.mockResolvedValueOnce(mock<Sexe>());
+    sexeRepository.findSexeById.mockResolvedValueOnce(mock<Sexe>());
 
-    await deleteSexe(11, loggedUser);
+    await sexeService.deleteSexe(11, loggedUser);
 
-    expect(prismaMock.sexe.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.sexe.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(sexeRepository.deleteSexeById).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.deleteSexeById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned sex as non-admin", async () => {
@@ -397,37 +320,37 @@ describe("Deletion of a sex", () => {
       role: "contributor",
     });
 
-    prismaMock.sexe.findFirst.mockResolvedValueOnce(mock<Sexe>());
+    sexeRepository.findSexeById.mockResolvedValueOnce(mock<Sexe>());
 
-    await expect(deleteSexe(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.deleteSexe(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.sexe.delete).not.toHaveBeenCalled();
+    expect(sexeRepository.deleteSexeById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.sexe.delete).not.toHaveBeenCalled();
+    await expect(sexeService.deleteSexe(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(sexeRepository.deleteSexeById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple sexes", async () => {
   const sexesData = [
-    mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.SexeCreateManyInput, "ownerId">>(),
+    mock<Omit<SexeCreateInput, "owner_id">>(),
+    mock<Omit<SexeCreateInput, "owner_id">>(),
+    mock<Omit<SexeCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createSexes(sexesData, loggedUser);
+  await sexeService.createSexes(sexesData, loggedUser);
 
-  expect(prismaMock.sexe.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.sexe.createMany).toHaveBeenLastCalledWith({
-    data: sexesData.map((sex) => {
+  expect(sexeRepository.createSexes).toHaveBeenCalledTimes(1);
+  expect(sexeRepository.createSexes).toHaveBeenLastCalledWith(
+    sexesData.map((sex) => {
       return {
         ...sex,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });
