@@ -1,6 +1,4 @@
 import { fastify } from "fastify";
-import fs from "node:fs";
-import path from "node:path";
 import { registerFastifyPlugins, registerFastifyRoutes } from "./fastify";
 import { buildServices } from "./services/services";
 import { logger } from "./utils/logger";
@@ -8,9 +6,6 @@ import options from "./utils/options";
 import { checkAndCreateFolders } from "./utils/paths";
 
 logger.debug("Starting app");
-
-const graphQLSchema = fs.readFileSync(path.join(__dirname, "model/schema.graphql"), "utf-8").toString();
-logger.debug("GraphQL schema has been parsed");
 
 const server = fastify({
   logger,
@@ -25,7 +20,7 @@ checkAndCreateFolders();
   logger.debug("Services initialized successfully");
   logger.debug("Connection to database successful");
 
-  await registerFastifyPlugins(server, services, graphQLSchema);
+  await registerFastifyPlugins(server, services, logger);
 
   registerFastifyRoutes(server, services);
 

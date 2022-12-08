@@ -30,6 +30,6 @@ RUN mkdir public && \
   mkdir uploads && \
   mkdir logs
 
-ENTRYPOINT ["node", "backend.js"]
+ENTRYPOINT ["node", "main.js"]
 
 EXPOSE 4000/tcp

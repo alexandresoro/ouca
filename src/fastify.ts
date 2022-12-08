@@ -11,6 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
+import { type Logger } from "pino";
 import { buildGraphQLContext } from "./graphql/graphql-context";
 import { logQueries, logResults } from "./graphql/mercurius-logger";
 import { buildResolvers } from "./graphql/resolvers";
@@ -22,7 +23,7 @@ import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/pa
 export const registerFastifyPlugins = async (
   server: FastifyInstance,
   services: Services,
-  graphQLSchema: string
+  logger: Logger
 ): Promise<void> => {
   // Middlewares
   await server.register(fastifyMultipart);
@@ -45,6 +46,11 @@ export const registerFastifyPlugins = async (
   services.logger.debug("Fastify static server successfully registered");
 
   // Mercurius GraphQL adapter
+
+  // Parse GraphQL schema
+  const graphQLSchema = fs.readFileSync(path.join(__dirname, "model/schema.graphql"), "utf-8").toString();
+  logger.debug("GraphQL schema has been parsed");
+
   await server.register(mercurius, {
     schema: graphQLSchema,
     resolvers: buildResolvers(services),

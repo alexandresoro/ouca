@@ -167,7 +167,6 @@ import {
   type MilieuxPaginatedResult,
   type Observateur,
   type ObservateursPaginatedResult,
-  type Resolvers,
   type Settings,
   type Sexe,
   type SexesPaginatedResult,
@@ -177,12 +176,10 @@ import {
 } from "./generated/graphql-types";
 import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper";
 
+/**
+ * @deprecated authent/authorization should be done at service level
+ */
 const USER_NOT_AUTHENTICATED = "User is not authenticated.";
-
-declare module "mercurius" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/consistent-type-imports
-  interface IResolvers extends Resolvers<import("mercurius").MercuriusContext> {}
-}
 
 export const buildResolvers = ({
   ageService,
@@ -191,7 +188,7 @@ export const buildResolvers = ({
   tokenService,
   userService,
 }: Services): IResolvers => {
-  const resolvers: IResolvers = {
+  return {
     Query: {
       age: async (_source, args, { user }): Promise<Age | null> => {
         return ageService.findAge(args.id, user);
@@ -793,6 +790,4 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(sexeService.getDonneesCountBySexe),
     },
   };
-
-  return resolvers;
 };
