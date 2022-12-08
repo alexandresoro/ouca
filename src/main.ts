@@ -1,50 +1,25 @@
-import { fastify } from "fastify";
 import config from "./config";
-import { registerFastifyPlugins, registerFastifyRoutes } from "./fastify";
+import { buildServer, registerFastifyRoutes } from "./fastify";
 import { buildServices } from "./services/services";
+import shutdown from "./shutdown";
 import { logger } from "./utils/logger";
 import { checkAndCreateFolders } from "./utils/paths";
 
 logger.debug("Starting app");
 
-const server = fastify({
-  logger,
-});
-
 checkAndCreateFolders();
 
 (async () => {
   const services = await buildServices();
-  const { slonik } = services;
 
-  logger.debug("Services initialized successfully");
-  logger.debug("Connection to database successful");
+  const server = await buildServer(services);
 
-  await registerFastifyPlugins(server, services, logger);
+  process.on("SIGINT", shutdown(server, services));
+  process.on("SIGTERM", shutdown(server, services));
 
   registerFastifyRoutes(server, services);
 
   await server.listen({ ...config.server });
-
-  // Handle shutdown request gracefully
-  // This is used when inside a container
-  // See https://emmer.dev/blog/you-don-t-need-an-init-system-for-node.js-in-docker/
-  // Alternative is to use --init flag
-  const shutdown = () => {
-    logger.info("Shutdown requested");
-    Promise.all([
-      slonik.end().then(() => {
-        logger.info("Database connector has been shut down");
-      }),
-      server.close().then(() => {
-        logger.info("Web server has been shut down");
-      }),
-    ]).finally(() => {
-      process.exit(0);
-    });
-  };
-  process.on("SIGINT", shutdown);
-  process.on("SIGTERM", shutdown);
 })().catch((e) => {
   logger.error(e);
 });

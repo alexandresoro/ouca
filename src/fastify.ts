@@ -3,7 +3,7 @@ import { fastifyCookie } from "@fastify/cookie";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import { fastifyStatic } from "@fastify/static";
-import { type FastifyInstance } from "fastify";
+import fastify, { type FastifyInstance } from "fastify";
 import { NoSchemaIntrospectionCustomRule } from "graphql";
 import mercurius from "mercurius";
 import { randomUUID } from "node:crypto";
@@ -11,7 +11,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
-import { type Logger } from "pino";
 import { buildGraphQLContext } from "./graphql/graphql-context";
 import { logQueries, logResults } from "./graphql/mercurius-logger";
 import { buildResolvers } from "./graphql/resolvers";
@@ -20,11 +19,12 @@ import { startImportTask } from "./services/import-manager";
 import { type Services } from "./services/services";
 import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
 
-export const registerFastifyPlugins = async (
-  server: FastifyInstance,
-  services: Services,
-  logger: Logger
-): Promise<void> => {
+export const buildServer = async (services: Services): Promise<FastifyInstance> => {
+  // Server
+  const server = fastify({
+    logger: services.logger,
+  });
+
   // Middlewares
   await server.register(fastifyMultipart);
   await server.register(fastifyCookie);
@@ -49,7 +49,7 @@ export const registerFastifyPlugins = async (
 
   // Parse GraphQL schema
   const graphQLSchema = fs.readFileSync(path.join(__dirname, "model/schema.graphql"), "utf-8").toString();
-  logger.debug("GraphQL schema has been parsed");
+  services.logger.debug("GraphQL schema has been parsed");
 
   await server.register(mercurius, {
     schema: graphQLSchema,
@@ -60,6 +60,8 @@ export const registerFastifyPlugins = async (
   server.graphql.addHook("preExecution", logQueries);
   server.graphql.addHook("onResolution", logResults);
   services.logger.debug("Mercurius GraphQL adapter successfully registered");
+
+  return server;
 };
 
 export const registerFastifyRoutes = (server: FastifyInstance, services: Services): void => {

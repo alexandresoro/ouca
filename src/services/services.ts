@@ -74,6 +74,8 @@ export const buildServices = async (): Promise<Services> => {
     ],
   });
 
+  logger.debug("Connection to database successful");
+
   const ageRepository = buildAgeRepository({ slonik });
   const classeRepository = buildClasseRepository({ slonik });
   const communeRepository = buildCommuneRepository({ slonik });
@@ -184,6 +186,8 @@ export const buildServices = async (): Promise<Services> => {
   const tokenService = buildTokenService({
     userService,
   });
+
+  logger.debug("Services initialized successfully");
 
   return {
     logger,
