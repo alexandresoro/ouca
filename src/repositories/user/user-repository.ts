@@ -1,7 +1,7 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { z } from "zod";
 import { type DatabaseRole } from "../../types/User";
-import { objectToKeyValueInsert, objectToKeyValueSet } from "../../utils/slonik-utils";
+import { objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers";
 import { userWithPasswordSchema, type UserWithPasswordResult } from "./user-repository-types";
 
 export type UserRepositoryDependencies = {

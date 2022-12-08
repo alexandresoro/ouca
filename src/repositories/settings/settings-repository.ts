@@ -1,6 +1,6 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { z } from "zod";
-import { objectToKeyValueSet } from "../../utils/slonik-utils";
+import { objectToKeyValueSet } from "../repository-helpers";
 import { settingsSchema, type Settings, type UpdateSettingsInput } from "./settings-repository-types";
 
 export type SettingsRepositoryDependencies = {

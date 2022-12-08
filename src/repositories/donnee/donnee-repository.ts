@@ -1,5 +1,5 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../repository-helpers";
+import { countSchema } from "../common";
 
 export type DonneeRepositoryDependencies = {
   slonik: DatabasePool;

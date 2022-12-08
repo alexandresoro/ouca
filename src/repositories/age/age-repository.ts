@@ -1,6 +1,12 @@
 import { sql, type DatabasePool } from "slonik";
-import { objectsToKeyValueInsert, objectToKeyValueInsert, objectToKeyValueSet } from "../../utils/slonik-utils";
-import { buildPaginationFragment, buildSortOrderFragment, countSchema } from "../repository-helpers";
+import { countSchema } from "../common";
+import {
+  buildPaginationFragment,
+  buildSortOrderFragment,
+  objectsToKeyValueInsert,
+  objectToKeyValueInsert,
+  objectToKeyValueSet,
+} from "../repository-helpers";
 import { ageSchema, type Age, type AgeCreateInput, type AgeFindManyInput } from "./age-repository-types";
 
 export type AgeRepositoryDependencies = {
