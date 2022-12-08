@@ -1,17 +1,17 @@
 import { type CookieSerializeOptions } from "@fastify/cookie";
 import { type FastifyReply, type FastifyRequest } from "fastify";
 import { jwtVerify, SignJWT, type JWTPayload } from "jose";
+import config from "../config";
 import { type DatabaseRole, type LoggedUser, type User } from "../types/User";
 import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
-import options from "../utils/options";
 import { type UserService } from "./user-service";
 
 const TOKEN_KEY = "token";
 
 const COOKIE_OPTIONS: CookieSerializeOptions = {
   httpOnly: true,
-  sameSite: options.jwt.cookie.sameSite ? "strict" : "none",
-  secure: options.jwt.cookie.secure,
+  sameSite: config.jwt.cookie.sameSite ? "strict" : "none",
+  secure: config.jwt.cookie.secure,
   maxAge: 60 * 60 * 24, // Let's keep it for 1 day for now
 };
 

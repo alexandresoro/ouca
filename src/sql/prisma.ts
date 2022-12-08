@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import config from "../config";
 import { logger } from "../utils/logger";
-import options from "../utils/options";
 
 /**
  * @deprecated
@@ -8,7 +8,7 @@ import options from "../utils/options";
 const prismaClient = new PrismaClient({
   datasources: {
     db: {
-      url: options.database.prismaUrl,
+      url: config.database.prismaUrl,
     },
   },
   errorFormat: "minimal",

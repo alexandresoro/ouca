@@ -2,9 +2,9 @@ import { format } from "date-fns";
 import { spawn, type ChildProcess } from "node:child_process";
 import { promises } from "node:fs";
 import path from "node:path";
+import config from "../../config";
 import { DATE_PATTERN } from "../../utils/constants";
 import { logger } from "../../utils/logger";
-import options from "../../utils/options";
 import { PUBLIC_DIR } from "../../utils/paths";
 
 const DUMP_FILE_NAME = "sauvegarde_base_naturaliste_";
@@ -15,7 +15,7 @@ const executeSqlDump = async (): Promise<string> => {
     let stdout = "";
     let stderr = "";
 
-    const dbUrl = new URL(options.database.prismaUrl);
+    const dbUrl = new URL(config.database.prismaUrl);
 
     const dumpParams: string[] = [
       `--user=${dbUrl.username}`,

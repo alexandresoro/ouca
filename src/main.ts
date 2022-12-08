@@ -1,8 +1,8 @@
 import { fastify } from "fastify";
+import config from "./config";
 import { registerFastifyPlugins, registerFastifyRoutes } from "./fastify";
 import { buildServices } from "./services/services";
 import { logger } from "./utils/logger";
-import options from "./utils/options";
 import { checkAndCreateFolders } from "./utils/paths";
 
 logger.debug("Starting app");
@@ -24,7 +24,7 @@ checkAndCreateFolders();
 
   registerFastifyRoutes(server, services);
 
-  await server.listen({ ...options.server });
+  await server.listen({ ...config.server });
 
   // Handle shutdown request gracefully
   // This is used when inside a container

@@ -1,12 +1,12 @@
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
+import config from "../config";
 import { type EditUserData, type UserCreateInput, type UserLoginInput } from "../graphql/generated/graphql-types";
 import { type SettingsRepository } from "../repositories/settings/settings-repository";
 import { type UserRepository } from "../repositories/user/user-repository";
 import { type LoggedUser, type UserWithPassword } from "../types/User";
 import { OucaError } from "../utils/errors";
-import options from "../utils/options";
 import { buildUserService, getHashedPassword, validatePassword } from "./user-service";
 
 const userRepository = mock<UserRepository>({
@@ -59,7 +59,7 @@ describe("User creation", () => {
   test("should throw error when signups are disabled", async () => {
     const signupData = mock<UserCreateInput>();
     const loggedUser = mock<LoggedUser>();
-    options.admin.signupsAllowed = false;
+    config.admin.signupsAllowed = false;
 
     await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0005")
@@ -71,8 +71,8 @@ describe("User creation", () => {
   test("should throw error when creating initial admin and no env password defined", async () => {
     const signupData = mock<UserCreateInput>();
     const loggedUser = mock<LoggedUser>();
-    options.admin.signupsAllowed = true;
-    options.admin.defaultAdminPassword = "";
+    config.admin.signupsAllowed = true;
+    config.admin.defaultAdminPassword = "";
 
     userRepository.getAdminsCount.mockResolvedValueOnce(0);
 
@@ -88,8 +88,8 @@ describe("User creation", () => {
       password: "wrong",
     });
     const loggedUser = mock<LoggedUser>();
-    options.admin.signupsAllowed = true;
-    options.admin.defaultAdminPassword = "right";
+    config.admin.signupsAllowed = true;
+    config.admin.defaultAdminPassword = "right";
 
     userRepository.getAdminsCount.mockResolvedValueOnce(0);
 
@@ -105,8 +105,8 @@ describe("User creation", () => {
       password: "right",
     });
     const loggedUser = mock<LoggedUser>();
-    options.admin.signupsAllowed = true;
-    options.admin.defaultAdminPassword = "right";
+    config.admin.signupsAllowed = true;
+    config.admin.defaultAdminPassword = "right";
 
     userRepository.getAdminsCount.mockResolvedValueOnce(0);
     userRepository.createUser.mockResolvedValueOnce(mock());
@@ -122,7 +122,7 @@ describe("User creation", () => {
     const loggedUser = mock<LoggedUser>({
       role: "contributor",
     });
-    options.admin.signupsAllowed = true;
+    config.admin.signupsAllowed = true;
 
     userRepository.getAdminsCount.mockResolvedValueOnce(1);
 
@@ -140,7 +140,7 @@ describe("User creation", () => {
     const loggedUser = mock<LoggedUser>({
       role: "admin",
     });
-    options.admin.signupsAllowed = true;
+    config.admin.signupsAllowed = true;
 
     userRepository.getAdminsCount.mockResolvedValueOnce(2);
     userRepository.createUser.mockResolvedValueOnce(mock());

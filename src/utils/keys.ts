@@ -1,6 +1,6 @@
 import { generateSecret, type KeyLike } from "jose";
 import { TextEncoder } from "node:util";
-import options from "./options";
+import config from "../config";
 
 export const SALT_AND_PWD_DELIMITER = ":";
 
@@ -16,9 +16,9 @@ class TokenKeysClass {
 
   public getKey = async (): Promise<KeyLike | Uint8Array> => {
     if (!this.key) {
-      if (options.jwt.signingKey) {
+      if (config.jwt.signingKey) {
         // JWS signing key is provided by config
-        this.key = new TextEncoder().encode(options.jwt.signingKey);
+        this.key = new TextEncoder().encode(config.jwt.signingKey);
       } else {
         // JWS signing key is generated
         this.key = await generateSecret(SIGNING_TOKEN_ALGO);

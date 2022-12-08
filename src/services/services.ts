@@ -1,6 +1,7 @@
 import { type Logger } from "pino";
 import { createPool, type DatabasePool } from "slonik";
 import { createFieldNameTransformationInterceptor } from "slonik-interceptor-field-name-transformation";
+import config from "../config";
 import { buildAgeRepository } from "../repositories/age/age-repository";
 import { buildClasseRepository } from "../repositories/classe/classe-repository";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository";
@@ -21,7 +22,6 @@ import { buildUserRepository } from "../repositories/user/user-repository";
 import { createQueryLoggingInterceptor } from "../slonik/slonik-pino-interceptor";
 import { createResultParserInterceptor } from "../slonik/slonik-zod-interceptor";
 import { logger } from "../utils/logger";
-import options from "../utils/options";
 import { buildAgeService, type AgeService } from "./entities/age-service";
 import { buildClasseService, type ClasseService } from "./entities/classe-service";
 import { buildCommuneService, type CommuneService } from "./entities/commune-service";
@@ -66,7 +66,7 @@ export type Services = {
 
 export const buildServices = async (): Promise<Services> => {
   // Database connection
-  const slonik = await createPool(options.database.url, {
+  const slonik = await createPool(config.database.url, {
     interceptors: [
       createFieldNameTransformationInterceptor({ format: "CAMEL_CASE" }),
       createResultParserInterceptor(),

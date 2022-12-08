@@ -2,13 +2,13 @@ import { randomBytes, scryptSync } from "node:crypto";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import type { CamelCasedProperties, Except } from "type-fest";
+import config from "../config";
 import { type EditUserData, type UserCreateInput } from "../graphql/generated/graphql-types";
 import { type SettingsRepository } from "../repositories/settings/settings-repository";
 import { type UserRepository } from "../repositories/user/user-repository";
 import { type DatabaseRole, type LoggedUser, type User } from "../types/User";
 import { OucaError } from "../utils/errors";
 import { SALT_AND_PWD_DELIMITER } from "../utils/keys";
-import options from "../utils/options";
 
 const PASSWORD_KEY_LENGTH = 64;
 
@@ -81,7 +81,7 @@ export const buildUserService = ({ logger, slonik, userRepository, settingsRepos
     role: DatabaseRole,
     loggedUser: LoggedUser | null
   ): Promise<User> => {
-    if (!options.admin.signupsAllowed) {
+    if (!config.admin.signupsAllowed) {
       throw new OucaError("OUCA0005");
     }
 
@@ -96,7 +96,7 @@ export const buildUserService = ({ logger, slonik, userRepository, settingsRepos
     if (adminsCount === 0) {
       // Initial account creation
       // Check that provided password matches
-      if (!options.admin.defaultAdminPassword?.length || password !== options.admin.defaultAdminPassword) {
+      if (!config.admin.defaultAdminPassword?.length || password !== config.admin.defaultAdminPassword) {
         throw new OucaError("OUCA0006");
       }
       roleToSet = "admin";
