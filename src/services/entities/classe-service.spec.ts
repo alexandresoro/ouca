@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   ClassesOrderBy,
   SortOrder,
@@ -36,6 +37,15 @@ const classeService = buildClasseService({
   logger,
   classeRepository,
 });
+
+const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
+  new Error("errorMessage"),
+  "constraint"
+);
+
+const uniqueConstraintFailed = () => {
+  throw uniqueConstraintFailedError;
+};
 
 const prismaConstraintFailedError = {
   code: "P2002",

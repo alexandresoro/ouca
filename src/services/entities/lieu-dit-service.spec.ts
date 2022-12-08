@@ -1,6 +1,7 @@
 import { Prisma, type Inventaire, type Lieudit } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   LieuxDitsOrderBy,
   SortOrder,
@@ -33,6 +34,15 @@ const lieuditService = buildLieuditService({
   logger,
   lieuditRepository,
 });
+
+const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
+  new Error("errorMessage"),
+  "constraint"
+);
+
+const uniqueConstraintFailed = () => {
+  throw uniqueConstraintFailedError;
+};
 
 const prismaConstraintFailedError = {
   code: "P2002",

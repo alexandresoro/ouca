@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   DepartementsOrderBy,
   SortOrder,
@@ -32,6 +33,15 @@ import { queryParametersToFindAllEntities } from "./entities-utils";
 
 const departementRepository = mock<DepartementRepository>({});
 const logger = mock<Logger>();
+
+const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
+  new Error("errorMessage"),
+  "constraint"
+);
+
+const uniqueConstraintFailed = () => {
+  throw uniqueConstraintFailedError;
+};
 
 const departementService = buildDepartementService({
   logger,

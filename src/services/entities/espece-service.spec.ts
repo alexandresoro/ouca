@@ -1,6 +1,7 @@
 import { Prisma, type Donnee } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   EspecesOrderBy,
   SortOrder,
@@ -36,6 +37,15 @@ const especeService = buildEspeceService({
   logger,
   especeRepository,
 });
+
+const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
+  new Error("errorMessage"),
+  "constraint"
+);
+
+const uniqueConstraintFailed = () => {
+  throw uniqueConstraintFailedError;
+};
 
 jest.mock<typeof import("./donnee-utils")>("./donnee-utils", () => {
   const actualModule = jest.requireActual<typeof import("./donnee-utils")>("./donnee-utils");

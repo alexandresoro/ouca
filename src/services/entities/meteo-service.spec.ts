@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
@@ -33,6 +34,15 @@ const meteoService = buildMeteoService({
   logger,
   meteoRepository,
 });
+
+const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
+  new Error("errorMessage"),
+  "constraint"
+);
+
+const uniqueConstraintFailed = () => {
+  throw uniqueConstraintFailedError;
+};
 
 const prismaConstraintFailedError = {
   code: "P2002",
