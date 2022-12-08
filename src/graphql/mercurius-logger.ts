@@ -9,8 +9,8 @@ import { type MercuriusContext } from "mercurius";
 
 const readOps = (document: DocumentNode, operation: string): string[] => {
   return document.definitions
-    .filter((d) => d.kind === "OperationDefinition" && d.operation === operation)
-    .flatMap((d) => (d as OperationDefinitionNode).selectionSet.selections)
+    .filter((d): d is OperationDefinitionNode => d.kind === "OperationDefinition" && d.operation === operation)
+    .flatMap((d) => d.selectionSet.selections)
     .map((selectionSet) => {
       const opName = (selectionSet as FieldNode).name.value;
       return opName;

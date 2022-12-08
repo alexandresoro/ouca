@@ -1,5 +1,4 @@
 import { sql, type ListSqlToken, type SqlFragment } from "slonik";
-import { type SortOrder } from "./common";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
@@ -164,7 +163,7 @@ describe("objectsToKeyValueInsert function", () => {
 describe("buildSortOrder function", () => {
   test("should return an empty fragment when no order is requested", () => {
     const orderInfo = {
-      sortOrder: "asc" as SortOrder,
+      sortOrder: "asc" as const,
     };
 
     expect(buildSortOrderFragment(orderInfo)).toEqual<SqlFragment & { type: string }>({
@@ -189,7 +188,7 @@ describe("buildSortOrder function", () => {
   test("should return ascending order when ascending order is requested", () => {
     const orderInfo = {
       orderBy: "id",
-      sortOrder: "asc" as SortOrder,
+      sortOrder: "asc" as const,
     };
 
     expect(buildSortOrderFragment(orderInfo)).toEqual<SqlFragment & { type: string }>({
@@ -202,7 +201,7 @@ describe("buildSortOrder function", () => {
   test("should return descending order when descending order is requested", () => {
     const orderInfo = {
       orderBy: 47,
-      sortOrder: "desc" as SortOrder,
+      sortOrder: "desc" as const,
     };
 
     expect(buildSortOrderFragment(orderInfo)).toEqual<SqlFragment & { type: string }>({
