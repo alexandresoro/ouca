@@ -163,6 +163,7 @@ export const buildServices = async (): Promise<Services> => {
   const observateurService = buildObservateurService({
     logger,
     observateurRepository,
+    donneeRepository,
   });
 
   const sexeService = buildSexeService({

@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -8,31 +7,25 @@ import {
   type MutationUpsertObservateurArgs,
   type QueryObservateursArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository";
-import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import {
+  type Observateur,
+  type ObservateurCreateInput,
+} from "../../repositories/observateur/observateur-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { queryParametersToFindAllEntities } from "./entities-utils";
-import {
-  buildObservateurService,
-  createObservateurs,
-  deleteObservateur,
-  findObservateur,
-  findObservateurs,
-  findPaginatedObservateurs,
-  getDonneesCountByObservateur,
-  getObservateursCount,
-  upsertObservateur,
-} from "./observateur-service";
+import { buildObservateurService } from "./observateur-service";
 
 const observateurRepository = mock<ObservateurRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const observateurService = buildObservateurService({
   logger,
   observateurRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -44,53 +37,32 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
-
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
-
 describe("Find observer", () => {
   test("should handle a matching observer", async () => {
     const observerData = mock<Observateur>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.observateur.findUnique.mockResolvedValueOnce(observerData);
+    observateurRepository.findObservateurById.mockResolvedValueOnce(observerData);
 
-    await findObservateur(observerData.id, loggedUser);
+    await observateurService.findObservateur(observerData.id, loggedUser);
 
-    expect(prismaMock.observateur.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: observerData.id,
-      },
-    });
+    expect(observateurRepository.findObservateurById).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.findObservateurById).toHaveBeenLastCalledWith(observerData.id);
   });
 
   test("should handle observer not found", async () => {
-    prismaMock.observateur.findUnique.mockResolvedValueOnce(null);
+    observateurRepository.findObservateurById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findObservateur(10, loggedUser)).resolves.toBe(null);
+    await expect(observateurService.findObservateur(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.observateur.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(observateurRepository.findObservateurById).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.findObservateurById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.observateur.findUnique).not.toHaveBeenCalled();
+    await expect(observateurService.findObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(observateurRepository.findObservateurById).not.toHaveBeenCalled();
   });
 });
 
@@ -98,39 +70,27 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByObservateur(12, loggedUser);
+    await observateurService.getDonneesCountByObservateur(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        inventaire: {
-          observateurId: 12,
-        },
-      },
-    });
+    expect(donneeRepository.getCountByObservateurId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByObservateurId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByObservateur(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(observateurService.getDonneesCountByObservateur(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 test("Find all observers", async () => {
   const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
-  const loggedUser = mock<LoggedUser>();
 
-  prismaMock.observateur.findMany.mockResolvedValueOnce(observersData);
+  observateurRepository.findObservateurs.mockResolvedValueOnce(observersData);
 
-  await findObservateurs(loggedUser);
+  await observateurService.findAllObservateurs();
 
-  expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(observateurRepository.findObservateurs).toHaveBeenCalledTimes(1);
+  expect(observateurRepository.findObservateurs).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_LIBELLE,
   });
 });
 
@@ -139,16 +99,12 @@ describe("Entities paginated find by search criteria", () => {
     const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.observateur.findMany.mockResolvedValueOnce(observersData);
+    observateurRepository.findObservateurs.mockResolvedValueOnce(observersData);
 
-    await findPaginatedObservateurs(loggedUser);
+    await observateurService.findPaginatedObservateurs(loggedUser);
 
-    expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {},
-      where: {},
-    });
+    expect(observateurRepository.findObservateurs).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.findObservateurs).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated observers ", async () => {
@@ -165,29 +121,22 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.observateur.findMany.mockResolvedValueOnce([observersData[0]]);
+    observateurRepository.findObservateurs.mockResolvedValueOnce([observersData[0]]);
 
-    await findPaginatedObservateurs(loggedUser, searchParams);
+    await observateurService.findPaginatedObservateurs(loggedUser, searchParams);
 
-    expect(prismaMock.observateur.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        libelle: {
-          contains: searchParams.searchParams?.q,
-        },
-      },
+    expect(observateurRepository.findObservateurs).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.findObservateurs).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedObservateurs(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(observateurService.findPaginatedObservateurs(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -195,31 +144,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getObservateursCount(loggedUser);
+    await observateurService.getObservateursCount(loggedUser);
 
-    expect(prismaMock.observateur.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(observateurRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getObservateursCount(loggedUser, "test");
+    await observateurService.getObservateursCount(loggedUser, "test");
 
-    expect(prismaMock.observateur.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.count).toHaveBeenLastCalledWith({
-      where: {
-        libelle: {
-          contains: "test",
-        },
-      },
-    });
+    expect(observateurRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getObservateursCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(observateurService.getObservateursCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -229,15 +170,10 @@ describe("Update of an observer", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertObservateur(observerData, loggedUser);
+    await observateurService.upsertObservateur(observerData, loggedUser);
 
-    expect(prismaMock.observateur.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.update).toHaveBeenLastCalledWith({
-      data: observerData.data,
-      where: {
-        id: observerData.id,
-      },
-    });
+    expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(observerData.id, observerData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -249,17 +185,12 @@ describe("Update of an observer", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.observateur.findFirst.mockResolvedValueOnce(existingData);
+    observateurRepository.findObservateurById.mockResolvedValueOnce(existingData);
 
-    await upsertObservateur(observerData, loggedUser);
+    await observateurService.upsertObservateur(observerData, loggedUser);
 
-    expect(prismaMock.observateur.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.update).toHaveBeenLastCalledWith({
-      data: observerData.data,
-      where: {
-        id: observerData.id,
-      },
-    });
+    expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(observerData.id, observerData.data);
   });
 
   test("should throw an error when requested by an use that is nor owner nor admin", async () => {
@@ -274,11 +205,13 @@ describe("Update of an observer", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.observateur.findFirst.mockResolvedValueOnce(existingData);
+    observateurRepository.findObservateurById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertObservateur(observerData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(observateurService.upsertObservateur(observerData, user)).rejects.toThrowError(
+      new OucaError("OUCA0001")
+    );
 
-    expect(prismaMock.observateur.update).not.toHaveBeenCalled();
+    expect(observateurRepository.updateObservateur).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to an observer that exists", async () => {
@@ -288,19 +221,14 @@ describe("Update of an observer", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.observateur.update.mockImplementation(prismaConstraintFailed);
+    observateurRepository.updateObservateur.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertObservateur(observerData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => observateurService.upsertObservateur(observerData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.observateur.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.update).toHaveBeenLastCalledWith({
-      data: observerData.data,
-      where: {
-        id: observerData.id,
-      },
-    });
+    expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(observerData.id, observerData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -308,8 +236,8 @@ describe("Update of an observer", () => {
       id: 12,
     });
 
-    await expect(upsertObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.observateur.update).not.toHaveBeenCalled();
+    await expect(observateurService.upsertObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(observateurRepository.updateObservateur).not.toHaveBeenCalled();
   });
 });
 
@@ -321,14 +249,12 @@ describe("Creation of an observer", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertObservateur(observerData, loggedUser);
+    await observateurService.upsertObservateur(observerData, loggedUser);
 
-    expect(prismaMock.observateur.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.create).toHaveBeenLastCalledWith({
-      data: {
-        ...observerData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(observateurRepository.createObservateur).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.createObservateur).toHaveBeenLastCalledWith({
+      ...observerData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -339,18 +265,16 @@ describe("Creation of an observer", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.observateur.create.mockImplementation(prismaConstraintFailed);
+    observateurRepository.createObservateur.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertObservateur(observerData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => observateurService.upsertObservateur(observerData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.observateur.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.create).toHaveBeenLastCalledWith({
-      data: {
-        ...observerData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(observateurRepository.createObservateur).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.createObservateur).toHaveBeenLastCalledWith({
+      ...observerData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -359,8 +283,8 @@ describe("Creation of an observer", () => {
       id: undefined,
     });
 
-    await expect(upsertObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.observateur.create).not.toHaveBeenCalled();
+    await expect(observateurService.upsertObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(observateurRepository.createObservateur).not.toHaveBeenCalled();
   });
 });
 
@@ -375,16 +299,12 @@ describe("Deletion of an observer", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.observateur.findFirst.mockResolvedValueOnce(observer);
+    observateurRepository.findObservateurById.mockResolvedValueOnce(observer);
 
-    await deleteObservateur(11, loggedUser);
+    await observateurService.deleteObservateur(11, loggedUser);
 
-    expect(prismaMock.observateur.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(observateurRepository.deleteObservateurById).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.deleteObservateurById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any observer if admin", async () => {
@@ -392,16 +312,12 @@ describe("Deletion of an observer", () => {
       role: "admin",
     });
 
-    prismaMock.observateur.findFirst.mockResolvedValueOnce(mock<Observateur>());
+    observateurRepository.findObservateurById.mockResolvedValueOnce(mock<Observateur>());
 
-    await deleteObservateur(11, loggedUser);
+    await observateurService.deleteObservateur(11, loggedUser);
 
-    expect(prismaMock.observateur.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.observateur.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(observateurRepository.deleteObservateurById).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.deleteObservateurById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when trying to delete a non-owned observer as non-admin", async () => {
@@ -409,37 +325,37 @@ describe("Deletion of an observer", () => {
       role: "contributor",
     });
 
-    prismaMock.observateur.findFirst.mockResolvedValueOnce(mock<Observateur>());
+    observateurRepository.findObservateurById.mockResolvedValueOnce(mock<Observateur>());
 
-    await expect(deleteObservateur(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(observateurService.deleteObservateur(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.observateur.delete).not.toHaveBeenCalled();
+    expect(observateurRepository.deleteObservateurById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.observateur.delete).not.toHaveBeenCalled();
+    await expect(observateurService.deleteObservateur(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(observateurRepository.deleteObservateurById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple observers", async () => {
   const observersData = [
-    mock<Omit<Prisma.ObservateurCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.ObservateurCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.ObservateurCreateManyInput, "ownerId">>(),
+    mock<Omit<ObservateurCreateInput, "owner_id">>(),
+    mock<Omit<ObservateurCreateInput, "owner_id">>(),
+    mock<Omit<ObservateurCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createObservateurs(observersData, loggedUser);
+  await observateurService.createObservateurs(observersData, loggedUser);
 
-  expect(prismaMock.observateur.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.observateur.createMany).toHaveBeenLastCalledWith({
-    data: observersData.map((observer) => {
+  expect(observateurRepository.createObservateurs).toHaveBeenCalledTimes(1);
+  expect(observateurRepository.createObservateurs).toHaveBeenLastCalledWith(
+    observersData.map((observer) => {
       return {
         ...observer,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

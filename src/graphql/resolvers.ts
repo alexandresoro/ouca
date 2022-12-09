@@ -111,14 +111,6 @@ import {
   upsertMilieu,
 } from "../services/entities/milieu-service";
 import {
-  deleteObservateur,
-  findObservateur,
-  findPaginatedObservateurs,
-  getDonneesCountByObservateur,
-  getObservateursCount,
-  upsertObservateur,
-} from "../services/entities/observateur-service";
-import {
   generateAgesExport,
   generateClassesExport,
   generateCommunesExport,
@@ -183,6 +175,7 @@ const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 
 export const buildResolvers = ({
   ageService,
+  observateurService,
   sexeService,
   settingsService,
   tokenService,
@@ -352,12 +345,12 @@ export const buildResolvers = ({
         };
       },
       observateur: async (_source, args, { user }): Promise<Observateur | null> => {
-        return findObservateur(args.id, user);
+        return observateurService.findObservateur(args.id, user);
       },
       observateurs: async (_, args, { user }): Promise<ObservateursPaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedObservateurs(user, args),
-          getObservateursCount(user, args?.searchParams?.q),
+          observateurService.findPaginatedObservateurs(user, args),
+          observateurService.getObservateursCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -462,7 +455,7 @@ export const buildResolvers = ({
       },
       exportObservateurs: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateObservateursExport();
+        return generateObservateursExport(observateurService);
       },
       exportSexes: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -518,7 +511,7 @@ export const buildResolvers = ({
         return deleteMilieu(args.id, user).then(({ id }) => id);
       },
       deleteObservateur: async (_source, args, { user }): Promise<number> => {
-        return deleteObservateur(args.id, user).then(({ id }) => id);
+        return observateurService.deleteObservateur(args.id, user).then(({ id }) => id);
       },
       deleteSexe: async (_source, args, { user }): Promise<number> => {
         return sexeService.deleteSexe(args.id, user).then(({ id }) => id);
@@ -599,7 +592,7 @@ export const buildResolvers = ({
         return upsertMilieu(args, user);
       },
       upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
-        return upsertObservateur(args, user);
+        return observateurService.upsertObservateur(args, user);
       },
       upsertSexe: async (_source, args, { user }): Promise<Sexe> => {
         return sexeService.upsertSexe(args, user);
@@ -774,8 +767,8 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(getDonneesCountByMilieu),
     },
     Observateur: {
-      editable: isEntityEditableResolver(findObservateur),
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByObservateur),
+      editable: isEntityEditableResolver(observateurService.findObservateur),
+      nbDonnees: entityNbDonneesResolver(observateurService.getDonneesCountByObservateur),
     },
     PaginatedSearchDonneesResult: {
       result: async (_, args): Promise<Omit<Donnee, "espece" | "inventaire">[]> => {

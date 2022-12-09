@@ -30,7 +30,6 @@ import { findAllInventaires, upsertInventaire, type InventaireWithRelations } fr
 import { findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { findMeteos } from "../entities/meteo-service";
 import { findMilieux } from "../entities/milieu-service";
-import { findObservateurs } from "../entities/observateur-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -69,7 +68,7 @@ export class ImportDonneeService extends ImportService {
       this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
     }
 
-    this.observateurs = await findObservateurs(null);
+    this.observateurs = await this.services.observateurService.findAllObservateurs();
     this.departements = await findDepartements(null);
     this.communes = await findCommunes(null);
     this.lieuxDits = await findLieuxDits(null);

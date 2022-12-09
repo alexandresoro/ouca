@@ -225,7 +225,6 @@ model Observateur {
   id                 Int                  @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle            String               @unique() @db.VarChar(100)
   ownerId            String?              @map("owner_id")
-  owner              User?                @relation(fields: [ownerId], references: [id], map: "fk_observateur_owner_id")
   inventaire         Inventaire[]
   inventaire_associe inventaire_associe[]
 
@@ -254,7 +253,6 @@ model User {
   Lieudit            Lieudit[]
   Meteo              Meteo[]
   Milieu             Milieu[]
-  Observateur        Observateur[]
 
   @@map("user")
 }

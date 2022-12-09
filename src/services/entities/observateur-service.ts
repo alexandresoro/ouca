@@ -1,225 +1,155 @@
-import { Prisma } from "@prisma/client";
 import { type Logger } from "pino";
-import {
-  type FindParams,
-  type MutationUpsertObservateurArgs,
-  type QueryObservateursArgs,
-} from "../../graphql/generated/graphql-types";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { type MutationUpsertObservateurArgs, type QueryObservateursArgs } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository";
-import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
-import prisma from "../../sql/prisma";
+import {
+  type Observateur,
+  type ObservateurCreateInput,
+} from "../../repositories/observateur/observateur-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
-import {
-  getEntiteAvecLibelleFilterClause,
-  getPrismaPagination,
-  getPrismaSqlPagination,
-  getSqlSorting,
-  queryParametersToFindAllEntities,
-  transformQueryRawResultsBigIntsToNumbers,
-} from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
 
 type ObservateurServiceDependencies = {
   logger: Logger;
   observateurRepository: ObservateurRepository;
+  donneeRepository: DonneeRepository;
 };
 
-export const buildObservateurService = ({ logger, observateurRepository }: ObservateurServiceDependencies) => {
-  return {};
-};
+export const buildObservateurService = ({
+  observateurRepository,
+  donneeRepository,
+}: ObservateurServiceDependencies) => {
+  const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur | null> => {
+    validateAuthorization(loggedUser);
 
-export type ObservateurService = ReturnType<typeof buildObservateurService>;
+    return observateurRepository.findObservateurById(id);
+  };
 
-export const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur | null> => {
-  validateAuthorization(loggedUser);
+  const getDonneesCountByObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.observateur.findUnique({
-    where: {
-      id,
-    },
-  });
-};
+    return donneeRepository.getCountByObservateurId(id);
+  };
 
-export const getDonneesCountByObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.donnee.count({
-    where: {
-      inventaire: {
-        observateurId: id,
-      },
-    },
-  });
-};
-
-export const findObservateurs = async (
-  loggedUser: LoggedUser | null,
-  params?: FindParams | null
-): Promise<Observateur[]> => {
-  validateAuthorization(loggedUser);
-
-  const { q, max } = params ?? {};
-
-  return prisma.observateur.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: q || undefined,
-      },
-    },
-    take: max || undefined,
-  });
-};
-
-export const findPaginatedObservateurs = async (
-  loggedUser: LoggedUser | null,
-  options: QueryObservateursArgs = {}
-): Promise<Observateur[]> => {
-  validateAuthorization(loggedUser);
-
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
-
-  const isNbDonneesNeeded = orderByField === "nbDonnees";
-
-  let observateurEntities: Observateur[];
-
-  if (isNbDonneesNeeded) {
-    const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
-    const filterRequest = queryExpression
-      ? Prisma.sql`
-    WHERE
-      libelle LIKE ${queryExpression}
-    `
-      : Prisma.empty;
-
-    const donneesPerObservateurIdRequest = Prisma.sql`
-    SELECT 
-      o.*, o.owner_id as ownerId, count(d.id) as nbDonnees
-    FROM 
-      donnee d 
-    RIGHT JOIN 
-      inventaire i
-    ON 
-      d.inventaire_id = i.id 
-    RIGHT JOIN
-      observateur o
-    ON
-      i.observateur_id = o.id
-    ${filterRequest}
-    GROUP BY 
-      o.id
-    `;
-
-    observateurEntities = await prisma.$queryRaw<
-      (Observateur & { nbDonnees: bigint })[]
-    >`${donneesPerObservateurIdRequest} ${getSqlSorting(options)} ${getPrismaSqlPagination(searchParams)}`.then(
-      transformQueryRawResultsBigIntsToNumbers
-    );
-  } else {
-    const orderBy = orderByField ? { [orderByField]: sortOrder } : {};
-
-    observateurEntities = await prisma.observateur.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
+  const findAllObservateurs = async (): Promise<Observateur[]> => {
+    const observateurs = await observateurRepository.findObservateurs({
+      orderBy: COLUMN_LIBELLE,
     });
-  }
 
-  return observateurEntities;
-};
+    return [...observateurs];
+  };
 
-export const getObservateursCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const findPaginatedObservateurs = async (
+    loggedUser: LoggedUser | null,
+    options: QueryObservateursArgs = {}
+  ): Promise<Observateur[]> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.observateur.count({
-    where: getEntiteAvecLibelleFilterClause(q),
-  });
-};
+    const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-export const upsertObservateur = async (
-  args: MutationUpsertObservateurArgs,
-  loggedUser: LoggedUser | null
-): Promise<Observateur> => {
-  validateAuthorization(loggedUser);
+    const observateurs = await observateurRepository.findObservateurs({
+      q: searchParams?.q,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
+    });
 
-  const { id, data } = args;
+    return [...observateurs];
+  };
 
-  let upsertedObservateur: Observateur;
+  const getObservateursCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  if (id) {
+    return observateurRepository.getCount(q);
+  };
+
+  const upsertObservateur = async (
+    args: MutationUpsertObservateurArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Observateur> => {
+    validateAuthorization(loggedUser);
+
+    const { id, data } = args;
+
+    let upsertedObservateur: Observateur;
+
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser.role !== "admin") {
+        const existingData = await observateurRepository.findObservateurById(id);
+
+        if (existingData?.ownerId !== loggedUser.id) {
+          throw new OucaError("OUCA0001");
+        }
+      }
+
+      // Update an existing observer
+      try {
+        upsertedObservateur = await observateurRepository.updateObservateur(id, data);
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      // Create a new observer
+      try {
+        upsertedObservateur = await observateurRepository.createObservateur({
+          ...data,
+          owner_id: loggedUser?.id,
+        });
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    }
+
+    return upsertedObservateur;
+  };
+
+  const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur> => {
+    validateAuthorization(loggedUser);
+
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.observateur.findFirst({
-        where: { id },
-      });
+    if (loggedUser.role !== "admin") {
+      const existingData = await observateurRepository.findObservateurById(id);
 
-      if (existingData?.ownerId !== loggedUser?.id) {
+      if (existingData?.ownerId !== loggedUser.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    // Update an existing observer
-    try {
-      upsertedObservateur = await prisma.observateur.update({
-        where: { id },
-        data,
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    // Create a new observer
-    try {
-      upsertedObservateur = await prisma.observateur.create({
-        data: {
-          ...data,
-          ownerId: loggedUser?.id,
-        },
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
+    return observateurRepository.deleteObservateurById(id);
+  };
 
-  return upsertedObservateur;
+  const createObservateurs = async (
+    observateurs: Omit<ObservateurCreateInput, "owner_id">[],
+    loggedUser: LoggedUser
+  ): Promise<readonly Observateur[]> => {
+    return observateurRepository.createObservateurs(
+      observateurs.map((observateur) => {
+        return { ...observateur, owner_id: loggedUser.id };
+      })
+    );
+  };
+
+  return {
+    findObservateur,
+    getDonneesCountByObservateur,
+    findAllObservateurs,
+    findPaginatedObservateurs,
+    getObservateursCount,
+    upsertObservateur,
+    deleteObservateur,
+    createObservateurs,
+  };
 };
 
-export const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.observateur.findFirst({
-      where: { id },
-    });
-
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
-
-  return prisma.observateur.delete({
-    where: {
-      id,
-    },
-  });
-};
-
-export const createObservateurs = async (
-  observateurs: Omit<Prisma.ObservateurCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.observateur.createMany({
-    data: observateurs.map((observateur) => {
-      return { ...observateur, ownerId: loggedUser.id };
-    }),
-  });
-};
+export type ObservateurService = ReturnType<typeof buildObservateurService>;
