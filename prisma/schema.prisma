@@ -20,7 +20,6 @@ model Classe {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle String   @unique() @db.VarChar(100)
   ownerId String?  @map("owner_id")
-  owner   User?    @relation(fields: [ownerId], references: [id], map: "fk_classe_owner_id")
   espece  Espece[]
 
   @@map("classe")
@@ -242,7 +241,6 @@ model Sexe {
 
 model User {
   id                 String               @id @default(uuid())
-  Classe             Classe[]
   Commune            Commune[]
   Comportement       Comportement[]
   Departement        Departement[]

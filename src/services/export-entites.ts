@@ -7,7 +7,7 @@ import { SEPARATOR_COMMA } from "../utils/constants";
 import { writeToExcelFile } from "../utils/export-excel-utils";
 import { PUBLIC_DIR } from "../utils/paths";
 import { type AgeService } from "./entities/age-service";
-import { findClasses } from "./entities/classe-service";
+import { type ClasseService } from "./entities/classe-service";
 import { findCommunesWithDepartements } from "./entities/commune-service";
 import { findComportements } from "./entities/comportement-service";
 import { findDepartements } from "./entities/departement-service";
@@ -35,8 +35,8 @@ export const generateAgesExport = async (ageService: AgeService): Promise<string
   return fileName;
 };
 
-export const generateClassesExport = async (): Promise<string> => {
-  const classes = await findClasses(null);
+export const generateClassesExport = async (classeService: ClasseService): Promise<string> => {
+  const classes = await classeService.findAllClasses();
 
   const objectsToExport = classes.map((object) => {
     return { Classe: object.libelle };

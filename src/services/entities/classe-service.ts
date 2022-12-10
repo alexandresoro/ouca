@@ -1,262 +1,169 @@
-import { Prisma } from "@prisma/client";
 import { type Logger } from "pino";
-import {
-  type FindParams,
-  type MutationUpsertClasseArgs,
-  type QueryClassesArgs,
-} from "../../graphql/generated/graphql-types";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { type MutationUpsertClasseArgs, type QueryClassesArgs } from "../../graphql/generated/graphql-types";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository";
-import { type Classe } from "../../repositories/classe/classe-repository-types";
-import prisma from "../../sql/prisma";
+import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
+import { type EspeceRepository } from "../../repositories/espece/espece-repository";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
-import {
-  getEntiteAvecLibelleFilterClause,
-  getPrismaPagination,
-  getPrismaSqlPagination,
-  getSqlSorting,
-  queryParametersToFindAllEntities,
-  transformQueryRawResultsBigIntsToNumbers,
-} from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
 
 type ClasseServiceDependencies = {
   logger: Logger;
   classeRepository: ClasseRepository;
+  especeRepository: EspeceRepository;
+  donneeRepository: DonneeRepository;
 };
 
-export const buildClasseService = ({ logger, classeRepository }: ClasseServiceDependencies) => {
-  return {};
-};
+export const buildClasseService = ({
+  classeRepository,
+  especeRepository,
+  donneeRepository,
+}: ClasseServiceDependencies) => {
+  const findClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe | null> => {
+    validateAuthorization(loggedUser);
 
-export type ClasseService = ReturnType<typeof buildClasseService>;
+    return classeRepository.findClasseById(id);
+  };
 
-export const findClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe | null> => {
-  validateAuthorization(loggedUser);
+  const getEspecesCountByClasse = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.classe.findUnique({
-    where: {
-      id,
-    },
-  });
-};
+    return especeRepository.getCountByClasseId(id);
+  };
 
-export const getEspecesCountByClasse = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const getDonneesCountByClasse = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.espece.count({
-    where: {
-      classeId: id,
-    },
-  });
-};
+    return donneeRepository.getCountByClasseId(id);
+  };
 
-export const getDonneesCountByClasse = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const findClasseOfEspeceId = async (
+    especeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Classe | null> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.donnee.count({
-    where: {
-      espece: {
-        classeId: id,
-      },
-    },
-  });
-};
+    return classeRepository.findClasseByEspeceId(especeId);
+  };
 
-export const findClasseOfEspeceId = async (
-  especeId: number | undefined,
-  loggedUser: LoggedUser | null
-): Promise<Classe | null> => {
-  validateAuthorization(loggedUser);
+  const findAllClasses = async (): Promise<Classe[]> => {
+    const classes = await classeRepository.findClasses({
+      orderBy: COLUMN_LIBELLE,
+    });
 
-  return prisma.espece
-    .findUnique({
-      where: {
-        id: especeId,
-      },
-    })
-    .classe();
-};
+    return [...classes];
+  };
 
-export const findClasses = async (loggedUser: LoggedUser | null, params?: FindParams | null): Promise<Classe[]> => {
-  validateAuthorization(loggedUser);
+  const findPaginatedClasses = async (
+    loggedUser: LoggedUser | null,
+    options: QueryClassesArgs = {}
+  ): Promise<Classe[]> => {
+    validateAuthorization(loggedUser);
 
-  const { q, max } = params ?? {};
+    const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  return prisma.classe.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: q || undefined,
-      },
-    },
-    take: max || undefined,
-  });
-};
+    const classes = await classeRepository.findClasses({
+      q: searchParams?.q,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
+    });
 
-export const findPaginatedClasses = async (
-  loggedUser: LoggedUser | null,
-  options: Partial<QueryClassesArgs> = {}
-): Promise<Classe[]> => {
-  validateAuthorization(loggedUser);
+    return [...classes];
+  };
 
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const getClassesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  const isNbDonneesNeeded = orderByField === "nbDonnees";
+    return classeRepository.getCount(q);
+  };
 
-  let classeEntities: Classe[];
+  const upsertClasse = async (args: MutationUpsertClasseArgs, loggedUser: LoggedUser | null): Promise<Classe> => {
+    validateAuthorization(loggedUser);
 
-  if (isNbDonneesNeeded) {
-    const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
-    const filterRequest = queryExpression
-      ? Prisma.sql`
-    WHERE
-      libelle LIKE ${queryExpression}
-    `
-      : Prisma.empty;
+    const { id, data } = args;
 
-    const donneesPerClasseIdRequest = Prisma.sql`
-    SELECT 
-      c.*, c.owner_id as ownerId, count(d.id) as nbDonnees
-    FROM 
-      donnee d 
-    RIGHT JOIN 
-      espece e
-    ON 
-      d.espece_id = e.id 
-    RIGHT JOIN
-      classe c
-    ON
-      e.classe_id = c.id
-    ${filterRequest}
-    GROUP BY 
-      c.id
-    `;
+    let upsertedClasse: Classe;
 
-    classeEntities = await prisma.$queryRaw<
-      (Classe & { nbDonnees: bigint })[]
-    >`${donneesPerClasseIdRequest} ${getSqlSorting(options)} ${getPrismaSqlPagination(searchParams)}`.then(
-      transformQueryRawResultsBigIntsToNumbers
-    );
-  } else {
-    let orderBy: Prisma.Enumerable<Prisma.ClasseOrderByWithRelationInput> | undefined = undefined;
-    if (sortOrder) {
-      switch (orderByField) {
-        case "id":
-        case "libelle":
-          orderBy = {
-            [orderByField]: sortOrder,
-          };
-          break;
-        case "nbEspeces":
-          orderBy = {
-            espece: {
-              _count: sortOrder,
-            },
-          };
-          break;
-        default:
-          orderBy = {};
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser.role !== "admin") {
+        const existingData = await classeRepository.findClasseById(id);
+
+        if (existingData?.ownerId !== loggedUser.id) {
+          throw new OucaError("OUCA0001");
+        }
+      }
+
+      // Update an existing observer
+      try {
+        upsertedClasse = await classeRepository.updateClasse(id, data);
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      // Create a new observer
+      try {
+        upsertedClasse = await classeRepository.createClasse({
+          ...data,
+          owner_id: loggedUser?.id,
+        });
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
       }
     }
 
-    classeEntities = await prisma.classe.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-    });
-  }
+    return upsertedClasse;
+  };
 
-  return classeEntities;
-};
+  const deleteClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe> => {
+    validateAuthorization(loggedUser);
 
-export const getClassesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.classe.count({
-    where: getEntiteAvecLibelleFilterClause(q),
-  });
-};
-
-export const upsertClasse = async (args: MutationUpsertClasseArgs, loggedUser: LoggedUser | null): Promise<Classe> => {
-  validateAuthorization(loggedUser);
-
-  const { id, data } = args;
-
-  let upsertedClasse: Classe;
-
-  if (id) {
     // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.classe.findFirst({
-        where: { id },
-      });
+    if (loggedUser.role !== "admin") {
+      const existingData = await classeRepository.findClasseById(id);
 
-      if (existingData?.ownerId !== loggedUser?.id) {
+      if (existingData?.ownerId !== loggedUser.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    // Update an existing class
-    try {
-      upsertedClasse = await prisma.classe.update({
-        where: { id },
-        data,
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    // Create a new class
-    try {
-      upsertedClasse = await prisma.classe.create({
-        data: {
-          ...data,
-          ownerId: loggedUser?.id,
-        },
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
+    return classeRepository.deleteClasseById(id);
+  };
 
-  return upsertedClasse;
+  const createClasses = async (
+    classes: Omit<ClasseCreateInput, "owner_id">[],
+    loggedUser: LoggedUser
+  ): Promise<readonly Classe[]> => {
+    return classeRepository.createClasses(
+      classes.map((classe) => {
+        return { ...classe, owner_id: loggedUser.id };
+      })
+    );
+  };
+
+  return {
+    findClasse,
+    getEspecesCountByClasse,
+    getDonneesCountByClasse,
+    findClasseOfEspeceId,
+    findAllClasses,
+    findPaginatedClasses,
+    getClassesCount,
+    upsertClasse,
+    deleteClasse,
+    createClasses,
+  };
 };
 
-export const deleteClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.classe.findFirst({
-      where: { id },
-    });
-
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
-  return prisma.classe.delete({
-    where: {
-      id,
-    },
-  });
-};
-
-export const createClasses = async (
-  classes: Omit<Prisma.ClasseCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.classe.createMany({
-    data: classes.map((classe) => {
-      return { ...classe, ownerId: loggedUser.id };
-    }),
-  });
-};
+export type ClasseService = ReturnType<typeof buildClasseService>;

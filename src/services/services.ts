@@ -103,6 +103,8 @@ export const buildServices = async (): Promise<Services> => {
   const classeService = buildClasseService({
     logger,
     classeRepository,
+    especeRepository,
+    donneeRepository,
   });
 
   const communeService = buildCommuneService({

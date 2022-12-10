@@ -2,16 +2,6 @@ import { type Commune as CommuneEntity, type Espece as EspeceEntity } from "@pri
 import mercurius, { type IResolvers } from "mercurius";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import {
-  deleteClasse,
-  findClasse,
-  findClasseOfEspeceId,
-  findPaginatedClasses,
-  getClassesCount,
-  getDonneesCountByClasse,
-  getEspecesCountByClasse,
-  upsertClasse,
-} from "../services/entities/classe-service";
-import {
   deleteCommune,
   findCommune,
   findCommuneOfLieuDitId,
@@ -175,6 +165,7 @@ const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 
 export const buildResolvers = ({
   ageService,
+  classeService,
   observateurService,
   sexeService,
   settingsService,
@@ -197,12 +188,12 @@ export const buildResolvers = ({
         };
       },
       classe: async (_source, args, { user }): Promise<Classe | null> => {
-        return findClasse(args.id, user);
+        return classeService.findClasse(args.id, user);
       },
       classes: async (_, args, { user }): Promise<ClassesPaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedClasses(user, args),
-          getClassesCount(user, args?.searchParams?.q),
+          classeService.findPaginatedClasses(user, args),
+          classeService.getClassesCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -411,7 +402,7 @@ export const buildResolvers = ({
       },
       exportClasses: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateClassesExport();
+        return generateClassesExport(classeService);
       },
       exportCommunes: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -477,7 +468,7 @@ export const buildResolvers = ({
         return ageService.deleteAge(args.id, user).then(({ id }) => id);
       },
       deleteClasse: async (_source, args, { user }): Promise<number> => {
-        return deleteClasse(args.id, user).then(({ id }) => id);
+        return classeService.deleteClasse(args.id, user).then(({ id }) => id);
       },
       deleteCommune: async (_source, args, { user }): Promise<number> => {
         return deleteCommune(args.id, user).then(({ id }) => id);
@@ -520,7 +511,7 @@ export const buildResolvers = ({
         return ageService.upsertAge(args, user);
       },
       upsertClasse: async (_source, args, { user }): Promise<Classe> => {
-        return upsertClasse(args, user);
+        return classeService.upsertClasse(args, user);
       },
       upsertCommune: async (_source, args, { user }): Promise<CommuneEntity> => {
         return upsertCommune(args, user);
@@ -670,14 +661,14 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(ageService.getDonneesCountByAge),
     },
     Classe: {
-      editable: isEntityEditableResolver(findClasse),
+      editable: isEntityEditableResolver(classeService.findClasse),
       nbEspeces: async (parent, args, { user }): Promise<number | null> => {
         if (!parent?.id) {
           return null;
         }
-        return getEspecesCountByClasse(parent.id, user);
+        return classeService.getEspecesCountByClasse(parent.id, user);
       },
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByClasse),
+      nbDonnees: entityNbDonneesResolver(classeService.getDonneesCountByClasse),
     },
     Commune: {
       editable: isEntityEditableResolver(findCommune),
@@ -733,7 +724,7 @@ export const buildResolvers = ({
     Espece: {
       editable: isEntityEditableResolver(findEspece),
       classe: async (parent, args, { user }): Promise<Classe | null> => {
-        return findClasseOfEspeceId(parent?.id, user);
+        return classeService.findClasseOfEspeceId(parent?.id, user);
       },
       nbDonnees: entityNbDonneesResolver(getDonneesCountByEspece),
     },

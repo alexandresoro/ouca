@@ -1,5 +1,4 @@
-import { Prisma } from "@prisma/client";
-import { mock, mockDeep } from "jest-mock-extended";
+import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
@@ -9,33 +8,24 @@ import {
   type QueryClassesArgs,
 } from "../../graphql/generated/graphql-types";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository";
-import { type Classe } from "../../repositories/classe/classe-repository-types";
-import { type Espece } from "../../repositories/espece/espece-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
+import { type EspeceRepository } from "../../repositories/espece/espece-repository";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import {
-  buildClasseService,
-  createClasses,
-  deleteClasse,
-  findClasse,
-  findClasseOfEspeceId,
-  findClasses,
-  findPaginatedClasses,
-  getClassesCount,
-  getDonneesCountByClasse,
-  getEspecesCountByClasse,
-  upsertClasse,
-} from "./classe-service";
-import { queryParametersToFindAllEntities } from "./entities-utils";
+import { buildClasseService } from "./classe-service";
 
 const classeRepository = mock<ClasseRepository>({});
+const especeRepository = mock<EspeceRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const classeService = buildClasseService({
   logger,
   classeRepository,
+  especeRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -47,53 +37,32 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
-
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
-
 describe("Find class", () => {
   test("should handle a matching class", async () => {
     const classData: Classe = mock<Classe>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.classe.findUnique.mockResolvedValueOnce(classData);
+    classeRepository.findClasseById.mockResolvedValueOnce(classData);
 
-    await findClasse(classData.id, loggedUser);
+    await classeService.findClasse(classData.id, loggedUser);
 
-    expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: classData.id,
-      },
-    });
+    expect(classeRepository.findClasseById).toHaveBeenCalledTimes(1);
+    expect(classeRepository.findClasseById).toHaveBeenLastCalledWith(classData.id);
   });
 
   test("should handle class not found", async () => {
-    prismaMock.classe.findUnique.mockResolvedValueOnce(null);
+    classeRepository.findClasseById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findClasse(10, loggedUser)).resolves.toBe(null);
+    await expect(classeService.findClasse(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.classe.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(classeRepository.findClasseById).toHaveBeenCalledTimes(1);
+    expect(classeRepository.findClasseById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.classe.findUnique).not.toHaveBeenCalled();
+    await expect(classeService.findClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(classeRepository.findClasseById).not.toHaveBeenCalled();
   });
 });
 
@@ -101,18 +70,14 @@ describe("Species count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getEspecesCountByClasse(12, loggedUser);
+    await classeService.getEspecesCountByClasse(12, loggedUser);
 
-    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.count).toHaveBeenLastCalledWith<[Prisma.EspeceCountArgs]>({
-      where: {
-        classeId: 12,
-      },
-    });
+    expect(especeRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
+    expect(especeRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getEspecesCountByClasse(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.getEspecesCountByClasse(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -120,20 +85,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByClasse(12, loggedUser);
+    await classeService.getDonneesCountByClasse(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        espece: {
-          classeId: 12,
-        },
-      },
-    });
+    expect(donneeRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByClasse(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.getDonneesCountByClasse(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -144,43 +103,30 @@ describe("Find class by species ID", () => {
     });
     const loggedUser = mock<LoggedUser>();
 
-    const species = mockDeep<Prisma.Prisma__EspeceClient<Espece>>();
-    species.classe.mockResolvedValueOnce(classData);
+    classeRepository.findClasseByEspeceId.mockResolvedValueOnce(classData);
 
-    prismaMock.espece.findUnique.mockReturnValueOnce(species);
+    const classe = await classeService.findClasseOfEspeceId(43, loggedUser);
 
-    const classe = await findClasseOfEspeceId(43, loggedUser);
-
-    expect(prismaMock.espece.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 43,
-      },
-    });
+    expect(classeRepository.findClasseByEspeceId).toHaveBeenCalledTimes(1);
+    expect(classeRepository.findClasseByEspeceId).toHaveBeenLastCalledWith(43);
     expect(classe?.id).toEqual(256);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findClasseOfEspeceId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.findClasseOfEspeceId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 test("Find all classes", async () => {
   const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
-  const loggedUser = mock<LoggedUser>();
 
-  prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
+  classeRepository.findClasses.mockResolvedValueOnce(classesData);
 
-  await findClasses(loggedUser);
+  await classeService.findAllClasses();
 
-  expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
+  expect(classeRepository.findClasses).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_LIBELLE,
   });
 });
 
@@ -189,16 +135,12 @@ describe("Entities paginated find by search criteria", () => {
     const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
+    classeRepository.findClasses.mockResolvedValueOnce(classesData);
 
-    await findPaginatedClasses(loggedUser);
+    await classeService.findPaginatedClasses(loggedUser);
 
-    expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
+    expect(classeRepository.findClasses).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated classes ", async () => {
@@ -215,29 +157,22 @@ describe("Entities paginated find by search criteria", () => {
       },
     });
 
-    prismaMock.classe.findMany.mockResolvedValueOnce(classesData);
+    classeRepository.findClasses.mockResolvedValueOnce(classesData);
 
-    await findPaginatedClasses(loggedUser, searchParams);
+    await classeService.findPaginatedClasses(loggedUser, searchParams);
 
-    expect(prismaMock.classe.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        libelle: {
-          contains: searchParams.searchParams?.q,
-        },
-      },
+    expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
+    expect(classeRepository.findClasses).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedClasses(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.findPaginatedClasses(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -245,31 +180,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getClassesCount(loggedUser);
+    await classeService.getClassesCount(loggedUser);
 
-    expect(prismaMock.classe.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(classeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(classeRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getClassesCount(loggedUser, "test");
+    await classeService.getClassesCount(loggedUser, "test");
 
-    expect(prismaMock.classe.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.count).toHaveBeenLastCalledWith({
-      where: {
-        libelle: {
-          contains: "test",
-        },
-      },
-    });
+    expect(classeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(classeRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getClassesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.getClassesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -279,15 +206,10 @@ describe("Update of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertClasse(classData, loggedUser);
+    await classeService.upsertClasse(classData, loggedUser);
 
-    expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
-      data: classData.data,
-      where: {
-        id: classData.id,
-      },
-    });
+    expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
+    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(classData.id, classData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -299,17 +221,12 @@ describe("Update of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
+    classeRepository.findClasseById.mockResolvedValueOnce(existingData);
 
-    await upsertClasse(classData, loggedUser);
+    await classeService.upsertClasse(classData, loggedUser);
 
-    expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
-      data: classData.data,
-      where: {
-        id: classData.id,
-      },
-    });
+    expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
+    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(classData.id, classData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -324,11 +241,11 @@ describe("Update of a class", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.classe.findFirst.mockResolvedValueOnce(existingData);
+    classeRepository.findClasseById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertClasse(classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(classeService.upsertClasse(classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.classe.update).not.toHaveBeenCalled();
+    expect(classeRepository.updateClasse).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a class that exists", async () => {
@@ -338,19 +255,14 @@ describe("Update of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.classe.update.mockImplementation(prismaConstraintFailed);
+    classeRepository.updateClasse.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertClasse(classData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => classeService.upsertClasse(classData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.classe.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.update).toHaveBeenLastCalledWith({
-      data: classData.data,
-      where: {
-        id: classData.id,
-      },
-    });
+    expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
+    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(classData.id, classData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -358,8 +270,8 @@ describe("Update of a class", () => {
       id: 12,
     });
 
-    await expect(upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.classe.update).not.toHaveBeenCalled();
+    await expect(classeService.upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(classeRepository.updateClasse).not.toHaveBeenCalled();
   });
 });
 
@@ -371,14 +283,12 @@ describe("Creation of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertClasse(classData, loggedUser);
+    await classeService.upsertClasse(classData, loggedUser);
 
-    expect(prismaMock.classe.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
-      data: {
-        ...classData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(classeRepository.createClasse).toHaveBeenCalledTimes(1);
+    expect(classeRepository.createClasse).toHaveBeenLastCalledWith({
+      ...classData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -389,18 +299,16 @@ describe("Creation of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.classe.create.mockImplementation(prismaConstraintFailed);
+    classeRepository.createClasse.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertClasse(classData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => classeService.upsertClasse(classData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.classe.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.create).toHaveBeenLastCalledWith({
-      data: {
-        ...classData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(classeRepository.createClasse).toHaveBeenCalledTimes(1);
+    expect(classeRepository.createClasse).toHaveBeenLastCalledWith({
+      ...classData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -409,8 +317,8 @@ describe("Creation of a class", () => {
       id: undefined,
     });
 
-    await expect(upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.classe.create).not.toHaveBeenCalled();
+    await expect(classeService.upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(classeRepository.createClasse).not.toHaveBeenCalled();
   });
 });
 
@@ -425,16 +333,12 @@ describe("Deletion of a class", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.classe.findFirst.mockResolvedValueOnce(classe);
+    classeRepository.findClasseById.mockResolvedValueOnce(classe);
 
-    await deleteClasse(11, loggedUser);
+    await classeService.deleteClasse(11, loggedUser);
 
-    expect(prismaMock.classe.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(classeRepository.deleteClasseById).toHaveBeenCalledTimes(1);
+    expect(classeRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any class if admin", async () => {
@@ -442,16 +346,12 @@ describe("Deletion of a class", () => {
       role: "admin",
     });
 
-    prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
+    classeRepository.findClasseById.mockResolvedValueOnce(mock<Classe>());
 
-    await deleteClasse(11, loggedUser);
+    await classeService.deleteClasse(11, loggedUser);
 
-    expect(prismaMock.classe.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.classe.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(classeRepository.deleteClasseById).toHaveBeenCalledTimes(1);
+    expect(classeRepository.deleteClasseById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned class as non-admin", async () => {
@@ -459,37 +359,37 @@ describe("Deletion of a class", () => {
       role: "contributor",
     });
 
-    prismaMock.classe.findFirst.mockResolvedValueOnce(mock<Classe>());
+    classeRepository.findClasseById.mockResolvedValueOnce(mock<Classe>());
 
-    await expect(deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.deleteClasse(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.classe.delete).not.toHaveBeenCalled();
+    expect(classeRepository.deleteClasseById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.classe.delete).not.toHaveBeenCalled();
+    await expect(classeService.deleteClasse(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(classeRepository.deleteClasseById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple classes", async () => {
   const classesData = [
-    mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.ClasseCreateManyInput, "ownerId">>(),
+    mock<Omit<ClasseCreateInput, "owner_id">>(),
+    mock<Omit<ClasseCreateInput, "owner_id">>(),
+    mock<Omit<ClasseCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createClasses(classesData, loggedUser);
+  await classeService.createClasses(classesData, loggedUser);
 
-  expect(prismaMock.classe.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.classe.createMany).toHaveBeenLastCalledWith({
-    data: classesData.map((classe) => {
+  expect(classeRepository.createClasses).toHaveBeenCalledTimes(1);
+  expect(classeRepository.createClasses).toHaveBeenLastCalledWith(
+    classesData.map((classe) => {
       return {
         ...classe,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });
