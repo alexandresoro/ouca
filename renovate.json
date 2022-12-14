@@ -12,6 +12,12 @@
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor"],
       "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["vite", "@vitejs"],
+      "matchUpdateTypes": ["major", "minor"],
+      "groupName": "vite",
+      "groupSlug": "vite"
     }
   ],
   "timezone": "Europe/Paris"
