@@ -44,15 +44,6 @@ import {
   type DonneeWithRelations,
 } from "../services/entities/donnee-service";
 import {
-  deleteEspece,
-  findEspece,
-  findEspeceOfDonneeId,
-  findPaginatedEspeces,
-  getDonneesCountByEspece,
-  getEspecesCount,
-  upsertEspece,
-} from "../services/entities/espece-service";
-import {
   deleteEstimationDistance,
   findEstimationDistance,
   findPaginatedEstimationsDistance,
@@ -166,6 +157,7 @@ const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 export const buildResolvers = ({
   ageService,
   classeService,
+  especeService,
   observateurService,
   sexeService,
   settingsService,
@@ -250,12 +242,12 @@ export const buildResolvers = ({
         };
       },
       espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
-        return findEspece(args.id, user);
+        return especeService.findEspece(args.id, user);
       },
       especes: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
         const [data, count] = await Promise.all([
-          findPaginatedEspeces(user, args, null),
-          getEspecesCount(user, args?.searchParams?.q),
+          especeService.findPaginatedEspeces(user, args, null),
+          especeService.getEspecesCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -380,8 +372,8 @@ export const buildResolvers = ({
       searchEspeces: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
         const { searchCriteria, ...rest } = args ?? {};
         const [data, count] = await Promise.all([
-          findPaginatedEspeces(user, rest, searchCriteria),
-          getEspecesCount(user, null, searchCriteria),
+          especeService.findPaginatedEspeces(user, rest, searchCriteria),
+          especeService.getEspecesCount(user, null, searchCriteria),
         ]);
         return {
           data,
@@ -484,7 +476,7 @@ export const buildResolvers = ({
         return deleteDonnee(args.id).then(({ id }) => id);
       },
       deleteEspece: async (_source, args, { user }): Promise<number> => {
-        return deleteEspece(args.id, user).then(({ id }) => id);
+        return especeService.deleteEspece(args.id, user).then(({ id }) => id);
       },
       deleteEstimationDistance: async (_source, args, { user }): Promise<number> => {
         return deleteEstimationDistance(args.id, user).then(({ id }) => id);
@@ -544,7 +536,7 @@ export const buildResolvers = ({
         }
       },
       upsertEspece: async (_source, args, { user }): Promise<EspeceEntity> => {
-        return upsertEspece(args, user);
+        return especeService.upsertEspece(args, user);
       },
       upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
         return upsertEstimationDistance(args, user);
@@ -705,8 +697,11 @@ export const buildResolvers = ({
     },
     Donnee: {
       espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
-        const espece = await findEspeceOfDonneeId(parent?.id, user);
-        return findEspece(espece?.id, user);
+        const espece = await especeService.findEspeceOfDonneeId(parent?.id, user);
+        if (!espece) {
+          return null;
+        }
+        return especeService.findEspece(espece?.id, user);
       },
       inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
         const inventaire = await findInventaireOfDonneeId(parent?.id);
@@ -722,11 +717,11 @@ export const buildResolvers = ({
       },
     },
     Espece: {
-      editable: isEntityEditableResolver(findEspece),
+      editable: isEntityEditableResolver(especeService.findEspece),
       classe: async (parent, args, { user }): Promise<Classe | null> => {
         return classeService.findClasseOfEspeceId(parent?.id, user);
       },
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByEspece),
+      nbDonnees: entityNbDonneesResolver(especeService.getDonneesCountByEspece),
     },
     EstimationDistance: {
       editable: isEntityEditableResolver(findEstimationDistance),

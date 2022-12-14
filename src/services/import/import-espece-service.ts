@@ -1,7 +1,6 @@
 import { type Classe, type Espece } from "@prisma/client";
 import { ImportedEspece } from "../../objects/import/imported-espece.object";
 import { type LoggedUser } from "../../types/User";
-import { createEspeces, findEspeces } from "../entities/espece-service";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {
@@ -17,7 +16,7 @@ export class ImportEspeceService extends ImportService {
   protected init = async (): Promise<void> => {
     this.especesToInsert = [];
     this.classes = await this.services.classeService.findAllClasses();
-    this.especes = await findEspeces(null);
+    this.especes = await this.services.especeService.findAllEspeces(null);
   };
 
   protected validateAndPrepareEntity = (especeTab: string[]): string | null => {
@@ -70,7 +69,7 @@ export class ImportEspeceService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.especesToInsert.length) {
-      await createEspeces(this.especesToInsert, loggedUser);
+      await this.services.especeService.createEspeces(this.especesToInsert, loggedUser);
     }
   };
 }

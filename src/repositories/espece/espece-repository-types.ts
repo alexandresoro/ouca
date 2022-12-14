@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type SortOrder } from "../common";
 
 export const especeSchema = z.object({
   id: z.number(),
@@ -10,3 +11,19 @@ export const especeSchema = z.object({
 });
 
 export type Espece = z.infer<typeof especeSchema>;
+
+export type EspeceFindManyInput = Partial<{
+  q: string | null;
+  orderBy: "id" | "code" | "nomClasse" | "nomFrancais" | "nomLatin" | "nbDonnees" | null;
+  sortOrder: SortOrder;
+  offset: number | null;
+  limit: number | null;
+}>;
+
+export type EspeceCreateInput = {
+  classe_id: string;
+  code: number;
+  nom_francais: string;
+  nom_latin: string;
+  owner_id?: string | null;
+};

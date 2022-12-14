@@ -34,6 +34,19 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
+  const getCountByEspeceId = async (especeId: number): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.donnee
+      WHERE
+        donnee.espece_id = ${especeId}
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
   const getCountByObservateurId = async (observateurId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -65,6 +78,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   return {
     getCountByAgeId,
     getCountByClasseId,
+    getCountByEspeceId,
     getCountByObservateurId,
     getCountBySexeId,
   };

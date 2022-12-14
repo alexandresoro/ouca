@@ -6,7 +6,9 @@ import {
   type QueryEspecesArgs,
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
+import { type ClasseRepository } from "../../repositories/classe/classe-repository";
 import { type Classe } from "../../repositories/classe/classe-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository";
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import prisma from "../../sql/prisma";
@@ -19,49 +21,53 @@ import { getPrismaPagination, queryParametersToFindAllEntities } from "./entitie
 
 type EspeceServiceDependencies = {
   logger: Logger;
+  classeRepository: ClasseRepository;
   especeRepository: EspeceRepository;
+  donneeRepository: DonneeRepository;
 };
 
-export const buildEspeceService = ({ logger, especeRepository }: EspeceServiceDependencies) => {
-  return {};
+export const buildEspeceService = ({
+  classeRepository,
+  especeRepository,
+  donneeRepository,
+}: EspeceServiceDependencies) => {
+  const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece | null> => {
+    validateAuthorization(loggedUser);
+
+    return especeRepository.findEspeceById(id);
+  };
+
+  const getDonneesCountByEspece = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return donneeRepository.getCountByEspeceId(id);
+  };
+
+  const findEspeceOfDonneeId = async (
+    donneeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Espece | null> => {
+    validateAuthorization(loggedUser);
+
+    return especeRepository.findEspeceByDonneeId(donneeId);
+  };
+
+  return {
+    findEspece,
+    getDonneesCountByEspece,
+    findEspeceOfDonneeId,
+    findAllEspeces: findEspeces,
+    findPaginatedEspeces,
+    getEspecesCount,
+    upsertEspece,
+    deleteEspece,
+    createEspeces,
+  };
 };
 
 export type EspeceService = ReturnType<typeof buildEspeceService>;
 
-export const findEspece = async (id: number | undefined, loggedUser: LoggedUser | null): Promise<Espece | null> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.espece.findUnique({
-    where: {
-      id,
-    },
-  });
-};
-
-export const getDonneesCountByEspece = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.donnee.count({
-    where: {
-      especeId: id,
-    },
-  });
-};
-
-export const findEspeceOfDonneeId = async (
-  donneeId: number | undefined,
-  loggedUser: LoggedUser | null = null
-): Promise<Espece | null> => {
-  return prisma.donnee
-    .findUnique({
-      where: {
-        id: donneeId,
-      },
-    })
-    .espece();
-};
-
-export const findEspeces = async (
+const findEspeces = async (
   loggedUser: LoggedUser | null,
   options: {
     params?: FindParams | null;
@@ -190,7 +196,7 @@ export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: C
   });
 };
 
-export const findPaginatedEspeces = async (
+const findPaginatedEspeces = async (
   loggedUser: LoggedUser | null,
   options: Partial<QueryEspecesArgs> = {},
   searchCriteria: SearchDonneeCriteria | null | undefined = undefined
@@ -299,7 +305,7 @@ export const findPaginatedEspeces = async (
   return especesEntities;
 };
 
-export const getEspecesCount = async (
+const getEspecesCount = async (
   loggedUser: LoggedUser | null,
   q?: string | null,
   searchCriteria: SearchDonneeCriteria | null | undefined = undefined
@@ -311,7 +317,7 @@ export const getEspecesCount = async (
   });
 };
 
-export const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
+const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
   validateAuthorization(loggedUser);
 
   const { id, data } = args;
@@ -355,7 +361,7 @@ export const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: L
   return upsertedEspece;
 };
 
-export const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece> => {
+const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece> => {
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
@@ -376,7 +382,7 @@ export const deleteEspece = async (id: number, loggedUser: LoggedUser | null): P
   });
 };
 
-export const createEspeces = async (
+const createEspeces = async (
   especes: Omit<Prisma.EspeceCreateManyInput, "ownerId">[],
   loggedUser: LoggedUser
 ): Promise<Prisma.BatchPayload> => {

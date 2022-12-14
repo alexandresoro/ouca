@@ -23,7 +23,6 @@ import { findCommunes } from "../entities/commune-service";
 import { findComportements } from "../entities/comportement-service";
 import { findDepartements } from "../entities/departement-service";
 import { createDonnee, findAllDonnees, type DonneeWithRelations } from "../entities/donnee-service";
-import { findEspeces } from "../entities/espece-service";
 import { findEstimationsDistance } from "../entities/estimation-distance-service";
 import { findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { findAllInventaires, upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
@@ -73,7 +72,7 @@ export class ImportDonneeService extends ImportService {
     this.communes = await findCommunes(null);
     this.lieuxDits = await findLieuxDits(null);
     this.meteos = await findMeteos(null);
-    this.especes = await findEspeces(null);
+    this.especes = await this.services.especeService.findAllEspeces(null);
     this.sexes = await this.services.sexeService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
     this.estimationsNombre = await findEstimationsNombre(null);
