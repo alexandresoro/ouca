@@ -12,7 +12,7 @@ import { findCommunesWithDepartements } from "./entities/commune-service";
 import { findComportements } from "./entities/comportement-service";
 import { findDepartements } from "./entities/departement-service";
 import { findDonneesByCriteria, type DonneeWithRelations } from "./entities/donnee-service";
-import { findAllEspecesWithClasses } from "./entities/espece-service";
+import { type EspeceService } from "./entities/espece-service";
 import { findEstimationsDistance } from "./entities/estimation-distance-service";
 import { findEstimationsNombre } from "./entities/estimation-nombre-service";
 import { findAllLieuxDitsWithCommuneAndDepartement } from "./entities/lieu-dit-service";
@@ -165,12 +165,12 @@ export const generateDonneesExport = async (
   return fileName;
 };
 
-export const generateEspecesExport = async (): Promise<string> => {
-  const especes = await findAllEspecesWithClasses();
+export const generateEspecesExport = async (especeService: EspeceService): Promise<string> => {
+  const especes = await especeService.findAllEspecesWithClasses();
 
   const objectsToExport = especes.map((espece) => {
     return {
-      Classe: espece.classe?.libelle,
+      Classe: espece.classeLibelle,
       Code: espece.code,
       "Nom français": espece.nomFrancais,
       "Nom scientifique": espece.nomLatin,

@@ -12,6 +12,12 @@ export const especeSchema = z.object({
 
 export type Espece = z.infer<typeof especeSchema>;
 
+export const especeWithClasseLibelleSchema = especeSchema.extend({
+  classeLibelle: z.string(),
+});
+
+export type EspeceWithClasseLibelle = z.infer<typeof especeWithClasseLibelleSchema>;
+
 export type EspeceFindManyInput = Partial<{
   q: string | null;
   orderBy: "id" | "code" | "nomClasse" | "nomFrancais" | "nomLatin" | "nbDonnees" | null;
@@ -21,8 +27,8 @@ export type EspeceFindManyInput = Partial<{
 }>;
 
 export type EspeceCreateInput = {
-  classe_id: string;
-  code: number;
+  classe_id: number;
+  code: string;
   nom_francais: string;
   nom_latin: string;
   owner_id?: string | null;

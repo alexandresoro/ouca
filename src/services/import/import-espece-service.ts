@@ -1,13 +1,14 @@
-import { type Classe, type Espece } from "@prisma/client";
 import { ImportedEspece } from "../../objects/import/imported-espece.object";
+import { type Classe } from "../../repositories/classe/classe-repository-types";
+import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { ImportService } from "./import-service";
 
 export class ImportEspeceService extends ImportService {
   private classes!: Classe[];
-  private especes!: (Espece | Omit<Espece, "id" | "ownerId">)[];
+  private especes!: (Espece | ImportedEspece)[];
 
-  private especesToInsert!: Omit<Espece, "id" | "ownerId">[];
+  private especesToInsert!: Omit<EspeceCreateInput, "owner_id">[];
 
   protected getNumberOfColumns = (): number => {
     return 4;
@@ -63,7 +64,7 @@ export class ImportEspeceService extends ImportService {
     const especeToSave = importedEspece.buildEspece(classe.id);
 
     this.especesToInsert.push(especeToSave);
-    this.especes.push(especeToSave);
+    this.especes.push(importedEspece);
     return null;
   };
 

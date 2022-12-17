@@ -1,4 +1,4 @@
-import { Prisma, type Donnee } from "@prisma/client";
+import { type Donnee, type Prisma } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -12,7 +12,7 @@ import {
 import { type ClasseRepository } from "../../repositories/classe/classe-repository";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository";
-import { type Espece } from "../../repositories/espece/espece-repository-types";
+import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types";
 import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
@@ -20,6 +20,7 @@ import { OucaError } from "../../utils/errors";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import { buildEspeceService } from "./espece-service";
+import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
 
 const classeRepository = mock<ClasseRepository>({});
 const especeRepository = mock<EspeceRepository>({});
@@ -53,18 +54,15 @@ jest.mock<typeof import("./donnee-utils")>("./donnee-utils", () => {
 
 const mockedBuildSearchDonneeCriteria = jest.mocked(buildSearchDonneeCriteria, true);
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+jest.mock<typeof import("./espece-service-reshape")>("./espece-service-reshape", () => {
+  return {
+    __esModule: true,
+    reshapeInputEspeceUpsertData: jest.fn(),
+  };
+});
 
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
+const mockedReshapeInputEspeceUpsertData = jest.mocked(reshapeInputEspeceUpsertData);
 
 describe("Find species", () => {
   test("should handle a matching species", async () => {
@@ -445,17 +443,16 @@ describe("Update of a species", () => {
   test("should be allowed when requested by an admin", async () => {
     const speciesData = mock<MutationUpsertEspeceArgs>();
 
+    const reshapedInputData = mock<EspeceCreateInput>();
+    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await especeService.upsertEspece(speciesData, loggedUser);
 
-    expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
-      data: speciesData.data,
-      where: {
-        id: speciesData.id,
-      },
-    });
+    expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(speciesData.id, reshapedInputData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -465,19 +462,18 @@ describe("Update of a species", () => {
 
     const speciesData = mock<MutationUpsertEspeceArgs>();
 
+    const reshapedInputData = mock<EspeceCreateInput>();
+    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
+    especeRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
     await especeService.upsertEspece(speciesData, loggedUser);
 
-    expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
-      data: speciesData.data,
-      where: {
-        id: speciesData.id,
-      },
-    });
+    expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(speciesData.id, reshapedInputData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -492,11 +488,11 @@ describe("Update of a species", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.espece.findFirst.mockResolvedValueOnce(existingData);
+    especeRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
     await expect(especeService.upsertEspece(speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.espece.update).not.toHaveBeenCalled();
+    expect(especeRepository.updateEspece).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a species that exists", async () => {
@@ -504,21 +500,20 @@ describe("Update of a species", () => {
       id: 12,
     });
 
+    const reshapedInputData = mock<EspeceCreateInput>();
+    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.espece.update.mockImplementation(prismaConstraintFailed);
+    especeRepository.updateEspece.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => especeService.upsertEspece(speciesData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.espece.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.update).toHaveBeenLastCalledWith({
-      data: speciesData.data,
-      where: {
-        id: speciesData.id,
-      },
-    });
+    expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(speciesData.id, reshapedInputData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -527,7 +522,7 @@ describe("Update of a species", () => {
     });
 
     await expect(especeService.upsertEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.espece.update).not.toHaveBeenCalled();
+    expect(especeRepository.updateEspece).not.toHaveBeenCalled();
   });
 });
 
@@ -537,16 +532,18 @@ describe("Creation of a species", () => {
       id: undefined,
     });
 
+    const reshapedInputData = mock<EspeceCreateInput>();
+    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
     await especeService.upsertEspece(speciesData, loggedUser);
 
-    expect(prismaMock.espece.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.create).toHaveBeenLastCalledWith({
-      data: {
-        ...speciesData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(especeRepository.createEspece).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(especeRepository.createEspece).toHaveBeenLastCalledWith({
+      ...reshapedInputData,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -555,20 +552,22 @@ describe("Creation of a species", () => {
       id: undefined,
     });
 
+    const reshapedInputData = mock<EspeceCreateInput>();
+    mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.espece.create.mockImplementation(prismaConstraintFailed);
+    especeRepository.createEspece.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => especeService.upsertEspece(speciesData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.espece.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.create).toHaveBeenLastCalledWith({
-      data: {
-        ...speciesData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(especeRepository.createEspece).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
+    expect(especeRepository.createEspece).toHaveBeenLastCalledWith({
+      ...reshapedInputData,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -578,7 +577,7 @@ describe("Creation of a species", () => {
     });
 
     await expect(especeService.upsertEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.espece.create).not.toHaveBeenCalled();
+    expect(especeRepository.createEspece).not.toHaveBeenCalled();
   });
 });
 
@@ -593,16 +592,12 @@ describe("Deletion of a species", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.espece.findFirst.mockResolvedValueOnce(species);
+    especeRepository.findEspeceById.mockResolvedValueOnce(species);
 
     await especeService.deleteEspece(11, loggedUser);
 
-    expect(prismaMock.espece.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(especeRepository.deleteEspeceById).toHaveBeenCalledTimes(1);
+    expect(especeRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any species if admin", async () => {
@@ -610,16 +605,12 @@ describe("Deletion of a species", () => {
       role: "admin",
     });
 
-    prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
+    especeRepository.findEspeceById.mockResolvedValueOnce(mock<Espece>());
 
     await especeService.deleteEspece(11, loggedUser);
 
-    expect(prismaMock.espece.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(especeRepository.deleteEspeceById).toHaveBeenCalledTimes(1);
+    expect(especeRepository.deleteEspeceById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned species as non-admin", async () => {
@@ -627,37 +618,37 @@ describe("Deletion of a species", () => {
       role: "contributor",
     });
 
-    prismaMock.espece.findFirst.mockResolvedValueOnce(mock<Espece>());
+    especeRepository.findEspeceById.mockResolvedValueOnce(mock<Espece>());
 
     await expect(especeService.deleteEspece(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.espece.delete).not.toHaveBeenCalled();
+    expect(especeRepository.deleteEspeceById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(especeService.deleteEspece(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.espece.delete).not.toHaveBeenCalled();
+    expect(especeRepository.deleteEspeceById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple species", async () => {
   const speciesData = [
-    mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EspeceCreateManyInput, "ownerId">>(),
+    mock<Omit<EspeceCreateInput, "owner_id">>(),
+    mock<Omit<EspeceCreateInput, "owner_id">>(),
+    mock<Omit<EspeceCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
   await especeService.createEspeces(speciesData, loggedUser);
 
-  expect(prismaMock.espece.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.espece.createMany).toHaveBeenLastCalledWith({
-    data: speciesData.map((species) => {
+  expect(especeRepository.createEspeces).toHaveBeenCalledTimes(1);
+  expect(especeRepository.createEspeces).toHaveBeenLastCalledWith(
+    speciesData.map((species) => {
       return {
         ...species,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

@@ -422,7 +422,7 @@ export const buildResolvers = ({
       },
       exportEspeces: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateEspecesExport();
+        return generateEspecesExport(especeService);
       },
       exportLieuxDits: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);

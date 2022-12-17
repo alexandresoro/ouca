@@ -1,6 +1,13 @@
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common";
-import { especeSchema, type Espece } from "./espece-repository-types";
+import { objectsToKeyValueInsert, objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers";
+import {
+  especeSchema,
+  especeWithClasseLibelleSchema,
+  type Espece,
+  type EspeceCreateInput,
+  type EspeceWithClasseLibelle,
+} from "./espece-repository-types";
 
 export type EspeceRepositoryDependencies = {
   slonik: DatabasePool;
@@ -38,6 +45,72 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
+  const findAllEspecesWithClasseLibelle = async (): Promise<readonly EspeceWithClasseLibelle[]> => {
+    const query = sql.type(especeWithClasseLibelleSchema)`
+    SELECT 
+      espece.*,
+      classe.libelle as classe_libelle
+    FROM
+      basenaturaliste.espece
+    LEFT JOIN basenaturaliste.classe ON espece.classe_id = classe.id
+  `;
+
+    return slonik.any(query);
+  };
+
+  const createEspece = async (especeInput: EspeceCreateInput): Promise<Espece> => {
+    const query = sql.type(especeSchema)`
+      INSERT INTO
+        basenaturaliste.espece
+        ${objectToKeyValueInsert(especeInput)}
+      RETURNING
+        *
+    `;
+
+    return slonik.one(query);
+  };
+
+  const createEspeces = async (especeInputs: EspeceCreateInput[]): Promise<readonly Espece[]> => {
+    const query = sql.type(especeSchema)`
+      INSERT INTO
+        basenaturaliste.espece
+        ${objectsToKeyValueInsert(especeInputs)}
+      RETURNING
+        *
+    `;
+
+    return slonik.many(query);
+  };
+
+  const updateEspece = async (especeId: number, especeInput: EspeceCreateInput): Promise<Espece> => {
+    const query = sql.type(especeSchema)`
+      UPDATE
+        basenaturaliste.espece
+      SET
+        ${objectToKeyValueSet(especeInput)}
+      WHERE
+        id = ${especeId}
+      RETURNING
+        *
+    `;
+
+    return slonik.one(query);
+  };
+
+  const deleteEspeceById = async (especeId: number): Promise<Espece> => {
+    const query = sql.type(especeSchema)`
+      DELETE
+      FROM
+        basenaturaliste.espece
+      WHERE
+        id = ${especeId}
+      RETURNING
+        *
+    `;
+
+    return slonik.one(query);
+  };
+
   const getCountByClasseId = async (classeId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -54,6 +127,11 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
   return {
     findEspeceById,
     findEspeceByDonneeId,
+    findAllEspecesWithClasseLibelle,
+    createEspece,
+    createEspeces,
+    updateEspece,
+    deleteEspeceById,
     getCountByClasseId,
   };
 };

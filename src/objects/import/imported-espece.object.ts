@@ -1,4 +1,4 @@
-import { type Espece } from "@prisma/client";
+import { type EspeceCreateInput } from "../../repositories/espece/espece-repository-types";
 
 const CLASSE_INDEX = 0;
 const CODE_INDEX = 1;
@@ -22,12 +22,12 @@ export class ImportedEspece {
     this.nomLatin = especeTab[NOM_LATIN_INDEX].trim();
   }
 
-  buildEspece = (classeId: number): Pick<Espece, "classeId" | "code" | "nomFrancais" | "nomLatin"> => {
+  buildEspece = (classeId: number): Omit<EspeceCreateInput, "owner_id"> => {
     return {
-      classeId,
+      classe_id: classeId,
       code: this.code,
-      nomFrancais: this.nomFrancais,
-      nomLatin: this.nomLatin,
+      nom_francais: this.nomFrancais,
+      nom_latin: this.nomLatin,
     };
   };
 

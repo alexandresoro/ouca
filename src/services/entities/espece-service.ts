@@ -1,5 +1,6 @@
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   type FindParams,
   type MutationUpsertEspeceArgs,
@@ -7,10 +8,13 @@ import {
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository";
-import { type Classe } from "../../repositories/classe/classe-repository-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository";
-import { type Espece } from "../../repositories/espece/espece-repository-types";
+import {
+  type Espece,
+  type EspeceCreateInput,
+  type EspeceWithClasseLibelle,
+} from "../../repositories/espece/espece-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
@@ -18,6 +22,7 @@ import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
 
 type EspeceServiceDependencies = {
   logger: Logger;
@@ -52,11 +57,85 @@ export const buildEspeceService = ({
     return especeRepository.findEspeceByDonneeId(donneeId);
   };
 
+  const findAllEspecesWithClasses = async (): Promise<EspeceWithClasseLibelle[]> => {
+    const especesWithClasses = await especeRepository.findAllEspecesWithClasseLibelle();
+    return [...especesWithClasses];
+  };
+
+  const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
+    validateAuthorization(loggedUser);
+
+    const { id, data } = args;
+
+    let upsertedEspece: Espece;
+
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser?.role !== "admin") {
+        const existingData = await especeRepository.findEspeceById(id);
+
+        if (existingData?.ownerId !== loggedUser?.id) {
+          throw new OucaError("OUCA0001");
+        }
+      }
+
+      try {
+        upsertedEspece = await especeRepository.updateEspece(id, reshapeInputEspeceUpsertData(data));
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      try {
+        upsertedEspece = await especeRepository.createEspece({
+          ...reshapeInputEspeceUpsertData(data),
+          owner_id: loggedUser?.id,
+        });
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    }
+
+    return upsertedEspece;
+  };
+
+  const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece> => {
+    validateAuthorization(loggedUser);
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await especeRepository.findEspeceById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    return especeRepository.deleteEspeceById(id);
+  };
+
+  const createEspeces = async (
+    especes: Omit<EspeceCreateInput, "owner_id">[],
+    loggedUser: LoggedUser
+  ): Promise<readonly Espece[]> => {
+    return especeRepository.createEspeces(
+      especes.map((espece) => {
+        return { ...espece, owner_id: loggedUser.id };
+      })
+    );
+  };
+
   return {
     findEspece,
     getDonneesCountByEspece,
     findEspeceOfDonneeId,
     findAllEspeces: findEspeces,
+    findAllEspecesWithClasses,
     findPaginatedEspeces,
     getEspecesCount,
     upsertEspece,
@@ -187,15 +266,6 @@ const getFilterClauseSearchDonnee = (
     : {};
 };
 
-export const findAllEspecesWithClasses = async (): Promise<(Espece & { classe: Classe | null })[]> => {
-  return prisma.espece.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    include: {
-      classe: true,
-    },
-  });
-};
-
 const findPaginatedEspeces = async (
   loggedUser: LoggedUser | null,
   options: Partial<QueryEspecesArgs> = {},
@@ -314,81 +384,5 @@ const getEspecesCount = async (
 
   return prisma.espece.count({
     where: { AND: [getFilterClause(q), getFilterClauseSearchDonnee(searchCriteria)] },
-  });
-};
-
-const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
-  validateAuthorization(loggedUser);
-
-  const { id, data } = args;
-
-  let upsertedEspece: Espece;
-
-  if (id) {
-    // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.espece.findFirst({
-        where: { id },
-      });
-
-      if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
-      }
-    }
-
-    try {
-      upsertedEspece = await prisma.espece.update({
-        where: { id },
-        data,
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    try {
-      upsertedEspece = await prisma.espece.create({ data: { ...data, ownerId: loggedUser?.id } });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
-
-  return upsertedEspece;
-};
-
-const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.espece.findFirst({
-      where: { id },
-    });
-
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
-
-  return prisma.espece.delete({
-    where: {
-      id,
-    },
-  });
-};
-
-const createEspeces = async (
-  especes: Omit<Prisma.EspeceCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.espece.createMany({
-    data: especes.map((espece) => {
-      return { ...espece, ownerId: loggedUser.id };
-    }),
   });
 };
