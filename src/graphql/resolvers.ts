@@ -20,17 +20,6 @@ import {
   upsertComportement,
 } from "../services/entities/comportement-service";
 import {
-  deleteDepartement,
-  findDepartement,
-  findDepartementOfCommuneId,
-  findPaginatedDepartements,
-  getCommunesCountByDepartement,
-  getDepartementsCount,
-  getDonneesCountByDepartement,
-  getLieuxDitsCountByDepartement,
-  upsertDepartement,
-} from "../services/entities/departement-service";
-import {
   countSpecimensByAgeForEspeceId,
   countSpecimensBySexeForEspeceId,
   deleteDonnee,
@@ -157,6 +146,7 @@ const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 export const buildResolvers = ({
   ageService,
   classeService,
+  departementService,
   especeService,
   observateurService,
   sexeService,
@@ -223,12 +213,12 @@ export const buildResolvers = ({
         };
       },
       departement: async (_source, args, { user }): Promise<Departement | null> => {
-        return findDepartement(args.id, user);
+        return departementService.findDepartement(args.id, user);
       },
       departements: async (_, args, { user }): Promise<DepartementsPaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedDepartements(user, args),
-          getDepartementsCount(user, args?.searchParams?.q),
+          departementService.findPaginatedDepartements(user, args),
+          departementService.getDepartementsCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -406,7 +396,7 @@ export const buildResolvers = ({
       },
       exportDepartements: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateDepartementsExport();
+        return generateDepartementsExport(departementService);
       },
       exportEstimationsDistance: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -469,7 +459,7 @@ export const buildResolvers = ({
         return deleteComportement(args.id, user).then(({ id }) => id);
       },
       deleteDepartement: async (_source, args, { user }): Promise<number> => {
-        return deleteDepartement(args.id, user).then(({ id }) => id);
+        return departementService.deleteDepartement(args.id, user).then(({ id }) => id);
       },
       deleteDonnee: async (_source, args, { user }): Promise<number> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -512,7 +502,7 @@ export const buildResolvers = ({
         return upsertComportement(args, user);
       },
       upsertDepartement: async (_source, args, { user }): Promise<Departement> => {
-        return upsertDepartement(args, user);
+        return departementService.upsertDepartement(args, user);
       },
       upsertDonnee: async (
         _source,
@@ -672,7 +662,7 @@ export const buildResolvers = ({
       },
       nbDonnees: entityNbDonneesResolver(getDonneesCountByCommune),
       departement: async (parent, args, { user }): Promise<Departement | null> => {
-        return findDepartementOfCommuneId(parent?.id, user);
+        return departementService.findDepartementOfCommuneId(parent?.id, user);
       },
     },
     Comportement: {
@@ -680,20 +670,20 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(getDonneesCountByComportement),
     },
     Departement: {
-      editable: isEntityEditableResolver(findDepartement),
+      editable: isEntityEditableResolver(departementService.findDepartement),
       nbCommunes: async (parent, args, { user }): Promise<number | null> => {
         if (!parent?.id) {
           return null;
         }
-        return getCommunesCountByDepartement(parent.id, user);
+        return departementService.getCommunesCountByDepartement(parent.id, user);
       },
       nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
         if (!parent?.id) {
           return null;
         }
-        return getLieuxDitsCountByDepartement(parent.id, user);
+        return departementService.getLieuxDitsCountByDepartement(parent.id, user);
       },
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByDepartement),
+      nbDonnees: entityNbDonneesResolver(departementService.getDonneesCountByDepartement),
     },
     Donnee: {
       espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {

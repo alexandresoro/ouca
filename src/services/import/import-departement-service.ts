@@ -1,7 +1,6 @@
 import { type Departement } from "@prisma/client";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
 import { type LoggedUser } from "../../types/User";
-import { createDepartements, findDepartements } from "../entities/departement-service";
 import { ImportService } from "./import-service";
 
 export class ImportDepartementService extends ImportService {
@@ -15,7 +14,7 @@ export class ImportDepartementService extends ImportService {
 
   protected init = async (): Promise<void> => {
     this.departementsToInsert = [];
-    this.departements = await findDepartements(null);
+    this.departements = await this.services.departementService.findAllDepartements();
   };
 
   protected validateAndPrepareEntity = (departementTab: string[]): string | null => {
@@ -44,7 +43,7 @@ export class ImportDepartementService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.departementsToInsert.length) {
-      await createDepartements(this.departementsToInsert, loggedUser);
+      await this.services.departementService.createDepartements(this.departementsToInsert, loggedUser);
     }
   };
 }

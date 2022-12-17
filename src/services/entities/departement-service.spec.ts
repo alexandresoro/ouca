@@ -1,5 +1,4 @@
-import { Prisma } from "@prisma/client";
-import { mock, mockDeep } from "jest-mock-extended";
+import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
@@ -8,31 +7,32 @@ import {
   type MutationUpsertDepartementArgs,
   type QueryDepartementsArgs,
 } from "../../graphql/generated/graphql-types";
-import { type Commune } from "../../repositories/commune/commune-repository-types";
+import { type CommuneRepository } from "../../repositories/commune/commune-repository";
 import { type DepartementRepository } from "../../repositories/departement/departement-repository";
-import { type Departement } from "../../repositories/departement/departement-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import {
+  type Departement,
+  type DepartementCreateInput,
+} from "../../repositories/departement/departement-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import {
-  buildDepartementService,
-  createDepartements,
-  deleteDepartement,
-  findDepartement,
-  findDepartementOfCommuneId,
-  findDepartements,
-  findPaginatedDepartements,
-  getCommunesCountByDepartement,
-  getDepartementsCount,
-  getDonneesCountByDepartement,
-  getLieuxDitsCountByDepartement,
-  upsertDepartement,
-} from "./departement-service";
-import { queryParametersToFindAllEntities } from "./entities-utils";
+import { buildDepartementService } from "./departement-service";
 
 const departementRepository = mock<DepartementRepository>({});
+const communeRepository = mock<CommuneRepository>({});
+const lieuditRepository = mock<LieuditRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
+
+const departementService = buildDepartementService({
+  logger,
+  departementRepository,
+  communeRepository,
+  lieuditRepository,
+  donneeRepository,
+});
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
   new Error("errorMessage"),
@@ -43,58 +43,32 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const departementService = buildDepartementService({
-  logger,
-  departementRepository,
-});
-
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
-
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
-
 describe("Find department", () => {
   test("should handle a matching department", async () => {
     const departmentData = mock<Departement>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.departement.findUnique.mockResolvedValueOnce(departmentData);
+    departementRepository.findDepartementById.mockResolvedValueOnce(departmentData);
 
-    await findDepartement(departmentData.id, loggedUser);
+    await departementService.findDepartement(departmentData.id, loggedUser);
 
-    expect(prismaMock.departement.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: departmentData.id,
-      },
-    });
+    expect(departementRepository.findDepartementById).toHaveBeenCalledTimes(1);
+    expect(departementRepository.findDepartementById).toHaveBeenLastCalledWith(departmentData.id);
   });
 
   test("should handle department not found", async () => {
-    prismaMock.departement.findUnique.mockResolvedValueOnce(null);
+    departementRepository.findDepartementById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findDepartement(10, loggedUser)).resolves.toBe(null);
+    await expect(departementService.findDepartement(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.departement.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(departementRepository.findDepartementById).toHaveBeenCalledTimes(1);
+    expect(departementRepository.findDepartementById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.departement.findUnique).not.toHaveBeenCalled();
+    await expect(departementService.findDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(departementRepository.findDepartementById).not.toHaveBeenCalled();
   });
 });
 
@@ -102,18 +76,14 @@ describe("Cities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getCommunesCountByDepartement(12, loggedUser);
+    await departementService.getCommunesCountByDepartement(12, loggedUser);
 
-    expect(prismaMock.commune.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.count).toHaveBeenLastCalledWith<[Prisma.CommuneCountArgs]>({
-      where: {
-        departementId: 12,
-      },
-    });
+    expect(communeRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
+    expect(communeRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getCommunesCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.getCommunesCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -121,20 +91,16 @@ describe("Localities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getLieuxDitsCountByDepartement(12, loggedUser);
+    await departementService.getLieuxDitsCountByDepartement(12, loggedUser);
 
-    expect(prismaMock.lieudit.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.count).toHaveBeenLastCalledWith<[Prisma.LieuditCountArgs]>({
-      where: {
-        commune: {
-          departementId: 12,
-        },
-      },
-    });
+    expect(lieuditRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getLieuxDitsCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.getLieuxDitsCountByDepartement(12, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
@@ -142,24 +108,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByDepartement(12, loggedUser);
+    await departementService.getDonneesCountByDepartement(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        inventaire: {
-          lieuDit: {
-            commune: {
-              departementId: 12,
-            },
-          },
-        },
-      },
-    });
+    expect(donneeRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.getDonneesCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -170,43 +126,30 @@ describe("Find department by city ID", () => {
     });
     const loggedUser = mock<LoggedUser>();
 
-    const city = mockDeep<Prisma.Prisma__CommuneClient<Commune>>();
-    city.departement.mockResolvedValueOnce(departmentData);
+    departementRepository.findDepartementByCommuneId.mockResolvedValueOnce(departmentData);
 
-    prismaMock.commune.findUnique.mockReturnValueOnce(city);
+    const department = await departementService.findDepartementOfCommuneId(43, loggedUser);
 
-    const department = await findDepartementOfCommuneId(43, loggedUser);
-
-    expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 43,
-      },
-    });
+    expect(departementRepository.findDepartementByCommuneId).toHaveBeenCalledTimes(1);
+    expect(departementRepository.findDepartementByCommuneId).toHaveBeenLastCalledWith(43);
     expect(department?.id).toEqual(256);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findDepartementOfCommuneId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.findDepartementOfCommuneId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 test("Find all departments", async () => {
   const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
-  const loggedUser = mock<LoggedUser>();
 
-  prismaMock.departement.findMany.mockResolvedValueOnce(departementsData);
+  departementRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
-  await findDepartements(loggedUser);
+  await departementService.findAllDepartements();
 
-  expect(prismaMock.departement.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      code: {
-        contains: undefined,
-      },
-    },
+  expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
+  expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_CODE,
   });
 });
 
@@ -215,16 +158,12 @@ describe("Entities paginated find by search criteria", () => {
     const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.departement.findMany.mockResolvedValueOnce(departementsData);
+    departementRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
-    await findPaginatedDepartements(loggedUser);
+    await departementService.findPaginatedDepartements(loggedUser);
 
-    expect(prismaMock.departement.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
+    expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated departments ", async () => {
@@ -241,29 +180,22 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.departement.findMany.mockResolvedValueOnce([departementsData[0]]);
+    departementRepository.findDepartements.mockResolvedValueOnce([departementsData[0]]);
 
-    await findPaginatedDepartements(loggedUser, searchParams);
+    await departementService.findPaginatedDepartements(loggedUser, searchParams);
 
-    expect(prismaMock.departement.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        code: {
-          contains: searchParams.searchParams?.q,
-        },
-      },
+    expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
+    expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_CODE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedDepartements(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.findPaginatedDepartements(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -271,31 +203,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDepartementsCount(loggedUser);
+    await departementService.getDepartementsCount(loggedUser);
 
-    expect(prismaMock.departement.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(departementRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(departementRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDepartementsCount(loggedUser, "test");
+    await departementService.getDepartementsCount(loggedUser, "test");
 
-    expect(prismaMock.departement.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.count).toHaveBeenLastCalledWith({
-      where: {
-        code: {
-          contains: "test",
-        },
-      },
-    });
+    expect(departementRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(departementRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDepartementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.getDepartementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -305,15 +229,10 @@ describe("Update of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertDepartement(departmentData, loggedUser);
+    await departementService.upsertDepartement(departmentData, loggedUser);
 
-    expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
-      data: departmentData.data,
-      where: {
-        id: departmentData.id,
-      },
-    });
+    expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
+    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(departmentData.id, departmentData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -325,17 +244,12 @@ describe("Update of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
+    departementRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
-    await upsertDepartement(departmentData, loggedUser);
+    await departementService.upsertDepartement(departmentData, loggedUser);
 
-    expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
-      data: departmentData.data,
-      where: {
-        id: departmentData.id,
-      },
-    });
+    expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
+    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(departmentData.id, departmentData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -350,11 +264,13 @@ describe("Update of a department", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.departement.findFirst.mockResolvedValueOnce(existingData);
+    departementRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertDepartement(departmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(departementService.upsertDepartement(departmentData, user)).rejects.toThrowError(
+      new OucaError("OUCA0001")
+    );
 
-    expect(prismaMock.departement.update).not.toHaveBeenCalled();
+    expect(departementRepository.updateDepartement).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a department that exists", async () => {
@@ -364,19 +280,14 @@ describe("Update of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.departement.update.mockImplementation(prismaConstraintFailed);
+    departementRepository.updateDepartement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => departementService.upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.departement.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.update).toHaveBeenLastCalledWith({
-      data: departmentData.data,
-      where: {
-        id: departmentData.id,
-      },
-    });
+    expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
+    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(departmentData.id, departmentData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -384,8 +295,8 @@ describe("Update of a department", () => {
       id: 12,
     });
 
-    await expect(upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.departement.update).not.toHaveBeenCalled();
+    await expect(departementService.upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(departementRepository.updateDepartement).not.toHaveBeenCalled();
   });
 });
 
@@ -397,14 +308,12 @@ describe("Creation of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertDepartement(departmentData, loggedUser);
+    await departementService.upsertDepartement(departmentData, loggedUser);
 
-    expect(prismaMock.departement.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.create).toHaveBeenLastCalledWith({
-      data: {
-        ...departmentData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(departementRepository.createDepartement).toHaveBeenCalledTimes(1);
+    expect(departementRepository.createDepartement).toHaveBeenLastCalledWith({
+      ...departmentData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -415,18 +324,16 @@ describe("Creation of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.departement.create.mockImplementation(prismaConstraintFailed);
+    departementRepository.createDepartement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => departementService.upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.departement.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.create).toHaveBeenLastCalledWith({
-      data: {
-        ...departmentData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(departementRepository.createDepartement).toHaveBeenCalledTimes(1);
+    expect(departementRepository.createDepartement).toHaveBeenLastCalledWith({
+      ...departmentData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -435,8 +342,8 @@ describe("Creation of a department", () => {
       id: undefined,
     });
 
-    await expect(upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.departement.create).not.toHaveBeenCalled();
+    await expect(departementService.upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(departementRepository.createDepartement).not.toHaveBeenCalled();
   });
 });
 
@@ -451,16 +358,12 @@ describe("Deletion of a department", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.departement.findFirst.mockResolvedValueOnce(department);
+    departementRepository.findDepartementById.mockResolvedValueOnce(department);
 
-    await deleteDepartement(11, loggedUser);
+    await departementService.deleteDepartement(11, loggedUser);
 
-    expect(prismaMock.departement.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(departementRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
+    expect(departementRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any department if admin", async () => {
@@ -468,16 +371,12 @@ describe("Deletion of a department", () => {
       role: "admin",
     });
 
-    prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
+    departementRepository.findDepartementById.mockResolvedValueOnce(mock<Departement>());
 
-    await deleteDepartement(11, loggedUser);
+    await departementService.deleteDepartement(11, loggedUser);
 
-    expect(prismaMock.departement.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.departement.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(departementRepository.deleteDepartementById).toHaveBeenCalledTimes(1);
+    expect(departementRepository.deleteDepartementById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned department as non-admin", async () => {
@@ -485,37 +384,37 @@ describe("Deletion of a department", () => {
       role: "contributor",
     });
 
-    prismaMock.departement.findFirst.mockResolvedValueOnce(mock<Departement>());
+    departementRepository.findDepartementById.mockResolvedValueOnce(mock<Departement>());
 
-    await expect(deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.deleteDepartement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.departement.delete).not.toHaveBeenCalled();
+    expect(departementRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.departement.delete).not.toHaveBeenCalled();
+    await expect(departementService.deleteDepartement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(departementRepository.deleteDepartementById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple departments", async () => {
   const departmentsData = [
-    mock<Omit<Prisma.DepartementCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.DepartementCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.DepartementCreateManyInput, "ownerId">>(),
+    mock<Omit<DepartementCreateInput, "owner_id">>(),
+    mock<Omit<DepartementCreateInput, "owner_id">>(),
+    mock<Omit<DepartementCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createDepartements(departmentsData, loggedUser);
+  await departementService.createDepartements(departmentsData, loggedUser);
 
-  expect(prismaMock.departement.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.departement.createMany).toHaveBeenLastCalledWith({
-    data: departmentsData.map((department) => {
+  expect(departementRepository.createDepartements).toHaveBeenCalledTimes(1);
+  expect(departementRepository.createDepartements).toHaveBeenLastCalledWith(
+    departmentsData.map((department) => {
       return {
         ...department,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

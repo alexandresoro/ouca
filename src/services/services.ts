@@ -120,6 +120,9 @@ export const buildServices = async (): Promise<Services> => {
   const departementService = buildDepartementService({
     logger,
     departementRepository,
+    communeRepository,
+    lieuditRepository,
+    donneeRepository,
   });
 
   const donneeService = buildDonneeService({

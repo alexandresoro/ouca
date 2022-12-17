@@ -1,11 +1,29 @@
-import { type DatabasePool } from "slonik";
+import { sql, type DatabasePool } from "slonik";
+import { countSchema } from "../common";
 
 export type LieuditRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies) => {
-  return {};
+  const getCountByDepartementId = async (departementId: number): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.lieudit
+      LEFT JOIN
+        basenaturaliste.commune ON lieudit.commune_id = commune.id
+      WHERE
+        commune.departement_id = ${departementId}
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
+  return {
+    getCountByDepartementId,
+  };
 };
 
 export type LieuditRepository = ReturnType<typeof buildLieuditRepository>;

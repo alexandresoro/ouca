@@ -10,7 +10,7 @@ import { type AgeService } from "./entities/age-service";
 import { type ClasseService } from "./entities/classe-service";
 import { findCommunesWithDepartements } from "./entities/commune-service";
 import { findComportements } from "./entities/comportement-service";
-import { findDepartements } from "./entities/departement-service";
+import { type DepartementService } from "./entities/departement-service";
 import { findDonneesByCriteria, type DonneeWithRelations } from "./entities/donnee-service";
 import { type EspeceService } from "./entities/espece-service";
 import { findEstimationsDistance } from "./entities/estimation-distance-service";
@@ -78,8 +78,8 @@ export const generateComportementsExport = async (): Promise<string> => {
   return fileName;
 };
 
-export const generateDepartementsExport = async (): Promise<string> => {
-  const departementsDb = await findDepartements(null);
+export const generateDepartementsExport = async (departementService: DepartementService): Promise<string> => {
+  const departementsDb = await departementService.findAllDepartements();
 
   const objectsToExport = departementsDb.map((object) => {
     return {
