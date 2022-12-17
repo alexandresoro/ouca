@@ -56,7 +56,6 @@ model Departement {
   id      Int       @id @default(autoincrement()) @db.UnsignedSmallInt
   code    String    @unique() @db.VarChar(100)
   ownerId String?   @map("owner_id")
-  owner   User?     @relation(fields: [ownerId], references: [id], map: "fk_departement_owner_id")
   commune Commune[]
 
   @@map("departement")
@@ -243,7 +242,6 @@ model User {
   id                 String               @id @default(uuid())
   Commune            Commune[]
   Comportement       Comportement[]
-  Departement        Departement[]
   Espece             Espece[]
   EstimationDistance EstimationDistance[]
   EstimationNombre   EstimationNombre[]
