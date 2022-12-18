@@ -1,4 +1,4 @@
-import { type Commune } from "@prisma/client";
+import { type CommuneCreateInput } from "../../repositories/commune/commune-repository-types";
 
 const DEPARTEMENT_INDEX = 0;
 const CODE_INDEX = 1;
@@ -19,9 +19,9 @@ export class ImportedCommune {
     this.nom = communeTab[NOM_INDEX].trim();
   }
 
-  buildCommune = (departementId: number): Pick<Commune, "departementId" | "code" | "nom"> => {
+  buildCommune = (departementId: number): Omit<CommuneCreateInput, "owner_id"> => {
     return {
-      departementId,
+      departement_id: departementId,
       code: +this.code,
       nom: this.nom,
     };

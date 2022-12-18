@@ -1,14 +1,14 @@
 import { type Commune, type Departement } from "@prisma/client";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
+import { type CommuneCreateInput } from "../../repositories/commune/commune-repository-types";
 import { type LoggedUser } from "../../types/User";
-import { createCommunes, findCommunes } from "../entities/commune-service";
 import { ImportService } from "./import-service";
 
 export class ImportCommuneService extends ImportService {
   private departements!: Departement[];
-  private communes!: (Commune | Omit<Commune, "id" | "ownerId">)[];
+  private communes!: (Commune | ImportedCommune)[];
 
-  private communesToInsert!: Omit<Commune, "id" | "ownerId">[];
+  private communesToInsert!: Omit<CommuneCreateInput, "owner_id">[];
 
   protected getNumberOfColumns = (): number => {
     return 3;
@@ -18,7 +18,7 @@ export class ImportCommuneService extends ImportService {
     this.communesToInsert = [];
     [this.departements, this.communes] = await Promise.all([
       this.services.departementService.findAllDepartements(),
-      findCommunes(null),
+      this.services.communeService.findAllCommunes(),
     ]);
   };
 
@@ -41,7 +41,8 @@ export class ImportCommuneService extends ImportService {
     // Check that the commune does not exists
     const commune = this.communes.find((commune) => {
       return (
-        commune.departementId === departement.id &&
+        ((commune as Commune)?.departementId === departement.id ||
+          (commune as ImportedCommune)?.departement === departement.code) &&
         (commune.code === +importedCommune.code || this.compareStrings(commune.nom, importedCommune.nom))
       );
     });
@@ -53,13 +54,13 @@ export class ImportCommuneService extends ImportService {
     const communeToSave = importedCommune.buildCommune(departement.id);
 
     this.communesToInsert.push(communeToSave);
-    this.communes.push(communeToSave);
+    this.communes.push(importedCommune);
     return null;
   };
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.communesToInsert.length) {
-      await createCommunes(this.communesToInsert, loggedUser);
+      await this.services.communeService.createCommunes(this.communesToInsert, loggedUser);
     }
   };
 }

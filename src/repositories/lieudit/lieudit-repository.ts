@@ -6,6 +6,19 @@ export type LieuditRepositoryDependencies = {
 };
 
 export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies) => {
+  const getCountByCommuneId = async (communeId: number): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.lieudit
+      WHERE
+        lieudit.commune_id = ${communeId}
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
   const getCountByDepartementId = async (departementId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -22,6 +35,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
   };
 
   return {
+    getCountByCommuneId,
     getCountByDepartementId,
   };
 };

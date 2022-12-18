@@ -1,5 +1,4 @@
-import { Prisma, type Lieudit } from "@prisma/client";
-import { mock, mockDeep } from "jest-mock-extended";
+import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
@@ -9,32 +8,25 @@ import {
   type QueryCommunesArgs,
 } from "../../graphql/generated/graphql-types";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository";
-import { type Commune } from "../../repositories/commune/commune-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import {
-  buildCommuneService,
-  createCommunes,
-  deleteCommune,
-  findCommune,
-  findCommuneOfLieuDitId,
-  findCommunes,
-  findPaginatedCommunes,
-  getCommunesCount,
-  getDonneesCountByCommune,
-  getLieuxDitsCountByCommune,
-  upsertCommune,
-} from "./commune-service";
-import { queryParametersToFindAllEntities } from "./entities-utils";
+import { buildCommuneService } from "./commune-service";
+import { reshapeInputCommuneUpsertData } from "./commune-service-reshape";
 
 const communeRepository = mock<CommuneRepository>({});
+const lieuditRepository = mock<LieuditRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const communeService = buildCommuneService({
   logger,
   communeRepository,
+  lieuditRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -46,53 +38,42 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+jest.mock<typeof import("./commune-service-reshape")>("./commune-service-reshape", () => {
+  return {
+    __esModule: true,
+    reshapeInputCommuneUpsertData: jest.fn(),
+  };
+});
 
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
+const mockedReshapeInputCommuneUpsertData = jest.mocked(reshapeInputCommuneUpsertData);
 
 describe("Find city", () => {
   test("should handle a matching city", async () => {
     const cityData = mock<Commune>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.commune.findUnique.mockResolvedValueOnce(cityData);
+    communeRepository.findCommuneById.mockResolvedValueOnce(cityData);
 
-    await findCommune(cityData.id, loggedUser);
+    await communeService.findCommune(cityData.id, loggedUser);
 
-    expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: cityData.id,
-      },
-    });
+    expect(communeRepository.findCommuneById).toHaveBeenCalledTimes(1);
+    expect(communeRepository.findCommuneById).toHaveBeenLastCalledWith(cityData.id);
   });
 
   test("should handle city not found", async () => {
-    prismaMock.commune.findUnique.mockResolvedValueOnce(null);
+    communeRepository.findCommuneById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findCommune(10, loggedUser)).resolves.toBe(null);
+    await expect(communeService.findCommune(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.commune.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(communeRepository.findCommuneById).toHaveBeenCalledTimes(1);
+    expect(communeRepository.findCommuneById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.commune.findUnique).not.toHaveBeenCalled();
+    await expect(communeService.findCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(communeRepository.findCommuneById).not.toHaveBeenCalled();
   });
 });
 
@@ -100,18 +81,14 @@ describe("Localities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getLieuxDitsCountByCommune(12, loggedUser);
+    await communeService.getLieuxDitsCountByCommune(12, loggedUser);
 
-    expect(prismaMock.lieudit.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.count).toHaveBeenLastCalledWith<[Prisma.LieuditCountArgs]>({
-      where: {
-        communeId: 12,
-      },
-    });
+    expect(lieuditRepository.getCountByCommuneId).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.getCountByCommuneId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getLieuxDitsCountByCommune(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.getLieuxDitsCountByCommune(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -119,22 +96,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByCommune(12, loggedUser);
+    await communeService.getDonneesCountByCommune(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        inventaire: {
-          lieuDit: {
-            communeId: 12,
-          },
-        },
-      },
-    });
+    expect(donneeRepository.getCountByCommuneId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByCommuneId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByCommune(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.getDonneesCountByCommune(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -145,53 +114,30 @@ describe("Find city by locality ID", () => {
     });
     const loggedUser = mock<LoggedUser>();
 
-    const zone = mockDeep<Prisma.Prisma__LieuditClient<Lieudit>>();
-    zone.commune.mockResolvedValueOnce(cityData);
+    communeRepository.findCommuneByLieuDitId.mockResolvedValueOnce(cityData);
 
-    prismaMock.lieudit.findUnique.mockReturnValueOnce(zone);
+    const city = await communeService.findCommuneOfLieuDitId(43, loggedUser);
 
-    const city = await findCommuneOfLieuDitId(43, loggedUser);
-
-    expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 43,
-      },
-    });
+    expect(communeRepository.findCommuneByLieuDitId).toHaveBeenCalledTimes(1);
+    expect(communeRepository.findCommuneByLieuDitId).toHaveBeenLastCalledWith(43);
     expect(city?.id).toEqual(256);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findCommuneOfLieuDitId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.findCommuneOfLieuDitId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 test("Find all cities", async () => {
   const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
-  const loggedUser = mock<LoggedUser>();
 
-  prismaMock.commune.findMany.mockResolvedValueOnce(citiesData);
+  communeRepository.findCommunes.mockResolvedValueOnce(citiesData);
 
-  await findCommunes(loggedUser);
+  await communeService.findAllCommunes();
 
-  expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    where: {
-      AND: [
-        {
-          OR: [
-            {},
-            {
-              nom: {
-                startsWith: undefined,
-              },
-            },
-          ],
-        },
-        {},
-      ],
-    },
+  expect(communeRepository.findCommunes).toHaveBeenCalledTimes(1);
+  expect(communeRepository.findCommunes).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_NOM,
   });
 });
 
@@ -200,16 +146,12 @@ describe("Entities paginated find by search criteria", () => {
     const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.commune.findMany.mockResolvedValueOnce(citiesData);
+    communeRepository.findCommunes.mockResolvedValueOnce(citiesData);
 
-    await findPaginatedCommunes(loggedUser);
+    await communeService.findPaginatedCommunes(loggedUser);
 
-    expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_NOM),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(communeRepository.findCommunes).toHaveBeenCalledTimes(1);
+    expect(communeRepository.findCommunes).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated cities ", async () => {
@@ -226,40 +168,22 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.commune.findMany.mockResolvedValueOnce([citiesData[0]]);
+    communeRepository.findCommunes.mockResolvedValueOnce([citiesData[0]]);
 
-    await findPaginatedCommunes(loggedUser, searchParams);
+    await communeService.findPaginatedCommunes(loggedUser, searchParams);
 
-    expect(prismaMock.commune.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_NOM),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        OR: [
-          {
-            nom: {
-              contains: searchParams.searchParams?.q,
-            },
-          },
-          {
-            departement: {
-              code: {
-                contains: searchParams.searchParams?.q,
-              },
-            },
-          },
-        ],
-      },
+    expect(communeRepository.findCommunes).toHaveBeenCalledTimes(1);
+    expect(communeRepository.findCommunes).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_NOM,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedCommunes(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.findPaginatedCommunes(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -267,42 +191,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getCommunesCount(loggedUser);
+    await communeService.getCommunesCount(loggedUser);
 
-    expect(prismaMock.commune.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(communeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(communeRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getCommunesCount(loggedUser, "test");
+    await communeService.getCommunesCount(loggedUser, "test");
 
-    expect(prismaMock.commune.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.count).toHaveBeenLastCalledWith({
-      where: {
-        OR: [
-          {
-            nom: {
-              contains: "test",
-            },
-          },
-          {
-            departement: {
-              code: {
-                contains: "test",
-              },
-            },
-          },
-        ],
-      },
-    });
+    expect(communeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(communeRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getCommunesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.getCommunesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -310,17 +215,16 @@ describe("Update of a city", () => {
   test("should be allowed when requested by an admin", async () => {
     const cityData = mock<MutationUpsertCommuneArgs>();
 
+    const reshapedInputData = mock<CommuneCreateInput>();
+    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertCommune(cityData, loggedUser);
+    await communeService.upsertCommune(cityData, loggedUser);
 
-    expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
-      data: cityData.data,
-      where: {
-        id: cityData.id,
-      },
-    });
+    expect(communeRepository.updateCommune).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(cityData.id, reshapedInputData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -330,19 +234,18 @@ describe("Update of a city", () => {
 
     const cityData = mock<MutationUpsertCommuneArgs>();
 
+    const reshapedInputData = mock<CommuneCreateInput>();
+    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
+    communeRepository.findCommuneById.mockResolvedValueOnce(existingData);
 
-    await upsertCommune(cityData, loggedUser);
+    await communeService.upsertCommune(cityData, loggedUser);
 
-    expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
-      data: cityData.data,
-      where: {
-        id: cityData.id,
-      },
-    });
+    expect(communeRepository.updateCommune).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(cityData.id, reshapedInputData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -357,11 +260,11 @@ describe("Update of a city", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.commune.findFirst.mockResolvedValueOnce(existingData);
+    communeRepository.findCommuneById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertCommune(cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(communeService.upsertCommune(cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.commune.update).not.toHaveBeenCalled();
+    expect(communeRepository.updateCommune).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a city that exists", async () => {
@@ -369,21 +272,20 @@ describe("Update of a city", () => {
       id: 12,
     });
 
+    const reshapedInputData = mock<CommuneCreateInput>();
+    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.commune.update.mockImplementation(prismaConstraintFailed);
+    communeRepository.updateCommune.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertCommune(cityData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => communeService.upsertCommune(cityData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.commune.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.update).toHaveBeenLastCalledWith({
-      data: cityData.data,
-      where: {
-        id: cityData.id,
-      },
-    });
+    expect(communeRepository.updateCommune).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(cityData.id, reshapedInputData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -391,8 +293,8 @@ describe("Update of a city", () => {
       id: 12,
     });
 
-    await expect(upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.commune.update).not.toHaveBeenCalled();
+    await expect(communeService.upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(communeRepository.updateCommune).not.toHaveBeenCalled();
   });
 });
 
@@ -402,16 +304,18 @@ describe("Creation of a city", () => {
       id: undefined,
     });
 
+    const reshapedInputData = mock<CommuneCreateInput>();
+    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertCommune(cityData, loggedUser);
+    await communeService.upsertCommune(cityData, loggedUser);
 
-    expect(prismaMock.commune.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.create).toHaveBeenLastCalledWith({
-      data: {
-        ...cityData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(communeRepository.createCommune).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(communeRepository.createCommune).toHaveBeenLastCalledWith({
+      ...reshapedInputData,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -420,20 +324,22 @@ describe("Creation of a city", () => {
       id: undefined,
     });
 
+    const reshapedInputData = mock<CommuneCreateInput>();
+    mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.commune.create.mockImplementation(prismaConstraintFailed);
+    communeRepository.createCommune.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertCommune(cityData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => communeService.upsertCommune(cityData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.commune.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.create).toHaveBeenLastCalledWith({
-      data: {
-        ...cityData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(communeRepository.createCommune).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
+    expect(communeRepository.createCommune).toHaveBeenLastCalledWith({
+      ...reshapedInputData,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -442,8 +348,8 @@ describe("Creation of a city", () => {
       id: undefined,
     });
 
-    await expect(upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.commune.create).not.toHaveBeenCalled();
+    await expect(communeService.upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(communeRepository.createCommune).not.toHaveBeenCalled();
   });
 });
 
@@ -458,16 +364,12 @@ describe("Deletion of a city", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.commune.findFirst.mockResolvedValueOnce(city);
+    communeRepository.findCommuneById.mockResolvedValueOnce(city);
 
-    await deleteCommune(11, loggedUser);
+    await communeService.deleteCommune(11, loggedUser);
 
-    expect(prismaMock.commune.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(communeRepository.deleteCommuneById).toHaveBeenCalledTimes(1);
+    expect(communeRepository.deleteCommuneById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any city if admin", async () => {
@@ -475,16 +377,12 @@ describe("Deletion of a city", () => {
       role: "admin",
     });
 
-    prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
+    communeRepository.findCommuneById.mockResolvedValueOnce(mock<Commune>());
 
-    await deleteCommune(11, loggedUser);
+    await communeService.deleteCommune(11, loggedUser);
 
-    expect(prismaMock.commune.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.commune.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(communeRepository.deleteCommuneById).toHaveBeenCalledTimes(1);
+    expect(communeRepository.deleteCommuneById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned city as non-admin", async () => {
@@ -492,37 +390,37 @@ describe("Deletion of a city", () => {
       role: "contributor",
     });
 
-    prismaMock.commune.findFirst.mockResolvedValueOnce(mock<Commune>());
+    communeRepository.findCommuneById.mockResolvedValueOnce(mock<Commune>());
 
-    await expect(deleteCommune(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.deleteCommune(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.commune.delete).not.toHaveBeenCalled();
+    expect(communeRepository.deleteCommuneById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.commune.delete).not.toHaveBeenCalled();
+    await expect(communeService.deleteCommune(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(communeRepository.deleteCommuneById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple cities", async () => {
   const communesData = [
-    mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.CommuneCreateManyInput, "ownerId">>(),
+    mock<Omit<CommuneCreateInput, "owner_id">>(),
+    mock<Omit<CommuneCreateInput, "owner_id">>(),
+    mock<Omit<CommuneCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createCommunes(communesData, loggedUser);
+  await communeService.createCommunes(communesData, loggedUser);
 
-  expect(prismaMock.commune.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.commune.createMany).toHaveBeenLastCalledWith({
-    data: communesData.map((commune) => {
+  expect(communeRepository.createCommunes).toHaveBeenCalledTimes(1);
+  expect(communeRepository.createCommunes).toHaveBeenLastCalledWith(
+    communesData.map((commune) => {
       return {
         ...commune,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

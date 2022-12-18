@@ -8,7 +8,7 @@ import { writeToExcelFile } from "../utils/export-excel-utils";
 import { PUBLIC_DIR } from "../utils/paths";
 import { type AgeService } from "./entities/age-service";
 import { type ClasseService } from "./entities/classe-service";
-import { findCommunesWithDepartements } from "./entities/commune-service";
+import { type CommuneService } from "./entities/commune-service";
 import { findComportements } from "./entities/comportement-service";
 import { type DepartementService } from "./entities/departement-service";
 import { findDonneesByCriteria, type DonneeWithRelations } from "./entities/donnee-service";
@@ -47,12 +47,12 @@ export const generateClassesExport = async (classeService: ClasseService): Promi
   return fileName;
 };
 
-export const generateCommunesExport = async (): Promise<string> => {
-  const communesDb = await findCommunesWithDepartements();
+export const generateCommunesExport = async (communeService: CommuneService): Promise<string> => {
+  const communesDb = await communeService.findAllCommunesWithDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {
     return {
-      Département: communeDb.departement.code,
+      Département: communeDb.departementCode,
       Code: communeDb.code,
       Nom: communeDb.nom,
     };

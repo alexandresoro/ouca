@@ -2,16 +2,6 @@ import { type Commune as CommuneEntity, type Espece as EspeceEntity } from "@pri
 import mercurius, { type IResolvers } from "mercurius";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import {
-  deleteCommune,
-  findCommune,
-  findCommuneOfLieuDitId,
-  findPaginatedCommunes,
-  getCommunesCount,
-  getDonneesCountByCommune,
-  getLieuxDitsCountByCommune,
-  upsertCommune,
-} from "../services/entities/commune-service";
-import {
   deleteComportement,
   findComportement,
   findPaginatedComportements,
@@ -146,6 +136,7 @@ const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 export const buildResolvers = ({
   ageService,
   classeService,
+  communeService,
   departementService,
   especeService,
   observateurService,
@@ -183,7 +174,7 @@ export const buildResolvers = ({
         };
       },
       commune: async (_source, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
-        return findCommune(args.id, user);
+        return communeService.findCommune(args.id, user);
       },
       communes: async (
         _,
@@ -191,8 +182,8 @@ export const buildResolvers = ({
         { user }
       ): Promise<Omit<CommunesPaginatedResult, "data"> & { data?: Omit<Commune, "departement">[] }> => {
         const [data, count] = await Promise.all([
-          findPaginatedCommunes(user, args),
-          getCommunesCount(user, args?.searchParams?.q),
+          communeService.findPaginatedCommunes(user, args),
+          communeService.getCommunesCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -388,7 +379,7 @@ export const buildResolvers = ({
       },
       exportCommunes: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateCommunesExport();
+        return generateCommunesExport(communeService);
       },
       exportComportements: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -453,7 +444,7 @@ export const buildResolvers = ({
         return classeService.deleteClasse(args.id, user).then(({ id }) => id);
       },
       deleteCommune: async (_source, args, { user }): Promise<number> => {
-        return deleteCommune(args.id, user).then(({ id }) => id);
+        return communeService.deleteCommune(args.id, user).then(({ id }) => id);
       },
       deleteComportement: async (_source, args, { user }): Promise<number> => {
         return deleteComportement(args.id, user).then(({ id }) => id);
@@ -496,7 +487,7 @@ export const buildResolvers = ({
         return classeService.upsertClasse(args, user);
       },
       upsertCommune: async (_source, args, { user }): Promise<CommuneEntity> => {
-        return upsertCommune(args, user);
+        return communeService.upsertCommune(args, user);
       },
       upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
         return upsertComportement(args, user);
@@ -653,14 +644,14 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(classeService.getDonneesCountByClasse),
     },
     Commune: {
-      editable: isEntityEditableResolver(findCommune),
+      editable: isEntityEditableResolver(communeService.findCommune),
       nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
         if (!parent?.id) {
           return null;
         }
-        return getLieuxDitsCountByCommune(parent.id, user);
+        return communeService.getLieuxDitsCountByCommune(parent.id, user);
       },
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByCommune),
+      nbDonnees: entityNbDonneesResolver(communeService.getDonneesCountByCommune),
       departement: async (parent, args, { user }): Promise<Departement | null> => {
         return departementService.findDepartementOfCommuneId(parent?.id, user);
       },
@@ -730,7 +721,7 @@ export const buildResolvers = ({
     LieuDit: {
       editable: isEntityEditableResolver(findLieuDit),
       commune: async (parent, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
-        return findCommuneOfLieuDitId(parent?.id, user);
+        return communeService.findCommuneOfLieuDitId(parent?.id, user);
       },
       nbDonnees: entityNbDonneesResolver(getDonneesCountByLieuDit),
     },

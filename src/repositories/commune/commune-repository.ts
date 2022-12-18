@@ -1,11 +1,133 @@
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common";
+import {
+  buildPaginationFragment,
+  buildSortOrderFragment,
+  objectsToKeyValueInsert,
+  objectToKeyValueInsert,
+  objectToKeyValueSet,
+} from "../repository-helpers";
+import {
+  communeSchema,
+  communeWithDepartementCodeSchema,
+  type Commune,
+  type CommuneCreateInput,
+  type CommuneFindManyInput,
+  type CommuneWithDepartementCode,
+} from "./commune-repository-types";
 
 export type CommuneRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies) => {
+  const findCommuneById = async (id: number): Promise<Commune | null> => {
+    const query = sql.type(communeSchema)`
+      SELECT 
+        *
+      FROM
+        basenaturaliste.commune
+      WHERE
+        id = ${id}
+    `;
+
+    return slonik.maybeOne(query);
+  };
+
+  const findCommuneByLieuDitId = async (lieuditId: number | undefined): Promise<Commune | null> => {
+    if (!lieuditId) {
+      return null;
+    }
+
+    const query = sql.type(communeSchema)`
+      SELECT 
+        commune.*
+      FROM
+        basenaturaliste.commune
+      LEFT JOIN basenaturaliste.lieudit ON commune.id = lieudit.commune_id
+      WHERE
+        lieudit.id = ${lieuditId}
+    `;
+
+    return slonik.maybeOne(query);
+  };
+
+  const findCommunes = async ({ orderBy, sortOrder, q, offset, limit }: CommuneFindManyInput = {}): Promise<
+    readonly Commune[]
+  > => {
+    const isSortByNbDonnees = orderBy === "nbDonnees";
+    const isSortByNbLieuxDits = orderBy === "nbLieuxDits";
+    const isSortByDepartement = orderBy === "departement";
+    const nomOrDepartementLike = q ? `%${q}%` : null;
+    const query = sql.type(communeSchema)`
+    SELECT 
+      commune.*
+    FROM
+      basenaturaliste.commune
+    LEFT JOIN
+      basenaturaliste.departement ON commune.departement_id = departement.id
+    ${
+      isSortByNbDonnees || isSortByNbLieuxDits
+        ? sql.fragment`
+        LEFT JOIN basenaturaliste.lieudit ON commune.id = lieudit.commune_id`
+        : sql.fragment``
+    }
+    ${
+      isSortByNbDonnees
+        ? sql.fragment`
+        LEFT JOIN basenaturaliste.inventaire ON lieudit.id = inventaire.lieudit_id
+        LEFT JOIN basenaturaliste.donnee ON inventaire.id = donnee.inventaire_id`
+        : sql.fragment``
+    }
+    ${
+      nomOrDepartementLike
+        ? sql.fragment`
+    WHERE commune.nom ILIKE ${nomOrDepartementLike}
+    OR departement.code ILIKE ${nomOrDepartementLike}
+    `
+        : sql.fragment``
+    }
+    ${isSortByNbDonnees || isSortByNbLieuxDits ? sql.fragment`GROUP BY commune."id"` : sql.fragment``}
+    ${isSortByNbDonnees ? sql.fragment`ORDER BY COUNT(donnee."id")` : sql.fragment``}
+    ${isSortByNbLieuxDits ? sql.fragment`ORDER BY COUNT(lieudit."id")` : sql.fragment``}
+    ${isSortByDepartement ? sql.fragment`ORDER BY departement."code"` : sql.fragment``}
+    ${
+      !isSortByNbDonnees && !isSortByNbLieuxDits && !isSortByDepartement && orderBy
+        ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}`
+        : sql.fragment``
+    }${buildSortOrderFragment({
+      orderBy,
+      sortOrder,
+    })}
+    ${buildPaginationFragment({ offset, limit })}
+  `;
+
+    return slonik.any(query);
+  };
+
+  const getCount = async (q?: string | null): Promise<number> => {
+    const codeLike = q ? `%${q}%` : null;
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.commune
+      LEFT JOIN
+        basenaturaliste.departement ON commune.departement_id = departement.id
+      ${
+        codeLike
+          ? sql.fragment`
+              WHERE
+                commune.nom ILIKE ${codeLike}
+                OR departement.code ILIKE ${codeLike}
+          `
+          : sql.fragment``
+      }
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
   const getCountByDepartementId = async (departementId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -19,8 +141,83 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.oneFirst(query);
   };
 
+  const findAllCommunesWithDepartementCode = async (): Promise<readonly CommuneWithDepartementCode[]> => {
+    const query = sql.type(communeWithDepartementCodeSchema)`
+    SELECT 
+      commune.*,
+      departement.code as departement_code
+    FROM
+      basenaturaliste.commune
+    LEFT JOIN basenaturaliste.departement ON commune.departement_id = departement_id.id
+  `;
+
+    return slonik.any(query);
+  };
+
+  const createCommune = async (communeInput: CommuneCreateInput): Promise<Commune> => {
+    const query = sql.type(communeSchema)`
+      INSERT INTO
+        basenaturaliste.commune
+        ${objectToKeyValueInsert(communeInput)}
+      RETURNING
+        *
+    `;
+
+    return slonik.one(query);
+  };
+
+  const createCommunes = async (communeInputs: CommuneCreateInput[]): Promise<readonly Commune[]> => {
+    const query = sql.type(communeSchema)`
+      INSERT INTO
+        basenaturaliste.commune
+        ${objectsToKeyValueInsert(communeInputs)}
+      RETURNING
+        *
+    `;
+
+    return slonik.many(query);
+  };
+
+  const updateCommune = async (communeId: number, communeInput: CommuneCreateInput): Promise<Commune> => {
+    const query = sql.type(communeSchema)`
+      UPDATE
+        basenaturaliste.commune
+      SET
+        ${objectToKeyValueSet(communeInput)}
+      WHERE
+        id = ${communeId}
+      RETURNING
+        *
+    `;
+
+    return slonik.one(query);
+  };
+
+  const deleteCommuneById = async (communeId: number): Promise<Commune> => {
+    const query = sql.type(communeSchema)`
+      DELETE
+      FROM
+        basenaturaliste.commune
+      WHERE
+        id = ${communeId}
+      RETURNING
+        *
+    `;
+
+    return slonik.one(query);
+  };
+
   return {
+    findCommuneById,
+    findCommuneByLieuDitId,
+    findCommunes,
+    getCount,
     getCountByDepartementId,
+    findAllCommunesWithDepartementCode,
+    createCommune,
+    createCommunes,
+    updateCommune,
+    deleteCommuneById,
   };
 };
 
