@@ -1,5 +1,5 @@
-import { type Departement } from "@prisma/client";
 import { ImportedDepartement } from "../../objects/import/imported-departement.object";
+import { type Departement } from "../../repositories/departement/departement-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { ImportService } from "./import-service";
 

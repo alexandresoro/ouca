@@ -1,10 +1,12 @@
-import { type Commune, type Departement, type Lieudit } from "@prisma/client";
+import { type Lieudit } from "@prisma/client";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import {
   type CoordinatesSystem,
   type CoordinatesSystemType,
 } from "../../model/coordinates-system/coordinates-system.object";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
+import { type Commune } from "../../repositories/commune/commune-repository-types";
+import { type Departement } from "../../repositories/departement/departement-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { createLieuxDits, findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";

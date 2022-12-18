@@ -1,4 +1,5 @@
-import { type Meteo, type Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
+import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { createMeteos, findMeteos } from "../entities/meteo-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";

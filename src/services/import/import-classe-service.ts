@@ -1,4 +1,4 @@
-import { type Classe } from "@prisma/client";
+import { type Classe } from "../../repositories/classe/classe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 

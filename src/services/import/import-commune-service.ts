@@ -1,6 +1,6 @@
-import { type Commune, type Departement } from "@prisma/client";
 import { ImportedCommune } from "../../objects/import/imported-commune.object";
-import { type CommuneCreateInput } from "../../repositories/commune/commune-repository-types";
+import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types";
+import { type Departement } from "../../repositories/departement/departement-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { ImportService } from "./import-service";
 

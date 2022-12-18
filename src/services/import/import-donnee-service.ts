@@ -1,14 +1,3 @@
-import {
-  type Commune,
-  type Comportement,
-  type Departement,
-  type Espece,
-  type EstimationDistance,
-  type EstimationNombre,
-  type Meteo,
-  type Milieu,
-  type Observateur,
-} from "@prisma/client";
 import { type InputDonnee } from "../../graphql/generated/graphql-types";
 import { areCoordinatesCustomized } from "../../model/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
@@ -16,6 +5,15 @@ import { type CoordinatesSystem } from "../../model/coordinates-system/coordinat
 import { type Coordinates } from "../../model/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object";
 import { type Age } from "../../repositories/age/age-repository-types";
+import { type Commune } from "../../repositories/commune/commune-repository-types";
+import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
+import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { type Espece } from "../../repositories/espece/espece-repository-types";
+import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
+import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
+import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
+import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
+import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";

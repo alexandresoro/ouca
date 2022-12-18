@@ -1,4 +1,5 @@
-import { type EstimationDistance, type Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
+import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { createEstimationsDistance, findEstimationsDistance } from "../entities/estimation-distance-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";

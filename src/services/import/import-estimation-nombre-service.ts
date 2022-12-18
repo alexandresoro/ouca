@@ -1,5 +1,6 @@
-import { type EstimationNombre, type Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
+import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { createEstimationsNombre, findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
