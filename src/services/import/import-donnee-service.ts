@@ -24,7 +24,6 @@ import { findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { findAllInventaires, upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
 import { findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { findMeteos } from "../entities/meteo-service";
-import { findMilieux } from "../entities/milieu-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -74,7 +73,7 @@ export class ImportDonneeService extends ImportService {
     this.estimationsNombre = await findEstimationsNombre(null);
     this.estimationsDistance = await findEstimationsDistance(null);
     this.comportements = await findComportements(null);
-    this.milieux = await findMilieux(null);
+    this.milieux = await this.services.milieuService.findAllMilieux();
     this.inventaires = await findAllInventaires();
     this.existingDonnees = await findAllDonnees();
   };

@@ -3,7 +3,7 @@ import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-e
 import { type LoggedUser } from "../../types/User";
 import { ImportService } from "./import-service";
 
-export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService {
+export abstract class ImportEntiteAvecLibelleEtCodeService<T = unknown> extends ImportService {
   protected entities!: { libelle: string; code: string }[];
 
   protected entitiesToInsert!: { libelle: string; code: string }[];
@@ -45,7 +45,7 @@ export abstract class ImportEntiteAvecLibelleEtCodeService extends ImportService
   protected abstract saveEntities(
     entities: { libelle: string; code: string }[],
     loggedUser: LoggedUser
-  ): Promise<Prisma.BatchPayload>;
+  ): Promise<Prisma.BatchPayload | readonly T[]>;
 
   protected abstract getAnEntityName(): string;
 }

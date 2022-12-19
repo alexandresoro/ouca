@@ -63,14 +63,6 @@ import {
   upsertMeteo,
 } from "../services/entities/meteo-service";
 import {
-  deleteMilieu,
-  findMilieu,
-  findPaginatedMilieux,
-  getDonneesCountByMilieu,
-  getMilieuxCount,
-  upsertMilieu,
-} from "../services/entities/milieu-service";
-import {
   generateAgesExport,
   generateClassesExport,
   generateCommunesExport,
@@ -139,6 +131,7 @@ export const buildResolvers = ({
   communeService,
   departementService,
   especeService,
+  milieuService,
   observateurService,
   sexeService,
   settingsService,
@@ -296,12 +289,12 @@ export const buildResolvers = ({
         };
       },
       milieu: async (_source, args, { user }): Promise<Milieu | null> => {
-        return findMilieu(args.id, user);
+        return milieuService.findMilieu(args.id, user);
       },
       milieux: async (_, args, { user }): Promise<MilieuxPaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedMilieux(user, args),
-          getMilieuxCount(user, args?.searchParams?.q),
+          milieuService.findPaginatedMilieux(user, args),
+          milieuService.getMilieuxCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -415,7 +408,7 @@ export const buildResolvers = ({
       },
       exportMilieux: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateMilieuxExport();
+        return generateMilieuxExport(milieuService);
       },
       exportObservateurs: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -472,7 +465,7 @@ export const buildResolvers = ({
         return deleteMeteo(args.id, user).then(({ id }) => id);
       },
       deleteMilieu: async (_source, args, { user }): Promise<number> => {
-        return deleteMilieu(args.id, user).then(({ id }) => id);
+        return milieuService.deleteMilieu(args.id, user).then(({ id }) => id);
       },
       deleteObservateur: async (_source, args, { user }): Promise<number> => {
         return observateurService.deleteObservateur(args.id, user).then(({ id }) => id);
@@ -553,7 +546,7 @@ export const buildResolvers = ({
         return upsertMeteo(args, user);
       },
       upsertMilieu: async (_source, args, { user }): Promise<Milieu> => {
-        return upsertMilieu(args, user);
+        return milieuService.upsertMilieu(args, user);
       },
       upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
         return observateurService.upsertObservateur(args, user);
@@ -730,8 +723,8 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(getDonneesCountByMeteo),
     },
     Milieu: {
-      editable: isEntityEditableResolver(findMilieu),
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByMilieu),
+      editable: isEntityEditableResolver(milieuService.findMilieu),
+      nbDonnees: entityNbDonneesResolver(milieuService.getDonneesCountByMilieu),
     },
     Observateur: {
       editable: isEntityEditableResolver(observateurService.findObservateur),

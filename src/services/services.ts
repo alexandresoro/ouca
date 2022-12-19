@@ -167,6 +167,7 @@ export const buildServices = async (): Promise<Services> => {
   const milieuService = buildMilieuService({
     logger,
     milieuRepository,
+    donneeRepository,
   });
 
   const observateurService = buildObservateurService({

@@ -212,7 +212,6 @@ model Milieu {
   code          String          @unique() @db.VarChar(6)
   libelle       String          @unique() @db.VarChar(100)
   ownerId       String?         @map("owner_id")
-  owner         User?           @relation(fields: [ownerId], references: [id], map: "fk_milieu_owner_id")
   donnee_milieu donnee_milieu[]
 
   @@map("milieu")
@@ -246,7 +245,6 @@ model User {
   Inventaire         Inventaire[]
   Lieudit            Lieudit[]
   Meteo              Meteo[]
-  Milieu             Milieu[]
 
   @@map("user")
 }

@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -8,31 +7,22 @@ import {
   type MutationUpsertMilieuArgs,
   type QueryMilieuxArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository";
-import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types";
 import { type LoggedUser } from "../../types/User";
-import { COLUMN_CODE } from "../../utils/constants";
+import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { queryParametersToFindAllEntities } from "./entities-utils";
-import {
-  buildMilieuService,
-  createMilieux,
-  deleteMilieu,
-  findMilieu,
-  findMilieux,
-  findPaginatedMilieux,
-  getDonneesCountByMilieu,
-  getMilieuxCount,
-  upsertMilieu,
-} from "./milieu-service";
+import { buildMilieuService } from "./milieu-service";
 
 const milieuRepository = mock<MilieuRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const milieuService = buildMilieuService({
   logger,
   milieuRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -44,53 +34,32 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
-
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
-
 describe("Find environment", () => {
   test("should handle a matching environment", async () => {
     const environmentData = mock<Milieu>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.milieu.findUnique.mockResolvedValueOnce(environmentData);
+    milieuRepository.findMilieuById.mockResolvedValueOnce(environmentData);
 
-    await findMilieu(environmentData.id, loggedUser);
+    await milieuService.findMilieu(environmentData.id, loggedUser);
 
-    expect(prismaMock.milieu.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: environmentData.id,
-      },
-    });
+    expect(milieuRepository.findMilieuById).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.findMilieuById).toHaveBeenLastCalledWith(environmentData.id);
   });
 
   test("should handle environment not found", async () => {
-    prismaMock.milieu.findUnique.mockResolvedValueOnce(null);
+    milieuRepository.findMilieuById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findMilieu(10, loggedUser)).resolves.toBe(null);
+    await expect(milieuService.findMilieu(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.milieu.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(milieuRepository.findMilieuById).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.findMilieuById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.milieu.findUnique).not.toHaveBeenCalled();
+    await expect(milieuService.findMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(milieuRepository.findMilieuById).not.toHaveBeenCalled();
   });
 });
 
@@ -98,69 +67,27 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByMilieu(12, loggedUser);
+    await milieuService.getDonneesCountByMilieu(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        donnee_milieu: {
-          some: {
-            milieu_id: 12,
-          },
-        },
-      },
-    });
+    expect(donneeRepository.getCountByMilieuId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByMilieuId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByMilieu(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.getDonneesCountByMilieu(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 test("Find all environments", async () => {
-  const environmentsCodeData = [
-    mock<Milieu>({ id: 1, code: "0017" }),
-    mock<Milieu>({ id: 7, code: "0357" }),
-    mock<Milieu>({ id: 2, code: "22A0" }),
-  ];
-  const environmentsLibelleData = [
-    mock<Milieu>({ id: 5, code: "7654" }),
-    mock<Milieu>({ id: 2, code: "22A0" }),
-    mock<Milieu>({ id: 6, code: "1177" }),
-  ];
-  const loggedUser = mock<LoggedUser>();
+  const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
 
-  prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsCodeData);
-  prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsLibelleData);
+  milieuRepository.findMilieux.mockResolvedValueOnce(environmentsData);
 
-  const milieux = await findMilieux(loggedUser);
+  await milieuService.findAllMilieux();
 
-  expect(milieux.length).toBe(5);
-  expect(milieux[0].code).toBe("0017");
-  expect(milieux[1].code).toBe("0357");
-  expect(milieux[2].code).toBe("1177");
-  expect(milieux[3].code).toBe("22A0");
-  expect(milieux[4].code).toBe("7654");
-
-  expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(2);
-  expect(prismaMock.milieu.findMany).toHaveBeenNthCalledWith(1, {
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-  });
-  expect(prismaMock.milieu.findMany).toHaveBeenNthCalledWith(2, {
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
-  });
-  expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(milieuRepository.findMilieux).toHaveBeenCalledTimes(1);
+  expect(milieuRepository.findMilieux).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_LIBELLE,
   });
 });
 
@@ -169,16 +96,12 @@ describe("Entities paginated find by search criteria", () => {
     const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.milieu.findMany.mockResolvedValueOnce(environmentsData);
+    milieuRepository.findMilieux.mockResolvedValueOnce(environmentsData);
 
-    await findPaginatedMilieux(loggedUser);
+    await milieuService.findPaginatedMilieux(loggedUser);
 
-    expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(milieuRepository.findMilieux).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.findMilieux).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated environments ", async () => {
@@ -195,38 +118,22 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.milieu.findMany.mockResolvedValueOnce([environmentsData[0]]);
+    milieuRepository.findMilieux.mockResolvedValueOnce([environmentsData[0]]);
 
-    await findPaginatedMilieux(loggedUser, searchParams);
+    await milieuService.findPaginatedMilieux(loggedUser, searchParams);
 
-    expect(prismaMock.milieu.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        OR: [
-          {
-            code: {
-              contains: searchParams.searchParams?.q,
-            },
-          },
-          {
-            libelle: {
-              contains: searchParams.searchParams?.q,
-            },
-          },
-        ],
-      },
+    expect(milieuRepository.findMilieux).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.findMilieux).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedMilieux(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.findPaginatedMilieux(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -234,40 +141,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getMilieuxCount(loggedUser);
+    await milieuService.getMilieuxCount(loggedUser);
 
-    expect(prismaMock.milieu.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(milieuRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getMilieuxCount(loggedUser, "test");
+    await milieuService.getMilieuxCount(loggedUser, "test");
 
-    expect(prismaMock.milieu.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.count).toHaveBeenLastCalledWith({
-      where: {
-        OR: [
-          {
-            code: {
-              contains: "test",
-            },
-          },
-          {
-            libelle: {
-              contains: "test",
-            },
-          },
-        ],
-      },
-    });
+    expect(milieuRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getMilieuxCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.getMilieuxCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -277,15 +167,10 @@ describe("Update of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertMilieu(environmentData, loggedUser);
+    await milieuService.upsertMilieu(environmentData, loggedUser);
 
-    expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
-      data: environmentData.data,
-      where: {
-        id: environmentData.id,
-      },
-    });
+    expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(environmentData.id, environmentData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -297,17 +182,12 @@ describe("Update of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
+    milieuRepository.findMilieuById.mockResolvedValueOnce(existingData);
 
-    await upsertMilieu(environmentData, loggedUser);
+    await milieuService.upsertMilieu(environmentData, loggedUser);
 
-    expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
-      data: environmentData.data,
-      where: {
-        id: environmentData.id,
-      },
-    });
+    expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(environmentData.id, environmentData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -322,11 +202,11 @@ describe("Update of an environment", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.milieu.findFirst.mockResolvedValueOnce(existingData);
+    milieuRepository.findMilieuById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertMilieu(environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(milieuService.upsertMilieu(environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.milieu.update).not.toHaveBeenCalled();
+    expect(milieuRepository.updateMilieu).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to an environment that exists", async () => {
@@ -336,19 +216,14 @@ describe("Update of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.milieu.update.mockImplementation(prismaConstraintFailed);
+    milieuRepository.updateMilieu.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => milieuService.upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.milieu.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.update).toHaveBeenLastCalledWith({
-      data: environmentData.data,
-      where: {
-        id: environmentData.id,
-      },
-    });
+    expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(environmentData.id, environmentData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -356,8 +231,8 @@ describe("Update of an environment", () => {
       id: 12,
     });
 
-    await expect(upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.milieu.update).not.toHaveBeenCalled();
+    await expect(milieuService.upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(milieuRepository.updateMilieu).not.toHaveBeenCalled();
   });
 });
 
@@ -369,14 +244,12 @@ describe("Creation of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertMilieu(environmentData, loggedUser);
+    await milieuService.upsertMilieu(environmentData, loggedUser);
 
-    expect(prismaMock.milieu.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.create).toHaveBeenLastCalledWith({
-      data: {
-        ...environmentData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(milieuRepository.createMilieu).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.createMilieu).toHaveBeenLastCalledWith({
+      ...environmentData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -387,18 +260,16 @@ describe("Creation of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.milieu.create.mockImplementation(prismaConstraintFailed);
+    milieuRepository.createMilieu.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => milieuService.upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.milieu.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.create).toHaveBeenLastCalledWith({
-      data: {
-        ...environmentData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(milieuRepository.createMilieu).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.createMilieu).toHaveBeenLastCalledWith({
+      ...environmentData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -407,8 +278,8 @@ describe("Creation of an environment", () => {
       id: undefined,
     });
 
-    await expect(upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.milieu.create).not.toHaveBeenCalled();
+    await expect(milieuService.upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(milieuRepository.createMilieu).not.toHaveBeenCalled();
   });
 });
 
@@ -423,16 +294,12 @@ describe("Deletion of an environment", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.milieu.findFirst.mockResolvedValueOnce(environment);
+    milieuRepository.findMilieuById.mockResolvedValueOnce(environment);
 
-    await deleteMilieu(11, loggedUser);
+    await milieuService.deleteMilieu(11, loggedUser);
 
-    expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(milieuRepository.deleteMilieuById).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.deleteMilieuById).toHaveBeenLastCalledWith(11);
   });
 
   test("hould handle the deletion of any environment if admin", async () => {
@@ -440,16 +307,12 @@ describe("Deletion of an environment", () => {
       role: "admin",
     });
 
-    prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
+    milieuRepository.findMilieuById.mockResolvedValueOnce(mock<Milieu>());
 
-    await deleteMilieu(11, loggedUser);
+    await milieuService.deleteMilieu(11, loggedUser);
 
-    expect(prismaMock.milieu.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.milieu.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(milieuRepository.deleteMilieuById).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.deleteMilieuById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned environment as non-admin", async () => {
@@ -457,37 +320,37 @@ describe("Deletion of an environment", () => {
       role: "contributor",
     });
 
-    prismaMock.milieu.findFirst.mockResolvedValueOnce(mock<Milieu>());
+    milieuRepository.findMilieuById.mockResolvedValueOnce(mock<Milieu>());
 
-    await expect(deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.deleteMilieu(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.milieu.delete).not.toHaveBeenCalled();
+    expect(milieuRepository.deleteMilieuById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.milieu.delete).not.toHaveBeenCalled();
+    await expect(milieuService.deleteMilieu(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(milieuRepository.deleteMilieuById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple environments", async () => {
   const environmentsData = [
-    mock<Omit<Prisma.MilieuCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.MilieuCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.MilieuCreateManyInput, "ownerId">>(),
+    mock<Omit<MilieuCreateInput, "owner_id">>(),
+    mock<Omit<MilieuCreateInput, "owner_id">>(),
+    mock<Omit<MilieuCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createMilieux(environmentsData, loggedUser);
+  await milieuService.createMilieux(environmentsData, loggedUser);
 
-  expect(prismaMock.milieu.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.milieu.createMany).toHaveBeenLastCalledWith({
-    data: environmentsData.map((environment) => {
+  expect(milieuRepository.createMilieux).toHaveBeenCalledTimes(1);
+  expect(milieuRepository.createMilieux).toHaveBeenLastCalledWith(
+    environmentsData.map((environment) => {
       return {
         ...environment,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

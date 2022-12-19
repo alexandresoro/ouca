@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type SortOrder } from "../common";
 
 export const milieuSchema = z.object({
   id: z.number(),
@@ -8,3 +9,17 @@ export const milieuSchema = z.object({
 });
 
 export type Milieu = z.infer<typeof milieuSchema>;
+
+export type MilieuFindManyInput = Partial<{
+  q: string | null;
+  orderBy: "id" | "code" | "libelle" | "nbDonnees" | null;
+  sortOrder: SortOrder;
+  offset: number | null;
+  limit: number | null;
+}>;
+
+export type MilieuCreateInput = {
+  code: string;
+  libelle: string;
+  owner_id?: string | null;
+};
