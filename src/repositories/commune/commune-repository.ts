@@ -52,6 +52,8 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.maybeOne(query);
   };
 
+  // TODO add search by commune code
+
   const findCommunes = async ({ orderBy, sortOrder, q, offset, limit }: CommuneFindManyInput = {}): Promise<
     readonly Commune[]
   > => {
