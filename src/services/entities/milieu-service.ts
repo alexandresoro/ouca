@@ -119,11 +119,11 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
   };
 
   const createMilieux = async (
-    milieus: Omit<MilieuCreateInput[], "owner_id">,
+    milieux: Omit<MilieuCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly Milieu[]> => {
     return milieuRepository.createMilieux(
-      milieus.map((milieu) => {
+      milieux.map((milieu) => {
         return { ...milieu, owner_id: loggedUser.id };
       })
     );
