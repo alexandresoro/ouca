@@ -17,7 +17,6 @@ import { type Observateur } from "../../repositories/observateur/observateur-rep
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
-import { findComportements } from "../entities/comportement-service";
 import { createDonnee, findAllDonnees, type DonneeWithRelations } from "../entities/donnee-service";
 import { findEstimationsDistance } from "../entities/estimation-distance-service";
 import { findEstimationsNombre } from "../entities/estimation-nombre-service";
@@ -72,7 +71,7 @@ export class ImportDonneeService extends ImportService {
     this.ages = await this.services.ageService.findAllAges();
     this.estimationsNombre = await findEstimationsNombre(null);
     this.estimationsDistance = await findEstimationsDistance(null);
-    this.comportements = await findComportements(null);
+    this.comportements = await this.services.comportementService.findAllComportements();
     this.milieux = await this.services.milieuService.findAllMilieux();
     this.inventaires = await findAllInventaires();
     this.existingDonnees = await findAllDonnees();

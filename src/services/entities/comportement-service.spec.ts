@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -9,30 +8,24 @@ import {
   type QueryComportementsArgs,
 } from "../../graphql/generated/graphql-types";
 import { type ComportementRepository } from "../../repositories/comportement/comportement-repository";
-import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_CODE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
 import {
-  buildComportementService,
-  createComportements,
-  deleteComportement,
-  findComportement,
-  findComportements,
-  findPaginatedComportements,
-  getComportementsCount,
-  getDonneesCountByComportement,
-  upsertComportement,
-} from "./comportement-service";
-import { queryParametersToFindAllEntities } from "./entities-utils";
+  type Comportement,
+  type ComportementCreateInput,
+} from "../../repositories/comportement/comportement-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
+import { type LoggedUser } from "../../types/User";
+import { COLUMN_CODE, COLUMN_LIBELLE } from "../../utils/constants";
+import { OucaError } from "../../utils/errors";
+import { buildComportementService } from "./comportement-service";
 
 const comportementRepository = mock<ComportementRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const comportementService = buildComportementService({
   logger,
   comportementRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -44,53 +37,32 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
-
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
-
 describe("Find behavior", () => {
   test("should handle a matching behavior ", async () => {
     const behaviorData = mock<Comportement>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.comportement.findUnique.mockResolvedValueOnce(behaviorData);
+    comportementRepository.findComportementById.mockResolvedValueOnce(behaviorData);
 
-    await findComportement(behaviorData.id, loggedUser);
+    await comportementService.findComportement(behaviorData.id, loggedUser);
 
-    expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: behaviorData.id,
-      },
-    });
+    expect(comportementRepository.findComportementById).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.findComportementById).toHaveBeenLastCalledWith(behaviorData.id);
   });
 
   test("should handle behavior not found", async () => {
-    prismaMock.comportement.findUnique.mockResolvedValueOnce(null);
+    comportementRepository.findComportementById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findComportement(10, loggedUser)).resolves.toBe(null);
+    await expect(comportementService.findComportement(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.comportement.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(comportementRepository.findComportementById).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.findComportementById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.comportement.findUnique).not.toHaveBeenCalled();
+    await expect(comportementService.findComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(comportementRepository.findComportementById).not.toHaveBeenCalled();
   });
 });
 
@@ -98,69 +70,29 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByComportement(12, loggedUser);
+    await comportementService.getDonneesCountByComportement(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        donnee_comportement: {
-          some: {
-            comportement_id: 12,
-          },
-        },
-      },
-    });
+    expect(donneeRepository.getCountByComportementId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByComportementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByComportement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(comportementService.getDonneesCountByComportement(12, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
 test("Find all behaviors", async () => {
-  const behaviorsCodeData = [
-    mock<Comportement>({ id: 1, code: "0017" }),
-    mock<Comportement>({ id: 7, code: "0357" }),
-    mock<Comportement>({ id: 2, code: "22A0" }),
-  ];
-  const behaviorsLibelleData = [
-    mock<Comportement>({ id: 5, code: "7654" }),
-    mock<Comportement>({ id: 2, code: "22A0" }),
-    mock<Comportement>({ id: 6, code: "1177" }),
-  ];
-  const loggedUser = mock<LoggedUser>();
+  const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
 
-  prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsCodeData);
-  prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsLibelleData);
+  comportementRepository.findComportements.mockResolvedValueOnce(behaviorsData);
 
-  const behaviors = await findComportements(loggedUser);
+  await comportementService.findAllComportements();
 
-  expect(behaviors.length).toBe(5);
-  expect(behaviors[0].code).toBe("0017");
-  expect(behaviors[1].code).toBe("0357");
-  expect(behaviors[2].code).toBe("1177");
-  expect(behaviors[3].code).toBe("22A0");
-  expect(behaviors[4].code).toBe("7654");
-
-  expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(2);
-  expect(prismaMock.comportement.findMany).toHaveBeenNthCalledWith(1, {
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-  });
-  expect(prismaMock.comportement.findMany).toHaveBeenNthCalledWith(2, {
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
-  });
-  expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(comportementRepository.findComportements).toHaveBeenCalledTimes(1);
+  expect(comportementRepository.findComportements).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_CODE,
   });
 });
 
@@ -169,16 +101,12 @@ describe("Entities paginated find by search criteria", () => {
     const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.comportement.findMany.mockResolvedValueOnce(behaviorsData);
+    comportementRepository.findComportements.mockResolvedValueOnce(behaviorsData);
 
-    await findPaginatedComportements(loggedUser);
+    await comportementService.findPaginatedComportements(loggedUser);
 
-    expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(comportementRepository.findComportements).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.findComportements).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated behaviors ", async () => {
@@ -195,43 +123,22 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.comportement.findMany.mockResolvedValueOnce([behaviorsData[0]]);
+    comportementRepository.findComportements.mockResolvedValueOnce([behaviorsData[0]]);
 
-    await findPaginatedComportements(loggedUser, searchParams);
+    await comportementService.findPaginatedComportements(loggedUser, searchParams);
 
-    expect(prismaMock.comportement.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        OR: [
-          {
-            code: {
-              contains: searchParams.searchParams?.q,
-            },
-          },
-          {
-            libelle: {
-              contains: searchParams.searchParams?.q,
-            },
-          },
-          {
-            nicheur: {
-              in: [],
-            },
-          },
-        ],
-      },
+    expect(comportementRepository.findComportements).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.findComportements).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedComportements(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(comportementService.findPaginatedComportements(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -239,74 +146,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getComportementsCount(loggedUser);
+    await comportementService.getComportementsCount(loggedUser);
 
-    expect(prismaMock.comportement.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(comportementRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getComportementsCount(loggedUser, "test");
+    await comportementService.getComportementsCount(loggedUser, "test");
 
-    expect(prismaMock.comportement.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.count).toHaveBeenLastCalledWith({
-      where: {
-        OR: [
-          {
-            code: {
-              contains: "test",
-            },
-          },
-          {
-            libelle: {
-              contains: "test",
-            },
-          },
-          {
-            nicheur: {
-              in: [],
-            },
-          },
-        ],
-      },
-    });
-  });
-
-  test("should handle to be called with criteria matching a nicheur status provided", async () => {
-    const loggedUser = mock<LoggedUser>();
-
-    await getComportementsCount(loggedUser, "certain");
-
-    expect(prismaMock.comportement.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.count).toHaveBeenLastCalledWith({
-      where: {
-        OR: [
-          {
-            code: {
-              contains: "certain",
-            },
-          },
-          {
-            libelle: {
-              contains: "certain",
-            },
-          },
-          {
-            nicheur: {
-              in: ["certain"],
-            },
-          },
-        ],
-      },
-    });
+    expect(comportementRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getComportementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(comportementService.getComportementsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -316,15 +172,10 @@ describe("Update of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertComportement(behaviorData, loggedUser);
+    await comportementService.upsertComportement(behaviorData, loggedUser);
 
-    expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
-      data: behaviorData.data,
-      where: {
-        id: behaviorData.id,
-      },
-    });
+    expect(comportementRepository.updateComportement).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(behaviorData.id, behaviorData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -336,17 +187,12 @@ describe("Update of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
+    comportementRepository.findComportementById.mockResolvedValueOnce(existingData);
 
-    await upsertComportement(behaviorData, loggedUser);
+    await comportementService.upsertComportement(behaviorData, loggedUser);
 
-    expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
-      data: behaviorData.data,
-      where: {
-        id: behaviorData.id,
-      },
-    });
+    expect(comportementRepository.updateComportement).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(behaviorData.id, behaviorData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -361,11 +207,13 @@ describe("Update of a behavior", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.comportement.findFirst.mockResolvedValueOnce(existingData);
+    comportementRepository.findComportementById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertComportement(behaviorData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(comportementService.upsertComportement(behaviorData, user)).rejects.toThrowError(
+      new OucaError("OUCA0001")
+    );
 
-    expect(prismaMock.comportement.update).not.toHaveBeenCalled();
+    expect(comportementRepository.updateComportement).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a behavior that exists", async () => {
@@ -375,19 +223,14 @@ describe("Update of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.comportement.update.mockImplementation(prismaConstraintFailed);
+    comportementRepository.updateComportement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => comportementService.upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.comportement.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.update).toHaveBeenLastCalledWith({
-      data: behaviorData.data,
-      where: {
-        id: behaviorData.id,
-      },
-    });
+    expect(comportementRepository.updateComportement).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(behaviorData.id, behaviorData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -395,8 +238,8 @@ describe("Update of a behavior", () => {
       id: 12,
     });
 
-    await expect(upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.comportement.update).not.toHaveBeenCalled();
+    await expect(comportementService.upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(comportementRepository.updateComportement).not.toHaveBeenCalled();
   });
 });
 
@@ -408,14 +251,12 @@ describe("Creation of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertComportement(behaviorData, loggedUser);
+    await comportementService.upsertComportement(behaviorData, loggedUser);
 
-    expect(prismaMock.comportement.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.create).toHaveBeenLastCalledWith({
-      data: {
-        ...behaviorData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(comportementRepository.createComportement).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.createComportement).toHaveBeenLastCalledWith({
+      ...behaviorData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -426,18 +267,16 @@ describe("Creation of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.comportement.create.mockImplementation(prismaConstraintFailed);
+    comportementRepository.createComportement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => comportementService.upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.comportement.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.create).toHaveBeenLastCalledWith({
-      data: {
-        ...behaviorData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(comportementRepository.createComportement).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.createComportement).toHaveBeenLastCalledWith({
+      ...behaviorData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -446,8 +285,8 @@ describe("Creation of a behavior", () => {
       id: undefined,
     });
 
-    await expect(upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.comportement.create).not.toHaveBeenCalled();
+    await expect(comportementService.upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(comportementRepository.createComportement).not.toHaveBeenCalled();
   });
 });
 
@@ -462,16 +301,12 @@ describe("Deletion of a behavior", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.comportement.findFirst.mockResolvedValueOnce(behavior);
+    comportementRepository.findComportementById.mockResolvedValueOnce(behavior);
 
-    await deleteComportement(11, loggedUser);
+    await comportementService.deleteComportement(11, loggedUser);
 
-    expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(comportementRepository.deleteComportementById).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.deleteComportementById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any behavior if admin", async () => {
@@ -479,16 +314,12 @@ describe("Deletion of a behavior", () => {
       role: "admin",
     });
 
-    prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
+    comportementRepository.findComportementById.mockResolvedValueOnce(mock<Comportement>());
 
-    await deleteComportement(11, loggedUser);
+    await comportementService.deleteComportement(11, loggedUser);
 
-    expect(prismaMock.comportement.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.comportement.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(comportementRepository.deleteComportementById).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.deleteComportementById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned behavior as non-admin", async () => {
@@ -496,37 +327,37 @@ describe("Deletion of a behavior", () => {
       role: "contributor",
     });
 
-    prismaMock.comportement.findFirst.mockResolvedValueOnce(mock<Comportement>());
+    comportementRepository.findComportementById.mockResolvedValueOnce(mock<Comportement>());
 
-    await expect(deleteComportement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(comportementService.deleteComportement(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.comportement.delete).not.toHaveBeenCalled();
+    expect(comportementRepository.deleteComportementById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.comportement.delete).not.toHaveBeenCalled();
+    await expect(comportementService.deleteComportement(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(comportementRepository.deleteComportementById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple comportements", async () => {
   const comportementsData = [
-    mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.ComportementCreateManyInput, "ownerId">>(),
+    mock<Omit<ComportementCreateInput, "owner_id">>(),
+    mock<Omit<ComportementCreateInput, "owner_id">>(),
+    mock<Omit<ComportementCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createComportements(comportementsData, loggedUser);
+  await comportementService.createComportements(comportementsData, loggedUser);
 
-  expect(prismaMock.comportement.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.comportement.createMany).toHaveBeenLastCalledWith({
-    data: comportementsData.map((comportement) => {
+  expect(comportementRepository.createComportements).toHaveBeenCalledTimes(1);
+  expect(comportementRepository.createComportements).toHaveBeenLastCalledWith(
+    comportementsData.map((comportement) => {
       return {
         ...comportement,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

@@ -1,257 +1,156 @@
-import { Nicheur, Prisma } from "@prisma/client";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
-  type FindParams,
   type MutationUpsertComportementArgs,
   type QueryComportementsArgs,
 } from "../../graphql/generated/graphql-types";
 import { type ComportementRepository } from "../../repositories/comportement/comportement-repository";
-import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
-import prisma from "../../sql/prisma";
+import {
+  type Comportement,
+  type ComportementCreateInput,
+} from "../../repositories/comportement/comportement-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import numberAsCodeSqlMatcher from "../../utils/number-as-code-sql-matcher";
 import { validateAuthorization } from "./authorization-utils";
-import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
 
 type ComportementServiceDependencies = {
   logger: Logger;
   comportementRepository: ComportementRepository;
+  donneeRepository: DonneeRepository;
 };
 
-export const buildComportementService = ({ logger, comportementRepository }: ComportementServiceDependencies) => {
-  return {};
-};
+export const buildComportementService = ({
+  comportementRepository,
+  donneeRepository,
+}: ComportementServiceDependencies) => {
+  const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement | null> => {
+    validateAuthorization(loggedUser);
 
-export type ComportementService = ReturnType<typeof buildComportementService>;
+    return comportementRepository.findComportementById(id);
+  };
 
-export const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement | null> => {
-  validateAuthorization(loggedUser);
+  const getDonneesCountByComportement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.comportement.findUnique({
-    where: {
-      id,
-    },
-  });
-};
+    return donneeRepository.getCountByComportementId(id);
+  };
 
-export const getDonneesCountByComportement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const findAllComportements = async (): Promise<Comportement[]> => {
+    const comportements = await comportementRepository.findComportements({
+      orderBy: COLUMN_CODE,
+    });
 
-  return prisma.donnee.count({
-    where: {
-      donnee_comportement: {
-        some: {
-          comportement_id: id,
-        },
-      },
-    },
-  });
-};
+    return [...comportements];
+  };
 
-export const findComportements = async (
-  loggedUser: LoggedUser | null,
-  params?: FindParams | null
-): Promise<Comportement[]> => {
-  validateAuthorization(loggedUser);
+  const findPaginatedComportements = async (
+    loggedUser: LoggedUser | null,
+    options: QueryComportementsArgs = {}
+  ): Promise<Comportement[]> => {
+    validateAuthorization(loggedUser);
 
-  const { q, max } = params ?? {};
+    const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  const matchingCodesAsNumber = numberAsCodeSqlMatcher(q);
-  const matchingCodesAsNumberClause = matchingCodesAsNumber.map((matchingCode) => {
-    return {
-      code: {
-        startsWith: matchingCode,
-      },
-    };
-  });
+    const comportements = await comportementRepository.findComportements({
+      q: searchParams?.q,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
+    });
 
-  const matchingWithCode = await prisma.comportement.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: q
-      ? {
-          OR: [
-            ...matchingCodesAsNumberClause,
-            {
-              code: {
-                startsWith: q, // It can happen that codes are a mix of numbers+letters (e.g. 22A0)
-              },
-            },
-          ],
+    return [...comportements];
+  };
+
+  const getComportementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return comportementRepository.getCount(q);
+  };
+
+  const upsertComportement = async (
+    args: MutationUpsertComportementArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Comportement> => {
+    validateAuthorization(loggedUser);
+
+    const { id, data } = args;
+
+    let upsertedComportement: Comportement;
+
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser?.role !== "admin") {
+        const existingData = await comportementRepository.findComportementById(id);
+
+        if (existingData?.ownerId !== loggedUser?.id) {
+          throw new OucaError("OUCA0001");
         }
-      : undefined,
-    take: max || undefined,
-  });
-
-  const matchingWithLibelle = await prisma.comportement.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      libelle: {
-        contains: q || undefined,
-      },
-    },
-    take: max || undefined,
-  });
-
-  // Concatenate arrays and remove elements that could be present in several indexes, to keep a unique reference
-  // This is done like this to be consistent with what was done previously on UI side:
-  // code had a weight of 1, and libelle had no weight, so we don't "return first" the elements that appear multiple time
-  // However, to be consistent, we still need to sort them by code as it can still be mixed up
-  const matchingEntries = [...matchingWithCode, ...matchingWithLibelle]
-    .sort((a, b) => a.code.localeCompare(b.code))
-    .filter((element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id));
-
-  return max ? matchingEntries.slice(0, max) : matchingEntries;
-};
-
-const getFilterClause = (q: string | null | undefined): Prisma.ComportementWhereInput => {
-  return q != null && q.length
-    ? {
-        OR: [
-          {
-            code: {
-              contains: q,
-            },
-          },
-          {
-            libelle: {
-              contains: q,
-            },
-          },
-          {
-            nicheur: {
-              in: (Object.keys(Nicheur) as Nicheur[]).filter((nicheur) => nicheur.includes(q)),
-            },
-          },
-        ],
       }
-    : {};
-};
 
-export const findPaginatedComportements = async (
-  loggedUser: LoggedUser | null,
-  options: Partial<QueryComportementsArgs> = {}
-): Promise<Comportement[]> => {
-  validateAuthorization(loggedUser);
-
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
-
-  let orderBy: Prisma.Enumerable<Prisma.ComportementOrderByWithRelationInput> | undefined = undefined;
-  if (sortOrder) {
-    switch (orderByField) {
-      case "id":
-      case "code":
-      case "libelle":
-      case "nicheur":
-        orderBy = {
-          [orderByField]: sortOrder,
-        };
-        break;
-      case "nbDonnees":
-        orderBy = {
-          donnee_comportement: {
-            _count: sortOrder,
-          },
-        };
-        break;
-      default:
-        orderBy = {};
+      try {
+        upsertedComportement = await comportementRepository.updateComportement(id, data);
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      try {
+        upsertedComportement = await comportementRepository.createComportement({
+          ...data,
+          owner_id: loggedUser.id,
+        });
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
     }
-  }
 
-  return prisma.comportement.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    where: getFilterClause(searchParams?.q),
-  });
-};
+    return upsertedComportement;
+  };
 
-export const getComportementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const deleteComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.comportement.count({
-    where: getFilterClause(q),
-  });
-};
-
-export const upsertComportement = async (
-  args: MutationUpsertComportementArgs,
-  loggedUser: LoggedUser | null
-): Promise<Comportement> => {
-  validateAuthorization(loggedUser);
-
-  const { id, data } = args;
-
-  let upsertedComportement: Comportement;
-
-  if (id) {
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.comportement.findFirst({
-        where: { id },
-      });
+      const existingData = await comportementRepository.findComportementById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    // Update an existing comportement
-    try {
-      upsertedComportement = await prisma.comportement.update({
-        where: { id },
-        data,
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    // Create a new comportement
-    try {
-      upsertedComportement = await prisma.comportement.create({ data: { ...data, ownerId: loggedUser?.id } });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
+    return comportementRepository.deleteComportementById(id);
+  };
 
-  return upsertedComportement;
+  const createComportements = async (
+    comportements: Omit<ComportementCreateInput[], "owner_id">,
+    loggedUser: LoggedUser
+  ): Promise<readonly Comportement[]> => {
+    return comportementRepository.createComportements(
+      comportements.map((comportement) => {
+        return { ...comportement, owner_id: loggedUser.id };
+      })
+    );
+  };
+
+  return {
+    findComportement,
+    getDonneesCountByComportement,
+    findAllComportements,
+    findPaginatedComportements,
+    getComportementsCount,
+    upsertComportement,
+    deleteComportement,
+    createComportements,
+  };
 };
 
-export const deleteComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.comportement.findFirst({
-      where: { id },
-    });
-
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
-
-  return prisma.comportement.delete({
-    where: {
-      id,
-    },
-  });
-};
-
-export const createComportements = async (
-  comportements: Omit<Prisma.ComportementCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.comportement.createMany({
-    data: comportements.map((comportement) => {
-      return { ...comportement, ownerId: loggedUser.id };
-    }),
-  });
-};
+export type ComportementService = ReturnType<typeof buildComportementService>;

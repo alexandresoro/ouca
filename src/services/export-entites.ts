@@ -9,7 +9,7 @@ import { PUBLIC_DIR } from "../utils/paths";
 import { type AgeService } from "./entities/age-service";
 import { type ClasseService } from "./entities/classe-service";
 import { type CommuneService } from "./entities/commune-service";
-import { findComportements } from "./entities/comportement-service";
+import { type ComportementService } from "./entities/comportement-service";
 import { type DepartementService } from "./entities/departement-service";
 import { findDonneesByCriteria, type DonneeWithRelations } from "./entities/donnee-service";
 import { type EspeceService } from "./entities/espece-service";
@@ -63,8 +63,8 @@ export const generateCommunesExport = async (communeService: CommuneService): Pr
   return fileName;
 };
 
-export const generateComportementsExport = async (): Promise<string> => {
-  const comportementsDb = await findComportements(null);
+export const generateComportementsExport = async (comportementService: ComportementService): Promise<string> => {
+  const comportementsDb = await comportementService.findAllComportements();
 
   const comportementsToExport = comportementsDb.map((object) => {
     return {

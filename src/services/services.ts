@@ -117,6 +117,7 @@ export const buildServices = async (): Promise<Services> => {
   const comportementService = buildComportementService({
     logger,
     comportementRepository,
+    donneeRepository,
   });
 
   const departementService = buildDepartementService({

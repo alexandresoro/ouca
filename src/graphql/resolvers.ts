@@ -2,14 +2,6 @@ import { type Commune as CommuneEntity, type Espece as EspeceEntity } from "@pri
 import mercurius, { type IResolvers } from "mercurius";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import {
-  deleteComportement,
-  findComportement,
-  findPaginatedComportements,
-  getComportementsCount,
-  getDonneesCountByComportement,
-  upsertComportement,
-} from "../services/entities/comportement-service";
-import {
   countSpecimensByAgeForEspeceId,
   countSpecimensBySexeForEspeceId,
   deleteDonnee,
@@ -129,6 +121,7 @@ export const buildResolvers = ({
   ageService,
   classeService,
   communeService,
+  comportementService,
   departementService,
   especeService,
   milieuService,
@@ -184,12 +177,12 @@ export const buildResolvers = ({
         };
       },
       comportement: async (_source, args, { user }): Promise<Comportement | null> => {
-        return findComportement(args.id, user);
+        return comportementService.findComportement(args.id, user);
       },
       comportements: async (_, args, { user }): Promise<ComportementsPaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedComportements(user, args),
-          getComportementsCount(user, args?.searchParams?.q),
+          comportementService.findPaginatedComportements(user, args),
+          comportementService.getComportementsCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -376,7 +369,7 @@ export const buildResolvers = ({
       },
       exportComportements: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateComportementsExport();
+        return generateComportementsExport(comportementService);
       },
       exportDepartements: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -440,7 +433,7 @@ export const buildResolvers = ({
         return communeService.deleteCommune(args.id, user).then(({ id }) => id);
       },
       deleteComportement: async (_source, args, { user }): Promise<number> => {
-        return deleteComportement(args.id, user).then(({ id }) => id);
+        return comportementService.deleteComportement(args.id, user).then(({ id }) => id);
       },
       deleteDepartement: async (_source, args, { user }): Promise<number> => {
         return departementService.deleteDepartement(args.id, user).then(({ id }) => id);
@@ -483,7 +476,7 @@ export const buildResolvers = ({
         return communeService.upsertCommune(args, user);
       },
       upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
-        return upsertComportement(args, user);
+        return comportementService.upsertComportement(args, user);
       },
       upsertDepartement: async (_source, args, { user }): Promise<Departement> => {
         return departementService.upsertDepartement(args, user);
@@ -650,8 +643,8 @@ export const buildResolvers = ({
       },
     },
     Comportement: {
-      editable: isEntityEditableResolver(findComportement),
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByComportement),
+      editable: isEntityEditableResolver(comportementService.findComportement),
+      nbDonnees: entityNbDonneesResolver(comportementService.getDonneesCountByComportement),
     },
     Departement: {
       editable: isEntityEditableResolver(departementService.findDepartement),
