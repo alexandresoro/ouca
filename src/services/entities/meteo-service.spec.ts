@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -8,31 +7,22 @@ import {
   type MutationUpsertMeteoArgs,
   type QueryMeteosArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository";
-import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { queryParametersToFindAllEntities } from "./entities-utils";
-import {
-  buildMeteoService,
-  createMeteos,
-  deleteMeteo,
-  findMeteo,
-  findMeteos,
-  findPaginatedMeteos,
-  getDonneesCountByMeteo,
-  getMeteosCount,
-  upsertMeteo,
-} from "./meteo-service";
+import { buildMeteoService } from "./meteo-service";
 
 const meteoRepository = mock<MeteoRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const meteoService = buildMeteoService({
   logger,
   meteoRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -44,53 +34,32 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
-
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
-
 describe("Find weather", () => {
   test("should handle a matching weather", async () => {
     const weatherData = mock<Meteo>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.meteo.findUnique.mockResolvedValueOnce(weatherData);
+    meteoRepository.findMeteoById.mockResolvedValueOnce(weatherData);
 
-    await findMeteo(weatherData.id, loggedUser);
+    await meteoService.findMeteo(weatherData.id, loggedUser);
 
-    expect(prismaMock.meteo.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: weatherData.id,
-      },
-    });
+    expect(meteoRepository.findMeteoById).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.findMeteoById).toHaveBeenLastCalledWith(weatherData.id);
   });
 
   test("should handle weather not found", async () => {
-    prismaMock.meteo.findUnique.mockResolvedValueOnce(null);
+    meteoRepository.findMeteoById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findMeteo(10, loggedUser)).resolves.toBe(null);
+    await expect(meteoService.findMeteo(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.meteo.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(meteoRepository.findMeteoById).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.findMeteoById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.meteo.findUnique).not.toHaveBeenCalled();
+    await expect(meteoService.findMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(meteoRepository.findMeteoById).not.toHaveBeenCalled();
   });
 });
 
@@ -98,43 +67,27 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByMeteo(12, loggedUser);
+    await meteoService.getDonneesCountByMeteo(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        inventaire: {
-          inventaire_meteo: {
-            some: {
-              meteo_id: 12,
-            },
-          },
-        },
-      },
-    });
+    expect(donneeRepository.getCountByMeteoId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByMeteoId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByMeteo(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(meteoService.getDonneesCountByMeteo(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 test("Find all weathers", async () => {
   const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
-  const loggedUser = mock<LoggedUser>();
 
-  prismaMock.meteo.findMany.mockResolvedValueOnce(weathersData);
+  meteoRepository.findMeteos.mockResolvedValueOnce(weathersData);
 
-  await findMeteos(loggedUser);
+  await meteoService.findAllMeteos();
 
-  expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
+  expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_LIBELLE,
   });
 });
 
@@ -143,19 +96,15 @@ describe("Entities paginated find by search criteria", () => {
     const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.meteo.findMany.mockResolvedValueOnce(weathersData);
+    meteoRepository.findMeteos.mockResolvedValueOnce(weathersData);
 
-    await findPaginatedMeteos(loggedUser);
+    await meteoService.findPaginatedMeteos(loggedUser);
 
-    expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {},
-      where: {},
-    });
+    expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated weathers", async () => {
+  test("should handle params when retrieving paginated weathers ", async () => {
     const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
     const loggedUser = mock<LoggedUser>();
 
@@ -169,29 +118,22 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.meteo.findMany.mockResolvedValueOnce([weathersData[0]]);
+    meteoRepository.findMeteos.mockResolvedValueOnce([weathersData[0]]);
 
-    await findPaginatedMeteos(loggedUser, searchParams);
+    await meteoService.findPaginatedMeteos(loggedUser, searchParams);
 
-    expect(prismaMock.meteo.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        libelle: {
-          contains: searchParams.searchParams?.q,
-        },
-      },
+    expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedMeteos(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(meteoService.findPaginatedMeteos(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -199,49 +141,36 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getMeteosCount(loggedUser);
+    await meteoService.getMeteosCount(loggedUser);
 
-    expect(prismaMock.meteo.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(meteoRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getMeteosCount(loggedUser, "test");
+    await meteoService.getMeteosCount(loggedUser, "test");
 
-    expect(prismaMock.meteo.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.count).toHaveBeenLastCalledWith({
-      where: {
-        libelle: {
-          contains: "test",
-        },
-      },
-    });
+    expect(meteoRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getMeteosCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(meteoService.getMeteosCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
-describe("Update of a weather", () => {
+describe("Update of an weather", () => {
   test("should be allowed when requested by an admin", async () => {
     const weatherData = mock<MutationUpsertMeteoArgs>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertMeteo(weatherData, loggedUser);
+    await meteoService.upsertMeteo(weatherData, loggedUser);
 
-    expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
-      data: weatherData.data,
-      where: {
-        id: weatherData.id,
-      },
-    });
+    expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(weatherData.id, weatherData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -253,20 +182,15 @@ describe("Update of a weather", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.meteo.findFirst.mockResolvedValueOnce(existingData);
+    meteoRepository.findMeteoById.mockResolvedValueOnce(existingData);
 
-    await upsertMeteo(weatherData, loggedUser);
+    await meteoService.upsertMeteo(weatherData, loggedUser);
 
-    expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
-      data: weatherData.data,
-      where: {
-        id: weatherData.id,
-      },
-    });
+    expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(weatherData.id, weatherData.data);
   });
 
-  test("should throw an error when requested by an user that is nor owner nor admin", async () => {
+  test("should throw an error when requested by an use that is nor owner nor admin", async () => {
     const existingData = mock<Meteo>({
       ownerId: "notAdmin",
     });
@@ -278,33 +202,28 @@ describe("Update of a weather", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.meteo.findFirst.mockResolvedValueOnce(existingData);
+    meteoRepository.findMeteoById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertMeteo(weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(meteoService.upsertMeteo(weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.meteo.update).not.toHaveBeenCalled();
+    expect(meteoRepository.updateMeteo).not.toHaveBeenCalled();
   });
 
-  test("should throw an error when trying to update to a weather that exists", async () => {
+  test("should throw an error when trying to update to an weather that exists", async () => {
     const weatherData = mock<MutationUpsertMeteoArgs>({
       id: 12,
     });
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.meteo.update.mockImplementation(prismaConstraintFailed);
+    meteoRepository.updateMeteo.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => meteoService.upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.meteo.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.update).toHaveBeenLastCalledWith({
-      data: weatherData.data,
-      where: {
-        id: weatherData.id,
-      },
-    });
+    expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(weatherData.id, weatherData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -312,12 +231,12 @@ describe("Update of a weather", () => {
       id: 12,
     });
 
-    await expect(upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.meteo.update).not.toHaveBeenCalled();
+    await expect(meteoService.upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(meteoRepository.updateMeteo).not.toHaveBeenCalled();
   });
 });
 
-describe("Creation of a weather", () => {
+describe("Creation of an weather", () => {
   test("should create new weather", async () => {
     const weatherData = mock<MutationUpsertMeteoArgs>({
       id: undefined,
@@ -325,36 +244,32 @@ describe("Creation of a weather", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertMeteo(weatherData, loggedUser);
+    await meteoService.upsertMeteo(weatherData, loggedUser);
 
-    expect(prismaMock.meteo.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.create).toHaveBeenLastCalledWith({
-      data: {
-        ...weatherData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(meteoRepository.createMeteo).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.createMeteo).toHaveBeenLastCalledWith({
+      ...weatherData.data,
+      owner_id: loggedUser.id,
     });
   });
 
-  test("should throw an error when trying to create a weather that already exists", async () => {
+  test("should throw an error when trying to create an weather that already exists", async () => {
     const weatherData = mock<MutationUpsertMeteoArgs>({
       id: undefined,
     });
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.meteo.create.mockImplementation(prismaConstraintFailed);
+    meteoRepository.createMeteo.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() => meteoService.upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.meteo.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.create).toHaveBeenLastCalledWith({
-      data: {
-        ...weatherData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(meteoRepository.createMeteo).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.createMeteo).toHaveBeenLastCalledWith({
+      ...weatherData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -363,32 +278,28 @@ describe("Creation of a weather", () => {
       id: undefined,
     });
 
-    await expect(upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.meteo.create).not.toHaveBeenCalled();
+    await expect(meteoService.upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(meteoRepository.createMeteo).not.toHaveBeenCalled();
   });
 });
 
-describe("Deletion of a weather", () => {
+describe("Deletion of an weather", () => {
   test("should handle the deletion of an owned weather", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
       role: "contributor",
     };
 
-    const meteo = mock<Meteo>({
+    const weather = mock<Meteo>({
       ownerId: loggedUser.id,
     });
 
-    prismaMock.meteo.findFirst.mockResolvedValueOnce(meteo);
+    meteoRepository.findMeteoById.mockResolvedValueOnce(weather);
 
-    await deleteMeteo(11, loggedUser);
+    await meteoService.deleteMeteo(11, loggedUser);
 
-    expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(meteoRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any weather if admin", async () => {
@@ -396,54 +307,50 @@ describe("Deletion of a weather", () => {
       role: "admin",
     });
 
-    prismaMock.meteo.findFirst.mockResolvedValueOnce(mock<Meteo>());
+    meteoRepository.findMeteoById.mockResolvedValueOnce(mock<Meteo>());
 
-    await deleteMeteo(11, loggedUser);
+    await meteoService.deleteMeteo(11, loggedUser);
 
-    expect(prismaMock.meteo.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.meteo.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(meteoRepository.deleteMeteoById).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.deleteMeteoById).toHaveBeenLastCalledWith(11);
   });
 
-  test("should return an error when deleting a non-owned weather as non-admin", async () => {
+  test("should return an error when trying to delete a non-owned weather as non-admin", async () => {
     const loggedUser = mock<LoggedUser>({
       role: "contributor",
     });
 
-    prismaMock.meteo.findFirst.mockResolvedValueOnce(mock<Meteo>());
+    meteoRepository.findMeteoById.mockResolvedValueOnce(mock<Meteo>());
 
-    await expect(deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(meteoService.deleteMeteo(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.meteo.delete).not.toHaveBeenCalled();
+    expect(meteoRepository.deleteMeteoById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.meteo.delete).not.toHaveBeenCalled();
+    await expect(meteoService.deleteMeteo(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(meteoRepository.deleteMeteoById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple weathers", async () => {
   const weathersData = [
-    mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.MeteoCreateManyInput, "ownerId">>(),
+    mock<Omit<MeteoCreateInput, "owner_id">>(),
+    mock<Omit<MeteoCreateInput, "owner_id">>(),
+    mock<Omit<MeteoCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createMeteos(weathersData, loggedUser);
+  await meteoService.createMeteos(weathersData, loggedUser);
 
-  expect(prismaMock.meteo.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.meteo.createMany).toHaveBeenLastCalledWith({
-    data: weathersData.map((weather) => {
+  expect(meteoRepository.createMeteos).toHaveBeenCalledTimes(1);
+  expect(meteoRepository.createMeteos).toHaveBeenLastCalledWith(
+    weathersData.map((weather) => {
       return {
         ...weather,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

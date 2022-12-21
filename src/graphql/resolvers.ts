@@ -47,14 +47,6 @@ import {
   type LieuDitWithCoordinatesAsNumber,
 } from "../services/entities/lieu-dit-service";
 import {
-  deleteMeteo,
-  findMeteo,
-  findPaginatedMeteos,
-  getDonneesCountByMeteo,
-  getMeteosCount,
-  upsertMeteo,
-} from "../services/entities/meteo-service";
-import {
   generateAgesExport,
   generateClassesExport,
   generateCommunesExport,
@@ -124,6 +116,7 @@ export const buildResolvers = ({
   comportementService,
   departementService,
   especeService,
+  meteoService,
   milieuService,
   observateurService,
   sexeService,
@@ -269,12 +262,12 @@ export const buildResolvers = ({
         };
       },
       meteo: async (_source, args, { user }): Promise<Meteo | null> => {
-        return findMeteo(args.id, user);
+        return meteoService.findMeteo(args.id, user);
       },
       meteos: async (_, args, { user }): Promise<MeteosPaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedMeteos(user, args),
-          getMeteosCount(user, args?.searchParams?.q),
+          meteoService.findPaginatedMeteos(user, args),
+          meteoService.getMeteosCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -397,7 +390,7 @@ export const buildResolvers = ({
       },
       exportMeteos: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateMeteosExport();
+        return generateMeteosExport(meteoService);
       },
       exportMilieux: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -455,7 +448,7 @@ export const buildResolvers = ({
         return deleteLieuDit(args.id, user).then(({ id }) => id);
       },
       deleteMeteo: async (_source, args, { user }): Promise<number> => {
-        return deleteMeteo(args.id, user).then(({ id }) => id);
+        return meteoService.deleteMeteo(args.id, user).then(({ id }) => id);
       },
       deleteMilieu: async (_source, args, { user }): Promise<number> => {
         return milieuService.deleteMilieu(args.id, user).then(({ id }) => id);
@@ -536,7 +529,7 @@ export const buildResolvers = ({
         return upsertLieuDit(args, user);
       },
       upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
-        return upsertMeteo(args, user);
+        return meteoService.upsertMeteo(args, user);
       },
       upsertMilieu: async (_source, args, { user }): Promise<Milieu> => {
         return milieuService.upsertMilieu(args, user);
@@ -712,8 +705,8 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(getDonneesCountByLieuDit),
     },
     Meteo: {
-      editable: isEntityEditableResolver(findMeteo),
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByMeteo),
+      editable: isEntityEditableResolver(meteoService.findMeteo),
+      nbDonnees: entityNbDonneesResolver(meteoService.getDonneesCountByMeteo),
     },
     Milieu: {
       editable: isEntityEditableResolver(milieuService.findMilieu),

@@ -200,7 +200,6 @@ model Meteo {
   id               Int                @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle          String             @unique() @db.VarChar(100)
   ownerId          String?            @map("owner_id")
-  owner            User?              @relation(fields: [ownerId], references: [id], map: "fk_meteo_owner_id")
   inventaire_meteo inventaire_meteo[]
 
   @@map("meteo")
@@ -242,7 +241,6 @@ model User {
   EstimationNombre   EstimationNombre[]
   Inventaire         Inventaire[]
   Lieudit            Lieudit[]
-  Meteo              Meteo[]
 
   @@map("user")
 }
