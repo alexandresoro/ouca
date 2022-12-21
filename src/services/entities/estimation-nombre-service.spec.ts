@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -8,31 +7,26 @@ import {
   type MutationUpsertEstimationNombreArgs,
   type QueryEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository";
-import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import {
+  type EstimationNombre,
+  type EstimationNombreCreateInput,
+} from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { queryParametersToFindAllEntities } from "./entities-utils";
-import {
-  buildEstimationNombreService,
-  createEstimationsNombre,
-  deleteEstimationNombre,
-  findEstimationNombre,
-  findEstimationsNombre,
-  findPaginatedEstimationsNombre,
-  getDonneesCountByEstimationNombre,
-  getEstimationsNombreCount,
-  upsertEstimationNombre,
-} from "./estimation-nombre-service";
+import { buildEstimationNombreService } from "./estimation-nombre-service";
+import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape";
 
 const estimationNombreRepository = mock<EstimationNombreRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const estimationNombreService = buildEstimationNombreService({
   logger,
   estimationNombreRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -44,53 +38,42 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+jest.mock<typeof import("./estimation-nombre-service-reshape")>("./estimation-nombre-service-reshape", () => {
+  return {
+    __esModule: true,
+    reshapeInputEstimationNombreUpsertData: jest.fn(),
+  };
+});
 
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
+const mockedReshapeInputEstimationNombreUpsertData = jest.mocked(reshapeInputEstimationNombreUpsertData);
 
 describe("Find number estimate", () => {
   test("should handle a matching number estimate", async () => {
     const numberEstimateData = mock<EstimationNombre>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.estimationNombre.findUnique.mockResolvedValueOnce(numberEstimateData);
+    estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimateData);
 
-    await findEstimationNombre(numberEstimateData.id, loggedUser);
+    await estimationNombreService.findEstimationNombre(numberEstimateData.id, loggedUser);
 
-    expect(prismaMock.estimationNombre.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: numberEstimateData.id,
-      },
-    });
+    expect(estimationNombreRepository.findEstimationNombreById).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.findEstimationNombreById).toHaveBeenLastCalledWith(numberEstimateData.id);
   });
 
   test("should handle number estimate not found", async () => {
-    prismaMock.estimationNombre.findUnique.mockResolvedValueOnce(null);
+    estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findEstimationNombre(10, loggedUser)).resolves.toBe(null);
+    await expect(estimationNombreService.findEstimationNombre(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.estimationNombre.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(estimationNombreRepository.findEstimationNombreById).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.findEstimationNombreById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationNombre.findUnique).not.toHaveBeenCalled();
+    await expect(estimationNombreService.findEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(estimationNombreRepository.findEstimationNombreById).not.toHaveBeenCalled();
   });
 });
 
@@ -98,59 +81,47 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByEstimationNombre(12, loggedUser);
+    await estimationNombreService.getDonneesCountByEstimationNombre(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        estimationNombreId: 12,
-      },
-    });
+    expect(donneeRepository.getCountByEstimationNombreId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByEstimationNombreId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByEstimationNombre(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(estimationNombreService.getDonneesCountByEstimationNombre(12, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
-test("Find all number estimates", async () => {
-  const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
-  const loggedUser = mock<LoggedUser>();
+test("Find all estimationsNombre", async () => {
+  const estimationsNombreData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
 
-  prismaMock.estimationNombre.findMany.mockResolvedValueOnce(numberEstimatesData);
+  estimationNombreRepository.findEstimationsNombre.mockResolvedValueOnce(estimationsNombreData);
 
-  await findEstimationsNombre(loggedUser);
+  await estimationNombreService.findAllEstimationsNombre();
 
-  expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
+  expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_LIBELLE,
   });
 });
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
+    const estimationsNombreData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.estimationNombre.findMany.mockResolvedValueOnce(numberEstimatesData);
+    estimationNombreRepository.findEstimationsNombre.mockResolvedValueOnce(estimationsNombreData);
 
-    await findPaginatedEstimationsNombre(loggedUser);
+    await estimationNombreService.findPaginatedEstimationsNombre(loggedUser);
 
-    expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated number estimates ", async () => {
-    const numberEstimatesData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
+  test("should handle params when retrieving paginated estimationsNombre ", async () => {
+    const estimationsNombreData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: QueryEstimationsNombreArgs = {
@@ -163,29 +134,24 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.estimationNombre.findMany.mockResolvedValueOnce([numberEstimatesData[0]]);
+    estimationNombreRepository.findEstimationsNombre.mockResolvedValueOnce([estimationsNombreData[0]]);
 
-    await findPaginatedEstimationsNombre(loggedUser, searchParams);
+    await estimationNombreService.findPaginatedEstimationsNombre(loggedUser, searchParams);
 
-    expect(prismaMock.estimationNombre.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        libelle: {
-          contains: searchParams.searchParams?.q,
-        },
-      },
+    expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedEstimationsNombre(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(estimationNombreService.findPaginatedEstimationsNombre(null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
@@ -193,71 +159,67 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getEstimationsNombreCount(loggedUser);
+    await estimationNombreService.getEstimationsNombreCount(loggedUser);
 
-    expect(prismaMock.estimationNombre.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(estimationNombreRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getEstimationsNombreCount(loggedUser, "test");
+    await estimationNombreService.getEstimationsNombreCount(loggedUser, "test");
 
-    expect(prismaMock.estimationNombre.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.count).toHaveBeenLastCalledWith({
-      where: {
-        libelle: {
-          contains: "test",
-        },
-      },
-    });
+    expect(estimationNombreRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getEstimationsNombreCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(estimationNombreService.getEstimationsNombreCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Update of a number estimate", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when requested by an admin ", async () => {
     const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
+
+    const reshapedInputData = mock<EstimationNombreCreateInput>();
+    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertEstimationNombre(numberEstimateData, loggedUser);
+    await estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser);
 
-    expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
-      data: numberEstimateData.data,
-      where: {
-        id: numberEstimateData.id,
-      },
-    });
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(
+      numberEstimateData.id,
+      reshapedInputData
+    );
   });
 
-  test("should be allowed when requested by the owner", async () => {
+  test("should be allowed when requested by the owner ", async () => {
     const existingData = mock<EstimationNombre>({
       ownerId: "notAdmin",
     });
 
     const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
 
+    const reshapedInputData = mock<EstimationNombreCreateInput>();
+    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
+    estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(existingData);
 
-    await upsertEstimationNombre(numberEstimateData, loggedUser);
+    await estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser);
 
-    expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
-      data: numberEstimateData.data,
-      where: {
-        id: numberEstimateData.id,
-      },
-    });
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(
+      numberEstimateData.id,
+      reshapedInputData
+    );
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -272,11 +234,13 @@ describe("Update of a number estimate", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(existingData);
+    estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertEstimationNombre(numberEstimateData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(estimationNombreService.upsertEstimationNombre(numberEstimateData, user)).rejects.toThrowError(
+      new OucaError("OUCA0001")
+    );
 
-    expect(prismaMock.estimationNombre.update).not.toHaveBeenCalled();
+    expect(estimationNombreRepository.updateEstimationNombre).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a number estimate that exists", async () => {
@@ -284,21 +248,23 @@ describe("Update of a number estimate", () => {
       id: 12,
     });
 
+    const reshapedInputData = mock<EstimationNombreCreateInput>();
+    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.estimationNombre.update.mockImplementation(prismaConstraintFailed);
+    estimationNombreRepository.updateEstimationNombre.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertEstimationNombre(numberEstimateData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() =>
+      estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser)
+    ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
+
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(
+      numberEstimateData.id,
+      reshapedInputData
     );
-
-    expect(prismaMock.estimationNombre.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.update).toHaveBeenLastCalledWith({
-      data: numberEstimateData.data,
-      where: {
-        id: numberEstimateData.id,
-      },
-    });
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -306,8 +272,10 @@ describe("Update of a number estimate", () => {
       id: 12,
     });
 
-    await expect(upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationNombre.update).not.toHaveBeenCalled();
+    await expect(estimationNombreService.upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
+    expect(estimationNombreRepository.updateEstimationNombre).not.toHaveBeenCalled();
   });
 });
 
@@ -317,16 +285,18 @@ describe("Creation of a number estimate", () => {
       id: undefined,
     });
 
+    const reshapedInputData = mock<EstimationNombreCreateInput>();
+    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertEstimationNombre(numberEstimateData, loggedUser);
+    await estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser);
 
-    expect(prismaMock.estimationNombre.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.create).toHaveBeenLastCalledWith({
-      data: {
-        ...numberEstimateData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(estimationNombreRepository.createEstimationNombre).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.createEstimationNombre).toHaveBeenLastCalledWith({
+      ...reshapedInputData,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -335,20 +305,22 @@ describe("Creation of a number estimate", () => {
       id: undefined,
     });
 
+    const reshapedInputData = mock<EstimationNombreCreateInput>();
+    mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.estimationNombre.create.mockImplementation(prismaConstraintFailed);
+    estimationNombreRepository.createEstimationNombre.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertEstimationNombre(numberEstimateData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
-    );
+    await expect(() =>
+      estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser)
+    ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
-    expect(prismaMock.estimationNombre.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.create).toHaveBeenLastCalledWith({
-      data: {
-        ...numberEstimateData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(estimationNombreRepository.createEstimationNombre).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.createEstimationNombre).toHaveBeenLastCalledWith({
+      ...reshapedInputData,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -357,8 +329,10 @@ describe("Creation of a number estimate", () => {
       id: undefined,
     });
 
-    await expect(upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationNombre.create).not.toHaveBeenCalled();
+    await expect(estimationNombreService.upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
+    expect(estimationNombreRepository.createEstimationNombre).not.toHaveBeenCalled();
   });
 });
 
@@ -373,16 +347,12 @@ describe("Deletion of a number estimate", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(numberEstimate);
+    estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimate);
 
-    await deleteEstimationNombre(11, loggedUser);
+    await estimationNombreService.deleteEstimationNombre(11, loggedUser);
 
-    expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(estimationNombreRepository.deleteEstimationNombreById).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.deleteEstimationNombreById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any number estimate if admin", async () => {
@@ -390,16 +360,12 @@ describe("Deletion of a number estimate", () => {
       role: "admin",
     });
 
-    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
+    estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(mock<EstimationNombre>());
 
-    await deleteEstimationNombre(11, loggedUser);
+    await estimationNombreService.deleteEstimationNombre(11, loggedUser);
 
-    expect(prismaMock.estimationNombre.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationNombre.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(estimationNombreRepository.deleteEstimationNombreById).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.deleteEstimationNombreById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned number estimate as non-admin", async () => {
@@ -407,37 +373,39 @@ describe("Deletion of a number estimate", () => {
       role: "contributor",
     });
 
-    prismaMock.estimationNombre.findFirst.mockResolvedValueOnce(mock<EstimationNombre>());
+    estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(mock<EstimationNombre>());
 
-    await expect(deleteEstimationNombre(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(estimationNombreService.deleteEstimationNombre(11, loggedUser)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
 
-    expect(prismaMock.estimationNombre.delete).not.toHaveBeenCalled();
+    expect(estimationNombreRepository.deleteEstimationNombreById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationNombre.delete).not.toHaveBeenCalled();
+    await expect(estimationNombreService.deleteEstimationNombre(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(estimationNombreRepository.deleteEstimationNombreById).not.toHaveBeenCalled();
   });
 });
 
-test("Create multiple number estimates", async () => {
-  const numberEstimatesData = [
-    mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">>(),
+test("Create multiple estimationsNombre", async () => {
+  const estimationsNombreData = [
+    mock<Omit<EstimationNombreCreateInput, "owner_id">>(),
+    mock<Omit<EstimationNombreCreateInput, "owner_id">>(),
+    mock<Omit<EstimationNombreCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createEstimationsNombre(numberEstimatesData, loggedUser);
+  await estimationNombreService.createEstimationsNombre(estimationsNombreData, loggedUser);
 
-  expect(prismaMock.estimationNombre.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationNombre.createMany).toHaveBeenLastCalledWith({
-    data: numberEstimatesData.map((numberEstimate) => {
+  expect(estimationNombreRepository.createEstimationsNombre).toHaveBeenCalledTimes(1);
+  expect(estimationNombreRepository.createEstimationsNombre).toHaveBeenLastCalledWith(
+    estimationsNombreData.map((numberEstimate) => {
       return {
         ...numberEstimate,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

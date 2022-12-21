@@ -149,6 +149,7 @@ export const buildServices = async (): Promise<Services> => {
   const estimationNombreService = buildEstimationNombreService({
     logger,
     estimationNombreRepository,
+    donneeRepository,
   });
 
   const inventaireService = buildInventaireService({

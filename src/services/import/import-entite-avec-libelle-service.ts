@@ -1,4 +1,3 @@
-import { type Prisma } from "@prisma/client";
 import { ImportedEntiteAvecLibelle } from "../../objects/import/imported-entite-avec-libelle.object";
 import { type LoggedUser } from "../../types/User";
 import { ImportService } from "./import-service";
@@ -45,10 +44,7 @@ export abstract class ImportEntiteAvecLibelleService<T = unknown> extends Import
     }
   };
 
-  protected abstract saveEntities(
-    entities: { libelle: string }[],
-    loggedUser: LoggedUser
-  ): Promise<Prisma.BatchPayload | readonly T[]>;
+  protected abstract saveEntities(entities: { libelle: string }[], loggedUser: LoggedUser): Promise<readonly T[]>;
 
   protected abstract getThisEntityName(): string;
 }

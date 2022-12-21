@@ -58,21 +58,6 @@ export const getSqlPagination = (
 /**
  * @deprecated
  */
-export const getEntiteAvecLibelleFilterClause = (
-  q: string | null | undefined
-): Partial<{ libelle: Prisma.StringFilter }> => {
-  return q != null && q.length
-    ? {
-        libelle: {
-          contains: q,
-        },
-      }
-    : {};
-};
-
-/**
- * @deprecated
- */
 export const getPrismaSqlPagination = (paginationOptions: PaginationOptions | null | undefined): Prisma.Sql => {
   if (!paginationOptions) {
     return Prisma.empty;

@@ -15,14 +15,6 @@ import {
   type DonneeWithRelations,
 } from "../services/entities/donnee-service";
 import {
-  deleteEstimationNombre,
-  findEstimationNombre,
-  findPaginatedEstimationsNombre,
-  getDonneesCountByEstimationNombre,
-  getEstimationsNombreCount,
-  upsertEstimationNombre,
-} from "../services/entities/estimation-nombre-service";
-import {
   findInventaire,
   findInventaireOfDonneeId,
   upsertInventaire,
@@ -109,6 +101,7 @@ export const buildResolvers = ({
   departementService,
   especeService,
   estimationDistanceService,
+  estimationNombreService,
   meteoService,
   milieuService,
   observateurService,
@@ -221,12 +214,12 @@ export const buildResolvers = ({
         };
       },
       estimationNombre: async (_source, args, { user }): Promise<EstimationNombre | null> => {
-        return findEstimationNombre(args.id, user);
+        return estimationNombreService.findEstimationNombre(args.id, user);
       },
       estimationsNombre: async (_, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedEstimationsNombre(user, args),
-          getEstimationsNombreCount(user, args?.searchParams?.q),
+          estimationNombreService.findPaginatedEstimationsNombre(user, args),
+          estimationNombreService.getEstimationsNombreCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -367,7 +360,7 @@ export const buildResolvers = ({
       },
       exportEstimationsNombre: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateEstimationsNombreExport();
+        return generateEstimationsNombreExport(estimationNombreService);
       },
       exportDonnees: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -435,7 +428,7 @@ export const buildResolvers = ({
         return estimationDistanceService.deleteEstimationDistance(args.id, user).then(({ id }) => id);
       },
       deleteEstimationNombre: async (_source, args, { user }): Promise<number> => {
-        return deleteEstimationNombre(args.id, user).then(({ id }) => id);
+        return estimationNombreService.deleteEstimationNombre(args.id, user).then(({ id }) => id);
       },
       deleteLieuDit: async (_source, args, { user }): Promise<number> => {
         return deleteLieuDit(args.id, user).then(({ id }) => id);
@@ -495,7 +488,7 @@ export const buildResolvers = ({
         return estimationDistanceService.upsertEstimationDistance(args, user);
       },
       upsertEstimationNombre: async (_source, args, { user }): Promise<EstimationNombre> => {
-        return upsertEstimationNombre(args, user);
+        return estimationNombreService.upsertEstimationNombre(args, user);
       },
       upsertInventaire: async (
         _source,
@@ -681,8 +674,8 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(estimationDistanceService.getDonneesCountByEstimationDistance),
     },
     EstimationNombre: {
-      editable: isEntityEditableResolver(findEstimationNombre),
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByEstimationNombre),
+      editable: isEntityEditableResolver(estimationNombreService.findEstimationNombre),
+      nbDonnees: entityNbDonneesResolver(estimationNombreService.getDonneesCountByEstimationNombre),
     },
     Inventaire: {
       lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {

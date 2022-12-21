@@ -14,7 +14,7 @@ import { type DepartementService } from "./entities/departement-service";
 import { findDonneesByCriteria, type DonneeWithRelations } from "./entities/donnee-service";
 import { type EspeceService } from "./entities/espece-service";
 import { type EstimationDistanceService } from "./entities/estimation-distance-service";
-import { findEstimationsNombre } from "./entities/estimation-nombre-service";
+import { type EstimationNombreService } from "./entities/estimation-nombre-service";
 import { findAllLieuxDitsWithCommuneAndDepartement } from "./entities/lieu-dit-service";
 import { type MeteoService } from "./entities/meteo-service";
 import { type MilieuService } from "./entities/milieu-service";
@@ -198,8 +198,10 @@ export const generateEstimationsDistanceExport = async (
   return fileName;
 };
 
-export const generateEstimationsNombreExport = async (): Promise<string> => {
-  const estimations = await findEstimationsNombre(null);
+export const generateEstimationsNombreExport = async (
+  estimationNombreService: EstimationNombreService
+): Promise<string> => {
+  const estimations = await estimationNombreService.findAllEstimationsNombre();
 
   const objectsToExport = estimations.map((object) => {
     return {

@@ -1,203 +1,160 @@
-import { Prisma } from "@prisma/client";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
-  type FindParams,
   type MutationUpsertEstimationNombreArgs,
   type QueryEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository";
-import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
-import prisma from "../../sql/prisma";
+import {
+  type EstimationNombre,
+  type EstimationNombreCreateInput,
+} from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
-import {
-  getEntiteAvecLibelleFilterClause,
-  getPrismaPagination,
-  queryParametersToFindAllEntities,
-} from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
+import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape";
 
 type EstimationNombreServiceDependencies = {
   logger: Logger;
   estimationNombreRepository: EstimationNombreRepository;
+  donneeRepository: DonneeRepository;
 };
 
 export const buildEstimationNombreService = ({
-  logger,
   estimationNombreRepository,
+  donneeRepository,
 }: EstimationNombreServiceDependencies) => {
-  return {};
-};
+  const findEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationNombre | null> => {
+    validateAuthorization(loggedUser);
 
-export type EstimationNombreService = ReturnType<typeof buildEstimationNombreService>;
+    return estimationNombreRepository.findEstimationNombreById(id);
+  };
 
-export const findEstimationNombre = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<EstimationNombre | null> => {
-  validateAuthorization(loggedUser);
+  const getDonneesCountByEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.estimationNombre.findUnique({
-    where: {
-      id,
-    },
-  });
-};
+    return donneeRepository.getCountByEstimationNombreId(id);
+  };
 
-export const getDonneesCountByEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const findAllEstimationsNombre = async (): Promise<EstimationNombre[]> => {
+    const estimationNombres = await estimationNombreRepository.findEstimationsNombre({
+      orderBy: COLUMN_LIBELLE,
+    });
 
-  return prisma.donnee.count({
-    where: {
-      estimationNombreId: id,
-    },
-  });
-};
+    return [...estimationNombres];
+  };
 
-export const findEstimationsNombre = async (
-  loggedUser: LoggedUser | null,
-  params?: FindParams | null
-): Promise<EstimationNombre[]> => {
-  validateAuthorization(loggedUser);
+  const findPaginatedEstimationsNombre = async (
+    loggedUser: LoggedUser | null,
+    options: QueryEstimationsNombreArgs = {}
+  ): Promise<EstimationNombre[]> => {
+    validateAuthorization(loggedUser);
 
-  const { q, max } = params ?? {};
+    const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  return prisma.estimationNombre.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        startsWith: q || undefined,
-      },
-    },
-    take: max || undefined,
-  });
-};
+    const estimationNombres = await estimationNombreRepository.findEstimationsNombre({
+      q: searchParams?.q,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField === "nonCompte" ? "non_compte" : orderByField,
+      sortOrder,
+    });
 
-export const findPaginatedEstimationsNombre = async (
-  loggedUser: LoggedUser | null,
-  options: Partial<QueryEstimationsNombreArgs> = {}
-): Promise<EstimationNombre[]> => {
-  validateAuthorization(loggedUser);
+    return [...estimationNombres];
+  };
 
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  let orderBy: Prisma.Enumerable<Prisma.EstimationNombreOrderByWithRelationInput> | undefined = undefined;
-  if (sortOrder) {
-    switch (orderByField) {
-      case "id":
-      case "libelle":
-      case "nonCompte":
-        orderBy = {
-          [orderByField]: sortOrder,
-        };
-        break;
-      case "nbDonnees":
-        {
-          orderBy = {
-            donnee: {
-              _count: sortOrder,
-            },
-          };
+    return estimationNombreRepository.getCount(q);
+  };
+
+  const upsertEstimationNombre = async (
+    args: MutationUpsertEstimationNombreArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<EstimationNombre> => {
+    validateAuthorization(loggedUser);
+
+    const { id, data } = args;
+
+    let upsertedEstimationNombre: EstimationNombre;
+
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser?.role !== "admin") {
+        const existingData = await estimationNombreRepository.findEstimationNombreById(id);
+
+        if (existingData?.ownerId !== loggedUser?.id) {
+          throw new OucaError("OUCA0001");
         }
-        break;
-      default:
-        orderBy = {};
+      }
+
+      try {
+        upsertedEstimationNombre = await estimationNombreRepository.updateEstimationNombre(
+          id,
+          reshapeInputEstimationNombreUpsertData(data)
+        );
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      try {
+        upsertedEstimationNombre = await estimationNombreRepository.createEstimationNombre({
+          ...reshapeInputEstimationNombreUpsertData(data),
+          owner_id: loggedUser.id,
+        });
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
     }
-  }
 
-  return prisma.estimationNombre.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-};
+    return upsertedEstimationNombre;
+  };
 
-export const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationNombre> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.estimationNombre.count({
-    where: getEntiteAvecLibelleFilterClause(q),
-  });
-};
-
-export const upsertEstimationNombre = async (
-  args: MutationUpsertEstimationNombreArgs,
-  loggedUser: LoggedUser | null
-): Promise<EstimationNombre> => {
-  validateAuthorization(loggedUser);
-
-  const { id, data } = args;
-
-  let upsertedEstimationNombre: EstimationNombre;
-
-  if (id) {
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.estimationNombre.findFirst({
-        where: { id },
-      });
+      const existingData = await estimationNombreRepository.findEstimationNombreById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    try {
-      upsertedEstimationNombre = await prisma.estimationNombre.update({
-        where: { id },
-        data,
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    try {
-      upsertedEstimationNombre = await prisma.estimationNombre.create({
-        data: { ...data, ownerId: loggedUser?.id },
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
+    return estimationNombreRepository.deleteEstimationNombreById(id);
+  };
 
-  return upsertedEstimationNombre;
+  const createEstimationsNombre = async (
+    estimationsNombre: Omit<EstimationNombreCreateInput[], "owner_id">,
+    loggedUser: LoggedUser
+  ): Promise<readonly EstimationNombre[]> => {
+    return estimationNombreRepository.createEstimationsNombre(
+      estimationsNombre.map((estimationNombre) => {
+        return { ...estimationNombre, owner_id: loggedUser.id };
+      })
+    );
+  };
+
+  return {
+    findEstimationNombre,
+    getDonneesCountByEstimationNombre,
+    findAllEstimationsNombre,
+    findPaginatedEstimationsNombre,
+    getEstimationsNombreCount,
+    upsertEstimationNombre,
+    deleteEstimationNombre,
+    createEstimationsNombre,
+  };
 };
 
-export const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationNombre> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.estimationNombre.findFirst({
-      where: { id },
-    });
-
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
-
-  return prisma.estimationNombre.delete({
-    where: {
-      id,
-    },
-  });
-};
-
-export const createEstimationsNombre = async (
-  estimationsNombre: Omit<Prisma.EstimationNombreCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.estimationNombre.createMany({
-    data: estimationsNombre.map((estimationNombre) => {
-      return { ...estimationNombre, ownerId: loggedUser.id };
-    }),
-  });
-};
+export type EstimationNombreService = ReturnType<typeof buildEstimationNombreService>;

@@ -1,14 +1,12 @@
-import { type Prisma } from "@prisma/client";
 import { ImportedEstimationNombre } from "../../objects/import/imported-estimation-nombre.object";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
 import { type LoggedUser } from "../../types/User";
-import { createEstimationsNombre, findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationNombreService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findEstimationsNombre(null);
+    this.entities = await this.services.estimationNombreService.findAllEstimationsNombre();
   };
 
   protected getThisEntityName(): string {
@@ -22,7 +20,15 @@ export class ImportEstimationNombreService extends ImportEntiteAvecLibelleServic
   protected saveEntities = (
     estimationsNombre: Omit<EstimationNombre, "id" | "ownerId">[],
     loggedUser: LoggedUser
-  ): Promise<Prisma.BatchPayload> => {
-    return createEstimationsNombre(estimationsNombre, loggedUser);
+  ): Promise<readonly EstimationNombre[]> => {
+    return this.services.estimationNombreService.createEstimationsNombre(
+      estimationsNombre.map((estimationNombre) => {
+        return {
+          ...estimationNombre,
+          non_compte: false,
+        };
+      }),
+      loggedUser
+    );
   };
 }

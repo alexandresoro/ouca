@@ -18,7 +18,6 @@ import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { createDonnee, findAllDonnees, type DonneeWithRelations } from "../entities/donnee-service";
-import { findEstimationsNombre } from "../entities/estimation-nombre-service";
 import { findAllInventaires, upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
 import { findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
@@ -67,7 +66,7 @@ export class ImportDonneeService extends ImportService {
     this.especes = await this.services.especeService.findAllEspeces(null);
     this.sexes = await this.services.sexeService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
-    this.estimationsNombre = await findEstimationsNombre(null);
+    this.estimationsNombre = await this.services.estimationNombreService.findAllEstimationsNombre();
     this.estimationsDistance = await this.services.estimationDistanceService.findAllEstimationsDistance();
     this.comportements = await this.services.comportementService.findAllComportements();
     this.milieux = await this.services.milieuService.findAllMilieux();
