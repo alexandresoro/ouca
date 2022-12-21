@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -8,31 +7,25 @@ import {
   type MutationUpsertEstimationDistanceArgs,
   type QueryEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository";
-import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
+import {
+  type EstimationDistance,
+  type EstimationDistanceCreateInput,
+} from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { queryParametersToFindAllEntities } from "./entities-utils";
-import {
-  buildEstimationDistanceService,
-  createEstimationsDistance,
-  deleteEstimationDistance,
-  findEstimationDistance,
-  findEstimationsDistance,
-  findPaginatedEstimationsDistance,
-  getDonneesCountByEstimationDistance,
-  getEstimationsDistanceCount,
-  upsertEstimationDistance,
-} from "./estimation-distance-service";
+import { buildEstimationDistanceService } from "./estimation-distance-service";
 
 const estimationDistanceRepository = mock<EstimationDistanceRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const estimationDistanceService = buildEstimationDistanceService({
   logger,
   estimationDistanceRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -44,53 +37,32 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
-
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
-
 describe("Find distance estimate", () => {
   test("should handle a matching distance estimate", async () => {
     const distanceEstimateData = mock<EstimationDistance>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.estimationDistance.findUnique.mockResolvedValueOnce(distanceEstimateData);
+    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(distanceEstimateData);
 
-    await findEstimationDistance(distanceEstimateData.id, loggedUser);
+    await estimationDistanceService.findEstimationDistance(distanceEstimateData.id, loggedUser);
 
-    expect(prismaMock.estimationDistance.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: distanceEstimateData.id,
-      },
-    });
+    expect(estimationDistanceRepository.findEstimationDistanceById).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.findEstimationDistanceById).toHaveBeenLastCalledWith(distanceEstimateData.id);
   });
 
   test("should handle distance estimate not found", async () => {
-    prismaMock.estimationDistance.findUnique.mockResolvedValueOnce(null);
+    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
-    await expect(findEstimationDistance(10, loggedUser)).resolves.toBe(null);
+    await expect(estimationDistanceService.findEstimationDistance(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.estimationDistance.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(estimationDistanceRepository.findEstimationDistanceById).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.findEstimationDistanceById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
-    await expect(findEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationDistance.findUnique).not.toHaveBeenCalled();
+    await expect(estimationDistanceService.findEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(estimationDistanceRepository.findEstimationDistanceById).not.toHaveBeenCalled();
   });
 });
 
@@ -98,59 +70,55 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getDonneesCountByEstimationDistance(12, loggedUser);
+    await estimationDistanceService.getDonneesCountByEstimationDistance(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        estimationDistanceId: 12,
-      },
-    });
+    expect(donneeRepository.getCountByEstimationDistanceId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByEstimationDistanceId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getDonneesCountByEstimationDistance(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(estimationDistanceService.getDonneesCountByEstimationDistance(12, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
-test("Find all distance estimates", async () => {
-  const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
-  const loggedUser = mock<LoggedUser>();
+test("Find all estimationsDistance", async () => {
+  const estimationsDistanceData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
 
-  prismaMock.estimationDistance.findMany.mockResolvedValueOnce(distanceEstimatesData);
+  estimationDistanceRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
 
-  await findEstimationsDistance(loggedUser);
+  await estimationDistanceService.findAllEstimationsDistance();
 
-  expect(prismaMock.estimationDistance.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        contains: undefined,
-      },
-    },
+  expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
+  expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_LIBELLE,
   });
 });
 
 describe("Entities paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
-    const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
+    const estimationsDistanceData = [
+      mock<EstimationDistance>(),
+      mock<EstimationDistance>(),
+      mock<EstimationDistance>(),
+    ];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.estimationDistance.findMany.mockResolvedValueOnce(distanceEstimatesData);
+    estimationDistanceRepository.findEstimationsDistance.mockResolvedValueOnce(estimationsDistanceData);
 
-    await findPaginatedEstimationsDistance(loggedUser);
+    await estimationDistanceService.findPaginatedEstimationsDistance(loggedUser);
 
-    expect(prismaMock.estimationDistance.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({});
   });
 
-  test("should handle params when retrieving paginated distance estimates ", async () => {
-    const distanceEstimatesData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
+  test("should handle params when retrieving paginated estimationsDistance ", async () => {
+    const estimationsDistanceData = [
+      mock<EstimationDistance>(),
+      mock<EstimationDistance>(),
+      mock<EstimationDistance>(),
+    ];
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: QueryEstimationsDistanceArgs = {
@@ -163,29 +131,24 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.estimationDistance.findMany.mockResolvedValueOnce([distanceEstimatesData[0]]);
+    estimationDistanceRepository.findEstimationsDistance.mockResolvedValueOnce([estimationsDistanceData[0]]);
 
-    await findPaginatedEstimationsDistance(loggedUser, searchParams);
+    await estimationDistanceService.findPaginatedEstimationsDistance(loggedUser, searchParams);
 
-    expect(prismaMock.estimationDistance.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        libelle: {
-          contains: searchParams.searchParams?.q,
-        },
-      },
+    expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_LIBELLE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(findPaginatedEstimationsDistance(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(estimationDistanceService.findPaginatedEstimationsDistance(null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
@@ -193,52 +156,44 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getEstimationsDistanceCount(loggedUser);
+    await estimationDistanceService.getEstimationsDistanceCount(loggedUser);
 
-    expect(prismaMock.estimationDistance.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(estimationDistanceRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await getEstimationsDistanceCount(loggedUser, "test");
+    await estimationDistanceService.getEstimationsDistanceCount(loggedUser, "test");
 
-    expect(prismaMock.estimationDistance.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.count).toHaveBeenLastCalledWith({
-      where: {
-        libelle: {
-          contains: "test",
-        },
-      },
-    });
+    expect(estimationDistanceRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(getEstimationsDistanceCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(estimationDistanceService.getEstimationsDistanceCount(null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
 describe("Update of a distance estimate", () => {
-  test("should be allowed when requested by an admin", async () => {
+  test("should be allowed when requested by an admin ", async () => {
     const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await upsertEstimationDistance(distanceEstimateData, loggedUser);
+    await estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser);
 
-    expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
-      data: distanceEstimateData.data,
-      where: {
-        id: distanceEstimateData.id,
-      },
-    });
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
+      distanceEstimateData.id,
+      distanceEstimateData.data
+    );
   });
 
-  test("should be allowed when requested by the owner", async () => {
+  test("should be allowed when requested by the owner ", async () => {
     const existingData = mock<EstimationDistance>({
       ownerId: "notAdmin",
     });
@@ -247,17 +202,15 @@ describe("Update of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(existingData);
+    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
 
-    await upsertEstimationDistance(distanceEstimateData, loggedUser);
+    await estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser);
 
-    expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
-      data: distanceEstimateData.data,
-      where: {
-        id: distanceEstimateData.id,
-      },
-    });
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
+      distanceEstimateData.id,
+      distanceEstimateData.data
+    );
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -272,11 +225,13 @@ describe("Update of a distance estimate", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(existingData);
+    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
 
-    await expect(upsertEstimationDistance(distanceEstimateData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(estimationDistanceService.upsertEstimationDistance(distanceEstimateData, user)).rejects.toThrowError(
+      new OucaError("OUCA0001")
+    );
 
-    expect(prismaMock.estimationDistance.update).not.toHaveBeenCalled();
+    expect(estimationDistanceRepository.updateEstimationDistance).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a distance estimate that exists", async () => {
@@ -286,19 +241,17 @@ describe("Update of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.estimationDistance.update.mockImplementation(prismaConstraintFailed);
+    estimationDistanceRepository.updateEstimationDistance.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertEstimationDistance(distanceEstimateData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+    await expect(() =>
+      estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser)
+    ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
+
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
+      distanceEstimateData.id,
+      distanceEstimateData.data
     );
-
-    expect(prismaMock.estimationDistance.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.update).toHaveBeenLastCalledWith({
-      data: distanceEstimateData.data,
-      where: {
-        id: distanceEstimateData.id,
-      },
-    });
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -306,8 +259,10 @@ describe("Update of a distance estimate", () => {
       id: 12,
     });
 
-    await expect(upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationDistance.update).not.toHaveBeenCalled();
+    await expect(estimationDistanceService.upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
+    expect(estimationDistanceRepository.updateEstimationDistance).not.toHaveBeenCalled();
   });
 });
 
@@ -319,14 +274,12 @@ describe("Creation of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await upsertEstimationDistance(distanceEstimateData, loggedUser);
+    await estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser);
 
-    expect(prismaMock.estimationDistance.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.create).toHaveBeenLastCalledWith({
-      data: {
-        ...distanceEstimateData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenLastCalledWith({
+      ...distanceEstimateData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -337,18 +290,16 @@ describe("Creation of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.estimationDistance.create.mockImplementation(prismaConstraintFailed);
+    estimationDistanceRepository.createEstimationDistance.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => upsertEstimationDistance(distanceEstimateData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
-    );
+    await expect(() =>
+      estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser)
+    ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
-    expect(prismaMock.estimationDistance.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.create).toHaveBeenLastCalledWith({
-      data: {
-        ...distanceEstimateData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenLastCalledWith({
+      ...distanceEstimateData.data,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -357,12 +308,14 @@ describe("Creation of a distance estimate", () => {
       id: undefined,
     });
 
-    await expect(upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationDistance.create).not.toHaveBeenCalled();
+    await expect(estimationDistanceService.upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
+    expect(estimationDistanceRepository.createEstimationDistance).not.toHaveBeenCalled();
   });
 });
 
-describe("Deletion of a distance exstimate", () => {
+describe("Deletion of a distance estimate", () => {
   test("should handle the deletion of an owned distance estimate", async () => {
     const loggedUser: LoggedUser = {
       id: "12",
@@ -373,16 +326,12 @@ describe("Deletion of a distance exstimate", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(distanceEstimate);
+    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(distanceEstimate);
 
-    await deleteEstimationDistance(11, loggedUser);
+    await estimationDistanceService.deleteEstimationDistance(11, loggedUser);
 
-    expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(estimationDistanceRepository.deleteEstimationDistanceById).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.deleteEstimationDistanceById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any distance estimate if admin", async () => {
@@ -390,16 +339,12 @@ describe("Deletion of a distance exstimate", () => {
       role: "admin",
     });
 
-    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
+    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<EstimationDistance>());
 
-    await deleteEstimationDistance(11, loggedUser);
+    await estimationDistanceService.deleteEstimationDistance(11, loggedUser);
 
-    expect(prismaMock.estimationDistance.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.estimationDistance.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(estimationDistanceRepository.deleteEstimationDistanceById).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.deleteEstimationDistanceById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned distance estimate as non-admin", async () => {
@@ -407,37 +352,41 @@ describe("Deletion of a distance exstimate", () => {
       role: "contributor",
     });
 
-    prismaMock.estimationDistance.findFirst.mockResolvedValueOnce(mock<EstimationDistance>());
+    estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(mock<EstimationDistance>());
 
-    await expect(deleteEstimationDistance(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(estimationDistanceService.deleteEstimationDistance(11, loggedUser)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
 
-    expect(prismaMock.estimationDistance.delete).not.toHaveBeenCalled();
+    expect(estimationDistanceRepository.deleteEstimationDistanceById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(deleteEstimationDistance(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.estimationDistance.delete).not.toHaveBeenCalled();
+    await expect(estimationDistanceService.deleteEstimationDistance(11, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
+    expect(estimationDistanceRepository.deleteEstimationDistanceById).not.toHaveBeenCalled();
   });
 });
 
-test("Create multiple distance estimates", async () => {
-  const distanceEstimatesData = [
-    mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">>(),
+test("Create multiple estimationsDistance", async () => {
+  const estimationsDistanceData = [
+    mock<Omit<EstimationDistanceCreateInput, "owner_id">>(),
+    mock<Omit<EstimationDistanceCreateInput, "owner_id">>(),
+    mock<Omit<EstimationDistanceCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
-  await createEstimationsDistance(distanceEstimatesData, loggedUser);
+  await estimationDistanceService.createEstimationsDistance(estimationsDistanceData, loggedUser);
 
-  expect(prismaMock.estimationDistance.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.estimationDistance.createMany).toHaveBeenLastCalledWith({
-    data: distanceEstimatesData.map((distanceEstimate) => {
+  expect(estimationDistanceRepository.createEstimationsDistance).toHaveBeenCalledTimes(1);
+  expect(estimationDistanceRepository.createEstimationsDistance).toHaveBeenLastCalledWith(
+    estimationsDistanceData.map((distanceEstimate) => {
       return {
         ...distanceEstimate,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

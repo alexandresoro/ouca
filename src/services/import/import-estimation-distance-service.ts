@@ -1,13 +1,11 @@
-import { type Prisma } from "@prisma/client";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type LoggedUser } from "../../types/User";
-import { createEstimationsDistance, findEstimationsDistance } from "../entities/estimation-distance-service";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
 
 export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {
     this.entitiesToInsert = [];
-    this.entities = await findEstimationsDistance(null);
+    this.entities = await this.services.estimationDistanceService.findAllEstimationsDistance();
   };
 
   protected getThisEntityName(): string {
@@ -17,7 +15,7 @@ export class ImportEstimationDistanceService extends ImportEntiteAvecLibelleServ
   protected saveEntities = (
     estimationsDistance: Omit<EstimationDistance, "id" | "ownerId">[],
     loggedUser: LoggedUser
-  ): Promise<Prisma.BatchPayload> => {
-    return createEstimationsDistance(estimationsDistance, loggedUser);
+  ): Promise<readonly EstimationDistance[]> => {
+    return this.services.estimationDistanceService.createEstimationsDistance(estimationsDistance, loggedUser);
   };
 }

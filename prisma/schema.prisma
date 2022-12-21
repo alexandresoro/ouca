@@ -120,7 +120,6 @@ model EstimationDistance {
   id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle String   @unique() @db.VarChar(100)
   ownerId String?  @map("owner_id")
-  owner   User?    @relation(fields: [ownerId], references: [id], map: "fk_estimation_distance_owner_id")
   donnee  Donnee[]
 
   @@map("estimation_distance")
@@ -235,12 +234,11 @@ model Sexe {
 }
 
 model User {
-  id                 String               @id @default(uuid())
-  Espece             Espece[]
-  EstimationDistance EstimationDistance[]
-  EstimationNombre   EstimationNombre[]
-  Inventaire         Inventaire[]
-  Lieudit            Lieudit[]
+  id               String             @id @default(uuid())
+  Espece           Espece[]
+  EstimationNombre EstimationNombre[]
+  Inventaire       Inventaire[]
+  Lieudit          Lieudit[]
 
   @@map("user")
 }

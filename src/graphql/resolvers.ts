@@ -15,14 +15,6 @@ import {
   type DonneeWithRelations,
 } from "../services/entities/donnee-service";
 import {
-  deleteEstimationDistance,
-  findEstimationDistance,
-  findPaginatedEstimationsDistance,
-  getDonneesCountByEstimationDistance,
-  getEstimationsDistanceCount,
-  upsertEstimationDistance,
-} from "../services/entities/estimation-distance-service";
-import {
   deleteEstimationNombre,
   findEstimationNombre,
   findPaginatedEstimationsNombre,
@@ -116,6 +108,7 @@ export const buildResolvers = ({
   comportementService,
   departementService,
   especeService,
+  estimationDistanceService,
   meteoService,
   milieuService,
   observateurService,
@@ -215,12 +208,12 @@ export const buildResolvers = ({
         };
       },
       estimationDistance: async (_source, args, { user }): Promise<EstimationDistance | null> => {
-        return findEstimationDistance(args.id, user);
+        return estimationDistanceService.findEstimationDistance(args.id, user);
       },
       estimationsDistance: async (_, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
         const [data, count] = await Promise.all([
-          findPaginatedEstimationsDistance(user, args),
-          getEstimationsDistanceCount(user, args?.searchParams?.q),
+          estimationDistanceService.findPaginatedEstimationsDistance(user, args),
+          estimationDistanceService.getEstimationsDistanceCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -370,7 +363,7 @@ export const buildResolvers = ({
       },
       exportEstimationsDistance: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateEstimationsDistanceExport();
+        return generateEstimationsDistanceExport(estimationDistanceService);
       },
       exportEstimationsNombre: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -439,7 +432,7 @@ export const buildResolvers = ({
         return especeService.deleteEspece(args.id, user).then(({ id }) => id);
       },
       deleteEstimationDistance: async (_source, args, { user }): Promise<number> => {
-        return deleteEstimationDistance(args.id, user).then(({ id }) => id);
+        return estimationDistanceService.deleteEstimationDistance(args.id, user).then(({ id }) => id);
       },
       deleteEstimationNombre: async (_source, args, { user }): Promise<number> => {
         return deleteEstimationNombre(args.id, user).then(({ id }) => id);
@@ -499,7 +492,7 @@ export const buildResolvers = ({
         return especeService.upsertEspece(args, user);
       },
       upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
-        return upsertEstimationDistance(args, user);
+        return estimationDistanceService.upsertEstimationDistance(args, user);
       },
       upsertEstimationNombre: async (_source, args, { user }): Promise<EstimationNombre> => {
         return upsertEstimationNombre(args, user);
@@ -684,8 +677,8 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(especeService.getDonneesCountByEspece),
     },
     EstimationDistance: {
-      editable: isEntityEditableResolver(findEstimationDistance),
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByEstimationDistance),
+      editable: isEntityEditableResolver(estimationDistanceService.findEstimationDistance),
+      nbDonnees: entityNbDonneesResolver(estimationDistanceService.getDonneesCountByEstimationDistance),
     },
     EstimationNombre: {
       editable: isEntityEditableResolver(findEstimationNombre),

@@ -143,6 +143,7 @@ export const buildServices = async (): Promise<Services> => {
   const estimationDistanceService = buildEstimationDistanceService({
     logger,
     estimationDistanceRepository,
+    donneeRepository,
   });
 
   const estimationNombreService = buildEstimationNombreService({

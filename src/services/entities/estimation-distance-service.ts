@@ -1,211 +1,159 @@
-import { Prisma } from "@prisma/client";
 import { type Logger } from "pino";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
-  type FindParams,
   type MutationUpsertEstimationDistanceArgs,
   type QueryEstimationsDistanceArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository";
-import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
-import prisma from "../../sql/prisma";
+import {
+  type EstimationDistance,
+  type EstimationDistanceCreateInput,
+} from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
-import {
-  getEntiteAvecLibelleFilterClause,
-  getPrismaPagination,
-  queryParametersToFindAllEntities,
-} from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
 
 type EstimationDistanceServiceDependencies = {
   logger: Logger;
   estimationDistanceRepository: EstimationDistanceRepository;
+  donneeRepository: DonneeRepository;
 };
 
 export const buildEstimationDistanceService = ({
-  logger,
   estimationDistanceRepository,
+  donneeRepository,
 }: EstimationDistanceServiceDependencies) => {
-  return {};
-};
+  const findEstimationDistance = async (
+    id: number,
+    loggedUser: LoggedUser | null
+  ): Promise<EstimationDistance | null> => {
+    validateAuthorization(loggedUser);
 
-export type EstimationDistanceService = ReturnType<typeof buildEstimationDistanceService>;
+    return estimationDistanceRepository.findEstimationDistanceById(id);
+  };
 
-export const findEstimationDistance = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<EstimationDistance | null> => {
-  validateAuthorization(loggedUser);
+  const getDonneesCountByEstimationDistance = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.estimationDistance.findUnique({
-    where: {
-      id,
-    },
-  });
-};
+    return donneeRepository.getCountByEstimationDistanceId(id);
+  };
 
-export const getDonneesCountByEstimationDistance = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const findAllEstimationsDistance = async (): Promise<EstimationDistance[]> => {
+    const estimationDistances = await estimationDistanceRepository.findEstimationsDistance({
+      orderBy: COLUMN_LIBELLE,
+    });
 
-  return prisma.donnee.count({
-    where: {
-      estimationDistanceId: id,
-    },
-  });
-};
+    return [...estimationDistances];
+  };
 
-export const findEstimationsDistance = async (
-  loggedUser: LoggedUser | null,
-  params?: FindParams | null
-): Promise<EstimationDistance[]> => {
-  validateAuthorization(loggedUser);
+  const findPaginatedEstimationsDistance = async (
+    loggedUser: LoggedUser | null,
+    options: QueryEstimationsDistanceArgs = {}
+  ): Promise<EstimationDistance[]> => {
+    validateAuthorization(loggedUser);
 
-  const { q, max } = params ?? {};
+    const { searchParams, orderBy: orderByField, sortOrder } = options;
 
-  return prisma.estimationDistance.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_LIBELLE),
-    where: {
-      libelle: {
-        startsWith: q || undefined,
-      },
-    },
-    take: max || undefined,
-  });
-};
+    const estimationDistances = await estimationDistanceRepository.findEstimationsDistance({
+      q: searchParams?.q,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
+    });
 
-export const findPaginatedEstimationsDistance = async (
-  loggedUser: LoggedUser | null,
-  options: Partial<QueryEstimationsDistanceArgs> = {}
-): Promise<EstimationDistance[]> => {
-  validateAuthorization(loggedUser);
+    return [...estimationDistances];
+  };
 
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
+  const getEstimationsDistanceCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+    validateAuthorization(loggedUser);
 
-  let orderBy: Prisma.Enumerable<Prisma.EstimationDistanceOrderByWithRelationInput> | undefined = undefined;
-  if (sortOrder) {
-    switch (orderByField) {
-      case "id":
-      case "libelle":
-        orderBy = {
-          [orderByField]: sortOrder,
-        };
-        break;
-      case "nbDonnees":
-        {
-          orderBy = {
-            donnee: {
-              _count: sortOrder,
-            },
-          };
+    return estimationDistanceRepository.getCount(q);
+  };
+
+  const upsertEstimationDistance = async (
+    args: MutationUpsertEstimationDistanceArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<EstimationDistance> => {
+    validateAuthorization(loggedUser);
+
+    const { id, data } = args;
+
+    let upsertedEstimationDistance: EstimationDistance;
+
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser?.role !== "admin") {
+        const existingData = await estimationDistanceRepository.findEstimationDistanceById(id);
+
+        if (existingData?.ownerId !== loggedUser?.id) {
+          throw new OucaError("OUCA0001");
         }
-        break;
-      default:
-        orderBy = {};
+      }
+
+      try {
+        upsertedEstimationDistance = await estimationDistanceRepository.updateEstimationDistance(id, data);
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      try {
+        upsertedEstimationDistance = await estimationDistanceRepository.createEstimationDistance({
+          ...data,
+          owner_id: loggedUser.id,
+        });
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
     }
-  }
 
-  return prisma.estimationDistance.findMany({
-    ...getPrismaPagination(searchParams),
-    orderBy,
-    where: getEntiteAvecLibelleFilterClause(searchParams?.q),
-  });
-};
+    return upsertedEstimationDistance;
+  };
 
-export const getEstimationsDistanceCount = async (
-  loggedUser: LoggedUser | null,
-  q?: string | null
-): Promise<number> => {
-  validateAuthorization(loggedUser);
+  const deleteEstimationDistance = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationDistance> => {
+    validateAuthorization(loggedUser);
 
-  return prisma.estimationDistance.count({
-    where: getEntiteAvecLibelleFilterClause(q),
-  });
-};
-
-export const upsertEstimationDistance = async (
-  args: MutationUpsertEstimationDistanceArgs,
-  loggedUser: LoggedUser | null
-): Promise<EstimationDistance> => {
-  validateAuthorization(loggedUser);
-
-  const { id, data } = args;
-
-  let upsertedEstimationDistance: EstimationDistance;
-
-  if (id) {
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.estimationDistance.findFirst({
-        where: { id },
-      });
+      const existingData = await estimationDistanceRepository.findEstimationDistanceById(id);
 
       if (existingData?.ownerId !== loggedUser?.id) {
         throw new OucaError("OUCA0001");
       }
     }
 
-    try {
-      upsertedEstimationDistance = await prisma.estimationDistance.update({
-        where: { id },
-        data,
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    try {
-      upsertedEstimationDistance = await prisma.estimationDistance.create({
-        data: { ...data, ownerId: loggedUser?.id },
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
+    return estimationDistanceRepository.deleteEstimationDistanceById(id);
+  };
 
-  return upsertedEstimationDistance;
+  const createEstimationsDistance = async (
+    estimationsDistance: Omit<EstimationDistanceCreateInput[], "owner_id">,
+    loggedUser: LoggedUser
+  ): Promise<readonly EstimationDistance[]> => {
+    return estimationDistanceRepository.createEstimationsDistance(
+      estimationsDistance.map((estimationDistance) => {
+        return { ...estimationDistance, owner_id: loggedUser.id };
+      })
+    );
+  };
+
+  return {
+    findEstimationDistance,
+    getDonneesCountByEstimationDistance,
+    findAllEstimationsDistance,
+    findPaginatedEstimationsDistance,
+    getEstimationsDistanceCount,
+    upsertEstimationDistance,
+    deleteEstimationDistance,
+    createEstimationsDistance,
+  };
 };
 
-export const deleteEstimationDistance = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<EstimationDistance> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.estimationDistance.findFirst({
-      where: { id },
-    });
-
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
-
-  return prisma.estimationDistance.delete({
-    where: {
-      id,
-    },
-  });
-};
-
-export const createEstimationsDistance = async (
-  estimationsDistance: Omit<Prisma.EstimationDistanceCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.estimationDistance.createMany({
-    data: estimationsDistance.map((estimationDistance) => {
-      return { ...estimationDistance, ownerId: loggedUser.id };
-    }),
-  });
-};
+export type EstimationDistanceService = ReturnType<typeof buildEstimationDistanceService>;
