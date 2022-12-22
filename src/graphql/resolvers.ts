@@ -20,16 +20,7 @@ import {
   upsertInventaire,
   type InventaireWithRelations,
 } from "../services/entities/inventaire-service";
-import {
-  deleteLieuDit,
-  findLieuDit,
-  findLieuDitOfInventaireId,
-  findPaginatedLieuxDits,
-  getDonneesCountByLieuDit,
-  getLieuxDitsCount,
-  upsertLieuDit,
-  type LieuDitWithCoordinatesAsNumber,
-} from "../services/entities/lieu-dit-service";
+import { type LieuDitWithCoordinatesAsNumber } from "../services/entities/lieu-dit-service";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -102,6 +93,7 @@ export const buildResolvers = ({
   especeService,
   estimationDistanceService,
   estimationNombreService,
+  lieuditService,
   meteoService,
   milieuService,
   observateurService,
@@ -231,7 +223,7 @@ export const buildResolvers = ({
         return findInventaire(args.id);
       },
       lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
-        return findLieuDit(args.id, user);
+        return lieuditService.findLieuDit(args.id, user);
       },
       lieuxDits: async (
         _,
@@ -239,8 +231,8 @@ export const buildResolvers = ({
         { user }
       ): Promise<Omit<LieuxDitsPaginatedResult, "data"> & { data?: Omit<LieuDit, "commune">[] }> => {
         const [data, count] = await Promise.all([
-          findPaginatedLieuxDits(user, args),
-          getLieuxDitsCount(user, args?.searchParams?.q),
+          lieuditService.findPaginatedLieuxDits(user, args),
+          lieuditService.getLieuxDitsCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -431,7 +423,7 @@ export const buildResolvers = ({
         return estimationNombreService.deleteEstimationNombre(args.id, user).then(({ id }) => id);
       },
       deleteLieuDit: async (_source, args, { user }): Promise<number> => {
-        return deleteLieuDit(args.id, user).then(({ id }) => id);
+        return lieuditService.deleteLieuDit(args.id, user).then(({ id }) => id);
       },
       deleteMeteo: async (_source, args, { user }): Promise<number> => {
         return meteoService.deleteMeteo(args.id, user).then(({ id }) => id);
@@ -512,7 +504,7 @@ export const buildResolvers = ({
         }
       },
       upsertLieuDit: async (_source, args, { user }): Promise<LieuDitWithCoordinatesAsNumber> => {
-        return upsertLieuDit(args, user);
+        return lieuditService.upsertLieuDit(args, user);
       },
       upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
         return meteoService.upsertMeteo(args, user);
@@ -679,16 +671,16 @@ export const buildResolvers = ({
     },
     Inventaire: {
       lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
-        const lieuDit = await findLieuDitOfInventaireId(parent?.id);
-        return findLieuDit(lieuDit?.id, user);
+        const lieuDit = await lieuditService.findLieuDitOfInventaireId(parent?.id);
+        return lieuditService.findLieuDit(lieuDit?.id, user);
       },
     },
     LieuDit: {
-      editable: isEntityEditableResolver(findLieuDit),
+      editable: isEntityEditableResolver(lieuditService.findLieuDit),
       commune: async (parent, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
         return communeService.findCommuneOfLieuDitId(parent?.id, user);
       },
-      nbDonnees: entityNbDonneesResolver(getDonneesCountByLieuDit),
+      nbDonnees: entityNbDonneesResolver(lieuditService.getDonneesCountByLieuDit),
     },
     Meteo: {
       editable: isEntityEditableResolver(meteoService.findMeteo),

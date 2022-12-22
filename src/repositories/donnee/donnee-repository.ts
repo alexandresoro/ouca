@@ -122,6 +122,21 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
+  const getCountByLieuditId = async (lieuditId: number): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.donnee
+      LEFT JOIN
+        basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
+      WHERE
+        inventaire.lieudit_id = ${lieuditId}
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
   const getCountByMeteoId = async (meteoId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -189,6 +204,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     getCountByEspeceId,
     getCountByEstimationDistanceId,
     getCountByEstimationNombreId,
+    getCountByLieuditId,
     getCountByMeteoId,
     getCountByMilieuId,
     getCountByObservateurId,

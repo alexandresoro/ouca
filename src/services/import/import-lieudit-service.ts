@@ -8,7 +8,7 @@ import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
 import { type LoggedUser } from "../../types/User";
-import { createLieuxDits, findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
+import { type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
@@ -30,7 +30,7 @@ export class ImportLieuxditService extends ImportService {
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
       this.services.departementService.findAllDepartements(),
       this.services.communeService.findAllCommunes(),
-      findLieuxDits(null),
+      this.services.lieuditService.findAllLieuxDits(null),
       this.services.settingsService.findCoordinatesSystem(loggedUser),
     ]);
 
@@ -89,7 +89,7 @@ export class ImportLieuxditService extends ImportService {
 
   protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     if (this.lieuxDitsToInsert.length) {
-      await createLieuxDits(this.lieuxDitsToInsert, loggedUser);
+      await this.services.lieuditService.createLieuxDits(this.lieuxDitsToInsert, loggedUser);
     }
   };
 }

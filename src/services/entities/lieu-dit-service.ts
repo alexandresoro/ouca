@@ -7,6 +7,7 @@ import {
 } from "../../graphql/generated/graphql-types";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
@@ -25,10 +26,21 @@ import {
 type LieuditServiceDependencies = {
   logger: Logger;
   lieuditRepository: LieuditRepository;
+  donneeRepository: DonneeRepository;
 };
 
-export const buildLieuditService = ({ logger, lieuditRepository }: LieuditServiceDependencies) => {
-  return {};
+export const buildLieuditService = ({ lieuditRepository, donneeRepository }: LieuditServiceDependencies) => {
+  return {
+    findLieuDit,
+    getDonneesCountByLieuDit,
+    findLieuDitOfInventaireId,
+    findAllLieuxDits: findLieuxDits,
+    findPaginatedLieuxDits,
+    getLieuxDitsCount,
+    upsertLieuDit,
+    deleteLieuDit,
+    createLieuxDits,
+  };
 };
 
 export type LieuditService = ReturnType<typeof buildLieuditService>;
@@ -48,7 +60,7 @@ const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWith
   };
 };
 
-export const findLieuDit = async (
+const findLieuDit = async (
   id: number | undefined,
   loggedUser: LoggedUser | null
 ): Promise<LieuDitWithCoordinatesAsNumber | null> => {
@@ -63,7 +75,7 @@ export const findLieuDit = async (
     .then((lieudit) => (lieudit ? buildLieuditFromLieuditDb(lieudit) : null));
 };
 
-export const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
   validateAuthorization(loggedUser);
 
   return prisma.donnee.count({
@@ -75,7 +87,7 @@ export const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUse
   });
 };
 
-export const findLieuDitOfInventaireId = async (
+const findLieuDitOfInventaireId = async (
   inventaireId: number | undefined,
   loggedUser: LoggedUser | null = null
 ): Promise<Lieudit | null> => {
@@ -88,7 +100,7 @@ export const findLieuDitOfInventaireId = async (
     .lieuDit();
 };
 
-export const findLieuxDits = async (
+const findLieuxDits = async (
   loggedUser: LoggedUser | null,
   options: {
     params?: FindParams | null;
@@ -170,7 +182,7 @@ export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
   return lieuxDitsDb.map(buildLieuditFromLieuditDb);
 };
 
-export const findPaginatedLieuxDits = async (
+const findPaginatedLieuxDits = async (
   loggedUser: LoggedUser | null,
   options: Partial<QueryLieuxDitsArgs> = {}
 ): Promise<LieuDitWithCoordinatesAsNumber<Lieudit>[]> => {
@@ -291,7 +303,7 @@ export const findPaginatedLieuxDits = async (
   return lieuxDitsEntities;
 };
 
-export const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
   validateAuthorization(loggedUser);
 
   return prisma.lieudit.count({
@@ -299,7 +311,7 @@ export const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: strin
   });
 };
 
-export const upsertLieuDit = async (
+const upsertLieuDit = async (
   args: MutationUpsertLieuDitArgs,
   loggedUser: LoggedUser | null
 ): Promise<LieuDitWithCoordinatesAsNumber> => {
@@ -350,10 +362,7 @@ export const upsertLieuDit = async (
   return upsertedLieuDit;
 };
 
-export const deleteLieuDit = async (
-  id: number,
-  loggedUser: LoggedUser | null
-): Promise<LieuDitWithCoordinatesAsNumber> => {
+const deleteLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<LieuDitWithCoordinatesAsNumber> => {
   validateAuthorization(loggedUser);
 
   // Check that the user is allowed to modify the existing data
@@ -376,7 +385,7 @@ export const deleteLieuDit = async (
     .then(buildLieuditFromLieuditDb);
 };
 
-export const createLieuxDits = async (
+const createLieuxDits = async (
   lieuxDits: Omit<Prisma.LieuditCreateManyInput, "ownerId">[],
   loggedUser: LoggedUser
 ): Promise<Prisma.BatchPayload> => {

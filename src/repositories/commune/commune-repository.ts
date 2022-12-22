@@ -150,7 +150,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       departement.code as departement_code
     FROM
       basenaturaliste.commune
-    LEFT JOIN basenaturaliste.departement ON commune.departement_id = departement_id.id
+    LEFT JOIN basenaturaliste.departement ON commune.departement_id = departement.id
   `;
 
     return slonik.any(query);

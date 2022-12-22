@@ -19,7 +19,7 @@ import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { createDonnee, findAllDonnees, type DonneeWithRelations } from "../entities/donnee-service";
 import { findAllInventaires, upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
-import { findLieuxDits, type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
+import { type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -61,7 +61,7 @@ export class ImportDonneeService extends ImportService {
     this.observateurs = await this.services.observateurService.findAllObservateurs();
     this.departements = await this.services.departementService.findAllDepartements();
     this.communes = await this.services.communeService.findAllCommunes();
-    this.lieuxDits = await findLieuxDits(null);
+    this.lieuxDits = await this.services.lieuditService.findAllLieuxDits(null);
     this.meteos = await this.services.meteoService.findAllMeteos();
     this.especes = await this.services.especeService.findAllEspeces(null);
     this.sexes = await this.services.sexeService.findAllSexes();

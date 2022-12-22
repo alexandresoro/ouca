@@ -160,6 +160,7 @@ export const buildServices = async (): Promise<Services> => {
   const lieuditService = buildLieuditService({
     logger,
     lieuditRepository,
+    donneeRepository,
   });
 
   const meteoService = buildMeteoService({
