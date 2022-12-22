@@ -1,4 +1,3 @@
-import { type Prisma } from "@prisma/client";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type MutationUpsertCommuneArgs, type QueryCommunesArgs } from "../../graphql/generated/graphql-types";
@@ -177,27 +176,3 @@ export const buildCommuneService = ({
 };
 
 export type CommuneService = ReturnType<typeof buildCommuneService>;
-
-/**
- * @deprecated
- */
-export const getFilterClauseCommune = (q: string | null | undefined): Prisma.CommuneWhereInput => {
-  return q != null && q.length
-    ? {
-        OR: [
-          {
-            nom: {
-              contains: q,
-            },
-          },
-          {
-            departement: {
-              code: {
-                contains: q,
-              },
-            },
-          },
-        ],
-      }
-    : {};
-};

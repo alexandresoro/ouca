@@ -9,9 +9,11 @@ import {
 } from "../repository-helpers";
 import {
   lieuditSchema,
+  lieuditWithCommuneAndDepartementCodeSchema,
   type Lieudit,
   type LieuditCreateInput,
   type LieuditFindManyInput,
+  type LieuditWithCommuneAndDepartementCode,
 } from "./lieudit-repository-types";
 
 export type LieuditRepositoryDependencies = {
@@ -32,10 +34,14 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.maybeOne(query);
   };
 
-  const findLieuditByInventaireId = async (inventaireId: number): Promise<Lieudit | null> => {
+  const findLieuditByInventaireId = async (inventaireId: number | undefined): Promise<Lieudit | null> => {
+    if (!inventaireId) {
+      return null;
+    }
+
     const query = sql.type(lieuditSchema)`
       SELECT 
-        *
+        lieudit.*
       FROM
         basenaturaliste.lieudit
       LEFT JOIN basenaturaliste.inventaire ON lieudit.id = inventaire.lieudit_id
@@ -148,6 +154,24 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.oneFirst(query);
   };
 
+  const findAllLieuxDitsWithCommuneAndDepartementCode = async (): Promise<
+    readonly LieuditWithCommuneAndDepartementCode[]
+  > => {
+    const query = sql.type(lieuditWithCommuneAndDepartementCodeSchema)`
+    SELECT 
+      lieudit.*,
+      commune.code as commune_code,
+      commune.nom as commune_nom,
+      departement.code as departement_code
+    FROM
+      basenaturaliste.lieudit
+    LEFT JOIN basenaturaliste.commune ON lieudit.commune_id = commune.id
+    LEFT JOIN basenaturaliste.departement ON commune.departement_id = departement.id
+  `;
+
+    return slonik.any(query);
+  };
+
   const getCountByDepartementId = async (departementId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -223,6 +247,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     getCount,
     getCountByCommuneId,
     getCountByDepartementId,
+    findAllLieuxDitsWithCommuneAndDepartementCode,
     createLieudit,
     createLieuxdits,
     updateLieudit,

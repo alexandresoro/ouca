@@ -1,15 +1,5 @@
 import { Prisma } from ".prisma/client";
-import { type ConditionalPick } from "type-fest";
-import { type SortOrder } from "../../graphql/generated/graphql-types";
 import { type LoggedUser } from "../../types/User";
-
-/**
- * @deprecated
- */
-type SortOptions = Partial<{
-  orderBy: string | null;
-  sortOrder: SortOrder | null;
-}>;
 
 type PaginationOptions = Partial<{
   pageNumber: number | null;
@@ -58,26 +48,6 @@ export const getSqlPagination = (
 /**
  * @deprecated
  */
-export const getPrismaSqlPagination = (paginationOptions: PaginationOptions | null | undefined): Prisma.Sql => {
-  if (!paginationOptions) {
-    return Prisma.empty;
-  }
-
-  const { pageNumber, pageSize } = paginationOptions;
-  return pageNumber != null && pageSize ? Prisma.sql`LIMIT ${pageSize} OFFSET ${pageNumber * pageSize}` : Prisma.empty;
-};
-
-/**
- * @deprecated
- */
-export const getSqlSorting = (sortOptions: SortOptions): Prisma.Sql => {
-  const { orderBy, sortOrder } = sortOptions;
-  return orderBy ? Prisma.raw(`ORDER BY ${orderBy} ${sortOrder ?? "asc"}`) : Prisma.empty;
-};
-
-/**
- * @deprecated
- */
 export const queryParametersToFindAllEntities = (
   attributeForOrdering?: string,
   order?: Prisma.SortOrder
@@ -90,26 +60,4 @@ export const queryParametersToFindAllEntities = (
     };
   }
   return {};
-};
-
-/**
- * @deprecated
- */
-export const transformQueryRawBigIntsToNumbers = <
-  T extends Record<string, unknown>,
-  U extends ConditionalPick<T, bigint>
->(
-  result: T
-): Omit<T, keyof U> & Record<keyof U, number> => {
-  return Object.entries(result).reduce((obj, [key, value]) => {
-    obj[key] = typeof value === "bigint" ? Number(value) : value;
-    return obj;
-  }, {} as Record<string, unknown>) as Omit<T, keyof U> & Record<keyof U, number>;
-};
-
-/**
- * @deprecated
- */
-export const transformQueryRawResultsBigIntsToNumbers = <T extends Record<string, unknown>>(results: T[]) => {
-  return results.map(transformQueryRawBigIntsToNumbers);
 };

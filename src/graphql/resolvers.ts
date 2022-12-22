@@ -1,5 +1,6 @@
 import { type Commune as CommuneEntity, type Espece as EspeceEntity } from "@prisma/client";
 import mercurius, { type IResolvers } from "mercurius";
+import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import {
   countSpecimensByAgeForEspeceId,
@@ -20,7 +21,6 @@ import {
   upsertInventaire,
   type InventaireWithRelations,
 } from "../services/entities/inventaire-service";
-import { type LieuDitWithCoordinatesAsNumber } from "../services/entities/lieu-dit-service";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -364,7 +364,7 @@ export const buildResolvers = ({
       },
       exportLieuxDits: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateLieuxDitsExport();
+        return generateLieuxDitsExport(lieuditService);
       },
       exportMeteos: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
@@ -503,7 +503,7 @@ export const buildResolvers = ({
           };
         }
       },
-      upsertLieuDit: async (_source, args, { user }): Promise<LieuDitWithCoordinatesAsNumber> => {
+      upsertLieuDit: async (_source, args, { user }): Promise<Lieudit> => {
         return lieuditService.upsertLieuDit(args, user);
       },
       upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
@@ -671,8 +671,7 @@ export const buildResolvers = ({
     },
     Inventaire: {
       lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
-        const lieuDit = await lieuditService.findLieuDitOfInventaireId(parent?.id);
-        return lieuditService.findLieuDit(lieuDit?.id, user);
+        return lieuditService.findLieuDitOfInventaireId(parent?.id, user);
       },
     },
     LieuDit: {

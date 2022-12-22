@@ -11,6 +11,7 @@ import { type Departement } from "../../repositories/departement/departement-rep
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
+import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
@@ -19,7 +20,6 @@ import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { createDonnee, findAllDonnees, type DonneeWithRelations } from "../entities/donnee-service";
 import { findAllInventaires, upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
-import { type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -27,7 +27,7 @@ export class ImportDonneeService extends ImportService {
   private observateurs!: Observateur[];
   private departements!: Departement[];
   private communes!: Commune[];
-  private lieuxDits!: LieuDitWithCoordinatesAsNumber[];
+  private lieuxDits!: Lieudit[];
   private especes!: Espece[];
   private ages!: Age[];
   private sexes!: Sexe[];
@@ -61,7 +61,7 @@ export class ImportDonneeService extends ImportService {
     this.observateurs = await this.services.observateurService.findAllObservateurs();
     this.departements = await this.services.departementService.findAllDepartements();
     this.communes = await this.services.communeService.findAllCommunes();
-    this.lieuxDits = await this.services.lieuditService.findAllLieuxDits(null);
+    this.lieuxDits = await this.services.lieuditService.findAllLieuxDits();
     this.meteos = await this.services.meteoService.findAllMeteos();
     this.especes = await this.services.especeService.findAllEspeces(null);
     this.sexes = await this.services.sexeService.findAllSexes();
@@ -377,7 +377,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findLieuDit = (communeId: number, nomLieuDit: string): LieuDitWithCoordinatesAsNumber | undefined => {
+  private findLieuDit = (communeId: number, nomLieuDit: string): Lieudit | undefined => {
     return this.lieuxDits.find((lieuDit) => {
       return lieuDit.communeId === communeId && this.compareStrings(lieuDit.nom, nomLieuDit);
     });

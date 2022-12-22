@@ -1,27 +1,19 @@
-import { Prisma, type Lieudit } from "@prisma/client";
 import { type Logger } from "pino";
-import {
-  type FindParams,
-  type MutationUpsertLieuDitArgs,
-  type QueryLieuxDitsArgs,
-} from "../../graphql/generated/graphql-types";
-import { type Commune } from "../../repositories/commune/commune-repository-types";
-import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { type MutationUpsertLieuDitArgs, type QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
-import prisma from "../../sql/prisma";
+import {
+  type Lieudit,
+  type LieuditCreateInput,
+  type LieuditWithCommuneAndDepartementCode,
+} from "../../repositories/lieudit/lieudit-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
-import { getFilterClauseCommune } from "./commune-service";
-import {
-  getPrismaPagination,
-  getPrismaSqlPagination,
-  getSqlSorting,
-  queryParametersToFindAllEntities,
-  transformQueryRawResultsBigIntsToNumbers,
-} from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
+import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape";
 
 type LieuditServiceDependencies = {
   logger: Logger;
@@ -30,11 +22,139 @@ type LieuditServiceDependencies = {
 };
 
 export const buildLieuditService = ({ lieuditRepository, donneeRepository }: LieuditServiceDependencies) => {
+  const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Lieudit | null> => {
+    validateAuthorization(loggedUser);
+
+    return lieuditRepository.findLieuditById(id);
+  };
+
+  const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return donneeRepository.getCountByLieuditId(id);
+  };
+
+  const findLieuDitOfInventaireId = async (
+    inventaireId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Lieudit | null> => {
+    validateAuthorization(loggedUser);
+
+    return lieuditRepository.findLieuditByInventaireId(inventaireId);
+  };
+
+  const findAllLieuxDits = async (): Promise<Lieudit[]> => {
+    const lieuxDits = await lieuditRepository.findLieuxdits({
+      orderBy: COLUMN_NOM,
+    });
+
+    return [...lieuxDits];
+  };
+
+  const findPaginatedLieuxDits = async (
+    loggedUser: LoggedUser | null,
+    options: QueryLieuxDitsArgs = {}
+  ): Promise<Lieudit[]> => {
+    validateAuthorization(loggedUser);
+
+    const { searchParams, orderBy: orderByField, sortOrder } = options;
+
+    const lieuxDits = await lieuditRepository.findLieuxdits({
+      q: searchParams?.q,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
+    });
+
+    return [...lieuxDits];
+  };
+
+  const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<LieuditWithCommuneAndDepartementCode[]> => {
+    const lieuxditsWithCommuneAndDepartementCode =
+      await lieuditRepository.findAllLieuxDitsWithCommuneAndDepartementCode();
+    return [...lieuxditsWithCommuneAndDepartementCode];
+  };
+
+  const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return lieuditRepository.getCount(q);
+  };
+
+  const upsertLieuDit = async (args: MutationUpsertLieuDitArgs, loggedUser: LoggedUser | null): Promise<Lieudit> => {
+    validateAuthorization(loggedUser);
+
+    const { id, data } = args;
+
+    let upsertedLieudit: Lieudit;
+
+    if (id) {
+      // Check that the user is allowed to modify the existing data
+      if (loggedUser?.role !== "admin") {
+        const existingData = await lieuditRepository.findLieuditById(id);
+
+        if (existingData?.ownerId !== loggedUser?.id) {
+          throw new OucaError("OUCA0001");
+        }
+      }
+
+      try {
+        upsertedLieudit = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(data));
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    } else {
+      try {
+        upsertedLieudit = await lieuditRepository.createLieudit({
+          ...reshapeInputLieuditUpsertData(data),
+          owner_id: loggedUser.id,
+        });
+      } catch (e) {
+        if (e instanceof UniqueIntegrityConstraintViolationError) {
+          throw new OucaError("OUCA0004", e);
+        }
+        throw e;
+      }
+    }
+
+    return upsertedLieudit;
+  };
+
+  const deleteLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Lieudit> => {
+    validateAuthorization(loggedUser);
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await lieuditRepository.findLieuditById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    return lieuditRepository.deleteLieuditById(id);
+  };
+
+  const createLieuxDits = async (
+    lieuxdits: Omit<LieuditCreateInput, "owner_id">[],
+    loggedUser: LoggedUser
+  ): Promise<readonly Lieudit[]> => {
+    return lieuditRepository.createLieuxdits(
+      lieuxdits.map((lieudit) => {
+        return { ...lieudit, owner_id: loggedUser.id };
+      })
+    );
+  };
+
   return {
     findLieuDit,
     getDonneesCountByLieuDit,
     findLieuDitOfInventaireId,
-    findAllLieuxDits: findLieuxDits,
+    findAllLieuxDits,
+    findAllLieuxDitsWithCommuneAndDepartement,
     findPaginatedLieuxDits,
     getLieuxDitsCount,
     upsertLieuDit,
@@ -44,354 +164,3 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
 };
 
 export type LieuditService = ReturnType<typeof buildLieuditService>;
-
-export type LieuDitWithCoordinatesAsNumber<T extends Lieudit = Lieudit> = Omit<T, "latitude" | "longitude"> & {
-  latitude: number;
-  longitude: number;
-};
-
-const buildLieuditFromLieuditDb = <T extends Lieudit>(lieuditDb: T): LieuDitWithCoordinatesAsNumber<T> => {
-  const { latitude, longitude, ...others } = lieuditDb;
-
-  return {
-    ...others,
-    longitude: longitude.toNumber(),
-    latitude: latitude.toNumber(),
-  };
-};
-
-const findLieuDit = async (
-  id: number | undefined,
-  loggedUser: LoggedUser | null
-): Promise<LieuDitWithCoordinatesAsNumber | null> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.lieudit
-    .findUnique({
-      where: {
-        id,
-      },
-    })
-    .then((lieudit) => (lieudit ? buildLieuditFromLieuditDb(lieudit) : null));
-};
-
-const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.donnee.count({
-    where: {
-      inventaire: {
-        lieuDitId: id,
-      },
-    },
-  });
-};
-
-const findLieuDitOfInventaireId = async (
-  inventaireId: number | undefined,
-  loggedUser: LoggedUser | null = null
-): Promise<Lieudit | null> => {
-  return prisma.inventaire
-    .findUnique({
-      where: {
-        id: inventaireId,
-      },
-    })
-    .lieuDit();
-};
-
-const findLieuxDits = async (
-  loggedUser: LoggedUser | null,
-  options: {
-    params?: FindParams | null;
-    communeId?: number | null;
-    departementId?: number | null;
-  } = {}
-): Promise<Omit<LieuDitWithCoordinatesAsNumber, "commune">[]> => {
-  validateAuthorization(loggedUser);
-
-  const { params, communeId, departementId } = options;
-  const { q, max } = params ?? {};
-
-  const whereClause = {
-    AND: [
-      {
-        nom: {
-          contains: q || undefined,
-        },
-      },
-      departementId
-        ? {
-            commune: {
-              departementId: {
-                equals: departementId,
-              },
-            },
-          }
-        : {},
-      communeId
-        ? {
-            communeId: {
-              equals: communeId,
-            },
-          }
-        : {},
-    ],
-  };
-
-  return prisma.lieudit
-    .findMany({
-      ...queryParametersToFindAllEntities(COLUMN_NOM),
-      where: whereClause,
-      take: max || undefined,
-    })
-    .then((lieuxDits) => lieuxDits.map(buildLieuditFromLieuditDb));
-};
-
-const getFilterClause = (q: string | null | undefined): Prisma.LieuditWhereInput => {
-  return q != null && q.length
-    ? {
-        OR: [
-          {
-            nom: {
-              contains: q,
-            },
-          },
-          {
-            commune: getFilterClauseCommune(q),
-          },
-        ],
-      }
-    : {};
-};
-
-export const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<
-  (LieuDitWithCoordinatesAsNumber & { commune: Commune & { departement: Departement } })[]
-> => {
-  const lieuxDitsDb = await prisma.lieudit.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    include: {
-      commune: {
-        include: {
-          departement: true,
-        },
-      },
-    },
-  });
-
-  return lieuxDitsDb.map(buildLieuditFromLieuditDb);
-};
-
-const findPaginatedLieuxDits = async (
-  loggedUser: LoggedUser | null,
-  options: Partial<QueryLieuxDitsArgs> = {}
-): Promise<LieuDitWithCoordinatesAsNumber<Lieudit>[]> => {
-  validateAuthorization(loggedUser);
-
-  const { searchParams, orderBy: orderByField, sortOrder } = options;
-
-  let lieuxDitsEntities: LieuDitWithCoordinatesAsNumber<Lieudit>[];
-
-  if (orderByField === "nbDonnees") {
-    const queryExpression = searchParams?.q ? `%${searchParams.q}%` : null;
-    const filterRequest = queryExpression
-      ? Prisma.sql`
-    WHERE
-      l.nom LIKE ${queryExpression}
-    OR
-      c.nom LIKE ${queryExpression}
-    OR
-      dpt.code LIKE ${queryExpression}
-    `
-      : Prisma.empty;
-
-    const donneesPerLieuDitRequest = Prisma.sql`
-    SELECT 
-      l.id, l.owner_id as ownerId, count(d.id) as nbDonnees
-    FROM 
-      donnee d 
-    RIGHT JOIN 
-      inventaire i
-    ON 
-      d.inventaire_id = i.id 
-    RIGHT JOIN
-      lieudit l
-    ON
-      i.lieudit_id = l.id
-    RIGHT JOIN
-      commune c
-    ON
-      l.commune_id = c.id
-    RIGHT JOIN
-      departement dpt
-    ON
-      c.departement_id = dpt.id
-    ${filterRequest}
-    GROUP BY 
-      l.id
-    `;
-
-    const nbDonneesForFilteredLieuxDits = await prisma.$queryRaw<
-      { id: number; nbDonnees: bigint }[]
-    >`${donneesPerLieuDitRequest} ${getSqlSorting(options)} ${getPrismaSqlPagination(searchParams)}`.then(
-      transformQueryRawResultsBigIntsToNumbers
-    );
-
-    const lieuxDitsRq = await prisma.lieudit.findMany({
-      where: {
-        id: {
-          in: nbDonneesForFilteredLieuxDits.map((lieuditInfo) => lieuditInfo.id), // /!\ The IN clause could break if not paginated enough
-        },
-      },
-    });
-
-    lieuxDitsEntities = nbDonneesForFilteredLieuxDits.map((lieuditInfo) => {
-      const lieudit = lieuxDitsRq?.find((lieudit) => lieudit.id === lieuditInfo.id);
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return buildLieuditFromLieuditDb(lieudit!);
-    });
-  } else {
-    let orderBy: Prisma.Enumerable<Prisma.LieuditOrderByWithRelationInput> | undefined = undefined;
-    if (sortOrder) {
-      switch (orderByField) {
-        case "id":
-        case "nom":
-        case "altitude":
-        case "longitude":
-        case "latitude":
-          orderBy = {
-            [orderByField]: sortOrder,
-          };
-          break;
-        case "codeCommune":
-          orderBy = {
-            commune: {
-              code: sortOrder,
-            },
-          };
-          break;
-        case "nomCommune":
-          orderBy = {
-            commune: {
-              nom: sortOrder,
-            },
-          };
-          break;
-        case "departement":
-          orderBy = {
-            commune: {
-              departement: {
-                code: sortOrder,
-              },
-            },
-          };
-          break;
-        default:
-          orderBy = {};
-      }
-    }
-
-    const lieuxDitsRq = await prisma.lieudit.findMany({
-      ...getPrismaPagination(searchParams),
-      orderBy,
-      where: getFilterClause(searchParams?.q),
-    });
-
-    lieuxDitsEntities = lieuxDitsRq.map(buildLieuditFromLieuditDb);
-  }
-
-  return lieuxDitsEntities;
-};
-
-const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.lieudit.count({
-    where: getFilterClause(q),
-  });
-};
-
-const upsertLieuDit = async (
-  args: MutationUpsertLieuDitArgs,
-  loggedUser: LoggedUser | null
-): Promise<LieuDitWithCoordinatesAsNumber> => {
-  validateAuthorization(loggedUser);
-
-  const { id, data } = args;
-
-  let upsertedLieuDit: LieuDitWithCoordinatesAsNumber;
-
-  if (id) {
-    // Check that the user is allowed to modify the existing data
-    if (loggedUser?.role !== "admin") {
-      const existingData = await prisma.lieudit.findFirst({
-        where: { id },
-      });
-
-      if (existingData?.ownerId !== loggedUser?.id) {
-        throw new OucaError("OUCA0001");
-      }
-    }
-
-    try {
-      upsertedLieuDit = await prisma.lieudit
-        .update({
-          where: { id },
-          data,
-        })
-        .then(buildLieuditFromLieuditDb);
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  } else {
-    try {
-      upsertedLieuDit = await prisma.lieudit
-        .create({ data: { ...data, ownerId: loggedUser?.id } })
-        .then(buildLieuditFromLieuditDb);
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-        throw new OucaError("OUCA0004", e);
-      }
-      throw e;
-    }
-  }
-
-  return upsertedLieuDit;
-};
-
-const deleteLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<LieuDitWithCoordinatesAsNumber> => {
-  validateAuthorization(loggedUser);
-
-  // Check that the user is allowed to modify the existing data
-  if (loggedUser?.role !== "admin") {
-    const existingData = await prisma.lieudit.findFirst({
-      where: { id },
-    });
-
-    if (existingData?.ownerId !== loggedUser?.id) {
-      throw new OucaError("OUCA0001");
-    }
-  }
-
-  return prisma.lieudit
-    .delete({
-      where: {
-        id,
-      },
-    })
-    .then(buildLieuditFromLieuditDb);
-};
-
-const createLieuxDits = async (
-  lieuxDits: Omit<Prisma.LieuditCreateManyInput, "ownerId">[],
-  loggedUser: LoggedUser
-): Promise<Prisma.BatchPayload> => {
-  return prisma.lieudit.createMany({
-    data: lieuxDits.map((lieuDit) => {
-      return { ...lieuDit, ownerId: loggedUser.id };
-    }),
-  });
-};

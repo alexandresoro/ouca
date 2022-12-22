@@ -15,7 +15,7 @@ import { findDonneesByCriteria, type DonneeWithRelations } from "./entities/donn
 import { type EspeceService } from "./entities/espece-service";
 import { type EstimationDistanceService } from "./entities/estimation-distance-service";
 import { type EstimationNombreService } from "./entities/estimation-nombre-service";
-import { findAllLieuxDitsWithCommuneAndDepartement } from "./entities/lieu-dit-service";
+import { type LieuditService } from "./entities/lieu-dit-service";
 import { type MeteoService } from "./entities/meteo-service";
 import { type MilieuService } from "./entities/milieu-service";
 import { type ObservateurService } from "./entities/observateur-service";
@@ -214,14 +214,14 @@ export const generateEstimationsNombreExport = async (
   return fileName;
 };
 
-export const generateLieuxDitsExport = async (): Promise<string> => {
-  const lieuxDits = await findAllLieuxDitsWithCommuneAndDepartement();
+export const generateLieuxDitsExport = async (lieuditService: LieuditService): Promise<string> => {
+  const lieuxDits = await lieuditService.findAllLieuxDitsWithCommuneAndDepartement();
 
   const objectsToExport = lieuxDits.map((lieudit) => {
     return {
-      Département: lieudit.commune.departement.code,
-      "Code commune": lieudit.commune.code,
-      "Nom commune": lieudit.commune.nom,
+      Département: lieudit.departementCode,
+      "Code commune": lieudit.communeCode,
+      "Nom commune": lieudit.communeNom,
       "Lieu-dit": lieudit.nom,
       Latitude: lieudit.latitude,
       Longitude: lieudit.longitude,

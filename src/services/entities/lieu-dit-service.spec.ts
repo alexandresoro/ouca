@@ -1,4 +1,3 @@
-import { Prisma, type Inventaire, type Lieudit } from "@prisma/client";
 import { mock, mockDeep } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
@@ -10,12 +9,12 @@ import {
 } from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
-import { prismaMock } from "../../sql/prisma-mock";
+import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_NOM } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { queryParametersToFindAllEntities } from "./entities-utils";
 import { buildLieuditService } from "./lieu-dit-service";
+import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape";
 
 const lieuditRepository = mock<LieuditRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
@@ -36,53 +35,42 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-const prismaConstraintFailedError = {
-  code: "P2002",
-  message: "Prisma error message",
-};
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+jest.mock<typeof import("./lieu-dit-service-reshape")>("./lieu-dit-service-reshape", () => {
+  return {
+    __esModule: true,
+    reshapeInputLieuditUpsertData: jest.fn(),
+  };
+});
 
-const prismaConstraintFailed = () => {
-  throw new Prisma.PrismaClientKnownRequestError(
-    prismaConstraintFailedError.message,
-    prismaConstraintFailedError.code,
-    ""
-  );
-};
+const mockedReshapeInputLieuditUpsertData = jest.mocked(reshapeInputLieuditUpsertData);
 
 describe("Find locality", () => {
   test("should handle a matching locality", async () => {
     const localityData = mockDeep<Lieudit>();
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.lieudit.findUnique.mockResolvedValueOnce(localityData);
+    lieuditRepository.findLieuditById.mockResolvedValueOnce(localityData);
 
     await lieuditService.findLieuDit(localityData.id, loggedUser);
 
-    expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: localityData.id,
-      },
-    });
+    expect(lieuditRepository.findLieuditById).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.findLieuditById).toHaveBeenLastCalledWith(localityData.id);
   });
 
   test("should handle locality not found", async () => {
-    prismaMock.lieudit.findUnique.mockResolvedValueOnce(null);
+    lieuditRepository.findLieuditById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
 
     await expect(lieuditService.findLieuDit(10, loggedUser)).resolves.toBe(null);
 
-    expect(prismaMock.lieudit.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 10,
-      },
-    });
+    expect(lieuditRepository.findLieuditById).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.findLieuditById).toHaveBeenLastCalledWith(10);
   });
 
   test("should throw an error when the no login details are provided", async () => {
     await expect(lieuditService.findLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.lieudit.findUnique).not.toHaveBeenCalled();
+    expect(lieuditRepository.findLieuditById).not.toHaveBeenCalled();
   });
 });
 
@@ -92,14 +80,8 @@ describe("Data count per entity", () => {
 
     await lieuditService.getDonneesCountByLieuDit(12, loggedUser);
 
-    expect(prismaMock.donnee.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.donnee.count).toHaveBeenLastCalledWith<[Prisma.DonneeCountArgs]>({
-      where: {
-        inventaire: {
-          lieuDitId: 12,
-        },
-      },
-    });
+    expect(donneeRepository.getCountByLieuditId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCountByLieuditId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -112,64 +94,32 @@ describe("Find locality by inventary ID", () => {
     const localityData = mock<Lieudit>({
       id: 256,
     });
+    const loggedUser = mock<LoggedUser>();
 
-    const inventary = mockDeep<Prisma.Prisma__InventaireClient<Inventaire>>();
-    inventary.lieuDit.mockResolvedValueOnce(localityData);
+    lieuditRepository.findLieuditByInventaireId.mockResolvedValueOnce(localityData);
 
-    prismaMock.inventaire.findUnique.mockReturnValueOnce(inventary);
+    const locality = await lieuditService.findLieuDitOfInventaireId(43, loggedUser);
 
-    const locality = await lieuditService.findLieuDitOfInventaireId(43);
-
-    expect(prismaMock.inventaire.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.inventaire.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 43,
-      },
-    });
+    expect(lieuditRepository.findLieuditByInventaireId).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.findLieuditByInventaireId).toHaveBeenLastCalledWith(43);
     expect(locality?.id).toEqual(256);
   });
 
-  test("should handle locality not found", async () => {
-    const inventary = mockDeep<Prisma.Prisma__InventaireClient<Inventaire>>();
-    inventary.lieuDit.mockResolvedValueOnce(null as unknown as Lieudit);
-
-    prismaMock.inventaire.findUnique.mockReturnValueOnce(inventary);
-
-    const locality = await lieuditService.findLieuDitOfInventaireId(43);
-
-    expect(prismaMock.inventaire.findUnique).toHaveBeenCalledTimes(1);
-    expect(prismaMock.inventaire.findUnique).toHaveBeenLastCalledWith({
-      where: {
-        id: 43,
-      },
-    });
-    expect(locality).toBeNull();
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(lieuditService.findLieuDitOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 test("Find all localities", async () => {
   const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
-  const loggedUser = mock<LoggedUser>();
 
-  prismaMock.lieudit.findMany.mockResolvedValueOnce(localitiesData);
+  lieuditRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
 
-  await lieuditService.findAllLieuxDits(loggedUser);
+  await lieuditService.findAllLieuxDits();
 
-  expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
-    ...queryParametersToFindAllEntities(COLUMN_NOM),
-    where: {
-      AND: [
-        {
-          nom: {
-            contains: undefined,
-          },
-        },
-        {},
-        {},
-      ],
-    },
-    take: undefined,
+  expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
+  expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_NOM,
   });
 });
 
@@ -178,16 +128,12 @@ describe("Entities paginated find by search criteria", () => {
     const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.lieudit.findMany.mockResolvedValueOnce(localitiesData);
+    lieuditRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
 
     await lieuditService.findPaginatedLieuxDits(loggedUser);
 
-    expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_NOM),
-      orderBy: undefined,
-      where: {},
-    });
+    expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated localities ", async () => {
@@ -204,46 +150,17 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.lieudit.findMany.mockResolvedValueOnce([localitiesData[0]]);
+    lieuditRepository.findLieuxdits.mockResolvedValueOnce([localitiesData[0]]);
 
     await lieuditService.findPaginatedLieuxDits(loggedUser, searchParams);
 
-    expect(prismaMock.lieudit.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_NOM),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        OR: [
-          {
-            nom: {
-              contains: searchParams.searchParams?.q,
-            },
-          },
-          {
-            commune: {
-              OR: [
-                {
-                  nom: {
-                    contains: searchParams.searchParams?.q,
-                  },
-                },
-                {
-                  departement: {
-                    code: {
-                      contains: searchParams.searchParams?.q,
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
+    expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_NOM,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
@@ -258,10 +175,8 @@ describe("Entities count by search criteria", () => {
 
     await lieuditService.getLieuxDitsCount(loggedUser);
 
-    expect(prismaMock.lieudit.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.count).toHaveBeenLastCalledWith({
-      where: {},
-    });
+    expect(lieuditRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -269,36 +184,8 @@ describe("Entities count by search criteria", () => {
 
     await lieuditService.getLieuxDitsCount(loggedUser, "test");
 
-    expect(prismaMock.lieudit.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.count).toHaveBeenLastCalledWith({
-      where: {
-        OR: [
-          {
-            nom: {
-              contains: "test",
-            },
-          },
-          {
-            commune: {
-              OR: [
-                {
-                  nom: {
-                    contains: "test",
-                  },
-                },
-                {
-                  departement: {
-                    code: {
-                      contains: "test",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    });
+    expect(lieuditRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.getCount).toHaveBeenLastCalledWith("test");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -310,18 +197,17 @@ describe("Update of a locality", () => {
   test("should be allowed when requested by an admin", async () => {
     const localityData = mock<MutationUpsertLieuDitArgs>();
 
+    const reshapedInputData = mock<LieuditCreateInput>();
+    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ role: "admin" });
-    prismaMock.lieudit.update.mockResolvedValueOnce(mockDeep<Lieudit>());
+    lieuditRepository.updateLieudit.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await lieuditService.upsertLieuDit(localityData, loggedUser);
 
-    expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
-      data: localityData.data,
-      where: {
-        id: localityData.id,
-      },
-    });
+    expect(lieuditRepository.updateLieudit).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.updateLieudit).toHaveBeenLastCalledWith(localityData.id, reshapedInputData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -331,20 +217,18 @@ describe("Update of a locality", () => {
 
     const localityData = mock<MutationUpsertLieuDitArgs>();
 
+    const reshapedInputData = mock<LieuditCreateInput>();
+    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
-    prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
-    prismaMock.lieudit.update.mockResolvedValueOnce(mockDeep<Lieudit>());
+    lieuditRepository.findLieuditById.mockResolvedValueOnce(existingData);
 
     await lieuditService.upsertLieuDit(localityData, loggedUser);
 
-    expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
-      data: localityData.data,
-      where: {
-        id: localityData.id,
-      },
-    });
+    expect(lieuditRepository.updateLieudit).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.updateLieudit).toHaveBeenLastCalledWith(localityData.id, reshapedInputData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -359,11 +243,11 @@ describe("Update of a locality", () => {
       role: "contributor",
     } as const;
 
-    prismaMock.lieudit.findFirst.mockResolvedValueOnce(existingData);
+    lieuditRepository.findLieuditById.mockResolvedValueOnce(existingData);
 
     await expect(lieuditService.upsertLieuDit(localityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
-    expect(prismaMock.lieudit.update).not.toHaveBeenCalled();
+    expect(lieuditRepository.updateLieudit).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a locality that exists", async () => {
@@ -371,21 +255,20 @@ describe("Update of a locality", () => {
       id: 12,
     });
 
+    const reshapedInputData = mock<LieuditCreateInput>();
+    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    prismaMock.lieudit.update.mockImplementation(prismaConstraintFailed);
+    lieuditRepository.updateLieudit.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => lieuditService.upsertLieuDit(localityData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.lieudit.update).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.update).toHaveBeenLastCalledWith({
-      data: localityData.data,
-      where: {
-        id: localityData.id,
-      },
-    });
+    expect(lieuditRepository.updateLieudit).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.updateLieudit).toHaveBeenLastCalledWith(localityData.id, reshapedInputData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -394,7 +277,7 @@ describe("Update of a locality", () => {
     });
 
     await expect(lieuditService.upsertLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.lieudit.update).not.toHaveBeenCalled();
+    expect(lieuditRepository.updateLieudit).not.toHaveBeenCalled();
   });
 });
 
@@ -404,18 +287,20 @@ describe("Creation of a locality", () => {
       id: undefined,
     });
 
+    const reshapedInputData = mock<LieuditCreateInput>();
+    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.lieudit.create.mockResolvedValueOnce(mockDeep<Lieudit>());
+    lieuditRepository.createLieudit.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await lieuditService.upsertLieuDit(localityData, loggedUser);
 
-    expect(prismaMock.lieudit.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.create).toHaveBeenLastCalledWith({
-      data: {
-        ...localityData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(lieuditRepository.createLieudit).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.createLieudit).toHaveBeenLastCalledWith({
+      ...reshapedInputData,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -424,20 +309,22 @@ describe("Creation of a locality", () => {
       id: undefined,
     });
 
+    const reshapedInputData = mock<LieuditCreateInput>();
+    mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
+
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    prismaMock.lieudit.create.mockImplementation(prismaConstraintFailed);
+    lieuditRepository.createLieudit.mockImplementation(uniqueConstraintFailed);
 
     await expect(() => lieuditService.upsertLieuDit(localityData, loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0004", prismaConstraintFailedError)
+      new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
-    expect(prismaMock.lieudit.create).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.create).toHaveBeenLastCalledWith({
-      data: {
-        ...localityData.data,
-        ownerId: loggedUser.id,
-      },
+    expect(lieuditRepository.createLieudit).toHaveBeenCalledTimes(1);
+    expect(mockedReshapeInputLieuditUpsertData).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.createLieudit).toHaveBeenLastCalledWith({
+      ...reshapedInputData,
+      owner_id: loggedUser.id,
     });
   });
 
@@ -447,7 +334,7 @@ describe("Creation of a locality", () => {
     });
 
     await expect(lieuditService.upsertLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.lieudit.create).not.toHaveBeenCalled();
+    expect(lieuditRepository.createLieudit).not.toHaveBeenCalled();
   });
 });
 
@@ -462,17 +349,13 @@ describe("Deletion of a locality", () => {
       ownerId: loggedUser.id,
     });
 
-    prismaMock.lieudit.findFirst.mockResolvedValueOnce(locality);
-    prismaMock.lieudit.delete.mockResolvedValueOnce(mockDeep<Lieudit>());
+    lieuditRepository.findLieuditById.mockResolvedValueOnce(locality);
+    lieuditRepository.deleteLieuditById.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await lieuditService.deleteLieuDit(11, loggedUser);
 
-    expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(lieuditRepository.deleteLieuditById).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.deleteLieuditById).toHaveBeenLastCalledWith(11);
   });
 
   test("should handle the deletion of any locality if admin", async () => {
@@ -480,17 +363,13 @@ describe("Deletion of a locality", () => {
       role: "admin",
     });
 
-    prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
-    prismaMock.lieudit.delete.mockResolvedValueOnce(mockDeep<Lieudit>());
+    lieuditRepository.findLieuditById.mockResolvedValueOnce(mock<Lieudit>());
+    lieuditRepository.deleteLieuditById.mockResolvedValueOnce(mockDeep<Lieudit>());
 
     await lieuditService.deleteLieuDit(11, loggedUser);
 
-    expect(prismaMock.lieudit.delete).toHaveBeenCalledTimes(1);
-    expect(prismaMock.lieudit.delete).toHaveBeenLastCalledWith({
-      where: {
-        id: 11,
-      },
-    });
+    expect(lieuditRepository.deleteLieuditById).toHaveBeenCalledTimes(1);
+    expect(lieuditRepository.deleteLieuditById).toHaveBeenLastCalledWith(11);
   });
 
   test("should return an error when deleting a non-owned locality as non-admin", async () => {
@@ -498,37 +377,37 @@ describe("Deletion of a locality", () => {
       role: "contributor",
     });
 
-    prismaMock.lieudit.findFirst.mockResolvedValueOnce(mock<Lieudit>());
+    lieuditRepository.findLieuditById.mockResolvedValueOnce(mock<Lieudit>());
 
     await expect(lieuditService.deleteLieuDit(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
 
-    expect(prismaMock.lieudit.delete).not.toHaveBeenCalled();
+    expect(lieuditRepository.deleteLieuditById).not.toHaveBeenCalled();
   });
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(lieuditService.deleteLieuDit(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(prismaMock.lieudit.delete).not.toHaveBeenCalled();
+    expect(lieuditRepository.deleteLieuditById).not.toHaveBeenCalled();
   });
 });
 
 test("Create multiple localities", async () => {
   const lieuDitsData = [
-    mock<Omit<Prisma.LieuditCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.LieuditCreateManyInput, "ownerId">>(),
-    mock<Omit<Prisma.LieuditCreateManyInput, "ownerId">>(),
+    mock<Omit<LieuditCreateInput, "owner_id">>(),
+    mock<Omit<LieuditCreateInput, "owner_id">>(),
+    mock<Omit<LieuditCreateInput, "owner_id">>(),
   ];
 
   const loggedUser = mock<LoggedUser>();
 
   await lieuditService.createLieuxDits(lieuDitsData, loggedUser);
 
-  expect(prismaMock.lieudit.createMany).toHaveBeenCalledTimes(1);
-  expect(prismaMock.lieudit.createMany).toHaveBeenLastCalledWith({
-    data: lieuDitsData.map((lieuDit) => {
+  expect(lieuditRepository.createLieuxdits).toHaveBeenCalledTimes(1);
+  expect(lieuditRepository.createLieuxdits).toHaveBeenLastCalledWith(
+    lieuDitsData.map((lieuDit) => {
       return {
         ...lieuDit,
-        ownerId: loggedUser.id,
+        owner_id: loggedUser.id,
       };
-    }),
-  });
+    })
+  );
 });

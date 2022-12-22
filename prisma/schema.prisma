@@ -187,7 +187,6 @@ model Lieudit {
   coordinatesSystem CoordinatesSystem @map("coordinates_system")
   ownerId           String?           @map("owner_id")
   commune           Commune           @relation(fields: [communeId], references: [id], map: "fk_lieudit_commune_id")
-  owner             User?             @relation(fields: [ownerId], references: [id], map: "fk_lieudit_owner_id")
   inventaire        Inventaire[]
 
   @@unique([communeId, nom])
@@ -236,7 +235,6 @@ model User {
   id         String       @id @default(uuid())
   Espece     Espece[]
   Inventaire Inventaire[]
-  Lieudit    Lieudit[]
 
   @@map("user")
 }

@@ -18,6 +18,14 @@ export const lieuditSchema = z.object({
 
 export type Lieudit = z.infer<typeof lieuditSchema>;
 
+export const lieuditWithCommuneAndDepartementCodeSchema = lieuditSchema.extend({
+  communeCode: z.number(),
+  communeNom: z.string(),
+  departementCode: z.string(),
+});
+
+export type LieuditWithCommuneAndDepartementCode = z.infer<typeof lieuditWithCommuneAndDepartementCodeSchema>;
+
 export type LieuditFindManyInput = Partial<{
   q: string | null;
   orderBy:

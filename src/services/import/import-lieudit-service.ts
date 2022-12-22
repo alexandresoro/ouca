@@ -1,4 +1,3 @@
-import { type Lieudit } from "@prisma/client";
 import { COORDINATES_SYSTEMS_CONFIG } from "../../model/coordinates-system/coordinates-system-list.object";
 import {
   type CoordinatesSystem,
@@ -7,16 +6,16 @@ import {
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types";
 import { type LoggedUser } from "../../types/User";
-import { type LieuDitWithCoordinatesAsNumber } from "../entities/lieu-dit-service";
 import { ImportService } from "./import-service";
 
 export class ImportLieuxditService extends ImportService {
   private departements!: Departement[];
   private communes!: Commune[];
-  private lieuxDits!: (Omit<Lieudit, "id" | "ownerId"> | LieuDitWithCoordinatesAsNumber)[];
+  private lieuxDits!: (Lieudit | ImportedLieuDit)[];
 
-  private lieuxDitsToInsert!: Omit<Lieudit, "id" | "ownerId">[];
+  private lieuxDitsToInsert!: Omit<LieuditCreateInput, "owner_id">[];
   private coordinatesSystem!: CoordinatesSystem;
 
   protected getNumberOfColumns = (): number => {
@@ -30,7 +29,7 @@ export class ImportLieuxditService extends ImportService {
     [this.departements, this.communes, this.lieuxDits, coordinatesSystemType] = await Promise.all([
       this.services.departementService.findAllDepartements(),
       this.services.communeService.findAllCommunes(),
-      this.services.lieuditService.findAllLieuxDits(null),
+      this.services.lieuditService.findAllLieuxDits(),
       this.services.settingsService.findCoordinatesSystem(loggedUser),
     ]);
 
@@ -73,7 +72,10 @@ export class ImportLieuxditService extends ImportService {
 
     // Check that the lieu-dit does not exist yet
     const lieudit = this.lieuxDits.find((lieuDit) => {
-      return lieuDit.communeId === commune.id && this.compareStrings(lieuDit.nom, importedLieuDit.nom);
+      return (
+        ((lieuDit as Lieudit)?.communeId === commune.id || (lieuDit as ImportedLieuDit)?.commune === commune.nom) &&
+        this.compareStrings(lieuDit.nom, importedLieuDit.nom)
+      );
     });
     if (lieudit) {
       return "Il existe déjà un lieu-dit avec ce nom dans cette commune";
@@ -82,7 +84,7 @@ export class ImportLieuxditService extends ImportService {
     const lieuditToSave = importedLieuDit.buildLieudit(commune.id);
 
     this.lieuxDitsToInsert.push(lieuditToSave);
-    this.lieuxDits.push(lieuditToSave);
+    this.lieuxDits.push(importedLieuDit);
 
     return null;
   };
