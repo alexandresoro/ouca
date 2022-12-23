@@ -673,6 +673,9 @@ export const buildResolvers = ({
       observateur: async (parent, args, { user }): Promise<Observateur | null> => {
         return observateurService.findObservateurOfInventaireId(parent?.id, user);
       },
+      associes: async (parent, args, { user }): Promise<Observateur[]> => {
+        return observateurService.findAssociesOfInventaireId(parent?.id, user);
+      },
       lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
         return lieuditService.findLieuDitOfInventaireId(parent?.id, user);
       },

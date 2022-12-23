@@ -44,6 +44,17 @@ export const buildObservateurService = ({
     return observateurRepository.findObservateurByInventaireId(inventaireId);
   };
 
+  const findAssociesOfInventaireId = async (
+    inventaireId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Observateur[]> => {
+    validateAuthorization(loggedUser);
+
+    const associes = await observateurRepository.findAssociesOfInventaireId(inventaireId);
+
+    return [...associes];
+  };
+
   const findAllObservateurs = async (): Promise<Observateur[]> => {
     const observateurs = await observateurRepository.findObservateurs({
       orderBy: COLUMN_LIBELLE,
@@ -153,6 +164,7 @@ export const buildObservateurService = ({
     findObservateur,
     getDonneesCountByObservateur,
     findObservateurOfInventaireId,
+    findAssociesOfInventaireId,
     findAllObservateurs,
     findPaginatedObservateurs,
     getObservateursCount,

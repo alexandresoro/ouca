@@ -102,6 +102,25 @@ describe("Find observer by inventary ID", () => {
   });
 });
 
+describe("Find associates by inventary ID", () => {
+  test("should handle observer found", async () => {
+    const associatesData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
+    const loggedUser = mock<LoggedUser>();
+
+    observateurRepository.findAssociesOfInventaireId.mockResolvedValueOnce(associatesData);
+
+    const associates = await observateurService.findAssociesOfInventaireId(43, loggedUser);
+
+    expect(observateurRepository.findAssociesOfInventaireId).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.findAssociesOfInventaireId).toHaveBeenLastCalledWith(43);
+    expect(associates).toEqual(associatesData);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(observateurService.findAssociesOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
 test("Find all observers", async () => {
   const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
 
