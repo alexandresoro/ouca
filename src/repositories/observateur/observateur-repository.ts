@@ -32,6 +32,24 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
     return slonik.maybeOne(query);
   };
 
+  const findObservateurByInventaireId = async (inventaireId: number | undefined): Promise<Observateur | null> => {
+    if (!inventaireId) {
+      return null;
+    }
+
+    const query = sql.type(observateurSchema)`
+      SELECT 
+        observateur.*
+      FROM
+        basenaturaliste.observateur
+      LEFT JOIN basenaturaliste.inventaire ON observateur.id = inventaire.observateur_id
+      WHERE
+        inventaire.id = ${inventaireId}
+    `;
+
+    return slonik.maybeOne(query);
+  };
+
   const findObservateurs = async ({ orderBy, sortOrder, q, offset, limit }: ObservateurFindManyInput = {}): Promise<
     readonly Observateur[]
   > => {
@@ -148,6 +166,7 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
 
   return {
     findObservateurById,
+    findObservateurByInventaireId,
     findObservateurs,
     getCount,
     createObservateur,

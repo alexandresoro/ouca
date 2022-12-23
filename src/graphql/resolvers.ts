@@ -670,6 +670,9 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(estimationNombreService.getDonneesCountByEstimationNombre),
     },
     Inventaire: {
+      observateur: async (parent, args, { user }): Promise<Observateur | null> => {
+        return observateurService.findObservateurOfInventaireId(parent?.id, user);
+      },
       lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
         return lieuditService.findLieuDitOfInventaireId(parent?.id, user);
       },

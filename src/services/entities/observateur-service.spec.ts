@@ -81,6 +81,27 @@ describe("Data count per entity", () => {
   });
 });
 
+describe("Find observer by inventary ID", () => {
+  test("should handle observer found", async () => {
+    const observerData = mock<Observateur>({
+      id: 256,
+    });
+    const loggedUser = mock<LoggedUser>();
+
+    observateurRepository.findObservateurByInventaireId.mockResolvedValueOnce(observerData);
+
+    const observer = await observateurService.findObservateurOfInventaireId(43, loggedUser);
+
+    expect(observateurRepository.findObservateurByInventaireId).toHaveBeenCalledTimes(1);
+    expect(observateurRepository.findObservateurByInventaireId).toHaveBeenLastCalledWith(43);
+    expect(observer?.id).toEqual(256);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(observateurService.findObservateurOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
 test("Find all observers", async () => {
   const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
 
