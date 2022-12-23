@@ -40,9 +40,16 @@ export const buildInventaireService = ({ inventaireRepository }: InventaireServi
     return inventaireRepository.findInventaireByDonneeId(donneeId);
   };
 
+  const findAllInventaires = async (): Promise<Inventaire[]> => {
+    const inventaires = await inventaireRepository.findInventaires();
+
+    return [...inventaires];
+  };
+
   return {
     findInventaire,
     findInventaireOfDonneeId,
+    findAllInventaires,
   };
 };
 
@@ -195,16 +202,6 @@ export const findExistingInventaire = async (inventaire: InputInventaire): Promi
       return areAssociesSameLength && areMeteosSameLength;
     })?.[0] ?? null
   );
-};
-
-export const findAllInventaires = async (): Promise<InventaireWithRelations[]> => {
-  return prisma.inventaire
-    .findMany({
-      include: COMMON_INVENTAIRE_INCLUDE,
-    })
-    .then((inventaires) => {
-      return inventaires.map(normalizeInventaireComplete);
-    });
 };
 
 export const upsertInventaire = async (

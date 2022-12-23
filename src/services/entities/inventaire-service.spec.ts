@@ -71,3 +71,13 @@ describe("Find inventary by data ID", () => {
     await expect(inventaireService.findInventaireOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
+
+test("Find all inventaries", async () => {
+  const inventariesData = [mock<Inventaire>(), mock<Inventaire>(), mock<Inventaire>()];
+
+  inventaireRepository.findInventaires.mockResolvedValueOnce(inventariesData);
+
+  await inventaireService.findAllInventaires();
+
+  expect(inventaireRepository.findInventaires).toHaveBeenCalledTimes(1);
+});

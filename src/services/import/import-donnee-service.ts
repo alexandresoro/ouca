@@ -11,6 +11,7 @@ import { type Departement } from "../../repositories/departement/departement-rep
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
+import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
 import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
@@ -19,7 +20,7 @@ import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
 import { createDonnee, findAllDonnees, type DonneeWithRelations } from "../entities/donnee-service";
-import { findAllInventaires, upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
+import { upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -36,7 +37,7 @@ export class ImportDonneeService extends ImportService {
   private comportements!: Comportement[];
   private milieux!: Milieu[];
   private meteos!: Meteo[];
-  private inventaires: InventaireWithRelations[] = []; // The list of existing inventaires + the ones we created along with the validation
+  private inventaires: (Omit<Inventaire, "dateCreation"> | InventaireWithRelations)[] = []; // The list of existing inventaires + the ones we created along with the validation
 
   private existingDonnees!: DonneeWithRelations[];
 
@@ -70,7 +71,7 @@ export class ImportDonneeService extends ImportService {
     this.estimationsDistance = await this.services.estimationDistanceService.findAllEstimationsDistance();
     this.comportements = await this.services.comportementService.findAllComportements();
     this.milieux = await this.services.milieuService.findAllMilieux();
-    this.inventaires = await findAllInventaires();
+    this.inventaires = await this.services.inventaireService.findAllInventaires();
     this.existingDonnees = await findAllDonnees();
   };
 
@@ -245,23 +246,24 @@ export class ImportDonneeService extends ImportService {
     );
 
     // Find if we already have an existing inventaire that matches the one from the current donnee
-    const existingInventaire = this.inventaires.find((existingInventaire) => {
+    const existingInventaire = this.inventaires.find(async (existingInventaire) => {
       return (
         existingInventaire.observateurId === inputInventaire.observateurId &&
         existingInventaire.date === inputInventaire.date &&
         existingInventaire.heure === inputInventaire.heure &&
         existingInventaire.duree === inputInventaire.duree &&
-        existingInventaire.lieuDitId === inputInventaire.lieuDitId &&
+        ((existingInventaire as InventaireWithRelations)?.lieuDitId === inputInventaire.lieuDitId ||
+          (existingInventaire as Inventaire)?.lieuditId === inputInventaire.lieuDitId) &&
         existingInventaire.customizedCoordinates?.altitude === inputInventaire.altitude &&
         existingInventaire.customizedCoordinates?.longitude === inputInventaire.longitude &&
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.latitude &&
         existingInventaire.temperature === inputInventaire.temperature &&
         areSetsContainingSameValues(
-          new Set(existingInventaire.associes?.map((associe) => associe?.id)),
+          new Set(await this.services.observateurService.findAssociesIdsOfInventaireId(existingInventaire.id)),
           new Set(inputInventaire.associesIds)
         ) &&
         areSetsContainingSameValues(
-          new Set(existingInventaire.meteos?.map((meteo) => meteo?.id)),
+          new Set(await this.services.meteoService.findMeteosIdsOfInventaireId(existingInventaire.id)),
           new Set(inputInventaire.meteosIds)
         )
       );

@@ -1,6 +1,9 @@
 import { type Inventaire, type RawInventaire } from "./inventaire-repository-types";
 
-export const reshapeRawInventaire = (rawInventaire: RawInventaire | null): Inventaire | null => {
+export function reshapeRawInventaire(rawInventaire: null): null;
+export function reshapeRawInventaire(rawInventaire: RawInventaire): Inventaire;
+export function reshapeRawInventaire(rawInventaire: RawInventaire | null): Inventaire | null;
+export function reshapeRawInventaire(rawInventaire: RawInventaire | null): Inventaire | null {
   if (!rawInventaire) {
     return null;
   }
@@ -21,4 +24,4 @@ export const reshapeRawInventaire = (rawInventaire: RawInventaire | null): Inven
     ...restInventaire,
     customizedCoordinates,
   };
-};
+}

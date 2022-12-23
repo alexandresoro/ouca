@@ -42,9 +42,22 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return reshapeRawInventaire(rawInventaire);
   };
 
+  const findInventaires = async (): Promise<Inventaire[]> => {
+    const query = sql.type(inventaireSchema)`
+    SELECT 
+      inventaire.*
+    FROM
+      basenaturaliste.inventaire`;
+
+    const rawInventaires = await slonik.any(query);
+
+    return rawInventaires.map((rawInventaire) => reshapeRawInventaire(rawInventaire));
+  };
+
   return {
     findInventaireById,
     findInventaireByDonneeId,
+    findInventaires,
   };
 };
 

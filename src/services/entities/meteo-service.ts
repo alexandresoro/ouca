@@ -40,6 +40,14 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     return [...meteos];
   };
 
+  const findMeteosIdsOfInventaireId = async (inventaireId: number): Promise<number[]> => {
+    const meteosIds = await meteoRepository
+      .findMeteosOfInventaireId(inventaireId)
+      .then((meteos) => meteos.map(({ id }) => id));
+
+    return [...meteosIds];
+  };
+
   const findAllMeteos = async (): Promise<Meteo[]> => {
     const meteos = await meteoRepository.findMeteos({
       orderBy: COLUMN_LIBELLE,
@@ -146,6 +154,7 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     findMeteo,
     getDonneesCountByMeteo,
     findMeteosOfInventaireId,
+    findMeteosIdsOfInventaireId,
     findAllMeteos,
     findPaginatedMeteos,
     getMeteosCount,
