@@ -7,7 +7,7 @@ import {
 export const inventaireSchema = z.object({
   id: z.number(),
   observateurId: z.number(),
-  date: z.date(),
+  date: z.string(), // YYYY-MM-DD
   heure: z.string().nullable(),
   duree: z.string().nullable(),
   lieuditId: z.number(),
@@ -16,7 +16,7 @@ export const inventaireSchema = z.object({
   latitude: z.number().nullable(),
   coordinatesSystem: z.enum(COORDINATES_SYSTEMS).nullable(),
   temperature: z.number().nullable(),
-  dateCreation: z.date(),
+  dateCreation: z.number(), // timestamp
   ownerId: z.string().uuid().nullable(),
 });
 

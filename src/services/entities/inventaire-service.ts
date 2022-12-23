@@ -1,4 +1,4 @@
-import { type CoordinatesSystem, type Inventaire } from "@prisma/client";
+import { type CoordinatesSystem, type Inventaire as InventairePrisma } from "@prisma/client";
 import { format } from "date-fns";
 import { type Logger } from "pino";
 import {
@@ -8,26 +8,48 @@ import {
   type UpsertInventaireFailureReason,
 } from "../../graphql/generated/graphql-types";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
+import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { DATE_PATTERN } from "../../utils/constants";
 import { parseISO8601AsUTCDate } from "../../utils/time-utils";
+import { validateAuthorization } from "./authorization-utils";
 
 type InventaireServiceDependencies = {
   logger: Logger;
   inventaireRepository: InventaireRepository;
 };
 
-export const buildInventaireService = ({ logger, inventaireRepository }: InventaireServiceDependencies) => {
-  return {};
+export const buildInventaireService = ({ inventaireRepository }: InventaireServiceDependencies) => {
+  const findInventaire = async (id: number, loggedUser: LoggedUser | null): Promise<Inventaire | null> => {
+    validateAuthorization(loggedUser);
+
+    const inventaire = await inventaireRepository.findInventaireById(id);
+
+    return inventaire;
+  };
+
+  const findInventaireOfDonneeId = async (
+    donneeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Inventaire | null> => {
+    validateAuthorization(loggedUser);
+
+    return inventaireRepository.findInventaireByDonneeId(donneeId);
+  };
+
+  return {
+    findInventaire,
+    findInventaireOfDonneeId,
+  };
 };
 
 export type InventaireService = ReturnType<typeof buildInventaireService>;
 
 export type InventaireWithRelations = Omit<
-  Inventaire,
+  InventairePrisma,
   "date" | "latitude" | "longitude" | "altitude" | "coordinates_system"
 > & {
   observateur: Observateur;
@@ -90,7 +112,9 @@ export const normalizeInventaire = <T extends InventaireRelatedTablesFields>(
   };
 };
 
-const normalizeInventaireComplete = <T extends Inventaire & InventaireRelatedTablesFields & InventaireResolvedFields>(
+const normalizeInventaireComplete = <
+  T extends InventairePrisma & InventaireRelatedTablesFields & InventaireResolvedFields
+>(
   inventaire: T
 ): InventaireWithRelations => {
   const { altitude, latitude, longitude, coordinates_system, date, ...restInventaire } = inventaire;
@@ -116,28 +140,7 @@ const normalizeInventaireComplete = <T extends Inventaire & InventaireRelatedTab
   };
 };
 
-export const findInventaire = async (id: number | undefined): Promise<InventaireWithRelations | null> => {
-  return prisma.inventaire
-    .findUnique({
-      include: COMMON_INVENTAIRE_INCLUDE,
-      where: {
-        id,
-      },
-    })
-    .then((inventaire) => (inventaire ? normalizeInventaireComplete(inventaire) : null));
-};
-
-export const findInventaireOfDonneeId = async (donneeId: number | undefined): Promise<Inventaire | null> => {
-  return prisma.donnee
-    .findUnique({
-      where: {
-        id: donneeId,
-      },
-    })
-    .inventaire();
-};
-
-export const findExistingInventaire = async (inventaire: InputInventaire): Promise<Inventaire | null> => {
+export const findExistingInventaire = async (inventaire: InputInventaire): Promise<InventairePrisma | null> => {
   const inventaireCandidates = await prisma.inventaire.findMany({
     where: {
       observateurId: inventaire.observateurId,

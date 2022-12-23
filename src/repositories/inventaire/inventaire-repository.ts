@@ -22,10 +22,14 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return reshapeRawInventaire(rawInventaire);
   };
 
-  const findInventaireByDonneeId = async (donneeId: number): Promise<Inventaire | null> => {
+  const findInventaireByDonneeId = async (donneeId: number | undefined): Promise<Inventaire | null> => {
+    if (!donneeId) {
+      return null;
+    }
+
     const query = sql.type(inventaireSchema)`
       SELECT 
-        *
+        inventaire.*
       FROM
         basenaturaliste.inventaire
       LEFT JOIN basenaturaliste.donnee ON inventaire.id = donnee.inventaire_id

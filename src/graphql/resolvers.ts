@@ -15,12 +15,7 @@ import {
   upsertDonnee,
   type DonneeWithRelations,
 } from "../services/entities/donnee-service";
-import {
-  findInventaire,
-  findInventaireOfDonneeId,
-  upsertInventaire,
-  type InventaireWithRelations,
-} from "../services/entities/inventaire-service";
+import { upsertInventaire, type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -93,6 +88,7 @@ export const buildResolvers = ({
   especeService,
   estimationDistanceService,
   estimationNombreService,
+  inventaireService,
   lieuditService,
   meteoService,
   milieuService,
@@ -218,9 +214,12 @@ export const buildResolvers = ({
           count,
         };
       },
-      inventaire: async (_source, args, { user }): Promise<Omit<Inventaire, "lieuDit"> | null> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return findInventaire(args.id);
+      inventaire: async (
+        _source,
+        args,
+        { user }
+      ): Promise<Omit<Inventaire, "observateur" | "associes" | "lieuDit" | "meteos"> | null> => {
+        return inventaireService.findInventaire(args.id, user);
       },
       lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
         return lieuditService.findLieuDit(args.id, user);
@@ -641,9 +640,12 @@ export const buildResolvers = ({
         }
         return especeService.findEspece(espece?.id, user);
       },
-      inventaire: async (parent): Promise<Omit<Inventaire, "lieuDit"> | null> => {
-        const inventaire = await findInventaireOfDonneeId(parent?.id);
-        return findInventaire(inventaire?.id);
+      inventaire: async (
+        parent,
+        args,
+        { user }
+      ): Promise<Omit<Inventaire, "observateur" | "associes" | "lieuDit" | "meteos"> | null> => {
+        return inventaireService.findInventaireOfDonneeId(parent?.id, user);
       },
     },
     DonneeResult: {
