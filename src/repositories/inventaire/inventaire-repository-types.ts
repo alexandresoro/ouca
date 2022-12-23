@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { COORDINATES_SYSTEMS } from "../../model/coordinates-system/coordinates-system.object";
+import {
+  COORDINATES_SYSTEMS,
+  type CoordinatesSystemType,
+} from "../../model/coordinates-system/coordinates-system.object";
 
 export const inventaireSchema = z.object({
   id: z.number(),
@@ -17,4 +20,13 @@ export const inventaireSchema = z.object({
   ownerId: z.string().uuid().nullable(),
 });
 
-export type Inventaire = z.infer<typeof inventaireSchema>;
+export type RawInventaire = z.infer<typeof inventaireSchema>;
+
+export type Inventaire = Omit<RawInventaire, "altitude" | "latitude" | "longitude" | "coordinatesSystem"> & {
+  customizedCoordinates: {
+    altitude: number;
+    latitude: number;
+    longitude: number;
+    system: CoordinatesSystemType;
+  } | null;
+};
