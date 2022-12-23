@@ -676,6 +676,9 @@ export const buildResolvers = ({
       lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
         return lieuditService.findLieuDitOfInventaireId(parent?.id, user);
       },
+      meteos: async (parent, args, { user }): Promise<Meteo[]> => {
+        return meteoService.findMeteosOfInventaireId(parent?.id, user);
+      },
     },
     LieuDit: {
       editable: isEntityEditableResolver(lieuditService.findLieuDit),

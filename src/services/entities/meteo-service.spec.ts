@@ -78,6 +78,25 @@ describe("Data count per entity", () => {
   });
 });
 
+describe("Find weathers by inventary ID", () => {
+  test("should handle observer found", async () => {
+    const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
+    const loggedUser = mock<LoggedUser>();
+
+    meteoRepository.findMeteosOfInventaireId.mockResolvedValueOnce(weathersData);
+
+    const weathers = await meteoService.findMeteosOfInventaireId(43, loggedUser);
+
+    expect(meteoRepository.findMeteosOfInventaireId).toHaveBeenCalledTimes(1);
+    expect(meteoRepository.findMeteosOfInventaireId).toHaveBeenLastCalledWith(43);
+    expect(weathers).toEqual(weathersData);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(meteoService.findMeteosOfInventaireId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
 test("Find all weathers", async () => {
   const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
 

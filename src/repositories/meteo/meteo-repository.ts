@@ -27,6 +27,24 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     return slonik.maybeOne(query);
   };
 
+  const findMeteosOfInventaireId = async (inventaireId: number | undefined): Promise<readonly Meteo[]> => {
+    if (!inventaireId) {
+      return [];
+    }
+
+    const query = sql.type(meteoSchema)`
+      SELECT 
+        meteo.*
+      FROM
+        basenaturaliste.meteo
+      LEFT JOIN basenaturaliste.inventaire_meteo ON meteo.id = inventaire_meteo.meteo_id
+      WHERE
+        inventaire_meteo.inventaire_id = ${inventaireId}
+    `;
+
+    return slonik.any(query);
+  };
+
   const findMeteos = async ({ orderBy, sortOrder, q, offset, limit }: MeteoFindManyInput = {}): Promise<
     readonly Meteo[]
   > => {
@@ -141,6 +159,7 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
 
   return {
     findMeteoById,
+    findMeteosOfInventaireId,
     findMeteos,
     getCount,
     createMeteo,
