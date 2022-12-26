@@ -28,7 +28,7 @@
     "@fontsource/lato": "4.5.10",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
     "@mui/icons-material": "5.10.16",
-    "@mui/lab": "5.0.0-alpha.113",
+    "@mui/lab": "5.0.0-alpha.114",
     "@mui/material": "5.10.17",
     "@sentry/react": "7.28.1",
     "@sentry/tracing": "7.28.1",
