@@ -32,6 +32,17 @@ export const buildComportementService = ({
     return comportementRepository.findComportementById(id);
   };
 
+  const findComportementsOfDonneeId = async (
+    donneeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Comportement[]> => {
+    validateAuthorization(loggedUser);
+
+    const comportements = await comportementRepository.findComportementsOfDonneeId(donneeId);
+
+    return [...comportements];
+  };
+
   const getDonneesCountByComportement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
@@ -143,6 +154,7 @@ export const buildComportementService = ({
 
   return {
     findComportement,
+    findComportementsOfDonneeId,
     getDonneesCountByComportement,
     findAllComportements,
     findPaginatedComportements,

@@ -78,6 +78,25 @@ describe("Data count per entity", () => {
   });
 });
 
+describe("Find environments by inventary ID", () => {
+  test("should handle environments found", async () => {
+    const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
+    const loggedUser = mock<LoggedUser>();
+
+    milieuRepository.findMilieuxOfDonneeId.mockResolvedValueOnce(environmentsData);
+
+    const environments = await milieuService.findMilieuxOfDonneeId(43, loggedUser);
+
+    expect(milieuRepository.findMilieuxOfDonneeId).toHaveBeenCalledTimes(1);
+    expect(milieuRepository.findMilieuxOfDonneeId).toHaveBeenLastCalledWith(43);
+    expect(environments).toEqual(environmentsData);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(milieuService.findMilieuxOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
 test("Find all environments", async () => {
   const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
 

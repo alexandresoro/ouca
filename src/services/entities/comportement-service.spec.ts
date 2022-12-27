@@ -83,6 +83,25 @@ describe("Data count per entity", () => {
   });
 });
 
+describe("Find behaviors by inventary ID", () => {
+  test("should handle behaviors found", async () => {
+    const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
+    const loggedUser = mock<LoggedUser>();
+
+    comportementRepository.findComportementsOfDonneeId.mockResolvedValueOnce(behaviorsData);
+
+    const behaviors = await comportementService.findComportementsOfDonneeId(43, loggedUser);
+
+    expect(comportementRepository.findComportementsOfDonneeId).toHaveBeenCalledTimes(1);
+    expect(comportementRepository.findComportementsOfDonneeId).toHaveBeenLastCalledWith(43);
+    expect(behaviors).toEqual(behaviorsData);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(comportementService.findComportementsOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
 test("Find all behaviors", async () => {
   const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
 

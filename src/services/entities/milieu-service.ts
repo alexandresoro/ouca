@@ -23,6 +23,17 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     return milieuRepository.findMilieuById(id);
   };
 
+  const findMilieuxOfDonneeId = async (
+    donneeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Milieu[]> => {
+    validateAuthorization(loggedUser);
+
+    const milieux = await milieuRepository.findMilieuxOfDonneeId(donneeId);
+
+    return [...milieux];
+  };
+
   const getDonneesCountByMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
@@ -131,6 +142,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
 
   return {
     findMilieu,
+    findMilieuxOfDonneeId,
     getDonneesCountByMilieu,
     findAllMilieux,
     findPaginatedMilieux,

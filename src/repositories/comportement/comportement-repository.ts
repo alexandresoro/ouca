@@ -32,6 +32,24 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     return slonik.maybeOne(query);
   };
 
+  const findComportementsOfDonneeId = async (donneeId: number | undefined): Promise<readonly Comportement[]> => {
+    if (!donneeId) {
+      return [];
+    }
+
+    const query = sql.type(comportementSchema)`
+      SELECT 
+        comportement.*
+      FROM
+        basenaturaliste.comportement
+      LEFT JOIN basenaturaliste.donnee_comportement ON comportement.id = donnee_comportement.comportement_id
+      WHERE
+        donnee_comportement.donnee_id = ${donneeId}
+    `;
+
+    return slonik.any(query);
+  };
+
   const findComportements = async ({ orderBy, sortOrder, q, offset, limit }: ComportementFindManyInput = {}): Promise<
     readonly Comportement[]
   > => {
@@ -159,6 +177,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
 
   return {
     findComportementById,
+    findComportementsOfDonneeId,
     findComportements,
     getCount,
     createComportement,

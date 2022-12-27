@@ -27,6 +27,24 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
+  const findMilieuxOfDonneeId = async (donneeId: number | undefined): Promise<readonly Milieu[]> => {
+    if (!donneeId) {
+      return [];
+    }
+
+    const query = sql.type(milieuSchema)`
+      SELECT 
+        milieu.*
+      FROM
+        basenaturaliste.milieu
+      LEFT JOIN basenaturaliste.donnee_milieu ON milieu.id = donnee_milieu.milieu_id
+      WHERE
+        donnee_milieu.donnee_id = ${donneeId}
+    `;
+
+    return slonik.any(query);
+  };
+
   const findMilieux = async ({ orderBy, sortOrder, q, offset, limit }: MilieuFindManyInput = {}): Promise<
     readonly Milieu[]
   > => {
@@ -149,6 +167,7 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
 
   return {
     findMilieuById,
+    findMilieuxOfDonneeId,
     findMilieux,
     getCount,
     createMilieu,

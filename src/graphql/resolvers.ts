@@ -629,6 +629,9 @@ export const buildResolvers = ({
       age: async (parent, args, { user }): Promise<Age | null> => {
         return ageService.findAgeOfDonneeId(parent?.id, user);
       },
+      comportements: async (parent, args, { user }): Promise<Comportement[]> => {
+        return comportementService.findComportementsOfDonneeId(parent?.id, user);
+      },
       espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
         return especeService.findEspeceOfDonneeId(parent?.id, user);
       },
@@ -644,6 +647,9 @@ export const buildResolvers = ({
         { user }
       ): Promise<Omit<Inventaire, "observateur" | "associes" | "lieuDit" | "meteos"> | null> => {
         return inventaireService.findInventaireOfDonneeId(parent?.id, user);
+      },
+      milieux: async (parent, args, { user }): Promise<Milieu[]> => {
+        return milieuService.findMilieuxOfDonneeId(parent?.id, user);
       },
       sexe: async (parent, args, { user }): Promise<Sexe | null> => {
         return sexeService.findSexeOfDonneeId(parent?.id, user);
