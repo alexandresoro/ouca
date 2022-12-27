@@ -81,6 +81,7 @@ export const buildSortOrderFragment = ({
   if (!orderBy || !sortOrder) {
     return sql.fragment``;
   }
+  // TODO handle null last cases
   return sortOrder === "asc" ? sql.fragment` ASC` : sql.fragment` DESC`;
 };
 
