@@ -14,6 +14,7 @@ import { type Commune } from "../../repositories/commune/commune-repository-type
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
+import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
@@ -25,7 +26,7 @@ import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
-import { getPrismaPagination } from "./entities-utils";
+import { getPrismaPagination, getSqlPagination } from "./entities-utils";
 import { normalizeInventaire } from "./inventaire-service";
 
 type DonneeServiceDependencies = {
@@ -34,6 +35,24 @@ type DonneeServiceDependencies = {
 };
 
 export const buildDonneeService = ({ logger, donneeRepository }: DonneeServiceDependencies) => {
+  const findPaginatedDonnees = async (
+    loggedUser: LoggedUser | null,
+    options: PaginatedSearchDonneesResultResultArgs = {}
+  ): Promise<Donnee[]> => {
+    validateAuthorization(loggedUser);
+
+    const { searchParams, searchCriteria, orderBy: orderByField, sortOrder } = options;
+
+    const donnees = await donneeRepository.findDonnees({
+      searchCriteria,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
+    });
+
+    return [...donnees];
+  };
+
   const findLastDonneeId = async (loggedUser: LoggedUser | null): Promise<number | null> => {
     validateAuthorization(loggedUser);
 
@@ -50,6 +69,7 @@ export const buildDonneeService = ({ logger, donneeRepository }: DonneeServiceDe
   };
 
   return {
+    findPaginatedDonnees,
     findLastDonneeId,
     findNextRegroupement,
   };

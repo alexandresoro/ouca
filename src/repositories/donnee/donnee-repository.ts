@@ -1,12 +1,104 @@
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common";
-import { idSchema, maxRegoupementSchema } from "./donnee-repository-types";
+import { buildPaginationFragment, buildSortOrderFragment } from "../repository-helpers";
+import { buildOrderByIdentifier } from "./donnee-repository-helper";
+import {
+  donneeSchema,
+  idSchema,
+  maxRegoupementSchema,
+  type Donnee,
+  type DonneeFindManyInput,
+} from "./donnee-repository-types";
 
 export type DonneeRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) => {
+  const findDonnees = async ({ orderBy, sortOrder, searchCriteria, offset, limit }: DonneeFindManyInput = {}): Promise<
+    readonly Donnee[]
+  > => {
+    // TODO handle search criteria
+    const query = sql.type(donneeSchema)`
+      SELECT
+        donnee.*
+      FROM basenaturaliste.donnee
+      LEFT JOIN basenaturaliste.espece ON donnee.espece_id = espece.id
+      LEFT JOIN basenaturaliste.donnee_comportement ON donnee.id = donnee_comportement.donnee_id
+      LEFT JOIN basenaturaliste.comportement ON donnee_comportement.comportement_id = comportement.id
+      LEFT JOIN basenaturaliste.donnee_milieu ON donnee.id = donnee_milieu.donnee_id
+      LEFT JOIN basenaturaliste.milieu ON donnee_milieu.milieu_id = milieu.id
+      LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
+      LEFT JOIN basenaturaliste.lieudit ON inventaire.lieudit_id = lieudit.id
+      LEFT JOIN basenaturaliste.commune ON lieudit.commune_id = commune.id
+      LEFT JOIN basenaturaliste.inventaire_meteo ON inventaire.id = inventaire_meteo.inventaire_id
+      LEFT JOIN basenaturaliste.inventaire_associe ON inventaire.id = inventaire_associe.inventaire_id
+      ${
+        orderBy === "age"
+          ? sql.fragment`
+        LEFT JOIN basenaturaliste.age ON donnee.age_id = age.id`
+          : sql.fragment``
+      }
+      ${
+        orderBy === "sexe"
+          ? sql.fragment`
+        LEFT JOIN basenaturaliste.sexe ON donnee.sexe_id = sexe.id`
+          : sql.fragment``
+      }
+      ${
+        orderBy === "departement"
+          ? sql.fragment`
+        LEFT JOIN basenaturaliste.departement ON commune.departement_id = departement.id`
+          : sql.fragment``
+      }
+      ${
+        orderBy === "observateur"
+          ? sql.fragment`
+        LEFT JOIN basenaturaliste.observateur ON inventaire.observateur_id = observateur.id`
+          : sql.fragment``
+      }
+      GROUP BY donnee.id${
+        orderBy
+          ? sql.fragment`
+      ,${buildOrderByIdentifier(orderBy)}`
+          : sql.fragment``
+      }
+      ${
+        orderBy
+          ? sql.fragment`
+      ORDER BY ${buildOrderByIdentifier(orderBy)}`
+          : sql.fragment``
+      }${buildSortOrderFragment({
+      orderBy,
+      sortOrder,
+    })}
+      ${buildPaginationFragment({ offset, limit })}
+    `;
+
+    return slonik.any(query);
+  };
+
+  const getCount = async (searchCriteria: DonneeFindManyInput["searchCriteria"] = {}): Promise<number> => {
+    // TODO handle search criteria
+    const query = sql.type(countSchema)`
+      SELECT
+        COUNT(DISTINCT donnee.id)
+      FROM basenaturaliste.donnee
+      LEFT JOIN basenaturaliste.espece ON donnee.espece_id = espece.id
+      LEFT JOIN basenaturaliste.donnee_comportement ON donnee.id = donnee_comportement.donnee_id
+      LEFT JOIN basenaturaliste.comportement ON donnee_comportement.comportement_id = comportement.id
+      LEFT JOIN basenaturaliste.donnee_milieu ON donnee.id = donnee_milieu.donnee_id
+      LEFT JOIN basenaturaliste.milieu ON donnee_milieu.milieu_id = milieu.id
+      LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
+      LEFT JOIN basenaturaliste.lieudit ON inventaire.lieudit_id = lieudit.id
+      LEFT JOIN basenaturaliste.commune ON lieudit.commune_id = commune.id
+      LEFT JOIN basenaturaliste.inventaire_meteo ON inventaire.id = inventaire_meteo.inventaire_id
+      LEFT JOIN basenaturaliste.inventaire_associe ON inventaire.id = inventaire_associe.inventaire_id
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
   const findLatestDonneeId = async (): Promise<number | null> => {
     const query = sql.type(idSchema)`
       SELECT
@@ -223,6 +315,8 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   return {
+    findDonnees,
+    getCount,
     findLatestDonneeId,
     findLatestRegroupement,
     getCountByAgeId,
