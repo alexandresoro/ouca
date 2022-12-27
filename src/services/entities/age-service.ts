@@ -27,6 +27,15 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     return ageRepository.findAgeById(id);
   };
 
+  const findAgeOfDonneeId = async (
+    donneeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Age | null> => {
+    validateAuthorization(loggedUser);
+
+    return ageRepository.findAgeByDonneeId(donneeId);
+  };
+
   const getDonneesCountByAge = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
@@ -148,6 +157,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
 
   return {
     findAge,
+    findAgeOfDonneeId,
     getDonneesCountByAge,
     findAllAges,
     findPaginatedAges,

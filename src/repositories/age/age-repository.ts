@@ -34,6 +34,24 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
     return slonik.maybeOne(query);
   };
 
+  const findAgeByDonneeId = async (donneeId: number | undefined): Promise<Age | null> => {
+    if (!donneeId) {
+      return null;
+    }
+
+    const query = sql.type(ageSchema)`
+      SELECT 
+        age.*
+      FROM
+        basenaturaliste.age
+      LEFT JOIN basenaturaliste.donnee ON age.id = donnee.age_id
+      WHERE
+        donnee.id = ${donneeId}
+    `;
+
+    return slonik.maybeOne(query);
+  };
+
   const findAges = async ({ orderBy, sortOrder, q, offset, limit }: AgeFindManyInput = {}): Promise<readonly Age[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
@@ -155,6 +173,7 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
 
   return {
     findAgeById,
+    findAgeByDonneeId,
     findAges,
     getCount,
     getAgesWithNbSpecimensForEspeceId,

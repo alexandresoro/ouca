@@ -626,6 +626,9 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(departementService.getDonneesCountByDepartement),
     },
     Donnee: {
+      age: async (parent, args, { user }): Promise<Age | null> => {
+        return ageService.findAgeOfDonneeId(parent?.id, user);
+      },
       espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
         return especeService.findEspeceOfDonneeId(parent?.id, user);
       },

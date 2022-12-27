@@ -78,6 +78,27 @@ describe("Data count per entity", () => {
   });
 });
 
+describe("Find age by data ID", () => {
+  test("should handle age found", async () => {
+    const ageData = mock<Age>({
+      id: 256,
+    });
+    const loggedUser = mock<LoggedUser>();
+
+    ageRepository.findAgeByDonneeId.mockResolvedValueOnce(ageData);
+
+    const age = await ageService.findAgeOfDonneeId(43, loggedUser);
+
+    expect(ageRepository.findAgeByDonneeId).toHaveBeenCalledTimes(1);
+    expect(ageRepository.findAgeByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(age?.id).toEqual(256);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(ageService.findAgeOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
 test("Find all ages", async () => {
   const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
 
