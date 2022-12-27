@@ -1,4 +1,3 @@
-import { type Commune as CommuneEntity, type Espece as EspeceEntity } from "@prisma/client";
 import mercurius, { type IResolvers } from "mercurius";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
 import { saveDatabaseRequest } from "../services/database/save-database";
@@ -174,7 +173,7 @@ export const buildResolvers = ({
       espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
         return especeService.findEspece(args.id, user);
       },
-      especes: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
+      especes: async (_, args, { user }): Promise<{ data: Omit<Espece, "classe">[]; count: number }> => {
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, args, null),
           especeService.getEspecesCount(user, args?.searchParams?.q),
@@ -298,7 +297,7 @@ export const buildResolvers = ({
       nextRegroupement: async (_source, args, { user }): Promise<number> => {
         return donneeService.findNextRegroupement(user);
       },
-      searchEspeces: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
+      searchEspeces: async (_, args, { user }): Promise<{ data: Omit<Espece, "classe">[]; count: number }> => {
         const { searchCriteria, ...rest } = args ?? {};
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, rest, searchCriteria),
@@ -434,7 +433,7 @@ export const buildResolvers = ({
       upsertClasse: async (_source, args, { user }): Promise<Classe> => {
         return classeService.upsertClasse(args, user);
       },
-      upsertCommune: async (_source, args, { user }): Promise<CommuneEntity> => {
+      upsertCommune: async (_source, args, { user }): Promise<Omit<Commune, "departement">> => {
         return communeService.upsertCommune(args, user);
       },
       upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
@@ -464,7 +463,7 @@ export const buildResolvers = ({
           };
         }
       },
-      upsertEspece: async (_source, args, { user }): Promise<EspeceEntity> => {
+      upsertEspece: async (_source, args, { user }): Promise<Omit<Espece, "classe">> => {
         return especeService.upsertEspece(args, user);
       },
       upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
