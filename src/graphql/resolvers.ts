@@ -9,7 +9,6 @@ import {
   findPaginatedDonneesByCriteria,
   getNbDonneesByCriteria,
   upsertDonnee,
-  type DonneeWithRelations,
 } from "../services/entities/donnee-service";
 import { upsertInventaire, type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
@@ -450,7 +449,7 @@ export const buildResolvers = ({
         { user }
       ): Promise<{
         failureReason?: string;
-        donnee?: DonneeWithRelations;
+        donnee?: Omit<Donnee, "inventaire" | "espece">;
       }> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
         try {
