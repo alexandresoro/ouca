@@ -8,8 +8,6 @@ import {
   deleteDonnee,
   findDonnee,
   findDonneeNavigationData,
-  findLastDonneeId,
-  findNextRegroupement,
   findPaginatedDonneesByCriteria,
   getNbDonneesByCriteria,
   upsertDonnee,
@@ -85,6 +83,7 @@ export const buildResolvers = ({
   communeService,
   comportementService,
   departementService,
+  donneeService,
   especeService,
   estimationDistanceService,
   estimationNombreService,
@@ -299,12 +298,10 @@ export const buildResolvers = ({
         return countSpecimensBySexeForEspeceId(args?.especeId);
       },
       lastDonneeId: async (_source, args, { user }): Promise<number | null> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return findLastDonneeId();
+        return donneeService.findLastDonneeId(user);
       },
       nextRegroupement: async (_source, args, { user }): Promise<number> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return findNextRegroupement();
+        return donneeService.findNextRegroupement(user);
       },
       searchEspeces: async (_, args, { user }): Promise<{ data: EspeceEntity[]; count: number }> => {
         const { searchCriteria, ...rest } = args ?? {};

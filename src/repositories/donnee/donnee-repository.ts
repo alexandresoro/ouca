@@ -1,11 +1,38 @@
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common";
+import { idSchema, maxRegoupementSchema } from "./donnee-repository-types";
 
 export type DonneeRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) => {
+  const findLatestDonneeId = async (): Promise<number | null> => {
+    const query = sql.type(idSchema)`
+      SELECT
+        id
+      FROM 
+        basenaturaliste.donnee
+      WHERE date_creation = (
+          SELECT MAX (date_creation)
+          FROM basenaturaliste.donnee
+       )
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
+  const findLatestRegroupement = async (): Promise<number | null> => {
+    const query = sql.type(maxRegoupementSchema)`
+      SELECT 
+        MAX(regroupement) 
+      FROM 
+        basenaturaliste.donnee
+    `;
+
+    return slonik.oneFirst(query);
+  };
+
   const getCountByAgeId = async (ageId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -196,6 +223,8 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   return {
+    findLatestDonneeId,
+    findLatestRegroupement,
     getCountByAgeId,
     getCountByClasseId,
     getCountByCommuneId,

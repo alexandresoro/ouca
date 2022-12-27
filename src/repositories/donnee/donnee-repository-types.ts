@@ -16,3 +16,9 @@ export const donneeSchema = z.object({
 });
 
 export type Donnee = z.infer<typeof donneeSchema>;
+
+export const idSchema = donneeSchema.pick({ id: true });
+
+export const maxRegoupementSchema = z.object({
+  max: z.number().nullable(),
+});

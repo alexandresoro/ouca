@@ -1,4 +1,4 @@
-import { Prisma, type Donnee as DonneeEntity, type Inventaire, type Lieudit } from "@prisma/client";
+import { type Donnee as DonneeEntity, type Inventaire, type Lieudit, type Prisma } from "@prisma/client";
 import { type Logger } from "pino";
 import {
   SortOrder,
@@ -24,6 +24,8 @@ import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import prisma from "../../sql/prisma";
+import { type LoggedUser } from "../../types/User";
+import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { getPrismaPagination } from "./entities-utils";
 import { normalizeInventaire } from "./inventaire-service";
@@ -34,7 +36,25 @@ type DonneeServiceDependencies = {
 };
 
 export const buildDonneeService = ({ logger, donneeRepository }: DonneeServiceDependencies) => {
-  return {};
+  const findLastDonneeId = async (loggedUser: LoggedUser | null): Promise<number | null> => {
+    validateAuthorization(loggedUser);
+
+    const latestDonneeId = await donneeRepository.findLatestDonneeId();
+
+    return latestDonneeId;
+  };
+
+  const findNextRegroupement = async (loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    const latestRegroupement = await donneeRepository.findLatestRegroupement();
+    return (latestRegroupement ?? 0) + 1;
+  };
+
+  return {
+    findLastDonneeId,
+    findNextRegroupement,
+  };
 };
 
 export type DonneeService = ReturnType<typeof buildDonneeService>;
@@ -410,17 +430,6 @@ export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEnt
   );
 };
 
-export const findLastDonneeId = async (): Promise<number | null> => {
-  return prisma.donnee
-    .findFirst({
-      orderBy: {
-        id: Prisma.SortOrder.desc,
-      },
-    })
-    .then((donnee) => donnee?.id ?? null)
-    .catch(() => Promise.resolve(null));
-};
-
 export const upsertDonnee = async (args: MutationUpsertDonneeArgs): Promise<DonneeWithRelations> => {
   const { id, data } = args;
 
@@ -552,16 +561,6 @@ export const findAllDonnees = async (): Promise<DonneeWithRelations[]> => {
     .then((donnees) => {
       return donnees.map(normalizeDonnee);
     });
-};
-
-export const findNextRegroupement = async (): Promise<number> => {
-  const regroupementsAggr = await prisma.donnee.aggregate({
-    _max: {
-      regroupement: true,
-    },
-  });
-  const regroupementMax = regroupementsAggr?._max?.regroupement ?? 0;
-  return regroupementMax + 1;
 };
 
 export const countSpecimensByAgeForEspeceId = async (especeId: number): Promise<AgeWithSpecimensCount[]> => {
