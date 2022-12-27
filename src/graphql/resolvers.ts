@@ -632,6 +632,12 @@ export const buildResolvers = ({
       espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
         return especeService.findEspeceOfDonneeId(parent?.id, user);
       },
+      estimationDistance: async (parent, args, { user }): Promise<EstimationDistance | null> => {
+        return estimationDistanceService.findEstimationDistanceOfDonneeId(parent?.id, user);
+      },
+      estimationNombre: async (parent, args, { user }): Promise<EstimationNombre | null> => {
+        return estimationNombreService.findEstimationNombreOfDonneeId(parent?.id, user);
+      },
       inventaire: async (
         parent,
         args,

@@ -94,6 +94,29 @@ describe("Data count per entity", () => {
   });
 });
 
+describe("Find number estimate by data ID", () => {
+  test("should handle number estimate found", async () => {
+    const numberEstimateData = mock<EstimationNombre>({
+      id: 256,
+    });
+    const loggedUser = mock<LoggedUser>();
+
+    estimationNombreRepository.findEstimationNombreByDonneeId.mockResolvedValueOnce(numberEstimateData);
+
+    const numberEstimate = await estimationNombreService.findEstimationNombreOfDonneeId(43, loggedUser);
+
+    expect(estimationNombreRepository.findEstimationNombreByDonneeId).toHaveBeenCalledTimes(1);
+    expect(estimationNombreRepository.findEstimationNombreByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(numberEstimate?.id).toEqual(256);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(estimationNombreService.findEstimationNombreOfDonneeId(12, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
+  });
+});
+
 test("Find all estimationsNombre", async () => {
   const estimationsNombreData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
 

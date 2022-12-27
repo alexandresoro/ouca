@@ -33,6 +33,15 @@ export const buildEstimationNombreService = ({
     return estimationNombreRepository.findEstimationNombreById(id);
   };
 
+  const findEstimationNombreOfDonneeId = async (
+    donneeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<EstimationNombre | null> => {
+    validateAuthorization(loggedUser);
+
+    return estimationNombreRepository.findEstimationNombreByDonneeId(donneeId);
+  };
+
   const getDonneesCountByEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
@@ -147,6 +156,7 @@ export const buildEstimationNombreService = ({
 
   return {
     findEstimationNombre,
+    findEstimationNombreOfDonneeId,
     getDonneesCountByEstimationNombre,
     findAllEstimationsNombre,
     findPaginatedEstimationsNombre,

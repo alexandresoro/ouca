@@ -32,6 +32,24 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
     return slonik.maybeOne(query);
   };
 
+  const findEstimationNombreByDonneeId = async (donneeId: number | undefined): Promise<EstimationNombre | null> => {
+    if (!donneeId) {
+      return null;
+    }
+
+    const query = sql.type(estimationNombreSchema)`
+      SELECT 
+        estimation_nombre.*
+      FROM
+        basenaturaliste.estimation_nombre
+      LEFT JOIN basenaturaliste.donnee ON estimation_nombre.id = donnee.estimation_nombre_id
+      WHERE
+        donnee.id = ${donneeId}
+    `;
+
+    return slonik.maybeOne(query);
+  };
+
   const findEstimationsNombre = async ({
     orderBy,
     sortOrder,
@@ -154,6 +172,7 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
 
   return {
     findEstimationNombreById,
+    findEstimationNombreByDonneeId,
     findEstimationsNombre,
     getCount,
     createEstimationNombre,

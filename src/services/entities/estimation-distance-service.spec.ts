@@ -83,6 +83,29 @@ describe("Data count per entity", () => {
   });
 });
 
+describe("Find distance estimate by data ID", () => {
+  test("should handle distance estimate found", async () => {
+    const distanceEstimateData = mock<EstimationDistance>({
+      id: 256,
+    });
+    const loggedUser = mock<LoggedUser>();
+
+    estimationDistanceRepository.findEstimationDistanceByDonneeId.mockResolvedValueOnce(distanceEstimateData);
+
+    const distanceEstimate = await estimationDistanceService.findEstimationDistanceOfDonneeId(43, loggedUser);
+
+    expect(estimationDistanceRepository.findEstimationDistanceByDonneeId).toHaveBeenCalledTimes(1);
+    expect(estimationDistanceRepository.findEstimationDistanceByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(distanceEstimate?.id).toEqual(256);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(estimationDistanceService.findEstimationDistanceOfDonneeId(12, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
+  });
+});
+
 test("Find all estimationsDistance", async () => {
   const estimationsDistanceData = [mock<EstimationDistance>(), mock<EstimationDistance>(), mock<EstimationDistance>()];
 

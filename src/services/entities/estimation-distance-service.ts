@@ -35,6 +35,15 @@ export const buildEstimationDistanceService = ({
     return estimationDistanceRepository.findEstimationDistanceById(id);
   };
 
+  const findEstimationDistanceOfDonneeId = async (
+    donneeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<EstimationDistance | null> => {
+    validateAuthorization(loggedUser);
+
+    return estimationDistanceRepository.findEstimationDistanceByDonneeId(donneeId);
+  };
+
   const getDonneesCountByEstimationDistance = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
@@ -146,6 +155,7 @@ export const buildEstimationDistanceService = ({
 
   return {
     findEstimationDistance,
+    findEstimationDistanceOfDonneeId,
     getDonneesCountByEstimationDistance,
     findAllEstimationsDistance,
     findPaginatedEstimationsDistance,
