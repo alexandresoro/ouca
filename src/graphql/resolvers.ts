@@ -3,8 +3,6 @@ import mercurius, { type IResolvers } from "mercurius";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
 import { saveDatabaseRequest } from "../services/database/save-database";
 import {
-  countSpecimensByAgeForEspeceId,
-  countSpecimensBySexeForEspeceId,
   deleteDonnee,
   findDonnee,
   findDonneeNavigationData,
@@ -290,12 +288,10 @@ export const buildResolvers = ({
         };
       },
       specimenCountByAge: (_source, args, { user }): Promise<AgeWithSpecimensCount[]> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return countSpecimensByAgeForEspeceId(args?.especeId);
+        return ageService.getAgesWithNbSpecimensForEspeceId(args.especeId, user);
       },
       specimenCountBySexe: (_source, args, { user }): Promise<SexeWithSpecimensCount[]> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return countSpecimensBySexeForEspeceId(args?.especeId);
+        return sexeService.getSexesWithNbSpecimensForEspeceId(args.especeId, user);
       },
       lastDonneeId: async (_source, args, { user }): Promise<number | null> => {
         return donneeService.findLastDonneeId(user);

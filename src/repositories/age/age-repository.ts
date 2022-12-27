@@ -7,7 +7,14 @@ import {
   objectToKeyValueInsert,
   objectToKeyValueSet,
 } from "../repository-helpers";
-import { ageSchema, type Age, type AgeCreateInput, type AgeFindManyInput } from "./age-repository-types";
+import {
+  ageSchema,
+  ageWithNbSpecimensSchema,
+  type Age,
+  type AgeCreateInput,
+  type AgeFindManyInput,
+  type AgeWithNbSpecimens,
+} from "./age-repository-types";
 
 export type AgeRepositoryDependencies = {
   slonik: DatabasePool;
@@ -77,6 +84,22 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
     return slonik.oneFirst(query);
   };
 
+  const getAgesWithNbSpecimensForEspeceId = async (especeId: number): Promise<readonly AgeWithNbSpecimens[]> => {
+    const query = sql.type(ageWithNbSpecimensSchema)`
+      SELECT
+        age.*,
+        SUM(donnee.nombre) as nb_specimens
+      FROM 
+        basenaturaliste.age
+      LEFT JOIN basenaturaliste.donnee on donnee.age_id = age.id
+      WHERE donnee.espece_id = ${especeId}
+      GROUP BY age.id
+      ORDER BY age.id
+    `;
+
+    return slonik.any(query);
+  };
+
   const createAge = async (ageInput: AgeCreateInput): Promise<Age> => {
     const query = sql.type(ageSchema)`
       INSERT INTO
@@ -134,6 +157,7 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
     findAgeById,
     findAges,
     getCount,
+    getAgesWithNbSpecimensForEspeceId,
     createAge,
     createAges,
     updateAge,

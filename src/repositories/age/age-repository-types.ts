@@ -21,3 +21,9 @@ export type AgeCreateInput = {
   libelle: string;
   owner_id?: string | null;
 };
+
+export const ageWithNbSpecimensSchema = ageSchema.extend({
+  nbSpecimens: z.number().nullable(),
+});
+
+export type AgeWithNbSpecimens = z.infer<typeof ageWithNbSpecimensSchema>;

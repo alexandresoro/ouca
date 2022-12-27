@@ -21,3 +21,9 @@ export type SexeCreateInput = {
   libelle: string;
   owner_id?: string | null;
 };
+
+export const sexeWithNbSpecimensSchema = sexeSchema.extend({
+  nbSpecimens: z.number().nullable(),
+});
+
+export type SexeWithNbSpecimens = z.infer<typeof sexeWithNbSpecimensSchema>;

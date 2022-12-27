@@ -9,7 +9,11 @@ import {
 } from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository";
-import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types";
+import {
+  type Sexe,
+  type SexeCreateInput,
+  type SexeWithNbSpecimens,
+} from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
@@ -158,6 +162,37 @@ describe("Entities count by search criteria", () => {
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(sexeService.getSexesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
+describe("Get number of specimens of sexe per species id", () => {
+  test("should handle to be called properly", async () => {
+    const loggedUser = mock<LoggedUser>();
+    sexeRepository.getSexesWithNbSpecimensForEspeceId.mockResolvedValueOnce([]);
+
+    await sexeService.getSexesWithNbSpecimensForEspeceId(10, loggedUser);
+
+    expect(sexeRepository.getSexesWithNbSpecimensForEspeceId).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.getSexesWithNbSpecimensForEspeceId).toHaveBeenLastCalledWith(10);
+  });
+
+  test("should handle to return no defined number of species", async () => {
+    const loggedUser = mock<LoggedUser>();
+    sexeRepository.getSexesWithNbSpecimensForEspeceId.mockResolvedValueOnce([
+      mock<SexeWithNbSpecimens>({
+        nbSpecimens: null,
+      }),
+    ]);
+
+    const result = await sexeService.getSexesWithNbSpecimensForEspeceId(10, loggedUser);
+
+    expect(sexeRepository.getSexesWithNbSpecimensForEspeceId).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.getSexesWithNbSpecimensForEspeceId).toHaveBeenLastCalledWith(10);
+    expect(result[0].nbSpecimens).toEqual(0);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(sexeService.getSexesWithNbSpecimensForEspeceId(10, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

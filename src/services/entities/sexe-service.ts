@@ -1,6 +1,10 @@
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertSexeArgs, type QuerySexesArgs } from "../../graphql/generated/graphql-types";
+import {
+  type MutationUpsertSexeArgs,
+  type QuerySexesArgs,
+  type SexeWithSpecimensCount,
+} from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository";
 import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types";
@@ -56,6 +60,22 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     validateAuthorization(loggedUser);
 
     return sexeRepository.getCount(q);
+  };
+
+  const getSexesWithNbSpecimensForEspeceId = async (
+    especeId: number,
+    loggedUser: LoggedUser | null
+  ): Promise<SexeWithSpecimensCount[]> => {
+    validateAuthorization(loggedUser);
+
+    const result = await sexeRepository.getSexesWithNbSpecimensForEspeceId(especeId);
+
+    return result.map(({ nbSpecimens, ...rest }) => {
+      return {
+        ...rest,
+        nbSpecimens: nbSpecimens ?? 0,
+      };
+    });
   };
 
   const upsertSexe = async (args: MutationUpsertSexeArgs, loggedUser: LoggedUser | null): Promise<Sexe> => {
@@ -132,6 +152,7 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     findAllSexes,
     findPaginatedSexes,
     getSexesCount,
+    getSexesWithNbSpecimensForEspeceId,
     upsertSexe,
     deleteSexe,
     createSexes,

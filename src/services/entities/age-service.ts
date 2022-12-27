@@ -1,6 +1,10 @@
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertAgeArgs, type QueryAgesArgs } from "../../graphql/generated/graphql-types";
+import {
+  type AgeWithSpecimensCount,
+  type MutationUpsertAgeArgs,
+  type QueryAgesArgs,
+} from "../../graphql/generated/graphql-types";
 import { type AgeRepository } from "../../repositories/age/age-repository";
 import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
@@ -56,6 +60,22 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     validateAuthorization(loggedUser);
 
     return ageRepository.getCount(q);
+  };
+
+  const getAgesWithNbSpecimensForEspeceId = async (
+    especeId: number,
+    loggedUser: LoggedUser | null
+  ): Promise<AgeWithSpecimensCount[]> => {
+    validateAuthorization(loggedUser);
+
+    const result = await ageRepository.getAgesWithNbSpecimensForEspeceId(especeId);
+
+    return result.map(({ nbSpecimens, ...rest }) => {
+      return {
+        ...rest,
+        nbSpecimens: nbSpecimens ?? 0,
+      };
+    });
   };
 
   const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser | null): Promise<Age> => {
@@ -132,6 +152,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     findAllAges,
     findPaginatedAges,
     getAgesCount,
+    getAgesWithNbSpecimensForEspeceId,
     upsertAge,
     deleteAge,
     createAges,

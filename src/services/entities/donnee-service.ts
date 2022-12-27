@@ -2,13 +2,11 @@ import { type Donnee as DonneeEntity, type Inventaire, type Lieudit, type Prisma
 import { type Logger } from "pino";
 import {
   SortOrder,
-  type AgeWithSpecimensCount,
   type DonneeNavigationData,
   type InputDonnee,
   type MutationUpsertDonneeArgs,
   type PaginatedSearchDonneesResultResultArgs,
   type SearchDonneeCriteria,
-  type SexeWithSpecimensCount,
 } from "../../graphql/generated/graphql-types";
 import { type Age } from "../../repositories/age/age-repository-types";
 import { type Classe } from "../../repositories/classe/classe-repository-types";
@@ -561,60 +559,4 @@ export const findAllDonnees = async (): Promise<DonneeWithRelations[]> => {
     .then((donnees) => {
       return donnees.map(normalizeDonnee);
     });
-};
-
-export const countSpecimensByAgeForEspeceId = async (especeId: number): Promise<AgeWithSpecimensCount[]> => {
-  const agesOfEspece = await prisma.donnee.groupBy({
-    by: ["ageId"],
-    where: {
-      especeId,
-    },
-    _sum: {
-      nombre: true,
-    },
-  });
-
-  const ages = await prisma.age.findMany({
-    where: {
-      id: {
-        in: agesOfEspece.map((ageOfEspece) => ageOfEspece.ageId),
-      },
-    },
-  });
-
-  return ages.map((age) => {
-    const nbSpecimens = agesOfEspece?.find((ageOfEspece) => ageOfEspece?.ageId === age.id)?._sum?.nombre ?? 0;
-    return {
-      ...age,
-      nbSpecimens,
-    };
-  });
-};
-
-export const countSpecimensBySexeForEspeceId = async (especeId: number): Promise<SexeWithSpecimensCount[]> => {
-  const sexesOfEspece = await prisma.donnee.groupBy({
-    by: ["sexeId"],
-    where: {
-      especeId,
-    },
-    _sum: {
-      nombre: true,
-    },
-  });
-
-  const sexes = await prisma.sexe.findMany({
-    where: {
-      id: {
-        in: sexesOfEspece.map((sexeOfEspece) => sexeOfEspece.sexeId),
-      },
-    },
-  });
-
-  return sexes.map((sexe) => {
-    const nbSpecimens = sexesOfEspece?.find((sexeOfEspece) => sexeOfEspece?.sexeId === sexe.id)?._sum?.nombre ?? 0;
-    return {
-      ...sexe,
-      nbSpecimens,
-    };
-  });
 };

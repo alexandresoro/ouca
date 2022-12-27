@@ -7,7 +7,14 @@ import {
   objectToKeyValueInsert,
   objectToKeyValueSet,
 } from "../repository-helpers";
-import { sexeSchema, type Sexe, type SexeCreateInput, type SexeFindManyInput } from "./sexe-repository-types";
+import {
+  sexeSchema,
+  sexeWithNbSpecimensSchema,
+  type Sexe,
+  type SexeCreateInput,
+  type SexeFindManyInput,
+  type SexeWithNbSpecimens,
+} from "./sexe-repository-types";
 
 export type SexeRepositoryDependencies = {
   slonik: DatabasePool;
@@ -79,6 +86,22 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
     return slonik.oneFirst(query);
   };
 
+  const getSexesWithNbSpecimensForEspeceId = async (especeId: number): Promise<readonly SexeWithNbSpecimens[]> => {
+    const query = sql.type(sexeWithNbSpecimensSchema)`
+      SELECT
+        sexe.*,
+        SUM(donnee.nombre) as nb_specimens
+      FROM 
+        basenaturaliste.sexe
+      LEFT JOIN basenaturaliste.donnee on donnee.sexe_id = sexe.id
+      WHERE donnee.espece_id = ${especeId}
+      GROUP BY sexe.id
+      ORDER BY sexe.id
+    `;
+
+    return slonik.any(query);
+  };
+
   const createSexe = async (sexeInput: SexeCreateInput): Promise<Sexe> => {
     const query = sql.type(sexeSchema)`
       INSERT INTO
@@ -136,6 +159,7 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
     findSexeById,
     findSexes,
     getCount,
+    getSexesWithNbSpecimensForEspeceId,
     createSexe,
     createSexes,
     updateSexe,
