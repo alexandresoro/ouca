@@ -27,6 +27,15 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     return sexeRepository.findSexeById(id);
   };
 
+  const findSexeOfDonneeId = async (
+    donneeId: number | undefined,
+    loggedUser: LoggedUser | null
+  ): Promise<Sexe | null> => {
+    validateAuthorization(loggedUser);
+
+    return sexeRepository.findSexeByDonneeId(donneeId);
+  };
+
   const getDonneesCountBySexe = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
@@ -148,6 +157,7 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
 
   return {
     findSexe,
+    findSexeOfDonneeId,
     getDonneesCountBySexe,
     findAllSexes,
     findPaginatedSexes,

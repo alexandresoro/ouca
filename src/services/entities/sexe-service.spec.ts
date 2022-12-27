@@ -82,6 +82,27 @@ describe("Data count per entity", () => {
   });
 });
 
+describe("Find sex by data ID", () => {
+  test("should handle sex found", async () => {
+    const sexData = mock<Sexe>({
+      id: 256,
+    });
+    const loggedUser = mock<LoggedUser>();
+
+    sexeRepository.findSexeByDonneeId.mockResolvedValueOnce(sexData);
+
+    const sex = await sexeService.findSexeOfDonneeId(43, loggedUser);
+
+    expect(sexeRepository.findSexeByDonneeId).toHaveBeenCalledTimes(1);
+    expect(sexeRepository.findSexeByDonneeId).toHaveBeenLastCalledWith(43);
+    expect(sex?.id).toEqual(256);
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(sexeService.findSexeOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
 test("Find all sexes", async () => {
   const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
 

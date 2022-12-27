@@ -34,6 +34,24 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
     return slonik.maybeOne(query);
   };
 
+  const findSexeByDonneeId = async (donneeId: number | undefined): Promise<Sexe | null> => {
+    if (!donneeId) {
+      return null;
+    }
+
+    const query = sql.type(sexeSchema)`
+      SELECT 
+        sexe.*
+      FROM
+        basenaturaliste.sexe
+      LEFT JOIN basenaturaliste.donnee ON sexe.id = donnee.sexe_id
+      WHERE
+        donnee.id = ${donneeId}
+    `;
+
+    return slonik.maybeOne(query);
+  };
+
   const findSexes = async ({ orderBy, sortOrder, q, offset, limit }: SexeFindManyInput = {}): Promise<
     readonly Sexe[]
   > => {
@@ -157,6 +175,7 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
 
   return {
     findSexeById,
+    findSexeByDonneeId,
     findSexes,
     getCount,
     getSexesWithNbSpecimensForEspeceId,

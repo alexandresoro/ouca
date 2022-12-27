@@ -639,6 +639,9 @@ export const buildResolvers = ({
       ): Promise<Omit<Inventaire, "observateur" | "associes" | "lieuDit" | "meteos"> | null> => {
         return inventaireService.findInventaireOfDonneeId(parent?.id, user);
       },
+      sexe: async (parent, args, { user }): Promise<Sexe | null> => {
+        return sexeService.findSexeOfDonneeId(parent?.id, user);
+      },
     },
     DonneeResult: {
       donnee: async (parent): Promise<Omit<Donnee, "inventaire" | "espece"> | null> => {
