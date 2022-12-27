@@ -634,11 +634,7 @@ export const buildResolvers = ({
     },
     Donnee: {
       espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
-        const espece = await especeService.findEspeceOfDonneeId(parent?.id, user);
-        if (!espece) {
-          return null;
-        }
-        return especeService.findEspece(espece?.id, user);
+        return especeService.findEspeceOfDonneeId(parent?.id, user);
       },
       inventaire: async (
         parent,
