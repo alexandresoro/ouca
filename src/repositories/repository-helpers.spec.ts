@@ -1,5 +1,6 @@
 import { sql, type ListSqlToken, type SqlFragment } from "slonik";
 import {
+  buildAndClause,
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
@@ -157,6 +158,44 @@ describe("objectsToKeyValueInsert function", () => {
       type: "SLONIK_TOKEN_FRAGMENT",
       values: ["value", 12, true, null, null, "value2", 123, false, "notsoNull", "there"],
     });
+  });
+});
+
+describe("buildAndClause function", () => {
+  test("should return an empty fragment when an empty object is provided", () => {
+    expect(buildAndClause([])).toEqual(sql.fragment``);
+  });
+
+  test("should return an empty fragment when called with only empty properties", () => {
+    const clause = [
+      [sql.identifier(["tab1", "id1"]), ""],
+      [sql.identifier(["tab1", "id2"]), ""],
+      [sql.identifier(["tab2", "id1"]), []],
+    ] as const;
+
+    expect(buildAndClause(clause)).toEqual(sql.fragment``);
+  });
+
+  test("should handle an object with a single property", () => {
+    const clause = [[sql.identifier(["tab1", "id1"]), 12]] as const;
+
+    expect(buildAndClause(clause)).toEqual(sql.fragment`WHERE \"tab1\".\"id1\" = ${12}`);
+  });
+
+  test("should handle an object with a multiple properties of various types", () => {
+    const clause = [
+      [sql.identifier(["tab1", "id1"]), "toto"],
+      [sql.identifier(["tab1", "id2"]), ""],
+      [sql.identifier(["tab2", "id1"]), []],
+      [sql.identifier(["tab2", "id2"]), [4, 8]],
+      [sql.identifier(["tab2", "id3"]), ["titi", "tutu"]],
+      [sql.identifier(["tab2", "id3"]), false],
+      [sql.identifier(["tab2", "id1"]), 7, sql.fragment`<`],
+    ] as const;
+
+    expect(buildAndClause(clause)).toEqual(
+      sql.fragment`WHERE \"tab1\".\"id1\" = ${"toto"} AND \"tab2\".\"id2\" IN (${4},${8}) AND \"tab2\".\"id3\" IN (${"titi"},${"tutu"}) AND \"tab2\".\"id3\" = ${false} AND \"tab2\".\"id1\" < ${7}`
+    );
   });
 });
 

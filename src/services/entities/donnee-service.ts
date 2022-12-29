@@ -53,6 +53,15 @@ export const buildDonneeService = ({ logger, donneeRepository }: DonneeServiceDe
     return [...donnees];
   };
 
+  const getDonneesCount = async (
+    loggedUser: LoggedUser | null,
+    searchCriteria?: SearchDonneeCriteria | null
+  ): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return donneeRepository.getCount(searchCriteria);
+  };
+
   const findLastDonneeId = async (loggedUser: LoggedUser | null): Promise<number | null> => {
     validateAuthorization(loggedUser);
 
@@ -70,6 +79,7 @@ export const buildDonneeService = ({ logger, donneeRepository }: DonneeServiceDe
 
   return {
     findPaginatedDonnees,
+    getDonneesCount,
     findLastDonneeId,
     findNextRegroupement,
   };

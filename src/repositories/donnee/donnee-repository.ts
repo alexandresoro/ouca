@@ -1,7 +1,7 @@
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common";
 import { buildPaginationFragment, buildSortOrderFragment } from "../repository-helpers";
-import { buildOrderByIdentifier } from "./donnee-repository-helper";
+import { buildOrderByIdentifier, buildSearchCriteriaClause } from "./donnee-repository-helper";
 import {
   donneeSchema,
   idSchema,
@@ -18,7 +18,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   const findDonnees = async ({ orderBy, sortOrder, searchCriteria, offset, limit }: DonneeFindManyInput = {}): Promise<
     readonly Donnee[]
   > => {
-    // TODO handle search criteria
     const query = sql.type(donneeSchema)`
       SELECT
         donnee.*
@@ -57,6 +56,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
         LEFT JOIN basenaturaliste.observateur ON inventaire.observateur_id = observateur.id`
           : sql.fragment``
       }
+      ${buildSearchCriteriaClause(searchCriteria)}
       GROUP BY donnee.id${
         orderBy
           ? sql.fragment`
@@ -79,7 +79,6 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   const getCount = async (searchCriteria: DonneeFindManyInput["searchCriteria"] = {}): Promise<number> => {
-    // TODO handle search criteria
     const query = sql.type(countSchema)`
       SELECT
         COUNT(DISTINCT donnee.id)
@@ -94,6 +93,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
       LEFT JOIN basenaturaliste.commune ON lieudit.commune_id = commune.id
       LEFT JOIN basenaturaliste.inventaire_meteo ON inventaire.id = inventaire_meteo.inventaire_id
       LEFT JOIN basenaturaliste.inventaire_associe ON inventaire.id = inventaire_associe.inventaire_id
+      ${buildSearchCriteriaClause(searchCriteria)}
     `;
 
     return slonik.oneFirst(query);

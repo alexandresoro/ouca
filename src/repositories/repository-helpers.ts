@@ -1,4 +1,10 @@
-import { sql, type ListSqlToken, type SqlFragment } from "slonik";
+import {
+  sql,
+  type IdentifierSqlToken,
+  type ListSqlToken,
+  type PrimitiveValueExpression,
+  type SqlFragment,
+} from "slonik";
 import { type SortOrder } from "./common";
 
 export const objectToKeyValueSet = (
@@ -69,6 +75,47 @@ export const objectsToKeyValueInsert = <T extends string>(
     sql.fragment`), (`
   )})
   `;
+};
+
+export const buildAndClause = (
+  conditions:
+    | readonly (readonly [
+        IdentifierSqlToken,
+        string | number | boolean | readonly string[] | readonly number[],
+        Readonly<{
+          type: "SLONIK_TOKEN_FRAGMENT";
+          sql: string;
+          values: PrimitiveValueExpression[];
+        }>?
+      ])[]
+    | null
+    | undefined
+) => {
+  if (!conditions?.length) {
+    return sql.fragment``;
+  }
+
+  const filteredConditions = conditions.filter(([, value]) => {
+    // Ignore empty arrays and empty strings
+    return !(typeof value === "string" && !value.trim().length) && !(Array.isArray(value) && !value.length);
+  });
+
+  if (!filteredConditions.length) {
+    return sql.fragment``;
+  }
+
+  const conditionsFragments = filteredConditions.map(([identifier, value, overrideConditionComparator]) => {
+    if (Array.isArray(value)) {
+      return sql.join([identifier, sql.fragment`(${sql.join(value, sql.fragment`,`)})`], sql.fragment` IN `);
+    } else {
+      return sql.join(
+        [identifier, value],
+        overrideConditionComparator ? sql.fragment` ${overrideConditionComparator} ` : sql.fragment` = `
+      );
+    }
+  });
+
+  return sql.fragment`WHERE ${sql.join(conditionsFragments, sql.fragment` AND `)}`;
 };
 
 export const buildSortOrderFragment = ({
