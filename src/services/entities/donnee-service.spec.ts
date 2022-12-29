@@ -1,7 +1,13 @@
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import {
+  SearchDonneesOrderBy,
+  SortOrder,
+  type PaginatedSearchDonneesResultResultArgs,
+} from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
+import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { OucaError } from "../../utils/errors";
 import { buildDonneeService } from "./donnee-service";
@@ -22,6 +28,90 @@ const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
 const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
+
+describe("Data paginated find by search criteria", () => {
+  test("should handle being called without query params", async () => {
+    const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
+    const loggedUser = mock<LoggedUser>();
+
+    donneeRepository.findDonnees.mockResolvedValueOnce(dataData);
+
+    await donneeService.findPaginatedDonnees(loggedUser);
+
+    expect(donneeRepository.findDonnees).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.findDonnees).toHaveBeenLastCalledWith({});
+  });
+
+  test("should handle params when retrieving paginated data", async () => {
+    const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
+    const loggedUser = mock<LoggedUser>();
+
+    const searchParams: PaginatedSearchDonneesResultResultArgs = {
+      searchCriteria: {
+        nombre: 12,
+        nicheurs: ["certain", "probable"],
+      },
+      orderBy: SearchDonneesOrderBy.Departement,
+      sortOrder: SortOrder.Desc,
+      searchParams: {
+        pageNumber: 0,
+        pageSize: 10,
+      },
+    };
+
+    donneeRepository.findDonnees.mockResolvedValueOnce([dataData[0]]);
+
+    await donneeService.findPaginatedDonnees(loggedUser, searchParams);
+
+    expect(donneeRepository.findDonnees).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.findDonnees).toHaveBeenLastCalledWith({
+      searchCriteria: {
+        nombre: 12,
+        nicheurs: ["certain", "probable"],
+      },
+      orderBy: "departement",
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(donneeService.findPaginatedDonnees(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await donneeService.getDonneesCount(loggedUser);
+
+    expect(donneeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCount).toHaveBeenLastCalledWith(undefined);
+  });
+
+  test("should handle to be called with some criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    const searchCriteria: PaginatedSearchDonneesResultResultArgs["searchCriteria"] = {
+      nombre: 12,
+      nicheurs: ["certain", "probable"],
+    };
+
+    await donneeService.getDonneesCount(loggedUser, searchCriteria);
+
+    expect(donneeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.getCount).toHaveBeenLastCalledWith({
+      nombre: 12,
+      nicheurs: ["certain", "probable"],
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(donneeService.getDonneesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
 
 describe("Get latest data id", () => {
   test("should handle existing data", async () => {
