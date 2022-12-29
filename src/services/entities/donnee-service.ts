@@ -34,7 +34,7 @@ type DonneeServiceDependencies = {
   donneeRepository: DonneeRepository;
 };
 
-export const buildDonneeService = ({ logger, donneeRepository }: DonneeServiceDependencies) => {
+export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependencies) => {
   const findPaginatedDonnees = async (
     loggedUser: LoggedUser | null,
     options: PaginatedSearchDonneesResultResultArgs = {}
