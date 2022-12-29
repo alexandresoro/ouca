@@ -2,7 +2,7 @@ import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
 import { saveDatabaseRequest } from "../services/database/save-database";
-import { deleteDonnee, findDonnee, findDonneeNavigationData, upsertDonnee } from "../services/entities/donnee-service";
+import { deleteDonnee, findDonneeNavigationData, upsertDonnee } from "../services/entities/donnee-service";
 import { upsertInventaire, type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
   generateAgesExport,
@@ -647,8 +647,11 @@ export const buildResolvers = ({
       },
     },
     DonneeResult: {
-      donnee: async (parent): Promise<Omit<Donnee, "inventaire" | "espece"> | null> => {
-        return findDonnee(parent?.id);
+      donnee: async (parent, args, { user }): Promise<DonneeEntity | null> => {
+        if (!parent?.id) {
+          return null;
+        }
+        return donneeService.findDonnee(parent.id, user);
       },
       navigation: async (parent): Promise<DonneeNavigationData> => {
         return findDonneeNavigationData(parent?.id);

@@ -29,6 +29,35 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
+describe("Find data", () => {
+  test("should handle a matching data", async () => {
+    const dataData = mock<Donnee>();
+    const loggedUser = mock<LoggedUser>();
+
+    donneeRepository.findDonneeById.mockResolvedValueOnce(dataData);
+
+    await donneeService.findDonnee(dataData.id, loggedUser);
+
+    expect(donneeRepository.findDonneeById).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.findDonneeById).toHaveBeenLastCalledWith(dataData.id);
+  });
+
+  test("should handle data not found", async () => {
+    donneeRepository.findDonneeById.mockResolvedValueOnce(null);
+    const loggedUser = mock<LoggedUser>();
+
+    await expect(donneeService.findDonnee(10, loggedUser)).resolves.toBe(null);
+
+    expect(donneeRepository.findDonneeById).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.findDonneeById).toHaveBeenLastCalledWith(10);
+  });
+
+  test("should throw an error when the no login details are provided", async () => {
+    await expect(donneeService.findDonnee(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(donneeRepository.findDonneeById).not.toHaveBeenCalled();
+  });
+});
+
 describe("Data paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];

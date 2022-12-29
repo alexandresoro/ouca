@@ -35,6 +35,12 @@ type DonneeServiceDependencies = {
 };
 
 export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependencies) => {
+  const findDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee | null> => {
+    validateAuthorization(loggedUser);
+
+    return donneeRepository.findDonneeById(id);
+  };
+
   const findPaginatedDonnees = async (
     loggedUser: LoggedUser | null,
     options: PaginatedSearchDonneesResultResultArgs = {}
@@ -78,6 +84,7 @@ export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependenci
   };
 
   return {
+    findDonnee,
     findPaginatedDonnees,
     getDonneesCount,
     findLastDonneeId,
@@ -155,17 +162,6 @@ const normalizeDonnee = <T extends DonneeRelatedTablesFields>(
     comportements: comportementsArray,
     milieux: milieuxArray,
   };
-};
-
-export const findDonnee = async (id: number | undefined): Promise<DonneeWithRelations | null> => {
-  return prisma.donnee
-    .findUnique({
-      include: COMMON_DONNEE_INCLUDE,
-      where: {
-        id,
-      },
-    })
-    .then((donnee) => (donnee ? normalizeDonnee(donnee) : null));
 };
 
 export const findDonneesByCriteria = async (

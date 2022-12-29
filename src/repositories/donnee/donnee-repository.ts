@@ -15,6 +15,19 @@ export type DonneeRepositoryDependencies = {
 };
 
 export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) => {
+  const findDonneeById = async (id: number): Promise<Donnee | null> => {
+    const query = sql.type(donneeSchema)`
+      SELECT 
+        *
+      FROM
+        basenaturaliste.donnee
+      WHERE
+        id = ${id}
+    `;
+
+    return slonik.maybeOne(query);
+  };
+
   const findDonnees = async ({ orderBy, sortOrder, searchCriteria, offset, limit }: DonneeFindManyInput = {}): Promise<
     readonly Donnee[]
   > => {
@@ -315,6 +328,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   return {
+    findDonneeById,
     findDonnees,
     getCount,
     findLatestDonneeId,
