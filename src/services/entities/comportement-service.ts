@@ -32,6 +32,14 @@ export const buildComportementService = ({
     return comportementRepository.findComportementById(id);
   };
 
+  const findComportementsIdsOfDonneeId = async (donneeId: number): Promise<number[]> => {
+    const comportementsIds = await comportementRepository
+      .findComportementsOfDonneeId(donneeId)
+      .then((comportements) => comportements.map(({ id }) => id));
+
+    return [...comportementsIds];
+  };
+
   const findComportementsOfDonneeId = async (
     donneeId: number | undefined,
     loggedUser: LoggedUser | null
@@ -154,6 +162,7 @@ export const buildComportementService = ({
 
   return {
     findComportement,
+    findComportementsIdsOfDonneeId,
     findComportementsOfDonneeId,
     getDonneesCountByComportement,
     findAllComportements,

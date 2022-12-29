@@ -41,6 +41,13 @@ export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependenci
     return donneeRepository.findDonneeById(id);
   };
 
+  // Be careful when calling it, it will retrieve a lot of data!
+  const findAllDonnees = async (): Promise<Donnee[]> => {
+    const donnees = await donneeRepository.findDonnees();
+
+    return [...donnees];
+  };
+
   const findPaginatedDonnees = async (
     loggedUser: LoggedUser | null,
     options: PaginatedSearchDonneesResultResultArgs = {}
@@ -85,6 +92,7 @@ export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependenci
 
   return {
     findDonnee,
+    findAllDonnees,
     findPaginatedDonnees,
     getDonneesCount,
     findLastDonneeId,
@@ -443,14 +451,4 @@ export const deleteDonnee = async (donneeId: number): Promise<DonneeEntity> => {
     });
   }
   return deletedDonnee;
-};
-
-export const findAllDonnees = async (): Promise<DonneeWithRelations[]> => {
-  return prisma.donnee
-    .findMany({
-      include: COMMON_DONNEE_INCLUDE,
-    })
-    .then((donnees) => {
-      return donnees.map(normalizeDonnee);
-    });
 };

@@ -23,6 +23,14 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     return milieuRepository.findMilieuById(id);
   };
 
+  const findMilieuxIdsOfDonneeId = async (donneeId: number): Promise<number[]> => {
+    const milieuxIds = await milieuRepository
+      .findMilieuxOfDonneeId(donneeId)
+      .then((milieux) => milieux.map(({ id }) => id));
+
+    return [...milieuxIds];
+  };
+
   const findMilieuxOfDonneeId = async (
     donneeId: number | undefined,
     loggedUser: LoggedUser | null
@@ -142,6 +150,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
 
   return {
     findMilieu,
+    findMilieuxIdsOfDonneeId,
     findMilieuxOfDonneeId,
     getDonneesCountByMilieu,
     findAllMilieux,

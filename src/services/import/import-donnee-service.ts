@@ -8,6 +8,7 @@ import { type Age } from "../../repositories/age/age-repository-types";
 import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
 import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
 import { type Espece } from "../../repositories/espece/espece-repository-types";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
@@ -19,7 +20,7 @@ import { type Observateur } from "../../repositories/observateur/observateur-rep
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
-import { createDonnee, findAllDonnees, type DonneeWithRelations } from "../entities/donnee-service";
+import { createDonnee } from "../entities/donnee-service";
 import { upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
 import { ImportService } from "./import-service";
 
@@ -39,7 +40,7 @@ export class ImportDonneeService extends ImportService {
   private meteos!: Meteo[];
   private inventaires: (Omit<Inventaire, "dateCreation"> | InventaireWithRelations)[] = []; // The list of existing inventaires + the ones we created along with the validation
 
-  private existingDonnees!: DonneeWithRelations[];
+  private existingDonnees!: Donnee[];
 
   private newDonnees!: InputDonnee[];
 
@@ -72,7 +73,7 @@ export class ImportDonneeService extends ImportService {
     this.comportements = await this.services.comportementService.findAllComportements();
     this.milieux = await this.services.milieuService.findAllMilieux();
     this.inventaires = await this.services.inventaireService.findAllInventaires();
-    this.existingDonnees = await findAllDonnees();
+    this.existingDonnees = await this.services.donneeService.findAllDonnees();
   };
 
   protected validateAndPrepareEntity = async (donneeTab: string[], loggedUser: LoggedUser): Promise<string | null> => {
@@ -270,7 +271,7 @@ export class ImportDonneeService extends ImportService {
     });
 
     // Check if already have a similar donnee in the database
-    const existingDonneeDatabase = this.existingDonnees.find((donnee) => {
+    const existingDonneeDatabase = this.existingDonnees.find(async (donnee) => {
       return (
         donnee.inventaireId === existingInventaire?.id &&
         donnee.especeId === espece.id &&
@@ -283,10 +284,13 @@ export class ImportDonneeService extends ImportService {
         donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
         areSetsContainingSameValues(
-          new Set(donnee.comportements?.map((comportement) => comportement?.id)),
+          new Set(await this.services.comportementService.findComportementsIdsOfDonneeId(donnee.id)),
           comportementsIds
         ) &&
-        areSetsContainingSameValues(new Set(donnee.milieux?.map((milieu) => milieu?.id)), milieuxIds)
+        areSetsContainingSameValues(
+          new Set(await this.services.milieuService.findMilieuxIdsOfDonneeId(donnee.id)),
+          milieuxIds
+        )
       );
     });
 

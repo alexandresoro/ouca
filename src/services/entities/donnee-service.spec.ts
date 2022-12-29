@@ -58,6 +58,16 @@ describe("Find data", () => {
   });
 });
 
+test("Find all datas", async () => {
+  const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
+
+  donneeRepository.findDonnees.mockResolvedValueOnce(dataData);
+
+  await donneeService.findAllDonnees();
+
+  expect(donneeRepository.findDonnees).toHaveBeenCalledTimes(1);
+});
+
 describe("Data paginated find by search criteria", () => {
   test("should handle being called without query params", async () => {
     const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
