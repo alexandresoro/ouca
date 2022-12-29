@@ -1,14 +1,8 @@
 import mercurius, { type IResolvers } from "mercurius";
+import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
 import { saveDatabaseRequest } from "../services/database/save-database";
-import {
-  deleteDonnee,
-  findDonnee,
-  findDonneeNavigationData,
-  findPaginatedDonneesByCriteria,
-  getNbDonneesByCriteria,
-  upsertDonnee,
-} from "../services/entities/donnee-service";
+import { deleteDonnee, findDonnee, findDonneeNavigationData, upsertDonnee } from "../services/entities/donnee-service";
 import { upsertInventaire, type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
   generateAgesExport,
@@ -308,8 +302,7 @@ export const buildResolvers = ({
           count,
         };
       },
-      searchDonnees: (_source, _args, { user }): Record<string, never> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
+      searchDonnees: (): Record<string, never> => {
         return {};
       },
       importStatus: async (_source, args, { user }): Promise<ImportStatus | null> => {
@@ -710,11 +703,11 @@ export const buildResolvers = ({
       nbDonnees: entityNbDonneesResolver(observateurService.getDonneesCountByObservateur),
     },
     PaginatedSearchDonneesResult: {
-      result: async (_, args): Promise<Omit<Donnee, "espece" | "inventaire">[]> => {
-        return findPaginatedDonneesByCriteria(args);
+      result: async (_, args, { user }): Promise<DonneeEntity[]> => {
+        return donneeService.findPaginatedDonnees(user, args);
       },
-      count: async (_, { searchCriteria }): Promise<number> => {
-        return getNbDonneesByCriteria(searchCriteria);
+      count: async (_, { searchCriteria }, { user }): Promise<number> => {
+        return donneeService.getDonneesCount(user, searchCriteria);
       },
     },
     Sexe: {

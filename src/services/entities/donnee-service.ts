@@ -1,4 +1,4 @@
-import { type Donnee as DonneeEntity, type Inventaire, type Lieudit, type Prisma } from "@prisma/client";
+import { type Donnee as DonneeEntity, type Inventaire, type Lieudit } from "@prisma/client";
 import { type Logger } from "pino";
 import {
   SortOrder,
@@ -26,7 +26,7 @@ import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
-import { getPrismaPagination, getSqlPagination } from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
 import { normalizeInventaire } from "./inventaire-service";
 
 type DonneeServiceDependencies = {
@@ -222,138 +222,6 @@ export const findDonneesByCriteria = async (
     });
 
   return donnees;
-};
-
-export const findPaginatedDonneesByCriteria = async (
-  options: PaginatedSearchDonneesResultResultArgs = {}
-): Promise<DonneeWithRelations[]> => {
-  const { searchParams, searchCriteria, orderBy: orderByField, sortOrder } = options;
-
-  let orderBy: Prisma.Enumerable<Prisma.DonneeOrderByWithRelationInput> | undefined = undefined;
-  if (sortOrder) {
-    switch (orderByField) {
-      case "id":
-      case "nombre":
-        orderBy = {
-          [orderByField]: sortOrder,
-        };
-        break;
-      case "codeEspece":
-        orderBy = {
-          espece: {
-            code: sortOrder,
-          },
-        };
-
-        break;
-      case "nomFrancais":
-        orderBy = {
-          espece: {
-            nomFrancais: sortOrder,
-          },
-        };
-        break;
-      case "sexe":
-        orderBy = {
-          sexe: {
-            libelle: sortOrder,
-          },
-        };
-        break;
-      case "age":
-        orderBy = {
-          age: {
-            libelle: sortOrder,
-          },
-        };
-        break;
-      case "departement":
-        orderBy = {
-          inventaire: {
-            lieuDit: {
-              commune: {
-                departement: {
-                  code: sortOrder,
-                },
-              },
-            },
-          },
-        };
-        break;
-      case "codeCommune":
-        orderBy = {
-          inventaire: {
-            lieuDit: {
-              commune: {
-                code: sortOrder,
-              },
-            },
-          },
-        };
-        break;
-      case "nomCommune":
-        orderBy = {
-          inventaire: {
-            lieuDit: {
-              commune: {
-                nom: sortOrder,
-              },
-            },
-          },
-        };
-        break;
-      case "lieuDit":
-        orderBy = {
-          inventaire: {
-            lieuDit: {
-              nom: sortOrder,
-            },
-          },
-        };
-        break;
-      case "date":
-      case "heure":
-      case "duree":
-        orderBy = {
-          inventaire: {
-            [orderByField]: sortOrder,
-          },
-        };
-        break;
-      case "observateur":
-        {
-          orderBy = {
-            inventaire: {
-              observateur: {
-                libelle: sortOrder,
-              },
-            },
-          };
-        }
-        break;
-      default:
-        orderBy = {
-          id: SortOrder.Desc,
-        };
-    }
-  }
-
-  return prisma.donnee
-    .findMany({
-      ...getPrismaPagination(searchParams),
-      include: COMMON_DONNEE_INCLUDE,
-      orderBy,
-      where: buildSearchDonneeCriteria(searchCriteria),
-    })
-    .then((donnees) => {
-      return donnees.map(normalizeDonnee);
-    });
-};
-
-export const getNbDonneesByCriteria = async (searchCriteria?: SearchDonneeCriteria | null): Promise<number> => {
-  return prisma.donnee.count({
-    where: buildSearchDonneeCriteria(searchCriteria),
-  });
 };
 
 export const findDonneeNavigationData = async (donneeId: number | undefined): Promise<DonneeNavigationData> => {
