@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { type SearchDonneeCriteria } from "../../graphql/generated/graphql-types";
 import { type SortOrder } from "../common";
+import { type SearchCriteria } from "../search-criteria";
 
 export const donneeSchema = z.object({
   id: z.number(),
@@ -26,7 +26,7 @@ export const maxRegoupementSchema = z.object({
 });
 
 export type DonneeFindManyInput = Partial<{
-  searchCriteria: SearchDonneeCriteria | null | undefined;
+  searchCriteria: SearchCriteria | null | undefined;
   orderBy:
     | "id"
     | "nombre"
