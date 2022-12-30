@@ -633,7 +633,12 @@ type Query {
   ): DepartementsPaginatedResult
   donnee(id: Int!): DonneeResult
   espece(id: Int!): Espece
-  especes(searchParams: SearchParams, orderBy: EspecesOrderBy, sortOrder: SortOrder): EspecesPaginatedResult
+  especes(
+    searchParams: SearchParams
+    searchCriteria: SearchDonneeCriteria
+    orderBy: EspecesOrderBy
+    sortOrder: SortOrder
+  ): EspecesPaginatedResult
   estimationDistance(id: Int!): EstimationDistance
   estimationsDistance(
     searchParams: SearchParams
@@ -666,12 +671,6 @@ type Query {
   nextRegroupement: Int!
   lastDonneeId: Int
   searchDonnees: PaginatedSearchDonneesResult
-  searchEspeces(
-    searchCriteria: SearchDonneeCriteria
-    searchParams: SearchDonneeParams
-    orderBy: EspecesOrderBy
-    sortOrder: SortOrder
-  ): EspecesPaginatedResult
   settings: Settings
   importStatus(importId: String!): ImportStatus
   exportAges: String
