@@ -13,24 +13,6 @@ export const isEntityEditable = (entity: { ownerId?: string | null } | null, use
   return user?.role === "admin" || entity?.ownerId === user?.id;
 };
 
-// Utility method to compute the Prisma pagination from the API pagination
-// Page number is starting at index 0
-/**
- * @deprecated
- */
-export const getPrismaPagination = (
-  paginationOptions: PaginationOptions | null | undefined
-): { skip: number; take: number } | Record<string, never> => {
-  if (paginationOptions?.pageNumber == null || !paginationOptions?.pageSize) {
-    return {};
-  }
-
-  return {
-    skip: paginationOptions.pageNumber * paginationOptions.pageSize,
-    take: paginationOptions.pageSize,
-  };
-};
-
 // Utility method to compute the SQL pagination from the API pagination
 // Page number is starting at index 0
 export const getSqlPagination = (
