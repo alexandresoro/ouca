@@ -7,7 +7,6 @@ import {
   SortOrder,
   type MutationUpsertEspeceArgs,
   type QueryEspecesArgs,
-  type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
@@ -17,7 +16,6 @@ import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { queryParametersToFindAllEntities } from "./entities-utils";
 import { buildEspeceService } from "./espece-service";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
@@ -42,17 +40,6 @@ const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
 const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
-
-jest.mock<typeof import("./donnee-utils")>("./donnee-utils", () => {
-  const actualModule = jest.requireActual<typeof import("./donnee-utils")>("./donnee-utils");
-  return {
-    __esModule: true,
-    ...actualModule,
-    buildSearchDonneeCriteria: jest.fn(),
-  };
-});
-
-const mockedBuildSearchDonneeCriteria = jest.mocked(buildSearchDonneeCriteria, true);
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 jest.mock<typeof import("./espece-service-reshape")>("./espece-service-reshape", () => {
@@ -172,16 +159,12 @@ describe("Entities paginated find by search criteria", () => {
     const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
     const loggedUser = mock<LoggedUser>();
 
-    prismaMock.espece.findMany.mockResolvedValueOnce(speciesData);
+    especeRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
     await especeService.findPaginatedEspeces(loggedUser);
 
-    expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: undefined,
-      where: { AND: [{}, {}] },
-    });
+    expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
+    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated species ", async () => {
@@ -198,43 +181,17 @@ describe("Entities paginated find by search criteria", () => {
       },
     };
 
-    prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
+    especeRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
 
     await especeService.findPaginatedEspeces(loggedUser, searchParams);
 
-    expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
-      },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        AND: [
-          {
-            OR: [
-              {
-                code: {
-                  contains: searchParams.searchParams?.q,
-                },
-              },
-              {
-                nomFrancais: {
-                  contains: searchParams.searchParams?.q,
-                },
-              },
-              {
-                nomLatin: {
-                  contains: searchParams.searchParams?.q,
-                },
-              },
-            ],
-          },
-          {},
-        ],
-      },
+    expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
+    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
+      q: "Bob",
+      orderBy: COLUMN_CODE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 
@@ -250,60 +207,31 @@ describe("Entities paginated find by search criteria", () => {
         pageNumber: 0,
         pageSize: 10,
       },
+      searchCriteria: {
+        ages: [12, 23],
+        nombre: null,
+        communes: [3, 6],
+        toDate: "2010-01-01",
+      },
     };
 
-    prismaMock.espece.findMany.mockResolvedValueOnce([speciesData[0]]);
+    especeRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
 
-    const whereInput = mock<Prisma.DonneeWhereInput>({
-      ageId: 12,
-    });
-    const { espece, especeId, ...restWhereInput } = whereInput;
+    await especeService.findPaginatedEspeces(loggedUser, searchParams);
 
-    // Need to be mocked twice, as we to two calls to buildSearchDonneeCriteria
-    mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
-    mockedBuildSearchDonneeCriteria.mockReturnValueOnce(whereInput);
-
-    await especeService.findPaginatedEspeces(loggedUser, searchParams, mock<SearchDonneeCriteria>());
-
-    expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.findMany).toHaveBeenLastCalledWith({
-      ...queryParametersToFindAllEntities(COLUMN_CODE),
-      orderBy: {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        [searchParams.orderBy!]: searchParams.sortOrder,
+    expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
+    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
+      q: "Bob",
+      searchCriteria: {
+        ages: [12, 23],
+        nombre: null,
+        communes: [3, 6],
+        toDate: "2010-01-01",
       },
-      skip: searchParams.searchParams?.pageNumber,
-      take: searchParams.searchParams?.pageSize,
-      where: {
-        AND: [
-          {
-            OR: [
-              {
-                code: {
-                  contains: searchParams.searchParams?.q,
-                },
-              },
-              {
-                nomFrancais: {
-                  contains: searchParams.searchParams?.q,
-                },
-              },
-              {
-                nomLatin: {
-                  contains: searchParams.searchParams?.q,
-                },
-              },
-            ],
-          },
-          {
-            ...espece,
-            id: especeId,
-            donnee: {
-              some: restWhereInput,
-            },
-          },
-        ],
-      },
+      orderBy: COLUMN_CODE,
+      sortOrder: SortOrder.Desc,
+      offset: searchParams.searchParams?.pageNumber,
+      limit: searchParams.searchParams?.pageSize,
     });
   });
 

@@ -21,7 +21,7 @@ import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import { buildSearchDonneeCriteria } from "./donnee-utils";
-import { getPrismaPagination, queryParametersToFindAllEntities } from "./entities-utils";
+import { getPrismaPagination, getSqlPagination, queryParametersToFindAllEntities } from "./entities-utils";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
 
 type EspeceServiceDependencies = {
@@ -62,16 +62,41 @@ export const buildEspeceService = ({
     return [...especesWithClasses];
   };
 
+  const findPaginatedEspeces = async (
+    loggedUser: LoggedUser | null,
+    options: QueryEspecesArgs = {}
+  ): Promise<Espece[]> => {
+    validateAuthorization(loggedUser);
+
+    const { searchParams, searchCriteria, orderBy: orderByField, sortOrder } = options;
+
+    const especes = await especeRepository.findEspeces({
+      q: searchParams?.q,
+      searchCriteria: searchCriteria && Object.keys(searchCriteria).length ? searchCriteria : undefined,
+      ...getSqlPagination(searchParams),
+      orderBy: orderByField,
+      sortOrder,
+    });
+
+    return [...especes];
+  };
+
   const getEspecesCount = async (
     loggedUser: LoggedUser | null,
-    criteria: {
+    {
+      q,
+      searchCriteria,
+    }: {
       q?: string | null;
       searchCriteria?: SearchDonneeCriteria | null;
     } = {}
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return especeRepository.getCount(criteria);
+    return especeRepository.getCount({
+      q,
+      searchCriteria: searchCriteria && Object.keys(searchCriteria).length ? searchCriteria : undefined,
+    });
   };
 
   const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {

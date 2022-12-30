@@ -1,4 +1,4 @@
-import { sql } from "slonik";
+import { sql, type IdentifierSqlToken } from "slonik";
 import { buildAndClause } from "../repository-helpers";
 import { buildSearchCriteriaParameters } from "../search-criteria";
 import { type EspeceFindManyInput } from "./espece-repository-types";
@@ -21,5 +21,24 @@ export const buildSearchEspeceClause = ({ q, searchCriteria }: Pick<EspeceFindMa
     }`;
   } else {
     return q ? sql.fragment`WHERE ${buildQClause(q)}` : sql.fragment``;
+  }
+};
+
+export const buildOrderByIdentifier = (
+  orderBy: Omit<NonNullable<EspeceFindManyInput["orderBy"]>, "nbDonnees">
+): IdentifierSqlToken => {
+  switch (orderBy) {
+    case "id":
+      return sql.identifier(["espece", "id"]);
+    case "code":
+      return sql.identifier(["espece", "code"]);
+    case "nomClasse":
+      return sql.identifier(["classe", "libelle"]);
+    case "nomFrancais":
+      return sql.identifier(["espece", "nom_francais"]);
+    case "nomLatin":
+      return sql.identifier(["espece", "nom_latin"]);
+    default:
+      throw new Error();
   }
 };
