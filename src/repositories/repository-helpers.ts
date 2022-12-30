@@ -90,9 +90,9 @@ export const buildAndClause = (
       ])[]
     | null
     | undefined
-) => {
+): ListSqlToken | null => {
   if (!conditions?.length) {
-    return sql.fragment``;
+    return null;
   }
 
   const filteredConditions = conditions.filter(([, value]) => {
@@ -101,7 +101,7 @@ export const buildAndClause = (
   });
 
   if (!filteredConditions.length) {
-    return sql.fragment``;
+    return null;
   }
 
   const conditionsFragments = filteredConditions.map(([identifier, value, overrideConditionComparator]) => {
@@ -115,7 +115,7 @@ export const buildAndClause = (
     }
   });
 
-  return sql.fragment`WHERE ${sql.join(conditionsFragments, sql.fragment` AND `)}`;
+  return sql.join(conditionsFragments, sql.fragment` AND `);
 };
 
 export const buildSortOrderFragment = ({

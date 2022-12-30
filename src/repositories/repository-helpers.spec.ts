@@ -162,24 +162,40 @@ describe("objectsToKeyValueInsert function", () => {
 });
 
 describe("buildAndClause function", () => {
-  test("should return an empty fragment when an empty object is provided", () => {
-    expect(buildAndClause([])).toEqual(sql.fragment``);
+  test("should return null when an empty object is provided", () => {
+    expect(buildAndClause([])).toBeNull();
   });
 
-  test("should return an empty fragment when called with only empty properties", () => {
+  test("should return null when called with only empty properties", () => {
     const clause = [
       [sql.identifier(["tab1", "id1"]), ""],
       [sql.identifier(["tab1", "id2"]), ""],
       [sql.identifier(["tab2", "id1"]), []],
     ] as const;
 
-    expect(buildAndClause(clause)).toEqual(sql.fragment``);
+    expect(buildAndClause(clause)).toBeNull();
   });
 
   test("should handle an object with a single property", () => {
     const clause = [[sql.identifier(["tab1", "id1"]), 12]] as const;
 
-    expect(buildAndClause(clause)).toEqual(sql.fragment`WHERE \"tab1\".\"id1\" = ${12}`);
+    expect(buildAndClause(clause)).toEqual<ListSqlToken>({
+      glue: sql.fragment` AND `,
+      members: [
+        {
+          glue: sql.fragment` = `,
+          members: [
+            {
+              names: ["tab1", "id1"],
+              type: "SLONIK_TOKEN_IDENTIFIER",
+            },
+            12,
+          ],
+          type: "SLONIK_TOKEN_LIST",
+        },
+      ],
+      type: "SLONIK_TOKEN_LIST",
+    });
   });
 
   test("should handle an object with a multiple properties of various types", () => {
@@ -189,13 +205,79 @@ describe("buildAndClause function", () => {
       [sql.identifier(["tab2", "id1"]), []],
       [sql.identifier(["tab2", "id2"]), [4, 8]],
       [sql.identifier(["tab2", "id3"]), ["titi", "tutu"]],
-      [sql.identifier(["tab2", "id3"]), false],
-      [sql.identifier(["tab2", "id1"]), 7, sql.fragment`<`],
+      [sql.identifier(["tab2", "id4"]), false],
+      [sql.identifier(["tab3", "id1"]), 7, sql.fragment`<`],
     ] as const;
 
-    expect(buildAndClause(clause)).toEqual(
-      sql.fragment`WHERE \"tab1\".\"id1\" = ${"toto"} AND \"tab2\".\"id2\" IN (${4},${8}) AND \"tab2\".\"id3\" IN (${"titi"},${"tutu"}) AND \"tab2\".\"id3\" = ${false} AND \"tab2\".\"id1\" < ${7}`
-    );
+    expect(buildAndClause(clause)).toEqual<ListSqlToken>({
+      glue: sql.fragment` AND `,
+      members: [
+        {
+          glue: sql.fragment` = `,
+          members: [
+            {
+              names: ["tab1", "id1"],
+              type: "SLONIK_TOKEN_IDENTIFIER",
+            },
+            "toto",
+          ],
+          type: "SLONIK_TOKEN_LIST",
+        },
+        {
+          glue: sql.fragment` IN `,
+          members: [
+            {
+              names: ["tab2", "id2"],
+              type: "SLONIK_TOKEN_IDENTIFIER",
+            },
+            {
+              sql: "($1,$2)",
+              type: "SLONIK_TOKEN_FRAGMENT",
+              values: [4, 8],
+            },
+          ],
+          type: "SLONIK_TOKEN_LIST",
+        },
+        {
+          glue: sql.fragment` IN `,
+          members: [
+            {
+              names: ["tab2", "id3"],
+              type: "SLONIK_TOKEN_IDENTIFIER",
+            },
+            {
+              sql: "($1,$2)",
+              type: "SLONIK_TOKEN_FRAGMENT",
+              values: ["titi", "tutu"],
+            },
+          ],
+          type: "SLONIK_TOKEN_LIST",
+        },
+        {
+          glue: sql.fragment` = `,
+          members: [
+            {
+              names: ["tab2", "id4"],
+              type: "SLONIK_TOKEN_IDENTIFIER",
+            },
+            false,
+          ],
+          type: "SLONIK_TOKEN_LIST",
+        },
+        {
+          glue: sql.fragment` < `,
+          members: [
+            {
+              names: ["tab3", "id1"],
+              type: "SLONIK_TOKEN_IDENTIFIER",
+            },
+            7,
+          ],
+          type: "SLONIK_TOKEN_LIST",
+        },
+      ],
+      type: "SLONIK_TOKEN_LIST",
+    });
   });
 });
 

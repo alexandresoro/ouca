@@ -91,7 +91,13 @@ export const buildSearchCriteriaClause = (searchCriteria: DonneeFindManyInput["s
       return [identifierCriteria, criteriaValue, comperatorOperator] as const;
     });
 
-  return buildAndClause(andClause);
+  const builtClause = buildAndClause(andClause);
+
+  if (!builtClause) {
+    return sql.fragment``;
+  }
+
+  return sql.fragment`WHERE ${buildAndClause(andClause)}`;
 };
 
 export const buildOrderByIdentifier = (orderBy: NonNullable<DonneeFindManyInput["orderBy"]>): IdentifierSqlToken => {
