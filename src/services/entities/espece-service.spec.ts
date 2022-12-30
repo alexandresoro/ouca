@@ -318,72 +318,40 @@ describe("Entities count by search criteria", () => {
 
     await especeService.getEspecesCount(loggedUser);
 
-    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.count).toHaveBeenLastCalledWith({
-      where: {
-        AND: [{}, {}],
-      },
-    });
+    expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(especeRepository.getCount).toHaveBeenLastCalledWith({});
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await especeService.getEspecesCount(loggedUser, "test");
+    await especeService.getEspecesCount(loggedUser, { q: "test" });
 
-    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.count).toHaveBeenLastCalledWith({
-      where: {
-        AND: [
-          {
-            OR: [
-              {
-                code: {
-                  contains: "test",
-                },
-              },
-              {
-                nomFrancais: {
-                  contains: "test",
-                },
-              },
-              {
-                nomLatin: {
-                  contains: "test",
-                },
-              },
-            ],
-          },
-          {},
-        ],
-      },
+    expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(especeRepository.getCount).toHaveBeenLastCalledWith({
+      q: "test",
     });
   });
 
   test("should handle to be called with some donnee criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    const mockedSearchDonneeCriteriaResult = mock<Prisma.DonneeWhereInput>({
-      ageId: 12,
+    await especeService.getEspecesCount(loggedUser, {
+      searchCriteria: {
+        ages: [12, 23],
+        nombre: null,
+        communes: [3, 6],
+        toDate: "2010-01-01",
+      },
     });
-    const { espece, especeId, ...restMockedSearchDonneeCriteriaResult } = mockedSearchDonneeCriteriaResult;
-    mockedBuildSearchDonneeCriteria.mockReturnValueOnce(mockedSearchDonneeCriteriaResult);
 
-    await especeService.getEspecesCount(loggedUser, null, mock<SearchDonneeCriteria>());
-
-    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.count).toHaveBeenLastCalledWith({
-      where: {
-        AND: [
-          {},
-          {
-            ...espece,
-            id: especeId,
-            donnee: {
-              some: restMockedSearchDonneeCriteriaResult,
-            },
-          },
-        ],
+    expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(especeRepository.getCount).toHaveBeenLastCalledWith({
+      searchCriteria: {
+        ages: [12, 23],
+        nombre: null,
+        communes: [3, 6],
+        toDate: "2010-01-01",
       },
     });
   });
@@ -391,45 +359,24 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with both espece and donnee criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    const mockedSearchDonneeCriteriaResult = mock<Prisma.DonneeWhereInput>({
-      ageId: 12,
+    await especeService.getEspecesCount(loggedUser, {
+      q: "test",
+      searchCriteria: {
+        ages: [12, 23],
+        nombre: null,
+        communes: [3, 6],
+        toDate: "2010-01-01",
+      },
     });
-    const { espece, especeId, ...restMockedSearchDonneeCriteriaResult } = mockedSearchDonneeCriteriaResult;
-    mockedBuildSearchDonneeCriteria.mockReturnValueOnce(mockedSearchDonneeCriteriaResult);
 
-    await especeService.getEspecesCount(loggedUser, "test", mock<SearchDonneeCriteria>());
-
-    expect(prismaMock.espece.count).toHaveBeenCalledTimes(1);
-    expect(prismaMock.espece.count).toHaveBeenLastCalledWith({
-      where: {
-        AND: [
-          {
-            OR: [
-              {
-                code: {
-                  contains: "test",
-                },
-              },
-              {
-                nomFrancais: {
-                  contains: "test",
-                },
-              },
-              {
-                nomLatin: {
-                  contains: "test",
-                },
-              },
-            ],
-          },
-          {
-            ...espece,
-            id: especeId,
-            donnee: {
-              some: restMockedSearchDonneeCriteriaResult,
-            },
-          },
-        ],
+    expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(especeRepository.getCount).toHaveBeenLastCalledWith({
+      q: "test",
+      searchCriteria: {
+        ages: [12, 23],
+        nombre: null,
+        communes: [3, 6],
+        toDate: "2010-01-01",
       },
     });
   });

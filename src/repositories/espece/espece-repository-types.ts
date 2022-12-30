@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { type SortOrder } from "../common";
+import { type SearchCriteria } from "../search-criteria";
 
 export const especeSchema = z.object({
   id: z.number(),
@@ -19,7 +20,8 @@ export const especeWithClasseLibelleSchema = especeSchema.extend({
 export type EspeceWithClasseLibelle = z.infer<typeof especeWithClasseLibelleSchema>;
 
 export type EspeceFindManyInput = Partial<{
-  q: string | null;
+  q: string | null | undefined;
+  searchCriteria: SearchCriteria | null | undefined;
   orderBy: "id" | "code" | "nomClasse" | "nomFrancais" | "nomLatin" | "nbDonnees" | null;
   sortOrder: SortOrder;
   offset: number | null;

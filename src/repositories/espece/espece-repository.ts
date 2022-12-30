@@ -1,11 +1,13 @@
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common";
 import { objectsToKeyValueInsert, objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers";
+import { buildSearchEspeceClause } from "./espece-repository-helper";
 import {
   especeSchema,
   especeWithClasseLibelleSchema,
   type Espece,
   type EspeceCreateInput,
+  type EspeceFindManyInput,
   type EspeceWithClasseLibelle,
 } from "./espece-repository-types";
 
@@ -56,6 +58,37 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
   `;
 
     return slonik.any(query);
+  };
+
+  const getCount = async ({
+    q,
+    searchCriteria,
+  }: Pick<EspeceFindManyInput, "q" | "searchCriteria">): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(DISTINCT espece.id)
+      FROM
+        basenaturaliste.espece
+      ${
+        searchCriteria
+          ? sql.fragment`
+      LEFT JOIN basenaturaliste.donnee ON donnee.espece_id = espece.id
+      LEFT JOIN basenaturaliste.donnee_comportement ON donnee.id = donnee_comportement.donnee_id
+      LEFT JOIN basenaturaliste.comportement ON donnee_comportement.comportement_id = comportement.id
+      LEFT JOIN basenaturaliste.donnee_milieu ON donnee.id = donnee_milieu.donnee_id
+      LEFT JOIN basenaturaliste.milieu ON donnee_milieu.milieu_id = milieu.id
+      LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
+      LEFT JOIN basenaturaliste.lieudit ON inventaire.lieudit_id = lieudit.id
+      LEFT JOIN basenaturaliste.commune ON lieudit.commune_id = commune.id
+      LEFT JOIN basenaturaliste.inventaire_meteo ON inventaire.id = inventaire_meteo.inventaire_id
+      LEFT JOIN basenaturaliste.inventaire_associe ON inventaire.id = inventaire_associe.inventaire_id
+        `
+          : sql.fragment``
+      }
+      ${buildSearchEspeceClause({ q, searchCriteria })}
+    `;
+
+    return slonik.oneFirst(query);
   };
 
   const createEspece = async (especeInput: EspeceCreateInput): Promise<Espece> => {
@@ -128,6 +161,7 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     findEspeceById,
     findEspeceByDonneeId,
     findAllEspecesWithClasseLibelle,
+    getCount,
     createEspece,
     createEspeces,
     updateEspece,

@@ -170,7 +170,7 @@ export const buildResolvers = ({
       especes: async (_, args, { user }): Promise<{ data: Omit<Espece, "classe">[]; count: number }> => {
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, args, null),
-          especeService.getEspecesCount(user, args?.searchParams?.q),
+          especeService.getEspecesCount(user, { q: args?.searchParams?.q }),
         ]);
         return {
           data,
@@ -295,7 +295,7 @@ export const buildResolvers = ({
         const { searchCriteria, ...rest } = args ?? {};
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, rest, searchCriteria),
-          especeService.getEspecesCount(user, null, searchCriteria),
+          especeService.getEspecesCount(user, { searchCriteria }),
         ]);
         return {
           data,

@@ -62,6 +62,18 @@ export const buildEspeceService = ({
     return [...especesWithClasses];
   };
 
+  const getEspecesCount = async (
+    loggedUser: LoggedUser | null,
+    criteria: {
+      q?: string | null;
+      searchCriteria?: SearchDonneeCriteria | null;
+    } = {}
+  ): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return especeRepository.getCount(criteria);
+  };
+
   const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
     validateAuthorization(loggedUser);
 
@@ -373,16 +385,4 @@ const findPaginatedEspeces = async (
   }
 
   return especesEntities;
-};
-
-const getEspecesCount = async (
-  loggedUser: LoggedUser | null,
-  q?: string | null,
-  searchCriteria: SearchDonneeCriteria | null | undefined = undefined
-): Promise<number> => {
-  validateAuthorization(loggedUser);
-
-  return prisma.espece.count({
-    where: { AND: [getFilterClause(q), getFilterClauseSearchDonnee(searchCriteria)] },
-  });
 };
