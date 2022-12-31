@@ -130,6 +130,8 @@ export const buildServices = async (): Promise<Services> => {
 
   const donneeService = buildDonneeService({
     logger,
+    slonik,
+    inventaireRepository,
     donneeRepository,
   });
 

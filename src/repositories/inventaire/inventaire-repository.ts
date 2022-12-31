@@ -1,4 +1,4 @@
-import { sql, type DatabasePool } from "slonik";
+import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { reshapeRawInventaire } from "./inventaire-repository-reshape";
 import { inventaireSchema, type Inventaire } from "./inventaire-repository-types";
 
@@ -22,7 +22,10 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return reshapeRawInventaire(rawInventaire);
   };
 
-  const findInventaireByDonneeId = async (donneeId: number | undefined): Promise<Inventaire | null> => {
+  const findInventaireByDonneeId = async (
+    donneeId: number | undefined,
+    transaction?: DatabaseTransactionConnection
+  ): Promise<Inventaire | null> => {
     if (!donneeId) {
       return null;
     }
@@ -37,7 +40,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
         donnee.id = ${donneeId}
     `;
 
-    const rawInventaire = await slonik.maybeOne(query);
+    const rawInventaire = await (transaction ?? slonik).maybeOne(query);
 
     return reshapeRawInventaire(rawInventaire);
   };
@@ -54,10 +57,30 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return rawInventaires.map((rawInventaire) => reshapeRawInventaire(rawInventaire));
   };
 
+  const deleteInventaireById = async (
+    inventaireId: number,
+    transaction?: DatabaseTransactionConnection
+  ): Promise<Inventaire> => {
+    const query = sql.type(inventaireSchema)`
+      DELETE
+      FROM
+        basenaturaliste.inventaire
+      WHERE
+        id = ${inventaireId}
+      RETURNING
+        *
+    `;
+
+    const rawInventaire = await (transaction ?? slonik).one(query);
+
+    return reshapeRawInventaire(rawInventaire);
+  };
+
   return {
     findInventaireById,
     findInventaireByDonneeId,
     findInventaires,
+    deleteInventaireById,
   };
 };
 

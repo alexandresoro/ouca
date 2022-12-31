@@ -1,6 +1,6 @@
 import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { createMockPool, UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   SearchDonneesOrderBy,
   SortOrder,
@@ -8,15 +8,23 @@ import {
 } from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
+import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { OucaError } from "../../utils/errors";
 import { buildDonneeService } from "./donnee-service";
 
 const donneeRepository = mock<DonneeRepository>({});
+const inventaireRepository = mock<InventaireRepository>({});
 const logger = mock<Logger>();
+const slonik = createMockPool({
+  query: jest.fn(),
+});
 
 const donneeService = buildDonneeService({
   logger,
+  slonik,
+  inventaireRepository,
   donneeRepository,
 });
 
@@ -205,5 +213,158 @@ describe("Get next group", () => {
   test("should throw an error when the no login details are provided", async () => {
     await expect(donneeService.findNextRegroupement(null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(donneeRepository.findLatestRegroupement).not.toHaveBeenCalled();
+  });
+});
+
+describe("Deletion of a data", () => {
+  describe("should handle the deletion of any data if admin", () => {
+    test("when the inventory should remain after the data deletion", async () => {
+      const loggedUser = mock<LoggedUser>({
+        role: "admin",
+      });
+
+      const matchingInventory = mock<Inventaire>({});
+
+      const deletedDonnee = mock<Donnee>({
+        id: 42,
+      });
+
+      inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
+      donneeRepository.getCountByInventaireId.mockResolvedValueOnce(2);
+      donneeRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+
+      const result = await donneeService.deleteDonnee(11, loggedUser);
+
+      expect(donneeRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
+      expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+      expect(result).toEqual(deletedDonnee);
+    });
+
+    test("when the inventory will not have any linked data after the data deletion", async () => {
+      const loggedUser = mock<LoggedUser>({
+        role: "admin",
+      });
+
+      const matchingInventory = mock<Inventaire>({});
+
+      const deletedDonnee = mock<Donnee>({
+        id: 42,
+      });
+
+      inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
+      donneeRepository.getCountByInventaireId.mockResolvedValueOnce(0);
+      donneeRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+
+      const result = await donneeService.deleteDonnee(11, loggedUser);
+
+      expect(donneeRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
+      expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(deletedDonnee);
+    });
+
+    test("even when no matching inventory has been found", async () => {
+      const loggedUser = mock<LoggedUser>({
+        role: "admin",
+      });
+
+      const deletedDonnee = mock<Donnee>({
+        id: 42,
+      });
+
+      inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(null);
+      donneeRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+
+      const result = await donneeService.deleteDonnee(11, loggedUser);
+
+      expect(donneeRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
+      expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+      expect(result).toEqual(deletedDonnee);
+    });
+  });
+
+  describe("should handle the deletion of any data belonging to a owned inventory if non-admin", () => {
+    test("when the inventory should remain after the data deletion", async () => {
+      const loggedUser = mock<LoggedUser>({
+        id: "12",
+        role: "contributor",
+      });
+
+      const matchingInventory = mock<Inventaire>({
+        ownerId: loggedUser.id,
+      });
+
+      const deletedDonnee = mock<Donnee>({
+        id: 42,
+      });
+
+      inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
+      donneeRepository.getCountByInventaireId.mockResolvedValueOnce(2);
+      donneeRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+
+      const result = await donneeService.deleteDonnee(11, loggedUser);
+
+      expect(donneeRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
+      expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+      expect(result).toEqual(deletedDonnee);
+    });
+
+    test("when the inventory will not have any linked data after the data deletion", async () => {
+      const loggedUser = mock<LoggedUser>({
+        id: "12",
+        role: "contributor",
+      });
+
+      const matchingInventory = mock<Inventaire>({
+        ownerId: loggedUser.id,
+      });
+
+      const deletedDonnee = mock<Donnee>({
+        id: 42,
+      });
+
+      inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
+      donneeRepository.getCountByInventaireId.mockResolvedValueOnce(0);
+      donneeRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+
+      const result = await donneeService.deleteDonnee(11, loggedUser);
+
+      expect(donneeRepository.deleteDonneeById).toHaveBeenCalledTimes(1);
+      expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(deletedDonnee);
+    });
+
+    test("unless no matching inventory has been found", async () => {
+      const loggedUser = mock<LoggedUser>({
+        id: "12",
+        role: "contributor",
+      });
+
+      const deletedDonnee = mock<Donnee>({
+        id: 42,
+      });
+
+      inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(null);
+      donneeRepository.deleteDonneeById.mockResolvedValueOnce(deletedDonnee);
+
+      await expect(donneeService.deleteDonnee(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+      expect(donneeRepository.deleteDonneeById).not.toHaveBeenCalled();
+      expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+    });
+  });
+
+  test("should throw an error when trying to deletre a data belonging to a non-owned inventory", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: "contributor",
+    });
+
+    inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(mock<Inventaire>());
+
+    await expect(donneeService.deleteDonnee(11, loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(donneeRepository.deleteDonneeById).not.toHaveBeenCalled();
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(donneeService.deleteDonnee(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(donneeRepository.deleteDonneeById).not.toHaveBeenCalled();
   });
 });

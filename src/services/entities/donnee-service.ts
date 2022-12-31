@@ -1,5 +1,6 @@
 import { type Donnee as DonneeEntity } from "@prisma/client";
 import { type Logger } from "pino";
+import { type DatabasePool } from "slonik";
 import {
   type DonneeNavigationData,
   type InputDonnee,
@@ -12,19 +13,23 @@ import { type Comportement } from "../../repositories/comportement/comportement-
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
+import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
 import { getSqlPagination } from "./entities-utils";
 
 type DonneeServiceDependencies = {
   logger: Logger;
+  slonik: DatabasePool;
+  inventaireRepository: InventaireRepository;
   donneeRepository: DonneeRepository;
 };
 
-export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependencies) => {
+export const buildDonneeService = ({ slonik, inventaireRepository, donneeRepository }: DonneeServiceDependencies) => {
   const findDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee | null> => {
     validateAuthorization(loggedUser);
 
@@ -80,6 +85,38 @@ export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependenci
     return (latestRegroupement ?? 0) + 1;
   };
 
+  const deleteDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee> => {
+    validateAuthorization(loggedUser);
+
+    const deletedDonnee = await slonik.transaction(async (transactionConnection) => {
+      // First get the corresponding inventaire
+      const inventaire = await inventaireRepository.findInventaireByDonneeId(id, transactionConnection);
+
+      if (loggedUser.role !== "admin" && inventaire?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
+      }
+
+      // Delete the actual donnee
+      const deletedDonnee = await donneeRepository.deleteDonneeById(id, transactionConnection);
+
+      if (!inventaire) {
+        return deletedDonnee;
+      }
+
+      // Check how many donnees the inventaire has after the deletion
+      const nbDonneesOfInventaire = await donneeRepository.getCountByInventaireId(inventaire.id, transactionConnection);
+
+      if (nbDonneesOfInventaire === 0) {
+        // If the inventaire has no more donnees then we remove the inventaire
+        await inventaireRepository.deleteInventaireById(inventaire.id, transactionConnection);
+      }
+
+      return deletedDonnee;
+    });
+
+    return deletedDonnee;
+  };
+
   return {
     findDonnee,
     findAllDonnees,
@@ -87,6 +124,7 @@ export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependenci
     getDonneesCount,
     findLastDonneeId,
     findNextRegroupement,
+    deleteDonnee,
   };
 };
 

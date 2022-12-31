@@ -1,4 +1,4 @@
-import { sql, type DatabasePool } from "slonik";
+import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { countSchema } from "../common";
 import { buildPaginationFragment, buildSortOrderFragment } from "../repository-helpers";
 import { buildOrderByIdentifier, buildSearchCriteriaClause } from "./donnee-repository-helper";
@@ -254,6 +254,22 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
+  const getCountByInventaireId = async (
+    inventaireId: number,
+    transaction?: DatabaseTransactionConnection
+  ): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.donnee
+      WHERE
+        donnee.inventaire_id = ${inventaireId}
+    `;
+
+    return (transaction ?? slonik).oneFirst(query);
+  };
+
   const getCountByLieuditId = async (lieuditId: number): Promise<number> => {
     const query = sql.type(countSchema)`
       SELECT 
@@ -327,6 +343,20 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
+  const deleteDonneeById = async (donneeId: number, transaction?: DatabaseTransactionConnection): Promise<Donnee> => {
+    const query = sql.type(donneeSchema)`
+      DELETE
+      FROM
+        basenaturaliste.donnee
+      WHERE
+        id = ${donneeId}
+      RETURNING
+        *
+    `;
+
+    return (transaction ?? slonik).one(query);
+  };
+
   return {
     findDonneeById,
     findDonnees,
@@ -341,11 +371,13 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     getCountByEspeceId,
     getCountByEstimationDistanceId,
     getCountByEstimationNombreId,
+    getCountByInventaireId,
     getCountByLieuditId,
     getCountByMeteoId,
     getCountByMilieuId,
     getCountByObservateurId,
     getCountBySexeId,
+    deleteDonneeById,
   };
 };
 
