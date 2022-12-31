@@ -1,5 +1,4 @@
-import { type Donnee, type Prisma } from "@prisma/client";
-import { mock, mockDeep } from "jest-mock-extended";
+import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
@@ -96,9 +95,6 @@ describe("Find species by data ID", () => {
       id: 256,
     });
     const loggedUser = mock<LoggedUser>();
-
-    const data = mockDeep<Prisma.Prisma__DonneeClient<Donnee>>();
-    data.espece.mockResolvedValueOnce(speciesData);
 
     especeRepository.findEspeceByDonneeId.mockResolvedValueOnce(speciesData);
 

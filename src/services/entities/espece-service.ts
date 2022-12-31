@@ -1,7 +1,6 @@
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
-  type FindParams,
   type MutationUpsertEspeceArgs,
   type QueryEspecesArgs,
   type SearchDonneeCriteria,
@@ -13,12 +12,11 @@ import {
   type EspeceCreateInput,
   type EspeceWithClasseLibelle,
 } from "../../repositories/espece/espece-repository-types";
-import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
-import { getSqlPagination, queryParametersToFindAllEntities } from "./entities-utils";
+import { getSqlPagination } from "./entities-utils";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
 
 type EspeceServiceDependencies = {
@@ -182,78 +180,3 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
 };
 
 export type EspeceService = ReturnType<typeof buildEspeceService>;
-
-const findEspeces = async (
-  loggedUser: LoggedUser | null,
-  options: {
-    params?: FindParams | null;
-    classeId?: number | null;
-  } = {}
-): Promise<Espece[]> => {
-  validateAuthorization(loggedUser);
-
-  const { params, classeId } = options;
-  const { q, max } = params ?? {};
-
-  const classeIdClause = classeId
-    ? {
-        classeId: {
-          equals: classeId,
-        },
-      }
-    : {};
-
-  const matchingWithCode = await prisma.espece.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      AND: [
-        {
-          code: {
-            startsWith: q || undefined,
-          },
-        },
-        classeIdClause,
-      ],
-    },
-    take: max || undefined,
-  });
-
-  const libelleClause = q
-    ? {
-        OR: [
-          {
-            nomFrancais: {
-              contains: q,
-            },
-          },
-          {
-            nomLatin: {
-              contains: q,
-            },
-          },
-        ],
-      }
-    : {};
-
-  const matchingWithLibelle = await prisma.espece.findMany({
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      AND: [libelleClause, classeIdClause],
-    },
-    take: max || undefined,
-  });
-
-  // Concatenate arrays and remove elements that could be present in several indexes, to keep a unique reference
-  // This is done like this to be consistent with what was done previously on UI side:
-  // code had a weight of 10, nom_francais and nom_latin had a weight of 1, so we don't "return first" the elements that appear multiple time
-  // The only difference with what was done before is that we used to sort them by adding up their priority:
-  // e.g. if the code and nom francais was matching, it was 11, then it was sorted before one for which only the code was matching for instance
-  // we could do the same here, but it's mostly pointless as the ones that are matching by code will be before, which was the main purpose of this thing initially
-  // And even so, it would never match 100%, as we could limit the matches per code/libelle, meaning that one entry may not be returned even though it would match because of this LIMIT
-  // We could be smarter, but I believe that this is enough for now
-  const matchingEntries = [...matchingWithCode, ...matchingWithLibelle].filter(
-    (element, index, self) => index === self.findIndex((eltArray) => eltArray.id === element.id)
-  );
-
-  return max ? matchingEntries.slice(0, max) : matchingEntries;
-};

@@ -1,4 +1,3 @@
-import { Prisma } from ".prisma/client";
 import { type LoggedUser } from "../../types/User";
 
 type PaginationOptions = Partial<{
@@ -25,21 +24,4 @@ export const getSqlPagination = (
         : undefined,
     limit: paginationOptions?.pageSize ?? undefined,
   };
-};
-
-/**
- * @deprecated
- */
-export const queryParametersToFindAllEntities = (
-  attributeForOrdering?: string,
-  order?: Prisma.SortOrder
-): { orderBy?: Record<string, Prisma.SortOrder> } => {
-  if (attributeForOrdering) {
-    return {
-      orderBy: {
-        [attributeForOrdering]: order ?? Prisma.SortOrder.asc,
-      },
-    };
-  }
-  return {};
 };
