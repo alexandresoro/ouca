@@ -76,6 +76,30 @@ export const buildDonneeService = ({
     return donneeRepository.getCount(searchCriteria);
   };
 
+  const findDonneeNavigationData = async (
+    loggedUser: LoggedUser | null,
+    donneeId: number | undefined
+  ): Promise<DonneeNavigationData> => {
+    validateAuthorization(loggedUser);
+
+    if (donneeId == null) {
+      return {
+        index: 0,
+      };
+    }
+    const [previousDonneeId, nextDonneeId, index] = await Promise.all([
+      donneeRepository.findPreviousDonneeId(donneeId),
+      donneeRepository.findNextDonneeId(donneeId),
+      donneeRepository.findDonneeIndex(donneeId),
+    ]);
+
+    return {
+      index,
+      previousDonneeId,
+      nextDonneeId,
+    };
+  };
+
   const findLastDonneeId = async (loggedUser: LoggedUser | null): Promise<number | null> => {
     validateAuthorization(loggedUser);
 
@@ -206,6 +230,7 @@ export const buildDonneeService = ({
     findAllDonnees,
     findPaginatedDonnees,
     getDonneesCount,
+    findDonneeNavigationData,
     findLastDonneeId,
     findNextRegroupement,
     upsertDonnee,
@@ -216,51 +241,7 @@ export const buildDonneeService = ({
 
 export type DonneeService = ReturnType<typeof buildDonneeService>;
 
-export const findDonneeNavigationData = async (donneeId: number | undefined): Promise<DonneeNavigationData> => {
-  const previousDonnee = await prisma.donnee.findFirst({
-    select: {
-      id: true,
-    },
-    where: {
-      id: {
-        lt: donneeId,
-      },
-    },
-    orderBy: {
-      id: "desc",
-    },
-  });
-
-  const nextDonnee = await prisma.donnee.findFirst({
-    select: {
-      id: true,
-    },
-    where: {
-      id: {
-        gt: donneeId,
-      },
-    },
-    orderBy: {
-      id: "asc",
-    },
-  });
-
-  const index = await prisma.donnee.count({
-    where: {
-      id: {
-        lte: donneeId,
-      },
-    },
-  });
-
-  return {
-    index,
-    previousDonneeId: previousDonnee?.id,
-    nextDonneeId: nextDonnee?.id,
-  };
-};
-
-export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEntity | null> => {
+const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEntity | null> => {
   const donneesCandidates = await prisma.donnee.findMany({
     where: {
       inventaireId: donnee.inventaireId,

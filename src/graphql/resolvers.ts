@@ -2,7 +2,6 @@ import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
 import { saveDatabaseRequest } from "../services/database/save-database";
-import { findDonneeNavigationData } from "../services/entities/donnee-service";
 import { upsertInventaire, type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
   generateAgesExport,
@@ -658,8 +657,8 @@ export const buildResolvers = ({
         }
         return donneeService.findDonnee(parent.id, user);
       },
-      navigation: async (parent): Promise<DonneeNavigationData> => {
-        return findDonneeNavigationData(parent?.id);
+      navigation: async (parent, args, { user }): Promise<DonneeNavigationData> => {
+        return donneeService.findDonneeNavigationData(user, parent?.id);
       },
     },
     Espece: {

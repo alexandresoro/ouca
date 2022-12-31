@@ -4,6 +4,7 @@ import { createMockPool, UniqueIntegrityConstraintViolationError } from "slonik"
 import {
   SearchDonneesOrderBy,
   SortOrder,
+  type DonneeNavigationData,
   type InputDonnee,
   type MutationUpsertDonneeArgs,
   type PaginatedSearchDonneesResultResultArgs,
@@ -176,6 +177,31 @@ describe("Entities count by search criteria", () => {
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(donneeService.getDonneesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
+describe("Data navigation", () => {
+  test("should call the correct info", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    donneeRepository.findPreviousDonneeId.mockResolvedValueOnce(3);
+    donneeRepository.findNextDonneeId.mockResolvedValueOnce(17);
+    donneeRepository.findDonneeIndex.mockResolvedValueOnce(11);
+
+    const result = await donneeService.findDonneeNavigationData(loggedUser, 12);
+
+    expect(donneeRepository.findPreviousDonneeId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.findNextDonneeId).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.findDonneeIndex).toHaveBeenCalledTimes(1);
+    expect(result).toEqual<DonneeNavigationData>({
+      index: 11,
+      previousDonneeId: 3,
+      nextDonneeId: 17,
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(donneeService.findDonneeNavigationData(null, 12)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

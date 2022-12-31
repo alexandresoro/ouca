@@ -1,4 +1,5 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
+import { z } from "zod";
 import { countSchema } from "../common";
 import {
   buildPaginationFragment,
@@ -95,6 +96,49 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     `;
 
     return slonik.any(query);
+  };
+
+  const findPreviousDonneeId = async (id: number): Promise<number | null> => {
+    const query = sql.type(z.object({ id: z.number() }))`
+      SELECT 
+        id
+      FROM
+        basenaturaliste.donnee
+      WHERE
+        id < ${id}
+      ORDER BY id DESC
+      LIMIT 1
+    `;
+
+    return slonik.maybeOneFirst(query);
+  };
+
+  const findNextDonneeId = async (id: number): Promise<number | null> => {
+    const query = sql.type(z.object({ id: z.number() }))`
+      SELECT 
+        id
+      FROM
+        basenaturaliste.donnee
+      WHERE
+        id > ${id}
+      ORDER BY id ASC
+      LIMIT 1
+    `;
+
+    return slonik.maybeOneFirst(query);
+  };
+
+  const findDonneeIndex = async (id: number): Promise<number> => {
+    const query = sql.type(countSchema)`
+      SELECT 
+        COUNT(*)
+      FROM
+        basenaturaliste.donnee
+      WHERE
+        id <= ${id}
+    `;
+
+    return slonik.oneFirst(query);
   };
 
   const getCount = async (searchCriteria: DonneeFindManyInput["searchCriteria"] = {}): Promise<number> => {
@@ -400,6 +444,9 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   return {
     findDonneeById,
     findDonnees,
+    findPreviousDonneeId,
+    findNextDonneeId,
+    findDonneeIndex,
     getCount,
     findLatestDonneeId,
     findLatestRegroupement,
