@@ -65,7 +65,7 @@ export class ImportDonneeService extends ImportService {
     this.communes = await this.services.communeService.findAllCommunes();
     this.lieuxDits = await this.services.lieuditService.findAllLieuxDits();
     this.meteos = await this.services.meteoService.findAllMeteos();
-    this.especes = await this.services.especeService.findAllEspeces(null);
+    this.especes = await this.services.especeService.findAllEspeces();
     this.sexes = await this.services.sexeService.findAllSexes();
     this.ages = await this.services.ageService.findAllAges();
     this.estimationsNombre = await this.services.estimationNombreService.findAllEstimationsNombre();

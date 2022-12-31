@@ -8,26 +8,21 @@ import {
   type MutationUpsertEspeceArgs,
   type QueryEspecesArgs,
 } from "../../graphql/generated/graphql-types";
-import { type ClasseRepository } from "../../repositories/classe/classe-repository";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository";
 import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types";
-import { prismaMock } from "../../sql/prisma-mock";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_CODE } from "../../utils/constants";
 import { OucaError } from "../../utils/errors";
-import { queryParametersToFindAllEntities } from "./entities-utils";
 import { buildEspeceService } from "./espece-service";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
 
-const classeRepository = mock<ClasseRepository>({});
 const especeRepository = mock<EspeceRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const especeService = buildEspeceService({
   logger,
-  classeRepository,
   especeRepository,
   donneeRepository,
 });
@@ -120,37 +115,15 @@ describe("Find species by data ID", () => {
 });
 
 test("Find all species", async () => {
-  const commonResultEspece = mock<Espece>();
-  const codeSpeciesData = [mock<Espece>(), mock<Espece>(), commonResultEspece];
-  const libelleSpeciesData = [mock<Espece>(), commonResultEspece];
-  const loggedUser = mock<LoggedUser>();
+  const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
 
-  prismaMock.espece.findMany.mockResolvedValueOnce(codeSpeciesData);
-  prismaMock.espece.findMany.mockResolvedValueOnce(libelleSpeciesData);
+  especeRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
-  await especeService.findAllEspeces(loggedUser);
+  await especeService.findAllEspeces();
 
-  expect(prismaMock.espece.findMany).toHaveBeenCalledTimes(2);
-  expect(prismaMock.espece.findMany).toHaveBeenNthCalledWith(1, {
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      AND: [
-        {
-          code: {
-            startsWith: undefined,
-          },
-        },
-        {},
-      ],
-    },
-    take: undefined,
-  });
-  expect(prismaMock.espece.findMany).toHaveBeenNthCalledWith(2, {
-    ...queryParametersToFindAllEntities(COLUMN_CODE),
-    where: {
-      AND: [{}, {}],
-    },
-    take: undefined,
+  expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
+  expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
+    orderBy: COLUMN_CODE,
   });
 });
 

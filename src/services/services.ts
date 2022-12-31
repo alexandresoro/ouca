@@ -135,7 +135,6 @@ export const buildServices = async (): Promise<Services> => {
 
   const especeService = buildEspeceService({
     logger,
-    classeRepository,
     especeRepository,
     donneeRepository,
   });

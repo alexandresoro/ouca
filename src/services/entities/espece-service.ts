@@ -6,7 +6,6 @@ import {
   type QueryEspecesArgs,
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
-import { type ClasseRepository } from "../../repositories/classe/classe-repository";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository";
 import {
@@ -24,16 +23,11 @@ import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
 
 type EspeceServiceDependencies = {
   logger: Logger;
-  classeRepository: ClasseRepository;
   especeRepository: EspeceRepository;
   donneeRepository: DonneeRepository;
 };
 
-export const buildEspeceService = ({
-  classeRepository,
-  especeRepository,
-  donneeRepository,
-}: EspeceServiceDependencies) => {
+export const buildEspeceService = ({ especeRepository, donneeRepository }: EspeceServiceDependencies) => {
   const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece | null> => {
     validateAuthorization(loggedUser);
 
@@ -53,6 +47,14 @@ export const buildEspeceService = ({
     validateAuthorization(loggedUser);
 
     return especeRepository.findEspeceByDonneeId(donneeId);
+  };
+
+  const findAllEspeces = async (): Promise<Espece[]> => {
+    const especes = await especeRepository.findEspeces({
+      orderBy: COLUMN_CODE,
+    });
+
+    return [...especes];
   };
 
   const findAllEspecesWithClasses = async (): Promise<EspeceWithClasseLibelle[]> => {
@@ -169,7 +171,7 @@ export const buildEspeceService = ({
     findEspece,
     getDonneesCountByEspece,
     findEspeceOfDonneeId,
-    findAllEspeces: findEspeces,
+    findAllEspeces,
     findAllEspecesWithClasses,
     findPaginatedEspeces,
     getEspecesCount,
