@@ -5,6 +5,7 @@ import {
   SearchDonneesOrderBy,
   SortOrder,
   type InputDonnee,
+  type MutationUpsertDonneeArgs,
   type PaginatedSearchDonneesResultResultArgs,
 } from "../../graphql/generated/graphql-types";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository";
@@ -388,6 +389,50 @@ describe("Deletion of a data", () => {
 });
 
 describe("Creation of a data", () => {
+  test.skip("should create new data", async () => {
+    const dataData = mock<MutationUpsertDonneeArgs>({
+      id: undefined,
+      data: {
+        comportementsIds: [2, 3],
+        milieuxIds: [4, 5],
+      },
+    });
+
+    const loggedUser = mock<LoggedUser>();
+
+    const reshapedInputData = mock<DonneeCreateInput>();
+    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+
+    await donneeService.upsertDonnee(dataData, loggedUser);
+
+    expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(reshapedInputData, any());
+    expect(donneeComportementRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
+  });
+
+  test.skip("should throw an error when trying to create a data that already exists", async () => {
+    const dataData = mock<MutationUpsertDonneeArgs>({
+      id: undefined,
+    });
+
+    const loggedUser = mock<LoggedUser>();
+
+    await expect(donneeService.upsertDonnee(dataData, loggedUser)).rejects.toEqual(new OucaError("OUCA0004"));
+    expect(donneeRepository.createDonnee).not.toHaveBeenCalled();
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    const dataData = mock<MutationUpsertDonneeArgs>({
+      id: undefined,
+    });
+
+    await expect(donneeService.upsertDonnee(dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(donneeRepository.createDonnee).not.toHaveBeenCalled();
+  });
+});
+
+describe("Direct creation of a data", () => {
   test("should create new data without behaviors or environments", async () => {
     const dataData = mock<InputDonnee>({
       comportementsIds: null,

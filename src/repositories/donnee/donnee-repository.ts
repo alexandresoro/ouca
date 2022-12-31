@@ -1,6 +1,11 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { countSchema } from "../common";
-import { buildPaginationFragment, buildSortOrderFragment, objectToKeyValueInsert } from "../repository-helpers";
+import {
+  buildPaginationFragment,
+  buildSortOrderFragment,
+  objectToKeyValueInsert,
+  objectToKeyValueSet,
+} from "../repository-helpers";
 import { buildOrderByIdentifier, buildSearchCriteriaClause } from "./donnee-repository-helper";
 import {
   donneeSchema,
@@ -359,6 +364,25 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return (transaction ?? slonik).one(query);
   };
 
+  const updateDonnee = async (
+    donneeId: number,
+    donneeInput: DonneeCreateInput,
+    transaction?: DatabaseTransactionConnection
+  ): Promise<Donnee> => {
+    const query = sql.type(donneeSchema)`
+      UPDATE
+        basenaturaliste.donnee
+      SET
+        ${objectToKeyValueSet(donneeInput)}
+      WHERE
+        id = ${donneeId}
+      RETURNING
+        *
+    `;
+
+    return (transaction ?? slonik).one(query);
+  };
+
   const deleteDonneeById = async (donneeId: number, transaction?: DatabaseTransactionConnection): Promise<Donnee> => {
     const query = sql.type(donneeSchema)`
       DELETE
@@ -394,6 +418,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     getCountByObservateurId,
     getCountBySexeId,
     createDonnee,
+    updateDonnee,
     deleteDonneeById,
   };
 };

@@ -7,6 +7,21 @@ export type SexeRepositoryDependencies = {
 };
 
 export const buildDonneeMilieuRepository = ({ slonik }: SexeRepositoryDependencies) => {
+  const deleteMilieuxOfDonneeId = async (
+    donneeId: number,
+    transaction?: DatabaseTransactionConnection
+  ): Promise<QueryResult<void>> => {
+    const query = sql.type(z.void())`
+      DELETE 
+      FROM
+        basenaturaliste.donnee_milieu
+      WHERE
+        donnee_milieu.donnee_id = ${donneeId}
+    `;
+
+    return (transaction ?? slonik).query(query);
+  };
+
   const insertDonneeWithMilieux = async (
     donneeId: number,
     milieuIds: number[],
@@ -28,14 +43,13 @@ export const buildDonneeMilieuRepository = ({ slonik }: SexeRepositoryDependenci
       INTO
         basenaturaliste.donnee_milieu
         ${objectsToKeyValueInsert(dataToInsert)}
-      RETURNING
-        *
     `;
 
     return (transaction ?? slonik).query(query);
   };
 
   return {
+    deleteMilieuxOfDonneeId,
     insertDonneeWithMilieux,
   };
 };

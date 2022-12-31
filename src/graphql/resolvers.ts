@@ -2,7 +2,7 @@ import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
 import { saveDatabaseRequest } from "../services/database/save-database";
-import { deleteDonnee, findDonneeNavigationData, upsertDonnee } from "../services/entities/donnee-service";
+import { findDonneeNavigationData } from "../services/entities/donnee-service";
 import { upsertInventaire, type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
   generateAgesExport,
@@ -36,7 +36,6 @@ import {
   type ComportementsPaginatedResult,
   type Departement,
   type DepartementsPaginatedResult,
-  type Donnee,
   type DonneeNavigationData,
   type Espece,
   type EstimationDistance,
@@ -401,8 +400,7 @@ export const buildResolvers = ({
         return departementService.deleteDepartement(args.id, user).then(({ id }) => id);
       },
       deleteDonnee: async (_source, args, { user }): Promise<number> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return deleteDonnee(args.id).then(({ id }) => id);
+        return donneeService.deleteDonnee(args.id, user).then(({ id }) => id);
       },
       deleteEspece: async (_source, args, { user }): Promise<number> => {
         return especeService.deleteEspece(args.id, user).then(({ id }) => id);
@@ -449,11 +447,10 @@ export const buildResolvers = ({
         { user }
       ): Promise<{
         failureReason?: string;
-        donnee?: Omit<Donnee, "inventaire" | "espece">;
+        donnee?: DonneeEntity;
       }> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
         try {
-          const upsertedDonnee = await upsertDonnee(args);
+          const upsertedDonnee = await donneeService.upsertDonnee(args, user);
           return {
             donnee: upsertedDonnee,
           };

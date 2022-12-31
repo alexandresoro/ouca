@@ -96,6 +96,57 @@ export const buildDonneeService = ({
     return (latestRegroupement ?? 0) + 1;
   };
 
+  const upsertDonnee = async (args: MutationUpsertDonneeArgs, loggedUser: LoggedUser | null): Promise<Donnee> => {
+    validateAuthorization(loggedUser);
+
+    const { id, data } = args;
+
+    // Check if an exact same donnee already exists or not
+    const existingDonnee = await findExistingDonnee(data);
+
+    if (existingDonnee && existingDonnee.id !== id) {
+      // The donnee already exists so we return an error
+      throw new OucaError("OUCA0004", {
+        code: "OUCA0004",
+        message: `Cette donnée existe déjà (ID = ${existingDonnee.id}).`,
+      });
+    } else {
+      const { comportementsIds, milieuxIds } = data;
+
+      if (id) {
+        const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
+          const updatedDonnee = await donneeRepository.updateDonnee(
+            id,
+            reshapeInputDonneeUpsertData(data),
+            transactionConnection
+          );
+
+          await donneeComportementRepository.deleteComportementsOfDonneeId(id, transactionConnection);
+
+          if (comportementsIds?.length) {
+            await donneeComportementRepository.insertDonneeWithComportements(
+              id,
+              comportementsIds,
+              transactionConnection
+            );
+          }
+
+          await donneeMilieuRepository.deleteMilieuxOfDonneeId(id, transactionConnection);
+
+          if (milieuxIds?.length) {
+            await donneeMilieuRepository.insertDonneeWithMilieux(id, milieuxIds, transactionConnection);
+          }
+
+          return updatedDonnee;
+        });
+
+        return updatedDonnee;
+      } else {
+        return createDonnee(data);
+      }
+    }
+  };
+
   const createDonnee = async (donnee: InputDonnee): Promise<Donnee> => {
     const { comportementsIds, milieuxIds } = donnee;
 
@@ -162,6 +213,7 @@ export const buildDonneeService = ({
     getDonneesCount,
     findLastDonneeId,
     findNextRegroupement,
+    upsertDonnee,
     createDonnee,
     deleteDonnee,
   };
@@ -326,7 +378,7 @@ export const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEnt
   );
 };
 
-export const upsertDonnee = async (args: MutationUpsertDonneeArgs): Promise<DonneeWithRelations> => {
+const upsertDonnee = async (args: MutationUpsertDonneeArgs): Promise<DonneeWithRelations> => {
   const { id, data } = args;
 
   // Check if an exact same donnee already exists or not
