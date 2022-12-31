@@ -10,6 +10,8 @@ import {
 } from "../../graphql/generated/graphql-types";
 import { type Age } from "../../repositories/age/age-repository-types";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
+import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository";
+import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
@@ -20,6 +22,7 @@ import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
+import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape";
 import { getSqlPagination } from "./entities-utils";
 
 type DonneeServiceDependencies = {
@@ -27,9 +30,17 @@ type DonneeServiceDependencies = {
   slonik: DatabasePool;
   inventaireRepository: InventaireRepository;
   donneeRepository: DonneeRepository;
+  donneeComportementRepository: DonneeComportementRepository;
+  donneeMilieuRepository: DonneeMilieuRepository;
 };
 
-export const buildDonneeService = ({ slonik, inventaireRepository, donneeRepository }: DonneeServiceDependencies) => {
+export const buildDonneeService = ({
+  slonik,
+  inventaireRepository,
+  donneeRepository,
+  donneeComportementRepository,
+  donneeMilieuRepository,
+}: DonneeServiceDependencies) => {
   const findDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee | null> => {
     validateAuthorization(loggedUser);
 
@@ -85,6 +96,33 @@ export const buildDonneeService = ({ slonik, inventaireRepository, donneeReposit
     return (latestRegroupement ?? 0) + 1;
   };
 
+  const createDonnee = async (donnee: InputDonnee): Promise<Donnee> => {
+    const { comportementsIds, milieuxIds } = donnee;
+
+    const createdDonnee = await slonik.transaction(async (transactionConnection) => {
+      const createdDonnee = await donneeRepository.createDonnee(
+        reshapeInputDonneeUpsertData(donnee),
+        transactionConnection
+      );
+
+      if (comportementsIds?.length) {
+        await donneeComportementRepository.insertDonneeWithComportements(
+          createdDonnee.id,
+          comportementsIds,
+          transactionConnection
+        );
+      }
+
+      if (milieuxIds?.length) {
+        await donneeMilieuRepository.insertDonneeWithMilieux(createdDonnee.id, milieuxIds, transactionConnection);
+      }
+
+      return createdDonnee;
+    });
+
+    return createdDonnee;
+  };
+
   const deleteDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee> => {
     validateAuthorization(loggedUser);
 
@@ -124,6 +162,7 @@ export const buildDonneeService = ({ slonik, inventaireRepository, donneeReposit
     getDonneesCount,
     findLastDonneeId,
     findNextRegroupement,
+    createDonnee,
     deleteDonnee,
   };
 };
@@ -341,7 +380,7 @@ export const upsertDonnee = async (args: MutationUpsertDonneeArgs): Promise<Donn
   }
 };
 
-export const createDonnee = async (donnee: InputDonnee): Promise<DonneeWithRelations> => {
+const createDonnee = async (donnee: InputDonnee): Promise<DonneeWithRelations> => {
   const { comportementsIds, milieuxIds, ...restData } = donnee;
 
   const comportementMap =

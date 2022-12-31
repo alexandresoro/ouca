@@ -47,3 +47,16 @@ export type DonneeFindManyInput = Partial<{
   offset: number | null;
   limit: number | null;
 }>;
+
+export type DonneeCreateInput = {
+  inventaire_id: number;
+  espece_id: number;
+  sexe_id: number;
+  age_id: number;
+  estimation_nombre_id: number;
+  nombre?: number | null;
+  estimation_distance_id?: number | null;
+  distance?: number | null;
+  commentaire?: string | null;
+  regroupement?: number | null;
+};

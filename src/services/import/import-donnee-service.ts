@@ -20,7 +20,6 @@ import { type Observateur } from "../../repositories/observateur/observateur-rep
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
-import { createDonnee } from "../entities/donnee-service";
 import { upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
 import { ImportService } from "./import-service";
 
@@ -358,7 +357,7 @@ export class ImportDonneeService extends ImportService {
 
   protected persistAllValidEntities = async (): Promise<void> => {
     for (const inputDonnee of this.newDonnees) {
-      await createDonnee(inputDonnee);
+      await this.services.donneeService.createDonnee(inputDonnee);
     }
   };
 

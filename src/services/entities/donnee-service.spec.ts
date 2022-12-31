@@ -1,20 +1,26 @@
-import { mock } from "jest-mock-extended";
+import { any, mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { createMockPool, UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   SearchDonneesOrderBy,
   SortOrder,
+  type InputDonnee,
   type PaginatedSearchDonneesResultResultArgs,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository";
+import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
+import { type Donnee, type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { OucaError } from "../../utils/errors";
 import { buildDonneeService } from "./donnee-service";
+import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape";
 
 const donneeRepository = mock<DonneeRepository>({});
+const donneeComportementRepository = mock<DonneeComportementRepository>({});
+const donneeMilieuRepository = mock<DonneeMilieuRepository>({});
 const inventaireRepository = mock<InventaireRepository>({});
 const logger = mock<Logger>();
 const slonik = createMockPool({
@@ -26,6 +32,8 @@ const donneeService = buildDonneeService({
   slonik,
   inventaireRepository,
   donneeRepository,
+  donneeComportementRepository,
+  donneeMilieuRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -36,6 +44,16 @@ const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
 const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+jest.mock<typeof import("./donnee-service-reshape")>("./donnee-service-reshape", () => {
+  return {
+    __esModule: true,
+    reshapeInputDonneeUpsertData: jest.fn(),
+  };
+});
+
+const mockedReshapeInputDonneeUpsertData = jest.mocked(reshapeInputDonneeUpsertData);
 
 describe("Find data", () => {
   test("should handle a matching data", async () => {
@@ -366,5 +384,74 @@ describe("Deletion of a data", () => {
   test("should throw an error when the requester is not logged", async () => {
     await expect(donneeService.deleteDonnee(11, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(donneeRepository.deleteDonneeById).not.toHaveBeenCalled();
+  });
+});
+
+describe("Creation of a data", () => {
+  test("should create new data without behaviors or environments", async () => {
+    const dataData = mock<InputDonnee>({
+      comportementsIds: null,
+      milieuxIds: null,
+    });
+
+    const reshapedInputData = mock<DonneeCreateInput>();
+    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+
+    await donneeService.createDonnee(dataData);
+
+    expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(reshapedInputData, any());
+    expect(donneeComportementRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
+  });
+
+  test("should create new data with behaviors only", async () => {
+    const dataData = mock<InputDonnee>({
+      comportementsIds: [2, 3],
+      milieuxIds: null,
+    });
+
+    const reshapedInputData = mock<DonneeCreateInput>();
+    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    donneeRepository.createDonnee.mockResolvedValueOnce(
+      mock<Donnee>({
+        id: 12,
+      })
+    );
+
+    await donneeService.createDonnee(dataData);
+
+    expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(reshapedInputData, any());
+    expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
+    expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
+      12,
+      dataData.comportementsIds,
+      any()
+    );
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
+  });
+
+  test("should create new data with environments only", async () => {
+    const dataData = mock<InputDonnee>({
+      comportementsIds: null,
+      milieuxIds: [2, 3],
+    });
+
+    const reshapedInputData = mock<DonneeCreateInput>();
+    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    donneeRepository.createDonnee.mockResolvedValueOnce(
+      mock<Donnee>({
+        id: 12,
+      })
+    );
+
+    await donneeService.createDonnee(dataData);
+
+    expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
+    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(reshapedInputData, any());
+    expect(donneeComportementRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, dataData.milieuxIds, any());
   });
 });

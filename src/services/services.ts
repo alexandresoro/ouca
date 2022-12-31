@@ -7,6 +7,8 @@ import { buildClasseRepository } from "../repositories/classe/classe-repository"
 import { buildCommuneRepository } from "../repositories/commune/commune-repository";
 import { buildComportementRepository } from "../repositories/comportement/comportement-repository";
 import { buildDepartementRepository } from "../repositories/departement/departement-repository";
+import { buildDonneeComportementRepository } from "../repositories/donnee-comportement/donnee-comportement-repository";
+import { buildDonneeMilieuRepository } from "../repositories/donnee-milieu/donnee-milieu-repository";
 import { buildDonneeRepository } from "../repositories/donnee/donnee-repository";
 import { buildEspeceRepository } from "../repositories/espece/espece-repository";
 import { buildEstimationDistanceRepository } from "../repositories/estimation-distance/estimation-distance-repository";
@@ -82,6 +84,8 @@ export const buildServices = async (): Promise<Services> => {
   const comportementRepository = buildComportementRepository({ slonik });
   const departementRepository = buildDepartementRepository({ slonik });
   const donneeRepository = buildDonneeRepository({ slonik });
+  const donneeComportementRepository = buildDonneeComportementRepository({ slonik });
+  const donneeMilieuRepository = buildDonneeMilieuRepository({ slonik });
   const especeRepository = buildEspeceRepository({ slonik });
   const estimationDistanceRepository = buildEstimationDistanceRepository({ slonik });
   const estimationNombreRepository = buildEstimationNombreRepository({ slonik });
@@ -133,6 +137,8 @@ export const buildServices = async (): Promise<Services> => {
     slonik,
     inventaireRepository,
     donneeRepository,
+    donneeComportementRepository,
+    donneeMilieuRepository,
   });
 
   const especeService = buildEspeceService({
