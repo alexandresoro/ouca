@@ -3,6 +3,9 @@ import path from "node:path";
 import { type SearchDonneeCriteria } from "../graphql/generated/graphql-types";
 import { GPS_COORDINATES } from "../model/coordinates-system/gps.object";
 import { getNicheurStatusToDisplay } from "../model/helpers/nicheur-helper";
+import { type Comportement } from "../repositories/comportement/comportement-repository-types";
+import { type Milieu } from "../repositories/milieu/milieu-repository-types";
+import { type LoggedUser } from "../types/User";
 import { SEPARATOR_COMMA } from "../utils/constants";
 import { writeToExcelFile } from "../utils/export-excel-utils";
 import { PUBLIC_DIR } from "../utils/paths";
@@ -11,10 +14,11 @@ import { type ClasseService } from "./entities/classe-service";
 import { type CommuneService } from "./entities/commune-service";
 import { type ComportementService } from "./entities/comportement-service";
 import { type DepartementService } from "./entities/departement-service";
-import { findDonneesByCriteria, type DonneeWithRelations } from "./entities/donnee-service";
+import { type DonneeService } from "./entities/donnee-service";
 import { type EspeceService } from "./entities/espece-service";
 import { type EstimationDistanceService } from "./entities/estimation-distance-service";
 import { type EstimationNombreService } from "./entities/estimation-nombre-service";
+import { type InventaireService } from "./entities/inventaire-service";
 import { type LieuditService } from "./entities/lieu-dit-service";
 import { type MeteoService } from "./entities/meteo-service";
 import { type MilieuService } from "./entities/milieu-service";
@@ -92,73 +96,123 @@ export const generateDepartementsExport = async (departementService: Departement
   return fileName;
 };
 
-const getComportement = (donnee: DonneeWithRelations, index: number): string => {
-  return donnee.comportements.length >= index
-    ? donnee.comportements[index - 1].code + " - " + donnee.comportements[index - 1].libelle
-    : "";
+const getComportement = (comportements: Comportement[], index: number): string => {
+  return comportements.length >= index ? comportements[index - 1].code + " - " + comportements[index - 1].libelle : "";
 };
 
-const getMilieu = (donnee: DonneeWithRelations, index: number): string => {
-  return donnee.milieux.length >= index
-    ? donnee.milieux[index - 1].code + " - " + donnee.milieux[index - 1].libelle
-    : "";
+const getMilieu = (milieux: Milieu[], index: number): string => {
+  return milieux.length >= index ? milieux[index - 1].code + " - " + milieux[index - 1].libelle : "";
 };
 
 export const generateDonneesExport = async (
+  {
+    ageService,
+    classeService,
+    communeService,
+    comportementService,
+    departementService,
+    donneeService,
+    especeService,
+    estimationDistanceService,
+    estimationNombreService,
+    inventaireService,
+    lieuditService,
+    meteoService,
+    milieuService,
+    observateurService,
+    sexeService,
+  }: {
+    ageService: AgeService;
+    classeService: ClasseService;
+    communeService: CommuneService;
+    comportementService: ComportementService;
+    departementService: DepartementService;
+    donneeService: DonneeService;
+    especeService: EspeceService;
+    estimationDistanceService: EstimationDistanceService;
+    estimationNombreService: EstimationNombreService;
+    inventaireService: InventaireService;
+    lieuditService: LieuditService;
+    meteoService: MeteoService;
+    milieuService: MilieuService;
+    observateurService: ObservateurService;
+    sexeService: SexeService;
+  },
+  loggedUser: LoggedUser | null,
   searchCriteria: SearchDonneeCriteria | null | undefined
 ): Promise<string> => {
   const coordinatesSystem = GPS_COORDINATES;
   const coordinatesSuffix = " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
 
-  const donnees = await findDonneesByCriteria(searchCriteria);
+  const donnees = await donneeService.findPaginatedDonnees(loggedUser, { searchCriteria });
 
-  const objectsToExport = donnees.map((donnee) => {
-    const nicheurStatus = getNicheurStatusToDisplay(donnee.comportements, "");
+  const objectsToExport = await Promise.all(
+    donnees.map(async (donnee) => {
+      const inventaire = await inventaireService.findInventaireOfDonneeId(donnee.id, loggedUser);
+      const observateur = await observateurService.findObservateurOfInventaireId(inventaire?.id, loggedUser);
+      const lieudit = await lieuditService.findLieuDitOfInventaireId(inventaire?.id, loggedUser);
+      const commune = await communeService.findCommuneOfLieuDitId(lieudit?.id, loggedUser);
+      const departement = await departementService.findDepartementOfCommuneId(commune?.id, loggedUser);
+      const associes = await observateurService.findAssociesOfInventaireId(inventaire?.id, loggedUser);
+      const meteos = await meteoService.findMeteosOfInventaireId(inventaire?.id, loggedUser);
+      const espece = await especeService.findEspeceOfDonneeId(donnee?.id, loggedUser);
+      const classe = await classeService.findClasseOfEspeceId(espece?.id, loggedUser);
+      const age = await ageService.findAgeOfDonneeId(donnee?.id, loggedUser);
+      const sexe = await sexeService.findSexeOfDonneeId(donnee?.id, loggedUser);
+      const estimationDistance = await estimationDistanceService.findEstimationDistanceOfDonneeId(
+        donnee?.id,
+        loggedUser
+      );
+      const estimationNombre = await estimationNombreService.findEstimationNombreOfDonneeId(donnee?.id, loggedUser);
+      const comportements = await comportementService.findComportementsOfDonneeId(donnee?.id, loggedUser);
+      const milieux = await milieuService.findMilieuxOfDonneeId(donnee.id, loggedUser);
 
-    return {
-      ID: donnee.id,
-      Observateur: donnee.inventaire.observateur.libelle,
-      "Observateurs associés":
-        donnee.inventaire.associes?.map((associe) => associe?.libelle)?.join(SEPARATOR_COMMA) ?? "",
-      Date: donnee.inventaire.date,
-      Heure: donnee.inventaire.heure,
-      Durée: donnee.inventaire.duree,
-      Département: donnee.inventaire.lieuDit.commune.departement.code,
-      "Code commune": donnee.inventaire.lieuDit.commune.code,
-      "Nom commune": donnee.inventaire.lieuDit.commune.nom,
-      "Lieu-dit": donnee.inventaire.lieuDit.nom,
-      ["Latitude" + coordinatesSuffix]:
-        donnee.inventaire.latitude?.toNumber() ?? donnee.inventaire.lieuDit.latitude?.toNumber(),
-      ["Longitude" + coordinatesSuffix]:
-        donnee.inventaire.longitude?.toNumber() ?? donnee.inventaire.lieuDit.longitude?.toNumber(),
-      "Altitude en mètres": donnee.inventaire.altitude ?? donnee.inventaire.lieuDit.altitude,
-      "Température en °C": donnee.inventaire.temperature,
-      Météo: donnee.inventaire.meteos?.map((meteo) => meteo?.libelle)?.join(SEPARATOR_COMMA) ?? "",
-      Classe: donnee.espece.classe?.libelle,
-      "Code espèce": donnee.espece.code,
-      "Nom francais": donnee.espece.nomFrancais,
-      "Nom scientifique": donnee.espece.nomLatin,
-      Sexe: donnee.sexe.libelle,
-      Âge: donnee.age.libelle,
-      "Nombre d'individus": donnee.nombre,
-      "Estimation du nombre": donnee.estimationNombre?.libelle,
-      "Estimation de la distance": donnee.estimationDistance?.libelle,
-      "Distance en mètres": donnee.distance,
-      "Numéro de regroupement": donnee.regroupement,
-      Nicheur: nicheurStatus,
-      "Comportement 1": getComportement(donnee, 1),
-      "Comportement 2": getComportement(donnee, 2),
-      "Comportement 3": getComportement(donnee, 3),
-      "Comportement 4": getComportement(donnee, 4),
-      "Comportement 5": getComportement(donnee, 5),
-      "Comportement 6": getComportement(donnee, 6),
-      "Milieu 1": getMilieu(donnee, 1),
-      "Milieu 2": getMilieu(donnee, 2),
-      "Milieu 3": getMilieu(donnee, 3),
-      "Milieu 4": getMilieu(donnee, 4),
-      Commentaires: donnee.commentaire,
-    };
-  });
+      const nicheurStatus = getNicheurStatusToDisplay(comportements, "");
+
+      return {
+        ID: donnee.id,
+        Observateur: observateur?.libelle,
+        "Observateurs associés": associes.length
+          ? associes.map((associe) => associe.libelle).join(SEPARATOR_COMMA)
+          : "",
+        Date: inventaire?.date ? new Date(inventaire.date) : "", // TODO test this
+        Heure: inventaire?.heure,
+        Durée: inventaire?.duree,
+        Département: departement?.code,
+        "Code commune": commune?.code,
+        "Nom commune": commune?.nom,
+        "Lieu-dit": lieudit?.nom,
+        ["Latitude" + coordinatesSuffix]: inventaire?.customizedCoordinates?.latitude ?? lieudit?.latitude,
+        ["Longitude" + coordinatesSuffix]: inventaire?.customizedCoordinates?.longitude ?? lieudit?.longitude,
+        "Altitude en mètres": inventaire?.customizedCoordinates?.altitude ?? lieudit?.altitude,
+        "Température en °C": inventaire?.temperature,
+        Météo: meteos.length ? meteos.map((meteo) => meteo.libelle).join(SEPARATOR_COMMA) : "",
+        Classe: classe?.libelle,
+        "Code espèce": espece?.code,
+        "Nom francais": espece?.nomFrancais,
+        "Nom scientifique": espece?.nomLatin,
+        Sexe: sexe?.libelle,
+        Âge: age?.libelle,
+        "Nombre d'individus": donnee.nombre,
+        "Estimation du nombre": estimationNombre?.libelle,
+        "Estimation de la distance": estimationDistance?.libelle,
+        "Distance en mètres": donnee.distance,
+        "Numéro de regroupement": donnee.regroupement,
+        Nicheur: nicheurStatus,
+        "Comportement 1": getComportement(comportements, 1),
+        "Comportement 2": getComportement(comportements, 2),
+        "Comportement 3": getComportement(comportements, 3),
+        "Comportement 4": getComportement(comportements, 4),
+        "Comportement 5": getComportement(comportements, 5),
+        "Comportement 6": getComportement(comportements, 6),
+        "Milieu 1": getMilieu(milieux, 1),
+        "Milieu 2": getMilieu(milieux, 2),
+        "Milieu 3": getMilieu(milieux, 3),
+        "Milieu 4": getMilieu(milieux, 4),
+        Commentaires: donnee.commentaire,
+      };
+    })
+  );
 
   const fileName = randomUUID();
   await writeToExcelFile(objectsToExport, "donnees", path.join(PUBLIC_DIR, fileName));

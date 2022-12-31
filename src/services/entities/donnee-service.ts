@@ -1,7 +1,6 @@
-import { type Donnee as DonneeEntity, type Inventaire, type Lieudit } from "@prisma/client";
+import { type Donnee as DonneeEntity } from "@prisma/client";
 import { type Logger } from "pino";
 import {
-  SortOrder,
   type DonneeNavigationData,
   type InputDonnee,
   type MutationUpsertDonneeArgs,
@@ -9,25 +8,16 @@ import {
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types";
 import { type Age } from "../../repositories/age/age-repository-types";
-import { type Classe } from "../../repositories/classe/classe-repository-types";
-import { type Commune } from "../../repositories/commune/commune-repository-types";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types";
-import { type Departement } from "../../repositories/departement/departement-repository-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
-import { type Espece } from "../../repositories/espece/espece-repository-types";
-import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
-import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
-import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { validateAuthorization } from "./authorization-utils";
-import { buildSearchDonneeCriteria } from "./donnee-utils";
 import { getSqlPagination } from "./entities-utils";
-import { normalizeInventaire } from "./inventaire-service";
 
 type DonneeServiceDependencies = {
   logger: Logger;
@@ -102,27 +92,12 @@ export const buildDonneeService = ({ donneeRepository }: DonneeServiceDependenci
 
 export type DonneeService = ReturnType<typeof buildDonneeService>;
 
-export type DonneeWithRelations = DonneeEntity & {
+type DonneeWithRelations = DonneeEntity & {
   age: Age;
   sexe: Sexe;
   comportements: Comportement[];
   milieux: Milieu[];
   estimationNombre: EstimationNombre;
-};
-
-export type FullDonnee = DonneeWithRelations & {
-  inventaire: Inventaire & {
-    observateur: Observateur;
-    associes: Observateur[];
-    lieuDit: Lieudit & {
-      commune: Commune & {
-        departement: Departement;
-      };
-    };
-    meteos: Meteo[];
-  };
-  espece: Espece & { classe: Classe | null };
-  estimationDistance: EstimationDistance | null;
 };
 
 type DonneeRelatedTablesFields = {
@@ -170,62 +145,6 @@ const normalizeDonnee = <T extends DonneeRelatedTablesFields>(
     comportements: comportementsArray,
     milieux: milieuxArray,
   };
-};
-
-export const findDonneesByCriteria = async (
-  searchCriteria: SearchDonneeCriteria | null = null
-): Promise<FullDonnee[]> => {
-  const donnees = await prisma.donnee
-    .findMany({
-      include: {
-        ...COMMON_DONNEE_INCLUDE,
-        inventaire: {
-          include: {
-            observateur: true,
-            inventaire_associe: {
-              select: {
-                observateur: true,
-              },
-            },
-            lieuDit: {
-              include: {
-                commune: {
-                  include: {
-                    departement: true,
-                  },
-                },
-              },
-            },
-            inventaire_meteo: {
-              select: {
-                meteo: true,
-              },
-            },
-          },
-        },
-        espece: {
-          include: {
-            classe: true,
-          },
-        },
-      },
-      orderBy: {
-        id: SortOrder.Asc,
-      },
-      where: buildSearchDonneeCriteria(searchCriteria),
-    })
-    .then((donnees) => {
-      return donnees.map((donnee) => {
-        const { inventaire, ...restDonnee } = donnee;
-        const normalizedInventaire = normalizeInventaire(inventaire);
-        return {
-          ...normalizeDonnee(restDonnee),
-          inventaire: normalizedInventaire,
-        };
-      });
-    });
-
-  return donnees;
 };
 
 export const findDonneeNavigationData = async (donneeId: number | undefined): Promise<DonneeNavigationData> => {

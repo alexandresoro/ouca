@@ -327,8 +327,27 @@ export const buildResolvers = ({
         return generateEstimationsNombreExport(estimationNombreService);
       },
       exportDonnees: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateDonneesExport(args?.searchCriteria);
+        return generateDonneesExport(
+          {
+            ageService,
+            classeService,
+            communeService,
+            comportementService,
+            departementService,
+            donneeService,
+            especeService,
+            estimationDistanceService,
+            estimationNombreService,
+            inventaireService,
+            lieuditService,
+            meteoService,
+            milieuService,
+            observateurService,
+            sexeService,
+          },
+          user,
+          args?.searchCriteria
+        );
       },
       exportEspeces: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
