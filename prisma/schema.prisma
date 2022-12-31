@@ -7,37 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Age {
-  id      Int     @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle String  @unique() @db.VarChar(100)
-  ownerId String? @map("owner_id")
-
-  @@map("age")
-}
-
-model Classe {
-  id      Int      @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle String   @unique() @db.VarChar(100)
-  ownerId String?  @map("owner_id")
-  espece  Espece[]
-
-  @@map("classe")
-}
-
-model Commune {
-  id            Int         @id @default(autoincrement()) @db.UnsignedSmallInt
-  departementId Int         @map("departement_id") @db.UnsignedSmallInt
-  code          Int         @db.UnsignedSmallInt
-  nom           String      @db.VarChar(100)
-  ownerId       String?     @map("owner_id")
-  departement   Departement @relation(fields: [departementId], references: [id], map: "fk_commune_departement_id")
-  lieudit       Lieudit[]
-
-  @@unique([departementId, code])
-  @@unique([departementId, nom])
-  @@map("commune")
-}
-
 model Comportement {
   id                  Int                   @id @default(autoincrement()) @db.UnsignedSmallInt
   code                String                @unique() @db.VarChar(6)
@@ -47,15 +16,6 @@ model Comportement {
   donnee_comportement donnee_comportement[]
 
   @@map("comportement")
-}
-
-model Departement {
-  id      Int       @id @default(autoincrement()) @db.UnsignedSmallInt
-  code    String    @unique() @db.VarChar(100)
-  ownerId String?   @map("owner_id")
-  commune Commune[]
-
-  @@map("departement")
 }
 
 model Donnee {
@@ -71,7 +31,6 @@ model Donnee {
   commentaire          String?               @db.Text
   regroupement         Int?                  @db.UnsignedSmallInt
   date_creation        DateTime              @db.DateTime(0)
-  espece               Espece                @relation(fields: [especeId], references: [id], map: "fk_donnee_espece_id")
   inventaire           Inventaire            @relation(fields: [inventaireId], references: [id], map: "fk_donnee_inventaire_id")
   donnee_comportement  donnee_comportement[]
   donnee_milieu        donnee_milieu[]
@@ -97,36 +56,6 @@ model donnee_milieu {
   @@id([donnee_id, milieu_id])
 }
 
-model Espece {
-  id          Int      @id @default(autoincrement()) @db.UnsignedMediumInt
-  classeId    Int?     @map("classe_id") @db.UnsignedSmallInt
-  code        String   @unique() @db.VarChar(20)
-  nomFrancais String   @unique() @map("nom_francais") @db.VarChar(100)
-  nomLatin    String   @unique() @map("nom_latin") @db.VarChar(100)
-  ownerId     String?  @map("owner_id")
-  classe      Classe?  @relation(fields: [classeId], references: [id], onDelete: Restrict, map: "fk_espece_classe_id")
-  donnee      Donnee[]
-
-  @@map("espece")
-}
-
-model EstimationDistance {
-  id      Int     @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle String  @unique() @db.VarChar(100)
-  ownerId String? @map("owner_id")
-
-  @@map("estimation_distance")
-}
-
-model EstimationNombre {
-  id        Int     @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle   String  @unique() @db.VarChar(100)
-  nonCompte Boolean @map("non_compte") @db.Bit(1)
-  ownerId   String? @map("owner_id")
-
-  @@map("estimation_nombre")
-}
-
 model Inventaire {
   id                 Int                  @id @default(autoincrement()) @db.UnsignedMediumInt
   observateurId      Int                  @map("observateur_id") @db.UnsignedSmallInt
@@ -141,7 +70,6 @@ model Inventaire {
   temperature        Int?                 @db.TinyInt
   date_creation      DateTime             @db.DateTime(0)
   ownerId            String?              @map("owner_id")
-  lieuDit            Lieudit              @relation(fields: [lieuDitId], references: [id], map: "fk_inventaire_lieudit_id")
   observateur        Observateur          @relation(fields: [observateurId], references: [id], map: "fk_inventaire_observateur_id")
   donnee             Donnee[]
   inventaire_associe inventaire_associe[]
@@ -166,22 +94,6 @@ model inventaire_meteo {
   meteo         Meteo      @relation(fields: [meteo_id], references: [id], onDelete: Cascade, map: "fk_inventaire_meteo_meteo_id")
 
   @@id([inventaire_id, meteo_id])
-}
-
-model Lieudit {
-  id                Int               @id @default(autoincrement()) @db.UnsignedMediumInt
-  communeId         Int               @map("commune_id") @db.UnsignedSmallInt
-  nom               String            @db.VarChar(150)
-  altitude          Int               @db.UnsignedSmallInt
-  longitude         Decimal           @db.Decimal(13, 6)
-  latitude          Decimal           @db.Decimal(16, 6)
-  coordinatesSystem CoordinatesSystem @map("coordinates_system")
-  ownerId           String?           @map("owner_id")
-  commune           Commune           @relation(fields: [communeId], references: [id], map: "fk_lieudit_commune_id")
-  inventaire        Inventaire[]
-
-  @@unique([communeId, nom])
-  @@map("lieudit")
 }
 
 model Meteo {
@@ -211,14 +123,6 @@ model Observateur {
   inventaire_associe inventaire_associe[]
 
   @@map("observateur")
-}
-
-model Sexe {
-  id      Int     @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle String  @unique() @db.VarChar(100)
-  ownerId String? @map("owner_id")
-
-  @@map("sexe")
 }
 
 enum Nicheur {
