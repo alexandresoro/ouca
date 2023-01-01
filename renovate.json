@@ -8,14 +8,10 @@
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
-      "excludePackageNames": ["prisma", "typescript"],
+      "excludePackageNames": ["typescript"],
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["minor"],
       "automerge": true
-    },
-    {
-      "matchPackageNames": ["prisma", "@prisma/client"],
-      "automerge": false
     },
     {
       "matchPackagePatterns": ["fastify", "mercurius"],

@@ -22,7 +22,6 @@ WORKDIR /app
 
 ENV OUCA_SERVER_HOST 0.0.0.0
 
-COPY prisma/ /app/prisma/
 COPY package.json package-lock.json /app/ 
 
 RUN npm set-script prepare "" && \

@@ -67,7 +67,6 @@ jobs:
             dist/
             package.json
             package-lock.json
-            prisma/
           retention-days: 1
           if-no-files-found: error
 

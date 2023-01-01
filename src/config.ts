@@ -12,9 +12,6 @@ export default {
     port: get("OUCA_SERVER_PORT").default("4000").asPortNumber(),
   },
   database: {
-    prismaUrl: get("DATABASE_URL")
-      .default("mysql://basenaturaliste:basenaturaliste@127.0.0.1:3306/basenaturaliste")
-      .asString(),
     url: get("OUCA_DATABASE_URL")
       .default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste")
       .asString(),
