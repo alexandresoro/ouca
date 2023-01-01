@@ -1,6 +1,7 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
+import { buildFindMatchingInventaireClause } from "./inventaire-repository-helper";
 import { reshapeRawInventaire } from "./inventaire-repository-reshape";
-import { inventaireSchema, type Inventaire } from "./inventaire-repository-types";
+import { inventaireSchema, type Inventaire, type InventaireFindMatchingInput } from "./inventaire-repository-types";
 
 export type InventaireRepositoryDependencies = {
   slonik: DatabasePool;
@@ -57,6 +58,33 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return rawInventaires.map((rawInventaire) => reshapeRawInventaire(rawInventaire));
   };
 
+  const findExistingInventaire = async (criteria: InventaireFindMatchingInput): Promise<Inventaire | null> => {
+    const { associesIds, meteosIds } = criteria;
+
+    // TODO the match is a bit too wide, meaning that a missing/null criteria will have no
+    // associated where clause, but we can consider this as acceptable
+    const query = sql.type(inventaireSchema)`
+      SELECT
+        inventaire.*
+      FROM
+        basenaturaliste.inventaire
+      LEFT JOIN
+	      basenaturaliste.inventaire_associe ON inventaire_associe.inventaire_id = inventaire.id
+      LEFT JOIN
+	      basenaturaliste.inventaire_meteo ON inventaire_meteo.inventaire_id = inventaire.id
+      ${buildFindMatchingInventaireClause(criteria)}
+      GROUP BY inventaire.id
+      HAVING 
+        COUNT(DISTINCT inventaire_associe.observateur_id) = ${associesIds?.length ?? 0}
+        AND COUNT(DISTINCT inventaire_meteo.meteo_id) = ${meteosIds?.length ?? 0}
+      LIMIT 1
+    `;
+
+    const rawInventaire = await slonik.maybeOne(query);
+
+    return reshapeRawInventaire(rawInventaire);
+  };
+
   const deleteInventaireById = async (
     inventaireId: number,
     transaction?: DatabaseTransactionConnection
@@ -80,6 +108,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     findInventaireById,
     findInventaireByDonneeId,
     findInventaires,
+    findExistingInventaire,
     deleteInventaireById,
   };
 };

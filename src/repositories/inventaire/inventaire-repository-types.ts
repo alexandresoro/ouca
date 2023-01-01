@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type InputInventaire } from "../../graphql/generated/graphql-types";
 import {
   COORDINATES_SYSTEMS,
   type CoordinatesSystemType,
@@ -29,4 +30,21 @@ export type Inventaire = Omit<RawInventaire, "altitude" | "latitude" | "longitud
     longitude: number;
     system: CoordinatesSystemType;
   } | null;
+};
+
+export type InventaireFindMatchingInput = InventaireCreateInput &
+  Required<Pick<InputInventaire, "associesIds" | "meteosIds">>;
+
+export type InventaireCreateInput = {
+  observateur_id: number;
+  date: string; // YYYY-MM-DD
+  heure?: string | null;
+  duree?: string | null;
+  lieudit_id: number;
+  altitude?: number | null;
+  longitude?: number | null;
+  latitude?: number | null;
+  coordinates_system?: CoordinatesSystemType | null;
+  temperature?: number | null;
+  owner_id?: string | null;
 };
