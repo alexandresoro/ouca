@@ -1,6 +1,8 @@
-import { mock } from "jest-mock-extended";
+import { any, mock } from "jest-mock-extended";
 import { type Logger } from "pino";
-import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { createMockPool, UniqueIntegrityConstraintViolationError } from "slonik";
+import { type MutationUpsertInventaireArgs } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
 import { type LoggedUser } from "../../types/User";
@@ -8,11 +10,17 @@ import { OucaError } from "../../utils/errors";
 import { buildInventaireService } from "./inventaire-service";
 
 const inventaireRepository = mock<InventaireRepository>({});
+const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
+const slonik = createMockPool({
+  query: jest.fn(),
+});
 
 const inventaireService = buildInventaireService({
   logger,
+  slonik,
   inventaireRepository,
+  donneeRepository,
 });
 
 const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
@@ -80,4 +88,104 @@ test("Find all inventaries", async () => {
   await inventaireService.findAllInventaires();
 
   expect(inventaireRepository.findInventaires).toHaveBeenCalledTimes(1);
+});
+
+describe("Update of an inventory", () => {
+  describe("to values already matching an existing inventory", () => {
+    test("should return the correct state if no migration requested", async () => {
+      const inventoryData = mock<MutationUpsertInventaireArgs>({
+        id: 12,
+        migrateDonneesIfMatchesExistingInventaire: undefined,
+      });
+
+      const loggedUser = mock<LoggedUser>();
+
+      inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
+        mock<Inventaire>({
+          id: 345,
+        })
+      );
+
+      await expect(inventaireService.upsertInventaire(inventoryData, loggedUser)).rejects.toEqual({
+        inventaireExpectedToBeUpdated: 12,
+        correspondingInventaireFound: 345,
+      });
+
+      expect(donneeRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
+      expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+    });
+
+    test("should handle migration of existing data if requested", async () => {
+      const inventoryData = mock<MutationUpsertInventaireArgs>({
+        id: 12,
+        migrateDonneesIfMatchesExistingInventaire: true,
+      });
+
+      const loggedUser = mock<LoggedUser>();
+
+      inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
+        mock<Inventaire>({
+          id: 345,
+        })
+      );
+
+      const result = await inventaireService.upsertInventaire(inventoryData, loggedUser);
+
+      expect(donneeRepository.updateAssociatedInventaire).toHaveBeenCalledTimes(1);
+      expect(donneeRepository.updateAssociatedInventaire).toHaveBeenCalledWith(12, 345, any());
+      expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+      expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledWith(12, any());
+      expect(result.id).toEqual(345);
+    });
+
+    test("should throw an error when the requester is not logged", async () => {
+      const inventoryData = mock<MutationUpsertInventaireArgs>({
+        id: 12,
+      });
+
+      await expect(inventaireService.upsertInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+      expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
+    });
+  });
+
+  describe.skip("to values not matching an existing inventory", () => {
+    /**/
+  });
+});
+
+describe("Creation of an inventory", () => {
+  describe("with values already matching an existing inventory", () => {
+    test("should return the existing inventory", async () => {
+      const inventoryData = mock<MutationUpsertInventaireArgs>({
+        id: undefined,
+      });
+
+      const loggedUser = mock<LoggedUser>();
+
+      inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
+        mock<Inventaire>({
+          id: 345,
+        })
+      );
+
+      const result = await inventaireService.upsertInventaire(inventoryData, loggedUser);
+
+      expect(donneeRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
+      expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+      expect(result.id).toEqual(345);
+    });
+
+    test("should throw an error when the requester is not logged", async () => {
+      const inventoryData = mock<MutationUpsertInventaireArgs>({
+        id: undefined,
+      });
+
+      await expect(inventaireService.upsertInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+      expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
+    });
+  });
+
+  describe.skip("with values not matching an existing inventory", () => {
+    /**/
+  });
 });
