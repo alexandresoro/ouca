@@ -1,7 +1,6 @@
 import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
-import { saveDatabaseRequest } from "../services/database/save-database";
 import { upsertInventaire, type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
   generateAgesExport,
@@ -370,13 +369,6 @@ export const buildResolvers = ({
       exportSexes: async (_source, args, { user }): Promise<string> => {
         if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
         return generateSexesExport(sexeService);
-      },
-      dumpDatabase: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        if (user.role !== "admin") {
-          throw new mercurius.ErrorWithProps("Database dump is not allowed for the current user");
-        }
-        return saveDatabaseRequest();
       },
       settings: async (_source, args, { user }): Promise<Settings | null> => {
         return settingsService.findAppConfiguration(user);

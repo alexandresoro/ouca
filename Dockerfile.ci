@@ -10,9 +10,6 @@ WORKDIR /app
 # In the container, listen to outside localhost by default
 ENV OUCA_SERVER_HOST 0.0.0.0
 
-# Add MariaDB client libs used for export feature (for now...)
-RUN apk add --no-cache mariadb-client
-
 # Workaround for https://github.com/prisma/prisma/issues/16553
 RUN apk add openssl1.1-compat
 

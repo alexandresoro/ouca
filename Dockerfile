@@ -22,8 +22,6 @@ WORKDIR /app
 
 ENV OUCA_SERVER_HOST 0.0.0.0
 
-RUN apk add --no-cache mariadb-client
-
 COPY prisma/ /app/prisma/
 COPY package.json package-lock.json /app/ 
 
