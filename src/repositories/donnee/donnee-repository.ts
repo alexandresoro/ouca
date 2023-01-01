@@ -1,4 +1,4 @@
-import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
+import { sql, type DatabasePool, type DatabaseTransactionConnection, type QueryResult } from "slonik";
 import { z } from "zod";
 import { countSchema } from "../common";
 import {
@@ -471,6 +471,25 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return (transaction ?? slonik).one(query);
   };
 
+  const updateAssociatedInventaire = async (
+    currentInventaireId: number,
+    newInventaireId: number,
+    transaction?: DatabaseTransactionConnection
+  ): Promise<QueryResult<void>> => {
+    const query = sql.type(z.void())`
+      UPDATE
+        basenaturaliste.donnee
+      SET
+        donnee.inventaire_id = ${newInventaireId}
+      WHERE
+        donnee.inventaire_id = ${currentInventaireId}
+      RETURNING
+        *
+    `;
+
+    return (transaction ?? slonik).query(query);
+  };
+
   return {
     findDonneeById,
     findDonnees,
@@ -498,6 +517,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     createDonnee,
     updateDonnee,
     deleteDonneeById,
+    updateAssociatedInventaire,
   };
 };
 

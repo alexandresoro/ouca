@@ -161,7 +161,9 @@ export const buildServices = async (): Promise<Services> => {
 
   const inventaireService = buildInventaireService({
     logger,
+    slonik,
     inventaireRepository,
+    donneeRepository,
   });
 
   const lieuditService = buildLieuditService({

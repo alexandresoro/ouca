@@ -7,14 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Donnee {
-  id           Int        @id @default(autoincrement()) @db.UnsignedMediumInt
-  inventaireId Int        @map("inventaire_id") @db.UnsignedMediumInt
-  inventaire   Inventaire @relation(fields: [inventaireId], references: [id], map: "fk_donnee_inventaire_id")
-
-  @@map("donnee")
-}
-
 model Inventaire {
   id                 Int                  @id @default(autoincrement()) @db.UnsignedMediumInt
   observateurId      Int                  @map("observateur_id") @db.UnsignedSmallInt
@@ -30,7 +22,6 @@ model Inventaire {
   date_creation      DateTime             @db.DateTime(0)
   ownerId            String?              @map("owner_id")
   observateur        Observateur          @relation(fields: [observateurId], references: [id], map: "fk_inventaire_observateur_id")
-  donnee             Donnee[]
   inventaire_associe inventaire_associe[]
   inventaire_meteo   inventaire_meteo[]
 

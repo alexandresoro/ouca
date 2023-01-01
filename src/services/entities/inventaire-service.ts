@@ -1,11 +1,13 @@
 import { type CoordinatesSystem, type Inventaire as InventairePrisma } from "@prisma/client";
 import { format } from "date-fns";
 import { type Logger } from "pino";
+import { type DatabasePool } from "slonik";
 import {
   CoordinatesSystemType,
   type MutationUpsertInventaireArgs,
   type UpsertInventaireFailureReason,
 } from "../../graphql/generated/graphql-types";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
@@ -19,10 +21,16 @@ import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape";
 
 type InventaireServiceDependencies = {
   logger: Logger;
+  slonik: DatabasePool;
   inventaireRepository: InventaireRepository;
+  donneeRepository: DonneeRepository;
 };
 
-export const buildInventaireService = ({ inventaireRepository }: InventaireServiceDependencies) => {
+export const buildInventaireService = ({
+  slonik,
+  inventaireRepository,
+  donneeRepository,
+}: InventaireServiceDependencies) => {
   const findInventaire = async (id: number, loggedUser: LoggedUser | null): Promise<Inventaire | null> => {
     validateAuthorization(loggedUser);
 
@@ -87,18 +95,9 @@ export const buildInventaireService = ({ inventaireRepository }: InventaireServi
         // should now be linked to inventaire B if matches
 
         // We update the inventaire ID for the donnees and we delete the duplicated inventaire
-        await prisma.donnee.updateMany({
-          where: {
-            inventaireId: id,
-          },
-          data: {
-            inventaireId: existingInventaire?.id,
-          },
-        });
-        await prisma.inventaire.delete({
-          where: {
-            id,
-          },
+        await slonik.transaction(async (transactionConnection) => {
+          await donneeRepository.updateAssociatedInventaire(id, existingInventaire.id, transactionConnection);
+          await inventaireRepository.deleteInventaireById(id, transactionConnection);
         });
       }
 
