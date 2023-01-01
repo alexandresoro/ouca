@@ -7,53 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Comportement {
-  id                  Int                   @id @default(autoincrement()) @db.UnsignedSmallInt
-  code                String                @unique() @db.VarChar(6)
-  libelle             String                @unique() @db.VarChar(100)
-  nicheur             Nicheur?
-  ownerId             String?               @map("owner_id")
-  donnee_comportement donnee_comportement[]
-
-  @@map("comportement")
-}
-
 model Donnee {
-  id                   Int                   @id @default(autoincrement()) @db.UnsignedMediumInt
-  inventaireId         Int                   @map("inventaire_id") @db.UnsignedMediumInt
-  especeId             Int                   @map("espece_id") @db.UnsignedMediumInt
-  sexeId               Int                   @map("sexe_id") @db.UnsignedSmallInt
-  ageId                Int                   @map("age_id") @db.UnsignedSmallInt
-  estimationNombreId   Int                   @map("estimation_nombre_id") @db.UnsignedSmallInt
-  nombre               Int?                  @db.UnsignedSmallInt
-  estimationDistanceId Int?                  @map("estimation_distance_id") @db.UnsignedSmallInt
-  distance             Int?                  @db.UnsignedSmallInt
-  commentaire          String?               @db.Text
-  regroupement         Int?                  @db.UnsignedSmallInt
-  date_creation        DateTime              @db.DateTime(0)
-  inventaire           Inventaire            @relation(fields: [inventaireId], references: [id], map: "fk_donnee_inventaire_id")
-  donnee_comportement  donnee_comportement[]
-  donnee_milieu        donnee_milieu[]
+  id           Int        @id @default(autoincrement()) @db.UnsignedMediumInt
+  inventaireId Int        @map("inventaire_id") @db.UnsignedMediumInt
+  inventaire   Inventaire @relation(fields: [inventaireId], references: [id], map: "fk_donnee_inventaire_id")
 
   @@map("donnee")
-}
-
-model donnee_comportement {
-  comportement_id Int          @db.UnsignedSmallInt
-  donnee_id       Int          @db.UnsignedMediumInt
-  comportement    Comportement @relation(fields: [comportement_id], references: [id], onDelete: Cascade, map: "fk_donnee_comportement_comportement_id")
-  donnee          Donnee       @relation(fields: [donnee_id], references: [id], onDelete: Cascade, map: "fk_donnee_comportement_donnee_id")
-
-  @@id([donnee_id, comportement_id])
-}
-
-model donnee_milieu {
-  milieu_id Int    @db.UnsignedSmallInt
-  donnee_id Int    @db.UnsignedMediumInt
-  donnee    Donnee @relation(fields: [donnee_id], references: [id], onDelete: Cascade, map: "fk_donnee_milieu_donnee_id")
-  milieu    Milieu @relation(fields: [milieu_id], references: [id], onDelete: Cascade, map: "fk_donnee_milieu_milieu_id")
-
-  @@id([donnee_id, milieu_id])
 }
 
 model Inventaire {
@@ -105,16 +64,6 @@ model Meteo {
   @@map("meteo")
 }
 
-model Milieu {
-  id            Int             @id @default(autoincrement()) @db.UnsignedSmallInt
-  code          String          @unique() @db.VarChar(6)
-  libelle       String          @unique() @db.VarChar(100)
-  ownerId       String?         @map("owner_id")
-  donnee_milieu donnee_milieu[]
-
-  @@map("milieu")
-}
-
 model Observateur {
   id                 Int                  @id @default(autoincrement()) @db.UnsignedSmallInt
   libelle            String               @unique() @db.VarChar(100)
@@ -123,12 +72,6 @@ model Observateur {
   inventaire_associe inventaire_associe[]
 
   @@map("observateur")
-}
-
-enum Nicheur {
-  possible
-  probable
-  certain
 }
 
 enum CoordinatesSystem {
