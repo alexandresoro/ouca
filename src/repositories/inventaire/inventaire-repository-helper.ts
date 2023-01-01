@@ -27,6 +27,9 @@ export const buildFindMatchingInventaireClause = (criteria: InventaireFindMatchi
         case "meteosIds":
           identifierCriteria = sql.identifier(["inventaire_meteo", "meteo_id"]);
           break;
+        case "observateur_id":
+          identifierCriteria = sql.identifier(["inventaire", "observateur_id"]);
+          break;
         default:
           identifierCriteria = sql.identifier([criteriaName]);
           break;

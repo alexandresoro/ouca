@@ -3,7 +3,6 @@ import { format } from "date-fns";
 import { type Logger } from "pino";
 import {
   CoordinatesSystemType,
-  type InputInventaire,
   type MutationUpsertInventaireArgs,
   type UpsertInventaireFailureReason,
 } from "../../graphql/generated/graphql-types";
@@ -16,6 +15,7 @@ import { type LoggedUser } from "../../types/User";
 import { DATE_PATTERN } from "../../utils/constants";
 import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 import { validateAuthorization } from "./authorization-utils";
+import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape";
 
 type InventaireServiceDependencies = {
   logger: Logger;
@@ -46,63 +46,6 @@ export const buildInventaireService = ({ inventaireRepository }: InventaireServi
     return [...inventaires];
   };
 
-  const findExistingInventaire = async (inventaire: InputInventaire): Promise<InventairePrisma | null> => {
-    const inventaireCandidates = await prisma.inventaire.findMany({
-      where: {
-        observateurId: inventaire.observateurId,
-        date: parseISO8601AsUTCDate(inventaire.date),
-        heure: inventaire.heure ?? null,
-        duree: inventaire.duree ?? null,
-        lieuDitId: inventaire.lieuDitId,
-        altitude: inventaire.altitude ?? null,
-        latitude: inventaire.latitude ?? null,
-        longitude: inventaire.longitude ?? null,
-        temperature: inventaire.temperature ?? null,
-        ...(inventaire.associesIds != null
-          ? {
-              inventaire_associe: {
-                every: {
-                  observateur_id: {
-                    in: inventaire.associesIds,
-                  },
-                },
-              },
-            }
-          : {}),
-        ...(inventaire.meteosIds != null
-          ? {
-              inventaire_meteo: {
-                every: {
-                  meteo_id: {
-                    in: inventaire.meteosIds,
-                  },
-                },
-              },
-            }
-          : {}),
-      },
-      include: {
-        inventaire_associe: true,
-        inventaire_meteo: true,
-      },
-    });
-
-    // At this point the candidates are the ones that match all parameters and for which each associe+meteo is in the required list
-    // However, we did not check yet that this candidates have exactly the requested associes/meteos as they can have additional ones
-
-    return (
-      inventaireCandidates?.filter((inventaireEntity) => {
-        const matcherAssociesLength = inventaire?.associesIds?.length ?? 0;
-        const matcherMeteosLength = inventaire?.meteosIds?.length ?? 0;
-
-        const areAssociesSameLength = inventaireEntity.inventaire_associe?.length === matcherAssociesLength;
-        const areMeteosSameLength = inventaireEntity.inventaire_meteo?.length === matcherMeteosLength;
-
-        return areAssociesSameLength && areMeteosSameLength;
-      })?.[0] ?? null
-    );
-  };
-
   const upsertInventaire = async (
     args: MutationUpsertInventaireArgs,
     loggedUser: LoggedUser | null
@@ -110,9 +53,14 @@ export const buildInventaireService = ({ inventaireRepository }: InventaireServi
     validateAuthorization(loggedUser);
 
     const { id, data, migrateDonneesIfMatchesExistingInventaire = false } = args;
+    const { associesIds, meteosIds } = data;
 
     // Check if an exact same inventaire already exists or not
-    const existingInventaire = await findExistingInventaire(data);
+    const existingInventaire = await inventaireRepository.findExistingInventaire({
+      ...reshapeInputInventaireUpsertData(data),
+      associesIds: associesIds ?? [],
+      meteosIds: meteosIds ?? [],
+    });
 
     if (existingInventaire) {
       // The inventaire we wish to upsert has already an existing equivalent
@@ -171,7 +119,7 @@ export const buildInventaireService = ({ inventaireRepository }: InventaireServi
       // The inventaire we wish to upsert does not have an equivalent existing one
       // In that case, we proceed as a classic upsert
 
-      const { associesIds, meteosIds, date, ...restData } = data;
+      const { date, ...restData } = data;
 
       const associesMap =
         associesIds?.map((associeId) => {
