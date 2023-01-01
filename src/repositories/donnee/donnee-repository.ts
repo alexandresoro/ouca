@@ -7,7 +7,11 @@ import {
   objectToKeyValueInsert,
   objectToKeyValueSet,
 } from "../repository-helpers";
-import { buildOrderByIdentifier, buildSearchCriteriaClause } from "./donnee-repository-helper";
+import {
+  buildFindMatchingDonneeClause,
+  buildOrderByIdentifier,
+  buildSearchCriteriaClause,
+} from "./donnee-repository-helper";
 import {
   donneeSchema,
   idSchema,
@@ -15,6 +19,7 @@ import {
   type Donnee,
   type DonneeCreateInput,
   type DonneeFindManyInput,
+  type DonneeFindMatchingInput,
 } from "./donnee-repository-types";
 
 export type DonneeRepositoryDependencies = {
@@ -96,6 +101,31 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     `;
 
     return slonik.any(query);
+  };
+
+  const findExistingDonnee = async (criteria: DonneeFindMatchingInput): Promise<Donnee | null> => {
+    const { comportementsIds, milieuxIds } = criteria;
+
+    // TODO the match is a bit too wide, meaning that a missing/null criteria will have no
+    // associated where clause, but we can consider this as acceptable
+    const query = sql.type(donneeSchema)`
+      SELECT
+        donnee.*
+      FROM
+        basenaturaliste.donnee
+      LEFT JOIN
+	      basenaturaliste.donnee_comportement ON donnee_comportement.donnee_id = donnee.id
+      LEFT JOIN
+	      basenaturaliste.donnee_milieu ON donnee_milieu.donnee_id = donnee.id
+      ${buildFindMatchingDonneeClause(criteria)}
+      GROUP BY donnee.id
+      HAVING 
+        COUNT(DISTINCT donnee_comportement.comportement_id) = ${comportementsIds?.length ?? 0}
+        AND COUNT(DISTINCT donnee_milieu.milieu_id) = ${milieuxIds?.length ?? 0}
+      LIMIT 1
+    `;
+
+    return slonik.maybeOne(query);
   };
 
   const findPreviousDonneeId = async (id: number): Promise<number | null> => {
@@ -444,6 +474,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   return {
     findDonneeById,
     findDonnees,
+    findExistingDonnee,
     findPreviousDonneeId,
     findNextDonneeId,
     findDonneeIndex,

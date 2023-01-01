@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type InputDonnee } from "../../graphql/generated/graphql-types";
 import { type SortOrder } from "../common";
 import { type SearchCriteria } from "../search-criteria";
 
@@ -47,6 +48,9 @@ export type DonneeFindManyInput = Partial<{
   offset: number | null;
   limit: number | null;
 }>;
+
+export type DonneeFindMatchingInput = DonneeCreateInput &
+  Required<Pick<InputDonnee, "comportementsIds" | "milieuxIds">>;
 
 export type DonneeCreateInput = {
   inventaire_id: number;

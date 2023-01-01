@@ -1,4 +1,3 @@
-import { type Donnee as DonneeEntity } from "@prisma/client";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import {
@@ -13,7 +12,6 @@ import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/do
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
-import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
 import { OucaError } from "../../utils/errors";
 import { validateAuthorization } from "./authorization-utils";
@@ -119,9 +117,14 @@ export const buildDonneeService = ({
     validateAuthorization(loggedUser);
 
     const { id, data } = args;
+    const { comportementsIds, milieuxIds } = data;
 
     // Check if an exact same donnee already exists or not
-    const existingDonnee = await findExistingDonnee(data);
+    const existingDonnee = await donneeRepository.findExistingDonnee({
+      ...reshapeInputDonneeUpsertData(data),
+      comportementsIds: comportementsIds ?? [],
+      milieuxIds: milieuxIds ?? [],
+    });
 
     if (existingDonnee && existingDonnee.id !== id) {
       // The donnee already exists so we return an error
@@ -130,8 +133,6 @@ export const buildDonneeService = ({
         message: `Cette donnée existe déjà (ID = ${existingDonnee.id}).`,
       });
     } else {
-      const { comportementsIds, milieuxIds } = data;
-
       if (id) {
         const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
           const updatedDonnee = await donneeRepository.updateDonnee(
@@ -240,61 +241,3 @@ export const buildDonneeService = ({
 };
 
 export type DonneeService = ReturnType<typeof buildDonneeService>;
-
-const findExistingDonnee = async (donnee: InputDonnee): Promise<DonneeEntity | null> => {
-  const donneesCandidates = await prisma.donnee.findMany({
-    where: {
-      inventaireId: donnee.inventaireId,
-      especeId: donnee.especeId,
-      sexeId: donnee.sexeId,
-      ageId: donnee.ageId,
-      estimationNombreId: donnee.estimationNombreId,
-      nombre: donnee?.nombre ?? null,
-      estimationDistanceId: donnee?.estimationDistanceId ?? null,
-      distance: donnee?.distance ?? null,
-      regroupement: donnee?.regroupement ?? null,
-      commentaire: donnee?.commentaire ?? null,
-      ...(donnee.comportementsIds != null
-        ? {
-            donnee_comportement: {
-              every: {
-                comportement_id: {
-                  in: donnee.comportementsIds,
-                },
-              },
-            },
-          }
-        : {}),
-      ...(donnee.milieuxIds != null
-        ? {
-            donnee_milieu: {
-              every: {
-                milieu_id: {
-                  in: donnee.milieuxIds,
-                },
-              },
-            },
-          }
-        : {}),
-    },
-    include: {
-      donnee_comportement: true,
-      donnee_milieu: true,
-    },
-  });
-
-  // At this point the candidates are the ones that match all parameters and for which each comportement+milieu is in the required list
-  // However, we did not check yet that this candidates have exactly the requested comportements/milieux as they can have additional ones
-
-  return (
-    donneesCandidates?.filter((donneeEntity) => {
-      const matcherComportementsLength = donnee?.comportementsIds?.length ?? 0;
-      const matcherMilieuxLength = donnee?.milieuxIds?.length ?? 0;
-
-      const areComportementsSameLength = donneeEntity.donnee_comportement?.length === matcherComportementsLength;
-      const areMilieuxSameLength = donneeEntity.donnee_milieu?.length === matcherMilieuxLength;
-
-      return areComportementsSameLength && areMilieuxSameLength;
-    })?.[0] ?? null
-  );
-};
