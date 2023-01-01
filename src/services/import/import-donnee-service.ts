@@ -20,7 +20,6 @@ import { type Observateur } from "../../repositories/observateur/observateur-rep
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
-import { type InventaireWithRelations } from "../entities/inventaire-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -37,7 +36,7 @@ export class ImportDonneeService extends ImportService {
   private comportements!: Comportement[];
   private milieux!: Milieu[];
   private meteos!: Meteo[];
-  private inventaires: (Omit<Inventaire, "dateCreation"> | InventaireWithRelations)[] = []; // The list of existing inventaires + the ones we created along with the validation
+  private inventaires: Inventaire[] = []; // The list of existing inventaires + the ones we created along with the validation
 
   private existingDonnees!: Donnee[];
 
@@ -252,8 +251,7 @@ export class ImportDonneeService extends ImportService {
         existingInventaire.date === inputInventaire.date &&
         existingInventaire.heure === inputInventaire.heure &&
         existingInventaire.duree === inputInventaire.duree &&
-        ((existingInventaire as InventaireWithRelations)?.lieuDitId === inputInventaire.lieuDitId ||
-          (existingInventaire as Inventaire)?.lieuditId === inputInventaire.lieuDitId) &&
+        existingInventaire?.lieuditId === inputInventaire.lieuDitId &&
         existingInventaire.customizedCoordinates?.altitude === inputInventaire.altitude &&
         existingInventaire.customizedCoordinates?.longitude === inputInventaire.longitude &&
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.latitude &&

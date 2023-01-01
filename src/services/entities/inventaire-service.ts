@@ -1,21 +1,15 @@
-import { type CoordinatesSystem, type Inventaire as InventairePrisma } from "@prisma/client";
-import { format } from "date-fns";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import {
-  CoordinatesSystemType,
   type MutationUpsertInventaireArgs,
   type UpsertInventaireFailureReason,
 } from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
+import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository";
+import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
-import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
-import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
-import prisma from "../../sql/prisma";
 import { type LoggedUser } from "../../types/User";
-import { DATE_PATTERN } from "../../utils/constants";
-import { parseISO8601AsUTCDate } from "../../utils/time-utils";
 import { validateAuthorization } from "./authorization-utils";
 import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape";
 
@@ -23,12 +17,16 @@ type InventaireServiceDependencies = {
   logger: Logger;
   slonik: DatabasePool;
   inventaireRepository: InventaireRepository;
+  inventaireAssocieRepository: InventaireAssocieRepository;
+  inventaireMeteoRepository: InventaireMeteoRepository;
   donneeRepository: DonneeRepository;
 };
 
 export const buildInventaireService = ({
   slonik,
   inventaireRepository,
+  inventaireAssocieRepository,
+  inventaireMeteoRepository,
   donneeRepository,
 }: InventaireServiceDependencies) => {
   const findInventaire = async (id: number, loggedUser: LoggedUser | null): Promise<Inventaire | null> => {
@@ -57,7 +55,7 @@ export const buildInventaireService = ({
   const upsertInventaire = async (
     args: MutationUpsertInventaireArgs,
     loggedUser: LoggedUser | null
-  ): Promise<Inventaire | InventaireWithRelations> => {
+  ): Promise<Inventaire> => {
     validateAuthorization(loggedUser);
 
     const { id, data, migrateDonneesIfMatchesExistingInventaire = false } = args;
@@ -126,55 +124,57 @@ export const buildInventaireService = ({
 
       if (id) {
         // Update an existing inventaire
-        return prisma.inventaire
-          .update({
-            where: { id },
-            include: COMMON_INVENTAIRE_INCLUDE,
-            data: {
-              ...restData,
-              coordinates_system:
-                restData?.altitude != null && restData?.latitude != null && restData?.longitude != null
-                  ? CoordinatesSystemType.Gps
-                  : null,
-              date: parseISO8601AsUTCDate(date),
-              inventaire_associe: {
-                deleteMany: {
-                  inventaire_id: id,
-                },
-                create: associesMap,
-              },
-              inventaire_meteo: {
-                deleteMany: {
-                  inventaire_id: id,
-                },
-                create: meteosMap,
-              },
-            },
-          })
-          .then(normalizeInventaireComplete);
+        const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
+          const updatedInventaire = await inventaireRepository.updateInventaire(
+            id,
+            reshapeInputInventaireUpsertData(data, loggedUser.id),
+            transactionConnection
+          );
+
+          await inventaireAssocieRepository.deleteAssociesOfInventaireId(id, transactionConnection);
+
+          if (associesIds?.length) {
+            await inventaireAssocieRepository.insertInventaireWithAssocies(id, associesIds, transactionConnection);
+          }
+
+          await inventaireMeteoRepository.deleteMeteosOfInventaireId(id, transactionConnection);
+
+          if (meteosIds?.length) {
+            await inventaireMeteoRepository.insertInventaireWithMeteos(id, meteosIds, transactionConnection);
+          }
+
+          return updatedInventaire;
+        });
+
+        return updatedInventaire;
       } else {
         // Create a new inventaire
-        return prisma.inventaire
-          .create({
-            data: {
-              ...restData,
-              coordinates_system:
-                restData?.altitude != null && restData?.latitude != null && restData?.longitude != null
-                  ? CoordinatesSystemType.Gps
-                  : null,
-              date: parseISO8601AsUTCDate(date),
-              date_creation: new Date(),
-              inventaire_associe: {
-                create: associesMap,
-              },
-              inventaire_meteo: {
-                create: meteosMap,
-              },
-              ownerId: loggedUser.id,
-            },
-            include: COMMON_INVENTAIRE_INCLUDE,
-          })
-          .then(normalizeInventaireComplete);
+        const createdInventaire = await slonik.transaction(async (transactionConnection) => {
+          const createdInventaire = await inventaireRepository.createInventaire(
+            reshapeInputInventaireUpsertData(data, loggedUser.id),
+            transactionConnection
+          );
+
+          if (associesIds?.length) {
+            await inventaireAssocieRepository.insertInventaireWithAssocies(
+              createdInventaire.id,
+              associesIds,
+              transactionConnection
+            );
+          }
+
+          if (meteosIds?.length) {
+            await inventaireMeteoRepository.insertInventaireWithMeteos(
+              createdInventaire.id,
+              meteosIds,
+              transactionConnection
+            );
+          }
+
+          return createdInventaire;
+        });
+
+        return createdInventaire;
       }
     }
   };
@@ -188,95 +188,3 @@ export const buildInventaireService = ({
 };
 
 export type InventaireService = ReturnType<typeof buildInventaireService>;
-
-export type InventaireWithRelations = Omit<
-  InventairePrisma,
-  "date" | "latitude" | "longitude" | "altitude" | "coordinates_system"
-> & {
-  observateur: Observateur;
-  customizedCoordinates?: {
-    altitude: number;
-    latitude: number;
-    longitude: number;
-    system: CoordinatesSystem;
-  };
-  date: string; // Formatted as yyyy-MM-dd
-  associes: Observateur[];
-  meteos: Meteo[];
-};
-
-const COMMON_INVENTAIRE_INCLUDE = {
-  observateur: true,
-  inventaire_associe: {
-    select: {
-      observateur: true,
-    },
-  },
-  inventaire_meteo: {
-    select: {
-      meteo: true,
-    },
-  },
-};
-
-type InventaireRelatedTablesFields = {
-  inventaire_associe: {
-    observateur: Observateur;
-  }[];
-  inventaire_meteo: {
-    meteo: Meteo;
-  }[];
-};
-
-type InventaireResolvedFields = {
-  observateur: Observateur;
-};
-
-export const normalizeInventaire = <T extends InventaireRelatedTablesFields>(
-  inventaire: T
-): Omit<T, "inventaire_associe" | "inventaire_meteo"> & {
-  associes: Observateur[];
-  meteos: Meteo[];
-} => {
-  const { inventaire_associe, inventaire_meteo, ...restInventaire } = inventaire;
-  const associesArray = inventaire_associe.map((inventaire_associe) => {
-    return inventaire_associe?.observateur;
-  });
-  const meteosArray = inventaire_meteo.map((inventaire_meteo) => {
-    return inventaire_meteo?.meteo;
-  });
-
-  return {
-    ...restInventaire,
-    associes: associesArray,
-    meteos: meteosArray,
-  };
-};
-
-const normalizeInventaireComplete = <
-  T extends InventairePrisma & InventaireRelatedTablesFields & InventaireResolvedFields
->(
-  inventaire: T
-): InventaireWithRelations => {
-  const { altitude, latitude, longitude, coordinates_system, date, ...restInventaire } = inventaire;
-
-  const customizedCoordinates =
-    coordinates_system != null && altitude != null && latitude != null && longitude != null
-      ? {
-          customizedCoordinates: {
-            altitude,
-            latitude: latitude.toNumber(),
-            longitude: longitude.toNumber(),
-            system: coordinates_system,
-          },
-        }
-      : {};
-
-  const inventaireWithoutAssociesMeteos = normalizeInventaire(restInventaire);
-
-  return {
-    ...inventaireWithoutAssociesMeteos,
-    ...customizedCoordinates,
-    date: format(date, DATE_PATTERN),
-  };
-};

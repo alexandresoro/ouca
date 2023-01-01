@@ -7,65 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Inventaire {
-  id                 Int                  @id @default(autoincrement()) @db.UnsignedMediumInt
-  observateurId      Int                  @map("observateur_id") @db.UnsignedSmallInt
-  date               DateTime             @db.Date
-  heure              String?              @db.VarChar(5)
-  duree              String?              @db.VarChar(5)
-  lieuDitId          Int                  @map("lieudit_id") @db.UnsignedMediumInt
-  altitude           Int?                 @db.UnsignedSmallInt
-  longitude          Decimal?             @db.Decimal(13, 6)
-  latitude           Decimal?             @db.Decimal(13, 6)
-  coordinates_system CoordinatesSystem?
-  temperature        Int?                 @db.TinyInt
-  date_creation      DateTime             @db.DateTime(0)
-  ownerId            String?              @map("owner_id")
-  observateur        Observateur          @relation(fields: [observateurId], references: [id], map: "fk_inventaire_observateur_id")
-  inventaire_associe inventaire_associe[]
-  inventaire_meteo   inventaire_meteo[]
-
-  @@map("inventaire")
-}
-
-model inventaire_associe {
-  inventaire_id  Int         @db.UnsignedMediumInt
-  observateur_id Int         @db.UnsignedSmallInt
-  inventaire     Inventaire  @relation(fields: [inventaire_id], references: [id], onDelete: Cascade, map: "fk_inventaire_associe_inventaire_id")
-  observateur    Observateur @relation(fields: [observateur_id], references: [id], onDelete: Cascade, map: "fk_inventaire_associe_observateur_id")
-
-  @@id([inventaire_id, observateur_id])
-}
-
-model inventaire_meteo {
-  meteo_id      Int        @db.UnsignedSmallInt
-  inventaire_id Int        @db.UnsignedMediumInt
-  inventaire    Inventaire @relation(fields: [inventaire_id], references: [id], onDelete: Cascade, map: "fk_inventaire_meteo_inventaire_id")
-  meteo         Meteo      @relation(fields: [meteo_id], references: [id], onDelete: Cascade, map: "fk_inventaire_meteo_meteo_id")
-
-  @@id([inventaire_id, meteo_id])
-}
-
-model Meteo {
-  id               Int                @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle          String             @unique() @db.VarChar(100)
-  ownerId          String?            @map("owner_id")
-  inventaire_meteo inventaire_meteo[]
-
-  @@map("meteo")
-}
-
 model Observateur {
-  id                 Int                  @id @default(autoincrement()) @db.UnsignedSmallInt
-  libelle            String               @unique() @db.VarChar(100)
-  ownerId            String?              @map("owner_id")
-  inventaire         Inventaire[]
-  inventaire_associe inventaire_associe[]
+  id Int @id @default(autoincrement()) @db.UnsignedSmallInt
 
   @@map("observateur")
-}
-
-enum CoordinatesSystem {
-  gps
-  lambert93
 }

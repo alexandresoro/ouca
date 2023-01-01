@@ -1,7 +1,13 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
+import { objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers";
 import { buildFindMatchingInventaireClause } from "./inventaire-repository-helper";
 import { reshapeRawInventaire } from "./inventaire-repository-reshape";
-import { inventaireSchema, type Inventaire, type InventaireFindMatchingInput } from "./inventaire-repository-types";
+import {
+  inventaireSchema,
+  type Inventaire,
+  type InventaireCreateInput,
+  type InventaireFindMatchingInput,
+} from "./inventaire-repository-types";
 
 export type InventaireRepositoryDependencies = {
   slonik: DatabasePool;
@@ -85,6 +91,44 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return reshapeRawInventaire(rawInventaire);
   };
 
+  const createInventaire = async (
+    inventaireInput: InventaireCreateInput,
+    transaction?: DatabaseTransactionConnection
+  ): Promise<Inventaire> => {
+    const query = sql.type(inventaireSchema)`
+      INSERT INTO
+        basenaturaliste.inventaire
+        ${objectToKeyValueInsert({ ...inventaireInput, date_creation: "NOW()" })}
+      RETURNING
+        *
+    `;
+
+    const rawInventaire = await (transaction ?? slonik).one(query);
+
+    return reshapeRawInventaire(rawInventaire);
+  };
+
+  const updateInventaire = async (
+    inventaireId: number,
+    inventaireInput: InventaireCreateInput,
+    transaction?: DatabaseTransactionConnection
+  ): Promise<Inventaire> => {
+    const query = sql.type(inventaireSchema)`
+      UPDATE
+        basenaturaliste.inventaire
+      SET
+        ${objectToKeyValueSet(inventaireInput)}
+      WHERE
+        id = ${inventaireId}
+      RETURNING
+        *
+    `;
+
+    const rawInventaire = await (transaction ?? slonik).one(query);
+
+    return reshapeRawInventaire(rawInventaire);
+  };
+
   const deleteInventaireById = async (
     inventaireId: number,
     transaction?: DatabaseTransactionConnection
@@ -109,6 +153,8 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     findInventaireByDonneeId,
     findInventaires,
     findExistingInventaire,
+    createInventaire,
+    updateInventaire,
     deleteInventaireById,
   };
 };

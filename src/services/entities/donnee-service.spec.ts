@@ -1,6 +1,6 @@
 import { any, mock } from "jest-mock-extended";
 import { type Logger } from "pino";
-import { createMockPool, UniqueIntegrityConstraintViolationError } from "slonik";
+import { createMockPool } from "slonik";
 import {
   SearchDonneesOrderBy,
   SortOrder,
@@ -37,15 +37,6 @@ const donneeService = buildDonneeService({
   donneeComportementRepository,
   donneeMilieuRepository,
 });
-
-const uniqueConstraintFailedError = new UniqueIntegrityConstraintViolationError(
-  new Error("errorMessage"),
-  "constraint"
-);
-
-const uniqueConstraintFailed = () => {
-  throw uniqueConstraintFailedError;
-};
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 jest.mock<typeof import("./donnee-service-reshape")>("./donnee-service-reshape", () => {
