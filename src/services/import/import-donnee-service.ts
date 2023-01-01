@@ -20,7 +20,7 @@ import { type Observateur } from "../../repositories/observateur/observateur-rep
 import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils";
-import { upsertInventaire, type InventaireWithRelations } from "../entities/inventaire-service";
+import { type InventaireWithRelations } from "../entities/inventaire-service";
 import { ImportService } from "./import-service";
 
 export class ImportDonneeService extends ImportService {
@@ -324,7 +324,7 @@ export class ImportDonneeService extends ImportService {
 
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
-      const inventaire = await upsertInventaire(
+      const inventaire = await this.services.inventaireService.upsertInventaire(
         {
           data: inputInventaire,
         },

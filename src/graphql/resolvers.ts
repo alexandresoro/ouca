@@ -1,7 +1,7 @@
 import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
-import { upsertInventaire, type InventaireWithRelations } from "../services/entities/inventaire-service";
+import { type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -469,9 +469,8 @@ export const buildResolvers = ({
         failureReason?: UpsertInventaireFailureReason;
         inventaire?: InventaireWithRelations;
       }> => {
-        if (!user) throw new mercurius.ErrorWithProps(USER_NOT_AUTHENTICATED);
         try {
-          const upsertedInventaire = await upsertInventaire(args, user);
+          const upsertedInventaire = await inventaireService.upsertInventaire(args, user);
           return {
             inventaire: upsertedInventaire,
           };
