@@ -687,7 +687,6 @@ type Query {
   exportMilieux: String
   exportObservateurs: String
   exportSexes: String
-  dumpDatabase: String
 }
 
 type Mutation {
