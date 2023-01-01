@@ -1,7 +1,5 @@
 import { type Logger } from "pino";
-import { createPool, type DatabasePool } from "slonik";
-import { createFieldNameTransformationInterceptor } from "slonik-interceptor-field-name-transformation";
-import config from "../config";
+import { type DatabasePool } from "slonik";
 import { buildAgeRepository } from "../repositories/age/age-repository";
 import { buildClasseRepository } from "../repositories/classe/classe-repository";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository";
@@ -23,8 +21,7 @@ import { buildObservateurRepository } from "../repositories/observateur/observat
 import { buildSettingsRepository } from "../repositories/settings/settings-repository";
 import { buildSexeRepository } from "../repositories/sexe/sexe-repository";
 import { buildUserRepository } from "../repositories/user/user-repository";
-import { createQueryLoggingInterceptor } from "../slonik/slonik-pino-interceptor";
-import { createResultParserInterceptor } from "../slonik/slonik-zod-interceptor";
+import getSlonikInstance from "../slonik/slonik-instance";
 import { logger } from "../utils/logger";
 import { buildAgeService, type AgeService } from "./entities/age-service";
 import { buildClasseService, type ClasseService } from "./entities/classe-service";
@@ -70,13 +67,7 @@ export type Services = {
 
 export const buildServices = async (): Promise<Services> => {
   // Database connection
-  const slonik = await createPool(config.database.url, {
-    interceptors: [
-      createFieldNameTransformationInterceptor({ format: "CAMEL_CASE" }),
-      createResultParserInterceptor(),
-      createQueryLoggingInterceptor(logger),
-    ],
-  });
+  const slonik = await getSlonikInstance({ logger: logger.child({ module: "slonik" }) });
 
   logger.debug("Connection to database successful");
 

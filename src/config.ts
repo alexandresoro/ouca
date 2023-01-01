@@ -12,9 +12,10 @@ export default {
     port: get("OUCA_SERVER_PORT").default("4000").asPortNumber(),
   },
   database: {
-    url: get("OUCA_DATABASE_URL")
+    url: get("DATABASE_URL")
       .default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste")
       .asString(),
+    enableMigrations: get("OUCA_DATABASE_ENABLE_MIGRATIONS").default("true").asBoolStrict(),
   },
   admin: {
     signupsAllowed: get("OUCA_SIGNUPS_ALLOWED").default("false").asBoolStrict(),
