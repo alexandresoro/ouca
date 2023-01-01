@@ -1,5 +1,6 @@
 import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types";
+import { type Inventaire as InventaireEntity } from "../repositories/inventaire/inventaire-repository-types";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types";
 import { type InventaireWithRelations } from "../services/entities/inventaire-service";
 import {
@@ -467,7 +468,7 @@ export const buildResolvers = ({
         { user }
       ): Promise<{
         failureReason?: UpsertInventaireFailureReason;
-        inventaire?: InventaireWithRelations;
+        inventaire?: InventaireEntity | InventaireWithRelations;
       }> => {
         try {
           const upsertedInventaire = await inventaireService.upsertInventaire(args, user);

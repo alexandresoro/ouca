@@ -49,7 +49,7 @@ export const buildInventaireService = ({ inventaireRepository }: InventaireServi
   const upsertInventaire = async (
     args: MutationUpsertInventaireArgs,
     loggedUser: LoggedUser | null
-  ): Promise<InventaireWithRelations> => {
+  ): Promise<Inventaire | InventaireWithRelations> => {
     validateAuthorization(loggedUser);
 
     const { id, data, migrateDonneesIfMatchesExistingInventaire = false } = args;
@@ -104,17 +104,7 @@ export const buildInventaireService = ({ inventaireRepository }: InventaireServi
 
       // We wished to create an inventaire but we already found one,
       // so we won't create anything and simply return the existing one
-      return (
-        prisma.inventaire
-          .findUnique({
-            where: {
-              id: existingInventaire.id,
-            },
-            include: COMMON_INVENTAIRE_INCLUDE,
-          })
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          .then((inventaire) => normalizeInventaireComplete(inventaire!))
-      );
+      return existingInventaire;
     } else {
       // The inventaire we wish to upsert does not have an equivalent existing one
       // In that case, we proceed as a classic upsert
