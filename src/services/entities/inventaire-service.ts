@@ -106,22 +106,6 @@ export const buildInventaireService = ({
       // The inventaire we wish to upsert does not have an equivalent existing one
       // In that case, we proceed as a classic upsert
 
-      const { date, ...restData } = data;
-
-      const associesMap =
-        associesIds?.map((associeId) => {
-          return {
-            observateur_id: associeId,
-          };
-        }) ?? [];
-
-      const meteosMap =
-        meteosIds?.map((meteoId) => {
-          return {
-            meteo_id: meteoId,
-          };
-        }) ?? [];
-
       if (id) {
         // Update an existing inventaire
         const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
