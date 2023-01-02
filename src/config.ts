@@ -15,7 +15,11 @@ export default {
     url: get("DATABASE_URL")
       .default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste")
       .asString(),
-    enableMigrations: get("OUCA_DATABASE_ENABLE_MIGRATIONS").default("true").asBoolStrict(),
+    migrator: {
+      runMigrations: get("OUCA_DATABASE_RUN_MIGRATIONS").default("false").asBoolStrict(),
+      migrationTableName: get("OUCA_DATABASE_MIGRATION_TABLE").default("base_naturaliste_umzug_migrations").asString(),
+      migrationsPath: get("OUCA_DATABASE_MIGRATIONS_PATH").default("../migrations").asString(),
+    },
   },
   admin: {
     signupsAllowed: get("OUCA_SIGNUPS_ALLOWED").default("false").asBoolStrict(),

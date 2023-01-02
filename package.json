@@ -24,7 +24,8 @@
     "lint": "eslint .",
     "prettier:check": "prettier -c .",
     "generate-graphql": "graphql-codegen",
-    "copy:assets": "node scripts/copy-graphql-schemas-to-dist.mjs"
+    "copy:assets": "node scripts/copy-graphql-schemas-to-dist.mjs",
+    "umzug": "cd dist && node umzug"
   },
   "dependencies": {
     "@fastify/compress": "6.2.0",
@@ -47,6 +48,7 @@
     "proj4": "2.8.0",
     "slonik": "33.0.6",
     "slonik-interceptor-field-name-transformation": "1.6.5",
+    "umzug": "^3.2.1",
     "zod": "3.20.2"
   },
   "devDependencies": {

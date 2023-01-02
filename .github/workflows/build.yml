@@ -65,6 +65,7 @@ jobs:
           name: dist-node-lts
           path: | 
             dist/
+            migrations/
             package.json
             package-lock.json
           retention-days: 1

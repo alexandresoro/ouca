@@ -2,6 +2,7 @@ import config from "./config";
 import { buildServer, registerFastifyRoutes } from "./fastify";
 import { buildServices } from "./services/services";
 import shutdown from "./shutdown";
+import { runDatabaseMigrations } from "./umzug";
 import { logger } from "./utils/logger";
 import { checkAndCreateFolders } from "./utils/paths";
 
@@ -11,6 +12,8 @@ checkAndCreateFolders();
 
 (async () => {
   const services = await buildServices();
+
+  await runDatabaseMigrations({ logger: logger.child({ module: "umzug" }), slonik: services.slonik });
 
   const server = await buildServer(services);
 
