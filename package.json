@@ -48,7 +48,7 @@
     "proj4": "2.8.0",
     "slonik": "33.0.6",
     "slonik-interceptor-field-name-transformation": "1.6.5",
-    "umzug": "^3.2.1",
+    "umzug": "3.2.1",
     "zod": "3.20.2"
   },
   "devDependencies": {
