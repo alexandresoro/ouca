@@ -6,7 +6,7 @@ dist
 .vscode
 
 # Ignore generated files
-src/graphql/generated
+generated
 
 # Ignore submodule formatting
 .gitmodules
