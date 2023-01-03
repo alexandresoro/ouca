@@ -1,17 +1,17 @@
 # 1. Transpile the project
 FROM node:18-alpine as build
 
-WORKDIR /app/backend
+WORKDIR /app
 
 RUN apk add git
 
-COPY ./ /app/backend/
+COPY ./ /app/
 
 RUN git submodule init
 RUN git submodule update
 
 RUN npm ci
-RUN npm run build
+RUN npm run backend build
 
 # 2. Run the NodeJS backend
 FROM node:18-alpine
@@ -25,14 +25,14 @@ ENV OUCA_SERVER_HOST 0.0.0.0
 COPY migrations/ /app/migrations/
 COPY package.json package-lock.json /app/ 
 
-RUN npm set-script prepare "" && \
-  npm set-script generate-graphql "" && \
-  npm ci --production && \
-  rm -f package.json package-lock.json
+RUN npm pkg delete scripts.prepare && \
+  npm --workspace=packages/backend pkg delete scripts.postinstall && \
+  npm ci && \
+  rm -f package-lock.json
 
-WORKDIR /app/backend
+COPY --from=build /app/packages/ /app/packages/
 
-COPY --from=build /app/backend/dist/ /app/backend/
+WORKDIR /app/packages/backend/dist
 
 # Create the necessary directories
 RUN mkdir public && \
