@@ -38,11 +38,13 @@ const getUmzugInstance = ({ logger, slonik }: { logger: Logger; slonik: Database
       async executed({ context }) {
         await context.slonik.query(
           sql.unsafe`CREATE TABLE IF NOT EXISTS ${sql.identifier([
+            config.database.migrator.migrationTableSchema,
             config.database.migrator.migrationTableName,
           ])}(name text, date timestamptz not null default now())`
         );
         const names = await context.slonik.anyFirst(
           sql.type(z.object({ name: z.string() }))`SELECT name from ${sql.identifier([
+            config.database.migrator.migrationTableSchema,
             config.database.migrator.migrationTableName,
           ])}`
         );
@@ -51,13 +53,17 @@ const getUmzugInstance = ({ logger, slonik }: { logger: Logger; slonik: Database
       async logMigration({ name, context }) {
         await context.slonik.query(
           sql.unsafe`INSERT INTO ${sql.identifier([
+            config.database.migrator.migrationTableSchema,
             config.database.migrator.migrationTableName,
           ])}(name) VALUES (${name})`
         );
       },
       async unlogMigration({ name, context }) {
         await context.slonik.query(
-          sql.unsafe`DELETE FROM ${sql.identifier([config.database.migrator.migrationTableName])} WHERE name = ${name}`
+          sql.unsafe`DELETE FROM ${sql.identifier([
+            config.database.migrator.migrationTableSchema,
+            config.database.migrator.migrationTableName,
+          ])} WHERE name = ${name}`
         );
       },
     },

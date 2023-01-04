@@ -17,6 +17,7 @@ export default {
       .asString(),
     migrator: {
       runMigrations: get("OUCA_DATABASE_RUN_MIGRATIONS").default("true").asBoolStrict(),
+      migrationTableSchema: get("OUCA_DATABASE_MIGRATION_SCHEMA").default("public").asString(),
       migrationTableName: get("OUCA_DATABASE_MIGRATION_TABLE").default("base_naturaliste_umzug_migrations").asString(),
       migrationsPath: get("OUCA_DATABASE_MIGRATIONS_PATH").default("../migrations").asString(),
     },
