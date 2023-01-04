@@ -27,7 +27,7 @@ npm ci
 To start:
 
 ```
-npm start
+npm run backend start
 ```
 
 This will start the server on the default port.
@@ -35,10 +35,10 @@ This will start the server on the default port.
 To build:
 
 ```
-npm run build
+npm run backend build
 ```
 
-This will generate the output files in the _dist/_ folder.
+This will generate the output files in the _packages/\*/dist/_ folders.
 
 ## API structure
 
