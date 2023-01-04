@@ -7,7 +7,7 @@ import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
-import { COORDINATES_SYSTEMS_CONFIG } from "../model/coordinates-system/coordinates-system-list.object";
+import { COORDINATES_SYSTEMS_CONFIG } from "../model/src/coordinates-system/coordinates-system-list.object";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
 import CenteredFlexBox from "./utils/CenteredFlexBox";

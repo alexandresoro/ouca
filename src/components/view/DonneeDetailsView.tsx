@@ -4,7 +4,7 @@ import { TFuncKey } from "i18next";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Comportement, Donnee } from "../../gql/graphql";
-import { getHighestNicheurStatus } from "../../model/helpers/nicheur-helper";
+import { getHighestNicheurStatus } from "../../model/src/helpers/nicheur-helper";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 
 type DonneeDetailsViewProps = {
