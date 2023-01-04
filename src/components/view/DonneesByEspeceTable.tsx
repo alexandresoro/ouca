@@ -21,17 +21,12 @@ import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 
 const PAGINATED_SEARCH_ESPECES_QUERY = graphql(`
   query PaginatedSearchEspeces(
-    $searchParams: SearchDonneeParams
+    $searchParams: SearchParams
     $searchCriteria: SearchDonneeCriteria
     $orderBy: EspecesOrderBy
     $sortOrder: SortOrder
   ) {
-    searchEspeces(
-      searchParams: $searchParams
-      searchCriteria: $searchCriteria
-      orderBy: $orderBy
-      sortOrder: $sortOrder
-    ) {
+    especes(searchParams: $searchParams, searchCriteria: $searchCriteria, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
       data {
         id
@@ -140,7 +135,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.searchEspeces?.data?.map((espece) => {
+            {data?.especes?.data?.map((espece) => {
               return (
                 <TableRow hover key={espece?.id}>
                   <TableCell>{espece?.classe?.libelle}</TableCell>
@@ -157,7 +152,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[25, 50, 100]}
-                count={data?.searchEspeces?.count ?? 0}
+                count={data?.especes?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}
