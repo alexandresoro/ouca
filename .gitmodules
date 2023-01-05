@@ -1,3 +1,0 @@
-[submodule "src/model"]
-	path = packages/common
-	url = https://github.com/ou-ca/ouca-model.git

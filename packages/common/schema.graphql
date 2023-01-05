@@ -1,0 +1,733 @@
+input InputAge {
+  libelle: String!
+}
+
+input InputClasse {
+  libelle: String!
+}
+
+input InputCommune {
+  departementId: Int!
+  code: Int!
+  nom: String!
+}
+
+input InputComportement {
+  code: String!
+  libelle: String!
+  nicheur: Nicheur
+}
+
+input InputDepartement {
+  code: String!
+}
+
+input InputDonnee {
+  inventaireId: Int!
+  especeId: Int!
+  sexeId: Int!
+  ageId: Int!
+  estimationNombreId: Int!
+  nombre: Int
+  estimationDistanceId: Int
+  distance: Int
+  regroupement: Int
+  commentaire: String
+  comportementsIds: [Int!]
+  milieuxIds: [Int!]
+}
+
+input InputEspece {
+  classeId: Int!
+  code: String!
+  nomFrancais: String!
+  nomLatin: String!
+}
+
+input InputEstimationDistance {
+  libelle: String!
+}
+
+input InputEstimationNombre {
+  libelle: String!
+  nonCompte: Boolean!
+}
+
+input InputInventaire {
+  observateurId: Int!
+  associesIds: [Int!]
+  date: String!
+  duree: String
+  heure: String
+  lieuDitId: Int!
+  altitude: Int
+  latitude: Float
+  longitude: Float
+  meteosIds: [Int!]
+  temperature: Int
+}
+
+input InputLieuDit {
+  communeId: Int!
+  nom: String!
+  altitude: Int!
+  longitude: Float!
+  latitude: Float!
+  coordinatesSystem: CoordinatesSystemType!
+}
+
+input InputMeteo {
+  libelle: String!
+}
+
+input InputMilieu {
+  code: String!
+  libelle: String!
+}
+
+input InputObservateur {
+  libelle: String!
+}
+
+input InputSexe {
+  libelle: String!
+}
+
+input InputSettings {
+  id: Int!
+  areAssociesDisplayed: Boolean!
+  isMeteoDisplayed: Boolean!
+  isDistanceDisplayed: Boolean!
+  isRegroupementDisplayed: Boolean!
+  defaultDepartement: Int!
+  defaultObservateur: Int!
+  coordinatesSystem: CoordinatesSystemType!
+  defaultEstimationNombre: Int!
+  defaultNombre: Int!
+  defaultSexe: Int!
+  defaultAge: Int!
+}
+
+input SearchDonneeCriteria {
+  id: Int
+  observateurs: [Int!]
+  temperature: Int
+  meteos: [Int!]
+  associes: [Int!]
+  heure: String
+  duree: String
+  classes: [Int!]
+  especes: [Int!]
+  departements: [Int!]
+  communes: [Int!]
+  lieuxdits: [Int!]
+  nombre: Int
+  estimationsNombre: [Int!]
+  sexes: [Int!]
+  ages: [Int!]
+  distance: Int
+  estimationsDistance: [Int!]
+  regroupement: Int
+  fromDate: String
+  toDate: String
+  commentaire: String
+  nicheurs: [Nicheur!]
+  comportements: [Int!]
+  milieux: [Int!]
+}
+
+input UserCreateInput {
+  username: String!
+  password: String!
+  firstName: String!
+  lastName: String!
+}
+
+input UserLoginInput {
+  username: String!
+  password: String!
+}
+
+input EditUserData {
+  username: String
+  currentPassword: String
+  newPassword: String
+  firstName: String
+  lastName: String
+}
+
+type Settings {
+  id: Int!
+  areAssociesDisplayed: Boolean!
+  isMeteoDisplayed: Boolean!
+  isDistanceDisplayed: Boolean!
+  isRegroupementDisplayed: Boolean!
+  defaultDepartementId: Int
+  defaultObservateurId: Int
+  coordinatesSystem: CoordinatesSystemType!
+  defaultEstimationNombreId: Int
+  defaultNombre: Int
+  defaultSexeId: Int
+  defaultAgeId: Int
+}
+
+enum Nicheur {
+  possible
+  probable
+  certain
+}
+
+enum CoordinatesSystemType {
+  gps
+  lambert93
+}
+
+type Comportement {
+  id: Int!
+  code: String!
+  libelle: String!
+  nicheur: Nicheur
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type Departement {
+  id: Int!
+  code: String!
+  editable: Boolean
+  nbCommunes: Int
+  nbLieuxDits: Int
+  nbDonnees: Int
+}
+
+type Observateur {
+  id: Int!
+  libelle: String!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type Classe {
+  id: Int!
+  libelle: String!
+  editable: Boolean
+  nbEspeces: Int
+  nbDonnees: Int
+}
+
+type Commune {
+  id: Int!
+  code: Int!
+  nom: String!
+  departement: Departement!
+  editable: Boolean
+  nbLieuxDits: Int
+  nbDonnees: Int
+}
+
+type Espece {
+  id: Int!
+  code: String!
+  nomFrancais: String!
+  nomLatin: String!
+  classe: Classe!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type EstimationDistance {
+  id: Int!
+  libelle: String!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type EstimationNombre {
+  id: Int!
+  libelle: String!
+  nonCompte: Boolean!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type Meteo {
+  id: Int!
+  libelle: String!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type LieuDit {
+  id: Int!
+  nom: String!
+  altitude: Int!
+  longitude: Float!
+  latitude: Float!
+  coordinatesSystem: CoordinatesSystemType!
+  commune: Commune!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type Milieu {
+  id: Int!
+  code: String!
+  libelle: String!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type Sexe {
+  id: Int!
+  libelle: String!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type SexeWithSpecimensCount {
+  id: Int!
+  libelle: String!
+  nbSpecimens: Int!
+}
+
+type Age {
+  id: Int!
+  libelle: String!
+  editable: Boolean
+  nbDonnees: Int
+}
+
+type AgeWithSpecimensCount {
+  id: Int!
+  libelle: String!
+  nbSpecimens: Int!
+}
+
+type Coordinates {
+  altitude: Int!
+  longitude: Float!
+  latitude: Float!
+  system: CoordinatesSystemType!
+}
+
+type Inventaire {
+  id: Int!
+  observateur: Observateur!
+  associes: [Observateur]!
+  date: String!
+  heure: String
+  duree: String
+  lieuDit: LieuDit!
+  customizedCoordinates: Coordinates
+  temperature: Int
+  meteos: [Meteo]!
+}
+
+type Donnee {
+  id: Int!
+  inventaire: Inventaire!
+  espece: Espece!
+  sexe: Sexe!
+  age: Age!
+  estimationNombre: EstimationNombre!
+  nombre: Int
+  estimationDistance: EstimationDistance
+  distance: Int
+  regroupement: Int
+  comportements: [Comportement!]!
+  milieux: [Milieu!]!
+  commentaire: String
+}
+
+type DonneeNavigationData {
+  previousDonneeId: Int
+  nextDonneeId: Int
+  index: Int!
+}
+
+#
+# Args
+#
+input SearchParams {
+  q: String
+  pageNumber: Int
+  pageSize: Int
+}
+
+input SearchDonneeParams {
+  pageNumber: Int
+  pageSize: Int
+}
+
+input FindParams {
+  q: String
+  max: Int
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+enum EntitesAvecLibelleOrderBy {
+  id
+  libelle
+  nbDonnees
+}
+
+enum ClassesOrderBy {
+  id
+  libelle
+  nbEspeces
+  nbDonnees
+}
+
+enum CommunesOrderBy {
+  id
+  code
+  nom
+  departement
+  nbLieuxDits
+  nbDonnees
+}
+
+enum ComportementsOrderBy {
+  id
+  code
+  libelle
+  nbDonnees
+  nicheur
+}
+
+enum DepartementsOrderBy {
+  id
+  code
+  nbCommunes
+  nbLieuxDits
+  nbDonnees
+}
+
+enum EstimationNombreOrderBy {
+  id
+  libelle
+  nonCompte
+  nbDonnees
+}
+
+enum EspecesOrderBy {
+  id
+  code
+  nomFrancais
+  nomLatin
+  nomClasse
+  nbDonnees
+}
+
+enum LieuxDitsOrderBy {
+  id
+  nom
+  altitude
+  longitude
+  latitude
+  codeCommune
+  nomCommune
+  departement
+  nbDonnees
+}
+
+enum MilieuxOrderBy {
+  id
+  code
+  libelle
+  nbDonnees
+}
+
+enum SearchDonneesOrderBy {
+  id
+  codeEspece
+  nomFrancais
+  nombre
+  sexe
+  age
+  departement
+  codeCommune
+  nomCommune
+  lieuDit
+  date
+  heure
+  duree
+  observateur
+}
+
+enum UserRole {
+  admin
+  contributor
+}
+
+#
+# Results
+#
+
+type DonneeResult {
+  id: Int!
+  donnee: Donnee
+  navigation: DonneeNavigationData
+}
+
+interface PaginatedResult {
+  count: Int!
+}
+
+type AgesPaginatedResult implements PaginatedResult {
+  data: [Age!]
+  count: Int!
+}
+
+type ClassesPaginatedResult implements PaginatedResult {
+  data: [Classe!]
+  count: Int!
+}
+
+type CommunesPaginatedResult implements PaginatedResult {
+  data: [Commune!]
+  count: Int!
+}
+
+type ComportementsPaginatedResult implements PaginatedResult {
+  data: [Comportement!]
+  count: Int!
+}
+
+type DepartementsPaginatedResult implements PaginatedResult {
+  data: [Departement!]
+  count: Int!
+}
+
+type EspecesPaginatedResult implements PaginatedResult {
+  data: [Espece!]
+  count: Int!
+}
+
+type EstimationsDistancePaginatedResult implements PaginatedResult {
+  data: [EstimationDistance!]
+  count: Int!
+}
+
+type EstimationsNombrePaginatedResult implements PaginatedResult {
+  data: [EstimationNombre!]
+  count: Int!
+}
+
+type LieuxDitsPaginatedResult implements PaginatedResult {
+  data: [LieuDit!]
+  count: Int!
+}
+
+type MeteosPaginatedResult implements PaginatedResult {
+  data: [Meteo!]
+  count: Int!
+}
+
+type MilieuxPaginatedResult implements PaginatedResult {
+  data: [Milieu!]
+  count: Int!
+}
+
+type ObservateursPaginatedResult implements PaginatedResult {
+  data: [Observateur!]
+  count: Int!
+}
+
+type SexesPaginatedResult implements PaginatedResult {
+  data: [Sexe!]
+  count: Int!
+}
+
+type PaginatedSearchDonneesResult implements PaginatedResult {
+  result(
+    searchCriteria: SearchDonneeCriteria
+    searchParams: SearchDonneeParams
+    orderBy: SearchDonneesOrderBy
+    sortOrder: SortOrder
+  ): [Donnee]
+  count(searchCriteria: SearchDonneeCriteria): Int!
+}
+
+enum ImportStatusEnum {
+  NOT_STARTED
+  ONGOING
+  COMPLETE
+  FAILED
+}
+
+enum ImportErrorType {
+  IMPORT_FAILURE
+  IMPORT_PROCESS_ERROR
+  IMPORT_PROCESS_UNEXPECTED_EXIT
+}
+
+enum OngoingSubStatus {
+  PROCESS_STARTED
+  RETRIEVING_REQUIRED_DATA
+  VALIDATING_INPUT_FILE
+  INSERTING_IMPORTED_DATA
+}
+
+type OngoingValidationStats {
+  totalLines: Int
+  totalEntries: Int
+  nbEntriesChecked: Int
+  nbEntriesWithErrors: Int
+}
+
+type ImportStatus {
+  status: ImportStatusEnum!
+  subStatus: OngoingSubStatus
+  errorType: ImportErrorType
+  errorDescription: String
+  importErrorsReportFile: String
+  ongoingValidationStats: OngoingValidationStats
+}
+
+type UpsertDonneeResult {
+  donnee: Donnee
+  failureReason: String
+}
+
+type UpsertInventaireFailureReason {
+  inventaireExpectedToBeUpdated: Int!
+  correspondingInventaireFound: Int!
+}
+
+type UpsertInventaireResult {
+  inventaire: Inventaire
+  failureReason: UpsertInventaireFailureReason
+}
+
+type UserInfo {
+  id: ID!
+  username: String!
+  firstName: String!
+  lastName: String
+  role: String!
+}
+
+type Query {
+  age(id: Int!): Age
+  ages(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
+  classe(id: Int!): Classe
+  classes(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
+  commune(id: Int!): Commune
+  communes(searchParams: SearchParams, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
+  comportement(id: Int!): Comportement
+  comportements(
+    searchParams: SearchParams
+    orderBy: ComportementsOrderBy
+    sortOrder: SortOrder
+  ): ComportementsPaginatedResult
+  departement(id: Int!): Departement
+  departements(
+    searchParams: SearchParams
+    orderBy: DepartementsOrderBy
+    sortOrder: SortOrder
+  ): DepartementsPaginatedResult
+  donnee(id: Int!): DonneeResult
+  espece(id: Int!): Espece
+  especes(
+    searchParams: SearchParams
+    searchCriteria: SearchDonneeCriteria
+    orderBy: EspecesOrderBy
+    sortOrder: SortOrder
+  ): EspecesPaginatedResult
+  estimationDistance(id: Int!): EstimationDistance
+  estimationsDistance(
+    searchParams: SearchParams
+    orderBy: EntitesAvecLibelleOrderBy
+    sortOrder: SortOrder
+  ): EstimationsDistancePaginatedResult
+  estimationNombre(id: Int!): EstimationNombre
+  estimationsNombre(
+    searchParams: SearchParams
+    orderBy: EstimationNombreOrderBy
+    sortOrder: SortOrder
+  ): EstimationsNombrePaginatedResult
+  inventaire(id: Int!): Inventaire
+  lieuDit(id: Int!): LieuDit
+  lieuxDits(searchParams: SearchParams, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
+  meteo(id: Int!): Meteo
+  meteos(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): MeteosPaginatedResult
+  milieu(id: Int!): Milieu
+  milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
+  observateur(id: Int!): Observateur
+  observateurs(
+    searchParams: SearchParams
+    orderBy: EntitesAvecLibelleOrderBy
+    sortOrder: SortOrder
+  ): ObservateursPaginatedResult
+  sexe(id: Int!): Sexe
+  sexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
+  specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
+  specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
+  nextRegroupement: Int!
+  lastDonneeId: Int
+  searchDonnees: PaginatedSearchDonneesResult
+  settings: Settings
+  importStatus(importId: String!): ImportStatus
+  exportAges: String
+  exportClasses: String
+  exportCommunes: String
+  exportComportements: String
+  exportDepartements: String
+  exportDonnees(searchCriteria: SearchDonneeCriteria): String
+  exportEspeces: String
+  exportEstimationsDistance: String
+  exportEstimationsNombre: String
+  exportLieuxDits: String
+  exportMeteos: String
+  exportMilieux: String
+  exportObservateurs: String
+  exportSexes: String
+}
+
+type Mutation {
+  deleteAge(id: Int!): Int
+  deleteClasse(id: Int!): Int
+  deleteCommune(id: Int!): Int
+  deleteComportement(id: Int!): Int
+  deleteDepartement(id: Int!): Int
+  deleteDonnee(id: Int!): Int
+  deleteEspece(id: Int!): Int
+  deleteEstimationDistance(id: Int!): Int
+  deleteEstimationNombre(id: Int!): Int
+  deleteLieuDit(id: Int!): Int
+  deleteMeteo(id: Int!): Int
+  deleteMilieu(id: Int!): Int
+  deleteObservateur(id: Int!): Int
+  deleteSexe(id: Int!): Int
+  upsertAge(id: Int, data: InputAge!): Age
+  upsertClasse(id: Int, data: InputClasse!): Classe
+  upsertCommune(id: Int, data: InputCommune!): Commune
+  upsertComportement(id: Int, data: InputComportement!): Comportement
+  upsertDepartement(id: Int, data: InputDepartement!): Departement
+  upsertDonnee(id: Int, data: InputDonnee!): UpsertDonneeResult
+  upsertEspece(id: Int, data: InputEspece!): Espece
+  upsertEstimationDistance(id: Int, data: InputEstimationDistance!): EstimationDistance
+  upsertEstimationNombre(id: Int, data: InputEstimationNombre!): EstimationNombre
+  upsertInventaire(
+    id: Int
+    data: InputInventaire!
+    migrateDonneesIfMatchesExistingInventaire: Boolean
+  ): UpsertInventaireResult
+  upsertLieuDit(id: Int, data: InputLieuDit!): LieuDit
+  upsertMeteo(id: Int, data: InputMeteo!): Meteo
+  upsertMilieu(id: Int, data: InputMilieu!): Milieu
+  upsertObservateur(id: Int, data: InputObservateur!): Observateur
+  upsertSexe(id: Int, data: InputSexe!): Sexe
+  updateSettings(appConfiguration: InputSettings!): Settings
+  userSignup(signupData: UserCreateInput!, role: UserRole): UserInfo
+  userLogin(loginData: UserLoginInput!): UserInfo
+  userRefresh: UserInfo
+  userLogout: Boolean!
+  userEdit(id: ID!, editUserData: EditUserData!): UserInfo
+  userDelete(id: ID!): Boolean!
+}
