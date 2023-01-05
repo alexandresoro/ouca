@@ -1,4 +1,5 @@
 import { Card, CircularProgress, Container, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { FunctionComponent, useCallback, useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -7,7 +8,6 @@ import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
-import { COORDINATES_SYSTEMS_CONFIG } from "../model/src/coordinates-system/coordinates-system-list.object";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
 import CenteredFlexBox from "./utils/CenteredFlexBox";

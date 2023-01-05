@@ -1,8 +1,0 @@
-src/gql
-
-jest.config.*
-vite.config.ts
-codegen.ts
-
-dist/
-functions/

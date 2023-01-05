@@ -2,7 +2,7 @@ import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-mat
 import { Card, Collapse, IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import { intlFormat, parseISO } from "date-fns";
 import { TFuncKey } from "i18next";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Donnee } from "../../gql/graphql";
 import PrimaryIconButton from "../utils/PrimaryIconButton";
@@ -20,7 +20,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
 
   const { t } = useTranslation();
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <>

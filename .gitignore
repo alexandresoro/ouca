@@ -4,7 +4,7 @@ node_modules
 coverage
 
 # production
-/dist
+dist
 
 # misc
 .DS_Store
@@ -12,4 +12,4 @@ coverage
 .env.*
 
 # Generated files
-src/gql
+**/src/gql

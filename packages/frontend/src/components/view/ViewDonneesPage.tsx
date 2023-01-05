@@ -1,6 +1,6 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Container, Tab, Typography } from "@mui/material";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import StyledPanelHeader from "../utils/StyledPanelHeader";
 import DonneeFilter from "./DonneeFilter";
@@ -19,7 +19,7 @@ type ViewTabs = typeof ViewTabsValues[ViewTabsKeys];
 const ViewDonneesPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const [selectedTab, setSelectedTab] = React.useState<ViewTabs>(ViewTabsValues.Donnees);
+  const [selectedTab, setSelectedTab] = useState<ViewTabs>(ViewTabsValues.Donnees);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: ViewTabs) => {
     setSelectedTab(newValue);

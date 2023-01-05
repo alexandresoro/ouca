@@ -3,7 +3,7 @@ import "@fontsource/lato";
 import "@fontsource/yuji-hentaigana-akebono";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
-import React, { Suspense } from "react";
+import { StrictMode, Suspense, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from "react-router-dom";
 import App from "./App";
@@ -29,7 +29,7 @@ appConfigFetch
         integrations: [
           new BrowserTracing({
             routingInstrumentation: Sentry.reactRouterV6Instrumentation(
-              React.useEffect,
+              useEffect,
               useLocation,
               useNavigationType,
               createRoutesFromChildren,
@@ -45,11 +45,11 @@ appConfigFetch
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  <StrictMode>
     <Suspense fallback={<></>}>
       <App appConfigWrapped={wrapPromise(appConfigFetch)} />
     </Suspense>
-  </React.StrictMode>
+  </StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

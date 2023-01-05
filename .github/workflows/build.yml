@@ -46,7 +46,7 @@ jobs:
         run: npm test
 
       - name: Build
-        run: npm run build
+        run: npm run frontend build
       
       - name: Upload release
         if: matrix.published && github.event_name == 'push'
@@ -54,7 +54,7 @@ jobs:
         with:
           name: dist
           path: | 
-            dist/
+            packages/frontend/dist/
           retention-days: 1
           if-no-files-found: error
 

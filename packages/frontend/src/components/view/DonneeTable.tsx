@@ -12,7 +12,7 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "urql";
 import { graphql } from "../../gql";
@@ -157,7 +157,7 @@ const DonneeTable: FunctionComponent = () => {
   const { page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<SearchDonneesOrderBy>();
 
-  const [deleteDialog, setDeleteDialog] = React.useState<Donnee | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<Donnee | null>(null);
 
   const { setSnackbarContent } = useSnackbar();
 

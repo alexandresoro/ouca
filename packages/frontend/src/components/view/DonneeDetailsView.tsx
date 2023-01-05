@@ -1,10 +1,10 @@
 import { Comment, EmojiNature, Filter1, Link, Park, Pets } from "@mui/icons-material";
 import { Chip, Divider, List, Typography, useTheme } from "@mui/material";
+import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import { TFuncKey } from "i18next";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Comportement, Donnee } from "../../gql/graphql";
-import { getHighestNicheurStatus } from "../../model/src/helpers/nicheur-helper";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 
 type DonneeDetailsViewProps = {
