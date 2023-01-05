@@ -7,9 +7,6 @@ RUN apk add git
 
 COPY ./ /app/
 
-RUN git submodule init
-RUN git submodule update
-
 RUN npm ci
 RUN npm run backend build
 

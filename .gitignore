@@ -12,3 +12,5 @@ coverage
 
 *.orig
 .DS_Store
+
+*.tsbuildinfo

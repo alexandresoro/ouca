@@ -8,8 +8,5 @@ dist
 # Ignore generated files
 generated
 
-# Ignore submodule formatting
-.gitmodules
-
 # Ignore coverage reports
 coverage
