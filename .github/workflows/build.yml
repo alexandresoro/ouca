@@ -51,7 +51,7 @@ jobs:
         run: npm test
 
       - name: Build
-        run: npm run build
+        run: npm run backend build
 
       - name: Set supported node version
         id: nodeVersion
@@ -64,10 +64,11 @@ jobs:
         with:
           name: dist-node-lts
           path: | 
-            dist/
-            migrations/
-            package.json
-            package-lock.json
+            packages/*/dist/
+            packages/backend/migrations/
+            **/package.json
+            **/package-lock.json
+            !**/node_modules/**
           retention-days: 1
           if-no-files-found: error
 

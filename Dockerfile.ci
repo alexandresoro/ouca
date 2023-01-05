@@ -15,12 +15,12 @@ COPY build/ /app/
 
 # Install production deps
 RUN npm pkg delete scripts.prepare && \
-  npm pkg delete scripts.postinstall && \
+  npm --workspace=packages/backend pkg delete scripts.postinstall && \
   npm ci && \
-  # Cleanup files not needed anymore
-  rm -f package.json package-lock.json
+  # Cleanup file not needed anymore
+  rm -f package-lock.json
 
-WORKDIR /app/dist
+WORKDIR /app/packages/backend/dist
 
 # Create the necessary directories
 RUN mkdir public && \

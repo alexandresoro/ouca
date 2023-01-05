@@ -1,1 +1,1 @@
-schema: src/model/schema.graphql
+schema: packages/common/schema.graphql
