@@ -96,6 +96,44 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
+  build-frontend:
+    needs: validate-build
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - node-version: 18
+            type: "build,lts"
+            published: true
+          - node-version: latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run frontend build
+      
+      # - name: Upload release
+      #   if: matrix.published && github.event_name == 'push'
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: dist
+      #     path: | 
+      #       packages/frontend/dist/
+      #     retention-days: 1
+      #     if-no-files-found: error
+
 
   publish-backend-image:
     needs: build-backend
@@ -148,7 +186,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           build-args: |
-            NODE_IMAGE_VERSION=${{ needs.check-build.outputs.nodeVersion }}
+            NODE_IMAGE_VERSION=${{ needs.build-backend.outputs.nodeVersion }}
           context: .
           file: Dockerfile.ci
           platforms: |
