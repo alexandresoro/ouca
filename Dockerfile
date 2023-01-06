@@ -23,7 +23,7 @@ COPY migrations/ /app/migrations/
 COPY package.json package-lock.json /app/ 
 
 RUN npm pkg delete scripts.prepare && \
-  npm --workspace=packages/backend pkg delete scripts.postinstall && \
+  npm --workspaces pkg delete scripts.postinstall && \
   npm ci && \
   rm -f package-lock.json
 
