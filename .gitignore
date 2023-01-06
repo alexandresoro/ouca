@@ -1,11 +1,15 @@
 node_modules
+
 # Keep environment variables out of version control
 .env
+.env.*
 
-dist/
+# production
+dist
 
 # Generated files
 generated
+**/src/gql
 
 # Jest code coverage
 coverage

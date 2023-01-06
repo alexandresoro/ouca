@@ -18,6 +18,12 @@
       "matchUpdateTypes": ["major", "minor"],
       "groupName": "fastify major & minor",
       "groupSlug": "fastify"
+    },
+    {
+      "matchPackagePatterns": ["vite", "@vitejs"],
+      "matchUpdateTypes": ["major", "minor"],
+      "groupName": "vite",
+      "groupSlug": "vite"
     }
   ],
   "timezone": "Europe/Paris"

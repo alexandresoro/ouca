@@ -3,5 +3,7 @@
   "eslint.packageManager": "npm",
   "editor.codeActionsOnSave": {
     "source.organizeImports": true
-  }
+  },
+  "git.pullTags": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
