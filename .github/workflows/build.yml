@@ -124,15 +124,15 @@ jobs:
       - name: Build
         run: npm run frontend build
       
-      # - name: Upload release
-      #   if: matrix.published && github.event_name == 'push'
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: dist
-      #     path: | 
-      #       packages/frontend/dist/
-      #     retention-days: 1
-      #     if-no-files-found: error
+      - name: Upload release
+        if: matrix.published && github.event_name == 'push'
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-dist
+          path: | 
+            packages/frontend/dist/
+          retention-days: 1
+          if-no-files-found: error
 
 
   publish-backend-image:
@@ -195,3 +195,31 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  publish-frontend-dist:
+    needs: build-frontend
+
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Retrieve artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-dist
+          path: dist
+
+      - name: Prepare release content
+        run: |
+          tar -cvzf ouca-web-latest.tar.gz -C dist/ .
+
+      - name: Publish the release
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest-frontend"
+          prerelease: true
+          title: "Latest version"
+          files: |
+            ouca-web-latest.tar.gz
