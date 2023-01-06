@@ -1,4 +1,4 @@
-name: Build backend
+name: CI/CD
 
 on:
   push:
@@ -12,7 +12,41 @@ on:
       - main
 
 jobs:
-  check-build:
+  validate-build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - node-version: 18
+            type: "build,lts"
+            published: true
+          - node-version: latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Prettier
+        run: npm run prettier:check
+
+      - name: Test
+        run: npm test
+
+  build-backend:
+    needs: validate-build
+
     runs-on: ubuntu-latest
 
     outputs:
@@ -35,18 +69,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Prettier
-        run: npm run prettier:check
-
-      - name: Test
-        run: npm test
 
       - name: Build
         run: npm run backend build
@@ -71,8 +97,8 @@ jobs:
           if-no-files-found: error
 
 
-  publish-package:
-    needs: check-build
+  publish-backend-image:
+    needs: build-backend
 
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
