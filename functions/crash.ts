@@ -5,7 +5,7 @@ export const onRequestPost: PagesFunction = async ({ request }) => {
     const pieces = body.split("\n");
 
     // DSN is in the first JSON structure
-    const header = JSON.parse(pieces[0]);
+    const header = JSON.parse(pieces[0]) as { dsn?: string };
     const dsnUrl = new URL(header?.dsn);
     const { host, pathname } = dsnUrl;
 

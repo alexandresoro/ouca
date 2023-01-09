@@ -1,0 +1,18 @@
+{
+  "name": "@ou-ca/cloudflare-functions",
+  "version": "1.0.0",
+  "description": "Où-ça Cloudflare functions",
+  "contributors": [
+    {
+      "name": "Camille Carrier"
+    },
+    {
+      "name": "Alexandre Soro"
+    }
+  ],
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20221111.1"
+  }
+}

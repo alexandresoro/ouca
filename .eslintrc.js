@@ -1,8 +1,8 @@
 module.exports = {
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: ["./packages/*/tsconfig.json"],
+    project: ["./functions/tsconfig.json", "./packages/*/tsconfig.json"],
   },
   root: true,
-  ignorePatterns: ["coverage", "dist", "jest.config.*", "functions/"],
+  ignorePatterns: ["coverage", "dist", "jest.config.*"],
 };
