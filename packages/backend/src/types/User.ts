@@ -1,5 +1,5 @@
 export const databaseRoles = ["admin", "contributor"] as const;
-export type DatabaseRole = typeof databaseRoles[number];
+export type DatabaseRole = (typeof databaseRoles)[number];
 
 export type User = {
   id: string;
