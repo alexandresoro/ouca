@@ -24,6 +24,12 @@
       "matchUpdateTypes": ["major", "minor"],
       "groupName": "vite",
       "groupSlug": "vite"
+    },
+    {
+      "matchPackagePatterns": ["i18next"],
+      "matchUpdateTypes": ["major", "minor"],
+      "groupName": "i18next",
+      "groupSlug": "i18next"
     }
   ],
   "timezone": "Europe/Paris"
