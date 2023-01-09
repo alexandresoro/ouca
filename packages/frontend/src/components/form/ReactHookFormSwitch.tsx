@@ -1,11 +1,11 @@
 import { FormControlLabel, Switch } from "@mui/material";
-import { Controller, UseControllerProps } from "react-hook-form";
+import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
 
-type ReactHookFormSwitchProps<TFieldValues> = UseControllerProps<TFieldValues> & {
+type ReactHookFormSwitchProps<TFieldValues extends FieldValues> = UseControllerProps<TFieldValues> & {
   label: string;
 };
 
-const ReactHookFormSwitch = <TFieldValues,>(props: ReactHookFormSwitchProps<TFieldValues>) => {
+const ReactHookFormSwitch = <TFieldValues extends FieldValues>(props: ReactHookFormSwitchProps<TFieldValues>) => {
   const { label, ...controllerProps } = props;
 
   return (
