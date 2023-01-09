@@ -4,7 +4,7 @@ export const GPS = "gps"; // WGS-84
 
 export const COORDINATES_SYSTEMS = [LAMBERT_93, GPS] as const;
 
-export type CoordinatesSystemType = typeof COORDINATES_SYSTEMS[number];
+export type CoordinatesSystemType = (typeof COORDINATES_SYSTEMS)[number];
 
 export type CoordinatesSystem = {
   code: CoordinatesSystemType;

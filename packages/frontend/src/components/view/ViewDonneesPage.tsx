@@ -14,7 +14,7 @@ const ViewTabsValues = {
 
 type ViewTabsKeys = keyof typeof ViewTabsValues;
 
-type ViewTabs = typeof ViewTabsValues[ViewTabsKeys];
+type ViewTabs = (typeof ViewTabsValues)[ViewTabsKeys];
 
 const ViewDonneesPage: FunctionComponent = () => {
   const { t } = useTranslation();
