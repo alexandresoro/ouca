@@ -4,7 +4,7 @@ export const CERTAIN = "certain";
 
 export const NICHEUR_CODES = [POSSIBLE, PROBABLE, CERTAIN] as const;
 
-export type NicheurCode = (typeof NICHEUR_CODES)[number];
+export type NicheurCode = typeof NICHEUR_CODES[number];
 
 export type Nicheur = {
   code: NicheurCode;

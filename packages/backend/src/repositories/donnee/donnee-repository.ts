@@ -94,9 +94,9 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
       ORDER BY ${buildOrderByIdentifier(orderBy)}`
           : sql.fragment`ORDER BY donnee.id DESC`
       }${buildSortOrderFragment({
-      orderBy,
-      sortOrder,
-    })}
+        orderBy,
+        sortOrder,
+      })}
       ${buildPaginationFragment({ offset, limit })}
     `;
 

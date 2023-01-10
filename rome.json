@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/rome/configuration_schema.json",
+  "linter": {
+    "enabled": false
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "lineWidth": 120
+  },
+  "javascript": {
+    "formatter": {
+      "trailingComma": "es5"
+    }
+  },
+  "files": {
+    "ignore": ["dist", "coverage", "generated", "**/src/gql/**/*", "Dockerfile", "LICENSE", "README", "*.json"]
+  }
+}

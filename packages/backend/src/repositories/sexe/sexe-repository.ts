@@ -75,9 +75,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
       ${
         !isSortByNbDonnees && orderBy ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}` : sql.fragment``
       }${buildSortOrderFragment({
-      orderBy,
-      sortOrder,
-    })}
+        orderBy,
+        sortOrder,
+      })}
       ${buildPaginationFragment({ offset, limit })}
     `;
 

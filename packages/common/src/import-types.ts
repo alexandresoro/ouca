@@ -30,4 +30,4 @@ export const IMPORT_TYPE = [
   IMPORT_DONNEE,
 ] as const;
 
-export type ImportType = (typeof IMPORT_TYPE)[number];
+export type ImportType = typeof IMPORT_TYPE[number];

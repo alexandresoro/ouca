@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Rome - check formatting
+        run: npm run rome:ci
+
       - name: Lint
         run: npm run lint
 
