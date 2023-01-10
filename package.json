@@ -20,7 +20,6 @@
     "prepare": "husky install",
     "test": "jest",
     "lint": "eslint .",
-    "prettier:check": "prettier -c .",
     "rome:ci": "rome ci *",
     "frontend": "npm --workspace=packages/frontend run --",
     "backend": "npm --workspace=packages/backend run --"
@@ -30,14 +29,12 @@
     "@typescript-eslint/eslint-plugin": "5.48.1",
     "@typescript-eslint/parser": "5.48.1",
     "eslint": "8.31.0",
-    "eslint-config-prettier": "8.6.0",
     "eslint-import-resolver-typescript": "3.5.2",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-jest": "27.2.1",
     "husky": "8.0.3",
     "jest": "29.3.1",
     "lint-staged": "13.1.0",
-    "prettier": "2.8.2",
     "rome": "11.0.0",
     "typescript": "4.9.4"
   },

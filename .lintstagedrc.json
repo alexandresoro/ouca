@@ -1,4 +1,4 @@
 {
-  "*": ["rome ci"],
+  "*.{ts,tsx,js}": ["rome ci"],
   "*.{ts,tsx}": ["eslint", "jest --bail --findRelatedTests --passWithNoTests"]
 }
