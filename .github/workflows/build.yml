@@ -11,25 +11,25 @@ on:
     branches:
       - main
 
-jobs:
+jobs:    
   validate-build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        include:
-          - node-version: 18
-            type: "build,lts"
-            published: true
-          - node-version: latest
+    
+    outputs:
+      nodeVersion: ${{ steps.nodeVersion.outputs.nodeVersion }}
 
     steps:
+      - name: Setup Node version
+        id: nodeVersion
+        run: |
+          echo "nodeVersion=18" >> $GITHUB_OUTPUT
+          echo "nodeVersion=18" >> $GITHUB_ENV
+    
       - uses: actions/checkout@v3
       
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.nodeVersion }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -49,26 +49,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    outputs:
-      nodeVersion: ${{ steps.nodeVersion.outputs.version }}
-
-    strategy:
-      matrix:
-        include:
-          - node-version: 18
-            type: "build,lts"
-            published: true
-          - node-version: latest
-            type: "next"
-            published: false
-
     steps:
       - uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ needs.validate-build.outputs.nodeVersion }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -77,13 +63,8 @@ jobs:
       - name: Build
         run: npm run backend build
 
-      - name: Set supported node version
-        id: nodeVersion
-        if: matrix.published && github.event_name == 'push'
-        run: echo "version=${{ matrix.node-version }}" >> $GITHUB_OUTPUT
-
       - name: Upload artifact
-        if: matrix.published && github.event_name == 'push'
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v3
         with:
           name: dist-node-lts
@@ -101,21 +82,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        include:
-          - node-version: 18
-            type: "build,lts"
-            published: true
-          - node-version: latest
-
     steps:
       - uses: actions/checkout@v3
       
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ needs.validate-build.outputs.nodeVersion }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -125,7 +97,7 @@ jobs:
         run: npm run frontend build
       
       - name: Upload release
-        if: matrix.published && github.event_name == 'push'
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v3
         with:
           name: frontend-dist
@@ -186,7 +158,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           build-args: |
-            NODE_IMAGE_VERSION=${{ needs.build-backend.outputs.nodeVersion }}
+            NODE_IMAGE_VERSION=${{ needs.validate-build.outputs.nodeVersion }}
           context: .
           file: Dockerfile.ci
           platforms: |
