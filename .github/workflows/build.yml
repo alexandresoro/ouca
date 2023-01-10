@@ -108,7 +108,7 @@ jobs:
 
 
   publish-backend-image:
-    needs: build-backend
+    needs: [validate-build, build-backend]
 
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
