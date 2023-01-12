@@ -19,7 +19,7 @@
     "compile:swc": "swc ./src -d dist"
   },
   "dependencies": {
-    "proj4": "2.8.0"
+    "proj4": "2.8.1"
   },
   "devDependencies": {
     "@swc/cli": "0.1.59",
