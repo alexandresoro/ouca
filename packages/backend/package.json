@@ -30,7 +30,7 @@
     "@fastify/compress": "6.2.0",
     "@fastify/cookie": "8.3.0",
     "@fastify/cors": "8.2.0",
-    "@fastify/multipart": "7.3.0",
+    "@fastify/multipart": "7.4.0",
     "@fastify/static": "6.6.1",
     "@ou-ca/common": "*",
     "csv-parse": "5.3.3",
