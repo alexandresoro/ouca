@@ -1,41 +1,75 @@
 import dotenv from "dotenv";
-import { get } from "env-var";
 import path from "node:path";
+import { pino } from "pino";
+import { z } from "zod";
 
 dotenv.config({
   path: path.join(process.cwd(), "../.env"),
 });
 
+const zodStringToBoolean = (input: string | undefined): boolean => {
+  return input?.toLowerCase() === "true" || input === "1";
+};
+
+const envSchema = z.object({
+  OUCA_SERVER_HOST: z.string().default("localhost"),
+  OUCA_SERVER_PORT: z.coerce.number().min(1).max(65535).multipleOf(1).default(4000),
+  DATABASE_URL: z.string().default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste"),
+  OUCA_DATABASE_RUN_MIGRATIONS: z.string().default("true").transform(zodStringToBoolean),
+  OUCA_DATABASE_MIGRATION_SCHEMA: z.string().default("public"),
+  OUCA_DATABASE_MIGRATION_TABLE: z.string().default("base_naturaliste_umzug_migrations"),
+  OUCA_DATABASE_MIGRATIONS_PATH: z.string().default("../migrations"),
+  OUCA_SIGNUPS_ALLOWED: z.string().default("false").transform(zodStringToBoolean),
+  OUCA_DEFAULT_ADMIN_PASSWORD: z.string().optional(),
+  OUCA_LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("warn"),
+  OUCA_LOG_TO_FILE: z.string().default("false").transform(zodStringToBoolean),
+  OUCA_JWT_SIGNING_KEY: z.string().optional(),
+  OUCA_JWT_COOKIE_SAME_SITE: z.string().default("true").transform(zodStringToBoolean),
+  OUCA_JWT_COOKIE_SECURE: z.string().default("true").transform(zodStringToBoolean),
+  NODE_ENV: z.string().optional(),
+});
+
+const initLogger = pino({
+  level: "warn",
+  base: undefined,
+});
+
+const envParseResult = envSchema.safeParse(process.env);
+if (!envParseResult.success) {
+  initLogger.fatal({ error: envParseResult.error }, "An error has occurred when trying to parse the environment");
+  process.exit(1);
+}
+
+const env = envParseResult.data;
+
 export default {
   server: {
-    host: get("OUCA_SERVER_HOST").default("localhost").asString(),
-    port: get("OUCA_SERVER_PORT").default("4000").asPortNumber(),
+    host: env.OUCA_SERVER_HOST,
+    port: env.OUCA_SERVER_PORT,
   },
   database: {
-    url: get("DATABASE_URL")
-      .default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste")
-      .asString(),
+    url: env.DATABASE_URL,
     migrator: {
-      runMigrations: get("OUCA_DATABASE_RUN_MIGRATIONS").default("true").asBoolStrict(),
-      migrationTableSchema: get("OUCA_DATABASE_MIGRATION_SCHEMA").default("public").asString(),
-      migrationTableName: get("OUCA_DATABASE_MIGRATION_TABLE").default("base_naturaliste_umzug_migrations").asString(),
-      migrationsPath: get("OUCA_DATABASE_MIGRATIONS_PATH").default("../migrations").asString(),
+      runMigrations: env.OUCA_DATABASE_RUN_MIGRATIONS,
+      migrationTableSchema: env.OUCA_DATABASE_MIGRATION_SCHEMA,
+      migrationTableName: env.OUCA_DATABASE_MIGRATION_TABLE,
+      migrationsPath: env.OUCA_DATABASE_MIGRATIONS_PATH,
     },
   },
   admin: {
-    signupsAllowed: get("OUCA_SIGNUPS_ALLOWED").default("false").asBoolStrict(),
-    defaultAdminPassword: get("OUCA_DEFAULT_ADMIN_PASSWORD").asString(),
+    signupsAllowed: env.OUCA_SIGNUPS_ALLOWED,
+    defaultAdminPassword: env.OUCA_DEFAULT_ADMIN_PASSWORD,
   },
   log: {
-    level: get("OUCA_LOG_LEVEL").default("warn").asEnum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]),
-    logToFile: get("OUCA_LOG_TO_FILE").default("false").asBoolStrict(),
+    level: env.OUCA_LOG_LEVEL,
+    logToFile: env.OUCA_LOG_TO_FILE,
   },
   jwt: {
-    signingKey: get("OUCA_JWT_SIGNING_KEY").asString(),
+    signingKey: env.OUCA_JWT_SIGNING_KEY,
     cookie: {
-      sameSite: get("OUCA_JWT_COOKIE_SAME_SITE").default("true").asBoolStrict(),
-      secure: get("OUCA_JWT_COOKIE_SECURE").default("true").asBoolStrict(),
+      sameSite: env.OUCA_JWT_COOKIE_SAME_SITE,
+      secure: env.OUCA_JWT_COOKIE_SECURE,
     },
   },
-  isProduction: get("NODE_ENV").asString() === "production",
+  isProduction: env.NODE_ENV,
 };
