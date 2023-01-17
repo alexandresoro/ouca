@@ -18,7 +18,7 @@
     "start": "npm run compile:swc -- -s && npm run copy:assets && cd dist && node main",
     "start:tsc": "npm run compile:tsc:dev && npm run copy:assets && cd dist && node main",
     "lint": "eslint .",
-    "test": "jest",
+    "test": "vitest run",
     "compile:swc": "npm run --prefix ../common compile:swc -- -s && swc ./src -d dist",
     "compile:tsc": "tsc --build tsconfig.build.json",
     "compile:tsc:dev": "tsc --build tsconfig.dev.json",
