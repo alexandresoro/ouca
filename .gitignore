@@ -11,7 +11,7 @@ dist
 generated
 **/src/gql
 
-# Jest code coverage
+# Code coverage
 coverage
 
 *.orig
