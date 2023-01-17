@@ -18,6 +18,7 @@
     "jsx": "react-jsx",
     "paths": {
       "@ou-ca/common/*": ["../common/src/*"]
-    }
+    },
+    "types": ["vitest/globals"]
   }
 }
