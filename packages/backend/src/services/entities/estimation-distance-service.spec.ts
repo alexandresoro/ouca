@@ -1,17 +1,17 @@
-import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { mock } from "vitest-mock-extended";
 import {
-  EntitesAvecLibelleOrderBy,
-  SortOrder,
-  type MutationUpsertEstimationDistanceArgs,
-  type QueryEstimationsDistanceArgs,
+    EntitesAvecLibelleOrderBy,
+    SortOrder,
+    type MutationUpsertEstimationDistanceArgs,
+    type QueryEstimationsDistanceArgs
 } from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository";
 import {
-  type EstimationDistance,
-  type EstimationDistanceCreateInput,
+    type EstimationDistance,
+    type EstimationDistanceCreateInput
 } from "../../repositories/estimation-distance/estimation-distance-repository-types";
 import { type LoggedUser } from "../../types/User";
 import { COLUMN_LIBELLE } from "../../utils/constants";

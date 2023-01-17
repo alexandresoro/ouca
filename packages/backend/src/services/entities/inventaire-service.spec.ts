@@ -1,6 +1,7 @@
-import { any, mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
+import { vi } from "vitest";
+import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
 import { type MutationUpsertInventaireArgs } from "../../graphql/generated/graphql-types";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
 import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository";
@@ -10,7 +11,6 @@ import { type Inventaire, type InventaireCreateInput } from "../../repositories/
 import { type LoggedUser } from "../../types/User";
 import { OucaError } from "../../utils/errors";
 import { buildInventaireService } from "./inventaire-service";
-import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape";
 
 const inventaireRepository = mock<InventaireRepository>({});
 const inventaireAssocieRepository = mock<InventaireAssocieRepository>({});
@@ -18,7 +18,7 @@ const inventaireMeteoRepository = mock<InventaireMeteoRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 const slonik = createMockPool({
-  query: jest.fn(),
+  query: vi.fn(),
 });
 
 const inventaireService = buildInventaireService({
@@ -30,15 +30,17 @@ const inventaireService = buildInventaireService({
   donneeRepository,
 });
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-jest.mock<typeof import("./inventaire-service-reshape")>("./inventaire-service-reshape", () => {
+const reshapeInputInventaireUpsertData = vi.fn();
+vi.doMock("./inventaire-service-reshape", () => {
   return {
     __esModule: true,
-    reshapeInputInventaireUpsertData: jest.fn(),
+    reshapeInputInventaireUpsertData,
   };
 });
 
-const mockedReshapeInputInventaireUpsertData = jest.mocked(reshapeInputInventaireUpsertData);
+beforeEach(() => {
+  vi.resetAllMocks();
+});
 
 describe("Find inventary", () => {
   test("should handle a matching inventary", async () => {
@@ -176,7 +178,7 @@ describe("Update of an inventory", () => {
       );
 
       const reshapedInputData = mock<InventaireCreateInput>();
-      mockedReshapeInputInventaireUpsertData.mockReturnValueOnce(reshapedInputData);
+      reshapeInputInventaireUpsertData.mockReturnValueOnce(reshapedInputData);
 
       await inventaireService.upsertInventaire(inventoryData, loggedUser);
 
@@ -185,12 +187,19 @@ describe("Update of an inventory", () => {
       expect(inventaireAssocieRepository.deleteAssociesOfInventaireId).toHaveBeenCalledTimes(1);
       expect(inventaireAssocieRepository.deleteAssociesOfInventaireId).toHaveBeenLastCalledWith(12, any());
       expect(inventaireAssocieRepository.insertInventaireWithAssocies).toHaveBeenCalledTimes(1);
-      // TODO investigate why this check is failing
-      // expect(inventaireAssocieRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(322, [2, 3], any());
+      expect(inventaireAssocieRepository.insertInventaireWithAssocies).toHaveBeenLastCalledWith(
+        anyNumber(),
+        expect.arrayContaining([2, 3]),
+        anyObject()
+      );
       expect(inventaireMeteoRepository.deleteMeteosOfInventaireId).toHaveBeenCalledTimes(1);
       expect(inventaireMeteoRepository.deleteMeteosOfInventaireId).toHaveBeenLastCalledWith(12, any());
       expect(inventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenCalledTimes(1);
-      // expect(nventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(322, [4, 5], any());
+      expect(inventaireMeteoRepository.insertInventaireWithMeteos).toHaveBeenLastCalledWith(
+        anyNumber(),
+        expect.arrayContaining([4, 5]),
+        anyObject()
+      );
     });
 
     test("should throw an error when the requester is not logged", async () => {
@@ -256,7 +265,7 @@ describe("Creation of an inventory", () => {
       );
 
       const reshapedInputData = mock<InventaireCreateInput>();
-      mockedReshapeInputInventaireUpsertData.mockReturnValueOnce(reshapedInputData);
+      reshapeInputInventaireUpsertData.mockReturnValueOnce(reshapedInputData);
 
       await inventaireService.upsertInventaire(inventoryData, loggedUser);
 

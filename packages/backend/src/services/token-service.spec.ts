@@ -1,31 +1,30 @@
 import type { FastifyRequest } from "fastify";
-import { mock } from "jest-mock-extended";
 import { jwtVerify, type JWTPayload, type JWTVerifyResult, type ResolvedKey } from "jose";
 import { TextEncoder } from "node:util";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import { type DatabaseRole, type User } from "../types/User";
 import { buildTokenService } from "./token-service";
 import { type UserService } from "./user-service";
 
 const userService = mock<UserService>({
-  getUser: jest.fn(),
+  getUser: vi.fn(),
 });
 
 const tokenService = buildTokenService({
   userService,
 });
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-jest.mock<typeof import("jose")>("jose", () => {
+vi.mock("jose", async () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-  const actualModule = jest.requireActual<typeof import("jose")>("jose");
+  const actualModule = await vi.importActual<typeof import("jose")>("jose");
   return {
-    __esModule: true,
     ...actualModule,
-    jwtVerify: jest.fn(),
+    jwtVerify: vi.fn(),
   };
 });
 
-const mockedJwtVerify = jest.mocked(jwtVerify, { shallow: true });
+const mockedJwtVerify = vi.mocked(jwtVerify);
 
 describe("Token validation and extraction", () => {
   test("should handle validation and extraction when missing token", async () => {

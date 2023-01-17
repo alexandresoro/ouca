@@ -1,6 +1,7 @@
-import { mock, mockDeep } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { vi } from "vitest";
+import { mock, mockDeep } from "vitest-mock-extended";
 import {
   LieuxDitsOrderBy,
   SortOrder,
@@ -35,15 +36,14 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-jest.mock<typeof import("./lieu-dit-service-reshape")>("./lieu-dit-service-reshape", () => {
+vi.mock("./lieu-dit-service-reshape", () => {
   return {
     __esModule: true,
-    reshapeInputLieuditUpsertData: jest.fn(),
+    reshapeInputLieuditUpsertData: vi.fn(),
   };
 });
 
-const mockedReshapeInputLieuditUpsertData = jest.mocked(reshapeInputLieuditUpsertData);
+const mockedReshapeInputLieuditUpsertData = vi.mocked(reshapeInputLieuditUpsertData);
 
 describe("Find locality", () => {
   test("should handle a matching locality", async () => {

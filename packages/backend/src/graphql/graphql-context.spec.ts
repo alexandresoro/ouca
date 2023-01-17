@@ -1,14 +1,15 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { mock } from "jest-mock-extended";
 import { type JWTPayload } from "jose";
 import mercurius from "mercurius";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import { type LoggedUserInfo, type TokenService } from "../services/token-service";
 import { buildGraphQLContext, type GraphQLContext } from "./graphql-context";
 
 const tokenService = mock<TokenService>({
-  getLoggedUserInfo: jest.fn(),
-  validateAndExtractUserToken: jest.fn(),
-  deleteTokenCookie: jest.fn(),
+  getLoggedUserInfo: vi.fn(),
+  validateAndExtractUserToken: vi.fn(),
+  deleteTokenCookie: vi.fn(),
 });
 
 const graphQLContext = buildGraphQLContext({

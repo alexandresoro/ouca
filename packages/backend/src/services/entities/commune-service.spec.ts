@@ -1,6 +1,7 @@
-import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import {
   CommunesOrderBy,
   SortOrder,
@@ -38,15 +39,14 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-jest.mock<typeof import("./commune-service-reshape")>("./commune-service-reshape", () => {
+vi.mock("./commune-service-reshape", () => {
   return {
     __esModule: true,
-    reshapeInputCommuneUpsertData: jest.fn(),
+    reshapeInputCommuneUpsertData: vi.fn(),
   };
 });
 
-const mockedReshapeInputCommuneUpsertData = jest.mocked(reshapeInputCommuneUpsertData);
+const mockedReshapeInputCommuneUpsertData = vi.mocked(reshapeInputCommuneUpsertData);
 
 describe("Find city", () => {
   test("should handle a matching city", async () => {

@@ -1,6 +1,7 @@
-import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import {
   EstimationNombreOrderBy,
   SortOrder,
@@ -38,15 +39,14 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-jest.mock<typeof import("./estimation-nombre-service-reshape")>("./estimation-nombre-service-reshape", () => {
+vi.mock("./estimation-nombre-service-reshape", () => {
   return {
     __esModule: true,
-    reshapeInputEstimationNombreUpsertData: jest.fn(),
+    reshapeInputEstimationNombreUpsertData: vi.fn(),
   };
 });
 
-const mockedReshapeInputEstimationNombreUpsertData = jest.mocked(reshapeInputEstimationNombreUpsertData);
+const mockedReshapeInputEstimationNombreUpsertData = vi.mocked(reshapeInputEstimationNombreUpsertData);
 
 describe("Find number estimate", () => {
   test("should handle a matching number estimate", async () => {

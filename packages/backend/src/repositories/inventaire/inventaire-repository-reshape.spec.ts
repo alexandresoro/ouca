@@ -1,4 +1,4 @@
-import { mock } from "jest-mock-extended";
+import { mock } from "vitest-mock-extended";
 import { reshapeRawInventaire } from "./inventaire-repository-reshape";
 import { type Inventaire, type RawInventaire } from "./inventaire-repository-types";
 

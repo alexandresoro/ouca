@@ -4,5 +4,5 @@ module.exports = {
     project: ["./functions/tsconfig.json", "./packages/*/tsconfig.json"],
   },
   root: true,
-  ignorePatterns: ["coverage", "dist", "jest.config.*"],
+  ignorePatterns: ["coverage", "dist", "vite.config.*"],
 };

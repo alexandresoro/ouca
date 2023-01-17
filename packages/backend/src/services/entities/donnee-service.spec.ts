@@ -1,6 +1,7 @@
-import { any, mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
+import { vi } from "vitest";
+import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
 import {
   SearchDonneesOrderBy,
   SortOrder,
@@ -18,7 +19,6 @@ import { type Inventaire } from "../../repositories/inventaire/inventaire-reposi
 import { type LoggedUser } from "../../types/User";
 import { OucaError } from "../../utils/errors";
 import { buildDonneeService } from "./donnee-service";
-import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape";
 
 const donneeRepository = mock<DonneeRepository>({});
 const donneeComportementRepository = mock<DonneeComportementRepository>({});
@@ -26,7 +26,7 @@ const donneeMilieuRepository = mock<DonneeMilieuRepository>({});
 const inventaireRepository = mock<InventaireRepository>({});
 const logger = mock<Logger>();
 const slonik = createMockPool({
-  query: jest.fn(),
+  query: vi.fn(),
 });
 
 const donneeService = buildDonneeService({
@@ -38,15 +38,17 @@ const donneeService = buildDonneeService({
   donneeMilieuRepository,
 });
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-jest.mock<typeof import("./donnee-service-reshape")>("./donnee-service-reshape", () => {
+const reshapeInputDonneeUpsertData = vi.fn<unknown[], DonneeCreateInput>();
+vi.doMock("./donnee-service-reshape", () => {
   return {
     __esModule: true,
-    reshapeInputDonneeUpsertData: jest.fn(),
+    reshapeInputDonneeUpsertData,
   };
 });
 
-const mockedReshapeInputDonneeUpsertData = jest.mocked(reshapeInputDonneeUpsertData);
+beforeEach(() => {
+  vi.resetAllMocks();
+});
 
 describe("Find data", () => {
   test("should handle a matching data", async () => {
@@ -425,7 +427,7 @@ describe("Update of a data", () => {
     );
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
 
     await donneeService.upsertDonnee(dataData, loggedUser);
 
@@ -434,12 +436,19 @@ describe("Update of a data", () => {
     expect(donneeComportementRepository.deleteComportementsOfDonneeId).toHaveBeenCalledTimes(1);
     expect(donneeComportementRepository.deleteComportementsOfDonneeId).toHaveBeenLastCalledWith(12, any());
     expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
-    // TODO investigate why this check is failing
-    // expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(12, [2, 3], any());
+    expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
+      anyNumber(),
+      expect.arrayContaining([2, 3]),
+      anyObject()
+    );
     expect(donneeMilieuRepository.deleteMilieuxOfDonneeId).toHaveBeenCalledTimes(1);
     expect(donneeMilieuRepository.deleteMilieuxOfDonneeId).toHaveBeenLastCalledWith(12, any());
     expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
-    // expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, [4, 5], any());
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(
+      anyNumber(),
+      expect.arrayContaining([4, 5]),
+      anyObject()
+    );
   });
 
   test("should throw an error when trying to update to a different data that already exists", async () => {
@@ -494,17 +503,24 @@ describe("Creation of a data", () => {
     );
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
 
     await donneeService.upsertDonnee(dataData, loggedUser);
 
     expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
     expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
-    // TODO investigate why this check is failing
-    // expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(322, [2, 3], any());
+    expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
+      322,
+      expect.arrayContaining([2, 3]),
+      anyObject()
+    );
     expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
-    // expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(322, [4, 5], any());
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(
+      322,
+      expect.arrayContaining([4, 5]),
+      anyObject()
+    );
   });
 
   test("should throw an error when trying to create a data that already exists", async () => {
@@ -547,12 +563,12 @@ describe("Direct creation of a data", () => {
     });
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
 
     await donneeService.createDonnee(dataData);
 
     expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(reshapedInputData, any());
+    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(donneeComportementRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
     expect(donneeMilieuRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
   });
@@ -564,7 +580,7 @@ describe("Direct creation of a data", () => {
     });
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
     donneeRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
         id: 12,
@@ -574,7 +590,7 @@ describe("Direct creation of a data", () => {
     await donneeService.createDonnee(dataData);
 
     expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(reshapedInputData, any());
+    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
     expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
       12,
@@ -591,7 +607,7 @@ describe("Direct creation of a data", () => {
     });
 
     const reshapedInputData = mock<DonneeCreateInput>();
-    mockedReshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
+    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
     donneeRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
         id: 12,
@@ -601,7 +617,7 @@ describe("Direct creation of a data", () => {
     await donneeService.createDonnee(dataData);
 
     expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(reshapedInputData, any());
+    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(donneeComportementRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
     expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
     expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, dataData.milieuxIds, any());

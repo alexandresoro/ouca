@@ -1,4 +1,4 @@
-import { mock } from "jest-mock-extended";
+import { mock } from "vitest-mock-extended";
 import { type LoggedUser } from "../../types/User";
 import { isEntityEditable } from "./entities-utils";
 

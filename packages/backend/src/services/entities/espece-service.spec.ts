@@ -1,6 +1,7 @@
-import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import {
   EspecesOrderBy,
   SortOrder,
@@ -35,15 +36,14 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-jest.mock<typeof import("./espece-service-reshape")>("./espece-service-reshape", () => {
+vi.mock("./espece-service-reshape", () => {
   return {
     __esModule: true,
-    reshapeInputEspeceUpsertData: jest.fn(),
+    reshapeInputEspeceUpsertData: vi.fn(),
   };
 });
 
-const mockedReshapeInputEspeceUpsertData = jest.mocked(reshapeInputEspeceUpsertData);
+const mockedReshapeInputEspeceUpsertData = vi.mocked(reshapeInputEspeceUpsertData);
 
 describe("Find species", () => {
   test("should handle a matching species", async () => {

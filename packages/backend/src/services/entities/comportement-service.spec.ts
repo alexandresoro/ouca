@@ -1,6 +1,6 @@
-import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
+import { mock } from "vitest-mock-extended";
 import {
   ComportementsOrderBy,
   SortOrder,

@@ -1,5 +1,6 @@
-import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import { type InputSettings } from "../graphql/generated/graphql-types";
 import { type SettingsRepository } from "../repositories/settings/settings-repository";
 import { type Settings } from "../repositories/settings/settings-repository-types";
@@ -8,8 +9,8 @@ import { OucaError } from "../utils/errors";
 import { buildSettingsService } from "./settings-service";
 
 const settingsRepository = mock<SettingsRepository>({
-  getUserSettings: jest.fn(),
-  updateUserSettings: jest.fn(),
+  getUserSettings: vi.fn(),
+  updateUserSettings: vi.fn(),
 });
 const logger = mock<Logger>();
 

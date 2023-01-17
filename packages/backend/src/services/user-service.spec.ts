@@ -1,6 +1,7 @@
-import { mock } from "jest-mock-extended";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
+import { vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import config from "../config";
 import { type EditUserData, type UserCreateInput, type UserLoginInput } from "../graphql/generated/graphql-types";
 import { type SettingsRepository } from "../repositories/settings/settings-repository";
@@ -10,16 +11,16 @@ import { OucaError } from "../utils/errors";
 import { buildUserService, getHashedPassword, validatePassword } from "./user-service";
 
 const userRepository = mock<UserRepository>({
-  getAdminsCount: jest.fn(),
-  createUser: jest.fn(),
-  updateUser: jest.fn(),
+  getAdminsCount: vi.fn(),
+  createUser: vi.fn(),
+  updateUser: vi.fn(),
 });
 const settingsRepository = mock<SettingsRepository>({
-  createDefaultSettings: jest.fn(),
+  createDefaultSettings: vi.fn(),
 });
 const logger = mock<Logger>();
 const slonik = createMockPool({
-  query: jest.fn(),
+  query: vi.fn(),
 });
 
 const userService = buildUserService({
