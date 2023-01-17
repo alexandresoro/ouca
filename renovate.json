@@ -26,6 +26,12 @@
       "groupSlug": "vite"
     },
     {
+      "matchPackagePatterns": ["vitest"],
+      "matchUpdateTypes": ["major", "minor"],
+      "groupName": "vitest",
+      "groupSlug": "vitest"
+    },
+    {
       "matchPackagePatterns": ["i18next"],
       "matchUpdateTypes": ["major", "minor"],
       "groupName": "i18next",
