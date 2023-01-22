@@ -1,6 +1,6 @@
-import { type Classe } from "../../repositories/classe/classe-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
+import { type Classe } from "../../repositories/classe/classe-repository-types.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportClasseService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {

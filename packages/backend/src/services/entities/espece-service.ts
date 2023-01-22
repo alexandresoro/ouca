@@ -4,20 +4,20 @@ import {
   type MutationUpsertEspeceArgs,
   type QueryEspecesArgs,
   type SearchDonneeCriteria,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type EspeceRepository } from "../../repositories/espece/espece-repository";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Espece,
   type EspeceCreateInput,
   type EspeceWithClasseLibelle,
-} from "../../repositories/espece/espece-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_CODE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
-import { getSqlPagination } from "./entities-utils";
-import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
+} from "../../repositories/espece/espece-repository-types.js";
+import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_CODE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { getSqlPagination } from "./entities-utils.js";
+import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 
 type EspeceServiceDependencies = {
   logger: Logger;

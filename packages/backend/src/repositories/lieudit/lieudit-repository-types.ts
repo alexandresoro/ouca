@@ -3,7 +3,7 @@ import {
   type CoordinatesSystemType,
 } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
-import { type SortOrder } from "../common";
+import { type SortOrder } from "../common.js";
 
 export const lieuditSchema = z.object({
   id: z.number(),

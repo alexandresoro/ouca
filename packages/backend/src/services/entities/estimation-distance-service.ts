@@ -1,20 +1,20 @@
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
-  type MutationUpsertEstimationDistanceArgs,
-  type QueryEstimationsDistanceArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository";
+    type MutationUpsertEstimationDistanceArgs,
+    type QueryEstimationsDistanceArgs
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-  type EstimationDistance,
-  type EstimationDistanceCreateInput,
-} from "../../repositories/estimation-distance/estimation-distance-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
-import { getSqlPagination } from "./entities-utils";
+    type EstimationDistance,
+    type EstimationDistanceCreateInput
+} from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
+import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { getSqlPagination } from "./entities-utils.js";
 
 type EstimationDistanceServiceDependencies = {
   logger: Logger;

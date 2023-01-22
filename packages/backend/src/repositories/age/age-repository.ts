@@ -1,12 +1,12 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
+} from "../repository-helpers.js";
 import {
   ageSchema,
   ageWithNbSpecimensSchema,
@@ -14,7 +14,7 @@ import {
   type AgeCreateInput,
   type AgeFindManyInput,
   type AgeWithNbSpecimens,
-} from "./age-repository-types";
+} from "./age-repository-types.js";
 
 export type AgeRepositoryDependencies = {
   slonik: DatabasePool;

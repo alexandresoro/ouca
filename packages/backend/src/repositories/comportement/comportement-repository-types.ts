@@ -1,6 +1,6 @@
 import { NICHEUR_CODES, type NicheurCode } from "@ou-ca/common/types/nicheur.model";
 import { z } from "zod";
-import { type SortOrder } from "../common";
+import { type SortOrder } from "../common.js";
 
 export const comportementSchema = z.object({
   id: z.number(),

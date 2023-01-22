@@ -6,17 +6,17 @@ import {
   type MutationUpsertDonneeArgs,
   type PaginatedSearchDonneesResultResultArgs,
   type SearchDonneeCriteria,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository";
-import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type Donnee } from "../../repositories/donnee/donnee-repository-types";
-import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
-import { type LoggedUser } from "../../types/User";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
-import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape";
-import { getSqlPagination } from "./entities-utils";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
+import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
+import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { reshapeInputDonneeUpsertData } from "./donnee-service-reshape.js";
+import { getSqlPagination } from "./entities-utils.js";
 
 type DonneeServiceDependencies = {
   logger: Logger;

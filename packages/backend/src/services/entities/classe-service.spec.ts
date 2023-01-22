@@ -6,15 +6,15 @@ import {
   SortOrder,
   type MutationUpsertClasseArgs,
   type QueryClassesArgs,
-} from "../../graphql/generated/graphql-types";
-import { type ClasseRepository } from "../../repositories/classe/classe-repository";
-import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type EspeceRepository } from "../../repositories/espece/espece-repository";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildClasseService } from "./classe-service";
+} from "../../graphql/generated/graphql-types.js";
+import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
+import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildClasseService } from "./classe-service.js";
 
 const classeRepository = mock<ClasseRepository>({});
 const especeRepository = mock<EspeceRepository>({});

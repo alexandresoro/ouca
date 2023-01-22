@@ -1,6 +1,6 @@
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
-import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types";
-import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";
+import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
+import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
 
 const DEPARTEMENT_INDEX = 0;
 const COMMUNE_INDEX = 1;

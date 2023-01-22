@@ -7,16 +7,16 @@ import {
   SortOrder,
   type MutationUpsertCommuneArgs,
   type QueryCommunesArgs,
-} from "../../graphql/generated/graphql-types";
-import { type CommuneRepository } from "../../repositories/commune/commune-repository";
-import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_NOM } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildCommuneService } from "./commune-service";
-import { reshapeInputCommuneUpsertData } from "./commune-service-reshape";
+} from "../../graphql/generated/graphql-types.js";
+import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
+import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_NOM } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
+import { buildCommuneService } from "./commune-service.js";
 
 const communeRepository = mock<CommuneRepository>({});
 const lieuditRepository = mock<LieuditRepository>({});
@@ -39,7 +39,7 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-vi.mock("./commune-service-reshape", () => {
+vi.mock("./commune-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputCommuneUpsertData: vi.fn(),

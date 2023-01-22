@@ -1,7 +1,7 @@
 import proj4 from "proj4";
-import { type Coordinates } from "../types/coordinates.object";
-import { COORDINATES_SYSTEMS_CONFIG } from "./coordinates-system-list.object";
-import { type CoordinatesSystemType } from "./coordinates-system.object";
+import { type Coordinates } from "../types/coordinates.object.js";
+import { COORDINATES_SYSTEMS_CONFIG } from "./coordinates-system-list.object.js";
+import { type CoordinatesSystemType } from "./coordinates-system.object.js";
 
 const areCoordinatesInvalid = (longitude: number, latitude: number, system: CoordinatesSystemType): boolean => {
   const coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[system];

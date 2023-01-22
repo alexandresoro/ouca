@@ -9,16 +9,16 @@ import {
   type InputDonnee,
   type MutationUpsertDonneeArgs,
   type PaginatedSearchDonneesResultResultArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository";
-import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type Donnee, type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types";
-import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
-import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { OucaError } from "../../utils/errors";
-import { buildDonneeService } from "./donnee-service";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
+import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
+import { type Donnee, type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildDonneeService } from "./donnee-service.js";
 
 const donneeRepository = mock<DonneeRepository>({});
 const donneeComportementRepository = mock<DonneeComportementRepository>({});
@@ -39,7 +39,7 @@ const donneeService = buildDonneeService({
 });
 
 const reshapeInputDonneeUpsertData = vi.fn<unknown[], DonneeCreateInput>();
-vi.doMock("./donnee-service-reshape", () => {
+vi.doMock("./donnee-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputDonneeUpsertData,

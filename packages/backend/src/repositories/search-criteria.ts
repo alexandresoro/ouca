@@ -1,5 +1,5 @@
 import { sql, type IdentifierSqlToken } from "slonik";
-import { type SearchDonneeCriteria } from "../graphql/generated/graphql-types";
+import { type SearchDonneeCriteria } from "../graphql/generated/graphql-types.js";
 
 export type SearchCriteria = SearchDonneeCriteria;
 

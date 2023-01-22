@@ -1,4 +1,4 @@
-import { type CoordinatesSystemType } from "../coordinates-system/coordinates-system.object";
+import { type CoordinatesSystemType } from "../coordinates-system/coordinates-system.object.js";
 
 export type Coordinates = {
   system: CoordinatesSystemType;

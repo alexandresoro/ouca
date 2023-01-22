@@ -3,19 +3,19 @@ import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
   type MutationUpsertEstimationNombreArgs,
   type QueryEstimationsNombreArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type EstimationNombre,
   type EstimationNombreCreateInput,
-} from "../../repositories/estimation-nombre/estimation-nombre-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
-import { getSqlPagination } from "./entities-utils";
-import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape";
+} from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
+import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { getSqlPagination } from "./entities-utils.js";
+import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape.js";
 
 type EstimationNombreServiceDependencies = {
   logger: Logger;

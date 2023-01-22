@@ -6,14 +6,14 @@ import {
   SortOrder,
   type MutationUpsertMilieuArgs,
   type QueryMilieuxArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type MilieuRepository } from "../../repositories/milieu/milieu-repository";
-import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildMilieuService } from "./milieu-service";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
+import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildMilieuService } from "./milieu-service.js";
 
 const milieuRepository = mock<MilieuRepository>({});
 const donneeRepository = mock<DonneeRepository>({});

@@ -1,4 +1,4 @@
-import { type CommuneCreateInput } from "../../repositories/commune/commune-repository-types";
+import { type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
 
 const DEPARTEMENT_INDEX = 0;
 const CODE_INDEX = 1;

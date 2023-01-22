@@ -10,16 +10,16 @@ import {
   OngoingSubStatus,
   type ImportStatus,
   type OngoingValidationStats,
-} from "../graphql/generated/graphql-types";
+} from "../graphql/generated/graphql-types.js";
 import {
   IMPORT_COMPLETE,
   IMPORT_FAILED,
   VALIDATION_PROGRESS,
   type ImportUpdateMessage,
-} from "../objects/import/import-update-message";
-import { type LoggedUser } from "../types/User";
-import { logger } from "../utils/logger";
-import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths";
+} from "../objects/import/import-update-message.js";
+import { type LoggedUser } from "../types/User.js";
+import { logger } from "../utils/logger.js";
+import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths.js";
 
 const importStatuses: Map<string, ImportStatusStructure> = new Map();
 

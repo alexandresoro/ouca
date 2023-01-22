@@ -1,18 +1,18 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
-  buildPaginationFragment,
-  buildSortOrderFragment,
-  objectsToKeyValueInsert,
-  objectToKeyValueInsert,
-  objectToKeyValueSet,
-} from "../repository-helpers";
+    buildPaginationFragment,
+    buildSortOrderFragment,
+    objectsToKeyValueInsert,
+    objectToKeyValueInsert,
+    objectToKeyValueSet
+} from "../repository-helpers.js";
 import {
-  estimationDistanceSchema,
-  type EstimationDistance,
-  type EstimationDistanceCreateInput,
-  type EstimationDistanceFindManyInput,
-} from "./estimation-distance-repository-types";
+    estimationDistanceSchema,
+    type EstimationDistance,
+    type EstimationDistanceCreateInput,
+    type EstimationDistanceFindManyInput
+} from "./estimation-distance-repository-types.js";
 
 export type EstimationDistanceRepositoryDependencies = {
   slonik: DatabasePool;

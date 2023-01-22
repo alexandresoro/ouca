@@ -1,6 +1,6 @@
 import { type FastifyReply, type FastifyRequest } from "fastify";
 import mercurius from "mercurius";
-import { type LoggedUserInfo, type TokenService } from "../services/token-service";
+import { type LoggedUserInfo, type TokenService } from "../services/token-service.js";
 
 export type GraphQLContext = {
   request: FastifyRequest;
@@ -20,7 +20,7 @@ export const buildGraphQLContext =
       // If the validation has thrown an error
       // Make sure that the cookie is deleted in order to avoid sending it again
       void tokenService.deleteTokenCookie(reply);
-      throw new mercurius.ErrorWithProps(e as string);
+      throw new mercurius.default.ErrorWithProps(e as string);
     });
 
     return {

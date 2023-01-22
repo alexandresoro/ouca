@@ -1,10 +1,10 @@
 import { parse } from "csv-parse/sync";
 import { EventEmitter } from "events";
-import { OngoingSubStatus } from "../../graphql/generated/graphql-types";
-import { type ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message";
-import { type LoggedUser } from "../../types/User";
-import { logger } from "../../utils/logger";
-import { type Services } from "../services";
+import { OngoingSubStatus } from "../../graphql/generated/graphql-types.js";
+import { type ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message.js";
+import { type LoggedUser } from "../../types/User.js";
+import { logger } from "../../utils/logger.js";
+import { type Services } from "../services.js";
 
 const COMMENT_PREFIX = "###";
 

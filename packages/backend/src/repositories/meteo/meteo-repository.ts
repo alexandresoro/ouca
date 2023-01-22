@@ -1,13 +1,13 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
-import { meteoSchema, type Meteo, type MeteoCreateInput, type MeteoFindManyInput } from "./meteo-repository-types";
+} from "../repository-helpers.js";
+import { meteoSchema, type Meteo, type MeteoCreateInput, type MeteoFindManyInput } from "./meteo-repository-types.js";
 
 export type MeteoRepositoryDependencies = {
   slonik: DatabasePool;

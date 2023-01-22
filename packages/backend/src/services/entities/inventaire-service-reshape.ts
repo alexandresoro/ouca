@@ -1,5 +1,5 @@
-import { CoordinatesSystemType, type InputInventaire } from "../../graphql/generated/graphql-types";
-import { type InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types";
+import { CoordinatesSystemType, type InputInventaire } from "../../graphql/generated/graphql-types.js";
+import { type InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 
 export const reshapeInputInventaireUpsertData = (
   inventory: InputInventaire,

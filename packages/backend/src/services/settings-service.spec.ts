@@ -1,12 +1,12 @@
 import { type Logger } from "pino";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type InputSettings } from "../graphql/generated/graphql-types";
-import { type SettingsRepository } from "../repositories/settings/settings-repository";
-import { type Settings } from "../repositories/settings/settings-repository-types";
-import { type LoggedUser } from "../types/User";
-import { OucaError } from "../utils/errors";
-import { buildSettingsService } from "./settings-service";
+import { type InputSettings } from "../graphql/generated/graphql-types.js";
+import { type Settings } from "../repositories/settings/settings-repository-types.js";
+import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
+import { type LoggedUser } from "../types/User.js";
+import { OucaError } from "../utils/errors.js";
+import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mock<SettingsRepository>({
   getUserSettings: vi.fn(),

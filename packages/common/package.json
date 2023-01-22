@@ -18,6 +18,7 @@
       "default": "./dist/*.js"
     }
   },
+  "type": "module",
   "scripts": {
     "test": "wireit",
     "lint": "wireit",

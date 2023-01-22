@@ -6,7 +6,7 @@ import {
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "./repository-helpers";
+} from "./repository-helpers.js";
 
 describe("objectToKeyValueSet function", () => {
   test("should return an empty string when an empty object is provided", () => {

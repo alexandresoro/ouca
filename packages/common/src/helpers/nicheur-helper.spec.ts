@@ -1,5 +1,5 @@
-import { type NicheurCode, NICHEUR_CERTAIN, NICHEUR_PROBABLE } from "../types/nicheur.model";
-import { getHighestNicheurStatus, getNicheurStatusToDisplay } from "./nicheur-helper";
+import { NICHEUR_CERTAIN, NICHEUR_PROBABLE, type NicheurCode } from "../types/nicheur.model.js";
+import { getHighestNicheurStatus, getNicheurStatusToDisplay } from "./nicheur-helper.js";
 
 test("should return correct value when no nicheur code provided ", () => {
   const comportementsEmpty: { nicheur?: NicheurCode | null }[] = [];

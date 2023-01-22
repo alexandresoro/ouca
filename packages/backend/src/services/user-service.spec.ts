@@ -2,13 +2,13 @@ import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import config from "../config";
-import { type EditUserData, type UserCreateInput, type UserLoginInput } from "../graphql/generated/graphql-types";
-import { type SettingsRepository } from "../repositories/settings/settings-repository";
-import { type UserRepository } from "../repositories/user/user-repository";
-import { type LoggedUser, type UserWithPassword } from "../types/User";
-import { OucaError } from "../utils/errors";
-import { buildUserService, getHashedPassword, validatePassword } from "./user-service";
+import config from "../config.js";
+import { type EditUserData, type UserCreateInput, type UserLoginInput } from "../graphql/generated/graphql-types.js";
+import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
+import { type UserRepository } from "../repositories/user/user-repository.js";
+import { type LoggedUser, type UserWithPassword } from "../types/User.js";
+import { OucaError } from "../utils/errors.js";
+import { buildUserService, getHashedPassword, validatePassword } from "./user-service.js";
 
 const userRepository = mock<UserRepository>({
   getAdminsCount: vi.fn(),

@@ -1,4 +1,10 @@
-import { areSetsContainingSameValues, getFormattedDate, getFormattedTime, isIdInListIds, isTimeValid } from "./utils";
+import {
+  areSetsContainingSameValues,
+  getFormattedDate,
+  getFormattedTime,
+  isIdInListIds,
+  isTimeValid,
+} from "./utils.js";
 
 describe("Method that checks that sets are containing same value", () => {
   test("should validate same values on same object", () => {

@@ -1,7 +1,7 @@
 import { mock } from "vitest-mock-extended";
-import { type LoggedUser } from "../../types/User";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
+import { type LoggedUser } from "../../types/User.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
 
 describe("General access check to the API", () => {
   test("should throw an error when login information is not defined", () => {

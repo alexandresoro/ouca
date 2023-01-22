@@ -1,17 +1,20 @@
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertObservateurArgs, type QueryObservateursArgs } from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository";
+import {
+  type MutationUpsertObservateurArgs,
+  type QueryObservateursArgs,
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Observateur,
   type ObservateurCreateInput,
-} from "../../repositories/observateur/observateur-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
-import { getSqlPagination } from "./entities-utils";
+} from "../../repositories/observateur/observateur-repository-types.js";
+import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { getSqlPagination } from "./entities-utils.js";
 
 type ObservateurServiceDependencies = {
   logger: Logger;

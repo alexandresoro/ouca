@@ -1,10 +1,10 @@
 import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Logger } from "pino";
-import { type InputSettings } from "../graphql/generated/graphql-types";
-import { type SettingsRepository } from "../repositories/settings/settings-repository";
-import { type Settings, type UpdateSettingsInput } from "../repositories/settings/settings-repository-types";
-import { type LoggedUser } from "../types/User";
-import { validateAuthorization } from "./entities/authorization-utils";
+import { type InputSettings } from "../graphql/generated/graphql-types.js";
+import { type Settings, type UpdateSettingsInput } from "../repositories/settings/settings-repository-types.js";
+import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
+import { type LoggedUser } from "../types/User.js";
+import { validateAuthorization } from "./entities/authorization-utils.js";
 
 type SettingsServiceDependencies = {
   logger: Logger;

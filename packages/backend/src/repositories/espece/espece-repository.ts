@@ -1,13 +1,13 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
-import { buildOrderByIdentifier, buildSearchEspeceClause } from "./espece-repository-helper";
+} from "../repository-helpers.js";
+import { buildOrderByIdentifier, buildSearchEspeceClause } from "./espece-repository-helper.js";
 import {
   especeSchema,
   especeWithClasseLibelleSchema,
@@ -15,7 +15,7 @@ import {
   type EspeceCreateInput,
   type EspeceFindManyInput,
   type EspeceWithClasseLibelle,
-} from "./espece-repository-types";
+} from "./espece-repository-types.js";
 
 export type EspeceRepositoryDependencies = {
   slonik: DatabasePool;

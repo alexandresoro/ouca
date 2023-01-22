@@ -1,6 +1,6 @@
-import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object";
-import { type LoggedUser } from "../../types/User";
-import { ImportService } from "./import-service";
+import { ImportedEntiteAvecLibelleEtCode } from "../../objects/import/imported-entite-avec-libelle-et-code.object.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportService } from "./import-service.js";
 
 export abstract class ImportEntiteAvecLibelleEtCodeService<T = unknown> extends ImportService {
   protected entities!: { libelle: string; code: string }[];

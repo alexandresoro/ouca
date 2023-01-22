@@ -6,18 +6,18 @@ import {
   SortOrder,
   type MutationUpsertSexeArgs,
   type QuerySexesArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type SexeRepository } from "../../repositories/sexe/sexe-repository";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Sexe,
   type SexeCreateInput,
   type SexeWithNbSpecimens,
-} from "../../repositories/sexe/sexe-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildSexeService } from "./sexe-service";
+} from "../../repositories/sexe/sexe-repository-types.js";
+import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildSexeService } from "./sexe-service.js";
 
 const sexeRepository = mock<SexeRepository>({});
 const donneeRepository = mock<DonneeRepository>({});

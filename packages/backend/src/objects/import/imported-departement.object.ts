@@ -1,4 +1,4 @@
-import { type Departement } from "../../repositories/departement/departement-repository-types";
+import { type Departement } from "../../repositories/departement/departement-repository-types.js";
 
 const CODE_INDEX = 0;
 const CODE_MAX_LENGTH = 100;

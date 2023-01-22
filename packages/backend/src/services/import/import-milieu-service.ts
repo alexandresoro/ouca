@@ -1,6 +1,6 @@
-import { type Milieu } from "../../repositories/milieu/milieu-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service";
+import { type Milieu } from "../../repositories/milieu/milieu-repository-types.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportEntiteAvecLibelleEtCodeService } from "./import-entite-avec-libelle-et-code-service.js";
 
 export class ImportMilieuService extends ImportEntiteAvecLibelleEtCodeService {
   protected init = async (): Promise<void> => {

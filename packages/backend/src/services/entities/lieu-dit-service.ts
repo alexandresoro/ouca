@@ -1,19 +1,19 @@
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertLieuDitArgs, type QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
+import { type MutationUpsertLieuDitArgs, type QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Lieudit,
   type LieuditCreateInput,
   type LieuditWithCommuneAndDepartementCode,
-} from "../../repositories/lieudit/lieudit-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_NOM } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
-import { getSqlPagination } from "./entities-utils";
-import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape";
+} from "../../repositories/lieudit/lieudit-repository-types.js";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_NOM } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { getSqlPagination } from "./entities-utils.js";
+import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape.js";
 
 type LieuditServiceDependencies = {
   logger: Logger;

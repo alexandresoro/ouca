@@ -7,15 +7,15 @@ import {
   SortOrder,
   type MutationUpsertEspeceArgs,
   type QueryEspecesArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type EspeceRepository } from "../../repositories/espece/espece-repository";
-import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_CODE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildEspeceService } from "./espece-service";
-import { reshapeInputEspeceUpsertData } from "./espece-service-reshape";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
+import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_CODE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
+import { buildEspeceService } from "./espece-service.js";
 
 const especeRepository = mock<EspeceRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
@@ -36,7 +36,7 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-vi.mock("./espece-service-reshape", () => {
+vi.mock("./espece-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputEspeceUpsertData: vi.fn(),

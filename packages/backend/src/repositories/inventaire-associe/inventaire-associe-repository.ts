@@ -1,6 +1,6 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection, type QueryResult } from "slonik";
 import { z } from "zod";
-import { objectsToKeyValueInsert } from "../repository-helpers";
+import { objectsToKeyValueInsert } from "../repository-helpers.js";
 
 export type SexeRepositoryDependencies = {
   slonik: DatabasePool;

@@ -1,7 +1,7 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { z } from "zod";
-import { objectToKeyValueSet } from "../repository-helpers";
-import { settingsSchema, type Settings, type UpdateSettingsInput } from "./settings-repository-types";
+import { objectToKeyValueSet } from "../repository-helpers.js";
+import { settingsSchema, type Settings, type UpdateSettingsInput } from "./settings-repository-types.js";
 
 export type SettingsRepositoryDependencies = {
   slonik: DatabasePool;

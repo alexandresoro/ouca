@@ -1,10 +1,10 @@
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { format } from "date-fns";
-import { type InputDonnee, type InputInventaire } from "../../graphql/generated/graphql-types";
-import { DATE_PATTERN } from "../../utils/constants";
-import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils";
-import { CoordinatesValidatorHelper } from "./coordinates-validation.helper";
+import { type InputDonnee, type InputInventaire } from "../../graphql/generated/graphql-types.js";
+import { DATE_PATTERN } from "../../utils/constants.js";
+import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils.js";
+import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
 
 const OBSERVATEUR_INDEX = 0;
 const ASSOCIES_INDEX = 1;

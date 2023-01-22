@@ -6,14 +6,14 @@ import {
   SortOrder,
   type MutationUpsertAgeArgs,
   type QueryAgesArgs,
-} from "../../graphql/generated/graphql-types";
-import { type AgeRepository } from "../../repositories/age/age-repository";
-import { type Age, type AgeCreateInput, type AgeWithNbSpecimens } from "../../repositories/age/age-repository-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildAgeService } from "./age-service";
+} from "../../graphql/generated/graphql-types.js";
+import { type Age, type AgeCreateInput, type AgeWithNbSpecimens } from "../../repositories/age/age-repository-types.js";
+import { type AgeRepository } from "../../repositories/age/age-repository.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildAgeService } from "./age-service.js";
 
 const ageRepository = mock<AgeRepository>({});
 const donneeRepository = mock<DonneeRepository>({});

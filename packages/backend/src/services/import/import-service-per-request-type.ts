@@ -15,22 +15,22 @@ import {
   IMPORT_SEXE,
   type ImportType,
 } from "@ou-ca/common/import-types";
-import { type Services } from "../services";
-import { ImportAgeService } from "./import-age-service";
-import { ImportClasseService } from "./import-classe-service";
-import { ImportCommuneService } from "./import-commune-service";
-import { ImportComportementService } from "./import-comportement-service";
-import { ImportDepartementService } from "./import-departement-service";
-import { ImportDonneeService } from "./import-donnee-service";
-import { ImportEspeceService } from "./import-espece-service";
-import { ImportEstimationDistanceService } from "./import-estimation-distance-service";
-import { ImportEstimationNombreService } from "./import-estimation-nombre-service";
-import { ImportLieuxditService } from "./import-lieudit-service";
-import { ImportMeteoService } from "./import-meteo-service";
-import { ImportMilieuService } from "./import-milieu-service";
-import { ImportObservateurService } from "./import-observateur-service";
-import { type ImportService } from "./import-service";
-import { ImportSexeService } from "./import-sexe-service";
+import { type Services } from "../services.js";
+import { ImportAgeService } from "./import-age-service.js";
+import { ImportClasseService } from "./import-classe-service.js";
+import { ImportCommuneService } from "./import-commune-service.js";
+import { ImportComportementService } from "./import-comportement-service.js";
+import { ImportDepartementService } from "./import-departement-service.js";
+import { ImportDonneeService } from "./import-donnee-service.js";
+import { ImportEspeceService } from "./import-espece-service.js";
+import { ImportEstimationDistanceService } from "./import-estimation-distance-service.js";
+import { ImportEstimationNombreService } from "./import-estimation-nombre-service.js";
+import { ImportLieuxditService } from "./import-lieudit-service.js";
+import { ImportMeteoService } from "./import-meteo-service.js";
+import { ImportMilieuService } from "./import-milieu-service.js";
+import { ImportObservateurService } from "./import-observateur-service.js";
+import { type ImportService } from "./import-service.js";
+import { ImportSexeService } from "./import-sexe-service.js";
 
 export const getNewImportServiceForRequestType = (requestType: ImportType, services: Services): ImportService => {
   switch (requestType) {

@@ -1,8 +1,8 @@
-import { ImportedEspece } from "../../objects/import/imported-espece.object";
-import { type Classe } from "../../repositories/classe/classe-repository-types";
-import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { ImportService } from "./import-service";
+import { ImportedEspece } from "../../objects/import/imported-espece.object.js";
+import { type Classe } from "../../repositories/classe/classe-repository-types.js";
+import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportService } from "./import-service.js";
 
 export class ImportEspeceService extends ImportService {
   private classes!: Classe[];

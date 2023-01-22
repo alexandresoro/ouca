@@ -5,7 +5,7 @@ import {
   type PrimitiveValueExpression,
   type SqlFragment,
 } from "slonik";
-import { type SortOrder } from "./common";
+import { type SortOrder } from "./common.js";
 
 export const objectToKeyValueSet = (
   obj: Record<string, string | number | boolean | undefined | null>

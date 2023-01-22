@@ -1,5 +1,5 @@
-import { isEntityEditable } from "../services/entities/entities-utils";
-import { type LoggedUserInfo } from "../services/token-service";
+import { isEntityEditable } from "../services/entities/entities-utils.js";
+import { type LoggedUserInfo } from "../services/token-service.js";
 
 export const isEntityEditableResolver = <T extends { id?: number } | null>(
   findEntityById: (id: number, user: LoggedUserInfo | null) => Promise<{ ownerId?: string | null } | null>

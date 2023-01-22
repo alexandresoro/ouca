@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type SortOrder } from "../common";
+import { type SortOrder } from "../common.js";
 
 export const departementSchema = z.object({
   id: z.number(),

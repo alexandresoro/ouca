@@ -1,12 +1,12 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
+} from "../repository-helpers.js";
 import {
   lieuditSchema,
   lieuditWithCommuneAndDepartementCodeSchema,
@@ -14,7 +14,7 @@ import {
   type LieuditCreateInput,
   type LieuditFindManyInput,
   type LieuditWithCommuneAndDepartementCode,
-} from "./lieudit-repository-types";
+} from "./lieudit-repository-types.js";
 
 export type LieuditRepositoryDependencies = {
   slonik: DatabasePool;

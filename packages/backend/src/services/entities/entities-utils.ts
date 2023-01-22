@@ -1,4 +1,4 @@
-import { type LoggedUser } from "../../types/User";
+import { type LoggedUser } from "../../types/User.js";
 
 type PaginationOptions = Partial<{
   pageNumber: number | null;

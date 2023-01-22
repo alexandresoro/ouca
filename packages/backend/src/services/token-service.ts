@@ -1,10 +1,10 @@
 import { type CookieSerializeOptions } from "@fastify/cookie";
 import { type FastifyReply, type FastifyRequest } from "fastify";
 import { jwtVerify, SignJWT, type JWTPayload } from "jose";
-import config from "../config";
-import { type DatabaseRole, type LoggedUser, type User } from "../types/User";
-import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys";
-import { type UserService } from "./user-service";
+import config from "../config.js";
+import { type DatabaseRole, type LoggedUser, type User } from "../types/User.js";
+import { SIGNING_TOKEN_ALGO, TokenKeys } from "../utils/keys.js";
+import { type UserService } from "./user-service.js";
 
 const TOKEN_KEY = "token";
 

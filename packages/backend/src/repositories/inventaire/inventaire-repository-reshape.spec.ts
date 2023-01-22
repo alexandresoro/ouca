@@ -1,6 +1,6 @@
 import { mock } from "vitest-mock-extended";
-import { reshapeRawInventaire } from "./inventaire-repository-reshape";
-import { type Inventaire, type RawInventaire } from "./inventaire-repository-types";
+import { reshapeRawInventaire } from "./inventaire-repository-reshape.js";
+import { type Inventaire, type RawInventaire } from "./inventaire-repository-types.js";
 
 describe("Inventaire reshaper", () => {
   describe("customized coordinates", () => {
