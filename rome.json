@@ -1,7 +1,23 @@
 {
   "$schema": "./node_modules/rome/configuration_schema.json",
   "linter": {
-    "enabled": false
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "useAltText": "warn"
+      },
+      "complexity": {
+        "useFlatMap": "warn",
+        "useOptionalChain": "warn",
+        "useSimplifiedLogicExpression": "warn"
+      },
+      "style": {
+        "noUnusedTemplateLiteral": "warn",
+        "useSelfClosingElements": "off",
+        "useTemplate": "warn"
+      }
+    }
   },
   "formatter": {
     "enabled": true,
