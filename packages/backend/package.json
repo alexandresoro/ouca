@@ -33,7 +33,7 @@
     "@fastify/multipart": "7.4.0",
     "@fastify/static": "6.6.1",
     "@ou-ca/common": "*",
-    "csv-parse": "5.3.3",
+    "csv-parse": "5.3.4",
     "csv-stringify": "6.2.3",
     "date-fns": "2.29.3",
     "dotenv": "16.0.3",
