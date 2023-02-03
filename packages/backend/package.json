@@ -60,7 +60,7 @@
     "@typescript-eslint/eslint-plugin": "5.48.2",
     "@typescript-eslint/parser": "5.48.2",
     "cpy": "9.0.1",
-    "eslint": "8.32.0",
+    "eslint": "8.33.0",
     "eslint-import-resolver-typescript": "3.5.3",
     "eslint-plugin-import": "2.27.5",
     "type-fest": "3.5.4",
