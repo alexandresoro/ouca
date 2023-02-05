@@ -6,14 +6,13 @@ export default defineConfig({
     globals: true,
     coverage: {
       all: true,
-      include: ["packages/*/src"],
+      include: ["src"],
       exclude: [
         ...defaultExclude,
         "**/*.spec.*",
         "**/src/**/@types/**",
         "**/src/graphql/resolvers.ts",
         "**/src/**/generated/**",
-        "packages/frontend",
       ],
     },
   },

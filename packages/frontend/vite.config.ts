@@ -1,6 +1,7 @@
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig, loadEnv } from "vite";
+import { defaultExclude } from "vitest/config";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -22,5 +23,14 @@ export default defineConfig(({ mode }) => {
       },
     },
     plugins: [react()],
+    test: {
+      clearMocks: true,
+      globals: true,
+      coverage: {
+        all: true,
+        include: ["src"],
+        exclude: [...defaultExclude, "**/*.spec.*", "**/src/**/@types/**", "**/src/gql/**"],
+      },
+    },
   };
 });
