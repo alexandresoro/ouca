@@ -1,0 +1,21 @@
+{
+  "name": "@ou-ca/eslint-config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Où-ça ESLint shared config",
+  "contributors": [
+    {
+      "name": "Camille Carrier"
+    },
+    {
+      "name": "Alexandre Soro"
+    }
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "5.50.0",
+    "@typescript-eslint/parser": "5.50.0",
+    "eslint": "8.33.0",
+    "eslint-import-resolver-typescript": "3.5.3",
+    "eslint-plugin-import": "2.27.5"
+  }
+}

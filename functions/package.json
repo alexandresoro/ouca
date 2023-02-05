@@ -12,7 +12,11 @@
   ],
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "lint": "eslint ."
+  },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20230115.0"
+    "@cloudflare/workers-types": "4.20230115.0",
+    "@ou-ca/eslint-config": "*"
   }
 }
