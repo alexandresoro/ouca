@@ -13,7 +13,10 @@
   "license": "MIT",
   "private": true,
   "exports": {
-    "./*": "./dist/*.js"
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./dist/*.js"
+    }
   },
   "scripts": {
     "compile:swc": "swc ./src -d dist"
