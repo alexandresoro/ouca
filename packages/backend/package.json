@@ -42,7 +42,7 @@
     "graphql": "16.6.0",
     "jose": "4.11.2",
     "mercurius": "12.0.0",
-    "pino": "8.8.0",
+    "pino": "8.9.0",
     "pino-pretty": "9.1.1",
     "slonik": "33.0.6",
     "slonik-interceptor-field-name-transformation": "1.6.5",
