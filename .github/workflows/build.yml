@@ -171,7 +171,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   publish-frontend-dist:
-    needs: [build, build-frontend]
+    needs: build
 
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
