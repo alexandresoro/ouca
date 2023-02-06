@@ -13,5 +13,6 @@
       "@ou-ca/common/*": ["../common/src/*"]
     },
     "types": ["vitest/globals"]
-  }
+  },
+  "include": ["src/**/*"]
 }
