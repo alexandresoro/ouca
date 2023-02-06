@@ -82,32 +82,16 @@ jobs:
         with:
           name: dist-node-lts
           path: | 
-            packages/*/dist/
+            packages/backend/dist/
+            packages/common/dist/
             packages/backend/migrations/
-            **/package.json
-            **/package-lock.json
+            package.json
+            package-lock.json
+            packages/backend/package.json
+            packages/common/package.json
             !**/node_modules/**
           retention-days: 1
           if-no-files-found: error
-
-  build-frontend:
-    needs: build
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ needs.build.outputs.nodeVersion }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run frontend build
 
   publish-backend-image:
     needs: [build, build-backend]
