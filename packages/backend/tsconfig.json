@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "rootDir": "src",
+    "outDir": "dist",
     "module": "commonjs",
     "lib": ["ES2022"],
     "target": "ES2022",
     "esModuleInterop": true,
-    "outDir": "dist",
     "resolveJsonModule": true,
     "strict": true,
     "paths": {

@@ -1,7 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*"],
-  "compilerOptions": {
-    "composite": true
-  }
+  "exclude": ["src/**/*.spec.ts"],
 }
