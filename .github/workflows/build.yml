@@ -32,6 +32,8 @@ jobs:
           node-version: ${{ env.nodeVersion }}
           cache: 'npm'
 
+      - uses: google/wireit@setup-github-actions-caching/v1
+
       - name: Install dependencies
         run: npm ci
 
