@@ -37,20 +37,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint, test & build
+      - name: Check & validate
+        run: npm run check:ci
+
+      - name: Build
         run: npm run build:ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Test
-        run: npm test
-
-      - name: Build - frontend
-        run: npm run frontend build
-
-      - name: Build - backend
-        run: npm run backend build
 
       - name: Upload release - frontend
         if: github.event_name == 'push'

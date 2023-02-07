@@ -18,14 +18,27 @@
   ],
   "scripts": {
     "prepare": "husky install",
-    "build:ci": "wireit",
     "test": "npm --workspaces --if-present test",
     "lint": "npm --workspaces --if-present run lint",
     "frontend": "npm --workspace=packages/frontend run --",
-    "backend": "npm --workspace=packages/backend run --"
+    "backend": "npm --workspace=packages/backend run --",
+    "check:ci": "wireit",
+    "build:ci": "wireit"
   },
   "wireit": {
     "build:ci": {
+      "dependencies":[
+        "build:backend",
+        "build:frontend"
+      ]
+    },
+    "build:backend": {
+      "command": "npm run backend build"
+    },
+    "build:frontend": {
+      "command": "npm run frontend build"
+    },
+    "check:ci": {
       "dependencies":[
         "rome:ci",
         "lint",
