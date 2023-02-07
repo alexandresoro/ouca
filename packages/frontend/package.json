@@ -17,10 +17,17 @@
     "postinstall": "npm run generate-graphql",
     "serve": "vite preview",
     "test": "wireit",
-    "lint": "eslint .",
+    "lint": "wireit",
     "generate-graphql": "graphql-codegen --config codegen.ts"
   },
   "wireit": {
+    "lint": {
+      "command": "eslint .",
+      "files": [
+        "**/*"
+      ],
+      "output": []
+    },
     "test": {
       "command": "vitest run --passWithNoTests",
       "files": [

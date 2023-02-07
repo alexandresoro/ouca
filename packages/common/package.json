@@ -20,10 +20,17 @@
   },
   "scripts": {
     "test": "wireit",
-    "compile:tsup": "tsup",
-    "lint": "eslint ."
+    "lint": "wireit",
+    "compile:tsup": "tsup"
   },
   "wireit": {
+    "lint": {
+      "command": "eslint .",
+      "files": [
+        "**/*"
+      ],
+      "output": []
+    },
     "test": {
       "command": "vitest run",
       "files": [

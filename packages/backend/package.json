@@ -17,8 +17,8 @@
     "postinstall": "npm run generate-graphql",
     "start": "npm run compile:tsup",
     "start:tsc": "npm run compile:tsc:dev && npm run copy:assets && cd dist && node main",
-    "lint": "eslint .",
     "test": "wireit",
+    "lint": "wireit",
     "compile:tsc": "tsc --build tsconfig.build.json",
     "compile:tsc:dev": "tsc --build tsconfig.dev.json",
     "compile:tsup": "npm run --prefix ../common compile:tsup && tsup",
@@ -27,6 +27,13 @@
     "umzug": "cd dist && node umzug"
   },
   "wireit": {
+    "lint": {
+      "command": "eslint .",
+      "files": [
+        "**/*"
+      ],
+      "output": []
+    },
     "test": {
       "command": "vitest run",
       "files": [
