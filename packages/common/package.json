@@ -21,21 +21,32 @@
   "scripts": {
     "test": "wireit",
     "lint": "wireit",
-    "compile:tsup": "tsup"
+    "compile:tsup": "wireit"
   },
   "wireit": {
+    "compile:tsup": {
+      "command": "tsup",
+      "files": [
+        "src/**",
+        "tsconfig.json",
+        "tsup.config.*"
+      ],
+      "output": ["dist/**"]
+    },
     "lint": {
       "command": "eslint .",
       "files": [
-        "**/*"
+        "**",
+        "!dist"
       ],
       "output": []
     },
     "test": {
       "command": "vitest run",
       "files": [
-        "src/**/*.ts",
-        "tsconfig.json"
+        "src/**",
+        "tsconfig.json",
+        "vite.config.*"
       ],
       "output": []
     }

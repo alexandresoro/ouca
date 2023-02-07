@@ -24,15 +24,17 @@
     "lint": {
       "command": "eslint .",
       "files": [
-        "**/*"
+        "**/*",
+        "!dist"
       ],
       "output": []
     },
     "test": {
       "command": "vitest run --passWithNoTests",
       "files": [
-        "src/**/*.ts",
-        "tsconfig.json"
+        "src/**",
+        "tsconfig.json",
+        "vite.config.*"
       ],
       "output": []
     }

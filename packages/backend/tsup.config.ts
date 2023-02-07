@@ -6,6 +6,7 @@ export default defineConfig({
   sourcemap: true,
   bundle: false,
   clean: true,
+  watch: true,
   async onSuccess() {
     spawnSync("node", ["scripts/copy-graphql-schemas-to-dist.mjs"]);
     const app = spawn("node", ["main"], { cwd: "./dist" });
