@@ -23,23 +23,35 @@
     "frontend": "npm --workspace=packages/frontend run --",
     "backend": "npm --workspace=packages/backend run --",
     "check:ci": "wireit",
-    "build:ci": "wireit"
+    "build:ci": "wireit",
+    "build:frontend:ci": "wireit"
   },
   "wireit": {
     "build:ci": {
-      "dependencies":[
+      "dependencies": [
         "build:backend",
-        "build:frontend"
+        "build:frontend:ci"
       ]
     },
     "build:backend": {
       "command": "npm run backend build"
     },
-    "build:frontend": {
-      "command": "npm run frontend build"
+    "build:frontend:ci": {
+      "command": "npm run frontend build",
+      "files": [
+        "packages/{frontend,common}/**",
+        "!packages/*/dist/**",
+        "!**/node_modules",
+        "!**/.wireit"
+      ],
+      "output": [
+        "packages/frontend/dist",
+        "packages/common/dist",
+        "packages/common/*.tsbuildinfo"
+      ]
     },
     "check:ci": {
-      "dependencies":[
+      "dependencies": [
         "rome:ci",
         "lint",
         "test"
