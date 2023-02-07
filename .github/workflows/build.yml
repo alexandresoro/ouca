@@ -62,7 +62,7 @@ jobs:
           retention-days: 1
           if-no-files-found: error
       
-      - name: Upload artifact - artifact
+      - name: Upload artifact - backend
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v3
         with:
