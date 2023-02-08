@@ -61,7 +61,7 @@
     "@fastify/static": "6.8.0",
     "@ou-ca/common": "*",
     "csv-parse": "5.3.5",
-    "csv-stringify": "6.2.3",
+    "csv-stringify": "6.2.4",
     "date-fns": "2.29.3",
     "dotenv": "16.0.3",
     "exceljs": "4.3.0",
