@@ -58,7 +58,7 @@
     "@fastify/cookie": "8.3.0",
     "@fastify/cors": "8.2.0",
     "@fastify/multipart": "7.4.0",
-    "@fastify/static": "6.8.0",
+    "@fastify/static": "6.9.0",
     "@ou-ca/common": "*",
     "csv-parse": "5.3.5",
     "csv-stringify": "6.2.4",
