@@ -14,5 +14,6 @@
     },
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "references": [{ "path": "../common/tsconfig.ref.json" }]
 }

@@ -3,6 +3,7 @@ module.exports = {
   extends: ["@ou-ca"],
   parserOptions: {
     project: ["./tsconfig.json"],
+    EXPERIMENTAL_useSourceOfProjectReferenceRedirect: true,
     tsconfigRootDir: __dirname,
   },
   settings: {
