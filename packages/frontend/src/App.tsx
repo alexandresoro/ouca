@@ -2,7 +2,7 @@ import { Box, createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
 import { cyan, grey, pink } from "@mui/material/colors";
 import * as Sentry from "@sentry/react";
 import { refocusExchange } from "@urql/exchange-refocus";
-import { FunctionComponent, lazy, Suspense, useMemo } from "react";
+import { lazy, Suspense, useMemo, type FunctionComponent } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { cacheExchange, createClient, dedupExchange, fetchExchange, Provider as UrqlProvider } from "urql";
@@ -11,7 +11,7 @@ import TempPage from "./components/TempPage";
 import RequireAuth from "./components/utils/RequireAuth";
 import { ApiUrlContext } from "./contexts/ApiUrlContext";
 import { UserProvider } from "./contexts/UserContext";
-import { AppConfig } from "./types/AppConfig";
+import { type AppConfig } from "./types/AppConfig";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
@@ -101,6 +101,9 @@ const App: FunctionComponent<AppProps> = (props) => {
         url: `${apiUrl}/graphql`,
         exchanges: [dedupExchange, refocusExchange(), cacheExchange, fetchExchange],
         requestPolicy: "cache-and-network",
+        fetchOptions: {
+          credentials: "include",
+        },
       }),
     [apiUrl]
   );
