@@ -52,6 +52,22 @@ jobs:
             packages/frontend/dist/
           retention-days: 1
           if-no-files-found: error
+
+      - name: Tarball release - frontend
+        if: (github.event_name == 'push') && (github.ref_name == github.event.repository.default_branch)
+        run: |
+          tar -cvzf ouca-web-latest.tar.gz -C packages/frontend/dist/ .
+
+      - name: Publish the release
+        if: (github.event_name == 'push') && (github.ref_name == github.event.repository.default_branch)
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest-frontend"
+          prerelease: true
+          title: "Latest version"
+          files: |
+            ouca-web-latest.tar.gz
       
       - name: Upload artifact - backend
         if: github.event_name == 'push'
@@ -67,6 +83,7 @@ jobs:
             packages/backend/package.json
             packages/common/package.json
             !**/node_modules/**
+            !ouca-web-latest.tar.gz
           retention-days: 1
           if-no-files-found: error
 
