@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "husky": "8.0.3",
-    "lint-staged": "13.1.1",
+    "lint-staged": "13.1.2",
     "rome": "11.0.0",
     "wireit": "0.9.5"
   },
