@@ -77,7 +77,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push to GitHub Container Registry
         id: docker_build
@@ -89,4 +89,4 @@ jobs:
             linux/amd64
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
+            ghcr.io/${{ github.repository }}-backend:${{ env.DOCKER_TAG }}
