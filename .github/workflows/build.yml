@@ -62,6 +62,7 @@ jobs:
 
   publish-backend-image:
     needs: build
+    concurrency: publish-backend-docker-${{ github.ref }}
 
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
