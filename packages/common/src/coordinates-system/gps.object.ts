@@ -1,4 +1,4 @@
-import { type CoordinatesSystem, GPS } from "./coordinates-system.object";
+import { GPS, type CoordinatesSystem } from "./coordinates-system.object.js";
 
 export const GPS_COORDINATES: CoordinatesSystem = {
   code: GPS,

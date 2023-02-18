@@ -1,12 +1,13 @@
+import esMain from "es-main";
 import fs from "node:fs";
 import path from "node:path";
 import { type Logger } from "pino";
 import { sql, type DatabasePool } from "slonik";
 import { Umzug } from "umzug";
 import { z } from "zod";
-import config from "./config";
-import getSlonikInstance from "./slonik/slonik-instance";
-import { logger } from "./utils/logger";
+import config from "./config.js";
+import getSlonikInstance from "./slonik/slonik-instance.js";
+import { logger } from "./utils/logger.js";
 
 const getUmzugInstance = ({ logger, slonik }: { logger: Logger; slonik: DatabasePool }) =>
   new Umzug({
@@ -89,7 +90,7 @@ export const runDatabaseMigrations = async ({
   }
 };
 
-if (require.main === module) {
+if (esMain(import.meta)) {
   void getSlonikInstance({ logger }).then((slonik) => {
     void getUmzugInstance({
       logger,

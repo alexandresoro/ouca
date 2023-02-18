@@ -1,6 +1,6 @@
 import { mock } from "vitest-mock-extended";
-import { type LoggedUser } from "../../types/User";
-import { isEntityEditable } from "./entities-utils";
+import { type LoggedUser } from "../../types/User.js";
+import { isEntityEditable } from "./entities-utils.js";
 
 describe("Entity editable status", () => {
   test("should return correct status for non logged user", () => {

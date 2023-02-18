@@ -1,4 +1,4 @@
-import { type CoordinatesSystem, LAMBERT_93 } from "./coordinates-system.object";
+import { LAMBERT_93, type CoordinatesSystem } from "./coordinates-system.object.js";
 
 export const LAMBERT_93_COORDINATES: CoordinatesSystem = {
   code: LAMBERT_93,

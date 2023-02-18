@@ -1,12 +1,12 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
+} from "../repository-helpers.js";
 import {
   sexeSchema,
   sexeWithNbSpecimensSchema,
@@ -14,7 +14,7 @@ import {
   type SexeCreateInput,
   type SexeFindManyInput,
   type SexeWithNbSpecimens,
-} from "./sexe-repository-types";
+} from "./sexe-repository-types.js";
 
 export type SexeRepositoryDependencies = {
   slonik: DatabasePool;

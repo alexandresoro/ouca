@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { databaseRoles } from "../../types/User";
+import { databaseRoles } from "../../types/User.js";
 
 export const userWithPasswordSchema = z.object({
   id: z.string(),

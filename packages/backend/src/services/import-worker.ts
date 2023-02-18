@@ -12,18 +12,18 @@ import {
   type ImportNotifyProgressMessageContent,
   type ImportNotifyStatusUpdateMessage,
   type ImportPostCompleteMessage,
-} from "../objects/import/import-update-message";
-import { type LoggedUser } from "../types/User";
-import { logger } from "../utils/logger";
-import { IMPORT_DIR } from "../utils/paths";
+} from "../objects/import/import-update-message.js";
+import { type LoggedUser } from "../types/User.js";
+import { logger } from "../utils/logger.js";
+import { IMPORT_DIR } from "../utils/paths.js";
+import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type.js";
 import {
   IMPORT_COMPLETE_EVENT,
   IMPORT_FAILED_EVENT,
   IMPORT_PROGRESS_UPDATE_EVENT,
   IMPORT_STATUS_UPDATE_EVENT,
-} from "./import/import-service";
-import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type";
-import { buildServices } from "./services";
+} from "./import/import-service.js";
+import { buildServices } from "./services.js";
 
 const { importId, importType, loggedUser } = workerData as {
   importId: string;

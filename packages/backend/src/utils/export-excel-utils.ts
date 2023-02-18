@@ -1,4 +1,7 @@
-import { stream } from "exceljs";
+// eslint-disable-next-line import/default
+import exceljs from "exceljs";
+// eslint-disable-next-line import/no-named-as-default-member
+const { stream } = exceljs;
 
 export const writeToExcelFile = async (
   objects: { [key: string]: unknown }[],

@@ -1,13 +1,13 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
-import { objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers";
-import { buildFindMatchingInventaireClause } from "./inventaire-repository-helper";
-import { reshapeRawInventaire } from "./inventaire-repository-reshape";
+import { objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers.js";
+import { buildFindMatchingInventaireClause } from "./inventaire-repository-helper.js";
+import { reshapeRawInventaire } from "./inventaire-repository-reshape.js";
 import {
   inventaireSchema,
   type Inventaire,
   type InventaireCreateInput,
   type InventaireFindMatchingInput,
-} from "./inventaire-repository-types";
+} from "./inventaire-repository-types.js";
 
 export type InventaireRepositoryDependencies = {
   slonik: DatabasePool;

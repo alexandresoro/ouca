@@ -1,20 +1,20 @@
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertCommuneArgs, type QueryCommunesArgs } from "../../graphql/generated/graphql-types";
-import { type CommuneRepository } from "../../repositories/commune/commune-repository";
+import { type MutationUpsertCommuneArgs, type QueryCommunesArgs } from "../../graphql/generated/graphql-types.js";
 import {
   type Commune,
   type CommuneCreateInput,
   type CommuneWithDepartementCode,
-} from "../../repositories/commune/commune-repository-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_NOM } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
-import { reshapeInputCommuneUpsertData } from "./commune-service-reshape";
-import { getSqlPagination } from "./entities-utils";
+} from "../../repositories/commune/commune-repository-types.js";
+import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_NOM } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
+import { getSqlPagination } from "./entities-utils.js";
 
 type CommuneServiceDependencies = {
   logger: Logger;

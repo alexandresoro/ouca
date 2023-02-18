@@ -6,17 +6,17 @@ import {
     SortOrder,
     type MutationUpsertEstimationDistanceArgs,
     type QueryEstimationsDistanceArgs
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
     type EstimationDistance,
     type EstimationDistanceCreateInput
-} from "../../repositories/estimation-distance/estimation-distance-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildEstimationDistanceService } from "./estimation-distance-service";
+} from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
+import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildEstimationDistanceService } from "./estimation-distance-service.js";
 
 const estimationDistanceRepository = mock<EstimationDistanceRepository>({});
 const donneeRepository = mock<DonneeRepository>({});

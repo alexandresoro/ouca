@@ -3,12 +3,12 @@ import {
   type CoordinatesSystem,
   type CoordinatesSystemType,
 } from "@ou-ca/common/coordinates-system/coordinates-system.object";
-import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object";
-import { type Commune } from "../../repositories/commune/commune-repository-types";
-import { type Departement } from "../../repositories/departement/departement-repository-types";
-import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { ImportService } from "./import-service";
+import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object.js";
+import { type Commune } from "../../repositories/commune/commune-repository-types.js";
+import { type Departement } from "../../repositories/departement/departement-repository-types.js";
+import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportService } from "./import-service.js";
 
 export class ImportLieuxditService extends ImportService {
   private departements!: Departement[];

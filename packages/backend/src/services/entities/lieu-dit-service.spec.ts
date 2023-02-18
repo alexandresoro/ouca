@@ -7,15 +7,15 @@ import {
   SortOrder,
   type MutationUpsertLieuDitArgs,
   type QueryLieuxDitsArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository";
-import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_NOM } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildLieuditService } from "./lieu-dit-service";
-import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_NOM } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape.js";
+import { buildLieuditService } from "./lieu-dit-service.js";
 
 const lieuditRepository = mock<LieuditRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
@@ -36,7 +36,7 @@ const uniqueConstraintFailed = () => {
   throw uniqueConstraintFailedError;
 };
 
-vi.mock("./lieu-dit-service-reshape", () => {
+vi.mock("./lieu-dit-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputLieuditUpsertData: vi.fn(),

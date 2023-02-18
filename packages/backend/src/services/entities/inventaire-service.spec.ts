@@ -2,15 +2,18 @@ import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
-import { type MutationUpsertInventaireArgs } from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository";
-import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository";
-import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
-import { type Inventaire, type InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { OucaError } from "../../utils/errors";
-import { buildInventaireService } from "./inventaire-service";
+import { type MutationUpsertInventaireArgs } from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
+import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
+import {
+  type Inventaire,
+  type InventaireCreateInput,
+} from "../../repositories/inventaire/inventaire-repository-types.js";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildInventaireService } from "./inventaire-service.js";
 
 const inventaireRepository = mock<InventaireRepository>({});
 const inventaireAssocieRepository = mock<InventaireAssocieRepository>({});
@@ -31,7 +34,7 @@ const inventaireService = buildInventaireService({
 });
 
 const reshapeInputInventaireUpsertData = vi.fn();
-vi.doMock("./inventaire-service-reshape", () => {
+vi.doMock("./inventaire-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputInventaireUpsertData,

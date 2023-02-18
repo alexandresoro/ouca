@@ -1,6 +1,6 @@
-import { type Meteo } from "../../repositories/meteo/meteo-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
+import { type Meteo } from "../../repositories/meteo/meteo-repository-types.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportMeteoService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {

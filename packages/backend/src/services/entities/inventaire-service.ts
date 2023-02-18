@@ -3,15 +3,15 @@ import { type DatabasePool } from "slonik";
 import {
   type MutationUpsertInventaireArgs,
   type UpsertInventaireFailureReason,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository";
-import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository";
-import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository";
-import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { validateAuthorization } from "./authorization-utils";
-import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
+import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
+import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
+import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape.js";
 
 type InventaireServiceDependencies = {
   logger: Logger;

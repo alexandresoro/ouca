@@ -1,7 +1,7 @@
-import { ImportedDepartement } from "../../objects/import/imported-departement.object";
-import { type Departement } from "../../repositories/departement/departement-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { ImportService } from "./import-service";
+import { ImportedDepartement } from "../../objects/import/imported-departement.object.js";
+import { type Departement } from "../../repositories/departement/departement-repository-types.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportService } from "./import-service.js";
 
 export class ImportDepartementService extends ImportService {
   private departements!: (Departement | Omit<Departement, "id" | "ownerId">)[];

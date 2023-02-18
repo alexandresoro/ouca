@@ -1,6 +1,6 @@
-import { type Observateur } from "../../repositories/observateur/observateur-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
+import { type Observateur } from "../../repositories/observateur/observateur-repository-types.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportObservateurService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {

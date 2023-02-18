@@ -1,10 +1,10 @@
-import config from "./config";
-import { buildServer, registerFastifyRoutes } from "./fastify";
-import { buildServices } from "./services/services";
-import shutdown from "./shutdown";
-import { runDatabaseMigrations } from "./umzug";
-import { logger } from "./utils/logger";
-import { checkAndCreateFolders } from "./utils/paths";
+import config from "./config.js";
+import { buildServer, registerFastifyRoutes } from "./fastify.js";
+import { buildServices } from "./services/services.js";
+import shutdown from "./shutdown.js";
+import { runDatabaseMigrations } from "./umzug.js";
+import { logger } from "./utils/logger.js";
+import { checkAndCreateFolders } from "./utils/paths.js";
 
 logger.debug("Starting app");
 

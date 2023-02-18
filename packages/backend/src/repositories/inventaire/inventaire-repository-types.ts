@@ -3,7 +3,7 @@ import {
   type CoordinatesSystemType,
 } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
-import { type InputInventaire } from "../../graphql/generated/graphql-types";
+import { type InputInventaire } from "../../graphql/generated/graphql-types.js";
 
 export const inventaireSchema = z.object({
   id: z.number(),

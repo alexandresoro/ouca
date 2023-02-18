@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { type SortOrder } from "../common";
-import { type SearchCriteria } from "../search-criteria";
+import { type SortOrder } from "../common.js";
+import { type SearchCriteria } from "../search-criteria.js";
 
 export const especeSchema = z.object({
   id: z.number(),

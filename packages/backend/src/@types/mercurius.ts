@@ -1,5 +1,5 @@
-import { type Resolvers } from "../graphql/generated/graphql-types";
-import { type buildGraphQLContext } from "../graphql/graphql-context";
+import { type Resolvers } from "../graphql/generated/graphql-types.js";
+import { type buildGraphQLContext } from "../graphql/graphql-context.js";
 
 type PromiseType<T> = T extends PromiseLike<infer U> ? U : T;
 

@@ -1,13 +1,18 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
-import { milieuSchema, type Milieu, type MilieuCreateInput, type MilieuFindManyInput } from "./milieu-repository-types";
+} from "../repository-helpers.js";
+import {
+  milieuSchema,
+  type Milieu,
+  type MilieuCreateInput,
+  type MilieuFindManyInput,
+} from "./milieu-repository-types.js";
 
 export type MilieuRepositoryDependencies = {
   slonik: DatabasePool;

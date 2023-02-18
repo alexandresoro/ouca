@@ -1,7 +1,7 @@
 import { sql, type IdentifierSqlToken } from "slonik";
-import { buildAndClause } from "../repository-helpers";
-import { buildSearchCriteriaParameters } from "../search-criteria";
-import { type EspeceFindManyInput } from "./espece-repository-types";
+import { buildAndClause } from "../repository-helpers.js";
+import { buildSearchCriteriaParameters } from "../search-criteria.js";
+import { type EspeceFindManyInput } from "./espece-repository-types.js";
 
 export const buildQClause = (q: string) => {
   return sql.fragment`

@@ -1,4 +1,4 @@
-import { parseISO8601AsUTCDate } from "./time-utils";
+import { parseISO8601AsUTCDate } from "./time-utils.js";
 
 test("should parse as UTC a valid date", () => {
   const date = "2022-02-28";

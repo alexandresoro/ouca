@@ -16,6 +16,7 @@
     "functions",
     "packages/*"
   ],
+  "type": "module",
   "scripts": {
     "prepare": "husky install",
     "test": "npm --workspaces --if-present test",

@@ -1,4 +1,4 @@
-import { type EspeceCreateInput } from "../../repositories/espece/espece-repository-types";
+import { type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 
 const CLASSE_INDEX = 0;
 const CODE_INDEX = 1;

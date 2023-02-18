@@ -2,13 +2,13 @@ import { randomBytes, scryptSync } from "node:crypto";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import type { CamelCasedProperties, Except } from "type-fest";
-import config from "../config";
-import { type EditUserData, type UserCreateInput } from "../graphql/generated/graphql-types";
-import { type SettingsRepository } from "../repositories/settings/settings-repository";
-import { type UserRepository } from "../repositories/user/user-repository";
-import { type DatabaseRole, type LoggedUser, type User } from "../types/User";
-import { OucaError } from "../utils/errors";
-import { SALT_AND_PWD_DELIMITER } from "../utils/keys";
+import config from "../config.js";
+import { type EditUserData, type UserCreateInput } from "../graphql/generated/graphql-types.js";
+import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
+import { type UserRepository } from "../repositories/user/user-repository.js";
+import { type DatabaseRole, type LoggedUser, type User } from "../types/User.js";
+import { OucaError } from "../utils/errors.js";
+import { SALT_AND_PWD_DELIMITER } from "../utils/keys.js";
 
 const PASSWORD_KEY_LENGTH = 64;
 

@@ -1,5 +1,5 @@
-import { type Coordinates } from "../types/coordinates.object";
-import { transformCoordinates } from "./coordinates-transformer";
+import { type Coordinates } from "../types/coordinates.object.js";
+import { transformCoordinates } from "./coordinates-transformer.js";
 
 test("should throw an error if coordinates are missing", () => {
   expect(() => transformCoordinates(null, "gps")).toThrowError();

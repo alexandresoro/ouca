@@ -6,17 +6,17 @@ import {
   SortOrder,
   type MutationUpsertObservateurArgs,
   type QueryObservateursArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Observateur,
   type ObservateurCreateInput,
-} from "../../repositories/observateur/observateur-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildObservateurService } from "./observateur-service";
+} from "../../repositories/observateur/observateur-repository-types.js";
+import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildObservateurService } from "./observateur-service.js";
 
 const observateurRepository = mock<ObservateurRepository>({});
 const donneeRepository = mock<DonneeRepository>({});

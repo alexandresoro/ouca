@@ -1,6 +1,6 @@
-import { type Sexe } from "../../repositories/sexe/sexe-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service";
+import { type Sexe } from "../../repositories/sexe/sexe-repository-types.js";
+import { type LoggedUser } from "../../types/User.js";
+import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
 export class ImportSexeService extends ImportEntiteAvecLibelleService {
   protected init = async (): Promise<void> => {

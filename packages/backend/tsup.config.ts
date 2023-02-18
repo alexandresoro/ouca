@@ -3,12 +3,13 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: ["src", "!src/**/*.spec.*"],
+  format: "esm",
   sourcemap: true,
   bundle: false,
   clean: true,
   watch: true,
   async onSuccess() {
-    spawnSync("node", ["scripts/copy-graphql-schemas-to-dist.mjs"]);
+    spawnSync("node", ["scripts/copy-graphql-schemas-to-dist.js"]);
     const app = spawn("node", ["main"], { cwd: "./dist" });
     app.stdout.pipe(process.stdout);
     return () => {

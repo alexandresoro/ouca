@@ -1,8 +1,9 @@
+/* eslint-disable import/no-named-as-default */
 import fastifyCompress from "@fastify/compress";
-import { fastifyCookie } from "@fastify/cookie";
+import fastifyCookie from "@fastify/cookie";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
-import { fastifyStatic } from "@fastify/static";
+import fastifyStatic from "@fastify/static";
 import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import-types";
 import fastify, { type FastifyInstance } from "fastify";
 import { NoSchemaIntrospectionCustomRule } from "graphql";
@@ -12,16 +13,16 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
-import { buildGraphQLContext } from "./graphql/graphql-context";
-import { logQueries, logResults } from "./graphql/mercurius-logger";
-import { buildResolvers } from "./graphql/resolvers";
-import { startImportTask } from "./services/import-manager";
-import { type Services } from "./services/services";
-import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths";
+import { buildGraphQLContext } from "./graphql/graphql-context.js";
+import { logQueries, logResults } from "./graphql/mercurius-logger.js";
+import { buildResolvers } from "./graphql/resolvers.js";
+import { startImportTask } from "./services/import-manager.js";
+import { type Services } from "./services/services.js";
+import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths.js";
 
 export const buildServer = async (services: Services): Promise<FastifyInstance> => {
   // Server
-  const server = fastify({
+  const server = fastify.default({
     logger: services.logger,
   });
 
@@ -48,10 +49,10 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
   // Mercurius GraphQL adapter
 
   // Parse GraphQL schema
-  const graphQLSchema = fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8").toString();
+  const graphQLSchema = fs.readFileSync(new URL("./schema.graphql", import.meta.url), "utf-8").toString();
   services.logger.debug("GraphQL schema has been parsed");
 
-  await server.register(mercurius, {
+  await server.register(mercurius.default, {
     schema: graphQLSchema,
     resolvers: buildResolvers(services),
     context: buildGraphQLContext({ tokenService: services.tokenService }),

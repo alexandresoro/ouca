@@ -6,14 +6,14 @@ import {
   SortOrder,
   type MutationUpsertMeteoArgs,
   type QueryMeteosArgs,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type MeteoRepository } from "../../repositories/meteo/meteo-repository";
-import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { buildMeteoService } from "./meteo-service";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
+import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { buildMeteoService } from "./meteo-service.js";
 
 const meteoRepository = mock<MeteoRepository>({});
 const donneeRepository = mock<DonneeRepository>({});

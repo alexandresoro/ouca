@@ -12,6 +12,7 @@
   ],
   "license": "MIT",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "npm run compile:tsc && npm run copy:assets",
     "postinstall": "npm run generate-graphql",
@@ -23,7 +24,7 @@
     "compile:tsc:dev": "tsc --build tsconfig.dev.json",
     "compile:tsup": "wireit",
     "generate-graphql": "graphql-codegen",
-    "copy:assets": "node scripts/copy-graphql-schemas-to-dist.mjs",
+    "copy:assets": "node scripts/copy-graphql-schemas-to-dist.js",
     "umzug": "cd dist && node umzug"
   },
   "wireit": {
@@ -64,6 +65,7 @@
     "csv-stringify": "6.2.4",
     "date-fns": "2.29.3",
     "dotenv": "16.0.3",
+    "es-main": "1.2.0",
     "exceljs": "4.3.0",
     "fastify": "4.13.0",
     "graphql": "16.6.0",

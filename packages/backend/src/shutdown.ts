@@ -1,5 +1,5 @@
 import { type FastifyInstance } from "fastify";
-import { type Services } from "./services/services";
+import { type Services } from "./services/services.js";
 
 // Handle shutdown request gracefully
 // This is used when inside a container

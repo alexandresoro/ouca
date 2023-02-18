@@ -3,8 +3,8 @@ import { type JWTPayload } from "jose";
 import mercurius from "mercurius";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type LoggedUserInfo, type TokenService } from "../services/token-service";
-import { buildGraphQLContext, type GraphQLContext } from "./graphql-context";
+import { type LoggedUserInfo, type TokenService } from "../services/token-service.js";
+import { buildGraphQLContext, type GraphQLContext } from "./graphql-context.js";
 
 const tokenService = mock<TokenService>({
   getLoggedUserInfo: vi.fn(),
@@ -60,7 +60,9 @@ describe("GraphQL context", () => {
 
     tokenService.validateAndExtractUserToken.mockRejectedValueOnce(rejection);
 
-    await expect(() => graphQLContext(request, reply)).rejects.toThrowError(new mercurius.ErrorWithProps(rejection));
+    await expect(() => graphQLContext(request, reply)).rejects.toThrowError(
+      new mercurius.default.ErrorWithProps(rejection)
+    );
     expect(tokenService.deleteTokenCookie).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,17 +1,17 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection, type QueryResult } from "slonik";
 import { z } from "zod";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
+} from "../repository-helpers.js";
 import {
   buildFindMatchingDonneeClause,
   buildOrderByIdentifier,
   buildSearchCriteriaClause,
-} from "./donnee-repository-helper";
+} from "./donnee-repository-helper.js";
 import {
   donneeSchema,
   idSchema,
@@ -20,7 +20,7 @@ import {
   type DonneeCreateInput,
   type DonneeFindManyInput,
   type DonneeFindMatchingInput,
-} from "./donnee-repository-types";
+} from "./donnee-repository-types.js";
 
 export type DonneeRepositoryDependencies = {
   slonik: DatabasePool;

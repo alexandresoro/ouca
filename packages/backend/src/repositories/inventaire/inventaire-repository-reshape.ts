@@ -1,4 +1,4 @@
-import { type Inventaire, type RawInventaire } from "./inventaire-repository-types";
+import { type Inventaire, type RawInventaire } from "./inventaire-repository-types.js";
 
 export function reshapeRawInventaire(rawInventaire: null): null;
 export function reshapeRawInventaire(rawInventaire: RawInventaire): Inventaire;

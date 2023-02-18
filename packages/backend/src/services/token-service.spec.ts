@@ -3,9 +3,9 @@ import { jwtVerify, type JWTPayload, type JWTVerifyResult, type ResolvedKey } fr
 import { TextEncoder } from "node:util";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type DatabaseRole, type User } from "../types/User";
-import { buildTokenService } from "./token-service";
-import { type UserService } from "./user-service";
+import { type DatabaseRole, type User } from "../types/User.js";
+import { buildTokenService } from "./token-service.js";
+import { type UserService } from "./user-service.js";
 
 const userService = mock<UserService>({
   getUser: vi.fn(),

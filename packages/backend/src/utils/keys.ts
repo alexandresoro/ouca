@@ -1,6 +1,6 @@
 import { generateSecret, type KeyLike } from "jose";
 import { TextEncoder } from "node:util";
-import config from "../config";
+import config from "../config.js";
 
 export const SALT_AND_PWD_DELIMITER = ":";
 

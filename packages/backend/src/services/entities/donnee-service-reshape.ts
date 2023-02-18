@@ -1,5 +1,5 @@
-import { type InputDonnee } from "../../graphql/generated/graphql-types";
-import { type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types";
+import { type InputDonnee } from "../../graphql/generated/graphql-types.js";
+import { type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 
 export const reshapeInputDonneeUpsertData = (data: InputDonnee): DonneeCreateInput => {
   const {

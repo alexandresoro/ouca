@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "rootDir": "src",
     "outDir": "dist",
-    "module": "commonjs",
+    "module": "Node16",
     "lib": ["ES2022"],
     "target": "ES2022",
     "esModuleInterop": true,

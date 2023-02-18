@@ -4,15 +4,15 @@ import {
   type MutationUpsertSexeArgs,
   type QuerySexesArgs,
   type SexeWithSpecimensCount,
-} from "../../graphql/generated/graphql-types";
-import { type DonneeRepository } from "../../repositories/donnee/donnee-repository";
-import { type SexeRepository } from "../../repositories/sexe/sexe-repository";
-import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types";
-import { type LoggedUser } from "../../types/User";
-import { COLUMN_LIBELLE } from "../../utils/constants";
-import { OucaError } from "../../utils/errors";
-import { validateAuthorization } from "./authorization-utils";
-import { getSqlPagination } from "./entities-utils";
+} from "../../graphql/generated/graphql-types.js";
+import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
+import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types.js";
+import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
+import { type LoggedUser } from "../../types/User.js";
+import { COLUMN_LIBELLE } from "../../utils/constants.js";
+import { OucaError } from "../../utils/errors.js";
+import { validateAuthorization } from "./authorization-utils.js";
+import { getSqlPagination } from "./entities-utils.js";
 
 type SexeServiceDependencies = {
   logger: Logger;

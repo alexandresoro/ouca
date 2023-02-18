@@ -1,12 +1,12 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
+} from "../repository-helpers.js";
 import {
   communeSchema,
   communeWithDepartementCodeSchema,
@@ -14,7 +14,7 @@ import {
   type CommuneCreateInput,
   type CommuneFindManyInput,
   type CommuneWithDepartementCode,
-} from "./commune-repository-types";
+} from "./commune-repository-types.js";
 
 export type CommuneRepositoryDependencies = {
   slonik: DatabasePool;

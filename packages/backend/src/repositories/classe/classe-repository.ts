@@ -1,13 +1,18 @@
 import { sql, type DatabasePool } from "slonik";
-import { countSchema } from "../common";
+import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
   objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
-} from "../repository-helpers";
-import { classeSchema, type Classe, type ClasseCreateInput, type ClasseFindManyInput } from "./classe-repository-types";
+} from "../repository-helpers.js";
+import {
+  classeSchema,
+  type Classe,
+  type ClasseCreateInput,
+  type ClasseFindManyInput,
+} from "./classe-repository-types.js";
 
 export type ClasseRepositoryDependencies = {
   slonik: DatabasePool;

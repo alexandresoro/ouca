@@ -1,5 +1,5 @@
 import { pino, type TransportTargetOptions } from "pino";
-import config from "../config";
+import config from "../config.js";
 
 const getPinoTransportsToUse = () => {
   const transports: TransportTargetOptions[] = [];
