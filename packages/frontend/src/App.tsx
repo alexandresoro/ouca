@@ -1,4 +1,4 @@
-import { Box, createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
+import { Box, createTheme, responsiveFontSizes, ThemeProvider, useMediaQuery } from "@mui/material";
 import { cyan, grey, pink } from "@mui/material/colors";
 import * as Sentry from "@sentry/react";
 import { refocusExchange } from "@urql/exchange-refocus";
@@ -43,51 +43,53 @@ const App: FunctionComponent<AppProps> = (props) => {
 
   const theme = useMemo(
     () =>
-      createTheme({
-        palette: {
-          mode: prefersDarkMode ? "dark" : "light",
-          primary: {
-            main: cyan[800],
+      responsiveFontSizes(
+        createTheme({
+          palette: {
+            mode: prefersDarkMode ? "dark" : "light",
+            primary: {
+              main: cyan[800],
+            },
+            secondary: {
+              main: pink["A200"],
+            },
+            ...(prefersDarkMode
+              ? {}
+              : {
+                  background: {
+                    default: grey[50],
+                  },
+                }),
           },
-          secondary: {
-            main: pink["A200"],
+          typography: {
+            fontFamily: "Lato",
+            button: {
+              textTransform: "none",
+            },
           },
-          ...(prefersDarkMode
-            ? {}
-            : {
-                background: {
-                  default: grey[50],
+          components: {
+            MuiCard: {
+              defaultProps: {
+                elevation: 0,
+              },
+              styleOverrides: {
+                root: {
+                  borderStyle: "solid",
+                  borderWidth: "2px",
+                  borderColor: cyan[800],
                 },
-              }),
-        },
-        typography: {
-          fontFamily: "Lato",
-          button: {
-            textTransform: "none",
-          },
-        },
-        components: {
-          MuiCard: {
-            defaultProps: {
-              elevation: 0,
+              },
             },
-            styleOverrides: {
-              root: {
-                borderStyle: "solid",
-                borderWidth: "2px",
-                borderColor: cyan[800],
+            MuiTableCell: {
+              styleOverrides: {
+                head: {
+                  fontWeight: "700",
+                },
               },
             },
           },
-          MuiTableCell: {
-            styleOverrides: {
-              head: {
-                fontWeight: "700",
-              },
-            },
-          },
-        },
-      }),
+        })
+      ),
     [prefersDarkMode]
   );
 
