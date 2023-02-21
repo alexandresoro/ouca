@@ -1,10 +1,9 @@
 import { CircularProgress } from "@mui/material";
-import { FunctionComponent, ReactElement, useContext, useEffect } from "react";
+import { useContext, useEffect, type FunctionComponent, type ReactElement } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
 import { UserContext } from "../../contexts/UserContext";
 import { graphql } from "../../gql";
-import CenteredFlexBox from "./CenteredFlexBox";
 
 const REFRESH_TOKEN_MUTATION = graphql(`
   mutation RefreshToken {
@@ -50,13 +49,9 @@ const RequireAuth: FunctionComponent<{ children: ReactElement }> = (props) => {
   }
 
   return (
-    <CenteredFlexBox
-      sx={{
-        height: "100vh",
-      }}
-    >
+    <div className="centeredflex h-screen">
       <CircularProgress />
-    </CenteredFlexBox>
+    </div>
   );
 };
 

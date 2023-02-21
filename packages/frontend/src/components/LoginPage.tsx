@@ -1,5 +1,5 @@
 import { LoadingButton } from "@mui/lab";
-import { Card, Container, styled, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Card, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useContext, type FunctionComponent } from "react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,6 @@ import GreenBird from "../assets/img/green-bird.svg";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type UserLoginInput } from "../gql/graphql";
-import CenteredFlexBox from "./utils/CenteredFlexBox";
 
 const USER_LOGIN_MUTATION = graphql(`
   mutation UserLogin($loginData: UserLoginInput!) {
@@ -22,10 +21,6 @@ const USER_LOGIN_MUTATION = graphql(`
     }
   }
 `);
-
-const LoginTextField = styled(TextField)(() => ({
-  width: "32ch",
-}));
 
 type LocationState = {
   from: Location;
@@ -58,7 +53,7 @@ const LoginPage: FunctionComponent = () => {
 
   const [{ fetching }, sendUserLogin] = useMutation(USER_LOGIN_MUTATION);
 
-  const logoSize = isDesktopSize ? "220px" : isTabletSize ? "180px" : "100px";
+  const logoSize = isDesktopSize ? 220 : isTabletSize ? 180 : 100;
 
   const onSubmit: SubmitHandler<UserLoginInput> = (loginData) => {
     sendUserLogin({
@@ -87,36 +82,21 @@ const LoginPage: FunctionComponent = () => {
   };
 
   return (
-    <Container
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        gap: isDesktopSize ? 2 : 1,
-        paddingTop: isDesktopSize ? 5 : 2,
-        paddingBottom: 2,
-      }}
-    >
-      <CenteredFlexBox>
+    <div className="min-h-screen max-w-screen-xl mx-auto flex flex-col lg:pt-10 px-6 py-4 lg:gap-4 gap-2">
+      <div className="centeredflex">
         <img src={GreenBird} alt="" width={logoSize} height={logoSize} loading="lazy" />
-      </CenteredFlexBox>
-      <CenteredFlexBox>
-        <Typography color="textPrimary" component="h1" variant="h4" sx={{ textAlign: "center" }}>
+      </div>
+      <div className="centeredflex">
+        <Typography
+          className="text-center lg:text-3xl md:text-2xl sm:text-xl text-lg"
+          color="textPrimary"
+          component="h1"
+        >
           {t("welcomeText")}
         </Typography>
-      </CenteredFlexBox>
-      <CenteredFlexBox
-        sx={{
-          marginTop: isDesktopSize ? 4 : 2,
-        }}
-      >
-        <Card
-          sx={{
-            flexGrow: 1,
-            maxWidth: "800px",
-            padding: 1,
-          }}
-        >
+      </div>
+      <div className="centeredflex lg:mt-8 mt-4">
+        <Card className="grow p-2 max-w-screen-md">
           <form onSubmit={handleSubmit(onSubmit)}>
             <Controller
               name="username"
@@ -125,8 +105,9 @@ const LoginPage: FunctionComponent = () => {
                 required: t("loginRequiredLabel"),
               }}
               render={({ field }) => (
-                <CenteredFlexBox>
-                  <LoginTextField
+                <div className="centeredflex">
+                  <TextField
+                    className="w-[32ch]"
                     label={t("loginLabel")}
                     variant="standard"
                     required
@@ -135,7 +116,7 @@ const LoginPage: FunctionComponent = () => {
                     helperText={errors?.username?.message ?? " "}
                     {...field}
                   />
-                </CenteredFlexBox>
+                </div>
               )}
             />
             <Controller
@@ -145,8 +126,9 @@ const LoginPage: FunctionComponent = () => {
                 required: t("passwordRequiredLabel"),
               }}
               render={({ field }) => (
-                <CenteredFlexBox>
-                  <LoginTextField
+                <div className="centeredflex">
+                  <TextField
+                    className="w-[32ch]"
                     label={t("passwordLabel")}
                     type="password"
                     variant="standard"
@@ -156,25 +138,18 @@ const LoginPage: FunctionComponent = () => {
                     helperText={errors?.password?.message ?? " "}
                     {...field}
                   />
-                </CenteredFlexBox>
+                </div>
               )}
             />
-            <CenteredFlexBox>
-              <LoadingButton
-                type="submit"
-                loading={fetching}
-                variant="contained"
-                sx={{
-                  margin: 2,
-                }}
-              >
+            <div className="centeredflex">
+              <LoadingButton className="m-4" type="submit" loading={fetching} variant="contained">
                 {t("loginButton")}
               </LoadingButton>
-            </CenteredFlexBox>
+            </div>
           </form>
         </Card>
-      </CenteredFlexBox>
-    </Container>
+      </div>
+    </div>
   );
 };
 

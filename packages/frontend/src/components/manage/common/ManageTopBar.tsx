@@ -1,9 +1,8 @@
 import { Add, FileUpload } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
-import { FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import FlexSpacer from "../../utils/FlexSpacer";
 import StyledPanelHeader from "../../utils/StyledPanelHeader";
 
 type ManageTopBarProps = {
@@ -19,28 +18,25 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
 
   return (
     <>
-      <StyledPanelHeader>
+      <StyledPanelHeader className="place-content-between">
         <Typography variant="h5" component="h1">
           {title}
         </Typography>
         {showButtons && (
-          <>
-            <FlexSpacer />
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 3,
-              }}
-            >
-              <Button component={Link} to="create" variant="contained" color="secondary" startIcon={<Add />}>
-                {t("createAction")}
-              </Button>
-              <Button variant="contained" color="secondary" startIcon={<FileUpload />} onClick={onClickExport}>
-                {t("exportAction")}
-              </Button>
-            </Box>
-          </>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 3,
+            }}
+          >
+            <Button component={Link} to="create" variant="contained" color="secondary" startIcon={<Add />}>
+              {t("createAction")}
+            </Button>
+            <Button variant="contained" color="secondary" startIcon={<FileUpload />} onClick={onClickExport}>
+              {t("exportAction")}
+            </Button>
+          </Box>
         )}
       </StyledPanelHeader>
     </>

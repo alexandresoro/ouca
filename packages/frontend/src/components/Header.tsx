@@ -32,8 +32,8 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { TFuncKey } from "i18next";
-import { FunctionComponent, useContext, useState } from "react";
+import { type TFuncKey } from "i18next";
+import { useContext, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
@@ -41,7 +41,6 @@ import Logo from "../assets/img/logo.svg";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { getFullName, getInitials } from "../utils/usernameUtils";
-import FlexSpacer from "./utils/FlexSpacer";
 
 const USER_LOGOUT_MUTATION = graphql(`
   mutation Logout {
@@ -187,7 +186,7 @@ const Header: FunctionComponent = () => {
 
   return (
     <AppBar position="sticky">
-      <Toolbar variant="dense">
+      <Toolbar className="place-content-between" variant="dense">
         <ButtonBase component={Link} to="/">
           <img
             src={Logo}
@@ -217,7 +216,6 @@ const Header: FunctionComponent = () => {
             </Typography>
           </Box>
         </ButtonBase>
-        <FlexSpacer />
         <Box
           sx={{
             display: "flex",
