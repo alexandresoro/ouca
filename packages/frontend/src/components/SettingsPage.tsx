@@ -212,7 +212,7 @@ const SettingsPage: FunctionComponent = () => {
         }}
       >
         {fetching && (
-          <div className="centeredflex">
+          <div className="flex justify-center items-center">
             <CircularProgress size={100} />
           </div>
         )}

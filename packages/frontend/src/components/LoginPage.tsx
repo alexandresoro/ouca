@@ -1,5 +1,5 @@
 import { LoadingButton } from "@mui/lab";
-import { Card, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { TextField } from "@mui/material";
 import { useContext, type FunctionComponent } from "react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -32,10 +32,6 @@ const LoginPage: FunctionComponent = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const theme = useTheme();
-  const isDesktopSize = useMediaQuery(theme.breakpoints.up("lg"));
-  const isTabletSize = useMediaQuery(theme.breakpoints.between("sm", "lg"));
-
   const from = (location.state as LocationState)?.from?.pathname || "/";
 
   const {
@@ -52,8 +48,6 @@ const LoginPage: FunctionComponent = () => {
   });
 
   const [{ fetching }, sendUserLogin] = useMutation(USER_LOGIN_MUTATION);
-
-  const logoSize = isDesktopSize ? 220 : isTabletSize ? 180 : 100;
 
   const onSubmit: SubmitHandler<UserLoginInput> = (loginData) => {
     sendUserLogin({
@@ -82,73 +76,62 @@ const LoginPage: FunctionComponent = () => {
   };
 
   return (
-    <div className="min-h-screen max-w-screen-xl mx-auto flex flex-col lg:pt-10 px-6 py-4 lg:gap-4 gap-2">
-      <div className="centeredflex">
-        <img src={GreenBird} alt="" width={logoSize} height={logoSize} loading="lazy" />
-      </div>
-      <div className="centeredflex">
-        <Typography
-          className="text-center lg:text-3xl md:text-2xl sm:text-xl text-lg"
-          color="textPrimary"
-          component="h1"
-        >
-          {t("welcomeText")}
-        </Typography>
-      </div>
-      <div className="centeredflex lg:mt-8 mt-4">
-        <Card className="grow p-2 max-w-screen-md">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-              name="username"
-              control={control}
-              rules={{
-                required: t("loginRequiredLabel"),
-              }}
-              render={({ field }) => (
-                <div className="centeredflex">
-                  <TextField
-                    className="w-[32ch]"
-                    label={t("loginLabel")}
-                    variant="standard"
-                    required
-                    fullWidth
-                    error={!!errors?.username}
-                    helperText={errors?.username?.message ?? " "}
-                    {...field}
-                  />
-                </div>
-              )}
-            />
-            <Controller
-              name="password"
-              control={control}
-              rules={{
-                required: t("passwordRequiredLabel"),
-              }}
-              render={({ field }) => (
-                <div className="centeredflex">
-                  <TextField
-                    className="w-[32ch]"
-                    label={t("passwordLabel")}
-                    type="password"
-                    variant="standard"
-                    required
-                    fullWidth
-                    error={!!errors?.password}
-                    helperText={errors?.password?.message ?? " "}
-                    {...field}
-                  />
-                </div>
-              )}
-            />
-            <div className="centeredflex">
-              <LoadingButton className="m-4" type="submit" loading={fetching} variant="contained">
-                {t("loginButton")}
-              </LoadingButton>
+    <div className="container xl:max-w-screen-xl mx-auto min-h-screen flex flex-col lg:pt-10 px-6 py-4 lg:gap-4 gap-2">
+      <img src={GreenBird} alt="" className="block mx-auto w-24 h-24 md:w-44 md:h-44 lg:w-56 lg:h-56" loading="lazy" />
+      <h1 className="font-normal text-center lg:text-3xl md:text-2xl sm:text-xl text-lg">{t("welcomeText")}</h1>
+      <form
+        className="flex flex-col container mx-auto max-w-screen-md p-2 border-solid border-2 border-teal-700 rounded-lg justify-center mt-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Controller
+          name="username"
+          control={control}
+          rules={{
+            required: t("loginRequiredLabel"),
+          }}
+          render={({ field }) => (
+            <div className="flex justify-center">
+              <TextField
+                className="grow w-[20ch] max-w-[32ch]"
+                label={t("loginLabel")}
+                variant="standard"
+                required
+                fullWidth
+                error={!!errors?.username}
+                helperText={errors?.username?.message ?? " "}
+                {...field}
+              />
             </div>
-          </form>
-        </Card>
-      </div>
+          )}
+        />
+        <Controller
+          name="password"
+          control={control}
+          rules={{
+            required: t("passwordRequiredLabel"),
+          }}
+          render={({ field }) => (
+            <div className="flex justify-center">
+              <TextField
+                className="grow w-[20ch] max-w-[32ch]"
+                label={t("passwordLabel")}
+                type="password"
+                variant="standard"
+                required
+                fullWidth
+                error={!!errors?.password}
+                helperText={errors?.password?.message ?? " "}
+                {...field}
+              />
+            </div>
+          )}
+        />
+        <div className="flex justify-center">
+          <LoadingButton className="m-4" type="submit" loading={fetching} variant="contained">
+            {t("loginButton")}
+          </LoadingButton>
+        </div>
+      </form>
     </div>
   );
 };

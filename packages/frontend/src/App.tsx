@@ -1,5 +1,4 @@
 import {
-  Box,
   createTheme,
   CssBaseline,
   responsiveFontSizes,
@@ -142,11 +141,7 @@ const App: FunctionComponent<AppProps> = (props) => {
               <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <UserProvider>
-                  <Box
-                    sx={{
-                      backgroundColor: theme?.palette?.background?.default,
-                    }}
-                  >
+                  <div className="bg-neutral-50 dark:bg-neutral-900">
                     <Suspense fallback="">
                       <SentryRoutes>
                         <Route
@@ -291,7 +286,7 @@ const App: FunctionComponent<AppProps> = (props) => {
                         </Route>
                       </SentryRoutes>
                     </Suspense>
-                  </Box>
+                  </div>
                 </UserProvider>
               </ThemeProvider>
             </StyledEngineProvider>
