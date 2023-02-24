@@ -20,7 +20,6 @@ import {
 import {
   AppBar,
   Avatar,
-  Box,
   Button,
   ButtonBase,
   Divider,
@@ -29,7 +28,6 @@ import {
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
   useTheme,
 } from "@mui/material";
 import { type TFuncKey } from "i18next";
@@ -187,41 +185,11 @@ const Header: FunctionComponent = () => {
   return (
     <AppBar position="sticky">
       <Toolbar className="place-content-between" variant="dense">
-        <ButtonBase component={Link} to="/">
-          <img
-            src={Logo}
-            height="60px"
-            width="70px"
-            style={{
-              marginBottom: "-12px",
-            }}
-          ></img>
-          <Box
-            sx={{
-              marginLeft: "10px",
-              fontFamily: "Showcard Gothic",
-              fontSize: "26px",
-              textShadow: "2px 2px rgba(0, 0, 0, 0.4)",
-            }}
-          >
-            <Typography
-              variant="h4"
-              component="h1"
-              sx={{
-                fontFamily: "Yuji Hentaigana Akebono",
-                fontWeight: "bold",
-              }}
-            >
-              oùça?
-            </Typography>
-          </Box>
+        <ButtonBase className="gap-2.5" component={Link} to="/">
+          <img className="-mb-3" src={Logo} height="60px" width="70px"></img>
+          <h1 className="font-['Yuji_Hentaigana_Akebono'] font-bold drop-shadow-[2px_2px_rgba(0,0,0,0.4)]">oùça?</h1>
         </ButtonBase>
-        <Box
-          sx={{
-            display: "flex",
-            gap: theme.spacing(3),
-          }}
-        >
+        <div className="flex gap-6">
           <Button component={Link} to="/creation" color="inherit" startIcon={<Add />}>
             {t("observationButton")}
           </Button>
@@ -256,22 +224,15 @@ const Header: FunctionComponent = () => {
             })}
           </Menu>
 
-          <IconButton
-            onClick={handleClickOptions}
-            aria-label={t("aria-userMenuButton")}
-            sx={{
-              p: 0,
-            }}
-          >
+          <IconButton className="p-0" onClick={handleClickOptions} aria-label={t("aria-userMenuButton")}>
             <Avatar
+              className="w-8 h-8"
               sx={{
                 ...(fullName
                   ? {
                       bgcolor: theme.palette.secondary.main,
                     }
                   : {}),
-                width: 32,
-                height: 32,
               }}
             >
               {initials}
@@ -308,7 +269,7 @@ const Header: FunctionComponent = () => {
               {t("logout")}
             </MenuItem>
           </Menu>
-        </Box>
+        </div>
       </Toolbar>
     </AppBar>
   );
