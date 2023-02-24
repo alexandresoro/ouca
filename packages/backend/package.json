@@ -72,7 +72,7 @@
     "jose": "4.12.0",
     "mercurius": "12.2.0",
     "pino": "8.11.0",
-    "pino-pretty": "9.3.0",
+    "pino-pretty": "9.4.0",
     "slonik": "33.0.10",
     "slonik-interceptor-field-name-transformation": "1.6.5",
     "umzug": "3.2.1",
