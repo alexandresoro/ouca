@@ -1,7 +1,7 @@
-import { AlertColor, Box } from "@mui/material";
-import { Dispatch, FunctionComponent, useState } from "react";
+import { type AlertColor } from "@mui/material";
+import { useState, type Dispatch, type FunctionComponent } from "react";
 import { Outlet } from "react-router-dom";
-import { SnackbarContentType, SnackbarContext } from "../contexts/SnackbarContext";
+import { SnackbarContext, type SnackbarContentType } from "../contexts/SnackbarContext";
 import NotificationSnackbar from "./common/NotificationSnackbar";
 import Header from "./Header";
 
@@ -32,23 +32,12 @@ const Layout: FunctionComponent = () => {
   return (
     <>
       <SnackbarContext.Provider value={{ snackbarContent, setSnackbarContent }}>
-        <Box
-          sx={{
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <div className="flex flex-col h-screen">
           <Header />
-          <Box
-            sx={{
-              flex: "1 1 auto",
-              overflowY: "auto",
-            }}
-          >
+          <div className="flex-auto overflow-y-auto">
             <Outlet />
-          </Box>
-        </Box>
+          </div>
+        </div>
       </SnackbarContext.Provider>
       <NotificationSnackbar
         keyAlert={snackbarContent?.timestamp}
