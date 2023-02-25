@@ -225,18 +225,7 @@ const Header: FunctionComponent = () => {
           </Menu>
 
           <IconButton className="p-0" onClick={handleClickOptions} aria-label={t("aria-userMenuButton")}>
-            <Avatar
-              className="w-8 h-8"
-              sx={{
-                ...(fullName
-                  ? {
-                      bgcolor: theme.palette.secondary.main,
-                    }
-                  : {}),
-              }}
-            >
-              {initials}
-            </Avatar>
+            <Avatar className={`w-8 h-8 ${fullName ? "bg-rose-500" : ""}`}>{initials}</Avatar>
           </IconButton>
 
           <Menu

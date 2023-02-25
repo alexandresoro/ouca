@@ -1,7 +1,8 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Container, Tab, Typography } from "@mui/material";
-import { FunctionComponent, useState } from "react";
+import { Tab, Typography } from "@mui/material";
+import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import ContentContainerLayout from "../layout/ContentContainerLayout";
 import StyledPanelHeader from "../utils/StyledPanelHeader";
 import DonneeFilter from "./DonneeFilter";
 import DonneesByEspeceTable from "./DonneesByEspeceTable";
@@ -33,21 +34,14 @@ const ViewDonneesPage: FunctionComponent = () => {
         </Typography>
       </StyledPanelHeader>
 
-      <Container
-        maxWidth="xl"
-        sx={{
-          marginTop: 5,
-        }}
-      >
+      <ContentContainerLayout>
         <DonneeFilter></DonneeFilter>
 
         <TabContext value={selectedTab}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList onChange={handleTabChange}>
-              <Tab label={t("view.tab.observations")} value={ViewTabsValues.Donnees} />
-              <Tab label={t("view.tab.species")} value={ViewTabsValues.Especes} />
-            </TabList>
-          </Box>
+          <TabList className="border-b border-gray-200" onChange={handleTabChange}>
+            <Tab label={t("view.tab.observations")} value={ViewTabsValues.Donnees} />
+            <Tab label={t("view.tab.species")} value={ViewTabsValues.Especes} />
+          </TabList>
           <TabPanel value={ViewTabsValues.Donnees}>
             <DonneeTable></DonneeTable>
           </TabPanel>
@@ -55,7 +49,7 @@ const ViewDonneesPage: FunctionComponent = () => {
             <DonneesByEspeceTable></DonneesByEspeceTable>
           </TabPanel>
         </TabContext>
-      </Container>
+      </ContentContainerLayout>
     </>
   );
 };

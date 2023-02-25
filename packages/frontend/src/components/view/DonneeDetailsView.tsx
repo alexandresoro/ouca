@@ -1,10 +1,10 @@
 import { Comment, EmojiNature, Filter1, Link, Park, Pets } from "@mui/icons-material";
-import { Chip, Divider, List, Typography, useTheme } from "@mui/material";
+import { Chip } from "@mui/material";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
-import { TFuncKey } from "i18next";
-import { FunctionComponent } from "react";
+import { type TFuncKey } from "i18next";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Comportement, Donnee } from "../../gql/graphql";
+import { type Comportement, type Donnee } from "../../gql/graphql";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 
 type DonneeDetailsViewProps = {
@@ -15,7 +15,6 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
   const { donnee } = props;
 
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const getNicheurStatusStr = (comportements: Comportement[]): string => {
     const statusCode = getHighestNicheurStatus(comportements);
@@ -24,32 +23,31 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
 
   return (
     <>
-      <List sx={{ borderRadius: "4px", border: 1, borderColor: theme.palette.grey[300] }}>
+      <ul className="border border-solid rounded border-neutral-300 divide-solid divide-neutral-200 divide-y py-2">
         <ItemWithAvatar
           primary={
             <>
-              <Typography component="h3" variant="h6">
+              <h3 className="text-x font-normal">
                 {t("observationDetails.observationTitle")}
 
                 {donnee?.regroupement ? (
                   <>
                     <Chip
-                      icon={<Link sx={{ paddingLeft: "5px" }} />}
+                      className="ml-2.5 border-gray-300"
+                      icon={<Link className="pl-1" />}
                       label={t("observationDetails.group", {
                         group: donnee?.regroupement,
                       })}
                       variant="outlined"
-                      sx={{ marginLeft: "10px", borderColor: theme.palette.grey[300] }}
                     />
                   </>
                 ) : (
                   <></>
                 )}
-              </Typography>
+              </h3>
             </>
           }
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<Filter1 />}
@@ -75,7 +73,6 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             }) as string
           }
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<EmojiNature />}
@@ -94,7 +91,6 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             </>
           }
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<Pets />}
@@ -106,7 +102,6 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
           })}
           secondary={getNicheurStatusStr(donnee.comportements)}
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<Park />}
@@ -117,7 +112,6 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             }),
           })}
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<Comment />}
@@ -126,7 +120,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             comment: donnee?.commentaire,
           })}
         ></ItemWithAvatar>
-      </List>
+      </ul>
     </>
   );
 };

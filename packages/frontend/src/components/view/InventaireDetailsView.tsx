@@ -1,9 +1,8 @@
 import { CalendarToday, LightMode, People, Place } from "@mui/icons-material";
-import { Divider, List, Typography, useTheme } from "@mui/material";
 import { intlFormat, parseISO } from "date-fns";
-import { FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Inventaire } from "../../gql/graphql";
+import { type Inventaire } from "../../gql/graphql";
 import { getInventaireCoordinates } from "../../utils/coordinates-helper";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 
@@ -15,19 +14,13 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
   const { inventaire } = props;
 
   const { t } = useTranslation();
-  const theme = useTheme();
 
   return (
     <>
-      <List sx={{ borderRadius: "4px", border: 1, borderColor: theme.palette.grey[300] }}>
+      <ul className="border border-solid rounded border-neutral-300 divide-solid divide-neutral-200 divide-y py-2">
         <ItemWithAvatar
-          primary={
-            <Typography component="h3" variant="h6">
-              {t("observationDetails.inventoryTitle")}
-            </Typography>
-          }
+          primary={<h3 className="text-x font-normal">{t("observationDetails.inventoryTitle")}</h3>}
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<People />}
@@ -41,7 +34,6 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
             }),
           })}
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<CalendarToday />}
@@ -54,7 +46,6 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
             duration: inventaire.duree,
           })}
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<Place />}
@@ -76,7 +67,6 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
             </>
           }
         ></ItemWithAvatar>
-        <Divider />
 
         <ItemWithAvatar
           icon={<LightMode />}
@@ -91,7 +81,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
             temperature: inventaire.temperature,
           })}
         ></ItemWithAvatar>
-      </List>
+      </ul>
     </>
   );
 };

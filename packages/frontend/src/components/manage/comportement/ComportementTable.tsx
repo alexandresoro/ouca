@@ -1,5 +1,4 @@
 import {
-  Box,
   Paper,
   Table,
   TableBody,
@@ -11,13 +10,12 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
-import { FunctionComponent, useState } from "react";
+import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
-import { Comportement, ComportementsOrderBy } from "../../../gql/graphql";
+import { type Comportement, type ComportementsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
@@ -155,12 +153,7 @@ const ComportementTable: FunctionComponent = () => {
           setQuery(e.currentTarget.value);
         }}
       />
-      <TableContainer
-        component={Paper}
-        sx={{
-          mt: 2,
-        }}
-      >
+      <TableContainer className="mt-4" component={Paper}>
         <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
@@ -173,9 +166,9 @@ const ComportementTable: FunctionComponent = () => {
                   >
                     {t(column.locKey)}
                     {orderBy === column.key ? (
-                      <Box component="span" sx={visuallyHidden}>
+                      <span className="sr-only">
                         {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
-                      </Box>
+                      </span>
                     ) : null}
                   </TableSortLabel>
                 </TableCell>

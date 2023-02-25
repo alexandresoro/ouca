@@ -1,10 +1,10 @@
 import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { Card, Collapse, IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
+import { Card, Collapse, IconButton, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
 import { intlFormat, parseISO } from "date-fns";
-import { TFuncKey } from "i18next";
-import { FunctionComponent, useState } from "react";
+import { type TFuncKey } from "i18next";
+import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Donnee } from "../../gql/graphql";
+import { type Donnee } from "../../gql/graphql";
 import PrimaryIconButton from "../utils/PrimaryIconButton";
 import DonneeDetailsView from "./DonneeDetailsView";
 import InventaireDetailsView from "./InventaireDetailsView";
@@ -59,17 +59,13 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
       <TableRow>
         <TableCell style={{ padding: 0 }} colSpan={7}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Card
-              sx={{
-                padding: 3,
-              }}
-            >
+            <Card className="p-6">
               <Typography component="h2" variant="h5">
                 {t("observationDetails.mainTitle", {
                   speciesName: donnee?.espece.nomFrancais,
                 })}
               </Typography>
-              <Typography sx={{ marginTop: "5px", fontSize: "13px" }}>
+              <Typography className="mt-1 text-[13px]">
                 {t("observationDetails.mainSubtitle", {
                   owner: donnee?.inventaire.observateur.libelle,
                   creationDate: intlFormat(parseISO(donnee?.inventaire.date)),
@@ -79,39 +75,15 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
                 })}
               </Typography>
 
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                justifyContent="center"
-                alignItems="center"
-                spacing={{
-                  xs: 0,
-                  sm: 5,
-                  md: 8,
-                }}
-                sx={{ marginTop: "30px" }}
-              >
-                <Stack
-                  sx={{
-                    flex: "auto",
-                    width: {
-                      xs: "100%",
-                    },
-                  }}
-                >
+              <div className="mt-8 flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
+                <div className="flex flex-col flex-auto w-full">
                   <InventaireDetailsView inventaire={donnee.inventaire}></InventaireDetailsView>
-                </Stack>
+                </div>
 
-                <Stack
-                  sx={{
-                    flex: "auto",
-                    width: {
-                      xs: "100%",
-                    },
-                  }}
-                >
+                <div className="flex flex-col flex-auto w-full">
                   <DonneeDetailsView donnee={donnee}></DonneeDetailsView>
-                </Stack>
-              </Stack>
+                </div>
+              </div>
             </Card>
           </Collapse>
         </TableCell>

@@ -1,5 +1,5 @@
 import { Autocomplete, Button, Card, Chip, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
-import { FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 const DonneeFilter: FunctionComponent = () => {
@@ -10,11 +10,7 @@ const DonneeFilter: FunctionComponent = () => {
 
   return (
     <>
-      <Card
-        sx={{
-          padding: 3,
-        }}
-      >
+      <Card className="p-6">
         <FormGroup>
           <Autocomplete
             multiple

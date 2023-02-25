@@ -1,14 +1,15 @@
 import { Cancel, Save } from "@mui/icons-material";
-import { Button, Card, CardActions, CardContent, CardHeader, Container, TextField } from "@mui/material";
-import { FunctionComponent, useEffect } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Button, Card, CardActions, CardContent, CardHeader, TextField } from "@mui/material";
+import { useEffect, type FunctionComponent } from "react";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { graphql } from "../../../gql";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { getOucaError } from "../../../utils/ouca-error-extractor";
-import { EntityWithLibelleInputs } from "../common/entity-types";
+import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import { type EntityWithLibelleInputs } from "../common/entity-types";
 import ManageTopBar from "../common/ManageTopBar";
 
 const OBSERVATEUR_QUERY = graphql(`
@@ -121,12 +122,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
   return (
     <>
       <ManageTopBar title={t("observers")} showButtons={false} />
-      <Container
-        maxWidth="xl"
-        sx={{
-          marginTop: 5,
-        }}
-      >
+      <ContentContainerLayout>
         <Card>
           <CardHeader component="h2" title={title}></CardHeader>
 
@@ -164,7 +160,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
             </CardActions>
           </form>
         </Card>
-      </Container>
+      </ContentContainerLayout>
     </>
   );
 };

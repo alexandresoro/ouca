@@ -1,5 +1,4 @@
 import {
-  Box,
   Paper,
   Table,
   TableBody,
@@ -11,12 +10,11 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
-import { FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "urql";
 import { graphql } from "../../gql";
-import { EspecesOrderBy } from "../../gql/graphql";
+import { type EspecesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 
 const PAGINATED_SEARCH_ESPECES_QUERY = graphql(`
@@ -107,12 +105,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
 
   return (
     <>
-      <TableContainer
-        component={Paper}
-        sx={{
-          mt: 2,
-        }}
-      >
+      <TableContainer className="mt-4" component={Paper}>
         <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
@@ -125,9 +118,9 @@ const DonneesByEspeceTable: FunctionComponent = () => {
                   >
                     {t(column.locKey)}
                     {orderBy === column.key ? (
-                      <Box component="span" sx={visuallyHidden}>
+                      <span className="sr-only">
                         {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
-                      </Box>
+                      </span>
                     ) : null}
                   </TableSortLabel>
                 </TableCell>

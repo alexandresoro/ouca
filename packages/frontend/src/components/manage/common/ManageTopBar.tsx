@@ -1,5 +1,5 @@
 import { Add, FileUpload } from "@mui/icons-material";
-import { Box, Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -23,20 +23,14 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
           {title}
         </Typography>
         {showButtons && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 3,
-            }}
-          >
+          <div className="flex items-center gap-6">
             <Button component={Link} to="create" variant="contained" color="secondary" startIcon={<Add />}>
               {t("createAction")}
             </Button>
             <Button variant="contained" color="secondary" startIcon={<FileUpload />} onClick={onClickExport}>
               {t("exportAction")}
             </Button>
-          </Box>
+          </div>
         )}
       </StyledPanelHeader>
     </>

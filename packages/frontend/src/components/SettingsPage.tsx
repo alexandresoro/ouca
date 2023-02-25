@@ -1,4 +1,4 @@
-import { Card, CircularProgress, Container, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { Card, CircularProgress, MenuItem, TextField, Typography } from "@mui/material";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { useCallback, useContext, useEffect, type FunctionComponent } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import { type CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
+import ContentContainerLayout from "./layout/ContentContainerLayout";
 import StyledPanelHeader from "./utils/StyledPanelHeader";
 
 const SETTINGS_QUERY = graphql(`
@@ -205,228 +206,194 @@ const SettingsPage: FunctionComponent = () => {
           {t("settings")}
         </Typography>
       </StyledPanelHeader>
-      <Container
-        maxWidth="xl"
-        sx={{
-          marginTop: 5,
-        }}
-      >
+      <ContentContainerLayout>
         {fetching && (
           <div className="flex justify-center items-center">
             <CircularProgress size={100} />
           </div>
         )}
         {!(fetching || error) && (
-          <Card
-            sx={{
-              padding: 3,
-            }}
-          >
-            <form>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                justifyContent="center"
-                alignItems="center"
-                spacing={{
-                  xs: 0,
-                  sm: 5,
-                  md: 8,
-                }}
-              >
-                <Stack
-                  sx={{
-                    flex: "auto",
-                    width: {
-                      xs: "100%",
-                    },
+          <Card className="p-6">
+            <form className="flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
+              <div className="flex flex-col flex-auto w-full">
+                <ReactHookFormSelect
+                  name="defaultObservateur"
+                  label={t("defaultObserver")}
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: true,
+                  }}
+                  formControlProps={{
+                    margin: "normal",
+                    fullWidth: true,
                   }}
                 >
-                  <ReactHookFormSelect
-                    name="defaultObservateur"
-                    label={t("defaultObserver")}
-                    control={control}
-                    defaultValue=""
-                    rules={{
-                      required: true,
-                    }}
-                    formControlProps={{
-                      margin: "normal",
-                      fullWidth: true,
-                    }}
-                  >
-                    {data?.observateurs?.data?.map((observateur) => (
-                      <MenuItem key={observateur.id} value={observateur.id}>
-                        {observateur.libelle}
-                      </MenuItem>
-                    ))}
-                  </ReactHookFormSelect>
+                  {data?.observateurs?.data?.map((observateur) => (
+                    <MenuItem key={observateur.id} value={observateur.id}>
+                      {observateur.libelle}
+                    </MenuItem>
+                  ))}
+                </ReactHookFormSelect>
 
-                  <ReactHookFormSelect
-                    name="defaultDepartement"
-                    label={t("defaultDepartment")}
-                    control={control}
-                    defaultValue=""
-                    rules={{
-                      required: true,
-                    }}
-                    formControlProps={{
-                      margin: "normal",
-                      fullWidth: true,
-                    }}
-                  >
-                    {data?.departements?.data?.map((departement) => (
-                      <MenuItem key={departement.id} value={departement.id}>
-                        {departement.code}
-                      </MenuItem>
-                    ))}
-                  </ReactHookFormSelect>
-
-                  <ReactHookFormSelect
-                    name="defaultEstimationNombre"
-                    label={t("defaultNumberPrecision")}
-                    control={control}
-                    defaultValue=""
-                    rules={{
-                      required: true,
-                    }}
-                    formControlProps={{
-                      margin: "normal",
-                      fullWidth: true,
-                    }}
-                  >
-                    {data?.estimationsNombre?.data?.map((estimationNombre) => (
-                      <MenuItem key={estimationNombre.id} value={estimationNombre.id}>
-                        {estimationNombre.libelle}
-                      </MenuItem>
-                    ))}
-                  </ReactHookFormSelect>
-
-                  <Controller
-                    name="defaultNombre"
-                    control={control}
-                    defaultValue=""
-                    rules={{
-                      required: true,
-                      min: 1,
-                      max: 65535,
-                      validate: (v) => !isNaN(v as unknown as number),
-                    }}
-                    render={({ field }) => (
-                      <TextField
-                        label={t("defaultNumber")}
-                        inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                        variant="standard"
-                        fullWidth
-                        required
-                        error={!!errors?.defaultNombre}
-                        margin="normal"
-                        {...field}
-                      />
-                    )}
-                  />
-
-                  <ReactHookFormSelect
-                    name="defaultSexe"
-                    label={t("defaultSex")}
-                    control={control}
-                    defaultValue=""
-                    rules={{
-                      required: true,
-                    }}
-                    formControlProps={{
-                      margin: "normal",
-                      fullWidth: true,
-                    }}
-                  >
-                    {data?.sexes?.data?.map((sexe) => (
-                      <MenuItem key={sexe.id} value={sexe.id}>
-                        {sexe.libelle}
-                      </MenuItem>
-                    ))}
-                  </ReactHookFormSelect>
-
-                  <ReactHookFormSelect
-                    name="defaultAge"
-                    label={t("defaultAge")}
-                    control={control}
-                    defaultValue=""
-                    rules={{
-                      required: true,
-                    }}
-                    formControlProps={{
-                      margin: "normal",
-                      fullWidth: true,
-                    }}
-                  >
-                    {data?.ages?.data?.map((age) => (
-                      <MenuItem key={age.id} value={age.id}>
-                        {age.libelle}
-                      </MenuItem>
-                    ))}
-                  </ReactHookFormSelect>
-                </Stack>
-
-                <Stack
-                  sx={{
-                    flex: "auto",
-                    width: {
-                      xs: "100%",
-                    },
+                <ReactHookFormSelect
+                  name="defaultDepartement"
+                  label={t("defaultDepartment")}
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: true,
+                  }}
+                  formControlProps={{
+                    margin: "normal",
+                    fullWidth: true,
                   }}
                 >
-                  <ReactHookFormSwitch
-                    name="areAssociesDisplayed"
-                    control={control}
-                    defaultValue=""
-                    label={t("displayAssociateObservers")}
-                  />
+                  {data?.departements?.data?.map((departement) => (
+                    <MenuItem key={departement.id} value={departement.id}>
+                      {departement.code}
+                    </MenuItem>
+                  ))}
+                </ReactHookFormSelect>
 
-                  <ReactHookFormSwitch
-                    name="isMeteoDisplayed"
-                    control={control}
-                    defaultValue=""
-                    label={t("displayWeather")}
-                  />
+                <ReactHookFormSelect
+                  name="defaultEstimationNombre"
+                  label={t("defaultNumberPrecision")}
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: true,
+                  }}
+                  formControlProps={{
+                    margin: "normal",
+                    fullWidth: true,
+                  }}
+                >
+                  {data?.estimationsNombre?.data?.map((estimationNombre) => (
+                    <MenuItem key={estimationNombre.id} value={estimationNombre.id}>
+                      {estimationNombre.libelle}
+                    </MenuItem>
+                  ))}
+                </ReactHookFormSelect>
 
-                  <ReactHookFormSwitch
-                    name="isDistanceDisplayed"
-                    control={control}
-                    defaultValue=""
-                    label={t("displayDistance")}
-                  />
+                <Controller
+                  name="defaultNombre"
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: true,
+                    min: 1,
+                    max: 65535,
+                    validate: (v) => !isNaN(v as unknown as number),
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      label={t("defaultNumber")}
+                      inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                      variant="standard"
+                      fullWidth
+                      required
+                      error={!!errors?.defaultNombre}
+                      margin="normal"
+                      {...field}
+                    />
+                  )}
+                />
 
-                  <ReactHookFormSwitch
-                    name="isRegroupementDisplayed"
-                    control={control}
-                    defaultValue=""
-                    label={t("displayRegroupmentNumber")}
-                  />
+                <ReactHookFormSelect
+                  name="defaultSexe"
+                  label={t("defaultSex")}
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: true,
+                  }}
+                  formControlProps={{
+                    margin: "normal",
+                    fullWidth: true,
+                  }}
+                >
+                  {data?.sexes?.data?.map((sexe) => (
+                    <MenuItem key={sexe.id} value={sexe.id}>
+                      {sexe.libelle}
+                    </MenuItem>
+                  ))}
+                </ReactHookFormSelect>
 
-                  <ReactHookFormSelect
-                    name="coordinatesSystem"
-                    label={t("coordinatesSystem")}
-                    control={control}
-                    defaultValue=""
-                    rules={{
-                      required: true,
-                    }}
-                    formControlProps={{
-                      margin: "normal",
-                      fullWidth: true,
-                    }}
-                  >
-                    {COORDINATES_SYSTEMS.map((coordinateSystem) => (
-                      <MenuItem key={coordinateSystem.code} value={coordinateSystem.code}>
-                        {coordinateSystem.name}
-                      </MenuItem>
-                    ))}
-                  </ReactHookFormSelect>
-                </Stack>
-              </Stack>
+                <ReactHookFormSelect
+                  name="defaultAge"
+                  label={t("defaultAge")}
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: true,
+                  }}
+                  formControlProps={{
+                    margin: "normal",
+                    fullWidth: true,
+                  }}
+                >
+                  {data?.ages?.data?.map((age) => (
+                    <MenuItem key={age.id} value={age.id}>
+                      {age.libelle}
+                    </MenuItem>
+                  ))}
+                </ReactHookFormSelect>
+              </div>
+
+              <div className="flex flex-col flex-auto w-full">
+                <ReactHookFormSwitch
+                  name="areAssociesDisplayed"
+                  control={control}
+                  defaultValue=""
+                  label={t("displayAssociateObservers")}
+                />
+
+                <ReactHookFormSwitch
+                  name="isMeteoDisplayed"
+                  control={control}
+                  defaultValue=""
+                  label={t("displayWeather")}
+                />
+
+                <ReactHookFormSwitch
+                  name="isDistanceDisplayed"
+                  control={control}
+                  defaultValue=""
+                  label={t("displayDistance")}
+                />
+
+                <ReactHookFormSwitch
+                  name="isRegroupementDisplayed"
+                  control={control}
+                  defaultValue=""
+                  label={t("displayRegroupmentNumber")}
+                />
+
+                <ReactHookFormSelect
+                  name="coordinatesSystem"
+                  label={t("coordinatesSystem")}
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: true,
+                  }}
+                  formControlProps={{
+                    margin: "normal",
+                    fullWidth: true,
+                  }}
+                >
+                  {COORDINATES_SYSTEMS.map((coordinateSystem) => (
+                    <MenuItem key={coordinateSystem.code} value={coordinateSystem.code}>
+                      {coordinateSystem.name}
+                    </MenuItem>
+                  ))}
+                </ReactHookFormSelect>
+              </div>
             </form>
           </Card>
         )}
-      </Container>
+      </ContentContainerLayout>
     </>
   );
 };

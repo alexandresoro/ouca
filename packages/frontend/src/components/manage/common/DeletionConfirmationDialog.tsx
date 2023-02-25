@@ -7,7 +7,7 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-import { FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 type DeletionConfirmationDialogProps = {
@@ -48,6 +48,7 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
           {t("deleteConfirmationDialogCancelAction")}
         </Button>
         <Button
+          className="uppercase"
           onClick={onConfirmAction}
           autoFocus
           variant="outlined"

@@ -1,5 +1,5 @@
-import { TextField, TextFieldProps } from "@mui/material";
-import { FunctionComponent } from "react";
+import { TextField, type TextFieldProps } from "@mui/material";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 const FilterTextField: FunctionComponent<TextFieldProps> = (props) => {
@@ -7,15 +7,7 @@ const FilterTextField: FunctionComponent<TextFieldProps> = (props) => {
 
   return (
     <>
-      <TextField
-        label={t("filter")}
-        variant="standard"
-        sx={{
-          width: "40ch",
-        }}
-        margin="dense"
-        {...props}
-      />
+      <TextField className="w-[40ch]" label={t("filter")} variant="standard" margin="dense" {...props} />
     </>
   );
 };

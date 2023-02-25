@@ -1,11 +1,11 @@
-import { Container } from "@mui/material";
-import { FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useClient } from "urql";
 import { graphql } from "../../../gql";
 import useApiUrlContext from "../../../hooks/useApiUrlContext";
 import { DOWNLOAD_PATH, EXCEL_FILE_EXTENSION } from "../../../utils/constants";
 import { downloadFile } from "../../../utils/file-download-helper";
+import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import ManageTopBar from "../common/ManageTopBar";
 import EstimationDistanceTable from "./EstimationDistanceTable";
 
@@ -36,14 +36,10 @@ const EstimationDistancePage: FunctionComponent = () => {
   return (
     <>
       <ManageTopBar title={t("distancePrecisions")} onClickExport={handleExportClick} />
-      <Container
-        maxWidth="xl"
-        sx={{
-          marginTop: 5,
-        }}
+      <ContentContainerLayout
       >
         <EstimationDistanceTable />
-      </Container>
+      </ContentContainerLayout>
     </>
   );
 };
