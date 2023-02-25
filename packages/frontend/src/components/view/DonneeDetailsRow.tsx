@@ -24,7 +24,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
 
   return (
     <>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow>
         <TableCell>
           <IconButton
             aria-label={t("expand-data-row" as unknown as TFuncKey) as string}

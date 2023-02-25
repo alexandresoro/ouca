@@ -1,20 +1,11 @@
-import { Paper, styled } from "@mui/material";
+import { type FunctionComponent, type PropsWithChildren } from "react";
 
-export default styled(Paper)(({ theme }) => {
-  return {
-    display: "flex",
-    flex: "0 0 auto",
-    backgroundColor: theme.palette.mode === "dark" ? theme.palette.background.default : theme.palette.primary.main,
-    height: "76px",
-    lineHeight: "76px",
-    h1: {
-      lineHeight: "inherit",
-      color: "white",
-    },
-    width: "100%",
-    boxSizing: "border-box",
-    paddingLeft: "50px",
-    paddingRight: "50px",
-    borderRadius: "0",
-  };
-});
+const StyledPanelHeader: FunctionComponent<PropsWithChildren> = ({ children }) => {
+  return (
+    <div className="box-border h-16 md:h-20 w-full flex justify-between items-center px-12 shadow shadow-gray-500/75 bg-teal-700 dark:bg-neutral-900 text-white">
+      {children}
+    </div>
+  );
+};
+
+export default StyledPanelHeader;
