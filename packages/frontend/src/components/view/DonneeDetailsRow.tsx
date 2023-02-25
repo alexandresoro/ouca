@@ -1,5 +1,5 @@
 import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { Card, Collapse, IconButton, TableCell, TableRow, Tooltip, Typography } from "@mui/material";
+import { Card, Collapse, IconButton, TableCell, TableRow, Tooltip } from "@mui/material";
 import { intlFormat, parseISO } from "date-fns";
 import { type TFuncKey } from "i18next";
 import { useState, type FunctionComponent } from "react";
@@ -60,12 +60,12 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
         <TableCell style={{ padding: 0 }} colSpan={7}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Card className="p-6">
-              <Typography component="h2" variant="h5">
+              <h2 className="text-2xl font-normal">
                 {t("observationDetails.mainTitle", {
                   speciesName: donnee?.espece.nomFrancais,
                 })}
-              </Typography>
-              <Typography className="mt-1 text-[13px]">
+              </h2>
+              <div className="mt-1 text-[13px]">
                 {t("observationDetails.mainSubtitle", {
                   owner: donnee?.inventaire.observateur.libelle,
                   creationDate: intlFormat(parseISO(donnee?.inventaire.date)),
@@ -73,7 +73,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
                   inventoryId: donnee?.inventaire?.id,
                   observationId: donnee?.id,
                 })}
-              </Typography>
+              </div>
 
               <div className="mt-8 flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
                 <div className="flex flex-col flex-auto w-full">

@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab, Typography } from "@mui/material";
+import { Tab } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import ContentContainerLayout from "../layout/ContentContainerLayout";
@@ -29,9 +29,7 @@ const ViewDonneesPage: FunctionComponent = () => {
   return (
     <>
       <StyledPanelHeader>
-        <Typography variant="h5" component="h1">
-          {t("viewObservations")}
-        </Typography>
+        <h1 className="text-2xl font-normal">{t("viewObservations")}</h1>
       </StyledPanelHeader>
 
       <ContentContainerLayout>

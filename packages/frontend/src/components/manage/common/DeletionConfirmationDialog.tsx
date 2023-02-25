@@ -1,12 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Typography,
-} from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -33,14 +25,8 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
       <DialogTitle id="delete-confirmation-dialog-title">{t("deleteConfirmationDialogTitle")}</DialogTitle>
       <DialogContent>
         <DialogContentText component="div" id="delete-confirmation-dialog-description">
-          <Typography variant="body1" component="p">
-            {messageContent}
-          </Typography>
-          {impactedItemsMessage && (
-            <Typography variant="body1" component="p">
-              {impactedItemsMessage}
-            </Typography>
-          )}
+          <p>{messageContent}</p>
+          {impactedItemsMessage && <p>{impactedItemsMessage}</p>}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

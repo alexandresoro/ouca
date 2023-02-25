@@ -1,4 +1,4 @@
-import { Card, CircularProgress, MenuItem, TextField, Typography } from "@mui/material";
+import { Card, CircularProgress, MenuItem, TextField } from "@mui/material";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { useCallback, useContext, useEffect, type FunctionComponent } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -202,9 +202,7 @@ const SettingsPage: FunctionComponent = () => {
   return (
     <>
       <StyledPanelHeader>
-        <Typography variant="h5" component="h1">
-          {t("settings")}
-        </Typography>
+        <h1 className="text-2xl font-normal">{t("settings")}</h1>
       </StyledPanelHeader>
       <ContentContainerLayout>
         {fetching && (
