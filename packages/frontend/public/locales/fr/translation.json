@@ -170,7 +170,10 @@
   "databaseManagementButton": "Gestion du référentiel",
   "createAction": "Créer",
   "exportAction": "Exporter",
-  "filter": "Filtre",
+  "filter": {
+    "label": "Filtre",
+    "placeholder": "Tapez un filtre ici"
+  },
   "label": "Libellé",
   "undefinedNumber": "Non compté",
   "actions": "Actions",

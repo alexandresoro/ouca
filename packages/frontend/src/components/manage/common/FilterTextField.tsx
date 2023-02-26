@@ -1,14 +1,16 @@
-import { TextField, type TextFieldProps } from "@mui/material";
-import { type FunctionComponent } from "react";
+import { type ComponentPropsWithoutRef, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
-const FilterTextField: FunctionComponent<TextFieldProps> = (props) => {
+const FilterTextField: FunctionComponent<ComponentPropsWithoutRef<"input">> = (props) => {
   const { t } = useTranslation();
 
   return (
-    <>
-      <TextField className="w-[40ch]" label={t("filter")} variant="standard" margin="dense" {...props} />
-    </>
+    <div className="form-control mb-8">
+      <label className="label">
+        <span className="label-text text-primary">{t("filter.label")}</span>
+      </label>
+      <input className="input input-bordered input-primary w-[40ch]" placeholder={t("filter.placeholder")} {...props} />
+    </div>
   );
 };
 
