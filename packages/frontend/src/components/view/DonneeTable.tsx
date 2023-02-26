@@ -157,7 +157,7 @@ const DonneeTable: FunctionComponent = () => {
 
   const [deleteDialog, setDeleteDialog] = useState<Donnee | null>(null);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const [{ data: donneesResult }, reexecuteSearchDonneesQuery] = useQuery({
     query: PAGINATED_SEARCH_DONNEES_QUERY,
@@ -195,7 +195,7 @@ const DonneeTable: FunctionComponent = () => {
       })
         .then(({ data, error }) => {
           if (!error && data?.deleteDonnee) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
@@ -203,7 +203,7 @@ const DonneeTable: FunctionComponent = () => {
           reexecuteSearchDonneesQuery();
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

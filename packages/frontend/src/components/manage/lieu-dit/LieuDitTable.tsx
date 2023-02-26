@@ -115,7 +115,7 @@ const LieuDitTable: FunctionComponent = () => {
 
   const [_, deleteLieuDit] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditLieuDit = (id: number | undefined) => {
     if (id) {
@@ -138,19 +138,19 @@ const LieuDitTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteLieuxDits();
           if (!error && data?.deleteLieuDit) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

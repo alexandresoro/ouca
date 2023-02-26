@@ -82,7 +82,7 @@ const MilieuTable: FunctionComponent = () => {
 
   const [_, deleteMilieu] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditMilieu = (id: number | undefined) => {
     if (id) {
@@ -105,19 +105,19 @@ const MilieuTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteMilieux();
           if (!error && data?.deleteMilieu) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

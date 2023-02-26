@@ -77,7 +77,7 @@ const SexeTable: FunctionComponent = () => {
 
   const [_, deleteSexe] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditSexe = (id: number | undefined) => {
     if (id) {
@@ -100,19 +100,19 @@ const SexeTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteSexes();
           if (!error && data?.deleteSexe) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

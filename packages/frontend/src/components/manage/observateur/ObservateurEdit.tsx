@@ -63,7 +63,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   const [_, upsertObservateur] = useMutation(OBSERVATEUR_UPSERT);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   useEffect(() => {
     if (data?.observateur) {
@@ -74,12 +74,12 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   useEffect(() => {
     if (error) {
-      setSnackbarContent({
+      displayNotification({
         type: "error",
         message: t("retrieveGenericError"),
       });
     }
-  }, [error, setSnackbarContent, t]);
+  }, [error, displayNotification, t]);
 
   const title = isEditionMode ? t("observerEditionTitle") : t("observerCreationTitle");
 
@@ -91,7 +91,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     })
       .then(({ data, error }) => {
         if (data?.upsertObservateur) {
-          setSnackbarContent({
+          displayNotification({
             type: "success",
             message: t("retrieveGenericSaveSuccess"),
           });
@@ -99,12 +99,12 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
         }
         if (error) {
           if (getOucaError(error) === "OUCA0004") {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("observerAlreadyExistingError"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("retrieveGenericSaveError"),
             });
@@ -112,7 +112,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
         }
       })
       .catch(() => {
-        setSnackbarContent({
+        displayNotification({
           type: "error",
           message: t("retrieveGenericSaveError"),
         });

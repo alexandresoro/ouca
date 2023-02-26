@@ -1,37 +1,16 @@
-import { type AlertColor } from "@mui/material";
-import { useState, type Dispatch, type FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { Outlet } from "react-router-dom";
-import { SnackbarContext, type SnackbarContentType } from "../contexts/SnackbarContext";
-import NotificationSnackbar from "./common/NotificationSnackbar";
+import { SnackbarContext } from "../contexts/SnackbarContext";
+import { useNotifications } from "../hooks/useNotifications";
 import Header from "./Header";
-
-const useSnackbarContent = (): [SnackbarContentType, Dispatch<Omit<SnackbarContentType, "timestamp">>] => {
-  const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
-  const [type, setType] = useState<AlertColor | undefined>(undefined);
-  const [message, setMessage] = useState<string | undefined>(undefined);
-
-  const setSnackbarContent = (content: Omit<SnackbarContentType, "timestamp">): void => {
-    setTimestamp(content ? new Date().getTime() : undefined);
-    setType(content?.type ?? undefined);
-    setMessage(content?.message ?? undefined);
-  };
-
-  return [
-    {
-      timestamp,
-      type,
-      message,
-    },
-    setSnackbarContent,
-  ];
-};
+import NotificationSnackbar from "./notifications/NotificationSnackbar";
 
 const Layout: FunctionComponent = () => {
-  const [snackbarContent, setSnackbarContent] = useSnackbarContent();
+  const [notifications, displayNotification] = useNotifications();
 
   return (
     <>
-      <SnackbarContext.Provider value={{ snackbarContent, setSnackbarContent }}>
+      <SnackbarContext.Provider value={{ displayNotification }}>
         <div className="flex flex-col h-screen">
           <Header />
           <div className="flex-auto overflow-y-auto">
@@ -39,11 +18,7 @@ const Layout: FunctionComponent = () => {
           </div>
         </div>
       </SnackbarContext.Provider>
-      <NotificationSnackbar
-        keyAlert={snackbarContent?.timestamp}
-        type={snackbarContent.type}
-        message={snackbarContent.message}
-      />
+      <NotificationSnackbar notifications={notifications} />
     </>
   );
 };

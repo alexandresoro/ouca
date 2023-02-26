@@ -95,7 +95,7 @@ const EspeceTable: FunctionComponent = () => {
 
   const [_, deleteEspece] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditEspece = (id: number | undefined) => {
     if (id) {
@@ -118,19 +118,19 @@ const EspeceTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteEspeces();
           if (!error && data?.deleteEspece) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

@@ -82,7 +82,7 @@ const EstimationNombreTable: FunctionComponent = () => {
 
   const [_, deleteEstimationNombre] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditEstimationNombre = (id: number | undefined) => {
     if (id) {
@@ -105,19 +105,19 @@ const EstimationNombreTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteEstimationsNombre();
           if (!error && data?.deleteEstimationNombre) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

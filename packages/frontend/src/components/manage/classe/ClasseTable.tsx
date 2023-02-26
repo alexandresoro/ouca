@@ -82,7 +82,7 @@ const ClasseTable: FunctionComponent = () => {
 
   const [_, deleteClasse] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditClasse = (id: number | undefined) => {
     if (id) {
@@ -105,19 +105,19 @@ const ClasseTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteClasses();
           if (!error && data?.deleteClasse) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

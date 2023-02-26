@@ -77,7 +77,7 @@ const AgeTable: FunctionComponent = () => {
 
   const [_, deleteAge] = useMutation(DELETE_AGE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditAge = (id: number | undefined) => {
     if (id) {
@@ -100,19 +100,19 @@ const AgeTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteAges();
           if (!error && data?.deleteAge) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

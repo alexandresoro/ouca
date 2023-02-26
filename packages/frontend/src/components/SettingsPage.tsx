@@ -102,7 +102,7 @@ const SettingsPage: FunctionComponent = () => {
 
   const { userInfo } = useContext(UserContext);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   // TODO check fetch policies
   const [{ fetching, error, data }, refetchSettings] = useQuery({ query: SETTINGS_QUERY });
@@ -137,18 +137,18 @@ const SettingsPage: FunctionComponent = () => {
   }, [data, reset]);
 
   const displaySuccessNotification = useCallback(() => {
-    setSnackbarContent({
+    displayNotification({
       type: "success",
       message: t("saveSettingsSuccess"),
     });
-  }, [t, setSnackbarContent]);
+  }, [t, displayNotification]);
 
   const displayErrorNotification = useCallback(() => {
-    setSnackbarContent({
+    displayNotification({
       type: "error",
       message: t("saveSettingsError"),
     });
-  }, [t, setSnackbarContent]);
+  }, [t, displayNotification]);
 
   // Handle updated settings
   const sendUpdatedSettings = useCallback(
@@ -192,12 +192,12 @@ const SettingsPage: FunctionComponent = () => {
   // Display a generic error message when something wrong happened while retrieving the settings
   useEffect(() => {
     if (error) {
-      setSnackbarContent({
+      displayNotification({
         type: "error",
         message: t("retrieveSettingsError"),
       });
     }
-  }, [t, setSnackbarContent, error]);
+  }, [t, displayNotification, error]);
 
   return (
     <>

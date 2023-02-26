@@ -81,7 +81,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
 
   const [_, deleteEstimationDistance] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditEstimationDistance = (id: number | undefined) => {
     if (id) {
@@ -104,19 +104,19 @@ const EstimationDistanceTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecutEstimationsDistance();
           if (!error && data?.deleteEstimationDistance) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

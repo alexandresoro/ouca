@@ -77,7 +77,7 @@ const ObservateurTable: FunctionComponent = () => {
 
   const [_, deleteObservateur] = useMutation(DELETE_OBSERVATEUR);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditObservateur = (id: number | undefined) => {
     if (id) {
@@ -100,19 +100,19 @@ const ObservateurTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteObservateurs();
           if (!error && data?.deleteObservateur) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

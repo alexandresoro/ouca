@@ -77,7 +77,7 @@ const MeteoTable: FunctionComponent = () => {
 
   const [_, deleteMeteo] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditMeteo = (id: number | undefined) => {
     if (id) {
@@ -100,19 +100,19 @@ const MeteoTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteMeteos();
           if (!error && data?.deleteMeteo) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

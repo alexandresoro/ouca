@@ -87,7 +87,7 @@ const DepartementTable: FunctionComponent = () => {
 
   const [_, deleteDepartement] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditDepartement = (id: number | undefined) => {
     if (id) {
@@ -110,19 +110,19 @@ const DepartementTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteDepartements();
           if (!error && data?.deleteDepartement) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

@@ -87,7 +87,7 @@ const ComportementTable: FunctionComponent = () => {
 
   const [_, deleteComportement] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditComportement = (id: number | undefined) => {
     if (id) {
@@ -110,19 +110,19 @@ const ComportementTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteComportements();
           if (!error && data?.deleteComportement) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });

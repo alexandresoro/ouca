@@ -95,7 +95,7 @@ const CommuneTable: FunctionComponent = () => {
 
   const [_, deleteCommune] = useMutation(DELETE);
 
-  const { setSnackbarContent } = useSnackbar();
+  const { displayNotification } = useSnackbar();
 
   const handleEditCommune = (id: number | undefined) => {
     if (id) {
@@ -118,19 +118,19 @@ const CommuneTable: FunctionComponent = () => {
         .then(({ data, error }) => {
           reexecuteCommunes();
           if (!error && data?.deleteCommune) {
-            setSnackbarContent({
+            displayNotification({
               type: "success",
               message: t("deleteConfirmationMessage"),
             });
           } else {
-            setSnackbarContent({
+            displayNotification({
               type: "error",
               message: t("deleteErrorMessage"),
             });
           }
         })
         .catch(() => {
-          setSnackbarContent({
+          displayNotification({
             type: "error",
             message: t("deleteErrorMessage"),
           });
