@@ -1,23 +1,24 @@
 import {
-  AccountBox,
-  EmojiNature,
-  FileDownload,
-  Filter1,
-  Logout,
-  Male,
-  Park,
-  Person,
-  Pets,
-  Place,
-  PlusOne,
-  Settings,
+  Angry,
+  Bug,
+  CalendarPlus,
+  Cog,
+  Group,
+  Import,
+  ListUl,
+  LogOut,
+  MaleSign,
+  MapPin,
+  PieChartAlt2,
+  Plus,
+  SearchAlt2,
   SpaceBar,
-  WbSunny,
-} from "@mui/icons-material";
-import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
-import { ListUl, Plus, SearchAlt2 } from "@styled-icons/boxicons-regular";
+  Sun,
+  User,
+} from "@styled-icons/boxicons-regular";
+import { Tree } from "@styled-icons/boxicons-solid";
 import { type TFuncKey } from "i18next";
-import { useContext, useState, type FunctionComponent } from "react";
+import { useContext, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
@@ -35,52 +36,52 @@ const USER_LOGOUT_MUTATION = graphql(`
 const DATABASE_MENU_OPTIONS = [
   {
     localizationKey: "observers" as TFuncKey,
-    Icon: Person,
+    Icon: Group,
     to: "/manage/observateur",
   },
   {
     localizationKey: "departments" as TFuncKey,
-    Icon: Place,
+    Icon: MapPin,
     to: "/manage/departement",
   },
   {
     localizationKey: "cities" as TFuncKey,
-    Icon: Place,
+    Icon: MapPin,
     to: "/manage/commune",
   },
   {
     localizationKey: "localities" as TFuncKey,
-    Icon: Place,
+    Icon: MapPin,
     to: "/manage/lieudit",
   },
   {
     localizationKey: "weathers" as TFuncKey,
-    Icon: WbSunny,
+    Icon: Sun,
     to: "/manage/meteo",
   },
   {
     localizationKey: "speciesClasses" as TFuncKey,
-    Icon: EmojiNature,
+    Icon: Bug,
     to: "/manage/classe",
   },
   {
     localizationKey: "species" as TFuncKey,
-    Icon: EmojiNature,
+    Icon: Bug,
     to: "/manage/espece",
   },
   {
     localizationKey: "genders" as TFuncKey,
-    Icon: Male,
+    Icon: MaleSign,
     to: "/manage/sexe",
   },
   {
     localizationKey: "ages" as TFuncKey,
-    Icon: PlusOne,
+    Icon: CalendarPlus,
     to: "/manage/age",
   },
   {
     localizationKey: "numberPrecisions" as TFuncKey,
-    Icon: Filter1,
+    Icon: PieChartAlt2,
     to: "/manage/estimation-nombre",
   },
   {
@@ -90,12 +91,12 @@ const DATABASE_MENU_OPTIONS = [
   },
   {
     localizationKey: "behaviors" as TFuncKey,
-    Icon: Pets,
+    Icon: Angry,
     to: "/manage/comportement",
   },
   {
     localizationKey: "environments" as TFuncKey,
-    Icon: Park,
+    Icon: Tree,
     to: "/manage/milieu",
   },
 ];
@@ -103,17 +104,17 @@ const DATABASE_MENU_OPTIONS = [
 const OPTIONS_MENU_OPTIONS = [
   {
     localizationKey: "profile" as TFuncKey,
-    Icon: AccountBox,
+    Icon: User,
     to: "/profile",
   },
   {
     localizationKey: "settings" as TFuncKey,
-    Icon: Settings,
+    Icon: Cog,
     to: "/configuration",
   },
   {
     localizationKey: "importFromFile" as TFuncKey,
-    Icon: FileDownload,
+    Icon: Import,
     to: "/import",
   },
 ];
@@ -128,27 +129,12 @@ const Header: FunctionComponent = () => {
 
   const [_, sendUserLogout] = useMutation(USER_LOGOUT_MUTATION);
 
-  const [anchorElDatabase, setAnchorElDatabase] = useState<null | HTMLElement>(null);
-  const openDatabaseMenu = Boolean(anchorElDatabase);
-
-  const [anchorElOptions, setAnchorElOptions] = useState<null | HTMLElement>(null);
-  const openOptionsMenu = Boolean(anchorElOptions);
-
-  const handleClickDatabase = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElDatabase(event.currentTarget);
-  };
-  const handleCloseDatabaseMenu = () => {
-    setAnchorElDatabase(null);
-  };
-
-  const handleClickOptions = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElOptions(event.currentTarget);
-  };
   const handleCloseOptionsMenu = () => {
-    setAnchorElOptions(null);
+    (document.activeElement as HTMLElement | null)?.blur();
   };
 
   const handleLogoutAction = async () => {
+    handleCloseOptionsMenu();
     try {
       const logoutResult = await sendUserLogout({});
       if (logoutResult.data?.userLogout) {
@@ -168,10 +154,10 @@ const Header: FunctionComponent = () => {
   };
 
   return (
-    <div className="navbar sticky bg-primary dark:bg-neutral-800 min-h-12 px-6 py-0 place-content-between shadow-md shadow-gray-700/75">
+    <div className="navbar z-10 sticky bg-primary dark:bg-neutral-800 min-h-12 px-6 py-0 place-content-between shadow-md shadow-gray-700/75">
       <Link className="gap-2.5" to="/">
         <img className="-mb-3" src={Logo} height="60px" width="70px"></img>
-        <h1 className="text-neutral-50 font-['Yuji_Hentaigana_Akebono'] font-bold drop-shadow-[2px_2px_rgba(0,0,0,0.4)]">
+        <h1 className="hidden md:block text-neutral-50 font-['Yuji_Hentaigana_Akebono'] font-bold drop-shadow-[2px_2px_rgba(0,0,0,0.4)]">
           oùça?
         </h1>
       </Link>
@@ -184,78 +170,82 @@ const Header: FunctionComponent = () => {
           <SearchAlt2 className="w-5 h-5" />
           {t("viewObservations")}
         </Link>
-        <button
-          className="btn btn-sm btn-ghost flex gap-1.5 text-neutral-100 font-normal normal-case"
-          onClick={handleClickDatabase}
-        >
-          <ListUl className="w-5 h-5" />
-          {t("databaseManagementButton")}
-        </button>
 
-        <Menu
-          anchorEl={anchorElDatabase}
-          open={openDatabaseMenu}
-          onClose={handleCloseDatabaseMenu}
-          onClick={handleCloseDatabaseMenu}
-        >
-          {DATABASE_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
-            const CurrentMenuItem = (
-              <MenuItem key={to} component={Link} to={to}>
-                <ListItemIcon>
-                  <Icon fontSize="small" />
-                </ListItemIcon>
-                {t(localizationKey) as string}
-              </MenuItem>
-            );
+        <div className="dropdown dropdown-hover dropdown-end">
+          <button className="btn btn-sm btn-ghost text-neutral-100 font-normal normal-case">
+            <ListUl className="h-5 mr-1.5" />
+            {t("databaseManagementButton")}
+          </button>
 
-            const Dividers = [];
-            if (localizationKey === "weathers") {
-              Dividers.push(<Divider />);
-            }
-            return [CurrentMenuItem, ...Dividers];
-          })}
-        </Menu>
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu menu-compact flex-nowrap p-2 shadow bg-base-100 rounded-box w-max"
+          >
+            {DATABASE_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
+              const CurrentMenuItem = (
+                <li key={to}>
+                  <Link to={to} onClick={handleCloseOptionsMenu}>
+                    <>
+                      <Icon className="h-5" />
+                      {t(localizationKey)}
+                    </>
+                  </Link>
+                </li>
+              );
 
-        <button
-          className="btn btn-circle w-8 h-8 min-h-8 border-none avatar placeholder"
-          onClick={handleClickOptions}
-          aria-label={t("aria-userMenuButton")}
-        >
-          <div className={`text-white rounded-full w-8 ${fullName ? "bg-secondary" : ""}`}>
-            <span>{initials}</span>
-          </div>
-        </button>
+              const Dividers = [];
+              if (localizationKey === "weathers") {
+                Dividers.push(<hr />);
+              }
+              return [CurrentMenuItem, ...Dividers];
+            })}
+          </ul>
+        </div>
 
-        <Menu
-          anchorEl={anchorElOptions}
-          open={openOptionsMenu}
-          onClose={handleCloseOptionsMenu}
-          onClick={handleCloseOptionsMenu}
-        >
-          {OPTIONS_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
-            const CurrentMenuItem = (
-              <MenuItem key={to} component={Link} to={to}>
-                <ListItemIcon>
-                  <Icon fontSize="small" />
-                </ListItemIcon>
-                {t(localizationKey) as string}
-              </MenuItem>
-            );
+        <div className="dropdown dropdown-hover dropdown-end">
+          <button
+            className="btn btn-circle w-8 h-8 min-h-8 border-none avatar placeholder"
+            aria-label={t("aria-userMenuButton")}
+          >
+            <div className={`text-white rounded-full w-8 ${fullName ? "bg-secondary" : ""}`}>
+              <span>{initials}</span>
+            </div>
+          </button>
 
-            const Dividers = [];
-            if (localizationKey === "settings") {
-              Dividers.push(<Divider />);
-            }
-            return [CurrentMenuItem, ...Dividers];
-          })}
-          <Divider />
-          <MenuItem onClick={handleLogoutAction}>
-            <ListItemIcon>
-              <Logout fontSize="small" />
-            </ListItemIcon>
-            {t("logout")}
-          </MenuItem>
-        </Menu>
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu menu-compact flex-nowrap p-2 shadow bg-base-100 rounded-box w-max"
+          >
+            {OPTIONS_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
+              const CurrentMenuItem = (
+                <li key={to}>
+                  <Link to={to} onClick={handleCloseOptionsMenu}>
+                    <>
+                      <Icon className="h-5" />
+                      {t(localizationKey)}
+                    </>
+                  </Link>
+                </li>
+              );
+
+              const Dividers = [];
+              if (localizationKey === "settings") {
+                Dividers.push(<hr key={`divider-${to}`} />);
+              }
+              return [CurrentMenuItem, ...Dividers];
+            })}
+            <hr />
+            <li key="/logout">
+              <button
+                className="bg-transparent hover:bg-opacity-10 hover:bg-base-content focus:bg-opacity-10 focus:bg-base-content active:bg-primary"
+                onClick={handleLogoutAction}
+              >
+                <LogOut className="h-5" />
+                {t("logout")}
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );

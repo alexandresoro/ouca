@@ -16,7 +16,8 @@ body {
 
 h1,
 h2,
-h3 {
+h3,
+hr {
   margin: 0;
 }
 
@@ -46,10 +47,21 @@ textarea {
   padding: 0;
 }
 
+hr {
+  height: 0;
+  color: inherit;
+  border-top-width: 1px;
+}
+
 *,
 ::before,
 ::after {
   border-width: 0;
   border-style: solid;
   border-color: theme('borderColor.DEFAULT', currentColor);
+}
+
+/* Disable initial button load animation */
+.btn {
+  animation: none;
 }

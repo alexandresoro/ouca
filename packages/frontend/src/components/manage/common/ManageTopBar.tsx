@@ -1,5 +1,4 @@
-import { Add, FileUpload } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Export, Plus } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -22,12 +21,14 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
         <h1 className="text-2xl font-normal">{title}</h1>
         {showButtons && (
           <div className="flex items-center gap-6">
-            <Button component={Link} to="create" variant="contained" color="secondary" startIcon={<Add />}>
+            <Link className="btn btn-sm btn-secondary shadow" to="create">
+              <Plus className="h-5 mr-1" />
               {t("createAction")}
-            </Button>
-            <Button variant="contained" color="secondary" startIcon={<FileUpload />} onClick={onClickExport}>
+            </Link>
+            <button className="btn btn-sm btn-secondary shadow" onClick={onClickExport}>
+              <Export className="h-5 mr-2" />
               {t("exportAction")}
-            </Button>
+            </button>
           </div>
         )}
       </StyledPanelHeader>
