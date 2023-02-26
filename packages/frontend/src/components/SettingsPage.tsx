@@ -1,4 +1,4 @@
-import { Card, CircularProgress, MenuItem, TextField } from "@mui/material";
+import { MenuItem, TextField } from "@mui/material";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { useCallback, useContext, useEffect, type FunctionComponent } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -207,11 +207,11 @@ const SettingsPage: FunctionComponent = () => {
       <ContentContainerLayout>
         {fetching && (
           <div className="flex justify-center items-center">
-            <CircularProgress size={100} />
+            <progress className="progress progress-primary w-56"></progress>
           </div>
         )}
         {!(fetching || error) && (
-          <Card className="p-6">
+          <div className="card p-6 bg-base-200 dark:bg-neutral">
             <form className="flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
               <div className="flex flex-col flex-auto w-full">
                 <ReactHookFormSelect
@@ -389,7 +389,7 @@ const SettingsPage: FunctionComponent = () => {
                 </ReactHookFormSelect>
               </div>
             </form>
-          </Card>
+          </div>
         )}
       </ContentContainerLayout>
     </>

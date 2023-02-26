@@ -1,4 +1,3 @@
-import { LoadingButton } from "@mui/lab";
 import { TextField } from "@mui/material";
 import { useContext, type FunctionComponent } from "react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
@@ -80,7 +79,7 @@ const LoginPage: FunctionComponent = () => {
       <img src={GreenBird} alt="" className="block mx-auto w-24 h-24 md:w-44 md:h-44 lg:w-56 lg:h-56" loading="lazy" />
       <h1 className="font-normal text-center lg:text-3xl md:text-2xl sm:text-xl text-lg">{t("welcomeText")}</h1>
       <form
-        className="flex flex-col container mx-auto max-w-screen-md p-2 border-solid border-2 border-teal-700 rounded-lg justify-center mt-4"
+        className="card items-center container mx-auto bg-base-200 dark:bg-neutral max-w-screen-md p-4 justify-center mt-4"
         onSubmit={handleSubmit(onSubmit)}
       >
         <Controller
@@ -90,18 +89,16 @@ const LoginPage: FunctionComponent = () => {
             required: t("loginRequiredLabel"),
           }}
           render={({ field }) => (
-            <div className="flex justify-center">
-              <TextField
-                className="grow w-[20ch] max-w-[32ch]"
-                label={t("loginLabel")}
-                variant="standard"
-                required
-                fullWidth
-                error={!!errors?.username}
-                helperText={errors?.username?.message ?? " "}
-                {...field}
-              />
-            </div>
+            <TextField
+              className="grow basis-auto max-w-[32ch]"
+              label={t("loginLabel")}
+              variant="standard"
+              required
+              fullWidth
+              error={!!errors?.username}
+              helperText={errors?.username?.message ?? " "}
+              {...field}
+            />
           )}
         />
         <Controller
@@ -111,26 +108,22 @@ const LoginPage: FunctionComponent = () => {
             required: t("passwordRequiredLabel"),
           }}
           render={({ field }) => (
-            <div className="flex justify-center">
-              <TextField
-                className="grow w-[20ch] max-w-[32ch]"
-                label={t("passwordLabel")}
-                type="password"
-                variant="standard"
-                required
-                fullWidth
-                error={!!errors?.password}
-                helperText={errors?.password?.message ?? " "}
-                {...field}
-              />
-            </div>
+            <TextField
+              className="grow basis-auto max-w-[32ch]"
+              label={t("passwordLabel")}
+              type="password"
+              variant="standard"
+              required
+              fullWidth
+              error={!!errors?.password}
+              helperText={errors?.password?.message ?? " "}
+              {...field}
+            />
           )}
         />
-        <div className="flex justify-center">
-          <LoadingButton className="m-4" type="submit" loading={fetching} variant="contained">
-            {t("loginButton")}
-          </LoadingButton>
-        </div>
+        <button className={`btn btn-primary sm:btn-wide mt-8 mb-4 ${fetching ? "loading" : ""}`} type="submit">
+          {t("loginButton")}
+        </button>
       </form>
     </div>
   );

@@ -1,10 +1,8 @@
 import {
   AccountBox,
-  Add,
   EmojiNature,
   FileDownload,
   Filter1,
-  List,
   Logout,
   Male,
   Park,
@@ -12,24 +10,12 @@ import {
   Pets,
   Place,
   PlusOne,
-  Search,
   Settings,
   SpaceBar,
   WbSunny,
 } from "@mui/icons-material";
-import {
-  AppBar,
-  Avatar,
-  Button,
-  ButtonBase,
-  Divider,
-  IconButton,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Toolbar,
-  useTheme,
-} from "@mui/material";
+import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { ListUl, Plus, SearchAlt2 } from "@styled-icons/boxicons-regular";
 import { type TFuncKey } from "i18next";
 import { useContext, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -134,7 +120,6 @@ const OPTIONS_MENU_OPTIONS = [
 
 const Header: FunctionComponent = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const { userInfo, setUserInfo } = useContext(UserContext);
@@ -183,84 +168,96 @@ const Header: FunctionComponent = () => {
   };
 
   return (
-    <AppBar position="sticky">
-      <Toolbar className="place-content-between" variant="dense">
-        <ButtonBase className="gap-2.5" component={Link} to="/">
-          <img className="-mb-3" src={Logo} height="60px" width="70px"></img>
-          <h1 className="font-['Yuji_Hentaigana_Akebono'] font-bold drop-shadow-[2px_2px_rgba(0,0,0,0.4)]">oùça?</h1>
-        </ButtonBase>
-        <div className="flex gap-6">
-          <Button component={Link} to="/creation" color="inherit" startIcon={<Add />}>
-            {t("observationButton")}
-          </Button>
-          <Button component={Link} to="/view" color="inherit" startIcon={<Search />}>
-            {t("viewObservations")}
-          </Button>
-          <Button color="inherit" startIcon={<List />} onClick={handleClickDatabase}>
-            {t("databaseManagementButton")}
-          </Button>
+    <div className="navbar sticky bg-primary dark:bg-neutral-800 min-h-12 px-6 py-0 place-content-between shadow-md shadow-gray-700/75">
+      <Link className="gap-2.5" to="/">
+        <img className="-mb-3" src={Logo} height="60px" width="70px"></img>
+        <h1 className="text-neutral-50 font-['Yuji_Hentaigana_Akebono'] font-bold drop-shadow-[2px_2px_rgba(0,0,0,0.4)]">
+          oùça?
+        </h1>
+      </Link>
+      <div className="flex items-center gap-4">
+        <Link className="btn btn-sm btn-ghost flex gap-1.5 text-neutral-100 font-normal normal-case" to="/creation">
+          <Plus className="w-5 h-5" />
+          {t("observationButton")}
+        </Link>
+        <Link className="btn btn-sm btn-ghost flex gap-1.5 text-neutral-100 font-normal normal-case" to="/view">
+          <SearchAlt2 className="w-5 h-5" />
+          {t("viewObservations")}
+        </Link>
+        <button
+          className="btn btn-sm btn-ghost flex gap-1.5 text-neutral-100 font-normal normal-case"
+          onClick={handleClickDatabase}
+        >
+          <ListUl className="w-5 h-5" />
+          {t("databaseManagementButton")}
+        </button>
 
-          <Menu
-            anchorEl={anchorElDatabase}
-            open={openDatabaseMenu}
-            onClose={handleCloseDatabaseMenu}
-            onClick={handleCloseDatabaseMenu}
-          >
-            {DATABASE_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
-              const CurrentMenuItem = (
-                <MenuItem key={to} component={Link} to={to}>
-                  <ListItemIcon>
-                    <Icon fontSize="small" />
-                  </ListItemIcon>
-                  {t(localizationKey) as string}
-                </MenuItem>
-              );
+        <Menu
+          anchorEl={anchorElDatabase}
+          open={openDatabaseMenu}
+          onClose={handleCloseDatabaseMenu}
+          onClick={handleCloseDatabaseMenu}
+        >
+          {DATABASE_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
+            const CurrentMenuItem = (
+              <MenuItem key={to} component={Link} to={to}>
+                <ListItemIcon>
+                  <Icon fontSize="small" />
+                </ListItemIcon>
+                {t(localizationKey) as string}
+              </MenuItem>
+            );
 
-              const Dividers = [];
-              if (localizationKey === "weathers") {
-                Dividers.push(<Divider />);
-              }
-              return [CurrentMenuItem, ...Dividers];
-            })}
-          </Menu>
+            const Dividers = [];
+            if (localizationKey === "weathers") {
+              Dividers.push(<Divider />);
+            }
+            return [CurrentMenuItem, ...Dividers];
+          })}
+        </Menu>
 
-          <IconButton className="p-0" onClick={handleClickOptions} aria-label={t("aria-userMenuButton")}>
-            <Avatar className={`w-8 h-8 ${fullName ? "bg-rose-500" : ""}`}>{initials}</Avatar>
-          </IconButton>
+        <button
+          className="btn btn-circle w-8 h-8 min-h-8 border-none avatar placeholder"
+          onClick={handleClickOptions}
+          aria-label={t("aria-userMenuButton")}
+        >
+          <div className={`text-white rounded-full w-8 ${fullName ? "bg-secondary" : ""}`}>
+            <span>{initials}</span>
+          </div>
+        </button>
 
-          <Menu
-            anchorEl={anchorElOptions}
-            open={openOptionsMenu}
-            onClose={handleCloseOptionsMenu}
-            onClick={handleCloseOptionsMenu}
-          >
-            {OPTIONS_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
-              const CurrentMenuItem = (
-                <MenuItem key={to} component={Link} to={to}>
-                  <ListItemIcon>
-                    <Icon fontSize="small" />
-                  </ListItemIcon>
-                  {t(localizationKey) as string}
-                </MenuItem>
-              );
+        <Menu
+          anchorEl={anchorElOptions}
+          open={openOptionsMenu}
+          onClose={handleCloseOptionsMenu}
+          onClick={handleCloseOptionsMenu}
+        >
+          {OPTIONS_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
+            const CurrentMenuItem = (
+              <MenuItem key={to} component={Link} to={to}>
+                <ListItemIcon>
+                  <Icon fontSize="small" />
+                </ListItemIcon>
+                {t(localizationKey) as string}
+              </MenuItem>
+            );
 
-              const Dividers = [];
-              if (localizationKey === "settings") {
-                Dividers.push(<Divider />);
-              }
-              return [CurrentMenuItem, ...Dividers];
-            })}
-            <Divider />
-            <MenuItem onClick={handleLogoutAction}>
-              <ListItemIcon>
-                <Logout fontSize="small" />
-              </ListItemIcon>
-              {t("logout")}
-            </MenuItem>
-          </Menu>
-        </div>
-      </Toolbar>
-    </AppBar>
+            const Dividers = [];
+            if (localizationKey === "settings") {
+              Dividers.push(<Divider />);
+            }
+            return [CurrentMenuItem, ...Dividers];
+          })}
+          <Divider />
+          <MenuItem onClick={handleLogoutAction}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            {t("logout")}
+          </MenuItem>
+        </Menu>
+      </div>
+    </div>
   );
 };
 

@@ -141,7 +141,7 @@ const App: FunctionComponent<AppProps> = (props) => {
               <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <UserProvider>
-                  <div className="bg-neutral-50 dark:bg-neutral-900">
+                  <div className="bg-base-100">
                     <Suspense fallback="">
                       <SentryRoutes>
                         <Route
