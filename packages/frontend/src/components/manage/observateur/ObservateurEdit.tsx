@@ -1,5 +1,5 @@
-import { Cancel, Save } from "@mui/icons-material";
-import { Button, Card, CardActions, CardContent, CardHeader, TextField } from "@mui/material";
+import { Card, CardActions, CardContent, CardHeader, TextField } from "@mui/material";
+import { Save, X } from "@styled-icons/boxicons-regular";
 import { useEffect, type FunctionComponent } from "react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -151,12 +151,14 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
             </CardContent>
 
             <CardActions>
-              <Button color="secondary" variant="contained" startIcon={<Cancel />} onClick={() => navigate("..")}>
+              <button className="btn btn-secondary" onClick={() => navigate("..")}>
+                <X className="h-6 mr-1" />
                 {t("cancel")}
-              </Button>
-              <Button disabled={fetching} variant="contained" startIcon={<Save />} type="submit">
+              </button>
+              <button className="btn btn-primary" disabled={fetching} type="submit">
+                <Save className="h-6 mr-1" />
                 {t("save")}
-              </Button>
+              </button>
             </CardActions>
           </form>
         </Card>
