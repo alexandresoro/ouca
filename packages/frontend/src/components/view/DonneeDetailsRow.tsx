@@ -1,5 +1,5 @@
-import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { Card, Collapse, IconButton, TableCell, TableRow, Tooltip } from "@mui/material";
+import { Card, Collapse, TableCell, TableRow } from "@mui/material";
+import { ChevronDown, ChevronUp, Edit, Trash } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
 import { type TFuncKey } from "i18next";
 import { useState, type FunctionComponent } from "react";
@@ -26,13 +26,13 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
     <>
       <TableRow>
         <TableCell>
-          <IconButton
+          <button
+            className="btn btn-circle btn-sm btn-ghost"
             aria-label={t("expand-data-row" as unknown as TFuncKey) as string}
-            size="small"
             onClick={() => setOpen(!open)}
           >
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
+            {open ? <ChevronUp className="h-6" /> : <ChevronDown className="h-6" />}
+          </button>
         </TableCell>
         <TableCell>{donnee?.espece.nomFrancais}</TableCell>
         <TableCell>{donnee?.nombre}</TableCell>
@@ -43,16 +43,20 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
         <TableCell>{intlFormat(parseISO(donnee?.inventaire.date))}</TableCell>
         <TableCell>{donnee?.inventaire.observateur.libelle}</TableCell>
         <TableCell align="right">
-          <Tooltip title={t("observationsTable.header.action.edit")}>
-            <PrimaryIconButton aria-label={t("observationsTable.header.action.edit")} onClick={onEditAction}>
-              <Edit />
-            </PrimaryIconButton>
-          </Tooltip>
-          <Tooltip title={t("observationsTable.header.action.delete")}>
-            <PrimaryIconButton aria-label={t("observationsTable.header.action.delete")} onClick={onDeleteAction}>
-              <Delete />
-            </PrimaryIconButton>
-          </Tooltip>
+          <PrimaryIconButton
+            className="mx-1 text-primary dark:text-white"
+            aria-label={t("observationsTable.header.action.edit")}
+            onClick={onEditAction}
+          >
+            <Edit className="h-5" />
+          </PrimaryIconButton>
+          <PrimaryIconButton
+            className="mx-1 text-error"
+            aria-label={t("observationsTable.header.action.delete")}
+            onClick={onDeleteAction}
+          >
+            <Trash className="h-5" />
+          </PrimaryIconButton>
         </TableCell>
       </TableRow>
 

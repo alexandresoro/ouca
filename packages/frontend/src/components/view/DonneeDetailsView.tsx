@@ -1,6 +1,7 @@
-import { Comment, EmojiNature, Filter1, Link, Park, Pets } from "@mui/icons-material";
 import { Chip } from "@mui/material";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
+import { Angry, Bug, Comment, Link, PieChartAlt2 } from "@styled-icons/boxicons-regular";
+import { Tree } from "@styled-icons/boxicons-solid";
 import { type TFuncKey } from "i18next";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,7 +35,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
                   <>
                     <Chip
                       className="ml-2.5 border-gray-300"
-                      icon={<Link className="pl-1" />}
+                      icon={<Link className="h-6 pl-1" />}
                       label={t("observationDetails.group", {
                         group: donnee?.regroupement,
                       })}
@@ -50,7 +51,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<Filter1 />}
+          icon={<PieChartAlt2 className="h-6" />}
           primary={
             t("observationDetails.number" as unknown as TFuncKey, {
               context: donnee?.estimationNombre?.nonCompte ? "undefined" : "defined",
@@ -75,7 +76,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<EmojiNature />}
+          icon={<Bug className="h-6" />}
           primary={
             <>
               <div>
@@ -93,7 +94,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<Pets />}
+          icon={<Angry className="h-6" />}
           primary={t("observationDetails.behaviors", {
             count: donnee?.comportements.length,
             behaviors: donnee?.comportements.map((c) => {
@@ -104,7 +105,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<Park />}
+          icon={<Tree className="h-6" />}
           primary={t("observationDetails.environments", {
             count: donnee?.milieux.length,
             environments: donnee?.milieux.map((m) => {
@@ -114,7 +115,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<Comment />}
+          icon={<Comment className="h-6" />}
           primary={t("observationDetails.comment", {
             context: donnee?.commentaire ? "" : "undefined",
             comment: donnee?.commentaire,

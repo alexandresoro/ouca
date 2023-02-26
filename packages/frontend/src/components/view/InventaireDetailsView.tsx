@@ -1,4 +1,4 @@
-import { CalendarToday, LightMode, People, Place } from "@mui/icons-material";
+import { Calendar, Map as MapIcon, Sun, User } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,7 +23,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<People />}
+          icon={<User className="h-6" />}
           primary={t("observationDetails.observer", {
             name: inventaire.observateur.libelle,
           })}
@@ -36,7 +36,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<CalendarToday />}
+          icon={<Calendar className="h-6" />}
           primary={t("observationDetails.dateTime", {
             date: intlFormat(parseISO(inventaire.date)),
             time: inventaire.heure,
@@ -48,7 +48,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<Place />}
+          icon={<MapIcon className="h-6" />}
           primary={t("observationDetails.locality", {
             locality: inventaire.lieuDit,
           })}
@@ -69,7 +69,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         ></ItemWithAvatar>
 
         <ItemWithAvatar
-          icon={<LightMode />}
+          icon={<Sun className="h-6" />}
           primary={t("observationDetails.weathers", {
             count: inventaire.meteos.length,
             weathers: inventaire.meteos.map((m) => {

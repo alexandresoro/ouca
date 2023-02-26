@@ -45,7 +45,6 @@
     "@emotion/styled": "11.10.6",
     "@fontsource/lato": "4.5.10",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
-    "@mui/icons-material": "5.11.9",
     "@mui/lab": "5.0.0-alpha.120",
     "@mui/material": "5.11.10",
     "@ou-ca/common": "*",
