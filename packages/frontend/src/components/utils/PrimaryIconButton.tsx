@@ -1,8 +1,15 @@
-import { IconButton, type IconButtonProps } from "@mui/material";
-import { forwardRef } from "react";
+import { type ComponentPropsWithoutRef, type FunctionComponent, type PropsWithChildren } from "react";
 
-const PrimaryIconButton = forwardRef<HTMLButtonElement, IconButtonProps>((props, ref) => (
-  <IconButton className="text-primary dark:text-white" {...props} ref={ref} />
-));
+const PrimaryIconButton: FunctionComponent<PropsWithChildren<ComponentPropsWithoutRef<"button">>> = ({
+  children,
+  className,
+  ...props
+}) => (
+  <div className="tooltip tooltip-bottom" data-tip={props["aria-label"]}>
+    <button className={`btn btn-circle btn-sm btn-ghost ${className ?? ""}`} {...props}>
+      {children}
+    </button>
+  </div>
+);
 
 export default PrimaryIconButton;

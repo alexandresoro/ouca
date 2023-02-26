@@ -1,6 +1,5 @@
-import { Delete, Edit } from "@mui/icons-material";
-import { Tooltip } from "@mui/material";
-import { FunctionComponent } from "react";
+import { EditAlt, Trash } from "@styled-icons/boxicons-regular";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import PrimaryIconButton from "../../utils/PrimaryIconButton";
 
@@ -16,16 +15,22 @@ const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (
 
   return (
     <>
-      <Tooltip title={t("aria-editButton")}>
-        <PrimaryIconButton disabled={disabled} aria-label={t("aria-editButton")} onClick={onEditClicked}>
-          <Edit />
-        </PrimaryIconButton>
-      </Tooltip>
-      <Tooltip title={t("aria-deleteButton")}>
-        <PrimaryIconButton disabled={disabled} aria-label={t("aria-deleteButton")} onClick={onDeleteClicked}>
-          <Delete />
-        </PrimaryIconButton>
-      </Tooltip>
+      <PrimaryIconButton
+        className="mx-1 text-primary dark:text-white"
+        disabled={disabled}
+        aria-label={t("aria-editButton")}
+        onClick={onEditClicked}
+      >
+        <EditAlt className="h-5" />
+      </PrimaryIconButton>
+      <PrimaryIconButton
+        className="mx-1 text-error"
+        disabled={disabled}
+        aria-label={t("aria-deleteButton")}
+        onClick={onDeleteClicked}
+      >
+        <Trash className="h-5" />
+      </PrimaryIconButton>
     </>
   );
 };
