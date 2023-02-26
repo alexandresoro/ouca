@@ -1,4 +1,3 @@
-import { CircularProgress } from "@mui/material";
 import { useContext, useEffect, type FunctionComponent, type ReactElement } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
@@ -50,7 +49,7 @@ const RequireAuth: FunctionComponent<{ children: ReactElement }> = (props) => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <CircularProgress />
+      <progress className="progress progress-primary w-56"></progress>
     </div>
   );
 };
