@@ -77,7 +77,7 @@ const LoginPage: FunctionComponent = () => {
   return (
     <div className="container xl:max-w-screen-xl mx-auto min-h-screen flex flex-col lg:pt-10 px-6 py-4 lg:gap-4 gap-2">
       <img src={GreenBird} alt="" className="block mx-auto w-24 h-24 md:w-44 md:h-44 lg:w-56 lg:h-56" loading="lazy" />
-      <h1 className="font-normal text-center lg:text-3xl md:text-2xl sm:text-xl text-lg">{t("welcomeText")}</h1>
+      <h1 className="font-semibold text-center lg:text-3xl md:text-2xl sm:text-xl text-lg">{t("welcomeText")}</h1>
       <form
         className="card items-center container mx-auto bg-base-200 dark:bg-neutral max-w-screen-md p-4 justify-center mt-4"
         onSubmit={handleSubmit(onSubmit)}

@@ -1,5 +1,5 @@
-/// <reference types="vite/client" />
-import "@fontsource/lato";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/variable.css";
 import "@fontsource/yuji-hentaigana-akebono";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
@@ -10,7 +10,7 @@ import App from "./App";
 import "./i18n";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import { AppConfig } from "./types/AppConfig";
+import { type AppConfig } from "./types/AppConfig";
 import wrapPromise from "./utils/wrapPromise";
 
 // Retrieve app config as early as possible

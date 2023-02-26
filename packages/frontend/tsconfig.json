@@ -19,6 +19,6 @@
     "paths": {
       "@ou-ca/common/*": ["../common/src/*"]
     },
-    "types": ["vitest/globals"]
+    "types": ["vite/client", "vitest/globals"]
   }
 }

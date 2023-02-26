@@ -69,7 +69,7 @@ const App: FunctionComponent<AppProps> = (props) => {
                 }),
           },
           typography: {
-            fontFamily: "Lato",
+            fontFamily: "InterVariable",
             button: {
               textTransform: "none",
             },
