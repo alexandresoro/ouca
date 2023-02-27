@@ -69,7 +69,7 @@
     "exceljs": "4.3.0",
     "fastify": "4.13.0",
     "graphql": "16.6.0",
-    "jose": "4.12.0",
+    "jose": "4.12.2",
     "mercurius": "12.2.0",
     "pino": "8.11.0",
     "pino-pretty": "9.4.0",
