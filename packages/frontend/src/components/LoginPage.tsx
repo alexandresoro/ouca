@@ -1,6 +1,5 @@
-import { TextField } from "@mui/material";
 import { useContext, type FunctionComponent } from "react";
-import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
@@ -8,6 +7,7 @@ import GreenBird from "../assets/img/green-bird.svg";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type UserLoginInput } from "../gql/graphql";
+import TextInput from "./common/TextInput";
 
 const USER_LOGIN_MUTATION = graphql(`
   mutation UserLogin($loginData: UserLoginInput!) {
@@ -34,7 +34,7 @@ const LoginPage: FunctionComponent = () => {
   const from = (location.state as LocationState)?.from?.pathname || "/";
 
   const {
-    control,
+    register,
     setError,
     formState: { errors },
     handleSubmit,
@@ -75,56 +75,43 @@ const LoginPage: FunctionComponent = () => {
   };
 
   return (
-    <div className="container xl:max-w-screen-xl mx-auto min-h-screen flex flex-col lg:pt-10 px-6 py-4 lg:gap-4 gap-2">
-      <img src={GreenBird} alt="" className="block mx-auto w-24 h-24 md:w-44 md:h-44 lg:w-56 lg:h-56" loading="lazy" />
-      <h1 className="font-semibold text-center lg:text-3xl md:text-2xl sm:text-xl text-lg">{t("welcomeText")}</h1>
-      <form
-        className="card items-center container mx-auto bg-base-200 dark:bg-neutral max-w-screen-md p-4 justify-center mt-4"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Controller
-          name="username"
-          control={control}
-          rules={{
-            required: t("loginRequiredLabel"),
-          }}
-          render={({ field }) => (
-            <TextField
-              className="grow basis-auto max-w-[32ch]"
+    <div className="hero min-h-screen bg-base-200">
+      <div className="hero-content flex-col md:flex-row w-full gap-0 md:gap-12 max-w-3xl">
+        <div className="text-center">
+          <img src={GreenBird} alt="" className="block mx-auto w-24 h-24 md:w-40 md:h-40" loading="lazy" />
+          <h1 className="text-2xl sm:text-3xl md:text-5xl md:mt-4 text-base-content font-bold">
+            {t("loginPanel.welcomeTitle")}
+          </h1>
+          <p className="text-base-content md:pt-6">{t("loginPanel.welcomeDescription")}</p>
+        </div>
+        <form className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100" onSubmit={handleSubmit(onSubmit)}>
+          <div className="card-body">
+            <TextInput
+              textInputClassName="w-full max-w-[32ch]"
               label={t("loginLabel")}
-              variant="standard"
+              type="text"
               required
-              fullWidth
-              error={!!errors?.username}
-              helperText={errors?.username?.message ?? " "}
-              {...field}
+              defaultValue=""
+              className={`input input-bordered ${errors?.username ? "input-error" : "input-primary"}`}
+              helperMessage={errors?.username?.message ?? ""}
+              {...register("username", { required: t("loginRequiredLabel") })}
             />
-          )}
-        />
-        <Controller
-          name="password"
-          control={control}
-          rules={{
-            required: t("passwordRequiredLabel"),
-          }}
-          render={({ field }) => (
-            <TextField
-              className="grow basis-auto max-w-[32ch]"
+            <TextInput
+              textInputClassName="w-full max-w-[32ch]"
               label={t("passwordLabel")}
               type="password"
-              variant="standard"
               required
-              fullWidth
-              error={!!errors?.password}
-              helperText={errors?.password?.message ?? " "}
-              {...field}
+              defaultValue=""
+              className={`input input-bordered ${errors?.password ? "input-error" : "input-primary"}`}
+              helperMessage={errors?.password?.message ?? ""}
+              {...register("password", { required: t("passwordRequiredLabel") })}
             />
-          )}
-        />
-        <button className={`btn btn-primary sm:btn-wide mt-8 mb-4 ${fetching ? "loading" : ""}`} type="submit">
-          {t("loginButton")}
-        </button>
-      </form>
+            <button className={`btn btn-primary mt-6 ${fetching ? "loading" : ""}`} type="submit">
+              {t("loginButton")}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

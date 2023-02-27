@@ -71,6 +71,10 @@
   "genders": "Sexes",
   "latitude": "Latitude",
   "localities": "Lieux-dits",
+  "loginPanel": {
+    "welcomeTitle": "Où-ça !",
+    "welcomeDescription": "Bienvenue sur l'application Où-ça !"
+  },
   "longitude": "Longitude",
   "name": "Nom",
   "numberOfCities": "Nombre de communes",
@@ -159,7 +163,6 @@
   },
   "viewObservations": "Consultation des observations",
   "weathers": "Météos",
-  "welcomeText": "Bienvenue sur l'application Où-ça !",
   "loginLabel": "Utilisateur",
   "loginRequiredLabel": "Le nom d'utilisateur est requis",
   "loginFailedMessage": "Le nom d'utilisateur ou le mot de passe est incorrect. Veuillez réessayer.",
