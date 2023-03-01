@@ -79,7 +79,7 @@
     "@vitejs/plugin-react": "3.1.0",
     "@vitest/coverage-c8": "0.29.2",
     "autoprefixer": "10.4.13",
-    "daisyui": "2.51.2",
+    "daisyui": "2.51.3",
     "eslint-plugin-react": "7.32.2",
     "postcss": "8.4.21",
     "postcss-100vh-fix": "1.0.2",
