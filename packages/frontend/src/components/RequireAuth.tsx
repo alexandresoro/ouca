@@ -1,8 +1,8 @@
 import { useContext, useEffect, type FunctionComponent, type ReactElement } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
-import { UserContext } from "../../contexts/UserContext";
-import { graphql } from "../../gql";
+import { UserContext } from "../contexts/UserContext";
+import { graphql } from "../gql";
 
 const REFRESH_TOKEN_MUTATION = graphql(`
   mutation RefreshToken {

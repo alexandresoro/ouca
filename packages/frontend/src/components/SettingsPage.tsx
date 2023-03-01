@@ -1,17 +1,18 @@
-import { MenuItem, TextField } from "@mui/material";
+import { MenuItem } from "@mui/material";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { useCallback, useContext, useEffect, type FunctionComponent } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "urql";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
+import Switch from "./common/Switch";
+import TextInput from "./common/TextInput";
 import ReactHookFormSelect from "./form/ReactHookFormSelect";
-import ReactHookFormSwitch from "./form/ReactHookFormSwitch";
 import ContentContainerLayout from "./layout/ContentContainerLayout";
-import StyledPanelHeader from "./utils/StyledPanelHeader";
+import StyledPanelHeader from "./layout/StyledPanelHeader";
 
 const SETTINGS_QUERY = graphql(`
   query GetUserSettings {
@@ -110,6 +111,7 @@ const SettingsPage: FunctionComponent = () => {
   const [_, sendUserSettingsUpdate] = useMutation(USER_SETTINGS_MUTATION);
 
   const {
+    register,
     control,
     formState: { errors },
     handleSubmit,
@@ -274,28 +276,19 @@ const SettingsPage: FunctionComponent = () => {
                   ))}
                 </ReactHookFormSelect>
 
-                <Controller
-                  name="defaultNombre"
-                  control={control}
+                <TextInput
+                  textInputClassName="w-full"
+                  label={t("defaultNumber")}
+                  type="text"
+                  required
                   defaultValue=""
-                  rules={{
+                  className={`input input-bordered ${errors?.defaultNombre ? "input-error" : "input-primary"}`}
+                  {...register("defaultNombre", {
                     required: true,
                     min: 1,
                     max: 65535,
                     validate: (v) => !isNaN(v as unknown as number),
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      label={t("defaultNumber")}
-                      inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                      variant="standard"
-                      fullWidth
-                      required
-                      error={!!errors?.defaultNombre}
-                      margin="normal"
-                      {...field}
-                    />
-                  )}
+                  })}
                 />
 
                 <ReactHookFormSelect
@@ -340,33 +333,13 @@ const SettingsPage: FunctionComponent = () => {
               </div>
 
               <div className="flex flex-col flex-auto w-full">
-                <ReactHookFormSwitch
-                  name="areAssociesDisplayed"
-                  control={control}
-                  defaultValue=""
-                  label={t("displayAssociateObservers")}
-                />
+                <Switch {...register("areAssociesDisplayed")} defaultValue="" label={t("displayAssociateObservers")} />
 
-                <ReactHookFormSwitch
-                  name="isMeteoDisplayed"
-                  control={control}
-                  defaultValue=""
-                  label={t("displayWeather")}
-                />
+                <Switch {...register("isMeteoDisplayed")} defaultValue="" label={t("displayWeather")} />
 
-                <ReactHookFormSwitch
-                  name="isDistanceDisplayed"
-                  control={control}
-                  defaultValue=""
-                  label={t("displayDistance")}
-                />
+                <Switch {...register("isDistanceDisplayed")} defaultValue="" label={t("displayDistance")} />
 
-                <ReactHookFormSwitch
-                  name="isRegroupementDisplayed"
-                  control={control}
-                  defaultValue=""
-                  label={t("displayRegroupmentNumber")}
-                />
+                <Switch {...register("isDistanceDisplayed")} defaultValue="" label={t("displayRegroupmentNumber")} />
 
                 <ReactHookFormSelect
                   name="coordinatesSystem"

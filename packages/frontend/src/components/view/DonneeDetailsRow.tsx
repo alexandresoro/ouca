@@ -5,7 +5,7 @@ import { type TFuncKey } from "i18next";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { type Donnee } from "../../gql/graphql";
-import PrimaryIconButton from "../utils/PrimaryIconButton";
+import PrimaryIconButton from "../common/PrimaryIconButton";
 import DonneeDetailsView from "./DonneeDetailsView";
 import InventaireDetailsView from "./InventaireDetailsView";
 

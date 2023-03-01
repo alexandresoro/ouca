@@ -1,7 +1,7 @@
 import { EditAlt, Trash } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import PrimaryIconButton from "../../utils/PrimaryIconButton";
+import PrimaryIconButton from "../../common/PrimaryIconButton";
 
 type TableCellActionButtonsProps = {
   disabled?: boolean;

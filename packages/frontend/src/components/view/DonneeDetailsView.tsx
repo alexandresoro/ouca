@@ -28,7 +28,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         <ItemWithAvatar
           primary={
             <>
-              <h3 className="text-x font-normal">
+              <h3 className="text-lg font-normal">
                 {t("observationDetails.observationTitle")}
 
                 {donnee?.regroupement ? (

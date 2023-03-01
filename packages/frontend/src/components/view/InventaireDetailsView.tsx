@@ -19,7 +19,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
     <>
       <ul className="border border-solid rounded border-neutral-300 divide-solid divide-neutral-200 divide-y py-2">
         <ItemWithAvatar
-          primary={<h3 className="text-x font-normal">{t("observationDetails.inventoryTitle")}</h3>}
+          primary={<h3 className="text-lg font-normal">{t("observationDetails.inventoryTitle")}</h3>}
         ></ItemWithAvatar>
 
         <ItemWithAvatar

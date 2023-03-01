@@ -1,10 +1,10 @@
-import { Card, CardActions, CardContent, CardHeader, TextField } from "@mui/material";
 import { Save, X } from "@styled-icons/boxicons-regular";
 import { useEffect, type FunctionComponent } from "react";
-import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
+import TextInput from "../../../components/common/TextInput";
 import { graphql } from "../../../gql";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { getOucaError } from "../../../utils/ouca-error-extractor";
@@ -44,7 +44,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
   const navigate = useNavigate();
 
   const {
-    control,
+    register,
     formState: { errors },
     setValue,
     handleSubmit,
@@ -123,45 +123,36 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     <>
       <ManageTopBar title={t("observers")} showButtons={false} />
       <ContentContainerLayout>
-        <Card>
-          <CardHeader component="h2" title={title}></CardHeader>
+        <div className="card bg-base-200 dark:bg-neutral shadow-xl max-w-3xl mx-auto">
+          <div className="card-body">
+            <h2 className="card-title my-4">{title}</h2>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <CardContent>
-              <Controller
-                name="libelle"
-                control={control}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <TextInput
+                label={t("label")}
+                type="text"
+                required
                 defaultValue=""
-                rules={{
+                helperMessage={errors?.libelle?.message ?? ""}
+                className={`input input-bordered ${errors?.libelle ? "input-error" : "input-primary"}`}
+                {...register("libelle", {
                   required: t("requiredFieldError"),
-                }}
-                render={({ field }) => (
-                  <TextField
-                    label={t("label")}
-                    variant="standard"
-                    fullWidth
-                    required
-                    error={!!errors?.libelle}
-                    helperText={errors?.libelle?.message ?? " "}
-                    margin="normal"
-                    {...field}
-                  />
-                )}
+                })}
               />
-            </CardContent>
 
-            <CardActions>
-              <button className="btn btn-secondary" onClick={() => navigate("..")}>
-                <X className="h-6 mr-1" />
-                {t("cancel")}
-              </button>
-              <button className="btn btn-primary" disabled={fetching} type="submit">
-                <Save className="h-6 mr-1" />
-                {t("save")}
-              </button>
-            </CardActions>
-          </form>
-        </Card>
+              <div className="card-actions justify-end">
+                <button className="btn btn-secondary" onClick={() => navigate("..")}>
+                  <X className="h-6 mr-1" />
+                  {t("cancel")}
+                </button>
+                <button className="btn btn-primary" disabled={fetching} type="submit">
+                  <Save className="h-6 mr-1" />
+                  {t("save")}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </ContentContainerLayout>
     </>
   );

@@ -2,7 +2,7 @@ import { Export, Plus } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import StyledPanelHeader from "../../utils/StyledPanelHeader";
+import StyledPanelHeader from "../../layout/StyledPanelHeader";
 
 type ManageTopBarProps = {
   showButtons?: boolean;

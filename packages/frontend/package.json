@@ -45,7 +45,6 @@
     "@emotion/styled": "11.10.6",
     "@fontsource/inter": "4.5.15",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
-    "@mui/lab": "5.0.0-alpha.121",
     "@mui/material": "5.11.11",
     "@ou-ca/common": "*",
     "@sentry/react": "7.40.0",
