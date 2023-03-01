@@ -75,7 +75,7 @@ const LoginPage: FunctionComponent = () => {
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200">
+    <div className="hero min-h-[100dvh] bg-base-200">
       <div className="hero-content flex-col md:flex-row w-full gap-0 md:gap-12 max-w-3xl">
         <div className="text-center">
           <img src={GreenBird} alt="" className="block mx-auto w-24 h-24 md:w-40 md:h-40" loading="lazy" />

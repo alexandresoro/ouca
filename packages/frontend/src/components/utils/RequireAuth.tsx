@@ -48,7 +48,7 @@ const RequireAuth: FunctionComponent<{ children: ReactElement }> = (props) => {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-[100dvh]">
       <progress className="progress progress-primary w-56"></progress>
     </div>
   );

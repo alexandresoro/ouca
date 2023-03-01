@@ -11,7 +11,7 @@ const Layout: FunctionComponent = () => {
   return (
     <>
       <SnackbarContext.Provider value={{ displayNotification }}>
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-[100dvh]">
           <Header />
           <div className="flex-auto overflow-y-auto">
             <Outlet />
