@@ -61,7 +61,7 @@
     "@fastify/multipart": "7.4.1",
     "@fastify/static": "6.9.0",
     "@ou-ca/common": "*",
-    "csv-parse": "5.3.5",
+    "csv-parse": "5.3.6",
     "csv-stringify": "6.2.4",
     "date-fns": "2.29.3",
     "dotenv": "16.0.3",
