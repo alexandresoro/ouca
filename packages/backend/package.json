@@ -62,7 +62,7 @@
     "@fastify/static": "6.9.0",
     "@ou-ca/common": "*",
     "csv-parse": "5.3.6",
-    "csv-stringify": "6.2.4",
+    "csv-stringify": "6.3.0",
     "date-fns": "2.29.3",
     "dotenv": "16.0.3",
     "es-main": "1.2.0",
