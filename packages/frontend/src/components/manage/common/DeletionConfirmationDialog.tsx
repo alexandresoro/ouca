@@ -1,5 +1,5 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-import { type FunctionComponent } from "react";
+import { Dialog } from "@headlessui/react";
+import { useRef, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 type DeletionConfirmationDialogProps = {
@@ -13,38 +13,32 @@ type DeletionConfirmationDialogProps = {
 const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogProps> = (props) => {
   const { open, messageContent, impactedItemsMessage, onCancelAction, onConfirmAction } = props;
 
+  const confirmButtonRef = useRef(null);
+
   const { t } = useTranslation();
 
   return (
     <Dialog
+      className={`modal ${open ? "modal-open" : ""}`}
       open={open}
       onClose={onCancelAction}
-      aria-labelledby="delete-confirmation-dialog-title"
-      aria-describedby="delete-confirmation-dialog-description"
+      initialFocus={confirmButtonRef}
     >
-      <DialogTitle id="delete-confirmation-dialog-title">{t("deleteConfirmationDialogTitle")}</DialogTitle>
-      <DialogContent>
-        <DialogContentText component="div" id="delete-confirmation-dialog-description">
-          <p>{messageContent}</p>
-          {impactedItemsMessage && <p>{impactedItemsMessage}</p>}
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onCancelAction} variant="outlined">
-          {t("deleteConfirmationDialogCancelAction")}
-        </Button>
-        <Button
-          className="uppercase"
-          onClick={onConfirmAction}
-          autoFocus
-          variant="outlined"
-          sx={{
-            textTransform: "uppercase",
-          }}
-        >
-          {t("deleteConfirmationDialogConfirmAction")}
-        </Button>
-      </DialogActions>
+      <Dialog.Panel className="modal-box text-base-content">
+        <Dialog.Title className="text-2xl font-semibold">{t("deleteConfirmationDialogTitle")}</Dialog.Title>
+        <Dialog.Description as={"div"} className="flex flex-col gap-4 mt-4 mb-2">
+          <div>{messageContent}</div>
+          {impactedItemsMessage && <div>{impactedItemsMessage}</div>}
+        </Dialog.Description>
+        <div className="modal-action">
+          <button className="btn btn-primary btn-outline" onClick={onCancelAction}>
+            {t("deleteConfirmationDialogCancelAction")}
+          </button>
+          <button className="btn btn-error btn-outline" ref={confirmButtonRef} onClick={onConfirmAction}>
+            {t("deleteConfirmationDialogConfirmAction")}
+          </button>
+        </div>
+      </Dialog.Panel>
     </Dialog>
   );
 };

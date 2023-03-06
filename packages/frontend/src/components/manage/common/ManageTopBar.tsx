@@ -21,11 +21,11 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
         <h1 className="text-2xl font-normal">{title}</h1>
         {showButtons && (
           <div className="flex items-center gap-6">
-            <Link className="btn btn-sm btn-secondary shadow" to="create">
+            <Link className="btn btn-secondary shadow" to="create">
               <Plus className="h-5 mr-1" />
               {t("createAction")}
             </Link>
-            <button className="btn btn-sm btn-secondary shadow" onClick={onClickExport}>
+            <button className="btn btn-secondary shadow" onClick={onClickExport}>
               <Export className="h-5 mr-2" />
               {t("exportAction")}
             </button>

@@ -213,7 +213,7 @@ const SettingsPage: FunctionComponent = () => {
           </div>
         )}
         {!(fetching || error) && (
-          <div className="card p-6 bg-base-200 dark:bg-neutral">
+          <div className="card border-2 border-primary p-6 bg-base-100 shadow-xl">
             <form className="flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
               <div className="flex flex-col flex-auto w-full">
                 <ReactHookFormSelect
@@ -339,7 +339,11 @@ const SettingsPage: FunctionComponent = () => {
 
                 <Switch {...register("isDistanceDisplayed")} defaultValue="" label={t("displayDistance")} />
 
-                <Switch {...register("isDistanceDisplayed")} defaultValue="" label={t("displayRegroupmentNumber")} />
+                <Switch
+                  {...register("isRegroupementDisplayed")}
+                  defaultValue=""
+                  label={t("displayRegroupmentNumber")}
+                />
 
                 <ReactHookFormSelect
                   name="coordinatesSystem"
