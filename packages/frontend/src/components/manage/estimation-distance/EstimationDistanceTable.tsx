@@ -19,7 +19,7 @@ import { type EntitesAvecLibelleOrderBy, type EstimationDistance } from "../../.
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
-import FilterTextField from "../common/FilterTextField";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 const PAGINATED_QUERY = graphql(`
@@ -141,11 +141,12 @@ const EstimationDistanceTable: FunctionComponent = () => {
 
   return (
     <>
-      <FilterTextField
+      <ManageEntitiesHeader
         value={query}
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
+        count={data?.estimationsDistance?.count}
       />
       <TableContainer
         className="mt-4"

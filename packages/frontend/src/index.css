@@ -59,6 +59,15 @@ hr {
   border-top-width: 1px;
 }
 
+table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
+}
+
 *,
 ::before,
 ::after {

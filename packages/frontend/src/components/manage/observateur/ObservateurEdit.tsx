@@ -123,7 +123,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     <>
       <ManageTopBar title={t("observers")} showButtons={false} />
       <ContentContainerLayout>
-        <div className="card bg-base-200 dark:bg-neutral shadow-xl max-w-3xl mx-auto">
+        <div className="card border-2 border-primary bg-base-100 text-base-content shadow-xl max-w-3xl mx-auto">
           <div className="card-body">
             <h2 className="card-title my-4">{title}</h2>
 

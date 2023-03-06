@@ -1,25 +1,15 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TableSortLabel,
-} from "@mui/material";
+import { TableSortLabel } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
+import Table from "../../../components/common/Table";
 import { graphql } from "../../../gql";
 import { type EntitesAvecLibelleOrderBy, type Observateur } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
-import FilterTextField from "../common/FilterTextField";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 const PAGINATED_OBSERVATEURS_QUERY = graphql(`
@@ -57,7 +47,7 @@ const ObservateurTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
   const [dialogObservateur, setDialogObservateur] = useState<Observateur | null>(null);
@@ -124,11 +114,6 @@ const ObservateurTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -137,66 +122,55 @@ const ObservateurTable: FunctionComponent = () => {
 
   return (
     <>
-      <FilterTextField
+      <ManageEntitiesHeader
         value={query}
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
+        count={data?.observateurs?.count}
       />
-      <TableContainer className="mt-4" component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                    {orderBy === column.key ? (
-                      <span className="sr-only">
-                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
-                      </span>
-                    ) : null}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-              <TableCell align="right">{t("actions")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.observateurs?.data?.map((observateur) => {
-              return (
-                <TableRow hover key={observateur?.id}>
-                  <TableCell>{observateur?.libelle}</TableCell>
-                  <TableCell>{observateur?.nbDonnees}</TableCell>
-                  <TableCell align="right">
-                    <TableCellActionButtons
-                      disabled={!observateur.editable}
-                      onEditClicked={() => handleEditObservateur(observateur?.id)}
-                      onDeleteClicked={() => handleDeleteObservateur(observateur)}
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={data?.observateurs?.count ?? 0}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+      <Table
+        tableHead={
+          <>
+            {COLUMNS.map((column) => (
+              <th key={column.key}>
+                <TableSortLabel
+                  active={orderBy === column.key}
+                  direction={orderBy === column.key ? sortOrder : "asc"}
+                  onClick={() => handleRequestSort(column.key)}
+                >
+                  {t(column.locKey)}
+                  {orderBy === column.key ? (
+                    <span className="sr-only">
+                      {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
+                    </span>
+                  ) : null}
+                </TableSortLabel>
+              </th>
+            ))}
+            <th align="right">{t("actions")}</th>
+          </>
+        }
+        tableRows={data?.observateurs?.data?.map((observateur) => {
+          return (
+            <tr className="hover" key={observateur?.id}>
+              <td>{observateur?.libelle}</td>
+              <td>{observateur?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!observateur.editable}
+                  onEditClicked={() => handleEditObservateur(observateur?.id)}
+                  onDeleteClicked={() => handleDeleteObservateur(observateur)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.observateurs?.count}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogObservateur}
         messageContent={t("deleteObserverDialogMsg", {

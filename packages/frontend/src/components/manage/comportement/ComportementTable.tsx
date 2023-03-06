@@ -19,7 +19,7 @@ import { type Comportement, type ComportementsOrderBy } from "../../../gql/graph
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
-import FilterTextField from "../common/FilterTextField";
+import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
 const PAGINATED_QUERY = graphql(`
@@ -147,11 +147,12 @@ const ComportementTable: FunctionComponent = () => {
 
   return (
     <>
-      <FilterTextField
+      <ManageEntitiesHeader
         value={query}
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
+        count={data?.comportements?.count}
       />
       <TableContainer className="mt-4" component={Paper}>
         <Table stickyHeader size="small">

@@ -137,6 +137,9 @@
   },
   "observer": "observateur",
   "observers": "Observateurs",
+  "pagination": {
+    "currentPageDescription": "Page {{currentPage}} sur {{totalPages}}"
+  },
   "scientificName": "Nom scientifique",
   "species": "Espèces",
   "speciesClass": "Classe espèce",
@@ -175,7 +178,10 @@
   "exportAction": "Exporter",
   "filter": {
     "label": "Filtre",
-    "placeholder": "Tapez un filtre ici"
+    "placeholder": "Tapez un filtre ici",
+    "resultsCount": "{{count}} résultats",
+    "resultsCount_zero": "Aucun résultat",
+    "resultsCount_one": "{{count}} résultat"
   },
   "label": "Libellé",
   "undefinedNumber": "Non compté",
