@@ -80,9 +80,9 @@
   },
   "devDependencies": {
     "@graphql-codegen/add": "4.0.1",
-    "@graphql-codegen/cli": "3.2.1",
-    "@graphql-codegen/typescript": "3.0.1",
-    "@graphql-codegen/typescript-resolvers": "3.1.0",
+    "@graphql-codegen/cli": "3.2.2",
+    "@graphql-codegen/typescript": "3.0.2",
+    "@graphql-codegen/typescript-resolvers": "3.1.1",
     "@ou-ca/eslint-config": "*",
     "@types/node": "18.14.6",
     "@vitest/coverage-c8": "0.29.2",
