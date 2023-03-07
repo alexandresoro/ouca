@@ -46,7 +46,7 @@
     "@fontsource/inter": "4.5.15",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
     "@headlessui/react": "1.7.13",
-    "@mui/material": "5.11.11",
+    "@mui/material": "5.11.12",
     "@ou-ca/common": "*",
     "@sentry/react": "7.40.0",
     "@sentry/tracing": "7.40.0",
