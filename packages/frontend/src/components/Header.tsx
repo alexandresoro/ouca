@@ -157,7 +157,7 @@ const Header: FunctionComponent = () => {
     <div className="navbar z-10 sticky bg-primary dark:bg-neutral-800 min-h-12 px-6 py-0 place-content-between shadow-md shadow-gray-700/75">
       <Link className="gap-2.5" to="/">
         <img className="-mb-3" src={Logo} height="60px" width="70px"></img>
-        <h1 className="hidden md:block text-neutral-50 font-['Yuji_Hentaigana_Akebono'] font-bold drop-shadow-[2px_2px_rgba(0,0,0,0.4)]">
+        <h1 className="hidden text-2xl md:block text-neutral-50 font-['Yuji_Hentaigana_Akebono'] font-bold drop-shadow-[2px_2px_rgba(0,0,0,0.4)]">
           oùça?
         </h1>
       </Link>

@@ -1,4 +1,3 @@
-import { MenuItem } from "@mui/material";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { useCallback, useContext, useEffect, type FunctionComponent } from "react";
 import { useForm } from "react-hook-form";
@@ -8,9 +7,9 @@ import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
+import Select from "./common/Select";
 import Switch from "./common/Switch";
 import TextInput from "./common/TextInput";
-import ReactHookFormSelect from "./form/ReactHookFormSelect";
 import ContentContainerLayout from "./layout/ContentContainerLayout";
 import StyledPanelHeader from "./layout/StyledPanelHeader";
 
@@ -216,7 +215,7 @@ const SettingsPage: FunctionComponent = () => {
           <div className="card border-2 border-primary p-6 bg-base-100 shadow-xl">
             <form className="flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
               <div className="flex flex-col flex-auto w-full">
-                <ReactHookFormSelect
+                <Select
                   name="defaultObservateur"
                   label={t("defaultObserver")}
                   control={control}
@@ -228,15 +227,11 @@ const SettingsPage: FunctionComponent = () => {
                     margin: "normal",
                     fullWidth: true,
                   }}
-                >
-                  {data?.observateurs?.data?.map((observateur) => (
-                    <MenuItem key={observateur.id} value={observateur.id}>
-                      {observateur.libelle}
-                    </MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  data={data?.observateurs?.data}
+                  renderValue={({ libelle }) => libelle}
+                />
 
-                <ReactHookFormSelect
+                <Select
                   name="defaultDepartement"
                   label={t("defaultDepartment")}
                   control={control}
@@ -248,15 +243,11 @@ const SettingsPage: FunctionComponent = () => {
                     margin: "normal",
                     fullWidth: true,
                   }}
-                >
-                  {data?.departements?.data?.map((departement) => (
-                    <MenuItem key={departement.id} value={departement.id}>
-                      {departement.code}
-                    </MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  data={data?.departements?.data}
+                  renderValue={({ code }) => code}
+                />
 
-                <ReactHookFormSelect
+                <Select
                   name="defaultEstimationNombre"
                   label={t("defaultNumberPrecision")}
                   control={control}
@@ -268,13 +259,9 @@ const SettingsPage: FunctionComponent = () => {
                     margin: "normal",
                     fullWidth: true,
                   }}
-                >
-                  {data?.estimationsNombre?.data?.map((estimationNombre) => (
-                    <MenuItem key={estimationNombre.id} value={estimationNombre.id}>
-                      {estimationNombre.libelle}
-                    </MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  data={data?.estimationsNombre?.data}
+                  renderValue={({ libelle }) => libelle}
+                />
 
                 <TextInput
                   textInputClassName="w-full"
@@ -282,7 +269,9 @@ const SettingsPage: FunctionComponent = () => {
                   type="text"
                   required
                   defaultValue=""
-                  className={`input input-bordered ${errors?.defaultNombre ? "input-error" : "input-primary"}`}
+                  className={`input input-bordered text-base-content text-sm font-semibold ${
+                    errors?.defaultNombre ? "input-error" : "input-primary"
+                  }`}
                   {...register("defaultNombre", {
                     required: true,
                     min: 1,
@@ -291,7 +280,7 @@ const SettingsPage: FunctionComponent = () => {
                   })}
                 />
 
-                <ReactHookFormSelect
+                <Select
                   name="defaultSexe"
                   label={t("defaultSex")}
                   control={control}
@@ -303,15 +292,11 @@ const SettingsPage: FunctionComponent = () => {
                     margin: "normal",
                     fullWidth: true,
                   }}
-                >
-                  {data?.sexes?.data?.map((sexe) => (
-                    <MenuItem key={sexe.id} value={sexe.id}>
-                      {sexe.libelle}
-                    </MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  data={data?.sexes?.data}
+                  renderValue={({ libelle }) => libelle}
+                />
 
-                <ReactHookFormSelect
+                <Select
                   name="defaultAge"
                   label={t("defaultAge")}
                   control={control}
@@ -323,13 +308,9 @@ const SettingsPage: FunctionComponent = () => {
                     margin: "normal",
                     fullWidth: true,
                   }}
-                >
-                  {data?.ages?.data?.map((age) => (
-                    <MenuItem key={age.id} value={age.id}>
-                      {age.libelle}
-                    </MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  data={data?.ages?.data}
+                  renderValue={({ libelle }) => libelle}
+                />
               </div>
 
               <div className="flex flex-col flex-auto w-full">
@@ -345,7 +326,7 @@ const SettingsPage: FunctionComponent = () => {
                   label={t("displayRegroupmentNumber")}
                 />
 
-                <ReactHookFormSelect
+                <Select
                   name="coordinatesSystem"
                   label={t("coordinatesSystem")}
                   control={control}
@@ -357,13 +338,10 @@ const SettingsPage: FunctionComponent = () => {
                     margin: "normal",
                     fullWidth: true,
                   }}
-                >
-                  {COORDINATES_SYSTEMS.map((coordinateSystem) => (
-                    <MenuItem key={coordinateSystem.code} value={coordinateSystem.code}>
-                      {coordinateSystem.name}
-                    </MenuItem>
-                  ))}
-                </ReactHookFormSelect>
+                  data={COORDINATES_SYSTEMS}
+                  by="code"
+                  renderValue={({ name }) => name}
+                />
               </div>
             </form>
           </div>

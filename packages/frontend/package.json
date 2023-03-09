@@ -43,6 +43,7 @@
   "dependencies": {
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
+    "@floating-ui/react": "0.20.1",
     "@fontsource/inter": "4.5.15",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
     "@headlessui/react": "1.7.13",
