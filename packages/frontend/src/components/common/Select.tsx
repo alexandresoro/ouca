@@ -1,6 +1,5 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Listbox } from "@headlessui/react";
-import { FormControl, type FormControlProps } from "@mui/material";
 import { Check } from "@styled-icons/boxicons-regular";
 import { type Key, type PropsWithChildren } from "react";
 import { useController, type FieldValues, type UseControllerProps } from "react-hook-form";
@@ -8,7 +7,6 @@ import { useController, type FieldValues, type UseControllerProps } from "react-
 type SelectProps<TFieldValues extends FieldValues, T> = UseControllerProps<TFieldValues> & {
   renderValue: (value: T) => string;
   label: string;
-  formControlProps?: FormControlProps;
 } & (T extends { id: string | number }
     ? {
         data: T[] | null | undefined;
@@ -17,7 +15,7 @@ type SelectProps<TFieldValues extends FieldValues, T> = UseControllerProps<TFiel
     : { data: T[] | null | undefined; by: keyof T });
 
 const Select = <TFieldValues extends FieldValues, T>(props: PropsWithChildren<SelectProps<TFieldValues, T>>) => {
-  const { data, by, renderValue, name, label, defaultValue, control, rules, formControlProps } = props;
+  const { data, by, renderValue, name, label, defaultValue, control, rules } = props;
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-start",
@@ -95,7 +93,6 @@ const Select = <TFieldValues extends FieldValues, T>(props: PropsWithChildren<Se
           })}
         </Listbox.Options>
       </Listbox>
-      <FormControl variant="standard" {...formControlProps}></FormControl>
     </>
   );
 };

@@ -223,10 +223,6 @@ const SettingsPage: FunctionComponent = () => {
                   rules={{
                     required: true,
                   }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true,
-                  }}
                   data={data?.observateurs?.data}
                   renderValue={({ libelle }) => libelle}
                 />
@@ -239,10 +235,6 @@ const SettingsPage: FunctionComponent = () => {
                   rules={{
                     required: true,
                   }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true,
-                  }}
                   data={data?.departements?.data}
                   renderValue={({ code }) => code}
                 />
@@ -254,10 +246,6 @@ const SettingsPage: FunctionComponent = () => {
                   defaultValue=""
                   rules={{
                     required: true,
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true,
                   }}
                   data={data?.estimationsNombre?.data}
                   renderValue={({ libelle }) => libelle}
@@ -288,10 +276,6 @@ const SettingsPage: FunctionComponent = () => {
                   rules={{
                     required: true,
                   }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true,
-                  }}
                   data={data?.sexes?.data}
                   renderValue={({ libelle }) => libelle}
                 />
@@ -303,10 +287,6 @@ const SettingsPage: FunctionComponent = () => {
                   defaultValue=""
                   rules={{
                     required: true,
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true,
                   }}
                   data={data?.ages?.data}
                   renderValue={({ libelle }) => libelle}
@@ -333,10 +313,6 @@ const SettingsPage: FunctionComponent = () => {
                   defaultValue=""
                   rules={{
                     required: true,
-                  }}
-                  formControlProps={{
-                    margin: "normal",
-                    fullWidth: true,
                   }}
                   data={COORDINATES_SYSTEMS}
                   by="code"
