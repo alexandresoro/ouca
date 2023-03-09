@@ -7,9 +7,9 @@ import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
-import Select from "./common/Select";
-import Switch from "./common/Switch";
-import TextInput from "./common/TextInput";
+import FormSelect from "./common/form/FormSelect";
+import FormSwitch from "./common/form/FormSwitch";
+import TextInput from "./common/styled/TextInput";
 import ContentContainerLayout from "./layout/ContentContainerLayout";
 import StyledPanelHeader from "./layout/StyledPanelHeader";
 
@@ -104,7 +104,6 @@ const SettingsPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  // TODO check fetch policies
   const [{ fetching, error, data }, refetchSettings] = useQuery({ query: SETTINGS_QUERY });
 
   const [_, sendUserSettingsUpdate] = useMutation(USER_SETTINGS_MUTATION);
@@ -159,9 +158,6 @@ const SettingsPage: FunctionComponent = () => {
       }
       const { defaultNombre, ...otherValues } = values;
 
-      // TODO add userId at some point
-      console.log(userInfo);
-
       await sendUserSettingsUpdate({
         appConfiguration: {
           id: data.settings.id,
@@ -213,9 +209,9 @@ const SettingsPage: FunctionComponent = () => {
         )}
         {!(fetching || error) && (
           <div className="card border-2 border-primary p-6 bg-base-100 shadow-xl">
-            <form className="flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
-              <div className="flex flex-col flex-auto w-full">
-                <Select
+            <form className="flex justify-center items-center flex-col sm:flex-row gap-5 sm:gap-10 md:gap-16">
+              <div className="flex flex-col w-full">
+                <FormSelect
                   name="defaultObservateur"
                   label={t("defaultObserver")}
                   control={control}
@@ -227,7 +223,7 @@ const SettingsPage: FunctionComponent = () => {
                   renderValue={({ libelle }) => libelle}
                 />
 
-                <Select
+                <FormSelect
                   name="defaultDepartement"
                   label={t("defaultDepartment")}
                   control={control}
@@ -239,7 +235,7 @@ const SettingsPage: FunctionComponent = () => {
                   renderValue={({ code }) => code}
                 />
 
-                <Select
+                <FormSelect
                   name="defaultEstimationNombre"
                   label={t("defaultNumberPrecision")}
                   control={control}
@@ -268,7 +264,7 @@ const SettingsPage: FunctionComponent = () => {
                   })}
                 />
 
-                <Select
+                <FormSelect
                   name="defaultSexe"
                   label={t("defaultSex")}
                   control={control}
@@ -280,7 +276,7 @@ const SettingsPage: FunctionComponent = () => {
                   renderValue={({ libelle }) => libelle}
                 />
 
-                <Select
+                <FormSelect
                   name="defaultAge"
                   label={t("defaultAge")}
                   control={control}
@@ -293,20 +289,26 @@ const SettingsPage: FunctionComponent = () => {
                 />
               </div>
 
-              <div className="flex flex-col flex-auto w-full">
-                <Switch {...register("areAssociesDisplayed")} defaultValue="" label={t("displayAssociateObservers")} />
-
-                <Switch {...register("isMeteoDisplayed")} defaultValue="" label={t("displayWeather")} />
-
-                <Switch {...register("isDistanceDisplayed")} defaultValue="" label={t("displayDistance")} />
-
-                <Switch
-                  {...register("isRegroupementDisplayed")}
+              <div className="flex flex-col w-full">
+                <FormSwitch
+                  name="areAssociesDisplayed"
+                  label={t("displayAssociateObservers")}
+                  control={control}
                   defaultValue=""
-                  label={t("displayRegroupmentNumber")}
                 />
 
-                <Select
+                <FormSwitch name="isMeteoDisplayed" label={t("displayWeather")} control={control} defaultValue="" />
+
+                <FormSwitch name="isDistanceDisplayed" label={t("displayDistance")} control={control} defaultValue="" />
+
+                <FormSwitch
+                  name="isRegroupementDisplayed"
+                  label={t("displayRegroupmentNumber")}
+                  control={control}
+                  defaultValue=""
+                />
+
+                <FormSelect
                   name="coordinatesSystem"
                   label={t("coordinatesSystem")}
                   control={control}

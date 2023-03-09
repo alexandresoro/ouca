@@ -1,0 +1,90 @@
+import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
+import { Listbox } from "@headlessui/react";
+import { Check } from "@styled-icons/boxicons-regular";
+import { forwardRef, type ForwardedRef, type Key } from "react";
+import { type ConditionalKeys } from "type-fest";
+
+type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
+  data: T[] | null | undefined;
+  name?: string;
+  label: string;
+  value: T;
+  onChange?: (value: T) => void;
+  renderValue: (value: T) => string;
+} & (T extends { id: Key }
+  ? {
+      by?: K;
+    }
+  : { by: K });
+
+const Select = <T, K extends ConditionalKeys<T, Key>>(props: SelectProps<T, K>, ref: ForwardedRef<HTMLElement>) => {
+  const { data, name, value, onChange, by, renderValue, label } = props;
+
+  const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
+    placement: "bottom-start",
+    middleware: [
+      offset(({ rects }) => {
+        const shiftToCenter = data && data?.length > 4 ? 3 : 2; // Center if few elements, otherwise shift in order to give room to flip if needed
+        return -rects.reference.height / shiftToCenter - rects.floating.height / shiftToCenter;
+      }),
+      shift(),
+      flip({ padding: 8 }),
+      size({
+        apply({ rects, elements, availableHeight }) {
+          Object.assign(elements.floating.style, {
+            maxHeight: `${Math.min(availableHeight, 36 * 8)}px`,
+            width: `${rects.reference.width}px`,
+          });
+        },
+        padding: 8,
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
+
+  // TODO: try to improve type inference
+  const key = by ?? ("id" as ConditionalKeys<T, Key>);
+
+  const getDisplayedSelectedValue = (value: unknown): string => {
+    const selectedOption = data?.find((entry) => entry[key] === value);
+    return selectedOption ? renderValue(selectedOption) : "";
+  };
+
+  return (
+    <Listbox as="div" ref={ref} name={name} value={value} onChange={onChange} className="form-control w-full py-2">
+      <div className="label">
+        <Listbox.Label className="label-text">{label}</Listbox.Label>
+      </div>
+      <Listbox.Button
+        className="w-full select select-bordered select-primary items-center text-base-content"
+        ref={refs.setReference}
+      >
+        {({ value }) => <>{getDisplayedSelectedValue(value)}</>}
+      </Listbox.Button>
+      <Listbox.Options
+        className="menu menu-compact flex-nowrap text-base-content dark:shadow shadow-primary-focus bg-gray-100 dark:bg-base-300 ring-2 ring-primary-focus rounded-box overflow-y-auto"
+        style={{
+          position: strategy,
+          top: y ?? 0,
+          left: x ?? 0,
+        }}
+        ref={refs.setFloating}
+      >
+        {data?.map((option) => {
+          return (
+            <Listbox.Option className="font-semibold" key={option[key] as Key} value={option[key]}>
+              {({ active, selected, disabled }) => (
+                <div className={`flex justify-between disabled ${active && !disabled ? "active" : ""}`}>
+                  <span>{renderValue(option)}</span>
+                  {selected && <Check className={`h-5 ${active ? "text-primary-content" : "text-primary"}`} />}
+                </div>
+              )}
+            </Listbox.Option>
+          );
+        })}
+      </Listbox.Options>
+    </Listbox>
+  );
+};
+
+export default forwardRef(Select);

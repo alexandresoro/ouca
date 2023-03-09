@@ -7,7 +7,7 @@ import GreenBird from "../assets/img/green-bird.svg";
 import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type UserLoginInput } from "../gql/graphql";
-import TextInput from "./common/TextInput";
+import TextInput from "./common/styled/TextInput";
 
 const USER_LOGIN_MUTATION = graphql(`
   mutation UserLogin($loginData: UserLoginInput!) {

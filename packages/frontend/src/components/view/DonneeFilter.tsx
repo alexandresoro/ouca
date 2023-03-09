@@ -1,7 +1,7 @@
 import { Autocomplete, Chip, FormGroup, TextField } from "@mui/material";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import Switch from "../common/Switch";
+import Switch from "../common/styled/Switch";
 
 const DonneeFilter: FunctionComponent = () => {
   const { t } = useTranslation();

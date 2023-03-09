@@ -1,7 +1,7 @@
 import { EditAlt, Trash } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import PrimaryIconButton from "../../common/PrimaryIconButton";
+import IconButton from "../../common/styled/IconButton";
 
 type TableCellActionButtonsProps = {
   disabled?: boolean;
@@ -15,22 +15,22 @@ const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (
 
   return (
     <>
-      <PrimaryIconButton
+      <IconButton
         className="mx-1 text-primary dark:text-white"
         disabled={disabled}
         aria-label={t("aria-editButton")}
         onClick={onEditClicked}
       >
         <EditAlt className="h-5" />
-      </PrimaryIconButton>
-      <PrimaryIconButton
+      </IconButton>
+      <IconButton
         className="mx-1 text-error"
         disabled={disabled}
         aria-label={t("aria-deleteButton")}
         onClick={onDeleteClicked}
       >
         <Trash className="h-5" />
-      </PrimaryIconButton>
+      </IconButton>
     </>
   );
 };

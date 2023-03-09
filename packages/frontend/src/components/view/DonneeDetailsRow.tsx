@@ -5,7 +5,7 @@ import { type TFuncKey } from "i18next";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { type Donnee } from "../../gql/graphql";
-import PrimaryIconButton from "../common/PrimaryIconButton";
+import IconButton from "../common/styled/IconButton";
 import DonneeDetailsView from "./DonneeDetailsView";
 import InventaireDetailsView from "./InventaireDetailsView";
 
@@ -43,20 +43,20 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
         <TableCell>{intlFormat(parseISO(donnee?.inventaire.date))}</TableCell>
         <TableCell>{donnee?.inventaire.observateur.libelle}</TableCell>
         <TableCell align="right">
-          <PrimaryIconButton
+          <IconButton
             className="mx-1 text-primary dark:text-white"
             aria-label={t("observationsTable.header.action.edit")}
             onClick={onEditAction}
           >
             <Edit className="h-5" />
-          </PrimaryIconButton>
-          <PrimaryIconButton
+          </IconButton>
+          <IconButton
             className="mx-1 text-error"
             aria-label={t("observationsTable.header.action.delete")}
             onClick={onDeleteAction}
           >
             <Trash className="h-5" />
-          </PrimaryIconButton>
+          </IconButton>
         </TableCell>
       </TableRow>
 

@@ -1,6 +1,6 @@
 import { type ComponentPropsWithoutRef, type FunctionComponent, type PropsWithChildren } from "react";
 
-const PrimaryIconButton: FunctionComponent<PropsWithChildren<ComponentPropsWithoutRef<"button">>> = ({
+const IconButton: FunctionComponent<PropsWithChildren<ComponentPropsWithoutRef<"button">>> = ({
   children,
   className,
   ...props
@@ -12,4 +12,4 @@ const PrimaryIconButton: FunctionComponent<PropsWithChildren<ComponentPropsWitho
   </div>
 );
 
-export default PrimaryIconButton;
+export default IconButton;
