@@ -1,19 +1,9 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TableSortLabel,
-} from "@mui/material";
+import { TableSortLabel } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
+import Table from "../../../components/common/styled/Table";
 import { graphql } from "../../../gql";
 import { type Age, type EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -57,7 +47,7 @@ const AgeTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
   const [dialogAge, setDialogAge] = useState<Age | null>(null);
@@ -124,11 +114,6 @@ const AgeTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -144,60 +129,48 @@ const AgeTable: FunctionComponent = () => {
         }}
         count={data?.ages?.count}
       />
-      <TableContainer className="mt-4" component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                    {orderBy === column.key ? (
-                      <span className="sr-only">
-                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
-                      </span>
-                    ) : null}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-              <TableCell align="right">{t("actions")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.ages?.data?.map((age) => {
-              return (
-                <TableRow hover key={age?.id}>
-                  <TableCell>{age?.libelle}</TableCell>
-                  <TableCell>{age?.nbDonnees}</TableCell>
-                  <TableCell align="right">
-                    <TableCellActionButtons
-                      disabled={!age.editable}
-                      onEditClicked={() => handleEditAge(age?.id)}
-                      onDeleteClicked={() => handleDeleteAge(age)}
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={data?.ages?.count ?? 0}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+      <Table
+        tableHead={
+          <>
+            {COLUMNS.map((column) => (
+              <th key={column.key}>
+                <TableSortLabel
+                  active={orderBy === column.key}
+                  direction={orderBy === column.key ? sortOrder : "asc"}
+                  onClick={() => handleRequestSort(column.key)}
+                >
+                  {t(column.locKey)}
+                  {orderBy === column.key ? (
+                    <span className="sr-only">
+                      {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
+                    </span>
+                  ) : null}
+                </TableSortLabel>
+              </th>
+            ))}
+            <th align="right">{t("actions")}</th>
+          </>
+        }
+        tableRows={data?.ages?.data?.map((age) => {
+          return (
+            <tr className="hover" key={age?.id}>
+              <td>{age?.libelle}</td>
+              <td>{age?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!age.editable}
+                  onEditClicked={() => handleEditAge(age?.id)}
+                  onDeleteClicked={() => handleDeleteAge(age)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.ages?.count}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogAge}
         messageContent={t("deleteAgeDialogMsg", {
