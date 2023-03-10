@@ -65,7 +65,7 @@
     "react-hook-form": "7.43.5",
     "react-i18next": "12.2.0",
     "react-router-dom": "6.8.2",
-    "urql": "3.0.3",
+    "urql": "3.0.4",
     "web-vitals": "3.1.1"
   },
   "devDependencies": {
