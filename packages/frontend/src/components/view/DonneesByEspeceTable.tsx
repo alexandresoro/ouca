@@ -8,7 +8,6 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
 } from "@mui/material";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,6 +15,7 @@ import { useQuery } from "urql";
 import { graphql } from "../../gql";
 import { type EspecesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
+import TableSortLabel from "../common/styled/table/TableSortLabel";
 
 const PAGINATED_SEARCH_ESPECES_QUERY = graphql(`
   query PaginatedSearchEspeces(
@@ -117,11 +117,6 @@ const DonneesByEspeceTable: FunctionComponent = () => {
                     onClick={() => handleRequestSort(column.key)}
                   >
                     {t(column.locKey)}
-                    {orderBy === column.key ? (
-                      <span className="sr-only">
-                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
-                      </span>
-                    ) : null}
                   </TableSortLabel>
                 </TableCell>
               ))}

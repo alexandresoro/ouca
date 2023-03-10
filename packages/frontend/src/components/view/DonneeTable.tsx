@@ -8,7 +8,6 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
 } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,6 +16,7 @@ import { graphql } from "../../gql";
 import { type Donnee, type SearchDonneesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
+import TableSortLabel from "../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
 
@@ -241,11 +241,6 @@ const DonneeTable: FunctionComponent = () => {
                     onClick={() => handleRequestSort(column.key)}
                   >
                     {t(column.locKey)}
-                    {orderBy === column.key ? (
-                      <span className="sr-only">
-                        {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
-                      </span>
-                    ) : null}
                   </TableSortLabel>
                 </TableCell>
               ))}

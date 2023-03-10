@@ -1,13 +1,13 @@
-import { TableSortLabel } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import Table from "../../../components/common/styled/Table";
 import { graphql } from "../../../gql";
 import { type Age, type EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
+import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
@@ -140,11 +140,6 @@ const AgeTable: FunctionComponent = () => {
                   onClick={() => handleRequestSort(column.key)}
                 >
                   {t(column.locKey)}
-                  {orderBy === column.key ? (
-                    <span className="sr-only">
-                      {sortOrder === "desc" ? t("aria-descendingSort") : t("aria-ascendingSort")}
-                    </span>
-                  ) : null}
                 </TableSortLabel>
               </th>
             ))}
