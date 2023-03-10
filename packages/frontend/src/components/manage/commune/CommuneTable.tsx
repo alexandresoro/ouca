@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type Commune, type CommunesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -147,8 +147,8 @@ const CommuneTable: FunctionComponent = () => {
         }}
         count={data?.communes?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -163,38 +163,30 @@ const CommuneTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.communes?.data?.map((commune) => {
-            return (
-              <tr className="hover" key={commune?.id}>
-                <td>{commune?.departement?.code}</td>
-                <td>{commune?.code}</td>
-                <td>{commune?.nom}</td>
-                <td>{commune?.nbLieuxDits}</td>
-                <td>{commune?.nbDonnees}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!commune.editable}
-                    onEditClicked={() => handleEditCommune(commune?.id)}
-                    onDeleteClicked={() => handleDeleteCommune(commune)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.communes?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.communes?.data?.map((commune) => {
+          return (
+            <tr className="hover" key={commune?.id}>
+              <td>{commune?.departement?.code}</td>
+              <td>{commune?.code}</td>
+              <td>{commune?.nom}</td>
+              <td>{commune?.nbLieuxDits}</td>
+              <td>{commune?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!commune.editable}
+                  onEditClicked={() => handleEditCommune(commune?.id)}
+                  onDeleteClicked={() => handleDeleteCommune(commune)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.communes?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogCommune}
         messageContent={t("deleteCityDialogMsg", {

@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type EntitesAvecLibelleOrderBy, type Sexe } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -129,8 +129,8 @@ const SexeTable: FunctionComponent = () => {
         }}
         count={data?.sexes?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -145,35 +145,27 @@ const SexeTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.sexes?.data?.map((sexe) => {
-            return (
-              <tr className="hover" key={sexe?.id}>
-                <td>{sexe?.libelle}</td>
-                <td>{sexe?.nbDonnees}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!sexe.editable}
-                    onEditClicked={() => handleEditSexe(sexe?.id)}
-                    onDeleteClicked={() => handleDeleteSexe(sexe)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.sexes?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.sexes?.data?.map((sexe) => {
+          return (
+            <tr className="hover" key={sexe?.id}>
+              <td>{sexe?.libelle}</td>
+              <td>{sexe?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!sexe.editable}
+                  onEditClicked={() => handleEditSexe(sexe?.id)}
+                  onDeleteClicked={() => handleDeleteSexe(sexe)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.sexes?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogSexe}
         messageContent={t("deleteGenderDialogMsg", {

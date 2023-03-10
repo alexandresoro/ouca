@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type Espece, type EspecesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -147,8 +147,8 @@ const EspeceTable: FunctionComponent = () => {
         }}
         count={data?.especes?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -163,38 +163,30 @@ const EspeceTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.especes?.data?.map((espece) => {
-            return (
-              <tr className="hover" key={espece?.id}>
-                <td>{espece?.classe?.libelle}</td>
-                <td>{espece?.code}</td>
-                <td>{espece?.nomFrancais}</td>
-                <td>{espece?.nomLatin}</td>
-                <td>{espece?.nbDonnees ? espece?.nbDonnees : "0"}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!espece.editable}
-                    onEditClicked={() => handleEditEspece(espece?.id)}
-                    onDeleteClicked={() => handleDeleteEspece(espece)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.especes?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.especes?.data?.map((espece) => {
+          return (
+            <tr className="hover" key={espece?.id}>
+              <td>{espece?.classe?.libelle}</td>
+              <td>{espece?.code}</td>
+              <td>{espece?.nomFrancais}</td>
+              <td>{espece?.nomLatin}</td>
+              <td>{espece?.nbDonnees ? espece?.nbDonnees : "0"}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!espece.editable}
+                  onEditClicked={() => handleEditEspece(espece?.id)}
+                  onDeleteClicked={() => handleDeleteEspece(espece)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.especes?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogEspece}
         messageContent={t("deleteSpeciesDialogMsg", {

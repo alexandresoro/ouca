@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type Milieu, type MilieuxOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -134,8 +134,8 @@ const MilieuTable: FunctionComponent = () => {
         }}
         count={data?.milieux?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -150,36 +150,28 @@ const MilieuTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.milieux?.data?.map((milieu) => {
-            return (
-              <tr className="hover" key={milieu?.id}>
-                <td>{milieu?.code}</td>
-                <td>{milieu?.libelle}</td>
-                <td>{milieu?.nbDonnees}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!milieu.editable}
-                    onEditClicked={() => handleEditMilieu(milieu?.id)}
-                    onDeleteClicked={() => handleDeleteMilieu(milieu)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.milieux?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.milieux?.data?.map((milieu) => {
+          return (
+            <tr className="hover" key={milieu?.id}>
+              <td>{milieu?.code}</td>
+              <td>{milieu?.libelle}</td>
+              <td>{milieu?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!milieu.editable}
+                  onEditClicked={() => handleEditMilieu(milieu?.id)}
+                  onDeleteClicked={() => handleDeleteMilieu(milieu)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.milieux?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogMilieu}
         messageContent={t("deleteEnvironmentDialogMsg", {

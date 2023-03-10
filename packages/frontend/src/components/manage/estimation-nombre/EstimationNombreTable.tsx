@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type EstimationNombre, type EstimationNombreOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -134,8 +134,8 @@ const EstimationNombreTable: FunctionComponent = () => {
         }}
         count={data?.estimationsNombre?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -150,36 +150,28 @@ const EstimationNombreTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.estimationsNombre?.data?.map((estimationNombre) => {
-            return (
-              <tr className="hover" key={estimationNombre?.id}>
-                <td>{estimationNombre?.libelle}</td>
-                <td>{estimationNombre?.nonCompte ? "Oui" : ""}</td>
-                <td>{estimationNombre?.nbDonnees}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!estimationNombre.editable}
-                    onEditClicked={() => handleEditEstimationNombre(estimationNombre?.id)}
-                    onDeleteClicked={() => handleDeleteEstimationNombre(estimationNombre)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.estimationsNombre?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.estimationsNombre?.data?.map((estimationNombre) => {
+          return (
+            <tr className="hover" key={estimationNombre?.id}>
+              <td>{estimationNombre?.libelle}</td>
+              <td>{estimationNombre?.nonCompte ? "Oui" : ""}</td>
+              <td>{estimationNombre?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!estimationNombre.editable}
+                  onEditClicked={() => handleEditEstimationNombre(estimationNombre?.id)}
+                  onDeleteClicked={() => handleDeleteEstimationNombre(estimationNombre)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.estimationsNombre?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogEstimationNombre}
         messageContent={t("deleteNumberPrecisionDialogMsg", {

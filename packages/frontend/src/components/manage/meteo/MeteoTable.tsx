@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type EntitesAvecLibelleOrderBy, type Meteo } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -129,8 +129,8 @@ const MeteoTable: FunctionComponent = () => {
         }}
         count={data?.meteos?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -145,35 +145,27 @@ const MeteoTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.meteos?.data?.map((meteo) => {
-            return (
-              <tr className="hover" key={meteo?.id}>
-                <td>{meteo?.libelle}</td>
-                <td>{meteo?.nbDonnees}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!meteo.editable}
-                    onEditClicked={() => handleEditMeteo(meteo?.id)}
-                    onDeleteClicked={() => handleDeleteMeteo(meteo)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.meteos?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.meteos?.data?.map((meteo) => {
+          return (
+            <tr className="hover" key={meteo?.id}>
+              <td>{meteo?.libelle}</td>
+              <td>{meteo?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!meteo.editable}
+                  onEditClicked={() => handleEditMeteo(meteo?.id)}
+                  onDeleteClicked={() => handleDeleteMeteo(meteo)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.meteos?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogMeteo}
         messageContent={t("deleteWeatherDialogMsg", {

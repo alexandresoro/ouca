@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type Comportement, type ComportementsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -139,8 +139,8 @@ const ComportementTable: FunctionComponent = () => {
         }}
         count={data?.comportements?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -155,37 +155,29 @@ const ComportementTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.comportements?.data?.map((comportement) => {
-            return (
-              <TableRow className="hover" key={comportement?.id}>
-                <td>{comportement?.code}</td>
-                <td>{comportement?.libelle}</td>
-                <td>{comportement?.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
-                <td>{comportement?.nbDonnees}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!comportement.editable}
-                    onEditClicked={() => handleEditComportement(comportement?.id)}
-                    onDeleteClicked={() => handleDeleteComportement(comportement)}
-                  />
-                </td>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.comportements?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.comportements?.data?.map((comportement) => {
+          return (
+            <tr className="hover" key={comportement?.id}>
+              <td>{comportement?.code}</td>
+              <td>{comportement?.libelle}</td>
+              <td>{comportement?.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
+              <td>{comportement?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!comportement.editable}
+                  onEditClicked={() => handleEditComportement(comportement?.id)}
+                  onDeleteClicked={() => handleDeleteComportement(comportement)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.comportements?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogComportement}
         messageContent={t("deleteBehaviorDialogMsg", {

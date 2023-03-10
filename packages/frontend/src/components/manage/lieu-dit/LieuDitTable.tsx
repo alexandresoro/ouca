@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type LieuDit, type LieuxDitsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -167,8 +167,8 @@ const LieuDitTable: FunctionComponent = () => {
         }}
         count={data?.lieuxDits?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -183,41 +183,33 @@ const LieuDitTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.lieuxDits?.data?.map((lieuDit) => {
-            return (
-              <tr className="hover" key={lieuDit?.id}>
-                <td>{lieuDit?.commune?.departement?.code}</td>
-                <td>{lieuDit?.commune?.code}</td>
-                <td>{lieuDit?.commune?.nom}</td>
-                <td>{lieuDit?.nom}</td>
-                <td>{lieuDit?.latitude}</td>
-                <td>{lieuDit?.longitude}</td>
-                <td>{lieuDit?.altitude}</td>
-                <td>{lieuDit?.nbDonnees}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!lieuDit.editable}
-                    onEditClicked={() => handleEditLieuDit(lieuDit?.id)}
-                    onDeleteClicked={() => handleDeleteLieuDit(lieuDit)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.lieuxDits?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.lieuxDits?.data?.map((lieuDit) => {
+          return (
+            <tr className="hover" key={lieuDit?.id}>
+              <td>{lieuDit?.commune?.departement?.code}</td>
+              <td>{lieuDit?.commune?.code}</td>
+              <td>{lieuDit?.commune?.nom}</td>
+              <td>{lieuDit?.nom}</td>
+              <td>{lieuDit?.latitude}</td>
+              <td>{lieuDit?.longitude}</td>
+              <td>{lieuDit?.altitude}</td>
+              <td>{lieuDit?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!lieuDit.editable}
+                  onEditClicked={() => handleEditLieuDit(lieuDit?.id)}
+                  onDeleteClicked={() => handleDeleteLieuDit(lieuDit)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.lieuxDits?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogLieuDit}
         messageContent={t("deleteLieuDitDialogMsg", {

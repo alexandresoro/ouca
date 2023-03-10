@@ -1,10 +1,3 @@
-import {
-  Table,
-  TableBody, TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow
-} from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -13,11 +6,11 @@ import { graphql } from "../../../gql";
 import { type EntitesAvecLibelleOrderBy, type EstimationDistance } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
 
 const PAGINATED_QUERY = graphql(`
   query EstimationsDistanceTable(
@@ -140,8 +133,8 @@ const EstimationDistanceTable: FunctionComponent = () => {
         }}
         count={data?.estimationsDistance?.count}
       />
-        <Table>
-          <TableHead>
+        <Table   
+          tableHead={ 
             <>
               {COLUMNS.map((column) => (
                 <th key={column.key}>
@@ -155,10 +148,8 @@ const EstimationDistanceTable: FunctionComponent = () => {
                 </th>
               ))}
               <th align="right">{t("actions")}</th>
-            </>
-          </TableHead>
-          <TableBody>
-            {data?.estimationsDistance?.data?.map((estimationDistance) => {
+            </>}
+            tableRows={data?.estimationsDistance?.data?.map((estimationDistance) => {
               return (
                 <tr className="hover" key={estimationDistance?.id}>
                   <td>{estimationDistance?.libelle}</td>
@@ -173,18 +164,11 @@ const EstimationDistanceTable: FunctionComponent = () => {
                 </tr>
               );
             })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                page={page}
-                rowsPerPage={rowsPerPage}
-                count={data?.estimationsDistance?.count ?? 0}
-                onPageChange={handleChangePage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
+            page={page}
+            elementsPerPage={rowsPerPage}
+            count={data?.estimationsDistance?.count ?? 0}
+            onPageChange={handleChangePage}
+          ></Table>
       <DeletionConfirmationDialog
         open={!!dialogEstimationDistance}
         messageContent={t("deleteDistancePrecisionDialogMsg", {

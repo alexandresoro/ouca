@@ -1,4 +1,3 @@
-import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { graphql } from "../../../gql";
 import { type Departement, type DepartementsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
+import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -139,8 +139,8 @@ const DepartementTable: FunctionComponent = () => {
         }}
         count={data?.departements?.count}
       />
-      <Table>
-        <TableHead>
+      <Table
+        tableHead={
           <>
             {COLUMNS.map((column) => (
               <th key={column.key}>
@@ -155,37 +155,29 @@ const DepartementTable: FunctionComponent = () => {
             ))}
             <th align="right">{t("actions")}</th>
           </>
-        </TableHead>
-        <TableBody>
-          {data?.departements?.data?.map((departement) => {
-            return (
-              <tr className="hover" key={departement?.id}>
-                <td>{departement?.code}</td>
-                <td>{departement?.nbCommunes}</td>
-                <td>{departement?.nbLieuxDits}</td>
-                <td>{departement?.nbDonnees}</td>
-                <td align="right">
-                  <TableCellActionButtons
-                    disabled={!departement.editable}
-                    onEditClicked={() => handleEditDepartement(departement?.id)}
-                    onDeleteClicked={() => handleDeleteDepartement(departement)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={data?.departements?.count ?? 0}
-              onPageChange={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
+        }
+        tableRows={data?.departements?.data?.map((departement) => {
+          return (
+            <tr className="hover" key={departement?.id}>
+              <td>{departement?.code}</td>
+              <td>{departement?.nbCommunes}</td>
+              <td>{departement?.nbLieuxDits}</td>
+              <td>{departement?.nbDonnees}</td>
+              <td align="right">
+                <TableCellActionButtons
+                  disabled={!departement.editable}
+                  onEditClicked={() => handleEditDepartement(departement?.id)}
+                  onDeleteClicked={() => handleDeleteDepartement(departement)}
+                />
+              </td>
+            </tr>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={data?.departements?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
       <DeletionConfirmationDialog
         open={!!dialogDepartement}
         messageContent={t("deleteDepartmentDialogMsg", {
