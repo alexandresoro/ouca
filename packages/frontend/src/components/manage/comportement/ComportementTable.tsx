@@ -1,14 +1,4 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-} from "@mui/material";
+import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -67,7 +57,7 @@ const ComportementTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<ComportementsOrderBy>();
 
   const [dialogComportement, setDialogComportement] = useState<Comportement | null>(null);
@@ -134,11 +124,6 @@ const ComportementTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: ComportementsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -154,57 +139,53 @@ const ComportementTable: FunctionComponent = () => {
         }}
         count={data?.comportements?.count}
       />
-      <TableContainer className="mt-4" component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-              <TableCell align="right">{t("actions")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.comportements?.data?.map((comportement) => {
-              return (
-                <TableRow hover key={comportement?.id}>
-                  <TableCell>{comportement?.code}</TableCell>
-                  <TableCell>{comportement?.libelle}</TableCell>
-                  <TableCell>{comportement?.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</TableCell>
-                  <TableCell>{comportement?.nbDonnees}</TableCell>
-                  <TableCell align="right">
-                    <TableCellActionButtons
-                      disabled={!comportement.editable}
-                      onEditClicked={() => handleEditComportement(comportement?.id)}
-                      onDeleteClicked={() => handleDeleteComportement(comportement)}
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={data?.comportements?.count ?? 0}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+      <Table>
+        <TableHead>
+          <>
+            {COLUMNS.map((column) => (
+              <th key={column.key}>
+                <TableSortLabel
+                  active={orderBy === column.key}
+                  direction={orderBy === column.key ? sortOrder : "asc"}
+                  onClick={() => handleRequestSort(column.key)}
+                >
+                  {t(column.locKey)}
+                </TableSortLabel>
+              </th>
+            ))}
+            <th align="right">{t("actions")}</th>
+          </>
+        </TableHead>
+        <TableBody>
+          {data?.comportements?.data?.map((comportement) => {
+            return (
+              <TableRow className="hover" key={comportement?.id}>
+                <td>{comportement?.code}</td>
+                <td>{comportement?.libelle}</td>
+                <td>{comportement?.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
+                <td>{comportement?.nbDonnees}</td>
+                <td align="right">
+                  <TableCellActionButtons
+                    disabled={!comportement.editable}
+                    onEditClicked={() => handleEditComportement(comportement?.id)}
+                    onDeleteClicked={() => handleDeleteComportement(comportement)}
+                  />
+                </td>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              page={page}
+              rowsPerPage={rowsPerPage}
+              count={data?.comportements?.count ?? 0}
+              onPageChange={handleChangePage}
+            />
+          </TableRow>
+        </TableFooter>
+      </Table>
       <DeletionConfirmationDialog
         open={!!dialogComportement}
         messageContent={t("deleteBehaviorDialogMsg", {

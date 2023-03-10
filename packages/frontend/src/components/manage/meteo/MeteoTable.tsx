@@ -1,14 +1,4 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-} from "@mui/material";
+import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -57,7 +47,7 @@ const MeteoTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
   const [dialogMeteo, setDialogMeteo] = useState<Meteo | null>(null);
@@ -124,11 +114,6 @@ const MeteoTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -144,55 +129,51 @@ const MeteoTable: FunctionComponent = () => {
         }}
         count={data?.meteos?.count}
       />
-      <TableContainer className="mt-4" component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-              <TableCell align="right">{t("actions")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.meteos?.data?.map((meteo) => {
-              return (
-                <TableRow hover key={meteo?.id}>
-                  <TableCell>{meteo?.libelle}</TableCell>
-                  <TableCell>{meteo?.nbDonnees}</TableCell>
-                  <TableCell align="right">
-                    <TableCellActionButtons
-                      disabled={!meteo.editable}
-                      onEditClicked={() => handleEditMeteo(meteo?.id)}
-                      onDeleteClicked={() => handleDeleteMeteo(meteo)}
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={data?.meteos?.count ?? 0}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+      <Table>
+        <TableHead>
+          <>
+            {COLUMNS.map((column) => (
+              <th key={column.key}>
+                <TableSortLabel
+                  active={orderBy === column.key}
+                  direction={orderBy === column.key ? sortOrder : "asc"}
+                  onClick={() => handleRequestSort(column.key)}
+                >
+                  {t(column.locKey)}
+                </TableSortLabel>
+              </th>
+            ))}
+            <th align="right">{t("actions")}</th>
+          </>
+        </TableHead>
+        <TableBody>
+          {data?.meteos?.data?.map((meteo) => {
+            return (
+              <tr className="hover" key={meteo?.id}>
+                <td>{meteo?.libelle}</td>
+                <td>{meteo?.nbDonnees}</td>
+                <td align="right">
+                  <TableCellActionButtons
+                    disabled={!meteo.editable}
+                    onEditClicked={() => handleEditMeteo(meteo?.id)}
+                    onDeleteClicked={() => handleDeleteMeteo(meteo)}
+                  />
+                </td>
+              </tr>
+            );
+          })}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              page={page}
+              rowsPerPage={rowsPerPage}
+              count={data?.meteos?.count ?? 0}
+              onPageChange={handleChangePage}
+            />
+          </TableRow>
+        </TableFooter>
+      </Table>
       <DeletionConfirmationDialog
         open={!!dialogMeteo}
         messageContent={t("deleteWeatherDialogMsg", {

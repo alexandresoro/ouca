@@ -1,14 +1,4 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-} from "@mui/material";
+import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -62,7 +52,7 @@ const MilieuTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<MilieuxOrderBy>();
 
   const [dialogMilieu, setDialogMilieu] = useState<Milieu | null>(null);
@@ -129,11 +119,6 @@ const MilieuTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: MilieuxOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -149,56 +134,52 @@ const MilieuTable: FunctionComponent = () => {
         }}
         count={data?.milieux?.count}
       />
-      <TableContainer className="mt-4" component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-              <TableCell align="right">{t("actions")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.milieux?.data?.map((milieu) => {
-              return (
-                <TableRow hover key={milieu?.id}>
-                  <TableCell>{milieu?.code}</TableCell>
-                  <TableCell>{milieu?.libelle}</TableCell>
-                  <TableCell>{milieu?.nbDonnees}</TableCell>
-                  <TableCell align="right">
-                    <TableCellActionButtons
-                      disabled={!milieu.editable}
-                      onEditClicked={() => handleEditMilieu(milieu?.id)}
-                      onDeleteClicked={() => handleDeleteMilieu(milieu)}
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={data?.milieux?.count ?? 0}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+      <Table>
+        <TableHead>
+          <>
+            {COLUMNS.map((column) => (
+              <th key={column.key}>
+                <TableSortLabel
+                  active={orderBy === column.key}
+                  direction={orderBy === column.key ? sortOrder : "asc"}
+                  onClick={() => handleRequestSort(column.key)}
+                >
+                  {t(column.locKey)}
+                </TableSortLabel>
+              </th>
+            ))}
+            <th align="right">{t("actions")}</th>
+          </>
+        </TableHead>
+        <TableBody>
+          {data?.milieux?.data?.map((milieu) => {
+            return (
+              <tr className="hover" key={milieu?.id}>
+                <td>{milieu?.code}</td>
+                <td>{milieu?.libelle}</td>
+                <td>{milieu?.nbDonnees}</td>
+                <td align="right">
+                  <TableCellActionButtons
+                    disabled={!milieu.editable}
+                    onEditClicked={() => handleEditMilieu(milieu?.id)}
+                    onDeleteClicked={() => handleDeleteMilieu(milieu)}
+                  />
+                </td>
+              </tr>
+            );
+          })}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              page={page}
+              rowsPerPage={rowsPerPage}
+              count={data?.milieux?.count ?? 0}
+              onPageChange={handleChangePage}
+            />
+          </TableRow>
+        </TableFooter>
+      </Table>
       <DeletionConfirmationDialog
         open={!!dialogMilieu}
         messageContent={t("deleteEnvironmentDialogMsg", {

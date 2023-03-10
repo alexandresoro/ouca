@@ -1,14 +1,4 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-} from "@mui/material";
+import { Table, TableBody, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -93,7 +83,7 @@ const LieuDitTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<LieuxDitsOrderBy>();
 
   const [dialogLieuDit, setDialogLieuDit] = useState<Pick<LieuDit, "id" | "nom" | "commune" | "nbDonnees"> | null>(
@@ -162,11 +152,6 @@ const LieuDitTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: LieuxDitsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -182,61 +167,57 @@ const LieuDitTable: FunctionComponent = () => {
         }}
         count={data?.lieuxDits?.count}
       />
-      <TableContainer className="mt-4" component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-              <TableCell align="right">{t("actions")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.lieuxDits?.data?.map((lieuDit) => {
-              return (
-                <TableRow hover key={lieuDit?.id}>
-                  <TableCell>{lieuDit?.commune?.departement?.code}</TableCell>
-                  <TableCell>{lieuDit?.commune?.code}</TableCell>
-                  <TableCell>{lieuDit?.commune?.nom}</TableCell>
-                  <TableCell>{lieuDit?.nom}</TableCell>
-                  <TableCell>{lieuDit?.latitude}</TableCell>
-                  <TableCell>{lieuDit?.longitude}</TableCell>
-                  <TableCell>{lieuDit?.altitude}</TableCell>
-                  <TableCell>{lieuDit?.nbDonnees}</TableCell>
-                  <TableCell align="right">
-                    <TableCellActionButtons
-                      disabled={!lieuDit.editable}
-                      onEditClicked={() => handleEditLieuDit(lieuDit?.id)}
-                      onDeleteClicked={() => handleDeleteLieuDit(lieuDit)}
-                    />
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={data?.lieuxDits?.count ?? 0}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+      <Table>
+        <TableHead>
+          <>
+            {COLUMNS.map((column) => (
+              <th key={column.key}>
+                <TableSortLabel
+                  active={orderBy === column.key}
+                  direction={orderBy === column.key ? sortOrder : "asc"}
+                  onClick={() => handleRequestSort(column.key)}
+                >
+                  {t(column.locKey)}
+                </TableSortLabel>
+              </th>
+            ))}
+            <th align="right">{t("actions")}</th>
+          </>
+        </TableHead>
+        <TableBody>
+          {data?.lieuxDits?.data?.map((lieuDit) => {
+            return (
+              <tr className="hover" key={lieuDit?.id}>
+                <td>{lieuDit?.commune?.departement?.code}</td>
+                <td>{lieuDit?.commune?.code}</td>
+                <td>{lieuDit?.commune?.nom}</td>
+                <td>{lieuDit?.nom}</td>
+                <td>{lieuDit?.latitude}</td>
+                <td>{lieuDit?.longitude}</td>
+                <td>{lieuDit?.altitude}</td>
+                <td>{lieuDit?.nbDonnees}</td>
+                <td align="right">
+                  <TableCellActionButtons
+                    disabled={!lieuDit.editable}
+                    onEditClicked={() => handleEditLieuDit(lieuDit?.id)}
+                    onDeleteClicked={() => handleDeleteLieuDit(lieuDit)}
+                  />
+                </td>
+              </tr>
+            );
+          })}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              page={page}
+              rowsPerPage={rowsPerPage}
+              count={data?.lieuxDits?.count ?? 0}
+              onPageChange={handleChangePage}
+            />
+          </TableRow>
+        </TableFooter>
+      </Table>
       <DeletionConfirmationDialog
         open={!!dialogLieuDit}
         messageContent={t("deleteLieuDitDialogMsg", {

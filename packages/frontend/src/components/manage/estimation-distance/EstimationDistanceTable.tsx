@@ -1,10 +1,6 @@
 import {
-  Paper,
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
+  TableBody, TableFooter,
   TableHead,
   TablePagination,
   TableRow
@@ -62,7 +58,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
   const [dialogEstimationDistance, setDialogEstimationDistance] = useState<EstimationDistance | null>(null);
@@ -129,11 +125,6 @@ const EstimationDistanceTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -149,15 +140,11 @@ const EstimationDistanceTable: FunctionComponent = () => {
         }}
         count={data?.estimationsDistance?.count}
       />
-      <TableContainer
-        className="mt-4"
-        component={Paper}
-      >
-        <Table stickyHeader size="small">
+        <Table>
           <TableHead>
-            <TableRow>
+            <>
               {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
+                <th key={column.key}>
                   <TableSortLabel
                     active={orderBy === column.key}
                     direction={orderBy === column.key ? sortOrder : "asc"}
@@ -165,42 +152,39 @@ const EstimationDistanceTable: FunctionComponent = () => {
                   >
                     {t(column.locKey)}
                   </TableSortLabel>
-                </TableCell>
+                </th>
               ))}
-              <TableCell align="right">{t("actions")}</TableCell>
-            </TableRow>
+              <th align="right">{t("actions")}</th>
+            </>
           </TableHead>
           <TableBody>
             {data?.estimationsDistance?.data?.map((estimationDistance) => {
               return (
-                <TableRow hover key={estimationDistance?.id}>
-                  <TableCell>{estimationDistance?.libelle}</TableCell>
-                  <TableCell>{estimationDistance?.nbDonnees}</TableCell>
-                  <TableCell align="right">
+                <tr className="hover" key={estimationDistance?.id}>
+                  <td>{estimationDistance?.libelle}</td>
+                  <td>{estimationDistance?.nbDonnees}</td>
+                  <td align="right">
                     <TableCellActionButtons
                       disabled={!estimationDistance.editable}
                       onEditClicked={() => handleEditEstimationDistance(estimationDistance?.id)}
                       onDeleteClicked={() => handleDeleteEstimationDistance(estimationDistance)}
                     />
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               );
             })}
           </TableBody>
           <TableFooter>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={data?.estimationsDistance?.count ?? 0}
                 page={page}
                 rowsPerPage={rowsPerPage}
+                count={data?.estimationsDistance?.count ?? 0}
                 onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </TableRow>
           </TableFooter>
         </Table>
-      </TableContainer>
       <DeletionConfirmationDialog
         open={!!dialogEstimationDistance}
         messageContent={t("deleteDistancePrecisionDialogMsg", {
