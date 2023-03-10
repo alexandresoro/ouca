@@ -8,7 +8,7 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   data: T[] | null | undefined;
   name?: string;
   label: string;
-  value: T;
+  value: T | null;
   onChange?: (value: T) => void;
   renderValue: (value: T) => string;
 } & (T extends { id: Key }
@@ -45,9 +45,8 @@ const Select = <T, K extends ConditionalKeys<T, Key>>(props: SelectProps<T, K>, 
   // TODO: try to improve type inference
   const key = by ?? ("id" as ConditionalKeys<T, Key>);
 
-  const getDisplayedSelectedValue = (value: unknown): string => {
-    const selectedOption = data?.find((entry) => entry[key] === value);
-    return selectedOption ? renderValue(selectedOption) : "";
+  const getDisplayedSelectedValue = (value: T | null): string => {
+    return value ? renderValue(value) : "";
   };
 
   return (
@@ -59,7 +58,7 @@ const Select = <T, K extends ConditionalKeys<T, Key>>(props: SelectProps<T, K>, 
         className="w-full select select-bordered select-primary items-center text-base-content"
         ref={refs.setReference}
       >
-        {({ value }) => <>{getDisplayedSelectedValue(value)}</>}
+        {({ value }: { value: T | null }) => <>{getDisplayedSelectedValue(value)}</>}
       </Listbox.Button>
       <Listbox.Options
         className="menu menu-compact flex-nowrap text-base-content dark:shadow shadow-primary-focus bg-gray-100 dark:bg-base-300 ring-2 ring-primary-focus rounded-box overflow-y-auto"
@@ -72,7 +71,7 @@ const Select = <T, K extends ConditionalKeys<T, Key>>(props: SelectProps<T, K>, 
       >
         {data?.map((option) => {
           return (
-            <Listbox.Option className="font-semibold" key={option[key] as Key} value={option[key]}>
+            <Listbox.Option className="font-semibold" key={option[key] as Key} value={option}>
               {({ active, selected, disabled }) => (
                 <div className={`flex justify-between disabled ${active && !disabled ? "active" : ""}`}>
                   <span>{renderValue(option)}</span>

@@ -21,14 +21,35 @@ const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKe
 ) => {
   const { data, by, renderValue, name, label, defaultValue, control, rules } = props;
 
-  const { field } = useController<TFieldValues>({
+  const {
+    field: { ref, value, onChange },
+  } = useController<TFieldValues>({
     name,
     control,
     rules,
     defaultValue,
   });
 
-  return <Select label={label} data={data} by={by as K} {...field} renderValue={renderValue} />;
+  // TODO: try to improve type inference
+  const key = by ?? ("id" as ConditionalKeys<T, Key>);
+
+  const handleOnChange = (newValue: T) => {
+    onChange(newValue[key]);
+  };
+
+  const selectedEntry = data?.find((entry) => entry[key] === value) ?? null;
+
+  return (
+    <Select
+      ref={ref}
+      label={label}
+      data={data}
+      by={by as K}
+      value={selectedEntry}
+      onChange={handleOnChange}
+      renderValue={renderValue}
+    />
+  );
 };
 
 export default FormSelect;
