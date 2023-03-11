@@ -1,14 +1,3 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-} from "@mui/material";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "urql";
@@ -16,6 +5,7 @@ import { graphql } from "../../gql";
 import { type Donnee, type SearchDonneesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
+import Table from "../common/styled/table/Table";
 import TableSortLabel from "../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
@@ -152,7 +142,7 @@ const COLUMNS = [
 const DonneeTable: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<SearchDonneesOrderBy>();
 
   const [deleteDialog, setDeleteDialog] = useState<Donnee | null>(null);
@@ -215,11 +205,6 @@ const DonneeTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: SearchDonneesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -228,54 +213,41 @@ const DonneeTable: FunctionComponent = () => {
 
   return (
     <>
-      <TableContainer className="mt-4" component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-              <TableCell align="right">{t("actions")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {donneesResult?.searchDonnees?.result?.map((donnee) => {
-              return donnee ? (
-                <DonneeDetailsRow
-                  key={donnee.id}
-                  donnee={donnee}
-                  onEditAction={() => handleEditDonnee(donnee)}
-                  onDeleteAction={() => handleDeleteDonnee(donnee)}
-                />
-              ) : (
-                <></>
-              );
-            })}
-          </TableBody>
-
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={donneesResult?.searchDonnees?.count ?? 0}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+      <Table
+        tableHead={
+          <>
+            <th></th>
+            {COLUMNS.map((column) => (
+              <th key={column.key}>
+                <TableSortLabel
+                  active={orderBy === column.key}
+                  direction={orderBy === column.key ? sortOrder : "asc"}
+                  onClick={() => handleRequestSort(column.key)}
+                >
+                  {t(column.locKey)}
+                </TableSortLabel>
+              </th>
+            ))}
+            <th align="right">{t("actions")}</th>
+          </>
+        }
+        tableRows={donneesResult?.searchDonnees?.result?.map((donnee) => {
+          return donnee ? (
+            <DonneeDetailsRow
+              key={donnee.id}
+              donnee={donnee}
+              onEditAction={() => handleEditDonnee(donnee)}
+              onDeleteAction={() => handleDeleteDonnee(donnee)}
+            />
+          ) : (
+            <></>
+          );
+        })}
+        page={page}
+        elementsPerPage={rowsPerPage}
+        count={donneesResult?.searchDonnees?.count ?? 0}
+        onPageChange={handleChangePage}
+      ></Table>
 
       <DeletionConfirmationDialog
         open={!!deleteDialog}

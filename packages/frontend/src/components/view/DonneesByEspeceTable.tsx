@@ -1,20 +1,10 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-} from "@mui/material";
-import { type FunctionComponent } from "react";
+import { useEffect, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "urql";
 import { graphql } from "../../gql";
 import { type EspecesOrderBy } from "../../gql/graphql";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
+import Table from "../common/styled/table/Table";
 import TableSortLabel from "../common/styled/table/TableSortLabel";
 
 const PAGINATED_SEARCH_ESPECES_QUERY = graphql(`
@@ -67,12 +57,13 @@ const COLUMNS = [
 const DonneesByEspeceTable: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { page, setPage, rowsPerPage, setRowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  const { page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EspecesOrderBy>();
 
-  // TODO order by nbDonnees desc
-  //setOrderBy("nbDonnees");
-  //setSortOrder("desc");
+  useEffect(() => {
+    setOrderBy("nbDonnees");
+    setSortOrder("desc");
+  }, [setOrderBy, setSortOrder]);
 
   const [{ data }] = useQuery({
     query: PAGINATED_SEARCH_ESPECES_QUERY,
@@ -92,11 +83,6 @@ const DonneesByEspeceTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const handleRequestSort = (sortingColumn: EspecesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -104,53 +90,38 @@ const DonneesByEspeceTable: FunctionComponent = () => {
   };
 
   return (
-    <>
-      <TableContainer className="mt-4" component={Paper}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              {COLUMNS.map((column) => (
-                <TableCell key={column.key}>
-                  <TableSortLabel
-                    active={orderBy === column.key}
-                    direction={orderBy === column.key ? sortOrder : "asc"}
-                    onClick={() => handleRequestSort(column.key)}
-                  >
-                    {t(column.locKey)}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data?.especes?.data?.map((espece) => {
-              return (
-                <TableRow hover key={espece?.id}>
-                  <TableCell>{espece?.classe?.libelle}</TableCell>
-                  <TableCell>{espece?.code}</TableCell>
-                  <TableCell>{espece?.nomFrancais}</TableCell>
-                  <TableCell>{espece?.nomLatin}</TableCell>
-                  <TableCell>{espece?.nbDonnees ? espece?.nbDonnees : "0"}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                count={data?.especes?.count ?? 0}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
-    </>
+    <Table
+      tableHead={
+        <>
+          {COLUMNS.map((column) => (
+            <th key={column.key}>
+              <TableSortLabel
+                active={orderBy === column.key}
+                direction={orderBy === column.key ? sortOrder : "asc"}
+                onClick={() => handleRequestSort(column.key)}
+              >
+                {t(column.locKey)}
+              </TableSortLabel>
+            </th>
+          ))}
+        </>
+      }
+      tableRows={data?.especes?.data?.map((espece) => {
+        return (
+          <tr className="hover" key={espece.id}>
+            <td>{espece.classe.libelle}</td>
+            <td>{espece.code}</td>
+            <td>{espece.nomFrancais}</td>
+            <td>{espece.nomLatin}</td>
+            <td>{espece.nbDonnees ?? "0"}</td>
+          </tr>
+        );
+      })}
+      page={page}
+      elementsPerPage={rowsPerPage}
+      count={data?.especes?.count ?? 0}
+      onPageChange={handleChangePage}
+    ></Table>
   );
 };
 

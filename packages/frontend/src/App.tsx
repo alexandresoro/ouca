@@ -1,12 +1,5 @@
-import {
-  createTheme,
-  CssBaseline,
-  responsiveFontSizes,
-  StyledEngineProvider,
-  ThemeProvider,
-  useMediaQuery,
-} from "@mui/material";
-import { cyan, grey, pink } from "@mui/material/colors";
+import { createTheme, responsiveFontSizes, StyledEngineProvider, ThemeProvider, useMediaQuery } from "@mui/material";
+import { cyan, pink } from "@mui/material/colors";
 import * as Sentry from "@sentry/react";
 import { refocusExchange } from "@urql/exchange-refocus";
 import { lazy, Suspense, useMemo, type FunctionComponent } from "react";
@@ -60,40 +53,6 @@ const App: FunctionComponent<AppProps> = (props) => {
             secondary: {
               main: pink["A200"],
             },
-            ...(prefersDarkMode
-              ? {}
-              : {
-                  background: {
-                    default: grey[50],
-                  },
-                }),
-          },
-          typography: {
-            fontFamily: "InterVariable",
-            button: {
-              textTransform: "none",
-            },
-          },
-          components: {
-            MuiCard: {
-              defaultProps: {
-                elevation: 0,
-              },
-              styleOverrides: {
-                root: {
-                  borderStyle: "solid",
-                  borderWidth: "2px",
-                  borderColor: cyan[800],
-                },
-              },
-            },
-            MuiTableCell: {
-              styleOverrides: {
-                head: {
-                  fontWeight: "700",
-                },
-              },
-            },
           },
           breakpoints: {
             values: {
@@ -139,7 +98,6 @@ const App: FunctionComponent<AppProps> = (props) => {
             </Helmet>
             <StyledEngineProvider injectFirst>
               <ThemeProvider theme={theme}>
-                <CssBaseline />
                 <UserProvider>
                   <div className="bg-base-100">
                     <Suspense fallback="">
