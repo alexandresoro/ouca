@@ -1,5 +1,5 @@
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/variable.css";
+import "@fontsource/nunito/400.css";
+import "@fontsource/nunito/variable.css";
 import "@fontsource/yuji-hentaigana-akebono";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
