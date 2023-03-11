@@ -133,8 +133,8 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
                 type="text"
                 required
                 defaultValue=""
+                hasError={!!errors?.libelle}
                 helperMessage={errors?.libelle?.message ?? ""}
-                className={`input input-bordered ${errors?.libelle ? "input-error" : "input-primary"}`}
                 {...register("libelle", {
                   required: t("requiredFieldError"),
                 })}

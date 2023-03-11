@@ -253,9 +253,8 @@ const SettingsPage: FunctionComponent = () => {
                   type="text"
                   required
                   defaultValue=""
-                  className={`input input-bordered text-base-content text-sm font-semibold ${
-                    errors?.defaultNombre ? "input-error" : "input-primary"
-                  }`}
+                  hasError={!!errors.defaultNombre}
+                  className="text-base-content text-sm font-semibold"
                   {...register("defaultNombre", {
                     required: true,
                     min: 1,

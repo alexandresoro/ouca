@@ -92,7 +92,7 @@ const LoginPage: FunctionComponent = () => {
               type="text"
               required
               defaultValue=""
-              className={`input input-bordered ${errors?.username ? "input-error" : "input-primary"}`}
+              hasError={!!errors?.username}
               helperMessage={errors?.username?.message ?? ""}
               {...register("username", { required: t("loginRequiredLabel") })}
             />
@@ -102,7 +102,7 @@ const LoginPage: FunctionComponent = () => {
               type="password"
               required
               defaultValue=""
-              className={`input input-bordered ${errors?.password ? "input-error" : "input-primary"}`}
+              hasError={!!errors?.password}
               helperMessage={errors?.password?.message ?? ""}
               {...register("password", { required: t("passwordRequiredLabel") })}
             />
