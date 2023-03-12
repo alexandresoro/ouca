@@ -1,4 +1,3 @@
-import { Chip } from "@mui/material";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import { Angry, Bug, Comment, Link, PieChartAlt2 } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";
@@ -28,19 +27,17 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         <ItemWithAvatar
           primary={
             <>
-              <h3 className="text-lg font-normal">
+              <h3 className="flex items-center gap-2.5 text-lg font-normal">
                 {t("observationDetails.observationTitle")}
 
-                {donnee?.regroupement ? (
+                {donnee.regroupement ? (
                   <>
-                    <Chip
-                      className="ml-2.5 border-gray-300"
-                      icon={<Link className="h-6 pl-1" />}
-                      label={t("observationDetails.group", {
-                        group: donnee?.regroupement,
+                    <span className="badge badge-primary badge-outline badge-lg">
+                      <Link className="h-4 pr-1.5" />
+                      {t("observationDetails.group", {
+                        group: donnee.regroupement,
                       })}
-                      variant="outlined"
-                    />
+                    </span>
                   </>
                 ) : (
                   <></>
