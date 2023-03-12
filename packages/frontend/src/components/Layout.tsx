@@ -2,7 +2,7 @@ import { type FunctionComponent } from "react";
 import { Outlet } from "react-router-dom";
 import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useNotifications } from "../hooks/useNotifications";
-import Header from "./Header";
+import Header from "./header/Header";
 import NotificationSnackbar from "./notifications/NotificationSnackbar";
 
 const Layout: FunctionComponent = () => {

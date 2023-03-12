@@ -4,7 +4,7 @@ import * as Sentry from "@sentry/react";
 import { refocusExchange } from "@urql/exchange-refocus";
 import { lazy, Suspense, useMemo, type FunctionComponent } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { cacheExchange, createClient, dedupExchange, fetchExchange, Provider as UrqlProvider } from "urql";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
@@ -118,7 +118,8 @@ const App: FunctionComponent<AppProps> = (props) => {
                             </RequireAuth>
                           }
                         >
-                          <Route index element={<TempPage />}></Route>
+                          <Route index element={<Navigate to="/create" replace={true} />}></Route>
+                          <Route path="create" index element={<TempPage />}></Route>
                           <Route
                             path="view"
                             element={

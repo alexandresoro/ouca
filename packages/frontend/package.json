@@ -47,6 +47,7 @@
     "@fontsource/nunito": "4.5.12",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
     "@headlessui/react": "1.7.13",
+    "@headlessui/tailwindcss": "0.1.2",
     "@mui/material": "5.11.12",
     "@ou-ca/common": "*",
     "@sentry/react": "7.40.0",
