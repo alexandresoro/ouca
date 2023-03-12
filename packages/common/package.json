@@ -53,7 +53,7 @@
     }
   },
   "dependencies": {
-    "proj4": "2.8.1"
+    "proj4": "2.9.0"
   },
   "devDependencies": {
     "@ou-ca/eslint-config": "*",
