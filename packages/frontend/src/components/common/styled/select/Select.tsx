@@ -11,14 +11,15 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   value: T | null;
   onChange?: (value: T) => void;
   renderValue: (value: T) => string;
+  selectClassName?: string;
 } & (T extends { id: Key }
   ? {
       by?: K;
     }
   : { by: K });
 
-const Select = <T, K extends ConditionalKeys<T, Key>>(props: SelectProps<T, K>, ref: ForwardedRef<HTMLElement>) => {
-  const { data, name, value, onChange, by, renderValue, label } = props;
+const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLElement>) => {
+  const { data, name, value, onChange, by, renderValue, label, selectClassName } = props;
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-start",
@@ -50,7 +51,14 @@ const Select = <T, K extends ConditionalKeys<T, Key>>(props: SelectProps<T, K>, 
   };
 
   return (
-    <Listbox as="div" ref={ref} name={name} value={value} onChange={onChange} className="form-control w-full py-2">
+    <Listbox
+      as="div"
+      ref={ref}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`form-control py-2 ${selectClassName ?? ""}`}
+    >
       <div className="label">
         <Listbox.Label className="label-text">{label}</Listbox.Label>
       </div>
@@ -61,7 +69,9 @@ const Select = <T, K extends ConditionalKeys<T, Key>>(props: SelectProps<T, K>, 
         {({ value }: { value: T | null }) => <>{getDisplayedSelectedValue(value)}</>}
       </Listbox.Button>
       <Listbox.Options
-        className="menu menu-compact flex-nowrap text-base-content dark:shadow shadow-primary-focus bg-gray-100 dark:bg-base-300 ring-2 ring-primary-focus rounded-box overflow-y-auto"
+        className={`menu menu-compact z-20 flex-nowrap text-base-content dark:shadow shadow-primary-focus bg-gray-100 dark:bg-base-300 ${
+          data?.length ? "ring-2" : ""
+        } ring-primary-focus rounded-lg overflow-y-auto`}
         style={{
           position: strategy,
           top: y ?? 0,

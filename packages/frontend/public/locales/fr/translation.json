@@ -13,6 +13,11 @@
   "cities": "Communes",
   "cityCode": "Code commune",
   "cityName": "Nom commune",
+  "components": {
+    "autocomplete": {
+      "noResults": "Aucun résultat"
+    }
+  },
   "deleteAgeDialogMsg": "Êtes-vous certain de vouloir supprimer l'âge {{name}} ?",
   "deleteAgeDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
   "deleteBehaviorDialogMsg": "Êtes-vous certain de vouloir supprimer le comportement {{name}} ?",

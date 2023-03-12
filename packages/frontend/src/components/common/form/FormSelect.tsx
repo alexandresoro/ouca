@@ -1,7 +1,7 @@
 import { type Key } from "react";
 import { useController, type FieldValues, type UseControllerProps } from "react-hook-form";
 import { type ConditionalKeys, type SetRequired } from "type-fest";
-import Select from "../styled/Select";
+import Select from "../styled/select/Select";
 
 type FormSelectProps<TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key>> = SetRequired<
   UseControllerProps<TFieldValues>,
@@ -10,6 +10,7 @@ type FormSelectProps<TFieldValues extends FieldValues, T, K extends ConditionalK
   data: T[] | null | undefined;
   renderValue: (value: T) => string;
   label: string;
+  selectClassName?: string;
 } & (T extends { id: Key }
     ? {
         by?: K;
@@ -19,7 +20,7 @@ type FormSelectProps<TFieldValues extends FieldValues, T, K extends ConditionalK
 const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key>>(
   props: FormSelectProps<TFieldValues, T, K>
 ) => {
-  const { data, by, renderValue, name, label, defaultValue, control, rules } = props;
+  const { data, by, renderValue, name, label, defaultValue, control, rules, selectClassName } = props;
 
   const {
     field: { ref, value, onChange },
@@ -48,6 +49,7 @@ const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKe
       value={selectedEntry}
       onChange={handleOnChange}
       renderValue={renderValue}
+      selectClassName={selectClassName}
     />
   );
 };
