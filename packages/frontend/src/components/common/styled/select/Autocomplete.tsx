@@ -5,7 +5,7 @@ import { forwardRef, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 
-type AutocompleteProps<T, K extends ConditionalKeys<T, Key>> = {
+type AutocompleteProps<T, K extends ConditionalKeys<T, Key> & string> = {
   data: T[] | null | undefined;
   name?: string;
   label: string;
@@ -23,7 +23,10 @@ type AutocompleteProps<T, K extends ConditionalKeys<T, Key>> = {
     }
   : { by: K });
 
-const Autocomplete = <T,>(props: AutocompleteProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLElement>) => {
+const Autocomplete = <T,>(
+  props: AutocompleteProps<T, ConditionalKeys<T, Key> & string>,
+  ref: ForwardedRef<HTMLElement>
+) => {
   const {
     data,
     name,
@@ -61,7 +64,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T, ConditionalKeys<T, Key>>, 
   });
 
   // TODO: try to improve type inference
-  const key = by ?? ("id" as ConditionalKeys<T, Key>);
+  const key = by ?? ("id" as ConditionalKeys<T, Key> & string);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onInputChange?.(event.target.value);
@@ -84,6 +87,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T, ConditionalKeys<T, Key>>, 
       onChange={onChange}
       onFocus={() => onFocus?.(value)}
       onBlur={onBlur}
+      by={key}
       className={`form-control py-2 ${autocompleteClassName ?? ""}`}
       nullable
     >

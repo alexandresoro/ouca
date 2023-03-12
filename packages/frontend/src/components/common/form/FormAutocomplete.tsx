@@ -3,10 +3,11 @@ import { useController, type FieldValues, type UseControllerProps } from "react-
 import { type ConditionalKeys, type SetRequired } from "type-fest";
 import Autocomplete from "../styled/select/Autocomplete";
 
-type FormAutocompleteProps<TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key>> = SetRequired<
-  UseControllerProps<TFieldValues>,
-  "control"
-> & {
+type FormAutocompleteProps<
+  TFieldValues extends FieldValues,
+  T,
+  K extends ConditionalKeys<T, Key> & string
+> = SetRequired<UseControllerProps<TFieldValues>, "control"> & {
   data: T[] | null | undefined;
   renderValue: (value: T) => string;
   label: string;
@@ -19,7 +20,7 @@ type FormAutocompleteProps<TFieldValues extends FieldValues, T, K extends Condit
       }
     : { by: K });
 
-const FormAutocomplete = <TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key>>(
+const FormAutocomplete = <TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key> & string>(
   props: FormAutocompleteProps<TFieldValues, T, K>
 ) => {
   const {
