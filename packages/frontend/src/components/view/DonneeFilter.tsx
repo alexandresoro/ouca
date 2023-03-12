@@ -1,4 +1,4 @@
-import { Autocomplete, Chip, FormGroup, TextField } from "@mui/material";
+import { Autocomplete, Chip, TextField } from "@mui/material";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import Switch from "../common/styled/Switch";
@@ -12,7 +12,7 @@ const DonneeFilter: FunctionComponent = () => {
   return (
     <>
       <div className="card border-2 border-primary bg-base-100 shadow-xl">
-        <FormGroup className="card-body">
+        <div className="card-body">
           <Autocomplete
             multiple
             id="tags-standard"
@@ -30,7 +30,7 @@ const DonneeFilter: FunctionComponent = () => {
           />
           <Switch label={t("observationFilter.displayOnlyMyObservations")} />
           <button className="btn btn-outline btn-primary mt-2">{t("observationFilter.exportToExcel")}</button>
-        </FormGroup>
+        </div>
       </div>
     </>
   );
