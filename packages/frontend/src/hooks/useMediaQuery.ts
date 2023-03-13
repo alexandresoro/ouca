@@ -1,17 +1,33 @@
 import { useEffect, useState } from "react";
 
-const useMediaQuery = (query: string) => {
-  const [matches, setMatches] = useState(false);
+const useMediaQuery = (query: string): boolean => {
+  const getMatches = (query: string): boolean => {
+    // Prevents SSR issues
+    if (typeof window !== "undefined") {
+      return window.matchMedia(query).matches;
+    }
+    return false;
+  };
+
+  const [matches, setMatches] = useState<boolean>(getMatches(query));
+
+  function handleChange() {
+    setMatches(getMatches(query));
+  }
 
   useEffect(() => {
-    const media = window.matchMedia(query);
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
-    const listener = () => setMatches(media.matches);
-    window.addEventListener("resize", listener);
-    return () => window.removeEventListener("resize", listener);
-  }, [matches, query]);
+    const matchMedia = window.matchMedia(query);
+
+    // Triggered at the first client-side load and if query changes
+    handleChange();
+
+    // Listen matchMedia
+    matchMedia.addEventListener("change", handleChange);
+
+    return () => {
+      matchMedia.removeEventListener("change", handleChange);
+    };
+  }, [query]);
 
   return matches;
 };
