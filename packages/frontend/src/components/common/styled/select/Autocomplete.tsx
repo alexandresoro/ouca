@@ -5,8 +5,7 @@ import { forwardRef, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 
-type AutocompleteProps<T, K extends ConditionalKeys<T, Key> & string> = {
-  data: T[] | null | undefined;
+type AutocompleteProps<T> = {
   name?: string;
   label: string;
   value: T | null;
@@ -16,17 +15,19 @@ type AutocompleteProps<T, K extends ConditionalKeys<T, Key> & string> = {
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
   autocompleteClassName?: string;
-  decorationKey?: K;
-} & (T extends { id: Key }
-  ? {
-      by?: K;
+  decorationKey?: ConditionalKeys<T, Key> & string;
+} & (
+  | {
+      data: (T & { id: Key })[] | null | undefined;
+      by?: ConditionalKeys<T, Key> & string;
     }
-  : { by: K });
+  | {
+      data: T[] | null | undefined;
+      by: ConditionalKeys<T, Key> & string;
+    }
+);
 
-const Autocomplete = <T,>(
-  props: AutocompleteProps<T, ConditionalKeys<T, Key> & string>,
-  ref: ForwardedRef<HTMLElement>
-) => {
+const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLElement>) => {
   const {
     data,
     name,

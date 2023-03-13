@@ -15,7 +15,9 @@
   "cityName": "Nom commune",
   "components": {
     "autocomplete": {
-      "noResults": "Aucun résultat"
+      "noResults": "Aucun résultat",
+      "selectedEntries": "Sélectionnés",
+      "resultsTitle": "Résultats"
     }
   },
   "deleteAgeDialogMsg": "Êtes-vous certain de vouloir supprimer l'âge {{name}} ?",

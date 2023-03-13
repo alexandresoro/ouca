@@ -2,31 +2,37 @@ import { type Key } from "react";
 import { useController, type FieldValues, type UseControllerProps } from "react-hook-form";
 import { type ConditionalKeys, type SetRequired } from "type-fest";
 import Autocomplete from "../styled/select/Autocomplete";
+import AutocompleteMultiple from "../styled/select/AutocompleteMultiple";
 
-type FormAutocompleteProps<
-  TFieldValues extends FieldValues,
-  T,
-  K extends ConditionalKeys<T, Key> & string
-> = SetRequired<UseControllerProps<TFieldValues>, "control"> & {
-  data: T[] | null | undefined;
+type FormAutocompleteProps<TFieldValues extends FieldValues, T> = SetRequired<
+  UseControllerProps<TFieldValues>,
+  "control"
+> & {
   renderValue: (value: T) => string;
   label: string;
   autocompleteClassName?: string;
   onInputChange?: (value: string) => void;
-  decorationKey?: K;
-} & (T extends { id: Key }
-    ? {
-        by?: K;
+} & (
+    | {
+        data: T[] | null | undefined;
+        multiple?: false;
+        decorationKey?: ConditionalKeys<T, Key> & string;
+        by: ConditionalKeys<T, Key> & string;
       }
-    : { by: K });
+    | { data: T[]; multiple: true; by: ConditionalKeys<T, Key> & string }
+    | {
+        data: (T & { id: Key })[] | null | undefined;
+        multiple?: false;
+        decorationKey?: ConditionalKeys<T, Key> & string;
+        by?: ConditionalKeys<T, Key> & string;
+      }
+    | { data: (T & { id: Key })[]; multiple: true; by?: ConditionalKeys<T, Key> & string }
+  );
 
-const FormAutocomplete = <TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key> & string>(
-  props: FormAutocompleteProps<TFieldValues, T, K>
-) => {
+const FormAutocomplete = <TFieldValues extends FieldValues, T>(props: FormAutocompleteProps<TFieldValues, T>) => {
   const {
     data,
     by,
-    decorationKey,
     renderValue,
     onInputChange,
     name,
@@ -35,6 +41,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T, K extends Conditi
     control,
     rules,
     autocompleteClassName,
+    multiple,
   } = props;
 
   const {
@@ -46,32 +53,52 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T, K extends Conditi
     defaultValue,
   });
 
-  const handleOnChange = (newValue: T | null) => {
-    onChange?.(newValue);
-    onInputChange?.(newValue ? renderValue(newValue) : "");
-  };
+  if (multiple) {
+    const handleOnChange = (newValue: T[]) => {
+      onChange?.(newValue);
+    };
 
-  const handleOnFocus = (currentValue: T | null) => {
-    if (currentValue) {
-      onInputChange?.(renderValue(currentValue));
-    }
-  };
+    return (
+      <AutocompleteMultiple
+        ref={ref}
+        label={label}
+        data={data}
+        by={by as ConditionalKeys<T, Key> & string}
+        values={value}
+        onChange={handleOnChange}
+        onInputChange={onInputChange}
+        renderValue={renderValue}
+        autocompleteClassName={autocompleteClassName}
+      />
+    );
+  } else {
+    const handleOnChange = (newValue: T | null) => {
+      onChange?.(newValue);
+      onInputChange?.(newValue ? renderValue(newValue) : "");
+    };
 
-  return (
-    <Autocomplete
-      ref={ref}
-      label={label}
-      data={data}
-      by={by as K}
-      decorationKey={decorationKey}
-      value={value}
-      onChange={handleOnChange}
-      onFocus={handleOnFocus}
-      onInputChange={onInputChange}
-      renderValue={renderValue}
-      autocompleteClassName={autocompleteClassName}
-    />
-  );
+    const handleOnFocus = (currentValue: T | null) => {
+      if (currentValue) {
+        onInputChange?.(renderValue(currentValue));
+      }
+    };
+
+    return (
+      <Autocomplete
+        ref={ref}
+        label={label}
+        data={data}
+        by={by as ConditionalKeys<T, Key> & string}
+        decorationKey={props.decorationKey}
+        value={value}
+        onChange={handleOnChange}
+        onFocus={handleOnFocus}
+        onInputChange={onInputChange}
+        renderValue={renderValue}
+        autocompleteClassName={autocompleteClassName}
+      />
+    );
+  }
 };
 
 export default FormAutocomplete;
