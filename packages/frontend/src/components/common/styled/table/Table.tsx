@@ -12,7 +12,7 @@ type TableProps = {
 
 const Table: FunctionComponent<TableProps> = ({ tableHead, tableRows, page, elementsPerPage, count, onPageChange }) => {
   return (
-    <div className="border-2 border-primary bg-base-100 text-base-content shadow-xl rounded-xl px-8 py-4 mb-2">
+    <div className="text-base-content my-4 border border-neutral rounded-lg border-opacity-10 shadow-md">
       <table className="table table-compact table-zebra w-full">
         <thead>
           <tr>{tableHead}</tr>
@@ -20,7 +20,7 @@ const Table: FunctionComponent<TableProps> = ({ tableHead, tableRows, page, elem
         <tbody>{tableRows}</tbody>
       </table>
       <TablePagination
-        className="mt-3"
+        className="mt-3 mb-2"
         page={page}
         elementsPerPage={elementsPerPage}
         count={count}
