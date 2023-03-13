@@ -41,14 +41,10 @@
     }
   },
   "dependencies": {
-    "@emotion/react": "11.10.6",
-    "@emotion/styled": "11.10.6",
     "@floating-ui/react": "0.21.0",
     "@fontsource/nunito": "4.5.12",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
     "@headlessui/react": "1.7.13",
-    "@headlessui/tailwindcss": "0.1.2",
-    "@mui/material": "5.11.12",
     "@ou-ca/common": "*",
     "@sentry/react": "7.42.0",
     "@sentry/tracing": "7.42.0",
@@ -72,6 +68,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "3.2.2",
     "@graphql-codegen/client-preset": "2.1.1",
+    "@headlessui/tailwindcss": "0.1.2",
     "@ou-ca/eslint-config": "*",
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "14.4.3",
