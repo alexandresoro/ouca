@@ -1,13 +1,13 @@
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 import { useEffect } from "react";
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType, type Routes } from "react-router-dom";
 import { type AppConfig } from "../types/AppConfig";
 
-const initializeSentry = async (
+export const initializeSentry = (
   sentryConfig: AppConfig["sentry"],
   RouterRoutes: typeof Routes
-): Promise<{ SentryRoutes: typeof Routes }> => {
-  const [Sentry, { BrowserTracing }] = await Promise.all([import("@sentry/react"), import("@sentry/tracing")]);
-
+): { SentryRoutes: typeof Routes } => {
   Sentry.init({
     ...sentryConfig,
     integrations: [
@@ -26,5 +26,3 @@ const initializeSentry = async (
     SentryRoutes: Sentry.withSentryReactRouterV6Routing(RouterRoutes),
   };
 };
-
-export default initializeSentry;
