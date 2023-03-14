@@ -1,25 +1,14 @@
-import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
 import { refocusExchange } from "@urql/exchange-refocus";
-import { lazy, Suspense, useEffect, useMemo, type FunctionComponent } from "react";
+import { lazy, Suspense, useMemo, type FunctionComponent } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import {
-  BrowserRouter,
-  createRoutesFromChildren,
-  matchRoutes,
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-  useNavigationType,
-} from "react-router-dom";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { cacheExchange, createClient, dedupExchange, fetchExchange, Provider as UrqlProvider } from "urql";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
 import { ApiUrlContext } from "./contexts/ApiUrlContext";
 import { UserProvider } from "./contexts/UserContext";
 import { type AppConfig } from "./types/AppConfig";
+import initializeSentry from "./utils/sentry";
 import suspend from "./utils/suspend";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
@@ -53,25 +42,13 @@ const fetchAppConfig = fetch("/appconfig", {
 const App: FunctionComponent = () => {
   const config = suspend(fetchAppConfig);
 
+  let RouterRoutes = Routes;
+
   // Sentry
   if (config.sentry) {
-    Sentry.init({
-      ...config.sentry,
-      integrations: [
-        new BrowserTracing({
-          routingInstrumentation: Sentry.reactRouterV6Instrumentation(
-            useEffect,
-            useLocation,
-            useNavigationType,
-            createRoutesFromChildren,
-            matchRoutes
-          ),
-        }),
-      ],
-    });
+    const { SentryRoutes } = suspend(initializeSentry(config.sentry, RouterRoutes));
+    RouterRoutes = SentryRoutes;
   }
-
-  const RouterRoutes = config.sentry ? Sentry.withSentryReactRouterV6Routing(Routes) : Routes;
 
   const apiUrl = config.apiUrl ?? "";
 
