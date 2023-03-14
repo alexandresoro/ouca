@@ -25,7 +25,7 @@ const OPTIONS_MENU_OPTIONS = [
   {
     localizationKey: "settings" as TFuncKey,
     Icon: Cog,
-    to: "/configuration",
+    to: "/settings",
   },
   {
     localizationKey: "importFromFile" as TFuncKey,

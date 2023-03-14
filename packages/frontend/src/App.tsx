@@ -1,17 +1,29 @@
 import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 import { refocusExchange } from "@urql/exchange-refocus";
-import { lazy, Suspense, useMemo, type FunctionComponent } from "react";
+import { lazy, Suspense, useEffect, useMemo, type FunctionComponent } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  createRoutesFromChildren,
+  matchRoutes,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigationType,
+} from "react-router-dom";
 import { cacheExchange, createClient, dedupExchange, fetchExchange, Provider as UrqlProvider } from "urql";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
-import TempPage from "./components/TempPage";
 import { ApiUrlContext } from "./contexts/ApiUrlContext";
 import { UserProvider } from "./contexts/UserContext";
 import { type AppConfig } from "./types/AppConfig";
+import suspend from "./utils/suspend";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
+const CreatePage = lazy(() => import("./components/create/CreatePage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
 const ObervateurManage = lazy(() => import("./components/manage/observateur/ObervateurManage"));
 const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
@@ -28,18 +40,37 @@ const ComportementManage = lazy(() => import("./components/manage/comportement/C
 const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
-const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
+const fetchAppConfig = () =>
+  fetch("/appconfig")
+    .then((res) => res.json() as Promise<AppConfig>)
+    .catch(() => {
+      return {} as AppConfig;
+    });
 
-type AppProps = {
-  appConfigWrapped: { read: () => AppConfig };
-};
+const App: FunctionComponent = () => {
+  const config = suspend(fetchAppConfig);
 
-const App: FunctionComponent<AppProps> = (props) => {
-  const { appConfigWrapped } = props;
+  // Sentry
+  if (config.sentry) {
+    Sentry.init({
+      ...config.sentry,
+      integrations: [
+        new BrowserTracing({
+          routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+            useEffect,
+            useLocation,
+            useNavigationType,
+            createRoutesFromChildren,
+            matchRoutes
+          ),
+        }),
+      ],
+    });
+  }
 
-  const userDetails = appConfigWrapped.read();
+  const RouterRoutes = config.sentry ? Sentry.withSentryReactRouterV6Routing(Routes) : Routes;
 
-  const apiUrl = userDetails?.apiUrl ?? "";
+  const apiUrl = config.apiUrl ?? "";
 
   const urqlClient = useMemo(
     () =>
@@ -61,14 +92,12 @@ const App: FunctionComponent<AppProps> = (props) => {
           <HelmetProvider>
             <Helmet>
               {/* Umami analytics */}
-              {userDetails?.umami && (
-                <script async defer data-website-id={userDetails.umami.id} src={userDetails.umami.url}></script>
-              )}
+              {config.umami && <script async defer data-website-id={config.umami.id} src={config.umami.url}></script>}
             </Helmet>
             <UserProvider>
               <div className="bg-base-100">
                 <Suspense fallback="">
-                  <SentryRoutes>
+                  <RouterRoutes>
                     <Route
                       path="/login"
                       element={
@@ -85,8 +114,16 @@ const App: FunctionComponent<AppProps> = (props) => {
                         </RequireAuth>
                       }
                     >
-                      <Route index element={<Navigate to="/create" replace={true} />}></Route>
-                      <Route path="create" index element={<TempPage />}></Route>
+                      <Route index element={<Navigate to="/create/new" replace={true} />}></Route>
+                      <Route
+                        path="create/new"
+                        index
+                        element={
+                          <Suspense fallback={<></>}>
+                            <CreatePage />
+                          </Suspense>
+                        }
+                      ></Route>
                       <Route
                         path="view"
                         element={
@@ -202,7 +239,7 @@ const App: FunctionComponent<AppProps> = (props) => {
                         ></Route>
                       </Route>
                       <Route
-                        path="configuration"
+                        path="settings"
                         element={
                           <Suspense fallback={<></>}>
                             <SettingsPage />
@@ -210,7 +247,7 @@ const App: FunctionComponent<AppProps> = (props) => {
                         }
                       ></Route>
                     </Route>
-                  </SentryRoutes>
+                  </RouterRoutes>
                 </Suspense>
               </div>
             </UserProvider>

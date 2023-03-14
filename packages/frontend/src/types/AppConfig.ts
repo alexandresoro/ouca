@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/react";
+import type * as Sentry from "@sentry/react";
 
 // Application configuration structure
 export type AppConfig = {

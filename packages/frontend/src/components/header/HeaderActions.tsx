@@ -26,7 +26,7 @@ const OBSERVATIONS_OPTIONS = [
   {
     localizationKey: "observationButton" as TFuncKey,
     Icon: Plus,
-    to: "/create",
+    to: "/create/new",
   },
   {
     localizationKey: "viewObservations" as TFuncKey,
@@ -132,7 +132,7 @@ const HeaderActions: FunctionComponent = () => {
     <div className="flex items-center gap-4">
       <Link
         className="hidden lg:flex btn btn-sm btn-ghost gap-1.5 text-neutral-100 font-normal normal-case"
-        to="/create"
+        to="/create/new"
       >
         <Plus className="w-5 h-5" />
         {t("observationButton")}
