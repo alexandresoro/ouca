@@ -7,8 +7,7 @@ import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
 import { ApiUrlContext } from "./contexts/ApiUrlContext";
 import { UserProvider } from "./contexts/UserContext";
-import { type AppConfig } from "./types/AppConfig";
-import initializeSentry from "./utils/sentry";
+import { initApp } from "./utils/init-app";
 import suspend from "./utils/suspend";
 
 const LoginPage = lazy(() => import("./components/LoginPage"));
@@ -29,26 +28,10 @@ const ComportementManage = lazy(() => import("./components/manage/comportement/C
 const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
-const fetchAppConfig = fetch("/appconfig", {
-  method: "GET",
-  credentials: "include",
-  mode: "no-cors",
-})
-  .then((res) => res.json() as Promise<AppConfig>)
-  .catch(() => {
-    return {} as AppConfig;
-  });
-
 const App: FunctionComponent = () => {
-  const config = suspend(fetchAppConfig);
+  const { config, SentryRoutes } = suspend(initApp(Routes));
 
-  let RouterRoutes = Routes;
-
-  // Sentry
-  if (config.sentry) {
-    const { SentryRoutes } = suspend(initializeSentry(config.sentry, RouterRoutes));
-    RouterRoutes = SentryRoutes;
-  }
+  const RouterRoutes = SentryRoutes ?? Routes;
 
   const apiUrl = config.apiUrl ?? "";
 

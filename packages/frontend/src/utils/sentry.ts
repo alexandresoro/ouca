@@ -22,9 +22,8 @@ const initializeSentry = async (
       }),
     ],
   });
-  const SentryRoutes = Sentry.withSentryReactRouterV6Routing(RouterRoutes);
   return {
-    SentryRoutes,
+    SentryRoutes: Sentry.withSentryReactRouterV6Routing(RouterRoutes),
   };
 };
 
