@@ -12,8 +12,8 @@ const response: Response<unknown> = {
   data: null,
 };
 
-const suspend = <T>(fn: () => Promise<T>) => {
-  const suspender = fn().then(
+const suspend = <T>(fn: Promise<T>) => {
+  const suspender = fn.then(
     (res) => {
       response.status = "success";
       response.data = res;

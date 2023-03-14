@@ -40,12 +40,15 @@ const ComportementManage = lazy(() => import("./components/manage/comportement/C
 const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
-const fetchAppConfig = () =>
-  fetch("/appconfig")
-    .then((res) => res.json() as Promise<AppConfig>)
-    .catch(() => {
-      return {} as AppConfig;
-    });
+const fetchAppConfig = fetch("/appconfig", {
+  method: "GET",
+  credentials: "include",
+  mode: "no-cors",
+})
+  .then((res) => res.json() as Promise<AppConfig>)
+  .catch(() => {
+    return {} as AppConfig;
+  });
 
 const App: FunctionComponent = () => {
   const config = suspend(fetchAppConfig);
