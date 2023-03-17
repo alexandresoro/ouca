@@ -77,6 +77,9 @@
   "departments": "Départements",
   "distancePrecisions": "Estimations de la distance",
   "environments": "Milieux naturels",
+  "firstNameLabel": "Prénom",
+  "firstNameRequiredLabel": "Un prénom doit être renseigné",
+  "lastNameLabel": "Nom",
   "frenchName": "Nom français",
   "genders": "Sexes",
   "latitude": "Latitude",
@@ -165,8 +168,7 @@
   "userRoles": {
     "viewer": "Lecteur",
     "contributor": "Contributeur",
-    "contentAdmin": "Administrateur du contenu",
-    "globalAdmin": "Administrateur global"
+    "admin": "Administrateur global"
   },
   "view": {
     "tab": {
@@ -228,6 +230,9 @@
   "retrieveGenericSaveError": "Une erreur est survenue lors de la sauvegarde des données. Veuillez réessayer",
   "retrieveGenericSaveSuccess": "Les données ont été sauvegardées avec succès",
   "retrieveSettingsError": "Une erreur est survenue lors de la récupération des préférences. Veuillez réessayer",
+  "saveProfileSuccess": "Votre profil a été mis à jour",
+  "saveProfileError": "Une erreur est survenue lors de la mise à jour du profil. Veuillez réessayer",
+  "updateProfileButton": "Mettre à jour le profil",
   "saveSettingsSuccess": "Vos préférences sont sauvegardées",
   "saveSettingsError": "Une erreur est survenue lors de la sauvegarde de vos préférences. Veuillez réessayer",
   "exportDatabaseButton": "Sauvegarde de la base",

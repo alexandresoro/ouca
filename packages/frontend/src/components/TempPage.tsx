@@ -1,7 +1,6 @@
-import { useContext, useState, type FunctionComponent } from "react";
+import { useState, type FunctionComponent } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery } from "urql";
-import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type Comportement, type Observateur } from "../gql/graphql";
 import FormAutocomplete from "./common/form/FormAutocomplete";
@@ -35,8 +34,6 @@ type Temp = {
 };
 
 const TempPage: FunctionComponent = () => {
-  const { userInfo } = useContext(UserContext);
-
   const [obsFilter, setObsFilter] = useState("");
   const [compFilter, setCompFilter] = useState("");
 
@@ -85,11 +82,6 @@ const TempPage: FunctionComponent = () => {
 
   return (
     <>
-      {userInfo && (
-        <code className="text-sm">
-          <pre>{JSON.stringify(userInfo, null, 2)}</pre>
-        </code>
-      )}
       {observateur?.id} - {obsFilter}
       <FormAutocomplete
         data={dataObs?.observateurs?.data}

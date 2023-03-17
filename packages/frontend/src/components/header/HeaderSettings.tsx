@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
 import { UserContext } from "../../contexts/UserContext";
 import { graphql } from "../../gql";
+import stringToColor from "../../utils/stringToColor";
 import { getFullName, getInitials } from "../../utils/usernameUtils";
 
 const USER_LOGOUT_MUTATION = graphql(`
@@ -88,7 +89,16 @@ const HeaderSettings: FunctionComponent = () => {
         className="btn btn-circle w-8 h-8 min-h-8 border-none avatar placeholder focus:outline-white"
         aria-label={t("aria-userMenuButton")}
       >
-        <div className={`text-white rounded-full w-8 ${fullName ? "bg-secondary" : ""}`}>
+        <div
+          style={
+            fullName
+              ? {
+                  backgroundColor: stringToColor(fullName),
+                }
+              : {}
+          }
+          className="text-white rounded-full w-8 bg-secondary"
+        >
           <span>{initials}</span>
         </div>
       </Menu.Button>

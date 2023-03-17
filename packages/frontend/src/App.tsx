@@ -26,6 +26,7 @@ const EstimationNombreManage = lazy(() => import("./components/manage/estimation
 const EstimationDistanceManage = lazy(() => import("./components/manage/estimation-distance/EstimationDistanceManage"));
 const ComportementManage = lazy(() => import("./components/manage/comportement/ComportementManage"));
 const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
+const UserProfilePage = lazy(() => import("./components/user-profile/UserProfilePage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
 
 const App: FunctionComponent = () => {
@@ -201,6 +202,14 @@ const App: FunctionComponent = () => {
                           }
                         ></Route>
                       </Route>
+                      <Route
+                        path="profile"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <UserProfilePage />
+                          </Suspense>
+                        }
+                      ></Route>
                       <Route
                         path="settings"
                         element={
