@@ -62,7 +62,7 @@
     "tsup": "6.6.3",
     "typescript": "4.9.5",
     "vitest": "0.29.3",
-    "vitest-mock-extended": "1.1.0",
+    "vitest-mock-extended": "1.1.1",
     "wireit": "0.9.5"
   }
 }
