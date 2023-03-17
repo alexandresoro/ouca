@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type EntitesAvecLibelleOrderBy, type Observateur } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,26 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_OBSERVATEURS_QUERY = graphql(`
-  query ObservateursTable($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        libelle
-        editable
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE_OBSERVATEUR = graphql(`
-  mutation DeleteObservateur($id: Int!) {
-    deleteObservateur(id: $id)
-  }
-`);
+import { DELETE_OBSERVATEUR, PAGINATED_OBSERVATEURS_QUERY } from "./ObservateurManageQueries";
 
 const COLUMNS = [
   {

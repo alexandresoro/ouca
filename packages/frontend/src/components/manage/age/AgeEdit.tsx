@@ -4,24 +4,23 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { type UpsertObservateurMutationVariables } from "../../../gql/graphql";
+import { type UpsertAgeMutationVariables } from "../../../gql/graphql";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { getOucaError } from "../../../utils/ouca-error-extractor";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import ManageTopBar from "../common/ManageTopBar";
-import { OBSERVATEUR_QUERY, UPSERT_OBSERVATEUR } from "./ObservateurManageQueries";
+import { AGE_QUERY, UPSERT_AGE } from "./AgeManageQueries";
 
-type ObservateurEditProps = {
+type AgeEditProps = {
   isEditionMode: boolean;
 };
 
-type ObservateurUpsertInputs = Pick<UpsertObservateurMutationVariables, "id"> &
-  UpsertObservateurMutationVariables["data"];
+type UpsertAgeInput = Pick<UpsertAgeMutationVariables, "id"> & UpsertAgeMutationVariables["data"];
 
-const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
+const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
   const { isEditionMode } = props;
-  const { id: observateurId } = useParams();
+  const { id: ageId } = useParams();
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -31,29 +30,29 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     formState: { errors },
     setValue,
     handleSubmit,
-  } = useForm<ObservateurUpsertInputs>();
+  } = useForm<UpsertAgeInput>();
 
-  // Retrieve the existing observer info in edit mode
+  // Retrieve the existing age info in edit mode
   const [{ data, error, fetching }] = useQuery({
-    query: OBSERVATEUR_QUERY,
+    query: AGE_QUERY,
     requestPolicy: "network-only",
     variables: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(observateurId!),
+      id: parseInt(ageId!),
     },
-    pause: !observateurId,
+    pause: !ageId,
   });
 
-  const [_, upsertObservateur] = useMutation(UPSERT_OBSERVATEUR);
+  const [_, upsertAge] = useMutation(UPSERT_AGE);
 
   const { displayNotification } = useSnackbar();
 
   useEffect(() => {
-    if (data?.observateur) {
-      setValue("id", data.observateur?.id);
-      setValue("libelle", data.observateur?.libelle);
+    if (data?.age) {
+      setValue("id", data.age?.id);
+      setValue("libelle", data.age?.libelle);
     }
-  }, [data?.observateur, setValue]);
+  }, [data?.age, setValue]);
 
   useEffect(() => {
     if (error) {
@@ -64,16 +63,16 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     }
   }, [error, displayNotification, t]);
 
-  const title = isEditionMode ? t("observerEditionTitle") : t("observerCreationTitle");
+  const title = isEditionMode ? t("ageEditionTitle") : t("ageCreationTitle");
 
-  const onSubmit: SubmitHandler<ObservateurUpsertInputs> = (data) => {
+  const onSubmit: SubmitHandler<UpsertAgeInput> = (data) => {
     const { id, ...restData } = data;
-    upsertObservateur({
+    upsertAge({
       id: id ?? undefined,
       data: restData,
     })
       .then(({ data, error }) => {
-        if (data?.upsertObservateur) {
+        if (data?.upsertAge) {
           displayNotification({
             type: "success",
             message: t("retrieveGenericSaveSuccess"),
@@ -84,7 +83,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
           if (getOucaError(error) === "OUCA0004") {
             displayNotification({
               type: "error",
-              message: t("observerAlreadyExistingError"),
+              message: t("ageAlreadyExistingError"),
             });
           } else {
             displayNotification({
@@ -104,7 +103,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   return (
     <>
-      <ManageTopBar title={t("observers")} showButtons={false} />
+      <ManageTopBar title={t("ages")} showButtons={false} />
       <ContentContainerLayout>
         <div className="card border-2 border-primary bg-base-100 text-base-content shadow-xl max-w-3xl mx-auto">
           <div className="card-body">
@@ -141,4 +140,4 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
   );
 };
 
-export default ObservateurEdit;
+export default AgeEdit;

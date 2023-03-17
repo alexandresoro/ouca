@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type Age, type EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,26 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_AGES_QUERY = graphql(`
-  query AgesTable($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    ages(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        libelle
-        editable
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE_AGE = graphql(`
-  mutation DeleteAge($id: Int!) {
-    deleteAge(id: $id)
-  }
-`);
+import { DELETE_AGE, PAGINATED_AGES_QUERY } from "./AgeManageQueries";
 
 const COLUMNS = [
   {

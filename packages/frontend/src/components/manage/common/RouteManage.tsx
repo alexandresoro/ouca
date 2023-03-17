@@ -1,4 +1,4 @@
-import { cloneElement, FunctionComponent, ReactElement } from "react";
+import { cloneElement, type FunctionComponent, type ReactElement } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 
 type RouteManageProps = {

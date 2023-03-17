@@ -1,5 +1,8 @@
 {
   "age": "age",
+  "ageAlreadyExistingError": "Il existe déjà un âge avec ce libellé.",
+  "ageCreationTitle": "Création d'un âge",
+  "ageEditionTitle": "Edition d'un âge",
   "ages": "Âges",
   "altitude": "Altitude",
   "behaviors": "Comportements",
