@@ -148,7 +148,9 @@ const MilieuTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.milieux?.data?.map((milieu) => {
@@ -157,7 +159,7 @@ const MilieuTable: FunctionComponent = () => {
               <td>{milieu?.code}</td>
               <td>{milieu?.libelle}</td>
               <td>{milieu?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!milieu.editable}
                   onEditClicked={() => handleEditMilieu(milieu?.id)}

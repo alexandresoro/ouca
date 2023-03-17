@@ -12,12 +12,12 @@ type TableProps = {
 
 const Table: FunctionComponent<TableProps> = ({ tableHead, tableRows, page, elementsPerPage, count, onPageChange }) => {
   return (
-    <div className="text-base-content my-4 border border-neutral rounded-lg border-opacity-10 shadow-md">
+    <div className="text-base-content my-4 border border-neutral rounded-lg border-opacity-10 shadow-md overflow-x-auto">
       <table className="table table-compact table-zebra w-full">
-        <thead>
+        <thead className="[&_td]:overflow-ellipsis">
           <tr>{tableHead}</tr>
         </thead>
-        <tbody>{tableRows}</tbody>
+        <tbody className="[&_td]:overflow-ellipsis">{tableRows}</tbody>
       </table>
       <TablePagination
         className="mt-3 mb-2"

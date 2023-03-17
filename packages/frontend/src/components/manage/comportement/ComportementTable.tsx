@@ -153,7 +153,9 @@ const ComportementTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.comportements?.data?.map((comportement) => {
@@ -163,7 +165,7 @@ const ComportementTable: FunctionComponent = () => {
               <td>{comportement?.libelle}</td>
               <td>{comportement?.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
               <td>{comportement?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!comportement.editable}
                   onEditClicked={() => handleEditComportement(comportement?.id)}

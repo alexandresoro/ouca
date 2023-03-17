@@ -161,7 +161,9 @@ const CommuneTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.communes?.data?.map((commune) => {
@@ -172,7 +174,7 @@ const CommuneTable: FunctionComponent = () => {
               <td>{commune?.nom}</td>
               <td>{commune?.nbLieuxDits}</td>
               <td>{commune?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!commune.editable}
                   onEditClicked={() => handleEditCommune(commune?.id)}

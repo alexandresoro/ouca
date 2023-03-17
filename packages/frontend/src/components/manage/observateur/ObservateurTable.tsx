@@ -143,7 +143,9 @@ const ObservateurTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.observateurs?.data?.map((observateur) => {
@@ -151,7 +153,7 @@ const ObservateurTable: FunctionComponent = () => {
             <tr className="hover" key={observateur?.id}>
               <td>{observateur?.libelle}</td>
               <td>{observateur?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!observateur.editable}
                   onEditClicked={() => handleEditObservateur(observateur?.id)}

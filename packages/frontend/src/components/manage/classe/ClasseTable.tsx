@@ -148,7 +148,9 @@ const ClasseTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.classes?.data?.map((classe) => {
@@ -157,7 +159,7 @@ const ClasseTable: FunctionComponent = () => {
               <td>{classe?.libelle}</td>
               <td>{classe?.nbEspeces}</td>
               <td>{classe?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!classe.editable}
                   onEditClicked={() => handleEditClasse(classe?.id)}

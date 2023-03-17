@@ -148,7 +148,9 @@ const EstimationNombreTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.estimationsNombre?.data?.map((estimationNombre) => {
@@ -157,7 +159,7 @@ const EstimationNombreTable: FunctionComponent = () => {
               <td>{estimationNombre?.libelle}</td>
               <td>{estimationNombre?.nonCompte ? "Oui" : ""}</td>
               <td>{estimationNombre?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!estimationNombre.editable}
                   onEditClicked={() => handleEditEstimationNombre(estimationNombre?.id)}

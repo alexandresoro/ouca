@@ -143,7 +143,9 @@ const MeteoTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.meteos?.data?.map((meteo) => {
@@ -151,7 +153,7 @@ const MeteoTable: FunctionComponent = () => {
             <tr className="hover" key={meteo?.id}>
               <td>{meteo?.libelle}</td>
               <td>{meteo?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!meteo.editable}
                   onEditClicked={() => handleEditMeteo(meteo?.id)}

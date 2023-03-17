@@ -181,7 +181,9 @@ const LieuDitTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.lieuxDits?.data?.map((lieuDit) => {
@@ -195,7 +197,7 @@ const LieuDitTable: FunctionComponent = () => {
               <td>{lieuDit?.longitude}</td>
               <td>{lieuDit?.altitude}</td>
               <td>{lieuDit?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!lieuDit.editable}
                   onEditClicked={() => handleEditLieuDit(lieuDit?.id)}

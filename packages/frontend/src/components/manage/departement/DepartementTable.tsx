@@ -153,7 +153,9 @@ const DepartementTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.departements?.data?.map((departement) => {
@@ -163,7 +165,7 @@ const DepartementTable: FunctionComponent = () => {
               <td>{departement?.nbCommunes}</td>
               <td>{departement?.nbLieuxDits}</td>
               <td>{departement?.nbDonnees}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!departement.editable}
                   onEditClicked={() => handleEditDepartement(departement?.id)}

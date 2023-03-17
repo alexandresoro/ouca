@@ -228,7 +228,9 @@ const DonneeTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={donneesResult?.searchDonnees?.result?.map((donnee) => {

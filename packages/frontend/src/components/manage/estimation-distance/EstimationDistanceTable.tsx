@@ -147,14 +147,14 @@ const EstimationDistanceTable: FunctionComponent = () => {
                   </TableSortLabel>
                 </th>
               ))}
-              <th align="right">{t("actions")}</th>
+              <th align="right" className="pr-8">{t("actions")}</th>
             </>}
             tableRows={data?.estimationsDistance?.data?.map((estimationDistance) => {
               return (
                 <tr className="hover" key={estimationDistance?.id}>
                   <td>{estimationDistance?.libelle}</td>
                   <td>{estimationDistance?.nbDonnees}</td>
-                  <td align="right">
+                  <td align="right" className="pr-6">
                     <TableCellActionButtons
                       disabled={!estimationDistance.editable}
                       onEditClicked={() => handleEditEstimationDistance(estimationDistance?.id)}

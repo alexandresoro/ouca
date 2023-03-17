@@ -161,7 +161,9 @@ const EspeceTable: FunctionComponent = () => {
                 </TableSortLabel>
               </th>
             ))}
-            <th align="right">{t("actions")}</th>
+            <th align="right" className="pr-8">
+              {t("actions")}
+            </th>
           </>
         }
         tableRows={data?.especes?.data?.map((espece) => {
@@ -172,7 +174,7 @@ const EspeceTable: FunctionComponent = () => {
               <td>{espece?.nomFrancais}</td>
               <td>{espece?.nomLatin}</td>
               <td>{espece?.nbDonnees ? espece?.nbDonnees : "0"}</td>
-              <td align="right">
+              <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!espece.editable}
                   onEditClicked={() => handleEditEspece(espece?.id)}

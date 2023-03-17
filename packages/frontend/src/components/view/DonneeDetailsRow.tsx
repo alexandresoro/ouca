@@ -41,7 +41,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
             </td>
             <td>{intlFormat(parseISO(donnee?.inventaire.date))}</td>
             <td>{donnee?.inventaire.observateur.libelle}</td>
-            <td align="right">
+            <td align="right" className="pr-6">
               <IconButton
                 className="mx-1 text-primary dark:text-white"
                 aria-label={t("observationsTable.header.action.edit")}
