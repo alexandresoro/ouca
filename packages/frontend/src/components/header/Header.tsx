@@ -1,13 +1,10 @@
 import { type FunctionComponent } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/img/logo.svg";
-import { useIsSizeLarge } from "../../hooks/useMediaQuery";
 import HeaderActions from "./HeaderActions";
 import HeaderSettings from "./HeaderSettings";
 
 const Header: FunctionComponent = () => {
-  const isSizeLarge = useIsSizeLarge();
-
   return (
     <div className="navbar z-10 sticky bg-primary dark:bg-neutral-800 min-h-12 px-6 py-0 place-content-between shadow-md dark:shadow shadow-gray-700/75 dark:shadow-neutral-800/50">
       <Link className="flex-shrink-0 gap-2.5 outline-none" to="/">
@@ -16,11 +13,8 @@ const Header: FunctionComponent = () => {
           oùça?
         </h1>
       </Link>
-      {isSizeLarge && <HeaderActions />}
       <div className="flex items-center gap-4">
-        <div className="block lg:hidden">
-          <HeaderActions />
-        </div>
+        <HeaderActions />
         <HeaderSettings />
       </div>
     </div>
