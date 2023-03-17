@@ -209,7 +209,7 @@ const SettingsPage: FunctionComponent = () => {
         )}
         {!(fetching || error) && (
           <div className="card border-2 border-primary p-6 bg-base-100 shadow-xl">
-            <form className="flex justify-center items-center flex-col sm:flex-row gap-5 sm:gap-10 md:gap-16">
+            <form className="flex justify-center items-center flex-col sm:flex-row gap-0 sm:gap-10 md:gap-16">
               <div className="flex flex-col w-full">
                 <FormSelect
                   name="defaultObservateur"
@@ -262,7 +262,9 @@ const SettingsPage: FunctionComponent = () => {
                     validate: (v) => !isNaN(v as unknown as number),
                   })}
                 />
+              </div>
 
+              <div className="flex flex-col w-full">
                 <FormSelect
                   name="defaultSexe"
                   label={t("defaultSex")}
@@ -286,9 +288,7 @@ const SettingsPage: FunctionComponent = () => {
                   data={data?.ages?.data}
                   renderValue={({ libelle }) => libelle}
                 />
-              </div>
 
-              <div className="flex flex-col w-full">
                 <FormSwitch
                   name="areAssociesDisplayed"
                   label={t("displayAssociateObservers")}
