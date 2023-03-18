@@ -1,5 +1,6 @@
 import { ExtraErrorData, HttpClient } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
+import { Replay } from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 import { useEffect } from "react";
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType, type Routes } from "react-router-dom";
@@ -22,6 +23,7 @@ export const initializeSentry = (
           matchRoutes
         ),
       }),
+      new Replay(),
       new ExtraErrorData(),
       new HttpClient(),
     ],
