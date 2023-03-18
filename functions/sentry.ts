@@ -1,16 +1,25 @@
-type AppConfig = {
-  apiUrl: string;
-};
+// Sentry proxy function
+export const onRequestPost: PagesFunction = async ({ request }) => {
+  try {
+    const body = await request.text();
+    const pieces = body.split("\n");
 
-export const onRequestGet: PagesFunction<{ API_URLS?: KVNamespace }> = async ({ request, env }) => {
-  const url = new URL(request.url);
+    // DSN is in the first JSON structure
+    const header = JSON.parse(pieces[0]) as { dsn?: string };
+    const dsnUrl = new URL(header?.dsn);
+    const { host, pathname } = dsnUrl;
 
-  const appConfig =
-    (await env.API_URLS?.get<AppConfig>(url.hostname, "json")) ??
-    (await env.API_URLS?.get<AppConfig>("default", "json"));
+    // Project id is the part after the URL
+    const projectId = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
 
-  const response = new Response(JSON.stringify(appConfig));
-  response.headers.set("Content-Type", "application/json");
+    const response = await fetch(`https://${host}/api${projectId}/envelope/`, {
+      method: "POST",
+      headers: request.headers,
+      body,
+    });
 
-  return response;
+    return response;
+  } catch (e) {
+    return new Response(`Invalid request`, { status: 400 });
+  }
 };
