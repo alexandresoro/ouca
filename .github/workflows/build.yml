@@ -42,6 +42,8 @@ jobs:
 
       - name: Build
         run: npm run build:ci
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Upload artifact - backend
         if: github.event_name == 'push'
