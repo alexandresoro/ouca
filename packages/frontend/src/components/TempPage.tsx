@@ -1,9 +1,12 @@
-import { useState, type FunctionComponent } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useQuery } from "urql";
 import { graphql } from "../gql";
 import { type Comportement, type Observateur } from "../gql/graphql";
 import FormAutocomplete from "./common/form/FormAutocomplete";
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useState, type FunctionComponent } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useQuery } from "urql";
 
 const OBS_QUERY = graphql(`
   query TempObs($searchParams: SearchParams) {
@@ -82,6 +85,9 @@ const TempPage: FunctionComponent = () => {
 
   return (
     <>
+      {/* 
+      // @ts-ignore*/}
+      <button onClick={() => methodDoesNotExist()}>Break the world</button>
       {observateur?.id} - {obsFilter}
       <FormAutocomplete
         data={dataObs?.observateurs?.data}
