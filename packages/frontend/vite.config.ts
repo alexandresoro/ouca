@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig, loadEnv } from "vite";
@@ -14,6 +15,9 @@ export default defineConfig(({ mode }) => {
         "@ou-ca/common": path.resolve(__dirname, "../common/src"),
       },
     },
+    build: {
+      sourcemap: !!env.SENTRY_URL,
+    },
     server: {
       port: 3000,
       open: true,
@@ -22,7 +26,10 @@ export default defineConfig(({ mode }) => {
         "/download": API_SERVER_URL,
       },
     },
-    plugins: [react()],
+    plugins: [
+      react(),
+      ...(env.SENTRY_URL ? [sentryVitePlugin({ include: "./dist", url: env.SENTRY_URL, telemetry: false })] : []),
+    ],
     test: {
       clearMocks: true,
       globals: true,
