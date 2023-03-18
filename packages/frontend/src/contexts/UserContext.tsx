@@ -1,5 +1,6 @@
-import { createContext, ReactElement, useState } from "react";
-import { UserInfo } from "../gql/graphql";
+import { createContext, useState, type ReactElement } from "react";
+import { type UserInfo } from "../gql/graphql";
+import useAppContext from "../hooks/useAppContext";
 
 export const UserContext = createContext<{
   userInfo: UserInfo | null;
@@ -14,11 +15,22 @@ export const UserContext = createContext<{
 export const UserProvider = ({ children }: { children: ReactElement }): ReactElement => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
+  const { appContext } = useAppContext();
+
+  const setUserInfoAction = (userInfo: UserInfo | null) => {
+    setUserInfo(userInfo);
+    if (appContext.isSentryEnabled) {
+      void import("../utils/sentry").then(({ setUser }) => {
+        setUser(userInfo);
+      });
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
         userInfo,
-        setUserInfo,
+        setUserInfo: setUserInfoAction,
       }}
     >
       {children}
