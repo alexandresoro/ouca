@@ -40,6 +40,11 @@ jobs:
       - name: Check & validate
         run: npm run check:ci
 
+      - name: Set Sentry for sourcemap build
+        if: github.event_name == 'push'
+        run: |
+          echo "SENTRY_URL=${{ vars.SENTRY_URL }}" >> $GITHUB_ENV
+
       - name: Build
         run: npm run build:ci
         env:
