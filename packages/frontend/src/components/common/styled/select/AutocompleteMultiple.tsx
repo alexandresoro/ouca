@@ -5,7 +5,7 @@ import { forwardRef, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 
-type AutocompleteMultipleProps<T> = {
+type AutocompleteMultipleProps<T extends object> = {
   name?: string;
   label: string;
   values: T[];
@@ -24,7 +24,10 @@ type AutocompleteMultipleProps<T> = {
     }
 );
 
-const AutocompleteMultiple = <T,>(props: AutocompleteMultipleProps<T>, ref: ForwardedRef<HTMLElement>) => {
+const AutocompleteMultiple = <T extends object,>(
+  props: AutocompleteMultipleProps<T>,
+  ref: ForwardedRef<HTMLElement>
+) => {
   const { data, name, values, onChange, onInputChange, by, renderValue, label, autocompleteClassName } = props;
 
   const { t } = useTranslation();
@@ -49,7 +52,7 @@ const AutocompleteMultiple = <T,>(props: AutocompleteMultipleProps<T>, ref: Forw
   });
 
   // TODO: try to improve type inference
-  const key = by ?? ("id" as keyof T & string);
+  const key = by ?? ("id" as keyof T);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onInputChange?.(event.target.value);
@@ -86,7 +89,8 @@ const AutocompleteMultiple = <T,>(props: AutocompleteMultipleProps<T>, ref: Forw
       value={values}
       onChange={onChange}
       onBlur={handleOnBlur}
-      by={key as T extends null ? string : keyof T & string}
+      // Ugly workaround weird types in combobox w/ TS 5.0
+      by={key as keyof unknown}
       className={`form-control py-2 ${autocompleteClassName ?? ""}`}
       multiple
     >
