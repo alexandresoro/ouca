@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import config from "./config.js";
 import { buildServer, registerFastifyRoutes } from "./fastify.js";
 import { buildServices } from "./services/services.js";
@@ -5,6 +6,17 @@ import shutdown from "./shutdown.js";
 import { runDatabaseMigrations } from "./umzug.js";
 import { logger } from "./utils/logger.js";
 import { checkAndCreateFolders } from "./utils/paths.js";
+// Importing @sentry/tracing patches the global hub for tracing to work.
+import "@sentry/tracing";
+
+// Sentry
+if (config.sentry.dsn) {
+  logger.debug("Sentry instrumenting enabled");
+  Sentry.init({
+    dsn: config.sentry.dsn,
+    tracesSampleRate: 1.0,
+  });
+}
 
 logger.debug("Starting app");
 
@@ -24,5 +36,6 @@ checkAndCreateFolders();
 
   await server.listen({ ...config.server });
 })().catch((e) => {
+  Sentry.captureException(e);
   logger.error(e);
 });

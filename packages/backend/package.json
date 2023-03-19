@@ -31,7 +31,9 @@
     "compile:tsup": {
       "command": "tsup",
       "service": true,
-      "dependencies": ["../common:compile:tsup"],
+      "dependencies": [
+        "../common:compile:tsup"
+      ],
       "files": [
         "src/**",
         "tsconfig.json",
@@ -61,6 +63,8 @@
     "@fastify/multipart": "7.5.0",
     "@fastify/static": "6.9.0",
     "@ou-ca/common": "*",
+    "@sentry/node": "7.43.0",
+    "@sentry/tracing": "7.43.0",
     "csv-parse": "5.3.6",
     "csv-stringify": "6.3.0",
     "date-fns": "2.29.3",

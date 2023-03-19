@@ -26,6 +26,7 @@ const envSchema = z.object({
   OUCA_JWT_SIGNING_KEY: z.string().optional(),
   OUCA_JWT_COOKIE_SAME_SITE: z.string().default("true").transform(zodStringToBoolean),
   OUCA_JWT_COOKIE_SECURE: z.string().default("true").transform(zodStringToBoolean),
+  SENTRY_DSN: z.string().optional(),
   NODE_ENV: z.string().optional(),
 });
 
@@ -70,6 +71,9 @@ export default {
       sameSite: env.OUCA_JWT_COOKIE_SAME_SITE,
       secure: env.OUCA_JWT_COOKIE_SECURE,
     },
+  },
+  sentry: {
+    dsn: env.SENTRY_DSN,
   },
   isProduction: env.NODE_ENV,
 };

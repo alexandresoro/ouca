@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { type FastifyInstance } from "fastify";
 import { type Services } from "./services/services.js";
 
@@ -9,6 +10,7 @@ const shutdown =
   () => {
     services.logger.info("Shutdown requested");
     Promise.all([
+      Sentry.close(2000),
       services.slonik.end().then(() => {
         services.logger.info("Database connector has been shut down");
       }),
