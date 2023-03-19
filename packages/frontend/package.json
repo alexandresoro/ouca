@@ -63,8 +63,7 @@
     "react-hook-form": "7.43.7",
     "react-i18next": "12.2.0",
     "react-router-dom": "6.9.0",
-    "urql": "3.0.4",
-    "web-vitals": "3.3.0"
+    "urql": "3.0.4"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "3.2.2",
