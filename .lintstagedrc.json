@@ -1,4 +1,8 @@
 {
-  "*.{ts,tsx,js}": ["rome ci"],
-  "*.{ts,tsx}": ["eslint", "vitest related --watch=false --passWithNoTests"]
+  "*.{ts,tsx,js}": [
+    "rome ci"
+  ],
+  "*.{ts,tsx}": [
+    "eslint"
+  ]
 }

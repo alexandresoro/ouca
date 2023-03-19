@@ -1,0 +1,5 @@
+{
+  "*.ts": [
+    "vitest related --watch=false --passWithNoTests"
+  ]
+}
