@@ -10,7 +10,7 @@ export default defineConfig({
   watch: true,
   async onSuccess() {
     spawnSync("node", ["scripts/copy-graphql-schemas-to-dist.js"]);
-    const app = spawn("node", ["main"], { cwd: "./dist" });
+    const app = spawn("node", ["-r", "dotenv/config", "dist/main"]);
     app.stdout.pipe(process.stdout);
     return () => {
       app.kill();

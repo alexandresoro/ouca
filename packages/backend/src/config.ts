@@ -1,11 +1,5 @@
-import dotenv from "dotenv";
-import path from "node:path";
 import { pino } from "pino";
 import { z } from "zod";
-
-dotenv.config({
-  path: path.join(process.cwd(), "../.env"),
-});
 
 const zodStringToBoolean = (input: string | undefined): boolean => {
   return input?.toLowerCase() === "true" || input === "1";
