@@ -1,18 +1,19 @@
 import { existsSync, mkdirSync } from "node:fs";
-import path from "node:path";
 
 export const DOWNLOAD_ENDPOINT = "/download";
 
 // The folder that is mapped to the download endpoint
-export const PUBLIC_DIR = "./public";
+const PUBLIC_DIR = "./public";
 
-export const PUBLIC_DIR_PATH = path.join(process.cwd(), PUBLIC_DIR);
+export const PUBLIC_DIR_PATH = new URL(`../${PUBLIC_DIR}`, import.meta.url);
 
-export const IMPORT_DIR = "./uploads";
+const IMPORT_DIR = "uploads";
 
-export const IMPORTS_DIR_PATH = path.join(process.cwd(), IMPORT_DIR);
+export const IMPORTS_DIR_PATH = new URL(`../${IMPORT_DIR}`, import.meta.url);
 
-export const IMPORT_REPORTS_DIR = "/importReports";
+export const IMPORT_REPORTS_DIR = "importReports";
+
+export const IMPORT_REPORTS_DIR_PATH = new URL(`${PUBLIC_DIR_PATH.toString()}/${IMPORT_REPORTS_DIR}`);
 
 export const checkAndCreateFolders = () => {
   // Create a public dir if does not exist
@@ -22,8 +23,8 @@ export const checkAndCreateFolders = () => {
   }
 
   // Create the folder that contains importReports if does not exist
-  if (!existsSync(path.join(PUBLIC_DIR, IMPORT_REPORTS_DIR))) {
-    mkdirSync(path.join(PUBLIC_DIR, IMPORT_REPORTS_DIR));
+  if (!existsSync(IMPORT_REPORTS_DIR_PATH)) {
+    mkdirSync(IMPORT_REPORTS_DIR_PATH);
   }
 
   // Create uploads dir if does not exist

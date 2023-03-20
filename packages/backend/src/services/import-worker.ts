@@ -15,7 +15,7 @@ import {
 } from "../objects/import/import-update-message.js";
 import { type LoggedUser } from "../types/User.js";
 import { logger } from "../utils/logger.js";
-import { IMPORT_DIR } from "../utils/paths.js";
+import { IMPORTS_DIR_PATH } from "../utils/paths.js";
 import { getNewImportServiceForRequestType } from "./import/import-service-per-request-type.js";
 import {
   IMPORT_COMPLETE_EVENT,
@@ -68,9 +68,7 @@ const { importId, importType, loggedUser } = workerData as {
     process.exit(0);
   });
 
-  const IMPORTS_DIR_PATH = path.join(process.cwd(), IMPORT_DIR);
-
-  promisify(readFile)(path.join(IMPORTS_DIR_PATH, importId))
+  promisify(readFile)(path.join(IMPORTS_DIR_PATH.pathname, importId))
     .then((data) => {
       // This is the 100% CPU intensive task
       serviceWorker.importFile(data.toString(), loggedUser).catch((error) => {

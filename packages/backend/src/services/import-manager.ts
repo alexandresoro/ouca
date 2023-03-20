@@ -19,7 +19,7 @@ import {
 } from "../objects/import/import-update-message.js";
 import { type LoggedUser } from "../types/User.js";
 import { logger } from "../utils/logger.js";
-import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, PUBLIC_DIR_PATH } from "../utils/paths.js";
+import { DOWNLOAD_ENDPOINT, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "../utils/paths.js";
 
 const importStatuses: Map<string, ImportStatusStructure> = new Map();
 
@@ -84,7 +84,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
           delimiter: ";",
           record_delimiter: "windows",
         });
-        writeFileSync(path.join(PUBLIC_DIR_PATH, IMPORT_REPORTS_DIR, importReportId), csvString);
+        writeFileSync(path.join(IMPORT_REPORTS_DIR_PATH.pathname, importReportId), csvString);
       }
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -95,7 +95,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
         ...(importReportId
           ? {
               statusDetails: {
-                importErrorsReportFile: `${DOWNLOAD_ENDPOINT}${IMPORT_REPORTS_DIR}/${importReportId}`,
+                importErrorsReportFile: `${DOWNLOAD_ENDPOINT}/${IMPORT_REPORTS_DIR}/${importReportId}`,
                 nbErrors: postMessage?.lineErrors?.length ?? 0,
               },
             }

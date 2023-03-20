@@ -1,3 +1,9 @@
+import { buildGraphQLContext } from "./graphql/graphql-context.js";
+import { logQueries, logResults } from "./graphql/mercurius-logger.js";
+import { buildResolvers } from "./graphql/resolvers.js";
+import { startImportTask } from "./services/import-manager.js";
+import { type Services } from "./services/services.js";
+import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths.js";
 /* eslint-disable import/no-named-as-default */
 import fastifyCompress from "@fastify/compress";
 import fastifyCookie from "@fastify/cookie";
@@ -13,12 +19,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
-import { buildGraphQLContext } from "./graphql/graphql-context.js";
-import { logQueries, logResults } from "./graphql/mercurius-logger.js";
-import { buildResolvers } from "./graphql/resolvers.js";
-import { startImportTask } from "./services/import-manager.js";
-import { type Services } from "./services/services.js";
-import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths.js";
 
 export const buildServer = async (services: Services): Promise<FastifyInstance> => {
   // Server
@@ -40,7 +40,7 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
 
   // Static files server
   await server.register(fastifyStatic, {
-    root: PUBLIC_DIR_PATH,
+    root: PUBLIC_DIR_PATH.pathname,
     prefix: DOWNLOAD_ENDPOINT,
   });
 
@@ -117,7 +117,7 @@ export const registerFastifyRoutes = (server: FastifyInstance, services: Service
 
     const uploadId = randomUUID();
 
-    await promisify(pipeline)(data.file, fs.createWriteStream(path.join(IMPORTS_DIR_PATH, uploadId)));
+    await promisify(pipeline)(data.file, fs.createWriteStream(path.join(IMPORTS_DIR_PATH.pathname, uploadId)));
 
     startImportTask(uploadId, params.entityName as ImportType, loggedUser);
 
