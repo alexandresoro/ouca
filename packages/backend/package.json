@@ -71,7 +71,7 @@
     "dotenv": "16.0.3",
     "es-main": "1.2.0",
     "exceljs": "4.3.0",
-    "fastify": "4.14.1",
+    "fastify": "4.15.0",
     "graphql": "16.6.0",
     "jose": "4.13.1",
     "mercurius": "12.2.0",
