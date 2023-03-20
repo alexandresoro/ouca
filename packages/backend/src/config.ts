@@ -22,7 +22,7 @@ const envSchema = z.object({
   OUCA_SIGNUPS_ALLOWED: z.string().default("false").transform(zodStringToBoolean),
   OUCA_DEFAULT_ADMIN_PASSWORD: z.string().optional(),
   OUCA_LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("warn"),
-  OUCA_LOG_TO_FILE: z.string().default("false").transform(zodStringToBoolean),
+  OUCA_LOG_PATH: z.string().startsWith("/").optional(),
   OUCA_JWT_SIGNING_KEY: z.string().optional(),
   OUCA_JWT_COOKIE_SAME_SITE: z.string().default("true").transform(zodStringToBoolean),
   OUCA_JWT_COOKIE_SECURE: z.string().default("true").transform(zodStringToBoolean),
@@ -63,7 +63,7 @@ export default {
   },
   log: {
     level: env.OUCA_LOG_LEVEL,
-    logToFile: env.OUCA_LOG_TO_FILE,
+    logPath: env.OUCA_LOG_PATH,
   },
   jwt: {
     signingKey: env.OUCA_JWT_SIGNING_KEY,

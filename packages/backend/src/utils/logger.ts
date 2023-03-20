@@ -1,3 +1,4 @@
+import path from "node:path";
 import { pino, type TransportTargetOptions } from "pino";
 import config from "../config.js";
 
@@ -23,12 +24,12 @@ const getPinoTransportsToUse = () => {
     });
   }
 
-  if (config.log.logToFile) {
+  if (config.log.logPath) {
     transports.push({
       target: "pino/file",
       level: config.log.level,
       options: {
-        destination: "./logs/logfile.log",
+        destination: path.join(config.log.logPath, "logFile.log"),
         mkdir: true,
       },
     });
