@@ -28,7 +28,17 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      ...(env.SENTRY_URL ? [sentryVitePlugin({ include: "./dist", url: env.SENTRY_URL, telemetry: false })] : []),
+      ...(env.SENTRY_URL
+        ? [
+            sentryVitePlugin({
+              include: "./dist",
+              url: env.SENTRY_URL,
+              // https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/182
+              releaseInjectionTargets: /src\/index\.tsx$/,
+              telemetry: false,
+            }),
+          ]
+        : []),
     ],
     test: {
       clearMocks: true,
