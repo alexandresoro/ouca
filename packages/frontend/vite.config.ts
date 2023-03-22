@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      sourcemap: !!env.SENTRY_URL,
+      sourcemap: env.SENTRY_URL ? "hidden" : false,
     },
     server: {
       port: 3000,
