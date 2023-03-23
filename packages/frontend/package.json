@@ -14,7 +14,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc --build tsconfig.build.json && vite build",
-    "build:notypecheck": "vite build && rm -r dist/**/*.map",
+    "build:notypecheck": "vite build && rm -rf dist/**/*.map",
     "postinstall": "npm run generate-graphql",
     "serve": "vite preview",
     "test": "wireit",
