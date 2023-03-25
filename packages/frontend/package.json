@@ -14,7 +14,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc --build tsconfig.build.json && vite build",
-    "build:notypecheck": "vite build && rm -rf dist/**/*.map",
+    "build:cloudflare": "vite --config vite.config.cf.ts build",
     "postinstall": "npm run generate-graphql",
     "serve": "vite preview",
     "test": "wireit",
