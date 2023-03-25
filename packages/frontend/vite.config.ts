@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      sourcemap: env.SENTRY_URL ? "hidden" : false,
+      sourcemap: !!env.ENABLE_SENTRY,
     },
     server: {
       port: 3000,
@@ -28,13 +28,16 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      ...(env.SENTRY_URL
+      ...(env.ENABLE_SENTRY
         ? [
             sentryVitePlugin({
               include: "./dist",
               url: env.SENTRY_URL,
               // https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/182
               releaseInjectionTargets: /src\/index\.tsx$/,
+              setCommits: {
+                auto: true,
+              },
               telemetry: false,
             }),
           ]

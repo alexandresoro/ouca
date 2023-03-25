@@ -39,6 +39,23 @@
     },
     "build:frontend:ci": {
       "command": "npm run frontend build",
+      "env": {
+        "ENABLE_SENTRY": {
+          "external": true
+        },
+        "SENTRY_URL": {
+          "external": true
+        },
+        "SENTRY_AUTH_TOKEN": {
+          "external": true
+        },
+        "SENTRY_ORG": {
+          "external": true
+        },
+        "SENTRY_PROJECT": {
+          "external": true
+        }
+      },
       "files": [
         "packages/{frontend,common}/**",
         "!packages/*/dist/**",
