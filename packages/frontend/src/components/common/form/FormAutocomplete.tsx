@@ -4,7 +4,7 @@ import { type ConditionalKeys, type SetRequired } from "type-fest";
 import Autocomplete from "../styled/select/Autocomplete";
 import AutocompleteMultiple from "../styled/select/AutocompleteMultiple";
 
-type FormAutocompleteProps<TFieldValues extends FieldValues, T> = SetRequired<
+type FormAutocompleteProps<TFieldValues extends FieldValues, T extends object> = SetRequired<
   UseControllerProps<TFieldValues>,
   "control"
 > & {
@@ -29,7 +29,9 @@ type FormAutocompleteProps<TFieldValues extends FieldValues, T> = SetRequired<
     | { data: (T & { id: Key })[]; multiple: true; by?: ConditionalKeys<T, Key> & string }
   );
 
-const FormAutocomplete = <TFieldValues extends FieldValues, T>(props: FormAutocompleteProps<TFieldValues, T>) => {
+const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
+  props: FormAutocompleteProps<TFieldValues, T>
+) => {
   const {
     data,
     by,
