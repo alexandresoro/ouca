@@ -3,13 +3,13 @@ import { Suspense, lazy, useEffect, useMemo, useState, type FunctionComponent } 
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { Provider as UrqlProvider, cacheExchange, createClient, dedupExchange, fetchExchange } from "urql";
-import Layout from "./components/Layout";
-import RequireAuth from "./components/RequireAuth";
 import { AppContext, DEFAULT_CONFIG } from "./contexts/AppContext";
 import { UserProvider } from "./contexts/UserContext";
 import { initApp } from "./utils/init-app";
 import suspend from "./utils/suspend";
 
+const RequireAuth = lazy(() => import("./components/RequireAuth"));
+const Layout = lazy(() => import("./components/Layout"));
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const CreatePage = lazy(() => import("./components/create/CreatePage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
@@ -81,9 +81,11 @@ const App: FunctionComponent = () => {
                     <Route
                       path="/"
                       element={
-                        <RequireAuth>
-                          <Layout />
-                        </RequireAuth>
+                        <Suspense fallback={<></>}>
+                          <RequireAuth>
+                            <Layout />
+                          </RequireAuth>
+                        </Suspense>
                       }
                     >
                       <Route index element={<Navigate to="/create/new" replace={true} />}></Route>
