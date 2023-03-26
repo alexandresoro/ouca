@@ -1,7 +1,7 @@
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useClient } from "urql";
-import useApiUrlContext from "../../../hooks/useApiUrlContext";
+import useAppContext from "../../../hooks/useAppContext";
 import { DOWNLOAD_PATH, EXCEL_FILE_EXTENSION } from "../../../utils/constants";
 import { downloadFile } from "../../../utils/file-download-helper";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
@@ -14,7 +14,7 @@ const LieuDitPage: FunctionComponent = () => {
 
   const client = useClient();
 
-  const apiUrl = useApiUrlContext();
+  const { apiUrl } = useAppContext();
 
   const handleExportClick = async () => {
     const { data } = await client.query(EXPORT_LIEUX_DITS_QUERY, {}, { requestPolicy: "network-only" }).toPromise();

@@ -11,9 +11,7 @@ import DonneesByEspeceTable from "./DonneesByEspeceTable";
 const ViewDonneesPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const {
-    appContext: { features },
-  } = useAppContext();
+  const { features } = useAppContext();
 
   return (
     <>

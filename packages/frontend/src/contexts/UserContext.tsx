@@ -15,7 +15,7 @@ export const UserContext = createContext<{
 export const UserProvider = ({ children }: { children: ReactElement }): ReactElement => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
-  const { appContext } = useAppContext();
+  const appContext = useAppContext();
 
   const setUserInfoAction = (userInfo: UserInfo | null) => {
     setUserInfo(userInfo);

@@ -1,6 +1,7 @@
 import { createContext } from "react";
 
 export type AppContext = {
+  apiUrl: string;
   isSentryEnabled: boolean;
   features: {
     tmp_import: boolean;
@@ -9,6 +10,7 @@ export type AppContext = {
 };
 
 export const DEFAULT_CONFIG = {
+  apiUrl: "",
   isSentryEnabled: false,
   features: {
     tmp_import: false,
@@ -16,12 +18,4 @@ export const DEFAULT_CONFIG = {
   },
 } satisfies AppContext;
 
-export const AppContext = createContext<{
-  appContext: AppContext;
-  setAppContext: (appContext: AppContext) => void;
-}>({
-  appContext: DEFAULT_CONFIG,
-  setAppContext: () => {
-    /**/
-  },
-});
+export const AppContext = createContext<AppContext>(DEFAULT_CONFIG);

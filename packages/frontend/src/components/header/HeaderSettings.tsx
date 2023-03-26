@@ -46,9 +46,7 @@ const HeaderSettings: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { userInfo, setUserInfo } = useContext(UserContext);
-  const {
-    appContext: { features },
-  } = useAppContext();
+  const { features } = useAppContext();
 
   const [_, sendUserLogout] = useMutation(USER_LOGOUT_MUTATION);
 
