@@ -160,6 +160,9 @@
   "sexes": "Sexes",
   "species": "Espèces",
   "speciesClass": "Classe espèce",
+  "speciesClassAlreadyExistingError": "Il existe déjà une classe d'espèces avec ce libellé.",
+  "speciesClassCreationTitle": "Création d'une classe d'espèces",
+  "speciesClassEditionTitle": "Edition d'une classe d'espèces",
   "speciesClasses": "Classes espèces",
   "userForm": {
     "firstName": "Prénom",
