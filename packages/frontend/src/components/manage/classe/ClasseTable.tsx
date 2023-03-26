@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type Classe, type ClassesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,27 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query ClassesTable($searchParams: SearchParams, $orderBy: ClassesOrderBy, $sortOrder: SortOrder) {
-    classes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        libelle
-        editable
-        nbEspeces
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteClasse($id: Int!) {
-    deleteClasse(id: $id)
-  }
-`);
+import { DELETE_CLASSE, PAGINATED_CLASSES_QUERY } from "./ClasseManageQueries";
 
 const COLUMNS = [
   {
@@ -58,7 +37,7 @@ const ClasseTable: FunctionComponent = () => {
   const [dialogClasse, setDialogClasse] = useState<Classe | null>(null);
 
   const [{ data }, reexecuteClasses] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_CLASSES_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -70,7 +49,7 @@ const ClasseTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteClasse] = useMutation(DELETE);
+  const [_, deleteClasse] = useMutation(DELETE_CLASSE);
 
   const { displayNotification } = useSnackbar();
 

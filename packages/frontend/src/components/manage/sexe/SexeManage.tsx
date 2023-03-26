@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import RouteManage from "../common/RouteManage";
 import SexePage from "./SexePage";
 

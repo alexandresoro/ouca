@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type EntitesAvecLibelleOrderBy, type EstimationDistance } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,30 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query EstimationsDistanceTable(
-    $searchParams: SearchParams
-    $orderBy: EntitesAvecLibelleOrderBy
-    $sortOrder: SortOrder
-  ) {
-    estimationsDistance(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        libelle
-        editable
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteEstimationDistance($id: Int!) {
-    deleteEstimationDistance(id: $id)
-  }
-`);
+import { DELETE_ESTIMATION_DISTANCE, PAGINATED_ESTIMATIONS_DISTANCE_QUERY } from "./EstimationDistanceManageQueries";
 
 const COLUMNS = [
   {
@@ -57,7 +33,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
   const [dialogEstimationDistance, setDialogEstimationDistance] = useState<EstimationDistance | null>(null);
 
   const [{ data }, reexecutEstimationsDistance] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_ESTIMATIONS_DISTANCE_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -69,7 +45,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteEstimationDistance] = useMutation(DELETE);
+  const [_, deleteEstimationDistance] = useMutation(DELETE_ESTIMATION_DISTANCE);
 
   const { displayNotification } = useSnackbar();
 

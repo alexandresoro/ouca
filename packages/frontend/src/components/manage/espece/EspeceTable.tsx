@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type Espece, type EspecesOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,32 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query EspecesTable($searchParams: SearchParams, $orderBy: EspecesOrderBy, $sortOrder: SortOrder) {
-    especes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        classe {
-          id
-          libelle
-        }
-        code
-        editable
-        nomFrancais
-        nomLatin
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteEspece($id: Int!) {
-    deleteEspece(id: $id)
-  }
-`);
+import { DELETE_ESPECE, PAGINATED_ESPECES_QUERY } from "./EspeceManageQueries";
 
 const COLUMNS = [
   {
@@ -71,7 +45,7 @@ const EspeceTable: FunctionComponent = () => {
   const [dialogEspece, setDialogEspece] = useState<Espece | null>(null);
 
   const [{ data }, reexecuteEspeces] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_ESPECES_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -83,7 +57,7 @@ const EspeceTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteEspece] = useMutation(DELETE);
+  const [_, deleteEspece] = useMutation(DELETE_ESPECE);
 
   const { displayNotification } = useSnackbar();
 

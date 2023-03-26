@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type Comportement, type ComportementsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,28 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query ComportementsTable($searchParams: SearchParams, $orderBy: ComportementsOrderBy, $sortOrder: SortOrder) {
-    comportements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        code
-        libelle
-        nicheur
-        editable
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteComportement($id: Int!) {
-    deleteComportement(id: $id)
-  }
-`);
+import { DELETE_COMPORTEMENT, PAGINATED_COMPORTEMENTS_QUERY } from "./ComportementManageQueries";
 
 const COLUMNS = [
   {
@@ -63,7 +41,7 @@ const ComportementTable: FunctionComponent = () => {
   const [dialogComportement, setDialogComportement] = useState<Comportement | null>(null);
 
   const [{ data }, reexecuteComportements] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_COMPORTEMENTS_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -75,7 +53,7 @@ const ComportementTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteComportement] = useMutation(DELETE);
+  const [_, deleteComportement] = useMutation(DELETE_COMPORTEMENT);
 
   const { displayNotification } = useSnackbar();
 

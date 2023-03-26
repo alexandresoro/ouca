@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type LieuDit, type LieuxDitsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,38 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query LieuxDitsTable($searchParams: SearchParams, $orderBy: LieuxDitsOrderBy, $sortOrder: SortOrder) {
-    lieuxDits(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        commune {
-          id
-          departement {
-            id
-            code
-          }
-          code
-          nom
-        }
-        nom
-        altitude
-        longitude
-        latitude
-        editable
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteLieuDit($id: Int!) {
-    deleteLieuDit(id: $id)
-  }
-`);
+import { DELETE_LIEU_DIT, PAGINATED_LIEUX_DITS_QUERY } from "./LieuDitManageQueries";
 
 const COLUMNS = [
   {
@@ -91,7 +59,7 @@ const LieuDitTable: FunctionComponent = () => {
   );
 
   const [{ data }, reexecuteLieuxDits] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_LIEUX_DITS_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -103,7 +71,7 @@ const LieuDitTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteLieuDit] = useMutation(DELETE);
+  const [_, deleteLieuDit] = useMutation(DELETE_LIEU_DIT);
 
   const { displayNotification } = useSnackbar();
 

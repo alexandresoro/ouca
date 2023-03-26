@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type EntitesAvecLibelleOrderBy, type Meteo } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,26 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query MeteosTable($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    meteos(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        libelle
-        editable
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteMeteo($id: Int!) {
-    deleteMeteo(id: $id)
-  }
-`);
+import { DELETE_METEO, PAGINATED_METEOS_QUERY } from "./MeteoManageQueries";
 
 const COLUMNS = [
   {
@@ -53,7 +33,7 @@ const MeteoTable: FunctionComponent = () => {
   const [dialogMeteo, setDialogMeteo] = useState<Meteo | null>(null);
 
   const [{ data }, reexecuteMeteos] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_METEOS_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -65,7 +45,7 @@ const MeteoTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteMeteo] = useMutation(DELETE);
+  const [_, deleteMeteo] = useMutation(DELETE_METEO);
 
   const { displayNotification } = useSnackbar();
 

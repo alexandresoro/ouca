@@ -1,8 +1,8 @@
 import { refocusExchange } from "@urql/exchange-refocus";
-import { lazy, Suspense, useEffect, useMemo, useState, type FunctionComponent } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState, type FunctionComponent } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { cacheExchange, createClient, dedupExchange, fetchExchange, Provider as UrqlProvider } from "urql";
+import { Provider as UrqlProvider, cacheExchange, createClient, dedupExchange, fetchExchange } from "urql";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
 import { ApiUrlContext } from "./contexts/ApiUrlContext";
@@ -14,7 +14,7 @@ import suspend from "./utils/suspend";
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const CreatePage = lazy(() => import("./components/create/CreatePage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
-const ObervateurManage = lazy(() => import("./components/manage/observateur/ObervateurManage"));
+const ObservateurManage = lazy(() => import("./components/manage/observateur/ObservateurManage"));
 const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
 const CommuneManage = lazy(() => import("./components/manage/commune/CommuneManage"));
 const LieuDitManage = lazy(() => import("./components/manage/lieu-dit/LieuDitManage"));
@@ -117,7 +117,7 @@ const App: FunctionComponent = () => {
                             path="observateur/*"
                             element={
                               <Suspense fallback={<></>}>
-                                <ObervateurManage />
+                                <ObservateurManage />
                               </Suspense>
                             }
                           ></Route>

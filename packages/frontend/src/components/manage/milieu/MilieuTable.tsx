@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type Milieu, type MilieuxOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,27 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query MilieuxTable($searchParams: SearchParams, $orderBy: MilieuxOrderBy, $sortOrder: SortOrder) {
-    milieux(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        code
-        libelle
-        editable
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteMilieu($id: Int!) {
-    deleteMilieu(id: $id)
-  }
-`);
+import { DELETE_MILIEU, PAGINATED_MILIEUX_QUERY } from "./MilieuManageQueries";
 
 const COLUMNS = [
   {
@@ -58,7 +37,7 @@ const MilieuTable: FunctionComponent = () => {
   const [dialogMilieu, setDialogMilieu] = useState<Milieu | null>(null);
 
   const [{ data }, reexecuteMilieux] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_MILIEUX_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -70,7 +49,7 @@ const MilieuTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteMilieu] = useMutation(DELETE);
+  const [_, deleteMilieu] = useMutation(DELETE_MILIEU);
 
   const { displayNotification } = useSnackbar();
 

@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type EntitesAvecLibelleOrderBy, type Sexe } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,26 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query SexesTable($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    sexes(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        libelle
-        editable
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteSexe($id: Int!) {
-    deleteSexe(id: $id)
-  }
-`);
+import { DELETE_SEXE, PAGINATED_SEXES_QUERY } from "./SexeManageQueries";
 
 const COLUMNS = [
   {
@@ -53,7 +33,7 @@ const SexeTable: FunctionComponent = () => {
   const [dialogSexe, setDialogSexe] = useState<Sexe | null>(null);
 
   const [{ data }, reexecuteSexes] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_SEXES_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -65,7 +45,7 @@ const SexeTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteSexe] = useMutation(DELETE);
+  const [_, deleteSexe] = useMutation(DELETE_SEXE);
 
   const { displayNotification } = useSnackbar();
 

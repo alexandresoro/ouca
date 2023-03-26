@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type EstimationNombre, type EstimationNombreOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,27 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query EstimationsNombreTable($searchParams: SearchParams, $orderBy: EstimationNombreOrderBy, $sortOrder: SortOrder) {
-    estimationsNombre(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        libelle
-        editable
-        nbDonnees
-        nonCompte
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteEstimationNombre($id: Int!) {
-    deleteEstimationNombre(id: $id)
-  }
-`);
+import { DELETE_ESTIMATION_NOMBRE, PAGINATED_ESTIMATIONS_NOMBRE_QUERY } from "./EstimationNombreManageQueries";
 
 const COLUMNS = [
   {
@@ -58,7 +37,7 @@ const EstimationNombreTable: FunctionComponent = () => {
   const [dialogEstimationNombre, setDialogEstimationNombre] = useState<EstimationNombre | null>(null);
 
   const [{ data }, reexecuteEstimationsNombre] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_ESTIMATIONS_NOMBRE_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -70,7 +49,7 @@ const EstimationNombreTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteEstimationNombre] = useMutation(DELETE);
+  const [_, deleteEstimationNombre] = useMutation(DELETE_ESTIMATION_NOMBRE);
 
   const { displayNotification } = useSnackbar();
 

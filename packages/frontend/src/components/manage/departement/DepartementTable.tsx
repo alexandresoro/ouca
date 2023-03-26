@@ -2,7 +2,6 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { graphql } from "../../../gql";
 import { type Departement, type DepartementsOrderBy } from "../../../gql/graphql";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -11,28 +10,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-
-const PAGINATED_QUERY = graphql(`
-  query DepartementsTable($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
-    departements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        code
-        editable
-        nbCommunes
-        nbLieuxDits
-        nbDonnees
-      }
-    }
-  }
-`);
-
-const DELETE = graphql(`
-  mutation DeleteDepartement($id: Int!) {
-    deleteDepartement(id: $id)
-  }
-`);
+import { DELETE_DEPARTEMENT, PAGINATED_DEPARTEMENTS_QUERY } from "./DepartementManageQueries";
 
 const COLUMNS = [
   {
@@ -63,7 +41,7 @@ const DepartementTable: FunctionComponent = () => {
   const [dialogDepartement, setDialogDepartement] = useState<Departement | null>(null);
 
   const [{ data }, reexecuteDepartements] = useQuery({
-    query: PAGINATED_QUERY,
+    query: PAGINATED_DEPARTEMENTS_QUERY,
     variables: {
       searchParams: {
         pageNumber: page,
@@ -75,7 +53,7 @@ const DepartementTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteDepartement] = useMutation(DELETE);
+  const [_, deleteDepartement] = useMutation(DELETE_DEPARTEMENT);
 
   const { displayNotification } = useSnackbar();
 
