@@ -6,8 +6,10 @@ import { useContext, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "urql";
+import { type AppContext } from "../../contexts/AppContext";
 import { UserContext } from "../../contexts/UserContext";
 import { graphql } from "../../gql";
+import useAppContext from "../../hooks/useAppContext";
 import stringToColor from "../../utils/stringToColor";
 import { getFullName, getInitials } from "../../utils/usernameUtils";
 
@@ -17,7 +19,7 @@ const USER_LOGOUT_MUTATION = graphql(`
   }
 `);
 
-const OPTIONS_MENU_OPTIONS = [
+const getMenuOptions = (features: AppContext["features"]) => [
   {
     localizationKey: "profile" as TFuncKey,
     Icon: User,
@@ -28,11 +30,15 @@ const OPTIONS_MENU_OPTIONS = [
     Icon: Cog,
     to: "/settings",
   },
-  {
-    localizationKey: "importFromFile" as TFuncKey,
-    Icon: Import,
-    to: "/import",
-  },
+  ...(features.tmp_import
+    ? [
+        {
+          localizationKey: "importFromFile" as TFuncKey,
+          Icon: Import,
+          to: "/import",
+        },
+      ]
+    : []),
 ];
 
 const HeaderSettings: FunctionComponent = () => {
@@ -40,6 +46,9 @@ const HeaderSettings: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { userInfo, setUserInfo } = useContext(UserContext);
+  const {
+    appContext: { features },
+  } = useAppContext();
 
   const [_, sendUserLogout] = useMutation(USER_LOGOUT_MUTATION);
 
@@ -112,7 +121,7 @@ const HeaderSettings: FunctionComponent = () => {
         }}
         className="flex flex-col items-start flex-nowrap p-2 outline-none shadow-md ring-2 ring-primary-focus bg-base-100 dark:bg-base-300 rounded-lg w-max overflow-y-auto"
       >
-        {OPTIONS_MENU_OPTIONS.map(({ Icon, localizationKey, to }) => {
+        {getMenuOptions(features).map(({ Icon, localizationKey, to }) => {
           const CurrentMenuItem = (
             <Menu.Item key={to}>
               <Link
