@@ -154,6 +154,10 @@
     "currentPageDescription": "Page {{currentPage}} sur {{totalPages}}"
   },
   "scientificName": "Nom scientifique",
+  "sexAlreadyExistingError": "Il existe déjà un sexe avec ce libellé.",
+  "sexCreationTitle": "Création d'un sexe",
+  "sexEditionTitle": "Edition d'un sexe",
+  "sexes": "Sexes",
   "species": "Espèces",
   "speciesClass": "Classe espèce",
   "speciesClasses": "Classes espèces",

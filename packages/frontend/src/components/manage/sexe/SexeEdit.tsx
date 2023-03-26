@@ -1,0 +1,143 @@
+import { Save, X } from "@styled-icons/boxicons-regular";
+import { useEffect, type FunctionComponent } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
+import { type UpsertSexeMutationVariables } from "../../../gql/graphql";
+import useSnackbar from "../../../hooks/useSnackbar";
+import { getOucaError } from "../../../utils/ouca-error-extractor";
+import TextInput from "../../common/styled/TextInput";
+import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import ManageTopBar from "../common/ManageTopBar";
+import { SEXE_QUERY, UPSERT_SEXE } from "./SexeManageQueries";
+
+type SexeEditProps = {
+  isEditionMode: boolean;
+};
+
+type UpsertSexeInput = Pick<UpsertSexeMutationVariables, "id"> & UpsertSexeMutationVariables["data"];
+
+const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
+  const { isEditionMode } = props;
+  const { id: sexeId } = useParams();
+
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    formState: { errors },
+    setValue,
+    handleSubmit,
+  } = useForm<UpsertSexeInput>();
+
+  // Retrieve the existing sex info in edit mode
+  const [{ data, error, fetching }] = useQuery({
+    query: SEXE_QUERY,
+    requestPolicy: "network-only",
+    variables: {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      id: parseInt(sexeId!),
+    },
+    pause: !sexeId,
+  });
+
+  const [_, upsertSexe] = useMutation(UPSERT_SEXE);
+
+  const { displayNotification } = useSnackbar();
+
+  useEffect(() => {
+    if (data?.sexe) {
+      setValue("id", data.sexe?.id);
+      setValue("libelle", data.sexe?.libelle);
+    }
+  }, [data?.sexe, setValue]);
+
+  useEffect(() => {
+    if (error) {
+      displayNotification({
+        type: "error",
+        message: t("retrieveGenericError"),
+      });
+    }
+  }, [error, displayNotification, t]);
+
+  const title = isEditionMode ? t("sexEditionTitle") : t("sexCreationTitle");
+
+  const onSubmit: SubmitHandler<UpsertSexeInput> = (data) => {
+    const { id, ...restData } = data;
+    upsertSexe({
+      id: id ?? undefined,
+      data: restData,
+    })
+      .then(({ data, error }) => {
+        if (data?.upsertSexe) {
+          displayNotification({
+            type: "success",
+            message: t("retrieveGenericSaveSuccess"),
+          });
+          navigate("..");
+        }
+        if (error) {
+          if (getOucaError(error) === "OUCA0004") {
+            displayNotification({
+              type: "error",
+              message: t("sexAlreadyExistingError"),
+            });
+          } else {
+            displayNotification({
+              type: "error",
+              message: t("retrieveGenericSaveError"),
+            });
+          }
+        }
+      })
+      .catch(() => {
+        displayNotification({
+          type: "error",
+          message: t("retrieveGenericSaveError"),
+        });
+      });
+  };
+
+  return (
+    <>
+      <ManageTopBar title={t("sexes")} showButtons={false} />
+      <ContentContainerLayout>
+        <div className="card border-2 border-primary bg-base-100 text-base-content shadow-xl max-w-3xl mx-auto">
+          <div className="card-body">
+            <h2 className="card-title my-4">{title}</h2>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <TextInput
+                label={t("label")}
+                type="text"
+                required
+                defaultValue=""
+                hasError={!!errors?.libelle}
+                helperMessage={errors?.libelle?.message ?? ""}
+                {...register("libelle", {
+                  required: t("requiredFieldError"),
+                })}
+              />
+
+              <div className="card-actions justify-end">
+                <button className="btn btn-secondary" onClick={() => navigate("..")}>
+                  <X className="h-6 mr-1" />
+                  {t("cancel")}
+                </button>
+                <button className="btn btn-primary" disabled={fetching} type="submit">
+                  <Save className="h-6 mr-1" />
+                  {t("save")}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </ContentContainerLayout>
+    </>
+  );
+};
+
+export default SexeEdit;
