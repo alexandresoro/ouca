@@ -1,4 +1,3 @@
-import { Save, X } from "@styled-icons/boxicons-regular";
 import { useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -9,6 +8,7 @@ import useSnackbar from "../../../hooks/useSnackbar";
 import { getOucaError } from "../../../utils/ouca-error-extractor";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
+import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
 import { AGE_QUERY, UPSERT_AGE } from "./AgeManageQueries";
 
@@ -122,16 +122,7 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
                 })}
               />
 
-              <div className="card-actions justify-end">
-                <button className="btn btn-secondary" onClick={() => navigate("..")}>
-                  <X className="h-6 mr-1" />
-                  {t("cancel")}
-                </button>
-                <button className="btn btn-primary" disabled={fetching} type="submit">
-                  <Save className="h-6 mr-1" />
-                  {t("save")}
-                </button>
-              </div>
+              <EntityUpsertFormActionButtons onCancelClick={() => navigate("..")} disabled={fetching} />
             </form>
           </div>
         </div>

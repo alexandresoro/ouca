@@ -3,25 +3,24 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { type UpsertObservateurMutationVariables } from "../../../gql/graphql";
+import { type UpsertMeteoMutationVariables } from "../../../gql/graphql";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { getOucaError } from "../../../utils/ouca-error-extractor";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { OBSERVATEUR_QUERY, UPSERT_OBSERVATEUR } from "./ObservateurManageQueries";
+import { METEO_QUERY, UPSERT_METEO } from "./MeteoManageQueries";
 
-type ObservateurEditProps = {
+type MeteoEditProps = {
   isEditionMode: boolean;
 };
 
-type ObservateurUpsertInputs = Pick<UpsertObservateurMutationVariables, "id"> &
-  UpsertObservateurMutationVariables["data"];
+type UpsertMeteoInput = Pick<UpsertMeteoMutationVariables, "id"> & UpsertMeteoMutationVariables["data"];
 
-const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
+const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
   const { isEditionMode } = props;
-  const { id: observateurId } = useParams();
+  const { id: meteoId } = useParams();
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -31,29 +30,29 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     formState: { errors },
     setValue,
     handleSubmit,
-  } = useForm<ObservateurUpsertInputs>();
+  } = useForm<UpsertMeteoInput>();
 
-  // Retrieve the existing observer info in edit mode
+  // Retrieve the existing weather info in edit mode
   const [{ data, error, fetching }] = useQuery({
-    query: OBSERVATEUR_QUERY,
+    query: METEO_QUERY,
     requestPolicy: "network-only",
     variables: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(observateurId!),
+      id: parseInt(meteoId!),
     },
-    pause: !observateurId,
+    pause: !meteoId,
   });
 
-  const [_, upsertObservateur] = useMutation(UPSERT_OBSERVATEUR);
+  const [_, upsertMeteo] = useMutation(UPSERT_METEO);
 
   const { displayNotification } = useSnackbar();
 
   useEffect(() => {
-    if (data?.observateur) {
-      setValue("id", data.observateur?.id);
-      setValue("libelle", data.observateur?.libelle);
+    if (data?.meteo) {
+      setValue("id", data.meteo?.id);
+      setValue("libelle", data.meteo?.libelle);
     }
-  }, [data?.observateur, setValue]);
+  }, [data?.meteo, setValue]);
 
   useEffect(() => {
     if (error) {
@@ -64,16 +63,16 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
     }
   }, [error, displayNotification, t]);
 
-  const title = isEditionMode ? t("observerEditionTitle") : t("observerCreationTitle");
+  const title = isEditionMode ? t("weatherEditionTitle") : t("weatherCreationTitle");
 
-  const onSubmit: SubmitHandler<ObservateurUpsertInputs> = (data) => {
+  const onSubmit: SubmitHandler<UpsertMeteoInput> = (data) => {
     const { id, ...restData } = data;
-    upsertObservateur({
+    upsertMeteo({
       id: id ?? undefined,
       data: restData,
     })
       .then(({ data, error }) => {
-        if (data?.upsertObservateur) {
+        if (data?.upsertMeteo) {
           displayNotification({
             type: "success",
             message: t("retrieveGenericSaveSuccess"),
@@ -84,7 +83,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
           if (getOucaError(error) === "OUCA0004") {
             displayNotification({
               type: "error",
-              message: t("observerAlreadyExistingError"),
+              message: t("weatherAlreadyExistingError"),
             });
           } else {
             displayNotification({
@@ -104,7 +103,7 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   return (
     <>
-      <ManageTopBar title={t("observers")} showButtons={false} />
+      <ManageTopBar title={t("weathers")} showButtons={false} />
       <ContentContainerLayout>
         <div className="card border-2 border-primary bg-base-100 text-base-content shadow-xl max-w-3xl mx-auto">
           <div className="card-body">
@@ -132,4 +131,4 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
   );
 };
 
-export default ObservateurEdit;
+export default MeteoEdit;

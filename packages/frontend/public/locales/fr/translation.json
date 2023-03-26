@@ -181,6 +181,9 @@
     }
   },
   "viewObservations": "Consultation des observations",
+  "weatherAlreadyExistingError": "Il existe déjà une météo avec ce libellé.",
+  "weatherCreationTitle": "Création d'une météo",
+  "weatherEditionTitle": "Edition d'une météo",
   "weathers": "Météos",
   "loginLabel": "Utilisateur",
   "loginRequiredLabel": "Le nom d'utilisateur est requis",
