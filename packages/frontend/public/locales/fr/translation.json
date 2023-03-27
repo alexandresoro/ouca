@@ -97,6 +97,9 @@
   "numberOfLocalities": "Nombre de lieux-dits",
   "numberOfSpecies": "Nombre d'espèces",
   "numberOfObservations": "Nombre d'observations",
+  "numberPrecisionAlreadyExistingError": "Il existe déjà une estimation du nombre avec ce libellé.",
+  "numberPrecisionCreationTitle": "Création d'une estimation du nombre",
+  "numberPrecisionEditionTitle": "Edition d'une estimation du nombre",
   "numberPrecisions": "Estimations du nombre",
   "observationDetails": {
     "age": "Âge: {{age}}",
