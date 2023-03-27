@@ -9,6 +9,8 @@ export default defineConfig(({ mode }) => {
 
   const API_SERVER_URL = env.API_SERVER_URL ?? "http://localhost:4000";
 
+  const enableSentry = env.ENABLE_SENTRY?.toLowerCase() === "true";
+
   return {
     resolve: {
       alias: {
@@ -16,7 +18,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      sourcemap: !!env.ENABLE_SENTRY,
+      sourcemap: enableSentry,
     },
     server: {
       port: 3000,
@@ -28,7 +30,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      ...(env.ENABLE_SENTRY
+      ...(enableSentry
         ? [
             sentryVitePlugin({
               include: "./dist",
