@@ -29,11 +29,16 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
 
   const {
     register,
-    formState: { errors },
-    setValue,
+    formState: { isValid },
     reset,
     handleSubmit,
-  } = useForm<UpsertEstimationNombreInput>();
+  } = useForm<UpsertEstimationNombreInput>({
+    defaultValues: {
+      id: null,
+      libelle: "",
+      nonCompte: false,
+    },
+  });
 
   // Retrieve the existing estimate of numbers info in edit mode
   const [{ data, error, fetching }] = useQuery({
@@ -52,9 +57,11 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
 
   useEffect(() => {
     if (data?.estimationNombre) {
-      setValue("id", data.estimationNombre?.id);
-      setValue("libelle", data.estimationNombre?.libelle);
-      setValue("nonCompte", data.estimationNombre.nonCompte);
+      reset({
+        id: data.estimationNombre.id,
+        libelle: data.estimationNombre.libelle,
+        nonCompte: data.estimationNombre.nonCompte,
+      });
     }
   }, [data?.estimationNombre, reset]);
 
@@ -118,15 +125,16 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
                 label={t("label")}
                 type="text"
                 required
-                defaultValue=""
-                hasError={!!errors?.libelle}
-                helperMessage={errors?.libelle?.message ?? ""}
                 {...register("libelle", {
-                  required: t("requiredFieldError"),
+                  required: true,
                 })}
               />
-              <Checkbox label={t("undefinedNumber")} defaultValue="" {...register("nonCompte")} />
-              <EntityUpsertFormActionButtons onCancelClick={() => navigate("..")} disabled={fetching} />
+              <Checkbox label={t("undefinedNumber")} {...register("nonCompte")} />
+              <EntityUpsertFormActionButtons
+                className="mt-6"
+                onCancelClick={() => navigate("..")}
+                disabled={fetching || !isValid}
+              />
             </form>
           </div>
         </div>

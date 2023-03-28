@@ -27,10 +27,15 @@ const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
 
   const {
     register,
-    formState: { errors },
-    setValue,
+    formState: { isValid },
+    reset,
     handleSubmit,
-  } = useForm<UpsertMeteoInput>();
+  } = useForm<UpsertMeteoInput>({
+    defaultValues: {
+      id: null,
+      libelle: "",
+    },
+  });
 
   // Retrieve the existing weather info in edit mode
   const [{ data, error, fetching }] = useQuery({
@@ -49,10 +54,12 @@ const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
 
   useEffect(() => {
     if (data?.meteo) {
-      setValue("id", data.meteo?.id);
-      setValue("libelle", data.meteo?.libelle);
+      reset({
+        id: data.meteo.id,
+        libelle: data.meteo.libelle,
+      });
     }
-  }, [data?.meteo, setValue]);
+  }, [data?.meteo, reset]);
 
   useEffect(() => {
     if (error) {
@@ -114,15 +121,16 @@ const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
                 label={t("label")}
                 type="text"
                 required
-                defaultValue=""
-                hasError={!!errors?.libelle}
-                helperMessage={errors?.libelle?.message ?? ""}
                 {...register("libelle", {
-                  required: t("requiredFieldError"),
+                  required: true,
                 })}
               />
 
-              <EntityUpsertFormActionButtons onCancelClick={() => navigate("..")} disabled={fetching} />
+              <EntityUpsertFormActionButtons
+                className="mt-6"
+                onCancelClick={() => navigate("..")}
+                disabled={fetching || !isValid}
+              />
             </form>
           </div>
         </div>

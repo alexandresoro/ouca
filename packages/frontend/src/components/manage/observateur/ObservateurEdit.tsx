@@ -28,10 +28,15 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   const {
     register,
-    formState: { errors },
-    setValue,
+    formState: { isValid },
+    reset,
     handleSubmit,
-  } = useForm<ObservateurUpsertInputs>();
+  } = useForm<ObservateurUpsertInputs>({
+    defaultValues: {
+      id: null,
+      libelle: "",
+    },
+  });
 
   // Retrieve the existing observer info in edit mode
   const [{ data, error, fetching }] = useQuery({
@@ -50,10 +55,12 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
 
   useEffect(() => {
     if (data?.observateur) {
-      setValue("id", data.observateur?.id);
-      setValue("libelle", data.observateur?.libelle);
+      reset({
+        id: data.observateur.id,
+        libelle: data.observateur.libelle,
+      });
     }
-  }, [data?.observateur, setValue]);
+  }, [data?.observateur, reset]);
 
   useEffect(() => {
     if (error) {
@@ -115,15 +122,16 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
                 label={t("label")}
                 type="text"
                 required
-                defaultValue=""
-                hasError={!!errors?.libelle}
-                helperMessage={errors?.libelle?.message ?? ""}
                 {...register("libelle", {
-                  required: t("requiredFieldError"),
+                  required: true,
                 })}
               />
 
-              <EntityUpsertFormActionButtons onCancelClick={() => navigate("..")} disabled={fetching} />
+              <EntityUpsertFormActionButtons
+                className="mt-6"
+                onCancelClick={() => navigate("..")}
+                disabled={fetching || !isValid}
+              />
             </form>
           </div>
         </div>

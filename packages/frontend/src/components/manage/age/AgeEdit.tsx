@@ -27,10 +27,15 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
 
   const {
     register,
-    formState: { errors },
-    setValue,
+    formState: { isValid },
+    reset,
     handleSubmit,
-  } = useForm<UpsertAgeInput>();
+  } = useForm<UpsertAgeInput>({
+    defaultValues: {
+      id: null,
+      libelle: "",
+    },
+  });
 
   // Retrieve the existing age info in edit mode
   const [{ data, error, fetching }] = useQuery({
@@ -49,10 +54,12 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
 
   useEffect(() => {
     if (data?.age) {
-      setValue("id", data.age?.id);
-      setValue("libelle", data.age?.libelle);
+      reset({
+        id: data.age.id,
+        libelle: data.age.libelle,
+      });
     }
-  }, [data?.age, setValue]);
+  }, [data?.age, reset]);
 
   useEffect(() => {
     if (error) {
@@ -115,14 +122,16 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
                 type="text"
                 required
                 defaultValue=""
-                hasError={!!errors?.libelle}
-                helperMessage={errors?.libelle?.message ?? ""}
                 {...register("libelle", {
-                  required: t("requiredFieldError"),
+                  required: true,
                 })}
               />
 
-              <EntityUpsertFormActionButtons onCancelClick={() => navigate("..")} disabled={fetching} />
+              <EntityUpsertFormActionButtons
+                className="mt-6"
+                onCancelClick={() => navigate("..")}
+                disabled={fetching || !isValid}
+              />
             </form>
           </div>
         </div>

@@ -27,10 +27,15 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
 
   const {
     register,
-    formState: { errors },
-    setValue,
+    formState: { isValid },
+    reset,
     handleSubmit,
-  } = useForm<UpsertEstimationDistanceInput>();
+  } = useForm<UpsertEstimationDistanceInput>({
+    defaultValues: {
+      id: null,
+      libelle: ""
+    }
+  });
 
   // Retrieve the existing distance precision info in edit mode
   const [{ data, error, fetching }] = useQuery({
@@ -49,10 +54,12 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
 
   useEffect(() => {
     if (data?.estimationDistance) {
-      setValue("id", data.estimationDistance?.id);
-      setValue("libelle", data.estimationDistance?.libelle);
+      reset({
+        id: data.estimationDistance.id,
+        libelle: data.estimationDistance.libelle
+      })
     }
-  }, [data?.estimationDistance, setValue]);
+  }, [data?.estimationDistance, reset]);
 
   useEffect(() => {
     if (error) {
@@ -115,13 +122,15 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
                 type="text"
                 required
                 defaultValue=""
-                hasError={!!errors?.libelle}
-                helperMessage={errors?.libelle?.message ?? ""}
                 {...register("libelle", {
-                  required: t("requiredFieldError"),
+                  required: true,
                 })}
               />
-              <EntityUpsertFormActionButtons onCancelClick={() => navigate("..")} disabled={fetching} />
+              <EntityUpsertFormActionButtons
+                className="mt-6"
+                onCancelClick={() => navigate("..")}
+                disabled={fetching || !isValid}
+              />
             </form>
           </div>
         </div>

@@ -27,10 +27,15 @@ const ClasseEdit: FunctionComponent<ClasseEditProps> = (props) => {
 
   const {
     register,
-    formState: { errors },
-    setValue,
+    formState: { isValid },
+    reset,
     handleSubmit,
-  } = useForm<UpsertClasseInput>();
+  } = useForm<UpsertClasseInput>({
+    defaultValues: {
+      id: null,
+      libelle: "",
+    },
+  });
 
   // Retrieve the existing class info in edit mode
   const [{ data, error, fetching }] = useQuery({
@@ -49,10 +54,12 @@ const ClasseEdit: FunctionComponent<ClasseEditProps> = (props) => {
 
   useEffect(() => {
     if (data?.classe) {
-      setValue("id", data.classe?.id);
-      setValue("libelle", data.classe?.libelle);
+      reset({
+        id: data.classe.id,
+        libelle: data.classe.libelle,
+      });
     }
-  }, [data?.classe, setValue]);
+  }, [data?.classe, reset]);
 
   useEffect(() => {
     if (error) {
@@ -115,13 +122,15 @@ const ClasseEdit: FunctionComponent<ClasseEditProps> = (props) => {
                 type="text"
                 required
                 defaultValue=""
-                hasError={!!errors?.libelle}
-                helperMessage={errors?.libelle?.message ?? ""}
                 {...register("libelle", {
-                  required: t("requiredFieldError"),
+                  required: true,
                 })}
               />
-              <EntityUpsertFormActionButtons onCancelClick={() => navigate("..")} disabled={fetching} />
+              <EntityUpsertFormActionButtons
+                className="mt-6"
+                onCancelClick={() => navigate("..")}
+                disabled={fetching || !isValid}
+              />
             </form>
           </div>
         </div>
