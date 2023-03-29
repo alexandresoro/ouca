@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   departementSchema,
@@ -50,9 +50,13 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     return slonik.maybeOne(query);
   };
 
-  const findDepartements = async ({ orderBy, sortOrder, q, offset, limit }: DepartementFindManyInput = {}): Promise<
-    readonly Departement[]
-  > => {
+  const findDepartements = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: DepartementFindManyInput = {}): Promise<readonly Departement[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const isSortByNbLieuxDits = orderBy === "nbLieuxDits";
     const isSortByNbCommunes = orderBy === "nbCommunes";

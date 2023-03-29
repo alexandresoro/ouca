@@ -7,12 +7,16 @@
       "a11y": {
         "useAltText": "warn"
       },
+      "suspicious": {
+        "noEmptyInterface": "warn"
+      },
       "complexity": {
         "useFlatMap": "warn",
         "useOptionalChain": "warn",
         "useSimplifiedLogicExpression": "warn"
       },
       "style": {
+        "noNonNullAssertion": "warn",
         "noUnusedTemplateLiteral": "warn",
         "useSelfClosingElements": "off",
         "useTemplate": "warn"
@@ -30,6 +34,9 @@
     }
   },
   "files": {
-    "ignore": ["dist", "coverage", "generated", "**/src/gql/**/*", "Dockerfile", "LICENSE", "README", "*.json"]
+    "ignore": [
+      "dist", "coverage", "generated", "**/src/gql/**/*", "Dockerfile", "LICENSE", "README", "**/package.json",
+      "package-lock.json"
+    ]
   }
 }

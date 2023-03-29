@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   classeSchema,
@@ -50,9 +50,13 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
-  const findClasses = async ({ orderBy, sortOrder, q, offset, limit }: ClasseFindManyInput = {}): Promise<
-    readonly Classe[]
-  > => {
+  const findClasses = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: ClasseFindManyInput = {}): Promise<readonly Classe[]> => {
     const isSortByNbEspeces = orderBy === "nbEspeces";
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;

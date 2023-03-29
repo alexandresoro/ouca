@@ -11,4 +11,7 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "rome.rome"
   },
+  "[json]": {
+    "editor.defaultFormatter": "rome.rome"
+  }
 }

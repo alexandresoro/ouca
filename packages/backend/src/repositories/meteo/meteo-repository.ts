@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import { meteoSchema, type Meteo, type MeteoCreateInput, type MeteoFindManyInput } from "./meteo-repository-types.js";
 
@@ -45,9 +45,13 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     return slonik.any(query);
   };
 
-  const findMeteos = async ({ orderBy, sortOrder, q, offset, limit }: MeteoFindManyInput = {}): Promise<
-    readonly Meteo[]
-  > => {
+  const findMeteos = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: MeteoFindManyInput = {}): Promise<readonly Meteo[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(meteoSchema)`

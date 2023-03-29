@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   observateurSchema,
@@ -68,9 +68,13 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
     return slonik.any(query);
   };
 
-  const findObservateurs = async ({ orderBy, sortOrder, q, offset, limit }: ObservateurFindManyInput = {}): Promise<
-    readonly Observateur[]
-  > => {
+  const findObservateurs = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: ObservateurFindManyInput = {}): Promise<readonly Observateur[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(observateurSchema)`

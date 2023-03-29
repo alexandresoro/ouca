@@ -40,9 +40,13 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.maybeOne(query);
   };
 
-  const findDonnees = async ({ orderBy, sortOrder, searchCriteria, offset, limit }: DonneeFindManyInput = {}): Promise<
-    readonly Donnee[]
-  > => {
+  const findDonnees = async ({
+    orderBy,
+    sortOrder,
+    searchCriteria,
+    offset,
+    limit,
+  }: DonneeFindManyInput = {}): Promise<readonly Donnee[]> => {
     const query = sql.type(donneeSchema)`
       SELECT
         donnee.*

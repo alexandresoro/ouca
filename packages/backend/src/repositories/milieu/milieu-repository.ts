@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   milieuSchema,
@@ -50,9 +50,13 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     return slonik.any(query);
   };
 
-  const findMilieux = async ({ orderBy, sortOrder, q, offset, limit }: MilieuFindManyInput = {}): Promise<
-    readonly Milieu[]
-  > => {
+  const findMilieux = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: MilieuFindManyInput = {}): Promise<readonly Milieu[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const codeStarts = q ? `${q}%` : null;
     const libelleLike = q ? `%${q}%` : null;

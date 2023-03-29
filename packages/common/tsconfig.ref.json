@@ -3,5 +3,5 @@
   "compilerOptions": {
     "skipLibCheck": true
   },
-  "exclude": ["src/**/*.spec.ts"],
+  "exclude": ["src/**/*.spec.ts"]
 }

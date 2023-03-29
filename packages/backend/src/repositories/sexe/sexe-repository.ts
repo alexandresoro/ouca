@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   sexeSchema,
@@ -52,9 +52,13 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
     return slonik.maybeOne(query);
   };
 
-  const findSexes = async ({ orderBy, sortOrder, q, offset, limit }: SexeFindManyInput = {}): Promise<
-    readonly Sexe[]
-  > => {
+  const findSexes = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: SexeFindManyInput = {}): Promise<readonly Sexe[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(sexeSchema)`

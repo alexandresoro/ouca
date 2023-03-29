@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   comportementSchema,
@@ -50,9 +50,13 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     return slonik.any(query);
   };
 
-  const findComportements = async ({ orderBy, sortOrder, q, offset, limit }: ComportementFindManyInput = {}): Promise<
-    readonly Comportement[]
-  > => {
+  const findComportements = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: ComportementFindManyInput = {}): Promise<readonly Comportement[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const codeLike = q ? `^0*${q}` : null;
     const libelleLike = q ? `%${q}%` : null;
