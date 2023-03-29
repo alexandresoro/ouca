@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   communeSchema,
@@ -54,9 +54,13 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
 
   // TODO add search by commune code
 
-  const findCommunes = async ({ orderBy, sortOrder, q, offset, limit }: CommuneFindManyInput = {}): Promise<
-    readonly Commune[]
-  > => {
+  const findCommunes = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: CommuneFindManyInput = {}): Promise<readonly Commune[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const isSortByNbLieuxDits = orderBy === "nbLieuxDits";
     const isSortByDepartement = orderBy === "departement";

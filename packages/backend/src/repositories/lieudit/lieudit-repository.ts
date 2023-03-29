@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   lieuditSchema,
@@ -52,9 +52,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.maybeOne(query);
   };
 
-  const findLieuxdits = async ({ orderBy, sortOrder, q, offset, limit }: LieuditFindManyInput = {}): Promise<
-    readonly Lieudit[]
-  > => {
+  const findLieuxdits = async ({
+    orderBy,
+    sortOrder,
+    q,
+    offset,
+    limit,
+  }: LieuditFindManyInput = {}): Promise<readonly Lieudit[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const isSortByCodeCommune = orderBy === "codeCommune";
     const isSortByNomCommune = orderBy === "nomCommune";
