@@ -5,12 +5,15 @@
   "ageEditionTitle": "Edition d'un âge",
   "ages": "Âges",
   "altitude": "Altitude",
+  "behaviorAlreadyExistingError": "Il existe déjà un comportement avec un code ou un libellé identique.",
+  "behaviorCreationTitle": "Création d'un comportement",
+  "behaviorEditionTitle": "Edition d'un comportement",
   "behaviors": "Comportements",
-  "breeding": "Nicheur",
+  "breeding": "Reproducteur",
   "breedingStatus": {
-    "certain": "Nicheur certain",
-    "possible": "Nicheur possible",
-    "probable": "Nicheur probable"
+    "certain": "Reproducteur certain",
+    "possible": "Reproducteur possible",
+    "probable": "Reproducteur probable"
   },
   "code": "Code",
   "cities": "Communes",
