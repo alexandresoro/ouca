@@ -12,7 +12,7 @@ export const objectToKeyValueSet = (
 ): ListSqlToken => {
   return sql.join(
     Object.entries(obj)
-      .filter((entry): entry is [string, string | number | boolean] => entry[1] != null)
+      .filter((entry): entry is [string, string | number | boolean | null] => entry[1] !== undefined)
       .map(([key, value]) => {
         return sql.fragment`${sql.identifier([key])} = ${value}`;
       }),
@@ -30,13 +30,15 @@ export const objectToKeyValueInsert = (
   return sql.fragment`
   (${sql.join(
     entries
-      .filter((entry): entry is [string, string | number | boolean] => entry[1] != null)
+      .filter((entry): entry is [string, string | number | boolean | null] => entry[1] !== undefined)
       .map((entry) => sql.identifier([entry[0]])),
     sql.fragment`, `
   )})
     VALUES
   (${sql.join(
-    entries.filter((entry): entry is [string, string | number | boolean] => entry[1] != null).map((entry) => entry[1]),
+    entries
+      .filter((entry): entry is [string, string | number | boolean | null] => entry[1] !== undefined)
+      .map((entry) => entry[1]),
     sql.fragment`, `
   )})
   `;
@@ -45,15 +47,17 @@ export const objectToKeyValueInsert = (
 export const objectsToKeyValueInsert = <T extends string>(
   objects: Partial<Record<T, string | number | boolean | undefined | null>>[]
 ): SqlFragment => {
+  // FIXME There's an edge case where one property could be undefined in an object and defined in another
+  // In that case, it will set it to NULL in DB.
+  // The correct way should be to make sure that insert is containing the same props for everyone I believe
+  // and values cannot be undefined
   const columnsToInsert = [
     ...new Set(
-      objects
-        .map((object) => {
-          return Object.entries(object)
-            .filter((entry): entry is [T, string | number | boolean] => entry[1] != null)
-            .map((entry) => entry[0]);
-        })
-        .flat()
+      objects.flatMap((object) => {
+        return Object.entries(object)
+          .filter((entry): entry is [T, string | number | boolean | null] => entry[1] !== undefined)
+          .map((entry) => entry[0]);
+      })
     ),
   ];
   if (!columnsToInsert?.length) {

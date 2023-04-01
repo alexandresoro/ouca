@@ -3,9 +3,9 @@ import {
   buildAndClause,
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "./repository-helpers.js";
 
 describe("objectToKeyValueSet function", () => {
@@ -43,6 +43,7 @@ describe("objectToKeyValueSet function", () => {
       numberKey: 12,
       booleanKey: true,
       falsyValue: false,
+      setNull: null,
     };
 
     expect(objectToKeyValueSet(obj)).toEqual<ListSqlToken>({
@@ -67,6 +68,11 @@ describe("objectToKeyValueSet function", () => {
           sql: '"falsyValue" = $1',
           type: "SLONIK_TOKEN_FRAGMENT",
           values: [false],
+        },
+        {
+          sql: '"setNull" = $1',
+          type: "SLONIK_TOKEN_FRAGMENT",
+          values: [null],
         },
       ],
       type: "SLONIK_TOKEN_LIST",
@@ -99,12 +105,13 @@ describe("objectToKeyValueInsert function", () => {
       numberKey: 12,
       booleanKey: true,
       nullValue: null,
+      undefinedValue: undefined,
     };
 
     expect(objectToKeyValueInsert(obj)).toEqual<SqlFragment & { type: string }>({
-      sql: '\n  ("key", "numberKey", "booleanKey")\n    VALUES\n  ($1, $2, $3)\n  ',
+      sql: '\n  ("key", "numberKey", "booleanKey", "nullValue")\n    VALUES\n  ($1, $2, $3, $4)\n  ',
       type: "SLONIK_TOKEN_FRAGMENT",
-      values: ["value", 12, true],
+      values: ["value", 12, true, null],
     });
   });
 });
@@ -123,13 +130,14 @@ describe("objectsToKeyValueInsert function", () => {
         numberKey: 12,
         booleanKey: true,
         nullValue: null,
+        undefinedValue: undefined,
       },
     ];
 
     expect(objectsToKeyValueInsert(objs)).toEqual<SqlFragment & { type: string }>({
-      sql: '\n  ("key", "numberKey", "booleanKey")\n    VALUES\n  ($1, $2, $3)\n  ',
+      sql: '\n  ("key", "numberKey", "booleanKey", "nullValue")\n    VALUES\n  ($1, $2, $3, $4)\n  ',
       type: "SLONIK_TOKEN_FRAGMENT",
-      values: ["value", 12, true],
+      values: ["value", 12, true, null],
     });
   });
 
@@ -140,7 +148,7 @@ describe("objectsToKeyValueInsert function", () => {
         numberKey: 12,
         booleanKey: true,
         sometimesNullValue: null,
-        nullishValue: null,
+        undefinedValue: undefined,
         nullValue: null,
       },
       {
@@ -149,14 +157,15 @@ describe("objectsToKeyValueInsert function", () => {
         booleanKey: false,
         sometimesNullValue: "notsoNull",
         hello: "there",
-        nullishValue: undefined,
+        undefinedValue: undefined,
+        nullValue: null,
       },
     ];
 
     expect(objectsToKeyValueInsert(objs)).toEqual<SqlFragment & { type: string }>({
-      sql: '\n  ("key", "numberKey", "booleanKey", "sometimesNullValue", "hello")\n    VALUES\n  ($1, $2, $3, $4, $5), ($6, $7, $8, $9, $10)\n  ',
+      sql: '\n  ("key", "numberKey", "booleanKey", "sometimesNullValue", "nullValue", "hello")\n    VALUES\n  ($1, $2, $3, $4, $5, $6), ($7, $8, $9, $10, $11, $12)\n  ',
       type: "SLONIK_TOKEN_FRAGMENT",
-      values: ["value", 12, true, null, null, "value2", 123, false, "notsoNull", "there"],
+      values: ["value", 12, true, null, null, null, "value2", 123, false, "notsoNull", null, "there"],
     });
   });
 });
