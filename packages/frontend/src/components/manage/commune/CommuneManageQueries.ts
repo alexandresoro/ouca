@@ -13,8 +13,8 @@ export const COMMUNE_QUERY = graphql(`
   }
 `);
 
-export const ALL_DEPARTMENTS_QUERY = graphql(`
-  query GetAllDepartmentsForCommune($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
+export const ALL_DEPARTMENTS = graphql(`
+  query GetAllDepartments($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
     departements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       count
       data {

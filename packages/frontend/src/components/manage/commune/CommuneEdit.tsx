@@ -11,7 +11,7 @@ import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ALL_DEPARTMENTS_QUERY, COMMUNE_QUERY, UPSERT_COMMUNE } from "./CommuneManageQueries";
+import { ALL_DEPARTMENTS, COMMUNE_QUERY, UPSERT_COMMUNE } from "./CommuneManageQueries";
 
 type CommuneEditProps = {
   isEditionMode: boolean;
@@ -54,7 +54,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
   });
 
   const [{ data: dataDepartements, error: errorDepartements, fetching: fetchingDepartements }] = useQuery({
-    query: ALL_DEPARTMENTS_QUERY,
+    query: ALL_DEPARTMENTS,
     variables: {
       orderBy: "code",
       sortOrder: "asc",
