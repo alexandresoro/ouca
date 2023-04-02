@@ -121,7 +121,6 @@ const ClasseEdit: FunctionComponent<ClasseEditProps> = (props) => {
                 label={t("label")}
                 type="text"
                 required
-                defaultValue=""
                 {...register("libelle", {
                   required: true,
                 })}

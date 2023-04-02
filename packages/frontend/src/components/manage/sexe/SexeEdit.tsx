@@ -27,10 +27,15 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
 
   const {
     register,
-    formState: { errors },
+    formState: { isValid },
     setValue,
     handleSubmit,
-  } = useForm<UpsertSexeInput>();
+  } = useForm<UpsertSexeInput>({
+    defaultValues: {
+      id: null,
+      libelle: "",
+    },
+  });
 
   // Retrieve the existing sex info in edit mode
   const [{ data, error, fetching }] = useQuery({
@@ -114,14 +119,15 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
                 label={t("label")}
                 type="text"
                 required
-                defaultValue=""
-                hasError={!!errors?.libelle}
-                helperMessage={errors?.libelle?.message ?? ""}
                 {...register("libelle", {
                   required: t("requiredFieldError"),
                 })}
               />
-              <EntityUpsertFormActionButtons onCancelClick={() => navigate("..")} disabled={fetching} />
+              <EntityUpsertFormActionButtons
+                className="mt-6"
+                onCancelClick={() => navigate("..")}
+                disabled={fetching || !isValid}
+              />
             </form>
           </div>
         </div>

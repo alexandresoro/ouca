@@ -121,7 +121,6 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
                 label={t("label")}
                 type="text"
                 required
-                defaultValue=""
                 {...register("libelle", {
                   required: true,
                 })}

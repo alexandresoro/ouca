@@ -121,7 +121,6 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
                 label={t("label")}
                 type="text"
                 required
-                defaultValue=""
                 {...register("libelle", {
                   required: true,
                 })}
