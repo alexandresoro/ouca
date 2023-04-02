@@ -16,9 +16,6 @@
     "probable": "Reproducteur probable"
   },
   "code": "Code",
-  "cities": "Communes",
-  "cityCode": "Code commune",
-  "cityName": "Nom commune",
   "components": {
     "autocomplete": {
       "noResults": "Aucun résultat",
@@ -183,6 +180,12 @@
   "speciesClassCreationTitle": "Création d'une classe d'espèces",
   "speciesClassEditionTitle": "Edition d'une classe d'espèces",
   "speciesClasses": "Classes espèces",
+  "townCode": "Code commune",
+  "townName": "Nom commune",
+  "townAlreadyExistingError": "Il existe déjà une commune identique.",
+  "townCreationTitle": "Création d'une commune",
+  "townEditionTitle": "Edition d'une commune",
+  "towns": "Communes",
   "userForm": {
     "firstName": "Prénom",
     "lastName": "Nom",

@@ -47,7 +47,7 @@ const MANAGEMENT_MENU_OPTIONS = [
     to: "/manage/departement",
   },
   {
-    localizationKey: "cities" as TFuncKey,
+    localizationKey: "towns" as TFuncKey,
     Icon: MapPin,
     to: "/manage/commune",
   },

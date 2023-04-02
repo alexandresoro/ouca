@@ -19,11 +19,11 @@ const COLUMNS = [
   },
   {
     key: "codeCommune",
-    locKey: "cityCode",
+    locKey: "townCode",
   },
   {
     key: "nomCommune",
-    locKey: "cityName",
+    locKey: "townName",
   },
   {
     key: "nom",

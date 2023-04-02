@@ -19,13 +19,13 @@ const CommunePage: FunctionComponent = () => {
   const handleExportClick = async () => {
     const { data } = await client.query(EXPORT_COMMUNES_QUERY, {}, { requestPolicy: "network-only" }).toPromise();
     if (data?.exportCommunes) {
-      downloadFile(apiUrl, DOWNLOAD_PATH + data.exportCommunes, `${t("cities")}${EXCEL_FILE_EXTENSION}`);
+      downloadFile(apiUrl, DOWNLOAD_PATH + data.exportCommunes, `${t("towns")}${EXCEL_FILE_EXTENSION}`);
     }
   };
 
   return (
     <>
-      <ManageTopBar title={t("cities")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("towns")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <CommuneTable />
       </ContentContainerLayout>
