@@ -42,7 +42,7 @@ const COLUMNS = [
   },
   {
     key: "nomFrancais",
-    locKey: "frenchName",
+    locKey: "localizedName",
   },
   {
     key: "nomLatin",
