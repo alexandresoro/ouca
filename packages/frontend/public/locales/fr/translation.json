@@ -69,6 +69,10 @@
   "deleteSpeciesDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
   "deleteWeatherDialogMsg": "Êtes-vous certain de vouloir supprimer la météo {{name}} ?",
   "deleteWeatherDialogMsgImpactedData": "$t(deleteNotRequiredDialogMsgImpactedData)",
+  "displayData": {
+    "genericError": "Une erreur est survenue lors de la récupération de cette donnée.",
+    "dataNotFound": "La donnée que vous recherchez n'existe pas."
+  },
   "observationFilter": {
     "displayOnlyMyObservations": "Afficher uniquement mes observations",
     "exportToExcel": "Exporter les résultats dans un fichier Excel",
@@ -159,7 +163,7 @@
     "header": {
       "action": {
         "delete": "Supprimer",
-        "edit": "Éditer"
+        "view": "Afficher la donnée"
       },
       "species": "Espèce",
       "number": "Nombre d'individus",

@@ -1,5 +1,6 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { graphql } from "../../gql";
 import { type Donnee, type SearchDonneesOrderBy } from "../../gql/graphql";
@@ -142,6 +143,8 @@ const COLUMNS = [
 const DonneeTable: FunctionComponent = () => {
   const { t } = useTranslation();
 
+  const navigate = useNavigate();
+
   const { page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<SearchDonneesOrderBy>();
 
@@ -165,9 +168,9 @@ const DonneeTable: FunctionComponent = () => {
 
   const [_, deleteDonnee] = useMutation(DELETE_QUERY);
 
-  const handleEditDonnee = (donnee: Donnee | null) => {
+  const handleOpenDonneeDetails = (donnee: Donnee) => {
     if (donnee) {
-      alert("Edition de la donnée"); //TODO
+      navigate(`/data/${donnee.id}`);
     }
   };
 
@@ -238,7 +241,7 @@ const DonneeTable: FunctionComponent = () => {
             <DonneeDetailsRow
               key={donnee.id}
               donnee={donnee}
-              onEditAction={() => handleEditDonnee(donnee)}
+              onViewAction={() => handleOpenDonneeDetails(donnee)}
               onDeleteAction={() => handleDeleteDonnee(donnee)}
             />
           ) : (

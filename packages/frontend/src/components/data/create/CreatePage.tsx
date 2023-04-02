@@ -1,10 +1,10 @@
 import { type FunctionComponent } from "react";
-import TempPage from "../TempPage";
+import DataForm from "../DataForm";
 
 const CreatePage: FunctionComponent = () => {
   return (
     <>
-      <TempPage />
+      <DataForm isNewEntry />
     </>
   );
 };

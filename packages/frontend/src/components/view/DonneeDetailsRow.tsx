@@ -1,5 +1,5 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import { ChevronDown, Edit, Trash } from "@styled-icons/boxicons-regular";
+import { ChevronDown, Detail, Trash } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -10,12 +10,12 @@ import InventaireDetailsView from "./InventaireDetailsView";
 
 type DonneeRowProps = {
   donnee: Donnee;
-  onEditAction: () => void;
+  onViewAction: () => void;
   onDeleteAction: () => void;
 };
 
 const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
-  const { donnee, onEditAction, onDeleteAction } = props;
+  const { donnee, onViewAction, onDeleteAction } = props;
 
   const { t } = useTranslation();
 
@@ -44,10 +44,10 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
             <td align="right" className="pr-6">
               <IconButton
                 className="mx-1 text-primary dark:text-white"
-                aria-label={t("observationsTable.header.action.edit")}
-                onClick={onEditAction}
+                aria-label={t("observationsTable.header.action.view")}
+                onClick={onViewAction}
               >
-                <Edit className="h-5" />
+                <Detail className="h-5" />
               </IconButton>
               <IconButton
                 className="mx-1 text-error"
