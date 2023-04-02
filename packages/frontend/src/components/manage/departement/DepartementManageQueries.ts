@@ -1,5 +1,14 @@
 import { graphql } from "../../../gql";
 
+export const DEPARTEMENT_QUERY = graphql(`
+  query GetDepartement($id: Int!) {
+    departement(id: $id) {
+      id
+      code
+    }
+  }
+`);
+
 export const PAGINATED_DEPARTEMENTS_QUERY = graphql(`
   query ListDepartements($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
     departements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
@@ -12,6 +21,15 @@ export const PAGINATED_DEPARTEMENTS_QUERY = graphql(`
         nbLieuxDits
         nbDonnees
       }
+    }
+  }
+`);
+
+export const UPSERT_DEPARTEMENT = graphql(`
+  mutation UpsertDepartement($id: Int, $data: InputDepartement!) {
+    upsertDepartement(id: $id, data: $data) {
+      id
+      code
     }
   }
 `);
