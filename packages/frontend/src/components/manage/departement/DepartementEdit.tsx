@@ -29,7 +29,7 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
   const {
     register,
     formState: { isValid },
-    setValue,
+    reset,
     handleSubmit,
   } = useForm<UpsertDepartementInput>({
     defaultValues: {
@@ -55,10 +55,12 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
 
   useEffect(() => {
     if (data?.departement) {
-      setValue("id", data.departement?.id);
-      setValue("code", data.departement?.code);
+      reset({
+        id: data.departement.id,
+        code: data.departement.code,
+      });
     }
-  }, [data?.departement, setValue]);
+  }, [data?.departement, reset]);
 
   useEffect(() => {
     if (error) {

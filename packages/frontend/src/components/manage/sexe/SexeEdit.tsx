@@ -28,7 +28,7 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
   const {
     register,
     formState: { isValid },
-    setValue,
+    reset,
     handleSubmit,
   } = useForm<UpsertSexeInput>({
     defaultValues: {
@@ -54,10 +54,12 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
 
   useEffect(() => {
     if (data?.sexe) {
-      setValue("id", data.sexe?.id);
-      setValue("libelle", data.sexe?.libelle);
+      reset({
+        id: data.sexe.id,
+        libelle: data.sexe.libelle,
+      });
     }
-  }, [data?.sexe, setValue]);
+  }, [data?.sexe, reset]);
 
   useEffect(() => {
     if (error) {
