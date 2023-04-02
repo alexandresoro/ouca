@@ -24,8 +24,8 @@ import { type User } from "../types/User.js";
 import { logger } from "../utils/logger.js";
 import {
   type Age,
-  type AgesPaginatedResult,
   type AgeWithSpecimensCount,
+  type AgesPaginatedResult,
   type Classe,
   type ClassesPaginatedResult,
   type Commune,
@@ -52,8 +52,8 @@ import {
   type ObservateursPaginatedResult,
   type Settings,
   type Sexe,
-  type SexesPaginatedResult,
   type SexeWithSpecimensCount,
+  type SexesPaginatedResult,
   type UpsertInventaireFailureReason,
   type UserInfo,
 } from "./generated/graphql-types.js";
@@ -122,7 +122,7 @@ export const buildResolvers = ({
       ): Promise<Omit<CommunesPaginatedResult, "data"> & { data?: Omit<Commune, "departement">[] }> => {
         const [data, count] = await Promise.all([
           communeService.findPaginatedCommunes(user, args),
-          communeService.getCommunesCount(user, args?.searchParams?.q),
+          communeService.getCommunesCount(user, { q: args.searchParams?.q, departmentId: args.departmentId }),
         ]);
         return {
           data,

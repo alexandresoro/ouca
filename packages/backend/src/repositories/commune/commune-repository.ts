@@ -58,6 +58,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     orderBy,
     sortOrder,
     q,
+    departmentId,
     offset,
     limit,
   }: CommuneFindManyInput = {}): Promise<readonly Commune[]> => {
@@ -86,11 +87,26 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
         : sql.fragment``
     }
     ${
+      nomOrDepartementLike || departmentId != null
+        ? sql.fragment`
+      WHERE
+    `
+        : sql.fragment``
+    }
+    ${
       nomOrDepartementLike
         ? sql.fragment`
-    WHERE commune.nom ILIKE ${nomOrDepartementLike}
-    OR departement.code ILIKE ${nomOrDepartementLike}
+    (commune.nom ILIKE ${nomOrDepartementLike}
+    OR departement.code ILIKE ${nomOrDepartementLike})
     `
+        : sql.fragment``
+    }
+    ${nomOrDepartementLike && departmentId != null ? sql.fragment` AND ` : sql.fragment``}
+    ${
+      departmentId != null
+        ? sql.fragment`
+              commune.departement_id = ${departmentId}
+        `
         : sql.fragment``
     }
     ${isSortByNbDonnees || isSortByNbLieuxDits ? sql.fragment`GROUP BY commune."id"` : sql.fragment``}
@@ -111,7 +127,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     return slonik.any(query);
   };
 
-  const getCount = async (q?: string | null): Promise<number> => {
+  const getCount = async (q?: string | null, departmentId?: number | null): Promise<number> => {
     const codeLike = q ? `%${q}%` : null;
     const query = sql.type(countSchema)`
       SELECT 
@@ -121,11 +137,25 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       LEFT JOIN
         basenaturaliste.departement ON commune.departement_id = departement.id
       ${
+        codeLike || departmentId != null
+          ? sql.fragment`
+        WHERE
+      `
+          : sql.fragment``
+      }
+      ${
         codeLike
           ? sql.fragment`
-              WHERE
-                commune.nom ILIKE ${codeLike}
-                OR departement.code ILIKE ${codeLike}
+                (commune.nom ILIKE ${codeLike}
+                OR departement.code ILIKE ${codeLike})
+          `
+          : sql.fragment``
+      }
+      ${codeLike && departmentId != null ? sql.fragment` AND ` : sql.fragment``}
+      ${
+        departmentId != null
+          ? sql.fragment`
+                commune.departement_id = ${departmentId}
           `
           : sql.fragment``
       }

@@ -191,23 +191,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getCommunesCount(loggedUser);
+    await communeService.getCommunesCount(loggedUser, {});
 
     expect(communeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(communeRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    expect(communeRepository.getCount).toHaveBeenLastCalledWith(undefined, undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getCommunesCount(loggedUser, "test");
+    await communeService.getCommunesCount(loggedUser, { q: "test", departmentId: 12 });
 
     expect(communeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(communeRepository.getCount).toHaveBeenLastCalledWith("test");
+    expect(communeRepository.getCount).toHaveBeenLastCalledWith("test", 12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.getCommunesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.getCommunesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

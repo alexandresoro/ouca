@@ -19,6 +19,7 @@ export type CommuneWithDepartementCode = z.infer<typeof communeWithDepartementCo
 
 export type CommuneFindManyInput = Partial<{
   q: string | null;
+  departmentId?: number | null;
   orderBy: "id" | "code" | "nom" | "departement" | "nbDonnees" | "nbLieuxDits" | null;
   sortOrder: SortOrder;
   offset: number | null;

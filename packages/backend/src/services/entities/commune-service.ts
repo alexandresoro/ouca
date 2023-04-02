@@ -23,6 +23,11 @@ type CommuneServiceDependencies = {
   donneeRepository: DonneeRepository;
 };
 
+type CommunesSearchParams = {
+  q?: string | null;
+  departmentId?: number | null;
+};
+
 export const buildCommuneService = ({
   communeRepository,
   lieuditRepository,
@@ -69,11 +74,12 @@ export const buildCommuneService = ({
   ): Promise<Commune[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { searchParams, departmentId, orderBy: orderByField, sortOrder } = options;
 
     const communes = await communeRepository.findCommunes({
       q: searchParams?.q,
       ...getSqlPagination(searchParams),
+      departmentId,
       orderBy: orderByField,
       sortOrder,
     });
@@ -86,10 +92,13 @@ export const buildCommuneService = ({
     return [...communesWithDepartements];
   };
 
-  const getCommunesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  const getCommunesCount = async (
+    loggedUser: LoggedUser | null,
+    { q, departmentId }: CommunesSearchParams
+  ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return communeRepository.getCount(q);
+    return communeRepository.getCount(q, departmentId);
   };
 
   const upsertCommune = async (args: MutationUpsertCommuneArgs, loggedUser: LoggedUser | null): Promise<Commune> => {

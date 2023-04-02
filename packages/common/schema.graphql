@@ -618,7 +618,7 @@ type Query {
   classe(id: Int!): Classe
   classes(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
   commune(id: Int!): Commune
-  communes(searchParams: SearchParams, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
+  communes(searchParams: SearchParams, departmentId: Int, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
   comportement(id: Int!): Comportement
   comportements(
     searchParams: SearchParams
