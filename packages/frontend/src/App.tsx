@@ -2,7 +2,7 @@ import { refocusExchange } from "@urql/exchange-refocus";
 import { Suspense, lazy, useEffect, useMemo, useState, type FunctionComponent } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { Provider as UrqlProvider, cacheExchange, createClient, dedupExchange, fetchExchange } from "urql";
+import { Provider as UrqlProvider, cacheExchange, createClient, fetchExchange } from "urql";
 import { AppContext, DEFAULT_CONFIG } from "./contexts/AppContext";
 import { UserProvider } from "./contexts/UserContext";
 import { initApp } from "./utils/init-app";
@@ -46,14 +46,14 @@ const App: FunctionComponent = () => {
   const urqlClient = useMemo(
     () =>
       createClient({
-        url: `${appContext.apiUrl}/graphql`,
-        exchanges: [dedupExchange, refocusExchange(), cacheExchange, fetchExchange],
+        url: `${config.apiUrl ?? ""}/graphql`,
+        exchanges: [refocusExchange(), cacheExchange, fetchExchange],
         requestPolicy: "cache-and-network",
         fetchOptions: {
           credentials: "include",
         },
       }),
-    [appContext.apiUrl]
+    [config]
   );
 
   const RouterRoutes = SentryRoutes ?? Routes;
