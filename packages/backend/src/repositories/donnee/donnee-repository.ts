@@ -248,7 +248,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
 			      inventaire.id
 		      FROM
 			      basenaturaliste.inventaire
-		      ORDER BY date DESC
+		      ORDER BY date DESC, heure DESC NULLS LAST
 		      LIMIT 1
         )
       ORDER BY date_creation DESC
