@@ -199,16 +199,23 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   const findLatestDonneeId = async (): Promise<number | null> => {
     const query = sql.type(idSchema)`
       SELECT
-        id
-      FROM 
-        basenaturaliste.donnee
-      WHERE date_creation = (
-          SELECT MAX (date_creation)
-          FROM basenaturaliste.donnee
-       )
+	      id
+      FROM
+	      basenaturaliste.donnee
+      WHERE
+	      donnee.inventaire_id = (
+		      SELECT
+			      inventaire.id
+		      FROM
+			      basenaturaliste.inventaire
+		      ORDER BY date DESC
+		      LIMIT 1
+        )
+      ORDER BY date_creation DESC
+      LIMIT 1
     `;
 
-    return slonik.oneFirst(query);
+    return slonik.maybeOneFirst(query);
   };
 
   const findLatestRegroupement = async (): Promise<number | null> => {
