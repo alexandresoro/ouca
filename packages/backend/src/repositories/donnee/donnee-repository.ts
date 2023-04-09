@@ -133,33 +133,73 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   const findPreviousDonneeId = async (id: number): Promise<number | null> => {
-    const query = sql.type(z.object({ id: z.number() }))`
-      SELECT 
-        id
-      FROM
-        basenaturaliste.donnee
-      WHERE
-        id < ${id}
-      ORDER BY id DESC
-      LIMIT 1
-    `;
+    return await slonik.transaction(async (transaction) => {
+      const currentDonneeInfo = sql.type(
+        z.object({ currentDataCreation: z.string(), currentInventoryDate: z.string() })
+      )`
+        SELECT
+	        donnee.date_creation AS current_data_creation,
+	        inventaire.date AS current_inventory_date
+        FROM
+	        basenaturaliste.donnee
+	      LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
+        WHERE
+	      donnee.id = ${id}
+      `;
 
-    return slonik.maybeOneFirst(query);
+      const { currentDataCreation, currentInventoryDate } = await transaction.one(currentDonneeInfo);
+
+      const previousDonneeQuery = sql.type(z.object({ id: z.number() }))`
+        SELECT
+	        donnee.id
+        FROM
+	        basenaturaliste.donnee
+        LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
+        WHERE 
+          inventaire."date" <= ${currentInventoryDate} 
+          AND donnee.date_creation <= ${currentDataCreation} 
+          AND donnee.id != ${id}
+        ORDER BY inventaire."date" DESC, donnee.date_creation DESC
+        LIMIT 1
+      `;
+
+      return slonik.maybeOneFirst(previousDonneeQuery);
+    });
   };
 
   const findNextDonneeId = async (id: number): Promise<number | null> => {
-    const query = sql.type(z.object({ id: z.number() }))`
-      SELECT 
-        id
-      FROM
-        basenaturaliste.donnee
-      WHERE
-        id > ${id}
-      ORDER BY id ASC
-      LIMIT 1
-    `;
+    return await slonik.transaction(async (transaction) => {
+      const currentDonneeInfo = sql.type(
+        z.object({ currentDataCreation: z.string(), currentInventoryDate: z.string() })
+      )`
+        SELECT
+	        donnee.date_creation AS current_data_creation,
+	        inventaire.date AS current_inventory_date
+        FROM
+	        basenaturaliste.donnee
+	      LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
+        WHERE
+	      donnee.id = ${id}
+      `;
 
-    return slonik.maybeOneFirst(query);
+      const { currentDataCreation, currentInventoryDate } = await transaction.one(currentDonneeInfo);
+
+      const previousDonneeQuery = sql.type(z.object({ id: z.number() }))`
+        SELECT
+	        donnee.id
+        FROM
+	        basenaturaliste.donnee
+        LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
+        WHERE 
+          inventaire."date" >= ${currentInventoryDate} 
+          AND donnee.date_creation >= ${currentDataCreation} 
+          AND donnee.id != ${id}
+        ORDER BY inventaire."date" ASC, donnee.date_creation ASC
+        LIMIT 1
+      `;
+
+      return slonik.maybeOneFirst(previousDonneeQuery);
+    });
   };
 
   const findDonneeIndex = async (id: number): Promise<number> => {
