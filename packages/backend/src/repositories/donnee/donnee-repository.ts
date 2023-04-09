@@ -135,11 +135,15 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   const findPreviousDonneeId = async (id: number): Promise<number | null> => {
     return await slonik.transaction(async (transaction) => {
       const currentDonneeInfo = sql.type(
-        z.object({ currentDataCreation: z.string(), currentInventoryDate: z.string() })
+        z.object({
+          currentInventoryDate: z.string(),
+          currentInventoryHeure: z.string().optional(),
+        })
       )`
         SELECT
 	        donnee.date_creation AS current_data_creation,
-	        inventaire.date AS current_inventory_date
+	        inventaire.date AS current_inventory_date,
+          inventaire.heure AS current_inventory_heure
         FROM
 	        basenaturaliste.donnee
 	      LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
@@ -147,7 +151,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
 	      donnee.id = ${id}
       `;
 
-      const { currentDataCreation, currentInventoryDate } = await transaction.one(currentDonneeInfo);
+      const { currentInventoryDate, currentInventoryHeure } = await transaction.one(currentDonneeInfo);
 
       const previousDonneeQuery = sql.type(z.object({ id: z.number() }))`
         SELECT
@@ -155,11 +159,21 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
         FROM
 	        basenaturaliste.donnee
         LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
-        WHERE 
-          inventaire."date" <= ${currentInventoryDate} 
-          AND donnee.date_creation <= ${currentDataCreation} 
+        WHERE
+          (
+            inventaire."date" < ${currentInventoryDate}
+            OR
+            (
+              inventaire."date" = ${currentInventoryDate}
+              ${
+                currentInventoryHeure
+                  ? sql.fragment` AND inventaire."heure" <= ${currentInventoryHeure}`
+                  : sql.fragment``
+              }
+            )
+          )
           AND donnee.id != ${id}
-        ORDER BY inventaire."date" DESC, donnee.date_creation DESC
+        ORDER BY inventaire.date DESC, inventaire.heure DESC NULLS LAST, donnee.date_creation DESC
         LIMIT 1
       `;
 
@@ -170,11 +184,15 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   const findNextDonneeId = async (id: number): Promise<number | null> => {
     return await slonik.transaction(async (transaction) => {
       const currentDonneeInfo = sql.type(
-        z.object({ currentDataCreation: z.string(), currentInventoryDate: z.string() })
+        z.object({
+          currentInventoryDate: z.string(),
+          currentInventoryHeure: z.string().optional(),
+        })
       )`
         SELECT
 	        donnee.date_creation AS current_data_creation,
-	        inventaire.date AS current_inventory_date
+	        inventaire.date AS current_inventory_date,
+	        inventaire.heure AS current_inventory_heure
         FROM
 	        basenaturaliste.donnee
 	      LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
@@ -182,23 +200,33 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
 	      donnee.id = ${id}
       `;
 
-      const { currentDataCreation, currentInventoryDate } = await transaction.one(currentDonneeInfo);
+      const { currentInventoryDate, currentInventoryHeure } = await transaction.one(currentDonneeInfo);
 
-      const previousDonneeQuery = sql.type(z.object({ id: z.number() }))`
+      const nextDonneeQuery = sql.type(z.object({ id: z.number() }))`
         SELECT
 	        donnee.id
         FROM
 	        basenaturaliste.donnee
         LEFT JOIN basenaturaliste.inventaire ON donnee.inventaire_id = inventaire.id
-        WHERE 
-          inventaire."date" >= ${currentInventoryDate} 
-          AND donnee.date_creation >= ${currentDataCreation} 
+        WHERE
+          (
+            inventaire."date" > ${currentInventoryDate}
+            OR
+            (
+              inventaire."date" = ${currentInventoryDate}
+              ${
+                currentInventoryHeure
+                  ? sql.fragment` AND inventaire."heure" >= ${currentInventoryHeure}`
+                  : sql.fragment``
+              }
+            )
+          )
           AND donnee.id != ${id}
-        ORDER BY inventaire."date" ASC, donnee.date_creation ASC
+        ORDER BY inventaire.date ASC, inventaire.heure ASC NULLS FIRST, donnee.date_creation ASC
         LIMIT 1
       `;
 
-      return slonik.maybeOneFirst(previousDonneeQuery);
+      return slonik.maybeOneFirst(nextDonneeQuery);
     });
   };
 
