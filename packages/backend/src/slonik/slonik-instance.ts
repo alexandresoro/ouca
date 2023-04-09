@@ -9,7 +9,7 @@ const getSlonikInstance = ({ logger }: { logger: Logger }) => {
   return createPool(config.database.url, {
     interceptors: [
       createFieldNameTransformationInterceptor({ format: "CAMEL_CASE" }),
-      createResultParserInterceptor(),
+      createResultParserInterceptor(logger),
       createQueryLoggingInterceptor(logger),
     ],
   });

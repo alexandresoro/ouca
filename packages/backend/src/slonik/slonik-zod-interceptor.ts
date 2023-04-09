@@ -1,6 +1,7 @@
-import { SchemaValidationError, type SerializableValue, type Interceptor, type QueryResultRow } from "slonik";
+import { type Logger } from "pino";
+import { SchemaValidationError, type Interceptor, type QueryResultRow, type SerializableValue } from "slonik";
 
-export const createResultParserInterceptor = (): Interceptor => {
+export const createResultParserInterceptor = (logger: Logger): Interceptor => {
   return {
     // If you are not going to transform results using Zod, then you should use `afterQueryExecution` instead.
     // Future versions of Zod will provide a more efficient parser when parsing without transformations.
@@ -16,6 +17,7 @@ export const createResultParserInterceptor = (): Interceptor => {
       const validationResult = resultParser.safeParse(row);
 
       if (!validationResult.success) {
+        logger.debug({ issues: validationResult.error.issues }, "Slonik validation error");
         throw new SchemaValidationError(actualQuery, row as SerializableValue, validationResult.error.issues);
       }
 
