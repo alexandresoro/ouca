@@ -138,7 +138,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
         z.object({
           id: z.number(),
           date: z.string(),
-          heure: z.string().optional(),
+          heure: z.string().nullable(),
         })
       )`
         SELECT
@@ -200,7 +200,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
         z.object({
           id: z.number(),
           date: z.string(),
-          heure: z.string().optional(),
+          heure: z.string().nullable(),
         })
       )`
         SELECT
