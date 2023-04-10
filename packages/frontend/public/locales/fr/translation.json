@@ -24,6 +24,12 @@
       "resultsTitle": "Résultats"
     }
   },
+  "createPage": {
+    "headerTitle": "Donnée",
+    "newBadge": "Nouvelle",
+    "goToLastData": "Dernière donnée",
+    "goToLastDataDescription": "Aller à la dernière donnée enregistrée"
+  },
   "deleteAgeDialogMsg": "Êtes-vous certain de vouloir supprimer l'âge {{name}} ?",
   "deleteAgeDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
   "deleteBehaviorDialogMsg": "Êtes-vous certain de vouloir supprimer le comportement {{name}} ?",
@@ -70,6 +76,11 @@
   "deleteWeatherDialogMsg": "Êtes-vous certain de vouloir supprimer la météo {{name}} ?",
   "deleteWeatherDialogMsgImpactedData": "$t(deleteNotRequiredDialogMsgImpactedData)",
   "displayData": {
+    "headerTitle": "Donnée",
+    "dataId": "ID",
+    "previousData": "Donnée précédente",
+    "nextData": "Donnée suivante",
+    "newData": "Nouvelle donnée",
     "genericError": "Une erreur est survenue lors de la récupération de cette donnée.",
     "dataNotFound": "La donnée que vous recherchez n'existe pas."
   },
