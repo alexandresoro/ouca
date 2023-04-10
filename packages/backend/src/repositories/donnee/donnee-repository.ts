@@ -182,7 +182,13 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
                 AND donnee.id < ${id}
               )
             `
-                : sql.fragment``
+                : sql.fragment`
+              OR (
+                inventaire."date" = ${date}
+                AND inventaire."heure" IS NULL
+                AND donnee.id < ${id}
+              )
+            `
             }
           )
           AND donnee.id != ${id}
