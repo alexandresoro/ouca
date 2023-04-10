@@ -186,7 +186,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
             }
           )
           AND donnee.id != ${id}
-        ORDER BY inventaire.date DESC, inventaire.heure DESC NULLS LAST, donnee.date_creation DESC, donnee.id DESC
+        ORDER BY inventaire.date DESC, inventaire.heure DESC NULLS LAST, inventaire.id DESC, donnee.date_creation DESC, donnee.id DESC
         LIMIT 1
       `;
 
@@ -259,7 +259,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
             }
           )
           AND donnee.id != ${id}
-        ORDER BY inventaire.date ASC, inventaire.heure ASC NULLS FIRST, donnee.date_creation ASC, donnee.id ASC
+        ORDER BY inventaire.date ASC, inventaire.heure ASC NULLS FIRST, inventaire.id ASC, donnee.date_creation ASC, donnee.id ASC
         LIMIT 1
       `;
 
