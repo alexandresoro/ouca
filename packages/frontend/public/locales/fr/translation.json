@@ -107,6 +107,7 @@
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",
   "genders": "Sexes",
+  "inventoryForm": "Fiche inventaire",
   "latitude": "Latitude",
   "latitudeWithUnit": "Latitude en degrés",
   "localityName": "Nom du lieu-dit",
@@ -121,6 +122,25 @@
   },
   "longitude": "Longitude",
   "longitudeWithUnit": "Longitude en degrés",
+  "map": "Carte",
+  "maps": {
+    "openStreetMap": {
+      "name": "OpenStreetMap",
+      "attribution": "&copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap contributors</a>"
+    },
+    "openTopoMap": {
+      "name": "OpenTopoMap",
+      "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, <a href=\"http://viewfinderpanoramas.org\">SRTM</a> | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (<a href=\"https://creativecommons.org/licenses/by-sa/3.0/\">CC-BY-SA</a>)"
+    },
+    "ign": {
+      "name": "IGN",
+      "attribution": "IGN-F/Géoportail"
+    },
+    "ignSatellite": {
+      "name": "IGN satellite",
+      "attribution": "IGN-F/Géoportail"
+    }
+  },
   "name": "Nom",
   "numberOfCities": "Nombre de communes",
   "numberOfLocalities": "Nombre de lieux-dits",
@@ -193,6 +213,7 @@
   "sexCreationTitle": "Création d'un sexe",
   "sexEditionTitle": "Edition d'un sexe",
   "sexes": "Sexes",
+  "speciesForm": "Fiche espèce",
   "species": "Espèces",
   "speciesAlreadyExistingError": "Il existe déjà une espèce identique.",
   "speciesCode": "Code de l'espèce",
