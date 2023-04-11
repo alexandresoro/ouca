@@ -70,7 +70,7 @@
     "@graphql-codegen/client-preset": "3.0.0",
     "@headlessui/tailwindcss": "0.1.2",
     "@ou-ca/eslint-config": "*",
-    "@sentry/vite-plugin": "0.5.0",
+    "@sentry/vite-plugin": "0.6.0",
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "14.4.3",
     "@types/node": "18.15.11",
