@@ -35,8 +35,7 @@ export default defineConfig(({ mode }) => {
             sentryVitePlugin({
               include: "./dist",
               url: env.SENTRY_URL,
-              // https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/182
-              releaseInjectionTargets: /src\/index\.tsx$/,
+              injectRelease: false,
               setCommits: {
                 auto: true,
               },
