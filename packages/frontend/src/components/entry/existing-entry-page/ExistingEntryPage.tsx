@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "urql";
 import StyledPanelHeader from "../../layout/StyledPanelHeader";
-import DataForm from "../DataForm";
-import { DONNEE_QUERY } from "./DisplayDataPageQueries";
+import EntryForm from "../entry-form/EntryForm";
+import { DONNEE_QUERY } from "./ExistingEntryPageQueries";
 
-const DisplayDataPage: FunctionComponent = () => {
+const ExistingEntryPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const { id } = useParams();
 
@@ -80,9 +80,9 @@ const DisplayDataPage: FunctionComponent = () => {
         </div>
       </StyledPanelHeader>
       {JSON.stringify(data)}
-      {data?.donnee?.donnee && <DataForm />}
+      {data?.donnee?.donnee && <EntryForm existingEntryId={data.donnee.id} />}
     </>
   );
 };
 
-export default DisplayDataPage;
+export default ExistingEntryPage;

@@ -1,4 +1,4 @@
-import { type Key } from "react";
+import { type Key, type Ref } from "react";
 import { useController, type FieldValues, type UseControllerProps } from "react-hook-form";
 import { type ConditionalKeys, type SetRequired } from "type-fest";
 import Autocomplete from "../styled/select/Autocomplete";
@@ -11,7 +11,9 @@ type FormAutocompleteProps<TFieldValues extends FieldValues, T extends object> =
   renderValue: (value: T) => string;
   label: string;
   autocompleteClassName?: string;
+  labelClassName?: string;
   onInputChange?: (value: string) => void;
+  inputRef?: Ref<HTMLInputElement>;
 } & (
     | {
         data: T[] | null | undefined;
@@ -43,7 +45,9 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
     control,
     rules,
     autocompleteClassName,
+    labelClassName,
     multiple,
+    inputRef,
   } = props;
 
   const {
@@ -88,6 +92,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
     return (
       <Autocomplete
         ref={ref}
+        inputRef={inputRef}
         label={label}
         data={data}
         by={by as ConditionalKeys<T, Key> & string}
@@ -98,6 +103,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
         onInputChange={onInputChange}
         renderValue={renderValue}
         autocompleteClassName={autocompleteClassName}
+        labelClassName={labelClassName}
       />
     );
   }

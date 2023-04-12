@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useClient, useQuery } from "urql";
 import StyledPanelHeader from "../../layout/StyledPanelHeader";
-import DataForm from "../DataForm";
-import { GET_LAST_DONNEE_ID } from "./CreatePageQueries";
+import EntryForm from "../entry-form/EntryForm";
+import { GET_LAST_DONNEE_ID } from "./NewEntryPageQueries";
 
-const CreatePage: FunctionComponent = () => {
+const NewEntryPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const CreatePage: FunctionComponent = () => {
   const navigateToLastDonnee = async (): Promise<void> => {
     const { data } = await client.query(GET_LAST_DONNEE_ID, {}, { requestPolicy: "network-only" }).toPromise();
     if (data?.lastDonneeId != null) {
-      navigate(`/data/${data.lastDonneeId}`, { replace: true });
+      navigate(`/entry/${data.lastDonneeId}`, { replace: true });
     }
   };
 
@@ -43,9 +43,9 @@ const CreatePage: FunctionComponent = () => {
           </button>
         </div>
       </StyledPanelHeader>
-      <DataForm isNewEntry />
+      <EntryForm isNewEntry />
     </>
   );
 };
 
-export default CreatePage;
+export default NewEntryPage;

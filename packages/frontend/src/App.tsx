@@ -11,8 +11,8 @@ import suspend from "./utils/suspend";
 const RequireAuth = lazy(() => import("./components/RequireAuth"));
 const Layout = lazy(() => import("./components/Layout"));
 const LoginPage = lazy(() => import("./components/LoginPage"));
-const CreatePage = lazy(() => import("./components/data/create/CreatePage"));
-const DisplayDataPage = lazy(() => import("./components/data/display-data/DisplayDataPage"));
+const NewEntryPage = lazy(() => import("./components/entry/new-entry-page/NewEntryPage"));
+const ExistingEntryPage = lazy(() => import("./components/entry/existing-entry-page/ExistingEntryPage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
 const ObservateurManage = lazy(() => import("./components/manage/observateur/ObservateurManage"));
 const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
@@ -95,16 +95,16 @@ const App: FunctionComponent = () => {
                         index
                         element={
                           <Suspense fallback={<></>}>
-                            <CreatePage />
+                            <NewEntryPage />
                           </Suspense>
                         }
                       ></Route>
                       <Route
-                        path="data/:id"
+                        path="entry/:id"
                         index
                         element={
                           <Suspense fallback={<></>}>
-                            <DisplayDataPage />
+                            <ExistingEntryPage />
                           </Suspense>
                         }
                       ></Route>

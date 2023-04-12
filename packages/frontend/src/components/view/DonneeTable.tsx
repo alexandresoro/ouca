@@ -170,7 +170,7 @@ const DonneeTable: FunctionComponent = () => {
 
   const handleOpenDonneeDetails = (donnee: Donnee) => {
     if (donnee) {
-      navigate(`/data/${donnee.id}`);
+      navigate(`/entry/${donnee.id}`);
     }
   };
 

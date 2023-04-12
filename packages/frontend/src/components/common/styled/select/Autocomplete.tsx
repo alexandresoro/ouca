@@ -1,7 +1,7 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Combobox } from "@headlessui/react";
 import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
-import { forwardRef, type ForwardedRef, type Key } from "react";
+import { forwardRef, type ForwardedRef, type Key, type Ref } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 
@@ -15,7 +15,9 @@ type AutocompleteProps<T> = {
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
   autocompleteClassName?: string;
+  labelClassName?: string;
   decorationKey?: ConditionalKeys<T, Key> & string;
+  inputRef?: Ref<HTMLInputElement>;
 } & (
   | {
       data: (T & { id: Key })[] | null | undefined;
@@ -41,6 +43,8 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     renderValue,
     label,
     autocompleteClassName,
+    labelClassName,
+    inputRef,
   } = props;
 
   const { t } = useTranslation();
@@ -95,7 +99,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
       {({ value }) => (
         <>
           <div className="label">
-            <Combobox.Label className="label-text">{label}</Combobox.Label>
+            <Combobox.Label className={`label-text ${labelClassName ?? ""}`}>{label}</Combobox.Label>
           </div>
           <div className={`w-full relative ${decorationKey ? "input-group" : ""}`} ref={refs.setReference}>
             {decorationKey && <span className="w-20">{value?.[decorationKey] as Key}</span>}
@@ -103,6 +107,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
               <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
             </Combobox.Button>
             <Combobox.Input
+              ref={inputRef}
               className="flex-grow w-full input input-bordered input-primary text-base-content pr-10"
               displayValue={getDisplayValue}
               onChange={handleInputChange}
