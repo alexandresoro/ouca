@@ -163,7 +163,9 @@ type Settings {
   isDistanceDisplayed: Boolean!
   isRegroupementDisplayed: Boolean!
   defaultDepartementId: Int
+  defaultDepartement: Departement
   defaultObservateurId: Int
+  defaultObservateur: Observateur
   coordinatesSystem: CoordinatesSystemType!
   defaultEstimationNombreId: Int
   defaultNombre: Int

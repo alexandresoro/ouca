@@ -712,5 +712,21 @@ export const buildResolvers = ({
       editable: isEntityEditableResolver(sexeService.findSexe),
       nbDonnees: entityNbDonneesResolver(sexeService.getDonneesCountBySexe),
     },
+    Settings: {
+      defaultObservateur: async (parent, args, { user }): Promise<Observateur | null> => {
+        if (parent?.defaultObservateurId) {
+          return observateurService.findObservateur(parent.defaultObservateurId, user);
+        } else {
+          return null;
+        }
+      },
+      defaultDepartement: async (parent, args, { user }): Promise<Departement | null> => {
+        if (parent?.defaultDepartementId) {
+          return departementService.findDepartement(parent.defaultDepartementId, user);
+        } else {
+          return null;
+        }
+      },
+    },
   };
 };
