@@ -208,7 +208,7 @@ const SettingsPage: FunctionComponent = () => {
           </div>
         )}
         {!(fetching || error) && (
-          <div className="card border-2 border-primary p-6 bg-base-100 shadow-xl">
+          <div className="card border-2 border-primary p-6 bg-base-200 shadow-xl">
             <form className="flex justify-center items-center flex-col sm:flex-row gap-0 sm:gap-10 md:gap-16">
               <div className="flex flex-col w-full">
                 <FormSelect
