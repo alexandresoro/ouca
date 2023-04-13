@@ -315,14 +315,14 @@ type Coordinates {
 type Inventaire {
   id: Int!
   observateur: Observateur!
-  associes: [Observateur]!
+  associes: [Observateur!]!
   date: String!
   heure: String
   duree: String
   lieuDit: LieuDit!
   customizedCoordinates: Coordinates
   temperature: Int
-  meteos: [Meteo]!
+  meteos: [Meteo!]!
 }
 
 type Donnee {
