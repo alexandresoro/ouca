@@ -44,7 +44,7 @@
     "@floating-ui/react": "0.23.0",
     "@fontsource/nunito": "4.5.12",
     "@fontsource/yuji-hentaigana-akebono": "4.5.8",
-    "@headlessui/react": "1.7.13",
+    "@headlessui/react": "1.7.14",
     "@ou-ca/common": "*",
     "@sentry/integrations": "7.47.0",
     "@sentry/react": "7.47.0",
