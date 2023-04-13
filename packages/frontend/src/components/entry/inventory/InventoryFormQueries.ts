@@ -12,6 +12,7 @@ query GetInventaireByEntryId($entryId: Int!) {
         }
         associes {
           id
+          libelle
         }
         date
         heure
@@ -90,21 +91,4 @@ export const AUTOCOMPLETE_OBSERVATEURS_QUERY = graphql(`
       }
     }
   }
-`);
-
-export const GET_INVENTORY_DEFAULTS_SETTINGS = graphql(`
-query GetInventoryDefaultSettings {
-  settings {
-    defaultObservateur {
-      id
-      libelle
-    }
-    defaultDepartement {
-      id
-      code
-    }
-    areAssociesDisplayed
-    isMeteoDisplayed
-  }
-}
 `);

@@ -6,6 +6,7 @@
   "ages": "Âges",
   "altitude": "Altitude",
   "altitudeWithUnit": "Altitude en mètres",
+  "associateObservers": "observateurs associés",
   "behaviorAlreadyExistingError": "Il existe déjà un comportement avec un code ou un libellé identique.",
   "behaviorCreationTitle": "Création d'un comportement",
   "behaviorEditionTitle": "Edition d'un comportement",

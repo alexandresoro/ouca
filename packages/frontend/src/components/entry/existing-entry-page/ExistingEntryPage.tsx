@@ -33,7 +33,7 @@ const ExistingEntryPage: FunctionComponent = () => {
     return <>{t("displayData.genericError")}</>;
   }
 
-  if (data && !data.donnee?.donnee) {
+  if (data && !data.donnee) {
     return <>{t("displayData.dataNotFound")}</>;
   }
 
@@ -45,13 +45,13 @@ const ExistingEntryPage: FunctionComponent = () => {
       <StyledPanelHeader className="flex justify-between">
         <h1 className="text-2xl font-normal">{t("displayData.headerTitle")}</h1>
         <div className="flex items-center gap-4">
-          <span className="badge badge-md">
+          <span className="badge badge-md badge-accent">
             {t("displayData.dataId")} {data?.donnee?.id}
           </span>
           <div className="flex gap-2">
-            <div className="tooltip tooltip-bottom" data-tip={hasPrevious ? t("displayData.previousData") : ""}>
+            <div className="tooltip tooltip-bottom" data-tip={hasPrevious ? t("displayData.previousData") : undefined}>
               <Link
-                className={`btn btn-sm btn-outline btn-square ${hasPrevious ? "btn-secondary" : "btn-disabled"}`}
+                className={`btn btn-sm btn-square ${hasPrevious ? "btn-accent" : "btn-disabled"}`}
                 to={`../${data?.donnee?.navigation?.previousDonneeId as number}`}
                 tabIndex={hasPrevious ? 0 : -1}
                 relative="path"
@@ -60,9 +60,9 @@ const ExistingEntryPage: FunctionComponent = () => {
                 <ChevronLeft className="h-6" />
               </Link>
             </div>
-            <div className="tooltip tooltip-bottom" data-tip={hasNext ? t("displayData.nextData") : ""}>
+            <div className="tooltip tooltip-bottom" data-tip={hasNext ? t("displayData.nextData") : undefined}>
               <Link
-                className={`btn btn-sm btn-outline btn-square ${hasNext ? "btn-secondary" : "btn-disabled"}`}
+                className={`btn btn-sm btn-square ${hasNext ? "btn-accent" : "btn-disabled"}`}
                 to={`../${data?.donnee?.navigation?.nextDonneeId as number}`}
                 tabIndex={hasNext ? 0 : -1}
                 relative="path"
@@ -80,7 +80,7 @@ const ExistingEntryPage: FunctionComponent = () => {
         </div>
       </StyledPanelHeader>
       {JSON.stringify(data)}
-      {data?.donnee?.donnee && <EntryForm existingEntryId={data.donnee.id} />}
+      {data?.donnee && <EntryForm existingEntryId={data.donnee.id} />}
     </>
   );
 };

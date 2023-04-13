@@ -28,13 +28,13 @@ const NewEntryPage: FunctionComponent = () => {
   return (
     <>
       <StyledPanelHeader className="flex justify-between">
-        <h1 className="flex items-center gap-3 text-2xl font-normal">
-          {t("createPage.headerTitle")}
-          <div className="badge badge-md badge-primary uppercase">{t("createPage.newBadge")}</div>
-        </h1>
+        <div className="indicator pr-5">
+          <span className="indicator-item badge badge-xs badge-secondary">{t("createPage.newBadge")}</span>
+          <h1 className="flex items-center gap-3 text-2xl font-normal">{t("createPage.headerTitle")}</h1>
+        </div>
         <div className="tooltip tooltip-bottom" data-tip={hasLastDonnee ? t("createPage.goToLastDataDescription") : ""}>
           <button
-            className={`btn btn-sm btn-outline ${hasLastDonnee ? "btn-secondary" : "btn-disabled"}`}
+            className={`btn btn-sm ${hasLastDonnee ? "btn-accent" : "btn-disabled"}`}
             tabIndex={hasLastDonnee ? 0 : -1}
             onClick={navigateToLastDonnee}
           >

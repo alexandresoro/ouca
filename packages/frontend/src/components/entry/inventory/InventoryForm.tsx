@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState, type FunctionComponent } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "urql";
-import { type Observateur, type UpsertInventaireMutationVariables } from "../../../gql/graphql";
+import { useClient, useMutation, useQuery } from "urql";
+import { type Observateur } from "../../../gql/graphql";
+import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import TempPage from "../../TempPage";
 import FormAutocomplete from "../../common/form/FormAutocomplete";
-import {
-  AUTOCOMPLETE_OBSERVATEURS_QUERY,
-  GET_INVENTAIRE_BY_ENTRY_ID,
-  GET_INVENTORY_DEFAULTS_SETTINGS,
-  UPSERT_INVENTAIRE,
-} from "./InventoryFormQueries";
+import { AUTOCOMPLETE_OBSERVATEURS_QUERY, GET_INVENTAIRE_BY_ENTRY_ID, UPSERT_INVENTAIRE } from "./InventoryFormQueries";
 
 type InventoryFormProps =
   | {
@@ -22,46 +18,51 @@ type InventoryFormProps =
       existingEntryId: number;
     };
 
-type UpsertInventoryInput = Pick<UpsertInventaireMutationVariables, "upsertInventaireId"> &
-  UpsertInventaireMutationVariables["data"] & {
-    observer: Observateur;
-  };
+type UpsertInventoryInput = {
+  id: number | null;
+  observer: Observateur | null;
+  associateObservers: Observateur[];
+};
 
 const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingEntryId }) => {
   const { t } = useTranslation();
 
+  const { userSettings } = useUserSettingsContext();
+
   const [observateurInput, setObservateurInput] = useState("");
+  const [associatesInput, setAssociatesInput] = useState("");
 
   const {
     register,
-    setValue,
     control,
     formState: { isValid },
     reset,
     handleSubmit,
   } = useForm<UpsertInventoryInput>({
     defaultValues: {
-      observer: undefined,
+      id: null,
+      observer: null,
+      associateObservers: [],
     },
   });
 
-  const [{ data: defaultSettingsData, error, fetching }] = useQuery({
-    query: GET_INVENTORY_DEFAULTS_SETTINGS,
-  });
-
-  const [{ data: existingEntryData, error: errorExistingInventory, fetching: fetchingExistingInventory }] = useQuery({
-    query: GET_INVENTAIRE_BY_ENTRY_ID,
-    variables: {
-      entryId: existingEntryId!,
-    },
-    pause: !existingEntryId,
-  });
+  const client = useClient();
 
   const [{ data: dataObservers }] = useQuery({
     query: AUTOCOMPLETE_OBSERVATEURS_QUERY,
     variables: {
       searchParams: {
         q: observateurInput,
+        pageSize: 5,
+      },
+    },
+  });
+
+  const [{ data: dataAssociateObservers }] = useQuery({
+    query: AUTOCOMPLETE_OBSERVATEURS_QUERY,
+    variables: {
+      searchParams: {
+        q: associatesInput,
         pageSize: 5,
       },
     },
@@ -77,65 +78,84 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
     }
   }, [isNewInventory]);
 
+  // Initialize with new entry
   useEffect(() => {
-    if (isNewInventory && defaultSettingsData?.settings) {
-      // FIXME caution with pause on existingEntryData
-      // TODO use proper reset
-      console.log("RESET WITH DEFAULTS", { settings: defaultSettingsData.settings });
-      if (defaultSettingsData.settings.defaultObservateur) {
-        setValue("observer", defaultSettingsData.settings.defaultObservateur);
+    if (isNewInventory) {
+      console.log("RESET WITH DEFAULTS", { settings: userSettings });
+      if (userSettings.defaultObservateur) {
+        reset({
+          id: null,
+          observer: userSettings.defaultObservateur,
+          associateObservers: [],
+        });
       }
     }
-  }, [defaultSettingsData, isNewInventory]);
+  }, [userSettings, isNewInventory]);
 
+  // Initialize with existing entry
   useEffect(() => {
-    if (existingEntryData?.donnee?.donnee?.inventaire && defaultSettingsData?.settings) {
-      console.log("RESET WITH EXISTING", {
-        inventaire: existingEntryData.donnee.donnee.inventaire,
-        settings: defaultSettingsData.settings,
-      });
-      // TODO use proper reset
-      setValue("observer", existingEntryData.donnee.donnee.inventaire.observateur);
+    if (existingEntryId != null) {
+      client
+        .query(GET_INVENTAIRE_BY_ENTRY_ID, { entryId: existingEntryId })
+        .toPromise()
+        .then(({ data, error }) => {
+          if (error || !data?.donnee?.donnee) {
+            throw new Error(`An error has occurred while retrieving entry ID=${existingEntryId}`);
+          }
+          const inventory = data.donnee.donnee.inventaire;
+
+          console.log("RESET WITH EXISTING", {
+            inventory,
+          });
+          reset({
+            id: inventory.id,
+            observer: inventory.observateur,
+            associateObservers: inventory.associes,
+          });
+        })
+        .catch(() => {
+          throw new Error(`An error has occurred while retrieving entry ID=${existingEntryId}`);
+        });
     }
-  }, [defaultSettingsData, existingEntryData]);
+  }, [existingEntryId, client]);
 
-  const hasError = error || errorExistingInventory;
-  const isFetching = fetching || fetchingExistingInventory;
-
-  if (hasError || !(defaultSettingsData || isFetching)) {
-    return <>{t("displayData.genericError")}</>;
-  }
+  const onSubmit: SubmitHandler<UpsertInventoryInput> = (upsertInventoryInput) => {
+    console.log(upsertInventoryInput);
+  };
 
   return (
     <>
       <h2 className="text-xl font-semibold mb-3">{t("inventoryForm")}</h2>
-      <div className="card border-primary rounded-lg p-3 bg-base-100 shadow-lg">
-        <FormAutocomplete
-          inputRef={observerEl}
-          data={dataObservers?.observateurs?.data ?? []}
-          name="observer"
-          label={t("observer")}
-          control={control}
-          rules={{
-            required: true,
-          }}
-          onInputChange={setObservateurInput}
-          renderValue={({ libelle }) => libelle}
-          labelClassName="capitalize"
-        />
-        {JSON.stringify(defaultSettingsData?.settings?.areAssociesDisplayed)}
-        {/* <FormSelect
-          name="defaultObservateur"
-          label={t("defaultObserver")}
-          control={control}
-          defaultValue=""
-          rules={{
-            required: true,
-          }}
-          data={data?.observateurs?.data}
-          renderValue={({ libelle }) => libelle}
-        /> */}
-      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+          <FormAutocomplete
+            inputRef={observerEl}
+            data={dataObservers?.observateurs?.data ?? []}
+            name="observer"
+            label={t("observer")}
+            control={control}
+            rules={{
+              required: true,
+            }}
+            onInputChange={setObservateurInput}
+            renderValue={({ libelle }) => libelle}
+            labelClassName="first-letter:capitalize"
+          />
+          {userSettings.areAssociesDisplayed && (
+            <FormAutocomplete
+              multiple
+              data={dataAssociateObservers?.observateurs?.data ?? []}
+              name="associateObservers"
+              label={t("associateObservers")}
+              control={control}
+              onInputChange={setAssociatesInput}
+              renderValue={({ libelle }) => libelle}
+              labelClassName="first-letter:capitalize"
+            />
+          )}
+        </div>
+      </form>
+      Valid: {JSON.stringify(isValid)}
       <TempPage />
     </>
   );

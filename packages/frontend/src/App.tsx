@@ -9,6 +9,7 @@ import { initApp } from "./utils/init-app";
 import suspend from "./utils/suspend";
 
 const RequireAuth = lazy(() => import("./components/RequireAuth"));
+const UserSettingsProvider = lazy(() => import("./contexts/UserSettingsContext"));
 const Layout = lazy(() => import("./components/Layout"));
 const LoginPage = lazy(() => import("./components/LoginPage"));
 const NewEntryPage = lazy(() => import("./components/entry/new-entry-page/NewEntryPage"));
@@ -84,7 +85,9 @@ const App: FunctionComponent = () => {
                       element={
                         <Suspense fallback={<></>}>
                           <RequireAuth>
-                            <Layout />
+                            <UserSettingsProvider>
+                              <Layout />
+                            </UserSettingsProvider>
                           </RequireAuth>
                         </Suspense>
                       }

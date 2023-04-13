@@ -13,6 +13,7 @@ type AutocompleteMultipleProps<T extends object> = {
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
   autocompleteClassName?: string;
+  labelClassName?: string;
 } & (
   | {
       data: (T & { id: Key })[];
@@ -28,7 +29,8 @@ const AutocompleteMultiple = <T extends object,>(
   props: AutocompleteMultipleProps<T>,
   ref: ForwardedRef<HTMLElement>
 ) => {
-  const { data, name, values, onChange, onInputChange, by, renderValue, label, autocompleteClassName } = props;
+  const { data, name, values, onChange, onInputChange, by, renderValue, label, autocompleteClassName, labelClassName } =
+    props;
 
   const { t } = useTranslation();
 
@@ -97,7 +99,7 @@ const AutocompleteMultiple = <T extends object,>(
       {({ value }) => (
         <>
           <div className="label">
-            <Combobox.Label className="label-text">{label}</Combobox.Label>
+            <Combobox.Label className={`label-text ${labelClassName ?? ""}`}>{label}</Combobox.Label>
           </div>
           <div
             className="w-full inline-flex items-center input input-bordered focus-within:outline focus-within:outline-2 focus-within:outline-primary focus-within:outline-offset-2 input-primary gap-3 px-2"

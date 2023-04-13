@@ -75,6 +75,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
         onInputChange={onInputChange}
         renderValue={renderValue}
         autocompleteClassName={autocompleteClassName}
+        labelClassName={labelClassName}
       />
     );
   } else {

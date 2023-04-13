@@ -7,6 +7,7 @@ import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
+import useUserSettingsContext from "../hooks/useUserSettingsContext";
 import FormSelect from "./common/form/FormSelect";
 import FormSwitch from "./common/form/FormSwitch";
 import TextInput from "./common/styled/TextInput";
@@ -14,7 +15,7 @@ import ContentContainerLayout from "./layout/ContentContainerLayout";
 import StyledPanelHeader from "./layout/StyledPanelHeader";
 
 const SETTINGS_QUERY = graphql(`
-  query GetUserSettings {
+  query GetUserSettingsPage {
     settings {
       id
       areAssociesDisplayed
@@ -101,6 +102,7 @@ const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const { userInfo } = useContext(UserContext);
+  const { updateUserSettings } = useUserSettingsContext();
 
   const { displayNotification } = useSnackbar();
 
@@ -167,6 +169,8 @@ const SettingsPage: FunctionComponent = () => {
       }).then(({ error }) => {
         if (!error) {
           displaySuccessNotification();
+          // Update the app-wide user settings when settings change
+          void updateUserSettings();
         } else {
           displayErrorNotification();
           refetchSettings();
