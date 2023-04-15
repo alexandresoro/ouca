@@ -79,8 +79,9 @@ const ExistingEntryPage: FunctionComponent = () => {
           </div>
         </div>
       </StyledPanelHeader>
-      {JSON.stringify(data)}
-      {data?.donnee && <EntryForm existingEntryId={data.donnee.id} />}
+      {data?.donnee?.donnee && (
+        <EntryForm existingEntryId={data.donnee.id} existingInventoryId={data.donnee.donnee.inventaire.id} />
+      )}
     </>
   );
 };

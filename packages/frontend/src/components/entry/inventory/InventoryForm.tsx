@@ -1,22 +1,20 @@
+import { FilePlus } from "@styled-icons/boxicons-solid";
 import { useEffect, useRef, useState, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { useClient, useMutation, useQuery } from "urql";
 import { type Observateur } from "../../../gql/graphql";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import TempPage from "../../TempPage";
 import FormAutocomplete from "../../common/form/FormAutocomplete";
-import { AUTOCOMPLETE_OBSERVATEURS_QUERY, GET_INVENTAIRE_BY_ENTRY_ID, UPSERT_INVENTAIRE } from "./InventoryFormQueries";
+import { AUTOCOMPLETE_OBSERVATEURS_QUERY, GET_INVENTAIRE, UPSERT_INVENTAIRE } from "./InventoryFormQueries";
 
-type InventoryFormProps =
-  | {
-      isNewInventory?: boolean;
-      existingEntryId?: never;
-    }
-  | {
-      isNewInventory?: never;
-      existingEntryId: number;
-    };
+type InventoryFormProps = {
+  // New inventory (w/ possible existing inventory id as template)
+  isNewInventory?: boolean;
+  existingInventoryId?: number;
+};
 
 type UpsertInventoryInput = {
   id: number | null;
@@ -24,7 +22,7 @@ type UpsertInventoryInput = {
   associateObservers: Observateur[];
 };
 
-const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingEntryId }) => {
+const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventoryId }) => {
   const { t } = useTranslation();
 
   const { userSettings } = useUserSettingsContext();
@@ -78,9 +76,9 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
     }
   }, [isNewInventory]);
 
-  // Initialize with new entry
+  // Initialize with new entry if no existing inventory provided
   useEffect(() => {
-    if (isNewInventory) {
+    if (isNewInventory && existingInventoryId === undefined) {
       console.log("RESET WITH DEFAULTS", { settings: userSettings });
       if (userSettings.defaultObservateur) {
         reset({
@@ -90,34 +88,33 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         });
       }
     }
-  }, [userSettings, isNewInventory]);
+  }, [userSettings, isNewInventory, existingInventoryId]);
 
-  // Initialize with existing entry
+  // Initialize with existing inventory
   useEffect(() => {
-    if (existingEntryId != null) {
+    if (existingInventoryId != null) {
       client
-        .query(GET_INVENTAIRE_BY_ENTRY_ID, { entryId: existingEntryId })
+        .query(GET_INVENTAIRE, { inventoryId: existingInventoryId })
         .toPromise()
         .then(({ data, error }) => {
-          if (error || !data?.donnee?.donnee) {
-            throw new Error(`An error has occurred while retrieving entry ID=${existingEntryId}`);
+          if (error || !data?.inventaire) {
+            throw new Error(`An error has occurred while retrieving inventory ID=${existingInventoryId}`);
           }
-          const inventory = data.donnee.donnee.inventaire;
 
           console.log("RESET WITH EXISTING", {
-            inventory,
+            inventory: data.inventaire,
           });
           reset({
-            id: inventory.id,
-            observer: inventory.observateur,
-            associateObservers: inventory.associes,
+            id: data.inventaire.id,
+            observer: data.inventaire.observateur,
+            associateObservers: data.inventaire.associes,
           });
         })
         .catch(() => {
-          throw new Error(`An error has occurred while retrieving entry ID=${existingEntryId}`);
+          throw new Error(`An error has occurred while retrieving inventory ID=${existingInventoryId}`);
         });
     }
-  }, [existingEntryId, client]);
+  }, [existingInventoryId, client]);
 
   const onSubmit: SubmitHandler<UpsertInventoryInput> = (upsertInventoryInput) => {
     console.log(upsertInventoryInput);
@@ -125,8 +122,20 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
 
   return (
     <>
-      <h2 className="text-xl font-semibold mb-3">{t("inventoryForm")}</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex justify-between">
+        <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
+        {!isNewInventory && existingInventoryId && (
+          <div className="tooltip tooltip-bottom" data-tip={t("inventoryForm.createNewEntryFromInventory")}>
+            <Link
+              className="btn btn-sm btn-circle btn-ghost"
+              to={`/create/new?${new URLSearchParams({ inventoryId: `${existingInventoryId}` }).toString()}`}
+            >
+              <FilePlus className="text-primary h-6" />
+            </Link>
+          </div>
+        )}
+      </div>
+      <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
         <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
           <FormAutocomplete
             inputRef={observerEl}

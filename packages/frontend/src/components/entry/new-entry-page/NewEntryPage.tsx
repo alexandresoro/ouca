@@ -1,7 +1,7 @@
 import { ChevronsRight } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useClient, useQuery } from "urql";
 import StyledPanelHeader from "../../layout/StyledPanelHeader";
 import EntryForm from "../entry-form/EntryForm";
@@ -10,6 +10,7 @@ import { GET_LAST_DONNEE_ID } from "./NewEntryPageQueries";
 const NewEntryPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [{ data }] = useQuery({
     query: GET_LAST_DONNEE_ID,
@@ -17,6 +18,10 @@ const NewEntryPage: FunctionComponent = () => {
   const client = useClient();
 
   const hasLastDonnee = data?.lastDonneeId != null;
+
+  const existingInventoryId = searchParams.has("inventoryId")
+    ? Number.parseInt(searchParams.get("inventoryId")!)
+    : undefined;
 
   const navigateToLastDonnee = async (): Promise<void> => {
     const { data } = await client.query(GET_LAST_DONNEE_ID, {}, { requestPolicy: "network-only" }).toPromise();
@@ -43,7 +48,7 @@ const NewEntryPage: FunctionComponent = () => {
           </button>
         </div>
       </StyledPanelHeader>
-      <EntryForm isNewEntry />
+      <EntryForm isNewEntry existingInventoryId={existingInventoryId} />
     </>
   );
 };

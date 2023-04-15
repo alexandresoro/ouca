@@ -7,22 +7,27 @@ import InventoryForm from "../inventory/InventoryForm";
 
 type EntryFormProps =
   | {
-      isNewEntry?: boolean;
+      // New entry (w/ possible existing inventory id as template)
+      isNewEntry: true;
+      existingInventoryId?: number;
       existingEntryId?: never;
     }
   | {
+      // Existing entry
       isNewEntry?: never;
+      existingInventoryId: number;
       existingEntryId: number;
     };
 
-const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingEntryId }) => {
+const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInventoryId, existingEntryId }) => {
   const { t } = useTranslation();
+
+  const inventoryFormKey = isNewEntry ? `new-${existingInventoryId ?? ""}` : `existing-${existingEntryId}`;
 
   return (
     <div className="container mx-auto flex gap-10">
       <div className="basis-1/3 mt-4">
-        {isNewEntry && <InventoryForm isNewInventory={isNewEntry} />}
-        {existingEntryId && <InventoryForm existingEntryId={existingEntryId} />}
+        <InventoryForm key={inventoryFormKey} isNewInventory={isNewEntry} existingInventoryId={existingInventoryId} />
       </div>
       <div className="basis-2/3">
         <Tab.Group>

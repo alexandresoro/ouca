@@ -105,10 +105,13 @@
   "environments": "Milieux naturels",
   "firstNameLabel": "Prénom",
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
+  "inventoryForm": {
+    "title": "Fiche inventaire",
+    "createNewEntryFromInventory": "Créer une nouvelle fiche espèce à partir de cet inventaire"
+  },
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",
   "genders": "Sexes",
-  "inventoryForm": "Fiche inventaire",
   "latitude": "Latitude",
   "latitudeWithUnit": "Latitude en degrés",
   "localityName": "Nom du lieu-dit",

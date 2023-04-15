@@ -1,42 +1,38 @@
 import { graphql } from "../../../gql";
 
-export const GET_INVENTAIRE_BY_ENTRY_ID = graphql(`
-query GetInventaireByEntryId($entryId: Int!) {
-  donnee(id: $entryId) {
-    donnee {
-      inventaire {
+export const GET_INVENTAIRE = graphql(`
+query GetInventaire($inventoryId: Int!) {
+  inventaire(id: $inventoryId) {
+    id
+    observateur {
+      id
+      libelle
+    }
+    associes {
+      id
+      libelle
+    }
+    date
+    heure
+    duree
+    lieuDit {
+      id
+      commune {
         id
-        observateur {
-          id
-          libelle
-        }
-        associes {
-          id
-          libelle
-        }
-        date
-        heure
-        duree
-        lieuDit {
-          id
-          commune {
-            id
-            departement {
-              id
-            }
-          }
-        }
-        customizedCoordinates {
-          latitude
-          longitude
-          altitude
-        }
-        meteos {
+        departement {
           id
         }
-        temperature
       }
     }
+    customizedCoordinates {
+      latitude
+      longitude
+      altitude
+    }
+    meteos {
+      id
+    }
+    temperature
   }
 }
 `);
