@@ -107,7 +107,12 @@
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
   "inventoryForm": {
     "title": "Fiche inventaire",
-    "createNewEntryFromInventory": "Créer une nouvelle fiche espèce à partir de cet inventaire"
+    "createNewEntryFromInventory": "Créer une nouvelle fiche espèce à partir de cet inventaire",
+    "date": "Date",
+    "time": "Heure",
+    "duration": "Durée",
+    "temperature": "Température",
+    "weather": "Météo"
   },
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",

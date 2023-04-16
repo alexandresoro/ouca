@@ -1,4 +1,5 @@
 import { FilePlus } from "@styled-icons/boxicons-solid";
+import { format } from "date-fns";
 import { useEffect, useRef, useState, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -8,6 +9,7 @@ import { type Observateur } from "../../../gql/graphql";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import TempPage from "../../TempPage";
 import FormAutocomplete from "../../common/form/FormAutocomplete";
+import TextInput from "../../common/styled/TextInput";
 import { AUTOCOMPLETE_OBSERVATEURS_QUERY, GET_INVENTAIRE, UPSERT_INVENTAIRE } from "./InventoryFormQueries";
 
 type InventoryFormProps = {
@@ -20,6 +22,10 @@ type UpsertInventoryInput = {
   id: number | null;
   observer: Observateur | null;
   associateObservers: Observateur[];
+  date: string | null;
+  time?: string | null;
+  duration?: string | null;
+  temperature?: string | null;
 };
 
 const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventoryId }) => {
@@ -85,6 +91,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           id: null,
           observer: userSettings.defaultObservateur,
           associateObservers: [],
+          date: format(new Date(), "yyyy-MM-dd"),
         });
       }
     }
@@ -108,6 +115,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
             id: data.inventaire.id,
             observer: data.inventaire.observateur,
             associateObservers: data.inventaire.associes,
+            date: data.inventaire.date,
           });
         })
         .catch(() => {
@@ -135,7 +143,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           </div>
         )}
       </div>
-      <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
         <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
           <FormAutocomplete
             inputRef={observerEl}
@@ -163,6 +171,55 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
             />
           )}
         </div>
+        <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+          <div className="flex gap-2">
+            <TextInput
+              {...register("date", {
+                required: true,
+                min: "1990-01-01",
+                max: "9999-12-31",
+              })}
+              textInputClassName="flex-grow py-1"
+              label={t("inventoryForm.date")}
+              type="date"
+              required
+            />
+            <TextInput
+              {...register("time", {
+                validate: {
+                  time: (v) => !v || /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]/.test(v),
+                },
+              })}
+              textInputClassName="py-1"
+              label={t("inventoryForm.time")}
+              type="time"
+            />
+            <TextInput
+              {...register("duration", {
+                pattern: /^[0-9]{1,2}:[0-5][0-9]/,
+              })}
+              textInputClassName="w-24 py-1"
+              label={t("inventoryForm.duration")}
+              type="text"
+            />
+          </div>
+        </div>
+        {userSettings.isMeteoDisplayed && (
+          <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+            <div className="flex gap-2">
+              <TextInput
+                {...register("temperature", {
+                  min: -50,
+                  max: 100,
+                })}
+                textInputClassName="w-24 py-1"
+                label={t("inventoryForm.temperature")}
+                type="number"
+              />
+            </div>
+          </div>
+        )}
+        <button type="submit">submit</button>
       </form>
       Valid: {JSON.stringify(isValid)}
       <TempPage />

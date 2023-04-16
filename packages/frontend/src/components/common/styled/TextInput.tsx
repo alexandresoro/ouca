@@ -14,7 +14,7 @@ const TextInput: FunctionComponent<TextInputProps> = forwardRef<HTMLInputElement
     return (
       <div className={`form-control py-2 ${helperMessage ? "pb-0" : ""} ${textInputClassName ?? ""}`}>
         {label && (
-          <label className="label">
+          <label className="label py-1">
             <span className="label-text">{label}</span>
           </label>
         )}
