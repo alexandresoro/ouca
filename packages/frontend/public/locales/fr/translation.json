@@ -128,21 +128,21 @@
   "longitudeWithUnit": "Longitude en degrés",
   "map": "Carte",
   "maps": {
-    "openStreetMap": {
-      "name": "OpenStreetMap",
-      "attribution": "&copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap contributors</a>"
-    },
-    "openTopoMap": {
-      "name": "OpenTopoMap",
-      "attribution": "Map data: &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors, <a href=\"http://viewfinderpanoramas.org\">SRTM</a> | Map style: &copy; <a href=\"https://opentopomap.org\">OpenTopoMap</a> (<a href=\"https://creativecommons.org/licenses/by-sa/3.0/\">CC-BY-SA</a>)"
-    },
-    "ign": {
-      "name": "IGN",
-      "attribution": "IGN-F/Géoportail"
-    },
-    "ignSatellite": {
-      "name": "IGN satellite",
-      "attribution": "IGN-F/Géoportail"
+    "title": "Carte",
+    "opacityPhotosLabel": "Opacité de la vue photos",
+    "maps": {
+      "openStreetMap": {
+        "name": "OpenStreetMap",
+        "attribution": "&copy; <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap contributors</a>"
+      },
+      "ign": {
+        "name": "IGN",
+        "attribution": "IGN-F/Géoportail"
+      },
+      "ignSatellite": {
+        "name": "IGN satellite",
+        "attribution": "IGN-F/Géoportail"
+      }
     }
   },
   "name": "Nom",
