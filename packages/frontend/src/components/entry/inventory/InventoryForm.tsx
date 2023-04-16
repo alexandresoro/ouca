@@ -1,16 +1,22 @@
 import { FilePlus } from "@styled-icons/boxicons-solid";
 import { format } from "date-fns";
-import { useEffect, useRef, useState, type FunctionComponent } from "react";
+import { useContext, useEffect, useRef, useState, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useClient, useMutation, useQuery } from "urql";
-import { type Observateur } from "../../../gql/graphql";
+import { EntryCustomCoordinatesContext } from "../../../contexts/EntryCustomCoordinatesContext";
+import { type Departement, type Meteo, type Observateur } from "../../../gql/graphql";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
-import TempPage from "../../TempPage";
 import FormAutocomplete from "../../common/form/FormAutocomplete";
 import TextInput from "../../common/styled/TextInput";
-import { AUTOCOMPLETE_OBSERVATEURS_QUERY, GET_INVENTAIRE, UPSERT_INVENTAIRE } from "./InventoryFormQueries";
+import {
+  AUTOCOMPLETE_DEPARTMENTS_QUERY,
+  AUTOCOMPLETE_OBSERVATEURS_QUERY,
+  AUTOCOMPLETE_WEATHERS_QUERY,
+  GET_INVENTAIRE,
+  UPSERT_INVENTAIRE,
+} from "./InventoryFormQueries";
 
 type InventoryFormProps = {
   // New inventory (w/ possible existing inventory id as template)
@@ -25,7 +31,12 @@ type UpsertInventoryInput = {
   date: string | null;
   time?: string | null;
   duration?: string | null;
+  department?: Departement | null;
+  customLatitude?: string | null;
+  customLongitude?: string | null;
+  customAltitude?: string | null;
   temperature?: string | null;
+  weathers: Meteo[];
 };
 
 const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventoryId }) => {
@@ -33,13 +44,18 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
 
   const { userSettings } = useUserSettingsContext();
 
+  const { customCoordinates, updateCustomCoordinates } = useContext(EntryCustomCoordinatesContext);
+
   const [observateurInput, setObservateurInput] = useState("");
   const [associatesInput, setAssociatesInput] = useState("");
+  const [departmentsInput, setDepartmentsInput] = useState("");
+  const [weathersInput, setWeathersInput] = useState("");
 
   const {
     register,
     control,
     formState: { isValid },
+    getValues,
     reset,
     handleSubmit,
   } = useForm<UpsertInventoryInput>({
@@ -47,6 +63,8 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
       id: null,
       observer: null,
       associateObservers: [],
+      department: null,
+      weathers: [],
     },
   });
 
@@ -72,6 +90,27 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
     },
   });
 
+  const [{ data: dataDepartments }] = useQuery({
+    query: AUTOCOMPLETE_DEPARTMENTS_QUERY,
+    variables: {
+      searchParams: {
+        q: departmentsInput,
+        pageSize: 5,
+      },
+    },
+  });
+
+  const [{ data: dataWeathers }] = useQuery({
+    query: AUTOCOMPLETE_WEATHERS_QUERY,
+    variables: {
+      searchParams: {
+        q: weathersInput,
+        pageSize: 5,
+      },
+    },
+    pause: !userSettings.isMeteoDisplayed,
+  });
+
   const [_, upsertInventory] = useMutation(UPSERT_INVENTAIRE);
 
   const observerEl = useRef<HTMLInputElement>(null);
@@ -92,6 +131,8 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           observer: userSettings.defaultObservateur,
           associateObservers: [],
           date: format(new Date(), "yyyy-MM-dd"),
+          department: userSettings.defaultDepartement,
+          weathers: [],
         });
       }
     }
@@ -116,6 +157,22 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
             observer: data.inventaire.observateur,
             associateObservers: data.inventaire.associes,
             date: data.inventaire.date,
+            time: data.inventaire.heure,
+            department: data.inventaire.lieuDit.commune.departement,
+            customLatitude:
+              data.inventaire.customizedCoordinates?.latitude != null
+                ? `${data.inventaire.customizedCoordinates.latitude}`
+                : null,
+            customLongitude:
+              data.inventaire.customizedCoordinates?.longitude != null
+                ? `${data.inventaire.customizedCoordinates.longitude}`
+                : null,
+            customAltitude:
+              data.inventaire.customizedCoordinates?.altitude != null
+                ? `${data.inventaire.customizedCoordinates.altitude}`
+                : null,
+            duration: data.inventaire.duree,
+            weathers: data.inventaire.meteos,
           });
         })
         .catch(() => {
@@ -131,7 +188,12 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
   return (
     <>
       <div className="flex justify-between">
-        <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
+        <div
+          className="tooltip tooltip-bottom"
+          data-tip={existingInventoryId ? `ID ${existingInventoryId}` : undefined}
+        >
+          <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
+        </div>
         {!isNewInventory && existingInventoryId && (
           <div className="tooltip tooltip-bottom" data-tip={t("inventoryForm.createNewEntryFromInventory")}>
             <Link
@@ -156,7 +218,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
             }}
             onInputChange={setObservateurInput}
             renderValue={({ libelle }) => libelle}
-            labelClassName="first-letter:capitalize"
+            labelTextClassName="first-letter:capitalize"
           />
           {userSettings.areAssociesDisplayed && (
             <FormAutocomplete
@@ -167,7 +229,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
               control={control}
               onInputChange={setAssociatesInput}
               renderValue={({ libelle }) => libelle}
-              labelClassName="first-letter:capitalize"
+              labelTextClassName="first-letter:capitalize"
             />
           )}
         </div>
@@ -204,6 +266,64 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
             />
           </div>
         </div>
+        <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+          <div className="flex gap-2">
+            <FormAutocomplete
+              data={dataDepartments?.departements?.data ?? []}
+              name="department"
+              label={t("departments")}
+              control={control}
+              onInputChange={setDepartmentsInput}
+              renderValue={({ code }) => code}
+              autocompleteClassName="w-32"
+              labelTextClassName="first-letter:capitalize"
+            />
+            <span>TODO</span>
+          </div>
+          TODO <br />
+          <div className="flex gap-2">
+            <TextInput
+              {...register("customLatitude", {
+                min: -90,
+                max: 90,
+                validate: {
+                  allCustomCoordinates: () => {
+                    const customCoordinatesElements = getValues([
+                      "customLatitude",
+                      "customLongitude",
+                      "customAltitude",
+                    ]);
+                    return (
+                      customCoordinatesElements.every((elt) => elt != null && elt !== "") ||
+                      customCoordinatesElements.every((elt) => elt == null || elt === "")
+                    );
+                  },
+                },
+              })}
+              textInputClassName="flex-grow w-24 py-1"
+              label={t("latitude")}
+              type="number"
+            />
+            <TextInput
+              {...register("customLongitude", {
+                min: -180,
+                max: 180,
+              })}
+              textInputClassName="flex-grow w-24 py-1"
+              label={t("longitude")}
+              type="number"
+            />
+            <TextInput
+              {...register("customAltitude", {
+                min: -1000,
+                max: 9000,
+              })}
+              textInputClassName="flex-grow w-24 py-1"
+              label={t("altitude")}
+              type="number"
+            />
+          </div>
+        </div>
         {userSettings.isMeteoDisplayed && (
           <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
             <div className="flex gap-2">
@@ -216,13 +336,24 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
                 label={t("inventoryForm.temperature")}
                 type="number"
               />
+              <FormAutocomplete
+                multiple
+                data={dataWeathers?.meteos?.data ?? []}
+                name="weathers"
+                label={t("inventoryForm.weathers")}
+                control={control}
+                onInputChange={setWeathersInput}
+                renderValue={({ libelle }) => libelle}
+                autocompleteClassName="flex-grow"
+                labelClassName="py-1"
+                labelTextClassName="first-letter:capitalize"
+              />
             </div>
           </div>
         )}
         <button type="submit">submit</button>
       </form>
       Valid: {JSON.stringify(isValid)}
-      <TempPage />
     </>
   );
 };

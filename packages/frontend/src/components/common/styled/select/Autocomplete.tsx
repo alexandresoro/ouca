@@ -16,6 +16,7 @@ type AutocompleteProps<T> = {
   renderValue: (value: T) => string;
   autocompleteClassName?: string;
   labelClassName?: string;
+  labelTextClassName?: string;
   decorationKey?: ConditionalKeys<T, Key> & string;
   inputRef?: Ref<HTMLInputElement>;
 } & (
@@ -44,6 +45,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     label,
     autocompleteClassName,
     labelClassName,
+    labelTextClassName,
     inputRef,
   } = props;
 
@@ -98,8 +100,8 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     >
       {({ value }) => (
         <>
-          <div className="label">
-            <Combobox.Label className={`label-text ${labelClassName ?? ""}`}>{label}</Combobox.Label>
+          <div className={`label ${labelClassName ?? ""}`}>
+            <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>{label}</Combobox.Label>
           </div>
           <div className={`w-full relative ${decorationKey ? "input-group" : ""}`} ref={refs.setReference}>
             {decorationKey && <span className="w-20">{value?.[decorationKey] as Key}</span>}

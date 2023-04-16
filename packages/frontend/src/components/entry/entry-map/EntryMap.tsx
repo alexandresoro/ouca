@@ -1,6 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import { Marker as MapLibreMarker } from "maplibre-gl";
-import { useState, type FunctionComponent } from "react";
+import { useContext, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { ScaleControl as LeafletScaleControl, MapContainer, TileLayer } from "react-leaflet";
 import {
@@ -11,9 +11,9 @@ import {
   Popup,
   ScaleControl,
   Source,
-  type LngLat,
   type ViewState,
 } from "react-map-gl";
+import { EntryCustomCoordinatesContext } from "../../../contexts/EntryCustomCoordinatesContext";
 import MaplibreMap from "../../common/maps/MaplibreMap";
 import { MAP_PROVIDERS } from "../../common/maps/map-providers";
 import PhotosViewMapOpacityControl from "./PhotosViewMapOpacityControl";
@@ -29,6 +29,8 @@ const RED_PIN = new MapLibreMarker({
 const EntryMap: FunctionComponent = () => {
   const { t } = useTranslation();
 
+  const { customCoordinates, updateCustomCoordinates } = useContext(EntryCustomCoordinatesContext);
+
   const [viewState, setViewState] = useState<Partial<ViewState>>({
     longitude: 0,
     latitude: 45,
@@ -39,16 +41,10 @@ const EntryMap: FunctionComponent = () => {
 
   const [overlayOpacity, setOverlayOpacity] = useState(0);
 
-  const [markerPosition, setMarkerPosition] = useState<Pick<LngLat, "lat" | "lng">>({
-    lat: 45,
-    lng: 0,
-  });
-
   const [displayCoordinatesInfoPopup, setDisplayCoordinatesInfoPopup] = useState(false);
 
   return (
     <div className="flex flex-col">
-      Coords - LAT {markerPosition.lat} - LONG {markerPosition.lng}
       <div className="flex my-4 items-center justify-between">
         <div className="btn-group">
           {Object.entries(MAP_PROVIDERS).map(([providerKey, providerConfig]) => {
@@ -79,8 +75,8 @@ const EntryMap: FunctionComponent = () => {
         >
           {displayCoordinatesInfoPopup && (
             <Popup
-              longitude={markerPosition.lng}
-              latitude={markerPosition.lat}
+              longitude={customCoordinates.lng}
+              latitude={customCoordinates.lat}
               offset={[-15, -35]}
               focusAfterOpen={false}
               closeButton={false}
@@ -91,12 +87,12 @@ const EntryMap: FunctionComponent = () => {
             </Popup>
           )}
           <Marker
-            longitude={markerPosition.lng}
-            latitude={markerPosition.lat}
+            longitude={customCoordinates.lng}
+            latitude={customCoordinates.lat}
             draggable
             color="#b9383c"
             offset={[0, -14]}
-            onDragEnd={(e) => setMarkerPosition(e.lngLat)}
+            onDragEnd={(e) => updateCustomCoordinates(e.lngLat)}
             onClick={(e) => {
               // Prevent the event from bubbling to avoid closing directly the popup after open
               e.originalEvent.stopPropagation();

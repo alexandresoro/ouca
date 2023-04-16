@@ -21,6 +21,7 @@ query GetInventaire($inventoryId: Int!) {
         id
         departement {
           id
+          code
         }
       }
     }
@@ -67,6 +68,7 @@ mutation UpsertInventaire($upsertInventaireId: Int, $data: InputInventaire!) {
       }
       meteos {
         id
+        libelle
       }
       temperature
     }
@@ -81,6 +83,28 @@ mutation UpsertInventaire($upsertInventaireId: Int, $data: InputInventaire!) {
 export const AUTOCOMPLETE_OBSERVATEURS_QUERY = graphql(`
   query ListObservateursAutocomplete($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+      data {
+        id
+        libelle
+      }
+    }
+  }
+`);
+
+export const AUTOCOMPLETE_DEPARTMENTS_QUERY = graphql(`
+  query ListDepartmentsAutocomplete($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
+    departements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
+      data {
+        id
+        code
+      }
+    }
+  }
+`);
+
+export const AUTOCOMPLETE_WEATHERS_QUERY = graphql(`
+  query ListWeathersAutocomplete($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
+    meteos(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
       data {
         id
         libelle

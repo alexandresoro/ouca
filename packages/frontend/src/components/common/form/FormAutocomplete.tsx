@@ -12,6 +12,7 @@ type FormAutocompleteProps<TFieldValues extends FieldValues, T extends object> =
   label: string;
   autocompleteClassName?: string;
   labelClassName?: string;
+  labelTextClassName?: string;
   onInputChange?: (value: string) => void;
   inputRef?: Ref<HTMLInputElement>;
 } & (
@@ -46,6 +47,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
     rules,
     autocompleteClassName,
     labelClassName,
+    labelTextClassName,
     multiple,
     inputRef,
   } = props;
@@ -76,6 +78,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
         renderValue={renderValue}
         autocompleteClassName={autocompleteClassName}
         labelClassName={labelClassName}
+        labelTextClassName={labelTextClassName}
       />
     );
   } else {
@@ -105,6 +108,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
         renderValue={renderValue}
         autocompleteClassName={autocompleteClassName}
         labelClassName={labelClassName}
+        labelTextClassName={labelTextClassName}
       />
     );
   }
