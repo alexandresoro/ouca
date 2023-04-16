@@ -1,9 +1,10 @@
 import { Tab } from "@headlessui/react";
-import { Fragment, type FunctionComponent } from "react";
+import { Fragment, Suspense, lazy, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import TempPage from "../../TempPage";
-import DataMap from "../data-map/DataMap";
 import InventoryForm from "../inventory/InventoryForm";
+
+const EntryMap = lazy(() => import("../entry-map/EntryMap"));
 
 type EntryFormProps =
   | {
@@ -54,7 +55,9 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
               </div>
             </Tab.Panel>
             <Tab.Panel>
-              <DataMap />
+              <Suspense fallback={<></>}>
+                <EntryMap />
+              </Suspense>
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

@@ -1,14 +1,11 @@
 import "leaflet/dist/leaflet.css";
-import maplibregl, { LngLat as MapLibreLngLat, Marker as MapLibreMarker } from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import { Marker as MapLibreMarker } from "maplibre-gl";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { ScaleControl as LeafletScaleControl, MapContainer, TileLayer } from "react-leaflet";
 import {
   FullscreenControl,
   Layer,
-  // rome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
-  Map,
   Marker,
   NavigationControl,
   Popup,
@@ -17,8 +14,9 @@ import {
   type LngLat,
   type ViewState,
 } from "react-map-gl";
+import MaplibreMap from "../../common/maps/MaplibreMap";
+import { MAP_PROVIDERS } from "../../common/maps/map-providers";
 import PhotosViewMapOpacityControl from "./PhotosViewMapOpacityControl";
-import { MAP_PROVIDERS } from "./map-providers";
 
 // This is a workaround aswe want to be able to have the popup
 // open on marker hover.
@@ -28,7 +26,7 @@ const RED_PIN = new MapLibreMarker({
   color: "#b9383c",
 });
 
-const DataMap: FunctionComponent = () => {
+const EntryMap: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const [viewState, setViewState] = useState<Partial<ViewState>>({
@@ -41,12 +39,10 @@ const DataMap: FunctionComponent = () => {
 
   const [overlayOpacity, setOverlayOpacity] = useState(0);
 
-  const [markerPosition, setMarkerPosition] = useState<Pick<LngLat, "lat" | "lng">>(
-    MapLibreLngLat.convert({
-      lat: 45,
-      lng: 0,
-    })
-  );
+  const [markerPosition, setMarkerPosition] = useState<Pick<LngLat, "lat" | "lng">>({
+    lat: 45,
+    lng: 0,
+  });
 
   const [displayCoordinatesInfoPopup, setDisplayCoordinatesInfoPopup] = useState(false);
 
@@ -73,10 +69,9 @@ const DataMap: FunctionComponent = () => {
         />
       </div>
       <div className="h-80 lg:h-[500px] card border-2 border-primary shadow-xl">
-        <Map
+        <MaplibreMap
           {...viewState}
           onMove={(evt) => setViewState(evt.viewState)}
-          mapLib={maplibregl}
           mapStyle={MAP_PROVIDERS[mapProvider].mapboxStyle}
           style={{
             borderRadius: "14px",
@@ -133,7 +128,7 @@ const DataMap: FunctionComponent = () => {
           <NavigationControl />
           <FullscreenControl />
           <ScaleControl unit="metric" />
-        </Map>
+        </MaplibreMap>
       </div>
       <MapContainer
         center={[45, 0]}
@@ -152,4 +147,4 @@ const DataMap: FunctionComponent = () => {
   );
 };
 
-export default DataMap;
+export default EntryMap;
