@@ -65,7 +65,7 @@
     "@ou-ca/common": "*",
     "@sentry/node": "7.48.0",
     "@sentry/tracing": "7.48.0",
-    "csv-parse": "5.3.6",
+    "csv-parse": "5.3.8",
     "csv-stringify": "6.3.0",
     "date-fns": "2.29.3",
     "es-main": "1.2.0",
