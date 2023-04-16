@@ -9,7 +9,7 @@ const PhotosViewMapOpacityControl: FunctionComponent<PhotosViewMapOpacityControl
     <div className="flex items-center gap-3">
       <span className="text-sm">{t("maps.opacityPhotosLabel")}</span>
       <input
-        className={`range range-xs cursor-default w-24 ${props.disabled ? "" : "range-primary"}`}
+        className={`range range-xs w-24 ${props.disabled ? "" : "range-primary"}`}
         type="range"
         min="0"
         max="1"

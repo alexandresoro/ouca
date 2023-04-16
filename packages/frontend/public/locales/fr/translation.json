@@ -130,6 +130,7 @@
   "maps": {
     "title": "Carte",
     "opacityPhotosLabel": "Opacité de la vue photos",
+    "customPosition": "Position personnalisée",
     "maps": {
       "openStreetMap": {
         "name": "OpenStreetMap",

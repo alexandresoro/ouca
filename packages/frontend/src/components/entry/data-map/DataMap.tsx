@@ -1,13 +1,32 @@
 import "leaflet/dist/leaflet.css";
-import maplibregl from "maplibre-gl";
+import maplibregl, { LngLat as MapLibreLngLat, Marker as MapLibreMarker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { ScaleControl as LeafletScaleControl, MapContainer, TileLayer } from "react-leaflet";
-// rome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
-import { FullscreenControl, Layer, Map, NavigationControl, ScaleControl, Source, type ViewState } from "react-map-gl";
+import {
+  FullscreenControl,
+  Layer,
+  // rome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
+  Map,
+  Marker,
+  NavigationControl,
+  Popup,
+  ScaleControl,
+  Source,
+  type LngLat,
+  type ViewState,
+} from "react-map-gl";
 import PhotosViewMapOpacityControl from "./PhotosViewMapOpacityControl";
 import { MAP_PROVIDERS } from "./map-providers";
+
+// This is a workaround aswe want to be able to have the popup
+// open on marker hover.
+// To do that we create a div within Marker, but then, it won't
+// display back the default logo + we need to apply the same offset workarounds
+const RED_PIN = new MapLibreMarker({
+  color: "#b9383c",
+});
 
 const DataMap: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -22,8 +41,18 @@ const DataMap: FunctionComponent = () => {
 
   const [overlayOpacity, setOverlayOpacity] = useState(0);
 
+  const [markerPosition, setMarkerPosition] = useState<Pick<LngLat, "lat" | "lng">>(
+    MapLibreLngLat.convert({
+      lat: 45,
+      lng: 0,
+    })
+  );
+
+  const [displayCoordinatesInfoPopup, setDisplayCoordinatesInfoPopup] = useState(false);
+
   return (
     <div className="flex flex-col">
+      Coords - LAT {markerPosition.lat} - LONG {markerPosition.lng}
       <div className="flex my-4 items-center justify-between">
         <div className="btn-group">
           {Object.entries(MAP_PROVIDERS).map(([providerKey, providerConfig]) => {
@@ -53,6 +82,41 @@ const DataMap: FunctionComponent = () => {
             borderRadius: "14px",
           }}
         >
+          {displayCoordinatesInfoPopup && (
+            <Popup
+              longitude={markerPosition.lng}
+              latitude={markerPosition.lat}
+              offset={[-15, -35]}
+              focusAfterOpen={false}
+              closeButton={false}
+              onClose={() => setDisplayCoordinatesInfoPopup(false)}
+              anchor="right"
+            >
+              {t("maps.customPosition")}
+            </Popup>
+          )}
+          <Marker
+            longitude={markerPosition.lng}
+            latitude={markerPosition.lat}
+            draggable
+            color="#b9383c"
+            offset={[0, -14]}
+            onDragEnd={(e) => setMarkerPosition(e.lngLat)}
+            onClick={(e) => {
+              // Prevent the event from bubbling to avoid closing directly the popup after open
+              e.originalEvent.stopPropagation();
+              // TODO add the delete custom point
+              // setDisplayCustomMarkerPopup(true);
+            }}
+            anchor="bottom"
+          >
+            <div
+              // rome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+              dangerouslySetInnerHTML={{ __html: RED_PIN._element.innerHTML }}
+              onMouseEnter={() => setDisplayCoordinatesInfoPopup(true)}
+              onMouseLeave={() => setDisplayCoordinatesInfoPopup(false)}
+            />
+          </Marker>
           {overlayOpacity && (
             <Source
               key="ign-satellite"
