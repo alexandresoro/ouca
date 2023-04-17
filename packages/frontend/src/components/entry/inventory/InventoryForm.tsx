@@ -6,13 +6,14 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useClient, useMutation, useQuery } from "urql";
 import { EntryCustomCoordinatesContext } from "../../../contexts/EntryCustomCoordinatesContext";
-import { type Departement, type Meteo, type Observateur } from "../../../gql/graphql";
+import { type Commune, type Departement, type Meteo, type Observateur } from "../../../gql/graphql";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import FormAutocomplete from "../../common/form/FormAutocomplete";
 import TextInput from "../../common/styled/TextInput";
 import {
   AUTOCOMPLETE_DEPARTMENTS_QUERY,
   AUTOCOMPLETE_OBSERVATEURS_QUERY,
+  AUTOCOMPLETE_TOWNS_QUERY,
   AUTOCOMPLETE_WEATHERS_QUERY,
   GET_INVENTAIRE,
   UPSERT_INVENTAIRE,
@@ -32,6 +33,7 @@ type UpsertInventoryInput = {
   time?: string | null;
   duration?: string | null;
   department?: Departement | null;
+  town?: Commune | null;
   customLatitude?: string | null;
   customLongitude?: string | null;
   customAltitude?: string | null;
@@ -44,18 +46,22 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
 
   const { userSettings } = useUserSettingsContext();
 
+  // TODO: Think about how to sync this
   const { customCoordinates, updateCustomCoordinates } = useContext(EntryCustomCoordinatesContext);
 
   const [observateurInput, setObservateurInput] = useState("");
   const [associatesInput, setAssociatesInput] = useState("");
   const [departmentsInput, setDepartmentsInput] = useState("");
+  const [townsInput, setTownsInput] = useState("");
   const [weathersInput, setWeathersInput] = useState("");
 
   const {
     register,
     control,
     formState: { isValid },
+    setValue,
     getValues,
+    watch,
     reset,
     handleSubmit,
   } = useForm<UpsertInventoryInput>({
@@ -64,9 +70,25 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
       observer: null,
       associateObservers: [],
       department: null,
+      town: null,
       weathers: [],
     },
   });
+
+  const watchDepartment = watch("department");
+
+  // On department change, reset town
+  // TODO does not work
+  // useEffect(() => {
+  //   console.log("HELLO", watchDepartment);
+  //   setValue("town", null);
+  // }, [watchDepartment]);
+
+  // TODO On town change, reset locality
+  // TODO On locality change, reset coordinates
+
+  // TODO Handle altitude call
+  // TODO Handle custom coordinates info message
 
   const client = useClient();
 
@@ -97,6 +119,17 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         q: departmentsInput,
         pageSize: 5,
       },
+    },
+  });
+
+  const [{ data: dataTowns }] = useQuery({
+    query: AUTOCOMPLETE_TOWNS_QUERY,
+    variables: {
+      searchParams: {
+        q: townsInput,
+        pageSize: 5,
+      },
+      departmentId: watchDepartment?.id,
     },
   });
 
@@ -152,6 +185,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           console.log("RESET WITH EXISTING", {
             inventory: data.inventaire,
           });
+          // TODO rework this. Maybe put this outside on form and use values instead?
           reset({
             id: data.inventaire.id,
             observer: data.inventaire.observateur,
@@ -159,6 +193,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
             date: data.inventaire.date,
             time: data.inventaire.heure,
             department: data.inventaire.lieuDit.commune.departement,
+            town: data.inventaire.lieuDit.commune,
             customLatitude:
               data.inventaire.customizedCoordinates?.latitude != null
                 ? `${data.inventaire.customizedCoordinates.latitude}`
@@ -271,14 +306,24 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
             <FormAutocomplete
               data={dataDepartments?.departements?.data ?? []}
               name="department"
-              label={t("departments")}
+              label={t("department")}
               control={control}
               onInputChange={setDepartmentsInput}
               renderValue={({ code }) => code}
-              autocompleteClassName="w-32"
+              autocompleteClassName="w-28"
               labelTextClassName="first-letter:capitalize"
             />
-            <span>TODO</span>
+            <FormAutocomplete
+              data={watchDepartment?.id != null && dataTowns?.communes?.data ? dataTowns.communes.data : []}
+              name="town"
+              label={t("town")}
+              control={control}
+              decorationKey="code"
+              onInputChange={setTownsInput}
+              renderValue={({ nom }) => nom}
+              autocompleteClassName="flex-grow"
+              labelTextClassName="first-letter:capitalize"
+            />
           </div>
           TODO <br />
           <div className="flex gap-2">

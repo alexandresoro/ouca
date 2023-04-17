@@ -19,6 +19,8 @@ query GetInventaire($inventoryId: Int!) {
       id
       commune {
         id
+        code
+        nom
         departement {
           id
           code
@@ -97,6 +99,18 @@ export const AUTOCOMPLETE_DEPARTMENTS_QUERY = graphql(`
       data {
         id
         code
+      }
+    }
+  }
+`);
+
+export const AUTOCOMPLETE_TOWNS_QUERY = graphql(`
+  query ListTownsAutocomplete($searchParams: SearchParams, $departmentId: Int, $orderBy: CommunesOrderBy, $sortOrder: SortOrder) {
+    communes(searchParams: $searchParams, departmentId: $departmentId, orderBy: $orderBy, sortOrder: $sortOrder) {
+      data {
+        id
+        code
+        nom
       }
     }
   }
