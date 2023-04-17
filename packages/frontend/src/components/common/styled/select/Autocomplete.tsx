@@ -104,7 +104,11 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
             <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>{label}</Combobox.Label>
           </div>
           <div className={`w-full relative ${decorationKey ? "input-group" : ""}`} ref={refs.setReference}>
-            {decorationKey && <span className="w-20">{value?.[decorationKey] as Key}</span>}
+            {decorationKey && (
+              <span className="w-20 border border-primary border-r-0 border-opacity-70">
+                {value?.[decorationKey] as Key}
+              </span>
+            )}
             <Combobox.Button className="absolute z-[1] inset-y-0 right-0 flex items-center pr-2">
               <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
             </Combobox.Button>
