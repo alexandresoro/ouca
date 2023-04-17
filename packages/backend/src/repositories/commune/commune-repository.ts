@@ -66,7 +66,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     const isSortByNbLieuxDits = orderBy === "nbLieuxDits";
     const isSortByDepartement = orderBy === "departement";
     const nomOrDepartementLike = q ? `%${q}%` : null;
-    const nomOrDepartementStarts = q ? `%${q}` : null;
+    const nomOrDepartementStarts = q ? `${q}%` : null;
     const query = sql.type(communeSchema)`
     SELECT 
       commune.*
@@ -132,7 +132,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
 
   const getCount = async (q?: string | null, departmentId?: number | null): Promise<number> => {
     const codeLike = q ? `%${q}%` : null;
-    const codeStarts = q ? `%${q}` : null;
+    const codeStarts = q ? `${q}%` : null;
     const query = sql.type(countSchema)`
       SELECT 
         COUNT(*)
