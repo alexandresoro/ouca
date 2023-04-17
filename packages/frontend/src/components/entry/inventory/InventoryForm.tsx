@@ -303,6 +303,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
               textInputClassName="flex-grow w-24 py-1"
               label={t("latitude")}
               type="number"
+              step="any"
             />
             <TextInput
               {...register("customLongitude", {
@@ -312,6 +313,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
               textInputClassName="flex-grow w-24 py-1"
               label={t("longitude")}
               type="number"
+              step="any"
             />
             <TextInput
               {...register("customAltitude", {
