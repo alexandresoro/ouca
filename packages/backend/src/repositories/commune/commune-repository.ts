@@ -66,6 +66,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     const isSortByNbLieuxDits = orderBy === "nbLieuxDits";
     const isSortByDepartement = orderBy === "departement";
     const nomOrDepartementLike = q ? `%${q}%` : null;
+    const nomOrDepartementStarts = q ? `%${q}` : null;
     const query = sql.type(communeSchema)`
     SELECT 
       commune.*
@@ -97,7 +98,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       nomOrDepartementLike
         ? sql.fragment`
     (commune.nom ILIKE ${nomOrDepartementLike}
-    OR commune.code ILIKE ${nomOrDepartementLike})
+    OR CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts})
     `
         : sql.fragment``
     }
@@ -116,6 +117,8 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     ${
       !isSortByNbDonnees && !isSortByNbLieuxDits && !isSortByDepartement && orderBy
         ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}`
+        : q
+        ? sql.fragment`ORDER BY CAST(commune.code as VARCHAR) = ${q} DESC, CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts} DESC` // If no order provided, return in priority the towns that match by code if q provided
         : sql.fragment``
     }${buildSortOrderFragment({
       orderBy,
@@ -129,6 +132,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
 
   const getCount = async (q?: string | null, departmentId?: number | null): Promise<number> => {
     const codeLike = q ? `%${q}%` : null;
+    const codeStarts = q ? `%${q}` : null;
     const query = sql.type(countSchema)`
       SELECT 
         COUNT(*)
@@ -147,7 +151,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
         codeLike
           ? sql.fragment`
                 (commune.nom ILIKE ${codeLike}
-                OR commune.code ILIKE ${codeLike})
+                OR CAST(commune.code as VARCHAR) ILIKE ${codeStarts})
           `
           : sql.fragment``
       }
