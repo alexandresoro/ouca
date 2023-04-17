@@ -97,7 +97,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       nomOrDepartementLike
         ? sql.fragment`
     (commune.nom ILIKE ${nomOrDepartementLike}
-    OR departement.code ILIKE ${nomOrDepartementLike})
+    OR commune.code ILIKE ${nomOrDepartementLike})
     `
         : sql.fragment``
     }
@@ -147,7 +147,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
         codeLike
           ? sql.fragment`
                 (commune.nom ILIKE ${codeLike}
-                OR departement.code ILIKE ${codeLike})
+                OR commune.code ILIKE ${codeLike})
           `
           : sql.fragment``
       }
