@@ -10,8 +10,6 @@ type AutocompleteProps<T> = {
   label: string;
   value: T | null;
   onChange?: (value: T | null) => void;
-  onFocus?: (currentValue: T | null) => void;
-  onBlur?: () => void;
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
   autocompleteClassName?: string;
@@ -36,8 +34,6 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     name,
     value,
     onChange,
-    onBlur,
-    onFocus,
     onInputChange,
     by,
     decorationKey,
@@ -92,8 +88,6 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
       name={name}
       value={value}
       onChange={onChange}
-      onFocus={() => onFocus?.(value)}
-      onBlur={onBlur}
       by={key}
       className={`form-control py-2 ${autocompleteClassName ?? ""}`}
       nullable
@@ -117,6 +111,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
               className="flex-grow w-full input input-bordered input-primary text-base-content pr-10"
               displayValue={getDisplayValue}
               onChange={handleInputChange}
+              onBlur={handleInputChange}
             ></Combobox.Input>
           </div>
           <Combobox.Options

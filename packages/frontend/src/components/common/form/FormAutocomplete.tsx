@@ -87,17 +87,6 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
       onInputChange?.(newValue ? renderValue(newValue) : "");
     };
 
-    const handleOnFocus = (currentValue: T | null) => {
-      if (currentValue) {
-        // TODO investigate this as it causes issues with manual focus on observers
-        // Context: Done to fix case where selected then input (from start) so that no results (e.g. MOI -> wMOI)
-        // Even reproducible when replacing with dewgvywegdyuwegyud
-        // In that case, the selected is put back but input has not changed
-        // Context: https://github.com/tailwindlabs/headlessui/blob/f4e9710bca67c36aaa32a3c878b9fe4e52a1fe2c/packages/@headlessui-react/src/components/combobox/combobox.tsx#L765-L790
-        onInputChange?.(renderValue(currentValue));
-      }
-    };
-
     return (
       <Autocomplete
         ref={ref}
@@ -108,7 +97,6 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
         decorationKey={props.decorationKey}
         value={value}
         onChange={handleOnChange}
-        onFocus={handleOnFocus}
         onInputChange={onInputChange}
         renderValue={renderValue}
         autocompleteClassName={autocompleteClassName}
