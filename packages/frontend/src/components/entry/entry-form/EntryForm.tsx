@@ -1,9 +1,11 @@
 import { Tab } from "@headlessui/react";
 import { Fragment, Suspense, lazy, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "urql";
 import { EntryCustomCoordinatesContext, type Coordinates } from "../../../contexts/EntryCustomCoordinatesContext";
 import TempPage from "../../TempPage";
 import InventoryForm from "../inventory/InventoryForm";
+import { GET_EXISTING_INVENTAIRE } from "./EntryFormQueries";
 
 const EntryMap = lazy(() => import("../entry-map/EntryMap"));
 
@@ -29,6 +31,14 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
     lng: 0,
   });
 
+  const [{ data: existingInventory, fetching }] = useQuery({
+    query: GET_EXISTING_INVENTAIRE,
+    variables: {
+      inventoryId: existingInventoryId!,
+    },
+    pause: existingInventoryId === undefined,
+  });
+
   const inventoryFormKey = isNewEntry ? `new-${existingInventoryId ?? ""}` : `existing-${existingEntryId}`;
 
   return (
@@ -38,7 +48,14 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
       Coords - LAT {entryCustomCoordinates.lat} - LONG {entryCustomCoordinates.lng}
       <div className="container mx-auto flex gap-10">
         <div className="basis-1/3 mt-4">
-          <InventoryForm key={inventoryFormKey} isNewInventory={isNewEntry} existingInventoryId={existingInventoryId} />
+          {existingInventoryId != null && existingInventory?.inventaire != null && !fetching && (
+            <InventoryForm
+              key={inventoryFormKey}
+              isNewInventory={isNewEntry}
+              existingInventory={existingInventory.inventaire}
+            />
+          )}
+          {existingInventoryId === undefined && <InventoryForm key={inventoryFormKey} isNewInventory={isNewEntry} />}
         </div>
         <div className="basis-2/3">
           <Tab.Group>

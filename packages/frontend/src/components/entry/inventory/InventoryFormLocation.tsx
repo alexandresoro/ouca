@@ -52,7 +52,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   // TODO On locality change, reset coordinates
 
   // TODO Handle altitude call
-  // TODO Handle custom coordinates info message
 
   const [{ data: dataDepartments }] = useQuery({
     query: AUTOCOMPLETE_DEPARTMENTS_QUERY,
@@ -74,6 +73,9 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       departmentId: department?.id,
     },
   });
+
+  // TODO Handle custom coordinates info message
+  const areCoordinatesCustomized = false;
 
   return (
     <>
@@ -103,15 +105,15 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       TODO <br />
       <div className="flex gap-2">
         <TextInput
-          {...register("customLatitude", {
+          {...register("latitude", {
             min: -90,
             max: 90,
             validate: {
-              allCustomCoordinates: () => {
-                const customCoordinatesElements = getValues(["customLatitude", "customLongitude", "customAltitude"]);
+              allCoordinates: () => {
+                const coordinatesElements = getValues(["latitude", "longitude", "altitude"]);
                 return (
-                  customCoordinatesElements.every((elt) => elt != null && elt !== "") ||
-                  customCoordinatesElements.every((elt) => elt == null || elt === "")
+                  coordinatesElements.every((elt) => elt != null && elt !== "") ||
+                  coordinatesElements.every((elt) => elt == null || elt === "")
                 );
               },
             },
@@ -122,7 +124,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           step="any"
         />
         <TextInput
-          {...register("customLongitude", {
+          {...register("longitude", {
             min: -180,
             max: 180,
           })}
@@ -132,7 +134,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           step="any"
         />
         <TextInput
-          {...register("customAltitude", {
+          {...register("altitude", {
             min: -1000,
             max: 9000,
           })}
@@ -141,6 +143,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           type="number"
         />
       </div>
+      CUSTOMIZED COORDS: {new String(areCoordinatesCustomized)}
     </>
   );
 };

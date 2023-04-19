@@ -4,53 +4,80 @@ import { useEffect, useRef, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { useClient, useMutation } from "urql";
+import { useMutation } from "urql";
+import { type GetExistingInventaireQuery } from "../../../gql/graphql";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import InventoryFormDate from "./InventoryFormDate";
 import InventoryFormLocation from "./InventoryFormLocation";
 import InventoryFormObserver from "./InventoryFormObserver";
-import { GET_INVENTAIRE, UPSERT_INVENTAIRE } from "./InventoryFormQueries";
+import { UPSERT_INVENTAIRE } from "./InventoryFormQueries";
 import InventoryFormWeather from "./InventoryFormWeather";
 import { type UpsertInventoryInput } from "./inventory-form-types";
 
 type InventoryFormProps = {
-  // New inventory (w/ possible existing inventory id as template)
+  // New inventory (w/ possible existing inventory as template)
   isNewInventory?: boolean;
-  existingInventoryId?: number;
+  existingInventory?: NonNullable<GetExistingInventaireQuery["inventaire"]>;
 };
 
-const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventoryId }) => {
+const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventory }) => {
   const { t } = useTranslation();
 
   const observerEl = useRef<HTMLInputElement>(null);
   useEffect(() => {
     // Focus on observer on page load if new inventory
     if (isNewInventory) {
-      observerEl.current?.focus();
+      // TODO fix case where we click from new and loop
+      // observerEl.current?.focus();
     }
-  }, [isNewInventory]);
+  }, [isNewInventory, observerEl]);
 
   const { userSettings } = useUserSettingsContext();
 
   const defaultFormValues = (
-    isNewInventory && existingInventoryId === undefined // Brand new inventory
+    existingInventory === undefined
       ? {
+          // Brand new inventory
           id: null,
-          observer: userSettings.defaultObservateur,
+          observer: userSettings.defaultObservateur ?? null,
           associateObservers: [],
           date: format(new Date(), "yyyy-MM-dd"),
           time: "",
           duration: "",
           department: userSettings.defaultDepartement,
           town: null,
-          customLatitude: "",
-          customLongitude: "",
-          customAltitude: "",
+          latitude: "",
+          longitude: "",
+          altitude: "",
           temperature: "",
           weathers: [],
         }
-      : {}
-  ) satisfies Partial<UpsertInventoryInput>;
+      : {
+          // Existing inventory
+          id: existingInventory.id,
+          observer: existingInventory.observateur,
+          associateObservers: existingInventory.associes,
+          date: existingInventory.date,
+          time: existingInventory.heure ?? "",
+          duration: existingInventory.duree ?? "",
+          department: existingInventory.lieuDit.commune.departement,
+          town: existingInventory.lieuDit.commune,
+          latitude:
+            existingInventory.customizedCoordinates?.latitude != null
+              ? `${existingInventory.customizedCoordinates.latitude}`
+              : `${existingInventory.lieuDit.latitude}`,
+          longitude:
+            existingInventory.customizedCoordinates?.longitude != null
+              ? `${existingInventory.customizedCoordinates.longitude}`
+              : `${existingInventory.lieuDit.longitude}`,
+          altitude:
+            existingInventory.customizedCoordinates?.altitude != null
+              ? `${existingInventory.customizedCoordinates.altitude}`
+              : `${existingInventory.lieuDit.altitude}`,
+          temperature: `${existingInventory.temperature ?? ""}`,
+          weathers: existingInventory.meteos,
+        }
+  ) satisfies UpsertInventoryInput;
 
   const {
     register,
@@ -58,87 +85,30 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
     formState: { isValid },
     setValue,
     getValues,
-    reset,
     handleSubmit,
   } = useForm<UpsertInventoryInput>({
-    defaultValues: {
-      id: null,
-      observer: null,
-      associateObservers: [],
-      department: null,
-      town: null,
-      weathers: [],
-      ...defaultFormValues,
-    },
+    defaultValues: defaultFormValues,
   });
 
-  const client = useClient();
-
   const [_, upsertInventory] = useMutation(UPSERT_INVENTAIRE);
-
-  // Initialize with existing inventory
-  useEffect(() => {
-    if (existingInventoryId != null) {
-      client
-        .query(GET_INVENTAIRE, { inventoryId: existingInventoryId })
-        .toPromise()
-        .then(({ data, error }) => {
-          if (error || !data?.inventaire) {
-            throw new Error(`An error has occurred while retrieving inventory ID=${existingInventoryId}`);
-          }
-
-          console.log("RESET WITH EXISTING", {
-            inventory: data.inventaire,
-          });
-          // TODO rework this. Maybe put this outside on form and use values instead?
-          reset({
-            id: data.inventaire.id,
-            observer: data.inventaire.observateur,
-            associateObservers: data.inventaire.associes,
-            date: data.inventaire.date,
-            time: data.inventaire.heure,
-            department: data.inventaire.lieuDit.commune.departement,
-            town: data.inventaire.lieuDit.commune,
-            customLatitude:
-              data.inventaire.customizedCoordinates?.latitude != null
-                ? `${data.inventaire.customizedCoordinates.latitude}`
-                : null,
-            customLongitude:
-              data.inventaire.customizedCoordinates?.longitude != null
-                ? `${data.inventaire.customizedCoordinates.longitude}`
-                : null,
-            customAltitude:
-              data.inventaire.customizedCoordinates?.altitude != null
-                ? `${data.inventaire.customizedCoordinates.altitude}`
-                : null,
-            duration: data.inventaire.duree,
-            weathers: data.inventaire.meteos,
-          });
-        })
-        .catch(() => {
-          throw new Error(`An error has occurred while retrieving inventory ID=${existingInventoryId}`);
-        });
-    }
-  }, [existingInventoryId, client]);
 
   const onSubmit: SubmitHandler<UpsertInventoryInput> = (upsertInventoryInput) => {
     console.log(upsertInventoryInput);
   };
 
+  console.log("RENDER INVENTORY FORM", existingInventory?.id ?? "new");
+
   return (
     <>
       <div className="flex justify-between">
-        <div
-          className="tooltip tooltip-bottom"
-          data-tip={existingInventoryId ? `ID ${existingInventoryId}` : undefined}
-        >
+        <div className="tooltip tooltip-bottom" data-tip={existingInventory ? `ID ${existingInventory.id}` : undefined}>
           <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
         </div>
-        {!isNewInventory && existingInventoryId && (
+        {!isNewInventory && existingInventory && (
           <div className="tooltip tooltip-bottom" data-tip={t("inventoryForm.createNewEntryFromInventory")}>
             <Link
               className="btn btn-sm btn-circle btn-ghost"
-              to={`/create/new?${new URLSearchParams({ inventoryId: `${existingInventoryId}` }).toString()}`}
+              to={`/create/new?${new URLSearchParams({ inventoryId: `${existingInventory.id}` }).toString()}`}
             >
               <FilePlus className="text-primary h-6" />
             </Link>
@@ -166,6 +136,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         )}
         <button type="submit">submit</button>
       </form>
+      <br />
       Valid: {JSON.stringify(isValid)}
     </>
   );
