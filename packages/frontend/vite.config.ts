@@ -33,11 +33,13 @@ export default defineConfig(({ mode }) => {
       ...(enableSentry
         ? [
             sentryVitePlugin({
+              include: "./dist",
               url: env.SENTRY_URL,
               injectRelease: false,
-              sourcemaps: {
-                assets: "./dist/**",
-              },
+              // FIXME: Release 0.7.2 triggers 'error: release not found' when replacing with sourcemaps structure
+              // sourcemaps: {
+              //   assets: "./dist/**",
+              // },
               setCommits: {
                 auto: true,
               },
