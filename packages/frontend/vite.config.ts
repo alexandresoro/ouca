@@ -33,9 +33,11 @@ export default defineConfig(({ mode }) => {
       ...(enableSentry
         ? [
             sentryVitePlugin({
-              include: "./dist",
               url: env.SENTRY_URL,
               injectRelease: false,
+              sourcemaps: {
+                assets: "./dist/**",
+              },
               setCommits: {
                 auto: true,
               },
