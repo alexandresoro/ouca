@@ -1,7 +1,7 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Combobox } from "@headlessui/react";
 import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
-import { forwardRef, type ForwardedRef, type Key } from "react";
+import { forwardRef, type ComponentPropsWithRef, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 
@@ -15,6 +15,7 @@ type AutocompleteMultipleProps<T extends object> = {
   autocompleteClassName?: string;
   labelClassName?: string;
   labelTextClassName?: string;
+  inputProps?: Omit<ComponentPropsWithRef<"input">, "value" | "defaultValue">;
 } & (
   | {
       data: (T & { id: Key })[];
@@ -42,6 +43,7 @@ const AutocompleteMultiple = <T extends object,>(
     autocompleteClassName,
     labelClassName,
     labelTextClassName,
+    inputProps,
   } = props;
 
   const { t } = useTranslation();
@@ -118,6 +120,7 @@ const AutocompleteMultiple = <T extends object,>(
             ref={refs.setReference}
           >
             <Combobox.Input
+              {...inputProps}
               className="flex-grow outline-none bg-transparent text-base-content placeholder-shown:text-ellipsis"
               onChange={handleInputChange}
               placeholder={values.map(renderValue).join(", ") ?? ""}

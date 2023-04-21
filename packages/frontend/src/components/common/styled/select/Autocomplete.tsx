@@ -1,7 +1,7 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Combobox } from "@headlessui/react";
 import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
-import { forwardRef, type ForwardedRef, type Key, type Ref } from "react";
+import { forwardRef, type ComponentPropsWithRef, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 
@@ -16,7 +16,7 @@ type AutocompleteProps<T> = {
   labelClassName?: string;
   labelTextClassName?: string;
   decorationKey?: ConditionalKeys<T, Key> & string;
-  inputRef?: Ref<HTMLInputElement>;
+  inputProps?: Omit<ComponentPropsWithRef<"input">, "value" | "defaultValue">;
 } & (
   | {
       data: (T & { id: Key })[] | null | undefined;
@@ -42,7 +42,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     autocompleteClassName,
     labelClassName,
     labelTextClassName,
-    inputRef,
+    inputProps,
   } = props;
 
   const { t } = useTranslation();
@@ -107,7 +107,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
               <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />
             </Combobox.Button>
             <Combobox.Input
-              ref={inputRef}
+              {...inputProps}
               className="flex-grow w-full input input-bordered input-primary text-base-content pr-10"
               displayValue={getDisplayValue}
               onChange={handleInputChange}

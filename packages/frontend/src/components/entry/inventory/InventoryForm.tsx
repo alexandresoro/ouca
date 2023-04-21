@@ -1,6 +1,6 @@
 import { FilePlus } from "@styled-icons/boxicons-solid";
 import { format } from "date-fns";
-import { useEffect, useRef, type FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -22,15 +22,6 @@ type InventoryFormProps = {
 
 const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventory }) => {
   const { t } = useTranslation();
-
-  const observerEl = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    // Focus on observer on page load if new inventory
-    if (isNewInventory) {
-      // TODO fix case where we click from new and loop
-      // observerEl.current?.focus();
-    }
-  }, [isNewInventory, observerEl]);
 
   const { userSettings } = useUserSettingsContext();
 
@@ -120,7 +111,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           <InventoryFormObserver
             control={control}
             areAssociesDisplayed={userSettings.areAssociesDisplayed}
-            observerInputRef={observerEl}
+            autofocusOnObserver={isNewInventory}
           />
         </div>
         <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">

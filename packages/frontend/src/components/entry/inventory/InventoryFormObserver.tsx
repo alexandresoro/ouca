@@ -1,4 +1,4 @@
-import { useState, type FunctionComponent, type Ref } from "react";
+import { useState, type FunctionComponent } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "urql";
@@ -7,13 +7,13 @@ import { AUTOCOMPLETE_OBSERVATEURS_QUERY } from "./InventoryFormQueries";
 import { type UpsertInventoryInput } from "./inventory-form-types";
 
 type InventoryFormObserverProps = Pick<UseFormReturn<UpsertInventoryInput>, "control"> & {
+  autofocusOnObserver?: boolean;
   areAssociesDisplayed?: boolean;
-  observerInputRef?: Ref<HTMLInputElement>;
 };
 
 const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   control,
-  observerInputRef,
+  autofocusOnObserver,
   areAssociesDisplayed,
 }) => {
   const { t } = useTranslation();
@@ -45,7 +45,9 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   return (
     <>
       <FormAutocomplete
-        inputRef={observerInputRef}
+        inputProps={{
+          autoFocus: autofocusOnObserver,
+        }}
         data={dataObservers?.observateurs?.data ?? []}
         name="observer"
         label={t("observer")}
