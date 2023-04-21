@@ -95,7 +95,6 @@ const App: FunctionComponent = () => {
                       <Route index element={<Navigate to="/create/new" replace={true} />}></Route>
                       <Route
                         path="create/new"
-                        index
                         element={
                           <Suspense fallback={<></>}>
                             <NewEntryPage />
@@ -104,7 +103,6 @@ const App: FunctionComponent = () => {
                       ></Route>
                       <Route
                         path="entry/:id"
-                        index
                         element={
                           <Suspense fallback={<></>}>
                             <ExistingEntryPage />
