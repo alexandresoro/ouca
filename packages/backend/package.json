@@ -87,7 +87,7 @@
     "@graphql-codegen/typescript": "3.0.3",
     "@graphql-codegen/typescript-resolvers": "3.2.0",
     "@ou-ca/eslint-config": "*",
-    "@types/node": "18.15.12",
+    "@types/node": "18.15.13",
     "@vitest/coverage-c8": "0.30.1",
     "cpy": "9.0.1",
     "dotenv": "16.0.3",
