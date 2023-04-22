@@ -37,6 +37,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           duration: "",
           department: userSettings.defaultDepartement,
           town: null,
+          locality: null,
           latitude: "",
           longitude: "",
           altitude: "",
@@ -52,7 +53,23 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           time: existingInventory.heure ?? "",
           duration: existingInventory.duree ?? "",
           department: existingInventory.lieuDit.commune.departement,
-          town: existingInventory.lieuDit.commune,
+          town: {
+            // Hacky way to make sure that the objects from defaults and autocomplete are "equal"
+            // so that dirty flag is properly computed
+            __typename: existingInventory.lieuDit.commune.__typename,
+            id: existingInventory.lieuDit.commune.id,
+            code: existingInventory.lieuDit.commune.code,
+            nom: existingInventory.lieuDit.commune.nom,
+          },
+          locality: {
+            __typename: existingInventory.lieuDit.__typename,
+            id: existingInventory.lieuDit.id,
+            nom: existingInventory.lieuDit.nom,
+            latitude: existingInventory.lieuDit.latitude,
+            longitude: existingInventory.lieuDit.longitude,
+            altitude: existingInventory.lieuDit.altitude,
+            coordinatesSystem: existingInventory.lieuDit.coordinatesSystem,
+          },
           latitude:
             existingInventory.customizedCoordinates?.latitude != null
               ? `${existingInventory.customizedCoordinates.latitude}`
@@ -73,9 +90,9 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
   const {
     register,
     control,
-    formState: { isValid },
+    formState: { isValid, isDirty, dirtyFields },
+    getFieldState,
     setValue,
-    getValues,
     handleSubmit,
   } = useForm<UpsertInventoryInput>({
     defaultValues: defaultFormValues,
@@ -87,10 +104,13 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
     console.log(upsertInventoryInput);
   };
 
-  console.log("RENDER INVENTORY FORM", existingInventory?.id ?? "new");
-
   return (
-    <>
+    <div
+      className={`${isValid ? "" : "bg-red-500 bg-opacity-70"} ${
+        isDirty && isValid ? "bg-yellow-500 bg-opacity-70" : ""
+      }`}
+    >
+      DIRTY FIELDS: {JSON.stringify(dirtyFields)}
       <div className="flex justify-between">
         <div className="tooltip tooltip-bottom" data-tip={existingInventory ? `ID ${existingInventory.id}` : undefined}>
           <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
@@ -118,7 +138,12 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           <InventoryFormDate register={register} />
         </div>
         <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
-          <InventoryFormLocation control={control} register={register} getValues={getValues} setValue={setValue} />
+          <InventoryFormLocation
+            control={control}
+            register={register}
+            setValue={setValue}
+            getFieldState={getFieldState}
+          />
         </div>
         {userSettings.isMeteoDisplayed && (
           <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
@@ -128,8 +153,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         <button type="submit">submit</button>
       </form>
       <br />
-      Valid: {JSON.stringify(isValid)}
-    </>
+    </div>
   );
 };
 

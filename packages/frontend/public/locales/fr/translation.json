@@ -111,6 +111,10 @@
     "date": "Date",
     "time": "Heure",
     "duration": "Durée",
+    "locality": "Lieu-dit",
+    "customCoordinatesInformation": "Les coordonnées du lieu-dit sont personnalisées pour cet inventaire.",
+    "altitudeCallOngoing": "Une mise à jour de l'altitude correspondant aux coordonnées actuelles est en cours. L'altitude actuellement affichée peut ne pas être correcte.",
+    "altitudeCallError": "Une erreur est survenue lors de la récupération de l'altitude. L'altitude actuellement affichée peut ne pas être correcte.",
     "temperature": "Température",
     "weathers": "Météos"
   },

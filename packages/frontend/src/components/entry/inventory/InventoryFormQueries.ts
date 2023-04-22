@@ -16,6 +16,7 @@ mutation UpsertInventaire($upsertInventaireId: Int, $data: InputInventaire!) {
       duree
       lieuDit {
         id
+        nom
         commune {
           id
           departement {
@@ -71,6 +72,21 @@ export const AUTOCOMPLETE_TOWNS_QUERY = graphql(`
         id
         code
         nom
+      }
+    }
+  }
+`);
+
+export const AUTOCOMPLETE_LOCALITIES_QUERY = graphql(`
+  query ListLocalitiesAutocomplete($searchParams: SearchParams, $townId: Int, $orderBy: LieuxDitsOrderBy, $sortOrder: SortOrder) {
+    lieuxDits(searchParams: $searchParams, townId: $townId, orderBy: $orderBy, sortOrder: $sortOrder) {
+      data {
+        id
+        nom
+        latitude
+        longitude
+        altitude
+        coordinatesSystem
       }
     }
   }

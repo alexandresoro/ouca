@@ -17,9 +17,11 @@ query GetExistingInventaire($inventoryId: Int!) {
     duree
     lieuDit {
       id
+      nom
       latitude
       longitude
       altitude
+      coordinatesSystem
       commune {
         id
         code
