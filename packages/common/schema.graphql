@@ -655,7 +655,7 @@ type Query {
   ): EstimationsNombrePaginatedResult
   inventaire(id: Int!): Inventaire
   lieuDit(id: Int!): LieuDit
-  lieuxDits(searchParams: SearchParams, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
+  lieuxDits(searchParams: SearchParams, townId: Int, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
   meteo(id: Int!): Meteo
   meteos(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): MeteosPaginatedResult
   milieu(id: Int!): Milieu

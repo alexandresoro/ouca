@@ -56,6 +56,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     orderBy,
     sortOrder,
     q,
+    townId,
     offset,
     limit,
   }: LieuditFindManyInput = {}): Promise<readonly Lieudit[]> => {
@@ -91,13 +92,25 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
         : sql.fragment``
     }
     ${
+      qLike || townId != null
+        ? sql.fragment`
+      WHERE
+    `
+        : sql.fragment``
+    }
+    ${
       qLike
         ? sql.fragment`
-        WHERE
           lieudit.nom ILIKE ${qLike}
-          OR commune.nom ILIKE ${qLike}
-          OR departement.code ILIKE ${qLike}
     `
+        : sql.fragment``
+    }
+    ${qLike && townId != null ? sql.fragment` AND ` : sql.fragment``}
+    ${
+      townId != null
+        ? sql.fragment`
+              lieudit.commune_id = ${townId}
+        `
         : sql.fragment``
     }
     ${isSortByNbDonnees ? sql.fragment`GROUP BY lieudit."id"` : sql.fragment``}
@@ -119,7 +132,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.any(query);
   };
 
-  const getCount = async (q?: string | null): Promise<number> => {
+  const getCount = async (q?: string | null, townId?: number | null): Promise<number> => {
     const qLike = q ? `%${q}%` : null;
     const query = sql.type(countSchema)`
       SELECT 
@@ -131,12 +144,24 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
       LEFT JOIN
         basenaturaliste.departement ON commune.departement_id = departement.id
       ${
+        qLike || townId != null
+          ? sql.fragment`
+        WHERE
+      `
+          : sql.fragment``
+      }
+      ${
         qLike
           ? sql.fragment`
-              WHERE
-                lieudit.nom ILIKE ${qLike}
-                OR commune.nom ILIKE ${qLike}
-                OR departement.code ILIKE ${qLike}
+              lieudit.nom ILIKE ${qLike}
+          `
+          : sql.fragment``
+      }
+      ${qLike && townId != null ? sql.fragment` AND ` : sql.fragment``}
+      ${
+        townId != null
+          ? sql.fragment`
+                lieudit.commune_id = ${townId}
           `
           : sql.fragment``
       }

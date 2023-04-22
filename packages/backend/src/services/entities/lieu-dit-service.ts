@@ -21,6 +21,11 @@ type LieuditServiceDependencies = {
   donneeRepository: DonneeRepository;
 };
 
+type LieuxDitsSearchParams = {
+  q?: string | null;
+  townId?: number | null;
+};
+
 export const buildLieuditService = ({ lieuditRepository, donneeRepository }: LieuditServiceDependencies) => {
   const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Lieudit | null> => {
     validateAuthorization(loggedUser);
@@ -57,11 +62,12 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
   ): Promise<Lieudit[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { searchParams, townId, orderBy: orderByField, sortOrder } = options;
 
     const lieuxDits = await lieuditRepository.findLieuxdits({
       q: searchParams?.q,
       ...getSqlPagination(searchParams),
+      townId,
       orderBy: orderByField,
       sortOrder,
     });
@@ -75,10 +81,13 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     return [...lieuxditsWithCommuneAndDepartementCode];
   };
 
-  const getLieuxDitsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
+  const getLieuxDitsCount = async (
+    loggedUser: LoggedUser | null,
+    { q, townId }: LieuxDitsSearchParams
+  ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return lieuditRepository.getCount(q);
+    return lieuditRepository.getCount(q, townId);
   };
 
   const upsertLieuDit = async (args: MutationUpsertLieuDitArgs, loggedUser: LoggedUser | null): Promise<Lieudit> => {

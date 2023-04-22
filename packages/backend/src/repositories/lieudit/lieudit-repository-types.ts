@@ -28,6 +28,7 @@ export type LieuditWithCommuneAndDepartementCode = z.infer<typeof lieuditWithCom
 
 export type LieuditFindManyInput = Partial<{
   q: string | null;
+  townId?: number | null;
   orderBy:
     | "id"
     | "nom"

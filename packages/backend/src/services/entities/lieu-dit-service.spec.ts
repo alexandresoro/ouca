@@ -173,23 +173,23 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await lieuditService.getLieuxDitsCount(loggedUser);
+    await lieuditService.getLieuxDitsCount(loggedUser, {});
 
     expect(lieuditRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    expect(lieuditRepository.getCount).toHaveBeenLastCalledWith(undefined, undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await lieuditService.getLieuxDitsCount(loggedUser, "test");
+    await lieuditService.getLieuxDitsCount(loggedUser, { q: "test", townId: 12 });
 
     expect(lieuditRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.getCount).toHaveBeenLastCalledWith("test");
+    expect(lieuditRepository.getCount).toHaveBeenLastCalledWith("test", 12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(lieuditService.getLieuxDitsCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(lieuditService.getLieuxDitsCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

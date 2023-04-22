@@ -217,7 +217,7 @@ export const buildResolvers = ({
       ): Promise<Omit<LieuxDitsPaginatedResult, "data"> & { data?: Omit<LieuDit, "commune">[] }> => {
         const [data, count] = await Promise.all([
           lieuditService.findPaginatedLieuxDits(user, args),
-          lieuditService.getLieuxDitsCount(user, args?.searchParams?.q),
+          lieuditService.getLieuxDitsCount(user, { q: args.searchParams?.q, townId: args.townId }),
         ]);
         return {
           data,
