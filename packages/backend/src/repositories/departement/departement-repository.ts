@@ -61,6 +61,11 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     const isSortByNbLieuxDits = orderBy === "nbLieuxDits";
     const isSortByNbCommunes = orderBy === "nbCommunes";
     const codeLike = q ? `%${q}%` : null;
+    // If no explicit order is requested and a query is provided, return the matches in the following order:
+    // The ones for which code starts with query
+    // Then the ones which code contains the query
+    // Then two groups are finally sorted alphabetically
+    const matchStartCode = q ? `^${q}` : null;
     const query = sql.type(departementSchema)`
     SELECT 
       departement.*
@@ -100,6 +105,11 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     ${isSortByNbDonnees ? sql.fragment`ORDER BY COUNT(donnee."id")` : sql.fragment``}
     ${isSortByNbLieuxDits ? sql.fragment`ORDER BY COUNT(lieudit."id")` : sql.fragment``}
     ${isSortByNbCommunes ? sql.fragment`ORDER BY COUNT(commune."id")` : sql.fragment``}
+    ${
+      !orderBy && q
+        ? sql.fragment`ORDER BY (departement.code ~* ${matchStartCode}) DESC, departement.code ASC`
+        : sql.fragment``
+    }
     ${
       !isSortByNbDonnees && !isSortByNbLieuxDits && !isSortByNbCommunes && orderBy
         ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}`

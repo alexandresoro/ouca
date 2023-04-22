@@ -65,6 +65,11 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     const isSortByNomCommune = orderBy === "nomCommune";
     const isSortByDepartement = orderBy === "departement";
     const qLike = q ? `%${q}%` : null;
+    // If no explicit order is requested and a query is provided, return the matches in the following order:
+    // The ones for which nom starts with query
+    // Then the ones which nom contains the query
+    // Then two groups are nom sorted alphabetically
+    const matchStartNom = q ? `^${q}` : null;
     const query = sql.type(lieuditSchema)`
     SELECT 
       lieudit.*
@@ -118,6 +123,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     ${isSortByCodeCommune ? sql.fragment`ORDER BY commune."code"` : sql.fragment``}
     ${isSortByNomCommune ? sql.fragment`ORDER BY commune."nom"` : sql.fragment``}
     ${isSortByDepartement ? sql.fragment`ORDER BY departement."code"` : sql.fragment``}
+    ${!orderBy && q ? sql.fragment`ORDER BY (lieudit.nom ~* ${matchStartNom}) DESC, lieudit.nom ASC` : sql.fragment``}
     ${
       !isSortByNbDonnees && !isSortByCodeCommune && !isSortByNomCommune && !isSortByDepartement && orderBy
         ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}`

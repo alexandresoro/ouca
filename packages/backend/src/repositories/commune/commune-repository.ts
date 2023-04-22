@@ -67,6 +67,13 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     const isSortByDepartement = orderBy === "departement";
     const nomOrDepartementLike = q ? `%${q}%` : null;
     const nomOrDepartementStarts = q ? `${q}%` : null;
+    // If no explicit order is requested and a query is provided, return the matches in the following order:
+    // The ones for which code matches with query
+    // The ones for which code starts with query
+    // The ones for which nom starts with query
+    // Then the ones which nom contains the query
+    // Then two groups are finally sorted alphabetically
+    const matchStartNom = q ? `^${q}` : null;
     const query = sql.type(communeSchema)`
     SELECT 
       commune.*
@@ -118,7 +125,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       !isSortByNbDonnees && !isSortByNbLieuxDits && !isSortByDepartement && orderBy
         ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}`
         : q
-        ? sql.fragment`ORDER BY CAST(commune.code as VARCHAR) = ${q} DESC, CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts} DESC` // If no order provided, return in priority the towns that match by code if q provided
+        ? sql.fragment`ORDER BY CAST(commune.code as VARCHAR) = ${q} DESC, CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts} DESC, (commune.nom ~* ${matchStartNom}) DESC, commune.nom ASC` // If no order provided, return in priority the towns that match by code if q provided
         : sql.fragment``
     }${buildSortOrderFragment({
       orderBy,

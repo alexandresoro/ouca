@@ -77,6 +77,11 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
   }: ObservateurFindManyInput = {}): Promise<readonly Observateur[]> => {
     const isSortByNbDonnees = orderBy === "nbDonnees";
     const libelleLike = q ? `%${q}%` : null;
+    // If no explicit order is requested and a query is provided, return the matches in the following order:
+    // The ones for which libelle starts with query
+    // Then the ones which libelle contains the query
+    // Then two groups are finally sorted alphabetically
+    const matchStartLibelle = q ? `^${q}` : null;
     const query = sql.type(observateurSchema)`
     SELECT 
       observateur.*
@@ -98,6 +103,11 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
     }
     ${isSortByNbDonnees ? sql.fragment`GROUP BY observateur."id"` : sql.fragment``}
     ${isSortByNbDonnees ? sql.fragment`ORDER BY COUNT(donnee."id")` : sql.fragment``}
+    ${
+      !orderBy && q
+        ? sql.fragment`ORDER BY (observateur.libelle ~* ${matchStartLibelle}) DESC, observateur.libelle ASC`
+        : sql.fragment``
+    }
     ${
       !isSortByNbDonnees && orderBy ? sql.fragment`ORDER BY ${sql.identifier([orderBy])}` : sql.fragment``
     }${buildSortOrderFragment({
