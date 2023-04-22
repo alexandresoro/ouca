@@ -72,8 +72,8 @@
     "urql": "4.0.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "3.3.0",
-    "@graphql-codegen/client-preset": "3.0.0",
+    "@graphql-codegen/cli": "3.3.1",
+    "@graphql-codegen/client-preset": "3.0.1",
     "@headlessui/tailwindcss": "0.1.3",
     "@ou-ca/eslint-config": "*",
     "@sentry/vite-plugin": "0.7.2",
