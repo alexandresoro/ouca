@@ -44,7 +44,6 @@ const InventoryFormWeather: FunctionComponent<InventoryFormLocationProps> = ({ c
         onInputChange={setWeathersInput}
         renderValue={({ libelle }) => libelle}
         autocompleteClassName="flex-grow"
-        labelClassName="py-1"
         labelTextClassName="first-letter:capitalize"
       />
     </div>

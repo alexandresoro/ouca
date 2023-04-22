@@ -112,7 +112,7 @@ const AutocompleteMultiple = <T extends object,>(
     >
       {({ value }) => (
         <>
-          <div className={`label ${labelClassName ?? ""}`}>
+          <div className={`label py-1 ${labelClassName ?? ""}`}>
             <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>{label}</Combobox.Label>
           </div>
           <div

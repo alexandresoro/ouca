@@ -94,7 +94,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     >
       {({ value }) => (
         <>
-          <div className={`label ${labelClassName ?? ""}`}>
+          <div className={`label py-1 ${labelClassName ?? ""}`}>
             <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>{label}</Combobox.Label>
           </div>
           <div className={`w-full relative ${decorationKey ? "input-group" : ""}`} ref={refs.setReference}>
