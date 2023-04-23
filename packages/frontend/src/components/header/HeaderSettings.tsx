@@ -122,15 +122,19 @@ const HeaderSettings: FunctionComponent = () => {
         {getMenuOptions(features).map(({ Icon, localizationKey, to }) => {
           const CurrentMenuItem = (
             <Menu.Item key={to}>
-              <Link
-                to={to}
-                className="flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ui-active:bg-opacity-10 ui-active:bg-base-content"
-              >
-                <>
-                  <Icon className="h-5" />
-                  {t(localizationKey)}
-                </>
-              </Link>
+              {({ active }) => (
+                <Link
+                  to={to}
+                  className={`flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ${
+                    active ? "bg-opacity-10 bg-base-content" : ""
+                  }`}
+                >
+                  <>
+                    <Icon className="h-5" />
+                    {t(localizationKey)}
+                  </>
+                </Link>
+              )}
             </Menu.Item>
           );
 
@@ -142,13 +146,17 @@ const HeaderSettings: FunctionComponent = () => {
         })}
         <hr className="w-full border-t-[1px]" />
         <Menu.Item key="/logout">
-          <button
-            className="flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ui-active:bg-opacity-10 ui-active:bg-base-content"
-            onClick={handleLogoutAction}
-          >
-            <LogOut className="h-5" />
-            {t("logout")}
-          </button>
+          {({ active }) => (
+            <button
+              className={`flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ${
+                active ? "bg-opacity-10 bg-base-content" : ""
+              }`}
+              onClick={handleLogoutAction}
+            >
+              <LogOut className="h-5" />
+              {t("logout")}
+            </button>
+          )}
         </Menu.Item>
       </Menu.Items>
     </Menu>

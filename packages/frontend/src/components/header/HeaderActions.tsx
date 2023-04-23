@@ -147,9 +147,13 @@ const HeaderActions: FunctionComponent = () => {
           ref={floatingManage.refs.setReference}
           className="btn btn-sm btn-ghost text-neutral-100 font-normal normal-case"
         >
-          <ListUl className="h-5 mr-1.5" />
-          <span className="hidden lg:inline">{t("databaseManagementButton")}</span>
-          <ChevronDown className="h-6 ui-open:rotate-180" />
+          {({ open }) => (
+            <>
+              <ListUl className="h-5 mr-1.5" />
+              <span className="hidden lg:inline">{t("databaseManagementButton")}</span>
+              <ChevronDown className={`h-6 ${open ? "rotate-180" : ""}`} />
+            </>
+          )}
         </Menu.Button>
 
         <Menu.Items
@@ -164,15 +168,19 @@ const HeaderActions: FunctionComponent = () => {
           {entries.map(({ Icon, localizationKey, to }) => {
             const CurrentMenuItem = (
               <Menu.Item key={to}>
-                <Link
-                  className="flex items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ui-active:bg-opacity-10 ui-active:bg-base-content"
-                  to={to}
-                >
-                  <>
-                    <Icon className="h-5" />
-                    {t(localizationKey)}
-                  </>
-                </Link>
+                {({ active }) => (
+                  <Link
+                    className={`flex items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ${
+                      active ? "bg-opacity-10 bg-base-content" : ""
+                    }`}
+                    to={to}
+                  >
+                    <>
+                      <Icon className="h-5" />
+                      {t(localizationKey)}
+                    </>
+                  </Link>
+                )}
               </Menu.Item>
             );
 
