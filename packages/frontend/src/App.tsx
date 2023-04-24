@@ -1,10 +1,10 @@
 import { refocusExchange } from "@urql/exchange-refocus";
 import { Suspense, lazy, useEffect, useMemo, useState, type FunctionComponent } from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { Provider as UrqlProvider, cacheExchange, createClient, fetchExchange } from "urql";
 import { AppContext, DEFAULT_CONFIG } from "./contexts/AppContext";
 import { UserProvider } from "./contexts/UserContext";
+import loadAnalytics from "./services/load-analytics";
 import { initApp } from "./utils/init-app";
 import suspend from "./utils/suspend";
 
@@ -44,6 +44,10 @@ const App: FunctionComponent = () => {
     });
   }, [config]);
 
+  useEffect(() => {
+    loadAnalytics(config.umami);
+  }, [config]);
+
   const urqlClient = useMemo(
     () =>
       createClient({
@@ -63,188 +67,182 @@ const App: FunctionComponent = () => {
     <AppContext.Provider value={appContext}>
       <UrqlProvider value={urqlClient}>
         <BrowserRouter>
-          <HelmetProvider>
-            <Helmet>
-              {/* Umami analytics */}
-              {config.umami && <script async defer data-website-id={config.umami.id} src={config.umami.url}></script>}
-            </Helmet>
-            <UserProvider>
-              <div className="bg-base-100">
-                <Suspense fallback="">
-                  <RouterRoutes>
+          <UserProvider>
+            <div className="bg-base-100">
+              <Suspense fallback="">
+                <RouterRoutes>
+                  <Route
+                    path="/login"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <LoginPage />
+                      </Suspense>
+                    }
+                  ></Route>
+                  <Route
+                    path="/"
+                    element={
+                      <Suspense fallback={<></>}>
+                        <RequireAuth>
+                          <UserSettingsProvider>
+                            <Layout />
+                          </UserSettingsProvider>
+                        </RequireAuth>
+                      </Suspense>
+                    }
+                  >
+                    <Route index element={<Navigate to="/create/new" replace={true} />}></Route>
                     <Route
-                      path="/login"
+                      path="create/new"
                       element={
                         <Suspense fallback={<></>}>
-                          <LoginPage />
+                          <NewEntryPage />
                         </Suspense>
                       }
                     ></Route>
                     <Route
-                      path="/"
+                      path="entry/:id"
                       element={
                         <Suspense fallback={<></>}>
-                          <RequireAuth>
-                            <UserSettingsProvider>
-                              <Layout />
-                            </UserSettingsProvider>
-                          </RequireAuth>
+                          <ExistingEntryPage />
                         </Suspense>
                       }
-                    >
-                      <Route index element={<Navigate to="/create/new" replace={true} />}></Route>
+                    ></Route>
+                    <Route
+                      path="view"
+                      element={
+                        <Suspense fallback={<></>}>
+                          <ViewDonneesPage />
+                        </Suspense>
+                      }
+                    ></Route>
+                    <Route path="manage" element={<Outlet />}>
                       <Route
-                        path="create/new"
+                        path="observateur/*"
                         element={
                           <Suspense fallback={<></>}>
-                            <NewEntryPage />
+                            <ObservateurManage />
                           </Suspense>
                         }
                       ></Route>
                       <Route
-                        path="entry/:id"
+                        path="departement/*"
                         element={
                           <Suspense fallback={<></>}>
-                            <ExistingEntryPage />
+                            <DepartementManage />
                           </Suspense>
                         }
                       ></Route>
                       <Route
-                        path="view"
+                        path="commune/*"
                         element={
                           <Suspense fallback={<></>}>
-                            <ViewDonneesPage />
-                          </Suspense>
-                        }
-                      ></Route>
-                      <Route path="manage" element={<Outlet />}>
-                        <Route
-                          path="observateur/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <ObservateurManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="departement/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <DepartementManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="commune/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <CommuneManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="lieudit/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <LieuDitManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="meteo/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <MeteoManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="classe/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <ClasseManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="espece/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <EspeceManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="sexe/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <SexeManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="age/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <AgeManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="estimation-nombre/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <EstimationNombreManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="estimation-distance/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <EstimationDistanceManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="comportement/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <ComportementManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                        <Route
-                          path="milieu/*"
-                          element={
-                            <Suspense fallback={<></>}>
-                              <MilieuManage />
-                            </Suspense>
-                          }
-                        ></Route>
-                      </Route>
-                      <Route
-                        path="profile"
-                        element={
-                          <Suspense fallback={<></>}>
-                            <UserProfilePage />
+                            <CommuneManage />
                           </Suspense>
                         }
                       ></Route>
                       <Route
-                        path="settings"
+                        path="lieudit/*"
                         element={
                           <Suspense fallback={<></>}>
-                            <SettingsPage />
+                            <LieuDitManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="meteo/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <MeteoManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="classe/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <ClasseManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="espece/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <EspeceManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="sexe/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <SexeManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="age/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <AgeManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="estimation-nombre/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <EstimationNombreManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="estimation-distance/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <EstimationDistanceManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="comportement/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <ComportementManage />
+                          </Suspense>
+                        }
+                      ></Route>
+                      <Route
+                        path="milieu/*"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <MilieuManage />
                           </Suspense>
                         }
                       ></Route>
                     </Route>
-                  </RouterRoutes>
-                </Suspense>
-              </div>
-            </UserProvider>
-          </HelmetProvider>
+                    <Route
+                      path="profile"
+                      element={
+                        <Suspense fallback={<></>}>
+                          <UserProfilePage />
+                        </Suspense>
+                      }
+                    ></Route>
+                    <Route
+                      path="settings"
+                      element={
+                        <Suspense fallback={<></>}>
+                          <SettingsPage />
+                        </Suspense>
+                      }
+                    ></Route>
+                  </Route>
+                </RouterRoutes>
+              </Suspense>
+            </div>
+          </UserProvider>
         </BrowserRouter>
       </UrqlProvider>
     </AppContext.Provider>
