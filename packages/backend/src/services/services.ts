@@ -1,5 +1,7 @@
+import { Redis } from "ioredis";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
+import config from "../config.js";
 import { buildAgeRepository } from "../repositories/age/age-repository.js";
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
@@ -48,6 +50,7 @@ import { buildUserService, type UserService } from "./user-service.js";
 export type Services = {
   logger: Logger;
   slonik: DatabasePool;
+  redis: Redis;
   ageService: AgeService;
   classeService: ClasseService;
   communeService: CommuneService;
@@ -71,6 +74,9 @@ export type Services = {
 export const buildServices = async (): Promise<Services> => {
   // Database connection
   const slonik = await getSlonikInstance({ logger: logger.child({ module: "slonik" }) });
+
+  // Redis instance
+  const redis = new Redis(config.redis.url);
 
   logger.debug("Connection to database successful");
 
@@ -217,6 +223,7 @@ export const buildServices = async (): Promise<Services> => {
   return {
     logger,
     slonik,
+    redis,
     ageService,
     classeService,
     communeService,

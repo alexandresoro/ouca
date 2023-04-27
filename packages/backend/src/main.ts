@@ -32,7 +32,7 @@ checkAndCreateFolders();
   process.on("SIGINT", shutdown(server, services));
   process.on("SIGTERM", shutdown(server, services));
 
-  registerFastifyRoutes(server, services);
+  await registerFastifyRoutes(server, services);
 
   await server.listen({ ...config.server });
 })().catch((e) => {

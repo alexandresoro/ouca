@@ -9,6 +9,7 @@ const envSchema = z.object({
   OUCA_SERVER_HOST: z.string().default("localhost"),
   OUCA_SERVER_PORT: z.coerce.number().min(1).max(65535).multipleOf(1).default(4000),
   DATABASE_URL: z.string().default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste"),
+  REDIS_URL: z.string().default("redis://localhost:6379/0"),
   OUCA_DATABASE_RUN_MIGRATIONS: z.string().default("true").transform(zodStringToBoolean),
   OUCA_DATABASE_MIGRATION_SCHEMA: z.string().default("public"),
   OUCA_DATABASE_MIGRATION_TABLE: z.string().default("base_naturaliste_umzug_migrations"),
@@ -19,6 +20,10 @@ const envSchema = z.object({
   OUCA_JWT_SIGNING_KEY: z.string().optional(),
   OUCA_JWT_COOKIE_SAME_SITE: z.string().default("true").transform(zodStringToBoolean),
   OUCA_JWT_COOKIE_SECURE: z.string().default("true").transform(zodStringToBoolean),
+  OIDC_ISSUER: z.string(),
+  OIDC_INTROSPECTION_PATH: z.string().default("/oauth/v2/introspect"),
+  OIDC_CLIENT_ID: z.string(),
+  OIDC_CLIENT_SECRET: z.string(),
   SENTRY_DSN: z.string().optional(),
   NODE_ENV: z.string().optional(),
 });
@@ -50,6 +55,9 @@ export default {
       migrationsPath: env.OUCA_DATABASE_MIGRATIONS_PATH,
     },
   },
+  redis: {
+    url: env.REDIS_URL,
+  },
   admin: {
     signupsAllowed: env.OUCA_SIGNUPS_ALLOWED,
     defaultAdminPassword: env.OUCA_DEFAULT_ADMIN_PASSWORD,
@@ -63,6 +71,12 @@ export default {
       sameSite: env.OUCA_JWT_COOKIE_SAME_SITE,
       secure: env.OUCA_JWT_COOKIE_SECURE,
     },
+  },
+  oidc: {
+    issuer: env.OIDC_ISSUER,
+    introspectionPath: env.OIDC_INTROSPECTION_PATH,
+    clientId: env.OIDC_CLIENT_ID,
+    clientSecret: env.OIDC_CLIENT_SECRET,
   },
   sentry: {
     dsn: env.SENTRY_DSN,

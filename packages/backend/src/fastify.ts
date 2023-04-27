@@ -19,6 +19,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
+import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
+
+const API_V1_PREFIX = "/api/v1";
 
 export const buildServer = async (services: Services): Promise<FastifyInstance> => {
   // Server
@@ -65,8 +68,10 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
   return server;
 };
 
-export const registerFastifyRoutes = (server: FastifyInstance, services: Services): void => {
+export const registerFastifyRoutes = async (server: FastifyInstance, services: Services): Promise<void> => {
   const { tokenService } = services;
+
+  await server.register(apiRoutesPlugin, { services, prefix: API_V1_PREFIX });
 
   // Download files
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>("/download/:id", async (req, reply) => {
