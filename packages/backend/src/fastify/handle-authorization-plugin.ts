@@ -87,8 +87,13 @@ const handleAuthorizationPlugin: FastifyPluginCallback<{ services: Services }> =
     }
 
     const matchingLoggedUserResult = await zitadelOidcService.getMatchingLoggedUser(introspectionResult);
-    if (matchingLoggedUserResult.outcome === "internalUserNotFound") {
-      return await reply.status(404).send("Application user not found");
+    if (matchingLoggedUserResult.outcome === "notLogged") {
+      switch (matchingLoggedUserResult.reason) {
+        case "internalUserNotFound":
+          return await reply.status(404).send("Application user not found");
+        case "userHasNoRole":
+          return await reply.status(403).send("User has no role");
+      }
     }
 
     request.user = matchingLoggedUserResult.user;

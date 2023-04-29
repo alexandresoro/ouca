@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type UserWithPasswordResult } from "../../repositories/user/user-repository-types.js";
+import { userRoles, type LoggedUser } from "../../types/User.js";
 import introspectAccessTokenCommon from "./introspect-access-token.js";
 import { type OidcWithInternalUserMappingService } from "./oidc-with-internal-user-mapping.js";
 
@@ -14,7 +14,10 @@ export const introspectionUser = z.object({
   given_name: z.string().optional(),
   family_name: z.string().optional(),
   name: z.string().optional(),
-  "urn:zitadel:iam:org:project:roles": z.object({}),
+  "urn:zitadel:iam:org:project:roles": z
+    .record(z.enum(userRoles), z.any())
+    .optional()
+    .transform((rolesMap) => (rolesMap ? Object.keys(rolesMap) : undefined)),
 });
 
 export type ZitadelIntrospectionUser = z.infer<typeof introspectionUser>;
@@ -38,11 +41,12 @@ export type ZitadelOidcServiceDependencies = {
 
 type GetMatchingLoggedUserResult =
   | {
-      outcome: "internalUserNotFound";
+      outcome: "notLogged";
+      reason: "internalUserNotFound" | "userHasNoRole";
     }
   | {
       outcome: "success";
-      user: UserWithPasswordResult;
+      user: LoggedUser;
     };
 
 export const buildZitadelOidcService = ({ oidcWithInternalUserMappingService }: ZitadelOidcServiceDependencies) => {
@@ -60,16 +64,29 @@ export const buildZitadelOidcService = ({ oidcWithInternalUserMappingService }: 
 
     if (internalUserResult.outcome === "internalUserNotFound") {
       return {
-        outcome: "internalUserNotFound",
+        outcome: "notLogged",
+        reason: "internalUserNotFound",
       };
     }
 
     const internalUserInfo = internalUserResult.user;
 
+    const roleFromToken = userRoles.find((existingRole) =>
+      introspectionUser?.["urn:zitadel:iam:org:project:roles"]?.includes(existingRole)
+    );
+
+    if (!roleFromToken) {
+      return {
+        outcome: "notLogged",
+        reason: "userHasNoRole",
+      };
+    }
+
     return {
       outcome: "success",
       user: {
-        ...internalUserInfo,
+        id: internalUserInfo.id,
+        role: roleFromToken,
       },
     };
   };
