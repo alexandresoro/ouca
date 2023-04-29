@@ -21,7 +21,6 @@ import {
 import { getImportStatus } from "../services/import-manager.js";
 import { type Services } from "../services/services.js";
 import { type User } from "../types/User.js";
-import { logger } from "../utils/logger.js";
 import {
   type Age,
   type AgeWithSpecimensCount,
@@ -55,7 +54,6 @@ import {
   type SexeWithSpecimensCount,
   type SexesPaginatedResult,
   type UpsertInventaireFailureReason,
-  type UserInfo,
 } from "./generated/graphql-types.js";
 import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper.js";
 
@@ -81,7 +79,6 @@ export const buildResolvers = ({
   observateurService,
   sexeService,
   settingsService,
-  tokenService,
   userService,
 }: Services): IResolvers => {
   return {
@@ -502,61 +499,11 @@ export const buildResolvers = ({
       userSignup: async (_source, args, { user }): Promise<User> => {
         return userService.createUser(args.signupData, "admin", user);
       },
-      userLogin: async (_source, args, { reply }): Promise<User> => {
-        const userInfo = await userService.loginUser(args.loginData);
-
-        if (userInfo) {
-          await tokenService.createAndAddSignedTokenAsCookie(reply, userInfo);
-
-          logger.debug(`User ${userInfo?.username} logged in`);
-
-          return userInfo;
-        }
-
-        throw new mercurius.default.ErrorWithProps("Authentication failed");
-      },
-      userRefresh: async (_source, args, { user, reply }): Promise<UserInfo | null> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-
-        const userInfo = await userService.getUser(user.id);
-        if (userInfo) {
-          await tokenService.createAndAddSignedTokenAsCookie(reply, userInfo);
-          return userInfo;
-        }
-
-        return null;
-      },
-      userLogout: async (_source, args, { user, reply }): Promise<boolean> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        await tokenService.deleteTokenCookie(reply);
-
-        logger.debug(`User ${user.name} ( ID ${user.id} )logged out`);
-
-        return true;
-      },
-      userEdit: async (_source, args, { user, reply }): Promise<User> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-
-        try {
-          const updatedUser = await userService.updateUser(args.id, args.editUserData, user);
-
-          if (updatedUser?.id === user?.id) {
-            await tokenService.createAndAddSignedTokenAsCookie(reply, updatedUser);
-          }
-          return updatedUser;
-        } catch (e) {
-          throw new mercurius.default.ErrorWithProps("User modification is only allowed from the user itself");
-        }
-      },
-      userDelete: async (_source, args, { user, reply }): Promise<boolean> => {
+      userDelete: async (_source, args, { user }): Promise<boolean> => {
         if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
 
         try {
           const isUserDeleted = await userService.deleteUser(args.id, user);
-
-          if (args?.id === user?.id && isUserDeleted) {
-            await tokenService.deleteTokenCookie(reply);
-          }
 
           return isUserDeleted;
         } catch (e) {

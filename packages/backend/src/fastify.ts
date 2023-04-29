@@ -6,7 +6,6 @@ import { type Services } from "./services/services.js";
 import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths.js";
 /* eslint-disable import/no-named-as-default */
 import fastifyCompress from "@fastify/compress";
-import fastifyCookie from "@fastify/cookie";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
@@ -20,10 +19,14 @@ import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
+import handleAuthorizationPlugin from "./fastify/handle-authorization-plugin.js";
 
 const API_V1_PREFIX = "/api/v1";
 
 export const buildServer = async (services: Services): Promise<FastifyInstance> => {
+  const { logger: loggerParent } = services;
+  const logger = loggerParent.child({ module: "fastify" });
+
   // Server
   const server = fastify.default({
     logger: services.logger,
@@ -31,7 +34,6 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
 
   // Middlewares
   await server.register(fastifyMultipart);
-  await server.register(fastifyCookie);
   await server.register(fastifyCompress);
   await server.register(fastifyCors, {
     origin: true,
@@ -39,7 +41,7 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
     maxAge: 3600,
   });
 
-  services.logger.debug("Fastify middlewares successfully registered");
+  logger.debug("Fastify middlewares successfully registered");
 
   // Static files server
   await server.register(fastifyStatic, {
@@ -47,60 +49,50 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
     prefix: DOWNLOAD_ENDPOINT,
   });
 
-  services.logger.debug("Fastify static server successfully registered");
+  logger.debug("Fastify static server successfully registered");
+
+  // Authentication
+  await server.register(handleAuthorizationPlugin, { services });
 
   // Mercurius GraphQL adapter
 
   // Parse GraphQL schema
   const graphQLSchema = fs.readFileSync(new URL("./schema.graphql", import.meta.url), "utf-8").toString();
-  services.logger.debug("GraphQL schema has been parsed");
+  logger.debug("GraphQL schema has been parsed");
 
   await server.register(mercurius.default, {
     schema: graphQLSchema,
     resolvers: buildResolvers(services),
-    context: buildGraphQLContext({ tokenService: services.tokenService }),
+    context: buildGraphQLContext(),
     validationRules: process.env.NODE_ENV === "production" ? [NoSchemaIntrospectionCustomRule] : [],
   });
   server.graphql.addHook("preExecution", logQueries);
   server.graphql.addHook("onResolution", logResults);
-  services.logger.debug("Mercurius GraphQL adapter successfully registered");
+  logger.debug("Mercurius GraphQL adapter successfully registered");
+
+  await registerFastifyRoutes(server, services);
+  logger.debug("Fastify routes added");
 
   return server;
 };
 
-export const registerFastifyRoutes = async (server: FastifyInstance, services: Services): Promise<void> => {
-  const { tokenService } = services;
-
+const registerFastifyRoutes = async (server: FastifyInstance, services: Services): Promise<void> => {
   await server.register(apiRoutesPlugin, { services, prefix: API_V1_PREFIX });
 
   // Download files
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>("/download/:id", async (req, reply) => {
-    const tokenPayload = await tokenService.validateAndExtractUserToken(req);
-    if (!tokenPayload?.sub) {
-      return reply.code(401).send();
-    }
     return reply.download(req.params.id, req.query.filename ?? undefined);
   });
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>(
     "/download/importReports/:id",
     async (req, reply) => {
-      const tokenPayload = await tokenService.validateAndExtractUserToken(req);
-      if (!tokenPayload?.sub) {
-        return reply.code(401).send();
-      }
-
       return reply.download(req.params.id, req.query.filename ?? undefined);
     }
   );
 
   // Upload import path
   server.post<{ Params: { entityName: string } }>("/uploads/:entityName", async (req, reply) => {
-    const tokenPayload = await tokenService.validateAndExtractUserToken(req);
-    if (!tokenPayload) {
-      return reply.code(401).send();
-    }
-    const loggedUser = tokenService.getLoggedUserInfo(tokenPayload);
-    if (!loggedUser) {
+    if (!req.user) {
       return reply.code(401).send();
     }
 
@@ -124,7 +116,7 @@ export const registerFastifyRoutes = async (server: FastifyInstance, services: S
 
     await promisify(pipeline)(data.file, fs.createWriteStream(path.join(IMPORTS_DIR_PATH.pathname, uploadId)));
 
-    startImportTask(uploadId, params.entityName as ImportType, loggedUser);
+    startImportTask(uploadId, params.entityName as ImportType, req.user);
 
     await reply.send(
       JSON.stringify({
@@ -132,6 +124,4 @@ export const registerFastifyRoutes = async (server: FastifyInstance, services: S
       })
     );
   });
-
-  services.logger.debug("Fastify routes added");
 };

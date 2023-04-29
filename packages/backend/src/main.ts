@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/node";
 import config from "./config.js";
-import { buildServer, registerFastifyRoutes } from "./fastify.js";
+import { buildServer } from "./fastify.js";
 import { buildServices } from "./services/services.js";
 import shutdown from "./shutdown.js";
 import { runDatabaseMigrations } from "./umzug.js";
@@ -31,8 +31,6 @@ checkAndCreateFolders();
 
   process.on("SIGINT", shutdown(server, services));
   process.on("SIGTERM", shutdown(server, services));
-
-  await registerFastifyRoutes(server, services);
 
   await server.listen({ ...config.server });
 })().catch((e) => {

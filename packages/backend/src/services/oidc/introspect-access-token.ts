@@ -1,17 +1,14 @@
-import { z } from "zod";
+import { type z } from "zod";
 import config from "../../config.js";
-
-const introspectionResultSchema = z.object({
-  active: z.boolean(),
-});
-
-export type IntrospectionResult = z.infer<typeof introspectionResultSchema>;
 
 /**
  * Calls the OIDC introspection endpoint and returns the response of the introspection
  * @param accessToken the access token to introspect
  */
-const introspectAccessToken = async (accessToken: string): Promise<IntrospectionResult> => {
+const introspectAccessToken = async <T extends z.ZodType<Output>, Output>(
+  accessToken: string,
+  introspectionResultSchema: T
+): Promise<z.infer<typeof introspectionResultSchema>> => {
   const basicAuthHeader = Buffer.from(`${config.oidc.clientId}:${config.oidc.clientSecret}`).toString("base64");
 
   const response = await fetch(`${config.oidc.issuer}${config.oidc.introspectionPath}`, {
@@ -26,7 +23,6 @@ const introspectAccessToken = async (accessToken: string): Promise<Introspection
   });
   const responseBody = await response.json();
 
-  // TODO should we really use zod for that, as we need to list everything we need
   const parsedResponse = introspectionResultSchema.parse(responseBody);
 
   return parsedResponse;

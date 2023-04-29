@@ -43,8 +43,9 @@ import { buildMeteoService, type MeteoService } from "./entities/meteo-service.j
 import { buildMilieuService, type MilieuService } from "./entities/milieu-service.js";
 import { buildObservateurService, type ObservateurService } from "./entities/observateur-service.js";
 import { buildSexeService, type SexeService } from "./entities/sexe-service.js";
+import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
+import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
 import { buildSettingsService, type SettingsService } from "./settings-service.js";
-import { buildTokenService, type TokenService } from "./token-service.js";
 import { buildUserService, type UserService } from "./user-service.js";
 
 export type Services = {
@@ -67,8 +68,8 @@ export type Services = {
   observateurService: ObservateurService;
   sexeService: SexeService;
   settingsService: SettingsService;
-  tokenService: TokenService;
   userService: UserService;
+  zitadelOidcService: ZitadelOidcService;
 };
 
 export const buildServices = async (): Promise<Services> => {
@@ -101,6 +102,11 @@ export const buildServices = async (): Promise<Services> => {
   const settingsRepository = buildSettingsRepository({ slonik });
   const sexeRepository = buildSexeRepository({ slonik });
   const userRepository = buildUserRepository({ slonik });
+
+  const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ logger, redis, userRepository });
+  const zitadelOidcService = buildZitadelOidcService({
+    oidcWithInternalUserMappingService,
+  });
 
   const ageService = buildAgeService({
     logger,
@@ -214,10 +220,6 @@ export const buildServices = async (): Promise<Services> => {
     settingsRepository,
   });
 
-  const tokenService = buildTokenService({
-    userService,
-  });
-
   logger.debug("Services initialized successfully");
 
   return {
@@ -240,7 +242,7 @@ export const buildServices = async (): Promise<Services> => {
     observateurService,
     sexeService,
     settingsService,
-    tokenService,
     userService,
+    zitadelOidcService,
   };
 };

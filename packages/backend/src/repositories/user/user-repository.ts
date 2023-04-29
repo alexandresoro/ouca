@@ -1,6 +1,6 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { z } from "zod";
-import { type DatabaseRole } from "../../types/User.js";
+import { type UserRole } from "../../types/User.js";
 import { objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers.js";
 import { userWithPasswordSchema, type UserWithPasswordResult } from "./user-repository-types.js";
 
@@ -35,6 +35,23 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
     return slonik.maybeOne(query);
   };
 
+  const findUserByExternalId = async (
+    externalProviderName: string,
+    externalProviderId: string
+  ): Promise<UserWithPasswordResult | null> => {
+    const query = sql.type(userWithPasswordSchema)`
+      SELECT 
+        *
+      FROM
+        basenaturaliste.user
+      WHERE
+        ext_provider_name = ${externalProviderName}
+        AND ext_provider_id = ${externalProviderId}
+    `;
+
+    return slonik.maybeOne(query);
+  };
+
   const getAdminsCount = async (): Promise<number> => {
     const query = sql.type(z.object({ count: z.number() }))`
       SELECT 
@@ -53,8 +70,7 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
       first_name: string;
       last_name?: string | undefined | null;
       username: string;
-      password: string;
-      role: DatabaseRole;
+      role: UserRole;
     },
     transaction?: DatabaseTransactionConnection
   ): Promise<UserWithPasswordResult> => {
@@ -109,6 +125,7 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
   return {
     getUserInfoById,
     findUserByUsername,
+    findUserByExternalId,
     getAdminsCount,
     createUser,
     updateUser,

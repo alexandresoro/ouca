@@ -1,11 +1,10 @@
-export const databaseRoles = ["admin", "contributor"] as const;
-export type DatabaseRole = typeof databaseRoles[number];
+export const userRoles = ["admin", "contributor"] as const;
+export type UserRole = typeof userRoles[number];
 
 export type User = {
   id: string;
   username: string;
-  password?: never;
-  role: DatabaseRole;
+  role: UserRole;
   firstName: string;
   lastName: string | null;
 };

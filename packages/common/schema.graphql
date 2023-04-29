@@ -727,9 +727,5 @@ type Mutation {
   upsertSexe(id: Int, data: InputSexe!): Sexe
   updateSettings(appConfiguration: InputSettings!): Settings
   userSignup(signupData: UserCreateInput!, role: UserRole): UserInfo
-  userLogin(loginData: UserLoginInput!): UserInfo
-  userRefresh: UserInfo
-  userLogout: Boolean!
-  userEdit(id: ID!, editUserData: EditUserData!): UserInfo
   userDelete(id: ID!): Boolean!
 }
