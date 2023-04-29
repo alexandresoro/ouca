@@ -1,9 +1,8 @@
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
-import { useCallback, useContext, useEffect, type FunctionComponent } from "react";
+import { useCallback, useEffect, type FunctionComponent } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "urql";
-import { UserContext } from "../contexts/UserContext";
 import { graphql } from "../gql";
 import { type CoordinatesSystemType } from "../gql/graphql";
 import useSnackbar from "../hooks/useSnackbar";
@@ -101,7 +100,6 @@ const COORDINATES_SYSTEMS = Object.values(COORDINATES_SYSTEMS_CONFIG);
 const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { userInfo } = useContext(UserContext);
   const { updateUserSettings } = useUserSettingsContext();
 
   const { displayNotification } = useSnackbar();
@@ -177,7 +175,7 @@ const SettingsPage: FunctionComponent = () => {
         }
       });
     },
-    [sendUserSettingsUpdate, data, displaySuccessNotification, displayErrorNotification, userInfo, refetchSettings]
+    [sendUserSettingsUpdate, data, displaySuccessNotification, displayErrorNotification, refetchSettings]
   );
 
   // Watch inputs for changes, and submit the form if any

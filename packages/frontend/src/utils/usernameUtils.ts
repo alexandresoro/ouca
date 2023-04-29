@@ -1,33 +1,33 @@
-import { UserInfo } from "../gql/graphql";
+import { type User } from "oidc-client-ts";
 
-export const getFullName = (userInfo: UserInfo | null): string | null => {
-  if (!userInfo) {
+export const getFullName = (user: User | null | undefined): string | null => {
+  if (!user?.profile) {
     return null;
   }
   let fullName = "";
-  if (userInfo?.firstName) {
-    fullName += userInfo.firstName;
+  if (user.profile.given_name) {
+    fullName += user.profile.given_name;
   }
 
-  if (userInfo?.lastName) {
+  if (user.profile.family_name) {
     fullName += " ";
-    fullName += userInfo?.lastName;
+    fullName += user.profile.family_name;
   }
 
   return fullName;
 };
 
-export const getInitials = (userInfo: UserInfo | null): string | null => {
-  if (!userInfo) {
+export const getInitials = (user: User | null | undefined): string | null => {
+  if (!user?.profile) {
     return null;
   }
   let initials = "";
-  if (userInfo?.firstName.length) {
-    initials += userInfo.firstName[0];
+  if (user.profile.given_name?.length) {
+    initials += user.profile.given_name[0];
   }
 
-  if (userInfo?.lastName?.length) {
-    initials += userInfo?.lastName[0];
+  if (user.profile.family_name?.length) {
+    initials += user.profile.family_name[0];
   }
 
   return initials;

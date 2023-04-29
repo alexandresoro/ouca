@@ -24,6 +24,7 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       open: true,
       proxy: {
+        "/api/v1": `${API_SERVER_URL}/api/v1`,
         "/graphql": API_SERVER_URL,
         "/download": API_SERVER_URL,
       },

@@ -2,22 +2,14 @@ import { autoUpdate, offset, shift, size, useFloating } from "@floating-ui/react
 import { Menu } from "@headlessui/react";
 import { Cog, Import, LogOut, User } from "@styled-icons/boxicons-regular";
 import { type TFuncKey } from "i18next";
-import { useContext, type FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "urql";
+import { useAuth } from "react-oidc-context";
+import { Link } from "react-router-dom";
 import { type AppContext } from "../../contexts/AppContext";
-import { UserContext } from "../../contexts/UserContext";
-import { graphql } from "../../gql";
 import useAppContext from "../../hooks/useAppContext";
 import stringToColor from "../../utils/stringToColor";
 import { getFullName, getInitials } from "../../utils/usernameUtils";
-
-const USER_LOGOUT_MUTATION = graphql(`
-  mutation Logout {
-    userLogout
-  }
-`);
 
 const getMenuOptions = (features: AppContext["features"]) => [
   {
@@ -43,12 +35,11 @@ const getMenuOptions = (features: AppContext["features"]) => [
 
 const HeaderSettings: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
-  const { userInfo, setUserInfo } = useContext(UserContext);
   const { features } = useAppContext();
 
-  const [_, sendUserLogout] = useMutation(USER_LOGOUT_MUTATION);
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { user, removeUser } = useAuth();
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-end",
@@ -67,26 +58,11 @@ const HeaderSettings: FunctionComponent = () => {
     whileElementsMounted: autoUpdate,
   });
 
-  const fullName = getFullName(userInfo);
-  const initials = getInitials(userInfo);
+  const fullName = getFullName(user);
+  const initials = getInitials(user);
 
   const handleLogoutAction = async () => {
-    try {
-      const logoutResult = await sendUserLogout({});
-      if (logoutResult.data?.userLogout) {
-        // Successful logout
-        setUserInfo(null);
-
-        // Navigate to login page
-        navigate("/login", { replace: true });
-      } else if (logoutResult.error?.graphQLErrors?.length) {
-        setUserInfo(null);
-        navigate("/login", { replace: true });
-      }
-    } catch (error) {
-      setUserInfo(null);
-      navigate("/login", { replace: true });
-    }
+    await removeUser();
   };
 
   return (

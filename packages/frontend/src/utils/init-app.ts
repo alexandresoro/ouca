@@ -8,7 +8,12 @@ const fetchAppConfig = fetch("/appconfig", {
 })
   .then((res) => res.json() as Promise<AppConfig>)
   .catch(() => {
-    return {} as AppConfig;
+    return {
+      oidc: {
+        authority: import.meta.env.VITE_OIDC_AUTH_URL as string,
+        client_id: import.meta.env.VITE_OIDC_CLIENT_ID as string,
+      },
+    } as AppConfig;
   });
 
 export const initApp = async (
