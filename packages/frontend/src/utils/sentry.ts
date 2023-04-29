@@ -1,9 +1,9 @@
 import { ExtraErrorData, HttpClient } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
+import { type User } from "oidc-client-ts";
 import { useEffect } from "react";
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType, type Routes } from "react-router-dom";
-import { type UserInfo } from "..//gql/graphql";
 import { type AppConfig } from "../types/AppConfig";
 
 export const initializeSentry = (
@@ -42,12 +42,12 @@ export const initializeSentry = (
   };
 };
 
-export const setUser = (userInfo: UserInfo | null): void => {
+export const setUser = (user: User | null | undefined): void => {
   Sentry.setUser(
-    userInfo
+    user
       ? {
-          id: userInfo.id,
-          username: userInfo.username,
+          id: user.profile.sub,
+          username: user.profile.preferred_username,
         }
       : null
   );
