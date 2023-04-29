@@ -608,7 +608,6 @@ type UpsertInventaireResult {
 
 type UserInfo {
   id: ID!
-  role: String!
 }
 
 type Query {

@@ -2,6 +2,7 @@ import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types.js";
 import { type Inventaire as InventaireEntity } from "../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types.js";
+import { type UserWithPasswordResult } from "../repositories/user/user-repository-types.js";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -20,7 +21,6 @@ import {
 } from "../services/export-entites.js";
 import { getImportStatus } from "../services/import-manager.js";
 import { type Services } from "../services/services.js";
-import { type LoggedUser } from "../types/User.js";
 import {
   type Age,
   type AgeWithSpecimensCount,
@@ -496,7 +496,7 @@ export const buildResolvers = ({
       updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
         return settingsService.persistUserSettings(appConfiguration, user);
       },
-      userSignup: async (_source, args, { user }): Promise<LoggedUser> => {
+      userSignup: async (_source, args, { user }): Promise<UserWithPasswordResult> => {
         return userService.createUser(args.signupData, "admin", user);
       },
       userDelete: async (_source, args, { user }): Promise<boolean> => {
