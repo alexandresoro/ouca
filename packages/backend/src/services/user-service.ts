@@ -4,7 +4,7 @@ import config from "../config.js";
 import { type UserCreateInput } from "../graphql/generated/graphql-types.js";
 import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
 import { type UserRepository } from "../repositories/user/user-repository.js";
-import { type LoggedUser, type User, type UserRole } from "../types/User.js";
+import { type LoggedUser, type UserRole } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
 
 type UserServiceDependencies = {
@@ -15,7 +15,7 @@ type UserServiceDependencies = {
 };
 
 export const buildUserService = ({ logger, slonik, userRepository, settingsRepository }: UserServiceDependencies) => {
-  const getUser = async (userId: string): Promise<User | null> => {
+  const getUser = async (userId: string): Promise<LoggedUser | null> => {
     const user = await userRepository.getUserInfoById(userId);
 
     if (!user) {
@@ -29,7 +29,7 @@ export const buildUserService = ({ logger, slonik, userRepository, settingsRepos
     signupData: UserCreateInput,
     role: UserRole,
     loggedUser: LoggedUser | null
-  ): Promise<User> => {
+  ): Promise<LoggedUser> => {
     if (!config.admin.signupsAllowed) {
       throw new OucaError("OUCA0005");
     }
@@ -71,10 +71,6 @@ export const buildUserService = ({ logger, slonik, userRepository, settingsRepos
 
       return createdUserQueryResult;
     });
-
-    if (createdUser) {
-      logger.info(`User ${createdUser.username} has been created`);
-    }
 
     return createdUser;
   };

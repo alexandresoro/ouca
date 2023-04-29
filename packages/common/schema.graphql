@@ -608,9 +608,6 @@ type UpsertInventaireResult {
 
 type UserInfo {
   id: ID!
-  username: String!
-  firstName: String!
-  lastName: String
   role: String!
 }
 

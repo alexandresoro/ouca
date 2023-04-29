@@ -20,7 +20,7 @@ import {
 } from "../services/export-entites.js";
 import { getImportStatus } from "../services/import-manager.js";
 import { type Services } from "../services/services.js";
-import { type User } from "../types/User.js";
+import { type LoggedUser } from "../types/User.js";
 import {
   type Age,
   type AgeWithSpecimensCount,
@@ -496,7 +496,7 @@ export const buildResolvers = ({
       updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
         return settingsService.persistUserSettings(appConfiguration, user);
       },
-      userSignup: async (_source, args, { user }): Promise<User> => {
+      userSignup: async (_source, args, { user }): Promise<LoggedUser> => {
         return userService.createUser(args.signupData, "admin", user);
       },
       userDelete: async (_source, args, { user }): Promise<boolean> => {
