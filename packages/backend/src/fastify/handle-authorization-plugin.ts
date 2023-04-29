@@ -52,20 +52,25 @@ const handleAuthorizationPlugin: FastifyPluginCallback<{ services: Services }> =
 
   fastify.addHook("onRequest", async (request, reply) => {
     const authorizationHeader = request.headers.authorization;
+
     // Return if authorization header is missing
     if (!authorizationHeader) {
       return await reply.status(401).send("Authorization header is missing.");
     }
+
     // Return if authorization header format is incorrect
     const bearerGroups = BEARER_PATTERN.exec(authorizationHeader);
     if (!bearerGroups) {
       return await reply.status(401).send("Authorization header is invalid.");
     }
+
     // Access token extracted
     const accessToken = bearerGroups[1];
-    const redisKey = `${ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_PREFIX}:${accessToken}`;
+
     // Check if introspection result exists in cache
+    const redisKey = `${ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_PREFIX}:${accessToken}`;
     const cachedKey = await redis.get(redisKey);
+
     let introspectionResult: ZitadelIntrospectionResult;
     if (cachedKey != null) {
       // Retrieve result from cache
@@ -76,13 +81,16 @@ const handleAuthorizationPlugin: FastifyPluginCallback<{ services: Services }> =
       // Regardless of the outcome, store the result in cache
       await storeIntrospectionResultInCache(services, redisKey, introspectionResult, accessToken);
     }
+
     if (!introspectionResult.active) {
       return await reply.status(401).send("Access token is not active.");
     }
+
     const matchingLoggedUserResult = await zitadelOidcService.getMatchingLoggedUser(introspectionResult);
     if (matchingLoggedUserResult.outcome === "internalUserNotFound") {
       return await reply.status(404).send("Application user not found");
     }
+
     request.user = matchingLoggedUserResult.user;
   });
 
