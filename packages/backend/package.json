@@ -25,7 +25,8 @@
     "compile:tsup": "wireit",
     "generate-graphql": "graphql-codegen",
     "copy:assets": "node scripts/copy-graphql-schemas-to-dist.js",
-    "umzug": "cd dist && node umzug"
+    "umzug": "node dist/umzug",
+    "umzug:dev": "node -r dotenv/config dist/umzug"
   },
   "wireit": {
     "compile:tsup": {
