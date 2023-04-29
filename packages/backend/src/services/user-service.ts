@@ -3,6 +3,7 @@ import { type DatabasePool } from "slonik";
 import config from "../config.js";
 import { type UserCreateInput } from "../graphql/generated/graphql-types.js";
 import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
+import { type UserWithPasswordResult } from "../repositories/user/user-repository-types.js";
 import { type UserRepository } from "../repositories/user/user-repository.js";
 import { type LoggedUser, type UserRole } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
@@ -15,7 +16,7 @@ type UserServiceDependencies = {
 };
 
 export const buildUserService = ({ logger, slonik, userRepository, settingsRepository }: UserServiceDependencies) => {
-  const getUser = async (userId: string): Promise<LoggedUser | null> => {
+  const getUser = async (userId: string): Promise<UserWithPasswordResult | null> => {
     const user = await userRepository.getUserInfoById(userId);
 
     if (!user) {
@@ -29,7 +30,7 @@ export const buildUserService = ({ logger, slonik, userRepository, settingsRepos
     signupData: UserCreateInput,
     role: UserRole,
     loggedUser: LoggedUser | null
-  ): Promise<LoggedUser> => {
+  ): Promise<UserWithPasswordResult> => {
     if (!config.admin.signupsAllowed) {
       throw new OucaError("OUCA0005");
     }
