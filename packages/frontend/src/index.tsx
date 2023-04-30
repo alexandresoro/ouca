@@ -1,6 +1,6 @@
+import "@fontsource/carter-one";
 import "@fontsource/nunito/400.css";
 import "@fontsource/nunito/variable.css";
-import "@fontsource/yuji-hentaigana-akebono";
 import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";

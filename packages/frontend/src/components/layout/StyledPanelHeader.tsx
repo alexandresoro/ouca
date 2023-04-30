@@ -7,7 +7,7 @@ const StyledPanelHeader: FunctionComponent<PropsWithChildren<ComponentPropsWitho
 }) => {
   return (
     <div
-      className={`box-border h-16 md:h-20 w-full flex items-center px-12 shadow shadow-gray-500/75 dark:shadow-neutral/50 bg-primary dark:bg-neutral text-neutral-100 dark:text-neutral-content ${
+      className={`box-border h-14 md:h-16 w-full flex items-center px-12  dark:shadow-neutral/50 bg-base-200 dark:bg-neutral dark:text-neutral-content border-b-[1px] border-base-300 ${
         className ?? ""
       }`}
       {...restProps}
