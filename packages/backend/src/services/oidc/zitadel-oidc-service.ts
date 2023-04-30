@@ -8,7 +8,7 @@ const EXTERNAL_PROVIDER_NAME = "zitadel";
 export const introspectionUser = z.object({
   sub: z.string(),
   iss: z.string(),
-  username: z.string(),
+  username: z.string().optional(),
   exp: z.number(), // Expiration date as unix time
   email: z.string().optional(),
   given_name: z.string().optional(),
