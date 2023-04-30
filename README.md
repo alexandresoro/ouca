@@ -5,15 +5,16 @@
 The aim of the _Où ça ?_ project is to provide naturalists with an application where they can record and visualize their wildlife observations.
 
 This project provides an API to interact with these observations - add new elements, edit them and so on.
+This API is structured as a stateless microservice. It exposes a GraphQL and a REST API, and is agnostic of the integrator.
 
-This API is structured as a stateless microservice. It exposes a GraphQL and a small REST API, and is agnostic of the integrator.
+This project also provides a web application that consumes the API and allows a user-friendly representation of the data.
 
 ## Prerequisites
 
 - _Node.js 18_ or later
 - _npm 8_ or later
 - A database running PostgreSQL 15 or newer to store the data.
-- A [Zitadel](#https://zitadel.com/) instance as OIDC provider. Most of the app is independent of the OIDC provider, except for the roles that are returned in specific claims.
+- A [Zitadel](https://zitadel.com/) instance as OIDC provider. Most of the app is independent of the OIDC provider, except for the roles that are returned in specific claims.
 - A Redis instance used as temporary cache.
 
 ## Deployment
@@ -81,7 +82,7 @@ The following options are available as environment variables:
 | `OIDC_INTROSPECTION_PATH` | `string` | `/oauth/v2/introspect` | The path for introspection endpoint. |
 | `OIDC_CLIENT_ID *` | `string` | none | Client ID to connect to OIDC. |
 | `OIDC_CLIENT_SECRET *` | `string` | none | Client secret to connect to OIDC. The app implements the Client Credentials flow with Basic auth.|
-| `SENTRY_DSN` | `string` | none | A [Sentry](#https://sentry.io/) DSN used for error reporting |
+| `SENTRY_DSN` | `string` | none | A [Sentry](https://sentry.io/) DSN used for error reporting |
 
 Values with `*` are required and must be provided.
 
