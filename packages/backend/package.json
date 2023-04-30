@@ -67,7 +67,7 @@
     "@sentry/tracing": "7.50.0",
     "csv-parse": "5.3.8",
     "csv-stringify": "6.3.2",
-    "date-fns": "2.29.3",
+    "date-fns": "2.30.0",
     "es-main": "1.2.0",
     "exceljs": "4.3.0",
     "fastify": "4.15.0",
