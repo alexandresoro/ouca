@@ -667,7 +667,6 @@ type Query {
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
   nextRegroupement: Int!
-  lastDonneeId: Int
   searchDonnees: PaginatedSearchDonneesResult
   settings: Settings
   importStatus(importId: String!): ImportStatus

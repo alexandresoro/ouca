@@ -279,9 +279,6 @@ export const buildResolvers = ({
       specimenCountBySexe: (_source, args, { user }): Promise<SexeWithSpecimensCount[]> => {
         return sexeService.getSexesWithNbSpecimensForEspeceId(args.especeId, user);
       },
-      lastDonneeId: async (_source, args, { user }): Promise<number | null> => {
-        return donneeService.findLastDonneeId(user);
-      },
       nextRegroupement: async (_source, args, { user }): Promise<number> => {
         return donneeService.findNextRegroupement(user);
       },
