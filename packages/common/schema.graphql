@@ -136,13 +136,6 @@ input SearchDonneeCriteria {
   milieux: [Int!]
 }
 
-input UserCreateInput {
-  username: String!
-  password: String!
-  firstName: String!
-  lastName: String!
-}
-
 input UserLoginInput {
   username: String!
   password: String!
@@ -606,10 +599,6 @@ type UpsertInventaireResult {
   failureReason: UpsertInventaireFailureReason
 }
 
-type UserInfo {
-  id: ID!
-}
-
 type Query {
   age(id: Int!): Age
   ages(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
@@ -721,6 +710,5 @@ type Mutation {
   upsertObservateur(id: Int, data: InputObservateur!): Observateur
   upsertSexe(id: Int, data: InputSexe!): Sexe
   updateSettings(appConfiguration: InputSettings!): Settings
-  userSignup(signupData: UserCreateInput!, role: UserRole): UserInfo
   userDelete(id: ID!): Boolean!
 }

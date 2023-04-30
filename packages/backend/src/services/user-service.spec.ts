@@ -2,13 +2,11 @@ import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import config from "../config.js";
-import { type UserCreateInput } from "../graphql/generated/graphql-types.js";
 import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
 import { type UserRepository } from "../repositories/user/user-repository.js";
 import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
-import { buildUserService } from "./user-service.js";
+import { buildUserService, type CreateUserInput } from "./user-service.js";
 
 const userRepository = mock<UserRepository>({
   getAdminsCount: vi.fn(),
@@ -31,96 +29,29 @@ const userService = buildUserService({
 });
 
 describe("User creation", () => {
-  test("should throw error when signups are disabled", async () => {
-    const signupData = mock<UserCreateInput>();
-    const loggedUser = mock<LoggedUser>();
-    config.admin.signupsAllowed = false;
-
-    await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0005")
-    );
-
-    expect(userRepository.createUser).not.toHaveBeenCalled();
-  });
-
-  test("should throw error when creating initial admin and no env password defined", async () => {
-    const signupData = mock<UserCreateInput>();
-    const loggedUser = mock<LoggedUser>();
-    config.admin.signupsAllowed = true;
-    config.admin.defaultAdminPassword = "";
-
-    userRepository.getAdminsCount.mockResolvedValueOnce(0);
-
-    await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0006")
-    );
-
-    expect(userRepository.createUser).not.toHaveBeenCalled();
-  });
-
-  test("should throw error when creating initial admin and incorrect password provided", async () => {
-    const signupData = mock<UserCreateInput>({
-      password: "wrong",
-    });
-    const loggedUser = mock<LoggedUser>();
-    config.admin.signupsAllowed = true;
-    config.admin.defaultAdminPassword = "right";
-
-    userRepository.getAdminsCount.mockResolvedValueOnce(0);
-
-    await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0006")
-    );
-
-    expect(userRepository.createUser).not.toHaveBeenCalled();
-  });
-
-  test("should handle creation of initial admin and correct password provided", async () => {
-    const signupData = mock<UserCreateInput>({
-      password: "right",
-    });
-    const loggedUser = mock<LoggedUser>();
-    config.admin.signupsAllowed = true;
-    config.admin.defaultAdminPassword = "right";
-
-    userRepository.getAdminsCount.mockResolvedValueOnce(0);
-    userRepository.createUser.mockResolvedValueOnce(mock());
-
-    await userService.createUser(signupData, "contributor", loggedUser);
-
-    expect(userRepository.createUser).toHaveBeenCalledTimes(1);
-    expect(settingsRepository.createDefaultSettings).toHaveBeenCalledTimes(1);
-  });
-
   test("should throw error when non admin tries to create a user", async () => {
-    const signupData = mock<UserCreateInput>();
+    const signupData = mock<CreateUserInput>();
     const loggedUser = mock<LoggedUser>({
       role: "contributor",
     });
-    config.admin.signupsAllowed = true;
 
     userRepository.getAdminsCount.mockResolvedValueOnce(1);
 
-    await expect(() => userService.createUser(signupData, "contributor", loggedUser)).rejects.toThrowError(
-      new OucaError("OUCA0007")
-    );
+    await expect(() => userService.createUser(signupData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0007"));
 
     expect(userRepository.createUser).not.toHaveBeenCalled();
   });
 
   test("should handle creation of user when requested by an admin", async () => {
-    const signupData = mock<UserCreateInput>({
-      password: "anything",
-    });
+    const signupData = mock<CreateUserInput>();
     const loggedUser = mock<LoggedUser>({
       role: "admin",
     });
-    config.admin.signupsAllowed = true;
 
     userRepository.getAdminsCount.mockResolvedValueOnce(2);
     userRepository.createUser.mockResolvedValueOnce(mock());
 
-    await userService.createUser(signupData, "contributor", loggedUser);
+    await userService.createUser(signupData, loggedUser);
 
     expect(userRepository.createUser).toHaveBeenCalledTimes(1);
     expect(settingsRepository.createDefaultSettings).toHaveBeenCalledTimes(1);

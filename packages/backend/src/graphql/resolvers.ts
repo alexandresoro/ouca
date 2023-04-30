@@ -2,7 +2,6 @@ import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types.js";
 import { type Inventaire as InventaireEntity } from "../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types.js";
-import { type UserWithPasswordResult } from "../repositories/user/user-repository-types.js";
 import {
   generateAgesExport,
   generateClassesExport,
@@ -492,9 +491,6 @@ export const buildResolvers = ({
       },
       updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
         return settingsService.persistUserSettings(appConfiguration, user);
-      },
-      userSignup: async (_source, args, { user }): Promise<UserWithPasswordResult> => {
-        return userService.createUser(args.signupData, "admin", user);
       },
       userDelete: async (_source, args, { user }): Promise<boolean> => {
         if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);

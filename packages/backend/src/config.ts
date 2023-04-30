@@ -14,12 +14,7 @@ const envSchema = z.object({
   OUCA_DATABASE_MIGRATION_SCHEMA: z.string().default("public"),
   OUCA_DATABASE_MIGRATION_TABLE: z.string().default("base_naturaliste_umzug_migrations"),
   OUCA_DATABASE_MIGRATIONS_PATH: z.string().default(new URL("../migrations/", import.meta.url).pathname),
-  OUCA_SIGNUPS_ALLOWED: z.string().default("false").transform(zodStringToBoolean),
-  OUCA_DEFAULT_ADMIN_PASSWORD: z.string().optional(),
   OUCA_LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("warn"),
-  OUCA_JWT_SIGNING_KEY: z.string().optional(),
-  OUCA_JWT_COOKIE_SAME_SITE: z.string().default("true").transform(zodStringToBoolean),
-  OUCA_JWT_COOKIE_SECURE: z.string().default("true").transform(zodStringToBoolean),
   OIDC_ISSUER: z.string(),
   OIDC_INTROSPECTION_PATH: z.string().default("/oauth/v2/introspect"),
   OIDC_CLIENT_ID: z.string(),
@@ -58,19 +53,8 @@ export default {
   redis: {
     url: env.REDIS_URL,
   },
-  admin: {
-    signupsAllowed: env.OUCA_SIGNUPS_ALLOWED,
-    defaultAdminPassword: env.OUCA_DEFAULT_ADMIN_PASSWORD,
-  },
   log: {
     level: env.OUCA_LOG_LEVEL,
-  },
-  jwt: {
-    signingKey: env.OUCA_JWT_SIGNING_KEY,
-    cookie: {
-      sameSite: env.OUCA_JWT_COOKIE_SAME_SITE,
-      secure: env.OUCA_JWT_COOKIE_SECURE,
-    },
   },
   oidc: {
     issuer: env.OIDC_ISSUER,

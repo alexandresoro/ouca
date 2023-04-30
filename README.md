@@ -13,6 +13,8 @@ This API is structured as a stateless microservice. It exposes a GraphQL and a s
 - _Node.js 18_ or later
 - _npm 8_ or later
 - A database running PostgreSQL 15 or newer to store the data.
+- A [Zitadel](#https://zitadel.com/) instance as OIDC provider. Most of the app is independent of the OIDC provider, except for the roles that are returned in specific claims.
+- A Redis instance used as temporary cache.
 
 ## Deployment
 
@@ -44,19 +46,21 @@ This will generate the output files in the _packages/\*/dist/_ folders.
 
 Most of the API is exposed via GraphQL on `/graphql` path.
 
+Another part of the API is a REST API available under `/api/v1/`.
+
 The application exposes a static path at `/download`, that is to be used for two use cases: database exports and imports report files. The exact file paths are returned by their respective GraphQL actions.
 
 Finally, the app exposes a single REST endpoint at `POST /uploads/:entityName` to allow users to import observations. This endpoint expects a single file as a multipart data body and will return an `uploadId` if valid.
 
 ## Authentication
 
-(To be updated when complete)
+The API require users to be authenticated.
 
-Most of the accesses to the API require users to be authenticated.
-Authentication is using a signed JWT cookie.
-On successful user login and signup actions, the server will send this cookie with key `token` in the HTTP response.
+Authentication is done using a separate OIDC provider.
 
-A logout action is exposed that will simply clear the cookie in the response to mimic a proper logout.
+On server side, a valid access token is expected in header `Authorization: Bearer xyzabc`.
+
+The access token does not need to be a JWT token and can be an opaque one as introspection is performed server-side to validate the access token.
 
 ## Options
 
@@ -68,15 +72,18 @@ The following options are available as environment variables:
 | `OUCA_SERVER_PORT`               | `number (port)` |                                         `4000`                                         | The port used by the server                                                                                                                                                                                                                         |
 | `OUCA_LOG_LEVEL`                 |    `string`     |                                         `warn`                                         | The log level of the server. Uses [Pino](https://github.com/pinojs/pino) logging levels                                                                                                                                                             |
 | `DATABASE_URL`                   |    `string`     | `postgresql://` `basenaturaliste:basenaturaliste` `@127.0.0.1:5432/` `basenaturaliste` | The URL of the database to connect to                                                                                                                                                                                                               |
+| `REDIS_URL` | `string`| `redis://localhost:6379/0` | The URL of the Redis instance to connect to. |
 | `OUCA_DATABASE_RUN_MIGRATIONS`   |    `boolean`    |                                         `true`                                         | To enable or disable database migration scripts at startup                                                                                                                                                                                          |
 | `OUCA_DATABASE_MIGRATION_SCHEMA` |    `string`     |                                        `public`                                        | The name of the schema where to store the database migrations info                                                                                                                                                                                  |
 | `OUCA_DATABASE_MIGRATION_TABLE`  |    `string`     |                          `base_naturaliste_umzug_migrations`                           | The name of the table where to store the database migrations info                                                                                                                                                                                   |
 | `OUCA_DATABASE_MIGRATIONS_PATH`  |    `string`     |                                    Default migration folder path                                     | The path where the migration scripts are stored. Normally this should not need to be changed                                                                                                                                                        |
-| `OUCA_SIGNUPS_ALLOWED`           |    `boolean`    |                                        `false`                                         | Set this value to true to enable creation of new accounts                                                                                                                                                                                           |
-| `OUCA_DEFAULT_ADMIN_PASSWORD`    |    `string`     |                                          none                                          | Password to be provided at user signup when no user exist. It allows the creation of an initial admin user. This has no effect if any admin user already exists or if signups are disabled `signupsAllowed=false`                                   |
-| `OUCA_JWT_SIGNING_KEY`           |    `string`     |                                          none                                          | Allows to provide a user-defined signing key for the JWT token. This could be useful to be sure that cookies are valid between several API instances that share the same signing key. If not defined, a random signing key is used by the instance. |
-| `OUCA_JWT_COOKIE_SAME_SITE`      |    `boolean`    |                                         `true`                                         | If true, the cookie that contains the token will have a `strict` same-site policy, and `none` otherwise.                                                                                                                                            |
-| `OUCA_JWT_COOKIE_SECURE`         |    `boolean`    |                                         `true`                                         | If true, the cookie that contains the token can be only be used with HTTPS.                                                                                                                                                                         |
+| `OIDC_ISSUER *` | `string` | none | The URL of the OIDC provider. |
+| `OIDC_INTROSPECTION_PATH` | `string` | `/oauth/v2/introspect` | The path for introspection endpoint. |
+| `OIDC_CLIENT_ID *` | `string` | none | Client ID to connect to OIDC. |
+| `OIDC_CLIENT_SECRET *` | `string` | none | Client secret to connect to OIDC. The app implements the Client Credentials flow with Basic auth.|
+| `SENTRY_DSN` | `string` | none | A [Sentry](#https://sentry.io/) DSN used for error reporting |
+
+Values with `*` are required and must be provided.
 
 ## Structure of an observation
 

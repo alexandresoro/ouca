@@ -1,6 +1,5 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { z } from "zod";
-import { type UserRole } from "../../types/User.js";
 import { objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers.js";
 import { userWithPasswordSchema, type UserWithPasswordResult } from "./user-repository-types.js";
 
@@ -67,10 +66,8 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
 
   const createUser = async (
     create: {
-      first_name: string;
-      last_name?: string | undefined | null;
-      username: string;
-      role: UserRole;
+      ext_provider_name: string;
+      ext_provider_id: string;
     },
     transaction?: DatabaseTransactionConnection
   ): Promise<UserWithPasswordResult> => {
