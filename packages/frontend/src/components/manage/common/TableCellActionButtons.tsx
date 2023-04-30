@@ -24,7 +24,7 @@ const TableCellActionButtons: FunctionComponent<TableCellActionButtonsProps> = (
         <EditAlt className="h-5" />
       </IconButton>
       <IconButton
-        className="mx-1 text-error"
+        className="mx-1 text-accent"
         disabled={disabled}
         aria-label={t("aria-deleteButton")}
         onClick={onDeleteClicked}

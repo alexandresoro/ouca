@@ -50,7 +50,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
                 <Detail className="h-5" />
               </IconButton>
               <IconButton
-                className="mx-1 text-error"
+                className="mx-1 text-accent"
                 aria-label={t("observationsTable.header.action.delete")}
                 onClick={onDeleteAction}
               >
