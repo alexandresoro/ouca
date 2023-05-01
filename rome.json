@@ -10,16 +10,9 @@
       "suspicious": {
         "noEmptyInterface": "warn"
       },
-      "complexity": {
-        "useFlatMap": "warn",
-        "useOptionalChain": "warn",
-        "useSimplifiedLogicExpression": "warn"
-      },
       "style": {
         "noNonNullAssertion": "warn",
-        "noUnusedTemplateLiteral": "warn",
-        "useSelfClosingElements": "off",
-        "useTemplate": "warn"
+        "useSelfClosingElements": "warn"
       }
     }
   },

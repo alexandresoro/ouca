@@ -8,7 +8,6 @@ export const AuthHandler = ({ children }: { children: ReactElement }): ReactElem
   const appContext = useAppContext();
 
   useEffect(() => {
-    // rome-ignore lint/complexity/useSimplifiedLogicExpression: <explanation>
     if (!hasAuthParams() && !auth.isAuthenticated && !auth.activeNavigator && !auth.isLoading) {
       void auth.signinRedirect();
     }

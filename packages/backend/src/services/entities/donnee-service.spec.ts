@@ -467,7 +467,7 @@ describe("Update of a data", () => {
     await expect(donneeService.upsertDonnee(dataData, loggedUser)).rejects.toEqual(
       new OucaError("OUCA0004", {
         code: "OUCA0004",
-        message: `Cette donnée existe déjà (ID = 345).`,
+        message: "Cette donnée existe déjà (ID = 345).",
       })
     );
     expect(donneeRepository.updateDonnee).not.toHaveBeenCalled();
@@ -539,7 +539,7 @@ describe("Creation of a data", () => {
     await expect(donneeService.upsertDonnee(dataData, loggedUser)).rejects.toEqual(
       new OucaError("OUCA0004", {
         code: "OUCA0004",
-        message: `Cette donnée existe déjà (ID = 345).`,
+        message: "Cette donnée existe déjà (ID = 345).",
       })
     );
     expect(donneeRepository.createDonnee).not.toHaveBeenCalled();

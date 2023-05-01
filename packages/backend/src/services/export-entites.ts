@@ -97,11 +97,11 @@ export const generateDepartementsExport = async (departementService: Departement
 };
 
 const getComportement = (comportements: Comportement[], index: number): string => {
-  return comportements.length >= index ? comportements[index - 1].code + " - " + comportements[index - 1].libelle : "";
+  return comportements.length >= index ? `${comportements[index - 1].code} - ${comportements[index - 1].libelle}` : "";
 };
 
 const getMilieu = (milieux: Milieu[], index: number): string => {
-  return milieux.length >= index ? milieux[index - 1].code + " - " + milieux[index - 1].libelle : "";
+  return milieux.length >= index ? `${milieux[index - 1].code} - ${milieux[index - 1].libelle}` : "";
 };
 
 export const generateDonneesExport = async (
@@ -142,7 +142,7 @@ export const generateDonneesExport = async (
   searchCriteria: SearchDonneeCriteria | null | undefined
 ): Promise<string> => {
   const coordinatesSystem = GPS_COORDINATES;
-  const coordinatesSuffix = " en " + coordinatesSystem.unitName + " (" + coordinatesSystem.name + ")";
+  const coordinatesSuffix = ` en ${coordinatesSystem.unitName} (${coordinatesSystem.name})`;
 
   const donnees = await donneeService.findPaginatedDonnees(loggedUser, { searchCriteria });
 
@@ -182,8 +182,8 @@ export const generateDonneesExport = async (
         "Code commune": commune?.code,
         "Nom commune": commune?.nom,
         "Lieu-dit": lieudit?.nom,
-        ["Latitude" + coordinatesSuffix]: inventaire?.customizedCoordinates?.latitude ?? lieudit?.latitude,
-        ["Longitude" + coordinatesSuffix]: inventaire?.customizedCoordinates?.longitude ?? lieudit?.longitude,
+        [`Latitude${coordinatesSuffix}`]: inventaire?.customizedCoordinates?.latitude ?? lieudit?.latitude,
+        [`Longitude${coordinatesSuffix}`]: inventaire?.customizedCoordinates?.longitude ?? lieudit?.longitude,
         "Altitude en mètres": inventaire?.customizedCoordinates?.altitude ?? lieudit?.altitude,
         "Température en °C": inventaire?.temperature,
         Météo: meteos.length ? meteos.map((meteo) => meteo.libelle).join(SEPARATOR_COMMA) : "",

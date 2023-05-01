@@ -314,7 +314,7 @@ export class ImportDonneeService extends ImportService {
     });
 
     if (existingDonneeNew) {
-      return `Une donnée similaire existe déjà dans la liste à importer`;
+      return "Une donnée similaire existe déjà dans la liste à importer";
     }
 
     // Now we know that we need to add this donnee

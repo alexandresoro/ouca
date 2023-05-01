@@ -42,7 +42,7 @@ export const getFormattedTime = (timeStr: string): string | null => {
 
   const timeRegExp1 = new RegExp("^[0-9][0-9][0-5][0-9]$");
   if (timeRegExp1.test(timeStr)) {
-    return timeStr.charAt(0) + timeStr.charAt(1) + ":" + timeStr.charAt(2) + timeStr.charAt(3);
+    return `${timeStr.charAt(0)}${timeStr.charAt(1)}:${timeStr.charAt(2)}${timeStr.charAt(3)}`;
   }
 
   const timeRegExp2 = new RegExp("^[0-9][0-9][h][0-5][0-9]$");
