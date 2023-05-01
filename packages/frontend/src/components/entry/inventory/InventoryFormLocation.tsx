@@ -41,6 +41,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  const queryClient = useQueryClient();
+
   // TODO: Think about how to sync this
   const { customCoordinates, updateCustomCoordinates } = useContext(EntryCustomCoordinatesContext);
 
@@ -111,7 +113,12 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       const infoMessage = setTimeout(() => {
         setAltitudeCallOngoing(true);
       }, 500);
-      getAltitudeForCoordinates({ latitude, longitude })
+      queryClient
+        .fetchQuery({
+          queryKey: ["IGN", "altimetrie", { latitude, longitude }],
+          staleTime: Infinity,
+          queryFn: () => getAltitudeForCoordinates({ latitude, longitude }),
+        })
         .then((result) => {
           switch (result.outcome) {
             case "success": {
@@ -128,7 +135,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           setAltitudeCallOngoing(false);
         });
     }
-  }, [latitude, longitude, isLongitudeInputTainted, isLatitudeInputTainted, setValue]);
+  }, [latitude, longitude, isLongitudeInputTainted, isLatitudeInputTainted, setValue, queryClient]);
 
   // Clean altitude service error when input have changed
   useEffect(() => {
@@ -275,21 +282,27 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
         />
       </div>
       {areCoordinatesCustomized && (
-        <div className="flex items-center gap-2 py-1 text-sm text-info">
+        <div className="alert alert-info py-1 text-sm">
+          <div>
           <InfoCircle className="h-4 flex-shrink-0" />
           {t("inventoryForm.customCoordinatesInformation")}
+          </div>
         </div>
       )}
       {altitudeCallOngoing && (
-        <div className="flex items-center gap-2 py-1 text-sm text-info">
+        <div className="alert alert-info py-1 text-sm">
+          <div>
           <InfoCircle className="h-4 flex-shrink-0" />
           {t("inventoryForm.altitudeCallOngoing")}
+          </div>
         </div>
       )}
       {altitudeCallDisplayError && (
-        <div className="flex items-center gap-2 py-1 text-sm text-warning">
+        <div className="alert alert-warning py-1 text-sm">
+          <div>
           <InfoCircle className="h-4 flex-shrink-0" />
           {t("inventoryForm.altitudeCallError")}
+          </div>
         </div>
       )}
     </>
