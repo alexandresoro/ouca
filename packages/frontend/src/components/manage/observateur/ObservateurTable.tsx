@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type EntitesAvecLibelleOrderBy, type Observateur } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_OBSERVATEUR, PAGINATED_OBSERVATEURS_QUERY } from "./ObservateurManageQueries";
+import { PAGINATED_OBSERVATEURS_QUERY } from "./ObservateurManageQueries";
 
 const COLUMNS = [
   {
@@ -45,7 +46,26 @@ const ObservateurTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteObservateur] = useMutation(DELETE_OBSERVATEUR);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteObservateurs();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -64,29 +84,7 @@ const ObservateurTable: FunctionComponent = () => {
   const handleDeleteObservateurConfirmation = (observateur: Observateur | null) => {
     if (observateur) {
       setDialogObservateur(null);
-      deleteObservateur({
-        id: observateur.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteObservateurs();
-          if (!error && data?.deleteObservateur) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/observer/${observateur.id}` });
     }
   };
 
@@ -147,7 +145,7 @@ const ObservateurTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.observateurs?.count}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogObservateur}
         messageContent={t("deleteObserverDialogMsg", {

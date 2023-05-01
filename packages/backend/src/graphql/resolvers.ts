@@ -404,9 +404,6 @@ export const buildResolvers = ({
       deleteMilieu: async (_source, args, { user }): Promise<number> => {
         return milieuService.deleteMilieu(args.id, user).then(({ id }) => id);
       },
-      deleteObservateur: async (_source, args, { user }): Promise<number> => {
-        return observateurService.deleteObservateur(args.id, user).then(({ id }) => id);
-      },
       deleteSexe: async (_source, args, { user }): Promise<number> => {
         return sexeService.deleteSexe(args.id, user).then(({ id }) => id);
       },

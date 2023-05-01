@@ -32,12 +32,6 @@ export const UPSERT_OBSERVATEUR = graphql(`
   }
 `);
 
-export const DELETE_OBSERVATEUR = graphql(`
-  mutation DeleteObservateur($id: Int!) {
-    deleteObservateur(id: $id)
-  }
-`);
-
 export const EXPORT_OBSERVATEURS_QUERY = graphql(`
   query ExportObservateurs {
     exportObservateurs

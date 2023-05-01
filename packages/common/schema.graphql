@@ -688,7 +688,6 @@ type Mutation {
   deleteLieuDit(id: Int!): Int
   deleteMeteo(id: Int!): Int
   deleteMilieu(id: Int!): Int
-  deleteObservateur(id: Int!): Int
   deleteSexe(id: Int!): Int
   upsertAge(id: Int, data: InputAge!): Age
   upsertClasse(id: Int, data: InputClasse!): Classe
