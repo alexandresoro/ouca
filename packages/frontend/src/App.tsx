@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { authExchange } from "@urql/exchange-auth";
 import { refocusExchange } from "@urql/exchange-refocus";
 import { type UserManagerSettings } from "oidc-client-ts";
@@ -107,6 +108,7 @@ const App: FunctionComponent = () => {
         }}
       >
         <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools />
           <UrqlProvider value={urqlClient}>
             <BrowserRouter>
               <AuthHandler>

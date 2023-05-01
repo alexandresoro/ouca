@@ -24,7 +24,7 @@ function useApiQuery<SType>(
 
   const queryString = new URLSearchParams(queryParams).toString();
 
-  const queryKey = [path, ...(queryParams ? [queryParams] : [])];
+  const queryKey = ["API", path, ...(queryParams ? [queryParams] : [])];
 
   return useQuery<unknown>({
     ...queryOptions,
