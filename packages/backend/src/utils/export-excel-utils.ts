@@ -1,20 +1,12 @@
-// eslint-disable-next-line import/default
 import exceljs from "exceljs";
-// eslint-disable-next-line import/no-named-as-default-member
-const { stream } = exceljs;
 
-export const writeToExcelFile = async (
+export const writeExcelToBuffer = async (
   objects: { [key: string]: unknown }[],
-  worksheetName: string,
-  fileName: string
-): Promise<void> => {
-  const workbook = new stream.xlsx.WorkbookWriter({
-    filename: fileName,
-    useStyles: true,
-  });
-
+  worksheetName: string
+): Promise<exceljs.Buffer> => {
+  // eslint-disable-next-line import/no-named-as-default-member
+  const workbook = new exceljs.Workbook();
   const sheet = workbook.addWorksheet(worksheetName);
-
   if (objects?.length) {
     sheet.columns = Object.keys(objects[0]).map((column) => {
       return {
@@ -29,12 +21,9 @@ export const writeToExcelFile = async (
           : {}),
       };
     });
-
     objects.forEach((object) => {
       sheet.addRow(object).commit();
     });
   }
-
-  sheet.commit();
-  await workbook.commit();
+  return workbook.xlsx.writeBuffer();
 };

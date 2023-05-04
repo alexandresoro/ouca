@@ -80,9 +80,3 @@ export const DELETE_LIEU_DIT = graphql(`
     deleteLieuDit(id: $id)
   }
 `);
-
-export const EXPORT_LIEUX_DITS_QUERY = graphql(`
-  query ExportLieuxDits {
-    exportLieuxDits
-  }
-`);

@@ -1,5 +1,6 @@
 import { type FastifyPluginAsync } from "fastify";
 import entryController from "../controllers/entry-controller.js";
+import generateExportController from "../controllers/generate-export-controllers.js";
 import observerController from "../controllers/observer-controller.js";
 import userController from "../controllers/user-controller.js";
 import { type Services } from "../services/services.js";
@@ -15,6 +16,8 @@ const apiRoutesPlugin: FastifyPluginAsync<{ services: Services }> = async (fasti
   await fastify.register(entryController, { services, prefix: "/entry" });
   await fastify.register(observerController, { services, prefix: "/observer" });
   await fastify.register(userController, { services, prefix: "/user" });
+
+  await fastify.register(generateExportController, { services, prefix: "/generate-export" });
 };
 
 export default apiRoutesPlugin;

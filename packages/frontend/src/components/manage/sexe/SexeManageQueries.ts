@@ -37,9 +37,3 @@ export const DELETE_SEXE = graphql(`
     deleteSexe(id: $id)
   }
 `);
-
-export const EXPORT_SEXES_QUERY = graphql(`
-  query ExportSexes {
-    exportSexes
-  }
-`);

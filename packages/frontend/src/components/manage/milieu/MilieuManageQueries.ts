@@ -40,9 +40,3 @@ export const DELETE_MILIEU = graphql(`
     deleteMilieu(id: $id)
   }
 `);
-
-export const EXPORT_MILIEUX_QUERY = graphql(`
-  query ExportMilieux {
-    exportMilieux
-  }
-`);

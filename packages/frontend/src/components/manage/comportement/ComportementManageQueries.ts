@@ -43,9 +43,3 @@ export const DELETE_COMPORTEMENT = graphql(`
     deleteComportement(id: $id)
   }
 `);
-
-export const EXPORT_COMPORTEMENTS_QUERY = graphql(`
-  query ExportComportements {
-    exportComportements
-  }
-`);

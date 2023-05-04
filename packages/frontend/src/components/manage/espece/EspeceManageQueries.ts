@@ -65,9 +65,3 @@ export const DELETE_ESPECE = graphql(`
     deleteEspece(id: $id)
   }
 `);
-
-export const EXPORT_ESPECES_QUERY = graphql(`
-  query ExportEspeces {
-    exportEspeces
-  }
-`);

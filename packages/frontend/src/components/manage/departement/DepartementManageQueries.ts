@@ -39,9 +39,3 @@ export const DELETE_DEPARTEMENT = graphql(`
     deleteDepartement(id: $id)
   }
 `);
-
-export const EXPORT_DEPARTEMENTS_QUERY = graphql(`
-  query ExportDepartements {
-    exportDepartements
-  }
-`);

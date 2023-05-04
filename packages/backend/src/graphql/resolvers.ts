@@ -2,22 +2,6 @@ import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types.js";
 import { type Inventaire as InventaireEntity } from "../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types.js";
-import {
-  generateAgesExport,
-  generateClassesExport,
-  generateCommunesExport,
-  generateComportementsExport,
-  generateDepartementsExport,
-  generateDonneesExport,
-  generateEspecesExport,
-  generateEstimationsDistanceExport,
-  generateEstimationsNombreExport,
-  generateLieuxDitsExport,
-  generateMeteosExport,
-  generateMilieuxExport,
-  generateObservateursExport,
-  generateSexesExport,
-} from "../services/export-entites.js";
 import { getImportStatus } from "../services/import-manager.js";
 import { type Services } from "../services/services.js";
 import {
@@ -287,81 +271,6 @@ export const buildResolvers = ({
       importStatus: async (_source, args, { user }): Promise<ImportStatus | null> => {
         if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
         return getImportStatus(args.importId, user);
-      },
-      exportAges: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateAgesExport(ageService);
-      },
-      exportClasses: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateClassesExport(classeService);
-      },
-      exportCommunes: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateCommunesExport(communeService);
-      },
-      exportComportements: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateComportementsExport(comportementService);
-      },
-      exportDepartements: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateDepartementsExport(departementService);
-      },
-      exportEstimationsDistance: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateEstimationsDistanceExport(estimationDistanceService);
-      },
-      exportEstimationsNombre: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateEstimationsNombreExport(estimationNombreService);
-      },
-      exportDonnees: async (_source, args, { user }): Promise<string> => {
-        return generateDonneesExport(
-          {
-            ageService,
-            classeService,
-            communeService,
-            comportementService,
-            departementService,
-            donneeService,
-            especeService,
-            estimationDistanceService,
-            estimationNombreService,
-            inventaireService,
-            lieuditService,
-            meteoService,
-            milieuService,
-            observateurService,
-            sexeService,
-          },
-          user,
-          args?.searchCriteria
-        );
-      },
-      exportEspeces: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateEspecesExport(especeService);
-      },
-      exportLieuxDits: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateLieuxDitsExport(lieuditService);
-      },
-      exportMeteos: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateMeteosExport(meteoService);
-      },
-      exportMilieux: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateMilieuxExport(milieuService);
-      },
-      exportObservateurs: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateObservateursExport(observateurService);
-      },
-      exportSexes: async (_source, args, { user }): Promise<string> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return generateSexesExport(sexeService);
       },
       settings: async (_source, args, { user }): Promise<Settings | null> => {
         return settingsService.findAppConfiguration(user);

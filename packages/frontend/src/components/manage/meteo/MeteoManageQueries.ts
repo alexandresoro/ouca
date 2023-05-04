@@ -37,9 +37,3 @@ export const DELETE_METEO = graphql(`
     deleteMeteo(id: $id)
   }
 `);
-
-export const EXPORT_METEOS_QUERY = graphql(`
-  query ExportMeteos {
-    exportMeteos
-  }
-`);

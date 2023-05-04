@@ -31,9 +31,3 @@ export const UPSERT_OBSERVATEUR = graphql(`
     }
   }
 `);
-
-export const EXPORT_OBSERVATEURS_QUERY = graphql(`
-  query ExportObservateurs {
-    exportObservateurs
-  }
-`);

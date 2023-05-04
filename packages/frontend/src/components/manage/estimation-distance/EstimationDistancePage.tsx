@@ -1,30 +1,17 @@
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useClient } from "urql";
-import useAppContext from "../../../hooks/useAppContext";
-import { DOWNLOAD_PATH, EXCEL_FILE_EXTENSION } from "../../../utils/constants";
-import { downloadFile } from "../../../utils/file-download-helper";
+import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import ManageTopBar from "../common/ManageTopBar";
-import { EXPORT_ESTIMATIONS_DISTANCE_QUERY } from "./EstimationDistanceManageQueries";
 import EstimationDistanceTable from "./EstimationDistanceTable";
 
 const EstimationDistancePage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const client = useClient();
+  const { mutate } = useApiExportEntities({ filename: t("distancePrecisions") });
 
-  const {apiUrl} = useAppContext();
-
-  const handleExportClick = async () => {
-    const { data } = await client.query(EXPORT_ESTIMATIONS_DISTANCE_QUERY, {}, { requestPolicy: "network-only" }).toPromise();
-    if (data?.exportEstimationsDistance) {
-      downloadFile(
-        apiUrl,
-        DOWNLOAD_PATH + data.exportEstimationsDistance,
-        `${t("distancePrecisions")}${EXCEL_FILE_EXTENSION}`
-      );
-    }
+  const handleExportClick = () => {
+    mutate({ path: "/generate-export/distance-estimates" });
   };
 
   return (

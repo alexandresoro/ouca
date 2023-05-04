@@ -63,9 +63,3 @@ export const DELETE_COMMUNE = graphql(`
     deleteCommune(id: $id)
   }
 `);
-
-export const EXPORT_COMMUNES_QUERY = graphql(`
-  query ExportCommunes {
-    exportCommunes
-  }
-`);

@@ -37,9 +37,3 @@ export const DELETE_AGE = graphql(`
     deleteAge(id: $id)
   }
 `);
-
-export const EXPORT_AGES_QUERY = graphql(`
-  query ExportAges {
-    exportAges
-  }
-`);

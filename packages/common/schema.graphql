@@ -659,20 +659,6 @@ type Query {
   searchDonnees: PaginatedSearchDonneesResult
   settings: Settings
   importStatus(importId: String!): ImportStatus
-  exportAges: String
-  exportClasses: String
-  exportCommunes: String
-  exportComportements: String
-  exportDepartements: String
-  exportDonnees(searchCriteria: SearchDonneeCriteria): String
-  exportEspeces: String
-  exportEstimationsDistance: String
-  exportEstimationsNombre: String
-  exportLieuxDits: String
-  exportMeteos: String
-  exportMilieux: String
-  exportObservateurs: String
-  exportSexes: String
 }
 
 type Mutation {

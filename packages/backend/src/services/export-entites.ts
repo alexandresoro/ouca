@@ -1,14 +1,13 @@
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper";
+import { type Redis } from "ioredis";
 import { randomUUID } from "node:crypto";
-import path from "node:path";
 import { type SearchDonneeCriteria } from "../graphql/generated/graphql-types.js";
 import { type Comportement } from "../repositories/comportement/comportement-repository-types.js";
 import { type Milieu } from "../repositories/milieu/milieu-repository-types.js";
 import { type LoggedUser } from "../types/User.js";
 import { SEPARATOR_COMMA } from "../utils/constants.js";
-import { writeToExcelFile } from "../utils/export-excel-utils.js";
-import { PUBLIC_DIR_PATH } from "../utils/paths.js";
+import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
 import { type AgeService } from "./entities/age-service.js";
 import { type ClasseService } from "./entities/classe-service.js";
 import { type CommuneService } from "./entities/commune-service.js";
@@ -25,7 +24,28 @@ import { type MilieuService } from "./entities/milieu-service.js";
 import { type ObservateurService } from "./entities/observateur-service.js";
 import { type SexeService } from "./entities/sexe-service.js";
 
-export const generateAgesExport = async (ageService: AgeService): Promise<string> => {
+export const EXPORT_ENTITY_RESULT_PREFIX = "exportEntity";
+
+const storeExportInCache = async (
+  entitiesToExport: Record<string, unknown>[],
+  sheetName: string,
+  redis: Redis
+): Promise<string> => {
+  const id = randomUUID();
+
+  const redisKey = `${EXPORT_ENTITY_RESULT_PREFIX}:${id}`;
+  const exportArrayBuffer = await writeExcelToBuffer(entitiesToExport, sheetName);
+  const exportBuffer = Buffer.from(exportArrayBuffer);
+
+  await redis.set(redisKey, exportBuffer, "EX", 600);
+
+  return id;
+};
+
+export const generateAgesExport = async ({
+  ageService,
+  redis,
+}: { ageService: AgeService; redis: Redis }): Promise<string> => {
   const agesDb = await ageService.findAllAges();
 
   const agesToExport = agesDb.map((ageDb) => {
@@ -34,24 +54,28 @@ export const generateAgesExport = async (ageService: AgeService): Promise<string
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(agesToExport, "Âges", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(agesToExport, "Âges", redis);
+  return id;
 };
 
-export const generateClassesExport = async (classeService: ClasseService): Promise<string> => {
+export const generateClassesExport = async ({
+  classeService,
+  redis,
+}: { classeService: ClasseService; redis: Redis }): Promise<string> => {
   const classes = await classeService.findAllClasses();
 
   const objectsToExport = classes.map((object) => {
     return { Classe: object.libelle };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Classes", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Classes", redis);
+  return id;
 };
 
-export const generateCommunesExport = async (communeService: CommuneService): Promise<string> => {
+export const generateCommunesExport = async ({
+  communeService,
+  redis,
+}: { communeService: CommuneService; redis: Redis }): Promise<string> => {
   const communesDb = await communeService.findAllCommunesWithDepartements();
 
   const objectsToExport = communesDb.map((communeDb) => {
@@ -62,12 +86,14 @@ export const generateCommunesExport = async (communeService: CommuneService): Pr
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Communes", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Communes", redis);
+  return id;
 };
 
-export const generateComportementsExport = async (comportementService: ComportementService): Promise<string> => {
+export const generateComportementsExport = async ({
+  comportementService,
+  redis,
+}: { comportementService: ComportementService; redis: Redis }): Promise<string> => {
   const comportementsDb = await comportementService.findAllComportements();
 
   const comportementsToExport = comportementsDb.map((object) => {
@@ -77,12 +103,14 @@ export const generateComportementsExport = async (comportementService: Comportem
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(comportementsToExport, "Comportements", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(comportementsToExport, "Comportements", redis);
+  return id;
 };
 
-export const generateDepartementsExport = async (departementService: DepartementService): Promise<string> => {
+export const generateDepartementsExport = async ({
+  departementService,
+  redis,
+}: { departementService: DepartementService; redis: Redis }): Promise<string> => {
   const departementsDb = await departementService.findAllDepartements();
 
   const objectsToExport = departementsDb.map((object) => {
@@ -91,9 +119,8 @@ export const generateDepartementsExport = async (departementService: Departement
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Départements", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Départements", redis);
+  return id;
 };
 
 const getComportement = (comportements: Comportement[], index: number): string => {
@@ -106,6 +133,7 @@ const getMilieu = (milieux: Milieu[], index: number): string => {
 
 export const generateDonneesExport = async (
   {
+    redis,
     ageService,
     classeService,
     communeService,
@@ -122,6 +150,7 @@ export const generateDonneesExport = async (
     observateurService,
     sexeService,
   }: {
+    redis: Redis;
     ageService: AgeService;
     classeService: ClasseService;
     communeService: CommuneService;
@@ -214,12 +243,14 @@ export const generateDonneesExport = async (
     })
   );
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "donnees", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Données", redis);
+  return id;
 };
 
-export const generateEspecesExport = async (especeService: EspeceService): Promise<string> => {
+export const generateEspecesExport = async ({
+  especeService,
+  redis,
+}: { especeService: EspeceService; redis: Redis }): Promise<string> => {
   const especes = await especeService.findAllEspecesWithClasses();
 
   const objectsToExport = especes.map((espece) => {
@@ -231,14 +262,14 @@ export const generateEspecesExport = async (especeService: EspeceService): Promi
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Espèces", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Espèces", redis);
+  return id;
 };
 
-export const generateEstimationsDistanceExport = async (
-  estimationDistanceService: EstimationDistanceService
-): Promise<string> => {
+export const generateEstimationsDistanceExport = async ({
+  estimationDistanceService,
+  redis,
+}: { estimationDistanceService: EstimationDistanceService; redis: Redis }): Promise<string> => {
   const estimations = await estimationDistanceService.findAllEstimationsDistance();
 
   const objectsToExport = estimations.map((object) => {
@@ -247,14 +278,14 @@ export const generateEstimationsDistanceExport = async (
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Estimations de la distance", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Estimations de la distance", redis);
+  return id;
 };
 
-export const generateEstimationsNombreExport = async (
-  estimationNombreService: EstimationNombreService
-): Promise<string> => {
+export const generateEstimationsNombreExport = async ({
+  estimationNombreService,
+  redis,
+}: { estimationNombreService: EstimationNombreService; redis: Redis }): Promise<string> => {
   const estimations = await estimationNombreService.findAllEstimationsNombre();
 
   const objectsToExport = estimations.map((object) => {
@@ -263,12 +294,14 @@ export const generateEstimationsNombreExport = async (
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Estimations du nombre", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Estimations du nombre", redis);
+  return id;
 };
 
-export const generateLieuxDitsExport = async (lieuditService: LieuditService): Promise<string> => {
+export const generateLieuxDitsExport = async ({
+  lieuditService,
+  redis,
+}: { lieuditService: LieuditService; redis: Redis }): Promise<string> => {
   const lieuxDits = await lieuditService.findAllLieuxDitsWithCommuneAndDepartement();
 
   const objectsToExport = lieuxDits.map((lieudit) => {
@@ -283,12 +316,14 @@ export const generateLieuxDitsExport = async (lieuditService: LieuditService): P
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Lieux-dits", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Lieux-dits", redis);
+  return id;
 };
 
-export const generateMeteosExport = async (meteoService: MeteoService): Promise<string> => {
+export const generateMeteosExport = async ({
+  meteoService,
+  redis,
+}: { meteoService: MeteoService; redis: Redis }): Promise<string> => {
   const meteos = await meteoService.findAllMeteos();
 
   const objectsToExport = meteos.map((object) => {
@@ -297,12 +332,14 @@ export const generateMeteosExport = async (meteoService: MeteoService): Promise<
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Météos", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Météos", redis);
+  return id;
 };
 
-export const generateMilieuxExport = async (milieuService: MilieuService): Promise<string> => {
+export const generateMilieuxExport = async ({
+  milieuService,
+  redis,
+}: { milieuService: MilieuService; redis: Redis }): Promise<string> => {
   const milieuxDb = await milieuService.findAllMilieux();
 
   const milieuxToExport = milieuxDb.map((object) => {
@@ -312,12 +349,14 @@ export const generateMilieuxExport = async (milieuService: MilieuService): Promi
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(milieuxToExport, "Milieux", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(milieuxToExport, "Milieux", redis);
+  return id;
 };
 
-export const generateObservateursExport = async (observateurService: ObservateurService): Promise<string> => {
+export const generateObservateursExport = async ({
+  observateurService,
+  redis,
+}: { observateurService: ObservateurService; redis: Redis }): Promise<string> => {
   const observateurs = await observateurService.findAllObservateurs();
 
   const objectsToExport = observateurs.map((object) => {
@@ -326,12 +365,14 @@ export const generateObservateursExport = async (observateurService: Observateur
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Observateurs", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Observateurs", redis);
+  return id;
 };
 
-export const generateSexesExport = async (sexeService: SexeService): Promise<string> => {
+export const generateSexesExport = async ({
+  sexeService,
+  redis,
+}: { sexeService: SexeService; redis: Redis }): Promise<string> => {
   const sexes = await sexeService.findAllSexes();
 
   const objectsToExport = sexes.map((object) => {
@@ -340,7 +381,6 @@ export const generateSexesExport = async (sexeService: SexeService): Promise<str
     };
   });
 
-  const fileName = randomUUID();
-  await writeToExcelFile(objectsToExport, "Sexes", path.join(PUBLIC_DIR_PATH.pathname, fileName));
-  return fileName;
+  const id = await storeExportInCache(objectsToExport, "Sexes", redis);
+  return id;
 };

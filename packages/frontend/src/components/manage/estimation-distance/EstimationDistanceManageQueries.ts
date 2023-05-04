@@ -41,9 +41,3 @@ export const DELETE_ESTIMATION_DISTANCE = graphql(`
     deleteEstimationDistance(id: $id)
   }
 `);
-
-export const EXPORT_ESTIMATIONS_DISTANCE_QUERY = graphql(`
-  query ExportEstimationsDistance {
-    exportEstimationsDistance
-  }
-`);

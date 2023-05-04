@@ -1,6 +1,6 @@
 import { startImportTask } from "./services/import-manager.js";
 import { type Services } from "./services/services.js";
-import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, PUBLIC_DIR_PATH } from "./utils/paths.js";
+import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "./utils/paths.js";
 /* eslint-disable import/no-named-as-default */
 import fastifyCompress from "@fastify/compress";
 import fastifyCors from "@fastify/cors";
@@ -13,6 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
+import downloadController from "./controllers/download-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
 import graphQlServerPlugin from "./fastify/graphql-server-plugin.js";
 
@@ -40,8 +41,8 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
 
   // Static files server
   await server.register(fastifyStatic, {
-    root: PUBLIC_DIR_PATH.pathname,
-    prefix: DOWNLOAD_ENDPOINT,
+    root: IMPORT_REPORTS_DIR_PATH.pathname,
+    prefix: `${DOWNLOAD_ENDPOINT}/${IMPORT_REPORTS_DIR}`,
   });
 
   logger.debug("Fastify static server successfully registered");
@@ -59,6 +60,7 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
   await server.register(apiRoutesPlugin, { services, prefix: API_V1_PREFIX });
   logger.debug("Fastify API routes registered");
 
+  await server.register(downloadController, { services, prefix: "/download" });
   registerFastifyStaticRoutes(server);
   logger.debug("Fastify static routes added");
 
@@ -66,10 +68,6 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
 };
 
 const registerFastifyStaticRoutes = (server: FastifyInstance): void => {
-  // Download files
-  server.get<{ Params: { id: string }; Querystring: { filename?: string } }>("/download/:id", async (req, reply) => {
-    return reply.download(req.params.id, req.query.filename ?? undefined);
-  });
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>(
     "/download/importReports/:id",
     async (req, reply) => {

@@ -4,15 +4,19 @@ import { type z } from "zod";
 import useAppContext from "../useAppContext";
 
 function useApiMutation<V extends { path: string }>(
-  { method }: { method: string },
+  { method }: { method: string; responseHandler?: never },
   queryOptions: Omit<UseMutationOptions, "mutationFn">
 ): UseMutationResult<unknown, unknown, V>;
 function useApiMutation<V extends { path: string }, SType>(
-  { method }: { method: string },
-  options: Omit<UseMutationOptions, "mutationFn"> & { schema?: z.ZodType<SType> }
+  { method }: { method: string; responseHandler?: never },
+  options: Omit<UseMutationOptions<SType>, "mutationFn"> & { schema?: z.ZodType<SType> }
 ): UseMutationResult<SType, unknown, V>;
-function useApiMutation<V extends { path: string }, SType>(
-  { method }: { method: string },
+function useApiMutation<V extends { path: string }, R>(
+  { method, responseHandler }: { method: string; responseHandler: (response: Response) => R | Promise<R> },
+  options: Omit<UseMutationOptions<R>, "mutationFn">
+): UseMutationResult<R, unknown, V>;
+function useApiMutation<V extends { path: string }, SType, R>(
+  { method, responseHandler }: { method: string; responseHandler?: (response: Response) => R | Promise<R> },
   options: Omit<UseMutationOptions<unknown, unknown, V>, "mutationFn"> & { schema?: z.ZodType<SType> } = {}
 ) {
   const { user } = useAuth();
@@ -38,6 +42,11 @@ function useApiMutation<V extends { path: string }, SType>(
             : {}),
         },
       });
+
+      if (typeof responseHandler === "function") {
+        return responseHandler(response);
+      }
+
       if (!response.ok) {
         throw new Error("API call error");
       }

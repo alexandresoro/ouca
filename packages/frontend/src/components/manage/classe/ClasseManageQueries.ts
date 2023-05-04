@@ -38,9 +38,3 @@ export const DELETE_CLASSE = graphql(`
     deleteClasse(id: $id)
   }
 `);
-
-export const EXPORT_CLASSES_QUERY = graphql(`
-  query ExportClasses {
-    exportClasses
-  }
-`);

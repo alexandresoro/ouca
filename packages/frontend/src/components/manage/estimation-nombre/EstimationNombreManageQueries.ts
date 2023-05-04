@@ -40,9 +40,3 @@ export const DELETE_ESTIMATION_NOMBRE = graphql(`
     deleteEstimationNombre(id: $id)
   }
 `);
-
-export const EXPORT_ESTIMATIONS_NOMBRE_QUERY = graphql(`
-  query ExportEstimationsNombre {
-    exportEstimationsNombre
-  }
-`);
