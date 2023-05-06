@@ -3,6 +3,7 @@ import { readFile } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 import { parentPort, workerData } from "node:worker_threads";
+import { getConfig } from "../config.js";
 import {
   IMPORT_COMPLETE,
   IMPORT_FAILED,
@@ -32,7 +33,8 @@ const { importId, importType, loggedUser } = workerData as {
 };
 
 (async () => {
-  const services = await buildServices();
+  const config = getConfig();
+  const services = await buildServices(config);
 
   const serviceWorker = getNewImportServiceForRequestType(importType, services);
 

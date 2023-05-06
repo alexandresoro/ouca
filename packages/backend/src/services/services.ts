@@ -1,7 +1,7 @@
 import { Redis } from "ioredis";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
-import config from "../config.js";
+import { type Config } from "../config.js";
 import { buildAgeRepository } from "../repositories/age/age-repository.js";
 import { buildClasseRepository } from "../repositories/classe/classe-repository.js";
 import { buildCommuneRepository } from "../repositories/commune/commune-repository.js";
@@ -72,9 +72,11 @@ export type Services = {
   zitadelOidcService: ZitadelOidcService;
 };
 
-export const buildServices = async (): Promise<Services> => {
+export const buildServices = async (config: Config): Promise<Services> => {
+  const { database } = config;
+
   // Database connection
-  const slonik = await getSlonikInstance({ logger: logger.child({ module: "slonik" }) });
+  const slonik = await getSlonikInstance({ dbConfig: database, logger: logger.child({ module: "slonik" }) });
 
   // Redis instance
   const redis = new Redis(config.redis.url);
@@ -105,6 +107,7 @@ export const buildServices = async (): Promise<Services> => {
 
   const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ logger, redis, userRepository });
   const zitadelOidcService = buildZitadelOidcService({
+    config,
     oidcWithInternalUserMappingService,
   });
 

@@ -1,37 +1,13 @@
-import { pino, type TransportTargetOptions } from "pino";
-import config from "../config.js";
+import { pino } from "pino";
+import { getConfig, type Config } from "../config.js";
+import { getPinoTransportsToUse } from "./logger-transport.js";
 
-const getPinoTransportsToUse = () => {
-  const transports: TransportTargetOptions[] = [];
-
-  if (!config.isProduction) {
-    // In dev, prettify the logs
-    transports.push({
-      target: "pino-pretty",
-      level: config.log.level,
-      options: {
-        colorize: true,
-        translateTime: true,
-      },
-    });
-  } else {
-    // In prod, write to stdout
-    transports.push({
-      target: "pino/file",
-      level: config.log.level,
-      options: {},
-    });
-  }
-
-  return transports?.length
-    ? {
-        targets: transports,
-      }
-    : undefined;
+const getLogger = (config: Config) => {
+  return pino({
+    level: config.log.level,
+    base: undefined,
+    transport: getPinoTransportsToUse(config.log.level, !!config.isProduction),
+  });
 };
 
-export const logger = pino({
-  level: config.log.level,
-  base: undefined,
-  transport: getPinoTransportsToUse(),
-});
+export const logger = getLogger(getConfig());

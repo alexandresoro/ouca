@@ -1,5 +1,5 @@
 import { type z } from "zod";
-import config from "../../config.js";
+import { type Config } from "../../config.js";
 
 /**
  * Calls the OIDC introspection endpoint and returns the response of the introspection
@@ -7,11 +7,12 @@ import config from "../../config.js";
  */
 const introspectAccessToken = async <T extends z.ZodType<Output>, Output>(
   accessToken: string,
-  introspectionResultSchema: T
+  introspectionResultSchema: T,
+  oidcConfig: Config["oidc"]
 ): Promise<z.infer<typeof introspectionResultSchema>> => {
-  const basicAuthHeader = Buffer.from(`${config.oidc.clientId}:${config.oidc.clientSecret}`).toString("base64");
+  const basicAuthHeader = Buffer.from(`${oidcConfig.clientId}:${oidcConfig.clientSecret}`).toString("base64");
 
-  const response = await fetch(`${config.oidc.issuer}${config.oidc.introspectionPath}`, {
+  const response = await fetch(`${oidcConfig.issuer}${oidcConfig.introspectionPath}`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${basicAuthHeader}`,

@@ -1,18 +1,18 @@
 import esMain from "es-main";
 import fs from "node:fs";
 import path from "node:path";
-import { type Logger } from "pino";
+import { pino, type Logger } from "pino";
 import { sql, type DatabasePool } from "slonik";
 import { Umzug } from "umzug";
 import { z } from "zod";
-import config from "./config.js";
+import { getDbConfig, type DbConfig } from "./config.js";
 import getSlonikInstance from "./slonik/slonik-instance.js";
-import { logger } from "./utils/logger.js";
+import { getPinoTransportsToUse } from "./utils/logger-transport.js";
 
-const getUmzugInstance = ({ logger, slonik }: { logger: Logger; slonik: DatabasePool }) =>
+const getUmzugInstance = ({ dbConfig, logger, slonik }: { dbConfig: DbConfig; logger: Logger; slonik: DatabasePool }) =>
   new Umzug({
     migrations: {
-      glob: `${config.database.migrator.migrationsPath}/*.sql`,
+      glob: `${dbConfig.migrator.migrationsPath}/*.sql`,
       resolve: ({ name, path: pathFile, context }) => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return {
@@ -39,14 +39,14 @@ const getUmzugInstance = ({ logger, slonik }: { logger: Logger; slonik: Database
       async executed({ context }) {
         await context.slonik.query(
           sql.unsafe`CREATE TABLE IF NOT EXISTS ${sql.identifier([
-            config.database.migrator.migrationTableSchema,
-            config.database.migrator.migrationTableName,
+            dbConfig.migrator.migrationTableSchema,
+            dbConfig.migrator.migrationTableName,
           ])}(name text, date timestamptz not null default now())`
         );
         const names = await context.slonik.anyFirst(
           sql.type(z.object({ name: z.string() }))`SELECT name from ${sql.identifier([
-            config.database.migrator.migrationTableSchema,
-            config.database.migrator.migrationTableName,
+            dbConfig.migrator.migrationTableSchema,
+            dbConfig.migrator.migrationTableName,
           ])}`
         );
         return [...names];
@@ -54,36 +54,38 @@ const getUmzugInstance = ({ logger, slonik }: { logger: Logger; slonik: Database
       async logMigration({ name, context }) {
         await context.slonik.query(
           sql.unsafe`INSERT INTO ${sql.identifier([
-            config.database.migrator.migrationTableSchema,
-            config.database.migrator.migrationTableName,
+            dbConfig.migrator.migrationTableSchema,
+            dbConfig.migrator.migrationTableName,
           ])}(name) VALUES (${name})`
         );
       },
       async unlogMigration({ name, context }) {
         await context.slonik.query(
           sql.unsafe`DELETE FROM ${sql.identifier([
-            config.database.migrator.migrationTableSchema,
-            config.database.migrator.migrationTableName,
+            dbConfig.migrator.migrationTableSchema,
+            dbConfig.migrator.migrationTableName,
           ])} WHERE name = ${name}`
         );
       },
     },
     logger,
     create: {
-      folder: config.database.migrator.migrationsPath,
+      folder: dbConfig.migrator.migrationsPath,
     },
   });
 
 export const runDatabaseMigrations = async ({
+  dbConfig,
   logger,
   slonik,
 }: {
+  dbConfig: DbConfig;
   logger: Logger;
   slonik: DatabasePool;
 }): Promise<void> => {
-  if (config.database.migrator.runMigrations) {
+  if (dbConfig.migrator.runMigrations) {
     logger.child({ module: "umzug" }).debug("Running database migrations");
-    const umzug = getUmzugInstance({ logger, slonik });
+    const umzug = getUmzugInstance({ dbConfig, logger, slonik });
     await umzug.up();
   } else {
     logger.child({ module: "umzug" }).debug("No migrations to run as feature is disabled");
@@ -91,8 +93,15 @@ export const runDatabaseMigrations = async ({
 };
 
 if (esMain(import.meta)) {
-  void getSlonikInstance({ logger }).then((slonik) => {
+  const dbConfig = getDbConfig();
+  const logger = pino({
+    level: "info",
+    base: undefined,
+    transport: getPinoTransportsToUse("info", process.env.NODE_ENV != null),
+  });
+  void getSlonikInstance({ dbConfig, logger }).then((slonik) => {
     void getUmzugInstance({
+      dbConfig,
       logger,
       slonik,
     }).runAsCLI();

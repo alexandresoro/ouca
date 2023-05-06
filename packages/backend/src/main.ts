@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/node";
-import config from "./config.js";
+import { getConfig } from "./config.js";
 import { buildServer } from "./fastify.js";
 import { buildServices } from "./services/services.js";
 import shutdown from "./shutdown.js";
@@ -8,6 +8,8 @@ import { logger } from "./utils/logger.js";
 import { checkAndCreateFolders } from "./utils/paths.js";
 // Importing @sentry/tracing patches the global hub for tracing to work.
 import "@sentry/tracing";
+
+const config = getConfig();
 
 // Sentry
 if (config.sentry.dsn) {
@@ -23,9 +25,13 @@ logger.debug("Starting app");
 checkAndCreateFolders();
 
 (async () => {
-  const services = await buildServices();
+  const services = await buildServices(config);
 
-  await runDatabaseMigrations({ logger: logger.child({ module: "umzug" }), slonik: services.slonik });
+  await runDatabaseMigrations({
+    logger: logger.child({ module: "umzug" }),
+    slonik: services.slonik,
+    dbConfig: config.database,
+  });
 
   const server = await buildServer(services);
 
