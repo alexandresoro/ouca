@@ -127,3 +127,11 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Dispatch dev env update
+        if: github.ref_name == github.event.repository.default_branch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          repository: alexandresoro/k3s
+          event-type: update-ouca-dev-backend-image
+          client-payload: '{"tag":"${{ steps.docker_build.output.digest }}"}'
