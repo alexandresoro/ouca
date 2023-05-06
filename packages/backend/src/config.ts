@@ -7,7 +7,7 @@ const zodStringToBoolean = (input: string | undefined): boolean => {
 
 const envDbSchema = z.object({
   DATABASE_URL: z.string().default("postgresql://basenaturaliste:basenaturaliste@127.0.0.1:5432/basenaturaliste"),
-  OUCA_DATABASE_RUN_MIGRATIONS: z.string().default("true").transform(zodStringToBoolean),
+  OUCA_DATABASE_RUN_MIGRATIONS: z.string().default("false").transform(zodStringToBoolean),
   OUCA_DATABASE_MIGRATION_SCHEMA: z.string().default("public"),
   OUCA_DATABASE_MIGRATION_TABLE: z.string().default("base_naturaliste_umzug_migrations"),
   OUCA_DATABASE_MIGRATIONS_PATH: z.string().default(new URL("../migrations/", import.meta.url).pathname),
