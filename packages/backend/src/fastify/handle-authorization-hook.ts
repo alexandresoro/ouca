@@ -29,7 +29,6 @@ const storeIntrospectionResultInCache = async (
   if (introspectionResult.active) {
     const tokenExpirationDate = new Date(introspectionResult.exp * 1000); // Token is in seconds
     const cacheExpirationDate = add(new Date(), { seconds: ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION });
-    console.log(tokenExpirationDate, cacheExpirationDate);
     if (compareAsc(cacheExpirationDate, tokenExpirationDate) <= 0) {
       // Default cache duration is earlier than token duration
       await services.redis.expire(key, ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_DURATION);
