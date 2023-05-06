@@ -71,7 +71,7 @@
     "date-fns": "2.30.0",
     "es-main": "1.2.0",
     "exceljs": "4.3.0",
-    "fastify": "4.15.0",
+    "fastify": "4.17.0",
     "fastify-plugin": "4.5.0",
     "graphql": "16.6.0",
     "ioredis": "5.3.2",
