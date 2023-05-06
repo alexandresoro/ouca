@@ -6,6 +6,7 @@ import fastifyCompress from "@fastify/compress";
 import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
+import fastifyUnderPressure from "@fastify/under-pressure";
 import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import-types";
 import fastify, { type FastifyInstance } from "fastify";
 import { randomUUID } from "node:crypto";
@@ -36,6 +37,9 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
     origin: true,
     credentials: true,
     maxAge: 3600,
+  });
+  await server.register(fastifyUnderPressure, {
+    exposeStatusRoute: "/healthz",
   });
 
   logger.debug("Fastify middlewares successfully registered");
