@@ -134,4 +134,4 @@ jobs:
         with:
           repository: alexandresoro/k3s
           event-type: update-ouca-dev-backend-image
-          client-payload: '{"tag":"${{ steps.docker_build.output.digest }}"}'
+          client-payload: '{"tag":"${{ steps.docker_build.outputs.digest }}"}'
