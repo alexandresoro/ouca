@@ -16,6 +16,7 @@ import { promisify } from "node:util";
 import downloadController from "./controllers/download-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
 import graphQlServerPlugin from "./fastify/graphql-server-plugin.js";
+import sentryMetricsPlugin from "./fastify/sentry-metrics-plugin.js";
 
 const API_V1_PREFIX = "/api/v1";
 
@@ -46,6 +47,8 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
   });
 
   logger.debug("Fastify static server successfully registered");
+
+  await server.register(sentryMetricsPlugin);
 
   // Mercurius GraphQL adapter
 

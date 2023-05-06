@@ -6,19 +6,18 @@ import shutdown from "./shutdown.js";
 import { runDatabaseMigrations } from "./umzug.js";
 import { logger } from "./utils/logger.js";
 import { checkAndCreateFolders } from "./utils/paths.js";
-// Importing @sentry/tracing patches the global hub for tracing to work.
-import "@sentry/tracing";
 
 const config = getConfig();
 
 // Sentry
 if (config.sentry.dsn) {
   logger.debug("Sentry instrumenting enabled");
-  Sentry.init({
-    dsn: config.sentry.dsn,
-    tracesSampleRate: 1.0,
-  });
 }
+Sentry.init({
+  dsn: config.sentry.dsn,
+  environment: config.sentry.environment,
+  tracesSampleRate: 1.0,
+});
 
 logger.debug("Starting app");
 

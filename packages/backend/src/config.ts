@@ -25,6 +25,7 @@ const envSchema = z.object({
   OIDC_CLIENT_ID: z.string(),
   OIDC_CLIENT_SECRET: z.string(),
   SENTRY_DSN: z.string().optional(),
+  SENTRY_ENV: z.string().optional(),
   NODE_ENV: z.string().optional(),
 });
 
@@ -65,6 +66,7 @@ export type Config = {
   };
   sentry: {
     dsn: EnvSchemaType["SENTRY_DSN"];
+    environment: EnvSchemaType["SENTRY_ENV"];
   };
   isProduction: EnvSchemaType["NODE_ENV"];
 };
@@ -117,6 +119,7 @@ export const getConfig = (): Config => {
     },
     sentry: {
       dsn: env.SENTRY_DSN,
+      environment: env.SENTRY_ENV,
     },
     isProduction: env.NODE_ENV,
   };
