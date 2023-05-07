@@ -32,9 +32,3 @@ export const UPSERT_CLASSE = graphql(`
     }
   }
 `);
-
-export const DELETE_CLASSE = graphql(`
-  mutation DeleteClasse($id: Int!) {
-    deleteClasse(id: $id)
-  }
-`);

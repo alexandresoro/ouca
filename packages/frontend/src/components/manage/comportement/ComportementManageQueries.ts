@@ -37,9 +37,3 @@ export const UPSERT_COMPORTEMENT = graphql(`
     }
   }
 `);
-
-export const DELETE_COMPORTEMENT = graphql(`
-  mutation DeleteComportement($id: Int!) {
-    deleteComportement(id: $id)
-  }
-`);

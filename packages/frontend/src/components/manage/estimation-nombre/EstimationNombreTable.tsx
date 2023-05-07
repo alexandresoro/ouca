@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type EstimationNombre, type EstimationNombreOrderBy } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_ESTIMATION_NOMBRE, PAGINATED_ESTIMATIONS_NOMBRE_QUERY } from "./EstimationNombreManageQueries";
+import { PAGINATED_ESTIMATIONS_NOMBRE_QUERY } from "./EstimationNombreManageQueries";
 
 const COLUMNS = [
   {
@@ -49,7 +50,26 @@ const EstimationNombreTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteEstimationNombre] = useMutation(DELETE_ESTIMATION_NOMBRE);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteEstimationsNombre();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -68,29 +88,7 @@ const EstimationNombreTable: FunctionComponent = () => {
   const handleDeleteEstimationNombreConfirmation = (estimationNombre: EstimationNombre | null) => {
     if (estimationNombre) {
       setDialogEstimationNombre(null);
-      deleteEstimationNombre({
-        id: estimationNombre.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteEstimationsNombre();
-          if (!error && data?.deleteEstimationNombre) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/number-estimate/${estimationNombre.id}` });
     }
   };
 

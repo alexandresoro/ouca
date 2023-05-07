@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type EntitesAvecLibelleOrderBy, type Sexe } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_SEXE, PAGINATED_SEXES_QUERY } from "./SexeManageQueries";
+import { PAGINATED_SEXES_QUERY } from "./SexeManageQueries";
 
 const COLUMNS = [
   {
@@ -45,7 +46,26 @@ const SexeTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteSexe] = useMutation(DELETE_SEXE);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteSexes();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -64,29 +84,7 @@ const SexeTable: FunctionComponent = () => {
   const handleDeleteSexeConfirmation = (sexe: Sexe | null) => {
     if (sexe) {
       setDialogSexe(null);
-      deleteSexe({
-        id: sexe.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteSexes();
-          if (!error && data?.deleteSexe) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/sex/${sexe.id}` });
     }
   };
 

@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type LieuDit, type LieuxDitsOrderBy } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_LIEU_DIT, PAGINATED_LIEUX_DITS_QUERY } from "./LieuDitManageQueries";
+import { PAGINATED_LIEUX_DITS_QUERY } from "./LieuDitManageQueries";
 
 const COLUMNS = [
   {
@@ -71,7 +72,26 @@ const LieuDitTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteLieuDit] = useMutation(DELETE_LIEU_DIT);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteLieuxDits();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -90,29 +110,7 @@ const LieuDitTable: FunctionComponent = () => {
   const handleDeleteLieuDitConfirmation = (lieuDit: Pick<LieuDit, "id"> | null) => {
     if (lieuDit) {
       setDialogLieuDit(null);
-      deleteLieuDit({
-        id: lieuDit.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteLieuxDits();
-          if (!error && data?.deleteLieuDit) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/locality/${lieuDit.id}` });
     }
   };
 

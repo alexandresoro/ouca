@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type Departement, type DepartementsOrderBy } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_DEPARTEMENT, PAGINATED_DEPARTEMENTS_QUERY } from "./DepartementManageQueries";
+import { PAGINATED_DEPARTEMENTS_QUERY } from "./DepartementManageQueries";
 
 const COLUMNS = [
   {
@@ -53,7 +54,26 @@ const DepartementTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteDepartement] = useMutation(DELETE_DEPARTEMENT);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteDepartements();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -72,29 +92,7 @@ const DepartementTable: FunctionComponent = () => {
   const handleDeleteDepartementConfirmation = (departement: Departement | null) => {
     if (departement) {
       setDialogDepartement(null);
-      deleteDepartement({
-        id: departement.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteDepartements();
-          if (!error && data?.deleteDepartement) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/department/${departement.id}` });
     }
   };
 

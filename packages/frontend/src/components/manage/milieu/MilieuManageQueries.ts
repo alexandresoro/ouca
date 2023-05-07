@@ -34,9 +34,3 @@ export const UPSERT_MILIEU = graphql(`
     }
   }
 `);
-
-export const DELETE_MILIEU = graphql(`
-  mutation DeleteMilieu($id: Int!) {
-    deleteMilieu(id: $id)
-  }
-`);

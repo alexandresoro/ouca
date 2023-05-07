@@ -33,9 +33,3 @@ export const UPSERT_DEPARTEMENT = graphql(`
     }
   }
 `);
-
-export const DELETE_DEPARTEMENT = graphql(`
-  mutation DeleteDepartement($id: Int!) {
-    deleteDepartement(id: $id)
-  }
-`);

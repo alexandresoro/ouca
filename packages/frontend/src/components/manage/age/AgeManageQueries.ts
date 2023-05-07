@@ -31,9 +31,3 @@ export const UPSERT_AGE = graphql(`
     }
   }
 `);
-
-export const DELETE_AGE = graphql(`
-  mutation DeleteAge($id: Int!) {
-    deleteAge(id: $id)
-  }
-`);

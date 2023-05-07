@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type EntitesAvecLibelleOrderBy, type Meteo } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_METEO, PAGINATED_METEOS_QUERY } from "./MeteoManageQueries";
+import { PAGINATED_METEOS_QUERY } from "./MeteoManageQueries";
 
 const COLUMNS = [
   {
@@ -45,7 +46,26 @@ const MeteoTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteMeteo] = useMutation(DELETE_METEO);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteMeteos();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -64,29 +84,7 @@ const MeteoTable: FunctionComponent = () => {
   const handleDeleteMeteoConfirmation = (meteo: Meteo | null) => {
     if (meteo) {
       setDialogMeteo(null);
-      deleteMeteo({
-        id: meteo.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteMeteos();
-          if (!error && data?.deleteMeteo) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/weather/${meteo.id}` });
     }
   };
 

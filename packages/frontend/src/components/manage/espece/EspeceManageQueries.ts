@@ -59,9 +59,3 @@ export const UPSERT_ESPECE = graphql(`
     }
   }
 `);
-
-export const DELETE_ESPECE = graphql(`
-  mutation DeleteEspece($id: Int!) {
-    deleteEspece(id: $id)
-  }
-`);

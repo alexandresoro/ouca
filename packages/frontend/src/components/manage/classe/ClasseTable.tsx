@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type Classe, type ClassesOrderBy } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_CLASSE, PAGINATED_CLASSES_QUERY } from "./ClasseManageQueries";
+import { PAGINATED_CLASSES_QUERY } from "./ClasseManageQueries";
 
 const COLUMNS = [
   {
@@ -49,7 +50,26 @@ const ClasseTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteClasse] = useMutation(DELETE_CLASSE);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteClasses();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -68,29 +88,7 @@ const ClasseTable: FunctionComponent = () => {
   const handleDeleteClasseConfirmation = (classe: Classe | null) => {
     if (classe) {
       setDialogClasse(null);
-      deleteClasse({
-        id: classe.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteClasses();
-          if (!error && data?.deleteClasse) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/class/${classe.id}` });
     }
   };
 

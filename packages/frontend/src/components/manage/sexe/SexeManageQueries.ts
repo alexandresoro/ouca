@@ -31,9 +31,3 @@ export const UPSERT_SEXE = graphql(`
     }
   }
 `);
-
-export const DELETE_SEXE = graphql(`
-  mutation DeleteSexe($id: Int!) {
-    deleteSexe(id: $id)
-  }
-`);

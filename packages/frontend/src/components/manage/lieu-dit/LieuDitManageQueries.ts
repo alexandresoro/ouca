@@ -74,9 +74,3 @@ export const UPSERT_LIEU_DIT = graphql(`
     }
   }
 `);
-
-export const DELETE_LIEU_DIT = graphql(`
-  mutation DeleteLieuDit($id: Int!) {
-    deleteLieuDit(id: $id)
-  }
-`);

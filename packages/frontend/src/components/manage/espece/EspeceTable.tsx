@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type Espece, type EspecesOrderBy } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_ESPECE, PAGINATED_ESPECES_QUERY } from "./EspeceManageQueries";
+import { PAGINATED_ESPECES_QUERY } from "./EspeceManageQueries";
 
 const COLUMNS = [
   {
@@ -57,7 +58,26 @@ const EspeceTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteEspece] = useMutation(DELETE_ESPECE);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteEspeces();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -76,29 +96,7 @@ const EspeceTable: FunctionComponent = () => {
   const handleDeleteEspeceConfirmation = (espece: Espece | null) => {
     if (espece) {
       setDialogEspece(null);
-      deleteEspece({
-        id: espece.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteEspeces();
-          if (!error && data?.deleteEspece) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/species/${espece.id}` });
     }
   };
 

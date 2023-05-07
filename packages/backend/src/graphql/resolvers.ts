@@ -277,45 +277,6 @@ export const buildResolvers = ({
       },
     },
     Mutation: {
-      deleteAge: async (_source, args, { user }): Promise<number> => {
-        return ageService.deleteAge(args.id, user).then(({ id }) => id);
-      },
-      deleteClasse: async (_source, args, { user }): Promise<number> => {
-        return classeService.deleteClasse(args.id, user).then(({ id }) => id);
-      },
-      deleteCommune: async (_source, args, { user }): Promise<number> => {
-        return communeService.deleteCommune(args.id, user).then(({ id }) => id);
-      },
-      deleteComportement: async (_source, args, { user }): Promise<number> => {
-        return comportementService.deleteComportement(args.id, user).then(({ id }) => id);
-      },
-      deleteDepartement: async (_source, args, { user }): Promise<number> => {
-        return departementService.deleteDepartement(args.id, user).then(({ id }) => id);
-      },
-      deleteDonnee: async (_source, args, { user }): Promise<number> => {
-        return donneeService.deleteDonnee(args.id, user).then(({ id }) => id);
-      },
-      deleteEspece: async (_source, args, { user }): Promise<number> => {
-        return especeService.deleteEspece(args.id, user).then(({ id }) => id);
-      },
-      deleteEstimationDistance: async (_source, args, { user }): Promise<number> => {
-        return estimationDistanceService.deleteEstimationDistance(args.id, user).then(({ id }) => id);
-      },
-      deleteEstimationNombre: async (_source, args, { user }): Promise<number> => {
-        return estimationNombreService.deleteEstimationNombre(args.id, user).then(({ id }) => id);
-      },
-      deleteLieuDit: async (_source, args, { user }): Promise<number> => {
-        return lieuditService.deleteLieuDit(args.id, user).then(({ id }) => id);
-      },
-      deleteMeteo: async (_source, args, { user }): Promise<number> => {
-        return meteoService.deleteMeteo(args.id, user).then(({ id }) => id);
-      },
-      deleteMilieu: async (_source, args, { user }): Promise<number> => {
-        return milieuService.deleteMilieu(args.id, user).then(({ id }) => id);
-      },
-      deleteSexe: async (_source, args, { user }): Promise<number> => {
-        return sexeService.deleteSexe(args.id, user).then(({ id }) => id);
-      },
       upsertAge: async (_source, args, { user }): Promise<Age> => {
         return ageService.upsertAge(args, user);
       },

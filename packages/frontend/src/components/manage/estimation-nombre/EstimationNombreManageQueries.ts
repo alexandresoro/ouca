@@ -34,9 +34,3 @@ export const UPSERT_ESTIMATION_NOMBRE = graphql(`
     }
   }
 `);
-
-export const DELETE_ESTIMATION_NOMBRE = graphql(`
-  mutation DeleteEstimationNombre($id: Int!) {
-    deleteEstimationNombre(id: $id)
-  }
-`);

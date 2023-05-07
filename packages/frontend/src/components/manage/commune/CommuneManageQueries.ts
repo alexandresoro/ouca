@@ -57,9 +57,3 @@ export const UPSERT_COMMUNE = graphql(`
     }
   }
 `);
-
-export const DELETE_COMMUNE = graphql(`
-  mutation DeleteCommune($id: Int!) {
-    deleteCommune(id: $id)
-  }
-`);

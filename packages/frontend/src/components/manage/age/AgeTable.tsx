@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type Age, type EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_AGE, PAGINATED_AGES_QUERY } from "./AgeManageQueries";
+import { PAGINATED_AGES_QUERY } from "./AgeManageQueries";
 
 const COLUMNS = [
   {
@@ -45,7 +46,26 @@ const AgeTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteAge] = useMutation(DELETE_AGE);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteAges();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -64,29 +84,7 @@ const AgeTable: FunctionComponent = () => {
   const handleDeleteAgeConfirmation = (age: Age | null) => {
     if (age) {
       setDialogAge(null);
-      deleteAge({
-        id: age.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteAges();
-          if (!error && data?.deleteAge) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/age/${age.id}` });
     }
   };
 

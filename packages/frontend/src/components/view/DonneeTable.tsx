@@ -1,9 +1,10 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { graphql } from "../../gql";
 import { type Donnee, type SearchDonneesOrderBy } from "../../gql/graphql";
+import useApiMutation from "../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
 import Table from "../common/styled/table/Table";
@@ -111,12 +112,6 @@ const PAGINATED_SEARCH_DONNEES_QUERY = graphql(`
   }
 `);
 
-const DELETE_QUERY = graphql(`
-  mutation DeleteDonnee($id: Int!) {
-    deleteDonnee(id: $id)
-  }
-`);
-
 const COLUMNS = [
   {
     key: "nomFrancais",
@@ -166,7 +161,26 @@ const DonneeTable: FunctionComponent = () => {
     requestPolicy: "cache-and-network",
   });
 
-  const [_, deleteDonnee] = useMutation(DELETE_QUERY);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteSearchDonneesQuery();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const handleOpenDonneeDetails = (donnee: Donnee) => {
     if (donnee) {
@@ -180,27 +194,10 @@ const DonneeTable: FunctionComponent = () => {
     }
   };
 
-  const handleDeleteDonneeConfirmation = async (donnee: Donnee | null) => {
+  const handleDeleteDonneeConfirmation = (donnee: Donnee | null) => {
     if (donnee) {
       setDeleteDialog(null);
-      await deleteDonnee({
-        id: donnee.id,
-      })
-        .then(({ data, error }) => {
-          if (!error && data?.deleteDonnee) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          }
-          reexecuteSearchDonneesQuery();
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/entry/${donnee.id}` });
     }
   };
 

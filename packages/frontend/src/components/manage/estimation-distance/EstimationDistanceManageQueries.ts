@@ -35,9 +35,3 @@ export const UPSERT_ESTIMATION_DISTANCE = graphql(`
     }
   }
 `);
-
-export const DELETE_ESTIMATION_DISTANCE = graphql(`
-  mutation DeleteEstimationDistance($id: Int!) {
-    deleteEstimationDistance(id: $id)
-  }
-`);

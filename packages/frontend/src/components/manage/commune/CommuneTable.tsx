@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type Commune, type CommunesOrderBy } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_COMMUNE, PAGINATED_COMMUNES_QUERY } from "./CommuneManageQueries";
+import { PAGINATED_COMMUNES_QUERY } from "./CommuneManageQueries";
 
 const COLUMNS = [
   {
@@ -57,7 +58,26 @@ const CommuneTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteCommune] = useMutation(DELETE_COMMUNE);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteCommunes();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -76,29 +96,7 @@ const CommuneTable: FunctionComponent = () => {
   const handleDeleteCommuneConfirmation = (commune: Commune | null) => {
     if (commune) {
       setDialogCommune(null);
-      deleteCommune({
-        id: commune.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteCommunes();
-          if (!error && data?.deleteCommune) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/town/${commune.id}` });
     }
   };
 

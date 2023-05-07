@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type Comportement, type ComportementsOrderBy } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_COMPORTEMENT, PAGINATED_COMPORTEMENTS_QUERY } from "./ComportementManageQueries";
+import { PAGINATED_COMPORTEMENTS_QUERY } from "./ComportementManageQueries";
 
 const COLUMNS = [
   {
@@ -53,7 +54,26 @@ const ComportementTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteComportement] = useMutation(DELETE_COMPORTEMENT);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecuteComportements();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -72,29 +92,7 @@ const ComportementTable: FunctionComponent = () => {
   const handleDeleteComportementConfirmation = (comportement: Comportement | null) => {
     if (comportement) {
       setDialogComportement(null);
-      deleteComportement({
-        id: comportement.id,
-      })
-        .then(({ data, error }) => {
-          reexecuteComportements();
-          if (!error && data?.deleteComportement) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/behavior/${comportement.id}` });
     }
   };
 

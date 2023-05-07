@@ -1,8 +1,9 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { type EntitesAvecLibelleOrderBy, type EstimationDistance } from "../../../gql/graphql";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -10,7 +11,7 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { DELETE_ESTIMATION_DISTANCE, PAGINATED_ESTIMATIONS_DISTANCE_QUERY } from "./EstimationDistanceManageQueries";
+import { PAGINATED_ESTIMATIONS_DISTANCE_QUERY } from "./EstimationDistanceManageQueries";
 
 const COLUMNS = [
   {
@@ -45,7 +46,26 @@ const EstimationDistanceTable: FunctionComponent = () => {
     },
   });
 
-  const [_, deleteEstimationDistance] = useMutation(DELETE_ESTIMATION_DISTANCE);
+  const { mutate } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: () => {
+        reexecutEstimationsDistance();
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -64,29 +84,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
   const handleDeleteEstimationDistanceConfirmation = (estimationDistance: EstimationDistance | null) => {
     if (estimationDistance) {
       setDialogEstimationDistance(null);
-      deleteEstimationDistance({
-        id: estimationDistance.id,
-      })
-        .then(({ data, error }) => {
-          reexecutEstimationsDistance();
-          if (!error && data?.deleteEstimationDistance) {
-            displayNotification({
-              type: "success",
-              message: t("deleteConfirmationMessage"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("deleteErrorMessage"),
-            });
-          }
-        })
-        .catch(() => {
-          displayNotification({
-            type: "error",
-            message: t("deleteErrorMessage"),
-          });
-        });
+      mutate({ path: `/distance-estimate/${estimationDistance.id}` });
     }
   };
 

@@ -31,9 +31,3 @@ export const UPSERT_METEO = graphql(`
     }
   }
 `);
-
-export const DELETE_METEO = graphql(`
-  mutation DeleteMeteo($id: Int!) {
-    deleteMeteo(id: $id)
-  }
-`);
