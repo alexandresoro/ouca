@@ -2,15 +2,10 @@ import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 
-const entryController: FastifyPluginCallback<{
+const townController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { donneeService } = services;
-
-  fastify.get("/last", async (req, reply) => {
-    const id = await donneeService.findLastDonneeId(req.user);
-    await reply.send({ id });
-  });
+  const { communeService } = services;
 
   fastify.delete<{
     Params: {
@@ -18,7 +13,7 @@ const entryController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await donneeService.deleteDonnee(req.params.id, req.user);
+      const { id: deletedId } = await communeService.deleteCommune(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -31,4 +26,4 @@ const entryController: FastifyPluginCallback<{
   done();
 };
 
-export default entryController;
+export default townController;
