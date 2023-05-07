@@ -124,7 +124,7 @@ const AutocompleteMultiple = <T extends object,>(
               className="flex-grow outline-none bg-transparent text-base-content placeholder-shown:text-ellipsis"
               onChange={handleInputChange}
               placeholder={values.map(renderValue).join(", ") ?? ""}
-            ></Combobox.Input>
+            />
             {value.length > 0 && <div className="badge badge-accent">{value.length}</div>}
             <Combobox.Button className="flex items-center">
               <ExpandVertical className="h-5 opacity-70" aria-hidden="true" />

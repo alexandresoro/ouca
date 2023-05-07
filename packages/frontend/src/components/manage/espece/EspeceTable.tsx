@@ -160,7 +160,7 @@ const EspeceTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.especes?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogEspece}
         messageContent={t("deleteSpeciesDialogMsg", {

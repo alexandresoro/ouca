@@ -150,7 +150,7 @@ const ClasseTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.classes?.count}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogClasse}
         messageContent={t("deleteClassDialogMsg", {

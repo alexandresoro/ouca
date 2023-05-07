@@ -112,7 +112,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
               displayValue={getDisplayValue}
               onChange={handleInputChange}
               onBlur={handleInputChange}
-            ></Combobox.Input>
+            />
           </div>
           <Combobox.Options
             className="menu menu-compact z-20 flex-nowrap text-base-content dark:shadow shadow-primary-focus bg-gray-100 dark:bg-base-300 ring-2 ring-primary-focus rounded-lg overflow-y-auto"

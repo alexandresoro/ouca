@@ -150,7 +150,7 @@ const EstimationNombreTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.estimationsNombre?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogEstimationNombre}
         messageContent={t("deleteNumberPrecisionDialogMsg", {

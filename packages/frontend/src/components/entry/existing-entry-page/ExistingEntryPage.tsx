@@ -24,7 +24,7 @@ const ExistingEntryPage: FunctionComponent = () => {
   if (fetching && !data) {
     return (
       <div className="flex justify-center items-center h-56">
-        <progress className="progress progress-primary w-56"></progress>
+        <progress className="progress progress-primary w-56" />
       </div>
     );
   }

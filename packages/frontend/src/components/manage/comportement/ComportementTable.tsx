@@ -155,7 +155,7 @@ const ComportementTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.comportements?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogComportement}
         messageContent={t("deleteBehaviorDialogMsg", {

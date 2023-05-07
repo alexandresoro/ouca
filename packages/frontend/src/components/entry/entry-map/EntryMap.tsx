@@ -118,7 +118,7 @@ const EntryMap: FunctionComponent = () => {
               tileSize={256}
               attribution={t("maps.maps.ignSatellite.attribution")}
             >
-              <Layer type="raster" paint={{ "raster-opacity": overlayOpacity }}></Layer>
+              <Layer type="raster" paint={{ "raster-opacity": overlayOpacity }} />
             </Source>
           )}
           <NavigationControl />
@@ -136,7 +136,7 @@ const EntryMap: FunctionComponent = () => {
         <TileLayer
           url="https://wxs.ign.fr/choisirgeoportail/geoportail/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&format=image/png&style=normal"
           attribution={t("maps.maps.ign.attribution")}
-        ></TileLayer>
+        />
         <LeafletScaleControl metric imperial={false} />
       </MapContainer>
     </div>

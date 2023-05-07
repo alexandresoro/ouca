@@ -86,11 +86,11 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
 
                 <div className="mt-8 flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
                   <div className="flex flex-col flex-auto w-full">
-                    <InventaireDetailsView inventaire={donnee.inventaire}></InventaireDetailsView>
+                    <InventaireDetailsView inventaire={donnee.inventaire} />
                   </div>
 
                   <div className="flex flex-col flex-auto w-full">
-                    <DonneeDetailsView donnee={donnee}></DonneeDetailsView>
+                    <DonneeDetailsView donnee={donnee} />
                   </div>
                 </div>
               </div>

@@ -216,7 +216,7 @@ const DonneeTable: FunctionComponent = () => {
       <Table
         tableHead={
           <>
-            <th></th>
+            <th />
             {COLUMNS.map((column) => (
               <th key={column.key}>
                 <TableSortLabel
@@ -249,7 +249,7 @@ const DonneeTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={donneesResult?.searchDonnees?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
 
       <DeletionConfirmationDialog
         open={!!deleteDialog}

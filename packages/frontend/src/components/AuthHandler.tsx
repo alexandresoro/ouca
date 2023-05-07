@@ -25,7 +25,7 @@ export const AuthHandler = ({ children }: { children: ReactElement }): ReactElem
   if (auth.activeNavigator) {
     return (
       <div>
-        <progress className="progress progress-primary w-56"></progress>
+        <progress className="progress progress-primary w-56" />
       </div>
     );
   }

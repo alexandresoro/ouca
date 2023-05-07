@@ -121,7 +121,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
       elementsPerPage={rowsPerPage}
       count={data?.especes?.count ?? 0}
       onPageChange={handleChangePage}
-    ></Table>
+    />
   );
 };
 

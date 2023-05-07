@@ -206,7 +206,7 @@ const SettingsPage: FunctionComponent = () => {
       <ContentContainerLayout>
         {fetching && (
           <div className="flex justify-center items-center">
-            <progress className="progress progress-primary w-56"></progress>
+            <progress className="progress progress-primary w-56" />
           </div>
         )}
         {!(fetching || error) && (

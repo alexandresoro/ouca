@@ -145,7 +145,7 @@ const SexeTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.sexes?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogSexe}
         messageContent={t("deleteGenderDialogMsg", {

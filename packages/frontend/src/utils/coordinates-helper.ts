@@ -1,4 +1,4 @@
-import { Inventaire } from "../gql/graphql";
+import { type Inventaire } from "../gql/graphql";
 
 export const getInventaireCoordinates = (
   inventaire: Inventaire

@@ -20,7 +20,7 @@ const ViewDonneesPage: FunctionComponent = () => {
       </StyledPanelHeader>
 
       <ContentContainerLayout>
-        {features.tmp_view_search_filters && <DonneeFilter></DonneeFilter>}
+        {features.tmp_view_search_filters && <DonneeFilter />}
 
         <Tab.Group>
           <Tab.List className="btn-group mt-6 mb-2">

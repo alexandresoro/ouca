@@ -125,7 +125,7 @@ const App: FunctionComponent = () => {
                           </Suspense>
                         }
                       >
-                        <Route index element={<Navigate to="/create/new" replace={true} />}></Route>
+                        <Route index element={<Navigate to="/create/new" replace={true} />} />
                         <Route
                           path="create/new"
                           element={
@@ -133,7 +133,7 @@ const App: FunctionComponent = () => {
                               <NewEntryPage />
                             </Suspense>
                           }
-                        ></Route>
+                        />
                         <Route
                           path="entry/:id"
                           element={
@@ -141,7 +141,7 @@ const App: FunctionComponent = () => {
                               <ExistingEntryPage />
                             </Suspense>
                           }
-                        ></Route>
+                        />
                         <Route
                           path="view"
                           element={
@@ -149,7 +149,7 @@ const App: FunctionComponent = () => {
                               <ViewDonneesPage />
                             </Suspense>
                           }
-                        ></Route>
+                        />
                         <Route path="manage" element={<Outlet />}>
                           <Route
                             path="observateur/*"
@@ -158,7 +158,7 @@ const App: FunctionComponent = () => {
                                 <ObservateurManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="departement/*"
                             element={
@@ -166,7 +166,7 @@ const App: FunctionComponent = () => {
                                 <DepartementManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="commune/*"
                             element={
@@ -174,7 +174,7 @@ const App: FunctionComponent = () => {
                                 <CommuneManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="lieudit/*"
                             element={
@@ -182,7 +182,7 @@ const App: FunctionComponent = () => {
                                 <LieuDitManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="meteo/*"
                             element={
@@ -190,7 +190,7 @@ const App: FunctionComponent = () => {
                                 <MeteoManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="classe/*"
                             element={
@@ -198,7 +198,7 @@ const App: FunctionComponent = () => {
                                 <ClasseManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="espece/*"
                             element={
@@ -206,7 +206,7 @@ const App: FunctionComponent = () => {
                                 <EspeceManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="sexe/*"
                             element={
@@ -214,7 +214,7 @@ const App: FunctionComponent = () => {
                                 <SexeManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="age/*"
                             element={
@@ -222,7 +222,7 @@ const App: FunctionComponent = () => {
                                 <AgeManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="estimation-nombre/*"
                             element={
@@ -230,7 +230,7 @@ const App: FunctionComponent = () => {
                                 <EstimationNombreManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="estimation-distance/*"
                             element={
@@ -238,7 +238,7 @@ const App: FunctionComponent = () => {
                                 <EstimationDistanceManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="comportement/*"
                             element={
@@ -246,7 +246,7 @@ const App: FunctionComponent = () => {
                                 <ComportementManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                           <Route
                             path="milieu/*"
                             element={
@@ -254,7 +254,7 @@ const App: FunctionComponent = () => {
                                 <MilieuManage />
                               </Suspense>
                             }
-                          ></Route>
+                          />
                         </Route>
                         <Route
                           path="profile"
@@ -263,7 +263,7 @@ const App: FunctionComponent = () => {
                               <UserProfilePage />
                             </Suspense>
                           }
-                        ></Route>
+                        />
                         <Route
                           path="settings"
                           element={
@@ -271,7 +271,7 @@ const App: FunctionComponent = () => {
                               <SettingsPage />
                             </Suspense>
                           }
-                        ></Route>
+                        />
                       </Route>
                     </RouterRoutes>
                   </Suspense>

@@ -155,7 +155,7 @@ const DepartementTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.departements?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogDepartement}
         messageContent={t("deleteDepartmentDialogMsg", {

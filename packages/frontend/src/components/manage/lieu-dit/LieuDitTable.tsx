@@ -177,7 +177,7 @@ const LieuDitTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.lieuxDits?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogLieuDit}
         messageContent={t("deleteLieuDitDialogMsg", {

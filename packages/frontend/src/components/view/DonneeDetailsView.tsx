@@ -45,7 +45,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
               </h3>
             </>
           }
-        ></ItemWithAvatar>
+        />
 
         <ItemWithAvatar
           icon={<PieChartAlt2 className="h-6" />}
@@ -70,7 +70,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
               distancePrecision: donnee?.estimationDistance?.libelle,
             }) as string
           }
-        ></ItemWithAvatar>
+        />
 
         <ItemWithAvatar
           icon={<Bug className="h-6" />}
@@ -88,7 +88,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
               </div>
             </>
           }
-        ></ItemWithAvatar>
+        />
 
         <ItemWithAvatar
           icon={<Angry className="h-6" />}
@@ -99,7 +99,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             }),
           })}
           secondary={getNicheurStatusStr(donnee.comportements)}
-        ></ItemWithAvatar>
+        />
 
         <ItemWithAvatar
           icon={<Tree className="h-6" />}
@@ -109,7 +109,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
               return m?.libelle;
             }),
           })}
-        ></ItemWithAvatar>
+        />
 
         <ItemWithAvatar
           icon={<Comment className="h-6" />}
@@ -117,7 +117,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             context: donnee?.commentaire ? "" : "undefined",
             comment: donnee?.commentaire,
           })}
-        ></ItemWithAvatar>
+        />
       </ul>
     </>
   );

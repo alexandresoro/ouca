@@ -150,7 +150,7 @@ const MilieuTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.milieux?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogMilieu}
         messageContent={t("deleteEnvironmentDialogMsg", {

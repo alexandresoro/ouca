@@ -160,7 +160,7 @@ const CommuneTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.communes?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogCommune}
         messageContent={t("deleteCityDialogMsg", {

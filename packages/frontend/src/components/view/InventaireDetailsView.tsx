@@ -18,9 +18,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
   return (
     <>
       <ul className="border border-solid rounded border-neutral-300 divide-solid divide-neutral-200 divide-y py-2">
-        <ItemWithAvatar
-          primary={<h3 className="text-lg font-normal">{t("observationDetails.inventoryTitle")}</h3>}
-        ></ItemWithAvatar>
+        <ItemWithAvatar primary={<h3 className="text-lg font-normal">{t("observationDetails.inventoryTitle")}</h3>} />
 
         <ItemWithAvatar
           icon={<User className="h-6" />}
@@ -33,7 +31,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
               return i?.libelle;
             }),
           })}
-        ></ItemWithAvatar>
+        />
 
         <ItemWithAvatar
           icon={<Calendar className="h-6" />}
@@ -45,7 +43,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
             context: inventaire.duree ? "" : "undefined",
             duration: inventaire.duree,
           })}
-        ></ItemWithAvatar>
+        />
 
         <ItemWithAvatar
           icon={<MapIcon className="h-6" />}
@@ -66,7 +64,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
               </span>
             </>
           }
-        ></ItemWithAvatar>
+        />
 
         <ItemWithAvatar
           icon={<Sun className="h-6" />}
@@ -80,7 +78,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
             context: inventaire.temperature ? "" : "undefined",
             temperature: inventaire.temperature,
           })}
-        ></ItemWithAvatar>
+        />
       </ul>
     </>
   );

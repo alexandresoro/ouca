@@ -145,7 +145,7 @@ const MeteoTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.meteos?.count ?? 0}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogMeteo}
         messageContent={t("deleteWeatherDialogMsg", {

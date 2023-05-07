@@ -145,7 +145,7 @@ const AgeTable: FunctionComponent = () => {
         elementsPerPage={rowsPerPage}
         count={data?.ages?.count}
         onPageChange={handleChangePage}
-      ></Table>
+      />
       <DeletionConfirmationDialog
         open={!!dialogAge}
         messageContent={t("deleteAgeDialogMsg", {
