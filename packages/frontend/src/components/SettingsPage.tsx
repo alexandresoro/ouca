@@ -6,13 +6,13 @@ import {
   type PutSettingsInput,
 } from "@ou-ca/common/api/settings";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
+import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "urql";
 import { graphql } from "../gql";
-import { type CoordinatesSystemType } from "../gql/graphql";
 import useApiMutation from "../hooks/api/useApiMutation";
 import useApiQuery from "../hooks/api/useApiQuery";
 import useSnackbar from "../hooks/useSnackbar";
@@ -111,7 +111,7 @@ const SettingsPage: FunctionComponent = () => {
     }
   );
 
-  const [{ fetching: fetchingGql, error: errorGql, data }, refetchSettings] = useQuery({ query: SETTINGS_QUERY });
+  const [{ fetching: fetchingGql, error: errorGql, data }] = useQuery({ query: SETTINGS_QUERY });
 
   const fetching = isFetching || fetchingGql;
   const error = errorSettings || errorGql;
@@ -130,9 +130,6 @@ const SettingsPage: FunctionComponent = () => {
       onError: () => {
         displayErrorNotification();
         void refetch();
-      },
-      onSettled: () => {
-        refetchSettings();
       },
     }
   );
@@ -184,7 +181,7 @@ const SettingsPage: FunctionComponent = () => {
 
       mutate({ body: values });
     },
-    [mutate, settings, displaySuccessNotification, displayErrorNotification, refetch, refetchSettings]
+    [mutate, settings]
   );
 
   // Watch inputs for changes, and submit the form if any
