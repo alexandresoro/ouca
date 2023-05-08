@@ -1,5 +1,5 @@
 import { getSettingsResponse, type GetSettingsResponse } from "@ou-ca/common/api/settings";
-import { createContext, useState, type FunctionComponent, type PropsWithChildren } from "react";
+import { createContext, type FunctionComponent, type PropsWithChildren } from "react";
 import useApiQuery from "../hooks/api/useApiQuery";
 
 export const UserSettingsContext = createContext<{
@@ -13,28 +13,19 @@ export const UserSettingsContext = createContext<{
 });
 
 const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
-  const [userSettings, setUserSettings] = useState<GetSettingsResponse | null>(null);
-
-  const { data: settings, refetch } = useApiQuery(
-    {
-      path: "/settings",
-      schema: getSettingsResponse,
-    },
-    {
-      onSuccess: (resultSettings) => {
-        setUserSettings(resultSettings);
-      },
-    }
-  );
+  const { data: userSettings, refetch } = useApiQuery({
+    path: "/settings",
+    schema: getSettingsResponse,
+  });
 
   return (
     <UserSettingsContext.Provider
       value={{
-        userSettings,
+        userSettings: userSettings ?? null,
         refetchSettings: () => refetch,
       }}
     >
-      {userSettings && settings && children}
+      {userSettings && children}
     </UserSettingsContext.Provider>
   );
 };
