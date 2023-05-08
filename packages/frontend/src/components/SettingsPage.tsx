@@ -1,3 +1,4 @@
+import { getSettingsResponse } from "@ou-ca/common/api/settings";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { useCallback, useEffect, type FunctionComponent } from "react";
 import { useForm } from "react-hook-form";
@@ -5,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "urql";
 import { graphql } from "../gql";
 import { type CoordinatesSystemType } from "../gql/graphql";
+import useApiQuery from "../hooks/api/useApiQuery";
 import useSnackbar from "../hooks/useSnackbar";
 import useUserSettingsContext from "../hooks/useUserSettingsContext";
 import FormSelect from "./common/form/FormSelect";
@@ -15,20 +17,6 @@ import StyledPanelHeader from "./layout/StyledPanelHeader";
 
 const SETTINGS_QUERY = graphql(`
   query GetUserSettingsPage {
-    settings {
-      id
-      areAssociesDisplayed
-      isDistanceDisplayed
-      isMeteoDisplayed
-      isRegroupementDisplayed
-      defaultDepartementId
-      defaultObservateurId
-      coordinatesSystem
-      defaultEstimationNombreId
-      defaultSexeId
-      defaultAgeId
-      defaultNombre
-    }
     ages {
       data {
         id
@@ -104,7 +92,20 @@ const SettingsPage: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const [{ fetching, error, data }, refetchSettings] = useQuery({ query: SETTINGS_QUERY });
+  const {
+    data: settingsData,
+    error: errorSettings,
+    isFetching,
+    refetch,
+  } = useApiQuery({
+    path: "/settings",
+    schema: getSettingsResponse,
+  });
+
+  const [{ fetching: fetchingGql, error: errorGql, data }, refetchSettings] = useQuery({ query: SETTINGS_QUERY });
+
+  const fetching = isFetching || fetchingGql;
+  const error = errorSettings || errorGql;
 
   const [_, sendUserSettingsUpdate] = useMutation(USER_SETTINGS_MUTATION);
 
@@ -119,22 +120,22 @@ const SettingsPage: FunctionComponent = () => {
 
   // Reset the form with the user preferences, when they are retrieved
   useEffect(() => {
-    if (data?.settings) {
+    if (settingsData) {
       reset({
-        defaultObservateur: data.settings.defaultObservateurId ?? undefined,
-        defaultDepartement: data.settings.defaultDepartementId ?? undefined,
-        defaultEstimationNombre: data.settings.defaultEstimationNombreId ?? undefined,
-        defaultNombre: data.settings.defaultNombre ?? "",
-        defaultSexe: data.settings.defaultSexeId ?? undefined,
-        defaultAge: data.settings.defaultAgeId ?? undefined,
-        areAssociesDisplayed: !!data.settings.areAssociesDisplayed,
-        isMeteoDisplayed: !!data.settings.isMeteoDisplayed,
-        isDistanceDisplayed: !!data.settings.isDistanceDisplayed,
-        isRegroupementDisplayed: !!data.settings.isRegroupementDisplayed,
-        coordinatesSystem: data?.settings?.coordinatesSystem,
+        defaultObservateur: settingsData.defaultObservateurId ?? undefined,
+        defaultDepartement: settingsData.defaultDepartementId ?? undefined,
+        defaultEstimationNombre: settingsData.defaultEstimationNombreId ?? undefined,
+        defaultNombre: settingsData.defaultNombre ?? "",
+        defaultSexe: settingsData.defaultSexeId ?? undefined,
+        defaultAge: settingsData.defaultAgeId ?? undefined,
+        areAssociesDisplayed: !!settingsData.areAssociesDisplayed,
+        isMeteoDisplayed: !!settingsData.isMeteoDisplayed,
+        isDistanceDisplayed: !!settingsData.isDistanceDisplayed,
+        isRegroupementDisplayed: !!settingsData.isRegroupementDisplayed,
+        coordinatesSystem: settingsData?.coordinatesSystem,
       });
     }
-  }, [data, reset]);
+  }, [settingsData, reset]);
 
   const displaySuccessNotification = useCallback(() => {
     displayNotification({
@@ -153,18 +154,20 @@ const SettingsPage: FunctionComponent = () => {
   // Handle updated settings
   const sendUpdatedSettings = useCallback(
     async (values: SettingsInputs) => {
-      if (!data?.settings) {
+      if (!settingsData) {
         return;
       }
       const { defaultNombre, ...otherValues } = values;
 
       await sendUserSettingsUpdate({
         appConfiguration: {
-          id: data.settings.id,
+          id: settingsData.id,
           defaultNombre: typeof defaultNombre === "string" ? parseInt(defaultNombre) : defaultNombre,
           ...otherValues,
         },
       }).then(({ error }) => {
+        void refetch();
+
         if (!error) {
           displaySuccessNotification();
           // Update the app-wide user settings when settings change
@@ -175,7 +178,15 @@ const SettingsPage: FunctionComponent = () => {
         }
       });
     },
-    [sendUserSettingsUpdate, data, displaySuccessNotification, displayErrorNotification, refetchSettings]
+    [
+      sendUserSettingsUpdate,
+      settingsData,
+      displaySuccessNotification,
+      displayErrorNotification,
+      refetch,
+      refetchSettings,
+      updateUserSettings,
+    ]
   );
 
   // Watch inputs for changes, and submit the form if any

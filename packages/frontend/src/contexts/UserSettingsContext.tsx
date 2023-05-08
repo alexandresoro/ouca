@@ -1,7 +1,9 @@
+import { getSettingsResponse, type GetSettingsResponse } from "@ou-ca/common/api/settings";
 import { createContext, useEffect, useState, type FunctionComponent, type PropsWithChildren } from "react";
 import { useClient } from "urql";
 import { graphql } from "../gql/gql";
 import { type GetUserSettingsQuery } from "../gql/graphql";
+import useApiQuery from "../hooks/api/useApiQuery";
 
 const GET_USER_SETTINGS = graphql(`
 query GetUserSettings {
@@ -15,20 +17,12 @@ query GetUserSettings {
       id
       code
     }
-    defaultEstimationNombreId
-    defaultNombre
-    defaultSexeId
-    defaultAgeId
-    areAssociesDisplayed
-    isMeteoDisplayed
-    isDistanceDisplayed
-    isRegroupementDisplayed
   }
 }
 `);
 
 export const UserSettingsContext = createContext<{
-  userSettings: GetUserSettingsQuery["settings"];
+  userSettings: (GetUserSettingsQuery["settings"] & Partial<GetSettingsResponse>) | null;
   updateUserSettings: () => Promise<void> | void;
 }>({
   userSettings: null,
@@ -38,9 +32,28 @@ export const UserSettingsContext = createContext<{
 });
 
 const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
-  const [userSettings, setUserSettings] = useState<GetUserSettingsQuery["settings"]>(null);
+  const [userSettings, setUserSettings] = useState<
+    (GetUserSettingsQuery["settings"] & Partial<GetSettingsResponse>) | null
+  >(null);
 
   const client = useClient();
+
+  const { data: settings } = useApiQuery(
+    {
+      path: "/settings",
+      schema: getSettingsResponse,
+    },
+    {
+      onSuccess: (resultSettings) => {
+        setUserSettings((userSettings) => {
+          return {
+            ...userSettings,
+            ...resultSettings,
+          };
+        });
+      },
+    }
+  );
 
   const updateUserSettings = async () => {
     const { data, error } = await client.query(GET_USER_SETTINGS, {});
@@ -48,7 +61,13 @@ const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }
       throw new Error("An error occurred while retrieving user settings");
     }
     if (data?.settings) {
-      setUserSettings(data.settings);
+      const resultSettings = data.settings;
+      setUserSettings((userSettings) => {
+        return {
+          ...userSettings,
+          ...resultSettings,
+        };
+      });
     }
   };
 
@@ -65,7 +84,7 @@ const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }
         updateUserSettings,
       }}
     >
-      {userSettings && children}
+      {userSettings && settings && children}
     </UserSettingsContext.Provider>
   );
 };

@@ -5,20 +5,18 @@ import useAppContext from "../useAppContext";
 
 function useApiQuery(
   { path, queryParams }: { path: string; queryParams?: Record<string, string> },
-  queryOptions: Omit<UseQueryOptions, "queryKey" | "queryFn">
+  queryOptions?: Omit<UseQueryOptions, "queryKey" | "queryFn">
 ): UseQueryResult<unknown>;
 function useApiQuery<SType>(
-  { path, queryParams }: { path: string; queryParams?: Record<string, string> },
-  options: Omit<UseQueryOptions, "queryKey" | "queryFn"> & { schema?: z.ZodType<SType> }
+  { path, queryParams, schema }: { path: string; queryParams?: Record<string, string>; schema?: z.ZodType<SType> },
+  queryOptions?: Omit<UseQueryOptions<SType>, "queryKey" | "queryFn">
 ): UseQueryResult<SType>;
 function useApiQuery<SType>(
-  { path, queryParams }: { path: string; queryParams?: Record<string, string> },
-  options: Omit<UseQueryOptions, "queryKey" | "queryFn"> & { schema?: z.ZodType<SType> } = {}
+  { path, queryParams, schema }: { path: string; queryParams?: Record<string, string>; schema?: z.ZodType<SType> },
+  queryOptions?: Omit<UseQueryOptions, "queryKey" | "queryFn">
 ) {
   const { user } = useAuth();
   const { apiUrl } = useAppContext();
-
-  const { schema, ...queryOptions } = options;
 
   const accessToken = user?.access_token;
 
