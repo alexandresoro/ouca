@@ -6,7 +6,7 @@ import fastifyPlugin from "fastify-plugin";
 const sentryMetricsPlugin: FastifyPluginCallback = (fastify, opts, done) => {
   fastify.decorateRequest("sentry", null);
   fastify.addHook("onRequest", (request, reply, done) => {
-    const transaction = Sentry.startTransaction({ name: request.url, op: "http" });
+    const transaction = Sentry.startTransaction({ name: request.routerPath, op: "http" });
     transaction.setData("http.method", request.method);
     transaction.setTag("http.method", request.method);
 
