@@ -1,4 +1,4 @@
-import { type PutSettingsInput } from "@ou-ca/common/api/settings.js";
+import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Logger } from "pino";
 import { type Departement } from "../repositories/departement/departement-repository-types.js";

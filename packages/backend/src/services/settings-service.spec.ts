@@ -1,4 +1,4 @@
-import { type PutSettingsInput } from "@ou-ca/common/api/settings.js";
+import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { type Logger } from "pino";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";

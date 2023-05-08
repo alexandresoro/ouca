@@ -1,3 +1,4 @@
+import { type Redis } from "ioredis";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
@@ -9,9 +10,7 @@ import { OucaError } from "../utils/errors.js";
 import { buildUserService, type CreateUserInput } from "./user-service.js";
 
 const userRepository = mock<UserRepository>({
-  getAdminsCount: vi.fn(),
   createUser: vi.fn(),
-  updateUser: vi.fn(),
 });
 const settingsRepository = mock<SettingsRepository>({
   createDefaultSettings: vi.fn(),
@@ -20,35 +19,23 @@ const logger = mock<Logger>();
 const slonik = createMockPool({
   query: vi.fn(),
 });
+const redis = mock<Redis>();
 
 const userService = buildUserService({
   logger,
   slonik,
+  redis,
   userRepository,
   settingsRepository,
 });
 
 describe("User creation", () => {
-  test("should throw error when non admin tries to create a user", async () => {
-    const signupData = mock<CreateUserInput>();
-    const loggedUser = mock<LoggedUser>({
-      role: "contributor",
-    });
-
-    userRepository.getAdminsCount.mockResolvedValueOnce(1);
-
-    await expect(() => userService.createUser(signupData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0007"));
-
-    expect(userRepository.createUser).not.toHaveBeenCalled();
-  });
-
-  test("should handle creation of user when requested by an admin", async () => {
+  test("should handle creation of user", async () => {
     const signupData = mock<CreateUserInput>();
     const loggedUser = mock<LoggedUser>({
       role: "admin",
     });
 
-    userRepository.getAdminsCount.mockResolvedValueOnce(2);
     userRepository.createUser.mockResolvedValueOnce(mock());
 
     await userService.createUser(signupData, loggedUser);
