@@ -3,26 +3,38 @@ import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
 import useAppContext from "../useAppContext";
 
-function useApiMutation<V extends { path: string }>(
-  { method }: { method: string; responseHandler?: never },
-  queryOptions: Omit<UseMutationOptions, "mutationFn">
+function useApiMutation<V extends { path?: string; body?: Record<string, unknown> }>(
+  { path, method }: { path?: string; method: string; responseHandler?: never; schema?: never },
+  mutationOptions: Omit<UseMutationOptions, "mutationFn">
 ): UseMutationResult<unknown, unknown, V>;
-function useApiMutation<V extends { path: string }, SType>(
-  { method }: { method: string; responseHandler?: never },
-  options: Omit<UseMutationOptions<SType>, "mutationFn"> & { schema?: z.ZodType<SType> }
+function useApiMutation<V extends { path?: string; body?: Record<string, unknown> }, SType>(
+  { path, method }: { path?: string; method: string; responseHandler?: never; schema: z.ZodType<SType> },
+  mutationOptions: Omit<UseMutationOptions<SType, unknown, V>, "mutationFn">
 ): UseMutationResult<SType, unknown, V>;
-function useApiMutation<V extends { path: string }, R>(
-  { method, responseHandler }: { method: string; responseHandler: (response: Response) => R | Promise<R> },
-  options: Omit<UseMutationOptions<R>, "mutationFn">
+function useApiMutation<V extends { path?: string; body?: Record<string, unknown> }, R>(
+  {
+    path,
+    method,
+    responseHandler,
+  }: { path?: string; method: string; responseHandler: (response: Response) => R | Promise<R>; schema?: never },
+  mutationOptions?: Omit<UseMutationOptions<R>, "mutationFn">
 ): UseMutationResult<R, unknown, V>;
-function useApiMutation<V extends { path: string }, SType, R>(
-  { method, responseHandler }: { method: string; responseHandler?: (response: Response) => R | Promise<R> },
-  options: Omit<UseMutationOptions<unknown, unknown, V>, "mutationFn"> & { schema?: z.ZodType<SType> } = {}
+function useApiMutation<V extends { path?: string; body?: Record<string, unknown> }, SType, R>(
+  {
+    path: pathFromOptions,
+    method,
+    responseHandler,
+    schema,
+  }: {
+    path?: string;
+    method: string;
+    responseHandler?: (response: Response) => R | Promise<R>;
+    schema?: z.ZodType<SType>;
+  },
+  mutationOptions?: Omit<UseMutationOptions<unknown, unknown, V>, "mutationFn">
 ) {
   const { user } = useAuth();
   const { apiUrl } = useAppContext();
-
-  const { schema, ...mutationOptions } = options;
 
   const accessToken = user?.access_token;
 
@@ -30,7 +42,14 @@ function useApiMutation<V extends { path: string }, SType, R>(
     ...mutationOptions,
     mutationFn: async (variables) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { path, ...restVariables } = variables;
+      const { path: pathFromMutate, body, ...restVariables } = variables;
+
+      const path = pathFromMutate ?? pathFromOptions;
+
+      // TODO improve handling
+      if (!path) {
+        throw new Error("missing path param");
+      }
 
       const response = await fetch(`${apiUrl}/api/v1${path}`, {
         method,
@@ -41,6 +60,7 @@ function useApiMutation<V extends { path: string }, SType, R>(
               }
             : {}),
         },
+        body: body ? JSON.stringify(body) : null,
       });
 
       if (typeof responseHandler === "function") {

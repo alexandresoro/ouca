@@ -1,12 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getSettingsResponse, updateSettingsInput, type UpdateSettingsInput } from "@ou-ca/common/api/settings";
+import {
+  getSettingsResponse,
+  putSettingsInput,
+  putSettingsResponse,
+  type PutSettingsInput,
+} from "@ou-ca/common/api/settings";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "urql";
+import { useQuery } from "urql";
 import { graphql } from "../gql";
 import { type CoordinatesSystemType } from "../gql/graphql";
+import useApiMutation from "../hooks/api/useApiMutation";
 import useApiQuery from "../hooks/api/useApiQuery";
 import useSnackbar from "../hooks/useSnackbar";
 import FormSelect from "./common/form/FormSelect";
@@ -50,25 +57,6 @@ const SETTINGS_QUERY = graphql(`
   }
 `);
 
-const USER_SETTINGS_MUTATION = graphql(`
-  mutation UpdateUserSettings($appConfiguration: InputSettings!) {
-    updateSettings(appConfiguration: $appConfiguration) {
-      id
-      areAssociesDisplayed
-      isMeteoDisplayed
-      isDistanceDisplayed
-      isRegroupementDisplayed
-      defaultAgeId
-      defaultSexeId
-      defaultNombre
-      defaultEstimationNombreId
-      coordinatesSystem
-      defaultObservateurId
-      defaultDepartementId
-    }
-  }
-`);
-
 type SettingsInputs = {
   defaultObserver: number | null;
   defaultDepartment: number | null;
@@ -89,6 +77,8 @@ const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const { displayNotification } = useSnackbar();
+
+  const queryClient = useQueryClient();
 
   const {
     data: settings,
@@ -126,7 +116,26 @@ const SettingsPage: FunctionComponent = () => {
   const fetching = isFetching || fetchingGql;
   const error = errorSettings || errorGql;
 
-  const [_, sendUserSettingsUpdate] = useMutation(USER_SETTINGS_MUTATION);
+  const { mutate } = useApiMutation(
+    {
+      path: "/settings",
+      method: "PUT",
+      schema: putSettingsResponse,
+    },
+    {
+      onSuccess: (updatedSettings) => {
+        queryClient.setQueryData(["API", "/settings"], updatedSettings);
+        displaySuccessNotification();
+      },
+      onError: () => {
+        displayErrorNotification();
+        void refetch();
+      },
+      onSettled: () => {
+        refetchSettings();
+      },
+    }
+  );
 
   const {
     register,
@@ -149,7 +158,7 @@ const SettingsPage: FunctionComponent = () => {
       isRegroupementDisplayed: false,
       coordinatesSystem: "gps",
     },
-    resolver: zodResolver(updateSettingsInput),
+    resolver: zodResolver(putSettingsInput),
   });
 
   const displaySuccessNotification = useCallback(() => {
@@ -167,31 +176,15 @@ const SettingsPage: FunctionComponent = () => {
   }, [t, displayNotification]);
 
   // Handle updated settings
-  const sendUpdatedSettings: SubmitHandler<UpdateSettingsInput> = useCallback(
-    async (values) => {
+  const sendUpdatedSettings: SubmitHandler<PutSettingsInput> = useCallback(
+    (values) => {
       if (!settings) {
         return;
       }
 
-      await sendUserSettingsUpdate({
-        appConfiguration: {
-          id: settings.id,
-          ...values,
-        },
-      })
-        .then(({ error }) => {
-          if (!error) {
-            displaySuccessNotification();
-          } else {
-            displayErrorNotification();
-          }
-        })
-        .finally(() => {
-          void refetch();
-          refetchSettings();
-        });
+      mutate({ body: values });
     },
-    [sendUserSettingsUpdate, settings, displaySuccessNotification, displayErrorNotification, refetch, refetchSettings]
+    [mutate, settings, displaySuccessNotification, displayErrorNotification, refetch, refetchSettings]
   );
 
   // Watch inputs for changes, and submit the form if any

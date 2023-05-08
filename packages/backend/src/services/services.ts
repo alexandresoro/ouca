@@ -105,12 +105,6 @@ export const buildServices = async (config: Config): Promise<Services> => {
   const sexeRepository = buildSexeRepository({ slonik });
   const userRepository = buildUserRepository({ slonik });
 
-  const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ logger, redis, userRepository });
-  const zitadelOidcService = buildZitadelOidcService({
-    config,
-    oidcWithInternalUserMappingService,
-  });
-
   const ageService = buildAgeService({
     logger,
     ageRepository,
@@ -214,6 +208,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
   const userService = buildUserService({
     logger,
     slonik,
+    redis,
     userRepository,
     settingsRepository,
   });
@@ -223,6 +218,12 @@ export const buildServices = async (config: Config): Promise<Services> => {
     settingsRepository,
     departementRepository,
     observateurRepository,
+  });
+
+  const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ userService });
+  const zitadelOidcService = buildZitadelOidcService({
+    config,
+    oidcWithInternalUserMappingService,
   });
 
   logger.debug("Services initialized successfully");

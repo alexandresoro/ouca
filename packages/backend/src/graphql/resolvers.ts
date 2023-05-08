@@ -32,7 +32,6 @@ import {
   type MilieuxPaginatedResult,
   type Observateur,
   type ObservateursPaginatedResult,
-  type Settings,
   type Sexe,
   type SexeWithSpecimensCount,
   type SexesPaginatedResult,
@@ -350,9 +349,6 @@ export const buildResolvers = ({
       upsertSexe: async (_source, args, { user }): Promise<Sexe> => {
         return sexeService.upsertSexe(args, user);
       },
-      updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
-        return settingsService.persistUserSettings(appConfiguration, user);
-      },
     },
     Age: {
       editable: isEntityEditableResolver(ageService.findAge),
@@ -501,22 +497,6 @@ export const buildResolvers = ({
     Sexe: {
       editable: isEntityEditableResolver(sexeService.findSexe),
       nbDonnees: entityNbDonneesResolver(sexeService.getDonneesCountBySexe),
-    },
-    Settings: {
-      defaultObservateur: async (parent, args, { user }): Promise<Observateur | null> => {
-        if (parent?.defaultObservateurId) {
-          return observateurService.findObservateur(parent.defaultObservateurId, user);
-        } else {
-          return null;
-        }
-      },
-      defaultDepartement: async (parent, args, { user }): Promise<Departement | null> => {
-        if (parent?.defaultDepartementId) {
-          return departementService.findDepartement(parent.defaultDepartementId, user);
-        } else {
-          return null;
-        }
-      },
     },
   };
 };

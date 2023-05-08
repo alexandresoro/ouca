@@ -1,15 +1,15 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { z } from "zod";
-import { objectToKeyValueInsert, objectToKeyValueSet } from "../repository-helpers.js";
-import { userWithPasswordSchema, type UserWithPasswordResult } from "./user-repository-types.js";
+import { objectToKeyValueInsert } from "../repository-helpers.js";
+import { userSchema, type UserResult } from "./user-repository-types.js";
 
 export type UserRepositoryDependencies = {
   slonik: DatabasePool;
 };
 
 export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
-  const getUserInfoById = async (userId: string): Promise<UserWithPasswordResult | null> => {
-    const query = sql.type(userWithPasswordSchema)`
+  const getUserInfoById = async (userId: string): Promise<UserResult | null> => {
+    const query = sql.type(userSchema)`
     SELECT 
       *
     FROM
@@ -21,24 +21,11 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
     return slonik.maybeOne(query);
   };
 
-  const findUserByUsername = async (username: string): Promise<UserWithPasswordResult | null> => {
-    const query = sql.type(userWithPasswordSchema)`
-      SELECT 
-        *
-      FROM
-        basenaturaliste.user
-      WHERE
-        username = ${username}
-    `;
-
-    return slonik.maybeOne(query);
-  };
-
   const findUserByExternalId = async (
     externalProviderName: string,
     externalProviderId: string
-  ): Promise<UserWithPasswordResult | null> => {
-    const query = sql.type(userWithPasswordSchema)`
+  ): Promise<UserResult | null> => {
+    const query = sql.type(userSchema)`
       SELECT 
         *
       FROM
@@ -51,27 +38,14 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
     return slonik.maybeOne(query);
   };
 
-  const getAdminsCount = async (): Promise<number> => {
-    const query = sql.type(z.object({ count: z.number() }))`
-      SELECT 
-        COUNT(*)
-      FROM
-        basenaturaliste.user
-      WHERE
-        role = 'admin'
-    `;
-
-    return slonik.oneFirst(query);
-  };
-
   const createUser = async (
     create: {
       ext_provider_name: string;
       ext_provider_id: string;
     },
     transaction?: DatabaseTransactionConnection
-  ): Promise<UserWithPasswordResult> => {
-    const createUserQuery = sql.type(userWithPasswordSchema)`
+  ): Promise<UserResult> => {
+    const createUserQuery = sql.type(userSchema)`
       INSERT INTO
         basenaturaliste.user
         ${objectToKeyValueInsert(create)}
@@ -80,29 +54,6 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
     `;
 
     return (transaction ?? slonik).one(createUserQuery);
-  };
-
-  const updateUser = async (
-    userId: string,
-    update: {
-      first_name: string | undefined;
-      last_name: string | undefined;
-      username: string | undefined;
-      password: string | undefined;
-    }
-  ): Promise<UserWithPasswordResult> => {
-    const query = sql.type(userWithPasswordSchema)`
-      UPDATE
-        basenaturaliste.user
-      SET
-        ${objectToKeyValueSet(update)}
-      WHERE
-        id = ${userId}
-      RETURNING
-        *
-    `;
-
-    return slonik.one(query);
   };
 
   const deleteUserById = async (userId: string): Promise<boolean> => {
@@ -121,11 +72,8 @@ export const buildUserRepository = ({ slonik }: UserRepositoryDependencies) => {
 
   return {
     getUserInfoById,
-    findUserByUsername,
     findUserByExternalId,
-    getAdminsCount,
     createUser,
-    updateUser,
     deleteUserById,
   };
 };

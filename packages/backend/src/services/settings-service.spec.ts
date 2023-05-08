@@ -1,7 +1,7 @@
+import { type PutSettingsInput } from "@ou-ca/common/api/settings.js";
 import { type Logger } from "pino";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { type InputSettings } from "../graphql/generated/graphql-types.js";
 import { type DepartementRepository } from "../repositories/departement/departement-repository.js";
 import { type ObservateurRepository } from "../repositories/observateur/observateur-repository.js";
 import { type Settings } from "../repositories/settings/settings-repository-types.js";
@@ -36,7 +36,7 @@ describe("Fetch app configuration for user", () => {
     });
     settingsRepository.getUserSettings.mockResolvedValueOnce(mockResolved);
 
-    await settingsService.findAppConfiguration(loggedUser);
+    await settingsService.getSettings(loggedUser);
 
     expect(settingsRepository.getUserSettings).toHaveBeenCalledTimes(1);
     expect(settingsRepository.getUserSettings).toHaveBeenCalledWith(loggedUser.id);
@@ -55,7 +55,7 @@ describe("Fetch app configuration for user", () => {
     });
     settingsRepository.getUserSettings.mockResolvedValueOnce(mockResolved);
 
-    await settingsService.findAppConfiguration(loggedUser);
+    await settingsService.getSettings(loggedUser);
 
     expect(settingsRepository.getUserSettings).toHaveBeenCalledTimes(1);
     expect(settingsRepository.getUserSettings).toHaveBeenCalledWith(loggedUser.id);
@@ -64,7 +64,7 @@ describe("Fetch app configuration for user", () => {
   });
 
   test("should throw an error when no logged user provided", async () => {
-    await expect(settingsService.findAppConfiguration(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(settingsService.getSettings(null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(settingsRepository.getUserSettings).not.toHaveBeenCalled();
   });
 });
@@ -85,7 +85,7 @@ test("should query coordinates system for user", async () => {
 });
 
 test("should update settings with parameters  for user", async () => {
-  const updatedAppConfiguration: InputSettings = {
+  const updatedAppConfiguration = {
     areAssociesDisplayed: true,
     coordinatesSystem: "gps",
     defaultAge: 1,
@@ -94,15 +94,20 @@ test("should update settings with parameters  for user", async () => {
     defaultNombre: 4,
     defaultObserver: "5",
     defaultSexe: 6,
-    id: 7,
     isDistanceDisplayed: true,
     isMeteoDisplayed: true,
     isRegroupementDisplayed: true,
-  };
+  } satisfies PutSettingsInput;
 
   const loggedUser = mock<LoggedUser>();
 
-  await settingsService.persistUserSettings(updatedAppConfiguration, loggedUser);
+  const mockResolved = mock<Settings>({
+    defaultDepartementId: 2,
+    defaultObservateurId: 5,
+  });
+  settingsRepository.updateUserSettings.mockResolvedValueOnce(mockResolved);
+
+  await settingsService.updateUserSettings(updatedAppConfiguration, loggedUser);
 
   expect(settingsRepository.updateUserSettings).toHaveBeenCalledTimes(1);
   expect(settingsRepository.updateUserSettings).toHaveBeenCalledWith(loggedUser.id, {
@@ -118,4 +123,8 @@ test("should update settings with parameters  for user", async () => {
     is_meteo_displayed: true,
     is_regroupement_displayed: true,
   });
+  expect(departementRepository.findDepartementById).toHaveBeenCalledTimes(1);
+  expect(departementRepository.findDepartementById).toHaveBeenCalledWith(2);
+  expect(observateurRepository.findObservateurById).toHaveBeenCalledTimes(1);
+  expect(observateurRepository.findObservateurById).toHaveBeenCalledWith(5);
 });

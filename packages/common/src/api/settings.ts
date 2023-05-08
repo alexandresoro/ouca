@@ -3,11 +3,8 @@ import { COORDINATES_SYSTEMS } from "../coordinates-system/coordinates-system.ob
 import { department } from "../entities/department.js";
 import { observer } from "../entities/observer.js";
 
-/**
- * `GET` `/settings`
- */
-export const getSettingsResponse = z.object({
-  id: z.number(),
+// Common response content returned when settings are queried or updated
+const settingsResponse = z.object({
   defaultObserver: observer.nullable(),
   defaultDepartment: department.nullable(),
   defaultAgeId: z.number().nullable(),
@@ -21,12 +18,19 @@ export const getSettingsResponse = z.object({
   coordinatesSystem: z.enum(COORDINATES_SYSTEMS),
 });
 
+/**
+ * `GET` `/settings`
+ *  Retrieve user settings
+ */
+export const getSettingsResponse = settingsResponse;
+
 export type GetSettingsResponse = z.infer<typeof getSettingsResponse>;
 
 /**
- *
+ * `PUT` `/settings`
+ * Update of user settings
  */
-export const updateSettingsInput = z.object({
+export const putSettingsInput = z.object({
   defaultDepartment: z.coerce.string(),
   defaultObserver: z.coerce.string(),
   defaultEstimationNombre: z.number(),
@@ -40,4 +44,8 @@ export const updateSettingsInput = z.object({
   coordinatesSystem: z.enum(COORDINATES_SYSTEMS),
 });
 
-export type UpdateSettingsInput = z.infer<typeof updateSettingsInput>;
+export type PutSettingsInput = z.infer<typeof putSettingsInput>;
+
+export const putSettingsResponse = settingsResponse;
+
+export type UpdateSettingsResponse = z.infer<typeof getSettingsResponse>;

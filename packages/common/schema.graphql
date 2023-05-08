@@ -93,21 +93,6 @@ input InputSexe {
   libelle: String!
 }
 
-input InputSettings {
-  id: Int!
-  areAssociesDisplayed: Boolean!
-  isMeteoDisplayed: Boolean!
-  isDistanceDisplayed: Boolean!
-  isRegroupementDisplayed: Boolean!
-  defaultDepartment: String!
-  defaultObserver: String!
-  coordinatesSystem: CoordinatesSystemType!
-  defaultEstimationNombre: Int!
-  defaultNombre: Int!
-  defaultSexe: Int!
-  defaultAge: Int!
-}
-
 input SearchDonneeCriteria {
   id: Int
   observateurs: [Int!]
@@ -134,23 +119,6 @@ input SearchDonneeCriteria {
   nicheurs: [Nicheur!]
   comportements: [Int!]
   milieux: [Int!]
-}
-
-type Settings {
-  id: Int!
-  areAssociesDisplayed: Boolean!
-  isMeteoDisplayed: Boolean!
-  isDistanceDisplayed: Boolean!
-  isRegroupementDisplayed: Boolean!
-  defaultDepartementId: Int
-  defaultDepartement: Departement
-  defaultObservateurId: Int
-  defaultObservateur: Observateur
-  coordinatesSystem: CoordinatesSystemType!
-  defaultEstimationNombreId: Int
-  defaultNombre: Int
-  defaultSexeId: Int
-  defaultAgeId: Int
 }
 
 enum Nicheur {
@@ -666,5 +634,4 @@ type Mutation {
   upsertMilieu(id: Int, data: InputMilieu!): Milieu
   upsertObservateur(id: Int, data: InputObservateur!): Observateur
   upsertSexe(id: Int, data: InputSexe!): Sexe
-  updateSettings(appConfiguration: InputSettings!): Settings
 }
