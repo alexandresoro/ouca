@@ -136,19 +136,6 @@ input SearchDonneeCriteria {
   milieux: [Int!]
 }
 
-input UserLoginInput {
-  username: String!
-  password: String!
-}
-
-input EditUserData {
-  username: String
-  currentPassword: String
-  newPassword: String
-  firstName: String
-  lastName: String
-}
-
 type Settings {
   id: Int!
   areAssociesDisplayed: Boolean!
@@ -655,7 +642,6 @@ type Query {
   sexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
-  nextRegroupement: Int!
   searchDonnees: PaginatedSearchDonneesResult
   importStatus(importId: String!): ImportStatus
 }
@@ -681,5 +667,4 @@ type Mutation {
   upsertObservateur(id: Int, data: InputObservateur!): Observateur
   upsertSexe(id: Int, data: InputSexe!): Sexe
   updateSettings(appConfiguration: InputSettings!): Settings
-  userDelete(id: ID!): Boolean!
 }

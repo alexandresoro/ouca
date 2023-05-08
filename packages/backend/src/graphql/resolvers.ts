@@ -262,9 +262,6 @@ export const buildResolvers = ({
       specimenCountBySexe: (_source, args, { user }): Promise<SexeWithSpecimensCount[]> => {
         return sexeService.getSexesWithNbSpecimensForEspeceId(args.especeId, user);
       },
-      nextRegroupement: async (_source, args, { user }): Promise<number> => {
-        return donneeService.findNextRegroupement(user);
-      },
       searchDonnees: (): Record<string, never> => {
         return {};
       },
@@ -355,17 +352,6 @@ export const buildResolvers = ({
       },
       updateSettings: async (_source, { appConfiguration }, { user }): Promise<Settings> => {
         return settingsService.persistUserSettings(appConfiguration, user);
-      },
-      userDelete: async (_source, args, { user }): Promise<boolean> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-
-        try {
-          const isUserDeleted = await userService.deleteUser(args.id, user);
-
-          return isUserDeleted;
-        } catch (e) {
-          throw new mercurius.default.ErrorWithProps("User deletion request failed");
-        }
       },
     },
     Age: {

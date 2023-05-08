@@ -28,6 +28,11 @@ const entryController: FastifyPluginCallback<{
     }
   });
 
+  fastify.get("/next-regroupment", async (req, reply) => {
+    const id = await donneeService.findNextRegroupement(req.user);
+    await reply.send({ id });
+  });
+
   done();
 };
 

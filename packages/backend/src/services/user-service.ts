@@ -56,6 +56,7 @@ export const buildUserService = ({ logger, slonik, userRepository, settingsRepos
     return createdUser;
   };
 
+  // Not used, not sure if still needed with IDP
   const deleteUser = async (userId: string, loggedUser: LoggedUser): Promise<boolean> => {
     // Only a user can delete itself
     // With admin role, admin can delete anyone
