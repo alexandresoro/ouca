@@ -272,9 +272,6 @@ export const buildResolvers = ({
         if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
         return getImportStatus(args.importId, user);
       },
-      settings: async (_source, args, { user }): Promise<Settings | null> => {
-        return settingsService.findAppConfiguration(user);
-      },
     },
     Mutation: {
       upsertAge: async (_source, args, { user }): Promise<Age> => {

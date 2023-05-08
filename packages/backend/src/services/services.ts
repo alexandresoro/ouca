@@ -221,6 +221,8 @@ export const buildServices = async (config: Config): Promise<Services> => {
   const settingsService = buildSettingsService({
     logger,
     settingsRepository,
+    departementRepository,
+    observateurRepository,
   });
 
   logger.debug("Services initialized successfully");

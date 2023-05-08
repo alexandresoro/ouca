@@ -1,14 +1,14 @@
-import { getSettingsResponse } from "@ou-ca/common/api/settings";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getSettingsResponse, updateSettingsInput, type UpdateSettingsInput } from "@ou-ca/common/api/settings";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { useCallback, useEffect, type FunctionComponent } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "urql";
 import { graphql } from "../gql";
 import { type CoordinatesSystemType } from "../gql/graphql";
 import useApiQuery from "../hooks/api/useApiQuery";
 import useSnackbar from "../hooks/useSnackbar";
-import useUserSettingsContext from "../hooks/useUserSettingsContext";
 import FormSelect from "./common/form/FormSelect";
 import FormSwitch from "./common/form/FormSwitch";
 import TextInput from "./common/styled/TextInput";
@@ -70,12 +70,12 @@ const USER_SETTINGS_MUTATION = graphql(`
 `);
 
 type SettingsInputs = {
-  defaultObservateur: number;
-  defaultDepartement: number;
-  defaultEstimationNombre: number;
-  defaultNombre: number | string;
-  defaultSexe: number;
-  defaultAge: number;
+  defaultObserver: number | null;
+  defaultDepartment: number | null;
+  defaultEstimationNombre: number | null;
+  defaultNombre: string;
+  defaultSexe: number | null;
+  defaultAge: number | null;
   areAssociesDisplayed: boolean;
   isMeteoDisplayed: boolean;
   isDistanceDisplayed: boolean;
@@ -88,19 +88,38 @@ const COORDINATES_SYSTEMS = Object.values(COORDINATES_SYSTEMS_CONFIG);
 const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { updateUserSettings } = useUserSettingsContext();
-
   const { displayNotification } = useSnackbar();
 
   const {
-    data: settingsData,
+    data: settings,
     error: errorSettings,
     isFetching,
     refetch,
-  } = useApiQuery({
-    path: "/settings",
-    schema: getSettingsResponse,
-  });
+  } = useApiQuery(
+    {
+      path: "/settings",
+      schema: getSettingsResponse,
+    },
+    {
+      onSuccess: (updatedSettings) => {
+        reset({
+          defaultObserver: updatedSettings?.defaultObserver?.id ? parseInt(updatedSettings.defaultObserver.id) : null,
+          defaultDepartment: updatedSettings?.defaultDepartment?.id
+            ? parseInt(updatedSettings.defaultDepartment.id)
+            : null,
+          defaultEstimationNombre: updatedSettings?.defaultEstimationNombreId ?? null,
+          defaultNombre: updatedSettings?.defaultNombre ? `${updatedSettings.defaultNombre}` : "",
+          defaultSexe: updatedSettings?.defaultSexeId ?? null,
+          defaultAge: updatedSettings?.defaultAgeId ?? null,
+          areAssociesDisplayed: !!updatedSettings?.areAssociesDisplayed,
+          isMeteoDisplayed: !!updatedSettings?.isMeteoDisplayed,
+          isDistanceDisplayed: !!updatedSettings?.isDistanceDisplayed,
+          isRegroupementDisplayed: !!updatedSettings?.isRegroupementDisplayed,
+          coordinatesSystem: updatedSettings?.coordinatesSystem ?? "gps",
+        });
+      },
+    }
+  );
 
   const [{ fetching: fetchingGql, error: errorGql, data }, refetchSettings] = useQuery({ query: SETTINGS_QUERY });
 
@@ -116,26 +135,22 @@ const SettingsPage: FunctionComponent = () => {
     handleSubmit,
     reset,
     watch,
-  } = useForm<SettingsInputs>();
-
-  // Reset the form with the user preferences, when they are retrieved
-  useEffect(() => {
-    if (settingsData) {
-      reset({
-        defaultObservateur: settingsData.defaultObservateurId ?? undefined,
-        defaultDepartement: settingsData.defaultDepartementId ?? undefined,
-        defaultEstimationNombre: settingsData.defaultEstimationNombreId ?? undefined,
-        defaultNombre: settingsData.defaultNombre ?? "",
-        defaultSexe: settingsData.defaultSexeId ?? undefined,
-        defaultAge: settingsData.defaultAgeId ?? undefined,
-        areAssociesDisplayed: !!settingsData.areAssociesDisplayed,
-        isMeteoDisplayed: !!settingsData.isMeteoDisplayed,
-        isDistanceDisplayed: !!settingsData.isDistanceDisplayed,
-        isRegroupementDisplayed: !!settingsData.isRegroupementDisplayed,
-        coordinatesSystem: settingsData?.coordinatesSystem,
-      });
-    }
-  }, [settingsData, reset]);
+  } = useForm<SettingsInputs>({
+    defaultValues: {
+      defaultObserver: null,
+      defaultDepartment: null,
+      defaultEstimationNombre: null,
+      defaultNombre: "",
+      defaultSexe: null,
+      defaultAge: null,
+      areAssociesDisplayed: false,
+      isMeteoDisplayed: false,
+      isDistanceDisplayed: false,
+      isRegroupementDisplayed: false,
+      coordinatesSystem: "gps",
+    },
+    resolver: zodResolver(updateSettingsInput),
+  });
 
   const displaySuccessNotification = useCallback(() => {
     displayNotification({
@@ -152,48 +167,38 @@ const SettingsPage: FunctionComponent = () => {
   }, [t, displayNotification]);
 
   // Handle updated settings
-  const sendUpdatedSettings = useCallback(
-    async (values: SettingsInputs) => {
-      if (!settingsData) {
+  const sendUpdatedSettings: SubmitHandler<UpdateSettingsInput> = useCallback(
+    async (values) => {
+      if (!settings) {
         return;
       }
-      const { defaultNombre, ...otherValues } = values;
 
       await sendUserSettingsUpdate({
         appConfiguration: {
-          id: settingsData.id,
-          defaultNombre: typeof defaultNombre === "string" ? parseInt(defaultNombre) : defaultNombre,
-          ...otherValues,
+          id: settings.id,
+          ...values,
         },
-      }).then(({ error }) => {
-        void refetch();
-
-        if (!error) {
-          displaySuccessNotification();
-          // Update the app-wide user settings when settings change
-          void updateUserSettings();
-        } else {
-          displayErrorNotification();
+      })
+        .then(({ error }) => {
+          if (!error) {
+            displaySuccessNotification();
+          } else {
+            displayErrorNotification();
+          }
+        })
+        .finally(() => {
+          void refetch();
           refetchSettings();
-        }
-      });
+        });
     },
-    [
-      sendUserSettingsUpdate,
-      settingsData,
-      displaySuccessNotification,
-      displayErrorNotification,
-      refetch,
-      refetchSettings,
-      updateUserSettings,
-    ]
+    [sendUserSettingsUpdate, settings, displaySuccessNotification, displayErrorNotification, refetch, refetchSettings]
   );
 
   // Watch inputs for changes, and submit the form if any
   useEffect(() => {
     const subscription = watch(() => {
       if (!fetching) {
-        void handleSubmit(sendUpdatedSettings)();
+        void handleSubmit(sendUpdatedSettings as unknown as SubmitHandler<SettingsInputs>)();
       }
     });
     return () => subscription.unsubscribe();
@@ -225,25 +230,17 @@ const SettingsPage: FunctionComponent = () => {
             <form className="flex justify-center items-center flex-col sm:flex-row gap-0 sm:gap-10 md:gap-16">
               <div className="flex flex-col w-full">
                 <FormSelect
-                  name="defaultObservateur"
+                  name="defaultObserver"
                   label={t("defaultObserver")}
                   control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true,
-                  }}
                   data={data?.observateurs?.data}
                   renderValue={({ libelle }) => libelle}
                 />
 
                 <FormSelect
-                  name="defaultDepartement"
+                  name="defaultDepartment"
                   label={t("defaultDepartment")}
                   control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true,
-                  }}
                   data={data?.departements?.data}
                   renderValue={({ code }) => code}
                 />
@@ -252,10 +249,6 @@ const SettingsPage: FunctionComponent = () => {
                   name="defaultEstimationNombre"
                   label={t("defaultNumberPrecision")}
                   control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true,
-                  }}
                   data={data?.estimationsNombre?.data}
                   renderValue={({ libelle }) => libelle}
                 />
@@ -265,7 +258,6 @@ const SettingsPage: FunctionComponent = () => {
                   label={t("defaultNumber")}
                   type="text"
                   required
-                  defaultValue=""
                   hasError={!!errors.defaultNombre}
                   className="text-base-content text-sm font-semibold"
                   {...register("defaultNombre", {
@@ -282,10 +274,6 @@ const SettingsPage: FunctionComponent = () => {
                   name="defaultSexe"
                   label={t("defaultSex")}
                   control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true,
-                  }}
                   data={data?.sexes?.data}
                   renderValue={({ libelle }) => libelle}
                 />
@@ -294,40 +282,22 @@ const SettingsPage: FunctionComponent = () => {
                   name="defaultAge"
                   label={t("defaultAge")}
                   control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true,
-                  }}
                   data={data?.ages?.data}
                   renderValue={({ libelle }) => libelle}
                 />
 
-                <FormSwitch
-                  name="areAssociesDisplayed"
-                  label={t("displayAssociateObservers")}
-                  control={control}
-                  defaultValue=""
-                />
+                <FormSwitch name="areAssociesDisplayed" label={t("displayAssociateObservers")} control={control} />
 
-                <FormSwitch name="isMeteoDisplayed" label={t("displayWeather")} control={control} defaultValue="" />
+                <FormSwitch name="isMeteoDisplayed" label={t("displayWeather")} control={control} />
 
-                <FormSwitch name="isDistanceDisplayed" label={t("displayDistance")} control={control} defaultValue="" />
+                <FormSwitch name="isDistanceDisplayed" label={t("displayDistance")} control={control} />
 
-                <FormSwitch
-                  name="isRegroupementDisplayed"
-                  label={t("displayRegroupmentNumber")}
-                  control={control}
-                  defaultValue=""
-                />
+                <FormSwitch name="isRegroupementDisplayed" label={t("displayRegroupmentNumber")} control={control} />
 
                 <FormSelect
                   name="coordinatesSystem"
                   label={t("coordinatesSystem")}
                   control={control}
-                  defaultValue=""
-                  rules={{
-                    required: true,
-                  }}
                   data={COORDINATES_SYSTEMS}
                   by="code"
                   renderValue={({ name }) => name}

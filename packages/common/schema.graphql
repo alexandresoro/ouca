@@ -99,8 +99,8 @@ input InputSettings {
   isMeteoDisplayed: Boolean!
   isDistanceDisplayed: Boolean!
   isRegroupementDisplayed: Boolean!
-  defaultDepartement: Int!
-  defaultObservateur: Int!
+  defaultDepartment: String!
+  defaultObserver: String!
   coordinatesSystem: CoordinatesSystemType!
   defaultEstimationNombre: Int!
   defaultNombre: Int!
@@ -657,7 +657,6 @@ type Query {
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
   nextRegroupement: Int!
   searchDonnees: PaginatedSearchDonneesResult
-  settings: Settings
   importStatus(importId: String!): ImportStatus
 }
 
