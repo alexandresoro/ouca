@@ -1,10 +1,7 @@
+import { type UpsertAgeInput } from "@ou-ca/common/api/age";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import {
-  type AgeWithSpecimensCount,
-  type MutationUpsertAgeArgs,
-  type QueryAgesArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { type AgeWithSpecimensCount, type QueryAgesArgs } from "../../graphql/generated/graphql-types.js";
 import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types.js";
 import { type AgeRepository } from "../../repositories/age/age-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -87,46 +84,46 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     });
   };
 
-  const upsertAge = async (args: MutationUpsertAgeArgs, loggedUser: LoggedUser | null): Promise<Age> => {
+  const createAge = async (input: UpsertAgeInput, loggedUser: LoggedUser | null): Promise<Age> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    try {
+      const createdAge = await ageRepository.createAge({
+        ...input,
+        owner_id: loggedUser.id,
+      });
 
-    let upsertedAge: Age;
-
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await ageRepository.findAgeById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return createdAge;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedAge = await ageRepository.updateAge(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedAge = await ageRepository.createAge({
-          ...data,
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateAge = async (id: number, input: UpsertAgeInput, loggedUser: LoggedUser | null): Promise<Age> => {
+    validateAuthorization(loggedUser);
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await ageRepository.findAgeById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedAge;
+    try {
+      const upsertedAge = await ageRepository.updateAge(id, input);
+
+      return upsertedAge;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age> => {
@@ -163,7 +160,8 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     findPaginatedAges,
     getAgesCount,
     getAgesWithNbSpecimensForEspeceId,
-    upsertAge,
+    createAge,
+    updateAge,
     deleteAge,
     createAges,
   };

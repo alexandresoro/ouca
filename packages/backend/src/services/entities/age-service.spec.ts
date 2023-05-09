@@ -1,12 +1,8 @@
+import { type UpsertAgeInput } from "@ou-ca/common/api/age";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  EntitesAvecLibelleOrderBy,
-  SortOrder,
-  type MutationUpsertAgeArgs,
-  type QueryAgesArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { EntitesAvecLibelleOrderBy, SortOrder, type QueryAgesArgs } from "../../graphql/generated/graphql-types.js";
 import { type Age, type AgeCreateInput, type AgeWithNbSpecimens } from "../../repositories/age/age-repository-types.js";
 import { type AgeRepository } from "../../repositories/age/age-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -215,14 +211,14 @@ describe("Get number of specimens of age per species id", () => {
 
 describe("Update of an age", () => {
   test("should be allowed when requested by an admin", async () => {
-    const ageData = mock<MutationUpsertAgeArgs>();
+    const ageData = mock<UpsertAgeInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await ageService.upsertAge(ageData, loggedUser);
+    await ageService.updateAge(12, ageData, loggedUser);
 
     expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
-    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(ageData.id, ageData.data);
+    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(12, ageData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -230,16 +226,16 @@ describe("Update of an age", () => {
       ownerId: "notAdmin",
     });
 
-    const ageData = mock<MutationUpsertAgeArgs>();
+    const ageData = mock<UpsertAgeInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
     ageRepository.findAgeById.mockResolvedValueOnce(existingData);
 
-    await ageService.upsertAge(ageData, loggedUser);
+    await ageService.updateAge(12, ageData, loggedUser);
 
     expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
-    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(ageData.id, ageData.data);
+    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(12, ageData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -247,7 +243,7 @@ describe("Update of an age", () => {
       ownerId: "notAdmin",
     });
 
-    const ageData = mock<MutationUpsertAgeArgs>();
+    const ageData = mock<UpsertAgeInput>();
 
     const user = {
       id: "Bob",
@@ -256,81 +252,71 @@ describe("Update of an age", () => {
 
     ageRepository.findAgeById.mockResolvedValueOnce(existingData);
 
-    await expect(ageService.upsertAge(ageData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(ageService.updateAge(12, ageData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(ageRepository.updateAge).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to an age that exists", async () => {
-    const ageData = mock<MutationUpsertAgeArgs>({
-      id: 12,
-    });
+    const ageData = mock<UpsertAgeInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     ageRepository.updateAge.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => ageService.upsertAge(ageData, loggedUser)).rejects.toThrowError(
+    await expect(() => ageService.updateAge(12, ageData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(ageRepository.updateAge).toHaveBeenCalledTimes(1);
-    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(ageData.id, ageData.data);
+    expect(ageRepository.updateAge).toHaveBeenLastCalledWith(12, ageData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const ageData = mock<MutationUpsertAgeArgs>({
-      id: 12,
-    });
+    const ageData = mock<UpsertAgeInput>();
 
-    await expect(ageService.upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.updateAge(12, ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(ageRepository.updateAge).not.toHaveBeenCalled();
   });
 });
 
 describe("Creation of an age", () => {
   test("should create new age", async () => {
-    const ageData = mock<MutationUpsertAgeArgs>({
-      id: undefined,
-    });
+    const ageData = mock<UpsertAgeInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await ageService.upsertAge(ageData, loggedUser);
+    await ageService.createAge(ageData, loggedUser);
 
     expect(ageRepository.createAge).toHaveBeenCalledTimes(1);
     expect(ageRepository.createAge).toHaveBeenLastCalledWith({
-      ...ageData.data,
+      ...ageData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create an age that already exists", async () => {
-    const ageData = mock<MutationUpsertAgeArgs>({
-      id: undefined,
-    });
+    const ageData = mock<UpsertAgeInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
     ageRepository.createAge.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => ageService.upsertAge(ageData, loggedUser)).rejects.toThrowError(
+    await expect(() => ageService.createAge(ageData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(ageRepository.createAge).toHaveBeenCalledTimes(1);
     expect(ageRepository.createAge).toHaveBeenLastCalledWith({
-      ...ageData.data,
+      ...ageData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const ageData = mock<MutationUpsertAgeArgs>({
-      id: undefined,
-    });
+    const ageData = mock<UpsertAgeInput>();
 
-    await expect(ageService.upsertAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.createAge(ageData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(ageRepository.createAge).not.toHaveBeenCalled();
   });
 });

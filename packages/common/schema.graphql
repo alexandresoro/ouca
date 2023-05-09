@@ -555,7 +555,6 @@ type UpsertInventaireResult {
 }
 
 type Query {
-  age(id: Int!): Age
   ages(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
   classe(id: Int!): Classe
   classes(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
@@ -615,7 +614,6 @@ type Query {
 }
 
 type Mutation {
-  upsertAge(id: Int, data: InputAge!): Age
   upsertClasse(id: Int, data: InputClasse!): Classe
   upsertCommune(id: Int, data: InputCommune!): Commune
   upsertComportement(id: Int, data: InputComportement!): Comportement

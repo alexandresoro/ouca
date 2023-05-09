@@ -60,14 +60,9 @@ export const buildResolvers = ({
   milieuService,
   observateurService,
   sexeService,
-  settingsService,
-  userService,
 }: Services): IResolvers => {
   return {
     Query: {
-      age: async (_source, args, { user }): Promise<Age | null> => {
-        return ageService.findAge(args.id, user);
-      },
       ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
         const [data, count] = await Promise.all([
           ageService.findPaginatedAges(user, args),
@@ -270,9 +265,6 @@ export const buildResolvers = ({
       },
     },
     Mutation: {
-      upsertAge: async (_source, args, { user }): Promise<Age> => {
-        return ageService.upsertAge(args, user);
-      },
       upsertClasse: async (_source, args, { user }): Promise<Classe> => {
         return classeService.upsertClasse(args, user);
       },

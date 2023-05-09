@@ -1,14 +1,5 @@
 import { graphql } from "../../../gql";
 
-export const AGE_QUERY = graphql(`
-  query GetAge($id: Int!) {
-    age(id: $id) {
-      id
-      libelle
-    }
-  }
-`);
-
 export const PAGINATED_AGES_QUERY = graphql(`
   query ListAges($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     ages(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
@@ -19,15 +10,6 @@ export const PAGINATED_AGES_QUERY = graphql(`
         editable
         nbDonnees
       }
-    }
-  }
-`);
-
-export const UPSERT_AGE = graphql(`
-  mutation UpsertAge($id: Int, $data: InputAge!) {
-    upsertAge(id: $id, data: $data) {
-      id
-      libelle
     }
   }
 `);
