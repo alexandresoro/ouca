@@ -4,7 +4,13 @@ import CommuneEdit from "./CommuneEdit";
 import CommunePage from "./CommunePage";
 
 const CommuneManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<CommunePage />} createEditElement={<CommuneEdit isEditionMode={false} />} />;
+  return (
+    <RouteManage
+      pageElement={<CommunePage />}
+      createElement={<CommuneEdit isEditionMode={false} />}
+      editElement={<CommuneEdit isEditionMode={true} />}
+    />
+  );
 };
 
 export default CommuneManage;

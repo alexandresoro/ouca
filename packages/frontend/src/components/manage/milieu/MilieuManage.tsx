@@ -4,7 +4,13 @@ import MilieuEdit from "./MilieuEdit";
 import MilieuPage from "./MilieuPage";
 
 const MilieuManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<MilieuPage />} createEditElement={<MilieuEdit isEditionMode={false} />} />;
+  return (
+    <RouteManage
+      pageElement={<MilieuPage />}
+      createElement={<MilieuEdit isEditionMode={false} />}
+      editElement={<MilieuEdit isEditionMode={true} />}
+    />
+  );
 };
 
 export default MilieuManage;

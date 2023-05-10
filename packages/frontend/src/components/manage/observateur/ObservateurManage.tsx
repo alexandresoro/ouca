@@ -5,7 +5,11 @@ import ObservateurPage from "./ObservateurPage";
 
 const ObservateurManage: FunctionComponent = () => {
   return (
-    <RouteManage pageElement={<ObservateurPage />} createEditElement={<ObservateurEdit isEditionMode={false} />} />
+    <RouteManage
+      pageElement={<ObservateurPage />}
+      createElement={<ObservateurEdit isEditionMode={false} />}
+      editElement={<ObservateurEdit isEditionMode={true} />}
+    />
   );
 };
 

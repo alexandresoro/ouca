@@ -7,7 +7,8 @@ const EstimationNombreManage: FunctionComponent = () => {
   return (
     <RouteManage
       pageElement={<EstimationNombrePage />}
-      createEditElement={<EstimationNombreEdit isEditionMode={false} />}
+      createElement={<EstimationNombreEdit isEditionMode={false} />}
+      editElement={<EstimationNombreEdit isEditionMode={true} />}
     />
   );
 };

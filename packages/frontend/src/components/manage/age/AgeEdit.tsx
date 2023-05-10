@@ -1,104 +1,36 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getAgeResponse, upsertAgeInput, upsertAgeResponse, type UpsertAgeInput } from "@ou-ca/common/api/age";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState, type FunctionComponent } from "react";
+import { upsertAgeInput, type UpsertAgeInput } from "@ou-ca/common/api/age";
+import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import useApiMutation from "../../../hooks/api/useApiMutation";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import useSnackbar from "../../../hooks/useSnackbar";
+import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
 
 type AgeEditProps = {
-  isEditionMode: boolean;
+  title: string;
+  defaultValues?: UpsertAgeInput | null;
+  onSubmit: SubmitHandler<UpsertAgeInput>;
 };
 
 const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
-  const { isEditionMode } = props;
-  const { id: ageId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { displayNotification } = useSnackbar();
-
-  const queryClient = useQueryClient();
-
   const {
     register,
     formState: { isValid, isDirty },
-    reset,
     handleSubmit,
   } = useForm<UpsertAgeInput>({
-    defaultValues: {
+    defaultValues: defaultValues ?? {
       libelle: "",
     },
     resolver: zodResolver(upsertAgeInput),
   });
-
-  // Retrieve the existing age info in edit mode
-  const [enabledQuery, setEnabledQuery] = useState(ageId != null);
-  const { isFetching } = useApiQuery(
-    { path: `/age/${ageId!}`, schema: getAgeResponse },
-    {
-      onSuccess: (age) => {
-        setEnabledQuery(false);
-        reset({
-          libelle: age.libelle,
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericError"),
-        });
-      },
-      enabled: enabledQuery,
-    }
-  );
-
-  const { mutate } = useApiMutation(
-    {
-      schema: upsertAgeResponse,
-    },
-    {
-      onSuccess: (updatedAge) => {
-        displayNotification({
-          type: "success",
-          message: t("retrieveGenericSaveSuccess"),
-        });
-        queryClient.setQueryData(["API", `/age/${updatedAge.id}`], updatedAge);
-        navigate("..");
-      },
-      onError: (e) => {
-        if (e.status === 409) {
-          displayNotification({
-            type: "error",
-            message: t("ageAlreadyExistingError"),
-          });
-        } else {
-          displayNotification({
-            type: "error",
-            message: t("retrieveGenericSaveError"),
-          });
-        }
-      },
-    }
-  );
-
-  const title = isEditionMode ? t("ageEditionTitle") : t("ageCreationTitle");
-
-  const onSubmit: SubmitHandler<UpsertAgeInput> = (input) => {
-    if (ageId) {
-      mutate({ path: `/age/${ageId}`, method: "PUT", body: input });
-    } else {
-      mutate({ path: "/age", method: "POST", body: input });
-    }
-  };
 
   return (
     <>
@@ -114,7 +46,7 @@ const AgeEdit: FunctionComponent<AgeEditProps> = (props) => {
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={isFetching || !isValid || !isDirty}
+                disabled={!isValid || !isDirty}
               />
             </form>
           </div>

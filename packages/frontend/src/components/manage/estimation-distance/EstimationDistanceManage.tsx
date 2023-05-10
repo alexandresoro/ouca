@@ -4,7 +4,8 @@ import EstimationDistanceEdit from "./EstimationDistanceEdit";
 import EstimationDistancePage from "./EstimationDistancePage";
 
 const EstimationDistanceManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<EstimationDistancePage />} createEditElement={<EstimationDistanceEdit isEditionMode={false} />} />;
+  return <RouteManage pageElement={<EstimationDistancePage />}       createElement={<EstimationDistanceEdit isEditionMode={false} />}
+  editElement={<EstimationDistanceEdit isEditionMode={true} />} />;
 };
 
 export default EstimationDistanceManage;

@@ -5,7 +5,11 @@ import DepartementPage from "./DepartementPage";
 
 const DepartementManage: FunctionComponent = () => {
   return (
-    <RouteManage pageElement={<DepartementPage />} createEditElement={<DepartementEdit isEditionMode={false} />} />
+    <RouteManage
+      pageElement={<DepartementPage />}
+      createElement={<DepartementEdit isEditionMode={false} />}
+      editElement={<DepartementEdit isEditionMode={true} />}
+    />
   );
 };
 

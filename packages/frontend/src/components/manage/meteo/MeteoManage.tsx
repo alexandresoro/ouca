@@ -4,7 +4,13 @@ import MeteoEdit from "./MeteoEdit";
 import MeteoPage from "./MeteoPage";
 
 const MeteoManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<MeteoPage />} createEditElement={<MeteoEdit isEditionMode={false} />} />;
+  return (
+    <RouteManage
+      pageElement={<MeteoPage />}
+      createElement={<MeteoEdit isEditionMode={false} />}
+      editElement={<MeteoEdit isEditionMode={true} />}
+    />
+  );
 };
 
 export default MeteoManage;

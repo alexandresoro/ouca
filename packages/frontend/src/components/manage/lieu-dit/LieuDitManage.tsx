@@ -4,7 +4,13 @@ import LieuDitEdit from "./LieuDitEdit";
 import LieuDitPage from "./LieuDitPage";
 
 const LieuDitManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<LieuDitPage />} createEditElement={<LieuDitEdit isEditionMode={false} />} />;
+  return (
+    <RouteManage
+      pageElement={<LieuDitPage />}
+      createElement={<LieuDitEdit isEditionMode={false} />}
+      editElement={<LieuDitEdit isEditionMode={true} />}
+    />
+  );
 };
 
 export default LieuDitManage;

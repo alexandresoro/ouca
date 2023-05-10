@@ -5,7 +5,11 @@ import ComportementPage from "./ComportementPage";
 
 const ComportementManage: FunctionComponent = () => {
   return (
-    <RouteManage pageElement={<ComportementPage />} createEditElement={<ComportementEdit isEditionMode={false} />} />
+    <RouteManage
+      pageElement={<ComportementPage />}
+      createElement={<ComportementEdit isEditionMode={false} />}
+      editElement={<ComportementEdit isEditionMode={true} />}
+    />
   );
 };
 

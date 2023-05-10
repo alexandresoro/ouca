@@ -4,7 +4,13 @@ import ClasseEdit from "./ClasseEdit";
 import ClassePage from "./ClassePage";
 
 const ClasseManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<ClassePage />} createEditElement={<ClasseEdit isEditionMode={false} />} />;
+  return (
+    <RouteManage
+      pageElement={<ClassePage />}
+      createElement={<ClasseEdit isEditionMode={false} />}
+      editElement={<ClasseEdit isEditionMode={true} />}
+    />
+  );
 };
 
 export default ClasseManage;

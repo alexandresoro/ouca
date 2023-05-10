@@ -4,7 +4,13 @@ import SexeEdit from "./SexeEdit";
 import SexePage from "./SexePage";
 
 const SexeManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<SexePage />} createEditElement={<SexeEdit isEditionMode={false} />} />;
+  return (
+    <RouteManage
+      pageElement={<SexePage />}
+      createElement={<SexeEdit isEditionMode={false} />}
+      editElement={<SexeEdit isEditionMode={true} />}
+    />
+  );
 };
 
 export default SexeManage;

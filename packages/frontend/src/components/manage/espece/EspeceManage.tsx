@@ -4,7 +4,13 @@ import EspeceEdit from "./EspeceEdit";
 import EspecePage from "./EspecePage";
 
 const EspeceManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<EspecePage />} createEditElement={<EspeceEdit isEditionMode={false} />} />;
+  return (
+    <RouteManage
+      pageElement={<EspecePage />}
+      createElement={<EspeceEdit isEditionMode={false} />}
+      editElement={<EspeceEdit isEditionMode={true} />}
+    />
+  );
 };
 
 export default EspeceManage;

@@ -5,21 +5,21 @@ import useAppContext from "../useAppContext";
 
 type MutationParamsSchema<R> = {
   path?: string;
-  method?: string;
+  method: string;
   responseHandler?: never;
   schema?: z.ZodType<R>;
 };
 
 type MutationParamsResponseHandler<R> = {
   path?: string;
-  method?: string;
+  method: string;
   responseHandler: (response: Response) => R | Promise<R>;
   schema?: never;
 };
 
 type MutationParams<R> = MutationParamsSchema<R> | MutationParamsResponseHandler<R>;
 
-type MutationVariables = { path?: string; method?: string; body?: Record<string, unknown> };
+type MutationVariables = { path?: string; body?: Record<string, unknown> };
 
 type FetchError = {
   status: number;
@@ -35,7 +35,7 @@ function useApiMutation<TData, TVariables extends MutationVariables>(
   mutationOptions?: Omit<UseMutationOptions<TData, unknown, TVariables>, "mutationFn">
 ): UseMutationResult<TData, unknown, TVariables>;
 function useApiMutation<TData, TError, TVariables extends MutationVariables>(
-  { path: pathFromOptions, method: methodFromOptions, responseHandler, schema }: MutationParams<TData>,
+  { path: pathFromOptions, method, responseHandler, schema }: MutationParams<TData>,
   mutationOptions?: Omit<UseMutationOptions<unknown, TError, TVariables>, "mutationFn">
 ): UseMutationResult<unknown, TError, TVariables> {
   const { user } = useAuth();
@@ -47,13 +47,12 @@ function useApiMutation<TData, TError, TVariables extends MutationVariables>(
     ...mutationOptions,
     mutationFn: async (variables) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { path: pathFromMutate, method: methodFromMutate, body, ...restVariables } = variables;
+      const { path: pathFromMutate, body, ...restVariables } = variables;
 
       const path = pathFromMutate ?? pathFromOptions;
-      const method = methodFromMutate ?? methodFromOptions;
 
       // TODO improve handling
-      if (!path || !method) {
+      if (!path) {
         throw new Error("missing path param");
       }
 
