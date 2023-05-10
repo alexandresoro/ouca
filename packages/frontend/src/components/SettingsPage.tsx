@@ -82,39 +82,18 @@ const SettingsPage: FunctionComponent = () => {
 
   const {
     data: settings,
-    error: errorSettings,
+    isError,
     isFetching,
     refetch,
-  } = useApiQuery(
-    {
-      path: "/settings",
-      schema: getSettingsResponse,
-    },
-    {
-      onSuccess: (updatedSettings) => {
-        reset({
-          defaultObserver: updatedSettings?.defaultObserver?.id ? parseInt(updatedSettings.defaultObserver.id) : null,
-          defaultDepartment: updatedSettings?.defaultDepartment?.id
-            ? parseInt(updatedSettings.defaultDepartment.id)
-            : null,
-          defaultEstimationNombre: updatedSettings?.defaultEstimationNombreId ?? null,
-          defaultNombre: updatedSettings?.defaultNombre ? `${updatedSettings.defaultNombre}` : "",
-          defaultSexe: updatedSettings?.defaultSexeId ?? null,
-          defaultAge: updatedSettings?.defaultAgeId ?? null,
-          areAssociesDisplayed: !!updatedSettings?.areAssociesDisplayed,
-          isMeteoDisplayed: !!updatedSettings?.isMeteoDisplayed,
-          isDistanceDisplayed: !!updatedSettings?.isDistanceDisplayed,
-          isRegroupementDisplayed: !!updatedSettings?.isRegroupementDisplayed,
-          coordinatesSystem: updatedSettings?.coordinatesSystem ?? "gps",
-        });
-      },
-    }
-  );
+  } = useApiQuery({
+    path: "/settings",
+    schema: getSettingsResponse,
+  });
 
   const [{ fetching: fetchingGql, error: errorGql, data }] = useQuery({ query: SETTINGS_QUERY });
 
   const fetching = isFetching || fetchingGql;
-  const error = errorSettings || errorGql;
+  const error = isError || errorGql;
 
   const { mutate } = useApiMutation(
     {
@@ -125,10 +104,16 @@ const SettingsPage: FunctionComponent = () => {
     {
       onSuccess: (updatedSettings) => {
         queryClient.setQueryData(["API", "/settings"], updatedSettings);
-        displaySuccessNotification();
+        displayNotification({
+          type: "success",
+          message: t("saveSettingsSuccess"),
+        });
       },
       onError: () => {
-        displayErrorNotification();
+        displayNotification({
+          type: "error",
+          message: t("saveSettingsError"),
+        });
         void refetch();
       },
     }
@@ -158,19 +143,21 @@ const SettingsPage: FunctionComponent = () => {
     resolver: zodResolver(putSettingsInput),
   });
 
-  const displaySuccessNotification = useCallback(() => {
-    displayNotification({
-      type: "success",
-      message: t("saveSettingsSuccess"),
+  useEffect(() => {
+    reset({
+      defaultObserver: settings?.defaultObserver?.id ? parseInt(settings.defaultObserver.id) : null,
+      defaultDepartment: settings?.defaultDepartment?.id ? parseInt(settings.defaultDepartment.id) : null,
+      defaultEstimationNombre: settings?.defaultEstimationNombreId ?? null,
+      defaultNombre: settings?.defaultNombre ? `${settings.defaultNombre}` : "",
+      defaultSexe: settings?.defaultSexeId ?? null,
+      defaultAge: settings?.defaultAgeId ?? null,
+      areAssociesDisplayed: !!settings?.areAssociesDisplayed,
+      isMeteoDisplayed: !!settings?.isMeteoDisplayed,
+      isDistanceDisplayed: !!settings?.isDistanceDisplayed,
+      isRegroupementDisplayed: !!settings?.isRegroupementDisplayed,
+      coordinatesSystem: settings?.coordinatesSystem ?? "gps",
     });
-  }, [t, displayNotification]);
-
-  const displayErrorNotification = useCallback(() => {
-    displayNotification({
-      type: "error",
-      message: t("saveSettingsError"),
-    });
-  }, [t, displayNotification]);
+  }, [settings, reset]);
 
   // Handle updated settings
   const sendUpdatedSettings: SubmitHandler<PutSettingsInput> = useCallback(
@@ -187,12 +174,12 @@ const SettingsPage: FunctionComponent = () => {
   // Watch inputs for changes, and submit the form if any
   useEffect(() => {
     const subscription = watch(() => {
-      if (!fetching) {
+      if (!isFetching) {
         void handleSubmit(sendUpdatedSettings as unknown as SubmitHandler<SettingsInputs>)();
       }
     });
     return () => subscription.unsubscribe();
-  }, [watch, handleSubmit, sendUpdatedSettings, fetching]);
+  }, [watch, handleSubmit, sendUpdatedSettings, isFetching]);
 
   // Display a generic error message when something wrong happened while retrieving the settings
   useEffect(() => {
