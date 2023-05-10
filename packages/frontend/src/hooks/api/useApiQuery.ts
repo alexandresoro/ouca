@@ -3,10 +3,6 @@ import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
 import useAppContext from "../useAppContext";
 
-function useApiQuery(
-  { path, queryParams }: { path: string; queryParams?: Record<string, string>; schema?: never },
-  queryOptions?: Omit<UseQueryOptions, "queryKey" | "queryFn">
-): UseQueryResult<unknown>;
 function useApiQuery<SType>(
   { path, queryParams, schema }: { path: string; queryParams?: Record<string, string>; schema?: z.ZodType<SType> },
   queryOptions?: Omit<UseQueryOptions<SType>, "queryKey" | "queryFn">
