@@ -1,14 +1,15 @@
 import { type FunctionComponent } from "react";
 import RouteManage from "../common/RouteManage";
-import ObservateurEdit from "./ObservateurEdit";
+import ObservateurCreate from "./ObservateurCreate";
 import ObservateurPage from "./ObservateurPage";
+import ObservateurUpdate from "./ObservateurUpdate";
 
 const ObservateurManage: FunctionComponent = () => {
   return (
     <RouteManage
       pageElement={<ObservateurPage />}
-      createElement={<ObservateurEdit isEditionMode={false} />}
-      editElement={<ObservateurEdit isEditionMode={true} />}
+      createElement={<ObservateurCreate />}
+      editElement={<ObservateurUpdate />}
     />
   );
 };

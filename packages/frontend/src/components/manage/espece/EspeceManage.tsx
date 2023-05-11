@@ -1,16 +1,11 @@
 import { type FunctionComponent } from "react";
 import RouteManage from "../common/RouteManage";
-import EspeceEdit from "./EspeceEdit";
+import EspeceCreate from "./EspeceCreate";
 import EspecePage from "./EspecePage";
+import EspeceUpdate from "./EspeceUpdate";
 
 const EspeceManage: FunctionComponent = () => {
-  return (
-    <RouteManage
-      pageElement={<EspecePage />}
-      createElement={<EspeceEdit isEditionMode={false} />}
-      editElement={<EspeceEdit isEditionMode={true} />}
-    />
-  );
+  return <RouteManage pageElement={<EspecePage />} createElement={<EspeceCreate />} editElement={<EspeceUpdate />} />;
 };
 
 export default EspeceManage;

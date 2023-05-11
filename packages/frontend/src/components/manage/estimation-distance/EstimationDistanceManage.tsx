@@ -1,11 +1,12 @@
 import { type FunctionComponent } from "react";
 import RouteManage from "../common/RouteManage";
-import EstimationDistanceEdit from "./EstimationDistanceEdit";
+import EstimationDistanceCreate from "./EstimationDistanceCreate";
 import EstimationDistancePage from "./EstimationDistancePage";
+import EstimationDistanceUpdate from "./EstimationDistanceUpdate";
 
 const EstimationDistanceManage: FunctionComponent = () => {
-  return <RouteManage pageElement={<EstimationDistancePage />}       createElement={<EstimationDistanceEdit isEditionMode={false} />}
-  editElement={<EstimationDistanceEdit isEditionMode={true} />} />;
+  return <RouteManage pageElement={<EstimationDistancePage />}       createElement={<EstimationDistanceCreate />}
+  editElement={<EstimationDistanceUpdate />} />;
 };
 
 export default EstimationDistanceManage;

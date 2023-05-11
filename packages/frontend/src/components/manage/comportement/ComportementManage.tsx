@@ -1,14 +1,15 @@
 import { type FunctionComponent } from "react";
 import RouteManage from "../common/RouteManage";
-import ComportementEdit from "./ComportementEdit";
+import ComportementCreate from "./ComportementCreate";
 import ComportementPage from "./ComportementPage";
+import ComportementUpdate from "./ComportementUpdate";
 
 const ComportementManage: FunctionComponent = () => {
   return (
     <RouteManage
       pageElement={<ComportementPage />}
-      createElement={<ComportementEdit isEditionMode={false} />}
-      editElement={<ComportementEdit isEditionMode={true} />}
+      createElement={<ComportementCreate />}
+      editElement={<ComportementUpdate />}
     />
   );
 };
