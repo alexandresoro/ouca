@@ -15,14 +15,14 @@ import ManageTopBar from "../common/ManageTopBar";
 import { COMPORTEMENT_QUERY, UPSERT_COMPORTEMENT } from "./ComportementManageQueries";
 
 type ComportementEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertComportementInput = Pick<UpsertComportementMutationVariables, "id"> &
   UpsertComportementMutationVariables["data"];
 
 const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: comportementId } = useParams();
 
   const { t } = useTranslation();
@@ -77,8 +77,6 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("behaviorEditionTitle") : t("behaviorCreationTitle");
 
   const breedingStatuses = [
     {

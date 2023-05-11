@@ -13,13 +13,13 @@ import ManageTopBar from "../common/ManageTopBar";
 import { MILIEU_QUERY, UPSERT_MILIEU } from "./MilieuManageQueries";
 
 type MilieuEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertMilieuInput = Pick<UpsertMilieuMutationVariables, "id"> & UpsertMilieuMutationVariables["data"];
 
 const MilieuEdit: FunctionComponent<MilieuEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: milieuId } = useParams();
 
   const { t } = useTranslation();
@@ -71,8 +71,6 @@ const MilieuEdit: FunctionComponent<MilieuEditProps> = (props) => {
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("environmentEditionTitle") : t("environmentCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertMilieuInput> = (data) => {
     const { id, ...restData } = data;

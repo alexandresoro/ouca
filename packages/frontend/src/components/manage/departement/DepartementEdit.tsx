@@ -13,14 +13,14 @@ import ManageTopBar from "../common/ManageTopBar";
 import { DEPARTEMENT_QUERY, UPSERT_DEPARTEMENT } from "./DepartementManageQueries";
 
 type DepartementEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertDepartementInput = Pick<UpsertDepartementMutationVariables, "id"> &
   UpsertDepartementMutationVariables["data"];
 
 const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: departementId } = useParams();
 
   const { t } = useTranslation();
@@ -70,8 +70,6 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("departmentEditionTitle") : t("departmentCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertDepartementInput> = (data) => {
     const { id, ...restData } = data;

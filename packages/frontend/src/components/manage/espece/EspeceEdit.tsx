@@ -14,13 +14,13 @@ import ManageTopBar from "../common/ManageTopBar";
 import { ALL_CLASSES_QUERY, ESPECE_QUERY, UPSERT_ESPECE } from "./EspeceManageQueries";
 
 type EspeceEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertEspeceInput = Pick<UpsertEspeceMutationVariables, "id"> & UpsertEspeceMutationVariables["data"];
 
 const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: especeId } = useParams();
 
   const { t } = useTranslation();
@@ -85,8 +85,6 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
       });
     }
   }, [error, errorClasses, displayNotification, t]);
-
-  const title = isEditionMode ? t("speciesEditionTitle") : t("speciesCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertEspeceInput> = (data) => {
     const { id, ...restData } = data;

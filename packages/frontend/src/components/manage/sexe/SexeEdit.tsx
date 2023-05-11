@@ -13,13 +13,13 @@ import ManageTopBar from "../common/ManageTopBar";
 import { SEXE_QUERY, UPSERT_SEXE } from "./SexeManageQueries";
 
 type SexeEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertSexeInput = Pick<UpsertSexeMutationVariables, "id"> & UpsertSexeMutationVariables["data"];
 
 const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: sexeId } = useParams();
 
   const { t } = useTranslation();
@@ -69,8 +69,6 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("sexEditionTitle") : t("sexCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertSexeInput> = (data) => {
     const { id, ...restData } = data;

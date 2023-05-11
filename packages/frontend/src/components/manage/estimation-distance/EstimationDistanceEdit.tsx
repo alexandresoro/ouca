@@ -13,13 +13,13 @@ import ManageTopBar from "../common/ManageTopBar";
 import { ESTIMATION_DISTANCE_QUERY, UPSERT_ESTIMATION_DISTANCE } from "./EstimationDistanceManageQueries";
 
 type EstimationDistanceEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertEstimationDistanceInput = Pick<UpsertEstimationDistanceMutationVariables, "id"> & UpsertEstimationDistanceMutationVariables["data"];
 
 const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: estimationDistanceId } = useParams();
 
   const { t } = useTranslation();
@@ -69,8 +69,6 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("distancePrecisionEditionTitle") : t("distancePrecisionCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertEstimationDistanceInput> = (data) => {
     const { id, ...restData } = data;

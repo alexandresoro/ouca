@@ -1,8 +1,25 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { type FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
+import useSnackbar from "../../../hooks/useSnackbar";
 import EspeceEdit from "./EspeceEdit";
 
 const EspeceUpdate: FunctionComponent = () => {
-  return <EspeceEdit isEditionMode={true} />;
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const { id } = useParams();
+
+  const { displayNotification } = useSnackbar();
+
+  const queryClient = useQueryClient();
+
+  if (!id) {
+    return null;
+  }
+
+  return <EspeceEdit title={t("speciesEditionTitle")} />;
 };
 
 export default EspeceUpdate;

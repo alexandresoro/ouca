@@ -15,7 +15,7 @@ import { ALL_DEPARTMENTS } from "../commune/CommuneManageQueries";
 import { ALL_COMMUNES_OF_DEPARTEMENT, LIEU_DIT_QUERY, UPSERT_LIEU_DIT } from "./LieuDitManageQueries";
 
 type LieuDitEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertLieuDitInput = Pick<UpsertLieuDitMutationVariables, "id"> &
@@ -31,7 +31,7 @@ type UpsertLieuDitInput = Pick<UpsertLieuDitMutationVariables, "id"> &
   };
 
 const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: lieuDitId } = useParams();
 
   const { t } = useTranslation();
@@ -121,8 +121,6 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
       });
     }
   }, [error, errorTowns, errorDepartements, displayNotification, t]);
-
-  const title = isEditionMode ? t("localityEditionTitle") : t("localityCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertLieuDitInput> = (data) => {
     const { id, communeId, latitude, longitude, altitude, departmentId, ...restData } = data;

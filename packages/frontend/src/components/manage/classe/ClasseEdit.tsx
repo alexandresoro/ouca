@@ -13,13 +13,13 @@ import ManageTopBar from "../common/ManageTopBar";
 import { CLASSE_QUERY, UPSERT_CLASSE } from "./ClasseManageQueries";
 
 type ClasseEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertClasseInput = Pick<UpsertClasseMutationVariables, "id"> & UpsertClasseMutationVariables["data"];
 
 const ClasseEdit: FunctionComponent<ClasseEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: classeId } = useParams();
 
   const { t } = useTranslation();
@@ -69,8 +69,6 @@ const ClasseEdit: FunctionComponent<ClasseEditProps> = (props) => {
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("speciesClassEditionTitle") : t("speciesClassCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertClasseInput> = (data) => {
     const { id, ...restData } = data;

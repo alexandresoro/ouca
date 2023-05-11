@@ -13,13 +13,13 @@ import ManageTopBar from "../common/ManageTopBar";
 import { METEO_QUERY, UPSERT_METEO } from "./MeteoManageQueries";
 
 type MeteoEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertMeteoInput = Pick<UpsertMeteoMutationVariables, "id"> & UpsertMeteoMutationVariables["data"];
 
 const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: meteoId } = useParams();
 
   const { t } = useTranslation();
@@ -69,8 +69,6 @@ const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("weatherEditionTitle") : t("weatherCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertMeteoInput> = (data) => {
     const { id, ...restData } = data;

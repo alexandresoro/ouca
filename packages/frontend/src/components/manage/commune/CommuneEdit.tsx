@@ -14,14 +14,14 @@ import ManageTopBar from "../common/ManageTopBar";
 import { ALL_DEPARTMENTS, COMMUNE_QUERY, UPSERT_COMMUNE } from "./CommuneManageQueries";
 
 type CommuneEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertCommuneInput = Pick<UpsertCommuneMutationVariables, "id"> &
   Omit<UpsertCommuneMutationVariables["data"], "code"> & { code: string };
 
 const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: communeId } = useParams();
 
   const { t } = useTranslation();
@@ -84,8 +84,6 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
       });
     }
   }, [error, errorDepartements, displayNotification, t]);
-
-  const title = isEditionMode ? t("townEditionTitle") : t("townCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertCommuneInput> = (data) => {
     const { id, code, ...restData } = data;

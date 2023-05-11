@@ -13,14 +13,14 @@ import ManageTopBar from "../common/ManageTopBar";
 import { OBSERVATEUR_QUERY, UPSERT_OBSERVATEUR } from "./ObservateurManageQueries";
 
 type ObservateurEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type ObservateurUpsertInputs = Pick<UpsertObservateurMutationVariables, "id"> &
   UpsertObservateurMutationVariables["data"];
 
 const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: observateurId } = useParams();
 
   const { t } = useTranslation();
@@ -70,8 +70,6 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("observerEditionTitle") : t("observerCreationTitle");
 
   const onSubmit: SubmitHandler<ObservateurUpsertInputs> = (data) => {
     const { id, ...restData } = data;

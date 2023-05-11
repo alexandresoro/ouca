@@ -14,14 +14,14 @@ import ManageTopBar from "../common/ManageTopBar";
 import { ESTIMATION_NOMBRE_QUERY, UPSERT_ESTIMATION_NOMBRE } from "./EstimationNombreManageQueries";
 
 type EstimationNombreEditProps = {
-  isEditionMode: boolean;
+  title: string;
 };
 
 type UpsertEstimationNombreInput = Pick<UpsertEstimationNombreMutationVariables, "id"> &
   UpsertEstimationNombreMutationVariables["data"];
 
 const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (props) => {
-  const { isEditionMode } = props;
+  const { title } = props;
   const { id: estimationNombreId } = useParams();
 
   const { t } = useTranslation();
@@ -73,8 +73,6 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
       });
     }
   }, [error, displayNotification, t]);
-
-  const title = isEditionMode ? t("numberPrecisionEditionTitle") : t("numberPrecisionCreationTitle");
 
   const onSubmit: SubmitHandler<UpsertEstimationNombreInput> = (data) => {
     const { id, ...restData } = data;
