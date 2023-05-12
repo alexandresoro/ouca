@@ -93,7 +93,7 @@
     "@types/content-disposition": "0.5.5",
     "@types/node": "18.16.8",
     "@vitest/coverage-c8": "0.31.0",
-    "cpy": "10.0.0",
+    "cpy": "10.1.0",
     "dotenv": "16.0.3",
     "tsup": "6.7.0",
     "type-fest": "3.10.0",
