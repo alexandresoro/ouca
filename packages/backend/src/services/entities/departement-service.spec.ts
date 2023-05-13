@@ -229,10 +229,10 @@ describe("Update of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await departementService.upsertDepartement(departmentData, loggedUser);
+    await departementService.updateDepartement(12, departmentData, loggedUser);
 
     expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(departmentData.id, departmentData.data);
+    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -246,10 +246,10 @@ describe("Update of a department", () => {
 
     departementRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
-    await departementService.upsertDepartement(departmentData, loggedUser);
+    await departementService.updateDepartement(12, departmentData, loggedUser);
 
     expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(departmentData.id, departmentData.data);
+    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -266,7 +266,7 @@ describe("Update of a department", () => {
 
     departementRepository.findDepartementById.mockResolvedValueOnce(existingData);
 
-    await expect(departementService.upsertDepartement(departmentData, user)).rejects.toThrowError(
+    await expect(departementService.updateDepartement(12, departmentData, user)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
@@ -282,7 +282,7 @@ describe("Update of a department", () => {
 
     departementRepository.updateDepartement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => departementService.upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
+    await expect(() => departementService.updateDepartement(12, departmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -295,7 +295,9 @@ describe("Update of a department", () => {
       id: 12,
     });
 
-    await expect(departementService.upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.updateDepartement(12, departmentData, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
     expect(departementRepository.updateDepartement).not.toHaveBeenCalled();
   });
 });
@@ -308,7 +310,7 @@ describe("Creation of a department", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await departementService.upsertDepartement(departmentData, loggedUser);
+    await departementService.createDepartement(departmentData, loggedUser);
 
     expect(departementRepository.createDepartement).toHaveBeenCalledTimes(1);
     expect(departementRepository.createDepartement).toHaveBeenLastCalledWith({
@@ -326,7 +328,7 @@ describe("Creation of a department", () => {
 
     departementRepository.createDepartement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => departementService.upsertDepartement(departmentData, loggedUser)).rejects.toThrowError(
+    await expect(() => departementService.createDepartement(departmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -342,7 +344,7 @@ describe("Creation of a department", () => {
       id: undefined,
     });
 
-    await expect(departementService.upsertDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.createDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(departementRepository.createDepartement).not.toHaveBeenCalled();
   });
 });

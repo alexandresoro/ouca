@@ -97,49 +97,57 @@ export const buildDepartementService = ({
     return departementRepository.getCount(q);
   };
 
-  const upsertDepartement = async (
-    args: MutationUpsertDepartementArgs,
+  const createDepartement = async (
+    input: MutationUpsertDepartementArgs,
     loggedUser: LoggedUser | null
   ): Promise<Departement> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedDepartement: Departement;
+    try {
+      const upsertedDepartement = await departementRepository.createDepartement({
+        ...data,
+        owner_id: loggedUser.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await departementRepository.findDepartementById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedDepartement;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedDepartement = await departementRepository.updateDepartement(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedDepartement = await departementRepository.createDepartement({
-          ...data,
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateDepartement = async (
+    id: number,
+    input: MutationUpsertDepartementArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Departement> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await departementRepository.findDepartementById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedDepartement;
+    try {
+      const upsertedDepartement = await departementRepository.updateDepartement(id, data);
+
+      return upsertedDepartement;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<Departement> => {
@@ -177,7 +185,8 @@ export const buildDepartementService = ({
     findAllDepartements,
     findPaginatedDepartements,
     getDepartementsCount,
-    upsertDepartement,
+    createDepartement,
+    updateDepartement,
     deleteDepartement,
     createDepartements,
   };

@@ -191,10 +191,10 @@ describe("Update of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await comportementService.upsertComportement(behaviorData, loggedUser);
+    await comportementService.updateComportement(12, behaviorData, loggedUser);
 
     expect(comportementRepository.updateComportement).toHaveBeenCalledTimes(1);
-    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(behaviorData.id, behaviorData.data);
+    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -208,10 +208,10 @@ describe("Update of a behavior", () => {
 
     comportementRepository.findComportementById.mockResolvedValueOnce(existingData);
 
-    await comportementService.upsertComportement(behaviorData, loggedUser);
+    await comportementService.updateComportement(12, behaviorData, loggedUser);
 
     expect(comportementRepository.updateComportement).toHaveBeenCalledTimes(1);
-    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(behaviorData.id, behaviorData.data);
+    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -228,7 +228,7 @@ describe("Update of a behavior", () => {
 
     comportementRepository.findComportementById.mockResolvedValueOnce(existingData);
 
-    await expect(comportementService.upsertComportement(behaviorData, user)).rejects.toThrowError(
+    await expect(comportementService.updateComportement(12, behaviorData, user)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
@@ -244,7 +244,7 @@ describe("Update of a behavior", () => {
 
     comportementRepository.updateComportement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => comportementService.upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
+    await expect(() => comportementService.updateComportement(12, behaviorData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -257,7 +257,9 @@ describe("Update of a behavior", () => {
       id: 12,
     });
 
-    await expect(comportementService.upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(comportementService.updateComportement(12, behaviorData, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
     expect(comportementRepository.updateComportement).not.toHaveBeenCalled();
   });
 });
@@ -270,7 +272,7 @@ describe("Creation of a behavior", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await comportementService.upsertComportement(behaviorData, loggedUser);
+    await comportementService.createComportement(behaviorData, loggedUser);
 
     expect(comportementRepository.createComportement).toHaveBeenCalledTimes(1);
     expect(comportementRepository.createComportement).toHaveBeenLastCalledWith({
@@ -288,7 +290,7 @@ describe("Creation of a behavior", () => {
 
     comportementRepository.createComportement.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => comportementService.upsertComportement(behaviorData, loggedUser)).rejects.toThrowError(
+    await expect(() => comportementService.createComportement(behaviorData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -304,7 +306,7 @@ describe("Creation of a behavior", () => {
       id: undefined,
     });
 
-    await expect(comportementService.upsertComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(comportementService.createComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(comportementRepository.createComportement).not.toHaveBeenCalled();
   });
 });

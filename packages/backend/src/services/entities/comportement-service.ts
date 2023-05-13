@@ -89,49 +89,57 @@ export const buildComportementService = ({
     return comportementRepository.getCount(q);
   };
 
-  const upsertComportement = async (
-    args: MutationUpsertComportementArgs,
+  const createComportement = async (
+    input: MutationUpsertComportementArgs,
     loggedUser: LoggedUser | null
   ): Promise<Comportement> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedComportement: Comportement;
+    try {
+      const upsertedComportement = await comportementRepository.createComportement({
+        ...data,
+        owner_id: loggedUser.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await comportementRepository.findComportementById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedComportement;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedComportement = await comportementRepository.updateComportement(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedComportement = await comportementRepository.createComportement({
-          ...data,
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateComportement = async (
+    id: number,
+    input: MutationUpsertComportementArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Comportement> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await comportementRepository.findComportementById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedComportement;
+    try {
+      const upsertedComportement = await comportementRepository.updateComportement(id, data);
+
+      return upsertedComportement;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement> => {
@@ -168,7 +176,8 @@ export const buildComportementService = ({
     findAllComportements,
     findPaginatedComportements,
     getComportementsCount,
-    upsertComportement,
+    createComportement,
+    updateComportement,
     deleteComportement,
     createComportements,
   };

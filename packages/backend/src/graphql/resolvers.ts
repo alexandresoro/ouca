@@ -270,13 +270,25 @@ export const buildResolvers = ({
         }
       },
       upsertCommune: async (_source, args, { user }): Promise<Omit<Commune, "departement">> => {
-        return communeService.upsertCommune(args, user);
+        if (args.id) {
+          return communeService.updateCommune(args.id, args, user);
+        } else {
+          return communeService.createCommune(args, user);
+        }
       },
       upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
-        return comportementService.upsertComportement(args, user);
+        if (args.id) {
+          return comportementService.updateComportement(args.id, args, user);
+        } else {
+          return comportementService.createComportement(args, user);
+        }
       },
       upsertDepartement: async (_source, args, { user }): Promise<Departement> => {
-        return departementService.upsertDepartement(args, user);
+        if (args.id) {
+          return departementService.updateDepartement(args.id, args, user);
+        } else {
+          return departementService.createDepartement(args, user);
+        }
       },
       upsertDonnee: async (
         _source,

@@ -101,46 +101,54 @@ export const buildCommuneService = ({
     return communeRepository.getCount(q, departmentId);
   };
 
-  const upsertCommune = async (args: MutationUpsertCommuneArgs, loggedUser: LoggedUser | null): Promise<Commune> => {
+  const createCommune = async (input: MutationUpsertCommuneArgs, loggedUser: LoggedUser | null): Promise<Commune> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedCommune: Commune;
+    try {
+      const upsertedCommune = await communeRepository.createCommune({
+        ...reshapeInputCommuneUpsertData(data),
+        owner_id: loggedUser.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await communeRepository.findCommuneById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedCommune;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedCommune = await communeRepository.updateCommune(id, reshapeInputCommuneUpsertData(data));
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedCommune = await communeRepository.createCommune({
-          ...reshapeInputCommuneUpsertData(data),
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateCommune = async (
+    id: number,
+    input: MutationUpsertCommuneArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Commune> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await communeRepository.findCommuneById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedCommune;
+    try {
+      const upsertedCommune = await communeRepository.updateCommune(id, reshapeInputCommuneUpsertData(data));
+
+      return upsertedCommune;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Commune> => {
@@ -178,7 +186,8 @@ export const buildCommuneService = ({
     findAllCommunesWithDepartements,
     findPaginatedCommunes,
     getCommunesCount,
-    upsertCommune,
+    createCommune,
+    updateCommune,
     deleteCommune,
     createCommunes,
   };

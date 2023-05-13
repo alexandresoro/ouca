@@ -220,11 +220,11 @@ describe("Update of a city", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await communeService.upsertCommune(cityData, loggedUser);
+    await communeService.updateCommune(12, cityData, loggedUser);
 
     expect(communeRepository.updateCommune).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
-    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(cityData.id, reshapedInputData);
+    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -241,11 +241,11 @@ describe("Update of a city", () => {
 
     communeRepository.findCommuneById.mockResolvedValueOnce(existingData);
 
-    await communeService.upsertCommune(cityData, loggedUser);
+    await communeService.updateCommune(12, cityData, loggedUser);
 
     expect(communeRepository.updateCommune).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
-    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(cityData.id, reshapedInputData);
+    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -262,7 +262,7 @@ describe("Update of a city", () => {
 
     communeRepository.findCommuneById.mockResolvedValueOnce(existingData);
 
-    await expect(communeService.upsertCommune(cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(communeService.updateCommune(12, cityData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(communeRepository.updateCommune).not.toHaveBeenCalled();
   });
@@ -279,7 +279,7 @@ describe("Update of a city", () => {
 
     communeRepository.updateCommune.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => communeService.upsertCommune(cityData, loggedUser)).rejects.toThrowError(
+    await expect(() => communeService.updateCommune(12, cityData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -293,7 +293,7 @@ describe("Update of a city", () => {
       id: 12,
     });
 
-    await expect(communeService.upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.updateCommune(12, cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(communeRepository.updateCommune).not.toHaveBeenCalled();
   });
 });
@@ -309,7 +309,7 @@ describe("Creation of a city", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await communeService.upsertCommune(cityData, loggedUser);
+    await communeService.createCommune(cityData, loggedUser);
 
     expect(communeRepository.createCommune).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
@@ -331,7 +331,7 @@ describe("Creation of a city", () => {
 
     communeRepository.createCommune.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => communeService.upsertCommune(cityData, loggedUser)).rejects.toThrowError(
+    await expect(() => communeService.createCommune(cityData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -348,7 +348,7 @@ describe("Creation of a city", () => {
       id: undefined,
     });
 
-    await expect(communeService.upsertCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.createCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(communeRepository.createCommune).not.toHaveBeenCalled();
   });
 });
