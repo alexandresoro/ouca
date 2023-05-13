@@ -1,9 +1,7 @@
+import { type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import {
-  type MutationUpsertDepartementArgs,
-  type QueryDepartementsArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { type QueryDepartementsArgs } from "../../graphql/generated/graphql-types.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import {
   type Departement,
@@ -98,16 +96,14 @@ export const buildDepartementService = ({
   };
 
   const createDepartement = async (
-    input: MutationUpsertDepartementArgs,
+    input: UpsertDepartmentInput,
     loggedUser: LoggedUser | null
   ): Promise<Departement> => {
     validateAuthorization(loggedUser);
 
-    const { data } = input;
-
     try {
       const upsertedDepartement = await departementRepository.createDepartement({
-        ...data,
+        ...input,
         owner_id: loggedUser.id,
       });
 
@@ -122,12 +118,10 @@ export const buildDepartementService = ({
 
   const updateDepartement = async (
     id: number,
-    input: MutationUpsertDepartementArgs,
+    input: UpsertDepartmentInput,
     loggedUser: LoggedUser | null
   ): Promise<Departement> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
@@ -139,7 +133,7 @@ export const buildDepartementService = ({
     }
 
     try {
-      const upsertedDepartement = await departementRepository.updateDepartement(id, data);
+      const upsertedDepartement = await departementRepository.updateDepartement(id, input);
 
       return upsertedDepartement;
     } catch (e) {

@@ -1,12 +1,8 @@
+import { type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  ClassesOrderBy,
-  SortOrder,
-  type MutationUpsertClasseArgs,
-  type QueryClassesArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { ClassesOrderBy, SortOrder, type QueryClassesArgs } from "../../graphql/generated/graphql-types.js";
 import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -202,14 +198,14 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a class", () => {
   test("should be allowed when requested by an admin", async () => {
-    const classData = mock<MutationUpsertClasseArgs>();
+    const classData = mock<UpsertClassInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await classeService.updateClasse(12, classData, loggedUser);
 
     expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData.data);
+    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -217,7 +213,7 @@ describe("Update of a class", () => {
       ownerId: "notAdmin",
     });
 
-    const classData = mock<MutationUpsertClasseArgs>();
+    const classData = mock<UpsertClassInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
@@ -226,7 +222,7 @@ describe("Update of a class", () => {
     await classeService.updateClasse(12, classData, loggedUser);
 
     expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData.data);
+    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -234,7 +230,7 @@ describe("Update of a class", () => {
       ownerId: "notAdmin",
     });
 
-    const classData = mock<MutationUpsertClasseArgs>();
+    const classData = mock<UpsertClassInput>();
 
     const loggedUser = {
       id: "Bob",
@@ -249,9 +245,7 @@ describe("Update of a class", () => {
   });
 
   test("should throw an error when trying to update to a class that exists", async () => {
-    const classData = mock<MutationUpsertClasseArgs>({
-      id: 12,
-    });
+    const classData = mock<UpsertClassInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
@@ -262,13 +256,11 @@ describe("Update of a class", () => {
     );
 
     expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(classData.id, classData.data);
+    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const classData = mock<MutationUpsertClasseArgs>({
-      id: 12,
-    });
+    const classData = mock<UpsertClassInput>();
 
     await expect(classeService.updateClasse(12, classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classeRepository.updateClasse).not.toHaveBeenCalled();
@@ -277,9 +269,7 @@ describe("Update of a class", () => {
 
 describe("Creation of a class", () => {
   test("should create new class", async () => {
-    const classData = mock<MutationUpsertClasseArgs>({
-      id: undefined,
-    });
+    const classData = mock<UpsertClassInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -287,15 +277,13 @@ describe("Creation of a class", () => {
 
     expect(classeRepository.createClasse).toHaveBeenCalledTimes(1);
     expect(classeRepository.createClasse).toHaveBeenLastCalledWith({
-      ...classData.data,
+      ...classData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create a class that already exists", async () => {
-    const classData = mock<MutationUpsertClasseArgs>({
-      id: undefined,
-    });
+    const classData = mock<UpsertClassInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -307,15 +295,13 @@ describe("Creation of a class", () => {
 
     expect(classeRepository.createClasse).toHaveBeenCalledTimes(1);
     expect(classeRepository.createClasse).toHaveBeenLastCalledWith({
-      ...classData.data,
+      ...classData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const classData = mock<MutationUpsertClasseArgs>({
-      id: undefined,
-    });
+    const classData = mock<UpsertClassInput>();
 
     await expect(classeService.createClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classeRepository.createClasse).not.toHaveBeenCalled();

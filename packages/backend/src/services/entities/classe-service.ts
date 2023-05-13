@@ -1,6 +1,7 @@
+import { type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertClasseArgs, type QueryClassesArgs } from "../../graphql/generated/graphql-types.js";
+import { type QueryClassesArgs } from "../../graphql/generated/graphql-types.js";
 import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -82,15 +83,13 @@ export const buildClasseService = ({
     return classeRepository.getCount(q);
   };
 
-  const createClasse = async (input: MutationUpsertClasseArgs, loggedUser: LoggedUser | null): Promise<Classe> => {
+  const createClasse = async (input: UpsertClassInput, loggedUser: LoggedUser | null): Promise<Classe> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Create a new class
     try {
       const upsertedClasse = await classeRepository.createClasse({
-        ...data,
+        ...input,
         owner_id: loggedUser?.id,
       });
       return upsertedClasse;
@@ -102,14 +101,8 @@ export const buildClasseService = ({
     }
   };
 
-  const updateClasse = async (
-    id: number,
-    input: MutationUpsertClasseArgs,
-    loggedUser: LoggedUser | null
-  ): Promise<Classe> => {
+  const updateClasse = async (id: number, input: UpsertClassInput, loggedUser: LoggedUser | null): Promise<Classe> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
@@ -122,7 +115,7 @@ export const buildClasseService = ({
 
     // Update an existing class
     try {
-      const upsertedClasse = await classeRepository.updateClasse(id, data);
+      const upsertedClasse = await classeRepository.updateClasse(id, input);
 
       return upsertedClasse;
     } catch (e) {

@@ -1,13 +1,9 @@
+import { type UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import {
-  CommunesOrderBy,
-  SortOrder,
-  type MutationUpsertCommuneArgs,
-  type QueryCommunesArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { CommunesOrderBy, SortOrder, type QueryCommunesArgs } from "../../graphql/generated/graphql-types.js";
 import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -213,7 +209,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a city", () => {
   test("should be allowed when requested by an admin", async () => {
-    const cityData = mock<MutationUpsertCommuneArgs>();
+    const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -232,7 +228,7 @@ describe("Update of a city", () => {
       ownerId: "notAdmin",
     });
 
-    const cityData = mock<MutationUpsertCommuneArgs>();
+    const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -253,7 +249,7 @@ describe("Update of a city", () => {
       ownerId: "notAdmin",
     });
 
-    const cityData = mock<MutationUpsertCommuneArgs>();
+    const cityData = mock<UpsertTownInput>();
 
     const user = {
       id: "Bob",
@@ -268,9 +264,7 @@ describe("Update of a city", () => {
   });
 
   test("should throw an error when trying to update to a city that exists", async () => {
-    const cityData = mock<MutationUpsertCommuneArgs>({
-      id: 12,
-    });
+    const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -285,13 +279,11 @@ describe("Update of a city", () => {
 
     expect(communeRepository.updateCommune).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputCommuneUpsertData).toHaveBeenCalledTimes(1);
-    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(cityData.id, reshapedInputData);
+    expect(communeRepository.updateCommune).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const cityData = mock<MutationUpsertCommuneArgs>({
-      id: 12,
-    });
+    const cityData = mock<UpsertTownInput>();
 
     await expect(communeService.updateCommune(12, cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(communeRepository.updateCommune).not.toHaveBeenCalled();
@@ -300,9 +292,7 @@ describe("Update of a city", () => {
 
 describe("Creation of a city", () => {
   test("should create new city", async () => {
-    const cityData = mock<MutationUpsertCommuneArgs>({
-      id: undefined,
-    });
+    const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -320,9 +310,7 @@ describe("Creation of a city", () => {
   });
 
   test("should throw an error when trying to create a city that already exists", async () => {
-    const cityData = mock<MutationUpsertCommuneArgs>({
-      id: undefined,
-    });
+    const cityData = mock<UpsertTownInput>();
 
     const reshapedInputData = mock<CommuneCreateInput>();
     mockedReshapeInputCommuneUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -344,9 +332,7 @@ describe("Creation of a city", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const cityData = mock<MutationUpsertCommuneArgs>({
-      id: undefined,
-    });
+    const cityData = mock<UpsertTownInput>();
 
     await expect(communeService.createCommune(cityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(communeRepository.createCommune).not.toHaveBeenCalled();

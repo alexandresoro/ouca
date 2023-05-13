@@ -1,9 +1,7 @@
+import { type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import {
-  type MutationUpsertComportementArgs,
-  type QueryComportementsArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { type QueryComportementsArgs } from "../../graphql/generated/graphql-types.js";
 import {
   type Comportement,
   type ComportementCreateInput,
@@ -90,16 +88,14 @@ export const buildComportementService = ({
   };
 
   const createComportement = async (
-    input: MutationUpsertComportementArgs,
+    input: UpsertBehaviorInput,
     loggedUser: LoggedUser | null
   ): Promise<Comportement> => {
     validateAuthorization(loggedUser);
 
-    const { data } = input;
-
     try {
       const upsertedComportement = await comportementRepository.createComportement({
-        ...data,
+        ...input,
         owner_id: loggedUser.id,
       });
 
@@ -114,12 +110,10 @@ export const buildComportementService = ({
 
   const updateComportement = async (
     id: number,
-    input: MutationUpsertComportementArgs,
+    input: UpsertBehaviorInput,
     loggedUser: LoggedUser | null
   ): Promise<Comportement> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
@@ -131,7 +125,7 @@ export const buildComportementService = ({
     }
 
     try {
-      const upsertedComportement = await comportementRepository.updateComportement(id, data);
+      const upsertedComportement = await comportementRepository.updateComportement(id, input);
 
       return upsertedComportement;
     } catch (e) {

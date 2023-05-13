@@ -1,6 +1,7 @@
+import { type UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertCommuneArgs, type QueryCommunesArgs } from "../../graphql/generated/graphql-types.js";
+import { type QueryCommunesArgs } from "../../graphql/generated/graphql-types.js";
 import {
   type Commune,
   type CommuneCreateInput,
@@ -101,14 +102,12 @@ export const buildCommuneService = ({
     return communeRepository.getCount(q, departmentId);
   };
 
-  const createCommune = async (input: MutationUpsertCommuneArgs, loggedUser: LoggedUser | null): Promise<Commune> => {
+  const createCommune = async (input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Commune> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     try {
       const upsertedCommune = await communeRepository.createCommune({
-        ...reshapeInputCommuneUpsertData(data),
+        ...reshapeInputCommuneUpsertData(input),
         owner_id: loggedUser.id,
       });
 
@@ -121,14 +120,8 @@ export const buildCommuneService = ({
     }
   };
 
-  const updateCommune = async (
-    id: number,
-    input: MutationUpsertCommuneArgs,
-    loggedUser: LoggedUser | null
-  ): Promise<Commune> => {
+  const updateCommune = async (id: number, input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Commune> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
@@ -140,7 +133,7 @@ export const buildCommuneService = ({
     }
 
     try {
-      const upsertedCommune = await communeRepository.updateCommune(id, reshapeInputCommuneUpsertData(data));
+      const upsertedCommune = await communeRepository.updateCommune(id, reshapeInputCommuneUpsertData(input));
 
       return upsertedCommune;
     } catch (e) {

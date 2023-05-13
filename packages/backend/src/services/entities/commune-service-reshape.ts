@@ -1,7 +1,7 @@
-import { type InputCommune } from "../../graphql/generated/graphql-types.js";
+import { type UpsertTownInput } from "@ou-ca/common/api/town";
 import { type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
 
-export const reshapeInputCommuneUpsertData = (data: InputCommune): CommuneCreateInput => {
+export const reshapeInputCommuneUpsertData = (data: UpsertTownInput): CommuneCreateInput => {
   const { departementId, ...rest } = data;
   return {
     ...rest,

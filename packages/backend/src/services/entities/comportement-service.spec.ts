@@ -1,12 +1,8 @@
+import { type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  ComportementsOrderBy,
-  SortOrder,
-  type MutationUpsertComportementArgs,
-  type QueryComportementsArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { ComportementsOrderBy, SortOrder, type QueryComportementsArgs } from "../../graphql/generated/graphql-types.js";
 import {
   type Comportement,
   type ComportementCreateInput,
@@ -187,14 +183,14 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a behavior", () => {
   test("should be allowed when requested by an admin", async () => {
-    const behaviorData = mock<MutationUpsertComportementArgs>();
+    const behaviorData = mock<UpsertBehaviorInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await comportementService.updateComportement(12, behaviorData, loggedUser);
 
     expect(comportementRepository.updateComportement).toHaveBeenCalledTimes(1);
-    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData.data);
+    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -202,7 +198,7 @@ describe("Update of a behavior", () => {
       ownerId: "notAdmin",
     });
 
-    const behaviorData = mock<MutationUpsertComportementArgs>();
+    const behaviorData = mock<UpsertBehaviorInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
@@ -211,7 +207,7 @@ describe("Update of a behavior", () => {
     await comportementService.updateComportement(12, behaviorData, loggedUser);
 
     expect(comportementRepository.updateComportement).toHaveBeenCalledTimes(1);
-    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData.data);
+    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -219,7 +215,7 @@ describe("Update of a behavior", () => {
       ownerId: "notAdmin",
     });
 
-    const behaviorData = mock<MutationUpsertComportementArgs>();
+    const behaviorData = mock<UpsertBehaviorInput>();
 
     const user = {
       id: "Bob",
@@ -236,9 +232,7 @@ describe("Update of a behavior", () => {
   });
 
   test("should throw an error when trying to update to a behavior that exists", async () => {
-    const behaviorData = mock<MutationUpsertComportementArgs>({
-      id: 12,
-    });
+    const behaviorData = mock<UpsertBehaviorInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
@@ -249,13 +243,11 @@ describe("Update of a behavior", () => {
     );
 
     expect(comportementRepository.updateComportement).toHaveBeenCalledTimes(1);
-    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(behaviorData.id, behaviorData.data);
+    expect(comportementRepository.updateComportement).toHaveBeenLastCalledWith(12, behaviorData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const behaviorData = mock<MutationUpsertComportementArgs>({
-      id: 12,
-    });
+    const behaviorData = mock<UpsertBehaviorInput>();
 
     await expect(comportementService.updateComportement(12, behaviorData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -266,9 +258,7 @@ describe("Update of a behavior", () => {
 
 describe("Creation of a behavior", () => {
   test("should create new behavior", async () => {
-    const behaviorData = mock<MutationUpsertComportementArgs>({
-      id: undefined,
-    });
+    const behaviorData = mock<UpsertBehaviorInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -276,15 +266,13 @@ describe("Creation of a behavior", () => {
 
     expect(comportementRepository.createComportement).toHaveBeenCalledTimes(1);
     expect(comportementRepository.createComportement).toHaveBeenLastCalledWith({
-      ...behaviorData.data,
+      ...behaviorData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create a behavior that already exists", async () => {
-    const behaviorData = mock<MutationUpsertComportementArgs>({
-      id: undefined,
-    });
+    const behaviorData = mock<UpsertBehaviorInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -296,15 +284,13 @@ describe("Creation of a behavior", () => {
 
     expect(comportementRepository.createComportement).toHaveBeenCalledTimes(1);
     expect(comportementRepository.createComportement).toHaveBeenLastCalledWith({
-      ...behaviorData.data,
+      ...behaviorData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const behaviorData = mock<MutationUpsertComportementArgs>({
-      id: undefined,
-    });
+    const behaviorData = mock<UpsertBehaviorInput>();
 
     await expect(comportementService.createComportement(behaviorData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(comportementRepository.createComportement).not.toHaveBeenCalled();

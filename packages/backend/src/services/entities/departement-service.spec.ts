@@ -1,12 +1,8 @@
+import { type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  DepartementsOrderBy,
-  SortOrder,
-  type MutationUpsertDepartementArgs,
-  type QueryDepartementsArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { DepartementsOrderBy, SortOrder, type QueryDepartementsArgs } from "../../graphql/generated/graphql-types.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import {
   type Departement,
@@ -225,14 +221,14 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a department", () => {
   test("should be allowed when requested by an admin", async () => {
-    const departmentData = mock<MutationUpsertDepartementArgs>();
+    const departmentData = mock<UpsertDepartmentInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await departementService.updateDepartement(12, departmentData, loggedUser);
 
     expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData.data);
+    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -240,7 +236,7 @@ describe("Update of a department", () => {
       ownerId: "notAdmin",
     });
 
-    const departmentData = mock<MutationUpsertDepartementArgs>();
+    const departmentData = mock<UpsertDepartmentInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
@@ -249,7 +245,7 @@ describe("Update of a department", () => {
     await departementService.updateDepartement(12, departmentData, loggedUser);
 
     expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData.data);
+    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -257,7 +253,7 @@ describe("Update of a department", () => {
       ownerId: "notAdmin",
     });
 
-    const departmentData = mock<MutationUpsertDepartementArgs>();
+    const departmentData = mock<UpsertDepartmentInput>();
 
     const user = {
       id: "Bob",
@@ -274,9 +270,7 @@ describe("Update of a department", () => {
   });
 
   test("should throw an error when trying to update to a department that exists", async () => {
-    const departmentData = mock<MutationUpsertDepartementArgs>({
-      id: 12,
-    });
+    const departmentData = mock<UpsertDepartmentInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
@@ -287,13 +281,11 @@ describe("Update of a department", () => {
     );
 
     expect(departementRepository.updateDepartement).toHaveBeenCalledTimes(1);
-    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(departmentData.id, departmentData.data);
+    expect(departementRepository.updateDepartement).toHaveBeenLastCalledWith(12, departmentData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const departmentData = mock<MutationUpsertDepartementArgs>({
-      id: 12,
-    });
+    const departmentData = mock<UpsertDepartmentInput>();
 
     await expect(departementService.updateDepartement(12, departmentData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -304,9 +296,7 @@ describe("Update of a department", () => {
 
 describe("Creation of a department", () => {
   test("should create new department", async () => {
-    const departmentData = mock<MutationUpsertDepartementArgs>({
-      id: undefined,
-    });
+    const departmentData = mock<UpsertDepartmentInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -314,15 +304,13 @@ describe("Creation of a department", () => {
 
     expect(departementRepository.createDepartement).toHaveBeenCalledTimes(1);
     expect(departementRepository.createDepartement).toHaveBeenLastCalledWith({
-      ...departmentData.data,
+      ...departmentData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create a department that already exists", async () => {
-    const departmentData = mock<MutationUpsertDepartementArgs>({
-      id: undefined,
-    });
+    const departmentData = mock<UpsertDepartmentInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -334,15 +322,13 @@ describe("Creation of a department", () => {
 
     expect(departementRepository.createDepartement).toHaveBeenCalledTimes(1);
     expect(departementRepository.createDepartement).toHaveBeenLastCalledWith({
-      ...departmentData.data,
+      ...departmentData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const departmentData = mock<MutationUpsertDepartementArgs>({
-      id: undefined,
-    });
+    const departmentData = mock<UpsertDepartmentInput>();
 
     await expect(departementService.createDepartement(departmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(departementRepository.createDepartement).not.toHaveBeenCalled();

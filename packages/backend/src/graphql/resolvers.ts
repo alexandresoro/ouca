@@ -264,30 +264,34 @@ export const buildResolvers = ({
     Mutation: {
       upsertClasse: async (_source, args, { user }): Promise<Classe> => {
         if (args.id) {
-          return classeService.updateClasse(args.id, args, user);
+          return classeService.updateClasse(args.id, args.data, user);
         } else {
-          return classeService.createClasse(args, user);
+          return classeService.createClasse(args.data, user);
         }
       },
       upsertCommune: async (_source, args, { user }): Promise<Omit<Commune, "departement">> => {
         if (args.id) {
-          return communeService.updateCommune(args.id, args, user);
+          return communeService.updateCommune(args.id, args.data, user);
         } else {
-          return communeService.createCommune(args, user);
+          return communeService.createCommune(args.data, user);
         }
       },
       upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
+        const data = {
+          ...args.data,
+          nicheur: args.data.nicheur ?? null,
+        };
         if (args.id) {
-          return comportementService.updateComportement(args.id, args, user);
+          return comportementService.updateComportement(args.id, data, user);
         } else {
-          return comportementService.createComportement(args, user);
+          return comportementService.createComportement(data, user);
         }
       },
       upsertDepartement: async (_source, args, { user }): Promise<Departement> => {
         if (args.id) {
-          return departementService.updateDepartement(args.id, args, user);
+          return departementService.updateDepartement(args.id, args.data, user);
         } else {
-          return departementService.createDepartement(args, user);
+          return departementService.createDepartement(args.data, user);
         }
       },
       upsertDonnee: async (
