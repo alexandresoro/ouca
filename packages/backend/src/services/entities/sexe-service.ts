@@ -1,10 +1,7 @@
+import { type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import {
-  type MutationUpsertSexeArgs,
-  type QuerySexesArgs,
-  type SexeWithSpecimensCount,
-} from "../../graphql/generated/graphql-types.js";
+import { type QuerySexesArgs, type SexeWithSpecimensCount } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types.js";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
@@ -87,46 +84,46 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     });
   };
 
-  const upsertSexe = async (args: MutationUpsertSexeArgs, loggedUser: LoggedUser | null): Promise<Sexe> => {
+  const createSexe = async (input: UpsertSexInput, loggedUser: LoggedUser | null): Promise<Sexe> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    try {
+      const upsertedSexe = await sexeRepository.createSexe({
+        ...input,
+        owner_id: loggedUser.id,
+      });
 
-    let upsertedSexe: Sexe;
-
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await sexeRepository.findSexeById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedSexe;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedSexe = await sexeRepository.updateSexe(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedSexe = await sexeRepository.createSexe({
-          ...data,
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateSexe = async (id: number, input: UpsertSexInput, loggedUser: LoggedUser | null): Promise<Sexe> => {
+    validateAuthorization(loggedUser);
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await sexeRepository.findSexeById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedSexe;
+    try {
+      const upsertedSexe = await sexeRepository.updateSexe(id, input);
+
+      return upsertedSexe;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe> => {
@@ -163,7 +160,8 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     findPaginatedSexes,
     getSexesCount,
     getSexesWithNbSpecimensForEspeceId,
-    upsertSexe,
+    createSexe,
+    updateSexe,
     deleteSexe,
     createSexes,
   };

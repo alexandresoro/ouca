@@ -237,9 +237,6 @@ export const buildResolvers = ({
           count,
         };
       },
-      sexe: async (_source, args, { user }): Promise<Sexe | null> => {
-        return sexeService.findSexe(args.id, user);
-      },
       sexes: async (_, args, { user }): Promise<SexesPaginatedResult> => {
         const [data, count] = await Promise.all([
           sexeService.findPaginatedSexes(user, args),
@@ -337,9 +334,6 @@ export const buildResolvers = ({
       },
       upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
         return observateurService.upsertObservateur(args, user);
-      },
-      upsertSexe: async (_source, args, { user }): Promise<Sexe> => {
-        return sexeService.upsertSexe(args, user);
       },
     },
     Age: {

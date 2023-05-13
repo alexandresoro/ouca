@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-export const observerSchema = z.object({
+export const ageSchema = z.object({
   id: z.coerce.string(),
   libelle: z.string(),
   editable: z.boolean().optional(),
 });
 
-export type Observer = z.infer<typeof observerSchema>;
+export type Age = z.infer<typeof ageSchema>;

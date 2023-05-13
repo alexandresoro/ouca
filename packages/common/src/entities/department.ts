@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-export const department = z.object({
+export const departmentSchema = z.object({
   id: z.coerce.string(),
   code: z.string(),
   editable: z.boolean().optional(),
 });
 
-export type Departement = z.infer<typeof department>;
+export type Department = z.infer<typeof departmentSchema>;

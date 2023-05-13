@@ -1,110 +1,36 @@
-import { useEffect, type FunctionComponent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertSexInput, type UpsertSexInput } from "@ou-ca/common/api/sex";
+import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type UpsertSexeMutationVariables } from "../../../gql/graphql";
-import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
+import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { SEXE_QUERY, UPSERT_SEXE } from "./SexeManageQueries";
 
 type SexeEditProps = {
   title: string;
+  defaultValues?: UpsertSexInput | null;
+  onSubmit: SubmitHandler<UpsertSexInput>;
 };
 
-type UpsertSexeInput = Pick<UpsertSexeMutationVariables, "id"> & UpsertSexeMutationVariables["data"];
-
 const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
-  const { title } = props;
-  const { id: sexeId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const {
     register,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<UpsertSexeInput>({
-    defaultValues: {
-      id: null,
+  } = useForm<UpsertSexInput>({
+    defaultValues: defaultValues ?? {
       libelle: "",
     },
+    resolver: zodResolver(upsertSexInput),
   });
-
-  // Retrieve the existing sex info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: SEXE_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(sexeId!),
-    },
-    pause: !sexeId,
-  });
-
-  const [_, upsertSexe] = useMutation(UPSERT_SEXE);
-
-  const { displayNotification } = useSnackbar();
-
-  useEffect(() => {
-    if (data?.sexe) {
-      reset({
-        id: data.sexe.id,
-        libelle: data.sexe.libelle,
-      });
-    }
-  }, [data?.sexe, reset]);
-
-  useEffect(() => {
-    if (error) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [error, displayNotification, t]);
-
-  const onSubmit: SubmitHandler<UpsertSexeInput> = (data) => {
-    const { id, ...restData } = data;
-    upsertSexe({
-      id: id ?? undefined,
-      data: restData,
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertSexe) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("sexAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
-  };
 
   return (
     <>
@@ -126,7 +52,7 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || !isValid}
+                disabled={!isValid || !isDirty}
               />
             </form>
           </div>

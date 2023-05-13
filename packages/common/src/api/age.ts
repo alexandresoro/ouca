@@ -1,16 +1,11 @@
 import { z } from "zod";
-
-// Common response content returned when age is queried or upserted
-const ageResponse = z.object({
-  id: z.number(),
-  libelle: z.string(),
-});
+import { ageSchema } from "../entities/age.js";
 
 /**
  * `GET` `/age/:id`
  *  Retrieve age entity
  */
-export const getAgeResponse = ageResponse;
+export const getAgeResponse = ageSchema.omit({ editable: true });
 
 export type GetAgeResponse = z.infer<typeof getAgeResponse>;
 
@@ -24,6 +19,6 @@ export const upsertAgeInput = z.object({
 
 export type UpsertAgeInput = z.infer<typeof upsertAgeInput>;
 
-export const upsertAgeResponse = ageResponse;
+export const upsertAgeResponse = ageSchema.omit({ editable: true });
 
 export type UpsertAgeResponse = z.infer<typeof upsertAgeResponse>;

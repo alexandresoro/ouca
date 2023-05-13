@@ -605,7 +605,6 @@ type Query {
     orderBy: EntitesAvecLibelleOrderBy
     sortOrder: SortOrder
   ): ObservateursPaginatedResult
-  sexe(id: Int!): Sexe
   sexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
@@ -631,5 +630,4 @@ type Mutation {
   upsertMeteo(id: Int, data: InputMeteo!): Meteo
   upsertMilieu(id: Int, data: InputMilieu!): Milieu
   upsertObservateur(id: Int, data: InputObservateur!): Observateur
-  upsertSexe(id: Int, data: InputSexe!): Sexe
 }

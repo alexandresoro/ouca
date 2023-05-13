@@ -1,12 +1,8 @@
+import { type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  EntitesAvecLibelleOrderBy,
-  SortOrder,
-  type MutationUpsertSexeArgs,
-  type QuerySexesArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { EntitesAvecLibelleOrderBy, SortOrder, type QuerySexesArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Sexe,
@@ -219,14 +215,14 @@ describe("Get number of specimens of sexe per species id", () => {
 
 describe("Update of a sex", () => {
   test("should be allowed when requested by an admin ", async () => {
-    const sexData = mock<MutationUpsertSexeArgs>();
+    const sexData = mock<UpsertSexInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await sexeService.upsertSexe(sexData, loggedUser);
+    await sexeService.updateSexe(12, sexData, loggedUser);
 
     expect(sexeRepository.updateSexe).toHaveBeenCalledTimes(1);
-    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(sexData.id, sexData.data);
+    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(12, sexData);
   });
 
   test("should be allowed when requested by the owner ", async () => {
@@ -234,16 +230,16 @@ describe("Update of a sex", () => {
       ownerId: "notAdmin",
     });
 
-    const sexData = mock<MutationUpsertSexeArgs>();
+    const sexData = mock<UpsertSexInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
     sexeRepository.findSexeById.mockResolvedValueOnce(existingData);
 
-    await sexeService.upsertSexe(sexData, loggedUser);
+    await sexeService.updateSexe(12, sexData, loggedUser);
 
     expect(sexeRepository.updateSexe).toHaveBeenCalledTimes(1);
-    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(sexData.id, sexData.data);
+    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(12, sexData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -251,7 +247,7 @@ describe("Update of a sex", () => {
       ownerId: "notAdmin",
     });
 
-    const sexData = mock<MutationUpsertSexeArgs>();
+    const sexData = mock<UpsertSexInput>();
 
     const user = {
       id: "Bob",
@@ -260,81 +256,71 @@ describe("Update of a sex", () => {
 
     sexeRepository.findSexeById.mockResolvedValueOnce(existingData);
 
-    await expect(sexeService.upsertSexe(sexData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(sexeService.updateSexe(12, sexData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(sexeRepository.updateSexe).not.toHaveBeenCalled();
   });
 
   test("should throw an error when trying to update to a sex that exists", async () => {
-    const sexData = mock<MutationUpsertSexeArgs>({
-      id: 12,
-    });
+    const sexData = mock<UpsertSexInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     sexeRepository.updateSexe.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => sexeService.upsertSexe(sexData, loggedUser)).rejects.toThrowError(
+    await expect(() => sexeService.updateSexe(12, sexData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(sexeRepository.updateSexe).toHaveBeenCalledTimes(1);
-    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(sexData.id, sexData.data);
+    expect(sexeRepository.updateSexe).toHaveBeenLastCalledWith(12, sexData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const sexData = mock<MutationUpsertSexeArgs>({
-      id: 12,
-    });
+    const sexData = mock<UpsertSexInput>();
 
-    await expect(sexeService.upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.updateSexe(12, sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(sexeRepository.updateSexe).not.toHaveBeenCalled();
   });
 });
 
 describe("Creation of a sex", () => {
   test("should create new sex", async () => {
-    const sexData = mock<MutationUpsertSexeArgs>({
-      id: undefined,
-    });
+    const sexData = mock<UpsertSexInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await sexeService.upsertSexe(sexData, loggedUser);
+    await sexeService.createSexe(sexData, loggedUser);
 
     expect(sexeRepository.createSexe).toHaveBeenCalledTimes(1);
     expect(sexeRepository.createSexe).toHaveBeenLastCalledWith({
-      ...sexData.data,
+      ...sexData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create a sex that already exists", async () => {
-    const sexData = mock<MutationUpsertSexeArgs>({
-      id: undefined,
-    });
+    const sexData = mock<UpsertSexInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
     sexeRepository.createSexe.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => sexeService.upsertSexe(sexData, loggedUser)).rejects.toThrowError(
+    await expect(() => sexeService.createSexe(sexData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(sexeRepository.createSexe).toHaveBeenCalledTimes(1);
     expect(sexeRepository.createSexe).toHaveBeenLastCalledWith({
-      ...sexData.data,
+      ...sexData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const sexData = mock<MutationUpsertSexeArgs>({
-      id: undefined,
-    });
+    const sexData = mock<UpsertSexInput>();
 
-    await expect(sexeService.upsertSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.createSexe(sexData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(sexeRepository.createSexe).not.toHaveBeenCalled();
   });
 });
