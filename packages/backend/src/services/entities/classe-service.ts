@@ -82,48 +82,55 @@ export const buildClasseService = ({
     return classeRepository.getCount(q);
   };
 
-  const upsertClasse = async (args: MutationUpsertClasseArgs, loggedUser: LoggedUser | null): Promise<Classe> => {
+  const createClasse = async (input: MutationUpsertClasseArgs, loggedUser: LoggedUser | null): Promise<Classe> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedClasse: Classe;
-
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser.role !== "admin") {
-        const existingData = await classeRepository.findClasseById(id);
-
-        if (existingData?.ownerId !== loggedUser.id) {
-          throw new OucaError("OUCA0001");
-        }
+    // Create a new class
+    try {
+      const upsertedClasse = await classeRepository.createClasse({
+        ...data,
+        owner_id: loggedUser?.id,
+      });
+      return upsertedClasse;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      // Update an existing observer
-      try {
-        upsertedClasse = await classeRepository.updateClasse(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      // Create a new observer
-      try {
-        upsertedClasse = await classeRepository.createClasse({
-          ...data,
-          owner_id: loggedUser?.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateClasse = async (
+    id: number,
+    input: MutationUpsertClasseArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Classe> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser.role !== "admin") {
+      const existingData = await classeRepository.findClasseById(id);
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedClasse;
+    // Update an existing class
+    try {
+      const upsertedClasse = await classeRepository.updateClasse(id, data);
+
+      return upsertedClasse;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteClasse = async (id: number, loggedUser: LoggedUser | null): Promise<Classe> => {
@@ -160,7 +167,8 @@ export const buildClasseService = ({
     findAllClasses,
     findPaginatedClasses,
     getClassesCount,
-    upsertClasse,
+    createClasse,
+    updateClasse,
     deleteClasse,
     createClasses,
   };

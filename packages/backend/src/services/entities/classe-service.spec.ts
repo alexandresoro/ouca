@@ -206,10 +206,10 @@ describe("Update of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await classeService.upsertClasse(classData, loggedUser);
+    await classeService.updateClasse(12, classData, loggedUser);
 
     expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(classData.id, classData.data);
+    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -223,10 +223,10 @@ describe("Update of a class", () => {
 
     classeRepository.findClasseById.mockResolvedValueOnce(existingData);
 
-    await classeService.upsertClasse(classData, loggedUser);
+    await classeService.updateClasse(12, classData, loggedUser);
 
     expect(classeRepository.updateClasse).toHaveBeenCalledTimes(1);
-    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(classData.id, classData.data);
+    expect(classeRepository.updateClasse).toHaveBeenLastCalledWith(12, classData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -243,7 +243,7 @@ describe("Update of a class", () => {
 
     classeRepository.findClasseById.mockResolvedValueOnce(existingData);
 
-    await expect(classeService.upsertClasse(classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(classeService.updateClasse(12, classData, loggedUser)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(classeRepository.updateClasse).not.toHaveBeenCalled();
   });
@@ -257,7 +257,7 @@ describe("Update of a class", () => {
 
     classeRepository.updateClasse.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => classeService.upsertClasse(classData, loggedUser)).rejects.toThrowError(
+    await expect(() => classeService.updateClasse(12, classData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -270,7 +270,7 @@ describe("Update of a class", () => {
       id: 12,
     });
 
-    await expect(classeService.upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.updateClasse(12, classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classeRepository.updateClasse).not.toHaveBeenCalled();
   });
 });
@@ -283,7 +283,7 @@ describe("Creation of a class", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await classeService.upsertClasse(classData, loggedUser);
+    await classeService.createClasse(classData, loggedUser);
 
     expect(classeRepository.createClasse).toHaveBeenCalledTimes(1);
     expect(classeRepository.createClasse).toHaveBeenLastCalledWith({
@@ -301,7 +301,7 @@ describe("Creation of a class", () => {
 
     classeRepository.createClasse.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => classeService.upsertClasse(classData, loggedUser)).rejects.toThrowError(
+    await expect(() => classeService.createClasse(classData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -317,7 +317,7 @@ describe("Creation of a class", () => {
       id: undefined,
     });
 
-    await expect(classeService.upsertClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.createClasse(classData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(classeRepository.createClasse).not.toHaveBeenCalled();
   });
 });

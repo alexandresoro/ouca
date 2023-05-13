@@ -263,7 +263,11 @@ export const buildResolvers = ({
     },
     Mutation: {
       upsertClasse: async (_source, args, { user }): Promise<Classe> => {
-        return classeService.upsertClasse(args, user);
+        if (args.id) {
+          return classeService.updateClasse(args.id, args, user);
+        } else {
+          return classeService.createClasse(args, user);
+        }
       },
       upsertCommune: async (_source, args, { user }): Promise<Omit<Commune, "departement">> => {
         return communeService.upsertCommune(args, user);
