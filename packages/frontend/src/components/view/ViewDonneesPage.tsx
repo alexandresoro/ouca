@@ -26,14 +26,14 @@ const ViewDonneesPage: FunctionComponent = () => {
           <Tab.List className="btn-group mt-6 mb-2">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <button className={`btn ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
+                <button type="button" className={`btn ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
                   {t("view.tab.observations")}
                 </button>
               )}
             </Tab>
             <Tab as={Fragment}>
               {({ selected }) => (
-                <button className={`btn ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
+                <button type="button" className={`btn ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
                   {t("view.tab.species")}
                 </button>
               )}

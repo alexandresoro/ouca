@@ -1,7 +1,7 @@
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import AutocompleteMultiple from "../common/styled/select/AutocompleteMultiple";
 import Switch from "../common/styled/Switch";
+import AutocompleteMultiple from "../common/styled/select/AutocompleteMultiple";
 
 const DonneeFilter: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -25,7 +25,9 @@ const DonneeFilter: FunctionComponent = () => {
             onChange={setValues}
           />
           <Switch label={t("observationFilter.displayOnlyMyObservations")} />
-          <button className="btn btn-outline btn-primary mt-2">{t("observationFilter.exportToExcel")}</button>
+          <button type="button" className="btn btn-outline btn-primary mt-2">
+            {t("observationFilter.exportToExcel")}
+          </button>
         </div>
       </div>
     </>

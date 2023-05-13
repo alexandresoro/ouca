@@ -62,14 +62,14 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
             <Tab.List className="btn-group mt-6 mb-2">
               <Tab as={Fragment}>
                 {({ selected }) => (
-                  <button className={`btn btn-sm ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
+                  <button type="button" className={`btn btn-sm ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
                     {t("speciesForm")}
                   </button>
                 )}
               </Tab>
               <Tab as={Fragment}>
                 {({ selected }) => (
-                  <button className={`btn btn-sm ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
+                  <button type="button" className={`btn btn-sm ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
                     {t("map")}
                   </button>
                 )}

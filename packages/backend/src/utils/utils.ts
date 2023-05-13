@@ -27,6 +27,7 @@ export const getFormattedDate = (value: string): Date | null => {
   }
 
   // Invalid date is represented by NaN which is not === to itself
+  // rome-ignore lint/suspicious/noSelfCompare: <explanation>
   if (parsedDate.getTime() === parsedDate.getTime()) {
     return parsedDate;
   }

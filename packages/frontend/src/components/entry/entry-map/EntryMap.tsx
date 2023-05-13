@@ -50,6 +50,7 @@ const EntryMap: FunctionComponent = () => {
           {Object.entries(MAP_PROVIDERS).map(([providerKey, providerConfig]) => {
             return (
               <button
+                type="button"
                 key={providerKey}
                 className={`btn btn-xs ${mapProvider === providerKey ? "btn-active" : ""}`}
                 onClick={() => setMapProvider(providerKey as keyof typeof MAP_PROVIDERS)}
