@@ -124,6 +124,7 @@ const HeaderSettings: FunctionComponent = () => {
         <Menu.Item key="/logout">
           {({ active }) => (
             <button
+              type="button"
               className={`flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ${
                 active ? "bg-opacity-10 bg-base-content" : ""
               }`}

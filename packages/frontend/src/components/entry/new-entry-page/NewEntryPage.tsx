@@ -35,6 +35,7 @@ const NewEntryPage: FunctionComponent = () => {
         </div>
         <div className="tooltip tooltip-bottom" data-tip={hasLastDonnee ? t("createPage.goToLastDataDescription") : ""}>
           <button
+            type="button"
             className={`btn btn-sm ${hasLastDonnee ? "btn-accent" : "btn-disabled"}`}
             tabIndex={hasLastDonnee ? 0 : -1}
             onClick={navigateToLastDonnee}

@@ -31,10 +31,10 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
           {impactedItemsMessage && <div>{impactedItemsMessage}</div>}
         </Dialog.Description>
         <div className="modal-action">
-          <button className="btn btn-primary btn-outline" onClick={onCancelAction}>
+          <button type="button" className="btn btn-primary btn-outline" onClick={onCancelAction}>
             {t("deleteConfirmationDialogCancelAction")}
           </button>
-          <button className="btn btn-accent btn-outline" ref={confirmButtonRef} onClick={onConfirmAction}>
+          <button type="button" className="btn btn-accent btn-outline" ref={confirmButtonRef} onClick={onConfirmAction}>
             {t("deleteConfirmationDialogConfirmAction")}
           </button>
         </div>

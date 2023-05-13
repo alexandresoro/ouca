@@ -103,7 +103,7 @@ const TempPage: FunctionComponent = () => {
         renderValue={({ libelle }) => libelle}
         autocompleteClassName="w-[40ch] ml-4"
       />
-      <button className="btn btn-primary m-4" onClick={handleSubmit(onSubmit)}>
+      <button type="button" className="btn btn-primary m-4" onClick={handleSubmit(onSubmit)}>
         Submit
       </button>
       {dataSubmitted && (

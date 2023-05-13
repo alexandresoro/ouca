@@ -25,7 +25,7 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
               <Plus className="h-5 mr-1" />
               {t("createAction")}
             </Link>
-            <button className="btn btn-secondary shadow" onClick={onClickExport}>
+            <button type="button" className="btn btn-secondary shadow" onClick={onClickExport}>
               <Export className="h-5 mr-2" />
               {t("exportAction")}
             </button>

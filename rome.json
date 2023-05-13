@@ -28,7 +28,14 @@
   },
   "files": {
     "ignore": [
-      "dist", "coverage", "generated", "**/src/gql/**/*", "Dockerfile", "LICENSE", "README", "**/package.json",
+      "dist",
+      "coverage",
+      "generated",
+      "**/src/gql/**/*",
+      "Dockerfile",
+      "LICENSE",
+      "README",
+      "**/package.json",
       "package-lock.json"
     ]
   }
