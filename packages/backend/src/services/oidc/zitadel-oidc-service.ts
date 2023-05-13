@@ -4,7 +4,7 @@ import { userRoles, type LoggedUser } from "../../types/User.js";
 import introspectAccessTokenCommon from "./introspect-access-token.js";
 import { type OidcWithInternalUserMappingService } from "./oidc-with-internal-user-mapping.js";
 
-const EXTERNAL_PROVIDER_NAME = "zitadel";
+export const EXTERNAL_PROVIDER_NAME = "zitadel";
 
 export const introspectionUser = z.object({
   sub: z.string(),

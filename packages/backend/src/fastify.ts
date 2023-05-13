@@ -15,6 +15,7 @@ import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
 import downloadController from "./controllers/download-controller.js";
+import userController from "./controllers/user-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
 import graphQlServerPlugin from "./fastify/graphql-server-plugin.js";
 import sentryMetricsPlugin from "./fastify/sentry-metrics-plugin.js";
@@ -65,6 +66,7 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
 
   // Register API routes
   await server.register(apiRoutesPlugin, { services, prefix: API_V1_PREFIX });
+  await server.register(userController, { services, prefix: `${API_V1_PREFIX}/user` });
   logger.debug("Fastify API routes registered");
 
   await server.register(downloadController, { services, prefix: "/download" });

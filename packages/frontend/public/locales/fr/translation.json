@@ -156,6 +156,11 @@
     }
   },
   "name": "Nom",
+  "newAccount": {
+    "description": "Il semble que ce soit votre première connexion à l'application Où-çà.",
+    "descriptionAction": "Cliquez sur le bouton ci-dessous afin de créer votre compte. Vous serez par la suite invité à configurer vos réglages.",
+    "createAccountButton": "Créer mon compte"
+  },
   "numberOfCities": "Nombre de communes",
   "numberOfLocalities": "Nombre de lieux-dits",
   "numberOfSpecies": "Nombre d'espèces",

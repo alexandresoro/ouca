@@ -2,14 +2,15 @@ import { useQuery, type UseQueryOptions, type UseQueryResult } from "@tanstack/r
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
 import useAppContext from "../useAppContext";
+import { type FetchError } from "./api-types";
 
 function useApiQuery<SType>(
   { path, queryParams, schema }: { path: string; queryParams?: Record<string, string>; schema?: z.ZodType<SType> },
-  queryOptions?: Omit<UseQueryOptions<SType>, "queryKey" | "queryFn">
-): UseQueryResult<SType>;
+  queryOptions?: Omit<UseQueryOptions<SType, FetchError>, "queryKey" | "queryFn">
+): UseQueryResult<SType, FetchError>;
 function useApiQuery<SType>(
   { path, queryParams, schema }: { path: string; queryParams?: Record<string, string>; schema?: z.ZodType<SType> },
-  queryOptions?: Omit<UseQueryOptions, "queryKey" | "queryFn">
+  queryOptions?: Omit<UseQueryOptions<unknown, FetchError>, "queryKey" | "queryFn">
 ) {
   const { user } = useAuth();
   const { apiUrl } = useAppContext();
@@ -20,7 +21,7 @@ function useApiQuery<SType>(
 
   const queryKey = ["API", path, ...(queryParams ? [queryParams] : [])];
 
-  return useQuery<unknown>({
+  return useQuery<unknown, FetchError>({
     ...queryOptions,
     queryKey: queryKey,
     queryFn: async () => {
@@ -34,7 +35,10 @@ function useApiQuery<SType>(
         },
       });
       if (!response.ok) {
-        throw new Error("API call error");
+        return Promise.reject({
+          status: response.status,
+          statusText: response.statusText,
+        } satisfies FetchError);
       }
       const jsonResponse = (await response.json()) as unknown;
       if (schema) {

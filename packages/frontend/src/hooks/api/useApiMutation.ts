@@ -2,6 +2,7 @@ import { useMutation, type UseMutationOptions, type UseMutationResult } from "@t
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
 import useAppContext from "../useAppContext";
+import { type FetchError } from "./api-types";
 
 type MutationParamsSchema<R> = {
   path?: string;
@@ -20,11 +21,6 @@ type MutationParamsResponseHandler<R> = {
 type MutationParams<R> = MutationParamsSchema<R> | MutationParamsResponseHandler<R>;
 
 type MutationVariables = { path?: string; body?: Record<string, unknown> };
-
-type FetchError = {
-  status: number;
-  statusText?: string;
-};
 
 function useApiMutation<TData, TVariables extends MutationVariables>(
   { path, method }: MutationParamsSchema<TData>,

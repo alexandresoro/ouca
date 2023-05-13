@@ -3,7 +3,7 @@ import { type FastifyReply, type FastifyRequest } from "fastify";
 import { type ZitadelIntrospectionResult } from "../services/oidc/zitadel-oidc-service.js";
 import { type Services } from "../services/services.js";
 
-const BEARER_PATTERN = /^Bearer (.+)$/;
+export const BEARER_PATTERN = /^Bearer (.+)$/;
 
 const ACCESS_TOKEN_INTROSPECTION_RESULT_CACHE_PREFIX = "accessTokenIntrospection";
 

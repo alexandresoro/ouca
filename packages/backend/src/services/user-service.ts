@@ -66,16 +66,7 @@ export const buildUserService = ({
     }
   };
 
-  const createUser = async (
-    { extProvider, extProviderUserId }: CreateUserInput,
-    loggedUser: LoggedUser | null
-  ): Promise<UserResult> => {
-    // Only an administrator can create new accounts
-    // Check that the user requesting the account creation is authorized
-    if (loggedUser?.role !== "admin") {
-      throw new OucaError("OUCA0007");
-    }
-
+  const createUser = async ({ extProvider, extProviderUserId }: CreateUserInput): Promise<UserResult> => {
     const createdUser = await slonik.transaction(async (transactionConnection) => {
       const createdUserQueryResult = await userRepository.createUser(
         {

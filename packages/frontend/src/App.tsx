@@ -16,6 +16,7 @@ import suspend from "./utils/suspend";
 
 const UserSettingsProvider = lazy(() => import("./contexts/UserSettingsContext"));
 const Layout = lazy(() => import("./components/Layout"));
+const NewAccount = lazy(() => import("./components/new-account/NewAccount"));
 const NewEntryPage = lazy(() => import("./components/entry/new-entry-page/NewEntryPage"));
 const ExistingEntryPage = lazy(() => import("./components/entry/existing-entry-page/ExistingEntryPage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
@@ -273,6 +274,14 @@ const App: FunctionComponent = () => {
                           }
                         />
                       </Route>
+                      <Route
+                        path="new-account"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <NewAccount />
+                          </Suspense>
+                        }
+                      />
                     </RouterRoutes>
                   </Suspense>
                 </div>
