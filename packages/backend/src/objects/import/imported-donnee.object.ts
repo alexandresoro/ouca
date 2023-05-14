@@ -1,7 +1,8 @@
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { format } from "date-fns";
-import { type InputDonnee, type InputInventaire } from "../../graphql/generated/graphql-types.js";
 import { DATE_PATTERN } from "../../utils/constants.js";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils.js";
 import { CoordinatesValidatorHelper } from "./coordinates-validation.helper.js";
@@ -123,20 +124,20 @@ export class ImportedDonnee {
     estimationDistanceId: number | null,
     comportementsIds: Set<number>,
     milieuxIds: Set<number>
-  ): InputDonnee => {
+  ): UpsertEntryInput => {
     return {
-      inventaireId,
-      especeId,
-      sexeId,
+      inventoryId: inventaireId,
+      speciesId: especeId,
+      sexId: sexeId,
       ageId,
-      estimationNombreId,
-      nombre: this.nombre ? +this.nombre : null,
-      estimationDistanceId,
+      numberEstimateId: estimationNombreId,
+      number: this.nombre ? +this.nombre : null,
+      distanceEstimateId: estimationDistanceId,
       distance: this.distance ? +this.distance : null,
-      commentaire: this.commentaire ? this.commentaire : null,
-      regroupement: this.regroupement ? +this.regroupement : null,
-      comportementsIds: [...comportementsIds],
-      milieuxIds: [...milieuxIds],
+      comment: this.commentaire ? this.commentaire : null,
+      regroupment: this.regroupement ? +this.regroupement : null,
+      behaviorIds: [...comportementsIds],
+      environmentIds: [...milieuxIds],
     };
   };
 
@@ -147,31 +148,33 @@ export class ImportedDonnee {
     meteosIds: Set<number>,
     customizedAltitude: number | null,
     customizedCoordinates: Coordinates | null
-  ): InputInventaire => {
+  ): UpsertInventoryInput => {
     const customizedCoordinatesStr =
       customizedAltitude != null && customizedCoordinates != null
         ? {
-            customizedCoordinates: {
-              altitude: customizedAltitude,
-              latitude: customizedCoordinates?.latitude,
-              longitude: customizedCoordinates?.longitude,
-              system: customizedCoordinates?.system,
-            },
+            altitude: customizedAltitude,
+            latitude: customizedCoordinates?.latitude,
+            longitude: customizedCoordinates?.longitude,
+            system: customizedCoordinates?.system,
           }
-        : {};
+        : {
+            altitude: null,
+            latitude: null,
+            longitude: null,
+          };
 
     const formattedDate = getFormattedDate(this.date);
 
     return {
-      observateurId,
+      observerId: observateurId,
       date: formattedDate ? format(formattedDate, DATE_PATTERN) : "null",
-      heure: getFormattedTime(this.heure),
-      duree: getFormattedTime(this.duree),
-      lieuDitId: lieuditId,
+      time: getFormattedTime(this.heure),
+      duration: getFormattedTime(this.duree),
+      localityId: lieuditId,
       ...customizedCoordinatesStr,
       temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
-      meteosIds: [...meteosIds],
-      associesIds: [...associesIds],
+      weatherIds: [...meteosIds],
+      associateIds: [...associesIds],
     };
   };
 

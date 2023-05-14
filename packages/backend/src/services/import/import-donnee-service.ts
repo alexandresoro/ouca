@@ -1,8 +1,8 @@
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
-import { type InputDonnee } from "../../graphql/generated/graphql-types.js";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import { type Age } from "../../repositories/age/age-repository-types.js";
 import { type Commune } from "../../repositories/commune/commune-repository-types.js";
@@ -40,7 +40,7 @@ export class ImportDonneeService extends ImportService {
 
   private existingDonnees!: Donnee[];
 
-  private newDonnees!: InputDonnee[];
+  private newDonnees!: UpsertEntryInput[];
 
   protected getNumberOfColumns = (): number => {
     return 32;
@@ -247,22 +247,22 @@ export class ImportDonneeService extends ImportService {
     // Find if we already have an existing inventaire that matches the one from the current donnee
     const existingInventaire = this.inventaires.find(async (existingInventaire) => {
       return (
-        existingInventaire.observateurId === inputInventaire.observateurId &&
+        existingInventaire.observateurId === inputInventaire.observerId &&
         existingInventaire.date === inputInventaire.date &&
-        existingInventaire.heure === inputInventaire.heure &&
-        existingInventaire.duree === inputInventaire.duree &&
-        existingInventaire?.lieuditId === inputInventaire.lieuDitId &&
+        existingInventaire.heure === inputInventaire.time &&
+        existingInventaire.duree === inputInventaire.duration &&
+        existingInventaire?.lieuditId === inputInventaire.localityId &&
         existingInventaire.customizedCoordinates?.altitude === inputInventaire.altitude &&
         existingInventaire.customizedCoordinates?.longitude === inputInventaire.longitude &&
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.latitude &&
         existingInventaire.temperature === inputInventaire.temperature &&
         areSetsContainingSameValues(
           new Set(await this.services.observateurService.findAssociesIdsOfInventaireId(existingInventaire.id)),
-          new Set(inputInventaire.associesIds)
+          new Set(inputInventaire.associateIds)
         ) &&
         areSetsContainingSameValues(
           new Set(await this.services.meteoService.findMeteosIdsOfInventaireId(existingInventaire.id)),
-          new Set(inputInventaire.meteosIds)
+          new Set(inputInventaire.weatherIds)
         )
       );
     });
@@ -298,18 +298,18 @@ export class ImportDonneeService extends ImportService {
     // Check if already have a similar donnee in the ones we want to create
     const existingDonneeNew = this.newDonnees.find((donnee) => {
       return (
-        donnee.inventaireId === existingInventaire?.id &&
-        donnee.especeId === espece.id &&
-        donnee.sexeId === sexe.id &&
+        donnee.inventoryId === existingInventaire?.id &&
+        donnee.speciesId === espece.id &&
+        donnee.sexId === sexe.id &&
         donnee.ageId === age.id &&
-        donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
-        donnee.estimationNombreId === estimationNombre.id &&
+        donnee.number === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
+        donnee.numberEstimateId === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
-        donnee.estimationDistanceId === (estimationDistance?.id ?? null) &&
-        donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
-        this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
-        areSetsContainingSameValues(new Set(donnee.comportementsIds), comportementsIds) &&
-        areSetsContainingSameValues(new Set(donnee.milieuxIds), milieuxIds)
+        donnee.distanceEstimateId === (estimationDistance?.id ?? null) &&
+        donnee.regroupment === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
+        this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
+        areSetsContainingSameValues(new Set(donnee.behaviorIds), comportementsIds) &&
+        areSetsContainingSameValues(new Set(donnee.environmentIds), milieuxIds)
       );
     });
 
@@ -322,12 +322,7 @@ export class ImportDonneeService extends ImportService {
 
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
-      const inventaire = await this.services.inventaireService.createInventaire(
-        {
-          data: inputInventaire,
-        },
-        loggedUser
-      );
+      const inventaire = await this.services.inventaireService.createInventaire(inputInventaire, loggedUser);
       inventaireId = inventaire?.id;
 
       // Add the inventaire to the list
