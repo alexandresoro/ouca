@@ -322,7 +322,7 @@ export class ImportDonneeService extends ImportService {
 
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
-      const inventaire = await this.services.inventaireService.upsertInventaire(
+      const inventaire = await this.services.inventaireService.createInventaire(
         {
           data: inputInventaire,
         },
