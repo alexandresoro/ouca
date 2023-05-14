@@ -1,3 +1,4 @@
+import { type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
@@ -5,7 +6,6 @@ import { mock } from "vitest-mock-extended";
 import {
   EstimationNombreOrderBy,
   SortOrder,
-  type MutationUpsertEstimationNombreArgs,
   type QueryEstimationsNombreArgs,
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -204,7 +204,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a number estimate", () => {
   test("should be allowed when requested by an admin ", async () => {
-    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
+    const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -223,7 +223,7 @@ describe("Update of a number estimate", () => {
       ownerId: "notAdmin",
     });
 
-    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
+    const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -244,7 +244,7 @@ describe("Update of a number estimate", () => {
       ownerId: "notAdmin",
     });
 
-    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>();
+    const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const user = {
       id: "Bob",
@@ -261,9 +261,7 @@ describe("Update of a number estimate", () => {
   });
 
   test("should throw an error when trying to update to a number estimate that exists", async () => {
-    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-      id: 12,
-    });
+    const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -282,9 +280,7 @@ describe("Update of a number estimate", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-      id: 12,
-    });
+    const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     await expect(estimationNombreService.updateEstimationNombre(12, numberEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -295,9 +291,7 @@ describe("Update of a number estimate", () => {
 
 describe("Creation of a number estimate", () => {
   test("should create new number estimate", async () => {
-    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-      id: undefined,
-    });
+    const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -315,9 +309,7 @@ describe("Creation of a number estimate", () => {
   });
 
   test("should throw an error when trying to create a number estimate that already exists", async () => {
-    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-      id: undefined,
-    });
+    const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     const reshapedInputData = mock<EstimationNombreCreateInput>();
     mockedReshapeInputEstimationNombreUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -339,9 +331,7 @@ describe("Creation of a number estimate", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const numberEstimateData = mock<MutationUpsertEstimationNombreArgs>({
-      id: undefined,
-    });
+    const numberEstimateData = mock<UpsertNumberEstimateInput>();
 
     await expect(estimationNombreService.createEstimationNombre(numberEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")

@@ -1,9 +1,7 @@
+import { type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import {
-  type MutationUpsertObservateurArgs,
-  type QueryObservateursArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { type QueryObservateursArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Observateur,
@@ -98,18 +96,13 @@ export const buildObservateurService = ({
     return observateurRepository.getCount(q);
   };
 
-  const createObservateur = async (
-    input: MutationUpsertObservateurArgs,
-    loggedUser: LoggedUser | null
-  ): Promise<Observateur> => {
+  const createObservateur = async (input: UpsertObserverInput, loggedUser: LoggedUser | null): Promise<Observateur> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Create a new observer
     try {
       const upsertedObservateur = await observateurRepository.createObservateur({
-        ...data,
+        ...input,
         owner_id: loggedUser?.id,
       });
 
@@ -124,12 +117,10 @@ export const buildObservateurService = ({
 
   const updateObservateur = async (
     id: number,
-    input: MutationUpsertObservateurArgs,
+    input: UpsertObserverInput,
     loggedUser: LoggedUser | null
   ): Promise<Observateur> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
@@ -142,7 +133,7 @@ export const buildObservateurService = ({
 
     // Update an existing observer
     try {
-      const upsertedObservateur = await observateurRepository.updateObservateur(id, data);
+      const upsertedObservateur = await observateurRepository.updateObservateur(id, input);
 
       return upsertedObservateur;
     } catch (e) {

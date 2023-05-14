@@ -1,13 +1,9 @@
+import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock, mockDeep } from "vitest-mock-extended";
-import {
-  LieuxDitsOrderBy,
-  SortOrder,
-  type MutationUpsertLieuDitArgs,
-  type QueryLieuxDitsArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { LieuxDitsOrderBy, SortOrder, type QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
@@ -195,7 +191,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a locality", () => {
   test("should be allowed when requested by an admin", async () => {
-    const localityData = mock<MutationUpsertLieuDitArgs>();
+    const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -215,7 +211,7 @@ describe("Update of a locality", () => {
       ownerId: "notAdmin",
     });
 
-    const localityData = mock<MutationUpsertLieuDitArgs>();
+    const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -236,7 +232,7 @@ describe("Update of a locality", () => {
       ownerId: "notAdmin",
     });
 
-    const localityData = mock<MutationUpsertLieuDitArgs>();
+    const localityData = mock<UpsertLocalityInput>();
 
     const user = {
       id: "Bob",
@@ -251,9 +247,7 @@ describe("Update of a locality", () => {
   });
 
   test("should throw an error when trying to update to a locality that exists", async () => {
-    const localityData = mock<MutationUpsertLieuDitArgs>({
-      id: 12,
-    });
+    const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -272,9 +266,7 @@ describe("Update of a locality", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const localityData = mock<MutationUpsertLieuDitArgs>({
-      id: 12,
-    });
+    const localityData = mock<UpsertLocalityInput>();
 
     await expect(lieuditService.updateLieuDit(12, localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(lieuditRepository.updateLieudit).not.toHaveBeenCalled();
@@ -283,9 +275,7 @@ describe("Update of a locality", () => {
 
 describe("Creation of a locality", () => {
   test("should create new locality", async () => {
-    const localityData = mock<MutationUpsertLieuDitArgs>({
-      id: undefined,
-    });
+    const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -305,9 +295,7 @@ describe("Creation of a locality", () => {
   });
 
   test("should throw an error when trying to create a locality that already exists", async () => {
-    const localityData = mock<MutationUpsertLieuDitArgs>({
-      id: undefined,
-    });
+    const localityData = mock<UpsertLocalityInput>();
 
     const reshapedInputData = mock<LieuditCreateInput>();
     mockedReshapeInputLieuditUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -329,9 +317,7 @@ describe("Creation of a locality", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const localityData = mock<MutationUpsertLieuDitArgs>({
-      id: undefined,
-    });
+    const localityData = mock<UpsertLocalityInput>();
 
     await expect(lieuditService.createLieuDit(localityData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(lieuditRepository.createLieudit).not.toHaveBeenCalled();

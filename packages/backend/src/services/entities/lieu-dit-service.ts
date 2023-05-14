@@ -1,6 +1,7 @@
+import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertLieuDitArgs, type QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types.js";
+import { type QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Lieudit,
@@ -90,14 +91,12 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     return lieuditRepository.getCount(q, townId);
   };
 
-  const createLieuDit = async (input: MutationUpsertLieuDitArgs, loggedUser: LoggedUser | null): Promise<Lieudit> => {
+  const createLieuDit = async (input: UpsertLocalityInput, loggedUser: LoggedUser | null): Promise<Lieudit> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     try {
       const upsertedLieudit = await lieuditRepository.createLieudit({
-        ...reshapeInputLieuditUpsertData(data),
+        ...reshapeInputLieuditUpsertData(input),
         owner_id: loggedUser.id,
       });
 
@@ -112,12 +111,10 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
 
   const updateLieuDit = async (
     id: number,
-    input: MutationUpsertLieuDitArgs,
+    input: UpsertLocalityInput,
     loggedUser: LoggedUser | null
   ): Promise<Lieudit> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
@@ -129,7 +126,7 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     }
 
     try {
-      const upsertedLieudit = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(data));
+      const upsertedLieudit = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(input));
 
       return upsertedLieudit;
     } catch (e) {

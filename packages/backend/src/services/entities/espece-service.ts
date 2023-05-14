@@ -1,10 +1,7 @@
+import { type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import {
-  type MutationUpsertEspeceArgs,
-  type QueryEspecesArgs,
-  type SearchDonneeCriteria,
-} from "../../graphql/generated/graphql-types.js";
+import { type QueryEspecesArgs, type SearchDonneeCriteria } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Espece,
@@ -97,14 +94,12 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     });
   };
 
-  const createEspece = async (input: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
+  const createEspece = async (input: UpsertSpeciesInput, loggedUser: LoggedUser | null): Promise<Espece> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     try {
       const upsertedEspece = await especeRepository.createEspece({
-        ...reshapeInputEspeceUpsertData(data),
+        ...reshapeInputEspeceUpsertData(input),
         owner_id: loggedUser?.id,
       });
 
@@ -119,12 +114,10 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
 
   const updateEspece = async (
     id: number,
-    input: MutationUpsertEspeceArgs,
+    input: UpsertSpeciesInput,
     loggedUser: LoggedUser | null
   ): Promise<Espece> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
@@ -136,7 +129,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     }
 
     try {
-      const upsertedEspece = await especeRepository.updateEspece(id, reshapeInputEspeceUpsertData(data));
+      const upsertedEspece = await especeRepository.updateEspece(id, reshapeInputEspeceUpsertData(input));
 
       return upsertedEspece;
     } catch (e) {

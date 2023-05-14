@@ -1,19 +1,22 @@
-import { CoordinatesSystemType, type InputInventaire } from "../../graphql/generated/graphql-types.js";
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { CoordinatesSystemType } from "../../graphql/generated/graphql-types.js";
 import { type InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 
 export const reshapeInputInventaireUpsertData = (
-  inventory: InputInventaire,
+  inventory: UpsertInventoryInput,
   ownerId?: string | null
 ): InventaireCreateInput => {
-  const { observateurId, lieuDitId, associesIds, meteosIds, ...rest } = inventory;
+  const { observerId, localityId, associateIds, weatherIds, time, duration, ...rest } = inventory;
   const coordinatesSystem =
     inventory?.altitude != null && inventory?.latitude != null && inventory?.longitude != null
       ? CoordinatesSystemType.Gps
       : null;
   return {
     ...rest,
-    observateur_id: observateurId,
-    lieudit_id: lieuDitId,
+    observateur_id: observerId,
+    heure: time,
+    duree: duration,
+    lieudit_id: localityId,
     coordinates_system: coordinatesSystem,
     owner_id: ownerId,
   };

@@ -1,10 +1,10 @@
+import { type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
-  type MutationUpsertObservateurArgs,
   type QueryObservateursArgs,
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -206,14 +206,14 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of an observer", () => {
   test("should be allowed when requested by an admin", async () => {
-    const observerData = mock<MutationUpsertObservateurArgs>();
+    const observerData = mock<UpsertObserverInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await observateurService.updateObservateur(12, observerData, loggedUser);
 
     expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
-    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData.data);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -221,7 +221,7 @@ describe("Update of an observer", () => {
       ownerId: "notAdmin",
     });
 
-    const observerData = mock<MutationUpsertObservateurArgs>();
+    const observerData = mock<UpsertObserverInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
@@ -230,7 +230,7 @@ describe("Update of an observer", () => {
     await observateurService.updateObservateur(12, observerData, loggedUser);
 
     expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
-    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData.data);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData);
   });
 
   test("should throw an error when requested by an use that is nor owner nor admin", async () => {
@@ -238,7 +238,7 @@ describe("Update of an observer", () => {
       ownerId: "notAdmin",
     });
 
-    const observerData = mock<MutationUpsertObservateurArgs>();
+    const observerData = mock<UpsertObserverInput>();
 
     const user = {
       id: "Bob",
@@ -255,9 +255,7 @@ describe("Update of an observer", () => {
   });
 
   test("should throw an error when trying to update to an observer that exists", async () => {
-    const observerData = mock<MutationUpsertObservateurArgs>({
-      id: 12,
-    });
+    const observerData = mock<UpsertObserverInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
@@ -268,13 +266,11 @@ describe("Update of an observer", () => {
     );
 
     expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
-    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData.data);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const observerData = mock<MutationUpsertObservateurArgs>({
-      id: 12,
-    });
+    const observerData = mock<UpsertObserverInput>();
 
     await expect(observateurService.updateObservateur(12, observerData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -285,9 +281,7 @@ describe("Update of an observer", () => {
 
 describe("Creation of an observer", () => {
   test("should create new observer", async () => {
-    const observerData = mock<MutationUpsertObservateurArgs>({
-      id: undefined,
-    });
+    const observerData = mock<UpsertObserverInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -295,15 +289,13 @@ describe("Creation of an observer", () => {
 
     expect(observateurRepository.createObservateur).toHaveBeenCalledTimes(1);
     expect(observateurRepository.createObservateur).toHaveBeenLastCalledWith({
-      ...observerData.data,
+      ...observerData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create an observer that already exists", async () => {
-    const observerData = mock<MutationUpsertObservateurArgs>({
-      id: undefined,
-    });
+    const observerData = mock<UpsertObserverInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -315,15 +307,13 @@ describe("Creation of an observer", () => {
 
     expect(observateurRepository.createObservateur).toHaveBeenCalledTimes(1);
     expect(observateurRepository.createObservateur).toHaveBeenLastCalledWith({
-      ...observerData.data,
+      ...observerData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const observerData = mock<MutationUpsertObservateurArgs>({
-      id: undefined,
-    });
+    const observerData = mock<UpsertObserverInput>();
 
     await expect(observateurService.createObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(observateurRepository.createObservateur).not.toHaveBeenCalled();

@@ -1,6 +1,7 @@
+import { type UpsertWeatherInput } from "@ou-ca/common/api/weather";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertMeteoArgs, type QueryMeteosArgs } from "../../graphql/generated/graphql-types.js";
+import { type QueryMeteosArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
@@ -80,15 +81,13 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     return meteoRepository.getCount(q);
   };
 
-  const createMeteo = async (input: MutationUpsertMeteoArgs, loggedUser: LoggedUser | null): Promise<Meteo> => {
+  const createMeteo = async (input: UpsertWeatherInput, loggedUser: LoggedUser | null): Promise<Meteo> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Create a new weather
     try {
       const upsertedMeteo = await meteoRepository.createMeteo({
-        ...data,
+        ...input,
         owner_id: loggedUser?.id,
       });
 
@@ -101,14 +100,8 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     }
   };
 
-  const updateMeteo = async (
-    id: number,
-    input: MutationUpsertMeteoArgs,
-    loggedUser: LoggedUser | null
-  ): Promise<Meteo> => {
+  const updateMeteo = async (id: number, input: UpsertWeatherInput, loggedUser: LoggedUser | null): Promise<Meteo> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser.role !== "admin") {
@@ -121,7 +114,7 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
 
     // Update an existing weather
     try {
-      const upsertedMeteo = await meteoRepository.updateMeteo(id, data);
+      const upsertedMeteo = await meteoRepository.updateMeteo(id, input);
 
       return upsertedMeteo;
     } catch (e) {

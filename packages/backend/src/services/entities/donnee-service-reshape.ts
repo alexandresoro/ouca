@@ -1,25 +1,31 @@
-import { type InputDonnee } from "../../graphql/generated/graphql-types.js";
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
 
-export const reshapeInputDonneeUpsertData = (data: InputDonnee): DonneeCreateInput => {
+export const reshapeInputDonneeUpsertData = (data: UpsertEntryInput): DonneeCreateInput => {
   const {
     ageId,
-    especeId,
-    estimationNombreId,
-    estimationDistanceId,
-    inventaireId,
-    sexeId,
-    comportementsIds,
-    milieuxIds,
-    ...rest
+    speciesId,
+    numberEstimateId,
+    number,
+    distanceEstimateId,
+    distance,
+    inventoryId,
+    sexId,
+    behaviorIds,
+    environmentIds,
+    regroupment,
+    comment,
   } = data;
   return {
-    ...rest,
-    inventaire_id: inventaireId,
-    espece_id: especeId,
+    inventaire_id: inventoryId,
+    espece_id: speciesId,
     age_id: ageId,
-    sexe_id: sexeId,
-    estimation_nombre_id: estimationNombreId,
-    estimation_distance_id: estimationDistanceId,
+    sexe_id: sexId,
+    estimation_nombre_id: numberEstimateId,
+    nombre: number,
+    estimation_distance_id: distanceEstimateId,
+    distance,
+    regroupement: regroupment,
+    commentaire: comment,
   };
 };

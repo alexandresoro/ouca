@@ -1,12 +1,8 @@
+import { type UpsertWeatherInput } from "@ou-ca/common/api/weather";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  EntitesAvecLibelleOrderBy,
-  SortOrder,
-  type MutationUpsertMeteoArgs,
-  type QueryMeteosArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { EntitesAvecLibelleOrderBy, SortOrder, type QueryMeteosArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
@@ -182,14 +178,14 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of an weather", () => {
   test("should be allowed when requested by an admin", async () => {
-    const weatherData = mock<MutationUpsertMeteoArgs>();
+    const weatherData = mock<UpsertWeatherInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await meteoService.updateMeteo(12, weatherData, loggedUser);
 
     expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData.data);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -197,7 +193,7 @@ describe("Update of an weather", () => {
       ownerId: "notAdmin",
     });
 
-    const weatherData = mock<MutationUpsertMeteoArgs>();
+    const weatherData = mock<UpsertWeatherInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
@@ -206,7 +202,7 @@ describe("Update of an weather", () => {
     await meteoService.updateMeteo(12, weatherData, loggedUser);
 
     expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData.data);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should throw an error when requested by an use that is nor owner nor admin", async () => {
@@ -214,7 +210,7 @@ describe("Update of an weather", () => {
       ownerId: "notAdmin",
     });
 
-    const weatherData = mock<MutationUpsertMeteoArgs>();
+    const weatherData = mock<UpsertWeatherInput>();
 
     const user = {
       id: "Bob",
@@ -229,9 +225,7 @@ describe("Update of an weather", () => {
   });
 
   test("should throw an error when trying to update to an weather that exists", async () => {
-    const weatherData = mock<MutationUpsertMeteoArgs>({
-      id: 12,
-    });
+    const weatherData = mock<UpsertWeatherInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
@@ -242,13 +236,11 @@ describe("Update of an weather", () => {
     );
 
     expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData.data);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const weatherData = mock<MutationUpsertMeteoArgs>({
-      id: 12,
-    });
+    const weatherData = mock<UpsertWeatherInput>();
 
     await expect(meteoService.updateMeteo(12, weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(meteoRepository.updateMeteo).not.toHaveBeenCalled();
@@ -257,9 +249,7 @@ describe("Update of an weather", () => {
 
 describe("Creation of an weather", () => {
   test("should create new weather", async () => {
-    const weatherData = mock<MutationUpsertMeteoArgs>({
-      id: undefined,
-    });
+    const weatherData = mock<UpsertWeatherInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -267,15 +257,13 @@ describe("Creation of an weather", () => {
 
     expect(meteoRepository.createMeteo).toHaveBeenCalledTimes(1);
     expect(meteoRepository.createMeteo).toHaveBeenLastCalledWith({
-      ...weatherData.data,
+      ...weatherData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create an weather that already exists", async () => {
-    const weatherData = mock<MutationUpsertMeteoArgs>({
-      id: undefined,
-    });
+    const weatherData = mock<UpsertWeatherInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -287,15 +275,13 @@ describe("Creation of an weather", () => {
 
     expect(meteoRepository.createMeteo).toHaveBeenCalledTimes(1);
     expect(meteoRepository.createMeteo).toHaveBeenLastCalledWith({
-      ...weatherData.data,
+      ...weatherData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const weatherData = mock<MutationUpsertMeteoArgs>({
-      id: undefined,
-    });
+    const weatherData = mock<UpsertWeatherInput>();
 
     await expect(meteoService.createMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(meteoRepository.createMeteo).not.toHaveBeenCalled();

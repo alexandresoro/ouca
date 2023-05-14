@@ -1,3 +1,4 @@
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
@@ -6,8 +7,6 @@ import {
   SearchDonneesOrderBy,
   SortOrder,
   type DonneeNavigationData,
-  type InputDonnee,
-  type MutationUpsertDonneeArgs,
   type PaginatedSearchDonneesResultResultArgs,
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
@@ -409,12 +408,9 @@ describe("Deletion of a data", () => {
 
 describe("Update of a data", () => {
   test("should update existing data", async () => {
-    const dataData: MutationUpsertDonneeArgs = mock<MutationUpsertDonneeArgs>({
-      id: 12,
-      data: {
-        comportementsIds: [2, 3],
-        milieuxIds: [4, 5],
-      },
+    const dataData = mock<UpsertEntryInput>({
+      behaviorIds: [2, 3],
+      environmentIds: [4, 5],
     });
 
     const loggedUser = mock<LoggedUser>();
@@ -452,9 +448,7 @@ describe("Update of a data", () => {
   });
 
   test("should throw an error when trying to update to a different data that already exists", async () => {
-    const dataData = mock<MutationUpsertDonneeArgs>({
-      id: 12,
-    });
+    const dataData = mock<UpsertEntryInput>();
 
     const loggedUser = mock<LoggedUser>();
 
@@ -474,9 +468,7 @@ describe("Update of a data", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const dataData = mock<MutationUpsertDonneeArgs>({
-      id: 12,
-    });
+    const dataData = mock<UpsertEntryInput>();
 
     await expect(donneeService.updateDonnee(12, dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(donneeRepository.createDonnee).not.toHaveBeenCalled();
@@ -485,9 +477,9 @@ describe("Update of a data", () => {
 
 describe("Creation of a data", () => {
   test("should create new data without behaviors or environments", async () => {
-    const dataData = mock<InputDonnee>({
-      comportementsIds: null,
-      milieuxIds: null,
+    const dataData = mock<UpsertEntryInput>({
+      behaviorIds: [],
+      environmentIds: [],
     });
 
     const loggedUser = mock<LoggedUser>();
@@ -504,9 +496,9 @@ describe("Creation of a data", () => {
   });
 
   test("should create new data with behaviors only", async () => {
-    const dataData = mock<InputDonnee>({
-      comportementsIds: [2, 3],
-      milieuxIds: null,
+    const dataData = mock<UpsertEntryInput>({
+      behaviorIds: [2, 3],
+      environmentIds: [],
     });
 
     const loggedUser = mock<LoggedUser>();
@@ -526,16 +518,16 @@ describe("Creation of a data", () => {
     expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
     expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
       12,
-      dataData.comportementsIds,
+      dataData.behaviorIds,
       any()
     );
     expect(donneeMilieuRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
   });
 
   test("should create new data with environments only", async () => {
-    const dataData = mock<InputDonnee>({
-      comportementsIds: null,
-      milieuxIds: [2, 3],
+    const dataData = mock<UpsertEntryInput>({
+      behaviorIds: [],
+      environmentIds: [2, 3],
     });
 
     const loggedUser = mock<LoggedUser>();
@@ -554,6 +546,6 @@ describe("Creation of a data", () => {
     expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(donneeComportementRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
     expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
-    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, dataData.milieuxIds, any());
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, dataData.environmentIds, any());
   });
 });

@@ -1,7 +1,7 @@
-import { type InputLieuDit } from "../../graphql/generated/graphql-types.js";
+import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 
-export const reshapeInputLieuditUpsertData = (data: InputLieuDit): LieuditCreateInput => {
+export const reshapeInputLieuditUpsertData = (data: UpsertLocalityInput): LieuditCreateInput => {
   const { communeId, coordinatesSystem, ...rest } = data;
   return {
     ...rest,

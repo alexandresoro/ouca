@@ -1,3 +1,5 @@
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types.js";
 import { type Inventaire as InventaireEntity } from "../repositories/inventaire/inventaire-repository-types.js";
@@ -302,12 +304,40 @@ export const buildResolvers = ({
         failureReason?: string;
         donnee?: DonneeEntity;
       }> => {
+        const {
+          inventaireId,
+          especeId,
+          ageId,
+          sexeId,
+          estimationNombreId,
+          nombre,
+          estimationDistanceId,
+          distance,
+          comportementsIds,
+          milieuxIds,
+          regroupement,
+          commentaire,
+        } = args.data;
+        const data = {
+          inventoryId: inventaireId,
+          speciesId: especeId,
+          ageId,
+          sexId: sexeId,
+          numberEstimateId: estimationNombreId,
+          number: nombre ?? null,
+          distanceEstimateId: estimationDistanceId ?? null,
+          distance: distance ?? null,
+          behaviorIds: comportementsIds ?? [],
+          environmentIds: milieuxIds ?? [],
+          regroupment: regroupement ?? null,
+          comment: commentaire ?? null,
+        } satisfies UpsertEntryInput;
         try {
           let upsertedDonnee;
           if (args.id) {
-            upsertedDonnee = await donneeService.updateDonnee(args.id, args, user);
+            upsertedDonnee = await donneeService.updateDonnee(args.id, data, user);
           } else {
-            upsertedDonnee = await donneeService.createDonnee(args.data, user);
+            upsertedDonnee = await donneeService.createDonnee(data, user);
           }
           return {
             donnee: upsertedDonnee,
@@ -321,23 +351,23 @@ export const buildResolvers = ({
       },
       upsertEspece: async (_source, args, { user }): Promise<Omit<Espece, "classe">> => {
         if (args.id) {
-          return especeService.updateEspece(args.id, args, user);
+          return especeService.updateEspece(args.id, args.data, user);
         } else {
-          return especeService.createEspece(args, user);
+          return especeService.createEspece(args.data, user);
         }
       },
       upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
         if (args.id) {
-          return estimationDistanceService.updateEstimationDistance(args.id, args, user);
+          return estimationDistanceService.updateEstimationDistance(args.id, args.data, user);
         } else {
-          return estimationDistanceService.createEstimationDistance(args, user);
+          return estimationDistanceService.createEstimationDistance(args.data, user);
         }
       },
       upsertEstimationNombre: async (_source, args, { user }): Promise<EstimationNombre> => {
         if (args.id) {
-          return estimationNombreService.updateEstimationNombre(args.id, args, user);
+          return estimationNombreService.updateEstimationNombre(args.id, args.data, user);
         } else {
-          return estimationNombreService.createEstimationNombre(args, user);
+          return estimationNombreService.createEstimationNombre(args.data, user);
         }
       },
       upsertInventaire: async (
@@ -348,12 +378,39 @@ export const buildResolvers = ({
         failureReason?: UpsertInventaireFailureReason;
         inventaire?: InventaireEntity;
       }> => {
+        const {
+          observateurId,
+          lieuDitId,
+          associesIds,
+          meteosIds,
+          date,
+          heure,
+          duree,
+          altitude,
+          latitude,
+          longitude,
+          temperature,
+        } = args.data;
+        const data = {
+          observerId: observateurId,
+          associateIds: associesIds ?? [],
+          date,
+          time: heure ?? null,
+          duration: duree ?? null,
+          localityId: lieuDitId,
+          altitude: altitude ?? null,
+          latitude: latitude ?? null,
+          longitude: longitude ?? null,
+          temperature: temperature ?? null,
+          weatherIds: meteosIds ?? [],
+        } satisfies UpsertInventoryInput;
+
         try {
           let upsertedInventaire;
           if (args.id) {
-            upsertedInventaire = await inventaireService.updateInventaire(args.id, args, user);
+            upsertedInventaire = await inventaireService.updateInventaire(args.id, data, user);
           } else {
-            upsertedInventaire = await inventaireService.createInventaire(args, user);
+            upsertedInventaire = await inventaireService.createInventaire(data, user);
           }
           return {
             inventaire: upsertedInventaire,
@@ -367,30 +424,30 @@ export const buildResolvers = ({
       },
       upsertLieuDit: async (_source, args, { user }): Promise<Lieudit> => {
         if (args.id) {
-          return lieuditService.updateLieuDit(args.id, args, user);
+          return lieuditService.updateLieuDit(args.id, args.data, user);
         } else {
-          return lieuditService.createLieuDit(args, user);
+          return lieuditService.createLieuDit(args.data, user);
         }
       },
       upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
         if (args.id) {
-          return meteoService.updateMeteo(args.id, args, user);
+          return meteoService.updateMeteo(args.id, args.data, user);
         } else {
-          return meteoService.createMeteo(args, user);
+          return meteoService.createMeteo(args.data, user);
         }
       },
       upsertMilieu: async (_source, args, { user }): Promise<Milieu> => {
         if (args.id) {
-          return milieuService.updateMilieu(args.id, args, user);
+          return milieuService.updateMilieu(args.id, args.data, user);
         } else {
-          return milieuService.createMilieu(args, user);
+          return milieuService.createMilieu(args.data, user);
         }
       },
       upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
         if (args.id) {
-          return observateurService.updateObservateur(args.id, args, user);
+          return observateurService.updateObservateur(args.id, args.data, user);
         } else {
-          return observateurService.createObservateur(args, user);
+          return observateurService.createObservateur(args.data, user);
         }
       },
     },

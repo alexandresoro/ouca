@@ -1,9 +1,8 @@
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import {
   type DonneeNavigationData,
-  type InputDonnee,
-  type MutationUpsertDonneeArgs,
   type PaginatedSearchDonneesResultResultArgs,
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types.js";
@@ -113,16 +112,16 @@ export const buildDonneeService = ({
     return (latestRegroupement ?? 0) + 1;
   };
 
-  const createDonnee = async (input: InputDonnee, loggedUser: LoggedUser | null): Promise<Donnee> => {
+  const createDonnee = async (input: UpsertEntryInput, loggedUser: LoggedUser | null): Promise<Donnee> => {
     validateAuthorization(loggedUser);
 
-    const { comportementsIds, milieuxIds } = input;
+    const { behaviorIds, environmentIds } = input;
 
     // Check if an exact same donnee already exists or not
     const existingDonnee = await donneeRepository.findExistingDonnee({
       ...reshapeInputDonneeUpsertData(input),
-      comportementsIds: comportementsIds ?? [],
-      milieuxIds: milieuxIds ?? [],
+      comportementsIds: behaviorIds ?? [],
+      milieuxIds: environmentIds ?? [],
     });
 
     if (existingDonnee) {
@@ -139,16 +138,16 @@ export const buildDonneeService = ({
         transactionConnection
       );
 
-      if (comportementsIds?.length) {
+      if (behaviorIds?.length) {
         await donneeComportementRepository.insertDonneeWithComportements(
           createdDonnee.id,
-          comportementsIds,
+          behaviorIds,
           transactionConnection
         );
       }
 
-      if (milieuxIds?.length) {
-        await donneeMilieuRepository.insertDonneeWithMilieux(createdDonnee.id, milieuxIds, transactionConnection);
+      if (environmentIds?.length) {
+        await donneeMilieuRepository.insertDonneeWithMilieux(createdDonnee.id, environmentIds, transactionConnection);
       }
 
       return createdDonnee;
@@ -157,21 +156,16 @@ export const buildDonneeService = ({
     return createdDonnee;
   };
 
-  const updateDonnee = async (
-    id: number,
-    input: MutationUpsertDonneeArgs,
-    loggedUser: LoggedUser | null
-  ): Promise<Donnee> => {
+  const updateDonnee = async (id: number, input: UpsertEntryInput, loggedUser: LoggedUser | null): Promise<Donnee> => {
     validateAuthorization(loggedUser);
 
-    const { data } = input;
-    const { comportementsIds, milieuxIds } = data;
+    const { behaviorIds, environmentIds } = input;
 
     // Check if an exact same donnee already exists or not
     const existingDonnee = await donneeRepository.findExistingDonnee({
-      ...reshapeInputDonneeUpsertData(data),
-      comportementsIds: comportementsIds ?? [],
-      milieuxIds: milieuxIds ?? [],
+      ...reshapeInputDonneeUpsertData(input),
+      comportementsIds: behaviorIds ?? [],
+      milieuxIds: environmentIds ?? [],
     });
 
     if (existingDonnee && existingDonnee.id !== id) {
@@ -184,20 +178,20 @@ export const buildDonneeService = ({
       const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
         const updatedDonnee = await donneeRepository.updateDonnee(
           id,
-          reshapeInputDonneeUpsertData(data),
+          reshapeInputDonneeUpsertData(input),
           transactionConnection
         );
 
         await donneeComportementRepository.deleteComportementsOfDonneeId(id, transactionConnection);
 
-        if (comportementsIds?.length) {
-          await donneeComportementRepository.insertDonneeWithComportements(id, comportementsIds, transactionConnection);
+        if (behaviorIds?.length) {
+          await donneeComportementRepository.insertDonneeWithComportements(id, behaviorIds, transactionConnection);
         }
 
         await donneeMilieuRepository.deleteMilieuxOfDonneeId(id, transactionConnection);
 
-        if (milieuxIds?.length) {
-          await donneeMilieuRepository.insertDonneeWithMilieux(id, milieuxIds, transactionConnection);
+        if (environmentIds?.length) {
+          await donneeMilieuRepository.insertDonneeWithMilieux(id, environmentIds, transactionConnection);
         }
 
         return updatedDonnee;

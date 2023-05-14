@@ -1,7 +1,7 @@
-import { type InputEspece } from "../../graphql/generated/graphql-types.js";
+import { type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 
-export const reshapeInputEspeceUpsertData = (data: InputEspece): EspeceCreateInput => {
+export const reshapeInputEspeceUpsertData = (data: UpsertSpeciesInput): EspeceCreateInput => {
   const { classeId, nomFrancais, nomLatin, ...rest } = data;
   return {
     ...rest,

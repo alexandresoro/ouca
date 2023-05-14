@@ -1,9 +1,7 @@
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
-import {
-  type MutationUpsertInventaireArgs,
-  type UpsertInventaireFailureReason,
-} from "../../graphql/generated/graphql-types.js";
+import { type UpsertInventaireFailureReason } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
@@ -52,20 +50,16 @@ export const buildInventaireService = ({
     return [...inventaires];
   };
 
-  const createInventaire = async (
-    input: MutationUpsertInventaireArgs,
-    loggedUser: LoggedUser | null
-  ): Promise<Inventaire> => {
+  const createInventaire = async (input: UpsertInventoryInput, loggedUser: LoggedUser | null): Promise<Inventaire> => {
     validateAuthorization(loggedUser);
 
-    const { data } = input;
-    const { associesIds, meteosIds } = data;
+    const { associateIds, weatherIds } = input;
 
     // Check if an exact same inventaire already exists or not
     const existingInventaire = await inventaireRepository.findExistingInventaire({
-      ...reshapeInputInventaireUpsertData(data),
-      associesIds: associesIds ?? [],
-      meteosIds: meteosIds ?? [],
+      ...reshapeInputInventaireUpsertData(input),
+      associesIds: associateIds ?? [],
+      meteosIds: weatherIds ?? [],
     });
 
     if (existingInventaire) {
@@ -82,22 +76,22 @@ export const buildInventaireService = ({
       // Create a new inventaire
       const createdInventaire = await slonik.transaction(async (transactionConnection) => {
         const createdInventaire = await inventaireRepository.createInventaire(
-          reshapeInputInventaireUpsertData(data, loggedUser.id),
+          reshapeInputInventaireUpsertData(input, loggedUser.id),
           transactionConnection
         );
 
-        if (associesIds?.length) {
+        if (associateIds?.length) {
           await inventaireAssocieRepository.insertInventaireWithAssocies(
             createdInventaire.id,
-            associesIds,
+            associateIds,
             transactionConnection
           );
         }
 
-        if (meteosIds?.length) {
+        if (weatherIds?.length) {
           await inventaireMeteoRepository.insertInventaireWithMeteos(
             createdInventaire.id,
-            meteosIds,
+            weatherIds,
             transactionConnection
           );
         }
@@ -111,19 +105,19 @@ export const buildInventaireService = ({
 
   const updateInventaire = async (
     id: number,
-    input: MutationUpsertInventaireArgs,
+    input: UpsertInventoryInput,
     loggedUser: LoggedUser | null
   ): Promise<Inventaire> => {
     validateAuthorization(loggedUser);
 
-    const { data, migrateDonneesIfMatchesExistingInventaire = false } = input;
-    const { associesIds, meteosIds } = data;
+    const { migrateDonneesIfMatchesExistingInventaire = false, ...inputData } = input;
+    const { associateIds, weatherIds } = inputData;
 
     // Check if an exact same inventaire already exists or not
     const existingInventaire = await inventaireRepository.findExistingInventaire({
-      ...reshapeInputInventaireUpsertData(data),
-      associesIds: associesIds ?? [],
-      meteosIds: meteosIds ?? [],
+      ...reshapeInputInventaireUpsertData(inputData),
+      associesIds: associateIds ?? [],
+      meteosIds: weatherIds ?? [],
     });
 
     if (existingInventaire) {
@@ -166,20 +160,20 @@ export const buildInventaireService = ({
       const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
         const updatedInventaire = await inventaireRepository.updateInventaire(
           id,
-          reshapeInputInventaireUpsertData(data, loggedUser.id),
+          reshapeInputInventaireUpsertData(inputData, loggedUser.id),
           transactionConnection
         );
 
         await inventaireAssocieRepository.deleteAssociesOfInventaireId(id, transactionConnection);
 
-        if (associesIds?.length) {
-          await inventaireAssocieRepository.insertInventaireWithAssocies(id, associesIds, transactionConnection);
+        if (associateIds?.length) {
+          await inventaireAssocieRepository.insertInventaireWithAssocies(id, associateIds, transactionConnection);
         }
 
         await inventaireMeteoRepository.deleteMeteosOfInventaireId(id, transactionConnection);
 
-        if (meteosIds?.length) {
-          await inventaireMeteoRepository.insertInventaireWithMeteos(id, meteosIds, transactionConnection);
+        if (weatherIds?.length) {
+          await inventaireMeteoRepository.insertInventaireWithMeteos(id, weatherIds, transactionConnection);
         }
 
         return updatedInventaire;

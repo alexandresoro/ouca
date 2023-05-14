@@ -1,12 +1,8 @@
+import { type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  MilieuxOrderBy,
-  SortOrder,
-  type MutationUpsertMilieuArgs,
-  type QueryMilieuxArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { MilieuxOrderBy, SortOrder, type QueryMilieuxArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
@@ -182,14 +178,14 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of an environment", () => {
   test("should be allowed when requested by an admin", async () => {
-    const environmentData = mock<MutationUpsertMilieuArgs>();
+    const environmentData = mock<UpsertEnvironmentInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
     await milieuService.updateMilieu(12, environmentData, loggedUser);
 
     expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
-    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData.data);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -197,7 +193,7 @@ describe("Update of an environment", () => {
       ownerId: "notAdmin",
     });
 
-    const environmentData = mock<MutationUpsertMilieuArgs>();
+    const environmentData = mock<UpsertEnvironmentInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
@@ -206,7 +202,7 @@ describe("Update of an environment", () => {
     await milieuService.updateMilieu(12, environmentData, loggedUser);
 
     expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
-    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData.data);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -214,7 +210,7 @@ describe("Update of an environment", () => {
       ownerId: "notAdmin",
     });
 
-    const environmentData = mock<MutationUpsertMilieuArgs>();
+    const environmentData = mock<UpsertEnvironmentInput>();
 
     const user = {
       id: "Bob",
@@ -229,9 +225,7 @@ describe("Update of an environment", () => {
   });
 
   test("should throw an error when trying to update to an environment that exists", async () => {
-    const environmentData = mock<MutationUpsertMilieuArgs>({
-      id: 12,
-    });
+    const environmentData = mock<UpsertEnvironmentInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
@@ -242,13 +236,11 @@ describe("Update of an environment", () => {
     );
 
     expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
-    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData.data);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const environmentData = mock<MutationUpsertMilieuArgs>({
-      id: 12,
-    });
+    const environmentData = mock<UpsertEnvironmentInput>();
 
     await expect(milieuService.updateMilieu(12, environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(milieuRepository.updateMilieu).not.toHaveBeenCalled();
@@ -257,9 +249,7 @@ describe("Update of an environment", () => {
 
 describe("Creation of an environment", () => {
   test("should create new environment", async () => {
-    const environmentData = mock<MutationUpsertMilieuArgs>({
-      id: undefined,
-    });
+    const environmentData = mock<UpsertEnvironmentInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -267,15 +257,13 @@ describe("Creation of an environment", () => {
 
     expect(milieuRepository.createMilieu).toHaveBeenCalledTimes(1);
     expect(milieuRepository.createMilieu).toHaveBeenLastCalledWith({
-      ...environmentData.data,
+      ...environmentData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create an environment that already exists", async () => {
-    const environmentData = mock<MutationUpsertMilieuArgs>({
-      id: undefined,
-    });
+    const environmentData = mock<UpsertEnvironmentInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -287,15 +275,13 @@ describe("Creation of an environment", () => {
 
     expect(milieuRepository.createMilieu).toHaveBeenCalledTimes(1);
     expect(milieuRepository.createMilieu).toHaveBeenLastCalledWith({
-      ...environmentData.data,
+      ...environmentData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const environmentData = mock<MutationUpsertMilieuArgs>({
-      id: undefined,
-    });
+    const environmentData = mock<UpsertEnvironmentInput>();
 
     await expect(milieuService.createMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(milieuRepository.createMilieu).not.toHaveBeenCalled();

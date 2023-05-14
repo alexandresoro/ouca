@@ -1,8 +1,8 @@
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
-import { type MutationUpsertInventaireArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
@@ -106,8 +106,7 @@ test("Find all inventaries", async () => {
 describe("Update of an inventory", () => {
   describe("to values already matching an existing inventory", () => {
     test("should return the correct state if no migration requested", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: 12,
+      const inventoryData = mock<UpsertInventoryInput>({
         migrateDonneesIfMatchesExistingInventaire: undefined,
       });
 
@@ -129,8 +128,7 @@ describe("Update of an inventory", () => {
     });
 
     test("should handle migration of existing data if requested", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: 12,
+      const inventoryData = mock<UpsertInventoryInput>({
         migrateDonneesIfMatchesExistingInventaire: true,
       });
 
@@ -152,9 +150,7 @@ describe("Update of an inventory", () => {
     });
 
     test("should throw an error when the requester is not logged", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: 12,
-      });
+      const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
         new OucaError("OUCA0001")
@@ -165,12 +161,9 @@ describe("Update of an inventory", () => {
 
   describe("to values not matching an existing inventory", () => {
     test("should update an inventory", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: 12,
-        data: {
-          associesIds: [2, 3],
-          meteosIds: [4, 5],
-        },
+      const inventoryData = mock<UpsertInventoryInput>({
+        associateIds: [2, 3],
+        weatherIds: [4, 5],
       });
 
       const loggedUser = mock<LoggedUser>();
@@ -208,9 +201,7 @@ describe("Update of an inventory", () => {
     });
 
     test("should throw an error when the requester is not logged", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: 12,
-      });
+      const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
         new OucaError("OUCA0001")
@@ -223,9 +214,7 @@ describe("Update of an inventory", () => {
 describe("Creation of an inventory", () => {
   describe("with values already matching an existing inventory", () => {
     test("should return the existing inventory", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: undefined,
-      });
+      const inventoryData = mock<UpsertInventoryInput>();
 
       const loggedUser = mock<LoggedUser>();
 
@@ -243,9 +232,7 @@ describe("Creation of an inventory", () => {
     });
 
     test("should throw an error when the requester is not logged", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: undefined,
-      });
+      const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
       expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
@@ -254,12 +241,9 @@ describe("Creation of an inventory", () => {
 
   describe("with values not matching an existing inventory", () => {
     test("should create new inventory", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: undefined,
-        data: {
-          associesIds: [2, 3],
-          meteosIds: [4, 5],
-        },
+      const inventoryData = mock<UpsertInventoryInput>({
+        associateIds: [2, 3],
+        weatherIds: [4, 5],
       });
 
       const loggedUser = mock<LoggedUser>();
@@ -286,9 +270,7 @@ describe("Creation of an inventory", () => {
     });
 
     test("should throw an error when the requester is not logged", async () => {
-      const inventoryData = mock<MutationUpsertInventaireArgs>({
-        id: undefined,
-      });
+      const inventoryData = mock<UpsertInventoryInput>();
 
       await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
       expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();

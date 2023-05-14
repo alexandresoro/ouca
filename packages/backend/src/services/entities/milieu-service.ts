@@ -1,6 +1,7 @@
+import { type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type MutationUpsertMilieuArgs, type QueryMilieuxArgs } from "../../graphql/generated/graphql-types.js";
+import { type QueryMilieuxArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
@@ -80,14 +81,12 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     return milieuRepository.getCount(q);
   };
 
-  const createMilieu = async (input: MutationUpsertMilieuArgs, loggedUser: LoggedUser | null): Promise<Milieu> => {
+  const createMilieu = async (input: UpsertEnvironmentInput, loggedUser: LoggedUser | null): Promise<Milieu> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     try {
       const upsertedMilieu = await milieuRepository.createMilieu({
-        ...data,
+        ...input,
         owner_id: loggedUser.id,
       });
 
@@ -102,12 +101,10 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
 
   const updateMilieu = async (
     id: number,
-    input: MutationUpsertMilieuArgs,
+    input: UpsertEnvironmentInput,
     loggedUser: LoggedUser | null
   ): Promise<Milieu> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
@@ -119,7 +116,7 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     }
 
     try {
-      const upsertedMilieu = await milieuRepository.updateMilieu(id, data);
+      const upsertedMilieu = await milieuRepository.updateMilieu(id, input);
 
       return upsertedMilieu;
     } catch (e) {

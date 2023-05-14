@@ -1,10 +1,10 @@
+import { type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import {
   EntitesAvecLibelleOrderBy,
   SortOrder,
-  type MutationUpsertEstimationDistanceArgs,
   type QueryEstimationsDistanceArgs
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -203,7 +203,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a distance estimate", () => {
   test("should be allowed when requested by an admin ", async () => {
-    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
+    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
@@ -212,7 +212,7 @@ describe("Update of a distance estimate", () => {
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
       12,
-      distanceEstimateData.data
+      distanceEstimateData
     );
   });
 
@@ -221,7 +221,7 @@ describe("Update of a distance estimate", () => {
       ownerId: "notAdmin",
     });
 
-    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
+    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
@@ -232,7 +232,7 @@ describe("Update of a distance estimate", () => {
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
       12,
-      distanceEstimateData.data
+      distanceEstimateData
     );
   });
 
@@ -241,7 +241,7 @@ describe("Update of a distance estimate", () => {
       ownerId: "notAdmin",
     });
 
-    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>();
+    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const user = {
       id: "Bob",
@@ -258,9 +258,7 @@ describe("Update of a distance estimate", () => {
   });
 
   test("should throw an error when trying to update to a distance estimate that exists", async () => {
-    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-      id: 12,
-    });
+    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
@@ -273,14 +271,12 @@ describe("Update of a distance estimate", () => {
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
       12,
-      distanceEstimateData.data
+      distanceEstimateData
     );
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-      id: 12,
-    });
+    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     await expect(estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
@@ -291,9 +287,7 @@ describe("Update of a distance estimate", () => {
 
 describe("Creation of a distance estimate", () => {
   test("should create new distance estimate", async () => {
-    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-      id: undefined,
-    });
+    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -301,15 +295,13 @@ describe("Creation of a distance estimate", () => {
 
     expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenLastCalledWith({
-      ...distanceEstimateData.data,
+      ...distanceEstimateData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when trying to create a distance estimate that already exists", async () => {
-    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-      id: undefined,
-    });
+    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
@@ -321,15 +313,13 @@ describe("Creation of a distance estimate", () => {
 
     expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenLastCalledWith({
-      ...distanceEstimateData.data,
+      ...distanceEstimateData,
       owner_id: loggedUser.id,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const distanceEstimateData = mock<MutationUpsertEstimationDistanceArgs>({
-      id: undefined,
-    });
+    const distanceEstimateData = mock<UpsertDistanceEstimateInput>();
 
     await expect(estimationDistanceService.createEstimationDistance(distanceEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")

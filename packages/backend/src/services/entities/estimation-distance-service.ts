@@ -1,7 +1,7 @@
+import { type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
-  type MutationUpsertEstimationDistanceArgs,
   type QueryEstimationsDistanceArgs
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -83,16 +83,14 @@ export const buildEstimationDistanceService = ({
   };
 
   const createEstimationDistance = async (
-    input: MutationUpsertEstimationDistanceArgs,
+    input: UpsertDistanceEstimateInput,
     loggedUser: LoggedUser | null
   ): Promise<EstimationDistance> => {
     validateAuthorization(loggedUser);
 
-    const { data } = input;
-
     try {
       const upsertedEstimationDistance = await estimationDistanceRepository.createEstimationDistance({
-        ...data,
+        ...input,
         owner_id: loggedUser.id,
       });
 
@@ -107,12 +105,10 @@ export const buildEstimationDistanceService = ({
 
   const updateEstimationDistance = async (
     id: number,
-    input: MutationUpsertEstimationDistanceArgs,
+    input: UpsertDistanceEstimateInput,
     loggedUser: LoggedUser | null
   ): Promise<EstimationDistance> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
@@ -124,7 +120,7 @@ export const buildEstimationDistanceService = ({
     }
 
     try {
-      const upsertedEstimationDistance = await estimationDistanceRepository.updateEstimationDistance(id, data);
+      const upsertedEstimationDistance = await estimationDistanceRepository.updateEstimationDistance(id, input);
       
       return upsertedEstimationDistance;
     } catch (e) {

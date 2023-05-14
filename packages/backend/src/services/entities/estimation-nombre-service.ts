@@ -1,9 +1,7 @@
+import { type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import {
-  type MutationUpsertEstimationNombreArgs,
-  type QueryEstimationsNombreArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { type QueryEstimationsNombreArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type EstimationNombre,
@@ -81,16 +79,14 @@ export const buildEstimationNombreService = ({
   };
 
   const createEstimationNombre = async (
-    input: MutationUpsertEstimationNombreArgs,
+    input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null
   ): Promise<EstimationNombre> => {
     validateAuthorization(loggedUser);
 
-    const { data } = input;
-
     try {
       const upsertedEstimationNombre = await estimationNombreRepository.createEstimationNombre({
-        ...reshapeInputEstimationNombreUpsertData(data),
+        ...reshapeInputEstimationNombreUpsertData(input),
         owner_id: loggedUser.id,
       });
 
@@ -105,12 +101,10 @@ export const buildEstimationNombreService = ({
 
   const updateEstimationNombre = async (
     id: number,
-    input: MutationUpsertEstimationNombreArgs,
+    input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null
   ): Promise<EstimationNombre> => {
     validateAuthorization(loggedUser);
-
-    const { data } = input;
 
     // Check that the user is allowed to modify the existing data
     if (loggedUser?.role !== "admin") {
@@ -124,7 +118,7 @@ export const buildEstimationNombreService = ({
     try {
       const upsertedEstimationNombre = await estimationNombreRepository.updateEstimationNombre(
         id,
-        reshapeInputEstimationNombreUpsertData(data)
+        reshapeInputEstimationNombreUpsertData(input)
       );
 
       return upsertedEstimationNombre;

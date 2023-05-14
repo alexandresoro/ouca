@@ -1,13 +1,9 @@
+import { type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import {
-  EspecesOrderBy,
-  SortOrder,
-  type MutationUpsertEspeceArgs,
-  type QueryEspecesArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { EspecesOrderBy, SortOrder, type QueryEspecesArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
@@ -285,7 +281,7 @@ describe("Entities count by search criteria", () => {
 
 describe("Update of a species", () => {
   test("should be allowed when requested by an admin", async () => {
-    const speciesData = mock<MutationUpsertEspeceArgs>();
+    const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -304,7 +300,7 @@ describe("Update of a species", () => {
       ownerId: "notAdmin",
     });
 
-    const speciesData = mock<MutationUpsertEspeceArgs>();
+    const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -325,7 +321,7 @@ describe("Update of a species", () => {
       ownerId: "notAdmin",
     });
 
-    const speciesData = mock<MutationUpsertEspeceArgs>();
+    const speciesData = mock<UpsertSpeciesInput>();
 
     const user = {
       id: "Bob",
@@ -340,9 +336,7 @@ describe("Update of a species", () => {
   });
 
   test("should throw an error when trying to update to a species that exists", async () => {
-    const speciesData = mock<MutationUpsertEspeceArgs>({
-      id: 12,
-    });
+    const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -361,9 +355,7 @@ describe("Update of a species", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const speciesData = mock<MutationUpsertEspeceArgs>({
-      id: 12,
-    });
+    const speciesData = mock<UpsertSpeciesInput>();
 
     await expect(especeService.updateEspece(12, speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(especeRepository.updateEspece).not.toHaveBeenCalled();
@@ -372,9 +364,7 @@ describe("Update of a species", () => {
 
 describe("Creation of a species", () => {
   test("should create new species", async () => {
-    const speciesData = mock<MutationUpsertEspeceArgs>({
-      id: undefined,
-    });
+    const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -392,9 +382,7 @@ describe("Creation of a species", () => {
   });
 
   test("should throw an error when trying to create a species that already exists", async () => {
-    const speciesData = mock<MutationUpsertEspeceArgs>({
-      id: undefined,
-    });
+    const speciesData = mock<UpsertSpeciesInput>();
 
     const reshapedInputData = mock<EspeceCreateInput>();
     mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
@@ -416,9 +404,7 @@ describe("Creation of a species", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    const speciesData = mock<MutationUpsertEspeceArgs>({
-      id: undefined,
-    });
+    const speciesData = mock<UpsertSpeciesInput>();
 
     await expect(especeService.createEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(especeRepository.createEspece).not.toHaveBeenCalled();
