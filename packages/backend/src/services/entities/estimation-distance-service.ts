@@ -1,13 +1,13 @@
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import {
-    type MutationUpsertEstimationDistanceArgs,
-    type QueryEstimationsDistanceArgs
+  type MutationUpsertEstimationDistanceArgs,
+  type QueryEstimationsDistanceArgs
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-    type EstimationDistance,
-    type EstimationDistanceCreateInput
+  type EstimationDistance,
+  type EstimationDistanceCreateInput
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -82,49 +82,57 @@ export const buildEstimationDistanceService = ({
     return estimationDistanceRepository.getCount(q);
   };
 
-  const upsertEstimationDistance = async (
-    args: MutationUpsertEstimationDistanceArgs,
+  const createEstimationDistance = async (
+    input: MutationUpsertEstimationDistanceArgs,
     loggedUser: LoggedUser | null
   ): Promise<EstimationDistance> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedEstimationDistance: EstimationDistance;
+    try {
+      const upsertedEstimationDistance = await estimationDistanceRepository.createEstimationDistance({
+        ...data,
+        owner_id: loggedUser.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await estimationDistanceRepository.findEstimationDistanceById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedEstimationDistance;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedEstimationDistance = await estimationDistanceRepository.updateEstimationDistance(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedEstimationDistance = await estimationDistanceRepository.createEstimationDistance({
-          ...data,
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateEstimationDistance = async (
+    id: number,
+    input: MutationUpsertEstimationDistanceArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<EstimationDistance> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await estimationDistanceRepository.findEstimationDistanceById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedEstimationDistance;
+    try {
+      const upsertedEstimationDistance = await estimationDistanceRepository.updateEstimationDistance(id, data);
+      
+      return upsertedEstimationDistance;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteEstimationDistance = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationDistance> => {
@@ -160,7 +168,8 @@ export const buildEstimationDistanceService = ({
     findAllEstimationsDistance,
     findPaginatedEstimationsDistance,
     getEstimationsDistanceCount,
-    upsertEstimationDistance,
+    createEstimationDistance,
+    updateEstimationDistance,
     deleteEstimationDistance,
     createEstimationsDistance,
   };

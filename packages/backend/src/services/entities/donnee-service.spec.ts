@@ -429,7 +429,7 @@ describe("Update of a data", () => {
     const reshapedInputData = mock<DonneeCreateInput>();
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    await donneeService.upsertDonnee(dataData, loggedUser);
+    await donneeService.updateDonnee(12, dataData, loggedUser);
 
     expect(donneeRepository.updateDonnee).toHaveBeenCalledTimes(1);
     expect(donneeRepository.updateDonnee).toHaveBeenLastCalledWith(12, any(), any());
@@ -464,7 +464,7 @@ describe("Update of a data", () => {
       })
     );
 
-    await expect(donneeService.upsertDonnee(dataData, loggedUser)).rejects.toEqual(
+    await expect(donneeService.updateDonnee(12, dataData, loggedUser)).rejects.toEqual(
       new OucaError("OUCA0004", {
         code: "OUCA0004",
         message: "Cette donnée existe déjà (ID = 345).",
@@ -478,94 +478,24 @@ describe("Update of a data", () => {
       id: 12,
     });
 
-    await expect(donneeService.upsertDonnee(dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(donneeService.updateDonnee(12, dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(donneeRepository.createDonnee).not.toHaveBeenCalled();
   });
 });
 
 describe("Creation of a data", () => {
-  test("should create new data", async () => {
-    const dataData: MutationUpsertDonneeArgs = mock<MutationUpsertDonneeArgs>({
-      id: undefined,
-      data: {
-        comportementsIds: [2, 3],
-        milieuxIds: [4, 5],
-      },
-    });
-
-    const loggedUser = mock<LoggedUser>();
-
-    donneeRepository.findExistingDonnee.mockResolvedValueOnce(null);
-    donneeRepository.createDonnee.mockResolvedValueOnce(
-      mock<Donnee>({
-        id: 322,
-      })
-    );
-
-    const reshapedInputData = mock<DonneeCreateInput>();
-    reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
-
-    await donneeService.upsertDonnee(dataData, loggedUser);
-
-    expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
-    expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
-    expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
-      322,
-      expect.arrayContaining([2, 3]),
-      anyObject()
-    );
-    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
-    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(
-      322,
-      expect.arrayContaining([4, 5]),
-      anyObject()
-    );
-  });
-
-  test("should throw an error when trying to create a data that already exists", async () => {
-    const dataData = mock<MutationUpsertDonneeArgs>({
-      id: undefined,
-    });
-
-    const loggedUser = mock<LoggedUser>();
-
-    donneeRepository.findExistingDonnee.mockResolvedValueOnce(
-      mock<Donnee>({
-        id: 345,
-      })
-    );
-
-    await expect(donneeService.upsertDonnee(dataData, loggedUser)).rejects.toEqual(
-      new OucaError("OUCA0004", {
-        code: "OUCA0004",
-        message: "Cette donnée existe déjà (ID = 345).",
-      })
-    );
-    expect(donneeRepository.createDonnee).not.toHaveBeenCalled();
-  });
-
-  test("should throw an error when the requester is not logged", async () => {
-    const dataData = mock<MutationUpsertDonneeArgs>({
-      id: undefined,
-    });
-
-    await expect(donneeService.upsertDonnee(dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
-    expect(donneeRepository.createDonnee).not.toHaveBeenCalled();
-  });
-});
-
-describe("Direct creation of a data", () => {
   test("should create new data without behaviors or environments", async () => {
     const dataData = mock<InputDonnee>({
       comportementsIds: null,
       milieuxIds: null,
     });
 
+    const loggedUser = mock<LoggedUser>();
+
     const reshapedInputData = mock<DonneeCreateInput>();
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    await donneeService.createDonnee(dataData);
+    await donneeService.createDonnee(dataData, loggedUser);
 
     expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
     expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
@@ -579,6 +509,8 @@ describe("Direct creation of a data", () => {
       milieuxIds: null,
     });
 
+    const loggedUser = mock<LoggedUser>();
+
     const reshapedInputData = mock<DonneeCreateInput>();
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
     donneeRepository.createDonnee.mockResolvedValueOnce(
@@ -587,7 +519,7 @@ describe("Direct creation of a data", () => {
       })
     );
 
-    await donneeService.createDonnee(dataData);
+    await donneeService.createDonnee(dataData, loggedUser);
 
     expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
     expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
@@ -606,6 +538,8 @@ describe("Direct creation of a data", () => {
       milieuxIds: [2, 3],
     });
 
+    const loggedUser = mock<LoggedUser>();
+
     const reshapedInputData = mock<DonneeCreateInput>();
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
     donneeRepository.createDonnee.mockResolvedValueOnce(
@@ -614,7 +548,7 @@ describe("Direct creation of a data", () => {
       })
     );
 
-    await donneeService.createDonnee(dataData);
+    await donneeService.createDonnee(dataData, loggedUser);
 
     expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
     expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());

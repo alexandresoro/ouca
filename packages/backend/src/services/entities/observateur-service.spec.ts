@@ -210,10 +210,10 @@ describe("Update of an observer", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await observateurService.upsertObservateur(observerData, loggedUser);
+    await observateurService.updateObservateur(12, observerData, loggedUser);
 
     expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
-    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(observerData.id, observerData.data);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -227,10 +227,10 @@ describe("Update of an observer", () => {
 
     observateurRepository.findObservateurById.mockResolvedValueOnce(existingData);
 
-    await observateurService.upsertObservateur(observerData, loggedUser);
+    await observateurService.updateObservateur(12, observerData, loggedUser);
 
     expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
-    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(observerData.id, observerData.data);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData.data);
   });
 
   test("should throw an error when requested by an use that is nor owner nor admin", async () => {
@@ -247,7 +247,7 @@ describe("Update of an observer", () => {
 
     observateurRepository.findObservateurById.mockResolvedValueOnce(existingData);
 
-    await expect(observateurService.upsertObservateur(observerData, user)).rejects.toThrowError(
+    await expect(observateurService.updateObservateur(12, observerData, user)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
@@ -263,12 +263,12 @@ describe("Update of an observer", () => {
 
     observateurRepository.updateObservateur.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => observateurService.upsertObservateur(observerData, loggedUser)).rejects.toThrowError(
+    await expect(() => observateurService.updateObservateur(12, observerData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(observateurRepository.updateObservateur).toHaveBeenCalledTimes(1);
-    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(observerData.id, observerData.data);
+    expect(observateurRepository.updateObservateur).toHaveBeenLastCalledWith(12, observerData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -276,7 +276,9 @@ describe("Update of an observer", () => {
       id: 12,
     });
 
-    await expect(observateurService.upsertObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(observateurService.updateObservateur(12, observerData, null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
     expect(observateurRepository.updateObservateur).not.toHaveBeenCalled();
   });
 });
@@ -289,7 +291,7 @@ describe("Creation of an observer", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await observateurService.upsertObservateur(observerData, loggedUser);
+    await observateurService.createObservateur(observerData, loggedUser);
 
     expect(observateurRepository.createObservateur).toHaveBeenCalledTimes(1);
     expect(observateurRepository.createObservateur).toHaveBeenLastCalledWith({
@@ -307,7 +309,7 @@ describe("Creation of an observer", () => {
 
     observateurRepository.createObservateur.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => observateurService.upsertObservateur(observerData, loggedUser)).rejects.toThrowError(
+    await expect(() => observateurService.createObservateur(observerData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -323,7 +325,7 @@ describe("Creation of an observer", () => {
       id: undefined,
     });
 
-    await expect(observateurService.upsertObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(observateurService.createObservateur(observerData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(observateurRepository.createObservateur).not.toHaveBeenCalled();
   });
 });

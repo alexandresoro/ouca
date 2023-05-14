@@ -97,46 +97,54 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     });
   };
 
-  const upsertEspece = async (args: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
+  const createEspece = async (input: MutationUpsertEspeceArgs, loggedUser: LoggedUser | null): Promise<Espece> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedEspece: Espece;
+    try {
+      const upsertedEspece = await especeRepository.createEspece({
+        ...reshapeInputEspeceUpsertData(data),
+        owner_id: loggedUser?.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await especeRepository.findEspeceById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedEspece;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedEspece = await especeRepository.updateEspece(id, reshapeInputEspeceUpsertData(data));
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedEspece = await especeRepository.createEspece({
-          ...reshapeInputEspeceUpsertData(data),
-          owner_id: loggedUser?.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateEspece = async (
+    id: number,
+    input: MutationUpsertEspeceArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Espece> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await especeRepository.findEspeceById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedEspece;
+    try {
+      const upsertedEspece = await especeRepository.updateEspece(id, reshapeInputEspeceUpsertData(data));
+
+      return upsertedEspece;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece> => {
@@ -173,7 +181,8 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     findAllEspecesWithClasses,
     findPaginatedEspeces,
     getEspecesCount,
-    upsertEspece,
+    createEspece,
+    updateEspece,
     deleteEspece,
     createEspeces,
   };

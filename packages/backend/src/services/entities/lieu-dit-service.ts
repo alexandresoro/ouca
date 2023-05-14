@@ -90,46 +90,54 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     return lieuditRepository.getCount(q, townId);
   };
 
-  const upsertLieuDit = async (args: MutationUpsertLieuDitArgs, loggedUser: LoggedUser | null): Promise<Lieudit> => {
+  const createLieuDit = async (input: MutationUpsertLieuDitArgs, loggedUser: LoggedUser | null): Promise<Lieudit> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedLieudit: Lieudit;
+    try {
+      const upsertedLieudit = await lieuditRepository.createLieudit({
+        ...reshapeInputLieuditUpsertData(data),
+        owner_id: loggedUser.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await lieuditRepository.findLieuditById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedLieudit;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedLieudit = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(data));
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedLieudit = await lieuditRepository.createLieudit({
-          ...reshapeInputLieuditUpsertData(data),
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateLieuDit = async (
+    id: number,
+    input: MutationUpsertLieuDitArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Lieudit> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await lieuditRepository.findLieuditById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedLieudit;
+    try {
+      const upsertedLieudit = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(data));
+
+      return upsertedLieudit;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Lieudit> => {
@@ -166,7 +174,8 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     findAllLieuxDitsWithCommuneAndDepartement,
     findPaginatedLieuxDits,
     getLieuxDitsCount,
-    upsertLieuDit,
+    createLieuDit,
+    updateLieuDit,
     deleteLieuDit,
     createLieuxDits,
   };

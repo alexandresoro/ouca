@@ -80,52 +80,60 @@ export const buildEstimationNombreService = ({
     return estimationNombreRepository.getCount(q);
   };
 
-  const upsertEstimationNombre = async (
-    args: MutationUpsertEstimationNombreArgs,
+  const createEstimationNombre = async (
+    input: MutationUpsertEstimationNombreArgs,
     loggedUser: LoggedUser | null
   ): Promise<EstimationNombre> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedEstimationNombre: EstimationNombre;
+    try {
+      const upsertedEstimationNombre = await estimationNombreRepository.createEstimationNombre({
+        ...reshapeInputEstimationNombreUpsertData(data),
+        owner_id: loggedUser.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await estimationNombreRepository.findEstimationNombreById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedEstimationNombre;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedEstimationNombre = await estimationNombreRepository.updateEstimationNombre(
-          id,
-          reshapeInputEstimationNombreUpsertData(data)
-        );
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedEstimationNombre = await estimationNombreRepository.createEstimationNombre({
-          ...reshapeInputEstimationNombreUpsertData(data),
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateEstimationNombre = async (
+    id: number,
+    input: MutationUpsertEstimationNombreArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<EstimationNombre> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await estimationNombreRepository.findEstimationNombreById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedEstimationNombre;
+    try {
+      const upsertedEstimationNombre = await estimationNombreRepository.updateEstimationNombre(
+        id,
+        reshapeInputEstimationNombreUpsertData(data)
+      );
+
+      return upsertedEstimationNombre;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationNombre> => {
@@ -161,7 +169,8 @@ export const buildEstimationNombreService = ({
     findAllEstimationsNombre,
     findPaginatedEstimationsNombre,
     getEstimationsNombreCount,
-    upsertEstimationNombre,
+    createEstimationNombre,
+    updateEstimationNombre,
     deleteEstimationNombre,
     createEstimationsNombre,
   };

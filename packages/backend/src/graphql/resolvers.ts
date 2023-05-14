@@ -303,7 +303,12 @@ export const buildResolvers = ({
         donnee?: DonneeEntity;
       }> => {
         try {
-          const upsertedDonnee = await donneeService.upsertDonnee(args, user);
+          let upsertedDonnee;
+          if (args.id) {
+            upsertedDonnee = await donneeService.updateDonnee(args.id, args, user);
+          } else {
+            upsertedDonnee = await donneeService.createDonnee(args.data, user);
+          }
           return {
             donnee: upsertedDonnee,
           };
@@ -315,13 +320,25 @@ export const buildResolvers = ({
         }
       },
       upsertEspece: async (_source, args, { user }): Promise<Omit<Espece, "classe">> => {
-        return especeService.upsertEspece(args, user);
+        if (args.id) {
+          return especeService.updateEspece(args.id, args, user);
+        } else {
+          return especeService.createEspece(args, user);
+        }
       },
       upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
-        return estimationDistanceService.upsertEstimationDistance(args, user);
+        if (args.id) {
+          return estimationDistanceService.updateEstimationDistance(args.id, args, user);
+        } else {
+          return estimationDistanceService.createEstimationDistance(args, user);
+        }
       },
       upsertEstimationNombre: async (_source, args, { user }): Promise<EstimationNombre> => {
-        return estimationNombreService.upsertEstimationNombre(args, user);
+        if (args.id) {
+          return estimationNombreService.updateEstimationNombre(args.id, args, user);
+        } else {
+          return estimationNombreService.createEstimationNombre(args, user);
+        }
       },
       upsertInventaire: async (
         _source,
@@ -332,7 +349,12 @@ export const buildResolvers = ({
         inventaire?: InventaireEntity;
       }> => {
         try {
-          const upsertedInventaire = await inventaireService.upsertInventaire(args, user);
+          let upsertedInventaire;
+          if (args.id) {
+            upsertedInventaire = await inventaireService.updateInventaire(args.id, args, user);
+          } else {
+            upsertedInventaire = await inventaireService.createInventaire(args, user);
+          }
           return {
             inventaire: upsertedInventaire,
           };
@@ -344,16 +366,32 @@ export const buildResolvers = ({
         }
       },
       upsertLieuDit: async (_source, args, { user }): Promise<Lieudit> => {
-        return lieuditService.upsertLieuDit(args, user);
+        if (args.id) {
+          return lieuditService.updateLieuDit(args.id, args, user);
+        } else {
+          return lieuditService.createLieuDit(args, user);
+        }
       },
       upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {
-        return meteoService.upsertMeteo(args, user);
+        if (args.id) {
+          return meteoService.updateMeteo(args.id, args, user);
+        } else {
+          return meteoService.createMeteo(args, user);
+        }
       },
       upsertMilieu: async (_source, args, { user }): Promise<Milieu> => {
-        return milieuService.upsertMilieu(args, user);
+        if (args.id) {
+          return milieuService.updateMilieu(args.id, args, user);
+        } else {
+          return milieuService.createMilieu(args, user);
+        }
       },
       upsertObservateur: async (_source, args, { user }): Promise<Observateur> => {
-        return observateurService.upsertObservateur(args, user);
+        if (args.id) {
+          return observateurService.updateObservateur(args.id, args, user);
+        } else {
+          return observateurService.createObservateur(args, user);
+        }
       },
     },
     Age: {

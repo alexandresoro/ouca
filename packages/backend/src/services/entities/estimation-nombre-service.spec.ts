@@ -211,14 +211,11 @@ describe("Update of a number estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser);
+    await estimationNombreService.updateEstimationNombre(12, numberEstimateData, loggedUser);
 
     expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
-    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(
-      numberEstimateData.id,
-      reshapedInputData
-    );
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should be allowed when requested by the owner ", async () => {
@@ -235,14 +232,11 @@ describe("Update of a number estimate", () => {
 
     estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(existingData);
 
-    await estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser);
+    await estimationNombreService.updateEstimationNombre(12, numberEstimateData, loggedUser);
 
     expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
-    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(
-      numberEstimateData.id,
-      reshapedInputData
-    );
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -259,7 +253,7 @@ describe("Update of a number estimate", () => {
 
     estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(existingData);
 
-    await expect(estimationNombreService.upsertEstimationNombre(numberEstimateData, user)).rejects.toThrowError(
+    await expect(estimationNombreService.updateEstimationNombre(12, numberEstimateData, user)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
@@ -279,15 +273,12 @@ describe("Update of a number estimate", () => {
     estimationNombreRepository.updateEstimationNombre.mockImplementation(uniqueConstraintFailed);
 
     await expect(() =>
-      estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser)
+      estimationNombreService.updateEstimationNombre(12, numberEstimateData, loggedUser)
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
     expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
-    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(
-      numberEstimateData.id,
-      reshapedInputData
-    );
+    expect(estimationNombreRepository.updateEstimationNombre).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -295,7 +286,7 @@ describe("Update of a number estimate", () => {
       id: 12,
     });
 
-    await expect(estimationNombreService.upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(
+    await expect(estimationNombreService.updateEstimationNombre(12, numberEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
     expect(estimationNombreRepository.updateEstimationNombre).not.toHaveBeenCalled();
@@ -313,7 +304,7 @@ describe("Creation of a number estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser);
+    await estimationNombreService.createEstimationNombre(numberEstimateData, loggedUser);
 
     expect(estimationNombreRepository.createEstimationNombre).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEstimationNombreUpsertData).toHaveBeenCalledTimes(1);
@@ -336,7 +327,7 @@ describe("Creation of a number estimate", () => {
     estimationNombreRepository.createEstimationNombre.mockImplementation(uniqueConstraintFailed);
 
     await expect(() =>
-      estimationNombreService.upsertEstimationNombre(numberEstimateData, loggedUser)
+      estimationNombreService.createEstimationNombre(numberEstimateData, loggedUser)
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
     expect(estimationNombreRepository.createEstimationNombre).toHaveBeenCalledTimes(1);
@@ -352,7 +343,7 @@ describe("Creation of a number estimate", () => {
       id: undefined,
     });
 
-    await expect(estimationNombreService.upsertEstimationNombre(numberEstimateData, null)).rejects.toEqual(
+    await expect(estimationNombreService.createEstimationNombre(numberEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
     expect(estimationNombreRepository.createEstimationNombre).not.toHaveBeenCalled();

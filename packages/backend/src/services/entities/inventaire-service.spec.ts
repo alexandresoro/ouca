@@ -119,7 +119,7 @@ describe("Update of an inventory", () => {
         })
       );
 
-      await expect(inventaireService.upsertInventaire(inventoryData, loggedUser)).rejects.toEqual({
+      await expect(inventaireService.updateInventaire(12, inventoryData, loggedUser)).rejects.toEqual({
         inventaireExpectedToBeUpdated: 12,
         correspondingInventaireFound: 345,
       });
@@ -142,7 +142,7 @@ describe("Update of an inventory", () => {
         })
       );
 
-      const result = await inventaireService.upsertInventaire(inventoryData, loggedUser);
+      const result = await inventaireService.updateInventaire(12, inventoryData, loggedUser);
 
       expect(donneeRepository.updateAssociatedInventaire).toHaveBeenCalledTimes(1);
       expect(donneeRepository.updateAssociatedInventaire).toHaveBeenCalledWith(12, 345, any());
@@ -156,7 +156,9 @@ describe("Update of an inventory", () => {
         id: 12,
       });
 
-      await expect(inventaireService.upsertInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+      await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
+        new OucaError("OUCA0001")
+      );
       expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
@@ -183,7 +185,7 @@ describe("Update of an inventory", () => {
       const reshapedInputData = mock<InventaireCreateInput>();
       reshapeInputInventaireUpsertData.mockReturnValueOnce(reshapedInputData);
 
-      await inventaireService.upsertInventaire(inventoryData, loggedUser);
+      await inventaireService.updateInventaire(12, inventoryData, loggedUser);
 
       expect(inventaireRepository.updateInventaire).toHaveBeenCalledTimes(1);
       expect(inventaireRepository.updateInventaire).toHaveBeenLastCalledWith(12, any(), any());
@@ -210,7 +212,9 @@ describe("Update of an inventory", () => {
         id: 12,
       });
 
-      await expect(inventaireService.upsertInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+      await expect(inventaireService.updateInventaire(12, inventoryData, null)).rejects.toEqual(
+        new OucaError("OUCA0001")
+      );
       expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
@@ -231,7 +235,7 @@ describe("Creation of an inventory", () => {
         })
       );
 
-      const result = await inventaireService.upsertInventaire(inventoryData, loggedUser);
+      const result = await inventaireService.createInventaire(inventoryData, loggedUser);
 
       expect(donneeRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
       expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
@@ -243,7 +247,7 @@ describe("Creation of an inventory", () => {
         id: undefined,
       });
 
-      await expect(inventaireService.upsertInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+      await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
       expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });
@@ -270,7 +274,7 @@ describe("Creation of an inventory", () => {
       const reshapedInputData = mock<InventaireCreateInput>();
       reshapeInputInventaireUpsertData.mockReturnValueOnce(reshapedInputData);
 
-      await inventaireService.upsertInventaire(inventoryData, loggedUser);
+      await inventaireService.createInventaire(inventoryData, loggedUser);
 
       expect(inventaireRepository.createInventaire).toHaveBeenCalledTimes(1);
       expect(inventaireRepository.createInventaire).toHaveBeenLastCalledWith(any(), any());
@@ -286,7 +290,7 @@ describe("Creation of an inventory", () => {
         id: undefined,
       });
 
-      await expect(inventaireService.upsertInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+      await expect(inventaireService.createInventaire(inventoryData, null)).rejects.toEqual(new OucaError("OUCA0001"));
       expect(inventaireRepository.findExistingInventaire).not.toHaveBeenCalled();
     });
   });

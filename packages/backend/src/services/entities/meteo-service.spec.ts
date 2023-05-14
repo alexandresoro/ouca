@@ -186,10 +186,10 @@ describe("Update of an weather", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await meteoService.upsertMeteo(weatherData, loggedUser);
+    await meteoService.updateMeteo(12, weatherData, loggedUser);
 
     expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(weatherData.id, weatherData.data);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -203,10 +203,10 @@ describe("Update of an weather", () => {
 
     meteoRepository.findMeteoById.mockResolvedValueOnce(existingData);
 
-    await meteoService.upsertMeteo(weatherData, loggedUser);
+    await meteoService.updateMeteo(12, weatherData, loggedUser);
 
     expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(weatherData.id, weatherData.data);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData.data);
   });
 
   test("should throw an error when requested by an use that is nor owner nor admin", async () => {
@@ -223,7 +223,7 @@ describe("Update of an weather", () => {
 
     meteoRepository.findMeteoById.mockResolvedValueOnce(existingData);
 
-    await expect(meteoService.upsertMeteo(weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(meteoService.updateMeteo(12, weatherData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(meteoRepository.updateMeteo).not.toHaveBeenCalled();
   });
@@ -237,12 +237,12 @@ describe("Update of an weather", () => {
 
     meteoRepository.updateMeteo.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => meteoService.upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
+    await expect(() => meteoService.updateMeteo(12, weatherData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(meteoRepository.updateMeteo).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(weatherData.id, weatherData.data);
+    expect(meteoRepository.updateMeteo).toHaveBeenLastCalledWith(12, weatherData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -250,7 +250,7 @@ describe("Update of an weather", () => {
       id: 12,
     });
 
-    await expect(meteoService.upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(meteoService.updateMeteo(12, weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(meteoRepository.updateMeteo).not.toHaveBeenCalled();
   });
 });
@@ -263,7 +263,7 @@ describe("Creation of an weather", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await meteoService.upsertMeteo(weatherData, loggedUser);
+    await meteoService.createMeteo(weatherData, loggedUser);
 
     expect(meteoRepository.createMeteo).toHaveBeenCalledTimes(1);
     expect(meteoRepository.createMeteo).toHaveBeenLastCalledWith({
@@ -281,7 +281,7 @@ describe("Creation of an weather", () => {
 
     meteoRepository.createMeteo.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => meteoService.upsertMeteo(weatherData, loggedUser)).rejects.toThrowError(
+    await expect(() => meteoService.createMeteo(weatherData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -297,7 +297,7 @@ describe("Creation of an weather", () => {
       id: undefined,
     });
 
-    await expect(meteoService.upsertMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(meteoService.createMeteo(weatherData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(meteoRepository.createMeteo).not.toHaveBeenCalled();
   });
 });

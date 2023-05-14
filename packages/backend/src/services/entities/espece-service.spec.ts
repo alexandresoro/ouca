@@ -292,11 +292,11 @@ describe("Update of a species", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await especeService.upsertEspece(speciesData, loggedUser);
+    await especeService.updateEspece(12, speciesData, loggedUser);
 
     expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
-    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(speciesData.id, reshapedInputData);
+    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -313,11 +313,11 @@ describe("Update of a species", () => {
 
     especeRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
-    await especeService.upsertEspece(speciesData, loggedUser);
+    await especeService.updateEspece(12, speciesData, loggedUser);
 
     expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
-    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(speciesData.id, reshapedInputData);
+    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -334,7 +334,7 @@ describe("Update of a species", () => {
 
     especeRepository.findEspeceById.mockResolvedValueOnce(existingData);
 
-    await expect(especeService.upsertEspece(speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(especeService.updateEspece(12, speciesData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(especeRepository.updateEspece).not.toHaveBeenCalled();
   });
@@ -351,13 +351,13 @@ describe("Update of a species", () => {
 
     especeRepository.updateEspece.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => especeService.upsertEspece(speciesData, loggedUser)).rejects.toThrowError(
+    await expect(() => especeService.updateEspece(12, speciesData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
-    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(speciesData.id, reshapedInputData);
+    expect(especeRepository.updateEspece).toHaveBeenLastCalledWith(12, reshapedInputData);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -365,7 +365,7 @@ describe("Update of a species", () => {
       id: 12,
     });
 
-    await expect(especeService.upsertEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(especeService.updateEspece(12, speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(especeRepository.updateEspece).not.toHaveBeenCalled();
   });
 });
@@ -381,7 +381,7 @@ describe("Creation of a species", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await especeService.upsertEspece(speciesData, loggedUser);
+    await especeService.createEspece(speciesData, loggedUser);
 
     expect(especeRepository.createEspece).toHaveBeenCalledTimes(1);
     expect(mockedReshapeInputEspeceUpsertData).toHaveBeenCalledTimes(1);
@@ -403,7 +403,7 @@ describe("Creation of a species", () => {
 
     especeRepository.createEspece.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => especeService.upsertEspece(speciesData, loggedUser)).rejects.toThrowError(
+    await expect(() => especeService.createEspece(speciesData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -420,7 +420,7 @@ describe("Creation of a species", () => {
       id: undefined,
     });
 
-    await expect(especeService.upsertEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(especeService.createEspece(speciesData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(especeRepository.createEspece).not.toHaveBeenCalled();
   });
 });

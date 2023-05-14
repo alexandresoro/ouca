@@ -80,48 +80,56 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     return meteoRepository.getCount(q);
   };
 
-  const upsertMeteo = async (args: MutationUpsertMeteoArgs, loggedUser: LoggedUser | null): Promise<Meteo> => {
+  const createMeteo = async (input: MutationUpsertMeteoArgs, loggedUser: LoggedUser | null): Promise<Meteo> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedMeteo: Meteo;
+    // Create a new weather
+    try {
+      const upsertedMeteo = await meteoRepository.createMeteo({
+        ...data,
+        owner_id: loggedUser?.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser.role !== "admin") {
-        const existingData = await meteoRepository.findMeteoById(id);
-
-        if (existingData?.ownerId !== loggedUser.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedMeteo;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      // Update an existing weather
-      try {
-        upsertedMeteo = await meteoRepository.updateMeteo(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      // Create a new weather
-      try {
-        upsertedMeteo = await meteoRepository.createMeteo({
-          ...data,
-          owner_id: loggedUser?.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateMeteo = async (
+    id: number,
+    input: MutationUpsertMeteoArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Meteo> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser.role !== "admin") {
+      const existingData = await meteoRepository.findMeteoById(id);
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedMeteo;
+    // Update an existing weather
+    try {
+      const upsertedMeteo = await meteoRepository.updateMeteo(id, data);
+
+      return upsertedMeteo;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Meteo> => {
@@ -158,7 +166,8 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     findAllMeteos,
     findPaginatedMeteos,
     getMeteosCount,
-    upsertMeteo,
+    createMeteo,
+    updateMeteo,
     deleteMeteo,
     createMeteos,
   };

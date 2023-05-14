@@ -186,10 +186,10 @@ describe("Update of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await milieuService.upsertMilieu(environmentData, loggedUser);
+    await milieuService.updateMilieu(12, environmentData, loggedUser);
 
     expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
-    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(environmentData.id, environmentData.data);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData.data);
   });
 
   test("should be allowed when requested by the owner", async () => {
@@ -203,10 +203,10 @@ describe("Update of an environment", () => {
 
     milieuRepository.findMilieuById.mockResolvedValueOnce(existingData);
 
-    await milieuService.upsertMilieu(environmentData, loggedUser);
+    await milieuService.updateMilieu(12, environmentData, loggedUser);
 
     expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
-    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(environmentData.id, environmentData.data);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData.data);
   });
 
   test("should throw an error when requested by an user that is nor owner nor admin", async () => {
@@ -223,7 +223,7 @@ describe("Update of an environment", () => {
 
     milieuRepository.findMilieuById.mockResolvedValueOnce(existingData);
 
-    await expect(milieuService.upsertMilieu(environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
+    await expect(milieuService.updateMilieu(12, environmentData, user)).rejects.toThrowError(new OucaError("OUCA0001"));
 
     expect(milieuRepository.updateMilieu).not.toHaveBeenCalled();
   });
@@ -237,12 +237,12 @@ describe("Update of an environment", () => {
 
     milieuRepository.updateMilieu.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => milieuService.upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
+    await expect(() => milieuService.updateMilieu(12, environmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
     expect(milieuRepository.updateMilieu).toHaveBeenCalledTimes(1);
-    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(environmentData.id, environmentData.data);
+    expect(milieuRepository.updateMilieu).toHaveBeenLastCalledWith(12, environmentData.data);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -250,7 +250,7 @@ describe("Update of an environment", () => {
       id: 12,
     });
 
-    await expect(milieuService.upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.updateMilieu(12, environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(milieuRepository.updateMilieu).not.toHaveBeenCalled();
   });
 });
@@ -263,7 +263,7 @@ describe("Creation of an environment", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await milieuService.upsertMilieu(environmentData, loggedUser);
+    await milieuService.createMilieu(environmentData, loggedUser);
 
     expect(milieuRepository.createMilieu).toHaveBeenCalledTimes(1);
     expect(milieuRepository.createMilieu).toHaveBeenLastCalledWith({
@@ -281,7 +281,7 @@ describe("Creation of an environment", () => {
 
     milieuRepository.createMilieu.mockImplementation(uniqueConstraintFailed);
 
-    await expect(() => milieuService.upsertMilieu(environmentData, loggedUser)).rejects.toThrowError(
+    await expect(() => milieuService.createMilieu(environmentData, loggedUser)).rejects.toThrowError(
       new OucaError("OUCA0004", uniqueConstraintFailedError)
     );
 
@@ -297,7 +297,7 @@ describe("Creation of an environment", () => {
       id: undefined,
     });
 
-    await expect(milieuService.upsertMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.createMilieu(environmentData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(milieuRepository.createMilieu).not.toHaveBeenCalled();
   });
 });

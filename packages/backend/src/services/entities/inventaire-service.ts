@@ -52,13 +52,71 @@ export const buildInventaireService = ({
     return [...inventaires];
   };
 
-  const upsertInventaire = async (
-    args: MutationUpsertInventaireArgs,
+  const createInventaire = async (
+    input: MutationUpsertInventaireArgs,
     loggedUser: LoggedUser | null
   ): Promise<Inventaire> => {
     validateAuthorization(loggedUser);
 
-    const { id, data, migrateDonneesIfMatchesExistingInventaire = false } = args;
+    const { data } = input;
+    const { associesIds, meteosIds } = data;
+
+    // Check if an exact same inventaire already exists or not
+    const existingInventaire = await inventaireRepository.findExistingInventaire({
+      ...reshapeInputInventaireUpsertData(data),
+      associesIds: associesIds ?? [],
+      meteosIds: meteosIds ?? [],
+    });
+
+    if (existingInventaire) {
+      // The inventaire we wish to create has already an existing equivalent
+      // So now it depends on what we wished to do initially
+
+      // We wished to create an inventaire but we already found one,
+      // so we won't create anything and simply return the existing one
+      return existingInventaire;
+    } else {
+      // The inventaire we wish to create does not have an equivalent existing one
+      // In that case, we proceed as a classic create
+
+      // Create a new inventaire
+      const createdInventaire = await slonik.transaction(async (transactionConnection) => {
+        const createdInventaire = await inventaireRepository.createInventaire(
+          reshapeInputInventaireUpsertData(data, loggedUser.id),
+          transactionConnection
+        );
+
+        if (associesIds?.length) {
+          await inventaireAssocieRepository.insertInventaireWithAssocies(
+            createdInventaire.id,
+            associesIds,
+            transactionConnection
+          );
+        }
+
+        if (meteosIds?.length) {
+          await inventaireMeteoRepository.insertInventaireWithMeteos(
+            createdInventaire.id,
+            meteosIds,
+            transactionConnection
+          );
+        }
+
+        return createdInventaire;
+      });
+
+      return createdInventaire;
+    }
+  };
+
+  const updateInventaire = async (
+    id: number,
+    input: MutationUpsertInventaireArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Inventaire> => {
+    validateAuthorization(loggedUser);
+
+    const { data, migrateDonneesIfMatchesExistingInventaire = false } = input;
     const { associesIds, meteosIds } = data;
 
     // Check if an exact same inventaire already exists or not
@@ -72,7 +130,7 @@ export const buildInventaireService = ({
       // The inventaire we wish to upsert has already an existing equivalent
       // So now it depends on what we wished to do initially
 
-      if (id && !migrateDonneesIfMatchesExistingInventaire) {
+      if (!migrateDonneesIfMatchesExistingInventaire) {
         // This is the tricky case
         // We had an existing inventaire A that we expected to update
         // Meanwhile we found that the new values correspond to another already inventaire B
@@ -88,78 +146,46 @@ export const buildInventaireService = ({
         return Promise.reject(upsertInventaireFailureReason);
       }
 
-      if (id) {
-        // In that case, the user explicitely requested that the donnees of inventaire A
-        // should now be linked to inventaire B if matches
+      // In that case, the user explicitely requested that the donnees of inventaire A
+      // should now be linked to inventaire B if matches
 
-        // We update the inventaire ID for the donnees and we delete the duplicated inventaire
-        await slonik.transaction(async (transactionConnection) => {
-          await donneeRepository.updateAssociatedInventaire(id, existingInventaire.id, transactionConnection);
-          await inventaireRepository.deleteInventaireById(id, transactionConnection);
-        });
-      }
+      // We update the inventaire ID for the donnees and we delete the duplicated inventaire
+      await slonik.transaction(async (transactionConnection) => {
+        await donneeRepository.updateAssociatedInventaire(id, existingInventaire.id, transactionConnection);
+        await inventaireRepository.deleteInventaireById(id, transactionConnection);
+      });
 
       // We wished to create an inventaire but we already found one,
       // so we won't create anything and simply return the existing one
       return existingInventaire;
     } else {
-      // The inventaire we wish to upsert does not have an equivalent existing one
-      // In that case, we proceed as a classic upsert
+      // The inventaire we wish to update does not have an equivalent existing one
+      // In that case, we proceed as a classic update
 
-      if (id) {
-        // Update an existing inventaire
-        const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
-          const updatedInventaire = await inventaireRepository.updateInventaire(
-            id,
-            reshapeInputInventaireUpsertData(data, loggedUser.id),
-            transactionConnection
-          );
+      // Update an existing inventaire
+      const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
+        const updatedInventaire = await inventaireRepository.updateInventaire(
+          id,
+          reshapeInputInventaireUpsertData(data, loggedUser.id),
+          transactionConnection
+        );
 
-          await inventaireAssocieRepository.deleteAssociesOfInventaireId(id, transactionConnection);
+        await inventaireAssocieRepository.deleteAssociesOfInventaireId(id, transactionConnection);
 
-          if (associesIds?.length) {
-            await inventaireAssocieRepository.insertInventaireWithAssocies(id, associesIds, transactionConnection);
-          }
+        if (associesIds?.length) {
+          await inventaireAssocieRepository.insertInventaireWithAssocies(id, associesIds, transactionConnection);
+        }
 
-          await inventaireMeteoRepository.deleteMeteosOfInventaireId(id, transactionConnection);
+        await inventaireMeteoRepository.deleteMeteosOfInventaireId(id, transactionConnection);
 
-          if (meteosIds?.length) {
-            await inventaireMeteoRepository.insertInventaireWithMeteos(id, meteosIds, transactionConnection);
-          }
-
-          return updatedInventaire;
-        });
+        if (meteosIds?.length) {
+          await inventaireMeteoRepository.insertInventaireWithMeteos(id, meteosIds, transactionConnection);
+        }
 
         return updatedInventaire;
-      } else {
-        // Create a new inventaire
-        const createdInventaire = await slonik.transaction(async (transactionConnection) => {
-          const createdInventaire = await inventaireRepository.createInventaire(
-            reshapeInputInventaireUpsertData(data, loggedUser.id),
-            transactionConnection
-          );
+      });
 
-          if (associesIds?.length) {
-            await inventaireAssocieRepository.insertInventaireWithAssocies(
-              createdInventaire.id,
-              associesIds,
-              transactionConnection
-            );
-          }
-
-          if (meteosIds?.length) {
-            await inventaireMeteoRepository.insertInventaireWithMeteos(
-              createdInventaire.id,
-              meteosIds,
-              transactionConnection
-            );
-          }
-
-          return createdInventaire;
-        });
-
-        return createdInventaire;
-      }
+      return updatedInventaire;
     }
   };
 
@@ -167,7 +193,8 @@ export const buildInventaireService = ({
     findInventaire,
     findInventaireOfDonneeId,
     findAllInventaires,
-    upsertInventaire,
+    createInventaire,
+    updateInventaire,
   };
 };
 

@@ -80,46 +80,54 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     return milieuRepository.getCount(q);
   };
 
-  const upsertMilieu = async (args: MutationUpsertMilieuArgs, loggedUser: LoggedUser | null): Promise<Milieu> => {
+  const createMilieu = async (input: MutationUpsertMilieuArgs, loggedUser: LoggedUser | null): Promise<Milieu> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedMilieu: Milieu;
+    try {
+      const upsertedMilieu = await milieuRepository.createMilieu({
+        ...data,
+        owner_id: loggedUser.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser?.role !== "admin") {
-        const existingData = await milieuRepository.findMilieuById(id);
-
-        if (existingData?.ownerId !== loggedUser?.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedMilieu;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      try {
-        upsertedMilieu = await milieuRepository.updateMilieu(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      try {
-        upsertedMilieu = await milieuRepository.createMilieu({
-          ...data,
-          owner_id: loggedUser.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateMilieu = async (
+    id: number,
+    input: MutationUpsertMilieuArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Milieu> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser?.role !== "admin") {
+      const existingData = await milieuRepository.findMilieuById(id);
+
+      if (existingData?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedMilieu;
+    try {
+      const upsertedMilieu = await milieuRepository.updateMilieu(id, data);
+
+      return upsertedMilieu;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteMilieu = async (id: number, loggedUser: LoggedUser | null): Promise<Milieu> => {
@@ -156,7 +164,8 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     findAllMilieux,
     findPaginatedMilieux,
     getMilieuxCount,
-    upsertMilieu,
+    createMilieu,
+    updateMilieu,
     deleteMilieu,
     createMilieux,
   };

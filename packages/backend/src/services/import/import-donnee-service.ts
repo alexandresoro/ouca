@@ -353,9 +353,9 @@ export class ImportDonneeService extends ImportService {
     return null;
   };
 
-  protected persistAllValidEntities = async (): Promise<void> => {
+  protected persistAllValidEntities = async (loggedUser: LoggedUser): Promise<void> => {
     for (const inputDonnee of this.newDonnees) {
-      await this.services.donneeService.createDonnee(inputDonnee);
+      await this.services.donneeService.createDonnee(inputDonnee, loggedUser);
     }
   };
 

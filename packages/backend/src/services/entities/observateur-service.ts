@@ -98,51 +98,59 @@ export const buildObservateurService = ({
     return observateurRepository.getCount(q);
   };
 
-  const upsertObservateur = async (
-    args: MutationUpsertObservateurArgs,
+  const createObservateur = async (
+    input: MutationUpsertObservateurArgs,
     loggedUser: LoggedUser | null
   ): Promise<Observateur> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
+    const { data } = input;
 
-    let upsertedObservateur: Observateur;
+    // Create a new observer
+    try {
+      const upsertedObservateur = await observateurRepository.createObservateur({
+        ...data,
+        owner_id: loggedUser?.id,
+      });
 
-    if (id) {
-      // Check that the user is allowed to modify the existing data
-      if (loggedUser.role !== "admin") {
-        const existingData = await observateurRepository.findObservateurById(id);
-
-        if (existingData?.ownerId !== loggedUser.id) {
-          throw new OucaError("OUCA0001");
-        }
+      return upsertedObservateur;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
       }
+      throw e;
+    }
+  };
 
-      // Update an existing observer
-      try {
-        upsertedObservateur = await observateurRepository.updateObservateur(id, data);
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
-      }
-    } else {
-      // Create a new observer
-      try {
-        upsertedObservateur = await observateurRepository.createObservateur({
-          ...data,
-          owner_id: loggedUser?.id,
-        });
-      } catch (e) {
-        if (e instanceof UniqueIntegrityConstraintViolationError) {
-          throw new OucaError("OUCA0004", e);
-        }
-        throw e;
+  const updateObservateur = async (
+    id: number,
+    input: MutationUpsertObservateurArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Observateur> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+
+    // Check that the user is allowed to modify the existing data
+    if (loggedUser.role !== "admin") {
+      const existingData = await observateurRepository.findObservateurById(id);
+
+      if (existingData?.ownerId !== loggedUser.id) {
+        throw new OucaError("OUCA0001");
       }
     }
 
-    return upsertedObservateur;
+    // Update an existing observer
+    try {
+      const upsertedObservateur = await observateurRepository.updateObservateur(id, data);
+
+      return upsertedObservateur;
+    } catch (e) {
+      if (e instanceof UniqueIntegrityConstraintViolationError) {
+        throw new OucaError("OUCA0004", e);
+      }
+      throw e;
+    }
   };
 
   const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur> => {
@@ -180,7 +188,8 @@ export const buildObservateurService = ({
     findAllObservateurs,
     findPaginatedObservateurs,
     getObservateursCount,
-    upsertObservateur,
+    createObservateur,
+    updateObservateur,
     deleteObservateur,
     createObservateurs,
   };

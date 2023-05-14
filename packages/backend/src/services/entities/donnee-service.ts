@@ -113,66 +113,29 @@ export const buildDonneeService = ({
     return (latestRegroupement ?? 0) + 1;
   };
 
-  const upsertDonnee = async (args: MutationUpsertDonneeArgs, loggedUser: LoggedUser | null): Promise<Donnee> => {
+  const createDonnee = async (input: InputDonnee, loggedUser: LoggedUser | null): Promise<Donnee> => {
     validateAuthorization(loggedUser);
 
-    const { id, data } = args;
-    const { comportementsIds, milieuxIds } = data;
+    const { comportementsIds, milieuxIds } = input;
 
     // Check if an exact same donnee already exists or not
     const existingDonnee = await donneeRepository.findExistingDonnee({
-      ...reshapeInputDonneeUpsertData(data),
+      ...reshapeInputDonneeUpsertData(input),
       comportementsIds: comportementsIds ?? [],
       milieuxIds: milieuxIds ?? [],
     });
 
-    if (existingDonnee && existingDonnee.id !== id) {
+    if (existingDonnee) {
       // The donnee already exists so we return an error
       throw new OucaError("OUCA0004", {
         code: "OUCA0004",
         message: `Cette donnée existe déjà (ID = ${existingDonnee.id}).`,
       });
-    } else {
-      if (id) {
-        const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
-          const updatedDonnee = await donneeRepository.updateDonnee(
-            id,
-            reshapeInputDonneeUpsertData(data),
-            transactionConnection
-          );
-
-          await donneeComportementRepository.deleteComportementsOfDonneeId(id, transactionConnection);
-
-          if (comportementsIds?.length) {
-            await donneeComportementRepository.insertDonneeWithComportements(
-              id,
-              comportementsIds,
-              transactionConnection
-            );
-          }
-
-          await donneeMilieuRepository.deleteMilieuxOfDonneeId(id, transactionConnection);
-
-          if (milieuxIds?.length) {
-            await donneeMilieuRepository.insertDonneeWithMilieux(id, milieuxIds, transactionConnection);
-          }
-
-          return updatedDonnee;
-        });
-
-        return updatedDonnee;
-      } else {
-        return createDonnee(data);
-      }
     }
-  };
-
-  const createDonnee = async (donnee: InputDonnee): Promise<Donnee> => {
-    const { comportementsIds, milieuxIds } = donnee;
 
     const createdDonnee = await slonik.transaction(async (transactionConnection) => {
       const createdDonnee = await donneeRepository.createDonnee(
-        reshapeInputDonneeUpsertData(donnee),
+        reshapeInputDonneeUpsertData(input),
         transactionConnection
       );
 
@@ -192,6 +155,56 @@ export const buildDonneeService = ({
     });
 
     return createdDonnee;
+  };
+
+  const updateDonnee = async (
+    id: number,
+    input: MutationUpsertDonneeArgs,
+    loggedUser: LoggedUser | null
+  ): Promise<Donnee> => {
+    validateAuthorization(loggedUser);
+
+    const { data } = input;
+    const { comportementsIds, milieuxIds } = data;
+
+    // Check if an exact same donnee already exists or not
+    const existingDonnee = await donneeRepository.findExistingDonnee({
+      ...reshapeInputDonneeUpsertData(data),
+      comportementsIds: comportementsIds ?? [],
+      milieuxIds: milieuxIds ?? [],
+    });
+
+    if (existingDonnee && existingDonnee.id !== id) {
+      // The donnee already exists so we return an error
+      throw new OucaError("OUCA0004", {
+        code: "OUCA0004",
+        message: `Cette donnée existe déjà (ID = ${existingDonnee.id}).`,
+      });
+    } else {
+      const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
+        const updatedDonnee = await donneeRepository.updateDonnee(
+          id,
+          reshapeInputDonneeUpsertData(data),
+          transactionConnection
+        );
+
+        await donneeComportementRepository.deleteComportementsOfDonneeId(id, transactionConnection);
+
+        if (comportementsIds?.length) {
+          await donneeComportementRepository.insertDonneeWithComportements(id, comportementsIds, transactionConnection);
+        }
+
+        await donneeMilieuRepository.deleteMilieuxOfDonneeId(id, transactionConnection);
+
+        if (milieuxIds?.length) {
+          await donneeMilieuRepository.insertDonneeWithMilieux(id, milieuxIds, transactionConnection);
+        }
+
+        return updatedDonnee;
+      });
+
+      return updatedDonnee;
+    }
   };
 
   const deleteDonnee = async (id: number, loggedUser: LoggedUser | null): Promise<Donnee> => {
@@ -234,8 +247,8 @@ export const buildDonneeService = ({
     findDonneeNavigationData,
     findLastDonneeId,
     findNextRegroupement,
-    upsertDonnee,
     createDonnee,
+    updateDonnee,
     deleteDonnee,
   };
 };

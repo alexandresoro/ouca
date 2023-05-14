@@ -2,15 +2,15 @@ import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import {
-    EntitesAvecLibelleOrderBy,
-    SortOrder,
-    type MutationUpsertEstimationDistanceArgs,
-    type QueryEstimationsDistanceArgs
+  EntitesAvecLibelleOrderBy,
+  SortOrder,
+  type MutationUpsertEstimationDistanceArgs,
+  type QueryEstimationsDistanceArgs
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-    type EstimationDistance,
-    type EstimationDistanceCreateInput
+  type EstimationDistance,
+  type EstimationDistanceCreateInput
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -207,11 +207,11 @@ describe("Update of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
-    await estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser);
+    await estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, loggedUser);
 
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
-      distanceEstimateData.id,
+      12,
       distanceEstimateData.data
     );
   });
@@ -227,11 +227,11 @@ describe("Update of a distance estimate", () => {
 
     estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
 
-    await estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser);
+    await estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, loggedUser);
 
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
-      distanceEstimateData.id,
+      12,
       distanceEstimateData.data
     );
   });
@@ -250,7 +250,7 @@ describe("Update of a distance estimate", () => {
 
     estimationDistanceRepository.findEstimationDistanceById.mockResolvedValueOnce(existingData);
 
-    await expect(estimationDistanceService.upsertEstimationDistance(distanceEstimateData, user)).rejects.toThrowError(
+    await expect(estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, user)).rejects.toThrowError(
       new OucaError("OUCA0001")
     );
 
@@ -267,12 +267,12 @@ describe("Update of a distance estimate", () => {
     estimationDistanceRepository.updateEstimationDistance.mockImplementation(uniqueConstraintFailed);
 
     await expect(() =>
-      estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser)
+      estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, loggedUser)
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.updateEstimationDistance).toHaveBeenLastCalledWith(
-      distanceEstimateData.id,
+      12,
       distanceEstimateData.data
     );
   });
@@ -282,7 +282,7 @@ describe("Update of a distance estimate", () => {
       id: 12,
     });
 
-    await expect(estimationDistanceService.upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(
+    await expect(estimationDistanceService.updateEstimationDistance(12, distanceEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
     expect(estimationDistanceRepository.updateEstimationDistance).not.toHaveBeenCalled();
@@ -297,7 +297,7 @@ describe("Creation of a distance estimate", () => {
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
 
-    await estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser);
+    await estimationDistanceService.createEstimationDistance(distanceEstimateData, loggedUser);
 
     expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenLastCalledWith({
@@ -316,7 +316,7 @@ describe("Creation of a distance estimate", () => {
     estimationDistanceRepository.createEstimationDistance.mockImplementation(uniqueConstraintFailed);
 
     await expect(() =>
-      estimationDistanceService.upsertEstimationDistance(distanceEstimateData, loggedUser)
+      estimationDistanceService.createEstimationDistance(distanceEstimateData, loggedUser)
     ).rejects.toThrowError(new OucaError("OUCA0004", uniqueConstraintFailedError));
 
     expect(estimationDistanceRepository.createEstimationDistance).toHaveBeenCalledTimes(1);
@@ -331,7 +331,7 @@ describe("Creation of a distance estimate", () => {
       id: undefined,
     });
 
-    await expect(estimationDistanceService.upsertEstimationDistance(distanceEstimateData, null)).rejects.toEqual(
+    await expect(estimationDistanceService.createEstimationDistance(distanceEstimateData, null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
     expect(estimationDistanceRepository.createEstimationDistance).not.toHaveBeenCalled();
