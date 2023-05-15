@@ -21,10 +21,10 @@ export const buildFindMatchingInventaireClause = (criteria: InventaireFindMatchi
     .map(([criteriaName, criteriaValue]) => {
       let identifierCriteria: IdentifierSqlToken;
       switch (criteriaName) {
-        case "associesIds":
+        case "associateIds":
           identifierCriteria = sql.identifier(["inventaire_associe", "observateur_id"]);
           break;
-        case "meteosIds":
+        case "weatherIds":
           identifierCriteria = sql.identifier(["inventaire_meteo", "meteo_id"]);
           break;
         case "observateur_id":

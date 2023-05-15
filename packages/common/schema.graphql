@@ -1,98 +1,3 @@
-input InputAge {
-  libelle: String!
-}
-
-input InputClasse {
-  libelle: String!
-}
-
-input InputCommune {
-  departementId: Int!
-  code: Int!
-  nom: String!
-}
-
-input InputComportement {
-  code: String!
-  libelle: String!
-  nicheur: Nicheur
-}
-
-input InputDepartement {
-  code: String!
-}
-
-input InputDonnee {
-  inventaireId: Int!
-  especeId: Int!
-  sexeId: Int!
-  ageId: Int!
-  estimationNombreId: Int!
-  nombre: Int
-  estimationDistanceId: Int
-  distance: Int
-  regroupement: Int
-  commentaire: String
-  comportementsIds: [Int!]
-  milieuxIds: [Int!]
-}
-
-input InputEspece {
-  classeId: Int!
-  code: String!
-  nomFrancais: String!
-  nomLatin: String!
-}
-
-input InputEstimationDistance {
-  libelle: String!
-}
-
-input InputEstimationNombre {
-  libelle: String!
-  nonCompte: Boolean!
-}
-
-input InputInventaire {
-  observateurId: Int!
-  associesIds: [Int!]
-  date: String!
-  duree: String
-  heure: String
-  lieuDitId: Int!
-  altitude: Int
-  latitude: Float
-  longitude: Float
-  meteosIds: [Int!]
-  temperature: Int
-}
-
-input InputLieuDit {
-  communeId: Int!
-  nom: String!
-  altitude: Int!
-  longitude: Float!
-  latitude: Float!
-  coordinatesSystem: CoordinatesSystemType!
-}
-
-input InputMeteo {
-  libelle: String!
-}
-
-input InputMilieu {
-  code: String!
-  libelle: String!
-}
-
-input InputObservateur {
-  libelle: String!
-}
-
-input InputSexe {
-  libelle: String!
-}
-
 input SearchDonneeCriteria {
   id: Int
   observateurs: [Int!]
@@ -409,11 +314,6 @@ enum SearchDonneesOrderBy {
   observateur
 }
 
-enum UserRole {
-  admin
-  contributor
-}
-
 #
 # Results
 #
@@ -610,24 +510,4 @@ type Query {
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
   searchDonnees: PaginatedSearchDonneesResult
   importStatus(importId: String!): ImportStatus
-}
-
-type Mutation {
-  upsertClasse(id: Int, data: InputClasse!): Classe
-  upsertCommune(id: Int, data: InputCommune!): Commune
-  upsertComportement(id: Int, data: InputComportement!): Comportement
-  upsertDepartement(id: Int, data: InputDepartement!): Departement
-  upsertDonnee(id: Int, data: InputDonnee!): UpsertDonneeResult
-  upsertEspece(id: Int, data: InputEspece!): Espece
-  upsertEstimationDistance(id: Int, data: InputEstimationDistance!): EstimationDistance
-  upsertEstimationNombre(id: Int, data: InputEstimationNombre!): EstimationNombre
-  upsertInventaire(
-    id: Int
-    data: InputInventaire!
-    migrateDonneesIfMatchesExistingInventaire: Boolean
-  ): UpsertInventaireResult
-  upsertLieuDit(id: Int, data: InputLieuDit!): LieuDit
-  upsertMeteo(id: Int, data: InputMeteo!): Meteo
-  upsertMilieu(id: Int, data: InputMilieu!): Milieu
-  upsertObservateur(id: Int, data: InputObservateur!): Observateur
 }

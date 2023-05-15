@@ -1,48 +1,5 @@
 import { graphql } from "../../../gql";
 
-export const UPSERT_INVENTAIRE = graphql(`
-mutation UpsertInventaire($upsertInventaireId: Int, $data: InputInventaire!) {
-  upsertInventaire(id: $upsertInventaireId, data: $data) {
-    inventaire {
-      id
-      observateur {
-        id
-      }
-      associes {
-        id
-      }
-      date
-      heure
-      duree
-      lieuDit {
-        id
-        nom
-        commune {
-          id
-          departement {
-            id
-          }
-        }
-      }
-      customizedCoordinates {
-        latitude
-        longitude
-        altitude
-      }
-      meteos {
-        id
-        libelle
-      }
-      temperature
-    }
-    failureReason {
-      correspondingInventaireFound
-      inventaireExpectedToBeUpdated
-    }
-  }
-}
-`);
-
 export const AUTOCOMPLETE_OBSERVATEURS_QUERY = graphql(`
   query ListObservateursAutocomplete($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
     observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {

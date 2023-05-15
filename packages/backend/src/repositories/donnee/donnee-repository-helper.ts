@@ -22,10 +22,10 @@ export const buildFindMatchingDonneeClause = (criteria: DonneeFindMatchingInput)
     .map(([criteriaName, criteriaValue]) => {
       let identifierCriteria: IdentifierSqlToken;
       switch (criteriaName) {
-        case "comportementsIds":
+        case "behaviorIds":
           identifierCriteria = sql.identifier(["donnee_comportement", "comportement_id"]);
           break;
-        case "milieuxIds":
+        case "environmentIds":
           identifierCriteria = sql.identifier(["donnee_milieu", "milieu_id"]);
           break;
         default:

@@ -4,13 +4,11 @@ import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { useMutation } from "urql";
 import { type GetExistingInventaireQuery } from "../../../gql/graphql";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import InventoryFormDate from "./InventoryFormDate";
 import InventoryFormLocation from "./InventoryFormLocation";
 import InventoryFormObserver from "./InventoryFormObserver";
-import { UPSERT_INVENTAIRE } from "./InventoryFormQueries";
 import InventoryFormWeather from "./InventoryFormWeather";
 import { type UpsertInventoryInput } from "./inventory-form-types";
 
@@ -109,8 +107,6 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
   } = useForm<UpsertInventoryInput>({
     defaultValues: defaultFormValues,
   });
-
-  const [_, upsertInventory] = useMutation(UPSERT_INVENTAIRE);
 
   const onSubmit: SubmitHandler<UpsertInventoryInput> = (upsertInventoryInput) => {
     console.log(upsertInventoryInput);

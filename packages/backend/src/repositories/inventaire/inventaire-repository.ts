@@ -65,7 +65,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   };
 
   const findExistingInventaire = async (criteria: InventaireFindMatchingInput): Promise<Inventaire | null> => {
-    const { associesIds, meteosIds } = criteria;
+    const { associateIds, weatherIds } = criteria;
 
     // TODO the match is a bit too wide, meaning that a missing/null criteria will have no
     // associated where clause, but we can consider this as acceptable
@@ -81,8 +81,8 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
       ${buildFindMatchingInventaireClause(criteria)}
       GROUP BY inventaire.id
       HAVING 
-        COUNT(DISTINCT inventaire_associe.observateur_id) = ${associesIds?.length ?? 0}
-        AND COUNT(DISTINCT inventaire_meteo.meteo_id) = ${meteosIds?.length ?? 0}
+        COUNT(DISTINCT inventaire_associe.observateur_id) = ${associateIds?.length ?? 0}
+        AND COUNT(DISTINCT inventaire_meteo.meteo_id) = ${weatherIds?.length ?? 0}
       LIMIT 1
     `;
 

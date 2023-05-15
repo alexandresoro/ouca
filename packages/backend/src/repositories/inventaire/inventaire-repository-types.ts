@@ -1,9 +1,9 @@
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import {
   COORDINATES_SYSTEMS,
   type CoordinatesSystemType,
 } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
-import { type InputInventaire } from "../../graphql/generated/graphql-types.js";
 
 export const inventaireSchema = z.object({
   id: z.number(),
@@ -33,7 +33,7 @@ export type Inventaire = Omit<RawInventaire, "altitude" | "latitude" | "longitud
 };
 
 export type InventaireFindMatchingInput = InventaireCreateInput &
-  Required<Pick<InputInventaire, "associesIds" | "meteosIds">>;
+  Required<Pick<UpsertInventoryInput, "associateIds" | "weatherIds">>;
 
 export type InventaireCreateInput = {
   observateur_id: number;

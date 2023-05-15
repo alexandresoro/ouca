@@ -108,7 +108,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   };
 
   const findExistingDonnee = async (criteria: DonneeFindMatchingInput): Promise<Donnee | null> => {
-    const { comportementsIds, milieuxIds } = criteria;
+    const { behaviorIds, environmentIds } = criteria;
 
     // TODO the match is a bit too wide, meaning that a missing/null criteria will have no
     // associated where clause, but we can consider this as acceptable
@@ -124,8 +124,8 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
       ${buildFindMatchingDonneeClause(criteria)}
       GROUP BY donnee.id
       HAVING 
-        COUNT(DISTINCT donnee_comportement.comportement_id) = ${comportementsIds?.length ?? 0}
-        AND COUNT(DISTINCT donnee_milieu.milieu_id) = ${milieuxIds?.length ?? 0}
+        COUNT(DISTINCT donnee_comportement.comportement_id) = ${behaviorIds?.length ?? 0}
+        AND COUNT(DISTINCT donnee_milieu.milieu_id) = ${environmentIds?.length ?? 0}
       LIMIT 1
     `;
 

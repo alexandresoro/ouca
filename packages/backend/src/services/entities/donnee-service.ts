@@ -120,8 +120,8 @@ export const buildDonneeService = ({
     // Check if an exact same donnee already exists or not
     const existingDonnee = await donneeRepository.findExistingDonnee({
       ...reshapeInputDonneeUpsertData(input),
-      comportementsIds: behaviorIds ?? [],
-      milieuxIds: environmentIds ?? [],
+      behaviorIds,
+      environmentIds,
     });
 
     if (existingDonnee) {
@@ -164,8 +164,8 @@ export const buildDonneeService = ({
     // Check if an exact same donnee already exists or not
     const existingDonnee = await donneeRepository.findExistingDonnee({
       ...reshapeInputDonneeUpsertData(input),
-      comportementsIds: behaviorIds ?? [],
-      milieuxIds: environmentIds ?? [],
+      behaviorIds,
+      environmentIds,
     });
 
     if (existingDonnee && existingDonnee.id !== id) {

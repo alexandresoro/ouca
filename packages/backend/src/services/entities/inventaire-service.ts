@@ -58,8 +58,8 @@ export const buildInventaireService = ({
     // Check if an exact same inventaire already exists or not
     const existingInventaire = await inventaireRepository.findExistingInventaire({
       ...reshapeInputInventaireUpsertData(input),
-      associesIds: associateIds ?? [],
-      meteosIds: weatherIds ?? [],
+      associateIds,
+      weatherIds,
     });
 
     if (existingInventaire) {
@@ -116,8 +116,8 @@ export const buildInventaireService = ({
     // Check if an exact same inventaire already exists or not
     const existingInventaire = await inventaireRepository.findExistingInventaire({
       ...reshapeInputInventaireUpsertData(inputData),
-      associesIds: associateIds ?? [],
-      meteosIds: weatherIds ?? [],
+      associateIds,
+      weatherIds,
     });
 
     if (existingInventaire) {

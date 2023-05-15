@@ -1,5 +1,5 @@
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { z } from "zod";
-import { type InputDonnee } from "../../graphql/generated/graphql-types.js";
 import { type SortOrder } from "../common.js";
 import { type SearchCriteria } from "../search-criteria.js";
 
@@ -50,7 +50,7 @@ export type DonneeFindManyInput = Partial<{
 }>;
 
 export type DonneeFindMatchingInput = DonneeCreateInput &
-  Required<Pick<InputDonnee, "comportementsIds" | "milieuxIds">>;
+  Required<Pick<UpsertEntryInput, "behaviorIds" | "environmentIds">>;
 
 export type DonneeCreateInput = {
   inventaire_id: number;
