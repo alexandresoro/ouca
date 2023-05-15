@@ -14,7 +14,7 @@ export type GetAgeResponse = z.infer<typeof getAgeResponse>;
  * `POST` `/age` Create new age entity
  */
 export const upsertAgeInput = z.object({
-  libelle: z.string(),
+  libelle: z.string().trim().min(1),
 });
 
 export type UpsertAgeInput = z.infer<typeof upsertAgeInput>;

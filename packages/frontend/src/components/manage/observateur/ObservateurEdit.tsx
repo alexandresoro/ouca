@@ -1,111 +1,36 @@
-import { useEffect, type FunctionComponent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertObserverInput, type UpsertObserverInput } from "@ou-ca/common/api/observer";
+import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type UpsertObservateurMutationVariables } from "../../../gql/graphql";
-import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
+import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { OBSERVATEUR_QUERY, UPSERT_OBSERVATEUR } from "./ObservateurManageQueries";
 
 type ObservateurEditProps = {
   title: string;
+  defaultValues?: UpsertObserverInput | null;
+  onSubmit: SubmitHandler<UpsertObserverInput>;
 };
 
-type ObservateurUpsertInputs = Pick<UpsertObservateurMutationVariables, "id"> &
-  UpsertObservateurMutationVariables["data"];
-
 const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
-  const { title } = props;
-  const { id: observateurId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const {
     register,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<ObservateurUpsertInputs>({
-    defaultValues: {
-      id: null,
+  } = useForm<UpsertObserverInput>({
+    defaultValues: defaultValues ?? {
       libelle: "",
     },
+    resolver: zodResolver(upsertObserverInput),
   });
-
-  // Retrieve the existing observer info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: OBSERVATEUR_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(observateurId!),
-    },
-    pause: !observateurId,
-  });
-
-  const [_, upsertObservateur] = useMutation(UPSERT_OBSERVATEUR);
-
-  const { displayNotification } = useSnackbar();
-
-  useEffect(() => {
-    if (data?.observateur) {
-      reset({
-        id: data.observateur.id,
-        libelle: data.observateur.libelle,
-      });
-    }
-  }, [data?.observateur, reset]);
-
-  useEffect(() => {
-    if (error) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [error, displayNotification, t]);
-
-  const onSubmit: SubmitHandler<ObservateurUpsertInputs> = (data) => {
-    const { id, ...restData } = data;
-    upsertObservateur({
-      id: id ?? undefined,
-      data: restData,
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertObservateur) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("observerAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
-  };
 
   return (
     <>
@@ -116,19 +41,12 @@ const ObservateurEdit: FunctionComponent<ObservateurEditProps> = (props) => {
             <h2 className="card-title my-4">{title}</h2>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-              <TextInput
-                label={t("label")}
-                type="text"
-                required
-                {...register("libelle", {
-                  required: true,
-                })}
-              />
+              <TextInput label={t("label")} type="text" required {...register("libelle")} />
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || !isValid}
+                disabled={!isValid || !isDirty}
               />
             </form>
           </div>

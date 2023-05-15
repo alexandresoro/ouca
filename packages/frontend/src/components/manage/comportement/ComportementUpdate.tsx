@@ -1,7 +1,11 @@
+import { getBehaviorResponse, upsertBehaviorResponse, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { useQueryClient } from "@tanstack/react-query";
-import { type FunctionComponent } from "react";
+import { useEffect, useState, type FunctionComponent } from "react";
+import { type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
+import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ComportementEdit from "./ComportementEdit";
 
@@ -15,11 +19,73 @@ const ComportementUpdate: FunctionComponent = () => {
 
   const queryClient = useQueryClient();
 
+  const [enabledQuery, setEnabledQuery] = useState(true);
+  const { data, isLoading, isError } = useApiQuery(
+    { path: `/behavior/${id!}`, schema: getBehaviorResponse },
+    {
+      enabled: enabledQuery,
+    }
+  );
+
+  useEffect(() => {
+    setEnabledQuery(false);
+  }, [data]);
+
+  useEffect(() => {
+    if (isError) {
+      displayNotification({
+        type: "error",
+        message: t("retrieveGenericError"),
+      });
+    }
+  }, [isError, displayNotification, t]);
+
+  const { mutate } = useApiMutation(
+    {
+      path: `/behavior/${id!}`,
+      method: "PUT",
+      schema: upsertBehaviorResponse,
+    },
+    {
+      onSuccess: (updatedBehavior) => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        queryClient.setQueryData(["API", `/behavior/${updatedBehavior.id}`], updatedBehavior);
+        navigate("..");
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("behaviorAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const onSubmit: SubmitHandler<UpsertBehaviorInput> = (input) => {
+    mutate({ body: input });
+  };
+
   if (!id) {
     return null;
   }
 
-  return <ComportementEdit title={t("behaviorEditionTitle")} />;
+  return (
+    <>
+      {!isLoading && !isError && data && (
+        <ComportementEdit title={t("behaviorEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+      )}
+    </>
+  );
 };
 
 export default ComportementUpdate;

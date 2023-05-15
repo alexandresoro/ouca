@@ -1,27 +1,26 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertSpeciesInput, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type UpsertEspeceMutationVariables } from "../../../gql/graphql";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "urql";
 import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ALL_CLASSES_QUERY, ESPECE_QUERY, UPSERT_ESPECE } from "./EspeceManageQueries";
+import { ALL_CLASSES_QUERY } from "./EspeceManageQueries";
 
 type EspeceEditProps = {
   title: string;
+  defaultValues?: UpsertSpeciesInput | null;
+  onSubmit: SubmitHandler<UpsertSpeciesInput>;
 };
 
-type UpsertEspeceInput = Pick<UpsertEspeceMutationVariables, "id"> & UpsertEspeceMutationVariables["data"];
-
 const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
-  const { title } = props;
-  const { id: especeId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -29,28 +28,16 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
   const {
     register,
     control,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<UpsertEspeceInput>({
-    defaultValues: {
-      id: null,
+  } = useForm<UpsertSpeciesInput>({
+    defaultValues: defaultValues ?? {
       code: "",
       nomFrancais: "",
       nomLatin: "",
-      classeId: undefined,
+      classId: undefined,
     },
-  });
-
-  // Retrieve the existing species info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: ESPECE_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(especeId!),
-    },
-    pause: !especeId,
+    resolver: zodResolver(upsertSpeciesInput),
   });
 
   const [{ data: dataClasses, error: errorClasses, fetching: fetchingClasses }] = useQuery({
@@ -61,66 +48,25 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
     },
   });
 
-  const [_, upsertEspece] = useMutation(UPSERT_ESPECE);
+  // Workaround as GQL return ids as number and rest returns strings
+  const reshapedClasses = dataClasses?.classes?.data?.map((speciesClass) => {
+    const { id, ...rest } = speciesClass;
+    return {
+      ...rest,
+      id: `${id}`,
+    };
+  });
 
   const { displayNotification } = useSnackbar();
 
   useEffect(() => {
-    if (data?.espece) {
-      reset({
-        id: data.espece.id,
-        code: data.espece.code,
-        nomFrancais: data.espece.nomFrancais,
-        nomLatin: data.espece.nomLatin,
-        classeId: data.espece.classe.id,
-      });
-    }
-  }, [data?.espece, reset]);
-
-  useEffect(() => {
-    if (error || errorClasses) {
+    if (errorClasses) {
       displayNotification({
         type: "error",
         message: t("retrieveGenericError"),
       });
     }
-  }, [error, errorClasses, displayNotification, t]);
-
-  const onSubmit: SubmitHandler<UpsertEspeceInput> = (data) => {
-    const { id, ...restData } = data;
-    upsertEspece({
-      id: id ?? undefined,
-      data: restData,
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertEspece) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("speciesAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
-  };
+  }, [errorClasses, displayNotification, t]);
 
   return (
     <>
@@ -132,45 +78,21 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <FormSelect
-                name="classeId"
+                name="classId"
                 label={t("speciesClass")}
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                data={dataClasses?.classes?.data}
+                data={reshapedClasses}
                 renderValue={({ libelle }) => libelle}
               />
 
-              <TextInput
-                label={t("speciesCode")}
-                type="text"
-                required
-                {...register("code", {
-                  required: t("requiredFieldError"),
-                })}
-              />
-              <TextInput
-                label={t("localizedName")}
-                type="text"
-                required
-                {...register("nomFrancais", {
-                  required: t("requiredFieldError"),
-                })}
-              />
-              <TextInput
-                label={t("scientificName")}
-                type="text"
-                required
-                {...register("nomLatin", {
-                  required: t("requiredFieldError"),
-                })}
-              />
+              <TextInput label={t("speciesCode")} type="text" required {...register("code")} />
+              <TextInput label={t("localizedName")} type="text" required {...register("nomFrancais")} />
+              <TextInput label={t("scientificName")} type="text" required {...register("nomLatin")} />
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || fetchingClasses || !isValid}
+                disabled={fetchingClasses || !isValid || !isDirty}
               />
             </form>
           </div>

@@ -1,111 +1,36 @@
-import { useEffect, type FunctionComponent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertDepartmentInput, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
+import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type UpsertDepartementMutationVariables } from "../../../gql/graphql";
-import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
+import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { DEPARTEMENT_QUERY, UPSERT_DEPARTEMENT } from "./DepartementManageQueries";
 
 type DepartementEditProps = {
   title: string;
+  defaultValues?: UpsertDepartmentInput | null;
+  onSubmit: SubmitHandler<UpsertDepartmentInput>;
 };
 
-type UpsertDepartementInput = Pick<UpsertDepartementMutationVariables, "id"> &
-  UpsertDepartementMutationVariables["data"];
-
 const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
-  const { title } = props;
-  const { id: departementId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const {
     register,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<UpsertDepartementInput>({
-    defaultValues: {
-      id: null,
+  } = useForm<UpsertDepartmentInput>({
+    defaultValues: defaultValues ?? {
       code: "",
     },
+    resolver: zodResolver(upsertDepartmentInput),
   });
-
-  // Retrieve the existing department info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: DEPARTEMENT_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(departementId!),
-    },
-    pause: !departementId,
-  });
-
-  const [_, upsertDepartement] = useMutation(UPSERT_DEPARTEMENT);
-
-  const { displayNotification } = useSnackbar();
-
-  useEffect(() => {
-    if (data?.departement) {
-      reset({
-        id: data.departement.id,
-        code: data.departement.code,
-      });
-    }
-  }, [data?.departement, reset]);
-
-  useEffect(() => {
-    if (error) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [error, displayNotification, t]);
-
-  const onSubmit: SubmitHandler<UpsertDepartementInput> = (data) => {
-    const { id, ...restData } = data;
-    upsertDepartement({
-      id: id ?? undefined,
-      data: restData,
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertDepartement) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("departmentAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
-  };
 
   return (
     <>
@@ -116,19 +41,12 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
             <h2 className="card-title my-4">{title}</h2>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-              <TextInput
-                label={t("code")}
-                type="text"
-                required
-                {...register("code", {
-                  required: t("requiredFieldError"),
-                })}
-              />
+              <TextInput label={t("code")} type="text" required {...register("code")} />
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || !isValid}
+                disabled={!isValid || !isDirty}
               />
             </form>
           </div>

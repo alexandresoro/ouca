@@ -5,7 +5,7 @@ export const speciesSchema = z.object({
   code: z.string(),
   nomFrancais: z.string(),
   nomLatin: z.string(),
-  classId: z.coerce.string(),
+  classId: z.string(),
   editable: z.boolean().optional(),
 });
 

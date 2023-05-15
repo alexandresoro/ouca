@@ -15,11 +15,11 @@ export type GetLocalityResponse = z.infer<typeof getLocalityResponse>;
  * `POST` `/locality` Create new locality entity
  */
 export const upsertLocalityInput = z.object({
-  communeId: z.number(),
-  nom: z.string(),
-  altitude: z.number(),
-  longitude: z.number(),
-  latitude: z.number(),
+  townId: z.string().trim().min(1),
+  nom: z.string().trim().min(1),
+  altitude: z.coerce.number(),
+  longitude: z.coerce.number().min(-180).max(180),
+  latitude: z.coerce.number().min(-90).max(90),
   coordinatesSystem: z.enum(COORDINATES_SYSTEMS),
 });
 

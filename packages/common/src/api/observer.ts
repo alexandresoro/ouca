@@ -14,7 +14,7 @@ export type GetObserverResponse = z.infer<typeof getObserverResponse>;
  * `POST` `/observer` Create new observer entity
  */
 export const upsertObserverInput = z.object({
-  libelle: z.string(),
+  libelle: z.string().trim().min(1),
 });
 
 export type UpsertObserverInput = z.infer<typeof upsertObserverInput>;

@@ -8,7 +8,7 @@ export const localitySchema = z.object({
   longitude: z.number(),
   latitude: z.number(),
   coordinatesSystem: z.enum(COORDINATES_SYSTEMS),
-  townId: z.coerce.string(),
+  townId: z.string(),
   editable: z.boolean().optional(),
 });
 

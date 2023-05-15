@@ -1,5 +1,8 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type UpsertSpeciesInput } from "@ou-ca/common/api/species";
+import { type UpsertTownInput } from "@ou-ca/common/api/town";
 import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types.js";
 import { type Inventaire as InventaireEntity } from "../repositories/inventaire/inventaire-repository-types.js";
@@ -272,10 +275,16 @@ export const buildResolvers = ({
         }
       },
       upsertCommune: async (_source, args, { user }): Promise<Omit<Commune, "departement">> => {
+        const { departementId, ...restData } = args.data;
+        const data = {
+          ...restData,
+          departmentId: `${departementId}`,
+        } satisfies UpsertTownInput;
+
         if (args.id) {
-          return communeService.updateCommune(args.id, args.data, user);
+          return communeService.updateCommune(args.id, data, user);
         } else {
-          return communeService.createCommune(args.data, user);
+          return communeService.createCommune(data, user);
         }
       },
       upsertComportement: async (_source, args, { user }): Promise<Comportement> => {
@@ -350,10 +359,16 @@ export const buildResolvers = ({
         }
       },
       upsertEspece: async (_source, args, { user }): Promise<Omit<Espece, "classe">> => {
+        const { classeId, ...restData } = args.data;
+        const data = {
+          ...restData,
+          classId: `${classeId}`,
+        } satisfies UpsertSpeciesInput;
+
         if (args.id) {
-          return especeService.updateEspece(args.id, args.data, user);
+          return especeService.updateEspece(args.id, data, user);
         } else {
-          return especeService.createEspece(args.data, user);
+          return especeService.createEspece(data, user);
         }
       },
       upsertEstimationDistance: async (_source, args, { user }): Promise<EstimationDistance> => {
@@ -423,10 +438,16 @@ export const buildResolvers = ({
         }
       },
       upsertLieuDit: async (_source, args, { user }): Promise<Lieudit> => {
+        const { communeId, ...restData } = args.data;
+        const data = {
+          ...restData,
+          townId: `${communeId}`,
+        } satisfies UpsertLocalityInput;
+
         if (args.id) {
-          return lieuditService.updateLieuDit(args.id, args.data, user);
+          return lieuditService.updateLieuDit(args.id, data, user);
         } else {
-          return lieuditService.createLieuDit(args.data, user);
+          return lieuditService.createLieuDit(data, user);
         }
       },
       upsertMeteo: async (_source, args, { user }): Promise<Meteo> => {

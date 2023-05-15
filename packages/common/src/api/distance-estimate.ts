@@ -14,7 +14,7 @@ export type GetDistanceEstimateResponse = z.infer<typeof getDistanceEstimateResp
  * `POST` `/distance-estimate` Create new distance estimate entity
  */
 export const upsertDistanceEstimateInput = z.object({
-  libelle: z.string(),
+  libelle: z.string().trim().min(1),
 });
 
 export type UpsertDistanceEstimateInput = z.infer<typeof upsertDistanceEstimateInput>;

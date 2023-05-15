@@ -1,6 +1,9 @@
+import { upsertObserverResponse, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type FunctionComponent } from "react";
+import { type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ObservateurEdit from "./ObservateurEdit";
 
@@ -10,7 +13,41 @@ const ObservateurCreate: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  return <ObservateurEdit title={t("observerCreationTitle")} />;
+  const { mutate } = useApiMutation(
+    {
+      path: "/observer",
+      method: "POST",
+      schema: upsertObserverResponse,
+    },
+    {
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        navigate("..");
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("ageAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const onSubmit: SubmitHandler<UpsertObserverInput> = (input) => {
+    mutate({ body: input });
+  };
+
+  return <ObservateurEdit title={t("observerCreationTitle")} onSubmit={onSubmit} />;
 };
 
 export default ObservateurCreate;

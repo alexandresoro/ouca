@@ -1,11 +1,79 @@
+import {
+  getNumberEstimateResponse,
+  upsertNumberEstimateInput,
+  upsertNumberEstimateResponse,
+} from "@ou-ca/common/api/number-estimate";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
+import { OucaError } from "../utils/errors.js";
 
 const numberEstimateController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { estimationNombreService } = services;
+
+  fastify.get<{
+    Params: {
+      id: number;
+    };
+  }>("/:id", async (req, reply) => {
+    const numberEstimate = await estimationNombreService.findEstimationNombre(req.params.id, req.user);
+    if (!numberEstimate) {
+      return await reply.status(404).send();
+    }
+
+    const response = getNumberEstimateResponse.parse(numberEstimate);
+    return await reply.send(response);
+  });
+
+  fastify.post("/", async (req, reply) => {
+    const parsedInputResult = upsertNumberEstimateInput.safeParse(JSON.parse(req.body as string));
+
+    if (!parsedInputResult.success) {
+      return await reply.status(400).send();
+    }
+
+    const { data: input } = parsedInputResult;
+
+    try {
+      const numberEstimate = await estimationNombreService.createEstimationNombre(input, req.user);
+      const response = upsertNumberEstimateResponse.parse(numberEstimate);
+
+      return await reply.send(response);
+    } catch (e) {
+      if (e instanceof OucaError && e.name === "OUCA0004") {
+        return await reply.status(409).send();
+      }
+      throw e;
+    }
+  });
+
+  fastify.put<{
+    Params: {
+      id: number;
+    };
+  }>("/:id", async (req, reply) => {
+    const parsedInputResult = upsertNumberEstimateInput.safeParse(JSON.parse(req.body as string));
+
+    if (!parsedInputResult.success) {
+      return await reply.status(400).send();
+    }
+
+    const { data: input } = parsedInputResult;
+
+    try {
+      const numberEstimate = await estimationNombreService.updateEstimationNombre(req.params.id, input, req.user);
+      const response = upsertNumberEstimateResponse.parse(numberEstimate);
+
+      return await reply.send(response);
+    } catch (e) {
+      if (e instanceof OucaError && e.name === "OUCA0004") {
+        return await reply.status(409).send();
+      }
+      throw e;
+    }
+  });
 
   fastify.delete<{
     Params: {

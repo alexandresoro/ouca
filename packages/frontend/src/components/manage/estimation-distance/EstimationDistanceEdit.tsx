@@ -1,110 +1,36 @@
-import { useEffect, type FunctionComponent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertDistanceEstimateInput, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
+import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type UpsertEstimationDistanceMutationVariables } from "../../../gql/graphql";
-import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
+import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ESTIMATION_DISTANCE_QUERY, UPSERT_ESTIMATION_DISTANCE } from "./EstimationDistanceManageQueries";
 
 type EstimationDistanceEditProps = {
   title: string;
+  defaultValues?: UpsertDistanceEstimateInput | null;
+  onSubmit: SubmitHandler<UpsertDistanceEstimateInput>;
 };
 
-type UpsertEstimationDistanceInput = Pick<UpsertEstimationDistanceMutationVariables, "id"> & UpsertEstimationDistanceMutationVariables["data"];
-
 const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (props) => {
-  const { title } = props;
-  const { id: estimationDistanceId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const {
     register,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<UpsertEstimationDistanceInput>({
-    defaultValues: {
-      id: null,
+  } = useForm<UpsertDistanceEstimateInput>({
+    defaultValues: defaultValues ??{
       libelle: ""
-    }
-  });
-
-  // Retrieve the existing distance precision info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: ESTIMATION_DISTANCE_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(estimationDistanceId!),
     },
-    pause: !estimationDistanceId,
+    resolver: zodResolver(upsertDistanceEstimateInput),
   });
-
-  const [_, upsertEstimationDistance] = useMutation(UPSERT_ESTIMATION_DISTANCE);
-
-  const { displayNotification } = useSnackbar();
-
-  useEffect(() => {
-    if (data?.estimationDistance) {
-      reset({
-        id: data.estimationDistance.id,
-        libelle: data.estimationDistance.libelle
-      })
-    }
-  }, [data?.estimationDistance, reset]);
-
-  useEffect(() => {
-    if (error) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [error, displayNotification, t]);
-
-  const onSubmit: SubmitHandler<UpsertEstimationDistanceInput> = (data) => {
-    const { id, ...restData } = data;
-    upsertEstimationDistance({
-      id: id ?? undefined,
-      data: restData,
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertEstimationDistance) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("distancePrecisionAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
-  };
 
   return (
     <>
@@ -119,14 +45,12 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
                 label={t("label")}
                 type="text"
                 required
-                {...register("libelle", {
-                  required: true,
-                })}
+                {...register("libelle")}
               />
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || !isValid}
+                disabled={!isValid || !isDirty}
               />
             </form>
           </div>

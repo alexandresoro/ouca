@@ -14,7 +14,7 @@ export type GetWeatherResponse = z.infer<typeof getWeatherResponse>;
  * `POST` `/weather` Create new weather entity
  */
 export const upsertWeatherInput = z.object({
-  libelle: z.string(),
+  libelle: z.string().trim().min(1),
 });
 
 export type UpsertWeatherInput = z.infer<typeof upsertWeatherInput>;

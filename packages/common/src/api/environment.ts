@@ -14,8 +14,8 @@ export type GetEnvironmentResponse = z.infer<typeof getEnvironmentResponse>;
  * `POST` `/environment` Create new environment entity
  */
 export const upsertEnvironmentInput = z.object({
-  code: z.string(),
-  libelle: z.string(),
+  code: z.string().trim().min(1),
+  libelle: z.string().trim().min(1),
 });
 
 export type UpsertEnvironmentInput = z.infer<typeof upsertEnvironmentInput>;

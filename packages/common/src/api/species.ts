@@ -14,10 +14,10 @@ export type GetSpeciesResponse = z.infer<typeof getSpeciesResponse>;
  * `POST` `/species` Create new species entity
  */
 export const upsertSpeciesInput = z.object({
-  classeId: z.number(),
-  code: z.string(),
-  nomFrancais: z.string(),
-  nomLatin: z.string(),
+  classId: z.string().trim().min(1),
+  code: z.string().trim().min(1),
+  nomFrancais: z.string().trim().min(1),
+  nomLatin: z.string().trim().min(1),
 });
 
 export type UpsertSpeciesInput = z.infer<typeof upsertSpeciesInput>;

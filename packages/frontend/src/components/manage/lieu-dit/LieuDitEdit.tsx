@@ -1,38 +1,30 @@
-import { useEffect, type FunctionComponent } from "react";
-import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertLocalityInput, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type Department } from "@ou-ca/common/entities/department";
+import { useEffect, useState, type FunctionComponent } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type UpsertLieuDitMutationVariables } from "../../../gql/graphql";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "urql";
 import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
 import FormSelect from "../../common/form/FormSelect";
+import Select from "../../common/styled/select/Select";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
 import { ALL_DEPARTMENTS } from "../commune/CommuneManageQueries";
-import { ALL_COMMUNES_OF_DEPARTEMENT, LIEU_DIT_QUERY, UPSERT_LIEU_DIT } from "./LieuDitManageQueries";
+import { ALL_COMMUNES_OF_DEPARTEMENT } from "./LieuDitManageQueries";
 
 type LieuDitEditProps = {
   title: string;
+  defaultValues?: UpsertLocalityInput | null;
+  defaultDepartmentId?: string;
+  onSubmit: SubmitHandler<UpsertLocalityInput>;
 };
 
-type UpsertLieuDitInput = Pick<UpsertLieuDitMutationVariables, "id"> &
-  Omit<
-    UpsertLieuDitMutationVariables["data"],
-    "communeId" | "latitude" | "longitude" | "altitude" | "coordinatesSystem"
-  > & {
-    communeId: number | undefined;
-    latitude: string | undefined;
-    longitude: string | undefined;
-    altitude: string | undefined;
-    departmentId: number | undefined;
-  };
-
 const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
-  const { title } = props;
-  const { id: lieuDitId } = useParams();
+  const { title, defaultValues, defaultDepartmentId, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -42,32 +34,22 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
     setValue,
     getValues,
     control,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<UpsertLieuDitInput>({
+  } = useForm<UpsertLocalityInput>({
     defaultValues: {
-      id: null,
       nom: "",
       altitude: undefined,
       latitude: undefined,
       longitude: undefined,
-      communeId: undefined,
-      departmentId: undefined,
+      townId: "",
+      coordinatesSystem: "gps",
+      ...defaultValues,
     },
+    resolver: zodResolver(upsertLocalityInput),
   });
-  const selectedDepartementId = useWatch({ control, name: "departmentId" });
 
-  // Retrieve the existing localities info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: LIEU_DIT_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(lieuDitId!),
-    },
-    pause: !lieuDitId,
-  });
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState(defaultDepartmentId);
 
   const [{ data: dataDepartements, error: errorDepartements, fetching: fetchingDepartements }] = useQuery({
     query: ALL_DEPARTMENTS,
@@ -77,93 +59,61 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
     },
   });
 
+  // Workaround as GQL return ids as number and rest returns strings
+  const reshapedDepartments = dataDepartements?.departements?.data?.map((department) => {
+    const { id, ...rest } = department;
+    return {
+      ...rest,
+      id: `${id}`,
+    };
+  });
+
   const [{ data: dataTowns, error: errorTowns, fetching: fetchingTowns }] = useQuery({
     query: ALL_COMMUNES_OF_DEPARTEMENT,
     variables: {
-      departmentId: selectedDepartementId,
+      departmentId: selectedDepartmentId ? parseInt(selectedDepartmentId) : undefined,
       orderBy: "code",
       sortOrder: "asc",
     },
-    pause: !selectedDepartementId,
+    pause: !selectedDepartmentId,
+  });
+
+  // Workaround as GQL return ids as number and rest returns strings
+  const reshapedTowns = dataTowns?.communes?.data?.map((town) => {
+    const { id, ...rest } = town;
+    return {
+      ...rest,
+      id: `${id}`,
+    };
   });
 
   // When the list of towns change, reset the selection if no longer in the new list
   useEffect(() => {
-    const selectedCommuneId = getValues("communeId");
-    if (selectedCommuneId && !dataTowns?.communes?.data?.map(({ id }) => id).includes(selectedCommuneId)) {
-      setValue("communeId", undefined, { shouldValidate: true });
+    const selectedCommuneId = getValues("townId");
+    if (selectedCommuneId && !fetchingTowns && !reshapedTowns?.map(({ id }) => id).includes(selectedCommuneId)) {
+      setValue("townId", "", { shouldValidate: true });
     }
-  }, [dataTowns, getValues]);
-
-  const [_, upsertLieuDit] = useMutation(UPSERT_LIEU_DIT);
+  }, [reshapedTowns, fetchingTowns, getValues, setValue]);
 
   const { displayNotification } = useSnackbar();
 
   useEffect(() => {
-    if (data?.lieuDit) {
-      reset({
-        id: data.lieuDit.id,
-        nom: data.lieuDit.nom,
-        altitude: `${data.lieuDit.altitude}`,
-        latitude: `${data.lieuDit.latitude}`,
-        longitude: `${data.lieuDit.longitude}`,
-        communeId: data.lieuDit.commune.id,
-        departmentId: data.lieuDit.commune.departement.id,
-      });
-    }
-  }, [data?.lieuDit, reset]);
-
-  useEffect(() => {
-    if (error || errorTowns || errorDepartements) {
+    if (errorTowns || errorDepartements) {
       displayNotification({
         type: "error",
         message: t("retrieveGenericError"),
       });
     }
-  }, [error, errorTowns, errorDepartements, displayNotification, t]);
+  }, [errorTowns, errorDepartements, displayNotification, t]);
 
-  const onSubmit: SubmitHandler<UpsertLieuDitInput> = (data) => {
-    const { id, communeId, latitude, longitude, altitude, departmentId, ...restData } = data;
-    upsertLieuDit({
-      id: id ?? undefined,
-      data: {
-        ...restData,
-        communeId: communeId!,
-        latitude: parseFloat(latitude!),
-        longitude: parseFloat(longitude!),
-        altitude: parseInt(altitude!),
-        coordinatesSystem: "gps",
-      },
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertLieuDit) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("localityAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
+  const handleOnChangeDepartment = (newDepartment: Department | undefined) => {
+    setSelectedDepartmentId(newDepartment?.id);
   };
+
+  const selectedDepartment =
+    reshapedDepartments?.find((department) => {
+      return department.id === selectedDepartmentId;
+    }) ?? null;
 
   return (
     <>
@@ -175,39 +125,28 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex gap-4">
-                <FormSelect
+                <Select
                   selectClassName="basis-1/4"
-                  name="departmentId"
                   label={t("department")}
-                  control={control}
-                  rules={{
-                    required: true,
+                  data={reshapedDepartments}
+                  value={selectedDepartment}
+                  onChange={handleOnChangeDepartment}
+                  renderValue={(dept) => {
+                    return dept?.code ?? "";
                   }}
-                  data={dataDepartements?.departements?.data}
-                  renderValue={({ code }) => code}
                 />
 
                 <FormSelect
                   selectClassName="basis-3/4"
-                  name="communeId"
+                  name="townId"
                   label={t("town")}
                   control={control}
-                  rules={{
-                    required: true,
-                  }}
-                  data={dataTowns?.communes?.data}
+                  data={reshapedTowns}
                   renderValue={({ code, nom }) => `${code} - ${nom}`}
                 />
               </div>
 
-              <TextInput
-                label={t("localityName")}
-                type="text"
-                required
-                {...register("nom", {
-                  required: t("requiredFieldError"),
-                })}
-              />
+              <TextInput label={t("localityName")} type="text" required {...register("nom")} />
 
               <h3 className="font-semibold mt-6">{t("localityCoordinates")}</h3>
 
@@ -215,39 +154,33 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
                 <TextInput
                   textInputClassName="basis-1/3"
                   label={t("latitudeWithUnit")}
-                  type="text"
+                  type="number"
+                  step="any"
                   required
                   {...register("latitude", {
-                    required: t("requiredFieldError"),
-                    validate: {
-                      isNumber: (v) => v && /^-?\d+(\.\d+)?$/.test(v),
-                    },
+                    valueAsNumber: true,
                   })}
                 />
 
                 <TextInput
                   textInputClassName="basis-1/3"
                   label={t("longitudeWithUnit")}
-                  type="text"
+                  type="number"
+                  step="any"
                   required
                   {...register("longitude", {
-                    required: t("requiredFieldError"),
-                    validate: {
-                      isNumber: (v) => v && /^-?\d+(\.\d+)?$/.test(v),
-                    },
+                    valueAsNumber: true,
                   })}
                 />
 
                 <TextInput
                   textInputClassName="basis-1/3"
                   label={t("altitudeWithUnit")}
-                  type="text"
+                  type="number"
+                  step="any"
                   required
                   {...register("altitude", {
-                    required: t("requiredFieldError"),
-                    validate: {
-                      isNumber: (v) => v && /^-?\d+$/.test(v),
-                    },
+                    valueAsNumber: true,
                   })}
                 />
               </div>
@@ -255,7 +188,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || fetchingTowns || fetchingDepartements || !isValid}
+                disabled={fetchingTowns || fetchingDepartements || !isValid || !isDirty}
               />
             </form>
           </div>

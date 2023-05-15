@@ -14,7 +14,7 @@ export type GetClassResponse = z.infer<typeof getClassResponse>;
  * `POST` `/class` Create new class entity
  */
 export const upsertClassInput = z.object({
-  libelle: z.string(),
+  libelle: z.string().trim().min(1),
 });
 
 export type UpsertClassInput = z.infer<typeof upsertClassInput>;

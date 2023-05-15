@@ -1,7 +1,12 @@
+import { getLocalityResponse, upsertLocalityResponse, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { getTownResponse } from "@ou-ca/common/api/town";
 import { useQueryClient } from "@tanstack/react-query";
-import { type FunctionComponent } from "react";
+import { useEffect, useState, type FunctionComponent } from "react";
+import { type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
+import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import LieuDitEdit from "./LieuDitEdit";
 
@@ -15,11 +20,98 @@ const LieuDitUpdate: FunctionComponent = () => {
 
   const queryClient = useQueryClient();
 
+  const [enabledQuery, setEnabledQuery] = useState(true);
+  const { data, isLoading, isError } = useApiQuery(
+    { path: `/locality/${id!}`, schema: getLocalityResponse },
+    {
+      enabled: enabledQuery,
+    }
+  );
+
+  useEffect(() => {
+    setEnabledQuery(false);
+  }, [data]);
+
+  const [enabledQueryTown, setEnabledQueryTown] = useState(true);
+  const {
+    data: dataTown,
+    isLoading: isLoadingTown,
+    isError: isErrorTown,
+  } = useApiQuery(
+    { path: `/town/${data?.townId ?? ""}`, schema: getTownResponse },
+    {
+      enabled: enabledQueryTown && data?.townId != null,
+    }
+  );
+
+  useEffect(() => {
+    if (dataTown) {
+      setEnabledQueryTown(false);
+    }
+  }, [dataTown]);
+
+  useEffect(() => {
+    if (isError || isErrorTown) {
+      displayNotification({
+        type: "error",
+        message: t("retrieveGenericError"),
+      });
+    }
+  }, [isError, isErrorTown, displayNotification, t]);
+
+  const { mutate } = useApiMutation(
+    {
+      path: `/locality/${id!}`,
+      method: "PUT",
+      schema: upsertLocalityResponse,
+    },
+    {
+      onSuccess: (updatedLocality) => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        queryClient.setQueryData(["API", `/locality/${updatedLocality.id}`], updatedLocality);
+        navigate("..");
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("localityAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const departmentId = dataTown?.departmentId;
+
+  const onSubmit: SubmitHandler<UpsertLocalityInput> = (input) => {
+    mutate({ body: input });
+  };
+
   if (!id) {
     return null;
   }
 
-  return <LieuDitEdit title={t("localityEditionTitle")} />;
+  return (
+    <>
+      {!isLoading && !isLoadingTown && !isError && data && departmentId != null && (
+        <LieuDitEdit
+          title={t("localityEditionTitle")}
+          defaultValues={data}
+          defaultDepartmentId={departmentId}
+          onSubmit={onSubmit}
+        />
+      )}
+    </>
+  );
 };
 
 export default LieuDitUpdate;

@@ -7,6 +7,7 @@ import distanceEstimateController from "../controllers/distance-estimate-control
 import entryController from "../controllers/entry-controller.js";
 import environmentController from "../controllers/environment-controller.js";
 import generateExportController from "../controllers/generate-export-controllers.js";
+import inventoryController from "../controllers/inventory-controller.js";
 import localityController from "../controllers/locality-controller.js";
 import numberEstimateController from "../controllers/number-estimate-controller.js";
 import observerController from "../controllers/observer-controller.js";
@@ -32,6 +33,7 @@ const apiRoutesPlugin: FastifyPluginAsync<{ services: Services }> = async (fasti
   await fastify.register(distanceEstimateController, { services, prefix: "/distance-estimate" });
   await fastify.register(entryController, { services, prefix: "/entry" });
   await fastify.register(environmentController, { services, prefix: "/environment" });
+  await fastify.register(inventoryController, { services, prefix: "/inventory" });
   await fastify.register(localityController, { services, prefix: "/locality" });
   await fastify.register(numberEstimateController, { services, prefix: "/number-estimate" });
   await fastify.register(observerController, { services, prefix: "/observer" });

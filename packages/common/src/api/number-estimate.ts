@@ -14,7 +14,7 @@ export type GetNumberEstimateResponse = z.infer<typeof getNumberEstimateResponse
  * `POST` `/number-estimate` Create new number estimate entity
  */
 export const upsertNumberEstimateInput = z.object({
-  libelle: z.string(),
+  libelle: z.string().trim().min(1),
   nonCompte: z.boolean(),
 });
 

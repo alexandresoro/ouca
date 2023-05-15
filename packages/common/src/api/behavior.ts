@@ -15,8 +15,8 @@ export type GetBehaviorResponse = z.infer<typeof getBehaviorResponse>;
  * `POST` `/behavior` Create new behavior entity
  */
 export const upsertBehaviorInput = z.object({
-  code: z.string(),
-  libelle: z.string(),
+  code: z.string().trim().min(1),
+  libelle: z.string().trim().min(1),
   nicheur: z.enum(NICHEUR_CODES).nullable(),
 });
 

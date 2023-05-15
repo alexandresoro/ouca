@@ -1,6 +1,9 @@
+import { upsertSpeciesResponse, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type FunctionComponent } from "react";
+import { type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EspeceEdit from "./EspeceEdit";
 
@@ -10,7 +13,41 @@ const EspeceCreate: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  return <EspeceEdit title={t("speciesCreationTitle")} />;
+  const { mutate } = useApiMutation(
+    {
+      path: "/species",
+      method: "POST",
+      schema: upsertSpeciesResponse,
+    },
+    {
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("retrieveGenericSaveSuccess"),
+        });
+        navigate("..");
+      },
+      onError: (e) => {
+        if (e.status === 409) {
+          displayNotification({
+            type: "error",
+            message: t("ageAlreadyExistingError"),
+          });
+        } else {
+          displayNotification({
+            type: "error",
+            message: t("retrieveGenericSaveError"),
+          });
+        }
+      },
+    }
+  );
+
+  const onSubmit: SubmitHandler<UpsertSpeciesInput> = (input) => {
+    mutate({ body: input });
+  };
+
+  return <EspeceEdit title={t("speciesCreationTitle")} onSubmit={onSubmit} />;
 };
 
 export default EspeceCreate;

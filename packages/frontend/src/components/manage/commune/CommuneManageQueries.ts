@@ -1,18 +1,5 @@
 import { graphql } from "../../../gql";
 
-export const COMMUNE_QUERY = graphql(`
-  query GetCommune($id: Int!) {
-    commune(id: $id) {
-      id
-      code
-      nom
-      departement {
-        id
-      }
-    }
-  }
-`);
-
 export const ALL_DEPARTMENTS = graphql(`
   query GetAllDepartments($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
     departements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
@@ -40,19 +27,6 @@ export const PAGINATED_COMMUNES_QUERY = graphql(`
         editable
         nbLieuxDits
         nbDonnees
-      }
-    }
-  }
-`);
-
-export const UPSERT_COMMUNE = graphql(`
-  mutation UpsertCommune($id: Int, $data: InputCommune!) {
-    upsertCommune(id: $id, data: $data) {
-      id
-      code
-      nom
-      departement {
-        id
       }
     }
   }

@@ -1,28 +1,26 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertTownInput, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type UpsertCommuneMutationVariables } from "../../../gql/graphql";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "urql";
 import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ALL_DEPARTMENTS, COMMUNE_QUERY, UPSERT_COMMUNE } from "./CommuneManageQueries";
+import { ALL_DEPARTMENTS } from "./CommuneManageQueries";
 
 type CommuneEditProps = {
   title: string;
+  defaultValues?: UpsertTownInput | null;
+  onSubmit: SubmitHandler<UpsertTownInput>;
 };
 
-type UpsertCommuneInput = Pick<UpsertCommuneMutationVariables, "id"> &
-  Omit<UpsertCommuneMutationVariables["data"], "code"> & { code: string };
-
 const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
-  const { title } = props;
-  const { id: communeId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -30,27 +28,15 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
   const {
     register,
     control,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<UpsertCommuneInput>({
-    defaultValues: {
-      id: null,
-      code: "",
+  } = useForm<UpsertTownInput>({
+    defaultValues: defaultValues ?? {
+      code: undefined,
       nom: "",
-      departementId: undefined,
+      departmentId: undefined,
     },
-  });
-
-  // Retrieve the existing towns info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: COMMUNE_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(communeId!),
-    },
-    pause: !communeId,
+    resolver: zodResolver(upsertTownInput),
   });
 
   const [{ data: dataDepartements, error: errorDepartements, fetching: fetchingDepartements }] = useQuery({
@@ -61,68 +47,25 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
     },
   });
 
-  const [_, upsertCommune] = useMutation(UPSERT_COMMUNE);
+  // Workaround as GQL return ids as number and rest returns strings
+  const reshapedDepartments = dataDepartements?.departements?.data?.map((department) => {
+    const { id, ...rest } = department;
+    return {
+      ...rest,
+      id: `${id}`,
+    };
+  });
 
   const { displayNotification } = useSnackbar();
 
   useEffect(() => {
-    if (data?.commune) {
-      reset({
-        id: data.commune.id,
-        code: `${data.commune.code}`,
-        nom: data.commune.nom,
-        departementId: data.commune.departement.id,
-      });
-    }
-  }, [data?.commune, reset]);
-
-  useEffect(() => {
-    if (error || errorDepartements) {
+    if (errorDepartements) {
       displayNotification({
         type: "error",
         message: t("retrieveGenericError"),
       });
     }
-  }, [error, errorDepartements, displayNotification, t]);
-
-  const onSubmit: SubmitHandler<UpsertCommuneInput> = (data) => {
-    const { id, code, ...restData } = data;
-    upsertCommune({
-      id: id ?? undefined,
-      data: {
-        ...restData,
-        code: parseInt(code),
-      },
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertCommune) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("townAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
-  };
+  }, [errorDepartements, displayNotification, t]);
 
   return (
     <>
@@ -134,41 +77,20 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <FormSelect
-                name="departementId"
+                name="departmentId"
                 label={t("department")}
                 control={control}
-                rules={{
-                  required: true,
-                }}
-                data={dataDepartements?.departements?.data}
+                data={reshapedDepartments}
                 renderValue={({ code }) => code}
               />
 
-              <TextInput
-                label={t("townCode")}
-                type="text"
-                required
-                {...register("code", {
-                  required: t("requiredFieldError"),
-                  validate: {
-                    isNumber: (v) => /^\d+$/.test(v),
-                    isPositive: (v) => parseInt(v) > 0,
-                  },
-                })}
-              />
-              <TextInput
-                label={t("townName")}
-                type="text"
-                required
-                {...register("nom", {
-                  required: t("requiredFieldError"),
-                })}
-              />
+              <TextInput label={t("townCode")} type="text" required {...register("code")} />
+              <TextInput label={t("townName")} type="text" required {...register("nom")} />
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || fetchingDepartements || !isValid}
+                disabled={fetchingDepartements || !isValid || !isDirty}
               />
             </form>
           </div>

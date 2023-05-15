@@ -14,9 +14,9 @@ export type GetTownResponse = z.infer<typeof getTownResponse>;
  * `POST` `/town` Create new town entity
  */
 export const upsertTownInput = z.object({
-  code: z.number(),
-  nom: z.string(),
-  departementId: z.number(),
+  code: z.coerce.number(),
+  nom: z.string().trim().min(1),
+  departmentId: z.string().trim().min(1),
 });
 
 export type UpsertTownInput = z.infer<typeof upsertTownInput>;

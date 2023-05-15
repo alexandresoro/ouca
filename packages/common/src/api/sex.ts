@@ -14,7 +14,7 @@ export type GetSexResponse = z.infer<typeof getSexResponse>;
  * `POST` `/sex` Create new sex entity
  */
 export const upsertSexInput = z.object({
-  libelle: z.string(),
+  libelle: z.string().trim().min(1),
 });
 
 export type UpsertSexInput = z.infer<typeof upsertSexInput>;

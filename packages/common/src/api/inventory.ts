@@ -8,7 +8,7 @@ import { inventorySchema } from "../entities/inventory.js";
 export const upsertInventoryInput = z.object({
   observerId: z.number(),
   associateIds: z.array(z.number()),
-  date: z.string(),
+  date: z.string().trim().min(1),
   time: z.string().nullable(),
   duration: z.string().nullable(),
   localityId: z.number(),

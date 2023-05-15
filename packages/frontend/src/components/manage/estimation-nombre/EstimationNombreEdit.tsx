@@ -1,114 +1,38 @@
-import { useEffect, type FunctionComponent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertNumberEstimateInput, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type UpsertEstimationNombreMutationVariables } from "../../../gql/graphql";
-import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
+import { useNavigate } from "react-router-dom";
 import Checkbox from "../../common/styled/Checkbox";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ESTIMATION_NOMBRE_QUERY, UPSERT_ESTIMATION_NOMBRE } from "./EstimationNombreManageQueries";
 
 type EstimationNombreEditProps = {
   title: string;
+  defaultValues?: UpsertNumberEstimateInput | null;
+  onSubmit: SubmitHandler<UpsertNumberEstimateInput>;
 };
 
-type UpsertEstimationNombreInput = Pick<UpsertEstimationNombreMutationVariables, "id"> &
-  UpsertEstimationNombreMutationVariables["data"];
-
 const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (props) => {
-  const { title } = props;
-  const { id: estimationNombreId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const {
     register,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<UpsertEstimationNombreInput>({
-    defaultValues: {
-      id: null,
+  } = useForm<UpsertNumberEstimateInput>({
+    defaultValues: defaultValues ?? {
       libelle: "",
       nonCompte: false,
     },
+    resolver: zodResolver(upsertNumberEstimateInput),
   });
-
-  // Retrieve the existing estimate of numbers info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: ESTIMATION_NOMBRE_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(estimationNombreId!),
-    },
-    pause: !estimationNombreId,
-  });
-
-  const [_, upsertEstimationNombre] = useMutation(UPSERT_ESTIMATION_NOMBRE);
-
-  const { displayNotification } = useSnackbar();
-
-  useEffect(() => {
-    if (data?.estimationNombre) {
-      reset({
-        id: data.estimationNombre.id,
-        libelle: data.estimationNombre.libelle,
-        nonCompte: data.estimationNombre.nonCompte,
-      });
-    }
-  }, [data?.estimationNombre, reset]);
-
-  useEffect(() => {
-    if (error) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [error, displayNotification, t]);
-
-  const onSubmit: SubmitHandler<UpsertEstimationNombreInput> = (data) => {
-    const { id, ...restData } = data;
-    upsertEstimationNombre({
-      id: id ?? undefined,
-      data: restData,
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertEstimationNombre) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("numberPrecisionAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
-  };
 
   return (
     <>
@@ -119,19 +43,12 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
             <h2 className="card-title my-4">{title}</h2>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-              <TextInput
-                label={t("label")}
-                type="text"
-                required
-                {...register("libelle", {
-                  required: true,
-                })}
-              />
+              <TextInput label={t("label")} type="text" required {...register("libelle")} />
               <Checkbox label={t("undefinedNumber")} {...register("nonCompte")} />
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || !isValid}
+                disabled={!isValid || !isDirty}
               />
             </form>
           </div>

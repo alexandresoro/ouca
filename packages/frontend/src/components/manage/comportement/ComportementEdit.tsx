@@ -1,29 +1,25 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertBehaviorInput, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { CERTAIN, POSSIBLE, PROBABLE } from "@ou-ca/common/types/nicheur.model";
-import { useEffect, type FunctionComponent } from "react";
+import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "urql";
-import { type Nicheur, type UpsertComportementMutationVariables } from "../../../gql/graphql";
-import useSnackbar from "../../../hooks/useSnackbar";
-import { getOucaError } from "../../../utils/ouca-error-extractor";
+import { useNavigate } from "react-router-dom";
+import { type Nicheur } from "../../../gql/graphql";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { COMPORTEMENT_QUERY, UPSERT_COMPORTEMENT } from "./ComportementManageQueries";
 
 type ComportementEditProps = {
   title: string;
+  defaultValues?: UpsertBehaviorInput | null;
+  onSubmit: SubmitHandler<UpsertBehaviorInput>;
 };
 
-type UpsertComportementInput = Pick<UpsertComportementMutationVariables, "id"> &
-  UpsertComportementMutationVariables["data"];
-
 const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
-  const { title } = props;
-  const { id: comportementId } = useParams();
+  const { title, defaultValues, onSubmit } = props;
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -31,52 +27,16 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
   const {
     register,
     control,
-    formState: { isValid },
-    reset,
+    formState: { isValid, isDirty },
     handleSubmit,
-  } = useForm<UpsertComportementInput>({
-    defaultValues: {
-      id: null,
+  } = useForm<UpsertBehaviorInput>({
+    defaultValues: defaultValues ?? {
       code: "",
       libelle: "",
       nicheur: null,
     },
+    resolver: zodResolver(upsertBehaviorInput),
   });
-
-  // Retrieve the existing age info in edit mode
-  const [{ data, error, fetching }] = useQuery({
-    query: COMPORTEMENT_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(comportementId!),
-    },
-    pause: !comportementId,
-  });
-
-  const [_, upsertComportement] = useMutation(UPSERT_COMPORTEMENT);
-
-  const { displayNotification } = useSnackbar();
-
-  useEffect(() => {
-    if (data?.comportement) {
-      reset({
-        id: data.comportement.id,
-        code: data.comportement.code,
-        libelle: data.comportement.libelle,
-        nicheur: data.comportement.nicheur,
-      });
-    }
-  }, [data?.comportement, reset]);
-
-  useEffect(() => {
-    if (error) {
-      displayNotification({
-        type: "error",
-        message: t("retrieveGenericError"),
-      });
-    }
-  }, [error, displayNotification, t]);
 
   const breedingStatuses = [
     {
@@ -97,42 +57,6 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
     },
   ] satisfies { label: string; value: Nicheur | null }[];
 
-  const onSubmit: SubmitHandler<UpsertComportementInput> = (data) => {
-    const { id, ...restData } = data;
-    upsertComportement({
-      id: id ?? undefined,
-      data: restData,
-    })
-      .then(({ data, error }) => {
-        if (data?.upsertComportement) {
-          displayNotification({
-            type: "success",
-            message: t("retrieveGenericSaveSuccess"),
-          });
-          navigate("..");
-        }
-        if (error) {
-          if (getOucaError(error) === "OUCA0004") {
-            displayNotification({
-              type: "error",
-              message: t("behaviorAlreadyExistingError"),
-            });
-          } else {
-            displayNotification({
-              type: "error",
-              message: t("retrieveGenericSaveError"),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        displayNotification({
-          type: "error",
-          message: t("retrieveGenericSaveError"),
-        });
-      });
-  };
-
   return (
     <>
       <ManageTopBar title={t("behaviors")} showButtons={false} />
@@ -142,23 +66,9 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
             <h2 className="card-title my-4">{title}</h2>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-              <TextInput
-                label={t("code")}
-                type="text"
-                required
-                {...register("code", {
-                  required: true,
-                })}
-              />
+              <TextInput label={t("code")} type="text" required {...register("code")} />
 
-              <TextInput
-                label={t("label")}
-                type="text"
-                required
-                {...register("libelle", {
-                  required: true,
-                })}
-              />
+              <TextInput label={t("label")} type="text" required {...register("libelle")} />
 
               <FormSelect
                 name="nicheur"
@@ -172,7 +82,7 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
               <EntityUpsertFormActionButtons
                 className="mt-6"
                 onCancelClick={() => navigate("..")}
-                disabled={fetching || !isValid}
+                disabled={!isValid || !isDirty}
               />
             </form>
           </div>
