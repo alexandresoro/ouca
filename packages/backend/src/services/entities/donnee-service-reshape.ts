@@ -11,8 +11,6 @@ export const reshapeInputDonneeUpsertData = (data: UpsertEntryInput): DonneeCrea
     distance,
     inventoryId,
     sexId,
-    behaviorIds,
-    environmentIds,
     regroupment,
     comment,
   } = data;
