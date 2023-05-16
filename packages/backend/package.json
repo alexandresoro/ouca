@@ -58,7 +58,7 @@
     }
   },
   "dependencies": {
-    "@fastify/compress": "6.2.1",
+    "@fastify/compress": "6.3.0",
     "@fastify/cors": "8.2.1",
     "@fastify/multipart": "7.6.0",
     "@fastify/static": "6.10.1",
