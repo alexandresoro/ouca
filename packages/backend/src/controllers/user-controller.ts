@@ -32,6 +32,12 @@ const userController: FastifyPluginCallback<{
       return await reply.status(401).send("Access token is not active.");
     }
 
+    // Only user with active roles can create account
+    const role = zitadelOidcService.getRoleFromLoggedUser(introspectionResult);
+    if (!role) {
+      return await reply.status(403).send();
+    }
+
     const { id } = await userService.createUser({
       extProvider: EXTERNAL_PROVIDER_NAME,
       extProviderUserId: introspectionResult.sub,

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { type Config } from "../../config.js";
-import { userRoles, type LoggedUser } from "../../types/User.js";
+import { userRoles, type LoggedUser, type UserRole } from "../../types/User.js";
 import introspectAccessTokenCommon from "./introspect-access-token.js";
 import { type OidcWithInternalUserMappingService } from "./oidc-with-internal-user-mapping.js";
 
@@ -59,6 +59,14 @@ export const buildZitadelOidcService = ({
     return introspectAccessTokenCommon(accessToken, introspectionResultSchema, config.oidc);
   };
 
+  const getRoleFromLoggedUser = (introspectionUser: ZitadelIntrospectionUser): UserRole | null => {
+    return (
+      userRoles.find((existingRole) =>
+        introspectionUser?.["urn:zitadel:iam:org:project:roles"]?.includes(existingRole)
+      ) ?? null
+    );
+  };
+
   const getMatchingLoggedUser = async (
     introspectionUser: ZitadelIntrospectionUser
   ): Promise<GetMatchingLoggedUserResult> => {
@@ -76,9 +84,7 @@ export const buildZitadelOidcService = ({
 
     const internalUserInfo = internalUserResult.user;
 
-    const roleFromToken = userRoles.find((existingRole) =>
-      introspectionUser?.["urn:zitadel:iam:org:project:roles"]?.includes(existingRole)
-    );
+    const roleFromToken = getRoleFromLoggedUser(introspectionUser);
 
     if (!roleFromToken) {
       return {
@@ -96,7 +102,7 @@ export const buildZitadelOidcService = ({
     };
   };
 
-  return { introspectAccessToken, getMatchingLoggedUser };
+  return { introspectAccessToken, getRoleFromLoggedUser, getMatchingLoggedUser };
 };
 
 export type ZitadelOidcService = ReturnType<typeof buildZitadelOidcService>;
