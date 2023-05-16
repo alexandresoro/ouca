@@ -14,7 +14,6 @@ import {
   type ComportementsPaginatedResult,
   type Departement,
   type DepartementsPaginatedResult,
-  type DonneeNavigationData,
   type Espece,
   type EstimationDistance,
   type EstimationNombre,
@@ -308,9 +307,6 @@ export const buildResolvers = ({
           return null;
         }
         return donneeService.findDonnee(parent.id, user);
-      },
-      navigation: async (parent, args, { user }): Promise<DonneeNavigationData> => {
-        return donneeService.findDonneeNavigationData(user, parent?.id);
       },
     },
     Espece: {

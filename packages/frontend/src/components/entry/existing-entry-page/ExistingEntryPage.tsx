@@ -1,8 +1,10 @@
+import { getEntryNavigationResponse } from "@ou-ca/common/api/entry";
 import { ChevronLeft, ChevronRight, Plus } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "urql";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import StyledPanelHeader from "../../layout/StyledPanelHeader";
 import EntryForm from "../entry-form/EntryForm";
 import { DONNEE_QUERY } from "./ExistingEntryPageQueries";
@@ -21,6 +23,16 @@ const ExistingEntryPage: FunctionComponent = () => {
     pause: id == null,
   });
 
+  const { data: navigation, isFetching: isNavigationFetching } = useApiQuery(
+    {
+      path: `/entry/${id!}/navigation`,
+      schema: getEntryNavigationResponse,
+    },
+    {
+      enabled: id != null,
+    }
+  );
+
   if (fetching && !data) {
     return (
       <div className="flex justify-center items-center h-56">
@@ -37,8 +49,8 @@ const ExistingEntryPage: FunctionComponent = () => {
     return <>{t("displayData.dataNotFound")}</>;
   }
 
-  const hasPrevious = data?.donnee?.navigation?.previousDonneeId;
-  const hasNext = data?.donnee?.navigation?.nextDonneeId;
+  const hasPrevious = !isNavigationFetching && navigation?.previousEntryId != null;
+  const hasNext = !isNavigationFetching && navigation?.nextEntryId != null;
 
   return (
     <>
@@ -52,7 +64,7 @@ const ExistingEntryPage: FunctionComponent = () => {
             <div className="tooltip tooltip-bottom" data-tip={hasPrevious ? t("displayData.previousData") : undefined}>
               <Link
                 className={`btn btn-sm btn-square ${hasPrevious ? "btn-accent" : "btn-disabled"}`}
-                to={`../${data?.donnee?.navigation?.previousDonneeId as number}`}
+                to={`../${navigation?.previousEntryId as string}`}
                 tabIndex={hasPrevious ? 0 : -1}
                 relative="path"
                 replace
@@ -63,7 +75,7 @@ const ExistingEntryPage: FunctionComponent = () => {
             <div className="tooltip tooltip-bottom" data-tip={hasNext ? t("displayData.nextData") : undefined}>
               <Link
                 className={`btn btn-sm btn-square ${hasNext ? "btn-accent" : "btn-disabled"}`}
-                to={`../${data?.donnee?.navigation?.nextDonneeId as number}`}
+                to={`../${navigation?.nextEntryId as string}`}
                 tabIndex={hasNext ? 0 : -1}
                 relative="path"
                 replace

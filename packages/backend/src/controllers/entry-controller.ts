@@ -1,4 +1,5 @@
 import { upsertEntryInput, upsertEntryResponse } from "@ou-ca/common/api/entry";
+import { entryNavigationSchema } from "@ou-ca/common/entities/entry";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -60,6 +61,17 @@ const entryController: FastifyPluginCallback<{
   fastify.get("/last", async (req, reply) => {
     const id = await donneeService.findLastDonneeId(req.user);
     await reply.send({ id });
+  });
+
+  fastify.get<{
+    Params: {
+      id: string;
+    };
+  }>("/:id/navigation", async (req, reply) => {
+    const navigation = await donneeService.findDonneeNavigationData(req.user, req.params.id);
+    const response = entryNavigationSchema.parse(navigation);
+
+    return await reply.send(response);
   });
 
   fastify.delete<{

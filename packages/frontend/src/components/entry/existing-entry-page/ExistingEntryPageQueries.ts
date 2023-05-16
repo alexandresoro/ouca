@@ -9,11 +9,6 @@ export const DONNEE_QUERY = graphql(`
           id
         }
       }
-      navigation {
-        index
-        previousDonneeId
-        nextDonneeId
-      }
     }
   }
 `);

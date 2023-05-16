@@ -194,12 +194,6 @@ type Donnee {
   commentaire: String
 }
 
-type DonneeNavigationData {
-  previousDonneeId: Int
-  nextDonneeId: Int
-  index: Int!
-}
-
 #
 # Args
 #
@@ -321,7 +315,6 @@ enum SearchDonneesOrderBy {
 type DonneeResult {
   id: Int!
   donnee: Donnee
-  navigation: DonneeNavigationData
 }
 
 interface PaginatedResult {

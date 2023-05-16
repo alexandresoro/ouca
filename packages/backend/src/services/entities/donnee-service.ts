@@ -1,8 +1,8 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type EntryNavigation } from "@ou-ca/common/entities/entry";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import {
-  type DonneeNavigationData,
   type PaginatedSearchDonneesResultResultArgs,
   type SearchDonneeCriteria,
 } from "../../graphql/generated/graphql-types.js";
@@ -73,27 +73,19 @@ export const buildDonneeService = ({
     return donneeRepository.getCount(searchCriteria);
   };
 
-  const findDonneeNavigationData = async (
-    loggedUser: LoggedUser | null,
-    donneeId: number | undefined
-  ): Promise<DonneeNavigationData> => {
+  const findDonneeNavigationData = async (loggedUser: LoggedUser | null, entryId: string): Promise<EntryNavigation> => {
     validateAuthorization(loggedUser);
 
-    if (donneeId == null) {
-      return {
-        index: 0,
-      };
-    }
-    const [previousDonneeId, nextDonneeId, index] = await Promise.all([
-      donneeRepository.findPreviousDonneeId(donneeId),
-      donneeRepository.findNextDonneeId(donneeId),
-      donneeRepository.findDonneeIndex(donneeId),
+    const [previousEntryId, nextEntryId, index] = await Promise.all([
+      donneeRepository.findPreviousDonneeId(parseInt(entryId)),
+      donneeRepository.findNextDonneeId(parseInt(entryId)),
+      donneeRepository.findDonneeIndex(parseInt(entryId)),
     ]);
 
     return {
       index,
-      previousDonneeId,
-      nextDonneeId,
+      previousEntryId: previousEntryId != null ? `${previousEntryId}` : null,
+      nextEntryId: nextEntryId != null ? `${nextEntryId}` : null,
     };
   };
 

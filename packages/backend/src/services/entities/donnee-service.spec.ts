@@ -1,4 +1,5 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type EntryNavigation } from "@ou-ca/common/entities/entry";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
@@ -6,7 +7,6 @@ import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
 import {
   SearchDonneesOrderBy,
   SortOrder,
-  type DonneeNavigationData,
   type PaginatedSearchDonneesResultResultArgs,
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
@@ -180,20 +180,20 @@ describe("Data navigation", () => {
     donneeRepository.findNextDonneeId.mockResolvedValueOnce(17);
     donneeRepository.findDonneeIndex.mockResolvedValueOnce(11);
 
-    const result = await donneeService.findDonneeNavigationData(loggedUser, 12);
+    const result = await donneeService.findDonneeNavigationData(loggedUser, "12");
 
     expect(donneeRepository.findPreviousDonneeId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.findNextDonneeId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.findDonneeIndex).toHaveBeenCalledTimes(1);
-    expect(result).toEqual<DonneeNavigationData>({
+    expect(result).toEqual<EntryNavigation>({
       index: 11,
-      previousDonneeId: 3,
-      nextDonneeId: 17,
+      previousEntryId: "3",
+      nextEntryId: "17",
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(donneeService.findDonneeNavigationData(null, 12)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(donneeService.findDonneeNavigationData(null, "12")).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

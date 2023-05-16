@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { entrySchema } from "../entities/entry.js";
+import { entryNavigationSchema, entrySchema } from "../entities/entry.js";
 
 /**
  * `PUT` `/entry/:id` Update of entry
@@ -25,6 +25,13 @@ export type UpsertEntryInput = z.infer<typeof upsertEntryInput>;
 export const upsertEntryResponse = entrySchema;
 
 export type UpsertEntryResponse = z.infer<typeof upsertEntryResponse>;
+
+/**
+ * `GET` `/entry/:id/navigation` Get navigation relative to the given entry
+ */
+export const getEntryNavigationResponse = entryNavigationSchema;
+
+export type GetEntryNavigationResponse = z.infer<typeof getEntryNavigationResponse>;
 
 /**
  * `GET` `/entry/last`

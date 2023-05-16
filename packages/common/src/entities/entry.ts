@@ -17,3 +17,11 @@ export const entrySchema = z.object({
 });
 
 export type Entry = z.infer<typeof entrySchema>;
+
+export const entryNavigationSchema = z.object({
+  previousEntryId: z.string().nullable(),
+  nextEntryId: z.string().nullable(),
+  index: z.number(),
+});
+
+export type EntryNavigation = z.infer<typeof entryNavigationSchema>;
