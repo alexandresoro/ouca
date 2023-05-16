@@ -63,7 +63,7 @@
     "leaflet": "1.9.3",
     "mapbox-gl": "npm:empty-npm-package@1.0.0",
     "maplibre-gl": "2.4.0",
-    "oidc-client-ts": "2.2.3",
+    "oidc-client-ts": "2.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "7.43.9",
