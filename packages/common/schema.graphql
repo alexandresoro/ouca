@@ -456,50 +456,39 @@ type UpsertInventaireResult {
 
 type Query {
   ages(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
-  classe(id: Int!): Classe
   classes(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
-  commune(id: Int!): Commune
   communes(searchParams: SearchParams, departmentId: Int, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
-  comportement(id: Int!): Comportement
   comportements(
     searchParams: SearchParams
     orderBy: ComportementsOrderBy
     sortOrder: SortOrder
   ): ComportementsPaginatedResult
-  departement(id: Int!): Departement
   departements(
     searchParams: SearchParams
     orderBy: DepartementsOrderBy
     sortOrder: SortOrder
   ): DepartementsPaginatedResult
   donnee(id: Int!): DonneeResult
-  espece(id: Int!): Espece
   especes(
     searchParams: SearchParams
     searchCriteria: SearchDonneeCriteria
     orderBy: EspecesOrderBy
     sortOrder: SortOrder
   ): EspecesPaginatedResult
-  estimationDistance(id: Int!): EstimationDistance
   estimationsDistance(
     searchParams: SearchParams
     orderBy: EntitesAvecLibelleOrderBy
     sortOrder: SortOrder
   ): EstimationsDistancePaginatedResult
-  estimationNombre(id: Int!): EstimationNombre
   estimationsNombre(
     searchParams: SearchParams
     orderBy: EstimationNombreOrderBy
     sortOrder: SortOrder
   ): EstimationsNombrePaginatedResult
   inventaire(id: Int!): Inventaire
-  lieuDit(id: Int!): LieuDit
   lieuxDits(searchParams: SearchParams, townId: Int, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
-  meteo(id: Int!): Meteo
   meteos(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): MeteosPaginatedResult
-  milieu(id: Int!): Milieu
   milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
-  observateur(id: Int!): Observateur
   observateurs(
     searchParams: SearchParams
     orderBy: EntitesAvecLibelleOrderBy

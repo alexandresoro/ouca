@@ -70,9 +70,6 @@ export const buildResolvers = ({
           count,
         };
       },
-      classe: async (_source, args, { user }): Promise<Classe | null> => {
-        return classeService.findClasse(args.id, user);
-      },
       classes: async (_, args, { user }): Promise<ClassesPaginatedResult> => {
         const [data, count] = await Promise.all([
           classeService.findPaginatedClasses(user, args),
@@ -82,9 +79,6 @@ export const buildResolvers = ({
           data,
           count,
         };
-      },
-      commune: async (_source, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
-        return communeService.findCommune(args.id, user);
       },
       communes: async (
         _,
@@ -100,9 +94,6 @@ export const buildResolvers = ({
           count,
         };
       },
-      comportement: async (_source, args, { user }): Promise<Comportement | null> => {
-        return comportementService.findComportement(args.id, user);
-      },
       comportements: async (_, args, { user }): Promise<ComportementsPaginatedResult> => {
         const [data, count] = await Promise.all([
           comportementService.findPaginatedComportements(user, args),
@@ -112,9 +103,6 @@ export const buildResolvers = ({
           data,
           count,
         };
-      },
-      departement: async (_source, args, { user }): Promise<Departement | null> => {
-        return departementService.findDepartement(args.id, user);
       },
       departements: async (_, args, { user }): Promise<DepartementsPaginatedResult> => {
         const [data, count] = await Promise.all([
@@ -132,9 +120,6 @@ export const buildResolvers = ({
           id: args.id,
         };
       },
-      espece: async (_source, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
-        return especeService.findEspece(args.id, user);
-      },
       especes: async (_, args, { user }): Promise<{ data: Omit<Espece, "classe">[]; count: number }> => {
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, args),
@@ -145,9 +130,6 @@ export const buildResolvers = ({
           count,
         };
       },
-      estimationDistance: async (_source, args, { user }): Promise<EstimationDistance | null> => {
-        return estimationDistanceService.findEstimationDistance(args.id, user);
-      },
       estimationsDistance: async (_, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
         const [data, count] = await Promise.all([
           estimationDistanceService.findPaginatedEstimationsDistance(user, args),
@@ -157,9 +139,6 @@ export const buildResolvers = ({
           data,
           count,
         };
-      },
-      estimationNombre: async (_source, args, { user }): Promise<EstimationNombre | null> => {
-        return estimationNombreService.findEstimationNombre(args.id, user);
       },
       estimationsNombre: async (_, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
         const [data, count] = await Promise.all([
@@ -178,9 +157,6 @@ export const buildResolvers = ({
       ): Promise<Omit<Inventaire, "observateur" | "associes" | "lieuDit" | "meteos"> | null> => {
         return inventaireService.findInventaire(args.id, user);
       },
-      lieuDit: async (_source, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
-        return lieuditService.findLieuDit(args.id, user);
-      },
       lieuxDits: async (
         _,
         args,
@@ -195,9 +171,6 @@ export const buildResolvers = ({
           count,
         };
       },
-      meteo: async (_source, args, { user }): Promise<Meteo | null> => {
-        return meteoService.findMeteo(args.id, user);
-      },
       meteos: async (_, args, { user }): Promise<MeteosPaginatedResult> => {
         const [data, count] = await Promise.all([
           meteoService.findPaginatedMeteos(user, args),
@@ -208,9 +181,6 @@ export const buildResolvers = ({
           count,
         };
       },
-      milieu: async (_source, args, { user }): Promise<Milieu | null> => {
-        return milieuService.findMilieu(args.id, user);
-      },
       milieux: async (_, args, { user }): Promise<MilieuxPaginatedResult> => {
         const [data, count] = await Promise.all([
           milieuService.findPaginatedMilieux(user, args),
@@ -220,9 +190,6 @@ export const buildResolvers = ({
           data,
           count,
         };
-      },
-      observateur: async (_source, args, { user }): Promise<Observateur | null> => {
-        return observateurService.findObservateur(args.id, user);
       },
       observateurs: async (_, args, { user }): Promise<ObservateursPaginatedResult> => {
         const [data, count] = await Promise.all([
