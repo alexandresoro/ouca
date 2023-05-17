@@ -88,7 +88,7 @@ const EstimationNombreTable: FunctionComponent = () => {
   const handleDeleteEstimationNombreConfirmation = (estimationNombre: EstimationNombre | null) => {
     if (estimationNombre) {
       setDialogEstimationNombre(null);
-      mutate({ path: `/number-estimate/${estimationNombre.id}` });
+      mutate({ path: `/number-estimates/${estimationNombre.id}` });
     }
   };
 

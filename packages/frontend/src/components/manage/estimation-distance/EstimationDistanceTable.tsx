@@ -84,7 +84,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
   const handleDeleteEstimationDistanceConfirmation = (estimationDistance: EstimationDistance | null) => {
     if (estimationDistance) {
       setDialogEstimationDistance(null);
-      mutate({ path: `/distance-estimate/${estimationDistance.id}` });
+      mutate({ path: `/distance-estimates/${estimationDistance.id}` });
     }
   };
 

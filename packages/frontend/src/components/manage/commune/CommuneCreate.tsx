@@ -15,7 +15,7 @@ const CommuneCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/town",
+      path: "/towns",
       method: "POST",
       schema: upsertTownResponse,
     },

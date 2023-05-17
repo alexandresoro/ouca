@@ -96,7 +96,7 @@ const CommuneTable: FunctionComponent = () => {
   const handleDeleteCommuneConfirmation = (commune: Commune | null) => {
     if (commune) {
       setDialogCommune(null);
-      mutate({ path: `/town/${commune.id}` });
+      mutate({ path: `/towns/${commune.id}` });
     }
   };
 

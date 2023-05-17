@@ -21,7 +21,7 @@ const AgeUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/age/${id!}`, schema: getAgeResponse },
+    { path: `/ages/${id!}`, schema: getAgeResponse },
     {
       enabled: enabledQuery,
     }
@@ -42,7 +42,7 @@ const AgeUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/age/${id!}`,
+      path: `/ages/${id!}`,
       method: "PUT",
       schema: upsertAgeResponse,
     },

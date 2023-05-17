@@ -21,7 +21,7 @@ const CommuneUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/town/${id!}`, schema: getTownResponse },
+    { path: `/towns/${id!}`, schema: getTownResponse },
     {
       enabled: enabledQuery,
     }
@@ -42,7 +42,7 @@ const CommuneUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/town/${id!}`,
+      path: `/towns/${id!}`,
       method: "PUT",
       schema: upsertTownResponse,
     },

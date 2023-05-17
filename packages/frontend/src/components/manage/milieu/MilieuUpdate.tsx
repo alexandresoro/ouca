@@ -25,7 +25,7 @@ const MilieuUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/environment/${id!}`, schema: getEnvironmentResponse },
+    { path: `/environments/${id!}`, schema: getEnvironmentResponse },
     {
       enabled: enabledQuery,
     }
@@ -46,7 +46,7 @@ const MilieuUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/environment/${id!}`,
+      path: `/environments/${id!}`,
       method: "PUT",
       schema: upsertEnvironmentResponse,
     },

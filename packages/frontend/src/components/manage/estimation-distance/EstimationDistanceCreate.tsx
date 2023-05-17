@@ -15,7 +15,7 @@ const EstimationDistanceCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/distance-estimate",
+      path: "/distance-estimates",
       method: "POST",
       schema: upsertDistanceEstimateResponse,
     },

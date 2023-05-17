@@ -15,7 +15,7 @@ const ClasseCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/class",
+      path: "/classes",
       method: "POST",
       schema: upsertClassResponse,
     },

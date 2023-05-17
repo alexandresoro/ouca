@@ -92,7 +92,7 @@ const ComportementTable: FunctionComponent = () => {
   const handleDeleteComportementConfirmation = (comportement: Comportement | null) => {
     if (comportement) {
       setDialogComportement(null);
-      mutate({ path: `/behavior/${comportement.id}` });
+      mutate({ path: `/behaviors/${comportement.id}` });
     }
   };
 

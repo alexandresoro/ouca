@@ -88,7 +88,7 @@ const MilieuTable: FunctionComponent = () => {
   const handleDeleteMilieuConfirmation = (milieu: Milieu | null) => {
     if (milieu) {
       setDialogMilieu(null);
-      mutate({ path: `/environment/${milieu.id}` });
+      mutate({ path: `/environments/${milieu.id}` });
     }
   };
 

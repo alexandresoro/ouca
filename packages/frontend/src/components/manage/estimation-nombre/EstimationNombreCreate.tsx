@@ -15,7 +15,7 @@ const EstimationNombreCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/number-estimate",
+      path: "/number-estimates",
       method: "POST",
       schema: upsertNumberEstimateResponse,
     },

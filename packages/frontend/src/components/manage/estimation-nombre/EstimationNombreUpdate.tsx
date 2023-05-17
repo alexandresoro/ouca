@@ -25,7 +25,7 @@ const EstimationNombreUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/number-estimate/${id!}`, schema: getNumberEstimateResponse },
+    { path: `/number-estimates/${id!}`, schema: getNumberEstimateResponse },
     {
       enabled: enabledQuery,
     }
@@ -46,7 +46,7 @@ const EstimationNombreUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/number-estimate/${id!}`,
+      path: `/number-estimates/${id!}`,
       method: "PUT",
       schema: upsertNumberEstimateResponse,
     },

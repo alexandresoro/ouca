@@ -15,7 +15,7 @@ const ObservateurCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/observer",
+      path: "/observers",
       method: "POST",
       schema: upsertObserverResponse,
     },

@@ -84,7 +84,7 @@ const AgeTable: FunctionComponent = () => {
   const handleDeleteAgeConfirmation = (age: Age | null) => {
     if (age) {
       setDialogAge(null);
-      mutate({ path: `/age/${age.id}` });
+      mutate({ path: `/ages/${age.id}` });
     }
   };
 

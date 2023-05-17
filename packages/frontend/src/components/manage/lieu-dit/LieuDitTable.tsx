@@ -110,7 +110,7 @@ const LieuDitTable: FunctionComponent = () => {
   const handleDeleteLieuDitConfirmation = (lieuDit: Pick<LieuDit, "id"> | null) => {
     if (lieuDit) {
       setDialogLieuDit(null);
-      mutate({ path: `/locality/${lieuDit.id}` });
+      mutate({ path: `/localities/${lieuDit.id}` });
     }
   };
 

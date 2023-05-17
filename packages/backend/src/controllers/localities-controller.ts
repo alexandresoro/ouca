@@ -1,30 +1,41 @@
-import { getBehaviorResponse, upsertBehaviorInput, upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
+import { getLocalityResponse, upsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
+import { type Locality } from "@ou-ca/common/entities/locality";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
+import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types.js";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const behaviorController: FastifyPluginCallback<{
+const reshapeLocalityRepositoryToApi = (locality: Lieudit): Locality => {
+  const { id, communeId, ...restLocality } = locality;
+  return {
+    ...restLocality,
+    id: `${id}`,
+    townId: `${communeId}`,
+  };
+};
+
+const localitiesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { comportementService } = services;
+  const { lieuditService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const behavior = await comportementService.findComportement(req.params.id, req.user);
-    if (!behavior) {
+    const locality = await lieuditService.findLieuDit(req.params.id, req.user);
+    if (!locality) {
       return await reply.status(404).send();
     }
 
-    const response = getBehaviorResponse.parse(behavior);
+    const response = getLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
     return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertBehaviorInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertLocalityInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -33,8 +44,8 @@ const behaviorController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const behavior = await comportementService.createComportement(input, req.user);
-      const response = upsertBehaviorResponse.parse(behavior);
+      const locality = await lieuditService.createLieuDit(input, req.user);
+      const response = upsertLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
 
       return await reply.send(response);
     } catch (e) {
@@ -50,7 +61,7 @@ const behaviorController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertBehaviorInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertLocalityInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -59,8 +70,8 @@ const behaviorController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const behavior = await comportementService.updateComportement(req.params.id, input, req.user);
-      const response = upsertBehaviorResponse.parse(behavior);
+      const locality = await lieuditService.updateLieuDit(req.params.id, input, req.user);
+      const response = upsertLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
 
       return await reply.send(response);
     } catch (e) {
@@ -77,7 +88,7 @@ const behaviorController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await comportementService.deleteComportement(req.params.id, req.user);
+      const { id: deletedId } = await lieuditService.deleteLieuDit(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -90,4 +101,4 @@ const behaviorController: FastifyPluginCallback<{
   done();
 };
 
-export default behaviorController;
+export default localitiesController;

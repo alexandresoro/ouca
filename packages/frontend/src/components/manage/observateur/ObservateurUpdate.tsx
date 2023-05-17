@@ -21,7 +21,7 @@ const ObservateurUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/observer/${id!}`, schema: getObserverResponse },
+    { path: `/observers/${id!}`, schema: getObserverResponse },
     {
       enabled: enabledQuery,
     }
@@ -42,7 +42,7 @@ const ObservateurUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/observer/${id!}`,
+      path: `/observers/${id!}`,
       method: "PUT",
       schema: upsertObserverResponse,
     },

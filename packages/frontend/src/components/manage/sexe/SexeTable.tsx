@@ -84,7 +84,7 @@ const SexeTable: FunctionComponent = () => {
   const handleDeleteSexeConfirmation = (sexe: Sexe | null) => {
     if (sexe) {
       setDialogSexe(null);
-      mutate({ path: `/sex/${sexe.id}` });
+      mutate({ path: `/sexes/${sexe.id}` });
     }
   };
 

@@ -1,30 +1,41 @@
-import { getClassResponse, upsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
+import { getTownResponse, upsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
+import { type Town } from "@ou-ca/common/entities/town";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
+import { type Commune } from "../repositories/commune/commune-repository-types.js";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const classController: FastifyPluginCallback<{
+const reshapeTownRepositoryToApi = (town: Commune): Town => {
+  const { id, departementId, ...restTown } = town;
+  return {
+    ...restTown,
+    id: `${id}`,
+    departmentId: `${departementId}`,
+  };
+};
+
+const townsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { classeService } = services;
+  const { communeService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const speciesClass = await classeService.findClasse(req.params.id, req.user);
-    if (!speciesClass) {
+    const town = await communeService.findCommune(req.params.id, req.user);
+    if (!town) {
       return await reply.status(404).send();
     }
 
-    const response = getClassResponse.parse(speciesClass);
+    const response = getTownResponse.parse(reshapeTownRepositoryToApi(town));
     return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertClassInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertTownInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -33,8 +44,8 @@ const classController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const speciesClass = await classeService.createClasse(input, req.user);
-      const response = upsertClassResponse.parse(speciesClass);
+      const town = await communeService.createCommune(input, req.user);
+      const response = upsertTownResponse.parse(reshapeTownRepositoryToApi(town));
 
       return await reply.send(response);
     } catch (e) {
@@ -50,7 +61,7 @@ const classController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertClassInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertTownInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -59,8 +70,8 @@ const classController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const speciesClass = await classeService.updateClasse(req.params.id, input, req.user);
-      const response = upsertClassResponse.parse(speciesClass);
+      const town = await communeService.updateCommune(req.params.id, input, req.user);
+      const response = upsertTownResponse.parse(reshapeTownRepositoryToApi(town));
 
       return await reply.send(response);
     } catch (e) {
@@ -77,7 +88,7 @@ const classController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await classeService.deleteClasse(req.params.id, req.user);
+      const { id: deletedId } = await communeService.deleteCommune(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -90,4 +101,4 @@ const classController: FastifyPluginCallback<{
   done();
 };
 
-export default classController;
+export default townsController;

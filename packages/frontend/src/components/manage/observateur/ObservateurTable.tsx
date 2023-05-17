@@ -84,7 +84,7 @@ const ObservateurTable: FunctionComponent = () => {
   const handleDeleteObservateurConfirmation = (observateur: Observateur | null) => {
     if (observateur) {
       setDialogObservateur(null);
-      mutate({ path: `/observer/${observateur.id}` });
+      mutate({ path: `/observers/${observateur.id}` });
     }
   };
 

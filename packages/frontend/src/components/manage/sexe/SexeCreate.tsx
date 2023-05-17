@@ -15,7 +15,7 @@ const SexeCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/sex",
+      path: "/sexes",
       method: "POST",
       schema: upsertSexResponse,
     },

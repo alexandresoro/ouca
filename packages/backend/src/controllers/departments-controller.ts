@@ -1,30 +1,30 @@
-import { getSexResponse, upsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
+import { getDepartmentResponse, upsertDepartmentInput, upsertDepartmentResponse } from "@ou-ca/common/api/department";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const sexController: FastifyPluginCallback<{
+const departmentsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { sexeService } = services;
+  const { departementService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const sex = await sexeService.findSexe(req.params.id, req.user);
-    if (!sex) {
+    const department = await departementService.findDepartement(req.params.id, req.user);
+    if (!department) {
       return await reply.status(404).send();
     }
 
-    const response = getSexResponse.parse(sex);
+    const response = getDepartmentResponse.parse(department);
     return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertSexInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertDepartmentInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -33,8 +33,8 @@ const sexController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const sex = await sexeService.createSexe(input, req.user);
-      const response = upsertSexResponse.parse(sex);
+      const department = await departementService.createDepartement(input, req.user);
+      const response = upsertDepartmentResponse.parse(department);
 
       return await reply.send(response);
     } catch (e) {
@@ -50,7 +50,7 @@ const sexController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertSexInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertDepartmentInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -59,8 +59,8 @@ const sexController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const sex = await sexeService.updateSexe(req.params.id, input, req.user);
-      const response = upsertSexResponse.parse(sex);
+      const department = await departementService.updateDepartement(req.params.id, input, req.user);
+      const response = upsertDepartmentResponse.parse(department);
 
       return await reply.send(response);
     } catch (e) {
@@ -77,7 +77,7 @@ const sexController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await sexeService.deleteSexe(req.params.id, req.user);
+      const { id: deletedId } = await departementService.deleteDepartement(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -90,4 +90,4 @@ const sexController: FastifyPluginCallback<{
   done();
 };
 
-export default sexController;
+export default departmentsController;

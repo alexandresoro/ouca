@@ -15,7 +15,7 @@ const MeteoCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/weather",
+      path: "/weathers",
       method: "POST",
       schema: upsertWeatherResponse,
     },

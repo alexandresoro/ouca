@@ -1,30 +1,34 @@
-import { getDistanceEstimateResponse, upsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
+import {
+  getEnvironmentResponse,
+  upsertEnvironmentInput,
+  upsertEnvironmentResponse,
+} from "@ou-ca/common/api/environment";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const distanceEstimateController: FastifyPluginCallback<{
+const environmentsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { estimationDistanceService } = services;
+  const { milieuService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const distanceEstimate = await estimationDistanceService.findEstimationDistance(req.params.id, req.user);
-    if (!distanceEstimate) {
+    const environment = await milieuService.findMilieu(req.params.id, req.user);
+    if (!environment) {
       return await reply.status(404).send();
     }
 
-    const response = getDistanceEstimateResponse.parse(distanceEstimate);
+    const response = getEnvironmentResponse.parse(environment);
     return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertDistanceEstimateInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertEnvironmentInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -33,8 +37,8 @@ const distanceEstimateController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const distanceEstimate = await estimationDistanceService.createEstimationDistance(input, req.user);
-      const response = upsertDistanceEstimateResponse.parse(distanceEstimate);
+      const environment = await milieuService.createMilieu(input, req.user);
+      const response = upsertEnvironmentResponse.parse(environment);
 
       return await reply.send(response);
     } catch (e) {
@@ -50,7 +54,7 @@ const distanceEstimateController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertDistanceEstimateInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertEnvironmentInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -59,8 +63,8 @@ const distanceEstimateController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const distanceEstimate = await estimationDistanceService.updateEstimationDistance(req.params.id, input, req.user);
-      const response = upsertDistanceEstimateResponse.parse(distanceEstimate);
+      const environment = await milieuService.updateMilieu(req.params.id, input, req.user);
+      const response = upsertEnvironmentResponse.parse(environment);
 
       return await reply.send(response);
     } catch (e) {
@@ -77,7 +81,7 @@ const distanceEstimateController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await estimationDistanceService.deleteEstimationDistance(req.params.id, req.user);
+      const { id: deletedId } = await milieuService.deleteMilieu(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -90,4 +94,4 @@ const distanceEstimateController: FastifyPluginCallback<{
   done();
 };
 
-export default distanceEstimateController;
+export default environmentsController;

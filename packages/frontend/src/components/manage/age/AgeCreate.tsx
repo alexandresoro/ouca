@@ -15,7 +15,7 @@ const AgeCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/age",
+      path: "/ages",
       method: "POST",
       schema: upsertAgeResponse,
     },

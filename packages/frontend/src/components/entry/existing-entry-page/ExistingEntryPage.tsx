@@ -25,7 +25,7 @@ const ExistingEntryPage: FunctionComponent = () => {
 
   const { data: navigation, isFetching: isNavigationFetching } = useApiQuery(
     {
-      path: `/entry/${id!}/navigation`,
+      path: `/entries/${id!}/navigation`,
       schema: getEntryNavigationResponse,
     },
     {

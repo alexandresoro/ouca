@@ -22,7 +22,7 @@ const LieuDitUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/locality/${id!}`, schema: getLocalityResponse },
+    { path: `/localities/${id!}`, schema: getLocalityResponse },
     {
       enabled: enabledQuery,
     }
@@ -38,7 +38,7 @@ const LieuDitUpdate: FunctionComponent = () => {
     isLoading: isLoadingTown,
     isError: isErrorTown,
   } = useApiQuery(
-    { path: `/town/${data?.townId ?? ""}`, schema: getTownResponse },
+    { path: `/towns/${data?.townId ?? ""}`, schema: getTownResponse },
     {
       enabled: enabledQueryTown && data?.townId != null,
     }
@@ -61,7 +61,7 @@ const LieuDitUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/locality/${id!}`,
+      path: `/localities/${id!}`,
       method: "PUT",
       schema: upsertLocalityResponse,
     },

@@ -15,7 +15,7 @@ const LieuDitCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/locality",
+      path: "/localities",
       method: "POST",
       schema: upsertLocalityResponse,
     },

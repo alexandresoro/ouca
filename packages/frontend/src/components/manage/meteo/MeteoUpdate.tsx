@@ -21,7 +21,7 @@ const MeteoUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/weather/${id!}`, schema: getWeatherResponse },
+    { path: `/weathers/${id!}`, schema: getWeatherResponse },
     {
       enabled: enabledQuery,
     }
@@ -42,7 +42,7 @@ const MeteoUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/weather/${id!}`,
+      path: `/weathers/${id!}`,
       method: "PUT",
       schema: upsertWeatherResponse,
     },

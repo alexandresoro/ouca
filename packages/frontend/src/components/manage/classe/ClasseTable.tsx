@@ -88,7 +88,7 @@ const ClasseTable: FunctionComponent = () => {
   const handleDeleteClasseConfirmation = (classe: Classe | null) => {
     if (classe) {
       setDialogClasse(null);
-      mutate({ path: `/class/${classe.id}` });
+      mutate({ path: `/classes/${classe.id}` });
     }
   };
 

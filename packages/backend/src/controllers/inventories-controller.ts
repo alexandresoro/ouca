@@ -2,7 +2,7 @@ import { upsertInventoryInput, upsertInventoryResponse } from "@ou-ca/common/api
 import { type FastifyPluginCallback } from "fastify";
 import { type Services } from "../services/services.js";
 
-const inventoryController: FastifyPluginCallback<{
+const inventoriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { inventaireService } = services;
@@ -58,4 +58,4 @@ const inventoryController: FastifyPluginCallback<{
   done();
 };
 
-export default inventoryController;
+export default inventoriesController;

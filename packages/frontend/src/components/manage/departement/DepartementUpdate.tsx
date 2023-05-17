@@ -25,7 +25,7 @@ const DepartementUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/department/${id!}`, schema: getDepartmentResponse },
+    { path: `/departments/${id!}`, schema: getDepartmentResponse },
     {
       enabled: enabledQuery,
     }
@@ -46,7 +46,7 @@ const DepartementUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/department/${id!}`,
+      path: `/departments/${id!}`,
       method: "PUT",
       schema: upsertDepartmentResponse,
     },

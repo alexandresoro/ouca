@@ -1,34 +1,30 @@
-import {
-  getEnvironmentResponse,
-  upsertEnvironmentInput,
-  upsertEnvironmentResponse,
-} from "@ou-ca/common/api/environment";
+import { getClassResponse, upsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const environmentController: FastifyPluginCallback<{
+const classesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { milieuService } = services;
+  const { classeService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const environment = await milieuService.findMilieu(req.params.id, req.user);
-    if (!environment) {
+    const speciesClass = await classeService.findClasse(req.params.id, req.user);
+    if (!speciesClass) {
       return await reply.status(404).send();
     }
 
-    const response = getEnvironmentResponse.parse(environment);
+    const response = getClassResponse.parse(speciesClass);
     return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertEnvironmentInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertClassInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -37,8 +33,8 @@ const environmentController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const environment = await milieuService.createMilieu(input, req.user);
-      const response = upsertEnvironmentResponse.parse(environment);
+      const speciesClass = await classeService.createClasse(input, req.user);
+      const response = upsertClassResponse.parse(speciesClass);
 
       return await reply.send(response);
     } catch (e) {
@@ -54,7 +50,7 @@ const environmentController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertEnvironmentInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertClassInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -63,8 +59,8 @@ const environmentController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const environment = await milieuService.updateMilieu(req.params.id, input, req.user);
-      const response = upsertEnvironmentResponse.parse(environment);
+      const speciesClass = await classeService.updateClasse(req.params.id, input, req.user);
+      const response = upsertClassResponse.parse(speciesClass);
 
       return await reply.send(response);
     } catch (e) {
@@ -81,7 +77,7 @@ const environmentController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await milieuService.deleteMilieu(req.params.id, req.user);
+      const { id: deletedId } = await classeService.deleteClasse(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -94,4 +90,4 @@ const environmentController: FastifyPluginCallback<{
   done();
 };
 
-export default environmentController;
+export default classesController;

@@ -15,7 +15,7 @@ const MilieuCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/environment",
+      path: "/environments",
       method: "POST",
       schema: upsertEnvironmentResponse,
     },

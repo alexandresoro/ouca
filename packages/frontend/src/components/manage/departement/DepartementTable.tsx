@@ -92,7 +92,7 @@ const DepartementTable: FunctionComponent = () => {
   const handleDeleteDepartementConfirmation = (departement: Departement | null) => {
     if (departement) {
       setDialogDepartement(null);
-      mutate({ path: `/department/${departement.id}` });
+      mutate({ path: `/departments/${departement.id}` });
     }
   };
 

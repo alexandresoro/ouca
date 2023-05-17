@@ -15,7 +15,7 @@ const ComportementCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/behavior",
+      path: "/behaviors",
       method: "POST",
       schema: upsertBehaviorResponse,
     },

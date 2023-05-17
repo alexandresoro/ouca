@@ -21,7 +21,7 @@ const ClasseUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/class/${id!}`, schema: getClassResponse },
+    { path: `/classes/${id!}`, schema: getClassResponse },
     {
       enabled: enabledQuery,
     }
@@ -42,7 +42,7 @@ const ClasseUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/class/${id!}`,
+      path: `/classes/${id!}`,
       method: "PUT",
       schema: upsertClassResponse,
     },

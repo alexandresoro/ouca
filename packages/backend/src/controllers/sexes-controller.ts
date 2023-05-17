@@ -1,41 +1,30 @@
-import { getLocalityResponse, upsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
-import { type Locality } from "@ou-ca/common/entities/locality";
+import { getSexResponse, upsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
-import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types.js";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const reshapeLocalityRepositoryToApi = (locality: Lieudit): Locality => {
-  const { id, communeId, ...restLocality } = locality;
-  return {
-    ...restLocality,
-    id: `${id}`,
-    townId: `${communeId}`,
-  };
-};
-
-const localityController: FastifyPluginCallback<{
+const sexesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { lieuditService } = services;
+  const { sexeService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const locality = await lieuditService.findLieuDit(req.params.id, req.user);
-    if (!locality) {
+    const sex = await sexeService.findSexe(req.params.id, req.user);
+    if (!sex) {
       return await reply.status(404).send();
     }
 
-    const response = getLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
+    const response = getSexResponse.parse(sex);
     return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertLocalityInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertSexInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -44,8 +33,8 @@ const localityController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const locality = await lieuditService.createLieuDit(input, req.user);
-      const response = upsertLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
+      const sex = await sexeService.createSexe(input, req.user);
+      const response = upsertSexResponse.parse(sex);
 
       return await reply.send(response);
     } catch (e) {
@@ -61,7 +50,7 @@ const localityController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertLocalityInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertSexInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -70,8 +59,8 @@ const localityController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const locality = await lieuditService.updateLieuDit(req.params.id, input, req.user);
-      const response = upsertLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
+      const sex = await sexeService.updateSexe(req.params.id, input, req.user);
+      const response = upsertSexResponse.parse(sex);
 
       return await reply.send(response);
     } catch (e) {
@@ -88,7 +77,7 @@ const localityController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await lieuditService.deleteLieuDit(req.params.id, req.user);
+      const { id: deletedId } = await sexeService.deleteSexe(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -101,4 +90,4 @@ const localityController: FastifyPluginCallback<{
   done();
 };
 
-export default localityController;
+export default sexesController;

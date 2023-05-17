@@ -8,7 +8,7 @@ import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const numberEstimateController: FastifyPluginCallback<{
+const numberEstimatesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { estimationNombreService } = services;
@@ -94,4 +94,4 @@ const numberEstimateController: FastifyPluginCallback<{
   done();
 };
 
-export default numberEstimateController;
+export default numberEstimatesController;

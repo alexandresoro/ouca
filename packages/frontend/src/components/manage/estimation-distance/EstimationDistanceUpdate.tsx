@@ -21,7 +21,7 @@ const EstimationDistanceUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/distance-estimate/${id!}`, schema: getDistanceEstimateResponse },
+    { path: `/distance-estimates/${id!}`, schema: getDistanceEstimateResponse },
     {
       enabled: enabledQuery,
     }
@@ -42,7 +42,7 @@ const EstimationDistanceUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/distance-estimate/${id!}`,
+      path: `/distance-estimates/${id!}`,
       method: "PUT",
       schema: upsertDistanceEstimateResponse,
     },

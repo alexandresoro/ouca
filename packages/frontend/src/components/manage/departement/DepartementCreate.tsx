@@ -15,7 +15,7 @@ const DepartementCreate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: "/department",
+      path: "/departments",
       method: "POST",
       schema: upsertDepartmentResponse,
     },

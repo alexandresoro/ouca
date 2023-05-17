@@ -12,7 +12,7 @@ const NewEntryPage: FunctionComponent = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const { data } = useApiQuery({ path: "/entry/last", schema: getEntryLastResponse });
+  const { data } = useApiQuery({ path: "/entries/last", schema: getEntryLastResponse });
 
   const hasLastDonnee = data?.id != null;
 

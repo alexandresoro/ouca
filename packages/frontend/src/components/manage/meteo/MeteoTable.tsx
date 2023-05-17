@@ -84,7 +84,7 @@ const MeteoTable: FunctionComponent = () => {
   const handleDeleteMeteoConfirmation = (meteo: Meteo | null) => {
     if (meteo) {
       setDialogMeteo(null);
-      mutate({ path: `/weather/${meteo.id}` });
+      mutate({ path: `/weathers/${meteo.id}` });
     }
   };
 

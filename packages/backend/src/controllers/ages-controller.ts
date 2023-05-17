@@ -1,41 +1,30 @@
-import { getTownResponse, upsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
-import { type Town } from "@ou-ca/common/entities/town";
+import { getAgeResponse, upsertAgeInput, upsertAgeResponse } from "@ou-ca/common/api/age";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
-import { type Commune } from "../repositories/commune/commune-repository-types.js";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const reshapeTownRepositoryToApi = (town: Commune): Town => {
-  const { id, departementId, ...restTown } = town;
-  return {
-    ...restTown,
-    id: `${id}`,
-    departmentId: `${departementId}`,
-  };
-};
-
-const townController: FastifyPluginCallback<{
+const agesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { communeService } = services;
+  const { ageService } = services;
 
   fastify.get<{
     Params: {
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const town = await communeService.findCommune(req.params.id, req.user);
-    if (!town) {
+    const age = await ageService.findAge(req.params.id, req.user);
+    if (!age) {
       return await reply.status(404).send();
     }
 
-    const response = getTownResponse.parse(reshapeTownRepositoryToApi(town));
+    const response = getAgeResponse.parse(age);
     return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {
-    const parsedInputResult = upsertTownInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertAgeInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -44,8 +33,8 @@ const townController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const town = await communeService.createCommune(input, req.user);
-      const response = upsertTownResponse.parse(reshapeTownRepositoryToApi(town));
+      const age = await ageService.createAge(input, req.user);
+      const response = upsertAgeResponse.parse(age);
 
       return await reply.send(response);
     } catch (e) {
@@ -61,7 +50,7 @@ const townController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id", async (req, reply) => {
-    const parsedInputResult = upsertTownInput.safeParse(JSON.parse(req.body as string));
+    const parsedInputResult = upsertAgeInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
       return await reply.status(400).send();
@@ -70,8 +59,8 @@ const townController: FastifyPluginCallback<{
     const { data: input } = parsedInputResult;
 
     try {
-      const town = await communeService.updateCommune(req.params.id, input, req.user);
-      const response = upsertTownResponse.parse(reshapeTownRepositoryToApi(town));
+      const age = await ageService.updateAge(req.params.id, input, req.user);
+      const response = upsertAgeResponse.parse(age);
 
       return await reply.send(response);
     } catch (e) {
@@ -88,7 +77,7 @@ const townController: FastifyPluginCallback<{
     };
   }>("/:id", async (req, reply) => {
     try {
-      const { id: deletedId } = await communeService.deleteCommune(req.params.id, req.user);
+      const { id: deletedId } = await ageService.deleteAge(req.params.id, req.user);
       return await reply.send({ id: deletedId });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -101,4 +90,4 @@ const townController: FastifyPluginCallback<{
   done();
 };
 
-export default townController;
+export default agesController;

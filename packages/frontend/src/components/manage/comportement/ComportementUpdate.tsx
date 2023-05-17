@@ -21,7 +21,7 @@ const ComportementUpdate: FunctionComponent = () => {
 
   const [enabledQuery, setEnabledQuery] = useState(true);
   const { data, isLoading, isError } = useApiQuery(
-    { path: `/behavior/${id!}`, schema: getBehaviorResponse },
+    { path: `/behaviors/${id!}`, schema: getBehaviorResponse },
     {
       enabled: enabledQuery,
     }
@@ -42,7 +42,7 @@ const ComportementUpdate: FunctionComponent = () => {
 
   const { mutate } = useApiMutation(
     {
-      path: `/behavior/${id!}`,
+      path: `/behaviors/${id!}`,
       method: "PUT",
       schema: upsertBehaviorResponse,
     },

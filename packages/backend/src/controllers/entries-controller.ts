@@ -5,7 +5,7 @@ import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const entryController: FastifyPluginCallback<{
+const entriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
   const { donneeService } = services;
@@ -98,4 +98,4 @@ const entryController: FastifyPluginCallback<{
   done();
 };
 
-export default entryController;
+export default entriesController;
