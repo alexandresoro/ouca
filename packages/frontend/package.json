@@ -59,7 +59,7 @@
     "date-fns": "2.30.0",
     "graphql": "16.6.0",
     "i18next": "22.4.15",
-    "i18next-http-backend": "2.2.0",
+    "i18next-http-backend": "2.2.1",
     "leaflet": "1.9.3",
     "mapbox-gl": "npm:empty-npm-package@1.0.0",
     "maplibre-gl": "2.4.0",
