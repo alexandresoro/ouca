@@ -43,7 +43,7 @@
   "dependencies": {
     "@floating-ui/react": "0.24.1",
     "@fontsource-variable/nunito": "5.0.1",
-    "@fontsource/carter-one": "5.0.0",
+    "@fontsource/carter-one": "5.0.1",
     "@headlessui/react": "1.7.14",
     "@hookform/resolvers": "3.1.0",
     "@ou-ca/common": "*",
