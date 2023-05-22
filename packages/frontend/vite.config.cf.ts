@@ -18,11 +18,10 @@ export default defineConfig(({ mode }) => {
         ? [
             sentryVitePlugin({
               url: env.SENTRY_URL,
-              // Release 0.6.0 fixes injection but still seem to need this for injecting the release
-              releaseInjectionTargets: /src\/index\.tsx$/,
-              uploadSourceMaps: false,
               telemetry: false,
-              release: env.CF_PAGES_COMMIT_SHA,
+              release: {
+                name: env.CF_PAGES_COMMIT_SHA,
+              },
             }),
           ]
         : []),
