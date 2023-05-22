@@ -4,12 +4,12 @@
 
 @layer base {
   html {
-    font-family: Nunito, system-ui, sans-serif;
+    font-family: system-ui, sans-serif;
   }
 
   @supports (font-variation-settings: normal) {
     html {
-      font-family: NunitoVariable, system-ui, sans-serif;
+      font-family: "Nunito Variable", system-ui, sans-serif;
     }
   }
 }
