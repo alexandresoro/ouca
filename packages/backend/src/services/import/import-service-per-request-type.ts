@@ -14,7 +14,7 @@ import {
   IMPORT_OBSERVATEUR,
   IMPORT_SEXE,
   type ImportType,
-} from "@ou-ca/common/import-types";
+} from "@ou-ca/common/import/import-types";
 import { type Services } from "../services.js";
 import { ImportAgeService } from "./import-age-service.js";
 import { ImportClasseService } from "./import-classe-service.js";

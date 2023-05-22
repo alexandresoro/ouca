@@ -1,16 +1,13 @@
-import { type ImportType } from "@ou-ca/common/import-types";
+import { ImportErrorType } from "@ou-ca/common/import/import-error-types";
+import { type ImportStatus } from "@ou-ca/common/import/import-status";
+import { ImportStatusEnum, OngoingSubStatus } from "@ou-ca/common/import/import-status-enum";
+import { type ImportType } from "@ou-ca/common/import/import-types";
+import { type OngoingValidationStats } from "@ou-ca/common/import/ongoing-validation-stats";
 import { stringify } from "csv-stringify/sync";
 import { randomUUID } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { Worker } from "node:worker_threads";
-import {
-  ImportErrorType,
-  ImportStatusEnum,
-  OngoingSubStatus,
-  type ImportStatus,
-  type OngoingValidationStats,
-} from "../graphql/generated/graphql-types.js";
 import {
   IMPORT_COMPLETE,
   IMPORT_FAILED,
@@ -31,7 +28,7 @@ type ImportStatusStructure = {
 };
 
 type ImportOngoingStructure = {
-  status: typeof ImportStatusEnum.Ongoing;
+  status: typeof ImportStatusEnum.ONGOING;
   worker: Worker;
   owner: LoggedUser;
   statusDetails?: {
@@ -41,7 +38,7 @@ type ImportOngoingStructure = {
 };
 
 type ImportCompleteStructure = {
-  status: typeof ImportStatusEnum.Complete;
+  status: typeof ImportStatusEnum.COMPLETE;
   worker: Worker;
   owner: LoggedUser;
   statusDetails?: {
@@ -51,7 +48,7 @@ type ImportCompleteStructure = {
 };
 
 type ImportGlobalErrorStructure = {
-  status: typeof ImportStatusEnum.Failed;
+  status: typeof ImportStatusEnum.FAILED;
   worker: Worker;
   owner: LoggedUser;
   statusDetails?: {
@@ -91,7 +88,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportCompleteStructure = {
         ...currentStatus,
-        status: ImportStatusEnum.Complete,
+        status: ImportStatusEnum.COMPLETE,
         ...(importReportId
           ? {
               statusDetails: {
@@ -108,9 +105,9 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportGlobalErrorStructure = {
         ...currentStatus,
-        status: ImportStatusEnum.Failed,
+        status: ImportStatusEnum.FAILED,
         statusDetails: {
-          type: ImportErrorType.ImportFailure,
+          type: ImportErrorType.IMPORT_FAILURE,
           description: postMessage?.failureReason,
         },
       };
@@ -120,9 +117,9 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportOngoingStructure = {
         ...currentStatus,
-        status: ImportStatusEnum.Ongoing,
+        status: ImportStatusEnum.ONGOING,
         statusDetails: {
-          subStatus: OngoingSubStatus.ValidatingInputFile,
+          subStatus: OngoingSubStatus.VALIDATING_INPUT_FILE,
           ongoingValidationStats: {
             totalLines: postMessage?.progress?.totalEntries,
             totalEntries: postMessage?.progress?.entriesToBeValidated,
@@ -137,7 +134,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportOngoingStructure = {
         ...currentStatus,
-        status: ImportStatusEnum.Ongoing,
+        status: ImportStatusEnum.ONGOING,
         statusDetails: {
           subStatus: postMessage?.type,
         },
@@ -156,9 +153,9 @@ export const startImportTask = (importId: string, importType: ImportType, logged
     const currentStatus = importStatuses.get(importId)!;
     const newStatus: ImportGlobalErrorStructure = {
       ...currentStatus,
-      status: ImportStatusEnum.Failed,
+      status: ImportStatusEnum.FAILED,
       statusDetails: {
-        type: ImportErrorType.ImportProcessError,
+        type: ImportErrorType.IMPORT_PROCESS_ERROR,
         description: error?.message,
       },
     };
@@ -176,9 +173,9 @@ export const startImportTask = (importId: string, importType: ImportType, logged
       const currentStatus = importStatuses.get(importId)!;
       const newStatus: ImportGlobalErrorStructure = {
         ...currentStatus,
-        status: ImportStatusEnum.Failed,
+        status: ImportStatusEnum.FAILED,
         statusDetails: {
-          type: ImportErrorType.ImportProcessUnexpectedExit,
+          type: ImportErrorType.IMPORT_PROCESS_UNEXPECTED_EXIT,
           description: exitCode,
         },
       };
@@ -187,7 +184,7 @@ export const startImportTask = (importId: string, importType: ImportType, logged
   });
 
   importStatuses.set(importId, {
-    status: ImportStatusEnum.NotStarted,
+    status: ImportStatusEnum.NOT_STARTED,
     worker,
     owner: loggedUser,
   });
@@ -207,19 +204,19 @@ export const getImportStatus = (importId: string, loggedUser: LoggedUser): Promi
   }
 
   switch (importStatus?.status) {
-    case ImportStatusEnum.NotStarted:
+    case ImportStatusEnum.NOT_STARTED:
       // If the import task exists but has not yet started
       return Promise.resolve({
         status: importStatus.status,
       });
-    case ImportStatusEnum.Failed:
+    case ImportStatusEnum.FAILED:
       // If the import task has failed due to an unexpected error or a failure to treat the inported file
       return Promise.resolve({
         status: importStatus.status,
         errorType: (importStatus as ImportGlobalErrorStructure)?.statusDetails?.type,
         errorDescription: (importStatus as ImportGlobalErrorStructure)?.statusDetails?.description?.toString(),
       });
-    case ImportStatusEnum.Complete:
+    case ImportStatusEnum.COMPLETE:
       return Promise.resolve({
         status: importStatus.status,
         importErrorsReportFile: (importStatus as ImportCompleteStructure)?.statusDetails?.importErrorsReportFile,
@@ -231,7 +228,7 @@ export const getImportStatus = (importId: string, loggedUser: LoggedUser): Promi
             }
           : {}),
       });
-    case ImportStatusEnum.Ongoing: {
+    case ImportStatusEnum.ONGOING: {
       return Promise.resolve({
         status: importStatus.status,
         subStatus: (importStatus as ImportOngoingStructure)?.statusDetails?.subStatus,

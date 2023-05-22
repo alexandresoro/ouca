@@ -7,7 +7,7 @@ import fastifyCors from "@fastify/cors";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
 import fastifyUnderPressure from "@fastify/under-pressure";
-import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import-types";
+import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import/import-types";
 import fastify, { type FastifyInstance } from "fastify";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";

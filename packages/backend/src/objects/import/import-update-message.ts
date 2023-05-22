@@ -1,4 +1,4 @@
-import { type OngoingSubStatus } from "../../graphql/generated/graphql-types.js";
+import { type OngoingSubStatus } from "@ou-ca/common/import/import-status-enum";
 
 export const VALIDATION_PROGRESS = "VALIDATION_PROGRESS";
 

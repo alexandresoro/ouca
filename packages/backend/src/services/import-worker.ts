@@ -1,4 +1,4 @@
-import { type ImportType } from "@ou-ca/common/import-types";
+import { type ImportType } from "@ou-ca/common/import/import-types";
 import { readFile } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";

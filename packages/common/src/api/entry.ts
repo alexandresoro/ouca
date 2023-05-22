@@ -2,6 +2,14 @@ import { z } from "zod";
 import { entryNavigationSchema, entrySchema } from "../entities/entry.js";
 
 /**
+ * `GET` `/entry/:id`
+ *  Retrieve entry
+ */
+export const getEntryResponse = entrySchema;
+
+export type GetEntryResponse = z.infer<typeof getEntryResponse>;
+
+/**
  * `PUT` `/entry/:id` Update of entry
  * `POST` `/entry` Create new entry
  */

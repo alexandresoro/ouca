@@ -1,6 +1,6 @@
+import { OngoingSubStatus } from "@ou-ca/common/import/import-status-enum";
 import { parse } from "csv-parse/sync";
 import { EventEmitter } from "events";
-import { OngoingSubStatus } from "../../graphql/generated/graphql-types.js";
 import { type ImportNotifyProgressMessageContent } from "../../objects/import/import-update-message.js";
 import { type LoggedUser } from "../../types/User.js";
 import { logger } from "../../utils/logger.js";
@@ -25,7 +25,7 @@ export abstract class ImportService extends EventEmitter {
   }
 
   public importFile = async (fileContent: string, loggedUser: LoggedUser): Promise<void> => {
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.ProcessStarted });
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.PROCESS_STARTED });
 
     if (!fileContent) {
       this.emit(IMPORT_FAILED_EVENT, "Le contenu du fichier n'a pas pu être lu");
@@ -49,12 +49,12 @@ export abstract class ImportService extends EventEmitter {
     const errors = [] as string[][];
     let validatedEntries = 0;
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.RetrievingRequiredData });
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.RETRIEVING_REQUIRED_DATA });
 
     // Retrieve any initialization info needed before validation
     await this.init(loggedUser);
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.ValidatingInputFile });
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.VALIDATING_INPUT_FILE });
 
     // Validate all entries
     for (const lineTab of content) {
@@ -85,7 +85,7 @@ export abstract class ImportService extends EventEmitter {
       }
     }
 
-    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.InsertingImportedData });
+    this.emit(IMPORT_STATUS_UPDATE_EVENT, { type: OngoingSubStatus.INSERTING_IMPORTED_DATA });
 
     // Insert the valid entries in the database
     await this.persistAllValidEntities(loggedUser);
