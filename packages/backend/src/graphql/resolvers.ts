@@ -219,10 +219,6 @@ export const buildResolvers = ({
       searchDonnees: (): Record<string, never> => {
         return {};
       },
-      importStatus: async (_source, args, { user }): Promise<ImportStatus | null> => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return getImportStatus(args.importId, user);
-      },
     },
     Age: {
       editable: isEntityEditableResolver(ageService.findAge),
