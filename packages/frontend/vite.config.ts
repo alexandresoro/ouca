@@ -31,23 +31,23 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      ...(enableSentry
-        ? [
-            sentryVitePlugin({
-              include: "./dist",
-              url: env.SENTRY_URL,
-              injectRelease: false,
-              // FIXME: Release 0.7.2 triggers 'error: release not found' when replacing with sourcemaps structure
-              // sourcemaps: {
-              //   assets: "./dist/**",
-              // },
-              setCommits: {
-                auto: true,
-              },
-              telemetry: false,
-            }),
-          ]
-        : []),
+      sentryVitePlugin({
+        disable: !enableSentry,
+        url: env.SENTRY_URL,
+        org: env.SENTRY_ORG,
+        project: env.SENTRY_PROJECT,
+        authToken: env.SENTRY_AUTH_TOKEN,
+        release: {
+          inject: false,
+          uploadLegacySourcemaps: {
+            paths: ["./dist"],
+          },
+        },
+        sourcemaps: {
+          assets: "./**",
+        },
+        telemetry: false,
+      }),
     ],
     test: {
       clearMocks: true,
