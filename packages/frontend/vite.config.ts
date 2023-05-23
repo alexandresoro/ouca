@@ -38,14 +38,16 @@ export default defineConfig(({ mode }) => {
         project: env.SENTRY_PROJECT,
         authToken: env.SENTRY_AUTH_TOKEN,
         release: {
-          inject: false,
           uploadLegacySourcemaps: {
             paths: ["./dist"],
           },
         },
-        sourcemaps: {
-          assets: "./**",
-        },
+        // Disable new sourcemaps structure
+        // 1. Need to investigate why it does not seem to upload
+        // 2. Broke the hash difference between CF and GH
+        // sourcemaps: {
+        //   assets: "./**",
+        // },
         telemetry: false,
       }),
     ],
