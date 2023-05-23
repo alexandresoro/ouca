@@ -45,6 +45,7 @@ jobs:
         env:
           # Only enable Sentry on new commits in default branch
           ENABLE_SENTRY: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+          SENTRY_RELEASE: ${{ github.sha }}
           SENTRY_URL: ${{ vars.SENTRY_URL }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}

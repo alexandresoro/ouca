@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => {
         project: env.SENTRY_PROJECT,
         authToken: env.SENTRY_AUTH_TOKEN,
         release: {
+          name: env.SENTRY_RELEASE,
           uploadLegacySourcemaps: {
             paths: ["./dist"],
           },
