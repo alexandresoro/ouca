@@ -79,7 +79,7 @@
     "@graphql-codegen/cli": "3.3.1",
     "@graphql-codegen/client-preset": "3.0.1",
     "@ou-ca/eslint-config": "*",
-    "@sentry/vite-plugin": "2.0.0",
+    "@sentry/vite-plugin": "2.1.0",
     "@tanstack/react-query-devtools": "4.29.7",
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "14.4.3",
