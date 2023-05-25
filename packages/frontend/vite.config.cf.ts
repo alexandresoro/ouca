@@ -19,9 +19,13 @@ export default defineConfig(({ mode }) => {
             sentryVitePlugin({
               url: env.SENTRY_URL,
               telemetry: false,
+              org: env.SENTRY_ORG,
+              project: env.SENTRY_PROJECT,
+              authToken: env.SENTRY_AUTH_TOKEN,
               release: {
                 name: env.CF_PAGES_COMMIT_SHA,
               },
+              sourcemaps: undefined,
             }),
           ]
         : []),
