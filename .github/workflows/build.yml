@@ -51,8 +51,6 @@ jobs:
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
       
-      - run: pwd && ls -al
-
       - name: Deploy to CloudFlare - frontend
         if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         uses: cloudflare/pages-action@v1
@@ -60,7 +58,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
-          directory: "/packages/frontend/dist"
+          directory: "./packages/frontend/dist"
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifact - backend
