@@ -14,7 +14,6 @@
   "scripts": {
     "start": "vite",
     "build": "tsc --build tsconfig.build.json && vite build",
-    "build:cloudflare": "vite --config vite.config.cf.ts build",
     "postinstall": "npm run generate-graphql",
     "serve": "vite preview",
     "test": "wireit",

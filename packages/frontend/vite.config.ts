@@ -44,8 +44,7 @@ export default defineConfig(({ mode }) => {
           },
         },
         // Disable new sourcemaps structure
-        // 1. Need to investigate why it does not seem to upload
-        // 2. Broke the hash difference between CF and GH
+        // Looks like it needs a new versiopn of self-hosted sentry
         // sourcemaps: {
         //   assets: "./**",
         // },
