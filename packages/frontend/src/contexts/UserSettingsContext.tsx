@@ -22,10 +22,16 @@ const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }
     isLoading,
     isFetching,
     refetch,
-  } = useApiQuery({
-    path: "/settings",
-    schema: getSettingsResponse,
-  });
+  } = useApiQuery(
+    {
+      path: "/settings",
+      schema: getSettingsResponse,
+    },
+    {
+      notifyOnChangeProps: ["data", "error"],
+      staleTime: Infinity,
+    }
+  );
 
   useEffect(() => {
     if (error?.status === 404 && !isFetching) {
