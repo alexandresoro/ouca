@@ -96,7 +96,7 @@
     "cpy": "10.1.0",
     "dotenv": "16.0.3",
     "tsup": "6.7.0",
-    "type-fest": "3.11.0",
+    "type-fest": "3.11.1",
     "typescript": "5.0.4",
     "vitest": "0.31.1",
     "vitest-mock-extended": "1.1.3",
