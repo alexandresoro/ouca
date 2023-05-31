@@ -67,7 +67,7 @@
     "@sentry/node": "7.53.1",
     "@sentry/tracing": "7.53.1",
     "content-disposition": "0.5.4",
-    "csv-parse": "5.3.10",
+    "csv-parse": "5.4.0",
     "csv-stringify": "6.4.0",
     "date-fns": "2.30.0",
     "es-main": "1.2.0",
