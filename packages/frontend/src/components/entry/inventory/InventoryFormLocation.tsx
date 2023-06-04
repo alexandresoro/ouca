@@ -10,6 +10,14 @@ import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } 
 import { useWatch, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery as useQueryGql } from "urql";
+import {
+  areCoordinatesCustomizedFromLocalityAtom,
+  inventoryAltitudeAtom,
+  inventoryLatitudeAtom,
+  inventoryLocalityAtom,
+  inventoryLongitudeAtom,
+} from "../../../atoms/inventoryFormAtoms";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import TextInput from "../../common/styled/TextInput";
 import Autocomplete from "../../common/styled/select/Autocomplete";
 import {
@@ -23,16 +31,16 @@ type InventoryFormLocationProps = Pick<
   "control" | "register" | "setValue" | "getFieldState"
 >;
 
-const renderDepartment = (department: { code: string }): string => {
-  return department.code;
+const renderDepartment = (department: Department | null): string => {
+  return department?.code ?? "";
 };
 
-const renderTown = (town: { code: number; nom: string }): string => {
-  return town.nom;
+const renderTown = (town: Town | null): string => {
+  return town?.nom ?? "";
 };
 
-const renderLocality = (locality: { nom: string }): string => {
-  return locality.nom;
+const renderLocality = (locality: Locality | null): string => {
+  return locality?.nom ?? "";
 };
 
 const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
@@ -43,12 +51,24 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  const [departmentId, setDepartmentId] = useState<string | null>(null);
+  const [departmentsInput, setDepartmentsInput] = useState("");
+  const { data: department } = useApiQuery(
+    {
+      path: `/departments/${departmentId!}`,
+      schema: getDepartmentResponse,
+    },
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+      enabled: departmentId != null,
+    }
+  );
+
   const queryClient = useQueryClient();
 
-  const department = useWatch({ control, name: "department" });
   const previousDepartment = usePrevious(department);
   // TODO check if this "workaround" behaves properly
-  const [departmentsInput, setDepartmentsInput] = useState(department ? renderDepartment(department) : "");
 
   const town = useWatch({ control, name: "town" });
   const previousTown = usePrevious(town);
