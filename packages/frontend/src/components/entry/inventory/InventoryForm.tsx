@@ -50,44 +50,15 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         }
       : {
           // Existing inventory
-          id: existingInventory.id,
-          observer: existingInventory.observateur,
-          associateObservers: existingInventory.associes,
+          observerId: existingInventory.observer.id,
+          associateIds: existingInventory.associates.map((associate) => associate.id),
           date: existingInventory.date,
-          time: existingInventory.heure ?? "",
-          duration: existingInventory.duree ?? "",
-          department: existingInventory.lieuDit.commune.departement,
-          town: {
-            // Hacky way to make sure that the objects from defaults and autocomplete are "equal"
-            // so that dirty flag is properly computed
-            __typename: existingInventory.lieuDit.commune.__typename,
-            id: existingInventory.lieuDit.commune.id,
-            code: existingInventory.lieuDit.commune.code,
-            nom: existingInventory.lieuDit.commune.nom,
-          },
-          locality: {
-            __typename: existingInventory.lieuDit.__typename,
-            id: existingInventory.lieuDit.id,
-            nom: existingInventory.lieuDit.nom,
-            latitude: existingInventory.lieuDit.latitude,
-            longitude: existingInventory.lieuDit.longitude,
-            altitude: existingInventory.lieuDit.altitude,
-            coordinatesSystem: existingInventory.lieuDit.coordinatesSystem,
-          },
-          latitude:
-            existingInventory.customizedCoordinates?.latitude != null
-              ? `${existingInventory.customizedCoordinates.latitude}`
-              : `${existingInventory.lieuDit.latitude}`,
-          longitude:
-            existingInventory.customizedCoordinates?.longitude != null
-              ? `${existingInventory.customizedCoordinates.longitude}`
-              : `${existingInventory.lieuDit.longitude}`,
-          altitude:
-            existingInventory.customizedCoordinates?.altitude != null
-              ? `${existingInventory.customizedCoordinates.altitude}`
-              : `${existingInventory.lieuDit.altitude}`,
-          temperature: `${existingInventory.temperature ?? ""}`,
-          weathers: existingInventory.meteos,
+          time: existingInventory.heure ?? null,
+          duration: existingInventory.duree ?? null,
+          localityId: existingInventory.locality.id,
+          coordinates: existingInventory.customizedCoordinates ?? existingInventory.locality.coordinates,
+          temperature: existingInventory.temperature,
+          weatherIds: existingInventory.weathers.map((weather) => weather.id),
         }
   ) satisfies DefaultValues<UpsertInventoryInput>;
 
