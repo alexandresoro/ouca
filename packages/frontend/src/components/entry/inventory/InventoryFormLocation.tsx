@@ -1,3 +1,4 @@
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { areCoordinatesCustomized as areCoordinatesCustomizedFn } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,7 +15,6 @@ import {
   AUTOCOMPLETE_LOCALITIES_QUERY,
   AUTOCOMPLETE_TOWNS_QUERY,
 } from "./InventoryFormQueries";
-import { type UpsertInventoryInput } from "./inventory-form-types";
 
 type InventoryFormLocationProps = Pick<
   UseFormReturn<UpsertInventoryInput>,
