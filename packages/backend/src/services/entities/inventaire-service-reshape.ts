@@ -6,17 +6,32 @@ export const reshapeInputInventaireUpsertData = (
   inventory: UpsertInventoryInput,
   ownerId?: string | null
 ): InventaireCreateInput => {
-  const { observerId, localityId, associateIds, weatherIds, time, duration, ...rest } = inventory;
+  const {
+    observerId,
+    localityId,
+    associateIds,
+    weatherIds,
+    time,
+    duration,
+    migrateDonneesIfMatchesExistingInventaire,
+    coordinates,
+    ...rest
+  } = inventory;
   const coordinatesSystem =
-    inventory?.altitude != null && inventory?.latitude != null && inventory?.longitude != null
+    inventory?.coordinates?.altitude != null &&
+    inventory?.coordinates?.latitude != null &&
+    inventory?.coordinates?.longitude != null
       ? CoordinatesSystemType.Gps
       : null;
   return {
     ...rest,
-    observateur_id: observerId,
+    observateur_id: parseInt(observerId),
     heure: time,
     duree: duration,
-    lieudit_id: localityId,
+    lieudit_id: parseInt(localityId),
+    altitude: coordinates?.altitude ?? null,
+    latitude: coordinates?.latitude ?? null,
+    longitude: coordinates?.longitude ?? null,
     coordinates_system: coordinatesSystem,
     owner_id: ownerId,
   };

@@ -157,24 +157,20 @@ export class ImportedDonnee {
             longitude: customizedCoordinates?.longitude,
             system: customizedCoordinates?.system,
           }
-        : {
-            altitude: null,
-            latitude: null,
-            longitude: null,
-          };
+        : null;
 
     const formattedDate = getFormattedDate(this.date);
 
     return {
-      observerId: observateurId,
+      observerId: `${observateurId}`,
       date: formattedDate ? format(formattedDate, DATE_PATTERN) : "null",
       time: getFormattedTime(this.heure),
       duration: getFormattedTime(this.duree),
-      localityId: lieuditId,
-      ...customizedCoordinatesStr,
+      localityId: `${lieuditId}`,
+      coordinates: customizedCoordinatesStr,
       temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
-      weatherIds: [...meteosIds],
-      associateIds: [...associesIds],
+      weatherIds: [...meteosIds].map((weather) => `${weather}`),
+      associateIds: [...associesIds].map((associate) => `${associate}`),
     };
   };
 
