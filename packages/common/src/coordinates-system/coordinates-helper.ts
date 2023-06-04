@@ -50,25 +50,3 @@ export const areCoordinatesCustomized = (
 
   return false;
 };
-
-export const areSameCoordinates = (
-  firstCoordinates: Coordinates | null | undefined,
-  secondCoordinates: Coordinates | null | undefined
-): boolean => {
-  if (!firstCoordinates && !secondCoordinates) {
-    return true;
-  }
-
-  if (firstCoordinates?.longitude && secondCoordinates?.longitude) {
-    const firstCoordinatesTransformed = getCoordinates({ coordinates: firstCoordinates }, secondCoordinates.system);
-
-    if (
-      firstCoordinatesTransformed.longitude === secondCoordinates.longitude &&
-      firstCoordinatesTransformed.latitude === secondCoordinates.latitude
-    ) {
-      return true;
-    }
-  }
-
-  return false;
-};
