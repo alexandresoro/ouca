@@ -6,12 +6,17 @@ import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types.j
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
-const reshapeLocalityRepositoryToApi = (locality: Lieudit): Locality => {
-  const { id, communeId, ...restLocality } = locality;
+export const reshapeLocalityRepositoryToApi = (locality: Lieudit): Locality => {
+  const { id, communeId, altitude, latitude, longitude, ...restLocality } = locality;
   return {
     ...restLocality,
     id: `${id}`,
     townId: `${communeId}`,
+    coordinates: {
+      altitude,
+      latitude,
+      longitude,
+    },
   };
 };
 

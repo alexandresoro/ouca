@@ -43,7 +43,6 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
       latitude: undefined,
       longitude: undefined,
       townId: "",
-      coordinatesSystem: "gps",
       ...defaultValues,
     },
     resolver: zodResolver(upsertLocalityInput),

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { COORDINATES_SYSTEMS } from "../coordinates-system/coordinates-system.object.js";
 import { localitySchema } from "../entities/locality.js";
 
 /**
@@ -20,7 +19,6 @@ export const upsertLocalityInput = z.object({
   altitude: z.coerce.number(),
   longitude: z.coerce.number().min(-180).max(180),
   latitude: z.coerce.number().min(-90).max(90),
-  coordinatesSystem: z.enum(COORDINATES_SYSTEMS),
 });
 
 export type UpsertLocalityInput = z.infer<typeof upsertLocalityInput>;
