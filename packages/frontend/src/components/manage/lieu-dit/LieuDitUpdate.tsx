@@ -96,6 +96,17 @@ const LieuDitUpdate: FunctionComponent = () => {
     mutate({ body: input });
   };
 
+  const defaultValues =
+    data != null
+      ? ({
+          nom: data.nom,
+          townId: data.townId,
+          latitude: data.coordinates.latitude,
+          longitude: data.coordinates.longitude,
+          altitude: data.coordinates.altitude,
+        } satisfies UpsertLocalityInput)
+      : undefined;
+
   if (!id) {
     return null;
   }
@@ -105,7 +116,7 @@ const LieuDitUpdate: FunctionComponent = () => {
       {!isLoading && !isLoadingTown && !isError && data && departmentId != null && (
         <LieuDitEdit
           title={t("localityEditionTitle")}
-          defaultValues={data}
+          defaultValues={defaultValues}
           defaultDepartmentId={departmentId}
           onSubmit={onSubmit}
         />
