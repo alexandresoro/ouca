@@ -1,6 +1,5 @@
 import mercurius, { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types.js";
-import { getImportStatus } from "../services/import-manager.js";
 import { type Services } from "../services/services.js";
 import {
   type Age,
@@ -19,7 +18,6 @@ import {
   type EstimationNombre,
   type EstimationsDistancePaginatedResult,
   type EstimationsNombrePaginatedResult,
-  type ImportStatus,
   type Inventaire,
   type LieuDit,
   type LieuxDitsPaginatedResult,
