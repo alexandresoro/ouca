@@ -5,10 +5,9 @@ import { type Department } from "@ou-ca/common/entities/department";
 import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Town } from "@ou-ca/common/entities/town";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } from "react";
-import { useWatch, type UseFormReturn } from "react-hook-form";
+import { type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery as useQueryGql } from "urql";
 import { altitudeServiceStatusAtom } from "../../../atoms/altitudeServiceAtom";
@@ -100,119 +99,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   const areCoordinatesCustomized = useAtomValue(areCoordinatesCustomizedFromLocalityAtom);
 
   const altitudeServiceStatus = useAtomValue(altitudeServiceStatusAtom);
-
-  const queryClient = useQueryClient();
-
-  const previousDepartment = usePrevious(department);
-  // TODO check if this "workaround" behaves properly
-
-  const previousTown = usePrevious(town);
-
-  const previousLocality = usePrevious(locality);
-  const [isLocalityInputTainted, setIsLocalityInputTainted] = useState(false);
-  const { isDirty: isLocalityDirty } = getFieldState("locality");
-
-  const [latitude, longitude, altitude] = useWatch({ control, name: ["latitude", "longitude", "altitude"] });
-  const [isLatitudeInputTainted, setIsLatitudeInputTainted] = useState(false);
-  const { isDirty: isLatitudeDirty } = getFieldState("latitude");
-  const [isLongitudeInputTainted, setIsLongitudeInputTainted] = useState(false);
-  const { isDirty: isLongitudeDirty } = getFieldState("longitude");
-
-  const [altitudeCallDisplayError, setAltitudeCallDisplayError] = useState(false);
-
-  // On department change, reset town
-  useEffect(() => {
-    if (previousDepartment && previousDepartment.id !== department?.id) {
-      setValue("town", null, { shouldDirty: true, shouldValidate: true });
-      setTownsInput("");
-    }
-  }, [department, previousDepartment, setValue]);
-
-  // On town change, reset locality
-  useEffect(() => {
-    if (previousTown && previousTown.id !== town?.id) {
-      setValue("locality", null, { shouldDirty: true, shouldValidate: true });
-      setLocalityInput("");
-    }
-    // When a town is selected, set the locality as tainted
-    // Fixes the case where from a new entry we select a town then a locality
-    // and field was not marked tainted yet, so no coordinates were set
-    // TODO tried to replace this with previous distinct version, but it has side effects like reset when reselcting the same element
-    if (town?.id != null) {
-      setIsLocalityInputTainted(true);
-    }
-  }, [town, previousTown, setValue]);
-
-  useEffect(() => {
-    // TODO check what will happen with dirty WHEN changed from map?
-    console.log("LOCALITY CHANGED", locality, previousLocality, isLocalityInputTainted);
-    if (locality != null && locality.id !== previousLocality?.id && isLocalityInputTainted) {
-      setValue("latitude", `${locality.latitude}`, { shouldDirty: true, shouldValidate: true });
-      setValue("longitude", `${locality.longitude}`, { shouldDirty: true, shouldValidate: true });
-      setValue("altitude", `${locality.altitude}`, { shouldDirty: true, shouldValidate: true });
-    } else if (locality === null) {
-      setValue("latitude", "", { shouldDirty: true, shouldValidate: true });
-      setValue("longitude", "", { shouldDirty: true, shouldValidate: true });
-      setValue("altitude", "", { shouldDirty: true, shouldValidate: true });
-    }
-  }, [locality, previousLocality, isLocalityInputTainted, setValue]);
-
-  // Retrieve altitude call
-  useEffect(() => {
-    if (latitude.length && longitude.length && (isLatitudeInputTainted || isLongitudeInputTainted)) {
-      const infoMessage = setTimeout(() => {
-        setAltitudeCallOngoing(true);
-      }, 500);
-      queryClient
-        .fetchQuery({
-          queryKey: ["IGN", "altimetrie", { latitude, longitude }],
-          staleTime: Infinity,
-          queryFn: () =>
-            getAltitudeForCoordinates({ latitude: parseFloat(latitude), longitude: parseFloat(longitude) }),
-        })
-        .then((result) => {
-          switch (result.outcome) {
-            case "success": {
-              setValue("altitude", `${Math.round(result.altitude)}`, { shouldDirty: true, shouldValidate: true });
-            }
-          }
-          // TODO handle error maybe?
-        })
-        .catch(() => {
-          setAltitudeCallDisplayError(true);
-        })
-        .finally(() => {
-          clearTimeout(infoMessage);
-          setAltitudeCallOngoing(false);
-        });
-    }
-  }, [latitude, longitude, isLongitudeInputTainted, isLatitudeInputTainted, setValue, queryClient]);
-
-  // Clean altitude service error when input have changed
-  useEffect(() => {
-    setAltitudeCallDisplayError(false);
-  }, [latitude, longitude, altitude, setAltitudeCallDisplayError]);
-
-  // If the locality field becomes different from the default value at some point, mark it as tainted
-  useEffect(() => {
-    if (isLocalityDirty) {
-      setIsLocalityInputTainted(true);
-    }
-  }, [isLocalityDirty, setIsLocalityInputTainted]);
-
-  // If the latitude field becomes different from the default value at some point, mark it as tainted
-  useEffect(() => {
-    if (isLatitudeDirty) {
-      setIsLatitudeInputTainted(true);
-    }
-  }, [isLatitudeDirty, setIsLatitudeInputTainted]);
-
-  // If the longitude field becomes different from the default value at some point, mark it as tainted
-  useEffect(() => {
-    if (isLongitudeDirty) {
-      setIsLongitudeInputTainted(true);
-    }
-  }, [isLongitudeDirty, setIsLongitudeInputTainted]);
 
   // Only display altitude loading service if it takes too long
   const [altitudeCallOngoing, setAltitudeCallOngoing] = useState(false);
@@ -359,8 +245,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   return (
     <>
       LOCALITY: {locality?.nom ?? JSON.stringify(locality)}
-      <br />
-      PREVIOUS LOC : {previousLocality?.nom ?? JSON.stringify(previousLocality)}
       <div className="flex gap-2">
         <Autocomplete
           data={autocompleteDepartments}
