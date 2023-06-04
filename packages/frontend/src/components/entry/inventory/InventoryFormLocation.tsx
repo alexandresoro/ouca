@@ -6,7 +6,7 @@ import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Town } from "@ou-ca/common/entities/town";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState, type FunctionComponent } from "react";
+import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } from "react";
 import { useWatch, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery as useQueryGql } from "urql";
@@ -162,6 +162,22 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       setIsLongitudeInputTainted(true);
     }
   }, [isLongitudeDirty, setIsLongitudeInputTainted]);
+
+  // When the locality changes, make sure that the appropriate town is displayed
+  // This can happen when locality is updated from outside the component
+  useEffect(() => {
+    if (locality != null && locality.townId !== town?.id) {
+      setTownId(locality.townId);
+    }
+  }, [locality, town]);
+
+  // When the town changes, make sure that the appropriate department is displayed
+  // This can happen when town is updated from an update of locality outside the component
+  useEffect(() => {
+    if (town != null && town.departmentId !== department?.id) {
+      setDepartmentId(town.departmentId);
+    }
+  }, [town, department]);
 
   const [{ data: dataDepartments }] = useQueryGql({
     query: AUTOCOMPLETE_DEPARTMENTS_QUERY,
