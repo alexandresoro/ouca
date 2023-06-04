@@ -6,10 +6,12 @@ import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Town } from "@ou-ca/common/entities/town";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } from "react";
 import { useWatch, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery as useQueryGql } from "urql";
+import { altitudeServiceStatusAtom } from "../../../atoms/altitudeServiceAtom";
 import {
   areCoordinatesCustomizedFromLocalityAtom,
   inventoryAltitudeAtom,
@@ -85,6 +87,20 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
     setTownsInput(renderTown(town ?? null));
   }, [town]);
 
+  const [localityInput, setLocalityInput] = useState("");
+  const [locality, setLocality] = useAtom(inventoryLocalityAtom);
+  useEffect(() => {
+    setLocalityInput(renderLocality(locality ?? null));
+  }, [locality]);
+
+  const setLatitude = useSetAtom(inventoryLatitudeAtom);
+  const setLongitude = useSetAtom(inventoryLongitudeAtom);
+  const setAltitude = useSetAtom(inventoryAltitudeAtom);
+
+  const areCoordinatesCustomized = useAtomValue(areCoordinatesCustomizedFromLocalityAtom);
+
+  const altitudeServiceStatus = useAtomValue(altitudeServiceStatusAtom);
+
   const queryClient = useQueryClient();
 
   const previousDepartment = usePrevious(department);
@@ -92,9 +108,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
 
   const previousTown = usePrevious(town);
 
-  const locality = useWatch({ control, name: "locality" });
   const previousLocality = usePrevious(locality);
-  const [localityInput, setLocalityInput] = useState(locality ? renderLocality(locality) : "");
   const [isLocalityInputTainted, setIsLocalityInputTainted] = useState(false);
   const { isDirty: isLocalityDirty } = getFieldState("locality");
 
