@@ -155,6 +155,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
           <InventoryFormObserver
             control={control}
+            defaultObserver={existingInventory?.observer ?? userSettings.defaultObserver ?? undefined}
             areAssociesDisplayed={userSettings.areAssociesDisplayed}
             autofocusOnObserver={isNewInventory}
           />
