@@ -1,6 +1,7 @@
+import { useAtom } from "jotai";
 import "leaflet/dist/leaflet.css";
 import { Marker as MapLibreMarker } from "maplibre-gl";
-import { useContext, useState, type FunctionComponent } from "react";
+import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { ScaleControl as LeafletScaleControl, MapContainer, TileLayer } from "react-leaflet";
 import {
@@ -13,7 +14,7 @@ import {
   Source,
   type ViewState,
 } from "react-map-gl";
-import { EntryCustomCoordinatesContext } from "../../../contexts/EntryCustomCoordinatesContext";
+import { inventoryCoordinatesAtom } from "../../../atoms/inventoryFormAtoms";
 import MaplibreMap from "../../common/maps/MaplibreMap";
 import { MAP_PROVIDERS } from "../../common/maps/map-providers";
 import PhotosViewMapOpacityControl from "./PhotosViewMapOpacityControl";
@@ -29,12 +30,12 @@ const RED_PIN = new MapLibreMarker({
 const EntryMap: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { customCoordinates, updateCustomCoordinates } = useContext(EntryCustomCoordinatesContext);
+  const [inventoryCoordinates, setInventoryCoordinates] = useAtom(inventoryCoordinatesAtom);
 
   const [viewState, setViewState] = useState<Partial<ViewState>>({
-    longitude: 0,
-    latitude: 45,
-    zoom: 11,
+    longitude: inventoryCoordinates?.lng ?? 0,
+    latitude: inventoryCoordinates?.lat ?? 45,
+    zoom: inventoryCoordinates != null ? 15 : 11,
   });
 
   const [mapProvider, setMapProvider] = useState<keyof typeof MAP_PROVIDERS>("ign");
@@ -74,10 +75,10 @@ const EntryMap: FunctionComponent = () => {
             borderRadius: "14px",
           }}
         >
-          {displayCoordinatesInfoPopup && (
+          {displayCoordinatesInfoPopup && inventoryCoordinates != null && (
             <Popup
-              longitude={customCoordinates.lng}
-              latitude={customCoordinates.lat}
+              longitude={inventoryCoordinates.lng}
+              latitude={inventoryCoordinates.lat}
               offset={[-15, -35]}
               focusAfterOpen={false}
               closeButton={false}
@@ -87,28 +88,30 @@ const EntryMap: FunctionComponent = () => {
               {t("maps.customPosition")}
             </Popup>
           )}
-          <Marker
-            longitude={customCoordinates.lng}
-            latitude={customCoordinates.lat}
-            draggable
-            color="#b9383c"
-            offset={[0, -14]}
-            onDragEnd={(e) => updateCustomCoordinates(e.lngLat)}
-            onClick={(e) => {
-              // Prevent the event from bubbling to avoid closing directly the popup after open
-              e.originalEvent.stopPropagation();
-              // TODO add the delete custom point
-              // setDisplayCustomMarkerPopup(true);
-            }}
-            anchor="bottom"
-          >
-            <div
-              // rome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-              dangerouslySetInnerHTML={{ __html: RED_PIN._element.innerHTML }}
-              onMouseEnter={() => setDisplayCoordinatesInfoPopup(true)}
-              onMouseLeave={() => setDisplayCoordinatesInfoPopup(false)}
-            />
-          </Marker>
+          {inventoryCoordinates != null && (
+            <Marker
+              longitude={inventoryCoordinates.lng}
+              latitude={inventoryCoordinates.lat}
+              draggable
+              color="#b9383c"
+              offset={[0, -14]}
+              onDragEnd={(e) => setInventoryCoordinates(e.lngLat)}
+              onClick={(e) => {
+                // Prevent the event from bubbling to avoid closing directly the popup after open
+                e.originalEvent.stopPropagation();
+                // TODO add the delete custom point
+                // setDisplayCustomMarkerPopup(true);
+              }}
+              anchor="bottom"
+            >
+              <div
+                // rome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+                dangerouslySetInnerHTML={{ __html: RED_PIN._element.innerHTML }}
+                onMouseEnter={() => setDisplayCoordinatesInfoPopup(true)}
+                onMouseLeave={() => setDisplayCoordinatesInfoPopup(false)}
+              />
+            </Marker>
+          )}
           {overlayOpacity && (
             <Source
               key="ign-satellite"
