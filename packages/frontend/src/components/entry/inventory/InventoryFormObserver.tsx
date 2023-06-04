@@ -1,25 +1,63 @@
-import { useState, type FunctionComponent } from "react";
-import { type UseFormReturn } from "react-hook-form";
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type Observer } from "@ou-ca/common/entities/observer";
+import { useEffect, useState, type FunctionComponent } from "react";
+import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "urql";
-import FormAutocomplete from "../../common/form/FormAutocomplete";
+import Autocomplete from "../../common/styled/select/Autocomplete";
+import AutocompleteMultiple from "../../common/styled/select/AutocompleteMultiple";
 import { AUTOCOMPLETE_OBSERVATEURS_QUERY } from "./InventoryFormQueries";
-import { type UpsertInventoryInput } from "./inventory-form-types";
 
 type InventoryFormObserverProps = Pick<UseFormReturn<UpsertInventoryInput>, "control"> & {
+  defaultObserver?: Observer;
   autofocusOnObserver?: boolean;
   areAssociesDisplayed?: boolean;
 };
 
+const renderObserver = (observer: Observer | null): string => {
+  return observer?.libelle ?? "";
+};
+
 const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   control,
+  defaultObserver,
   autofocusOnObserver,
   areAssociesDisplayed,
 }) => {
   const { t } = useTranslation();
 
   const [observateurInput, setObservateurInput] = useState("");
+  const [selectedObserver, setSelectedObserver] = useState<Observer | null>(null);
+  useEffect(() => {
+    setSelectedObserver(defaultObserver ?? null);
+  }, [defaultObserver]);
+
   const [associatesInput, setAssociatesInput] = useState("");
+  const [selectedAssociates, setSelectedAssociates] = useState<Observer[]>([]);
+
+  const {
+    field: { ref: refObserver, value: observerId, onChange: onChangeObserverForm },
+  } = useController<UpsertInventoryInput>({
+    name: "observerId",
+    control,
+  });
+
+  const {
+    field: { ref: refAssociates, value: associateIds, onChange: onChangeAssociatesForm },
+  } = useController<UpsertInventoryInput>({
+    name: "associateIds",
+    control,
+  });
+
+  useEffect(() => {
+    // When the selected observer changes, update both the input and the form value
+    setObservateurInput(renderObserver(selectedObserver));
+    onChangeObserverForm(selectedObserver?.id ?? undefined);
+  }, [selectedObserver, onChangeObserverForm]);
+
+  useEffect(() => {
+    onChangeAssociatesForm(selectedAssociates?.map((associate) => associate.id) ?? []);
+  }, [selectedAssociates, onChangeAssociatesForm]);
 
   const [{ data: dataObservers }] = useQuery({
     query: AUTOCOMPLETE_OBSERVATEURS_QUERY,
@@ -42,31 +80,49 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
     pause: !areAssociesDisplayed,
   });
 
+  const dataObserversReshaped = dataObservers?.observateurs?.data
+    ? dataObservers.observateurs.data.map((observer) => {
+        return {
+          id: `${observer.id}`,
+          libelle: observer.libelle,
+        } satisfies Observer;
+      })
+    : [];
+
+  const dataAssociatesReshaped = dataAssociateObservers?.observateurs?.data
+    ? dataAssociateObservers.observateurs.data.map((associate) => {
+        return {
+          id: `${associate.id}`,
+          libelle: associate.libelle,
+        } satisfies Observer;
+      })
+    : [];
+
   return (
     <>
-      <FormAutocomplete
+      <Autocomplete
+        ref={refObserver}
         inputProps={{
           autoFocus: autofocusOnObserver,
         }}
-        data={dataObservers?.observateurs?.data ?? []}
+        data={dataObserversReshaped}
         name="observer"
         label={t("observer")}
-        control={control}
-        rules={{
-          required: true,
-        }}
         onInputChange={setObservateurInput}
-        renderValue={({ libelle }) => libelle}
+        onChange={setSelectedObserver}
+        value={selectedObserver}
+        renderValue={renderObserver}
         labelTextClassName="first-letter:capitalize"
       />
       {areAssociesDisplayed && (
-        <FormAutocomplete
-          multiple
-          data={dataAssociateObservers?.observateurs?.data ?? []}
+        <AutocompleteMultiple
+          ref={refAssociates}
+          data={dataAssociatesReshaped}
           name="associateObservers"
           label={t("associateObservers")}
-          control={control}
           onInputChange={setAssociatesInput}
+          onChange={setSelectedAssociates}
+          values={selectedAssociates}
           renderValue={({ libelle }) => libelle}
           labelTextClassName="first-letter:capitalize"
         />
