@@ -1,39 +1,48 @@
-import { getEntryNavigationResponse } from "@ou-ca/common/api/entry";
+import { getEntryNavigationResponse, getEntryResponse } from "@ou-ca/common/api/entry";
 import { ChevronLeft, ChevronRight, Plus } from "@styled-icons/boxicons-regular";
-import { type FunctionComponent } from "react";
+import { useEffect, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
-import { useQuery } from "urql";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import StyledPanelHeader from "../../layout/StyledPanelHeader";
 import EntryForm from "../entry-form/EntryForm";
-import { DONNEE_QUERY } from "./ExistingEntryPageQueries";
 
 const ExistingEntryPage: FunctionComponent = () => {
   const { t } = useTranslation();
   const { id } = useParams();
 
-  const [{ data, error, fetching }] = useQuery({
-    query: DONNEE_QUERY,
-    requestPolicy: "network-only",
-    variables: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: parseInt(id!),
+  const { data, error, isFetching, refetch } = useApiQuery(
+    {
+      path: `/entries/${id!}`,
+      schema: getEntryResponse,
     },
-    pause: id == null,
-  });
+    {
+      enabled: false,
+    }
+  );
 
-  const { data: navigation, isFetching: isNavigationFetching } = useApiQuery(
+  const {
+    data: navigation,
+    isFetching: isNavigationFetching,
+    refetch: refetchNavigation,
+  } = useApiQuery(
     {
       path: `/entries/${id!}/navigation`,
       schema: getEntryNavigationResponse,
     },
     {
-      enabled: id != null,
+      enabled: false,
     }
   );
 
-  if (fetching && !data) {
+  useEffect(() => {
+    if (id) {
+      void refetch();
+      void refetchNavigation();
+    }
+  }, [refetch, refetchNavigation, id]);
+
+  if (isFetching && !data) {
     return (
       <div className="flex justify-center items-center h-56">
         <progress className="progress progress-primary w-56" />
@@ -42,11 +51,11 @@ const ExistingEntryPage: FunctionComponent = () => {
   }
 
   if (error) {
-    return <>{t("displayData.genericError")}</>;
-  }
-
-  if (data && !data.donnee) {
-    return <>{t("displayData.dataNotFound")}</>;
+    if (error.status === 404) {
+      return <>{t("displayData.dataNotFound")}</>;
+    } else {
+      return <>{t("displayData.genericError")}</>;
+    }
   }
 
   const hasPrevious = !isNavigationFetching && navigation?.previousEntryId != null;
@@ -58,7 +67,7 @@ const ExistingEntryPage: FunctionComponent = () => {
         <h1 className="text-2xl font-normal">{t("displayData.headerTitle")}</h1>
         <div className="flex items-center gap-4">
           <span className="badge badge-md badge-accent">
-            {t("displayData.dataId")} {data?.donnee?.id}
+            {t("displayData.dataId")} {data?.id}
           </span>
           <div className="flex gap-2">
             <div className="tooltip tooltip-bottom" data-tip={hasPrevious ? t("displayData.previousData") : undefined}>
@@ -91,9 +100,7 @@ const ExistingEntryPage: FunctionComponent = () => {
           </div>
         </div>
       </StyledPanelHeader>
-      {data?.donnee?.donnee && (
-        <EntryForm existingEntryId={data.donnee.id} existingInventoryId={data.donnee.donnee.inventaire.id} />
-      )}
+      {data?.id != null && <EntryForm existingEntryId={data.id} existingInventoryId={data.inventoryId} />}
     </>
   );
 };
