@@ -1,4 +1,5 @@
-import { type GetInventoryResponse } from "@ou-ca/common/api/inventory";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { upsertInventoryInput, type GetInventoryResponse } from "@ou-ca/common/api/inventory";
 import { FilePlus } from "@styled-icons/boxicons-solid";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
@@ -118,6 +119,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
     handleSubmit,
   } = useForm<UpsertInventoryInput>({
     defaultValues: defaultFormValues,
+    resolver: zodResolver(upsertInventoryInput),
   });
 
   const onSubmit: SubmitHandler<UpsertInventoryInput> = (upsertInventoryInput) => {
