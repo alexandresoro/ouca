@@ -1,4 +1,9 @@
-import { upsertEntryInput, upsertEntryResponse } from "@ou-ca/common/api/entry";
+import {
+  getEntryResponse,
+  upsertEntryInput,
+  upsertEntryResponse,
+  type GetEntryResponse,
+} from "@ou-ca/common/api/entry";
 import { entryNavigationSchema } from "@ou-ca/common/entities/entry";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
@@ -8,7 +13,90 @@ import { OucaError } from "../utils/errors.js";
 const entriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { donneeService } = services;
+  const {
+    donneeService,
+    ageService,
+    comportementService,
+    especeService,
+    estimationDistanceService,
+    estimationNombreService,
+    milieuService,
+    sexeService,
+  } = services;
+
+  fastify.get<{
+    Params: {
+      id: number;
+    };
+  }>("/:id", async (req, reply) => {
+    const entry = await donneeService.findDonnee(req.params.id, req.user);
+    if (!entry) {
+      return await reply.status(404).send();
+    }
+
+    // Enrich entry
+    const [age, behaviors, species, distanceEstimate, numberEstimate, environments, sex] = await Promise.all([
+      ageService.findAgeOfDonneeId(entry.id, req.user),
+      comportementService.findComportementsOfDonneeId(entry.id, req.user),
+      especeService.findEspeceOfDonneeId(entry.id, req.user),
+      estimationDistanceService.findEstimationDistanceOfDonneeId(entry.id, req.user),
+      estimationNombreService.findEstimationNombreOfDonneeId(entry.id, req.user),
+      milieuService.findMilieuxOfDonneeId(entry.id, req.user),
+      sexeService.findSexeOfDonneeId(entry.id, req.user),
+    ]);
+
+    if (!age || !species || !numberEstimate || !sex) {
+      return await reply.status(404).send();
+    }
+
+    const enrichedEntry = {
+      ...entry,
+      id: `${entry.id}`,
+      inventoryId: `${entry.inventaireId}`,
+      age: {
+        ...age,
+        id: `${age.id}`,
+      },
+      behaviors: behaviors.map((behavior) => {
+        return {
+          ...behavior,
+          id: `${behavior.id}`,
+        };
+      }),
+      species: {
+        ...species,
+        id: `${species.id}`,
+        classId: species.classeId ? `${species.classeId}` : "",
+      },
+      distanceEstimate:
+        distanceEstimate != null
+          ? {
+              ...distanceEstimate,
+              id: `${distanceEstimate.id}`,
+            }
+          : null,
+      numberEstimate: {
+        ...numberEstimate,
+        id: `${numberEstimate.id}`,
+      },
+      environments: environments.map((environment) => {
+        return {
+          ...environment,
+          id: `${environment.id}`,
+        };
+      }),
+      sex: {
+        ...sex,
+        id: `${sex.id}`,
+      },
+      comment: entry.commentaire,
+      number: entry.nombre,
+      regroupment: entry.regroupement,
+    } satisfies GetEntryResponse;
+
+    const response = getEntryResponse.parse(enrichedEntry);
+    return await reply.send(response);
+  });
 
   fastify.post("/", async (req, reply) => {
     const parsedInputResult = upsertEntryInput.safeParse(JSON.parse(req.body as string));

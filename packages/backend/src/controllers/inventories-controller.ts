@@ -1,11 +1,65 @@
-import { upsertInventoryInput, upsertInventoryResponse } from "@ou-ca/common/api/inventory";
+import {
+  getInventoryResponse,
+  upsertInventoryInput,
+  upsertInventoryResponse,
+  type GetInventoryResponse,
+} from "@ou-ca/common/api/inventory";
 import { type FastifyPluginCallback } from "fastify";
 import { type Services } from "../services/services.js";
+import { reshapeLocalityRepositoryToApi } from "./localities-controller.js";
 
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { inventaireService } = services;
+  const { inventaireService, observateurService, lieuditService, meteoService } = services;
+
+  fastify.get<{
+    Params: {
+      id: number;
+    };
+  }>("/:id", async (req, reply) => {
+    const inventory = await inventaireService.findInventaire(req.params.id, req.user);
+    if (!inventory) {
+      return await reply.status(404).send();
+    }
+
+    // Enrich inventory
+    const [observer, associates, locality, weathers] = await Promise.all([
+      observateurService.findObservateurOfInventaireId(inventory.id, req.user),
+      observateurService.findAssociesOfInventaireId(inventory.id, req.user),
+      lieuditService.findLieuDitOfInventaireId(inventory.id, req.user),
+      meteoService.findMeteosOfInventaireId(inventory.id, req.user),
+    ]);
+
+    if (!observer || !locality) {
+      return await reply.status(404).send();
+    }
+
+    const enrichedInventory = {
+      ...inventory,
+      id: `${inventory.id}`,
+      observer: {
+        ...observer,
+        id: `${observer.id}`,
+      },
+      associates: associates.map((associate) => {
+        return {
+          ...associate,
+          id: `${associate.id}`,
+        };
+      }),
+      locality: reshapeLocalityRepositoryToApi(locality),
+      weathers: weathers.map((weather) => {
+        return {
+          ...weather,
+          id: `${weather.id}`,
+        };
+      }),
+    } satisfies GetInventoryResponse;
+
+    const response = getInventoryResponse.parse(enrichedInventory);
+    return await reply.send(response);
+  });
 
   fastify.post("/", async (req, reply) => {
     const parsedInputResult = upsertInventoryInput.safeParse(JSON.parse(req.body as string));

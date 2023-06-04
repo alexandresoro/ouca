@@ -1,19 +1,26 @@
 import { z } from "zod";
+import { ageSchema } from "./age.js";
+import { behaviorSchema } from "./behavior.js";
+import { distanceEstimateSchema } from "./distance-estimate.js";
+import { environmentSchema } from "./environment.js";
+import { numberEstimateSchema } from "./number-estimate.js";
+import { sexSchema } from "./sex.js";
+import { speciesSchema } from "./species.js";
 
 export const entrySchema = z.object({
   id: z.coerce.string(),
-  inventoryId: z.coerce.string(),
-  speciedId: z.coerce.string(),
-  sexId: z.coerce.string(),
-  age: z.coerce.string(),
-  numberEstimateId: z.coerce.string(),
-  nombre: z.number().optional(),
-  distanceEstimateId: z.coerce.string().optional(),
-  distance: z.number().optional(),
-  regroupement: z.number().optional(),
-  behaviorIds: z.array(z.coerce.string()),
-  environmentIds: z.array(z.coerce.string()),
-  commentaire: z.string().optional(),
+  inventoryId: z.string(),
+  species: speciesSchema,
+  sex: sexSchema,
+  age: ageSchema,
+  numberEstimate: numberEstimateSchema,
+  number: z.number().nullable(),
+  distanceEstimate: distanceEstimateSchema.nullable(),
+  distance: z.number().nullable(),
+  regroupment: z.number().nullable(),
+  behaviors: z.array(behaviorSchema),
+  environments: z.array(environmentSchema),
+  comment: z.string().nullable(),
 });
 
 export type Entry = z.infer<typeof entrySchema>;
