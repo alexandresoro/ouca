@@ -59,6 +59,7 @@
     "graphql": "16.6.0",
     "i18next": "22.5.0",
     "i18next-http-backend": "2.2.1",
+    "jotai": "2.1.0",
     "leaflet": "1.9.4",
     "mapbox-gl": "npm:empty-npm-package@1.0.0",
     "maplibre-gl": "2.4.0",
