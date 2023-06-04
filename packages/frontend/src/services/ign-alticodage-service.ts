@@ -27,10 +27,10 @@ type GetAltitudeForCoordinatesResult =
 export const getAltitudeForCoordinates = async ({
   latitude,
   longitude,
-}: { latitude: string; longitude: string }): Promise<GetAltitudeForCoordinatesResult> => {
+}: { latitude: number; longitude: number }): Promise<GetAltitudeForCoordinatesResult> => {
   const searchParams = new URLSearchParams({
-    lat: latitude,
-    lon: longitude,
+    lat: `${latitude}`,
+    lon: `${longitude}`,
   });
 
   try {

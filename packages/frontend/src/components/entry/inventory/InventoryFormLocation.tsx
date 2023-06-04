@@ -118,7 +118,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
         .fetchQuery({
           queryKey: ["IGN", "altimetrie", { latitude, longitude }],
           staleTime: Infinity,
-          queryFn: () => getAltitudeForCoordinates({ latitude, longitude }),
+          queryFn: () =>
+            getAltitudeForCoordinates({ latitude: parseFloat(latitude), longitude: parseFloat(longitude) }),
         })
         .then((result) => {
           switch (result.outcome) {
