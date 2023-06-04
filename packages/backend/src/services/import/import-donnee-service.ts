@@ -247,22 +247,22 @@ export class ImportDonneeService extends ImportService {
     // Find if we already have an existing inventaire that matches the one from the current donnee
     const existingInventaire = this.inventaires.find(async (existingInventaire) => {
       return (
-        existingInventaire.observateurId === inputInventaire.observerId &&
+        `${existingInventaire.observateurId}` === inputInventaire.observerId &&
         existingInventaire.date === inputInventaire.date &&
         existingInventaire.heure === inputInventaire.time &&
         existingInventaire.duree === inputInventaire.duration &&
-        existingInventaire?.lieuditId === inputInventaire.localityId &&
-        existingInventaire.customizedCoordinates?.altitude === inputInventaire.altitude &&
-        existingInventaire.customizedCoordinates?.longitude === inputInventaire.longitude &&
-        existingInventaire.customizedCoordinates?.latitude === inputInventaire.latitude &&
+        `${existingInventaire?.lieuditId}` === inputInventaire.localityId &&
+        existingInventaire.customizedCoordinates?.altitude === inputInventaire.coordinates?.altitude &&
+        existingInventaire.customizedCoordinates?.longitude === inputInventaire.coordinates?.longitude &&
+        existingInventaire.customizedCoordinates?.latitude === inputInventaire.coordinates?.latitude &&
         existingInventaire.temperature === inputInventaire.temperature &&
         areSetsContainingSameValues(
           new Set(await this.services.observateurService.findAssociesIdsOfInventaireId(existingInventaire.id)),
-          new Set(inputInventaire.associateIds)
+          new Set(inputInventaire.associateIds.map((associateId) => parseInt(associateId)))
         ) &&
         areSetsContainingSameValues(
           new Set(await this.services.meteoService.findMeteosIdsOfInventaireId(existingInventaire.id)),
-          new Set(inputInventaire.weatherIds)
+          new Set(inputInventaire.weatherIds.map((weatherId) => parseInt(weatherId)))
         )
       );
     });

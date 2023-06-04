@@ -1,7 +1,6 @@
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
-import { type UpsertInventaireFailureReason } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
@@ -83,7 +82,7 @@ export const buildInventaireService = ({
         if (associateIds?.length) {
           await inventaireAssocieRepository.insertInventaireWithAssocies(
             createdInventaire.id,
-            associateIds,
+            associateIds.map((associateId) => parseInt(associateId)),
             transactionConnection
           );
         }
@@ -91,7 +90,7 @@ export const buildInventaireService = ({
         if (weatherIds?.length) {
           await inventaireMeteoRepository.insertInventaireWithMeteos(
             createdInventaire.id,
-            weatherIds,
+            weatherIds.map((weatherId) => parseInt(weatherId)),
             transactionConnection
           );
         }
@@ -133,7 +132,7 @@ export const buildInventaireService = ({
         // With this information, it is up to the caller to react accordingly
         // (e.g. ask all donnees from inventaire B to be moved to A),
         // but this is not up to this upsert method to take this initiave
-        const upsertInventaireFailureReason: UpsertInventaireFailureReason = {
+        const upsertInventaireFailureReason = {
           inventaireExpectedToBeUpdated: id,
           correspondingInventaireFound: existingInventaire.id,
         };
@@ -167,13 +166,21 @@ export const buildInventaireService = ({
         await inventaireAssocieRepository.deleteAssociesOfInventaireId(id, transactionConnection);
 
         if (associateIds?.length) {
-          await inventaireAssocieRepository.insertInventaireWithAssocies(id, associateIds, transactionConnection);
+          await inventaireAssocieRepository.insertInventaireWithAssocies(
+            id,
+            associateIds.map((associateId) => parseInt(associateId)),
+            transactionConnection
+          );
         }
 
         await inventaireMeteoRepository.deleteMeteosOfInventaireId(id, transactionConnection);
 
         if (weatherIds?.length) {
-          await inventaireMeteoRepository.insertInventaireWithMeteos(id, weatherIds, transactionConnection);
+          await inventaireMeteoRepository.insertInventaireWithMeteos(
+            id,
+            weatherIds.map((weatherId) => parseInt(weatherId)),
+            transactionConnection
+          );
         }
 
         return updatedInventaire;
