@@ -38,32 +38,15 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
     existingInventory === undefined
       ? {
           // Brand new inventory
-          id: null,
-          observer: userSettings.defaultObserver
-            ? {
-                id: parseInt(userSettings.defaultObserver.id),
-                libelle: userSettings.defaultObserver.libelle,
-                __typename: "Observateur",
-              }
-            : null,
-          associateObservers: [],
+          observerId: userSettings.defaultObserver?.id,
+          associateIds: [],
           date: format(new Date(), "yyyy-MM-dd"),
           time: "",
           duration: "",
-          department: userSettings.defaultDepartment
-            ? {
-                id: parseInt(userSettings.defaultDepartment.id),
-                code: userSettings.defaultDepartment.code,
-                __typename: "Departement",
-              }
-            : null,
-          town: null,
-          locality: null,
-          latitude: "",
-          longitude: "",
-          altitude: "",
-          temperature: "",
-          weathers: [],
+          localityId: "",
+          coordinates: null,
+          temperature: null,
+          weatherIds: [],
         }
       : {
           // Existing inventory
