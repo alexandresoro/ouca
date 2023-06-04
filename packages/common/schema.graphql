@@ -396,57 +396,6 @@ type PaginatedSearchDonneesResult implements PaginatedResult {
   count(searchCriteria: SearchDonneeCriteria): Int!
 }
 
-enum ImportStatusEnum {
-  NOT_STARTED
-  ONGOING
-  COMPLETE
-  FAILED
-}
-
-enum ImportErrorType {
-  IMPORT_FAILURE
-  IMPORT_PROCESS_ERROR
-  IMPORT_PROCESS_UNEXPECTED_EXIT
-}
-
-enum OngoingSubStatus {
-  PROCESS_STARTED
-  RETRIEVING_REQUIRED_DATA
-  VALIDATING_INPUT_FILE
-  INSERTING_IMPORTED_DATA
-}
-
-type OngoingValidationStats {
-  totalLines: Int
-  totalEntries: Int
-  nbEntriesChecked: Int
-  nbEntriesWithErrors: Int
-}
-
-type ImportStatus {
-  status: ImportStatusEnum!
-  subStatus: OngoingSubStatus
-  errorType: ImportErrorType
-  errorDescription: String
-  importErrorsReportFile: String
-  ongoingValidationStats: OngoingValidationStats
-}
-
-type UpsertDonneeResult {
-  donnee: Donnee
-  failureReason: String
-}
-
-type UpsertInventaireFailureReason {
-  inventaireExpectedToBeUpdated: Int!
-  correspondingInventaireFound: Int!
-}
-
-type UpsertInventaireResult {
-  inventaire: Inventaire
-  failureReason: UpsertInventaireFailureReason
-}
-
 type Query {
   ages(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): AgesPaginatedResult
   classes(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
@@ -491,5 +440,4 @@ type Query {
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
   searchDonnees: PaginatedSearchDonneesResult
-  importStatus(importId: String!): ImportStatus
 }
