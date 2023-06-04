@@ -1,15 +1,17 @@
+import { getDepartmentResponse } from "@ou-ca/common/api/department";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { areCoordinatesCustomized as areCoordinatesCustomizedFn } from "@ou-ca/common/coordinates-system/coordinates-helper";
+import { getTownResponse } from "@ou-ca/common/api/town";
+import { type Department } from "@ou-ca/common/entities/department";
+import { type Locality } from "@ou-ca/common/entities/locality";
+import { type Town } from "@ou-ca/common/entities/town";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useWatch, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "urql";
-import usePrevious from "../../../hooks/usePrevious";
-import { getAltitudeForCoordinates } from "../../../services/ign-alticodage-service";
-import FormAutocomplete from "../../common/form/FormAutocomplete";
+import { useQuery as useQueryGql } from "urql";
 import TextInput from "../../common/styled/TextInput";
+import Autocomplete from "../../common/styled/select/Autocomplete";
 import {
   AUTOCOMPLETE_DEPARTMENTS_QUERY,
   AUTOCOMPLETE_LOCALITIES_QUERY,
@@ -161,7 +163,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
     }
   }, [isLongitudeDirty, setIsLongitudeInputTainted]);
 
-  const [{ data: dataDepartments }] = useQuery({
+  const [{ data: dataDepartments }] = useQueryGql({
     query: AUTOCOMPLETE_DEPARTMENTS_QUERY,
     variables: {
       searchParams: {
@@ -171,39 +173,105 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
     },
   });
 
-  const [{ data: dataTowns }] = useQuery({
+  const [{ data: dataTowns }] = useQueryGql({
     query: AUTOCOMPLETE_TOWNS_QUERY,
     variables: {
       searchParams: {
         q: townsInput,
         pageSize: 5,
       },
-      departmentId: department?.id,
+      departmentId: department?.id ? parseInt(department.id) : undefined,
     },
     pause: department?.id == null,
   });
 
-  const [{ data: dataLocalities }] = useQuery({
+  const [{ data: dataLocalities }] = useQueryGql({
     query: AUTOCOMPLETE_LOCALITIES_QUERY,
     variables: {
       searchParams: {
         q: localityInput,
         pageSize: 5,
       },
-      townId: town?.id,
+      townId: town?.id ? parseInt(town.id) : undefined,
     },
     pause: town?.id == null,
   });
 
-  const autocompleteDepartments = dataDepartments?.departements?.data ?? [];
-  const autocompleteTowns = department?.id != null && dataTowns?.communes?.data ? dataTowns.communes.data : [];
+  // Reshape GraphQL entities to map REST ones
+  // TODO cleanup one migration is complete
+  const autocompleteDepartments = dataDepartments?.departements?.data
+    ? dataDepartments?.departements?.data.map((department) => {
+        return {
+          id: `${department.id}`,
+          code: department.code,
+        } satisfies Department;
+      })
+    : [];
+  const autocompleteTowns =
+    department?.id != null && dataTowns?.communes?.data
+      ? dataTowns.communes.data.map((town) => {
+          return {
+            id: `${town.id}`,
+            code: town.code,
+            nom: town.nom,
+            departmentId: `${town.departement.id}`,
+          } satisfies Town;
+        })
+      : [];
   const autocompleteLocalities =
-    town?.id != null && dataLocalities?.lieuxDits?.data ? dataLocalities.lieuxDits.data : [];
+    town?.id != null && dataLocalities?.lieuxDits?.data
+      ? dataLocalities.lieuxDits.data.map((locality) => {
+          const { id, altitude, latitude, longitude, __typename, coordinatesSystem, commune, ...restLocality } =
+            locality;
+          return {
+            ...restLocality,
+            id: `${id}`,
+            coordinates: {
+              altitude,
+              latitude,
+              longitude,
+            },
+            townId: `${commune.id}`,
+          } satisfies Locality;
+        })
+      : [];
 
-  // Handle custom coordinates info message
-  const areCoordinatesCustomized =
-    locality != null &&
-    areCoordinatesCustomizedFn(locality, parseFloat(altitude), parseFloat(longitude), parseFloat(latitude), "gps");
+  // Handle when department is changed by the user
+  const handleDepartmentChange = (newDepartment: Department | null) => {
+    setDepartmentId(newDepartment?.id ?? null);
+
+    // On department change, reset town if it does not belong to department anymore
+    if (town != null && town.departmentId !== newDepartment?.id) {
+      handleTownChange(null);
+    }
+  };
+
+  // Handle when town is changed by the user
+  const handleTownChange = (newTown: Town | null) => {
+    setTownId(newTown?.id ?? null);
+
+    if (locality != null && locality.townId !== newTown?.id) {
+      handleLocalityChange(null);
+    }
+  };
+
+  // Handle when locality is changed by the user
+  const handleLocalityChange = (newLocality: Locality | null) => {
+    void setLocality(newLocality);
+  };
+
+  // Handlers when fields are changed manually by the user
+  const handleLatitudeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    void setLatitude(event.target.value ? parseFloat(event.target.value) : null);
+  };
+
+  const handleLongitudeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    void setLongitude(event.target.value ? parseFloat(event.target.value) : null);
+  };
+
+  const handleAltitudeChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    setAltitude(event.target.value ? parseFloat(event.target.value) : null);
+  };
 
   return (
     <>
@@ -211,69 +279,66 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       <br />
       PREVIOUS LOC : {previousLocality?.nom ?? JSON.stringify(previousLocality)}
       <div className="flex gap-2">
-        <FormAutocomplete
+        <Autocomplete
           data={autocompleteDepartments}
           name="department"
           label={t("department")}
-          control={control}
           onInputChange={setDepartmentsInput}
+          onChange={handleDepartmentChange}
           renderValue={renderDepartment}
+          value={department ?? null}
           autocompleteClassName="w-28"
           labelTextClassName="first-letter:capitalize"
         />
-        <FormAutocomplete
+        <Autocomplete
           data={autocompleteTowns}
           name="town"
           label={t("town")}
-          control={control}
           decorationKey="code"
           onInputChange={setTownsInput}
+          onChange={handleTownChange}
           renderValue={renderTown}
+          value={town ?? null}
           autocompleteClassName="flex-grow"
           labelTextClassName="first-letter:capitalize"
         />
       </div>
-      <FormAutocomplete
+      <Autocomplete
+        {...register("localityId")}
         data={autocompleteLocalities}
-        name="locality"
         label={t("inventoryForm.locality")}
-        control={control}
-        rules={{
-          required: true,
-        }}
         onInputChange={setLocalityInput}
+        onChange={handleLocalityChange}
+        value={locality}
         renderValue={renderLocality}
         labelTextClassName="first-letter:capitalize"
       />
       <div className="flex gap-2">
         <TextInput
-          {...register("latitude", {
-            min: -90,
-            max: 90,
-            required: true,
+          {...register("coordinates.latitude", {
+            valueAsNumber: true,
           })}
+          onChange={handleLatitudeChange}
           textInputClassName="flex-grow w-24 py-1"
           label={t("latitude")}
           type="number"
           step="any"
         />
         <TextInput
-          {...register("longitude", {
-            min: -180,
-            max: 180,
-            required: true,
+          {...register("coordinates.longitude", {
+            valueAsNumber: true,
           })}
+          onChange={handleLongitudeChange}
           textInputClassName="flex-grow w-24 py-1"
           label={t("longitude")}
           type="number"
           step="any"
         />
         <TextInput
-          {...register("altitude", {
-            min: -1000,
-            max: 9000,
-            required: true,
+          {...register("coordinates.altitude", {
+            valueAsNumber: true,
           })}
+          onChange={handleAltitudeChange}
           textInputClassName="flex-grow w-24 py-1"
           label={t("altitude")}
           type="number"
@@ -295,7 +360,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           </div>
         </div>
       )}
-      {altitudeCallDisplayError && (
+      {altitudeServiceStatus === "error" && (
         <div className="alert alert-warning py-1 text-sm">
           <div>
             <InfoCircle className="h-4 flex-shrink-0" />
