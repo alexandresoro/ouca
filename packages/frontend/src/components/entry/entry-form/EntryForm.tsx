@@ -1,11 +1,20 @@
 import { Tab } from "@headlessui/react";
-import { Fragment, Suspense, lazy, useState, type FunctionComponent } from "react";
+import { getInventoryResponse } from "@ou-ca/common/api/inventory";
+import { useAtomValue, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
+import { Fragment, Suspense, lazy, useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "urql";
-import { EntryCustomCoordinatesContext, type Coordinates } from "../../../contexts/EntryCustomCoordinatesContext";
+import {
+  inventoryAltitudeAtom,
+  inventoryLatitudeAtom,
+  inventoryLocalityAtom,
+  inventoryLongitudeAtom,
+  inventorySetAtom,
+  storedCustomizedCoordinatesAtom,
+} from "../../../atoms/inventoryFormAtoms";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import TempPage from "../../TempPage";
 import InventoryForm from "../inventory/InventoryForm";
-import { GET_EXISTING_INVENTAIRE } from "./EntryFormQueries";
 
 const EntryMap = lazy(() => import("../entry-map/EntryMap"));
 
@@ -13,49 +22,80 @@ type EntryFormProps =
   | {
       // New entry (w/ possible existing inventory id as template)
       isNewEntry: true;
-      existingInventoryId?: number;
+      existingInventoryId?: string;
       existingEntryId?: never;
     }
   | {
       // Existing entry
       isNewEntry?: never;
-      existingInventoryId: number;
-      existingEntryId: number;
+      existingInventoryId: string;
+      existingEntryId: string;
     };
 
 const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInventoryId, existingEntryId }) => {
   const { t } = useTranslation();
 
-  const [entryCustomCoordinates, setEntryCustomCoordinates] = useState<Coordinates>({
-    lat: 0,
-    lng: 0,
-  });
+  const inventoryLocality = useAtomValue(inventoryLocalityAtom);
+  const inventoryLatitude = useAtomValue(inventoryLatitudeAtom);
+  const inventoryLongitude = useAtomValue(inventoryLongitudeAtom);
+  const inventoryAltitude = useAtomValue(inventoryAltitudeAtom);
+  const storedCustomizedCoordinates = useAtomValue(storedCustomizedCoordinatesAtom);
+  const setInventory = useSetAtom(inventorySetAtom);
 
-  const [{ data: existingInventory, fetching }] = useQuery({
-    query: GET_EXISTING_INVENTAIRE,
-    variables: {
-      inventoryId: existingInventoryId!,
+  const {
+    data: existingInventory,
+    isFetching,
+    refetch,
+  } = useApiQuery(
+    {
+      path: `/inventories/${existingInventoryId!}`,
+      schema: getInventoryResponse,
     },
-    pause: existingInventoryId === undefined,
-  });
+    {
+      enabled: false,
+    }
+  );
+  useEffect(() => {
+    if (existingInventoryId) {
+      void refetch();
+    }
+  }, [existingInventoryId, refetch]);
+
+  const [isInventoryReady, setIsInventoryReady] = useState(false);
+
+  useEffect(() => {
+    setIsInventoryReady(false);
+    void setInventory(existingInventoryId != null ? existingInventory ?? RESET : RESET).then(() => {
+      setIsInventoryReady(true);
+    });
+  }, [existingInventory, existingInventoryId, setInventory]);
 
   const inventoryFormKey = isNewEntry ? `new-${existingInventoryId ?? ""}` : `existing-${existingEntryId}`;
 
   return (
-    <EntryCustomCoordinatesContext.Provider
-      value={{ customCoordinates: entryCustomCoordinates, updateCustomCoordinates: setEntryCustomCoordinates }}
-    >
-      Coords - LAT {entryCustomCoordinates.lat} - LONG {entryCustomCoordinates.lng}
+    <>
+      Coords - LAT {inventoryLatitude} - LONG {inventoryLongitude} - ALT {inventoryAltitude}
+      <br />
+      Stored custom coords - LAT {storedCustomizedCoordinates?.lat} - LONG {storedCustomizedCoordinates?.lng} - ALT{" "}
+      {storedCustomizedCoordinates?.altitude}
+      <br />
+      LOCALITY {JSON.stringify(inventoryLocality)}
       <div className="container mx-auto flex gap-10">
         <div className="basis-1/3 mt-4">
-          {existingInventoryId != null && existingInventory?.inventaire != null && !fetching && (
-            <InventoryForm
-              key={inventoryFormKey}
-              isNewInventory={isNewEntry}
-              existingInventory={existingInventory.inventaire}
-            />
+          {isInventoryReady && (
+            <>
+              {existingInventoryId != null && existingInventory != null && !isFetching && (
+                <InventoryForm
+                  key={inventoryFormKey}
+                  isNewInventory={isNewEntry}
+                  existingInventory={existingInventory}
+                />
+              )}
+              {existingInventoryId === undefined && (
+                <InventoryForm key={inventoryFormKey} isNewInventory={isNewEntry} />
+              )}
+            </>
           )}
-          {existingInventoryId === undefined && <InventoryForm key={inventoryFormKey} isNewInventory={isNewEntry} />}
         </div>
         <div className="basis-2/3">
           <Tab.Group>
@@ -90,7 +130,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
           </Tab.Group>
         </div>
       </div>
-    </EntryCustomCoordinatesContext.Provider>
+    </>
   );
 };
 

@@ -16,9 +16,7 @@ const NewEntryPage: FunctionComponent = () => {
 
   const hasLastDonnee = data?.id != null;
 
-  const existingInventoryId = searchParams.has("inventoryId")
-    ? Number.parseInt(searchParams.get("inventoryId")!)
-    : undefined;
+  const existingInventoryId = searchParams.get("inventoryId") ?? undefined;
 
   const navigateToLastDonnee = () => {
     if (data?.id != null) {
