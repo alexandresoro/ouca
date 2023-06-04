@@ -1,4 +1,4 @@
-import mercurius, { type IResolvers } from "mercurius";
+import { type IResolvers } from "mercurius";
 import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repository-types.js";
 import { type Services } from "../services/services.js";
 import {
@@ -32,11 +32,6 @@ import {
   type SexesPaginatedResult,
 } from "./generated/graphql-types.js";
 import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper.js";
-
-/**
- * @deprecated authent/authorization should be done at service level
- */
-const USER_NOT_AUTHENTICATED = "User is not authenticated.";
 
 export const buildResolvers = ({
   ageService,
@@ -111,12 +106,6 @@ export const buildResolvers = ({
           count,
         };
       },
-      donnee: (_source, args, { user }): { id: number } => {
-        if (!user) throw new mercurius.default.ErrorWithProps(USER_NOT_AUTHENTICATED);
-        return {
-          id: args.id,
-        };
-      },
       especes: async (_, args, { user }): Promise<{ data: Omit<Espece, "classe">[]; count: number }> => {
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, args),
@@ -146,13 +135,6 @@ export const buildResolvers = ({
           data,
           count,
         };
-      },
-      inventaire: async (
-        _source,
-        args,
-        { user }
-      ): Promise<Omit<Inventaire, "observateur" | "associes" | "lieuDit" | "meteos"> | null> => {
-        return inventaireService.findInventaire(args.id, user);
       },
       lieuxDits: async (
         _,

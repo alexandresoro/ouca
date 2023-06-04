@@ -410,7 +410,6 @@ type Query {
     orderBy: DepartementsOrderBy
     sortOrder: SortOrder
   ): DepartementsPaginatedResult
-  donnee(id: Int!): DonneeResult
   especes(
     searchParams: SearchParams
     searchCriteria: SearchDonneeCriteria
@@ -427,7 +426,6 @@ type Query {
     orderBy: EstimationNombreOrderBy
     sortOrder: SortOrder
   ): EstimationsNombrePaginatedResult
-  inventaire(id: Int!): Inventaire
   lieuxDits(searchParams: SearchParams, townId: Int, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
   meteos(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): MeteosPaginatedResult
   milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
