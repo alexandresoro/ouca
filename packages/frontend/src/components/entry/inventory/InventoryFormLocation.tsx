@@ -66,7 +66,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   const [isLongitudeInputTainted, setIsLongitudeInputTainted] = useState(false);
   const { isDirty: isLongitudeDirty } = getFieldState("longitude");
 
-  const [altitudeCallOngoing, setAltitudeCallOngoing] = useState(false);
   const [altitudeCallDisplayError, setAltitudeCallDisplayError] = useState(false);
 
   // On department change, reset town
@@ -162,6 +161,22 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       setIsLongitudeInputTainted(true);
     }
   }, [isLongitudeDirty, setIsLongitudeInputTainted]);
+
+  // Only display altitude loading service if it takes too long
+  const [altitudeCallOngoing, setAltitudeCallOngoing] = useState(false);
+  useEffect(() => {
+    let altitudeCallOngoingTimeout: NodeJS.Timeout;
+    if (altitudeServiceStatus === "ongoing") {
+      altitudeCallOngoingTimeout = setTimeout(() => {
+        setAltitudeCallOngoing(true);
+      }, 500);
+    } else {
+      setAltitudeCallOngoing(false);
+    }
+    return () => {
+      clearTimeout(altitudeCallOngoingTimeout);
+    };
+  }, [altitudeServiceStatus]);
 
   // When the locality changes, make sure that the appropriate town is displayed
   // This can happen when locality is updated from outside the component
