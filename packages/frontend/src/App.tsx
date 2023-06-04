@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { authExchange } from "@urql/exchange-auth";
 import { refocusExchange } from "@urql/exchange-refocus";
@@ -9,6 +9,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom
 import { Provider as UrqlProvider, cacheExchange, createClient, fetchExchange } from "urql";
 import { AuthHandler } from "./components/AuthHandler";
 import { AppContext, DEFAULT_CONFIG } from "./contexts/AppContext";
+import { queryClient } from "./query/query-client";
 import loadAnalytics from "./services/load-analytics";
 import { getUser } from "./utils/getUser";
 import { initApp } from "./utils/init-app";
@@ -35,8 +36,6 @@ const ComportementManage = lazy(() => import("./components/manage/comportement/C
 const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
 const UserProfilePage = lazy(() => import("./components/user-profile/UserProfilePage"));
 const SettingsPage = lazy(() => import("./components/SettingsPage"));
-
-const queryClient = new QueryClient();
 
 const App: FunctionComponent = () => {
   const { config, SentryRoutes } = suspend(initApp(Routes));
