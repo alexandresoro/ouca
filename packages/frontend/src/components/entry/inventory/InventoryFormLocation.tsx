@@ -1,11 +1,10 @@
 import { areCoordinatesCustomized as areCoordinatesCustomizedFn } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useQueryClient } from "@tanstack/react-query";
-import { useContext, useEffect, useState, type FunctionComponent } from "react";
+import { useEffect, useState, type FunctionComponent } from "react";
 import { useWatch, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "urql";
-import { EntryCustomCoordinatesContext } from "../../../contexts/EntryCustomCoordinatesContext";
 import usePrevious from "../../../hooks/usePrevious";
 import { getAltitudeForCoordinates } from "../../../services/ign-alticodage-service";
 import FormAutocomplete from "../../common/form/FormAutocomplete";
@@ -43,9 +42,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   const { t } = useTranslation();
 
   const queryClient = useQueryClient();
-
-  // TODO: Think about how to sync this
-  const { customCoordinates, updateCustomCoordinates } = useContext(EntryCustomCoordinatesContext);
 
   const department = useWatch({ control, name: "department" });
   const previousDepartment = usePrevious(department);
