@@ -7,7 +7,7 @@ import { type Town } from "@ou-ca/common/entities/town";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } from "react";
-import { type UseFormReturn } from "react-hook-form";
+import { type UseFormRegister } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery as useQueryGql } from "urql";
 import { altitudeServiceStatusAtom } from "../../../atoms/altitudeServiceAtom";
@@ -27,10 +27,7 @@ import {
   AUTOCOMPLETE_TOWNS_QUERY,
 } from "./InventoryFormQueries";
 
-type InventoryFormLocationProps = Pick<
-  UseFormReturn<UpsertInventoryInput>,
-  "control" | "register" | "setValue" | "getFieldState"
->;
+type InventoryFormLocationProps = { register: UseFormRegister<UpsertInventoryInput> };
 
 const renderDepartment = (department: Department | null): string => {
   return department?.code ?? "";
@@ -44,12 +41,7 @@ const renderLocality = (locality: Locality | null): string => {
   return locality?.nom ?? "";
 };
 
-const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
-  control,
-  register,
-  setValue,
-  getFieldState,
-}) => {
+const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ register }) => {
   const { t } = useTranslation();
 
   const [departmentId, setDepartmentId] = useState<string | null>(null);
