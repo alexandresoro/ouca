@@ -1,10 +1,10 @@
+import { type GetInventoryResponse } from "@ou-ca/common/api/inventory";
 import { FilePlus } from "@styled-icons/boxicons-solid";
 import { format } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { type GetExistingInventaireQuery } from "../../../gql/graphql";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import InventoryFormDate from "./InventoryFormDate";
 import InventoryFormLocation from "./InventoryFormLocation";
@@ -15,7 +15,7 @@ import { type UpsertInventoryInput } from "./inventory-form-types";
 type InventoryFormProps = {
   // New inventory (w/ possible existing inventory as template)
   isNewInventory?: boolean;
-  existingInventory?: NonNullable<GetExistingInventaireQuery["inventaire"]>;
+  existingInventory?: GetInventoryResponse;
 };
 
 const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventory }) => {
