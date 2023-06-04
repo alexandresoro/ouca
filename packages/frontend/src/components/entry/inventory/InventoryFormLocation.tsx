@@ -64,15 +64,33 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       enabled: departmentId != null,
     }
   );
+  useEffect(() => {
+    setDepartmentsInput(renderDepartment(department ?? null));
+  }, [department]);
+
+  const [townId, setTownId] = useState<string | null>(null);
+  const [townsInput, setTownsInput] = useState("");
+  const { data: town } = useApiQuery(
+    {
+      path: `/towns/${townId!}`,
+      schema: getTownResponse,
+    },
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+      enabled: townId != null,
+    }
+  );
+  useEffect(() => {
+    setTownsInput(renderTown(town ?? null));
+  }, [town]);
 
   const queryClient = useQueryClient();
 
   const previousDepartment = usePrevious(department);
   // TODO check if this "workaround" behaves properly
 
-  const town = useWatch({ control, name: "town" });
   const previousTown = usePrevious(town);
-  const [townsInput, setTownsInput] = useState(town ? renderTown(town) : "");
 
   const locality = useWatch({ control, name: "locality" });
   const previousLocality = usePrevious(locality);
