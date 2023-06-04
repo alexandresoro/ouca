@@ -29,6 +29,9 @@ export const AUTOCOMPLETE_TOWNS_QUERY = graphql(`
         id
         code
         nom
+        departement {
+          id
+        }
       }
     }
   }
@@ -44,6 +47,9 @@ export const AUTOCOMPLETE_LOCALITIES_QUERY = graphql(`
         longitude
         altitude
         coordinatesSystem
+        commune {
+          id
+        }
       }
     }
   }

@@ -1,5 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { upsertInventoryInput, type GetInventoryResponse } from "@ou-ca/common/api/inventory";
+import {
+  upsertInventoryInput,
+  type GetInventoryResponse,
+  type UpsertInventoryInput,
+} from "@ou-ca/common/api/inventory";
 import { FilePlus } from "@styled-icons/boxicons-solid";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
@@ -18,7 +22,6 @@ import InventoryFormDate from "./InventoryFormDate";
 import InventoryFormLocation from "./InventoryFormLocation";
 import InventoryFormObserver from "./InventoryFormObserver";
 import InventoryFormWeather from "./InventoryFormWeather";
-import { type UpsertInventoryInput } from "./inventory-form-types";
 
 type InventoryFormProps = {
   // New inventory (w/ possible existing inventory as template)

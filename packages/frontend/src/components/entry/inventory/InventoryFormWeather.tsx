@@ -1,18 +1,31 @@
-import { useState, type FunctionComponent } from "react";
-import { type UseFormReturn } from "react-hook-form";
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type Weather } from "@ou-ca/common/entities/weather";
+import { useEffect, useState, type FunctionComponent } from "react";
+import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "urql";
-import FormAutocomplete from "../../common/form/FormAutocomplete";
 import TextInput from "../../common/styled/TextInput";
+import AutocompleteMultiple from "../../common/styled/select/AutocompleteMultiple";
 import { AUTOCOMPLETE_WEATHERS_QUERY } from "./InventoryFormQueries";
-import { type UpsertInventoryInput } from "./inventory-form-types";
 
-type InventoryFormLocationProps = Pick<UseFormReturn<UpsertInventoryInput>, "control" | "register">;
+type InventoryFormWeatherProps = Pick<UseFormReturn<UpsertInventoryInput>, "control" | "register">;
 
-const InventoryFormWeather: FunctionComponent<InventoryFormLocationProps> = ({ control, register }) => {
+const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ control, register }) => {
   const { t } = useTranslation();
 
   const [weathersInput, setWeathersInput] = useState("");
+  const [selectedWeathers, setSelectedWeathers] = useState<Weather[]>([]);
+
+  const {
+    field: { ref: refWeathers, onChange: onChangeWeathersForm },
+  } = useController<UpsertInventoryInput>({
+    name: "weatherIds",
+    control,
+  });
+
+  useEffect(() => {
+    onChangeWeathersForm(selectedWeathers?.map((weather) => weather.id) ?? []);
+  }, [selectedWeathers, onChangeWeathersForm]);
 
   const [{ data: dataWeathers }] = useQuery({
     query: AUTOCOMPLETE_WEATHERS_QUERY,
@@ -24,24 +37,33 @@ const InventoryFormWeather: FunctionComponent<InventoryFormLocationProps> = ({ c
     },
   });
 
+  const dataWeathersReshaped = dataWeathers?.meteos?.data
+    ? dataWeathers.meteos.data.map((weather) => {
+        return {
+          id: `${weather.id}`,
+          libelle: weather.libelle,
+        } satisfies Weather;
+      })
+    : [];
+
   return (
     <div className="flex gap-2">
       <TextInput
         {...register("temperature", {
-          min: -50,
-          max: 100,
+          setValueAs: (v: string) => (v?.length ? parseInt(v) : null),
         })}
         textInputClassName="w-24 py-1"
         label={t("inventoryForm.temperature")}
         type="number"
       />
-      <FormAutocomplete
-        multiple
-        data={dataWeathers?.meteos?.data ?? []}
+      <AutocompleteMultiple
+        ref={refWeathers}
+        data={dataWeathersReshaped}
         name="weathers"
         label={t("inventoryForm.weathers")}
-        control={control}
         onInputChange={setWeathersInput}
+        onChange={setSelectedWeathers}
+        values={selectedWeathers}
         renderValue={({ libelle }) => libelle}
         autocompleteClassName="flex-grow"
         labelTextClassName="first-letter:capitalize"

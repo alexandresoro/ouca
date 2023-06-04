@@ -1,10 +1,10 @@
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type FunctionComponent } from "react";
-import { type UseFormReturn } from "react-hook-form";
+import { type UseFormRegister } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../common/styled/TextInput";
-import { type UpsertInventoryInput } from "./inventory-form-types";
 
-type InventoryFormDateProps = Pick<UseFormReturn<UpsertInventoryInput>, "register">;
+type InventoryFormDateProps = { register: UseFormRegister<UpsertInventoryInput> };
 
 const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register }) => {
   const { t } = useTranslation();
@@ -13,9 +13,7 @@ const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register
     <div className="flex gap-2">
       <TextInput
         {...register("date", {
-          required: true,
-          min: "1990-01-01",
-          max: "9999-12-31",
+          setValueAs: (v: string) => (v?.length ? v : null),
         })}
         textInputClassName="flex-grow py-1"
         label={t("inventoryForm.date")}
@@ -24,9 +22,7 @@ const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register
       />
       <TextInput
         {...register("time", {
-          validate: {
-            time: (v) => !v || /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]/.test(v),
-          },
+          setValueAs: (v: string) => (v?.length ? v : null),
         })}
         textInputClassName="py-1"
         label={t("inventoryForm.time")}
@@ -34,7 +30,7 @@ const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register
       />
       <TextInput
         {...register("duration", {
-          pattern: /^[0-9]{1,2}:[0-5][0-9]/,
+          setValueAs: (v: string) => (v?.length ? v : null),
         })}
         textInputClassName="w-24 py-1"
         label={t("inventoryForm.duration")}
