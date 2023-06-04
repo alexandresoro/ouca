@@ -5,7 +5,7 @@ export const coordinatesSchema = z.object({
   altitude: z.number(),
   longitude: z.number(),
   latitude: z.number(),
-  system: z.enum(COORDINATES_SYSTEMS),
+  system: z.enum(COORDINATES_SYSTEMS).nullable(),
 });
 
 export type Coordinates = z.infer<typeof coordinatesSchema>;
