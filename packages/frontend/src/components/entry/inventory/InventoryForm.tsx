@@ -1,10 +1,17 @@
 import { type GetInventoryResponse } from "@ou-ca/common/api/inventory";
 import { FilePlus } from "@styled-icons/boxicons-solid";
 import { format } from "date-fns";
+import { useAtomValue } from "jotai";
 import { type FunctionComponent } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type DefaultValues, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import {
+  inventoryAltitudeAtom,
+  inventoryLatitudeAtom,
+  inventoryLocalityAtom,
+  inventoryLongitudeAtom,
+} from "../../../atoms/inventoryFormAtoms";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import InventoryFormDate from "./InventoryFormDate";
 import InventoryFormLocation from "./InventoryFormLocation";
@@ -95,7 +102,12 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           temperature: `${existingInventory.temperature ?? ""}`,
           weathers: existingInventory.meteos,
         }
-  ) satisfies UpsertInventoryInput;
+  ) satisfies DefaultValues<UpsertInventoryInput>;
+
+  const locality = useAtomValue(inventoryLocalityAtom);
+  const latitude = useAtomValue(inventoryLatitudeAtom);
+  const altitude = useAtomValue(inventoryAltitudeAtom);
+  const longitude = useAtomValue(inventoryLongitudeAtom);
 
   const {
     register,
@@ -160,7 +172,6 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         )}
         <button type="submit">submit</button>
       </form>
-      <br />
     </div>
   );
 };
