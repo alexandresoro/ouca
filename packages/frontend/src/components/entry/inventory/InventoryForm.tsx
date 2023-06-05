@@ -118,7 +118,10 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           <InventoryFormDate register={register} />
         </div>
         <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
-          <InventoryFormLocation register={register} />
+          <InventoryFormLocation
+            register={register}
+            defaultDepartment={isNewInventory ? userSettings.defaultDepartment ?? undefined : undefined}
+          />
         </div>
         {userSettings.isMeteoDisplayed && (
           <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">

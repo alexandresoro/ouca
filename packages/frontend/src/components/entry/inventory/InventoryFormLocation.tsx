@@ -27,7 +27,9 @@ import {
   AUTOCOMPLETE_TOWNS_QUERY,
 } from "./InventoryFormQueries";
 
-type InventoryFormLocationProps = { register: UseFormRegister<UpsertInventoryInput> };
+type InventoryFormLocationProps = { register: UseFormRegister<UpsertInventoryInput> } & {
+  defaultDepartment?: Department;
+};
 
 const renderDepartment = (department: Department | null): string => {
   return department?.code ?? "";
@@ -41,7 +43,7 @@ const renderLocality = (locality: Locality | null): string => {
   return locality?.nom ?? "";
 };
 
-const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ register }) => {
+const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ register, defaultDepartment }) => {
   const { t } = useTranslation();
 
   const [departmentId, setDepartmentId] = useState<string | null>(null);
@@ -60,6 +62,11 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ 
   useEffect(() => {
     setDepartmentsInput(renderDepartment(department ?? null));
   }, [department]);
+  useEffect(() => {
+    if (defaultDepartment != null) {
+      setDepartmentId(defaultDepartment.id);
+    }
+  }, [defaultDepartment]);
 
   const [townId, setTownId] = useState<string | null>(null);
   const [townsInput, setTownsInput] = useState("");
