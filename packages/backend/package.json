@@ -79,7 +79,7 @@
     "mercurius": "12.2.0",
     "pino": "8.14.1",
     "pino-pretty": "10.0.0",
-    "slonik": "33.3.2",
+    "slonik": "33.3.3",
     "slonik-interceptor-field-name-transformation": "1.6.5",
     "umzug": "3.2.1",
     "zod": "3.21.4"
