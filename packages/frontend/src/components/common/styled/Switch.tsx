@@ -1,5 +1,5 @@
 import { Switch as SwitchHeadless } from "@headlessui/react";
-import { forwardRef, type ForwardedRef, type FunctionComponent } from "react";
+import { forwardRef, type ForwardedRef } from "react";
 
 type SwitchProps = {
   label: string;
@@ -9,7 +9,7 @@ type SwitchProps = {
   switchClassName?: string;
 };
 
-const Switch: FunctionComponent<SwitchProps> = (props, ref: ForwardedRef<HTMLButtonElement>) => {
+const Switch = (props: SwitchProps, ref: ForwardedRef<HTMLButtonElement>) => {
   const { checked, switchClassName, label, name, onChange } = props;
 
   return (
