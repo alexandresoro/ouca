@@ -136,7 +136,7 @@ const DepartementTable: FunctionComponent = () => {
         }
         tableRows={data?.departements?.data?.map((departement) => {
           return (
-            <tr className="hover" key={departement?.id}>
+            <tr className="hover:bg-base-200" key={departement?.id}>
               <td>{departement?.code}</td>
               <td>{departement?.nbCommunes}</td>
               <td>{departement?.nbLieuxDits}</td>

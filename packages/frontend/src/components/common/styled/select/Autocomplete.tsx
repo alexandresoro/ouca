@@ -97,9 +97,9 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
           <div className={`label py-1 ${labelClassName ?? ""}`}>
             <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>{label}</Combobox.Label>
           </div>
-          <div className={`w-full relative ${decorationKey ? "input-group" : ""}`} ref={refs.setReference}>
+          <div className={`w-full relative ${decorationKey ? "join" : ""}`} ref={refs.setReference}>
             {decorationKey && (
-              <span className="w-20 border border-primary border-r-0 border-opacity-70">
+              <span className="join-item w-20 bg-base-300/40 flex items-center px-4 border border-primary border-r-0 border-opacity-70">
                 {value?.[decorationKey] as Key}
               </span>
             )}
@@ -108,7 +108,9 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
             </Combobox.Button>
             <Combobox.Input
               {...inputProps}
-              className="flex-grow w-full input input-bordered input-primary text-base-content pr-10"
+              className={`joint-item flex-grow w-full input input-bordered input-primary text-base-content pr-10 ${
+                decorationKey ? "rounded-l-none" : ""
+              }`}
               displayValue={getDisplayValue}
               onChange={handleInputChange}
               onBlur={handleInputChange}

@@ -136,7 +136,7 @@ const ComportementTable: FunctionComponent = () => {
         }
         tableRows={data?.comportements?.data?.map((comportement) => {
           return (
-            <tr className="hover" key={comportement?.id}>
+            <tr className="hover:bg-base-200" key={comportement?.id}>
               <td>{comportement?.code}</td>
               <td>{comportement?.libelle}</td>
               <td>{comportement?.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>

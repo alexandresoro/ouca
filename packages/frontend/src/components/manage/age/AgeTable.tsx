@@ -128,7 +128,7 @@ const AgeTable: FunctionComponent = () => {
         }
         tableRows={data?.ages?.data?.map((age) => {
           return (
-            <tr className="hover" key={age?.id}>
+            <tr className="hover:bg-base-200" key={age?.id}>
               <td>{age?.libelle}</td>
               <td>{age?.nbDonnees}</td>
               <td align="right" className="pr-6">

@@ -31,10 +31,8 @@ const NotificationSnackbar: FunctionComponent<NotificationSnackbarProps> = (prop
             type === "success" ? "alert-success" : ""
           } ${type === "error" ? "alert-error" : ""} ${type === "warning" ? "alert-warning" : ""}`}
         >
-          <div>
-            {type && getAlertIcon(type)}
-            <span>{message}</span>
-          </div>
+          {type && getAlertIcon(type)}
+          <span>{message}</span>
         </div>
       ))}
     </div>

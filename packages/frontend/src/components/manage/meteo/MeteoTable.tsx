@@ -128,7 +128,7 @@ const MeteoTable: FunctionComponent = () => {
         }
         tableRows={data?.meteos?.data?.map((meteo) => {
           return (
-            <tr className="hover" key={meteo?.id}>
+            <tr className="hover:bg-base-200" key={meteo?.id}>
               <td>{meteo?.libelle}</td>
               <td>{meteo?.nbDonnees}</td>
               <td align="right" className="pr-6">

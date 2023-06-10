@@ -154,7 +154,7 @@ const LieuDitTable: FunctionComponent = () => {
         }
         tableRows={data?.lieuxDits?.data?.map((lieuDit) => {
           return (
-            <tr className="hover" key={lieuDit?.id}>
+            <tr className="hover:bg-base-200" key={lieuDit?.id}>
               <td>{lieuDit?.commune?.departement?.code}</td>
               <td>{lieuDit?.commune?.code}</td>
               <td>{lieuDit?.commune?.nom}</td>

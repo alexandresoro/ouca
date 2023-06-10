@@ -23,17 +23,23 @@ const ViewDonneesPage: FunctionComponent = () => {
         {features.tmp_view_search_filters && <DonneeFilter />}
 
         <Tab.Group>
-          <Tab.List className="btn-group mt-6 mb-2">
+          <Tab.List className="join mt-6 mb-2">
             <Tab as={Fragment}>
               {({ selected }) => (
-                <button type="button" className={`btn ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
+                <button
+                  type="button"
+                  className={`join-item btn btn-primary ${selected ? "btn-active" : "btn-primary btn-outline"}`}
+                >
                   {t("view.tab.observations")}
                 </button>
               )}
             </Tab>
             <Tab as={Fragment}>
               {({ selected }) => (
-                <button type="button" className={`btn ${selected ? "btn-active" : "btn-primary btn-outline"}`}>
+                <button
+                  type="button"
+                  className={`join-item btn btn-primary ${selected ? "btn-active" : "btn-primary btn-outline"}`}
+                >
                   {t("view.tab.species")}
                 </button>
               )}

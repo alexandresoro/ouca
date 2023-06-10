@@ -128,7 +128,7 @@ const ObservateurTable: FunctionComponent = () => {
         }
         tableRows={data?.observateurs?.data?.map((observateur) => {
           return (
-            <tr className="hover" key={observateur?.id}>
+            <tr className="hover:bg-base-200" key={observateur?.id}>
               <td>{observateur?.libelle}</td>
               <td>{observateur?.nbDonnees}</td>
               <td align="right" className="pr-6">
