@@ -312,26 +312,20 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ 
       </div>
       {areCoordinatesCustomized && (
         <div className="alert alert-info py-1 text-sm">
-          <div>
-            <InfoCircle className="h-4 flex-shrink-0" />
-            {t("inventoryForm.customCoordinatesInformation")}
-          </div>
+          <InfoCircle className="h-4 flex-shrink-0" />
+          {t("inventoryForm.customCoordinatesInformation")}
         </div>
       )}
       {altitudeCallOngoing && (
         <div className="alert alert-info py-1 text-sm">
-          <div>
-            <InfoCircle className="h-4 flex-shrink-0" />
-            {t("inventoryForm.altitudeCallOngoing")}
-          </div>
+          <InfoCircle className="h-4 flex-shrink-0" />
+          {t("inventoryForm.altitudeCallOngoing")}
         </div>
       )}
       {altitudeServiceStatus === "error" && (
         <div className="alert alert-warning py-1 text-sm">
-          <div>
-            <InfoCircle className="h-4 flex-shrink-0" />
-            {t("inventoryForm.altitudeCallError")}
-          </div>
+          <InfoCircle className="h-4 flex-shrink-0" />
+          {t("inventoryForm.altitudeCallError")}
         </div>
       )}
     </>

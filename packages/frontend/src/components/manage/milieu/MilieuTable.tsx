@@ -132,7 +132,7 @@ const MilieuTable: FunctionComponent = () => {
         }
         tableRows={data?.milieux?.data?.map((milieu) => {
           return (
-            <tr className="hover" key={milieu?.id}>
+            <tr className="hover:bg-base-200" key={milieu?.id}>
               <td>{milieu?.code}</td>
               <td>{milieu?.libelle}</td>
               <td>{milieu?.nbDonnees}</td>

@@ -47,13 +47,13 @@ const EntryMap: FunctionComponent = () => {
   return (
     <div className="flex flex-col">
       <div className="flex my-4 items-center justify-between">
-        <div className="btn-group">
+        <div className="join">
           {Object.entries(MAP_PROVIDERS).map(([providerKey, providerConfig]) => {
             return (
               <button
                 type="button"
                 key={providerKey}
-                className={`btn btn-xs ${mapProvider === providerKey ? "btn-active" : ""}`}
+                className={`join-item btn btn-xs ${mapProvider === providerKey ? "btn-active btn-primary" : ""}`}
                 onClick={() => setMapProvider(providerKey as keyof typeof MAP_PROVIDERS)}
               >
                 {t(providerConfig.nameKey)}

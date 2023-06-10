@@ -25,5 +25,6 @@ module.exports = {
       "night",
     ],
     darkTheme: "night",
+    logs: false,
   },
 };

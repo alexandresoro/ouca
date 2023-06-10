@@ -132,7 +132,7 @@ const EstimationNombreTable: FunctionComponent = () => {
         }
         tableRows={data?.estimationsNombre?.data?.map((estimationNombre) => {
           return (
-            <tr className="hover" key={estimationNombre?.id}>
+            <tr className="hover:bg-base-200" key={estimationNombre?.id}>
               <td>{estimationNombre?.libelle}</td>
               <td>{estimationNombre?.nonCompte ? "Oui" : ""}</td>
               <td>{estimationNombre?.nbDonnees}</td>

@@ -23,7 +23,7 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
     <Disclosure>
       {({ open }) => (
         <>
-          <tr className="hover">
+          <tr className="hover:bg-base-200">
             <td>
               <Disclosure.Button
                 className={`btn btn-circle btn-sm btn-ghost transition-transform duration-200 ${

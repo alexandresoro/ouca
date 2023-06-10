@@ -140,7 +140,7 @@ const CommuneTable: FunctionComponent = () => {
         }
         tableRows={data?.communes?.data?.map((commune) => {
           return (
-            <tr className="hover" key={commune?.id}>
+            <tr className="hover:bg-base-200" key={commune?.id}>
               <td>{commune?.departement?.code}</td>
               <td>{commune?.code}</td>
               <td>{commune?.nom}</td>

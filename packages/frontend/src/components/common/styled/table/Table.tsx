@@ -13,7 +13,7 @@ type TableProps = {
 const Table: FunctionComponent<TableProps> = ({ tableHead, tableRows, page, elementsPerPage, count, onPageChange }) => {
   return (
     <div className="text-base-content my-4 border border-neutral rounded-lg border-opacity-10 shadow-md overflow-x-auto">
-      <table className="table table-compact table-zebra w-full">
+      <table className="table table-sm table-zebra w-full">
         <thead className="[&_td]:overflow-ellipsis">
           <tr>{tableHead}</tr>
         </thead>

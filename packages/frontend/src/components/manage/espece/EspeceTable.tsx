@@ -140,7 +140,7 @@ const EspeceTable: FunctionComponent = () => {
         }
         tableRows={data?.especes?.data?.map((espece) => {
           return (
-            <tr className="hover" key={espece?.id}>
+            <tr className="hover:bg-base-200" key={espece?.id}>
               <td>{espece?.classe?.libelle}</td>
               <td>{espece?.code}</td>
               <td>{espece?.nomFrancais}</td>

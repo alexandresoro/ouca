@@ -132,7 +132,7 @@ const ClasseTable: FunctionComponent = () => {
         }
         tableRows={data?.classes?.data?.map((classe) => {
           return (
-            <tr className="hover" key={classe?.id}>
+            <tr className="hover:bg-base-200" key={classe?.id}>
               <td>{classe?.libelle}</td>
               <td>{classe?.nbEspeces}</td>
               <td>{classe?.nbDonnees}</td>

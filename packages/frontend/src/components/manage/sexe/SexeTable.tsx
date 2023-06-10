@@ -128,7 +128,7 @@ const SexeTable: FunctionComponent = () => {
         }
         tableRows={data?.sexes?.data?.map((sexe) => {
           return (
-            <tr className="hover" key={sexe?.id}>
+            <tr className="hover:bg-base-200" key={sexe?.id}>
               <td>{sexe?.libelle}</td>
               <td>{sexe?.nbDonnees}</td>
               <td align="right" className="pr-6">

@@ -125,7 +125,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
             </>}
             tableRows={data?.estimationsDistance?.data?.map((estimationDistance) => {
               return (
-                <tr className="hover" key={estimationDistance?.id}>
+                <tr className="hover:bg-base-200" key={estimationDistance?.id}>
                   <td>{estimationDistance?.libelle}</td>
                   <td>{estimationDistance?.nbDonnees}</td>
                   <td align="right" className="pr-6">
