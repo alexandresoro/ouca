@@ -83,7 +83,7 @@
     "@tanstack/react-query-devtools": "4.29.12",
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "14.4.3",
-    "@types/node": "18.16.17",
+    "@types/node": "18.16.18",
     "@types/react": "18.2.12",
     "@types/react-dom": "18.2.5",
     "@vitejs/plugin-react": "4.0.0",
