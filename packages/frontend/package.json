@@ -72,7 +72,7 @@
     "react-map-gl": "7.0.25",
     "react-oidc-context": "2.2.2",
     "react-router-dom": "6.12.1",
-    "urql": "4.0.3",
+    "urql": "4.0.4",
     "zod": "3.21.4"
   },
   "devDependencies": {
