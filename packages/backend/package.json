@@ -60,7 +60,7 @@
   "dependencies": {
     "@fastify/compress": "6.4.0",
     "@fastify/cors": "8.3.0",
-    "@fastify/multipart": "7.6.0",
+    "@fastify/multipart": "7.6.1",
     "@fastify/static": "6.10.2",
     "@fastify/under-pressure": "8.2.0",
     "@ou-ca/common": "*",
