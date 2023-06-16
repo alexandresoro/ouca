@@ -94,7 +94,7 @@
     "@types/node": "18.16.18",
     "@vitest/coverage-c8": "0.32.0",
     "cpy": "10.1.0",
-    "dotenv": "16.1.4",
+    "dotenv": "16.2.0",
     "tsup": "6.7.0",
     "type-fest": "3.11.1",
     "typescript": "5.1.3",
