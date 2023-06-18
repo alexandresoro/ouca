@@ -76,7 +76,7 @@ jobs:
             packages/common/dist/
             packages/backend/migrations/
             package.json
-            pnpm-lock.yaml
+            pnpm-*.yaml
             packages/backend/package.json
             packages/common/package.json
             !**/node_modules/**
