@@ -3,12 +3,12 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
-RUN apk add git
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY ./ /app/
 
-RUN npm ci
-RUN npm run backend build
+RUN pnpm i --frozen-lockfile
+RUN pnpm run backend build
 
 # 2. Run the NodeJS backend
 FROM node:18-alpine
@@ -20,12 +20,14 @@ WORKDIR /app
 ENV OUCA_SERVER_HOST 0.0.0.0
 
 COPY migrations/ /app/migrations/
-COPY package.json package-lock.json /app/ 
+COPY package.json pnpm-lock.yaml /app/
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 RUN npm pkg delete scripts.prepare && \
   npm --workspaces pkg delete scripts.postinstall && \
-  npm ci && \
-  rm -f package-lock.json
+  pnpm i --frozen-lockfile && \
+  rm -f pnpm-lock.yaml
 
 COPY --from=build /app/packages/ /app/packages/
 

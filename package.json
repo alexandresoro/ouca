@@ -13,16 +13,15 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "functions",
     "packages/*"
   ],
   "type": "module",
   "scripts": {
     "prepare": "husky install",
-    "test": "npm --workspaces --if-present test",
-    "lint": "npm --workspaces --if-present run lint",
-    "frontend": "npm --workspace=packages/frontend run --",
-    "backend": "npm --workspace=packages/backend run --",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r run lint",
+    "frontend": "pnpm --filter frontend run",
+    "backend": "pnpm --filter backend run",
     "check:ci": "wireit",
     "build:ci": "wireit",
     "build:frontend:ci": "wireit"
@@ -35,10 +34,10 @@
       ]
     },
     "build:backend": {
-      "command": "npm run backend build"
+      "command": "pnpm run backend build"
     },
     "build:frontend:ci": {
-      "command": "npm run frontend build",
+      "command": "pnpm run frontend build",
       "env": {
         "ENABLE_SENTRY": {
           "external": true
@@ -87,6 +86,6 @@
     "wireit": "0.9.5"
   },
   "engines": {
-    "npm": ">=8"
+    "pnpm": ">=8"
   }
 }

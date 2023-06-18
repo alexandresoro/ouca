@@ -1,5 +1,4 @@
 import { type TFuncKey } from "i18next";
-import { type Style } from "mapbox-gl";
 import ignMapStyle from "./ign.json";
 
 export const MAP_PROVIDERS = {
@@ -9,12 +8,12 @@ export const MAP_PROVIDERS = {
   },
   ign: {
     nameKey: "maps.maps.ign.name",
-    mapboxStyle: ignMapStyle as Style,
+    mapboxStyle: ignMapStyle,
   },
 } satisfies Record<
   string,
   {
     nameKey: TFuncKey;
-    mapboxStyle: string | Style;
+    mapboxStyle: string | unknown;
   }
 >;

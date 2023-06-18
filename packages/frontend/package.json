@@ -14,7 +14,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc --build tsconfig.build.json && vite build",
-    "postinstall": "npm run generate-graphql",
+    "postinstall": "pnpm run generate-graphql",
     "serve": "vite preview",
     "test": "wireit",
     "lint": "wireit",
@@ -78,6 +78,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "3.3.1",
     "@graphql-codegen/client-preset": "3.0.1",
+    "@graphql-typed-document-node/core": "3.2.0",
     "@ou-ca/eslint-config": "*",
     "@sentry/vite-plugin": "2.2.2",
     "@tanstack/react-query-devtools": "4.29.14",

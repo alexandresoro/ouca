@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAtom } from "jotai";
 import "leaflet/dist/leaflet.css";
 import { Marker as MapLibreMarker } from "maplibre-gl";
@@ -70,7 +72,8 @@ const EntryMap: FunctionComponent = () => {
         <MaplibreMap
           {...viewState}
           onMove={(evt) => setViewState(evt.viewState)}
-          mapStyle={MAP_PROVIDERS[mapProvider].mapboxStyle}
+          // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+          mapStyle={MAP_PROVIDERS[mapProvider].mapboxStyle as any}
           style={{
             borderRadius: "14px",
           }}

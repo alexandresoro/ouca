@@ -13,12 +13,14 @@ ENV OUCA_SERVER_HOST 0.0.0.0
 # Copy files from the built artifact
 COPY build/ /app/
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # Install production deps
 RUN npm pkg delete scripts.prepare && \
   npm --workspaces pkg delete scripts.postinstall && \
-  npm ci && \
+  pnpm i --frozen-lockfile && \
   # Cleanup file not needed anymore
-  rm -f package-lock.json
+  rm -f pnpm-lock.yaml
 
 WORKDIR /app/packages/backend/dist
 
