@@ -27,21 +27,27 @@ jobs:
 
       - uses: actions/checkout@v3
 
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.nodeVersion }}
-          cache: "npm"
+          cache: "pnpm"
 
       - uses: google/wireit@setup-github-actions-caching/v1
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
+
+      - run: pnpm run backend generate-graphql
 
       - name: Check & validate
-        run: npm run check:ci
+        run: pnpm run check:ci
 
       - name: Build
-        run: npm run build:ci
+        run: pnpm run build:ci
         env:
           # Only enable Sentry on new commits in default branch
           ENABLE_SENTRY: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
@@ -70,7 +76,7 @@ jobs:
             packages/common/dist/
             packages/backend/migrations/
             package.json
-            package-lock.json
+            pnpm-lock.yaml
             packages/backend/package.json
             packages/common/package.json
             !**/node_modules/**

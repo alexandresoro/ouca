@@ -22,7 +22,7 @@ This project also provides a web application that consumes the API and allows a 
 1. Install dependencies
 
 ```
-npm ci
+pnpm i
 ```
 
 2. Start or build the project:
@@ -30,7 +30,7 @@ npm ci
 To start:
 
 ```
-npm run backend start
+pnpm run backend start
 ```
 
 This will start the server on the default port.
@@ -38,7 +38,7 @@ This will start the server on the default port.
 To build:
 
 ```
-npm run backend build
+pnpm run backend build
 ```
 
 This will generate the output files in the _packages/\*/dist/_ folders.

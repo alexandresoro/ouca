@@ -1,10 +1,10 @@
 {
   "eslint.validate": ["typescript", "javascript"],
-  "eslint.packageManager": "npm",
+  "eslint.packageManager": "pnpm",
   "editor.codeActionsOnSave": {
     "source.organizeImports": true
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsdk": "packages/backend/node_modules/typescript/lib",
   "[typescript]": {
     "editor.defaultFormatter": "rome.rome"
   },
