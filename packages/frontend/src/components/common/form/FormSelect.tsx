@@ -1,5 +1,5 @@
 import { type Key } from "react";
-import { useController, type FieldValues, type UseControllerProps } from "react-hook-form";
+import { useController, type FieldValues, type Path, type PathValue, type UseControllerProps } from "react-hook-form";
 import { type ConditionalKeys, type SetRequired } from "type-fest";
 import Select from "../styled/select/Select";
 
@@ -24,7 +24,7 @@ const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKe
 
   const {
     field: { ref, value, onChange },
-  } = useController<TFieldValues>({
+  } = useController({
     name,
     control,
     rules,
@@ -35,7 +35,7 @@ const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKe
   const key = by ?? ("id" as ConditionalKeys<T, Key>);
 
   const handleOnChange = (newValue: T) => {
-    onChange(newValue[key]);
+    onChange(newValue[key] as PathValue<TFieldValues, Path<TFieldValues>>);
   };
 
   const selectedEntry = data?.find((entry) => entry[key] === value) ?? null;

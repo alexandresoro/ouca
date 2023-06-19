@@ -8,10 +8,10 @@ import {
   type UseControllerProps,
 } from "react-hook-form";
 import { type ConditionalKeys, type SetRequired } from "type-fest";
-import Autocomplete from "../styled/select/Autocomplete";
+import AutocompleteMultiple from "../styled/select/AutocompleteMultiple";
 
-type FormAutocompleteProps<TFieldValues extends FieldValues, T extends object> = SetRequired<
-  UseControllerProps<TFieldValues, FieldPathByValue<TFieldValues, T | null>>,
+type FormAutocompleteMultipleProps<TFieldValues extends FieldValues, T extends object> = SetRequired<
+  UseControllerProps<TFieldValues, FieldPathByValue<TFieldValues, T[]>>,
   "control"
 > & {
   renderValue: (value: T) => string;
@@ -21,20 +21,13 @@ type FormAutocompleteProps<TFieldValues extends FieldValues, T extends object> =
   labelTextClassName?: string;
   onInputChange?: (value: string) => void;
   inputProps?: Omit<ComponentPropsWithRef<"input">, "value" | "defaultValue">;
-  decorationKey?: ConditionalKeys<T, Key> & string;
 } & (
-    | {
-        data: T[] | null | undefined;
-        by: ConditionalKeys<T, Key> & string;
-      }
-    | {
-        data: (T & { id: Key })[] | null | undefined;
-        by?: ConditionalKeys<T, Key> & string;
-      }
+    | { data: T[]; by: ConditionalKeys<T, Key> & string }
+    | { data: (T & { id: Key })[]; by?: ConditionalKeys<T, Key> & string }
   );
 
-const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
-  props: FormAutocompleteProps<TFieldValues, T>
+const FormAutocompleteMultiple = <TFieldValues extends FieldValues, T extends object>(
+  props: FormAutocompleteMultipleProps<TFieldValues, T>
 ) => {
   const {
     data,
@@ -61,20 +54,18 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
     defaultValue,
   });
 
-  const handleOnChange = (newValue: T | null) => {
+  const handleOnChange = (newValue: T[]) => {
     onChange?.(newValue as PathValue<TFieldValues, Path<TFieldValues>>);
-    onInputChange?.(newValue ? renderValue(newValue) : "");
   };
 
   return (
-    <Autocomplete
+    <AutocompleteMultiple
       ref={ref}
       inputProps={inputProps}
       label={label}
       data={data}
       by={by as ConditionalKeys<T, Key> & string}
-      decorationKey={props.decorationKey}
-      value={value}
+      values={value}
       onChange={handleOnChange}
       onInputChange={onInputChange}
       renderValue={renderValue}
@@ -85,4 +76,4 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
   );
 };
 
-export default FormAutocomplete;
+export default FormAutocompleteMultiple;
