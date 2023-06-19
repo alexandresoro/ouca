@@ -336,8 +336,8 @@ importers:
         specifier: '*'
         version: link:../eslint-config
       '@sentry/vite-plugin':
-        specifier: 2.2.2
-        version: 2.2.2
+        specifier: 2.3.0
+        version: 2.3.0
       '@tanstack/react-query-devtools':
         specifier: 4.29.14
         version: 4.29.14(@tanstack/react-query@4.29.14)(react-dom@18.2.0)(react@18.2.0)
@@ -2389,8 +2389,8 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/bundler-plugin-core@2.2.2:
-    resolution: {integrity: sha512-tbuy9eQjbbeen8mAi7gmpXAtj/9CQHjdVxHntjBJ3fsA/dvOTWHQrnGkAUe9xNU+dwQstclSMCEwE6N3h5wXKA==}
+  /@sentry/bundler-plugin-core@2.3.0:
+    resolution: {integrity: sha512-PiX3yJ8UFKBIPRfhytweYjVdGfcruYJYdwSlbwFNe28fSMTKYPAF9/IqAOav9G8izlICnJm7ROyXlFlfMw0gRA==}
     engines: {node: '>= 10'}
     dependencies:
       '@sentry/cli': 2.19.1
@@ -2537,11 +2537,11 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/vite-plugin@2.2.2:
-    resolution: {integrity: sha512-P/3Nd57dT3TkFpvzpIVHD2mUo130YdotZeEl9Pn5fK7LDLpKcy5TpJk2KX3cacljDN48QnApINgTz9IIqdL7eg==}
+  /@sentry/vite-plugin@2.3.0:
+    resolution: {integrity: sha512-TUKj29cLT0RLUKg74GyP4YoAalvkYrVo9/7zW+L+gbgR/7sh+9iNBjn8IZbEuMwot+A7tG+2NBGLDVXvGrwIKA==}
     engines: {node: '>= 10'}
     dependencies:
-      '@sentry/bundler-plugin-core': 2.2.2
+      '@sentry/bundler-plugin-core': 2.3.0
       unplugin: 1.0.1
     transitivePeerDependencies:
       - encoding
