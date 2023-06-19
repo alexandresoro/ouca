@@ -10,7 +10,8 @@ type FormSelectProps<TFieldValues extends FieldValues, T, K extends ConditionalK
   data: T[] | null | undefined;
   renderValue: (value: T) => string;
   label: string;
-  selectClassName?: string;
+  // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+  selectClassName?: any;
 } & (T extends { id: Key }
     ? {
         by?: K;
