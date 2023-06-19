@@ -36,6 +36,18 @@ jobs:
               - .eslintrc.*
               - packages/eslint-config/**
 
+      - name: List all changed eslint files
+        run: |
+          for file in ${{ steps.changed-files.outputs.eslint_all_changed_files }}; do
+            echo "$file was changed"
+          done
+
+      - name: List all changed src files
+        run: |
+          for file in ${{ steps.changed-files.outputs.src_all_changed_files }}; do
+            echo "$file was changed"
+          done
+
       - uses: pnpm/action-setup@v2
         with:
           version: 8
