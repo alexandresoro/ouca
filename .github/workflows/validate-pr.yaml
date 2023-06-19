@@ -66,7 +66,7 @@ jobs:
       - name: Lint only changed files
         # Lint only changed files when no linter config has changed
         if: steps.changed-files.outputs.eslint_any_changed != 'true'
-        run: pnpm eslint ${{ steps.changed-files-lint.outputs.src_all_changed_files }}
+        run: pnpm eslint ${{ steps.changed-files.outputs.src_all_changed_files }}
 
       - name: Lint
         run: pnpm --aggregate-output --recursive run lint
