@@ -24,6 +24,7 @@
     "lint": {
       "command": "eslint .",
       "files": [
+        "../eslint-config/**/*",
         "**/*",
         "!dist"
       ],

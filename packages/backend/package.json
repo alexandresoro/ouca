@@ -37,6 +37,7 @@
       ],
       "files": [
         "src/**",
+        "../common/src/**/*",
         "tsconfig.json",
         "tsup.config.*"
       ]
@@ -44,6 +45,7 @@
     "lint": {
       "command": "eslint .",
       "files": [
+        "../eslint-config/**/*",
         "**/*"
       ],
       "output": []

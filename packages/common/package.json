@@ -21,29 +21,10 @@
   "type": "module",
   "scripts": {
     "test": "wireit",
-    "lint": "wireit",
-    "compile:tsup": "wireit"
+    "lint": "eslint .",
+    "compile:tsup": "tsup"
   },
   "wireit": {
-    "compile:tsup": {
-      "command": "tsup",
-      "files": [
-        "src/**",
-        "tsconfig.json",
-        "tsup.config.*"
-      ],
-      "output": [
-        "dist/**"
-      ]
-    },
-    "lint": {
-      "command": "eslint .",
-      "files": [
-        "**",
-        "!dist"
-      ],
-      "output": []
-    },
     "test": {
       "command": "vitest run",
       "files": [
