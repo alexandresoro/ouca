@@ -43,8 +43,14 @@ jobs:
 
       - run: pnpm run backend generate-graphql
 
-      - name: Check & validate
-        run: pnpm run check:ci
+      - name: Rome
+        run: pnpm run rome:ci
+
+      - name: Test
+        run: pnpm --aggregate-output --recursive run test
+        
+      - name: Lint
+        run: pnpm --aggregate-output --recursive run lint
 
       - name: Build
         run: pnpm run build:ci

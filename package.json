@@ -20,11 +20,10 @@
     "prepare": "husky install",
     "test": "pnpm -r test",
     "lint": "pnpm -r run lint",
-    "frontend": "pnpm --filter frontend run",
-    "backend": "pnpm --filter backend run",
-    "check:ci": "wireit",
-    "build:ci": "wireit",
-    "build:frontend:ci": "wireit"
+    "frontend": "pnpm --filter '@ou-ca/frontend' run",
+    "backend": "pnpm --filter '@ou-ca/backend' run",
+    "rome:ci": "rome ci *",
+    "build:ci": "wireit"
   },
   "wireit": {
     "build:ci": {
@@ -66,17 +65,6 @@
         "packages/common/dist",
         "packages/common/*.tsbuildinfo"
       ]
-    },
-    "check:ci": {
-      "dependencies": [
-        "rome:ci",
-        "lint",
-        "test"
-      ]
-    },
-    "rome:ci": {
-      "command": "rome ci *",
-      "output": []
     }
   },
   "devDependencies": {
