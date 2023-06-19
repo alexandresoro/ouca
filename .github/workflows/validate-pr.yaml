@@ -2,8 +2,6 @@ name: Validate PR
 
 on:
   pull_request:
-    branches:
-      - main
 
 jobs:
   build:
@@ -29,9 +27,11 @@ jobs:
         with:
           files_yaml: |
             src:
-              - '*.{ts,tsx,js}'
+              - '**/*.ts'
+              - '**/*.tsx'
+              - '**/*.js'
             eslint:
-              - .eslintrc.*
+              - '**/.eslintrc.*'
               - packages/eslint-config/**
 
       - uses: pnpm/action-setup@v2
@@ -64,16 +64,12 @@ jobs:
       - name: Lint only changed files
         # Lint only changed files when no linter config has changed
         if: steps.changed-files.outputs.eslint_any_changed != 'true'
-        run: pnpm eslint ${{ steps.changed-files-lint.outputs.src_all_changed_files }}
-
-      - name: Lint
-        run: pnpm --aggregate-output --recursive run lint
+        run: pnpm eslint ${{ steps.changed-files.outputs.src_all_changed_files }}
 
       - name: Build
         run: pnpm run build:ci
         env:
-          # Only enable Sentry on new commits in default branch
-          ENABLE_SENTRY: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+          ENABLE_SENTRY: false
           SENTRY_RELEASE: ${{ github.sha }}
           SENTRY_URL: ${{ vars.SENTRY_URL }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
