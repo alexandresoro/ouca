@@ -33,7 +33,7 @@ jobs:
               - '**/*.tsx'
               - '**/*.js'
             eslint:
-              - **/.eslintrc.*
+              - '**/.eslintrc.*'
               - packages/eslint-config/**
 
       - name: List all changed files
