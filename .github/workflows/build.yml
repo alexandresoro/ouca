@@ -23,20 +23,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files
-        id: changed-files
+      - name: Get changed source files
+        id: changed-source-files
         uses: tj-actions/changed-files@v36
         with:
-          files_yaml: |
-            src:
-              - '**/*.ts'
-              - '**/*.tsx'
-              - '**/*.js'
-            deps:
-              - pnpm-lock.yaml
-            eslint:
-              - '**/.eslintrc.*'
-              - packages/eslint-config/**
+          files: |
+            **.{ts,tsx,js}
 
       - uses: pnpm/action-setup@v2
         with:

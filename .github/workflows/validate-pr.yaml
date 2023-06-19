@@ -21,20 +21,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files
-        id: changed-files
+      - name: Get changed source files
+        id: changed-source-files
         uses: tj-actions/changed-files@v36
         with:
-          files_yaml: |
-            src:
-              - '**/*.ts'
-              - '**/*.tsx'
-              - '**/*.js'
-            deps:
-              - pnpm-lock.yaml
-            eslint:
-              - '**/.eslintrc.*'
-              - packages/eslint-config/**
+          files: |
+            **.{ts,tsx,js}
 
       - uses: pnpm/action-setup@v2
         with:
@@ -59,14 +51,14 @@ jobs:
         run: pnpm --aggregate-output --recursive run test
         
       - name: Lint - complete
-        # Do a complete lint only whenever linter config or deps have changed
-        if: steps.changed-files.outputs.eslint_any_changed == 'true' || steps.changed-files.outputs.deps_any_changed == 'true'
+        # Do a complete lint whenever anything else than a source file has changed
+        if: steps.changed-source-files.outputs.only_changed != 'true'
         run: pnpm --aggregate-output --recursive run lint
 
       - name: Lint - only changed source files
-        # Lint only changed files when no linter config has changed and no deps
-        if: steps.changed-files.outputs.src_any_changed == 'true' && steps.changed-files.outputs.eslint_any_changed != 'true' && steps.changed-files.outputs.deps_any_changed != 'true'
-        run: pnpm eslint ${{ steps.changed-files.outputs.src_all_changed_files }}
+        # Lint only changed files when only changed files have changed
+        if: steps.changed-source-files.outputs.only_changed == 'true'
+        run: pnpm eslint ${{ steps.changed-source-files.outputs.src_all_changed_files }}
 
       - name: Build
         run: pnpm run build:ci
