@@ -32,9 +32,11 @@ jobs:
         with:
           files_yaml: |
             src:
-              - '*.{ts,tsx,js}'
+              - '**/*.ts'
+              - '**/*.tsx'
+              - '**/*.js'
             eslint:
-              - .eslintrc.*
+              - '**/.eslintrc.*'
               - packages/eslint-config/**
 
       - uses: pnpm/action-setup@v2
