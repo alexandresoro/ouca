@@ -32,6 +32,8 @@ jobs:
               - '**/*.ts'
               - '**/*.tsx'
               - '**/*.js'
+            deps:
+              - pnpm-lock.yaml
             eslint:
               - '**/.eslintrc.*'
               - packages/eslint-config/**

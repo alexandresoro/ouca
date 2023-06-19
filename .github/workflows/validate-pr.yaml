@@ -30,6 +30,8 @@ jobs:
               - '**/*.ts'
               - '**/*.tsx'
               - '**/*.js'
+            deps:
+              - pnpm-lock.yaml
             eslint:
               - '**/.eslintrc.*'
               - packages/eslint-config/**
@@ -57,13 +59,13 @@ jobs:
         run: pnpm --aggregate-output --recursive run test
         
       - name: Lint - complete
-        # Do a complete lint only whenever linter config has changed
-        if: steps.changed-files.outputs.eslint_any_changed == 'true'
+        # Do a complete lint only whenever linter config or deps have changed
+        if: steps.changed-files.outputs.eslint_any_changed == 'true' || steps.changed-files.outputs.deps_any_changed == 'true'
         run: pnpm --aggregate-output --recursive run lint
 
-      - name: Lint only changed files
-        # Lint only changed files when no linter config has changed
-        if: steps.changed-files.outputs.eslint_any_changed != 'true'
+      - name: Lint - only changed source files
+        # Lint only changed files when no linter config has changed and no deps
+        if: steps.changed-files.outputs.src_any_changed == 'true' && steps.changed-files.outputs.eslint_any_changed != 'true' && steps.changed-files.outputs.deps_any_changed != 'true'
         run: pnpm eslint ${{ steps.changed-files.outputs.src_all_changed_files }}
 
       - name: Build
