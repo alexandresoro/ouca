@@ -29,11 +29,11 @@ jobs:
         with:
           files_yaml: |
             src:
-              - '*.ts'
-              - '*.tsx'
-              - '*.js'
+              - '**/*.ts'
+              - '**/*.tsx'
+              - '**/*.js'
             eslint:
-              - .eslintrc.*
+              - **/.eslintrc.*
               - packages/eslint-config/**
 
       - name: List all changed files
