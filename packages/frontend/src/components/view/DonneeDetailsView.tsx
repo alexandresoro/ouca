@@ -1,7 +1,7 @@
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import { Angry, Bug, Comment, Link, PieChartAlt2 } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";
-import { type TFuncKey } from "i18next";
+import { type ParseKeys } from "i18next";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { type Comportement, type Donnee } from "../../gql/graphql";
@@ -49,27 +49,23 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
 
         <ItemWithAvatar
           icon={<PieChartAlt2 className="h-6" />}
-          primary={
-            t("observationDetails.number" as unknown as TFuncKey, {
-              context: donnee?.estimationNombre?.nonCompte ? "undefined" : "defined",
-              number: donnee?.nombre,
-              numberPrecision: donnee?.estimationNombre?.libelle,
-            }) as string
-          }
-          secondary={
-            t("observationDetails.distance" as unknown as TFuncKey, {
-              context:
-                donnee?.distance && donnee?.estimationDistance
-                  ? "both"
-                  : donnee?.distance
-                  ? "valueOnly"
-                  : donnee?.estimationDistance
-                  ? "precisionOnly"
-                  : "none",
-              distance: donnee?.distance,
-              distancePrecision: donnee?.estimationDistance?.libelle,
-            }) as string
-          }
+          primary={t("observationDetails.number" as ParseKeys, {
+            context: donnee?.estimationNombre?.nonCompte ? "undefined" : "defined",
+            number: donnee?.nombre,
+            numberPrecision: donnee?.estimationNombre?.libelle,
+          })}
+          secondary={t("observationDetails.distance" as ParseKeys, {
+            context:
+              donnee?.distance && donnee?.estimationDistance
+                ? "both"
+                : donnee?.distance
+                ? "valueOnly"
+                : donnee?.estimationDistance
+                ? "precisionOnly"
+                : "none",
+            distance: donnee?.distance,
+            distancePrecision: donnee?.estimationDistance?.libelle,
+          })}
         />
 
         <ItemWithAvatar

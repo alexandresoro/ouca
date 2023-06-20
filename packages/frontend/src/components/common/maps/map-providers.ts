@@ -1,4 +1,4 @@
-import { type TFuncKey } from "i18next";
+import { type ParseKeys } from "i18next";
 import ignMapStyle from "./ign.json";
 
 export const MAP_PROVIDERS = {
@@ -13,7 +13,7 @@ export const MAP_PROVIDERS = {
 } satisfies Record<
   string,
   {
-    nameKey: TFuncKey;
+    nameKey: ParseKeys;
     mapboxStyle: string | unknown;
   }
 >;
