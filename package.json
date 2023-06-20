@@ -23,55 +23,12 @@
     "frontend": "pnpm --filter '@ou-ca/frontend' run",
     "backend": "pnpm --filter '@ou-ca/backend' run",
     "rome:ci": "rome ci *",
-    "build:ci": "wireit"
-  },
-  "wireit": {
-    "build:ci": {
-      "dependencies": [
-        "build:backend",
-        "build:frontend:ci"
-      ]
-    },
-    "build:backend": {
-      "command": "pnpm run backend build"
-    },
-    "build:frontend:ci": {
-      "command": "pnpm run frontend build",
-      "env": {
-        "ENABLE_SENTRY": {
-          "external": true
-        },
-        "SENTRY_URL": {
-          "external": true
-        },
-        "SENTRY_AUTH_TOKEN": {
-          "external": true
-        },
-        "SENTRY_ORG": {
-          "external": true
-        },
-        "SENTRY_PROJECT": {
-          "external": true
-        }
-      },
-      "files": [
-        "packages/{frontend,common}/**",
-        "!packages/*/dist/**",
-        "!**/node_modules",
-        "!**/.wireit"
-      ],
-      "output": [
-        "packages/frontend/dist",
-        "packages/common/dist",
-        "packages/common/*.tsbuildinfo"
-      ]
-    }
+    "build:ci": "pnpm -r run build"
   },
   "devDependencies": {
     "husky": "8.0.3",
     "lint-staged": "13.2.2",
-    "rome": "12.1.3",
-    "wireit": "0.9.5"
+    "rome": "12.1.3"
   },
   "engines": {
     "pnpm": ">=8"

@@ -16,7 +16,7 @@
     "build": "tsc --build tsconfig.build.json && vite build",
     "postinstall": "pnpm run generate-graphql",
     "serve": "vite preview",
-    "test": "wireit",
+    "test": "vitest run --passWithNoTests",
     "lint": "wireit",
     "generate-graphql": "graphql-codegen --config codegen.ts"
   },
@@ -27,15 +27,6 @@
         "../eslint-config/**/*",
         "**/*",
         "!dist"
-      ],
-      "output": []
-    },
-    "test": {
-      "command": "vitest run --passWithNoTests",
-      "files": [
-        "src/**",
-        "tsconfig.json",
-        "vite.config.*"
       ],
       "output": []
     }
