@@ -35,8 +35,7 @@ WORKDIR /app/packages/backend/dist
 
 # Create the necessary directories
 RUN mkdir public && \
-  mkdir uploads && \
-  mkdir logs
+  mkdir uploads
 
 ENTRYPOINT ["node", "main.js"]
 
