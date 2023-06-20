@@ -1,19 +1,42 @@
-import { spawn, spawnSync } from "node:child_process";
+import { ChildProcess, spawn, spawnSync } from "node:child_process";
 import { defineConfig } from "tsup";
 
-export default defineConfig({
-  entry: ["src", "!src/**/*.spec.*"],
-  format: "esm",
-  sourcemap: true,
-  bundle: false,
-  clean: true,
-  watch: true,
-  async onSuccess() {
-    spawnSync("node", ["scripts/copy-graphql-schemas-to-dist.js"]);
-    const app = spawn("node", ["-r", "dotenv/config", "dist/main"]);
-    app.stdout.pipe(process.stdout);
-    return () => {
-      app.kill();
-    };
+let app: ChildProcess;
+
+const onSuccess = async () => {
+  spawnSync("node", ["scripts/copy-graphql-schemas-to-dist.js"]);
+  if (app && !app.killed) {
+    app.kill();
+  }
+  app = spawn("node", ["-r", "dotenv/config", "dist/main"]);
+  app.stdout?.pipe(process.stdout);
+  return () => {
+    app.kill();
+  };
+};
+
+export default defineConfig([
+  // common
+  {
+    entry: ["../common/src", "!../common/src/**/*.spec.*"],
+    outDir: "../common/dist",
+    format: "esm",
+    target: "es2022",
+    sourcemap: true,
+    bundle: false,
+    clean: true,
+    watch: "../common",
+    onSuccess,
   },
-});
+  // backend
+  {
+    entry: ["src", "!src/**/*.spec.*"],
+    format: "esm",
+    target: "es2022",
+    sourcemap: true,
+    bundle: false,
+    clean: true,
+    watch: true,
+    onSuccess,
+  },
+]);

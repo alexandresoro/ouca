@@ -22,26 +22,13 @@
     "lint": "wireit",
     "compile:tsc": "tsc --build tsconfig.build.json",
     "compile:tsc:dev": "tsc --build tsconfig.dev.json",
-    "compile:tsup": "wireit",
+    "compile:tsup": "tsup",
     "generate-graphql": "graphql-codegen",
     "copy:assets": "node scripts/copy-graphql-schemas-to-dist.js",
     "umzug": "node dist/umzug",
     "umzug:dev": "node -r dotenv/config dist/umzug"
   },
   "wireit": {
-    "compile:tsup": {
-      "command": "tsup",
-      "service": true,
-      "dependencies": [
-        "../common:compile:tsup"
-      ],
-      "files": [
-        "src/**",
-        "../common/src/**/*",
-        "tsconfig.json",
-        "tsup.config.*"
-      ]
-    },
     "lint": {
       "command": "eslint .",
       "files": [
