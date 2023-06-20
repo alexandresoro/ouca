@@ -1,7 +1,7 @@
 import { autoUpdate, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
 import { Cog, Import, LogOut, User } from "@styled-icons/boxicons-regular";
-import { type TFuncKey } from "i18next";
+import { type ParseKeys } from "i18next";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "react-oidc-context";
@@ -13,19 +13,19 @@ import { getFullName, getInitials } from "../../utils/usernameUtils";
 
 const getMenuOptions = (features: AppContext["features"]) => [
   {
-    localizationKey: "profile" as TFuncKey,
+    localizationKey: "profile" as ParseKeys,
     Icon: User,
     to: "/profile",
   },
   {
-    localizationKey: "settings" as TFuncKey,
+    localizationKey: "settings" as ParseKeys,
     Icon: Cog,
     to: "/settings",
   },
   ...(features.tmp_import
     ? [
         {
-          localizationKey: "importFromFile" as TFuncKey,
+          localizationKey: "importFromFile" as ParseKeys,
           Icon: Import,
           to: "/import",
         },

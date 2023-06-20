@@ -16,7 +16,7 @@ import {
   Sun,
 } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";
-import { type TFuncKey } from "i18next";
+import { type ParseKeys } from "i18next";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -24,12 +24,12 @@ import { useIsSizeLarge } from "../../hooks/useMediaQuery";
 
 const OBSERVATIONS_OPTIONS = [
   {
-    localizationKey: "observationButton" as TFuncKey,
+    localizationKey: "observationButton" as ParseKeys,
     Icon: Plus,
     to: "/create/new",
   },
   {
-    localizationKey: "viewObservations" as TFuncKey,
+    localizationKey: "viewObservations" as ParseKeys,
     Icon: SearchAlt2,
     to: "/view",
   },
@@ -37,67 +37,67 @@ const OBSERVATIONS_OPTIONS = [
 
 const MANAGEMENT_MENU_OPTIONS = [
   {
-    localizationKey: "observers" as TFuncKey,
+    localizationKey: "observers" as ParseKeys,
     Icon: Group,
     to: "/manage/observateur",
   },
   {
-    localizationKey: "departments" as TFuncKey,
+    localizationKey: "departments" as ParseKeys,
     Icon: MapPin,
     to: "/manage/departement",
   },
   {
-    localizationKey: "towns" as TFuncKey,
+    localizationKey: "towns" as ParseKeys,
     Icon: MapPin,
     to: "/manage/commune",
   },
   {
-    localizationKey: "localities" as TFuncKey,
+    localizationKey: "localities" as ParseKeys,
     Icon: MapPin,
     to: "/manage/lieudit",
   },
   {
-    localizationKey: "weathers" as TFuncKey,
+    localizationKey: "weathers" as ParseKeys,
     Icon: Sun,
     to: "/manage/meteo",
   },
   {
-    localizationKey: "speciesClasses" as TFuncKey,
+    localizationKey: "speciesClasses" as ParseKeys,
     Icon: Bug,
     to: "/manage/classe",
   },
   {
-    localizationKey: "species" as TFuncKey,
+    localizationKey: "species" as ParseKeys,
     Icon: Bug,
     to: "/manage/espece",
   },
   {
-    localizationKey: "genders" as TFuncKey,
+    localizationKey: "genders" as ParseKeys,
     Icon: MaleSign,
     to: "/manage/sexe",
   },
   {
-    localizationKey: "ages" as TFuncKey,
+    localizationKey: "ages" as ParseKeys,
     Icon: CalendarPlus,
     to: "/manage/age",
   },
   {
-    localizationKey: "numberPrecisions" as TFuncKey,
+    localizationKey: "numberPrecisions" as ParseKeys,
     Icon: PieChartAlt2,
     to: "/manage/estimation-nombre",
   },
   {
-    localizationKey: "distancePrecisions" as TFuncKey,
+    localizationKey: "distancePrecisions" as ParseKeys,
     Icon: SpaceBar,
     to: "/manage/estimation-distance",
   },
   {
-    localizationKey: "behaviors" as TFuncKey,
+    localizationKey: "behaviors" as ParseKeys,
     Icon: Angry,
     to: "/manage/comportement",
   },
   {
-    localizationKey: "environments" as TFuncKey,
+    localizationKey: "environments" as ParseKeys,
     Icon: Tree,
     to: "/manage/milieu",
   },
