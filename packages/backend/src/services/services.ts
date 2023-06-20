@@ -173,6 +173,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
     inventaireAssocieRepository,
     inventaireMeteoRepository,
     donneeRepository,
+    lieuditRepository,
   });
 
   const lieuditService = buildLieuditService({

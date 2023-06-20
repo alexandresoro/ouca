@@ -1,9 +1,11 @@
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { CoordinatesSystemType } from "../../graphql/generated/graphql-types.js";
 import { type InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
+import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
 
 export const reshapeInputInventaireUpsertData = (
   inventory: UpsertInventoryInput,
+  locality: Lieudit,
   ownerId?: string | null
 ): InventaireCreateInput => {
   const {
@@ -17,21 +19,38 @@ export const reshapeInputInventaireUpsertData = (
     coordinates,
     ...rest
   } = inventory;
-  const coordinatesSystem =
-    inventory?.coordinates?.altitude != null &&
-    inventory?.coordinates?.latitude != null &&
-    inventory?.coordinates?.longitude != null
-      ? CoordinatesSystemType.Gps
-      : null;
+
+  let coordinatesSystem: CoordinatesSystemType | null;
+  let customLatitude: number | null;
+  let customLongitude: number | null;
+  let customAltitude: number | null;
+  // Check that coordinates are provided and should be used
+  if (
+    coordinates &&
+    (coordinates.latitude !== locality.latitude ||
+      coordinates.longitude !== locality.longitude ||
+      coordinates.altitude !== locality.altitude)
+  ) {
+    customLatitude = coordinates.latitude;
+    customLongitude = coordinates.longitude;
+    customAltitude = coordinates.altitude;
+    coordinatesSystem = CoordinatesSystemType.Gps;
+  } else {
+    customLatitude = null;
+    customLongitude = null;
+    customAltitude = null;
+    coordinatesSystem = null;
+  }
+
   return {
     ...rest,
     observateur_id: parseInt(observerId),
     heure: time,
     duree: duration,
     lieudit_id: parseInt(localityId),
-    altitude: coordinates?.altitude ?? null,
-    latitude: coordinates?.latitude ?? null,
-    longitude: coordinates?.longitude ?? null,
+    altitude: customAltitude,
+    latitude: customLatitude,
+    longitude: customLongitude,
     coordinates_system: coordinatesSystem,
     owner_id: ownerId,
   };

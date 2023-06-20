@@ -6,7 +6,9 @@ import { type InventaireAssocieRepository } from "../../repositories/inventaire-
 import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { type LoggedUser } from "../../types/User.js";
+import { logger } from "../../utils/logger.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape.js";
 
@@ -17,6 +19,7 @@ type InventaireServiceDependencies = {
   inventaireAssocieRepository: InventaireAssocieRepository;
   inventaireMeteoRepository: InventaireMeteoRepository;
   donneeRepository: DonneeRepository;
+  lieuditRepository: LieuditRepository;
 };
 
 export const buildInventaireService = ({
@@ -25,6 +28,7 @@ export const buildInventaireService = ({
   inventaireAssocieRepository,
   inventaireMeteoRepository,
   donneeRepository,
+  lieuditRepository,
 }: InventaireServiceDependencies) => {
   const findInventaire = async (id: number, loggedUser: LoggedUser | null): Promise<Inventaire | null> => {
     validateAuthorization(loggedUser);
@@ -54,17 +58,25 @@ export const buildInventaireService = ({
 
     const { associateIds, weatherIds } = input;
 
+    const locality = await lieuditRepository.findLieuditById(parseInt(input.localityId));
+    if (!locality) {
+      logger.warn(
+        {
+          localityId: input.localityId,
+        },
+        `Corresponding locality for ID=${input.localityId} not found`
+      );
+      return Promise.reject("");
+    }
+
     // Check if an exact same inventaire already exists or not
     const existingInventaire = await inventaireRepository.findExistingInventaire({
-      ...reshapeInputInventaireUpsertData(input),
+      ...reshapeInputInventaireUpsertData(input, locality),
       associateIds,
       weatherIds,
     });
 
     if (existingInventaire) {
-      // The inventaire we wish to create has already an existing equivalent
-      // So now it depends on what we wished to do initially
-
       // We wished to create an inventaire but we already found one,
       // so we won't create anything and simply return the existing one
       return existingInventaire;
@@ -75,7 +87,7 @@ export const buildInventaireService = ({
       // Create a new inventaire
       const createdInventaire = await slonik.transaction(async (transactionConnection) => {
         const createdInventaire = await inventaireRepository.createInventaire(
-          reshapeInputInventaireUpsertData(input, loggedUser.id),
+          reshapeInputInventaireUpsertData(input, locality, loggedUser.id),
           transactionConnection
         );
 
@@ -112,9 +124,20 @@ export const buildInventaireService = ({
     const { migrateDonneesIfMatchesExistingInventaire = false, ...inputData } = input;
     const { associateIds, weatherIds } = inputData;
 
+    const locality = await lieuditRepository.findLieuditById(parseInt(input.localityId));
+    if (!locality) {
+      logger.warn(
+        {
+          localityId: input.localityId,
+        },
+        `Corresponding locality for ID=${input.localityId} not found`
+      );
+      return Promise.reject("");
+    }
+
     // Check if an exact same inventaire already exists or not
     const existingInventaire = await inventaireRepository.findExistingInventaire({
-      ...reshapeInputInventaireUpsertData(inputData),
+      ...reshapeInputInventaireUpsertData(inputData, locality),
       associateIds,
       weatherIds,
     });
@@ -159,7 +182,7 @@ export const buildInventaireService = ({
       const updatedInventaire = await slonik.transaction(async (transactionConnection) => {
         const updatedInventaire = await inventaireRepository.updateInventaire(
           id,
-          reshapeInputInventaireUpsertData(inputData, loggedUser.id),
+          reshapeInputInventaireUpsertData(inputData, locality, loggedUser.id),
           transactionConnection
         );
 

@@ -1,4 +1,4 @@
-import { sql, type DatabasePool } from "slonik";
+import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
@@ -21,7 +21,7 @@ export type LieuditRepositoryDependencies = {
 };
 
 export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies) => {
-  const findLieuditById = async (id: number): Promise<Lieudit | null> => {
+  const findLieuditById = async (id: number, transaction?: DatabaseTransactionConnection): Promise<Lieudit | null> => {
     const query = sql.type(lieuditSchema)`
       SELECT 
         *
@@ -31,7 +31,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
         id = ${id}
     `;
 
-    return slonik.maybeOne(query);
+    return (transaction ?? slonik).maybeOne(query);
   };
 
   const findLieuditByInventaireId = async (inventaireId: number | undefined): Promise<Lieudit | null> => {
