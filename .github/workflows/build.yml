@@ -20,15 +20,6 @@ jobs:
           echo "nodeVersion=18" >> $GITHUB_ENV
 
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Get changed source files
-        id: changed-source-files
-        uses: tj-actions/changed-files@v36
-        with:
-          files: |
-            **.{ts,tsx,js}
 
       - uses: pnpm/action-setup@v2
         with:
