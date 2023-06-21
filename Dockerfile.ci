@@ -1,6 +1,9 @@
+# syntax=docker/dockerfile:1
 ARG NODE_IMAGE_VERSION=18
 
 FROM node:${NODE_IMAGE_VERSION}-alpine
+
+RUN corepack enable && corepack prepare pnpm@8.6.3 --activate
 
 # Sets to production, it also sets the install script to install deps only
 ENV NODE_ENV production
@@ -12,8 +15,6 @@ ENV OUCA_SERVER_HOST 0.0.0.0
 
 # Copy files from the built artifact
 COPY build/ /app/
-
-RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Install production deps
 RUN npm pkg delete scripts.prepare && \
