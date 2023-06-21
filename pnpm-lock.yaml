@@ -121,7 +121,7 @@ importers:
         specifier: 3.2.1
         version: 3.2.1(graphql@16.6.0)
       '@ou-ca/eslint-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../eslint-config
       '@types/content-disposition':
         specifier: 0.5.5
@@ -324,7 +324,7 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(graphql@16.6.0)
       '@ou-ca/eslint-config':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../eslint-config
       '@sentry/vite-plugin':
         specifier: 2.3.0

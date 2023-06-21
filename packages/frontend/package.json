@@ -71,7 +71,7 @@
     "@graphql-codegen/cli": "3.3.1",
     "@graphql-codegen/client-preset": "3.0.1",
     "@graphql-typed-document-node/core": "3.2.0",
-    "@ou-ca/eslint-config": "*",
+    "@ou-ca/eslint-config": "workspace:*",
     "@sentry/vite-plugin": "2.3.0",
     "@tanstack/react-query-devtools": "4.29.15",
     "@testing-library/react": "14.0.0",
