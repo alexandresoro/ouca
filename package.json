@@ -20,8 +20,8 @@
     "prepare": "husky install",
     "test": "pnpm -r test",
     "lint": "pnpm -r run lint",
-    "frontend": "pnpm --dir './packages/frontend' run",
-    "backend": "pnpm --dir './packages/backend' run",
+    "frontend": "pnpm --dir './packages/frontend'",
+    "backend": "pnpm --dir './packages/backend'",
     "rome:ci": "rome ci *",
     "build:ci": "pnpm -r run build"
   },
