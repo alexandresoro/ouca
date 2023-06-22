@@ -18,8 +18,8 @@ const TablePagination: FunctionComponent<TypePaginationProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const enablePreviousPage = count && page > 0;
-  const enableNextPage = count && page + 1 < Math.ceil(count / elementsPerPage);
+  const enablePreviousPage = count && page > 1;
+  const enableNextPage = count && page < Math.ceil(count / elementsPerPage);
 
   return (
     <div {...rest} className={`flex justify-center items-center gap-3 ${className ?? ""}`}>
@@ -32,7 +32,7 @@ const TablePagination: FunctionComponent<TypePaginationProps> = ({
       </button>
       <span className={`text-sm uppercase font-semibold ${count != null ? "" : "invisible"}`}>
         {t("pagination.currentPageDescription", {
-          currentPage: page + 1,
+          currentPage: page,
           totalPages: count != null ? Math.ceil(count / elementsPerPage) : 0,
         })}
       </span>

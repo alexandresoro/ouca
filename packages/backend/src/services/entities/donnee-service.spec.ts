@@ -113,7 +113,7 @@ describe("Data paginated find by search criteria", () => {
       orderBy: SearchDonneesOrderBy.Departement,
       sortOrder: SortOrder.Desc,
       searchParams: {
-        pageNumber: 0,
+        pageNumber: 1,
         pageSize: 10,
       },
     };
@@ -130,7 +130,7 @@ describe("Data paginated find by search criteria", () => {
       },
       orderBy: "departement",
       sortOrder: SortOrder.Desc,
-      offset: searchParams.searchParams?.pageNumber,
+      offset: 0,
       limit: searchParams.searchParams?.pageSize,
     });
   });

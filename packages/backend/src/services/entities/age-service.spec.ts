@@ -130,7 +130,7 @@ describe("Entities paginated find by search criteria", () => {
       sortOrder: SortOrder.Desc,
       searchParams: {
         q: "Bob",
-        pageNumber: 0,
+        pageNumber: 1,
         pageSize: 10,
       },
     };
@@ -144,7 +144,7 @@ describe("Entities paginated find by search criteria", () => {
       q: "Bob",
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
-      offset: searchParams.searchParams?.pageNumber,
+      offset: 0,
       limit: searchParams.searchParams?.pageSize,
     });
   });

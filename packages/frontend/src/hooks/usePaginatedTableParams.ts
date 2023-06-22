@@ -3,7 +3,7 @@ import { type SortOrder } from "../gql/graphql";
 
 export default function usePaginatedTableParams<T>() {
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [orderBy, setOrderBy] = useState<T | undefined>(undefined);
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");

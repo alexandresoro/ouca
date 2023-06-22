@@ -3,14 +3,14 @@ import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import {
-  EntitesAvecLibelleOrderBy,
-  SortOrder,
-  type QueryEstimationsDistanceArgs
+    EntitesAvecLibelleOrderBy,
+    SortOrder,
+    type QueryEstimationsDistanceArgs
 } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-  type EstimationDistance,
-  type EstimationDistanceCreateInput
+    type EstimationDistance,
+    type EstimationDistanceCreateInput
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -149,7 +149,7 @@ describe("Entities paginated find by search criteria", () => {
       sortOrder: SortOrder.Desc,
       searchParams: {
         q: "Bob",
-        pageNumber: 0,
+        pageNumber: 1,
         pageSize: 10,
       },
     };
@@ -163,7 +163,7 @@ describe("Entities paginated find by search criteria", () => {
       q: "Bob",
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
-      offset: searchParams.searchParams?.pageNumber,
+      offset: 0,
       limit: searchParams.searchParams?.pageSize,
     });
   });
