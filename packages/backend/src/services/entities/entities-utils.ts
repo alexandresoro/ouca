@@ -12,6 +12,22 @@ export const isEntityEditable = (entity: { ownerId?: string | null } | null, use
   return user?.role === "admin" || entity?.ownerId === user?.id;
 };
 
+export function enrichEntityWithEditableStatus<E>(entity: E, user: LoggedUser | null): E & { editable: boolean };
+export function enrichEntityWithEditableStatus(entity: null, user: LoggedUser | null): null;
+export function enrichEntityWithEditableStatus<E>(
+  entity: E | null,
+  user: LoggedUser | null
+): (E & { editable: boolean }) | null {
+  if (!entity) {
+    return null;
+  }
+
+  return {
+    ...entity,
+    editable: isEntityEditable(entity, user),
+  };
+}
+
 // Utility method to compute the SQL pagination from the API pagination
 // Page number is starting at index 1
 export const getSqlPagination = (
