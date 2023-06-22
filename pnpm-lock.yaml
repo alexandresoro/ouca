@@ -263,8 +263,8 @@ importers:
         specifier: 16.6.0
         version: 16.6.0
       i18next:
-        specifier: 23.2.2
-        version: 23.2.2
+        specifier: 23.2.3
+        version: 23.2.3
       i18next-http-backend:
         specifier: 2.2.1
         version: 2.2.1
@@ -294,7 +294,7 @@ importers:
         version: 7.45.0(react@18.2.0)
       react-i18next:
         specifier: 13.0.0
-        version: 13.0.0(i18next@23.2.2)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.0.0(i18next@23.2.3)(react-dom@18.2.0)(react@18.2.0)
       react-leaflet:
         specifier: 4.2.1
         version: 4.2.1(leaflet@1.9.4)(react-dom@18.2.0)(react@18.2.0)
@@ -5721,8 +5721,8 @@ packages:
       - encoding
     dev: false
 
-  /i18next@23.2.2:
-    resolution: {integrity: sha512-z4fKvPkAs2i5wwALjwBCirwc+Wx6YyToioozvkCgm3o8qW31IDdjHdq0jfFMpB16jIVbINHaOvvF1XXgSEqygA==}
+  /i18next@23.2.3:
+    resolution: {integrity: sha512-5spO7L0rNmW0jFuNhz+gfirlFt1anle4mTy4+gFkgsH0+T3R5++4oncBrzeKa7v8pweRyGBoGmOpboqlxovg6A==}
     dependencies:
       '@babel/runtime': 7.22.5
     dev: false
@@ -7729,7 +7729,7 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-i18next@13.0.0(i18next@23.2.2)(react-dom@18.2.0)(react@18.2.0):
+  /react-i18next@13.0.0(i18next@23.2.3)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-qRFbrSgynsBSjfnSTb/Um3mw9uPjOfDi4Iq2rMCuzfsRsYGdkEdyCr0i+T0bR0bG6xwULvK4k1oRVLLd7ZDBVw==}
     peerDependencies:
       i18next: '>= 23.0.1'
@@ -7744,7 +7744,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.22.5
       html-parse-stringify: 3.0.1
-      i18next: 23.2.2
+      i18next: 23.2.3
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
