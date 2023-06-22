@@ -37,7 +37,7 @@
     "@fontsource/carter-one": "5.0.3",
     "@headlessui/react": "1.7.15",
     "@hookform/resolvers": "3.1.1",
-    "@ou-ca/common": "*",
+    "@ou-ca/common": "workspace:*",
     "@sentry/integrations": "7.56.0",
     "@sentry/react": "7.56.0",
     "@sentry/tracing": "7.56.0",

@@ -45,7 +45,7 @@ importers:
         specifier: 8.2.0
         version: 8.2.0
       '@ou-ca/common':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../common
       '@sentry/node':
         specifier: 7.56.0
@@ -227,7 +227,7 @@ importers:
         specifier: 3.1.1
         version: 3.1.1(react-hook-form@7.45.0)
       '@ou-ca/common':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../common
       '@sentry/integrations':
         specifier: 7.56.0
