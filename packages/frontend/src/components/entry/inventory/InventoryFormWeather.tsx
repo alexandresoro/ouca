@@ -1,4 +1,3 @@
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Weather } from "@ou-ca/common/entities/weather";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
@@ -7,8 +6,9 @@ import { useQuery } from "urql";
 import TextInput from "../../common/styled/TextInput";
 import AutocompleteMultiple from "../../common/styled/select/AutocompleteMultiple";
 import { AUTOCOMPLETE_WEATHERS_QUERY } from "./InventoryFormQueries";
+import { type InventoryFormState } from "./InventoryFormState";
 
-type InventoryFormWeatherProps = Pick<UseFormReturn<UpsertInventoryInput>, "control" | "register">;
+type InventoryFormWeatherProps = Pick<UseFormReturn<InventoryFormState>, "control" | "register">;
 
 const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ control, register }) => {
   const { t } = useTranslation();
@@ -18,7 +18,7 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
 
   const {
     field: { ref: refWeathers, onChange: onChangeWeathersForm },
-  } = useController<UpsertInventoryInput>({
+  } = useController({
     name: "weatherIds",
     control,
   });

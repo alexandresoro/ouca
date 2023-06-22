@@ -1,5 +1,4 @@
 import { getDepartmentResponse } from "@ou-ca/common/api/department";
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { getTownResponse } from "@ou-ca/common/api/town";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type Locality } from "@ou-ca/common/entities/locality";
@@ -7,7 +6,7 @@ import { type Town } from "@ou-ca/common/entities/town";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } from "react";
-import { type UseFormRegister } from "react-hook-form";
+import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery as useQueryGql } from "urql";
 import { altitudeServiceStatusAtom } from "../../../atoms/altitudeServiceAtom";
@@ -26,8 +25,9 @@ import {
   AUTOCOMPLETE_LOCALITIES_QUERY,
   AUTOCOMPLETE_TOWNS_QUERY,
 } from "./InventoryFormQueries";
+import { type InventoryFormState } from "./InventoryFormState";
 
-type InventoryFormLocationProps = { register: UseFormRegister<UpsertInventoryInput> } & {
+type InventoryFormLocationProps = Pick<UseFormReturn<InventoryFormState>, "register" | "control"> & {
   defaultDepartment?: Department;
 };
 
@@ -43,7 +43,11 @@ const renderLocality = (locality: Locality | null): string => {
   return locality?.nom ?? "";
 };
 
-const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ register, defaultDepartment }) => {
+const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
+  register,
+  control,
+  defaultDepartment,
+}) => {
   const { t } = useTranslation();
 
   const [departmentId, setDepartmentId] = useState<string | null>(null);
@@ -130,6 +134,13 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ 
       setDepartmentId(town.departmentId);
     }
   }, [town, department]);
+
+  const {
+    field: { ref: refLocality },
+  } = useController({
+    name: "localityId",
+    control,
+  });
 
   const [{ data: dataDepartments }] = useQueryGql({
     query: AUTOCOMPLETE_DEPARTMENTS_QUERY,
@@ -243,8 +254,13 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ 
 
   return (
     <>
-      LOCALITY: {locality?.nom ?? JSON.stringify(locality)}
       <div className="flex gap-2">
+        INPUT: {JSON.stringify(departmentsInput)}
+        <br />
+        DPT ID: {JSON.stringify(departmentId)}
+        <br />
+        DPT: {JSON.stringify(department)}
+        <br />
         <Autocomplete
           data={autocompleteDepartments}
           name="department"
@@ -256,6 +272,12 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ 
           autocompleteClassName="w-28"
           labelTextClassName="first-letter:capitalize"
         />
+        INPUT: {JSON.stringify(townsInput)}
+        <br />
+        TWN ID: {JSON.stringify(townId)}
+        <br />
+        TWN: {JSON.stringify(town)}
+        <br />
         <Autocomplete
           data={autocompleteTowns}
           name="town"
@@ -269,8 +291,12 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({ 
           labelTextClassName="first-letter:capitalize"
         />
       </div>
+      INPUT: {JSON.stringify(localityInput)}
+      <br />
+      LOC: {JSON.stringify(locality)}
+      <br />
       <Autocomplete
-        {...register("localityId")}
+        ref={refLocality}
         data={autocompleteLocalities}
         label={t("inventoryForm.locality")}
         onInputChange={setLocalityInput}

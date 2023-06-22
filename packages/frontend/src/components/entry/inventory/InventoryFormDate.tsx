@@ -1,10 +1,10 @@
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type FunctionComponent } from "react";
 import { type UseFormRegister } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import TextInput from "../../common/styled/TextInput";
+import { type InventoryFormState } from "./InventoryFormState";
 
-type InventoryFormDateProps = { register: UseFormRegister<UpsertInventoryInput> };
+type InventoryFormDateProps = { register: UseFormRegister<InventoryFormState> };
 
 const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register }) => {
   const { t } = useTranslation();

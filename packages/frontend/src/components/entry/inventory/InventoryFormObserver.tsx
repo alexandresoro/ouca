@@ -1,4 +1,3 @@
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
@@ -7,8 +6,9 @@ import { useQuery } from "urql";
 import Autocomplete from "../../common/styled/select/Autocomplete";
 import AutocompleteMultiple from "../../common/styled/select/AutocompleteMultiple";
 import { AUTOCOMPLETE_OBSERVATEURS_QUERY } from "./InventoryFormQueries";
+import { type InventoryFormState } from "./InventoryFormState";
 
-type InventoryFormObserverProps = Pick<UseFormReturn<UpsertInventoryInput>, "control"> & {
+type InventoryFormObserverProps = Pick<UseFormReturn<InventoryFormState>, "control"> & {
   defaultObserver?: Observer;
   autofocusOnObserver?: boolean;
   areAssociesDisplayed?: boolean;
@@ -37,14 +37,14 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
 
   const {
     field: { ref: refObserver, value: observerId, onChange: onChangeObserverForm },
-  } = useController<UpsertInventoryInput>({
+  } = useController({
     name: "observerId",
     control,
   });
 
   const {
     field: { ref: refAssociates, value: associateIds, onChange: onChangeAssociatesForm },
-  } = useController<UpsertInventoryInput>({
+  } = useController({
     name: "associateIds",
     control,
   });
@@ -52,7 +52,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   useEffect(() => {
     // When the selected observer changes, update both the input and the form value
     setObservateurInput(renderObserver(selectedObserver));
-    onChangeObserverForm(selectedObserver?.id ?? undefined);
+    onChangeObserverForm(selectedObserver?.id ?? null);
   }, [selectedObserver, onChangeObserverForm]);
 
   useEffect(() => {
@@ -100,6 +100,12 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
 
   return (
     <>
+      VALUE: {JSON.stringify(observerId)}
+      <br />
+      INPUT: {JSON.stringify(observateurInput)}
+      <br />
+      OBS: {JSON.stringify(selectedObserver)}
+      <br />
       <Autocomplete
         ref={refObserver}
         inputProps={{
@@ -114,6 +120,12 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
         renderValue={renderObserver}
         labelTextClassName="first-letter:capitalize"
       />
+      VALUES: {JSON.stringify(associateIds)}
+      <br />
+      INPUT: {JSON.stringify(associatesInput)}
+      <br />
+      ASS: {JSON.stringify(selectedAssociates)}
+      <br />
       {areAssociesDisplayed && (
         <AutocompleteMultiple
           ref={refAssociates}

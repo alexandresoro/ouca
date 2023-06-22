@@ -1,14 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  upsertInventoryInput,
-  type GetInventoryResponse,
-  type UpsertInventoryInput,
-} from "@ou-ca/common/api/inventory";
+import { upsertInventoryInput, type GetInventoryResponse } from "@ou-ca/common/api/inventory";
 import { FilePlus } from "@styled-icons/boxicons-solid";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
-import { type FunctionComponent } from "react";
-import { useForm, type DefaultValues, type SubmitHandler } from "react-hook-form";
+import { useEffect, useState, type FunctionComponent } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
@@ -21,6 +17,7 @@ import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
 import InventoryFormDate from "./InventoryFormDate";
 import InventoryFormLocation from "./InventoryFormLocation";
 import InventoryFormObserver from "./InventoryFormObserver";
+import { type InventoryFormState } from "./InventoryFormState";
 import InventoryFormWeather from "./InventoryFormWeather";
 
 type InventoryFormProps = {
@@ -38,13 +35,17 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
     existingInventory === undefined
       ? {
           // Brand new inventory
-          observerId: userSettings.defaultObserver?.id,
+          observerId: userSettings.defaultObserver?.id ?? null,
           associateIds: [],
           date: format(new Date(), "yyyy-MM-dd"),
-          time: "",
-          duration: "",
-          localityId: "",
-          coordinates: null,
+          time: null,
+          duration: null,
+          localityId: null,
+          coordinates: {
+            latitude: null,
+            longitude: null,
+            altitude: null,
+          },
           temperature: null,
           weatherIds: [],
         }
@@ -53,34 +54,53 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           observerId: existingInventory.observer.id,
           associateIds: existingInventory.associates.map((associate) => associate.id),
           date: existingInventory.date,
-          time: existingInventory.heure ?? null,
-          duration: existingInventory.duree ?? null,
+          time: existingInventory.heure,
+          duration: existingInventory.duree,
           localityId: existingInventory.locality.id,
           coordinates: existingInventory.customizedCoordinates ?? existingInventory.locality.coordinates,
           temperature: existingInventory.temperature,
           weatherIds: existingInventory.weathers.map((weather) => weather.id),
         }
-  ) satisfies DefaultValues<UpsertInventoryInput>;
+  ) satisfies InventoryFormState;
 
   const locality = useAtomValue(inventoryLocalityAtom);
   const latitude = useAtomValue(inventoryLatitudeAtom);
   const altitude = useAtomValue(inventoryAltitudeAtom);
   const longitude = useAtomValue(inventoryLongitudeAtom);
 
+  const [formValues, setFormValues] = useState<InventoryFormState>(defaultFormValues);
+  useEffect(() => {
+    setFormValues((currentFormValues) => {
+      return {
+        ...currentFormValues,
+        localityId: locality?.id ?? null,
+        coordinates: {
+          ...currentFormValues.coordinates,
+          latitude,
+          longitude,
+          altitude,
+        },
+      };
+    });
+  }, [locality, latitude, longitude, altitude]);
+
   const {
     register,
     control,
-    formState: { isValid, isDirty, dirtyFields },
-    getFieldState,
-    setValue,
+    formState: { isValid, isDirty, dirtyFields, defaultValues },
     handleSubmit,
-  } = useForm<UpsertInventoryInput>({
+    watch,
+  } = useForm<InventoryFormState>({
+    resetOptions: { keepDefaultValues: true },
     defaultValues: defaultFormValues,
+    values: formValues,
     resolver: zodResolver(upsertInventoryInput),
   });
 
-  const onSubmit: SubmitHandler<UpsertInventoryInput> = (upsertInventoryInput) => {
-    console.log(upsertInventoryInput);
+  const localityId = watch();
+
+  const onSubmit: SubmitHandler<InventoryFormState> = (inventoryFormData) => {
+    console.log(inventoryFormData, existingInventory?.id);
   };
 
   return (
@@ -90,6 +110,10 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
       }`}
     >
       DIRTY FIELDS: {JSON.stringify(dirtyFields)}
+      <br />
+      DEFAULT: {JSON.stringify(defaultValues)}
+      <br />
+      LOCALITY: {JSON.stringify(localityId)}
       <div className="flex justify-between">
         <div className="tooltip tooltip-bottom" data-tip={existingInventory ? `ID ${existingInventory.id}` : undefined}>
           <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
@@ -120,6 +144,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
           <InventoryFormLocation
             register={register}
+            control={control}
             defaultDepartment={isNewInventory ? userSettings.defaultDepartment ?? undefined : undefined}
           />
         </div>

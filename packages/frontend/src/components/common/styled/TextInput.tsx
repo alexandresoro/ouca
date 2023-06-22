@@ -1,11 +1,11 @@
-import { forwardRef, type ComponentPropsWithoutRef, type FunctionComponent } from "react";
+import { forwardRef, type ComponentPropsWithRef, type FunctionComponent } from "react";
 
 type TextInputProps = {
   textInputClassName?: string;
   label?: string;
   hasError?: boolean;
   helperMessage?: string;
-} & ComponentPropsWithoutRef<"input">;
+} & ComponentPropsWithRef<"input">;
 
 const TextInput: FunctionComponent<TextInputProps> = forwardRef<HTMLInputElement, TextInputProps>(
   ({ textInputClassName, label, hasError, helperMessage, ...inputProps }, ref) => {
