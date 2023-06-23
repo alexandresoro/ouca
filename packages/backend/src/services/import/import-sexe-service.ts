@@ -1,4 +1,4 @@
-import { type Sexe } from "../../repositories/sexe/sexe-repository-types.js";
+import { type Sex } from "@ou-ca/common/entities/sex";
 import { type LoggedUser } from "../../types/User.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 
@@ -12,7 +12,7 @@ export class ImportSexeService extends ImportEntiteAvecLibelleService {
     return "Ce sexe";
   }
 
-  protected saveEntities = (ages: Omit<Sexe, "id" | "ownerId">[], loggedUser: LoggedUser): Promise<readonly Sexe[]> => {
+  protected saveEntities = (ages: Omit<Sex, "id" | "ownerId">[], loggedUser: LoggedUser): Promise<readonly Sex[]> => {
     return this.services.sexeService.createSexes(ages, loggedUser);
   };
 }

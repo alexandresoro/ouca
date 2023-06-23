@@ -1,8 +1,8 @@
-import { type UpsertSexInput } from "@ou-ca/common/api/sex";
+import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { EntitesAvecLibelleOrderBy, SortOrder, type QuerySexesArgs } from "../../graphql/generated/graphql-types.js";
+import { EntitesAvecLibelleOrderBy, SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Sexe,
@@ -41,10 +41,10 @@ describe("Find sex", () => {
 
     sexeRepository.findSexeById.mockResolvedValueOnce(sexData);
 
-    await sexeService.findSexe(sexData.id, loggedUser);
+    await sexeService.findSexe(12, loggedUser);
 
     expect(sexeRepository.findSexeById).toHaveBeenCalledTimes(1);
-    expect(sexeRepository.findSexeById).toHaveBeenLastCalledWith(sexData.id);
+    expect(sexeRepository.findSexeById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle sex not found", async () => {
@@ -67,21 +67,21 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await sexeService.getDonneesCountBySexe(12, loggedUser);
+    await sexeService.getDonneesCountBySexe("12", loggedUser);
 
     expect(donneeRepository.getCountBySexeId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountBySexeId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(sexeService.getDonneesCountBySexe(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.getDonneesCountBySexe("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Find sex by data ID", () => {
   test("should handle sex found", async () => {
     const sexData = mock<Sexe>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
@@ -91,7 +91,7 @@ describe("Find sex by data ID", () => {
 
     expect(sexeRepository.findSexeByDonneeId).toHaveBeenCalledTimes(1);
     expect(sexeRepository.findSexeByDonneeId).toHaveBeenLastCalledWith(43);
-    expect(sex?.id).toEqual(256);
+    expect(sex?.id).toEqual("256");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -119,7 +119,7 @@ describe("Entities paginated find by search criteria", () => {
 
     sexeRepository.findSexes.mockResolvedValueOnce(sexesData);
 
-    await sexeService.findPaginatedSexes(loggedUser);
+    await sexeService.findPaginatedSexes(loggedUser, {});
 
     expect(sexeRepository.findSexes).toHaveBeenCalledTimes(1);
     expect(sexeRepository.findSexes).toHaveBeenLastCalledWith({});
@@ -129,14 +129,12 @@ describe("Entities paginated find by search criteria", () => {
     const sexesData = [mock<Sexe>(), mock<Sexe>(), mock<Sexe>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QuerySexesArgs = {
+    const searchParams: SexesSearchParams = {
       orderBy: EntitesAvecLibelleOrderBy.Libelle,
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     sexeRepository.findSexes.mockResolvedValueOnce([sexesData[0]]);
@@ -149,12 +147,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(sexeService.findPaginatedSexes(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.findPaginatedSexes(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -383,6 +381,8 @@ test("Create multiple sexes", async () => {
   ];
 
   const loggedUser = mock<LoggedUser>();
+
+  sexeRepository.createSexes.mockResolvedValueOnce([]);
 
   await sexeService.createSexes(sexesData, loggedUser);
 

@@ -6,6 +6,7 @@ import {
   putSettingsResponse,
   type PutSettingsInput,
 } from "@ou-ca/common/api/settings";
+import { getSexesResponse } from "@ou-ca/common/api/sex";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { useQueryClient } from "@tanstack/react-query";
@@ -38,12 +39,6 @@ const SETTINGS_QUERY = graphql(`
       }
     }
     observateurs {
-      data {
-        id
-        libelle
-      }
-    }
-    sexes {
       data {
         id
         libelle
@@ -96,8 +91,17 @@ const SettingsPage: FunctionComponent = () => {
     schema: getAgesResponse,
   });
 
-  const fetching = isFetching || isFetchingAges || fetchingGql;
-  const error = isError || isErrorAges || errorGql;
+  const {
+    data: sexes,
+    isError: isErrorSexes,
+    isFetching: isFetchingSexes,
+  } = useApiQuery({
+    path: "/sexes",
+    schema: getSexesResponse,
+  });
+
+  const fetching = isFetching || isFetchingAges || isFetchingSexes || fetchingGql;
+  const error = isError || isErrorAges || isErrorSexes || errorGql;
 
   const { mutate } = useApiMutation(
     {
@@ -255,7 +259,7 @@ const SettingsPage: FunctionComponent = () => {
                   name="defaultSexe"
                   label={t("defaultSex")}
                   control={control}
-                  data={data?.sexes?.data}
+                  data={sexes?.data}
                   renderValue={({ libelle }) => libelle}
                 />
 

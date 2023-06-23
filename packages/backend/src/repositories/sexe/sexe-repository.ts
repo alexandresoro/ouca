@@ -24,7 +24,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
   const findSexeById = async (id: number): Promise<Sexe | null> => {
     const query = sql.type(sexeSchema)`
       SELECT 
-        *
+        sexe.id::text,
+        sexe.libelle,
+        sexe.owner_id
       FROM
         basenaturaliste.sexe
       WHERE
@@ -41,7 +43,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
 
     const query = sql.type(sexeSchema)`
       SELECT 
-        sexe.*
+        sexe.id::text,
+        sexe.libelle,
+        sexe.owner_id
       FROM
         basenaturaliste.sexe
       LEFT JOIN basenaturaliste.donnee ON sexe.id = donnee.sexe_id
@@ -63,7 +67,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(sexeSchema)`
       SELECT 
-        sexe.*
+        sexe.id::text,
+        sexe.libelle,
+        sexe.owner_id
       FROM
         basenaturaliste.sexe
       ${isSortByNbDonnees ? sql.fragment`LEFT JOIN basenaturaliste.donnee ON sexe.id = donnee.sexe_id` : sql.fragment``}
@@ -111,7 +117,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
   const getSexesWithNbSpecimensForEspeceId = async (especeId: number): Promise<readonly SexeWithNbSpecimens[]> => {
     const query = sql.type(sexeWithNbSpecimensSchema)`
       SELECT
-        sexe.*,
+        sexe.id::text,
+        sexe.libelle,
+        sexe.owner_id,
         SUM(donnee.nombre) as nb_specimens
       FROM 
         basenaturaliste.sexe
@@ -130,7 +138,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
         basenaturaliste.sexe
         ${objectToKeyValueInsert(sexeInput)}
       RETURNING
-        *
+        sexe.id::text,
+        sexe.libelle,
+        sexe.owner_id
     `;
 
     return slonik.one(query);
@@ -142,7 +152,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
         basenaturaliste.sexe
         ${objectsToKeyValueInsert(sexeInputs)}
       RETURNING
-        *
+        sexe.id::text,
+        sexe.libelle,
+        sexe.owner_id
     `;
 
     return slonik.many(query);
@@ -157,7 +169,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
       WHERE
         id = ${sexeId}
       RETURNING
-        *
+        sexe.id::text,
+        sexe.libelle,
+        sexe.owner_id
     `;
 
     return slonik.one(query);
@@ -171,7 +185,9 @@ export const buildSexeRepository = ({ slonik }: SexeRepositoryDependencies) => {
       WHERE
         id = ${sexeId}
       RETURNING
-        *
+        sexe.id::text,
+        sexe.libelle,
+        sexe.owner_id
     `;
 
     return slonik.one(query);

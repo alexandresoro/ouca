@@ -3,6 +3,7 @@ import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coord
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Age } from "@ou-ca/common/entities/age";
+import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import { type Commune } from "../../repositories/commune/commune-repository-types.js";
@@ -17,7 +18,6 @@ import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-type
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types.js";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types.js";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types.js";
-import { type Sexe } from "../../repositories/sexe/sexe-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
 import { ImportService } from "./import-service.js";
@@ -30,7 +30,7 @@ export class ImportDonneeService extends ImportService {
   private lieuxDits!: Lieudit[];
   private especes!: Espece[];
   private ages!: Age[];
-  private sexes!: Sexe[];
+  private sexes!: Sex[];
   private estimationsNombre!: EstimationNombre[];
   private estimationsDistance!: EstimationDistance[];
   private comportements!: Comportement[];
@@ -272,7 +272,7 @@ export class ImportDonneeService extends ImportService {
       return (
         donnee.inventaireId === existingInventaire?.id &&
         donnee.especeId === espece.id &&
-        donnee.sexeId === sexe.id &&
+        `${donnee.sexeId}` === sexe.id &&
         `${donnee.ageId}` === age.id &&
         donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
         donnee.estimationNombreId === estimationNombre.id &&
@@ -300,7 +300,7 @@ export class ImportDonneeService extends ImportService {
       return (
         donnee.inventoryId === existingInventaire?.id &&
         donnee.speciesId === espece.id &&
-        donnee.sexId === sexe.id &&
+        `${donnee.sexId}` === sexe.id &&
         `${donnee.ageId}` === age.id &&
         donnee.number === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
         donnee.numberEstimateId === estimationNombre.id &&
@@ -397,7 +397,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findSexe = (libelleSexe: string): Sexe | undefined => {
+  private findSexe = (libelleSexe: string): Sex | undefined => {
     return this.sexes.find((sexe) => {
       return this.compareStrings(sexe.libelle, libelleSexe);
     });

@@ -1,15 +1,16 @@
-import { type UpsertSexInput } from "@ou-ca/common/api/sex";
+import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
+import { type Sex } from "@ou-ca/common/entities/sex.js";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type QuerySexesArgs, type SexeWithSpecimensCount } from "../../graphql/generated/graphql-types.js";
+import { type SexeWithSpecimensCount } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types.js";
+import { type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types.js";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type SexeServiceDependencies = {
   logger: Logger;
@@ -18,48 +19,58 @@ type SexeServiceDependencies = {
 };
 
 export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServiceDependencies) => {
-  const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe | null> => {
+  const findSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sex | null> => {
     validateAuthorization(loggedUser);
 
-    return sexeRepository.findSexeById(id);
+    const sex = await sexeRepository.findSexeById(id);
+    return enrichEntityWithEditableStatus(sex, loggedUser);
   };
 
   const findSexeOfDonneeId = async (
     donneeId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Sexe | null> => {
+  ): Promise<Sex | null> => {
     validateAuthorization(loggedUser);
 
-    return sexeRepository.findSexeByDonneeId(donneeId);
+    const sex = await sexeRepository.findSexeByDonneeId(donneeId);
+    return enrichEntityWithEditableStatus(sex, loggedUser);
   };
 
-  const getDonneesCountBySexe = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountBySexe = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountBySexeId(id);
+    return donneeRepository.getCountBySexeId(parseInt(id));
   };
 
-  const findAllSexes = async (): Promise<Sexe[]> => {
+  const findAllSexes = async (): Promise<Sex[]> => {
     const sexes = await sexeRepository.findSexes({
       orderBy: COLUMN_LIBELLE,
     });
 
-    return [...sexes];
+    const enrichedSexes = sexes.map((sex) => {
+      return enrichEntityWithEditableStatus(sex, null);
+    });
+
+    return [...enrichedSexes];
   };
 
-  const findPaginatedSexes = async (loggedUser: LoggedUser | null, options: QuerySexesArgs = {}): Promise<Sexe[]> => {
+  const findPaginatedSexes = async (loggedUser: LoggedUser | null, options: SexesSearchParams): Promise<Sex[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const sexes = await sexeRepository.findSexes({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
+      q,
+      ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
 
-    return [...sexes];
+    const enrichedSexes = sexes.map((sex) => {
+      return enrichEntityWithEditableStatus(sex, loggedUser);
+    });
+
+    return [...enrichedSexes];
   };
 
   const getSexesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -76,24 +87,25 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
 
     const result = await sexeRepository.getSexesWithNbSpecimensForEspeceId(especeId);
 
-    return result.map(({ nbSpecimens, ...rest }) => {
+    return result.map(({ nbSpecimens, id, ...rest }) => {
       return {
         ...rest,
+        id: parseInt(id),
         nbSpecimens: nbSpecimens ?? 0,
       };
     });
   };
 
-  const createSexe = async (input: UpsertSexInput, loggedUser: LoggedUser | null): Promise<Sexe> => {
+  const createSexe = async (input: UpsertSexInput, loggedUser: LoggedUser | null): Promise<Sex> => {
     validateAuthorization(loggedUser);
 
     try {
-      const upsertedSexe = await sexeRepository.createSexe({
+      const createdSex = await sexeRepository.createSexe({
         ...input,
         owner_id: loggedUser.id,
       });
 
-      return upsertedSexe;
+      return enrichEntityWithEditableStatus(createdSex, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -102,7 +114,7 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     }
   };
 
-  const updateSexe = async (id: number, input: UpsertSexInput, loggedUser: LoggedUser | null): Promise<Sexe> => {
+  const updateSexe = async (id: number, input: UpsertSexInput, loggedUser: LoggedUser | null): Promise<Sex> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -115,9 +127,9 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     }
 
     try {
-      const upsertedSexe = await sexeRepository.updateSexe(id, input);
+      const updatedSex = await sexeRepository.updateSexe(id, input);
 
-      return upsertedSexe;
+      return enrichEntityWithEditableStatus(updatedSex, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -126,7 +138,7 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     }
   };
 
-  const deleteSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sexe> => {
+  const deleteSexe = async (id: number, loggedUser: LoggedUser | null): Promise<Sex> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -138,18 +150,25 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
       }
     }
 
-    return sexeRepository.deleteSexeById(id);
+    const deletedSex = await sexeRepository.deleteSexeById(id);
+    return enrichEntityWithEditableStatus(deletedSex, loggedUser);
   };
 
   const createSexes = async (
     sexes: Omit<SexeCreateInput[], "owner_id">,
     loggedUser: LoggedUser
-  ): Promise<readonly Sexe[]> => {
-    return sexeRepository.createSexes(
+  ): Promise<readonly Sex[]> => {
+    const createdSexes = await sexeRepository.createSexes(
       sexes.map((sexe) => {
         return { ...sexe, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedSexes = createdSexes.map((sex) => {
+      return enrichEntityWithEditableStatus(sex, loggedUser);
+    });
+
+    return enrichedCreatedSexes;
   };
 
   return {

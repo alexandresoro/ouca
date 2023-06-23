@@ -1,4 +1,12 @@
-import { getSexResponse, upsertSexInput, upsertSexResponse } from "@ou-ca/common/api/sex";
+import {
+  getSexResponse,
+  getSexesExtendedResponse,
+  getSexesQueryParamsSchema,
+  getSexesResponse,
+  upsertSexInput,
+  upsertSexResponse,
+} from "@ou-ca/common/api/sex";
+import { type Sex, type SexExtended } from "@ou-ca/common/entities/sex";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -20,6 +28,46 @@ const sexesController: FastifyPluginCallback<{
     }
 
     const response = getSexResponse.parse(sex);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getSexesQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [sexesData, count] = await Promise.all([
+      sexeService.findPaginatedSexes(req.user, queryParams),
+      sexeService.getSexesCount(req.user, queryParams.q),
+    ]);
+
+    let data: Sex[] | SexExtended[] = sexesData;
+    if (extended) {
+      data = await Promise.all(
+        sexesData.map(async (sexData) => {
+          const entriesCount = await sexeService.getDonneesCountBySexe(sexData.id, req.user);
+          return {
+            ...sexData,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getSexesExtendedResponse : getSexesResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 

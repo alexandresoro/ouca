@@ -1,9 +1,11 @@
+import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
+import { type SexExtended } from "@ou-ca/common/entities/sex";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type EntitesAvecLibelleOrderBy, type Sexe } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +13,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_SEXES_QUERY } from "./SexeManageQueries";
 
 const COLUMNS = [
   {
@@ -29,28 +30,33 @@ const SexeTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
+    usePaginatedTableParams<EntitiesWithLabelOrderBy>();
 
-  const [dialogSexe, setDialogSexe] = useState<Sexe | null>(null);
+  const [dialogSexe, setDialogSexe] = useState<SexExtended | null>(null);
 
-  const [{ data }, reexecuteSexes] = useQuery({
-    query: PAGINATED_SEXES_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/sexes",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getSexesExtendedResponse,
     },
-  });
-
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteSexes();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -69,19 +75,19 @@ const SexeTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditSexe = (id: number | undefined) => {
+  const handleEditSexe = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteSexe = (sexe: Sexe | null) => {
+  const handleDeleteSexe = (sexe: SexExtended | null) => {
     if (sexe) {
       setDialogSexe(sexe);
     }
   };
 
-  const handleDeleteSexeConfirmation = (sexe: Sexe | null) => {
+  const handleDeleteSexeConfirmation = (sexe: SexExtended | null) => {
     if (sexe) {
       setDialogSexe(null);
       mutate({ path: `/sexes/${sexe.id}` });
@@ -92,7 +98,7 @@ const SexeTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
+  const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -105,7 +111,7 @@ const SexeTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.sexes?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -126,11 +132,11 @@ const SexeTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.sexes?.data?.map((sexe) => {
+        tableRows={data?.data.map((sexe) => {
           return (
             <tr className="hover:bg-base-200" key={sexe?.id}>
               <td>{sexe?.libelle}</td>
-              <td>{sexe?.nbDonnees}</td>
+              <td>{sexe?.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!sexe.editable}
@@ -143,7 +149,7 @@ const SexeTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.sexes?.count ?? 0}
+        count={data?.meta?.count ?? 0}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog
@@ -152,7 +158,7 @@ const SexeTable: FunctionComponent = () => {
           name: dialogSexe?.libelle,
         })}
         impactedItemsMessage={t("deleteGenderDialogMsgImpactedData", {
-          nbOfObservations: dialogSexe?.nbDonnees,
+          nbOfObservations: dialogSexe?.entriesCount ?? 0,
         })}
         onCancelAction={() => setDialogSexe(null)}
         onConfirmAction={() => handleDeleteSexeConfirmation(dialogSexe)}

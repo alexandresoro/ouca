@@ -376,11 +376,6 @@ type ObservateursPaginatedResult implements PaginatedResult {
   count: Int!
 }
 
-type SexesPaginatedResult implements PaginatedResult {
-  data: [Sexe!]
-  count: Int!
-}
-
 type PaginatedSearchDonneesResult implements PaginatedResult {
   result(
     searchCriteria: SearchDonneeCriteria
@@ -428,7 +423,6 @@ type Query {
     orderBy: EntitesAvecLibelleOrderBy
     sortOrder: SortOrder
   ): ObservateursPaginatedResult
-  sexes(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): SexesPaginatedResult
   specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
   specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
   searchDonnees: PaginatedSearchDonneesResult

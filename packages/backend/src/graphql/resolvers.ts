@@ -28,7 +28,6 @@ import {
   type ObservateursPaginatedResult,
   type Sexe,
   type SexeWithSpecimensCount,
-  type SexesPaginatedResult,
 } from "./generated/graphql-types.js";
 import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper.js";
 
@@ -169,16 +168,6 @@ export const buildResolvers = ({
           count,
         };
       },
-      sexes: async (_, args, { user }): Promise<SexesPaginatedResult> => {
-        const [data, count] = await Promise.all([
-          sexeService.findPaginatedSexes(user, args),
-          sexeService.getSexesCount(user, args?.searchParams?.q),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
       specimenCountByAge: (_source, args, { user }): Promise<AgeWithSpecimensCount[]> => {
         return ageService.getAgesWithNbSpecimensForEspeceId(args.especeId, user);
       },
@@ -266,7 +255,14 @@ export const buildResolvers = ({
         return milieuService.findMilieuxOfDonneeId(parent?.id, user);
       },
       sexe: async (parent, args, { user }): Promise<Sexe | null> => {
-        return sexeService.findSexeOfDonneeId(parent?.id, user);
+        const sex = await sexeService.findSexeOfDonneeId(parent?.id, user);
+        if (!sex) {
+          return null;
+        }
+        return {
+          ...sex,
+          id: parseInt(sex.id),
+        };
       },
     },
     DonneeResult: {
@@ -332,10 +328,6 @@ export const buildResolvers = ({
       count: async (_, { searchCriteria }, { user }): Promise<number> => {
         return donneeService.getDonneesCount(user, searchCriteria);
       },
-    },
-    Sexe: {
-      editable: isEntityEditableResolver(sexeService.findSexe),
-      nbDonnees: entityNbDonneesResolver(sexeService.getDonneesCountBySexe),
     },
   };
 };

@@ -118,7 +118,7 @@ export class ImportedDonnee {
   buildInputDonnee = (
     inventaireId: number,
     especeId: number,
-    sexeId: number,
+    sexeId: string,
     ageId: string,
     estimationNombreId: number,
     estimationDistanceId: number | null,
@@ -128,7 +128,7 @@ export class ImportedDonnee {
     return {
       inventoryId: inventaireId,
       speciesId: especeId,
-      sexId: sexeId,
+      sexId: parseInt(sexeId),
       ageId: parseInt(ageId),
       numberEstimateId: estimationNombreId,
       number: this.nombre ? +this.nombre : null,
