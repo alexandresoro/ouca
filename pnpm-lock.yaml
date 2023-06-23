@@ -18,15 +18,6 @@ importers:
         specifier: 12.1.3
         version: 12.1.3
 
-  functions:
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: 4.20230518.0
-        version: 4.20230518.0
-      '@ou-ca/eslint-config':
-        specifier: workspace:*
-        version: link:../packages/eslint-config
-
   packages/backend:
     dependencies:
       '@fastify/compress':
@@ -159,6 +150,15 @@ importers:
       wireit:
         specifier: 0.9.5
         version: 0.9.5
+
+  packages/cloudflare-functions:
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: 4.20230518.0
+        version: 4.20230518.0
+      '@ou-ca/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
 
   packages/common:
     dependencies:
