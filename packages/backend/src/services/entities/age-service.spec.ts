@@ -1,8 +1,8 @@
-import { type UpsertAgeInput } from "@ou-ca/common/api/age";
+import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { EntitesAvecLibelleOrderBy, SortOrder, type QueryAgesArgs } from "../../graphql/generated/graphql-types.js";
+import { EntitesAvecLibelleOrderBy, SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type Age, type AgeCreateInput, type AgeWithNbSpecimens } from "../../repositories/age/age-repository-types.js";
 import { type AgeRepository } from "../../repositories/age/age-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -37,10 +37,10 @@ describe("Find age", () => {
 
     ageRepository.findAgeById.mockResolvedValueOnce(ageData);
 
-    await ageService.findAge(ageData.id, loggedUser);
+    await ageService.findAge(12, loggedUser);
 
     expect(ageRepository.findAgeById).toHaveBeenCalledTimes(1);
-    expect(ageRepository.findAgeById).toHaveBeenLastCalledWith(ageData.id);
+    expect(ageRepository.findAgeById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle age not found", async () => {
@@ -63,21 +63,21 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await ageService.getDonneesCountByAge(12, loggedUser);
+    await ageService.getDonneesCountByAge("12", loggedUser);
 
     expect(donneeRepository.getCountByAgeId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByAgeId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(ageService.getDonneesCountByAge(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.getDonneesCountByAge("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Find age by data ID", () => {
   test("should handle age found", async () => {
     const ageData = mock<Age>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
@@ -87,7 +87,7 @@ describe("Find age by data ID", () => {
 
     expect(ageRepository.findAgeByDonneeId).toHaveBeenCalledTimes(1);
     expect(ageRepository.findAgeByDonneeId).toHaveBeenLastCalledWith(43);
-    expect(age?.id).toEqual(256);
+    expect(age?.id).toEqual("256");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -115,7 +115,7 @@ describe("Entities paginated find by search criteria", () => {
 
     ageRepository.findAges.mockResolvedValueOnce(agesData);
 
-    await ageService.findPaginatedAges(loggedUser);
+    await ageService.findPaginatedAges(loggedUser, {});
 
     expect(ageRepository.findAges).toHaveBeenCalledTimes(1);
     expect(ageRepository.findAges).toHaveBeenLastCalledWith({});
@@ -125,14 +125,12 @@ describe("Entities paginated find by search criteria", () => {
     const agesData = [mock<Age>(), mock<Age>(), mock<Age>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryAgesArgs = {
+    const searchParams: AgesSearchParams = {
       orderBy: EntitesAvecLibelleOrderBy.Libelle,
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     ageRepository.findAges.mockResolvedValueOnce([agesData[0]]);
@@ -145,12 +143,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(ageService.findPaginatedAges(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.findPaginatedAges(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -379,6 +377,8 @@ test("Create multiple ages", async () => {
   ];
 
   const loggedUser = mock<LoggedUser>();
+
+  ageRepository.createAges.mockResolvedValueOnce([]);
 
   await ageService.createAges(agesData, loggedUser);
 

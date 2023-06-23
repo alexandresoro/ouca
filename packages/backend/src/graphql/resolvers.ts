@@ -4,7 +4,6 @@ import { type Services } from "../services/services.js";
 import {
   type Age,
   type AgeWithSpecimensCount,
-  type AgesPaginatedResult,
   type Classe,
   type ClassesPaginatedResult,
   type Commune,
@@ -52,16 +51,6 @@ export const buildResolvers = ({
 }: Services): IResolvers => {
   return {
     Query: {
-      ages: async (_, args, { user }): Promise<AgesPaginatedResult> => {
-        const [data, count] = await Promise.all([
-          ageService.findPaginatedAges(user, args),
-          ageService.getAgesCount(user, args?.searchParams?.q),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
       classes: async (_, args, { user }): Promise<ClassesPaginatedResult> => {
         const [data, count] = await Promise.all([
           classeService.findPaginatedClasses(user, args),
@@ -200,10 +189,6 @@ export const buildResolvers = ({
         return {};
       },
     },
-    Age: {
-      editable: isEntityEditableResolver(ageService.findAge),
-      nbDonnees: entityNbDonneesResolver(ageService.getDonneesCountByAge),
-    },
     Classe: {
       editable: isEntityEditableResolver(classeService.findClasse),
       nbEspeces: async (parent, args, { user }): Promise<number | null> => {
@@ -249,7 +234,14 @@ export const buildResolvers = ({
     },
     Donnee: {
       age: async (parent, args, { user }): Promise<Age | null> => {
-        return ageService.findAgeOfDonneeId(parent?.id, user);
+        const age = await ageService.findAgeOfDonneeId(parent?.id, user);
+        if (!age) {
+          return null;
+        }
+        return {
+          ...age,
+          id: parseInt(age.id),
+        };
       },
       comportements: async (parent, args, { user }): Promise<Comportement[]> => {
         return comportementService.findComportementsOfDonneeId(parent?.id, user);

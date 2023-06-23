@@ -1,9 +1,11 @@
+import { getAgesExtendedResponse } from "@ou-ca/common/api/age";
+import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import { type AgeExtended } from "@ou-ca/common/entities/age";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type Age, type EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +13,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_AGES_QUERY } from "./AgeManageQueries";
 
 const COLUMNS = [
   {
@@ -29,28 +30,34 @@ const AgeTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
+    usePaginatedTableParams<EntitiesWithLabelOrderBy>();
 
-  const [dialogAge, setDialogAge] = useState<Age | null>(null);
+  const [dialogAge, setDialogAge] = useState<AgeExtended | null>(null);
 
-  const [{ data }, reexecuteAges] = useQuery({
-    query: PAGINATED_AGES_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/ages",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getAgesExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteAges();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -69,19 +76,19 @@ const AgeTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditAge = (id: number | undefined) => {
+  const handleEditAge = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteAge = (age: Age | null) => {
+  const handleDeleteAge = (age: AgeExtended) => {
     if (age) {
       setDialogAge(age);
     }
   };
 
-  const handleDeleteAgeConfirmation = (age: Age | null) => {
+  const handleDeleteAgeConfirmation = (age: AgeExtended | null) => {
     if (age) {
       setDialogAge(null);
       mutate({ path: `/ages/${age.id}` });
@@ -92,7 +99,7 @@ const AgeTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
+  const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -105,7 +112,7 @@ const AgeTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.ages?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -126,15 +133,15 @@ const AgeTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.ages?.data?.map((age) => {
+        tableRows={data?.data.map((age) => {
           return (
             <tr className="hover:bg-base-200" key={age?.id}>
               <td>{age?.libelle}</td>
-              <td>{age?.nbDonnees}</td>
+              <td>{age?.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!age.editable}
-                  onEditClicked={() => handleEditAge(age?.id)}
+                  onEditClicked={() => handleEditAge(age.id)}
                   onDeleteClicked={() => handleDeleteAge(age)}
                 />
               </td>
@@ -143,7 +150,7 @@ const AgeTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.ages?.count}
+        count={data?.meta.count}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog
@@ -152,7 +159,7 @@ const AgeTable: FunctionComponent = () => {
           name: dialogAge?.libelle,
         })}
         impactedItemsMessage={t("deleteAgeDialogMsgImpactedData", {
-          nbOfObservations: dialogAge?.nbDonnees ?? 0,
+          nbOfObservations: dialogAge?.entriesCount ?? 0,
         })}
         onCancelAction={() => setDialogAge(null)}
         onConfirmAction={() => handleDeleteAgeConfirmation(dialogAge)}

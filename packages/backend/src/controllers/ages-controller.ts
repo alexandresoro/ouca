@@ -1,4 +1,12 @@
-import { getAgeResponse, upsertAgeInput, upsertAgeResponse } from "@ou-ca/common/api/age";
+import {
+  getAgeResponse,
+  getAgesExtendedResponse,
+  getAgesQueryParamsSchema,
+  getAgesResponse,
+  upsertAgeInput,
+  upsertAgeResponse,
+} from "@ou-ca/common/api/age";
+import { type Age, type AgeExtended } from "@ou-ca/common/entities/age";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -20,6 +28,46 @@ const agesController: FastifyPluginCallback<{
     }
 
     const response = getAgeResponse.parse(age);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getAgesQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [agesData, count] = await Promise.all([
+      ageService.findPaginatedAges(req.user, queryParams),
+      ageService.getAgesCount(req.user, queryParams.q),
+    ]);
+
+    let data: Age[] | AgeExtended[] = agesData;
+    if (extended) {
+      data = await Promise.all(
+        agesData.map(async (ageData) => {
+          const entriesCount = await ageService.getDonneesCountByAge(ageData.id, req.user);
+          return {
+            ...ageData,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getAgesExtendedResponse : getAgesResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 

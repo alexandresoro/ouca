@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   ageSchema,
@@ -24,7 +24,9 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
   const findAgeById = async (id: number): Promise<Age | null> => {
     const query = sql.type(ageSchema)`
       SELECT 
-        *
+        age.id::text,
+        age.libelle,
+        age.owner_id
       FROM
         basenaturaliste.age
       WHERE
@@ -41,7 +43,9 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
 
     const query = sql.type(ageSchema)`
       SELECT 
-        age.*
+        age.id::text,
+        age.libelle,
+        age.owner_id
       FROM
         basenaturaliste.age
       LEFT JOIN basenaturaliste.donnee ON age.id = donnee.age_id
@@ -57,7 +61,9 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(ageSchema)`
       SELECT 
-        age.*
+        age.id::text,
+        age.libelle,
+        age.owner_id
       FROM
         basenaturaliste.age
       ${isSortByNbDonnees ? sql.fragment`LEFT JOIN basenaturaliste.donnee ON age.id = donnee.age_id` : sql.fragment``}
@@ -105,7 +111,9 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
   const getAgesWithNbSpecimensForEspeceId = async (especeId: number): Promise<readonly AgeWithNbSpecimens[]> => {
     const query = sql.type(ageWithNbSpecimensSchema)`
       SELECT
-        age.*,
+        age.id::text,
+        age.libelle,
+        age.owner_id,
         SUM(donnee.nombre) as nb_specimens
       FROM 
         basenaturaliste.age
@@ -124,7 +132,9 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
         basenaturaliste.age
         ${objectToKeyValueInsert(ageInput)}
       RETURNING
-        *
+        age.id::text,
+        age.libelle,
+        age.owner_id
     `;
 
     return slonik.one(query);
@@ -136,7 +146,9 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
         basenaturaliste.age
         ${objectsToKeyValueInsert(ageInputs)}
       RETURNING
-        *
+        age.id::text,
+        age.libelle,
+        age.owner_id
     `;
 
     return slonik.many(query);
@@ -151,7 +163,9 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
       WHERE
         id = ${ageId}
       RETURNING
-        *
+        age.id::text,
+        age.libelle,
+        age.owner_id
     `;
 
     return slonik.one(query);
@@ -165,7 +179,9 @@ export const buildAgeRepository = ({ slonik }: AgeRepositoryDependencies) => {
       WHERE
         id = ${ageId}
       RETURNING
-        *
+        age.id::text,
+        age.libelle,
+        age.owner_id
     `;
 
     return slonik.one(query);

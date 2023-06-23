@@ -2,9 +2,9 @@ import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import { type Age } from "@ou-ca/common/entities/age";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
-import { type Age } from "../../repositories/age/age-repository-types.js";
 import { type Commune } from "../../repositories/commune/commune-repository-types.js";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types.js";
 import { type Departement } from "../../repositories/departement/departement-repository-types.js";
@@ -273,7 +273,7 @@ export class ImportDonneeService extends ImportService {
         donnee.inventaireId === existingInventaire?.id &&
         donnee.especeId === espece.id &&
         donnee.sexeId === sexe.id &&
-        donnee.ageId === age.id &&
+        `${donnee.ageId}` === age.id &&
         donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
         donnee.estimationNombreId === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
@@ -301,7 +301,7 @@ export class ImportDonneeService extends ImportService {
         donnee.inventoryId === existingInventaire?.id &&
         donnee.speciesId === espece.id &&
         donnee.sexId === sexe.id &&
-        donnee.ageId === age.id &&
+        `${donnee.ageId}` === age.id &&
         donnee.number === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
         donnee.numberEstimateId === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&

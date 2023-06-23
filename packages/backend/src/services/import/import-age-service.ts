@@ -1,4 +1,4 @@
-import { type Age } from "../../repositories/age/age-repository-types.js";
+import { type Age } from "@ou-ca/common/entities/age";
 import { type LoggedUser } from "../../types/User.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
 

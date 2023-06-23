@@ -1,15 +1,16 @@
-import { type UpsertAgeInput } from "@ou-ca/common/api/age";
+import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/age";
+import { type Age } from "@ou-ca/common/entities/age";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type AgeWithSpecimensCount, type QueryAgesArgs } from "../../graphql/generated/graphql-types.js";
-import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types.js";
+import { type AgeWithSpecimensCount } from "../../graphql/generated/graphql-types.js";
+import { type AgeCreateInput } from "../../repositories/age/age-repository-types.js";
 import { type AgeRepository } from "../../repositories/age/age-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type AgeServiceDependencies = {
   logger: Logger;
@@ -21,7 +22,8 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   const findAge = async (id: number, loggedUser: LoggedUser | null): Promise<Age | null> => {
     validateAuthorization(loggedUser);
 
-    return ageRepository.findAgeById(id);
+    const age = await ageRepository.findAgeById(id);
+    return enrichEntityWithEditableStatus(age, loggedUser);
   };
 
   const findAgeOfDonneeId = async (
@@ -30,13 +32,14 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   ): Promise<Age | null> => {
     validateAuthorization(loggedUser);
 
-    return ageRepository.findAgeByDonneeId(donneeId);
+    const age = await ageRepository.findAgeByDonneeId(donneeId);
+    return enrichEntityWithEditableStatus(age, loggedUser);
   };
 
-  const getDonneesCountByAge = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByAge = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByAgeId(id);
+    return donneeRepository.getCountByAgeId(parseInt(id));
   };
 
   const findAllAges = async (): Promise<Age[]> => {
@@ -44,22 +47,30 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
       orderBy: COLUMN_LIBELLE,
     });
 
-    return [...ages];
+    const enrichedAges = ages.map((age) => {
+      return enrichEntityWithEditableStatus(age, null);
+    });
+
+    return [...enrichedAges];
   };
 
-  const findPaginatedAges = async (loggedUser: LoggedUser | null, options: QueryAgesArgs = {}): Promise<Age[]> => {
+  const findPaginatedAges = async (loggedUser: LoggedUser | null, options: AgesSearchParams): Promise<Age[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const ages = await ageRepository.findAges({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
+      q,
+      ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
 
-    return [...ages];
+    const enrichedAges = ages.map((age) => {
+      return enrichEntityWithEditableStatus(age, loggedUser);
+    });
+
+    return [...enrichedAges];
   };
 
   const getAgesCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -76,9 +87,10 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
 
     const result = await ageRepository.getAgesWithNbSpecimensForEspeceId(especeId);
 
-    return result.map(({ nbSpecimens, ...rest }) => {
+    return result.map(({ nbSpecimens, id, ...rest }) => {
       return {
         ...rest,
+        id: parseInt(id),
         nbSpecimens: nbSpecimens ?? 0,
       };
     });
@@ -93,7 +105,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
         owner_id: loggedUser.id,
       });
 
-      return createdAge;
+      return enrichEntityWithEditableStatus(createdAge, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -117,7 +129,7 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
     try {
       const upsertedAge = await ageRepository.updateAge(id, input);
 
-      return upsertedAge;
+      return enrichEntityWithEditableStatus(upsertedAge, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -138,18 +150,25 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
       }
     }
 
-    return ageRepository.deleteAgeById(id);
+    const deletedAge = await ageRepository.deleteAgeById(id);
+    return enrichEntityWithEditableStatus(deletedAge, loggedUser);
   };
 
   const createAges = async (
     ages: Omit<AgeCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly Age[]> => {
-    return ageRepository.createAges(
+    const createdAges = await ageRepository.createAges(
       ages.map((age) => {
         return { ...age, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedAges = createdAges.map((age) => {
+      return enrichEntityWithEditableStatus(age, loggedUser);
+    });
+
+    return enrichedCreatedAges;
   };
 
   return {

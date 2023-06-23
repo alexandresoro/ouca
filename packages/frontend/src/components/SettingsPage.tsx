@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getAgesResponse } from "@ou-ca/common/api/age";
 import {
   getSettingsResponse,
   putSettingsInput,
@@ -24,12 +25,6 @@ import StyledPanelHeader from "./layout/StyledPanelHeader";
 
 const SETTINGS_QUERY = graphql(`
   query GetUserSettingsPage {
-    ages {
-      data {
-        id
-        libelle
-      }
-    }
     departements {
       data {
         id
@@ -92,8 +87,17 @@ const SettingsPage: FunctionComponent = () => {
 
   const [{ fetching: fetchingGql, error: errorGql, data }] = useQuery({ query: SETTINGS_QUERY });
 
-  const fetching = isFetching || fetchingGql;
-  const error = isError || errorGql;
+  const {
+    data: ages,
+    isError: isErrorAges,
+    isFetching: isFetchingAges,
+  } = useApiQuery({
+    path: "/ages",
+    schema: getAgesResponse,
+  });
+
+  const fetching = isFetching || isFetchingAges || fetchingGql;
+  const error = isError || isErrorAges || errorGql;
 
   const { mutate } = useApiMutation(
     {
@@ -259,7 +263,7 @@ const SettingsPage: FunctionComponent = () => {
                   name="defaultAge"
                   label={t("defaultAge")}
                   control={control}
-                  data={data?.ages?.data}
+                  data={ages?.data}
                   renderValue={({ libelle }) => libelle}
                 />
 
