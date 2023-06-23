@@ -1,15 +1,24 @@
 import { useQuery, type UseQueryOptions, type UseQueryResult } from "@tanstack/react-query";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
+import { toUrlSearchParams } from "../../utils/url-search-params";
 import useAppContext from "../useAppContext";
 import { type FetchError } from "./api-types";
 
 function useApiQuery<SType>(
-  { path, queryParams, schema }: { path: string; queryParams?: Record<string, string>; schema?: z.ZodType<SType> },
+  {
+    path,
+    queryParams,
+    schema,
+  }: { path: string; queryParams?: Record<string, string | number | boolean | undefined>; schema?: z.ZodType<SType> },
   queryOptions?: Omit<UseQueryOptions<SType, FetchError>, "queryKey" | "queryFn">
 ): UseQueryResult<SType, FetchError>;
 function useApiQuery<SType>(
-  { path, queryParams, schema }: { path: string; queryParams?: Record<string, string>; schema?: z.ZodType<SType> },
+  {
+    path,
+    queryParams,
+    schema,
+  }: { path: string; queryParams?: Record<string, string | number | boolean | undefined>; schema?: z.ZodType<SType> },
   queryOptions?: Omit<UseQueryOptions<unknown, FetchError>, "queryKey" | "queryFn">
 ) {
   const { user } = useAuth();
@@ -17,7 +26,7 @@ function useApiQuery<SType>(
 
   const accessToken = user?.access_token;
 
-  const queryString = new URLSearchParams(queryParams).toString();
+  const queryString = toUrlSearchParams(queryParams).toString();
 
   const queryKey = ["API", path, ...(queryParams ? [queryParams] : [])];
 

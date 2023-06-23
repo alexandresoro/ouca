@@ -16,7 +16,7 @@
     "build": "tsc --build tsconfig.build.json && vite build",
     "postinstall": "pnpm run generate-graphql",
     "serve": "vite preview",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "lint": "wireit",
     "generate-graphql": "graphql-codegen --config codegen.ts"
   },
