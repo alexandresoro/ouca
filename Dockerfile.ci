@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG NODE_IMAGE_VERSION=18
+ARG HUSKY=0
 
 FROM node:${NODE_IMAGE_VERSION}-alpine
 
@@ -17,8 +18,7 @@ ENV OUCA_SERVER_HOST 0.0.0.0
 COPY build/ /app/
 
 # Install production deps
-RUN npm pkg delete scripts.prepare && \
-  npm --workspaces pkg delete scripts.postinstall && \
+RUN npm --workspaces pkg delete scripts.postinstall && \
   pnpm i --frozen-lockfile && \
   # Cleanup file not needed anymore
   rm -f pnpm-lock.yaml

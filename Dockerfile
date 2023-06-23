@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1
+ARG HUSKY=0
 
 # 1. Transpile the project
 FROM node:18-alpine as build
@@ -28,8 +29,7 @@ COPY package.json pnpm-lock.yaml /app/
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-RUN npm pkg delete scripts.prepare && \
-  npm --workspaces pkg delete scripts.postinstall && \
+RUN npm --workspaces pkg delete scripts.postinstall && \
   pnpm i --frozen-lockfile && \
   rm -f pnpm-lock.yaml
 
