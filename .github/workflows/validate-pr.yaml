@@ -23,7 +23,7 @@ jobs:
 
       - name: Get changed source files
         id: changed-source-files
-        uses: tj-actions/changed-files@v36
+        uses: tj-actions/changed-files@v37
         with:
           files: |
             **.{ts,tsx,js}
