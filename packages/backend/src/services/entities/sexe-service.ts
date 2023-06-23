@@ -1,5 +1,5 @@
 import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/sex";
-import { type Sex } from "@ou-ca/common/entities/sex.js";
+import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { type SexeWithSpecimensCount } from "../../graphql/generated/graphql-types.js";
