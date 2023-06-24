@@ -212,13 +212,6 @@ enum EntitesAvecLibelleOrderBy {
   nbDonnees
 }
 
-enum ClassesOrderBy {
-  id
-  libelle
-  nbEspeces
-  nbDonnees
-}
-
 enum CommunesOrderBy {
   id
   code
