@@ -1,12 +1,9 @@
-import { type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
+import { type DistanceEstimatesSearchParams, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
+import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import {
-  type QueryEstimationsDistanceArgs
-} from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-  type EstimationDistance,
   type EstimationDistanceCreateInput
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
@@ -14,7 +11,7 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type EstimationDistanceServiceDependencies = {
   logger: Logger;
@@ -29,51 +26,61 @@ export const buildEstimationDistanceService = ({
   const findEstimationDistance = async (
     id: number,
     loggedUser: LoggedUser | null
-  ): Promise<EstimationDistance | null> => {
+  ): Promise<DistanceEstimate | null> => {
     validateAuthorization(loggedUser);
 
-    return estimationDistanceRepository.findEstimationDistanceById(id);
+    const distanceEstimate = await estimationDistanceRepository.findEstimationDistanceById(id);
+    return enrichEntityWithEditableStatus(distanceEstimate, loggedUser);
   };
 
   const findEstimationDistanceOfDonneeId = async (
     donneeId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<EstimationDistance | null> => {
+  ): Promise<DistanceEstimate | null> => {
     validateAuthorization(loggedUser);
 
-    return estimationDistanceRepository.findEstimationDistanceByDonneeId(donneeId);
+    const distanceEstimate = await estimationDistanceRepository.findEstimationDistanceByDonneeId(donneeId);
+    return enrichEntityWithEditableStatus(distanceEstimate, loggedUser);
   };
 
-  const getDonneesCountByEstimationDistance = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByEstimationDistance = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByEstimationDistanceId(id);
+    return donneeRepository.getCountByEstimationDistanceId(parseInt(id));
   };
 
-  const findAllEstimationsDistance = async (): Promise<EstimationDistance[]> => {
+  const findAllEstimationsDistance = async (): Promise<DistanceEstimate[]> => {
     const estimationDistances = await estimationDistanceRepository.findEstimationsDistance({
       orderBy: COLUMN_LIBELLE,
     });
 
-    return [...estimationDistances];
+    const enrichedDistanceEstimates = estimationDistances.map((age) => {
+      return enrichEntityWithEditableStatus(age, null);
+    });
+
+    return [...enrichedDistanceEstimates];
   };
 
   const findPaginatedEstimationsDistance = async (
     loggedUser: LoggedUser | null,
-    options: QueryEstimationsDistanceArgs = {}
-  ): Promise<EstimationDistance[]> => {
+    options: DistanceEstimatesSearchParams
+  ): Promise<DistanceEstimate[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const estimationDistances = await estimationDistanceRepository.findEstimationsDistance({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
+      q,
+      ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
 
-    return [...estimationDistances];
+    const enrichedDistanceEstimates = estimationDistances.map((age) => {
+      return enrichEntityWithEditableStatus(age, loggedUser);
+    });
+
+    return [...enrichedDistanceEstimates];
   };
 
   const getEstimationsDistanceCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -85,16 +92,16 @@ export const buildEstimationDistanceService = ({
   const createEstimationDistance = async (
     input: UpsertDistanceEstimateInput,
     loggedUser: LoggedUser | null
-  ): Promise<EstimationDistance> => {
+  ): Promise<DistanceEstimate> => {
     validateAuthorization(loggedUser);
 
     try {
-      const upsertedEstimationDistance = await estimationDistanceRepository.createEstimationDistance({
+      const createdEstimationDistance = await estimationDistanceRepository.createEstimationDistance({
         ...input,
         owner_id: loggedUser.id,
       });
 
-      return upsertedEstimationDistance;
+      return enrichEntityWithEditableStatus(createdEstimationDistance, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -107,7 +114,7 @@ export const buildEstimationDistanceService = ({
     id: number,
     input: UpsertDistanceEstimateInput,
     loggedUser: LoggedUser | null
-  ): Promise<EstimationDistance> => {
+  ): Promise<DistanceEstimate> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -120,9 +127,9 @@ export const buildEstimationDistanceService = ({
     }
 
     try {
-      const upsertedEstimationDistance = await estimationDistanceRepository.updateEstimationDistance(id, input);
+      const updatedEstimationDistance = await estimationDistanceRepository.updateEstimationDistance(id, input);
       
-      return upsertedEstimationDistance;
+      return enrichEntityWithEditableStatus(updatedEstimationDistance, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -131,7 +138,7 @@ export const buildEstimationDistanceService = ({
     }
   };
 
-  const deleteEstimationDistance = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationDistance> => {
+  const deleteEstimationDistance = async (id: number, loggedUser: LoggedUser | null): Promise<DistanceEstimate> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -143,18 +150,25 @@ export const buildEstimationDistanceService = ({
       }
     }
 
-    return estimationDistanceRepository.deleteEstimationDistanceById(id);
+    const deletedDistanceEstimate = await estimationDistanceRepository.deleteEstimationDistanceById(id);
+    return enrichEntityWithEditableStatus(deletedDistanceEstimate, loggedUser);
   };
 
   const createEstimationsDistance = async (
     estimationsDistance: Omit<EstimationDistanceCreateInput[], "owner_id">,
     loggedUser: LoggedUser
-  ): Promise<readonly EstimationDistance[]> => {
-    return estimationDistanceRepository.createEstimationsDistance(
+  ): Promise<readonly DistanceEstimate[]> => {
+    const createdDistanceEstimates = await estimationDistanceRepository.createEstimationsDistance(
       estimationsDistance.map((estimationDistance) => {
         return { ...estimationDistance, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedDistanceEstimates = createdDistanceEstimates.map((distanceEstimate) => {
+      return enrichEntityWithEditableStatus(distanceEstimate, loggedUser);
+    });
+
+    return enrichedCreatedDistanceEstimates;
   };
 
   return {

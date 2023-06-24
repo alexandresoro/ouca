@@ -1,17 +1,17 @@
 import { sql, type DatabasePool } from "slonik";
 import { countSchema } from "../common.js";
 import {
-    buildPaginationFragment,
-    buildSortOrderFragment,
-    objectsToKeyValueInsert,
-    objectToKeyValueInsert,
-    objectToKeyValueSet
+  buildPaginationFragment,
+  buildSortOrderFragment,
+  objectToKeyValueInsert,
+  objectToKeyValueSet,
+  objectsToKeyValueInsert
 } from "../repository-helpers.js";
 import {
-    estimationDistanceSchema,
-    type EstimationDistance,
-    type EstimationDistanceCreateInput,
-    type EstimationDistanceFindManyInput
+  estimationDistanceSchema,
+  type EstimationDistance,
+  type EstimationDistanceCreateInput,
+  type EstimationDistanceFindManyInput
 } from "./estimation-distance-repository-types.js";
 
 export type EstimationDistanceRepositoryDependencies = {
@@ -22,7 +22,9 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
   const findEstimationDistanceById = async (id: number): Promise<EstimationDistance | null> => {
     const query = sql.type(estimationDistanceSchema)`
       SELECT 
-        *
+        estimation_distance.id::text,
+        estimation_distance.libelle,
+        estimation_distance.owner_id
       FROM
         basenaturaliste.estimation_distance
       WHERE
@@ -39,7 +41,9 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
 
     const query = sql.type(estimationDistanceSchema)`
       SELECT 
-        estimation_distance.*
+        estimation_distance.id::text,
+        estimation_distance.libelle,
+        estimation_distance.owner_id
       FROM
         basenaturaliste.estimation_distance
       LEFT JOIN basenaturaliste.donnee ON estimation_distance.id = donnee.estimation_distance_id
@@ -61,7 +65,9 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(estimationDistanceSchema)`
       SELECT 
-        estimation_distance.*
+        estimation_distance.id::text,
+        estimation_distance.libelle,
+        estimation_distance.owner_id
       FROM
         basenaturaliste.estimation_distance
       ${
@@ -118,7 +124,9 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
         basenaturaliste.estimation_distance
         ${objectToKeyValueInsert(estimationdistanceInput)}
       RETURNING
-        *
+        estimation_distance.id::text,
+        estimation_distance.libelle,
+        estimation_distance.owner_id
     `;
 
     return slonik.one(query);
@@ -132,7 +140,9 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
         basenaturaliste.estimation_distance
         ${objectsToKeyValueInsert(estimationdistanceInputs)}
       RETURNING
-        *
+        estimation_distance.id::text,
+        estimation_distance.libelle,
+        estimation_distance.owner_id
     `;
 
     return slonik.many(query);
@@ -150,7 +160,9 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
       WHERE
         id = ${estimationdistanceId}
       RETURNING
-        *
+        estimation_distance.id::text,
+        estimation_distance.libelle,
+        estimation_distance.owner_id
     `;
 
     return slonik.one(query);
@@ -164,7 +176,9 @@ export const buildEstimationDistanceRepository = ({ slonik }: EstimationDistance
       WHERE
         id = ${estimationdistanceId}
       RETURNING
-        *
+        estimation_distance.id::text,
+        estimation_distance.libelle,
+        estimation_distance.owner_id
     `;
 
     return slonik.one(query);

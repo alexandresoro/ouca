@@ -13,7 +13,6 @@ import {
   type Espece,
   type EstimationDistance,
   type EstimationNombre,
-  type EstimationsDistancePaginatedResult,
   type EstimationsNombrePaginatedResult,
   type Inventaire,
   type LieuDit,
@@ -85,16 +84,6 @@ export const buildResolvers = ({
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, args),
           especeService.getEspecesCount(user, { q: args?.searchParams?.q, searchCriteria: args?.searchCriteria }),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
-      estimationsDistance: async (_, args, { user }): Promise<EstimationsDistancePaginatedResult> => {
-        const [data, count] = await Promise.all([
-          estimationDistanceService.findPaginatedEstimationsDistance(user, args),
-          estimationDistanceService.getEstimationsDistanceCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -210,7 +199,14 @@ export const buildResolvers = ({
         return especeService.findEspeceOfDonneeId(parent?.id, user);
       },
       estimationDistance: async (parent, args, { user }): Promise<EstimationDistance | null> => {
-        return estimationDistanceService.findEstimationDistanceOfDonneeId(parent?.id, user);
+        const distanceEstimate = await estimationDistanceService.findEstimationDistanceOfDonneeId(parent?.id, user);
+        if (!distanceEstimate) {
+          return null;
+        }
+        return {
+          ...distanceEstimate,
+          id: parseInt(distanceEstimate.id),
+        };
       },
       estimationNombre: async (parent, args, { user }): Promise<EstimationNombre | null> => {
         return estimationNombreService.findEstimationNombreOfDonneeId(parent?.id, user);
@@ -249,10 +245,6 @@ export const buildResolvers = ({
         };
       },
       nbDonnees: entityNbDonneesResolver(especeService.getDonneesCountByEspece),
-    },
-    EstimationDistance: {
-      editable: isEntityEditableResolver(estimationDistanceService.findEstimationDistance),
-      nbDonnees: entityNbDonneesResolver(estimationDistanceService.getDonneesCountByEstimationDistance),
     },
     EstimationNombre: {
       editable: isEntityEditableResolver(estimationNombreService.findEstimationNombre),

@@ -1,9 +1,11 @@
+import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
+import { getDistanceEstimatesExtendedResponse } from "@ou-ca/common/api/distance-estimate";
+import { type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type EntitesAvecLibelleOrderBy, type EstimationDistance } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +13,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_ESTIMATIONS_DISTANCE_QUERY } from "./EstimationDistanceManageQueries";
 
 const COLUMNS = [
   {
@@ -29,28 +30,34 @@ const EstimationDistanceTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
+    usePaginatedTableParams<EntitiesWithLabelOrderBy>();
 
-  const [dialogEstimationDistance, setDialogEstimationDistance] = useState<EstimationDistance | null>(null);
+  const [dialogEstimationDistance, setDialogEstimationDistance] = useState<DistanceEstimateExtended | null>(null);
 
-  const [{ data }, reexecutEstimationsDistance] = useQuery({
-    query: PAGINATED_ESTIMATIONS_DISTANCE_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/distance-estimates",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getDistanceEstimatesExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecutEstimationsDistance();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -69,19 +76,19 @@ const EstimationDistanceTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditEstimationDistance = (id: number | undefined) => {
+  const handleEditEstimationDistance = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteEstimationDistance = (estimationDistance: EstimationDistance | null) => {
+  const handleDeleteEstimationDistance = (estimationDistance: DistanceEstimateExtended) => {
     if (estimationDistance) {
       setDialogEstimationDistance(estimationDistance);
     }
   };
 
-  const handleDeleteEstimationDistanceConfirmation = (estimationDistance: EstimationDistance | null) => {
+  const handleDeleteEstimationDistanceConfirmation = (estimationDistance: DistanceEstimateExtended | null) => {
     if (estimationDistance) {
       setDialogEstimationDistance(null);
       mutate({ path: `/distance-estimates/${estimationDistance.id}` });
@@ -92,7 +99,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
+  const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -105,7 +112,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.estimationsDistance?.count}
+        count={data?.meta.count}
       />
         <Table   
           tableHead={ 
@@ -123,11 +130,11 @@ const EstimationDistanceTable: FunctionComponent = () => {
               ))}
               <th align="right" className="pr-8">{t("actions")}</th>
             </>}
-            tableRows={data?.estimationsDistance?.data?.map((estimationDistance) => {
+            tableRows={data?.data.map((estimationDistance) => {
               return (
                 <tr className="hover:bg-base-200" key={estimationDistance?.id}>
-                  <td>{estimationDistance?.libelle}</td>
-                  <td>{estimationDistance?.nbDonnees}</td>
+                  <td>{estimationDistance.libelle}</td>
+                  <td>{estimationDistance.entriesCount}</td>
                   <td align="right" className="pr-6">
                     <TableCellActionButtons
                       disabled={!estimationDistance.editable}
@@ -140,7 +147,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
             })}
             page={page}
             elementsPerPage={rowsPerPage}
-            count={data?.estimationsDistance?.count ?? 0}
+            count={data?.meta.count ?? 0}
             onPageChange={handleChangePage}
           ></Table>
       <DeletionConfirmationDialog
@@ -149,7 +156,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
           name: dialogEstimationDistance?.libelle,
         })}
         impactedItemsMessage={t("deleteDistancePrecisionDialogMsgImpactedData", {
-          nbOfObservations: dialogEstimationDistance?.nbDonnees,
+          nbOfObservations: dialogEstimationDistance?.entriesCount ?? 0,
         })}
         onCancelAction={() => setDialogEstimationDistance(null)}
         onConfirmAction={() => handleDeleteEstimationDistanceConfirmation(dialogEstimationDistance)}

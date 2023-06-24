@@ -121,7 +121,7 @@ export class ImportedDonnee {
     sexeId: string,
     ageId: string,
     estimationNombreId: number,
-    estimationDistanceId: number | null,
+    estimationDistanceId: string | null,
     comportementsIds: Set<number>,
     milieuxIds: Set<number>
   ): UpsertEntryInput => {
@@ -132,7 +132,7 @@ export class ImportedDonnee {
       ageId: parseInt(ageId),
       numberEstimateId: estimationNombreId,
       number: this.nombre ? +this.nombre : null,
-      distanceEstimateId: estimationDistanceId,
+      distanceEstimateId: estimationDistanceId != null ? parseInt(estimationDistanceId) : null,
       distance: this.distance ? +this.distance : null,
       comment: this.commentaire ? this.commentaire : null,
       regroupment: this.regroupement ? +this.regroupement : null,

@@ -1,4 +1,5 @@
-import { getDistanceEstimateResponse, upsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
+import { getDistanceEstimateResponse, getDistanceEstimatesExtendedResponse, getDistanceEstimatesQueryParamsSchema, getDistanceEstimatesResponse, upsertDistanceEstimateInput, upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
+import { type DistanceEstimate, type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -20,6 +21,46 @@ const distanceEstimatesController: FastifyPluginCallback<{
     }
 
     const response = getDistanceEstimateResponse.parse(distanceEstimate);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getDistanceEstimatesQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [distanceEstimatesData, count] = await Promise.all([
+      estimationDistanceService.findPaginatedEstimationsDistance(req.user, queryParams),
+      estimationDistanceService.getEstimationsDistanceCount(req.user, queryParams.q),
+    ]);
+
+    let data: DistanceEstimate[] | DistanceEstimateExtended[] = distanceEstimatesData;
+    if (extended) {
+      data = await Promise.all(
+        distanceEstimatesData.map(async (distanceEstimateData) => {
+          const entriesCount = await estimationDistanceService.getDonneesCountByEstimationDistance(distanceEstimateData.id, req.user);
+          return {
+            ...distanceEstimateData,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getDistanceEstimatesExtendedResponse : getDistanceEstimatesResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 

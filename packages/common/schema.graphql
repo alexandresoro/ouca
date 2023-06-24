@@ -317,11 +317,6 @@ type EspecesPaginatedResult implements PaginatedResult {
   count: Int!
 }
 
-type EstimationsDistancePaginatedResult implements PaginatedResult {
-  data: [EstimationDistance!]
-  count: Int!
-}
-
 type EstimationsNombrePaginatedResult implements PaginatedResult {
   data: [EstimationNombre!]
   count: Int!
@@ -375,11 +370,6 @@ type Query {
     orderBy: EspecesOrderBy
     sortOrder: SortOrder
   ): EspecesPaginatedResult
-  estimationsDistance(
-    searchParams: SearchParams
-    orderBy: EntitesAvecLibelleOrderBy
-    sortOrder: SortOrder
-  ): EstimationsDistancePaginatedResult
   estimationsNombre(
     searchParams: SearchParams
     orderBy: EstimationNombreOrderBy

@@ -3,6 +3,7 @@ import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coord
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Age } from "@ou-ca/common/entities/age";
+import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
@@ -11,7 +12,6 @@ import { type Comportement } from "../../repositories/comportement/comportement-
 import { type Departement } from "../../repositories/departement/departement-repository-types.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type Espece } from "../../repositories/espece/espece-repository-types.js";
-import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
@@ -32,7 +32,7 @@ export class ImportDonneeService extends ImportService {
   private ages!: Age[];
   private sexes!: Sex[];
   private estimationsNombre!: EstimationNombre[];
-  private estimationsDistance!: EstimationDistance[];
+  private estimationsDistance!: DistanceEstimate[];
   private comportements!: Comportement[];
   private milieux!: Milieu[];
   private meteos!: Meteo[];
@@ -199,7 +199,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Estimation de la distance" or return an error if it doesn't exist
-    let estimationDistance: EstimationDistance | undefined | null = null;
+    let estimationDistance: DistanceEstimate | undefined | null = null;
     if (importedDonnee.estimationDistance) {
       estimationDistance = this.findEstimationDistance(importedDonnee.estimationDistance);
       if (!estimationDistance) {
@@ -277,7 +277,7 @@ export class ImportDonneeService extends ImportService {
         donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
         donnee.estimationNombreId === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
-        donnee.estimationDistanceId === (estimationDistance?.id ?? null) &&
+        (donnee.estimationDistanceId ? `${donnee.estimationDistanceId}` : null) === (estimationDistance?.id ?? null) &&
         donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
         areSetsContainingSameValues(
@@ -415,7 +415,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findEstimationDistance = (libelleEstimation: string): EstimationDistance | undefined => {
+  private findEstimationDistance = (libelleEstimation: string): DistanceEstimate | undefined => {
     return this.estimationsDistance.find((estimation) => {
       return this.compareStrings(estimation.libelle, libelleEstimation);
     });
