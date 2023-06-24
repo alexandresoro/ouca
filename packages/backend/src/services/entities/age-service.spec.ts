@@ -3,7 +3,7 @@ import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
 import { EntitesAvecLibelleOrderBy, SortOrder } from "../../graphql/generated/graphql-types.js";
-import { type Age, type AgeCreateInput, type AgeWithNbSpecimens } from "../../repositories/age/age-repository-types.js";
+import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types.js";
 import { type AgeRepository } from "../../repositories/age/age-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -173,37 +173,6 @@ describe("Entities count by search criteria", () => {
 
   test("should throw an error when the requester is not logged", async () => {
     await expect(ageService.getAgesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
-  });
-});
-
-describe("Get number of specimens of age per species id", () => {
-  test("should handle to be called properly", async () => {
-    const loggedUser = mock<LoggedUser>();
-    ageRepository.getAgesWithNbSpecimensForEspeceId.mockResolvedValueOnce([]);
-
-    await ageService.getAgesWithNbSpecimensForEspeceId(10, loggedUser);
-
-    expect(ageRepository.getAgesWithNbSpecimensForEspeceId).toHaveBeenCalledTimes(1);
-    expect(ageRepository.getAgesWithNbSpecimensForEspeceId).toHaveBeenLastCalledWith(10);
-  });
-
-  test("should handle to return no defined number of species", async () => {
-    const loggedUser = mock<LoggedUser>();
-    ageRepository.getAgesWithNbSpecimensForEspeceId.mockResolvedValueOnce([
-      mock<AgeWithNbSpecimens>({
-        nbSpecimens: null,
-      }),
-    ]);
-
-    const result = await ageService.getAgesWithNbSpecimensForEspeceId(10, loggedUser);
-
-    expect(ageRepository.getAgesWithNbSpecimensForEspeceId).toHaveBeenCalledTimes(1);
-    expect(ageRepository.getAgesWithNbSpecimensForEspeceId).toHaveBeenLastCalledWith(10);
-    expect(result[0].nbSpecimens).toEqual(0);
-  });
-
-  test("should throw an error when the requester is not logged", async () => {
-    await expect(ageService.getAgesWithNbSpecimensForEspeceId(10, null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

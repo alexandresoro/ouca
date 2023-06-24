@@ -2,7 +2,6 @@ import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/s
 import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type SexeWithSpecimensCount } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types.js";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
@@ -77,23 +76,6 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     validateAuthorization(loggedUser);
 
     return sexeRepository.getCount(q);
-  };
-
-  const getSexesWithNbSpecimensForEspeceId = async (
-    especeId: number,
-    loggedUser: LoggedUser | null
-  ): Promise<SexeWithSpecimensCount[]> => {
-    validateAuthorization(loggedUser);
-
-    const result = await sexeRepository.getSexesWithNbSpecimensForEspeceId(especeId);
-
-    return result.map(({ nbSpecimens, id, ...rest }) => {
-      return {
-        ...rest,
-        id: parseInt(id),
-        nbSpecimens: nbSpecimens ?? 0,
-      };
-    });
   };
 
   const createSexe = async (input: UpsertSexInput, loggedUser: LoggedUser | null): Promise<Sex> => {
@@ -178,7 +160,6 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
     findAllSexes,
     findPaginatedSexes,
     getSexesCount,
-    getSexesWithNbSpecimensForEspeceId,
     createSexe,
     updateSexe,
     deleteSexe,

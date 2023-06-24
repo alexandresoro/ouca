@@ -3,7 +3,6 @@ import { type Donnee as DonneeEntity } from "../repositories/donnee/donnee-repos
 import { type Services } from "../services/services.js";
 import {
   type Age,
-  type AgeWithSpecimensCount,
   type Classe,
   type Commune,
   type CommunesPaginatedResult,
@@ -26,7 +25,6 @@ import {
   type Observateur,
   type ObservateursPaginatedResult,
   type Sexe,
-  type SexeWithSpecimensCount,
 } from "./generated/graphql-types.js";
 import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper.js";
 
@@ -156,12 +154,6 @@ export const buildResolvers = ({
           data,
           count,
         };
-      },
-      specimenCountByAge: (_source, args, { user }): Promise<AgeWithSpecimensCount[]> => {
-        return ageService.getAgesWithNbSpecimensForEspeceId(args.especeId, user);
-      },
-      specimenCountBySexe: (_source, args, { user }): Promise<SexeWithSpecimensCount[]> => {
-        return sexeService.getSexesWithNbSpecimensForEspeceId(args.especeId, user);
       },
       searchDonnees: (): Record<string, never> => {
         return {};

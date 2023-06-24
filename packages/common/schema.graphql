@@ -139,23 +139,11 @@ type Sexe {
   nbDonnees: Int
 }
 
-type SexeWithSpecimensCount {
-  id: Int!
-  libelle: String!
-  nbSpecimens: Int!
-}
-
 type Age {
   id: Int!
   libelle: String!
   editable: Boolean
   nbDonnees: Int
-}
-
-type AgeWithSpecimensCount {
-  id: Int!
-  libelle: String!
-  nbSpecimens: Int!
 }
 
 type Coordinates {
@@ -412,7 +400,5 @@ type Query {
     orderBy: EntitesAvecLibelleOrderBy
     sortOrder: SortOrder
   ): ObservateursPaginatedResult
-  specimenCountByAge(especeId: Int!): [AgeWithSpecimensCount]
-  specimenCountBySexe(especeId: Int!): [SexeWithSpecimensCount]
   searchDonnees: PaginatedSearchDonneesResult
 }
