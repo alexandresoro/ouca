@@ -1,4 +1,4 @@
-import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate.js";
+import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { type EstimationDistance } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
