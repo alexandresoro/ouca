@@ -1,4 +1,12 @@
-import { getClassResponse, upsertClassInput, upsertClassResponse } from "@ou-ca/common/api/species-class";
+import {
+  getClassResponse,
+  getClassesExtendedResponse,
+  getClassesQueryParamsSchema,
+  getClassesResponse,
+  upsertClassInput,
+  upsertClassResponse,
+} from "@ou-ca/common/api/species-class";
+import { type SpeciesClass, type SpeciesClassExtended } from "@ou-ca/common/entities/species-class";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -20,6 +28,48 @@ const classesController: FastifyPluginCallback<{
     }
 
     const response = getClassResponse.parse(speciesClass);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getClassesQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [classesData, count] = await Promise.all([
+      classeService.findPaginatedClasses(req.user, queryParams),
+      classeService.getClassesCount(req.user, queryParams.q),
+    ]);
+
+    let data: SpeciesClass[] | SpeciesClassExtended[] = classesData;
+    if (extended) {
+      data = await Promise.all(
+        classesData.map(async (classData) => {
+          const speciesCount = await classeService.getEspecesCountByClasse(classData.id, req.user);
+          const entriesCount = await classeService.getDonneesCountByClasse(classData.id, req.user);
+          return {
+            ...classData,
+            speciesCount,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getClassesExtendedResponse : getClassesResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 

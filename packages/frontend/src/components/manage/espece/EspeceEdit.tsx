@@ -1,17 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { upsertSpeciesInput, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
+import { getClassesResponse } from "@ou-ca/common/api/species-class";
 import { useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ALL_CLASSES_QUERY } from "./EspeceManageQueries";
 
 type EspeceEditProps = {
   title: string;
@@ -40,22 +40,24 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
     resolver: zodResolver(upsertSpeciesInput),
   });
 
-  const [{ data: dataClasses, error: errorClasses, fetching: fetchingClasses }] = useQuery({
-    query: ALL_CLASSES_QUERY,
-    variables: {
-      orderBy: "libelle",
-      sortOrder: "asc",
+  const {
+    data: classes,
+    isError: errorClasses,
+    isFetching: fetchingClasses,
+  } = useApiQuery(
+    {
+      path: "/classes",
+      queryParams: {
+        orderBy: "libelle",
+        sortOrder: "asc",
+      },
+      schema: getClassesResponse,
     },
-  });
-
-  // Workaround as GQL return ids as number and rest returns strings
-  const reshapedClasses = dataClasses?.classes?.data?.map((speciesClass) => {
-    const { id, ...rest } = speciesClass;
-    return {
-      ...rest,
-      id: `${id}`,
-    };
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -81,7 +83,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
                 name="classId"
                 label={t("speciesClass")}
                 control={control}
-                data={reshapedClasses}
+                data={classes?.data}
                 renderValue={({ libelle }) => libelle}
               />
 

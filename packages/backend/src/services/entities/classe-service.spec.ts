@@ -1,8 +1,8 @@
-import { type UpsertClassInput } from "@ou-ca/common/api/species-class";
+import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { ClassesOrderBy, SortOrder, type QueryClassesArgs } from "../../graphql/generated/graphql-types.js";
+import { ClassesOrderBy, SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -40,10 +40,10 @@ describe("Find class", () => {
 
     classeRepository.findClasseById.mockResolvedValueOnce(classData);
 
-    await classeService.findClasse(classData.id, loggedUser);
+    await classeService.findClasse(12, loggedUser);
 
     expect(classeRepository.findClasseById).toHaveBeenCalledTimes(1);
-    expect(classeRepository.findClasseById).toHaveBeenLastCalledWith(classData.id);
+    expect(classeRepository.findClasseById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle class not found", async () => {
@@ -66,14 +66,14 @@ describe("Species count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await classeService.getEspecesCountByClasse(12, loggedUser);
+    await classeService.getEspecesCountByClasse("12", loggedUser);
 
     expect(especeRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
     expect(especeRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(classeService.getEspecesCountByClasse(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.getEspecesCountByClasse("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -81,21 +81,21 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await classeService.getDonneesCountByClasse(12, loggedUser);
+    await classeService.getDonneesCountByClasse("12", loggedUser);
 
     expect(donneeRepository.getCountByClasseId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByClasseId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(classeService.getDonneesCountByClasse(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.getDonneesCountByClasse("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Find class by species ID", () => {
   test("should handle a found class", async () => {
     const classData = mock<Classe>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
@@ -105,7 +105,7 @@ describe("Find class by species ID", () => {
 
     expect(classeRepository.findClasseByEspeceId).toHaveBeenCalledTimes(1);
     expect(classeRepository.findClasseByEspeceId).toHaveBeenLastCalledWith(43);
-    expect(classe?.id).toEqual(256);
+    expect(classe?.id).toEqual("256");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -133,7 +133,7 @@ describe("Entities paginated find by search criteria", () => {
 
     classeRepository.findClasses.mockResolvedValueOnce(classesData);
 
-    await classeService.findPaginatedClasses(loggedUser);
+    await classeService.findPaginatedClasses(loggedUser, {});
 
     expect(classeRepository.findClasses).toHaveBeenCalledTimes(1);
     expect(classeRepository.findClasses).toHaveBeenLastCalledWith({});
@@ -143,14 +143,12 @@ describe("Entities paginated find by search criteria", () => {
     const classesData = [mock<Classe>(), mock<Classe>(), mock<Classe>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams = mock<QueryClassesArgs>({
+    const searchParams = mock<ClassesSearchParams>({
       orderBy: ClassesOrderBy.Libelle,
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     });
 
     classeRepository.findClasses.mockResolvedValueOnce(classesData);
@@ -163,12 +161,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(classeService.findPaginatedClasses(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.findPaginatedClasses(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -366,6 +364,8 @@ test("Create multiple classes", async () => {
   ];
 
   const loggedUser = mock<LoggedUser>();
+
+  classeRepository.createClasses.mockResolvedValueOnce([]);
 
   await classeService.createClasses(classesData, loggedUser);
 

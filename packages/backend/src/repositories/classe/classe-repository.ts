@@ -22,7 +22,9 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
   const findClasseById = async (id: number): Promise<Classe | null> => {
     const query = sql.type(classeSchema)`
       SELECT 
-        *
+        classe.id::text,
+        classe.libelle,
+        classe.owner_id
       FROM
         basenaturaliste.classe
       WHERE
@@ -39,7 +41,9 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
 
     const query = sql.type(classeSchema)`
       SELECT 
-        classe.*
+        classe.id::text,
+        classe.libelle,
+        classe.owner_id
       FROM
         basenaturaliste.classe
       LEFT JOIN basenaturaliste.espece ON classe.id = espece.classe_id
@@ -62,7 +66,9 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(classeSchema)`
     SELECT 
-      classe.*
+      classe.id::text,
+      classe.libelle,
+      classe.owner_id
     FROM
       basenaturaliste.classe
     ${
@@ -127,7 +133,9 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
         basenaturaliste.classe
         ${objectToKeyValueInsert(classeInput)}
       RETURNING
-        *
+        classe.id::text,
+        classe.libelle,
+        classe.owner_id
     `;
 
     return slonik.one(query);
@@ -139,7 +147,9 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
         basenaturaliste.classe
         ${objectsToKeyValueInsert(classeInputs)}
       RETURNING
-        *
+        classe.id::text,
+        classe.libelle,
+        classe.owner_id
     `;
 
     return slonik.many(query);
@@ -154,7 +164,9 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
       WHERE
         id = ${classeId}
       RETURNING
-        *
+        classe.id::text,
+        classe.libelle,
+        classe.owner_id
     `;
 
     return slonik.one(query);
@@ -168,7 +180,9 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
       WHERE
         id = ${classeId}
       RETURNING
-        *
+        classe.id::text,
+        classe.libelle,
+        classe.owner_id
     `;
 
     return slonik.one(query);

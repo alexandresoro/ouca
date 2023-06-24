@@ -1,11 +1,11 @@
+import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
 import { ImportedEspece } from "../../objects/import/imported-espece.object.js";
-import { type Classe } from "../../repositories/classe/classe-repository-types.js";
 import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportEspeceService extends ImportService {
-  private classes!: Classe[];
+  private classes!: SpeciesClass[];
   private especes!: (Espece | ImportedEspece)[];
 
   private especesToInsert!: Omit<EspeceCreateInput, "owner_id">[];
@@ -61,7 +61,7 @@ export class ImportEspeceService extends ImportService {
     }
 
     // Create and save the espece
-    const especeToSave = importedEspece.buildEspece(classe.id);
+    const especeToSave = importedEspece.buildEspece(parseInt(classe.id));
 
     this.especesToInsert.push(especeToSave);
     this.especes.push(importedEspece);

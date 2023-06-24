@@ -1,9 +1,10 @@
+import { getClassesExtendedResponse, type ClassesOrderBy } from "@ou-ca/common/api/species-class";
+import { type SpeciesClassExtended } from "@ou-ca/common/entities/species-class";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type Classe, type ClassesOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +12,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_CLASSES_QUERY } from "./ClasseManageQueries";
 
 const COLUMNS = [
   {
@@ -35,26 +35,32 @@ const ClasseTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<ClassesOrderBy>();
 
-  const [dialogClasse, setDialogClasse] = useState<Classe | null>(null);
+  const [dialogClasse, setDialogClasse] = useState<SpeciesClassExtended | null>(null);
 
-  const [{ data }, reexecuteClasses] = useQuery({
-    query: PAGINATED_CLASSES_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/classes",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getClassesExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteClasses();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -73,19 +79,19 @@ const ClasseTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditClasse = (id: number | undefined) => {
+  const handleEditClasse = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteClasse = (classe: Classe | null) => {
+  const handleDeleteClasse = (classe: SpeciesClassExtended | null) => {
     if (classe) {
       setDialogClasse(classe);
     }
   };
 
-  const handleDeleteClasseConfirmation = (classe: Classe | null) => {
+  const handleDeleteClasseConfirmation = (classe: SpeciesClassExtended | null) => {
     if (classe) {
       setDialogClasse(null);
       mutate({ path: `/classes/${classe.id}` });
@@ -109,7 +115,7 @@ const ClasseTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.classes?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -130,12 +136,12 @@ const ClasseTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.classes?.data?.map((classe) => {
+        tableRows={data?.data.map((classe) => {
           return (
             <tr className="hover:bg-base-200" key={classe?.id}>
-              <td>{classe?.libelle}</td>
-              <td>{classe?.nbEspeces}</td>
-              <td>{classe?.nbDonnees}</td>
+              <td>{classe.libelle}</td>
+              <td>{classe.speciesCount}</td>
+              <td>{classe.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!classe.editable}
@@ -148,7 +154,7 @@ const ClasseTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.classes?.count}
+        count={data?.meta.count}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog
@@ -157,8 +163,8 @@ const ClasseTable: FunctionComponent = () => {
           name: dialogClasse?.libelle,
         })}
         impactedItemsMessage={t("deleteClassDialogMsgImpactedData", {
-          nbOfObservations: dialogClasse?.nbDonnees,
-          nbOfSpecies: dialogClasse?.nbEspeces,
+          nbOfObservations: dialogClasse?.entriesCount ?? 0,
+          nbOfSpecies: dialogClasse?.speciesCount ?? 0,
         })}
         onCancelAction={() => setDialogClasse(null)}
         onConfirmAction={() => handleDeleteClasseConfirmation(dialogClasse)}

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { type SortOrder } from "../common.js";
 
 export const classeSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   libelle: z.string(),
   ownerId: z.string().uuid().nullable(),
 });

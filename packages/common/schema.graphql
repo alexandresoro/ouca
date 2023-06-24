@@ -321,11 +321,6 @@ interface PaginatedResult {
   count: Int!
 }
 
-type ClassesPaginatedResult implements PaginatedResult {
-  data: [Classe!]
-  count: Int!
-}
-
 type CommunesPaginatedResult implements PaginatedResult {
   data: [Commune!]
   count: Int!
@@ -387,7 +382,6 @@ type PaginatedSearchDonneesResult implements PaginatedResult {
 }
 
 type Query {
-  classes(searchParams: SearchParams, orderBy: ClassesOrderBy, sortOrder: SortOrder): ClassesPaginatedResult
   communes(searchParams: SearchParams, departmentId: Int, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
   comportements(
     searchParams: SearchParams

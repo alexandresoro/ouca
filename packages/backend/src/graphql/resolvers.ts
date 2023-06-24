@@ -5,7 +5,6 @@ import {
   type Age,
   type AgeWithSpecimensCount,
   type Classe,
-  type ClassesPaginatedResult,
   type Commune,
   type CommunesPaginatedResult,
   type Comportement,
@@ -50,16 +49,6 @@ export const buildResolvers = ({
 }: Services): IResolvers => {
   return {
     Query: {
-      classes: async (_, args, { user }): Promise<ClassesPaginatedResult> => {
-        const [data, count] = await Promise.all([
-          classeService.findPaginatedClasses(user, args),
-          classeService.getClassesCount(user, args?.searchParams?.q),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
       communes: async (
         _,
         args,
@@ -178,16 +167,6 @@ export const buildResolvers = ({
         return {};
       },
     },
-    Classe: {
-      editable: isEntityEditableResolver(classeService.findClasse),
-      nbEspeces: async (parent, args, { user }): Promise<number | null> => {
-        if (!parent?.id) {
-          return null;
-        }
-        return classeService.getEspecesCountByClasse(parent.id, user);
-      },
-      nbDonnees: entityNbDonneesResolver(classeService.getDonneesCountByClasse),
-    },
     Commune: {
       editable: isEntityEditableResolver(communeService.findCommune),
       nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
@@ -276,7 +255,14 @@ export const buildResolvers = ({
     Espece: {
       editable: isEntityEditableResolver(especeService.findEspece),
       classe: async (parent, args, { user }): Promise<Classe | null> => {
-        return classeService.findClasseOfEspeceId(parent?.id, user);
+        const speciesClass = await classeService.findClasseOfEspeceId(parent?.id, user);
+        if (!speciesClass) {
+          return null;
+        }
+        return {
+          ...speciesClass,
+          id: parseInt(speciesClass.id),
+        };
       },
       nbDonnees: entityNbDonneesResolver(especeService.getDonneesCountByEspece),
     },
