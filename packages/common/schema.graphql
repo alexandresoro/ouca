@@ -312,11 +312,6 @@ enum SearchDonneesOrderBy {
 # Results
 #
 
-type DonneeResult {
-  id: Int!
-  donnee: Donnee
-}
-
 interface PaginatedResult {
   count: Int!
 }
