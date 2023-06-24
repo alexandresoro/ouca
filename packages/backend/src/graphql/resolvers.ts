@@ -244,14 +244,6 @@ export const buildResolvers = ({
         };
       },
     },
-    DonneeResult: {
-      donnee: async (parent, args, { user }): Promise<DonneeEntity | null> => {
-        if (!parent?.id) {
-          return null;
-        }
-        return donneeService.findDonnee(parent.id, user);
-      },
-    },
     Espece: {
       editable: isEntityEditableResolver(especeService.findEspece),
       classe: async (parent, args, { user }): Promise<Classe | null> => {
