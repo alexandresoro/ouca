@@ -10,3 +10,9 @@ export const speciesSchema = z.object({
 });
 
 export type Species = z.infer<typeof speciesSchema>;
+
+export const speciesExtendedSchema = speciesSchema.extend({
+  entriesCount: z.number(),
+});
+
+export type SpeciesExtended = z.infer<typeof speciesExtendedSchema>;

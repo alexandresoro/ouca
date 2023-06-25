@@ -8,3 +8,9 @@ export const environmentSchema = z.object({
 });
 
 export type Environment = z.infer<typeof environmentSchema>;
+
+export const environmentExtendedSchema = environmentSchema.extend({
+  entriesCount: z.number(),
+});
+
+export type EnvironmentExtended = z.infer<typeof environmentExtendedSchema>;

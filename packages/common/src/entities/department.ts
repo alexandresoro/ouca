@@ -7,3 +7,11 @@ export const departmentSchema = z.object({
 });
 
 export type Department = z.infer<typeof departmentSchema>;
+
+export const departmentExtendedSchema = departmentSchema.extend({
+  localitiesCount: z.number(),
+  townsCount: z.number(),
+  entriesCount: z.number(),
+});
+
+export type DepartmentExtended = z.infer<typeof departmentExtendedSchema>;

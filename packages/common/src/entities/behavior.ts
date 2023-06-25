@@ -10,3 +10,9 @@ export const behaviorSchema = z.object({
 });
 
 export type Behavior = z.infer<typeof behaviorSchema>;
+
+export const behaviorExtendedSchema = behaviorSchema.extend({
+  entriesCount: z.number(),
+});
+
+export type BehaviorExtended = z.infer<typeof behaviorExtendedSchema>;

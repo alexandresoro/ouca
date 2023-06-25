@@ -9,3 +9,10 @@ export const townSchema = z.object({
 });
 
 export type Town = z.infer<typeof townSchema>;
+
+export const townExtendedSchema = townSchema.extend({
+  localitiesCount: z.number(),
+  entriesCount: z.number(),
+});
+
+export type TownExtended = z.infer<typeof townExtendedSchema>;

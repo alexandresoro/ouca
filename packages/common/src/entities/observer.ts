@@ -7,3 +7,9 @@ export const observerSchema = z.object({
 });
 
 export type Observer = z.infer<typeof observerSchema>;
+
+export const observerExtendedSchema = observerSchema.extend({
+  entriesCount: z.number(),
+});
+
+export type ObserverExtended = z.infer<typeof observerExtendedSchema>;

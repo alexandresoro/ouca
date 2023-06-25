@@ -8,3 +8,9 @@ export const numberEstimateSchema = z.object({
 });
 
 export type NumberEstimate = z.infer<typeof numberEstimateSchema>;
+
+export const numberEstimateExtendedSchema = numberEstimateSchema.extend({
+  entriesCount: z.number(),
+});
+
+export type NumberEstimateExtended = z.infer<typeof numberEstimateExtendedSchema>;

@@ -5,8 +5,8 @@ import { observerSchema } from "../entities/observer.js";
 
 // Common response content returned when settings are queried or updated
 const settingsResponse = z.object({
-  defaultObserver: observerSchema.omit({ editable: true }).nullable(),
-  defaultDepartment: departmentSchema.omit({ editable: true }).nullable(),
+  defaultObserver: observerSchema.nullable(),
+  defaultDepartment: departmentSchema.nullable(),
   defaultAgeId: z.number().nullable(),
   defaultSexeId: z.number().nullable(),
   defaultEstimationNombreId: z.number().nullable(),

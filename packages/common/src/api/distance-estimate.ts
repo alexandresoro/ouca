@@ -7,7 +7,7 @@ import { getPaginatedResponseSchema } from "./common/pagination.js";
  * `GET` `/distance-estimate/:id`
  *  Retrieve distance estimate entity
  */
-export const getDistanceEstimateResponse = distanceEstimateSchema.omit({ editable: true });
+export const getDistanceEstimateResponse = distanceEstimateSchema;
 
 export type GetDistanceEstimateResponse = z.infer<typeof getDistanceEstimateResponse>;
 
@@ -35,6 +35,6 @@ export const upsertDistanceEstimateInput = z.object({
 
 export type UpsertDistanceEstimateInput = z.infer<typeof upsertDistanceEstimateInput>;
 
-export const upsertDistanceEstimateResponse = distanceEstimateSchema.omit({ editable: true });
+export const upsertDistanceEstimateResponse = distanceEstimateSchema;
 
 export type UpsertDistanceEstimateResponse = z.infer<typeof upsertDistanceEstimateResponse>;

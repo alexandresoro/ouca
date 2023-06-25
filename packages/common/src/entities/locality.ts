@@ -1,15 +1,18 @@
 import { z } from "zod";
+import { coordinatesSchema } from "./coordinates.js";
 
 export const localitySchema = z.object({
   id: z.coerce.string(),
   nom: z.string(),
-  coordinates: z.object({
-    altitude: z.number(),
-    longitude: z.number(),
-    latitude: z.number(),
-  }),
+  coordinates: coordinatesSchema,
   townId: z.string(),
   editable: z.boolean().optional(),
 });
 
 export type Locality = z.infer<typeof localitySchema>;
+
+export const localityExtendedSchema = localitySchema.extend({
+  entriesCount: z.number(),
+});
+
+export type LocalityExtended = z.infer<typeof localityExtendedSchema>;

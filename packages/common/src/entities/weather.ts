@@ -7,3 +7,9 @@ export const weatherSchema = z.object({
 });
 
 export type Weather = z.infer<typeof weatherSchema>;
+
+export const weatherExtendedSchema = weatherSchema.extend({
+  entriesCount: z.number(),
+});
+
+export type WeatherExtended = z.infer<typeof weatherExtendedSchema>;
