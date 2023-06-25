@@ -2,7 +2,7 @@ import { type AgesSearchParams, type UpsertAgeInput } from "@ou-ca/common/api/ag
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { EntitesAvecLibelleOrderBy, SortOrder } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type Age, type AgeCreateInput } from "../../repositories/age/age-repository-types.js";
 import { type AgeRepository } from "../../repositories/age/age-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -126,7 +126,7 @@ describe("Entities paginated find by search criteria", () => {
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: AgesSearchParams = {
-      orderBy: EntitesAvecLibelleOrderBy.Libelle,
+      orderBy: "libelle",
       sortOrder: SortOrder.Desc,
       q: "Bob",
       pageNumber: 1,

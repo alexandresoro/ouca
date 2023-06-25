@@ -2,7 +2,7 @@ import { type SexesSearchParams, type UpsertSexInput } from "@ou-ca/common/api/s
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { EntitesAvecLibelleOrderBy, SortOrder } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Sexe, type SexeCreateInput } from "../../repositories/sexe/sexe-repository-types.js";
 import { type SexeRepository } from "../../repositories/sexe/sexe-repository.js";
@@ -126,7 +126,7 @@ describe("Entities paginated find by search criteria", () => {
     const loggedUser = mock<LoggedUser>();
 
     const searchParams: SexesSearchParams = {
-      orderBy: EntitesAvecLibelleOrderBy.Libelle,
+      orderBy: "libelle",
       sortOrder: SortOrder.Desc,
       q: "Bob",
       pageNumber: 1,

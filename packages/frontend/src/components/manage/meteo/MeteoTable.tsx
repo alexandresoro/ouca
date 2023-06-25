@@ -1,9 +1,9 @@
+import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
 import { type WeatherExtended } from "@ou-ca/common/entities/weather";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { type EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -30,7 +30,7 @@ const MeteoTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
+    usePaginatedTableParams<EntitiesWithLabelOrderBy>();
 
   const [dialogMeteo, setDialogMeteo] = useState<WeatherExtended | null>(null);
 
@@ -99,7 +99,7 @@ const MeteoTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: EntitesAvecLibelleOrderBy) => {
+  const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);

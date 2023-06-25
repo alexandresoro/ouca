@@ -206,12 +206,6 @@ enum SortOrder {
   desc
 }
 
-enum EntitesAvecLibelleOrderBy {
-  id
-  libelle
-  nbDonnees
-}
-
 enum CommunesOrderBy {
   id
   code
