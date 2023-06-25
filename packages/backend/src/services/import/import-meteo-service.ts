@@ -1,3 +1,4 @@
+import { type Weather } from "@ou-ca/common/entities/weather";
 import { type Meteo } from "../../repositories/meteo/meteo-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { ImportEntiteAvecLibelleService } from "./import-entite-avec-libelle-service.js";
@@ -15,7 +16,7 @@ export class ImportMeteoService extends ImportEntiteAvecLibelleService {
   protected saveEntities = (
     ages: Omit<Meteo, "id" | "ownerId">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Meteo[]> => {
+  ): Promise<readonly Weather[]> => {
     return this.services.meteoService.createMeteos(ages, loggedUser);
   };
 }

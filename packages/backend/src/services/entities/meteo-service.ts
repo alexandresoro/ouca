@@ -1,9 +1,9 @@
-import { type UpsertWeatherInput } from "@ou-ca/common/api/weather";
+import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
+import { type Weather } from "@ou-ca/common/entities/weather";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type QueryMeteosArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
+import { type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
@@ -18,23 +18,23 @@ type MeteoServiceDependencies = {
 };
 
 export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoServiceDependencies) => {
-  const findMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Meteo | null> => {
+  const findMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Weather | null> => {
     validateAuthorization(loggedUser);
 
     const weather = await meteoRepository.findMeteoById(id);
     return enrichEntityWithEditableStatus(weather, loggedUser);
   };
 
-  const getDonneesCountByMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByMeteo = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByMeteoId(id);
+    return donneeRepository.getCountByMeteoId(parseInt(id));
   };
 
   const findMeteosOfInventaireId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Meteo[]> => {
+  ): Promise<Weather[]> => {
     validateAuthorization(loggedUser);
 
     const meteos = await meteoRepository.findMeteosOfInventaireId(inventaireId);
@@ -46,7 +46,7 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     return [...enrichedWeathers];
   };
 
-  const findMeteosIdsOfInventaireId = async (inventaireId: number): Promise<number[]> => {
+  const findMeteosIdsOfInventaireId = async (inventaireId: number): Promise<string[]> => {
     const meteosIds = await meteoRepository
       .findMeteosOfInventaireId(inventaireId)
       .then((meteos) => meteos.map(({ id }) => id));
@@ -54,7 +54,7 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     return [...meteosIds];
   };
 
-  const findAllMeteos = async (): Promise<Meteo[]> => {
+  const findAllMeteos = async (): Promise<Weather[]> => {
     const meteos = await meteoRepository.findMeteos({
       orderBy: COLUMN_LIBELLE,
     });
@@ -68,15 +68,15 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
 
   const findPaginatedMeteos = async (
     loggedUser: LoggedUser | null,
-    options: QueryMeteosArgs = {}
-  ): Promise<Meteo[]> => {
+    options: WeathersSearchParams
+  ): Promise<Weather[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const meteos = await meteoRepository.findMeteos({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
+      q,
+      ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
@@ -94,7 +94,7 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     return meteoRepository.getCount(q);
   };
 
-  const createMeteo = async (input: UpsertWeatherInput, loggedUser: LoggedUser | null): Promise<Meteo> => {
+  const createMeteo = async (input: UpsertWeatherInput, loggedUser: LoggedUser | null): Promise<Weather> => {
     validateAuthorization(loggedUser);
 
     // Create a new weather
@@ -113,7 +113,11 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     }
   };
 
-  const updateMeteo = async (id: number, input: UpsertWeatherInput, loggedUser: LoggedUser | null): Promise<Meteo> => {
+  const updateMeteo = async (
+    id: number,
+    input: UpsertWeatherInput,
+    loggedUser: LoggedUser | null
+  ): Promise<Weather> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -138,7 +142,7 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
     }
   };
 
-  const deleteMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Meteo> => {
+  const deleteMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Weather> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -157,7 +161,7 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
   const createMeteos = async (
     meteos: Omit<MeteoCreateInput, "owner_id">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Meteo[]> => {
+  ): Promise<readonly Weather[]> => {
     const createdWeathers = await meteoRepository.createMeteos(
       meteos.map((meteo) => {
         return { ...meteo, owner_id: loggedUser.id };

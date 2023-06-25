@@ -18,7 +18,6 @@ import {
   type LieuDit,
   type LieuxDitsPaginatedResult,
   type Meteo,
-  type MeteosPaginatedResult,
   type Milieu,
   type MilieuxPaginatedResult,
   type Observateur,
@@ -108,16 +107,6 @@ export const buildResolvers = ({
         const [data, count] = await Promise.all([
           lieuditService.findPaginatedLieuxDits(user, args),
           lieuditService.getLieuxDitsCount(user, { q: args.searchParams?.q, townId: args.townId }),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
-      meteos: async (_, args, { user }): Promise<MeteosPaginatedResult> => {
-        const [data, count] = await Promise.all([
-          meteoService.findPaginatedMeteos(user, args),
-          meteoService.getMeteosCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -261,7 +250,13 @@ export const buildResolvers = ({
         return lieuditService.findLieuDitOfInventaireId(parent?.id, user);
       },
       meteos: async (parent, args, { user }): Promise<Meteo[]> => {
-        return meteoService.findMeteosOfInventaireId(parent?.id, user);
+        const weathers = await meteoService.findMeteosOfInventaireId(parent?.id, user);
+        return weathers.map((weather) => {
+          return {
+            ...weather,
+            id: parseInt(weather.id),
+          };
+        });
       },
     },
     LieuDit: {
@@ -270,10 +265,6 @@ export const buildResolvers = ({
         return communeService.findCommuneOfLieuDitId(parent?.id, user);
       },
       nbDonnees: entityNbDonneesResolver(lieuditService.getDonneesCountByLieuDit),
-    },
-    Meteo: {
-      editable: isEntityEditableResolver(meteoService.findMeteo),
-      nbDonnees: entityNbDonneesResolver(meteoService.getDonneesCountByMeteo),
     },
     Milieu: {
       editable: isEntityEditableResolver(milieuService.findMilieu),

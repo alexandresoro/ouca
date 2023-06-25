@@ -54,14 +54,3 @@ export const AUTOCOMPLETE_LOCALITIES_QUERY = graphql(`
     }
   }
 `);
-
-export const AUTOCOMPLETE_WEATHERS_QUERY = graphql(`
-  query ListWeathersAutocomplete($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    meteos(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      data {
-        id
-        libelle
-      }
-    }
-  }
-`);

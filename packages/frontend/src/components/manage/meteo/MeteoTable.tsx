@@ -1,9 +1,11 @@
+import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
+import { type WeatherExtended } from "@ou-ca/common/entities/weather";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type EntitesAvecLibelleOrderBy, type Meteo } from "../../../gql/graphql";
+import { type EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +13,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_METEOS_QUERY } from "./MeteoManageQueries";
 
 const COLUMNS = [
   {
@@ -31,26 +32,32 @@ const MeteoTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
-  const [dialogMeteo, setDialogMeteo] = useState<Meteo | null>(null);
+  const [dialogMeteo, setDialogMeteo] = useState<WeatherExtended | null>(null);
 
-  const [{ data }, reexecuteMeteos] = useQuery({
-    query: PAGINATED_METEOS_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/weathers",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getWeathersExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteMeteos();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -69,19 +76,19 @@ const MeteoTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditMeteo = (id: number | undefined) => {
+  const handleEditMeteo = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteMeteo = (meteo: Meteo | null) => {
+  const handleDeleteMeteo = (meteo: WeatherExtended | null) => {
     if (meteo) {
       setDialogMeteo(meteo);
     }
   };
 
-  const handleDeleteMeteoConfirmation = (meteo: Meteo | null) => {
+  const handleDeleteMeteoConfirmation = (meteo: WeatherExtended | null) => {
     if (meteo) {
       setDialogMeteo(null);
       mutate({ path: `/weathers/${meteo.id}` });
@@ -105,7 +112,7 @@ const MeteoTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.meteos?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -126,11 +133,11 @@ const MeteoTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.meteos?.data?.map((meteo) => {
+        tableRows={data?.data.map((meteo) => {
           return (
             <tr className="hover:bg-base-200" key={meteo?.id}>
-              <td>{meteo?.libelle}</td>
-              <td>{meteo?.nbDonnees}</td>
+              <td>{meteo.libelle}</td>
+              <td>{meteo.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!meteo.editable}
@@ -143,7 +150,7 @@ const MeteoTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.meteos?.count ?? 0}
+        count={data?.meta.count ?? 0}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog

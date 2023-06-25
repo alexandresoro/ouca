@@ -145,7 +145,7 @@ export class ImportedDonnee {
     observateurId: number,
     associesIds: Set<number>,
     lieuditId: number,
-    meteosIds: Set<number>,
+    meteosIds: Set<string>,
     customizedAltitude: number | null,
     customizedCoordinates: Coordinates | null
   ): UpsertInventoryInput => {
@@ -169,7 +169,7 @@ export class ImportedDonnee {
       localityId: `${lieuditId}`,
       coordinates: customizedCoordinatesStr,
       temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
-      weatherIds: [...meteosIds].map((weather) => `${weather}`),
+      weatherIds: [...meteosIds],
       associateIds: [...associesIds].map((associate) => `${associate}`),
     };
   };

@@ -5,6 +5,7 @@ import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordin
 import { type Age } from "@ou-ca/common/entities/age";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { type Sex } from "@ou-ca/common/entities/sex";
+import { type Weather } from "@ou-ca/common/entities/weather";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import { type Commune } from "../../repositories/commune/commune-repository-types.js";
@@ -15,7 +16,6 @@ import { type Espece } from "../../repositories/espece/espece-repository-types.j
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
-import { type Meteo } from "../../repositories/meteo/meteo-repository-types.js";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types.js";
 import { type Observateur } from "../../repositories/observateur/observateur-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -35,7 +35,7 @@ export class ImportDonneeService extends ImportService {
   private estimationsDistance!: DistanceEstimate[];
   private comportements!: Comportement[];
   private milieux!: Milieu[];
-  private meteos!: Meteo[];
+  private meteos!: Weather[];
   private inventaires: Inventaire[] = []; // The list of existing inventaires + the ones we created along with the validation
 
   private existingDonnees!: Donnee[];
@@ -151,7 +151,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Meteos" or return an error if some of them doesn't exist
-    const meteosIds = new Set<number>();
+    const meteosIds = new Set<string>();
     for (const libelleMeteo of importedDonnee.meteos) {
       const meteo = this.findMeteo(libelleMeteo);
       if (!meteo) {
@@ -262,7 +262,7 @@ export class ImportDonneeService extends ImportService {
         ) &&
         areSetsContainingSameValues(
           new Set(await this.services.meteoService.findMeteosIdsOfInventaireId(existingInventaire.id)),
-          new Set(inputInventaire.weatherIds.map((weatherId) => parseInt(weatherId)))
+          new Set(inputInventaire.weatherIds)
         )
       );
     });
@@ -381,7 +381,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findMeteo = (libelleMeteo: string): Meteo | undefined => {
+  private findMeteo = (libelleMeteo: string): Weather | undefined => {
     return this.meteos.find((meteo) => {
       return this.compareStrings(meteo.libelle, libelleMeteo);
     });

@@ -8,7 +8,7 @@ export const areSetsContainingSameValues = <T>(firstArray: Set<T>, secondArray: 
   return [...firstArray].every((value) => secondArray.has(value));
 };
 
-export const isIdInListIds = (ids: Set<number>, idToFind: number): boolean => {
+export const isIdInListIds = <T>(ids: Set<T>, idToFind: T): boolean => {
   return !![...ids].find((id) => {
     return id === idToFind;
   });

@@ -1,4 +1,12 @@
-import { getWeatherResponse, upsertWeatherInput, upsertWeatherResponse } from "@ou-ca/common/api/weather";
+import {
+  getWeatherResponse,
+  getWeathersExtendedResponse,
+  getWeathersQueryParamsSchema,
+  getWeathersResponse,
+  upsertWeatherInput,
+  upsertWeatherResponse,
+} from "@ou-ca/common/api/weather";
+import { type Weather, type WeatherExtended } from "@ou-ca/common/entities/weather";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -20,6 +28,46 @@ const weathersController: FastifyPluginCallback<{
     }
 
     const response = getWeatherResponse.parse(weather);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getWeathersQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [weathersData, count] = await Promise.all([
+      meteoService.findPaginatedMeteos(req.user, queryParams),
+      meteoService.getMeteosCount(req.user, queryParams.q),
+    ]);
+
+    let data: Weather[] | WeatherExtended[] = weathersData;
+    if (extended) {
+      data = await Promise.all(
+        weathersData.map(async (weatherData) => {
+          const entriesCount = await meteoService.getDonneesCountByMeteo(weatherData.id, req.user);
+          return {
+            ...weatherData,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getWeathersExtendedResponse : getWeathersResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 

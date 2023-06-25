@@ -17,7 +17,9 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
   const findMeteoById = async (id: number): Promise<Meteo | null> => {
     const query = sql.type(meteoSchema)`
       SELECT 
-        *
+        meteo.id::text,
+        meteo.libelle,
+        meteo.owner_id
       FROM
         basenaturaliste.meteo
       WHERE
@@ -34,7 +36,9 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
 
     const query = sql.type(meteoSchema)`
       SELECT 
-        meteo.*
+        meteo.id::text,
+        meteo.libelle,
+        meteo.owner_id
       FROM
         basenaturaliste.meteo
       LEFT JOIN basenaturaliste.inventaire_meteo ON meteo.id = inventaire_meteo.meteo_id
@@ -56,7 +60,9 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(meteoSchema)`
     SELECT 
-      meteo.*
+      meteo.id::text,
+      meteo.libelle,
+      meteo.owner_id
     FROM
       basenaturaliste.meteo
     ${
@@ -114,7 +120,9 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
         basenaturaliste.meteo
         ${objectToKeyValueInsert(meteoInput)}
       RETURNING
-        *
+        meteo.id::text,
+        meteo.libelle,
+        meteo.owner_id
     `;
 
     return slonik.one(query);
@@ -126,7 +134,9 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
         basenaturaliste.meteo
         ${objectsToKeyValueInsert(meteoInputs)}
       RETURNING
-        *
+        meteo.id::text,
+        meteo.libelle,
+        meteo.owner_id
     `;
 
     return slonik.many(query);
@@ -141,7 +151,9 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
       WHERE
         id = ${meteoId}
       RETURNING
-        *
+        meteo.id::text,
+        meteo.libelle,
+        meteo.owner_id
     `;
 
     return slonik.one(query);
@@ -155,7 +167,9 @@ export const buildMeteoRepository = ({ slonik }: MeteoRepositoryDependencies) =>
       WHERE
         id = ${meteoId}
       RETURNING
-        *
+        meteo.id::text,
+        meteo.libelle,
+        meteo.owner_id
     `;
 
     return slonik.one(query);

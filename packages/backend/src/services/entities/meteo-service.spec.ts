@@ -1,8 +1,8 @@
-import { type UpsertWeatherInput } from "@ou-ca/common/api/weather";
+import { type UpsertWeatherInput, type WeathersSearchParams } from "@ou-ca/common/api/weather";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { EntitesAvecLibelleOrderBy, SortOrder, type QueryMeteosArgs } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Meteo, type MeteoCreateInput } from "../../repositories/meteo/meteo-repository-types.js";
 import { type MeteoRepository } from "../../repositories/meteo/meteo-repository.js";
@@ -37,10 +37,10 @@ describe("Find weather", () => {
 
     meteoRepository.findMeteoById.mockResolvedValueOnce(weatherData);
 
-    await meteoService.findMeteo(weatherData.id, loggedUser);
+    await meteoService.findMeteo(12, loggedUser);
 
     expect(meteoRepository.findMeteoById).toHaveBeenCalledTimes(1);
-    expect(meteoRepository.findMeteoById).toHaveBeenLastCalledWith(weatherData.id);
+    expect(meteoRepository.findMeteoById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle weather not found", async () => {
@@ -63,14 +63,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await meteoService.getDonneesCountByMeteo(12, loggedUser);
+    await meteoService.getDonneesCountByMeteo("12", loggedUser);
 
     expect(donneeRepository.getCountByMeteoId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByMeteoId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(meteoService.getDonneesCountByMeteo(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(meteoService.getDonneesCountByMeteo("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -113,7 +113,7 @@ describe("Entities paginated find by search criteria", () => {
 
     meteoRepository.findMeteos.mockResolvedValueOnce(weathersData);
 
-    await meteoService.findPaginatedMeteos(loggedUser);
+    await meteoService.findPaginatedMeteos(loggedUser, {});
 
     expect(meteoRepository.findMeteos).toHaveBeenCalledTimes(1);
     expect(meteoRepository.findMeteos).toHaveBeenLastCalledWith({});
@@ -123,14 +123,12 @@ describe("Entities paginated find by search criteria", () => {
     const weathersData = [mock<Meteo>(), mock<Meteo>(), mock<Meteo>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryMeteosArgs = {
-      orderBy: EntitesAvecLibelleOrderBy.Libelle,
+    const searchParams: WeathersSearchParams = {
+      orderBy: "libelle",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     meteoRepository.findMeteos.mockResolvedValueOnce([weathersData[0]]);
@@ -143,12 +141,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(meteoService.findPaginatedMeteos(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(meteoService.findPaginatedMeteos(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

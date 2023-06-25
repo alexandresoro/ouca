@@ -327,11 +327,6 @@ type LieuxDitsPaginatedResult implements PaginatedResult {
   count: Int!
 }
 
-type MeteosPaginatedResult implements PaginatedResult {
-  data: [Meteo!]
-  count: Int!
-}
-
 type MilieuxPaginatedResult implements PaginatedResult {
   data: [Milieu!]
   count: Int!
@@ -376,7 +371,6 @@ type Query {
     sortOrder: SortOrder
   ): EstimationsNombrePaginatedResult
   lieuxDits(searchParams: SearchParams, townId: Int, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
-  meteos(searchParams: SearchParams, orderBy: EntitesAvecLibelleOrderBy, sortOrder: SortOrder): MeteosPaginatedResult
   milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
   observateurs(
     searchParams: SearchParams
