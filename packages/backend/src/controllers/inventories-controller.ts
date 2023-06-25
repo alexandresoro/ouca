@@ -38,32 +38,10 @@ const inventoriesController: FastifyPluginCallback<{
     const enrichedInventory = {
       ...inventory,
       id: `${inventory.id}`,
-      // TODO Remove this later
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      observer: {
-        ...observer,
-        id: `${observer.id}`,
-      },
-      // TODO Remove this later
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      associates: associates.map((associate) => {
-        return {
-          ...associate,
-          id: `${associate.id}`,
-        };
-      }),
+      observer,
+      associates,
       locality: reshapeLocalityRepositoryToApi(locality),
-      // TODO Remove this later
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      weathers: weathers.map((weather) => {
-        return {
-          ...weather,
-          id: `${weather.id}`,
-        };
-      }),
+      weathers,
     } satisfies GetInventoryResponse;
 
     const response = getInventoryResponse.parse(enrichedInventory);
