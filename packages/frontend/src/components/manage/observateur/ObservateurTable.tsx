@@ -1,9 +1,11 @@
+import { getObserversExtendedResponse } from "@ou-ca/common/api/observer";
+import { type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type EntitesAvecLibelleOrderBy, type Observateur } from "../../../gql/graphql";
+import { type EntitesAvecLibelleOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +13,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_OBSERVATEURS_QUERY } from "./ObservateurManageQueries";
 
 const COLUMNS = [
   {
@@ -31,26 +32,32 @@ const ObservateurTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<EntitesAvecLibelleOrderBy>();
 
-  const [dialogObservateur, setDialogObservateur] = useState<Observateur | null>(null);
+  const [dialogObservateur, setDialogObservateur] = useState<ObserverExtended | null>(null);
 
-  const [{ data }, reexecuteObservateurs] = useQuery({
-    query: PAGINATED_OBSERVATEURS_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/observers",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getObserversExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteObservateurs();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -69,19 +76,19 @@ const ObservateurTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditObservateur = (id: number | undefined) => {
+  const handleEditObservateur = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteObservateur = (observateur: Observateur | null) => {
+  const handleDeleteObservateur = (observateur: ObserverExtended | null) => {
     if (observateur) {
       setDialogObservateur(observateur);
     }
   };
 
-  const handleDeleteObservateurConfirmation = (observateur: Observateur | null) => {
+  const handleDeleteObservateurConfirmation = (observateur: ObserverExtended | null) => {
     if (observateur) {
       setDialogObservateur(null);
       mutate({ path: `/observers/${observateur.id}` });
@@ -105,7 +112,7 @@ const ObservateurTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.observateurs?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -126,11 +133,11 @@ const ObservateurTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.observateurs?.data?.map((observateur) => {
+        tableRows={data?.data.map((observateur) => {
           return (
             <tr className="hover:bg-base-200" key={observateur?.id}>
-              <td>{observateur?.libelle}</td>
-              <td>{observateur?.nbDonnees}</td>
+              <td>{observateur.libelle}</td>
+              <td>{observateur.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!observateur.editable}
@@ -143,7 +150,7 @@ const ObservateurTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.observateurs?.count}
+        count={data?.meta.count}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog
@@ -152,7 +159,7 @@ const ObservateurTable: FunctionComponent = () => {
           name: dialogObservateur?.libelle,
         })}
         impactedItemsMessage={t("deleteObserverDialogMsgImpactedData", {
-          nbOfObservations: dialogObservateur?.nbDonnees ?? 0,
+          nbOfObservations: dialogObservateur?.entriesCount ?? 0,
         })}
         onCancelAction={() => setDialogObservateur(null)}
         onConfirmAction={() => handleDeleteObservateurConfirmation(dialogObservateur)}

@@ -1,20 +1,12 @@
+import { getObserversResponse } from "@ou-ca/common/api/observer";
+import { type Observer } from "@ou-ca/common/entities/observer";
 import { useState, type FunctionComponent } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery } from "urql";
 import { graphql } from "../gql";
-import { type Comportement, type Observateur } from "../gql/graphql";
+import { type Comportement } from "../gql/graphql";
+import useApiQuery from "../hooks/api/useApiQuery";
 import FormAutocomplete from "./common/form/FormAutocomplete";
-
-const OBS_QUERY = graphql(`
-  query TempObs($searchParams: SearchParams) {
-    observateurs(searchParams: $searchParams) {
-      data {
-        id
-        libelle
-      }
-    }
-  }
-`);
 
 const COMPS_QUERY = graphql(`
   query TempComps($searchParams: SearchParams) {
@@ -29,7 +21,7 @@ const COMPS_QUERY = graphql(`
 `);
 
 type Temp = {
-  observateur: Observateur | null;
+  observateur: Observer | null;
   comportement1: Comportement | null;
 };
 
@@ -56,15 +48,20 @@ const TempPage: FunctionComponent = () => {
     name: "comportement1",
   });
 
-  const [{ data: dataObs }] = useQuery({
-    query: OBS_QUERY,
-    variables: {
-      searchParams: {
+  const { data: dataObs } = useApiQuery(
+    {
+      path: "/observers",
+      queryParams: {
         q: obsFilter,
         pageSize: 5,
       },
+      schema: getObserversResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const [{ data: dataComps }] = useQuery({
     query: COMPS_QUERY,
@@ -84,7 +81,7 @@ const TempPage: FunctionComponent = () => {
     <>
       {observateur?.id} - {obsFilter}
       <FormAutocomplete
-        data={dataObs?.observateurs?.data}
+        data={dataObs?.data}
         name="observateur"
         label="Observateurs"
         control={control}

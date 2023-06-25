@@ -142,8 +142,8 @@ export class ImportedDonnee {
   };
 
   buildInputInventaire = (
-    observateurId: number,
-    associesIds: Set<number>,
+    observateurId: string,
+    associesIds: Set<string>,
     lieuditId: number,
     meteosIds: Set<string>,
     customizedAltitude: number | null,
@@ -162,7 +162,7 @@ export class ImportedDonnee {
     const formattedDate = getFormattedDate(this.date);
 
     return {
-      observerId: `${observateurId}`,
+      observerId: observateurId,
       date: formattedDate ? format(formattedDate, DATE_PATTERN) : "null",
       time: getFormattedTime(this.heure),
       duration: getFormattedTime(this.duree),
@@ -170,7 +170,7 @@ export class ImportedDonnee {
       coordinates: customizedCoordinatesStr,
       temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
       weatherIds: [...meteosIds],
-      associateIds: [...associesIds].map((associate) => `${associate}`),
+      associateIds: [...associesIds],
     };
   };
 

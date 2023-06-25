@@ -1,12 +1,8 @@
-import { type UpsertObserverInput } from "@ou-ca/common/api/observer";
+import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  EntitesAvecLibelleOrderBy,
-  SortOrder,
-  type QueryObservateursArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Observateur,
@@ -44,10 +40,10 @@ describe("Find observer", () => {
 
     observateurRepository.findObservateurById.mockResolvedValueOnce(observerData);
 
-    await observateurService.findObservateur(observerData.id, loggedUser);
+    await observateurService.findObservateur(12, loggedUser);
 
     expect(observateurRepository.findObservateurById).toHaveBeenCalledTimes(1);
-    expect(observateurRepository.findObservateurById).toHaveBeenLastCalledWith(observerData.id);
+    expect(observateurRepository.findObservateurById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle observer not found", async () => {
@@ -70,21 +66,23 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await observateurService.getDonneesCountByObservateur(12, loggedUser);
+    await observateurService.getDonneesCountByObservateur("12", loggedUser);
 
     expect(donneeRepository.getCountByObservateurId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByObservateurId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.getDonneesCountByObservateur(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(observateurService.getDonneesCountByObservateur("12", null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
 describe("Find observer by inventary ID", () => {
   test("should handle observer found", async () => {
     const observerData = mock<Observateur>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
@@ -94,7 +92,7 @@ describe("Find observer by inventary ID", () => {
 
     expect(observateurRepository.findObservateurByInventaireId).toHaveBeenCalledTimes(1);
     expect(observateurRepository.findObservateurByInventaireId).toHaveBeenLastCalledWith(43);
-    expect(observer?.id).toEqual(256);
+    expect(observer?.id).toEqual("256");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -141,7 +139,7 @@ describe("Entities paginated find by search criteria", () => {
 
     observateurRepository.findObservateurs.mockResolvedValueOnce(observersData);
 
-    await observateurService.findPaginatedObservateurs(loggedUser);
+    await observateurService.findPaginatedObservateurs(loggedUser, {});
 
     expect(observateurRepository.findObservateurs).toHaveBeenCalledTimes(1);
     expect(observateurRepository.findObservateurs).toHaveBeenLastCalledWith({});
@@ -151,14 +149,12 @@ describe("Entities paginated find by search criteria", () => {
     const observersData = [mock<Observateur>(), mock<Observateur>(), mock<Observateur>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryObservateursArgs = {
-      orderBy: EntitesAvecLibelleOrderBy.Libelle,
+    const searchParams: ObserversSearchParams = {
+      orderBy: "libelle",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     observateurRepository.findObservateurs.mockResolvedValueOnce([observersData[0]]);
@@ -171,12 +167,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(observateurService.findPaginatedObservateurs(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(observateurService.findPaginatedObservateurs(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

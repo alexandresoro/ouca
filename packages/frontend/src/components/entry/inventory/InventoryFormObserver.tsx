@@ -1,11 +1,11 @@
+import { getObserversResponse } from "@ou-ca/common/api/observer";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "urql";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import Autocomplete from "../../common/styled/select/Autocomplete";
 import AutocompleteMultiple from "../../common/styled/select/AutocompleteMultiple";
-import { AUTOCOMPLETE_OBSERVATEURS_QUERY } from "./InventoryFormQueries";
 import { type InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormObserverProps = Pick<UseFormReturn<InventoryFormState>, "control"> & {
@@ -59,48 +59,36 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
     onChangeAssociatesForm(selectedAssociates?.map((associate) => associate.id) ?? []);
   }, [selectedAssociates, onChangeAssociatesForm]);
 
-  const [{ data: dataObservers }] = useQuery({
-    query: AUTOCOMPLETE_OBSERVATEURS_QUERY,
-    variables: {
-      searchParams: {
+  const { data: dataObservers } = useApiQuery(
+    {
+      path: "/observers",
+      queryParams: {
         q: observateurInput,
         pageSize: 5,
       },
+      schema: getObserversResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
-  const [{ data: dataAssociateObservers }] = useQuery({
-    query: AUTOCOMPLETE_OBSERVATEURS_QUERY,
-    variables: {
-      searchParams: {
+  const { data: dataAssociateObservers } = useApiQuery(
+    {
+      path: "/observers",
+      queryParams: {
         q: associatesInput,
         pageSize: 5,
       },
+      schema: getObserversResponse,
     },
-    pause: !areAssociesDisplayed,
-  });
-
-  const dataObserversReshaped = dataObservers?.observateurs?.data
-    ? dataObservers.observateurs.data.map((observer) => {
-        return {
-          id: `${observer.id}`,
-          libelle: observer.libelle,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-        } satisfies Observer;
-      })
-    : [];
-
-  const dataAssociatesReshaped = dataAssociateObservers?.observateurs?.data
-    ? dataAssociateObservers.observateurs.data.map((associate) => {
-        return {
-          id: `${associate.id}`,
-          libelle: associate.libelle,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-        } satisfies Observer;
-      })
-    : [];
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+      enabled: areAssociesDisplayed,
+    }
+  );
 
   return (
     <>
@@ -115,9 +103,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
         inputProps={{
           autoFocus: autofocusOnObserver,
         }}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        data={dataObserversReshaped}
+        data={dataObservers?.data}
         name="observer"
         label={t("observer")}
         onInputChange={setObservateurInput}
@@ -135,9 +121,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
       {areAssociesDisplayed && (
         <AutocompleteMultiple
           ref={refAssociates}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          data={dataAssociatesReshaped}
+          data={dataAssociateObservers?.data ?? []}
           name="associateObservers"
           label={t("associateObservers")}
           onInputChange={setAssociatesInput}

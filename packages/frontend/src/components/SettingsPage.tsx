@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getAgesResponse } from "@ou-ca/common/api/age";
+import { getObserversResponse } from "@ou-ca/common/api/observer";
 import {
   getSettingsResponse,
   putSettingsInput,
@@ -33,12 +34,6 @@ const SETTINGS_QUERY = graphql(`
       }
     }
     estimationsNombre {
-      data {
-        id
-        libelle
-      }
-    }
-    observateurs {
       data {
         id
         libelle
@@ -92,6 +87,15 @@ const SettingsPage: FunctionComponent = () => {
   });
 
   const {
+    data: observers,
+    isError: isErrorObservers,
+    isFetching: isFetchingObservers,
+  } = useApiQuery({
+    path: "/observers",
+    schema: getObserversResponse,
+  });
+
+  const {
     data: sexes,
     isError: isErrorSexes,
     isFetching: isFetchingSexes,
@@ -100,8 +104,8 @@ const SettingsPage: FunctionComponent = () => {
     schema: getSexesResponse,
   });
 
-  const fetching = isFetching || isFetchingAges || isFetchingSexes || fetchingGql;
-  const error = isError || isErrorAges || isErrorSexes || errorGql;
+  const fetching = isFetching || isFetchingAges || isErrorObservers || isFetchingSexes || fetchingGql;
+  const error = isError || isErrorAges || isErrorObservers || isErrorSexes || errorGql;
 
   const { mutate } = useApiMutation(
     {
@@ -218,7 +222,7 @@ const SettingsPage: FunctionComponent = () => {
                   name="defaultObserver"
                   label={t("defaultObserver")}
                   control={control}
-                  data={data?.observateurs?.data}
+                  data={observers?.data}
                   renderValue={({ libelle }) => libelle}
                 />
 

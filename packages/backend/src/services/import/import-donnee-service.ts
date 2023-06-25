@@ -4,6 +4,7 @@ import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coo
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Age } from "@ou-ca/common/entities/age";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
+import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Weather } from "@ou-ca/common/entities/weather";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
@@ -17,14 +18,13 @@ import { type EstimationNombre } from "../../repositories/estimation-nombre/esti
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types.js";
-import { type Observateur } from "../../repositories/observateur/observateur-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportDonneeService extends ImportService {
   private coordinatesSystem!: CoordinatesSystem;
-  private observateurs!: Observateur[];
+  private observateurs!: Observer[];
   private departements!: Departement[];
   private communes!: Commune[];
   private lieuxDits!: Lieudit[];
@@ -91,7 +91,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Observateurs associes" or return an error if some of them doesn't exist
-    const associesIds = new Set<number>();
+    const associesIds = new Set<string>();
     for (const associeLibelle of importedDonnee.associes) {
       const associe = this.findObservateur(associeLibelle);
       if (!associe) {
@@ -258,7 +258,7 @@ export class ImportDonneeService extends ImportService {
         existingInventaire.temperature === inputInventaire.temperature &&
         areSetsContainingSameValues(
           new Set(await this.services.observateurService.findAssociesIdsOfInventaireId(existingInventaire.id)),
-          new Set(inputInventaire.associateIds.map((associateId) => parseInt(associateId)))
+          new Set(inputInventaire.associateIds)
         ) &&
         areSetsContainingSameValues(
           new Set(await this.services.meteoService.findMeteosIdsOfInventaireId(existingInventaire.id)),
@@ -354,7 +354,7 @@ export class ImportDonneeService extends ImportService {
     }
   };
 
-  private findObservateur = (libelleObservateur: string): Observateur | undefined => {
+  private findObservateur = (libelleObservateur: string): Observer | undefined => {
     return this.observateurs.find((observateur) => {
       return this.compareStrings(observateur.libelle, libelleObservateur);
     });

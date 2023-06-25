@@ -1,12 +1,9 @@
-import { type UpsertObserverInput } from "@ou-ca/common/api/observer";
+import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/common/api/observer";
+import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type QueryObservateursArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import {
-  type Observateur,
-  type ObservateurCreateInput,
-} from "../../repositories/observateur/observateur-repository-types.js";
+import { type ObservateurCreateInput } from "../../repositories/observateur/observateur-repository-types.js";
 import { type ObservateurRepository } from "../../repositories/observateur/observateur-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
@@ -24,30 +21,30 @@ export const buildObservateurService = ({
   observateurRepository,
   donneeRepository,
 }: ObservateurServiceDependencies) => {
-  const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur | null> => {
+  const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observer | null> => {
     validateAuthorization(loggedUser);
 
     const observer = await observateurRepository.findObservateurById(id);
     return enrichEntityWithEditableStatus(observer, loggedUser);
   };
 
-  const getDonneesCountByObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByObservateur = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByObservateurId(id);
+    return donneeRepository.getCountByObservateurId(parseInt(id));
   };
 
   const findObservateurOfInventaireId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Observateur | null> => {
+  ): Promise<Observer | null> => {
     validateAuthorization(loggedUser);
 
     const observer = await observateurRepository.findObservateurByInventaireId(inventaireId);
     return enrichEntityWithEditableStatus(observer, loggedUser);
   };
 
-  const findAssociesIdsOfInventaireId = async (inventaireId: number): Promise<number[]> => {
+  const findAssociesIdsOfInventaireId = async (inventaireId: number): Promise<string[]> => {
     const associesIds = await observateurRepository
       .findAssociesOfInventaireId(inventaireId)
       .then((associes) => associes.map(({ id }) => id));
@@ -58,7 +55,7 @@ export const buildObservateurService = ({
   const findAssociesOfInventaireId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Observateur[]> => {
+  ): Promise<Observer[]> => {
     validateAuthorization(loggedUser);
 
     const associes = await observateurRepository.findAssociesOfInventaireId(inventaireId);
@@ -70,7 +67,7 @@ export const buildObservateurService = ({
     return [...enrichedAssociates];
   };
 
-  const findAllObservateurs = async (): Promise<Observateur[]> => {
+  const findAllObservateurs = async (): Promise<Observer[]> => {
     const observateurs = await observateurRepository.findObservateurs({
       orderBy: COLUMN_LIBELLE,
     });
@@ -84,15 +81,15 @@ export const buildObservateurService = ({
 
   const findPaginatedObservateurs = async (
     loggedUser: LoggedUser | null,
-    options: QueryObservateursArgs = {}
-  ): Promise<Observateur[]> => {
+    options: ObserversSearchParams
+  ): Promise<Observer[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const observateurs = await observateurRepository.findObservateurs({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
+      q,
+      ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
@@ -110,7 +107,7 @@ export const buildObservateurService = ({
     return observateurRepository.getCount(q);
   };
 
-  const createObservateur = async (input: UpsertObserverInput, loggedUser: LoggedUser | null): Promise<Observateur> => {
+  const createObservateur = async (input: UpsertObserverInput, loggedUser: LoggedUser | null): Promise<Observer> => {
     validateAuthorization(loggedUser);
 
     // Create a new observer
@@ -133,7 +130,7 @@ export const buildObservateurService = ({
     id: number,
     input: UpsertObserverInput,
     loggedUser: LoggedUser | null
-  ): Promise<Observateur> => {
+  ): Promise<Observer> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -158,7 +155,7 @@ export const buildObservateurService = ({
     }
   };
 
-  const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur> => {
+  const deleteObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observer> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -177,7 +174,7 @@ export const buildObservateurService = ({
   const createObservateurs = async (
     observateurs: Omit<ObservateurCreateInput, "owner_id">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Observateur[]> => {
+  ): Promise<readonly Observer[]> => {
     const createdObservers = await observateurRepository.createObservateurs(
       observateurs.map((observateur) => {
         return { ...observateur, owner_id: loggedUser.id };

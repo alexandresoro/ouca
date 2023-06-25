@@ -1,16 +1,5 @@
 import { graphql } from "../../../gql";
 
-export const AUTOCOMPLETE_OBSERVATEURS_QUERY = graphql(`
-  query ListObservateursAutocomplete($searchParams: SearchParams, $orderBy: EntitesAvecLibelleOrderBy, $sortOrder: SortOrder) {
-    observateurs(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      data {
-        id
-        libelle
-      }
-    }
-  }
-`);
-
 export const AUTOCOMPLETE_DEPARTMENTS_QUERY = graphql(`
   query ListDepartmentsAutocomplete($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
     departements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {

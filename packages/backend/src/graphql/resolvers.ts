@@ -21,7 +21,6 @@ import {
   type Milieu,
   type MilieuxPaginatedResult,
   type Observateur,
-  type ObservateursPaginatedResult,
   type Sexe,
 } from "./generated/graphql-types.js";
 import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper.js";
@@ -117,16 +116,6 @@ export const buildResolvers = ({
         const [data, count] = await Promise.all([
           milieuService.findPaginatedMilieux(user, args),
           milieuService.getMilieuxCount(user, args?.searchParams?.q),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
-      observateurs: async (_, args, { user }): Promise<ObservateursPaginatedResult> => {
-        const [data, count] = await Promise.all([
-          observateurService.findPaginatedObservateurs(user, args),
-          observateurService.getObservateursCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -241,10 +230,23 @@ export const buildResolvers = ({
     },
     Inventaire: {
       observateur: async (parent, args, { user }): Promise<Observateur | null> => {
-        return observateurService.findObservateurOfInventaireId(parent?.id, user);
+        const observer = await observateurService.findObservateurOfInventaireId(parent?.id, user);
+        if (!observer) {
+          return null;
+        }
+        return {
+          ...observer,
+          id: parseInt(observer.id),
+        };
       },
       associes: async (parent, args, { user }): Promise<Observateur[]> => {
-        return observateurService.findAssociesOfInventaireId(parent?.id, user);
+        const associates = await observateurService.findAssociesOfInventaireId(parent?.id, user);
+        return associates.map((associate) => {
+          return {
+            ...associate,
+            id: parseInt(associate.id),
+          };
+        });
       },
       lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
         return lieuditService.findLieuDitOfInventaireId(parent?.id, user);
@@ -269,10 +271,6 @@ export const buildResolvers = ({
     Milieu: {
       editable: isEntityEditableResolver(milieuService.findMilieu),
       nbDonnees: entityNbDonneesResolver(milieuService.getDonneesCountByMilieu),
-    },
-    Observateur: {
-      editable: isEntityEditableResolver(observateurService.findObservateur),
-      nbDonnees: entityNbDonneesResolver(observateurService.getDonneesCountByObservateur),
     },
     PaginatedSearchDonneesResult: {
       result: async (_, args, { user }): Promise<DonneeEntity[]> => {

@@ -332,11 +332,6 @@ type MilieuxPaginatedResult implements PaginatedResult {
   count: Int!
 }
 
-type ObservateursPaginatedResult implements PaginatedResult {
-  data: [Observateur!]
-  count: Int!
-}
-
 type PaginatedSearchDonneesResult implements PaginatedResult {
   result(
     searchCriteria: SearchDonneeCriteria
@@ -372,10 +367,5 @@ type Query {
   ): EstimationsNombrePaginatedResult
   lieuxDits(searchParams: SearchParams, townId: Int, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
   milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
-  observateurs(
-    searchParams: SearchParams
-    orderBy: EntitesAvecLibelleOrderBy
-    sortOrder: SortOrder
-  ): ObservateursPaginatedResult
   searchDonnees: PaginatedSearchDonneesResult
 }

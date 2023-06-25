@@ -22,7 +22,9 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
   const findObservateurById = async (id: number): Promise<Observateur | null> => {
     const query = sql.type(observateurSchema)`
       SELECT 
-        *
+        observateur.id::text,
+        observateur.libelle,
+        observateur.owner_id
       FROM
         basenaturaliste.observateur
       WHERE
@@ -39,7 +41,9 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
 
     const query = sql.type(observateurSchema)`
       SELECT 
-        observateur.*
+        observateur.id::text,
+        observateur.libelle,
+        observateur.owner_id
       FROM
         basenaturaliste.observateur
       LEFT JOIN basenaturaliste.inventaire ON observateur.id = inventaire.observateur_id
@@ -57,7 +61,9 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
 
     const query = sql.type(observateurSchema)`
       SELECT 
-        observateur.*
+        observateur.id::text,
+        observateur.libelle,
+        observateur.owner_id
       FROM
         basenaturaliste.observateur
       LEFT JOIN basenaturaliste.inventaire_associe ON observateur.id = inventaire_associe.observateur_id
@@ -84,7 +90,9 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
     const matchStartLibelle = q ? `^${q}` : null;
     const query = sql.type(observateurSchema)`
     SELECT 
-      observateur.*
+      observateur.id::text,
+      observateur.libelle,
+      observateur.owner_id
     FROM
       basenaturaliste.observateur
     ${
@@ -146,7 +154,9 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
         basenaturaliste.observateur
         ${objectToKeyValueInsert(observateurInput)}
       RETURNING
-        *
+        observateur.id::text,
+        observateur.libelle,
+        observateur.owner_id
     `;
 
     return slonik.one(query);
@@ -158,7 +168,9 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
         basenaturaliste.observateur
         ${objectsToKeyValueInsert(observateurInputs)}
       RETURNING
-        *
+        observateur.id::text,
+        observateur.libelle,
+        observateur.owner_id
     `;
 
     return slonik.many(query);
@@ -176,7 +188,9 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
       WHERE
         id = ${observateurId}
       RETURNING
-        *
+        observateur.id::text,
+        observateur.libelle,
+        observateur.owner_id
     `;
 
     return slonik.one(query);
@@ -190,7 +204,9 @@ export const buildObservateurRepository = ({ slonik }: ObservateurRepositoryDepe
       WHERE
         id = ${observateurId}
       RETURNING
-        *
+        observateur.id::text,
+        observateur.libelle,
+        observateur.owner_id
     `;
 
     return slonik.one(query);

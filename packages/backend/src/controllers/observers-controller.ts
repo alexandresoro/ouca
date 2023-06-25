@@ -1,4 +1,12 @@
-import { getObserverResponse, upsertObserverInput, upsertObserverResponse } from "@ou-ca/common/api/observer";
+import {
+  getObserverResponse,
+  getObserversExtendedResponse,
+  getObserversQueryParamsSchema,
+  getObserversResponse,
+  upsertObserverInput,
+  upsertObserverResponse,
+} from "@ou-ca/common/api/observer";
+import { type Observer, type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -20,6 +28,46 @@ const observersController: FastifyPluginCallback<{
     }
 
     const response = getObserverResponse.parse(observer);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getObserversQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [observersData, count] = await Promise.all([
+      observateurService.findPaginatedObservateurs(req.user, queryParams),
+      observateurService.getObservateursCount(req.user, queryParams.q),
+    ]);
+
+    let data: Observer[] | ObserverExtended[] = observersData;
+    if (extended) {
+      data = await Promise.all(
+        observersData.map(async (observerData) => {
+          const entriesCount = await observateurService.getDonneesCountByObservateur(observerData.id, req.user);
+          return {
+            ...observerData,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getObserversExtendedResponse : getObserversResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 
