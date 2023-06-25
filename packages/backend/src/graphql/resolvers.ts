@@ -5,7 +5,6 @@ import {
   type Age,
   type Classe,
   type Commune,
-  type CommunesPaginatedResult,
   type Comportement,
   type ComportementsPaginatedResult,
   type Departement,
@@ -43,20 +42,6 @@ export const buildResolvers = ({
 }: Services): IResolvers => {
   return {
     Query: {
-      communes: async (
-        _,
-        args,
-        { user }
-      ): Promise<Omit<CommunesPaginatedResult, "data"> & { data?: Omit<Commune, "departement">[] }> => {
-        const [data, count] = await Promise.all([
-          communeService.findPaginatedCommunes(user, args),
-          communeService.getCommunesCount(user, { q: args.searchParams?.q, departmentId: args.departmentId }),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
       comportements: async (_, args, { user }): Promise<ComportementsPaginatedResult> => {
         const [data, count] = await Promise.all([
           comportementService.findPaginatedComportements(user, args),
@@ -116,16 +101,11 @@ export const buildResolvers = ({
       },
     },
     Commune: {
-      editable: isEntityEditableResolver(communeService.findCommune),
-      nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
-        if (!parent?.id) {
-          return null;
-        }
-        return communeService.getLieuxDitsCountByCommune(parent.id, user);
-      },
-      nbDonnees: entityNbDonneesResolver(communeService.getDonneesCountByCommune),
       departement: async (parent, args, { user }): Promise<Departement | null> => {
-        const department = await departementService.findDepartementOfCommuneId(parent?.id, user);
+        const department = await departementService.findDepartementOfCommuneId(
+          parent?.id ? `${parent.id}` : undefined,
+          user
+        );
         if (!department) {
           return null;
         }
@@ -244,7 +224,14 @@ export const buildResolvers = ({
     LieuDit: {
       editable: isEntityEditableResolver(lieuditService.findLieuDit),
       commune: async (parent, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
-        return communeService.findCommuneOfLieuDitId(parent?.id, user);
+        const town = await communeService.findCommuneOfLieuDitId(parent?.id, user);
+        if (!town) {
+          return null;
+        }
+        return {
+          ...town,
+          id: parseInt(town.id),
+        };
       },
       nbDonnees: entityNbDonneesResolver(lieuditService.getDonneesCountByLieuDit),
     },

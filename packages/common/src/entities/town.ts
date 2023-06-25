@@ -11,6 +11,7 @@ export const townSchema = z.object({
 export type Town = z.infer<typeof townSchema>;
 
 export const townExtendedSchema = townSchema.extend({
+  departmentCode: z.string(),
   localitiesCount: z.number(),
   entriesCount: z.number(),
 });

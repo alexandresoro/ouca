@@ -1,32 +1,21 @@
-import { getTownResponse, upsertTownInput, upsertTownResponse } from "@ou-ca/common/api/town";
-import { type Town } from "@ou-ca/common/entities/town";
+import {
+  getTownResponse,
+  getTownsExtendedResponse,
+  getTownsQueryParamsSchema,
+  getTownsResponse,
+  upsertTownInput,
+  upsertTownResponse,
+} from "@ou-ca/common/api/town";
+import { type Town, type TownExtended } from "@ou-ca/common/entities/town";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
-import { type Commune } from "../repositories/commune/commune-repository-types.js";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
-
-const reshapeTownRepositoryToApi = (town: Commune): Town => {
-  // TODO Remove this later
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const { id, departementId, editable, ...restTown } = town;
-  return {
-    ...restTown,
-    id: `${id}`,
-    departmentId: `${departementId}`,
-    // TODO Remove this later
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    editable,
-  };
-};
 
 const townsController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { communeService } = services;
+  const { communeService, departementService } = services;
 
   fastify.get<{
     Params: {
@@ -38,7 +27,52 @@ const townsController: FastifyPluginCallback<{
       return await reply.status(404).send();
     }
 
-    const response = getTownResponse.parse(reshapeTownRepositoryToApi(town));
+    const response = getTownResponse.parse(town);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getTownsQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [townsData, count] = await Promise.all([
+      communeService.findPaginatedCommunes(req.user, queryParams),
+      communeService.getCommunesCount(req.user, queryParams),
+    ]);
+
+    let data: Town[] | TownExtended[] = townsData;
+    if (extended) {
+      data = await Promise.all(
+        townsData.map(async (townData) => {
+          // TODO look to optimize this request
+          const department = await departementService.findDepartementOfCommuneId(townData.id, req.user);
+          const localitiesCount = await communeService.getLieuxDitsCountByCommune(townData.id, req.user);
+          const entriesCount = await communeService.getDonneesCountByCommune(townData.id, req.user);
+          return {
+            ...townData,
+            departmentCode: department?.code,
+            localitiesCount,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getTownsExtendedResponse : getTownsResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 
@@ -53,7 +87,7 @@ const townsController: FastifyPluginCallback<{
 
     try {
       const town = await communeService.createCommune(input, req.user);
-      const response = upsertTownResponse.parse(reshapeTownRepositoryToApi(town));
+      const response = upsertTownResponse.parse(town);
 
       return await reply.send(response);
     } catch (e) {
@@ -79,7 +113,7 @@ const townsController: FastifyPluginCallback<{
 
     try {
       const town = await communeService.updateCommune(req.params.id, input, req.user);
-      const response = upsertTownResponse.parse(reshapeTownRepositoryToApi(town));
+      const response = upsertTownResponse.parse(town);
 
       return await reply.send(response);
     } catch (e) {

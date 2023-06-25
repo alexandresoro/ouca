@@ -1,9 +1,8 @@
-import { type UpsertTownInput } from "@ou-ca/common/api/town";
+import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
+import { type Town } from "@ou-ca/common/entities/town";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type QueryCommunesArgs } from "../../graphql/generated/graphql-types.js";
 import {
-  type Commune,
   type CommuneCreateInput,
   type CommuneWithDepartementCode,
 } from "../../repositories/commune/commune-repository-types.js";
@@ -24,46 +23,41 @@ type CommuneServiceDependencies = {
   donneeRepository: DonneeRepository;
 };
 
-type CommunesSearchParams = {
-  q?: string | null;
-  departmentId?: number | null;
-};
-
 export const buildCommuneService = ({
   communeRepository,
   lieuditRepository,
   donneeRepository,
 }: CommuneServiceDependencies) => {
-  const findCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Commune | null> => {
+  const findCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
     const town = await communeRepository.findCommuneById(id);
     return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
-  const getDonneesCountByCommune = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByCommune = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByCommuneId(id);
+    return donneeRepository.getCountByCommuneId(parseInt(id));
   };
 
-  const getLieuxDitsCountByCommune = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getLieuxDitsCountByCommune = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return lieuditRepository.getCountByCommuneId(id);
+    return lieuditRepository.getCountByCommuneId(parseInt(id));
   };
 
   const findCommuneOfLieuDitId = async (
     lieuditId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Commune | null> => {
+  ): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
     const town = await communeRepository.findCommuneByLieuDitId(lieuditId);
     return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
-  const findAllCommunes = async (): Promise<Commune[]> => {
+  const findAllCommunes = async (): Promise<Town[]> => {
     const communes = await communeRepository.findCommunes({
       orderBy: COLUMN_NOM,
     });
@@ -75,18 +69,15 @@ export const buildCommuneService = ({
     return [...enrichedTowns];
   };
 
-  const findPaginatedCommunes = async (
-    loggedUser: LoggedUser | null,
-    options: QueryCommunesArgs = {}
-  ): Promise<Commune[]> => {
+  const findPaginatedCommunes = async (loggedUser: LoggedUser | null, options: TownsSearchParams): Promise<Town[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, departmentId, orderBy: orderByField, sortOrder } = options;
+    const { q, departmentId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const communes = await communeRepository.findCommunes({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
-      departmentId,
+      q,
+      ...getSqlPagination(pagination),
+      departmentId: departmentId ? parseInt(departmentId) : undefined,
       orderBy: orderByField,
       sortOrder,
     });
@@ -105,14 +96,14 @@ export const buildCommuneService = ({
 
   const getCommunesCount = async (
     loggedUser: LoggedUser | null,
-    { q, departmentId }: CommunesSearchParams
+    { q, departmentId }: Pick<TownsSearchParams, "q" | "departmentId">
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return communeRepository.getCount(q, departmentId);
+    return communeRepository.getCount(q, departmentId ? parseInt(departmentId) : undefined);
   };
 
-  const createCommune = async (input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Commune> => {
+  const createCommune = async (input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Town> => {
     validateAuthorization(loggedUser);
 
     try {
@@ -130,7 +121,7 @@ export const buildCommuneService = ({
     }
   };
 
-  const updateCommune = async (id: number, input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Commune> => {
+  const updateCommune = async (id: number, input: UpsertTownInput, loggedUser: LoggedUser | null): Promise<Town> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -154,7 +145,7 @@ export const buildCommuneService = ({
     }
   };
 
-  const deleteCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Commune> => {
+  const deleteCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Town> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -173,7 +164,7 @@ export const buildCommuneService = ({
   const createCommunes = async (
     communes: Omit<CommuneCreateInput, "owner_id">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Commune[]> => {
+  ): Promise<readonly Town[]> => {
     const createdTowns = await communeRepository.createCommunes(
       communes.map((commune) => {
         return { ...commune, owner_id: loggedUser.id };

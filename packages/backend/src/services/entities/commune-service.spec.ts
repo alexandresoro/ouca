@@ -1,9 +1,9 @@
-import { type UpsertTownInput } from "@ou-ca/common/api/town";
+import { type TownsSearchParams, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { CommunesOrderBy, SortOrder, type QueryCommunesArgs } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -51,10 +51,10 @@ describe("Find city", () => {
 
     communeRepository.findCommuneById.mockResolvedValueOnce(cityData);
 
-    await communeService.findCommune(cityData.id, loggedUser);
+    await communeService.findCommune(12, loggedUser);
 
     expect(communeRepository.findCommuneById).toHaveBeenCalledTimes(1);
-    expect(communeRepository.findCommuneById).toHaveBeenLastCalledWith(cityData.id);
+    expect(communeRepository.findCommuneById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle city not found", async () => {
@@ -77,14 +77,14 @@ describe("Localities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getLieuxDitsCountByCommune(12, loggedUser);
+    await communeService.getLieuxDitsCountByCommune("12", loggedUser);
 
     expect(lieuditRepository.getCountByCommuneId).toHaveBeenCalledTimes(1);
     expect(lieuditRepository.getCountByCommuneId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.getLieuxDitsCountByCommune(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.getLieuxDitsCountByCommune("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -92,21 +92,21 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getDonneesCountByCommune(12, loggedUser);
+    await communeService.getDonneesCountByCommune("12", loggedUser);
 
     expect(donneeRepository.getCountByCommuneId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByCommuneId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.getDonneesCountByCommune(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.getDonneesCountByCommune("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Find city by locality ID", () => {
   test("should handle a found city", async () => {
     const cityData = mock<Commune>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
@@ -116,7 +116,7 @@ describe("Find city by locality ID", () => {
 
     expect(communeRepository.findCommuneByLieuDitId).toHaveBeenCalledTimes(1);
     expect(communeRepository.findCommuneByLieuDitId).toHaveBeenLastCalledWith(43);
-    expect(city?.id).toEqual(256);
+    expect(city?.id).toEqual("256");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -144,7 +144,7 @@ describe("Entities paginated find by search criteria", () => {
 
     communeRepository.findCommunes.mockResolvedValueOnce(citiesData);
 
-    await communeService.findPaginatedCommunes(loggedUser);
+    await communeService.findPaginatedCommunes(loggedUser, {});
 
     expect(communeRepository.findCommunes).toHaveBeenCalledTimes(1);
     expect(communeRepository.findCommunes).toHaveBeenLastCalledWith({});
@@ -154,14 +154,12 @@ describe("Entities paginated find by search criteria", () => {
     const citiesData = [mock<Commune>(), mock<Commune>(), mock<Commune>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryCommunesArgs = {
-      orderBy: CommunesOrderBy.Nom,
+    const searchParams: TownsSearchParams = {
+      orderBy: "nom",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     communeRepository.findCommunes.mockResolvedValueOnce([citiesData[0]]);
@@ -174,12 +172,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_NOM,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.findPaginatedCommunes(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.findPaginatedCommunes(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -196,7 +194,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await communeService.getCommunesCount(loggedUser, { q: "test", departmentId: 12 });
+    await communeService.getCommunesCount(loggedUser, { q: "test", departmentId: "12" });
 
     expect(communeRepository.getCount).toHaveBeenCalledTimes(1);
     expect(communeRepository.getCount).toHaveBeenLastCalledWith("test", 12);

@@ -2,8 +2,8 @@ import { z } from "zod";
 import { type SortOrder } from "../common.js";
 
 export const communeSchema = z.object({
-  id: z.number(),
-  departementId: z.number(),
+  id: z.string(),
+  departmentId: z.string(),
   code: z.number(),
   nom: z.string(),
   ownerId: z.string().uuid().nullable(),

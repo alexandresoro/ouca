@@ -24,7 +24,11 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
   const findCommuneById = async (id: number): Promise<Commune | null> => {
     const query = sql.type(communeSchema)`
       SELECT 
-        *
+        commune.id::text,
+        commune.code,
+        commune.nom,
+        commune.departement_id::text AS department_id,
+        commune.owner_id
       FROM
         basenaturaliste.commune
       WHERE
@@ -41,7 +45,11 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
 
     const query = sql.type(communeSchema)`
       SELECT 
-        commune.*
+        commune.id::text,
+        commune.code,
+        commune.nom,
+        commune.departement_id::text AS department_id,
+        commune.owner_id
       FROM
         basenaturaliste.commune
       LEFT JOIN basenaturaliste.lieudit ON commune.id = lieudit.commune_id
@@ -76,7 +84,11 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     const matchStartNom = q ? `^${q}` : null;
     const query = sql.type(communeSchema)`
     SELECT 
-      commune.*
+      commune.id::text,
+      commune.code,
+      commune.nom,
+      commune.departement_id::text AS department_id,
+      commune.owner_id
     FROM
       basenaturaliste.commune
     LEFT JOIN
@@ -191,7 +203,11 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
   const findAllCommunesWithDepartementCode = async (): Promise<readonly CommuneWithDepartementCode[]> => {
     const query = sql.type(communeWithDepartementCodeSchema)`
     SELECT 
-      commune.*,
+      commune.id::text,
+      commune.code,
+      commune.nom,
+      commune.departement_id::text AS department_id,
+      commune.owner_id,
       departement.code as departement_code
     FROM
       basenaturaliste.commune
@@ -207,7 +223,11 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
         basenaturaliste.commune
         ${objectToKeyValueInsert(communeInput)}
       RETURNING
-        *
+        commune.id::text,
+        commune.code,
+        commune.nom,
+        commune.departement_id::text AS department_id,
+        commune.owner_id
     `;
 
     return slonik.one(query);
@@ -219,7 +239,11 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
         basenaturaliste.commune
         ${objectsToKeyValueInsert(communeInputs)}
       RETURNING
-        *
+        commune.id::text,
+        commune.code,
+        commune.nom,
+        commune.departement_id::text AS department_id,
+        commune.owner_id
     `;
 
     return slonik.many(query);
@@ -234,7 +258,11 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       WHERE
         id = ${communeId}
       RETURNING
-        *
+        commune.id::text,
+        commune.code,
+        commune.nom,
+        commune.departement_id::text AS department_id,
+        commune.owner_id
     `;
 
     return slonik.one(query);
@@ -248,7 +276,11 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       WHERE
         id = ${communeId}
       RETURNING
-        *
+        commune.id::text,
+        commune.code,
+        commune.nom,
+        commune.departement_id::text AS department_id,
+        commune.owner_id
     `;
 
     return slonik.one(query);

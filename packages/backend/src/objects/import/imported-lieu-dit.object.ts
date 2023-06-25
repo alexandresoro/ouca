@@ -30,9 +30,9 @@ export class ImportedLieuDit {
     this.coordinatesSystem = coordinatesSystem;
   }
 
-  buildLieudit = (communeId: number): Omit<LieuditCreateInput, "owner_id"> => {
+  buildLieudit = (communeId: string): Omit<LieuditCreateInput, "owner_id"> => {
     return {
-      commune_id: communeId,
+      commune_id: parseInt(communeId),
       nom: this.nom,
       altitude: +this.altitude,
       longitude: +this.longitude,

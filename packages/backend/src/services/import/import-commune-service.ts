@@ -1,12 +1,13 @@
 import { type Department } from "@ou-ca/common/entities/department";
+import { type Town } from "@ou-ca/common/entities/town";
 import { ImportedCommune } from "../../objects/import/imported-commune.object.js";
-import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
+import { type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportCommuneService extends ImportService {
   private departements!: Department[];
-  private communes!: (Commune | ImportedCommune)[];
+  private communes!: (Town | ImportedCommune)[];
 
   private communesToInsert!: Omit<CommuneCreateInput, "owner_id">[];
 
@@ -41,7 +42,7 @@ export class ImportCommuneService extends ImportService {
     // Check that the commune does not exists
     const commune = this.communes.find((commune) => {
       return (
-        ((commune as Commune)?.departementId === parseInt(departement.id) ||
+        ((commune as Town)?.departmentId === departement.id ||
           (commune as ImportedCommune)?.departement === departement.code) &&
         (commune.code === +importedCommune.code || this.compareStrings(commune.nom, importedCommune.nom))
       );

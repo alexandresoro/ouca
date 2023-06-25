@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { upsertLocalityInput, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { getTownsResponse } from "@ou-ca/common/api/town";
 import { type Department } from "@ou-ca/common/entities/department";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
@@ -15,7 +15,6 @@ import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ALL_COMMUNES_OF_DEPARTEMENT } from "./LieuDitManageQueries";
 
 type LieuDitEditProps = {
   title: string;
@@ -70,32 +69,34 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
     }
   );
 
-  const [{ data: dataTowns, error: errorTowns, fetching: fetchingTowns }] = useQuery({
-    query: ALL_COMMUNES_OF_DEPARTEMENT,
-    variables: {
-      departmentId: selectedDepartmentId ? parseInt(selectedDepartmentId) : undefined,
-      orderBy: "code",
-      sortOrder: "asc",
+  const {
+    data: dataTowns,
+    isError: errorTowns,
+    isFetching: fetchingTowns,
+  } = useApiQuery(
+    {
+      path: "/towns",
+      queryParams: {
+        departmentId: selectedDepartmentId,
+        orderBy: "code",
+        sortOrder: "asc",
+      },
+      schema: getTownsResponse,
     },
-    pause: !selectedDepartmentId,
-  });
-
-  // Workaround as GQL return ids as number and rest returns strings
-  const reshapedTowns = dataTowns?.communes?.data?.map((town) => {
-    const { id, ...rest } = town;
-    return {
-      ...rest,
-      id: `${id}`,
-    };
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+      enabled: !!selectedDepartmentId,
+    }
+  );
 
   // When the list of towns change, reset the selection if no longer in the new list
   useEffect(() => {
     const selectedCommuneId = getValues("townId");
-    if (selectedCommuneId && !fetchingTowns && !reshapedTowns?.map(({ id }) => id).includes(selectedCommuneId)) {
+    if (selectedCommuneId && !fetchingTowns && !dataTowns?.data.map(({ id }) => id).includes(selectedCommuneId)) {
       setValue("townId", "", { shouldValidate: true });
     }
-  }, [reshapedTowns, fetchingTowns, getValues, setValue]);
+  }, [dataTowns, fetchingTowns, getValues, setValue]);
 
   const { displayNotification } = useSnackbar();
 
@@ -143,7 +144,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
                   name="townId"
                   label={t("town")}
                   control={control}
-                  data={reshapedTowns}
+                  data={dataTowns?.data}
                   renderValue={({ code, nom }) => `${code} - ${nom}`}
                 />
               </div>

@@ -53,12 +53,14 @@ export const buildDepartementService = ({
   };
 
   const findDepartementOfCommuneId = async (
-    communeId: number | undefined,
+    communeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Department | null> => {
     validateAuthorization(loggedUser);
 
-    const department = await departementRepository.findDepartementByCommuneId(communeId);
+    const department = await departementRepository.findDepartementByCommuneId(
+      communeId ? parseInt(communeId) : undefined
+    );
     return enrichEntityWithEditableStatus(department, loggedUser);
   };
 

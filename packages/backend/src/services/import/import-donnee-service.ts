@@ -7,10 +7,10 @@ import { type Department } from "@ou-ca/common/entities/department";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Sex } from "@ou-ca/common/entities/sex";
+import { type Town } from "@ou-ca/common/entities/town";
 import { type Weather } from "@ou-ca/common/entities/weather";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
-import { type Commune } from "../../repositories/commune/commune-repository-types.js";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type Espece } from "../../repositories/espece/espece-repository-types.js";
@@ -26,7 +26,7 @@ export class ImportDonneeService extends ImportService {
   private coordinatesSystem!: CoordinatesSystem;
   private observateurs!: Observer[];
   private departements!: Department[];
-  private communes!: Commune[];
+  private communes!: Town[];
   private lieuxDits!: Lieudit[];
   private especes!: Espece[];
   private ages!: Age[];
@@ -366,18 +366,18 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findCommune = (departementId: string, nomOrCodeCommune: string): Omit<Commune, "departement"> | undefined => {
+  private findCommune = (departementId: string, nomOrCodeCommune: string): Town | undefined => {
     return this.communes.find((commune) => {
       return (
-        commune.departementId === parseInt(departementId) &&
+        commune.departmentId === departementId &&
         (this.compareStrings(`${commune.code}`, nomOrCodeCommune) || this.compareStrings(commune.nom, nomOrCodeCommune))
       );
     });
   };
 
-  private findLieuDit = (communeId: number, nomLieuDit: string): Lieudit | undefined => {
+  private findLieuDit = (communeId: string, nomLieuDit: string): Lieudit | undefined => {
     return this.lieuxDits.find((lieuDit) => {
-      return lieuDit.communeId === communeId && this.compareStrings(lieuDit.nom, nomLieuDit);
+      return lieuDit.communeId === parseInt(communeId) && this.compareStrings(lieuDit.nom, nomLieuDit);
     });
   };
 

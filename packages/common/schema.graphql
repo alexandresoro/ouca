@@ -201,15 +201,6 @@ enum SortOrder {
   desc
 }
 
-enum CommunesOrderBy {
-  id
-  code
-  nom
-  departement
-  nbLieuxDits
-  nbDonnees
-}
-
 enum ComportementsOrderBy {
   id
   code
@@ -278,11 +269,6 @@ interface PaginatedResult {
   count: Int!
 }
 
-type CommunesPaginatedResult implements PaginatedResult {
-  data: [Commune!]
-  count: Int!
-}
-
 type ComportementsPaginatedResult implements PaginatedResult {
   data: [Comportement!]
   count: Int!
@@ -319,7 +305,6 @@ type PaginatedSearchDonneesResult implements PaginatedResult {
 }
 
 type Query {
-  communes(searchParams: SearchParams, departmentId: Int, orderBy: CommunesOrderBy, sortOrder: SortOrder): CommunesPaginatedResult
   comportements(
     searchParams: SearchParams
     orderBy: ComportementsOrderBy
