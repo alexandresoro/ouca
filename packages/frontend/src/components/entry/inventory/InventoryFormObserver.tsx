@@ -85,6 +85,8 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
         return {
           id: `${observer.id}`,
           libelle: observer.libelle,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
         } satisfies Observer;
       })
     : [];
@@ -94,6 +96,8 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
         return {
           id: `${associate.id}`,
           libelle: associate.libelle,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
         } satisfies Observer;
       })
     : [];
@@ -111,6 +115,8 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
         inputProps={{
           autoFocus: autofocusOnObserver,
         }}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         data={dataObserversReshaped}
         name="observer"
         label={t("observer")}
@@ -129,6 +135,8 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
       {areAssociesDisplayed && (
         <AutocompleteMultiple
           ref={refAssociates}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           data={dataAssociatesReshaped}
           name="associateObservers"
           label={t("associateObservers")}

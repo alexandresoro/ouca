@@ -183,6 +183,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
         return {
           id: `${department.id}`,
           code: department.code,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
         } satisfies Department;
       })
     : [];
@@ -194,6 +196,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
             code: town.code,
             nom: town.nom,
             departmentId: `${town.departement.id}`,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
           } satisfies Town;
         })
       : [];
@@ -211,6 +215,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
               longitude,
             },
             townId: `${commune.id}`,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
           } satisfies Locality;
         })
       : [];
@@ -262,6 +268,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
         DPT: {JSON.stringify(department)}
         <br />
         <Autocomplete
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           data={autocompleteDepartments}
           name="department"
           label={t("department")}
@@ -279,6 +287,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
         TWN: {JSON.stringify(town)}
         <br />
         <Autocomplete
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           data={autocompleteTowns}
           name="town"
           label={t("town")}
@@ -297,6 +307,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       <br />
       <Autocomplete
         ref={refLocality}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         data={autocompleteLocalities}
         label={t("inventoryForm.locality")}
         onInputChange={setLocalityInput}

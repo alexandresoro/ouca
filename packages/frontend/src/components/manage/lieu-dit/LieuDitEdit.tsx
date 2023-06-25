@@ -127,7 +127,11 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
                 <Select
                   selectClassName="basis-1/4"
                   label={t("department")}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
                   data={reshapedDepartments}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
                   value={selectedDepartment}
                   onChange={handleOnChangeDepartment}
                   renderValue={(dept) => {

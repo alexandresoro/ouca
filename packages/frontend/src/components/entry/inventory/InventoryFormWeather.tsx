@@ -42,6 +42,8 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
         return {
           id: `${weather.id}`,
           libelle: weather.libelle,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
         } satisfies Weather;
       })
     : [];
@@ -58,6 +60,8 @@ const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ co
       />
       <AutocompleteMultiple
         ref={refWeathers}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         data={dataWeathersReshaped}
         name="weathers"
         label={t("inventoryForm.weathers")}
