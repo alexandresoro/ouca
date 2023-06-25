@@ -1,10 +1,8 @@
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
 import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import { type Department } from "@ou-ca/common/entities/department";
+import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Logger } from "pino";
-import { type Departement } from "../repositories/departement/departement-repository-types.js";
-import { type DepartementRepository } from "../repositories/departement/departement-repository.js";
-import { type Observateur } from "../repositories/observateur/observateur-repository-types.js";
-import { type ObservateurRepository } from "../repositories/observateur/observateur-repository.js";
 import {
   type Settings as SettingsRepositoryType,
   type UpdateSettingsInput,
@@ -12,24 +10,26 @@ import {
 import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
 import { type LoggedUser } from "../types/User.js";
 import { validateAuthorization } from "./entities/authorization-utils.js";
+import { type DepartementService } from "./entities/departement-service.js";
+import { type ObservateurService } from "./entities/observateur-service.js";
 
 type SettingsServiceDependencies = {
   logger: Logger;
   settingsRepository: SettingsRepository;
-  departementRepository: DepartementRepository;
-  observateurRepository: ObservateurRepository;
+  departementService: DepartementService;
+  observateurService: ObservateurService;
 };
 
 type Settings = Omit<SettingsRepositoryType, "defaultDepartementId" | "defaultObservateurId"> & {
-  defaultDepartment: Departement | null;
-  defaultObserver: Observateur | null;
+  defaultDepartment: Department | null;
+  defaultObserver: Observer | null;
 };
 
 export const buildSettingsService = ({
   logger,
   settingsRepository,
-  departementRepository,
-  observateurRepository,
+  departementService,
+  observateurService,
 }: SettingsServiceDependencies) => {
   const getSettings = async (loggedUser: LoggedUser | null): Promise<Settings | null> => {
     validateAuthorization(loggedUser);
@@ -43,10 +43,10 @@ export const buildSettingsService = ({
 
     const [defaultDepartment, defaultObserver] = await Promise.all([
       defaultDepartementId != null
-        ? departementRepository.findDepartementById(defaultDepartementId)
+        ? departementService.findDepartement(defaultDepartementId, loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
-        ? observateurRepository.findObservateurById(defaultObservateurId)
+        ? observateurService.findObservateur(defaultObservateurId, loggedUser)
         : Promise.resolve(null),
     ]);
 
@@ -83,10 +83,10 @@ export const buildSettingsService = ({
 
     const [defaultDepartment, defaultObserver] = await Promise.all([
       defaultDepartementId != null
-        ? departementRepository.findDepartementById(defaultDepartementId)
+        ? departementService.findDepartement(defaultDepartementId, loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
-        ? observateurRepository.findObservateurById(defaultObservateurId)
+        ? observateurService.findObservateur(defaultObservateurId, loggedUser)
         : Promise.resolve(null),
     ]);
 
