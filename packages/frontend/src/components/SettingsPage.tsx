@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getAgesResponse } from "@ou-ca/common/api/age";
+import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
 import {
   getSettingsResponse,
@@ -27,12 +28,6 @@ import StyledPanelHeader from "./layout/StyledPanelHeader";
 
 const SETTINGS_QUERY = graphql(`
   query GetUserSettingsPage {
-    departements {
-      data {
-        id
-        code
-      }
-    }
     estimationsNombre {
       data {
         id
@@ -87,6 +82,15 @@ const SettingsPage: FunctionComponent = () => {
   });
 
   const {
+    data: departments,
+    isError: isErrorDepartments,
+    isFetching: isFetchingDepartments,
+  } = useApiQuery({
+    path: "/departments",
+    schema: getDepartmentsResponse,
+  });
+
+  const {
     data: observers,
     isError: isErrorObservers,
     isFetching: isFetchingObservers,
@@ -104,8 +108,9 @@ const SettingsPage: FunctionComponent = () => {
     schema: getSexesResponse,
   });
 
-  const fetching = isFetching || isFetchingAges || isErrorObservers || isFetchingSexes || fetchingGql;
-  const error = isError || isErrorAges || isErrorObservers || isErrorSexes || errorGql;
+  const fetching =
+    isFetching || isFetchingAges || isFetchingDepartments || isFetchingObservers || isFetchingSexes || fetchingGql;
+  const error = isError || isErrorAges || isErrorDepartments || isErrorObservers || isErrorSexes || errorGql;
 
   const { mutate } = useApiMutation(
     {
@@ -230,7 +235,7 @@ const SettingsPage: FunctionComponent = () => {
                   name="defaultDepartment"
                   label={t("defaultDepartment")}
                   control={control}
-                  data={data?.departements?.data}
+                  data={departments?.data}
                   renderValue={({ code }) => code}
                 />
 

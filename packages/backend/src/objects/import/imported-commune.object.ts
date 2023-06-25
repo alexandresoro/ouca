@@ -19,9 +19,9 @@ export class ImportedCommune {
     this.nom = communeTab[NOM_INDEX].trim();
   }
 
-  buildCommune = (departementId: number): Omit<CommuneCreateInput, "owner_id"> => {
+  buildCommune = (departementId: string): Omit<CommuneCreateInput, "owner_id"> => {
     return {
-      departement_id: departementId,
+      departement_id: parseInt(departementId),
       code: +this.code,
       nom: this.nom,
     };

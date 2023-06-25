@@ -1,9 +1,11 @@
+import { getDepartmentsExtendedResponse } from "@ou-ca/common/api/department";
+import { type DepartmentExtended } from "@ou-ca/common/entities/department";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type Departement, type DepartementsOrderBy } from "../../../gql/graphql";
+import { type DepartementsOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +13,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_DEPARTEMENTS_QUERY } from "./DepartementManageQueries";
 
 const COLUMNS = [
   {
@@ -39,26 +40,32 @@ const DepartementTable: FunctionComponent = () => {
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginatedTableParams<DepartementsOrderBy>();
 
-  const [dialogDepartement, setDialogDepartement] = useState<Departement | null>(null);
+  const [dialogDepartement, setDialogDepartement] = useState<DepartmentExtended | null>(null);
 
-  const [{ data }, reexecuteDepartements] = useQuery({
-    query: PAGINATED_DEPARTEMENTS_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/departments",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getDepartmentsExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteDepartements();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -77,19 +84,19 @@ const DepartementTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditDepartement = (id: number | undefined) => {
+  const handleEditDepartement = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteDepartement = (departement: Departement | null) => {
+  const handleDeleteDepartement = (departement: DepartmentExtended | null) => {
     if (departement) {
       setDialogDepartement(departement);
     }
   };
 
-  const handleDeleteDepartementConfirmation = (departement: Departement | null) => {
+  const handleDeleteDepartementConfirmation = (departement: DepartmentExtended | null) => {
     if (departement) {
       setDialogDepartement(null);
       mutate({ path: `/departments/${departement.id}` });
@@ -113,7 +120,7 @@ const DepartementTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.departements?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -134,13 +141,13 @@ const DepartementTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.departements?.data?.map((departement) => {
+        tableRows={data?.data.map((departement) => {
           return (
             <tr className="hover:bg-base-200" key={departement?.id}>
-              <td>{departement?.code}</td>
-              <td>{departement?.nbCommunes}</td>
-              <td>{departement?.nbLieuxDits}</td>
-              <td>{departement?.nbDonnees}</td>
+              <td>{departement.code}</td>
+              <td>{departement.townsCount}</td>
+              <td>{departement.localitiesCount}</td>
+              <td>{departement.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!departement.editable}
@@ -153,7 +160,7 @@ const DepartementTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.departements?.count ?? 0}
+        count={data?.meta.count ?? 0}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog
@@ -162,9 +169,9 @@ const DepartementTable: FunctionComponent = () => {
           code: dialogDepartement?.code,
         })}
         impactedItemsMessage={t("deleteDepartmentDialogMsgImpactedData", {
-          nbOfObservations: dialogDepartement?.nbDonnees ?? 0,
-          nbOfCities: dialogDepartement?.nbCommunes ?? 0,
-          nbOfLocalities: dialogDepartement?.nbLieuxDits ?? 0,
+          nbOfObservations: dialogDepartement?.entriesCount ?? 0,
+          nbOfCities: dialogDepartement?.townsCount ?? 0,
+          nbOfLocalities: dialogDepartement?.localitiesCount ?? 0,
         })}
         onCancelAction={() => setDialogDepartement(null)}
         onConfirmAction={() => handleDeleteDepartementConfirmation(dialogDepartement)}

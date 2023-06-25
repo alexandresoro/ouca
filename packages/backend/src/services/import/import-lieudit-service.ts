@@ -3,15 +3,15 @@ import {
   type CoordinatesSystem,
   type CoordinatesSystemType,
 } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import { type Department } from "@ou-ca/common/entities/department";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object.js";
 import { type Commune } from "../../repositories/commune/commune-repository-types.js";
-import { type Departement } from "../../repositories/departement/departement-repository-types.js";
 import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportLieuxditService extends ImportService {
-  private departements!: Departement[];
+  private departements!: Department[];
   private communes!: Commune[];
   private lieuxDits!: (Lieudit | ImportedLieuDit)[];
 
@@ -61,7 +61,7 @@ export class ImportLieuxditService extends ImportService {
     // Check that the commune exists
     const commune = this.communes.find((commune) => {
       return (
-        commune.departementId === departement.id &&
+        commune.departementId === parseInt(departement.id) &&
         (this.compareStrings(`${commune.code}`, importedLieuDit.commune) ||
           this.compareStrings(commune.nom, importedLieuDit.commune))
       );

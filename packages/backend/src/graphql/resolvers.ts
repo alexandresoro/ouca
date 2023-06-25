@@ -9,7 +9,6 @@ import {
   type Comportement,
   type ComportementsPaginatedResult,
   type Departement,
-  type DepartementsPaginatedResult,
   type Espece,
   type EstimationDistance,
   type EstimationNombre,
@@ -62,16 +61,6 @@ export const buildResolvers = ({
         const [data, count] = await Promise.all([
           comportementService.findPaginatedComportements(user, args),
           comportementService.getComportementsCount(user, args?.searchParams?.q),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
-      departements: async (_, args, { user }): Promise<DepartementsPaginatedResult> => {
-        const [data, count] = await Promise.all([
-          departementService.findPaginatedDepartements(user, args),
-          departementService.getDepartementsCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -136,28 +125,19 @@ export const buildResolvers = ({
       },
       nbDonnees: entityNbDonneesResolver(communeService.getDonneesCountByCommune),
       departement: async (parent, args, { user }): Promise<Departement | null> => {
-        return departementService.findDepartementOfCommuneId(parent?.id, user);
+        const department = await departementService.findDepartementOfCommuneId(parent?.id, user);
+        if (!department) {
+          return null;
+        }
+        return {
+          ...department,
+          id: parseInt(department.id),
+        };
       },
     },
     Comportement: {
       editable: isEntityEditableResolver(comportementService.findComportement),
       nbDonnees: entityNbDonneesResolver(comportementService.getDonneesCountByComportement),
-    },
-    Departement: {
-      editable: isEntityEditableResolver(departementService.findDepartement),
-      nbCommunes: async (parent, args, { user }): Promise<number | null> => {
-        if (!parent?.id) {
-          return null;
-        }
-        return departementService.getCommunesCountByDepartement(parent.id, user);
-      },
-      nbLieuxDits: async (parent, args, { user }): Promise<number | null> => {
-        if (!parent?.id) {
-          return null;
-        }
-        return departementService.getLieuxDitsCountByDepartement(parent.id, user);
-      },
-      nbDonnees: entityNbDonneesResolver(departementService.getDonneesCountByDepartement),
     },
     Donnee: {
       age: async (parent, args, { user }): Promise<Age | null> => {

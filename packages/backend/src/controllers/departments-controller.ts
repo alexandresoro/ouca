@@ -1,4 +1,12 @@
-import { getDepartmentResponse, upsertDepartmentInput, upsertDepartmentResponse } from "@ou-ca/common/api/department";
+import {
+  getDepartmentResponse,
+  getDepartmentsExtendedResponse,
+  getDepartmentsQueryParamsSchema,
+  getDepartmentsResponse,
+  upsertDepartmentInput,
+  upsertDepartmentResponse,
+} from "@ou-ca/common/api/department";
+import { type Department, type DepartmentExtended } from "@ou-ca/common/entities/department";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -20,6 +28,50 @@ const departmentsController: FastifyPluginCallback<{
     }
 
     const response = getDepartmentResponse.parse(department);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getDepartmentsQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [departmentsData, count] = await Promise.all([
+      departementService.findPaginatedDepartements(req.user, queryParams),
+      departementService.getDepartementsCount(req.user, queryParams.q),
+    ]);
+
+    let data: Department[] | DepartmentExtended[] = departmentsData;
+    if (extended) {
+      data = await Promise.all(
+        departmentsData.map(async (departmentData) => {
+          const localitiesCount = await departementService.getLieuxDitsCountByDepartement(departmentData.id, req.user);
+          const townsCount = await departementService.getCommunesCountByDepartement(departmentData.id, req.user);
+          const entriesCount = await departementService.getDonneesCountByDepartement(departmentData.id, req.user);
+          return {
+            ...departmentData,
+            localitiesCount,
+            townsCount,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getDepartmentsExtendedResponse : getDepartmentsResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 

@@ -1,16 +1,5 @@
 import { graphql } from "../../../gql";
 
-export const AUTOCOMPLETE_DEPARTMENTS_QUERY = graphql(`
-  query ListDepartmentsAutocomplete($searchParams: SearchParams, $orderBy: DepartementsOrderBy, $sortOrder: SortOrder) {
-    departements(searchParams: $searchParams, orderBy: $orderBy, sortOrder: $sortOrder) {
-      data {
-        id
-        code
-      }
-    }
-  }
-`);
-
 export const AUTOCOMPLETE_TOWNS_QUERY = graphql(`
   query ListTownsAutocomplete($searchParams: SearchParams, $departmentId: Int, $orderBy: CommunesOrderBy, $sortOrder: SortOrder) {
     communes(searchParams: $searchParams, departmentId: $departmentId, orderBy: $orderBy, sortOrder: $sortOrder) {

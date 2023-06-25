@@ -1,17 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { upsertTownInput, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ALL_DEPARTMENTS } from "./CommuneManageQueries";
 
 type CommuneEditProps = {
   title: string;
@@ -39,22 +39,24 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
     resolver: zodResolver(upsertTownInput),
   });
 
-  const [{ data: dataDepartements, error: errorDepartements, fetching: fetchingDepartements }] = useQuery({
-    query: ALL_DEPARTMENTS,
-    variables: {
-      orderBy: "code",
-      sortOrder: "asc",
+  const {
+    data: departments,
+    isError: errorDepartements,
+    isFetching: fetchingDepartements,
+  } = useApiQuery(
+    {
+      path: "/departments",
+      queryParams: {
+        orderBy: "code",
+        sortOrder: "asc",
+      },
+      schema: getDepartmentsResponse,
     },
-  });
-
-  // Workaround as GQL return ids as number and rest returns strings
-  const reshapedDepartments = dataDepartements?.departements?.data?.map((department) => {
-    const { id, ...rest } = department;
-    return {
-      ...rest,
-      id: `${id}`,
-    };
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { displayNotification } = useSnackbar();
 
@@ -80,7 +82,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
                 name="departmentId"
                 label={t("department")}
                 control={control}
-                data={reshapedDepartments}
+                data={departments?.data}
                 renderValue={({ code }) => code}
               />
 

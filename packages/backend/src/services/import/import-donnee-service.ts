@@ -3,6 +3,7 @@ import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coord
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Age } from "@ou-ca/common/entities/age";
+import { type Department } from "@ou-ca/common/entities/department";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Sex } from "@ou-ca/common/entities/sex";
@@ -11,7 +12,6 @@ import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import { type Commune } from "../../repositories/commune/commune-repository-types.js";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types.js";
-import { type Departement } from "../../repositories/departement/departement-repository-types.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type Espece } from "../../repositories/espece/espece-repository-types.js";
 import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
@@ -25,7 +25,7 @@ import { ImportService } from "./import-service.js";
 export class ImportDonneeService extends ImportService {
   private coordinatesSystem!: CoordinatesSystem;
   private observateurs!: Observer[];
-  private departements!: Departement[];
+  private departements!: Department[];
   private communes!: Commune[];
   private lieuxDits!: Lieudit[];
   private especes!: Espece[];
@@ -360,16 +360,16 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findDepartement = (codeDepartement: string): Departement | undefined => {
+  private findDepartement = (codeDepartement: string): Department | undefined => {
     return this.departements.find((departement) => {
       return this.compareStrings(departement.code, codeDepartement);
     });
   };
 
-  private findCommune = (departementId: number, nomOrCodeCommune: string): Omit<Commune, "departement"> | undefined => {
+  private findCommune = (departementId: string, nomOrCodeCommune: string): Omit<Commune, "departement"> | undefined => {
     return this.communes.find((commune) => {
       return (
-        commune.departementId === departementId &&
+        commune.departementId === parseInt(departementId) &&
         (this.compareStrings(`${commune.code}`, nomOrCodeCommune) || this.compareStrings(commune.nom, nomOrCodeCommune))
       );
     });

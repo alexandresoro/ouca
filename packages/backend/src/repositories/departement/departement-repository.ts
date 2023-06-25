@@ -22,7 +22,9 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
   const findDepartementById = async (id: number): Promise<Departement | null> => {
     const query = sql.type(departementSchema)`
       SELECT 
-        *
+        departement.id::text,
+        departement.code,
+        departement.owner_id
       FROM
         basenaturaliste.departement
       WHERE
@@ -39,7 +41,9 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
 
     const query = sql.type(departementSchema)`
       SELECT 
-        departement.*
+        departement.id::text,
+        departement.code,
+        departement.owner_id
       FROM
         basenaturaliste.departement
       LEFT JOIN basenaturaliste.commune ON departement.id = commune.departement_id
@@ -68,7 +72,9 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     const matchStartCode = q ? `^${q}` : null;
     const query = sql.type(departementSchema)`
     SELECT 
-      departement.*
+      departement.id::text,
+      departement.code,
+      departement.owner_id
     FROM
       basenaturaliste.departement
     ${
@@ -150,7 +156,9 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
         basenaturaliste.departement
         ${objectToKeyValueInsert(departementInput)}
       RETURNING
-        *
+        departement.id::text,
+        departement.code,
+        departement.owner_id
     `;
 
     return slonik.one(query);
@@ -162,7 +170,9 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
         basenaturaliste.departement
         ${objectsToKeyValueInsert(departementInputs)}
       RETURNING
-        *
+        departement.id::text,
+        departement.code,
+        departement.owner_id
     `;
 
     return slonik.many(query);
@@ -180,7 +190,9 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
       WHERE
         id = ${departementId}
       RETURNING
-        *
+        departement.id::text,
+        departement.code,
+        departement.owner_id
     `;
 
     return slonik.one(query);
@@ -194,7 +206,9 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
       WHERE
         id = ${departementId}
       RETURNING
-        *
+        departement.id::text,
+        departement.code,
+        departement.owner_id
     `;
 
     return slonik.one(query);

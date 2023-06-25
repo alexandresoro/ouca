@@ -1,8 +1,8 @@
-import { type UpsertDepartmentInput } from "@ou-ca/common/api/department";
+import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { DepartementsOrderBy, SortOrder, type QueryDepartementsArgs } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import {
   type Departement,
@@ -46,10 +46,10 @@ describe("Find department", () => {
 
     departementRepository.findDepartementById.mockResolvedValueOnce(departmentData);
 
-    await departementService.findDepartement(departmentData.id, loggedUser);
+    await departementService.findDepartement(12, loggedUser);
 
     expect(departementRepository.findDepartementById).toHaveBeenCalledTimes(1);
-    expect(departementRepository.findDepartementById).toHaveBeenLastCalledWith(departmentData.id);
+    expect(departementRepository.findDepartementById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle department not found", async () => {
@@ -72,14 +72,16 @@ describe("Cities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await departementService.getCommunesCountByDepartement(12, loggedUser);
+    await departementService.getCommunesCountByDepartement("12", loggedUser);
 
     expect(communeRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
     expect(communeRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.getCommunesCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.getCommunesCountByDepartement("12", null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
@@ -87,14 +89,14 @@ describe("Localities count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await departementService.getLieuxDitsCountByDepartement(12, loggedUser);
+    await departementService.getLieuxDitsCountByDepartement("12", loggedUser);
 
     expect(lieuditRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
     expect(lieuditRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.getLieuxDitsCountByDepartement(12, null)).rejects.toEqual(
+    await expect(departementService.getLieuxDitsCountByDepartement("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
   });
@@ -104,21 +106,23 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await departementService.getDonneesCountByDepartement(12, loggedUser);
+    await departementService.getDonneesCountByDepartement("12", loggedUser);
 
     expect(donneeRepository.getCountByDepartementId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByDepartementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.getDonneesCountByDepartement(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.getDonneesCountByDepartement("12", null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 
 describe("Find department by city ID", () => {
   test("should handle a found department", async () => {
     const departmentData = mock<Departement>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
@@ -128,7 +132,7 @@ describe("Find department by city ID", () => {
 
     expect(departementRepository.findDepartementByCommuneId).toHaveBeenCalledTimes(1);
     expect(departementRepository.findDepartementByCommuneId).toHaveBeenLastCalledWith(43);
-    expect(department?.id).toEqual(256);
+    expect(department?.id).toEqual("256");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -156,7 +160,7 @@ describe("Entities paginated find by search criteria", () => {
 
     departementRepository.findDepartements.mockResolvedValueOnce(departementsData);
 
-    await departementService.findPaginatedDepartements(loggedUser);
+    await departementService.findPaginatedDepartements(loggedUser, {});
 
     expect(departementRepository.findDepartements).toHaveBeenCalledTimes(1);
     expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({});
@@ -166,14 +170,12 @@ describe("Entities paginated find by search criteria", () => {
     const departementsData = [mock<Departement>(), mock<Departement>(), mock<Departement>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryDepartementsArgs = {
-      orderBy: DepartementsOrderBy.Code,
+    const searchParams: DepartmentsSearchParams = {
+      orderBy: "code",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     departementRepository.findDepartements.mockResolvedValueOnce([departementsData[0]]);
@@ -186,12 +188,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_CODE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.findPaginatedDepartements(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.findPaginatedDepartements(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

@@ -1,4 +1,4 @@
-import { getDepartmentResponse } from "@ou-ca/common/api/department";
+import { getDepartmentResponse, getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { getTownResponse } from "@ou-ca/common/api/town";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type Locality } from "@ou-ca/common/entities/locality";
@@ -20,11 +20,7 @@ import {
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import TextInput from "../../common/styled/TextInput";
 import Autocomplete from "../../common/styled/select/Autocomplete";
-import {
-  AUTOCOMPLETE_DEPARTMENTS_QUERY,
-  AUTOCOMPLETE_LOCALITIES_QUERY,
-  AUTOCOMPLETE_TOWNS_QUERY,
-} from "./InventoryFormQueries";
+import { AUTOCOMPLETE_LOCALITIES_QUERY, AUTOCOMPLETE_TOWNS_QUERY } from "./InventoryFormQueries";
 import { type InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormLocationProps = Pick<UseFormReturn<InventoryFormState>, "register" | "control"> & {
@@ -142,15 +138,20 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
     control,
   });
 
-  const [{ data: dataDepartments }] = useQueryGql({
-    query: AUTOCOMPLETE_DEPARTMENTS_QUERY,
-    variables: {
-      searchParams: {
+  const { data: dataDepartments } = useApiQuery(
+    {
+      path: "/departments",
+      queryParams: {
         q: departmentsInput,
         pageSize: 5,
       },
+      schema: getDepartmentsResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const [{ data: dataTowns }] = useQueryGql({
     query: AUTOCOMPLETE_TOWNS_QUERY,
@@ -178,16 +179,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
 
   // Reshape GraphQL entities to map REST ones
   // TODO cleanup one migration is complete
-  const autocompleteDepartments = dataDepartments?.departements?.data
-    ? dataDepartments?.departements?.data.map((department) => {
-        return {
-          id: `${department.id}`,
-          code: department.code,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-        } satisfies Department;
-      })
-    : [];
   const autocompleteTowns =
     department?.id != null && dataTowns?.communes?.data
       ? dataTowns.communes.data.map((town) => {
@@ -268,9 +259,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
         DPT: {JSON.stringify(department)}
         <br />
         <Autocomplete
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          data={autocompleteDepartments}
+          data={dataDepartments?.data}
           name="department"
           label={t("department")}
           onInputChange={setDepartmentsInput}

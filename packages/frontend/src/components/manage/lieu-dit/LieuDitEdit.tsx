@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getDepartmentsResponse } from "@ou-ca/common/api/department";
 import { upsertLocalityInput, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type Department } from "@ou-ca/common/entities/department";
 import { useEffect, useState, type FunctionComponent } from "react";
@@ -6,6 +7,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
 import Select from "../../common/styled/select/Select";
@@ -13,7 +15,6 @@ import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
-import { ALL_DEPARTMENTS } from "../commune/CommuneManageQueries";
 import { ALL_COMMUNES_OF_DEPARTEMENT } from "./LieuDitManageQueries";
 
 type LieuDitEditProps = {
@@ -50,22 +51,24 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
 
   const [selectedDepartmentId, setSelectedDepartmentId] = useState(defaultDepartmentId);
 
-  const [{ data: dataDepartements, error: errorDepartements, fetching: fetchingDepartements }] = useQuery({
-    query: ALL_DEPARTMENTS,
-    variables: {
-      orderBy: "code",
-      sortOrder: "asc",
+  const {
+    data: departments,
+    isError: errorDepartements,
+    isFetching: fetchingDepartements,
+  } = useApiQuery(
+    {
+      path: "/departments",
+      queryParams: {
+        orderBy: "code",
+        sortOrder: "asc",
+      },
+      schema: getDepartmentsResponse,
     },
-  });
-
-  // Workaround as GQL return ids as number and rest returns strings
-  const reshapedDepartments = dataDepartements?.departements?.data?.map((department) => {
-    const { id, ...rest } = department;
-    return {
-      ...rest,
-      id: `${id}`,
-    };
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const [{ data: dataTowns, error: errorTowns, fetching: fetchingTowns }] = useQuery({
     query: ALL_COMMUNES_OF_DEPARTEMENT,
@@ -110,7 +113,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
   };
 
   const selectedDepartment =
-    reshapedDepartments?.find((department) => {
+    departments?.data?.find((department) => {
       return department.id === selectedDepartmentId;
     }) ?? null;
 
@@ -127,11 +130,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
                 <Select
                   selectClassName="basis-1/4"
                   label={t("department")}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  data={reshapedDepartments}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
+                  data={departments?.data}
                   value={selectedDepartment}
                   onChange={handleOnChangeDepartment}
                   renderValue={(dept) => {

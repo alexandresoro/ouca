@@ -218,14 +218,6 @@ enum ComportementsOrderBy {
   nicheur
 }
 
-enum DepartementsOrderBy {
-  id
-  code
-  nbCommunes
-  nbLieuxDits
-  nbDonnees
-}
-
 enum EstimationNombreOrderBy {
   id
   libelle
@@ -296,11 +288,6 @@ type ComportementsPaginatedResult implements PaginatedResult {
   count: Int!
 }
 
-type DepartementsPaginatedResult implements PaginatedResult {
-  data: [Departement!]
-  count: Int!
-}
-
 type EspecesPaginatedResult implements PaginatedResult {
   data: [Espece!]
   count: Int!
@@ -338,11 +325,6 @@ type Query {
     orderBy: ComportementsOrderBy
     sortOrder: SortOrder
   ): ComportementsPaginatedResult
-  departements(
-    searchParams: SearchParams
-    orderBy: DepartementsOrderBy
-    sortOrder: SortOrder
-  ): DepartementsPaginatedResult
   especes(
     searchParams: SearchParams
     searchCriteria: SearchDonneeCriteria
