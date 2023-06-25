@@ -49,25 +49,16 @@ type Comportement {
 type Departement {
   id: Int!
   code: String!
-  editable: Boolean
-  nbCommunes: Int
-  nbLieuxDits: Int
-  nbDonnees: Int
 }
 
 type Observateur {
   id: Int!
   libelle: String!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type Classe {
   id: Int!
   libelle: String!
-  editable: Boolean
-  nbEspeces: Int
-  nbDonnees: Int
 }
 
 type Commune {
@@ -75,9 +66,6 @@ type Commune {
   code: Int!
   nom: String!
   departement: Departement!
-  editable: Boolean
-  nbLieuxDits: Int
-  nbDonnees: Int
 }
 
 type Espece {
@@ -93,8 +81,6 @@ type Espece {
 type EstimationDistance {
   id: Int!
   libelle: String!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type EstimationNombre {
@@ -108,8 +94,6 @@ type EstimationNombre {
 type Meteo {
   id: Int!
   libelle: String!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type LieuDit {
@@ -135,15 +119,11 @@ type Milieu {
 type Sexe {
   id: Int!
   libelle: String!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type Age {
   id: Int!
   libelle: String!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type Coordinates {
