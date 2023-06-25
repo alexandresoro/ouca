@@ -196,11 +196,6 @@ input SearchDonneeParams {
   pageSize: Int
 }
 
-input FindParams {
-  q: String
-  max: Int
-}
-
 enum SortOrder {
   asc
   desc
