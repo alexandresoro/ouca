@@ -394,6 +394,8 @@ test("Create multiple departments", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
+  departementRepository.createDepartements.mockResolvedValueOnce([]);
+
   await departementService.createDepartements(departmentsData, loggedUser);
 
   expect(departementRepository.createDepartements).toHaveBeenCalledTimes(1);

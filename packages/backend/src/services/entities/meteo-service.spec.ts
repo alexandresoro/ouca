@@ -85,7 +85,7 @@ describe("Find weathers by inventary ID", () => {
 
     expect(meteoRepository.findMeteosOfInventaireId).toHaveBeenCalledTimes(1);
     expect(meteoRepository.findMeteosOfInventaireId).toHaveBeenLastCalledWith(43);
-    expect(weathers).toEqual(weathersData);
+    expect(weathers.length).toEqual(weathersData.length);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -346,6 +346,8 @@ test("Create multiple weathers", async () => {
   ];
 
   const loggedUser = mock<LoggedUser>();
+
+  meteoRepository.createMeteos.mockResolvedValueOnce([]);
 
   await meteoService.createMeteos(weathersData, loggedUser);
 

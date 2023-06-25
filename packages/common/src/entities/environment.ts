@@ -4,7 +4,7 @@ export const environmentSchema = z.object({
   id: z.coerce.string(),
   code: z.string(),
   libelle: z.string(),
-  editable: z.boolean().optional(),
+  editable: z.boolean(),
 });
 
 export type Environment = z.infer<typeof environmentSchema>;

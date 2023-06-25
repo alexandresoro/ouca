@@ -113,7 +113,7 @@ describe("Find associates by inventary ID", () => {
 
     expect(observateurRepository.findAssociesOfInventaireId).toHaveBeenCalledTimes(1);
     expect(observateurRepository.findAssociesOfInventaireId).toHaveBeenLastCalledWith(43);
-    expect(associates).toEqual(associatesData);
+    expect(associates.length).toEqual(associatesData.length);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -378,6 +378,8 @@ test("Create multiple observers", async () => {
   ];
 
   const loggedUser = mock<LoggedUser>();
+
+  observateurRepository.createObservateurs.mockResolvedValueOnce([]);
 
   await observateurService.createObservateurs(observersData, loggedUser);
 

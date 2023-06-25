@@ -401,6 +401,8 @@ test("Create multiple estimationsNombre", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
+  estimationNombreRepository.createEstimationsNombre.mockResolvedValueOnce([]);
+
   await estimationNombreService.createEstimationsNombre(estimationsNombreData, loggedUser);
 
   expect(estimationNombreRepository.createEstimationsNombre).toHaveBeenCalledTimes(1);

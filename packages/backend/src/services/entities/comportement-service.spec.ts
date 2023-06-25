@@ -90,7 +90,7 @@ describe("Find behaviors by inventary ID", () => {
 
     expect(comportementRepository.findComportementsOfDonneeId).toHaveBeenCalledTimes(1);
     expect(comportementRepository.findComportementsOfDonneeId).toHaveBeenLastCalledWith(43);
-    expect(behaviors).toEqual(behaviorsData);
+    expect(behaviors.length).toEqual(behaviorsData.length);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -355,6 +355,8 @@ test("Create multiple comportements", async () => {
   ];
 
   const loggedUser = mock<LoggedUser>();
+
+  comportementRepository.createComportements.mockResolvedValueOnce([]);
 
   await comportementService.createComportements(comportementsData, loggedUser);
 

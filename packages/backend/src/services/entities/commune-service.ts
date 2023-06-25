@@ -15,7 +15,7 @@ import { COLUMN_NOM } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { reshapeInputCommuneUpsertData } from "./commune-service-reshape.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type CommuneServiceDependencies = {
   logger: Logger;
@@ -37,7 +37,8 @@ export const buildCommuneService = ({
   const findCommune = async (id: number, loggedUser: LoggedUser | null): Promise<Commune | null> => {
     validateAuthorization(loggedUser);
 
-    return communeRepository.findCommuneById(id);
+    const town = await communeRepository.findCommuneById(id);
+    return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
   const getDonneesCountByCommune = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -58,7 +59,8 @@ export const buildCommuneService = ({
   ): Promise<Commune | null> => {
     validateAuthorization(loggedUser);
 
-    return communeRepository.findCommuneByLieuDitId(lieuditId);
+    const town = await communeRepository.findCommuneByLieuDitId(lieuditId);
+    return enrichEntityWithEditableStatus(town, loggedUser);
   };
 
   const findAllCommunes = async (): Promise<Commune[]> => {
@@ -66,7 +68,11 @@ export const buildCommuneService = ({
       orderBy: COLUMN_NOM,
     });
 
-    return [...communes];
+    const enrichedTowns = communes.map((town) => {
+      return enrichEntityWithEditableStatus(town, null);
+    });
+
+    return [...enrichedTowns];
   };
 
   const findPaginatedCommunes = async (
@@ -85,7 +91,11 @@ export const buildCommuneService = ({
       sortOrder,
     });
 
-    return [...communes];
+    const enrichedTowns = communes.map((town) => {
+      return enrichEntityWithEditableStatus(town, loggedUser);
+    });
+
+    return [...enrichedTowns];
   };
 
   const findAllCommunesWithDepartements = async (): Promise<CommuneWithDepartementCode[]> => {
@@ -106,12 +116,12 @@ export const buildCommuneService = ({
     validateAuthorization(loggedUser);
 
     try {
-      const upsertedCommune = await communeRepository.createCommune({
+      const createdCommune = await communeRepository.createCommune({
         ...reshapeInputCommuneUpsertData(input),
         owner_id: loggedUser.id,
       });
 
-      return upsertedCommune;
+      return enrichEntityWithEditableStatus(createdCommune, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -133,9 +143,9 @@ export const buildCommuneService = ({
     }
 
     try {
-      const upsertedCommune = await communeRepository.updateCommune(id, reshapeInputCommuneUpsertData(input));
+      const updatedCommune = await communeRepository.updateCommune(id, reshapeInputCommuneUpsertData(input));
 
-      return upsertedCommune;
+      return enrichEntityWithEditableStatus(updatedCommune, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -156,18 +166,25 @@ export const buildCommuneService = ({
       }
     }
 
-    return communeRepository.deleteCommuneById(id);
+    const deletedCommune = await communeRepository.deleteCommuneById(id);
+    return enrichEntityWithEditableStatus(deletedCommune, loggedUser);
   };
 
   const createCommunes = async (
     communes: Omit<CommuneCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Commune[]> => {
-    return communeRepository.createCommunes(
+    const createdTowns = await communeRepository.createCommunes(
       communes.map((commune) => {
         return { ...commune, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedTowns = createdTowns.map((town) => {
+      return enrichEntityWithEditableStatus(town, loggedUser);
+    });
+
+    return enrichedCreatedTowns;
   };
 
   return {

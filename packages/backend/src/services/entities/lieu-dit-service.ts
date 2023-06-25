@@ -13,7 +13,7 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_NOM } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape.js";
 
 type LieuditServiceDependencies = {
@@ -31,7 +31,8 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
   const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Lieudit | null> => {
     validateAuthorization(loggedUser);
 
-    return lieuditRepository.findLieuditById(id);
+    const locality = await lieuditRepository.findLieuditById(id);
+    return enrichEntityWithEditableStatus(locality, loggedUser);
   };
 
   const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -46,7 +47,8 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
   ): Promise<Lieudit | null> => {
     validateAuthorization(loggedUser);
 
-    return lieuditRepository.findLieuditByInventaireId(inventaireId);
+    const locality = await lieuditRepository.findLieuditByInventaireId(inventaireId);
+    return enrichEntityWithEditableStatus(locality, loggedUser);
   };
 
   const findAllLieuxDits = async (): Promise<Lieudit[]> => {
@@ -54,7 +56,11 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
       orderBy: COLUMN_NOM,
     });
 
-    return [...lieuxDits];
+    const enrichedLocalities = lieuxDits.map((locality) => {
+      return enrichEntityWithEditableStatus(locality, null);
+    });
+
+    return [...enrichedLocalities];
   };
 
   const findPaginatedLieuxDits = async (
@@ -73,7 +79,11 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
       sortOrder,
     });
 
-    return [...lieuxDits];
+    const enrichedLocalities = lieuxDits.map((locality) => {
+      return enrichEntityWithEditableStatus(locality, loggedUser);
+    });
+
+    return [...enrichedLocalities];
   };
 
   const findAllLieuxDitsWithCommuneAndDepartement = async (): Promise<LieuditWithCommuneAndDepartementCode[]> => {
@@ -95,12 +105,12 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     validateAuthorization(loggedUser);
 
     try {
-      const upsertedLieudit = await lieuditRepository.createLieudit({
+      const createdLocality = await lieuditRepository.createLieudit({
         ...reshapeInputLieuditUpsertData(input),
         owner_id: loggedUser.id,
       });
 
-      return upsertedLieudit;
+      return enrichEntityWithEditableStatus(createdLocality, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -126,9 +136,9 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     }
 
     try {
-      const upsertedLieudit = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(input));
+      const updatedLocality = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(input));
 
-      return upsertedLieudit;
+      return enrichEntityWithEditableStatus(updatedLocality, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -149,18 +159,25 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
       }
     }
 
-    return lieuditRepository.deleteLieuditById(id);
+    const deletedLocality = await lieuditRepository.deleteLieuditById(id);
+    return enrichEntityWithEditableStatus(deletedLocality, loggedUser);
   };
 
   const createLieuxDits = async (
     lieuxdits: Omit<LieuditCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Lieudit[]> => {
-    return lieuditRepository.createLieuxdits(
+    const createdLocalities = await lieuditRepository.createLieuxdits(
       lieuxdits.map((lieudit) => {
         return { ...lieudit, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedLocalities = createdLocalities.map((locality) => {
+      return enrichEntityWithEditableStatus(locality, loggedUser);
+    });
+
+    return enrichedCreatedLocalities;
   };
 
   return {

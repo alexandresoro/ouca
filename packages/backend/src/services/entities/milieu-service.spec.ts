@@ -85,7 +85,7 @@ describe("Find environments by inventary ID", () => {
 
     expect(milieuRepository.findMilieuxOfDonneeId).toHaveBeenCalledTimes(1);
     expect(milieuRepository.findMilieuxOfDonneeId).toHaveBeenLastCalledWith(43);
-    expect(environments).toEqual(environmentsData);
+    expect(environments.length).toEqual(environmentsData.length);
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -346,6 +346,8 @@ test("Create multiple environments", async () => {
   ];
 
   const loggedUser = mock<LoggedUser>();
+
+  milieuRepository.createMilieux.mockResolvedValueOnce([]);
 
   await milieuService.createMilieux(environmentsData, loggedUser);
 

@@ -9,7 +9,7 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type MeteoServiceDependencies = {
   logger: Logger;
@@ -21,7 +21,8 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
   const findMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<Meteo | null> => {
     validateAuthorization(loggedUser);
 
-    return meteoRepository.findMeteoById(id);
+    const weather = await meteoRepository.findMeteoById(id);
+    return enrichEntityWithEditableStatus(weather, loggedUser);
   };
 
   const getDonneesCountByMeteo = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -38,7 +39,11 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
 
     const meteos = await meteoRepository.findMeteosOfInventaireId(inventaireId);
 
-    return [...meteos];
+    const enrichedWeathers = meteos.map((weather) => {
+      return enrichEntityWithEditableStatus(weather, loggedUser);
+    });
+
+    return [...enrichedWeathers];
   };
 
   const findMeteosIdsOfInventaireId = async (inventaireId: number): Promise<number[]> => {
@@ -54,7 +59,11 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
       orderBy: COLUMN_LIBELLE,
     });
 
-    return [...meteos];
+    const enrichedWeathers = meteos.map((weather) => {
+      return enrichEntityWithEditableStatus(weather, null);
+    });
+
+    return [...enrichedWeathers];
   };
 
   const findPaginatedMeteos = async (
@@ -72,7 +81,11 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
       sortOrder,
     });
 
-    return [...meteos];
+    const enrichedWeathers = meteos.map((weather) => {
+      return enrichEntityWithEditableStatus(weather, loggedUser);
+    });
+
+    return [...enrichedWeathers];
   };
 
   const getMeteosCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -86,12 +99,12 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
 
     // Create a new weather
     try {
-      const upsertedMeteo = await meteoRepository.createMeteo({
+      const createdMeteo = await meteoRepository.createMeteo({
         ...input,
         owner_id: loggedUser?.id,
       });
 
-      return upsertedMeteo;
+      return enrichEntityWithEditableStatus(createdMeteo, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -114,9 +127,9 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
 
     // Update an existing weather
     try {
-      const upsertedMeteo = await meteoRepository.updateMeteo(id, input);
+      const updatedMeteo = await meteoRepository.updateMeteo(id, input);
 
-      return upsertedMeteo;
+      return enrichEntityWithEditableStatus(updatedMeteo, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -137,18 +150,25 @@ export const buildMeteoService = ({ meteoRepository, donneeRepository }: MeteoSe
       }
     }
 
-    return meteoRepository.deleteMeteoById(id);
+    const deletedMeteo = await meteoRepository.deleteMeteoById(id);
+    return enrichEntityWithEditableStatus(deletedMeteo, loggedUser);
   };
 
   const createMeteos = async (
     meteos: Omit<MeteoCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Meteo[]> => {
-    return meteoRepository.createMeteos(
+    const createdWeathers = await meteoRepository.createMeteos(
       meteos.map((meteo) => {
         return { ...meteo, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedWeathers = createdWeathers.map((weather) => {
+      return enrichEntityWithEditableStatus(weather, loggedUser);
+    });
+
+    return enrichedCreatedWeathers;
   };
 
   return {

@@ -398,6 +398,8 @@ test("Create multiple cities", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
+  communeRepository.createCommunes.mockResolvedValueOnce([]);
+
   await communeService.createCommunes(communesData, loggedUser);
 
   expect(communeRepository.createCommunes).toHaveBeenCalledTimes(1);

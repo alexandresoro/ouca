@@ -385,6 +385,8 @@ test("Create multiple localities", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
+  lieuditRepository.createLieuxdits.mockResolvedValueOnce([]);
+
   await lieuditService.createLieuxDits(lieuDitsData, loggedUser);
 
   expect(lieuditRepository.createLieuxdits).toHaveBeenCalledTimes(1);

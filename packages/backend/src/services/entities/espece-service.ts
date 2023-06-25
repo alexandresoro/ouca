@@ -13,7 +13,7 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 
 type EspeceServiceDependencies = {
@@ -26,7 +26,8 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
   const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece | null> => {
     validateAuthorization(loggedUser);
 
-    return especeRepository.findEspeceById(id);
+    const species = await especeRepository.findEspeceById(id);
+    return enrichEntityWithEditableStatus(species, loggedUser);
   };
 
   const getDonneesCountByEspece = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -41,7 +42,8 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
   ): Promise<Espece | null> => {
     validateAuthorization(loggedUser);
 
-    return especeRepository.findEspeceByDonneeId(donneeId);
+    const species = await especeRepository.findEspeceByDonneeId(donneeId);
+    return enrichEntityWithEditableStatus(species, loggedUser);
   };
 
   const findAllEspeces = async (): Promise<Espece[]> => {
@@ -49,7 +51,11 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
       orderBy: COLUMN_CODE,
     });
 
-    return [...especes];
+    const enrichedSpecies = especes.map((species) => {
+      return enrichEntityWithEditableStatus(species, null);
+    });
+
+    return [...enrichedSpecies];
   };
 
   const findAllEspecesWithClasses = async (): Promise<EspeceWithClasseLibelle[]> => {
@@ -73,7 +79,11 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
       sortOrder,
     });
 
-    return [...especes];
+    const enrichedSpecies = especes.map((species) => {
+      return enrichEntityWithEditableStatus(species, loggedUser);
+    });
+
+    return [...enrichedSpecies];
   };
 
   const getEspecesCount = async (
@@ -98,12 +108,12 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     validateAuthorization(loggedUser);
 
     try {
-      const upsertedEspece = await especeRepository.createEspece({
+      const createdEspece = await especeRepository.createEspece({
         ...reshapeInputEspeceUpsertData(input),
         owner_id: loggedUser?.id,
       });
 
-      return upsertedEspece;
+      return enrichEntityWithEditableStatus(createdEspece, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -129,9 +139,9 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     }
 
     try {
-      const upsertedEspece = await especeRepository.updateEspece(id, reshapeInputEspeceUpsertData(input));
+      const updatedEspece = await especeRepository.updateEspece(id, reshapeInputEspeceUpsertData(input));
 
-      return upsertedEspece;
+      return enrichEntityWithEditableStatus(updatedEspece, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -152,18 +162,25 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
       }
     }
 
-    return especeRepository.deleteEspeceById(id);
+    const deletedSpecies = await especeRepository.deleteEspeceById(id);
+    return enrichEntityWithEditableStatus(deletedSpecies, loggedUser);
   };
 
   const createEspeces = async (
     especes: Omit<EspeceCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Espece[]> => {
-    return especeRepository.createEspeces(
+    const createdSpecies = await especeRepository.createEspeces(
       especes.map((espece) => {
         return { ...espece, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedSpecies = createdSpecies.map((species) => {
+      return enrichEntityWithEditableStatus(species, loggedUser);
+    });
+
+    return enrichedCreatedSpecies;
   };
 
   return {

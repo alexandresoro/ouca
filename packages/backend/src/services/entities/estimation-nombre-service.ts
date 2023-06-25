@@ -12,7 +12,7 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 import { reshapeInputEstimationNombreUpsertData } from "./estimation-nombre-service-reshape.js";
 
 type EstimationNombreServiceDependencies = {
@@ -28,7 +28,8 @@ export const buildEstimationNombreService = ({
   const findEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationNombre | null> => {
     validateAuthorization(loggedUser);
 
-    return estimationNombreRepository.findEstimationNombreById(id);
+    const numberEstimate = await estimationNombreRepository.findEstimationNombreById(id);
+    return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
   };
 
   const findEstimationNombreOfDonneeId = async (
@@ -37,7 +38,8 @@ export const buildEstimationNombreService = ({
   ): Promise<EstimationNombre | null> => {
     validateAuthorization(loggedUser);
 
-    return estimationNombreRepository.findEstimationNombreByDonneeId(donneeId);
+    const numberEstimate = await estimationNombreRepository.findEstimationNombreByDonneeId(donneeId);
+    return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
   };
 
   const getDonneesCountByEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -51,7 +53,11 @@ export const buildEstimationNombreService = ({
       orderBy: COLUMN_LIBELLE,
     });
 
-    return [...estimationNombres];
+    const enrichedNumberEstimates = estimationNombres.map((numberEstimate) => {
+      return enrichEntityWithEditableStatus(numberEstimate, null);
+    });
+
+    return [...enrichedNumberEstimates];
   };
 
   const findPaginatedEstimationsNombre = async (
@@ -69,7 +75,11 @@ export const buildEstimationNombreService = ({
       sortOrder,
     });
 
-    return [...estimationNombres];
+    const enrichedNumberEstimates = estimationNombres.map((numberEstimate) => {
+      return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
+    });
+
+    return [...enrichedNumberEstimates];
   };
 
   const getEstimationsNombreCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -85,12 +95,12 @@ export const buildEstimationNombreService = ({
     validateAuthorization(loggedUser);
 
     try {
-      const upsertedEstimationNombre = await estimationNombreRepository.createEstimationNombre({
+      const createdEstimationNombre = await estimationNombreRepository.createEstimationNombre({
         ...reshapeInputEstimationNombreUpsertData(input),
         owner_id: loggedUser.id,
       });
 
-      return upsertedEstimationNombre;
+      return enrichEntityWithEditableStatus(createdEstimationNombre, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -116,12 +126,12 @@ export const buildEstimationNombreService = ({
     }
 
     try {
-      const upsertedEstimationNombre = await estimationNombreRepository.updateEstimationNombre(
+      const updatedEstimationNombre = await estimationNombreRepository.updateEstimationNombre(
         id,
         reshapeInputEstimationNombreUpsertData(input)
       );
 
-      return upsertedEstimationNombre;
+      return enrichEntityWithEditableStatus(updatedEstimationNombre, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -142,18 +152,25 @@ export const buildEstimationNombreService = ({
       }
     }
 
-    return estimationNombreRepository.deleteEstimationNombreById(id);
+    const deletedNumberEstimate = await estimationNombreRepository.deleteEstimationNombreById(id);
+    return enrichEntityWithEditableStatus(deletedNumberEstimate, loggedUser);
   };
 
   const createEstimationsNombre = async (
     estimationsNombre: Omit<EstimationNombreCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly EstimationNombre[]> => {
-    return estimationNombreRepository.createEstimationsNombre(
+    const createdNumberEstimates = await estimationNombreRepository.createEstimationsNombre(
       estimationsNombre.map((estimationNombre) => {
         return { ...estimationNombre, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedNumberEstimates = createdNumberEstimates.map((numberEstimate) => {
+      return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
+    });
+
+    return enrichedCreatedNumberEstimates;
   };
 
   return {

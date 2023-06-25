@@ -6,7 +6,7 @@ export const localitySchema = z.object({
   nom: z.string(),
   coordinates: coordinatesSchema,
   townId: z.string(),
-  editable: z.boolean().optional(),
+  editable: z.boolean(),
 });
 
 export type Locality = z.infer<typeof localitySchema>;

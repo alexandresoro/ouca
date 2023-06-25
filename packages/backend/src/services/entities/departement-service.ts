@@ -14,7 +14,7 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type DepartementServiceDependencies = {
   logger: Logger;
@@ -33,7 +33,8 @@ export const buildDepartementService = ({
   const findDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<Departement | null> => {
     validateAuthorization(loggedUser);
 
-    return departementRepository.findDepartementById(id);
+    const department = await departementRepository.findDepartementById(id);
+    return enrichEntityWithEditableStatus(department, loggedUser);
   };
 
   const getDonneesCountByDepartement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -60,7 +61,8 @@ export const buildDepartementService = ({
   ): Promise<Departement | null> => {
     validateAuthorization(loggedUser);
 
-    return departementRepository.findDepartementByCommuneId(communeId);
+    const department = await departementRepository.findDepartementByCommuneId(communeId);
+    return enrichEntityWithEditableStatus(department, loggedUser);
   };
 
   const findAllDepartements = async (): Promise<Departement[]> => {
@@ -68,7 +70,11 @@ export const buildDepartementService = ({
       orderBy: COLUMN_CODE,
     });
 
-    return [...departements];
+    const enrichedDepartments = departements.map((department) => {
+      return enrichEntityWithEditableStatus(department, null);
+    });
+
+    return [...enrichedDepartments];
   };
 
   const findPaginatedDepartements = async (
@@ -86,7 +92,11 @@ export const buildDepartementService = ({
       sortOrder,
     });
 
-    return [...departements];
+    const enrichedDepartments = departements.map((department) => {
+      return enrichEntityWithEditableStatus(department, loggedUser);
+    });
+
+    return [...enrichedDepartments];
   };
 
   const getDepartementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -102,12 +112,12 @@ export const buildDepartementService = ({
     validateAuthorization(loggedUser);
 
     try {
-      const upsertedDepartement = await departementRepository.createDepartement({
+      const createdDepartement = await departementRepository.createDepartement({
         ...input,
         owner_id: loggedUser.id,
       });
 
-      return upsertedDepartement;
+      return enrichEntityWithEditableStatus(createdDepartement, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -133,9 +143,9 @@ export const buildDepartementService = ({
     }
 
     try {
-      const upsertedDepartement = await departementRepository.updateDepartement(id, input);
+      const updatedDepartement = await departementRepository.updateDepartement(id, input);
 
-      return upsertedDepartement;
+      return enrichEntityWithEditableStatus(updatedDepartement, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -156,18 +166,25 @@ export const buildDepartementService = ({
       }
     }
 
-    return departementRepository.deleteDepartementById(id);
+    const deletedDepartment = await departementRepository.deleteDepartementById(id);
+    return enrichEntityWithEditableStatus(deletedDepartment, loggedUser);
   };
 
   const createDepartements = async (
     departements: Omit<DepartementCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Departement[]> => {
-    return departementRepository.createDepartements(
+    const createdDepartments = await departementRepository.createDepartements(
       departements.map((departement) => {
         return { ...departement, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedDepartments = createdDepartments.map((department) => {
+      return enrichEntityWithEditableStatus(department, loggedUser);
+    });
+
+    return enrichedCreatedDepartments;
   };
 
   return {

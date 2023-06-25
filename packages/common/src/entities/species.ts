@@ -6,7 +6,7 @@ export const speciesSchema = z.object({
   nomFrancais: z.string(),
   nomLatin: z.string(),
   classId: z.string(),
-  editable: z.boolean().optional(),
+  editable: z.boolean(),
 });
 
 export type Species = z.infer<typeof speciesSchema>;

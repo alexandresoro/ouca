@@ -470,6 +470,8 @@ test("Create multiple species", async () => {
 
   const loggedUser = mock<LoggedUser>();
 
+  especeRepository.createEspeces.mockResolvedValueOnce([]);
+
   await especeService.createEspeces(speciesData, loggedUser);
 
   expect(especeRepository.createEspeces).toHaveBeenCalledTimes(1);

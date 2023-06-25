@@ -6,7 +6,7 @@ export const behaviorSchema = z.object({
   code: z.string(),
   libelle: z.string(),
   nicheur: z.enum(NICHEUR_CODES).nullable(),
-  editable: z.boolean().optional(),
+  editable: z.boolean(),
 });
 
 export type Behavior = z.infer<typeof behaviorSchema>;

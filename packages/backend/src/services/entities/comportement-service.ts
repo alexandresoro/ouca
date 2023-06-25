@@ -12,7 +12,7 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ComportementServiceDependencies = {
   logger: Logger;
@@ -27,7 +27,8 @@ export const buildComportementService = ({
   const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement | null> => {
     validateAuthorization(loggedUser);
 
-    return comportementRepository.findComportementById(id);
+    const behavior = await comportementRepository.findComportementById(id);
+    return enrichEntityWithEditableStatus(behavior, loggedUser);
   };
 
   const findComportementsIdsOfDonneeId = async (donneeId: number): Promise<number[]> => {
@@ -46,7 +47,11 @@ export const buildComportementService = ({
 
     const comportements = await comportementRepository.findComportementsOfDonneeId(donneeId);
 
-    return [...comportements];
+    const enrichedBehaviors = comportements.map((behavior) => {
+      return enrichEntityWithEditableStatus(behavior, loggedUser);
+    });
+
+    return [...enrichedBehaviors];
   };
 
   const getDonneesCountByComportement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -60,7 +65,11 @@ export const buildComportementService = ({
       orderBy: COLUMN_CODE,
     });
 
-    return [...comportements];
+    const enrichedBehaviors = comportements.map((behavior) => {
+      return enrichEntityWithEditableStatus(behavior, null);
+    });
+
+    return [...enrichedBehaviors];
   };
 
   const findPaginatedComportements = async (
@@ -78,7 +87,11 @@ export const buildComportementService = ({
       sortOrder,
     });
 
-    return [...comportements];
+    const enrichedBehaviors = comportements.map((behavior) => {
+      return enrichEntityWithEditableStatus(behavior, loggedUser);
+    });
+
+    return [...enrichedBehaviors];
   };
 
   const getComportementsCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -94,12 +107,12 @@ export const buildComportementService = ({
     validateAuthorization(loggedUser);
 
     try {
-      const upsertedComportement = await comportementRepository.createComportement({
+      const createdComportement = await comportementRepository.createComportement({
         ...input,
         owner_id: loggedUser.id,
       });
 
-      return upsertedComportement;
+      return enrichEntityWithEditableStatus(createdComportement, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -125,9 +138,9 @@ export const buildComportementService = ({
     }
 
     try {
-      const upsertedComportement = await comportementRepository.updateComportement(id, input);
+      const updatedComportement = await comportementRepository.updateComportement(id, input);
 
-      return upsertedComportement;
+      return enrichEntityWithEditableStatus(updatedComportement, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -148,18 +161,25 @@ export const buildComportementService = ({
       }
     }
 
-    return comportementRepository.deleteComportementById(id);
+    const deletedComportement = await comportementRepository.deleteComportementById(id);
+    return enrichEntityWithEditableStatus(deletedComportement, loggedUser);
   };
 
   const createComportements = async (
     comportements: Omit<ComportementCreateInput[], "owner_id">,
     loggedUser: LoggedUser
   ): Promise<readonly Comportement[]> => {
-    return comportementRepository.createComportements(
+    const createdBehaviors = await comportementRepository.createComportements(
       comportements.map((comportement) => {
         return { ...comportement, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedBehaviors = createdBehaviors.map((behavior) => {
+      return enrichEntityWithEditableStatus(behavior, loggedUser);
+    });
+
+    return enrichedCreatedBehaviors;
   };
 
   return {

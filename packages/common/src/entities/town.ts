@@ -5,7 +5,7 @@ export const townSchema = z.object({
   code: z.number(),
   nom: z.string(),
   departmentId: z.string(),
-  editable: z.boolean().optional(),
+  editable: z.boolean(),
 });
 
 export type Town = z.infer<typeof townSchema>;

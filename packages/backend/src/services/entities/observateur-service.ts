@@ -12,7 +12,7 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { getSqlPagination } from "./entities-utils.js";
+import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
 
 type ObservateurServiceDependencies = {
   logger: Logger;
@@ -27,7 +27,8 @@ export const buildObservateurService = ({
   const findObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<Observateur | null> => {
     validateAuthorization(loggedUser);
 
-    return observateurRepository.findObservateurById(id);
+    const observer = await observateurRepository.findObservateurById(id);
+    return enrichEntityWithEditableStatus(observer, loggedUser);
   };
 
   const getDonneesCountByObservateur = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
@@ -42,7 +43,8 @@ export const buildObservateurService = ({
   ): Promise<Observateur | null> => {
     validateAuthorization(loggedUser);
 
-    return observateurRepository.findObservateurByInventaireId(inventaireId);
+    const observer = await observateurRepository.findObservateurByInventaireId(inventaireId);
+    return enrichEntityWithEditableStatus(observer, loggedUser);
   };
 
   const findAssociesIdsOfInventaireId = async (inventaireId: number): Promise<number[]> => {
@@ -61,7 +63,11 @@ export const buildObservateurService = ({
 
     const associes = await observateurRepository.findAssociesOfInventaireId(inventaireId);
 
-    return [...associes];
+    const enrichedAssociates = associes.map((associate) => {
+      return enrichEntityWithEditableStatus(associate, loggedUser);
+    });
+
+    return [...enrichedAssociates];
   };
 
   const findAllObservateurs = async (): Promise<Observateur[]> => {
@@ -69,7 +75,11 @@ export const buildObservateurService = ({
       orderBy: COLUMN_LIBELLE,
     });
 
-    return [...observateurs];
+    const enrichedObservers = observateurs.map((observer) => {
+      return enrichEntityWithEditableStatus(observer, null);
+    });
+
+    return [...enrichedObservers];
   };
 
   const findPaginatedObservateurs = async (
@@ -87,7 +97,11 @@ export const buildObservateurService = ({
       sortOrder,
     });
 
-    return [...observateurs];
+    const enrichedObservers = observateurs.map((observer) => {
+      return enrichEntityWithEditableStatus(observer, loggedUser);
+    });
+
+    return [...enrichedObservers];
   };
 
   const getObservateursCount = async (loggedUser: LoggedUser | null, q?: string | null): Promise<number> => {
@@ -101,12 +115,12 @@ export const buildObservateurService = ({
 
     // Create a new observer
     try {
-      const upsertedObservateur = await observateurRepository.createObservateur({
+      const createdObservateur = await observateurRepository.createObservateur({
         ...input,
         owner_id: loggedUser?.id,
       });
 
-      return upsertedObservateur;
+      return enrichEntityWithEditableStatus(createdObservateur, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -133,9 +147,9 @@ export const buildObservateurService = ({
 
     // Update an existing observer
     try {
-      const upsertedObservateur = await observateurRepository.updateObservateur(id, input);
+      const updatedObservateur = await observateurRepository.updateObservateur(id, input);
 
-      return upsertedObservateur;
+      return enrichEntityWithEditableStatus(updatedObservateur, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -156,18 +170,25 @@ export const buildObservateurService = ({
       }
     }
 
-    return observateurRepository.deleteObservateurById(id);
+    const deletedObserver = await observateurRepository.deleteObservateurById(id);
+    return enrichEntityWithEditableStatus(deletedObserver, loggedUser);
   };
 
   const createObservateurs = async (
     observateurs: Omit<ObservateurCreateInput, "owner_id">[],
     loggedUser: LoggedUser
   ): Promise<readonly Observateur[]> => {
-    return observateurRepository.createObservateurs(
+    const createdObservers = await observateurRepository.createObservateurs(
       observateurs.map((observateur) => {
         return { ...observateur, owner_id: loggedUser.id };
       })
     );
+
+    const enrichedCreatedObservers = createdObservers.map((observer) => {
+      return enrichEntityWithEditableStatus(observer, loggedUser);
+    });
+
+    return enrichedCreatedObservers;
   };
 
   return {
