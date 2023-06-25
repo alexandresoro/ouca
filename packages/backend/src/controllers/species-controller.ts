@@ -7,11 +7,19 @@ import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
 const reshapeSpeciesRepositoryToApi = (species: Espece): Species => {
-  const { id, classeId, ...restSpecies } = species;
+  // TODO Remove this later
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const { id, classeId, editable, ...restSpecies } = species;
   return {
     ...restSpecies,
     id: `${id}`,
     classId: classeId ? `${classeId}` : "", // Should not happen, but classe is nullable from DB?
+    // TODO Remove this later
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    editable,
   };
 };
 

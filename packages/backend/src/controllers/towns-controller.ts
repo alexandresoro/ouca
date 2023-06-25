@@ -7,11 +7,19 @@ import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
 const reshapeTownRepositoryToApi = (town: Commune): Town => {
-  const { id, departementId, ...restTown } = town;
+  // TODO Remove this later
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const { id, departementId, editable, ...restTown } = town;
   return {
     ...restTown,
     id: `${id}`,
     departmentId: `${departementId}`,
+    // TODO Remove this later
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    editable,
   };
 };
 

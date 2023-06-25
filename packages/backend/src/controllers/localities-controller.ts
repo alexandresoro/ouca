@@ -7,7 +7,10 @@ import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
 
 export const reshapeLocalityRepositoryToApi = (locality: Lieudit): Locality => {
-  const { id, communeId, altitude, latitude, longitude, ...restLocality } = locality;
+  // TODO Remove this later
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const { id, communeId, altitude, latitude, longitude, editable, ...restLocality } = locality;
   return {
     ...restLocality,
     id: `${id}`,
@@ -17,6 +20,11 @@ export const reshapeLocalityRepositoryToApi = (locality: Lieudit): Locality => {
       latitude,
       longitude,
     },
+    // TODO Remove this later
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    editable,
   };
 };
 
