@@ -53,42 +53,42 @@ const entriesController: FastifyPluginCallback<{
       ...entry,
       id: `${entry.id}`,
       inventoryId: `${entry.inventaireId}`,
-      age: {
-        ...age,
-        id: `${age.id}`,
-      },
+      age,
+      // TODO Remove this later
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       behaviors: behaviors.map((behavior) => {
         return {
           ...behavior,
           id: `${behavior.id}`,
         };
       }),
+      // TODO Remove this later
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       species: {
         ...species,
         id: `${species.id}`,
         classId: species.classeId ? `${species.classeId}` : "",
       },
-      distanceEstimate:
-        distanceEstimate != null
-          ? {
-              ...distanceEstimate,
-              id: `${distanceEstimate.id}`,
-            }
-          : null,
+      distanceEstimate,
+      // TODO Remove this later
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       numberEstimate: {
         ...numberEstimate,
         id: `${numberEstimate.id}`,
       },
+      // TODO Remove this later
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       environments: environments.map((environment) => {
         return {
           ...environment,
           id: `${environment.id}`,
         };
       }),
-      sex: {
-        ...sex,
-        id: `${sex.id}`,
-      },
+      sex,
       comment: entry.commentaire,
       number: entry.nombre,
       regroupment: entry.regroupement,
