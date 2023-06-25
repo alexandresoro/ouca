@@ -1,9 +1,8 @@
-import { getDepartmentsExtendedResponse } from "@ou-ca/common/api/department";
+import { getDepartmentsExtendedResponse, type DepartmentsOrderBy } from "@ou-ca/common/api/department";
 import { type DepartmentExtended } from "@ou-ca/common/entities/department";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { type DepartementsOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
@@ -38,7 +37,7 @@ const DepartementTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<DepartementsOrderBy>();
+    usePaginatedTableParams<DepartmentsOrderBy>();
 
   const [dialogDepartement, setDialogDepartement] = useState<DepartmentExtended | null>(null);
 
@@ -107,7 +106,7 @@ const DepartementTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: DepartementsOrderBy) => {
+  const handleRequestSort = (sortingColumn: DepartmentsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
