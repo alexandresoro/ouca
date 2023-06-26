@@ -72,8 +72,6 @@ type Espece {
   nomFrancais: String!
   nomLatin: String!
   classe: Classe!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type EstimationDistance {
@@ -173,15 +171,6 @@ enum SortOrder {
   desc
 }
 
-enum EspecesOrderBy {
-  id
-  code
-  nomFrancais
-  nomLatin
-  nomClasse
-  nbDonnees
-}
-
 enum SearchDonneesOrderBy {
   id
   codeEspece
@@ -207,11 +196,6 @@ interface PaginatedResult {
   count: Int!
 }
 
-type EspecesPaginatedResult implements PaginatedResult {
-  data: [Espece!]
-  count: Int!
-}
-
 type PaginatedSearchDonneesResult implements PaginatedResult {
   result(
     searchCriteria: SearchDonneeCriteria
@@ -223,11 +207,5 @@ type PaginatedSearchDonneesResult implements PaginatedResult {
 }
 
 type Query {
-  especes(
-    searchParams: SearchParams
-    searchCriteria: SearchDonneeCriteria
-    orderBy: EspecesOrderBy
-    sortOrder: SortOrder
-  ): EspecesPaginatedResult
   searchDonnees: PaginatedSearchDonneesResult
 }

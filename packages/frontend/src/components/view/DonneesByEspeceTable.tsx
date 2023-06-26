@@ -1,35 +1,10 @@
+import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
 import { useEffect, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "urql";
-import { graphql } from "../../gql";
-import { type EspecesOrderBy } from "../../gql/graphql";
+import useApiQuery from "../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import Table from "../common/styled/table/Table";
 import TableSortLabel from "../common/styled/table/TableSortLabel";
-
-const PAGINATED_SEARCH_ESPECES_QUERY = graphql(`
-  query PaginatedSearchEspeces(
-    $searchParams: SearchParams
-    $searchCriteria: SearchDonneeCriteria
-    $orderBy: EspecesOrderBy
-    $sortOrder: SortOrder
-  ) {
-    especes(searchParams: $searchParams, searchCriteria: $searchCriteria, orderBy: $orderBy, sortOrder: $sortOrder) {
-      count
-      data {
-        id
-        code
-        nomFrancais
-        nomLatin
-        nbDonnees
-        classe {
-          id
-          libelle
-        }
-      }
-    }
-  }
-`);
 
 const COLUMNS = [
   {
@@ -58,32 +33,37 @@ const DonneesByEspeceTable: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const { page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EspecesOrderBy>();
+    usePaginatedTableParams<SpeciesOrderBy>();
 
   useEffect(() => {
     setOrderBy("nbDonnees");
     setSortOrder("desc");
   }, [setOrderBy, setSortOrder]);
 
-  const [{ data }] = useQuery({
-    query: PAGINATED_SEARCH_ESPECES_QUERY,
-    variables: {
-      searchParams: {
+  const { data } = useApiQuery(
+    {
+      path: "/species",
+      queryParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
+        orderBy,
+        sortOrder,
+        extended: true,
+        // TODO add search criteria
       },
-      orderBy,
-      sortOrder,
-      searchCriteria: null,
+      schema: getSpeciesExtendedResponse,
     },
-    requestPolicy: "cache-and-network",
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: EspecesOrderBy) => {
+  const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -106,20 +86,20 @@ const DonneesByEspeceTable: FunctionComponent = () => {
           ))}
         </>
       }
-      tableRows={data?.especes?.data?.map((espece) => {
+      tableRows={data?.data.map((espece) => {
         return (
           <tr className="hover:bg-base-200" key={espece.id}>
-            <td>{espece.classe.libelle}</td>
+            <td>{espece.speciesClassName}</td>
             <td>{espece.code}</td>
             <td>{espece.nomFrancais}</td>
             <td>{espece.nomLatin}</td>
-            <td>{espece.nbDonnees ?? "0"}</td>
+            <td>{espece.entriesCount}</td>
           </tr>
         );
       })}
       page={page}
       elementsPerPage={rowsPerPage}
-      count={data?.especes?.count ?? 0}
+      count={data?.meta.count ?? 0}
       onPageChange={handleChangePage}
     />
   );

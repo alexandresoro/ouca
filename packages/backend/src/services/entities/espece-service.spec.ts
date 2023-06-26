@@ -1,9 +1,9 @@
-import { type UpsertSpeciesInput } from "@ou-ca/common/api/species";
+import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { EspecesOrderBy, SortOrder, type QueryEspecesArgs } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Espece, type EspeceCreateInput } from "../../repositories/espece/espece-repository-types.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
@@ -126,24 +126,24 @@ describe("Entities paginated find by search criteria", () => {
 
     especeRepository.findEspeces.mockResolvedValueOnce(speciesData);
 
-    await especeService.findPaginatedEspeces(loggedUser);
+    await especeService.findPaginatedEspeces(loggedUser, {});
 
     expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({});
+    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
+      searchCriteria: {},
+    });
   });
 
   test("should handle params when retrieving paginated species ", async () => {
     const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryEspecesArgs = {
-      orderBy: EspecesOrderBy.Code,
+    const searchParams: SpeciesSearchParams = {
+      orderBy: "code",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     especeRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
@@ -156,7 +156,8 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_CODE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
+      searchCriteria: {},
     });
   });
 
@@ -164,20 +165,16 @@ describe("Entities paginated find by search criteria", () => {
     const speciesData = [mock<Espece>(), mock<Espece>(), mock<Espece>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryEspecesArgs = {
-      orderBy: EspecesOrderBy.Code,
+    const searchParams: SpeciesSearchParams = {
+      orderBy: "code",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
-      searchCriteria: {
-        ages: [12, 23],
-        nombre: null,
-        communes: [3, 6],
-        toDate: "2010-01-01",
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
+      ageIds: ["12", "23"],
+      number: undefined,
+      townIds: ["3", "6"],
+      toDate: "2010-01-01",
     };
 
     especeRepository.findEspeces.mockResolvedValueOnce([speciesData[0]]);
@@ -188,20 +185,20 @@ describe("Entities paginated find by search criteria", () => {
     expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
       q: "Bob",
       searchCriteria: {
-        ages: [12, 23],
-        nombre: null,
-        communes: [3, 6],
+        ageIds: [12, 23],
+        nombre: undefined,
+        townIds: [3, 6],
         toDate: "2010-01-01",
       },
       orderBy: COLUMN_CODE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.findPaginatedEspeces(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(especeService.findPaginatedEspeces(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -209,10 +206,12 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await especeService.getEspecesCount(loggedUser);
+    await especeService.getEspecesCount(loggedUser, {});
 
     expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(especeRepository.getCount).toHaveBeenLastCalledWith({});
+    expect(especeRepository.getCount).toHaveBeenLastCalledWith({
+      searchCriteria: {},
+    });
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -223,6 +222,7 @@ describe("Entities count by search criteria", () => {
     expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
     expect(especeRepository.getCount).toHaveBeenLastCalledWith({
       q: "test",
+      searchCriteria: {},
     });
   });
 
@@ -230,20 +230,18 @@ describe("Entities count by search criteria", () => {
     const loggedUser = mock<LoggedUser>();
 
     await especeService.getEspecesCount(loggedUser, {
-      searchCriteria: {
-        ages: [12, 23],
-        nombre: null,
-        communes: [3, 6],
-        toDate: "2010-01-01",
-      },
+      ageIds: ["12", "23"],
+      number: undefined,
+      townIds: ["3", "6"],
+      toDate: "2010-01-01",
     });
 
     expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
     expect(especeRepository.getCount).toHaveBeenLastCalledWith({
       searchCriteria: {
-        ages: [12, 23],
-        nombre: null,
-        communes: [3, 6],
+        ageIds: [12, 23],
+        nombre: undefined,
+        townIds: [3, 6],
         toDate: "2010-01-01",
       },
     });
@@ -254,28 +252,26 @@ describe("Entities count by search criteria", () => {
 
     await especeService.getEspecesCount(loggedUser, {
       q: "test",
-      searchCriteria: {
-        ages: [12, 23],
-        nombre: null,
-        communes: [3, 6],
-        toDate: "2010-01-01",
-      },
+      ageIds: ["12", "23"],
+      number: undefined,
+      townIds: ["3", "6"],
+      toDate: "2010-01-01",
     });
 
     expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
     expect(especeRepository.getCount).toHaveBeenLastCalledWith({
       q: "test",
       searchCriteria: {
-        ages: [12, 23],
-        nombre: null,
-        communes: [3, 6],
+        ageIds: [12, 23],
+        nombre: undefined,
+        townIds: [3, 6],
         toDate: "2010-01-01",
       },
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.getEspecesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(especeService.getEspecesCount(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

@@ -11,12 +11,12 @@ import { type Locality } from "@ou-ca/common/entities/locality";
 import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Sex } from "@ou-ca/common/entities/sex";
+import { type Species } from "@ou-ca/common/entities/species";
 import { type Town } from "@ou-ca/common/entities/town";
 import { type Weather } from "@ou-ca/common/entities/weather";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
-import { type Espece } from "../../repositories/espece/espece-repository-types.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
@@ -28,7 +28,7 @@ export class ImportDonneeService extends ImportService {
   private departements!: Department[];
   private communes!: Town[];
   private lieuxDits!: Locality[];
-  private especes!: Espece[];
+  private especes!: Species[];
   private ages!: Age[];
   private sexes!: Sex[];
   private estimationsNombre!: NumberEstimate[];
@@ -271,7 +271,7 @@ export class ImportDonneeService extends ImportService {
     const existingDonneeDatabase = this.existingDonnees.find(async (donnee) => {
       return (
         donnee.inventaireId === existingInventaire?.id &&
-        donnee.especeId === espece.id &&
+        `${donnee.especeId}` === espece.id &&
         `${donnee.sexeId}` === sexe.id &&
         `${donnee.ageId}` === age.id &&
         donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
@@ -299,7 +299,7 @@ export class ImportDonneeService extends ImportService {
     const existingDonneeNew = this.newDonnees.find((donnee) => {
       return (
         donnee.inventoryId === existingInventaire?.id &&
-        donnee.speciesId === espece.id &&
+        `${donnee.speciesId}` === espece.id &&
         `${donnee.sexId}` === sexe.id &&
         `${donnee.ageId}` === age.id &&
         donnee.number === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
@@ -393,7 +393,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findEspece = (codeOrNomEspece: string): Espece | undefined => {
+  private findEspece = (codeOrNomEspece: string): Species | undefined => {
     return this.especes.find((espece) => {
       return (
         this.compareStrings(espece.code, codeOrNomEspece) ||

@@ -1,14 +1,14 @@
-import { type UpsertSpeciesInput } from "@ou-ca/common/api/species";
+import { type SpeciesSearchParams, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
+import { type Species } from "@ou-ca/common/entities/species";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type QueryEspecesArgs, type SearchDonneeCriteria } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-  type Espece,
   type EspeceCreateInput,
   type EspeceWithClasseLibelle,
 } from "../../repositories/espece/espece-repository-types.js";
 import { type EspeceRepository } from "../../repositories/espece/espece-repository.js";
+import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
@@ -23,30 +23,30 @@ type EspeceServiceDependencies = {
 };
 
 export const buildEspeceService = ({ especeRepository, donneeRepository }: EspeceServiceDependencies) => {
-  const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece | null> => {
+  const findEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Species | null> => {
     validateAuthorization(loggedUser);
 
     const species = await especeRepository.findEspeceById(id);
     return enrichEntityWithEditableStatus(species, loggedUser);
   };
 
-  const getDonneesCountByEspece = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByEspece = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByEspeceId(id);
+    return donneeRepository.getCountByEspeceId(parseInt(id));
   };
 
   const findEspeceOfDonneeId = async (
     donneeId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Espece | null> => {
+  ): Promise<Species | null> => {
     validateAuthorization(loggedUser);
 
     const species = await especeRepository.findEspeceByDonneeId(donneeId);
     return enrichEntityWithEditableStatus(species, loggedUser);
   };
 
-  const findAllEspeces = async (): Promise<Espece[]> => {
+  const findAllEspeces = async (): Promise<Species[]> => {
     const especes = await especeRepository.findEspeces({
       orderBy: COLUMN_CODE,
     });
@@ -65,16 +65,21 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
 
   const findPaginatedEspeces = async (
     loggedUser: LoggedUser | null,
-    options: QueryEspecesArgs = {}
-  ): Promise<Espece[]> => {
+    options: SpeciesSearchParams
+  ): Promise<Species[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, searchCriteria, orderBy: orderByField, sortOrder } = options;
+    const { q, orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
+
+    const reshapedSearchCriteria = reshapeSearchCriteria(searchCriteria);
 
     const especes = await especeRepository.findEspeces({
-      q: searchParams?.q,
-      searchCriteria: searchCriteria && Object.keys(searchCriteria).length ? searchCriteria : undefined,
-      ...getSqlPagination(searchParams),
+      q,
+      searchCriteria: reshapedSearchCriteria,
+      ...getSqlPagination({
+        pageSize,
+        pageNumber,
+      }),
       orderBy: orderByField,
       sortOrder,
     });
@@ -86,25 +91,18 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     return [...enrichedSpecies];
   };
 
-  const getEspecesCount = async (
-    loggedUser: LoggedUser | null,
-    {
-      q,
-      searchCriteria,
-    }: {
-      q?: string | null;
-      searchCriteria?: SearchDonneeCriteria | null;
-    } = {}
-  ): Promise<number> => {
+  const getEspecesCount = async (loggedUser: LoggedUser | null, options: SpeciesSearchParams): Promise<number> => {
     validateAuthorization(loggedUser);
 
+    const reshapedSearchCriteria = reshapeSearchCriteria(options);
+
     return especeRepository.getCount({
-      q,
-      searchCriteria: searchCriteria && Object.keys(searchCriteria).length ? searchCriteria : undefined,
+      q: options.q,
+      searchCriteria: reshapedSearchCriteria,
     });
   };
 
-  const createEspece = async (input: UpsertSpeciesInput, loggedUser: LoggedUser | null): Promise<Espece> => {
+  const createEspece = async (input: UpsertSpeciesInput, loggedUser: LoggedUser | null): Promise<Species> => {
     validateAuthorization(loggedUser);
 
     try {
@@ -126,7 +124,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     id: number,
     input: UpsertSpeciesInput,
     loggedUser: LoggedUser | null
-  ): Promise<Espece> => {
+  ): Promise<Species> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -150,7 +148,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
     }
   };
 
-  const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Espece> => {
+  const deleteEspece = async (id: number, loggedUser: LoggedUser | null): Promise<Species> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -169,7 +167,7 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
   const createEspeces = async (
     especes: Omit<EspeceCreateInput, "owner_id">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Espece[]> => {
+  ): Promise<readonly Species[]> => {
     const createdSpecies = await especeRepository.createEspeces(
       especes.map((espece) => {
         return { ...espece, owner_id: loggedUser.id };

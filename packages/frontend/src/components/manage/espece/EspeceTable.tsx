@@ -1,9 +1,10 @@
+import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
+import { type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type Espece, type EspecesOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +12,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_ESPECES_QUERY } from "./EspeceManageQueries";
 
 const COLUMNS = [
   {
@@ -41,28 +41,34 @@ const EspeceTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EspecesOrderBy>();
+    usePaginatedTableParams<SpeciesOrderBy>();
 
-  const [dialogEspece, setDialogEspece] = useState<Espece | null>(null);
+  const [dialogEspece, setDialogEspece] = useState<SpeciesExtended | null>(null);
 
-  const [{ data }, reexecuteEspeces] = useQuery({
-    query: PAGINATED_ESPECES_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/species",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getSpeciesExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteEspeces();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -81,19 +87,19 @@ const EspeceTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditEspece = (id: number | undefined) => {
+  const handleEditEspece = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteEspece = (espece: Espece | null) => {
+  const handleDeleteEspece = (espece: SpeciesExtended | null) => {
     if (espece) {
       setDialogEspece(espece);
     }
   };
 
-  const handleDeleteEspeceConfirmation = (espece: Espece | null) => {
+  const handleDeleteEspeceConfirmation = (espece: SpeciesExtended | null) => {
     if (espece) {
       setDialogEspece(null);
       mutate({ path: `/species/${espece.id}` });
@@ -104,7 +110,7 @@ const EspeceTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: EspecesOrderBy) => {
+  const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -117,7 +123,7 @@ const EspeceTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.especes?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -138,14 +144,14 @@ const EspeceTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.especes?.data?.map((espece) => {
+        tableRows={data?.data.map((espece) => {
           return (
             <tr className="hover:bg-base-200" key={espece?.id}>
-              <td>{espece?.classe?.libelle}</td>
-              <td>{espece?.code}</td>
-              <td>{espece?.nomFrancais}</td>
-              <td>{espece?.nomLatin}</td>
-              <td>{espece?.nbDonnees ? espece?.nbDonnees : "0"}</td>
+              <td>{espece.speciesClassName}</td>
+              <td>{espece.code}</td>
+              <td>{espece.nomFrancais}</td>
+              <td>{espece.nomLatin}</td>
+              <td>{espece.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!espece.editable}
@@ -158,7 +164,7 @@ const EspeceTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.especes?.count ?? 0}
+        count={data?.meta.count ?? 0}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog
@@ -168,7 +174,7 @@ const EspeceTable: FunctionComponent = () => {
           code: dialogEspece?.code,
         })}
         impactedItemsMessage={t("deleteSpeciesDialogMsgImpactedData", {
-          nbOfObservations: dialogEspece?.nbDonnees ? dialogEspece?.nbDonnees : 0,
+          nbOfObservations: dialogEspece?.entriesCount ?? 0,
         })}
         onCancelAction={() => setDialogEspece(null)}
         onConfirmAction={() => handleDeleteEspeceConfirmation(dialogEspece)}

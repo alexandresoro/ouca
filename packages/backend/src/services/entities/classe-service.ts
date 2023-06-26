@@ -44,12 +44,12 @@ export const buildClasseService = ({
   };
 
   const findClasseOfEspeceId = async (
-    especeId: number | undefined,
+    especeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<SpeciesClass | null> => {
     validateAuthorization(loggedUser);
 
-    const speciesClass = await classeRepository.findClasseByEspeceId(especeId);
+    const speciesClass = await classeRepository.findClasseByEspeceId(especeId ? parseInt(especeId) : undefined);
     return enrichEntityWithEditableStatus(speciesClass, loggedUser);
   };
 

@@ -17,7 +17,6 @@ import {
   type Observateur,
   type Sexe,
 } from "./generated/graphql-types.js";
-import { entityNbDonneesResolver, isEntityEditableResolver } from "./resolvers-helper.js";
 
 export const buildResolvers = ({
   ageService,
@@ -38,16 +37,6 @@ export const buildResolvers = ({
 }: Services): IResolvers => {
   return {
     Query: {
-      especes: async (_, args, { user }): Promise<{ data: Omit<Espece, "classe">[]; count: number }> => {
-        const [data, count] = await Promise.all([
-          especeService.findPaginatedEspeces(user, args),
-          especeService.getEspecesCount(user, { q: args?.searchParams?.q, searchCriteria: args?.searchCriteria }),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
       searchDonnees: (): Record<string, never> => {
         return {};
       },
@@ -88,7 +77,14 @@ export const buildResolvers = ({
         });
       },
       espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
-        return especeService.findEspeceOfDonneeId(parent?.id, user);
+        const species = await especeService.findEspeceOfDonneeId(parent?.id, user);
+        if (!species) {
+          return null;
+        }
+        return {
+          ...species,
+          id: parseInt(species.id),
+        };
       },
       estimationDistance: async (parent, args, { user }): Promise<EstimationDistance | null> => {
         const distanceEstimate = await estimationDistanceService.findEstimationDistanceOfDonneeId(parent?.id, user);
@@ -138,9 +134,8 @@ export const buildResolvers = ({
       },
     },
     Espece: {
-      editable: isEntityEditableResolver(especeService.findEspece),
       classe: async (parent, args, { user }): Promise<Classe | null> => {
-        const speciesClass = await classeService.findClasseOfEspeceId(parent?.id, user);
+        const speciesClass = await classeService.findClasseOfEspeceId(parent?.id ? `${parent?.id}` : undefined, user);
         if (!speciesClass) {
           return null;
         }
@@ -149,7 +144,6 @@ export const buildResolvers = ({
           id: parseInt(speciesClass.id),
         };
       },
-      nbDonnees: entityNbDonneesResolver(especeService.getDonneesCountByEspece),
     },
     Inventaire: {
       observateur: async (parent, args, { user }): Promise<Observateur | null> => {

@@ -55,14 +55,7 @@ const entriesController: FastifyPluginCallback<{
       inventoryId: `${entry.inventaireId}`,
       age,
       behaviors,
-      // TODO Remove this later
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      species: {
-        ...species,
-        id: `${species.id}`,
-        classId: species.classeId ? `${species.classeId}` : "",
-      },
+      species,
       distanceEstimate,
       numberEstimate,
       environments,

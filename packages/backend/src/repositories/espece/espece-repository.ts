@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import { buildOrderByIdentifier, buildSearchEspeceClause } from "./espece-repository-helper.js";
 import {
@@ -25,7 +25,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
   const findEspeceById = async (id: number): Promise<Espece | null> => {
     const query = sql.type(especeSchema)`
       SELECT 
-        *
+        espece.id::text,
+        espece.code,
+        espece.nom_francais,
+        espece.nom_latin,
+        espece.classe_id::text AS class_id,
+        espece.owner_id
       FROM
         basenaturaliste.espece
       WHERE
@@ -42,7 +47,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
 
     const query = sql.type(especeSchema)`
       SELECT 
-        espece.*
+        espece.id::text,
+        espece.code,
+        espece.nom_francais,
+        espece.nom_latin,
+        espece.classe_id::text AS class_id,
+        espece.owner_id
       FROM
         basenaturaliste.espece
       LEFT JOIN basenaturaliste.donnee ON espece.id = donnee.espece_id
@@ -56,7 +66,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
   const findAllEspecesWithClasseLibelle = async (): Promise<readonly EspeceWithClasseLibelle[]> => {
     const query = sql.type(especeWithClasseLibelleSchema)`
     SELECT 
-      espece.*,
+      espece.id::text,
+      espece.code,
+      espece.nom_francais,
+      espece.nom_latin,
+      espece.classe_id::text AS class_id,
+      espece.owner_id,
       classe.libelle as classe_libelle
     FROM
       basenaturaliste.espece
@@ -83,7 +98,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
     const matchStartCode = q ? `^${q}` : null;
     const query = sql.type(especeSchema)`
       SELECT 
-        espece.*
+        espece.id::text,
+        espece.code,
+        espece.nom_francais,
+        espece.nom_latin,
+        espece.classe_id::text AS class_id,
+        espece.owner_id
       FROM
         basenaturaliste.espece
       ${
@@ -176,7 +196,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
         basenaturaliste.espece
         ${objectToKeyValueInsert(especeInput)}
       RETURNING
-        *
+        espece.id::text,
+        espece.code,
+        espece.nom_francais,
+        espece.nom_latin,
+        espece.classe_id::text AS class_id,
+        espece.owner_id
     `;
 
     return slonik.one(query);
@@ -188,7 +213,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
         basenaturaliste.espece
         ${objectsToKeyValueInsert(especeInputs)}
       RETURNING
-        *
+        espece.id::text,
+        espece.code,
+        espece.nom_francais,
+        espece.nom_latin,
+        espece.classe_id::text AS class_id,
+        espece.owner_id
     `;
 
     return slonik.many(query);
@@ -203,7 +233,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
       WHERE
         id = ${especeId}
       RETURNING
-        *
+        espece.id::text,
+        espece.code,
+        espece.nom_francais,
+        espece.nom_latin,
+        espece.classe_id::text AS class_id,
+        espece.owner_id
     `;
 
     return slonik.one(query);
@@ -217,7 +252,12 @@ export const buildEspeceRepository = ({ slonik }: EspeceRepositoryDependencies) 
       WHERE
         id = ${especeId}
       RETURNING
-        *
+        espece.id::text,
+        espece.code,
+        espece.nom_francais,
+        espece.nom_latin,
+        espece.classe_id::text AS class_id,
+        espece.owner_id
     `;
 
     return slonik.one(query);

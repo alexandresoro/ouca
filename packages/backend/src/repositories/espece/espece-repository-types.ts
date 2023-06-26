@@ -3,8 +3,8 @@ import { type SortOrder } from "../common.js";
 import { type SearchCriteria } from "../search-criteria.js";
 
 export const especeSchema = z.object({
-  id: z.number(),
-  classeId: z.number().nullable(),
+  id: z.string(),
+  classId: z.string().nullable(),
   code: z.string(),
   nomFrancais: z.string(),
   nomLatin: z.string(),

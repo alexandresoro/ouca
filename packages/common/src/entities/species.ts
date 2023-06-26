@@ -5,13 +5,14 @@ export const speciesSchema = z.object({
   code: z.string(),
   nomFrancais: z.string(),
   nomLatin: z.string(),
-  classId: z.string(),
+  classId: z.string().nullable(), // FIXME: field is nullable in DB
   editable: z.boolean(),
 });
 
 export type Species = z.infer<typeof speciesSchema>;
 
 export const speciesExtendedSchema = speciesSchema.extend({
+  speciesClassName: z.string(),
   entriesCount: z.number(),
 });
 

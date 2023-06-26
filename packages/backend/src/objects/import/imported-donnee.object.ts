@@ -117,7 +117,7 @@ export class ImportedDonnee {
 
   buildInputDonnee = (
     inventaireId: number,
-    especeId: number,
+    especeId: string,
     sexeId: string,
     ageId: string,
     estimationNombreId: string,
@@ -127,7 +127,7 @@ export class ImportedDonnee {
   ): UpsertEntryInput => {
     return {
       inventoryId: inventaireId,
-      speciesId: especeId,
+      speciesId: parseInt(especeId),
       sexId: parseInt(sexeId),
       ageId: parseInt(ageId),
       numberEstimateId: parseInt(estimationNombreId),
