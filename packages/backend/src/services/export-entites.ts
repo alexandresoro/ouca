@@ -211,9 +211,10 @@ export const generateDonneesExport = async (
         "Code commune": commune?.code,
         "Nom commune": commune?.nom,
         "Lieu-dit": lieudit?.nom,
-        [`Latitude${coordinatesSuffix}`]: inventaire?.customizedCoordinates?.latitude ?? lieudit?.latitude,
-        [`Longitude${coordinatesSuffix}`]: inventaire?.customizedCoordinates?.longitude ?? lieudit?.longitude,
-        "Altitude en mètres": inventaire?.customizedCoordinates?.altitude ?? lieudit?.altitude,
+        [`Latitude${coordinatesSuffix}`]: inventaire?.customizedCoordinates?.latitude ?? lieudit?.coordinates.latitude,
+        [`Longitude${coordinatesSuffix}`]:
+          inventaire?.customizedCoordinates?.longitude ?? lieudit?.coordinates.longitude,
+        "Altitude en mètres": inventaire?.customizedCoordinates?.altitude ?? lieudit?.coordinates.altitude,
         "Température en °C": inventaire?.temperature,
         Météo: meteos.length ? meteos.map((meteo) => meteo.libelle).join(SEPARATOR_COMMA) : "",
         Classe: classe?.libelle,

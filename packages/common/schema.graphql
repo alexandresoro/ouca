@@ -100,8 +100,6 @@ type LieuDit {
   latitude: Float!
   coordinatesSystem: CoordinatesSystemType!
   commune: Commune!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type Milieu {
@@ -184,18 +182,6 @@ enum EspecesOrderBy {
   nbDonnees
 }
 
-enum LieuxDitsOrderBy {
-  id
-  nom
-  altitude
-  longitude
-  latitude
-  codeCommune
-  nomCommune
-  departement
-  nbDonnees
-}
-
 enum SearchDonneesOrderBy {
   id
   codeEspece
@@ -226,11 +212,6 @@ type EspecesPaginatedResult implements PaginatedResult {
   count: Int!
 }
 
-type LieuxDitsPaginatedResult implements PaginatedResult {
-  data: [LieuDit!]
-  count: Int!
-}
-
 type PaginatedSearchDonneesResult implements PaginatedResult {
   result(
     searchCriteria: SearchDonneeCriteria
@@ -248,6 +229,5 @@ type Query {
     orderBy: EspecesOrderBy
     sortOrder: SortOrder
   ): EspecesPaginatedResult
-  lieuxDits(searchParams: SearchParams, townId: Int, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
   searchDonnees: PaginatedSearchDonneesResult
 }

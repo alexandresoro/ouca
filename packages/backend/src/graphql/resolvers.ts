@@ -12,7 +12,6 @@ import {
   type EstimationNombre,
   type Inventaire,
   type LieuDit,
-  type LieuxDitsPaginatedResult,
   type Meteo,
   type Milieu,
   type Observateur,
@@ -43,20 +42,6 @@ export const buildResolvers = ({
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, args),
           especeService.getEspecesCount(user, { q: args?.searchParams?.q, searchCriteria: args?.searchCriteria }),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
-      lieuxDits: async (
-        _,
-        args,
-        { user }
-      ): Promise<Omit<LieuxDitsPaginatedResult, "data"> & { data?: Omit<LieuDit, "commune">[] }> => {
-        const [data, count] = await Promise.all([
-          lieuditService.findPaginatedLieuxDits(user, args),
-          lieuditService.getLieuxDitsCount(user, { q: args.searchParams?.q, townId: args.townId }),
         ]);
         return {
           data,
@@ -187,7 +172,18 @@ export const buildResolvers = ({
         });
       },
       lieuDit: async (parent, args, { user }): Promise<Omit<LieuDit, "commune"> | null> => {
-        return lieuditService.findLieuDitOfInventaireId(parent?.id, user);
+        const locality = await lieuditService.findLieuDitOfInventaireId(parent?.id, user);
+        if (!locality) {
+          return null;
+        }
+        return {
+          ...locality,
+          id: parseInt(locality.id),
+          altitude: locality.coordinates.altitude,
+          longitude: locality.coordinates.longitude,
+          latitude: locality.coordinates.latitude,
+          coordinatesSystem: "gps",
+        };
       },
       meteos: async (parent, args, { user }): Promise<Meteo[]> => {
         const weathers = await meteoService.findMeteosOfInventaireId(parent?.id, user);
@@ -200,9 +196,8 @@ export const buildResolvers = ({
       },
     },
     LieuDit: {
-      editable: isEntityEditableResolver(lieuditService.findLieuDit),
       commune: async (parent, args, { user }): Promise<Omit<Commune, "departement"> | null> => {
-        const town = await communeService.findCommuneOfLieuDitId(parent?.id, user);
+        const town = await communeService.findCommuneOfLieuDitId(parent?.id ? `${parent.id}` : undefined, user);
         if (!town) {
           return null;
         }
@@ -211,7 +206,6 @@ export const buildResolvers = ({
           id: parseInt(town.id),
         };
       },
-      nbDonnees: entityNbDonneesResolver(lieuditService.getDonneesCountByLieuDit),
     },
     PaginatedSearchDonneesResult: {
       result: async (_, args, { user }): Promise<DonneeEntity[]> => {

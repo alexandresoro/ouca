@@ -1,37 +1,21 @@
-import { getLocalityResponse, upsertLocalityInput, upsertLocalityResponse } from "@ou-ca/common/api/locality";
-import { type Locality } from "@ou-ca/common/entities/locality";
+import {
+  getLocalitiesExtendedResponse,
+  getLocalitiesQueryParamsSchema,
+  getLocalitiesResponse,
+  getLocalityResponse,
+  upsertLocalityInput,
+  upsertLocalityResponse,
+} from "@ou-ca/common/api/locality";
+import { type Locality, type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
-import { type Lieudit } from "../repositories/lieudit/lieudit-repository-types.js";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
-
-export const reshapeLocalityRepositoryToApi = (locality: Lieudit): Locality => {
-  // TODO Remove this later
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const { id, communeId, altitude, latitude, longitude, editable, ...restLocality } = locality;
-  return {
-    ...restLocality,
-    id: `${id}`,
-    townId: `${communeId}`,
-    coordinates: {
-      altitude,
-      latitude,
-      longitude,
-    },
-    // TODO Remove this later
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    editable,
-  };
-};
 
 const localitiesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { lieuditService } = services;
+  const { lieuditService, communeService, departementService } = services;
 
   fastify.get<{
     Params: {
@@ -43,7 +27,53 @@ const localitiesController: FastifyPluginCallback<{
       return await reply.status(404).send();
     }
 
-    const response = getLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
+    const response = getLocalityResponse.parse(locality);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getLocalitiesQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [localitiesData, count] = await Promise.all([
+      lieuditService.findPaginatedLieuxDits(req.user, queryParams),
+      lieuditService.getLieuxDitsCount(req.user, queryParams),
+    ]);
+
+    let data: Locality[] | LocalityExtended[] = localitiesData;
+    if (extended) {
+      data = await Promise.all(
+        localitiesData.map(async (localityData) => {
+          // TODO look to optimize this request
+          const town = await communeService.findCommuneOfLieuDitId(localityData.id, req.user);
+          const department = town ? await departementService.findDepartementOfCommuneId(town.id, req.user) : null;
+          const entriesCount = await lieuditService.getDonneesCountByLieuDit(localityData.id, req.user);
+          return {
+            ...localityData,
+            townCode: town?.code,
+            townName: town?.nom,
+            departmentCode: department?.code,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getLocalitiesExtendedResponse : getLocalitiesResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 
@@ -58,7 +88,7 @@ const localitiesController: FastifyPluginCallback<{
 
     try {
       const locality = await lieuditService.createLieuDit(input, req.user);
-      const response = upsertLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
+      const response = upsertLocalityResponse.parse(locality);
 
       return await reply.send(response);
     } catch (e) {
@@ -84,7 +114,7 @@ const localitiesController: FastifyPluginCallback<{
 
     try {
       const locality = await lieuditService.updateLieuDit(req.params.id, input, req.user);
-      const response = upsertLocalityResponse.parse(reshapeLocalityRepositoryToApi(locality));
+      const response = upsertLocalityResponse.parse(locality);
 
       return await reply.send(response);
     } catch (e) {

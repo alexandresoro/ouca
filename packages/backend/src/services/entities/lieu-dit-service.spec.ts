@@ -1,16 +1,17 @@
-import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock, mockDeep } from "vitest-mock-extended";
-import { LieuxDitsOrderBy, SortOrder, type QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_NOM } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
-import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape.js";
+import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
 import { buildLieuditService } from "./lieu-dit-service.js";
 
 const lieuditRepository = mock<LieuditRepository>({});
@@ -36,10 +37,12 @@ vi.mock("./lieu-dit-service-reshape.js", () => {
   return {
     __esModule: true,
     reshapeInputLieuditUpsertData: vi.fn(),
+    reshapeLocalityRepositoryToApi: vi.fn(),
   };
 });
 
 const mockedReshapeInputLieuditUpsertData = vi.mocked(reshapeInputLieuditUpsertData);
+const mockedReshapeLocalityRepositoryToApi = vi.mocked(reshapeLocalityRepositoryToApi);
 
 describe("Find locality", () => {
   test("should handle a matching locality", async () => {
@@ -48,15 +51,17 @@ describe("Find locality", () => {
 
     lieuditRepository.findLieuditById.mockResolvedValueOnce(localityData);
 
-    await lieuditService.findLieuDit(localityData.id, loggedUser);
+    await lieuditService.findLieuDit(12, loggedUser);
 
     expect(lieuditRepository.findLieuditById).toHaveBeenCalledTimes(1);
-    expect(lieuditRepository.findLieuditById).toHaveBeenLastCalledWith(localityData.id);
+    expect(lieuditRepository.findLieuditById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle locality not found", async () => {
     lieuditRepository.findLieuditById.mockResolvedValueOnce(null);
     const loggedUser = mock<LoggedUser>();
+
+    mockedReshapeLocalityRepositoryToApi.mockReturnValueOnce(null);
 
     await expect(lieuditService.findLieuDit(10, loggedUser)).resolves.toBe(null);
 
@@ -74,31 +79,36 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await lieuditService.getDonneesCountByLieuDit(12, loggedUser);
+    await lieuditService.getDonneesCountByLieuDit("12", loggedUser);
 
     expect(donneeRepository.getCountByLieuditId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByLieuditId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(lieuditService.getDonneesCountByLieuDit(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(lieuditService.getDonneesCountByLieuDit("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Find locality by inventary ID", () => {
   test("should handle locality found", async () => {
     const localityData = mock<Lieudit>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
     lieuditRepository.findLieuditByInventaireId.mockResolvedValueOnce(localityData);
+    mockedReshapeLocalityRepositoryToApi.mockReturnValueOnce(
+      mock<Locality>({
+        id: "258",
+      })
+    );
 
     const locality = await lieuditService.findLieuDitOfInventaireId(43, loggedUser);
 
     expect(lieuditRepository.findLieuditByInventaireId).toHaveBeenCalledTimes(1);
     expect(lieuditRepository.findLieuditByInventaireId).toHaveBeenLastCalledWith(43);
-    expect(locality?.id).toEqual(256);
+    expect(locality?.id).toEqual("258");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -126,7 +136,7 @@ describe("Entities paginated find by search criteria", () => {
 
     lieuditRepository.findLieuxdits.mockResolvedValueOnce(localitiesData);
 
-    await lieuditService.findPaginatedLieuxDits(loggedUser);
+    await lieuditService.findPaginatedLieuxDits(loggedUser, {});
 
     expect(lieuditRepository.findLieuxdits).toHaveBeenCalledTimes(1);
     expect(lieuditRepository.findLieuxdits).toHaveBeenLastCalledWith({});
@@ -136,14 +146,12 @@ describe("Entities paginated find by search criteria", () => {
     const localitiesData = [mockDeep<Lieudit>(), mockDeep<Lieudit>(), mockDeep<Lieudit>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryLieuxDitsArgs = {
-      orderBy: LieuxDitsOrderBy.Nom,
+    const searchParams: LocalitiesSearchParams = {
+      orderBy: "nom",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     lieuditRepository.findLieuxdits.mockResolvedValueOnce([localitiesData[0]]);
@@ -156,12 +164,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_NOM,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(lieuditService.findPaginatedLieuxDits(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(lieuditService.findPaginatedLieuxDits(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -178,7 +186,7 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await lieuditService.getLieuxDitsCount(loggedUser, { q: "test", townId: 12 });
+    await lieuditService.getLieuxDitsCount(loggedUser, { q: "test", townId: "12" });
 
     expect(lieuditRepository.getCount).toHaveBeenCalledTimes(1);
     expect(lieuditRepository.getCount).toHaveBeenLastCalledWith("test", 12);

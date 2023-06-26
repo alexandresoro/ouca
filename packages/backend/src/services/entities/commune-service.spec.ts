@@ -112,7 +112,7 @@ describe("Find city by locality ID", () => {
 
     communeRepository.findCommuneByLieuDitId.mockResolvedValueOnce(cityData);
 
-    const city = await communeService.findCommuneOfLieuDitId(43, loggedUser);
+    const city = await communeService.findCommuneOfLieuDitId("43", loggedUser);
 
     expect(communeRepository.findCommuneByLieuDitId).toHaveBeenCalledTimes(1);
     expect(communeRepository.findCommuneByLieuDitId).toHaveBeenLastCalledWith(43);
@@ -120,7 +120,7 @@ describe("Find city by locality ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(communeService.findCommuneOfLieuDitId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(communeService.findCommuneOfLieuDitId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

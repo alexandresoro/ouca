@@ -1,10 +1,9 @@
-import { type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type LocalitiesSearchParams, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
+import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type QueryLieuxDitsArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-  type Lieudit,
   type LieuditCreateInput,
   type LieuditWithCommuneAndDepartementCode,
 } from "../../repositories/lieudit/lieudit-repository-types.js";
@@ -13,8 +12,8 @@ import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_NOM } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
-import { enrichEntityWithEditableStatus, getSqlPagination } from "./entities-utils.js";
-import { reshapeInputLieuditUpsertData } from "./lieu-dit-service-reshape.js";
+import { getSqlPagination } from "./entities-utils.js";
+import { reshapeInputLieuditUpsertData, reshapeLocalityRepositoryToApi } from "./lieu-dit-service-reshape.js";
 
 type LieuditServiceDependencies = {
   logger: Logger;
@@ -22,42 +21,37 @@ type LieuditServiceDependencies = {
   donneeRepository: DonneeRepository;
 };
 
-type LieuxDitsSearchParams = {
-  q?: string | null;
-  townId?: number | null;
-};
-
 export const buildLieuditService = ({ lieuditRepository, donneeRepository }: LieuditServiceDependencies) => {
-  const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Lieudit | null> => {
+  const findLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
     const locality = await lieuditRepository.findLieuditById(id);
-    return enrichEntityWithEditableStatus(locality, loggedUser);
+    return reshapeLocalityRepositoryToApi(locality, loggedUser);
   };
 
-  const getDonneesCountByLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByLieuDit = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByLieuditId(id);
+    return donneeRepository.getCountByLieuditId(parseInt(id));
   };
 
   const findLieuDitOfInventaireId = async (
     inventaireId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Lieudit | null> => {
+  ): Promise<Locality | null> => {
     validateAuthorization(loggedUser);
 
     const locality = await lieuditRepository.findLieuditByInventaireId(inventaireId);
-    return enrichEntityWithEditableStatus(locality, loggedUser);
+    return reshapeLocalityRepositoryToApi(locality, loggedUser);
   };
 
-  const findAllLieuxDits = async (): Promise<Lieudit[]> => {
+  const findAllLieuxDits = async (): Promise<Locality[]> => {
     const lieuxDits = await lieuditRepository.findLieuxdits({
       orderBy: COLUMN_NOM,
     });
 
     const enrichedLocalities = lieuxDits.map((locality) => {
-      return enrichEntityWithEditableStatus(locality, null);
+      return reshapeLocalityRepositoryToApi(locality, null);
     });
 
     return [...enrichedLocalities];
@@ -65,22 +59,22 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
 
   const findPaginatedLieuxDits = async (
     loggedUser: LoggedUser | null,
-    options: QueryLieuxDitsArgs = {}
-  ): Promise<Lieudit[]> => {
+    options: LocalitiesSearchParams
+  ): Promise<Locality[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, townId, orderBy: orderByField, sortOrder } = options;
+    const { q, townId, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const lieuxDits = await lieuditRepository.findLieuxdits({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
-      townId,
+      q,
+      ...getSqlPagination(pagination),
+      townId: townId ? parseInt(townId) : undefined,
       orderBy: orderByField,
       sortOrder,
     });
 
     const enrichedLocalities = lieuxDits.map((locality) => {
-      return enrichEntityWithEditableStatus(locality, loggedUser);
+      return reshapeLocalityRepositoryToApi(locality, loggedUser);
     });
 
     return [...enrichedLocalities];
@@ -94,14 +88,14 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
 
   const getLieuxDitsCount = async (
     loggedUser: LoggedUser | null,
-    { q, townId }: LieuxDitsSearchParams
+    { q, townId }: Pick<LocalitiesSearchParams, "q" | "townId">
   ): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return lieuditRepository.getCount(q, townId);
+    return lieuditRepository.getCount(q, townId ? parseInt(townId) : undefined);
   };
 
-  const createLieuDit = async (input: UpsertLocalityInput, loggedUser: LoggedUser | null): Promise<Lieudit> => {
+  const createLieuDit = async (input: UpsertLocalityInput, loggedUser: LoggedUser | null): Promise<Locality> => {
     validateAuthorization(loggedUser);
 
     try {
@@ -110,7 +104,7 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
         owner_id: loggedUser.id,
       });
 
-      return enrichEntityWithEditableStatus(createdLocality, loggedUser);
+      return reshapeLocalityRepositoryToApi(createdLocality, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -123,7 +117,7 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     id: number,
     input: UpsertLocalityInput,
     loggedUser: LoggedUser | null
-  ): Promise<Lieudit> => {
+  ): Promise<Locality> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -138,7 +132,7 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     try {
       const updatedLocality = await lieuditRepository.updateLieudit(id, reshapeInputLieuditUpsertData(input));
 
-      return enrichEntityWithEditableStatus(updatedLocality, loggedUser);
+      return reshapeLocalityRepositoryToApi(updatedLocality, loggedUser);
     } catch (e) {
       if (e instanceof UniqueIntegrityConstraintViolationError) {
         throw new OucaError("OUCA0004", e);
@@ -147,7 +141,7 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     }
   };
 
-  const deleteLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Lieudit> => {
+  const deleteLieuDit = async (id: number, loggedUser: LoggedUser | null): Promise<Locality> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -160,13 +154,13 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     }
 
     const deletedLocality = await lieuditRepository.deleteLieuditById(id);
-    return enrichEntityWithEditableStatus(deletedLocality, loggedUser);
+    return reshapeLocalityRepositoryToApi(deletedLocality, loggedUser);
   };
 
   const createLieuxDits = async (
     lieuxdits: Omit<LieuditCreateInput, "owner_id">[],
     loggedUser: LoggedUser
-  ): Promise<readonly Lieudit[]> => {
+  ): Promise<readonly Locality[]> => {
     const createdLocalities = await lieuditRepository.createLieuxdits(
       lieuxdits.map((lieudit) => {
         return { ...lieudit, owner_id: loggedUser.id };
@@ -174,7 +168,7 @@ export const buildLieuditService = ({ lieuditRepository, donneeRepository }: Lie
     );
 
     const enrichedCreatedLocalities = createdLocalities.map((locality) => {
-      return enrichEntityWithEditableStatus(locality, loggedUser);
+      return reshapeLocalityRepositoryToApi(locality, loggedUser);
     });
 
     return enrichedCreatedLocalities;

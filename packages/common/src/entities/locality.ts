@@ -12,6 +12,9 @@ export const localitySchema = z.object({
 export type Locality = z.infer<typeof localitySchema>;
 
 export const localityExtendedSchema = localitySchema.extend({
+  townCode: z.number(),
+  townName: z.string(),
+  departmentCode: z.string(),
   entriesCount: z.number(),
 });
 

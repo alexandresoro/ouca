@@ -1,9 +1,10 @@
+import { getLocalitiesExtendedResponse, type LocalitiesOrderBy } from "@ou-ca/common/api/locality";
+import { type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type LieuDit, type LieuxDitsOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +12,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_LIEUX_DITS_QUERY } from "./LieuDitManageQueries";
 
 const COLUMNS = [
   {
@@ -53,30 +53,34 @@ const LieuDitTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<LieuxDitsOrderBy>();
+    usePaginatedTableParams<LocalitiesOrderBy>();
 
-  const [dialogLieuDit, setDialogLieuDit] = useState<Pick<LieuDit, "id" | "nom" | "commune" | "nbDonnees"> | null>(
-    null
-  );
+  const [dialogLieuDit, setDialogLieuDit] = useState<LocalityExtended | null>(null);
 
-  const [{ data }, reexecuteLieuxDits] = useQuery({
-    query: PAGINATED_LIEUX_DITS_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/localities",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getLocalitiesExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteLieuxDits();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -95,19 +99,19 @@ const LieuDitTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditLieuDit = (id: number | undefined) => {
+  const handleEditLieuDit = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteLieuDit = (lieuDit: Pick<LieuDit, "id" | "nom" | "commune" | "nbDonnees"> | null) => {
+  const handleDeleteLieuDit = (lieuDit: LocalityExtended | null) => {
     if (lieuDit) {
       setDialogLieuDit(lieuDit);
     }
   };
 
-  const handleDeleteLieuDitConfirmation = (lieuDit: Pick<LieuDit, "id"> | null) => {
+  const handleDeleteLieuDitConfirmation = (lieuDit: Pick<LocalityExtended, "id"> | null) => {
     if (lieuDit) {
       setDialogLieuDit(null);
       mutate({ path: `/localities/${lieuDit.id}` });
@@ -118,7 +122,7 @@ const LieuDitTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: LieuxDitsOrderBy) => {
+  const handleRequestSort = (sortingColumn: LocalitiesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -131,7 +135,7 @@ const LieuDitTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.lieuxDits?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -152,17 +156,17 @@ const LieuDitTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.lieuxDits?.data?.map((lieuDit) => {
+        tableRows={data?.data.map((lieuDit) => {
           return (
             <tr className="hover:bg-base-200" key={lieuDit?.id}>
-              <td>{lieuDit?.commune?.departement?.code}</td>
-              <td>{lieuDit?.commune?.code}</td>
-              <td>{lieuDit?.commune?.nom}</td>
-              <td>{lieuDit?.nom}</td>
-              <td>{lieuDit?.latitude}</td>
-              <td>{lieuDit?.longitude}</td>
-              <td>{lieuDit?.altitude}</td>
-              <td>{lieuDit?.nbDonnees}</td>
+              <td>{lieuDit.departmentCode}</td>
+              <td>{lieuDit.townCode}</td>
+              <td>{lieuDit.townName}</td>
+              <td>{lieuDit.nom}</td>
+              <td>{lieuDit.coordinates.latitude}</td>
+              <td>{lieuDit.coordinates.longitude}</td>
+              <td>{lieuDit.coordinates.altitude}</td>
+              <td>{lieuDit.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!lieuDit.editable}
@@ -175,18 +179,18 @@ const LieuDitTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.lieuxDits?.count ?? 0}
+        count={data?.meta.count ?? 0}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog
         open={!!dialogLieuDit}
         messageContent={t("deleteLieuDitDialogMsg", {
           name: dialogLieuDit?.nom,
-          city: dialogLieuDit?.commune?.nom,
-          department: dialogLieuDit?.commune?.departement?.code,
+          city: dialogLieuDit?.townName,
+          department: dialogLieuDit?.departmentCode,
         })}
         impactedItemsMessage={t("deleteLieuDitDialogMsgImpactedData", {
-          nbOfObservations: dialogLieuDit?.nbDonnees ?? 0,
+          nbOfObservations: dialogLieuDit?.entriesCount ?? 0,
         })}
         onCancelAction={() => setDialogLieuDit(null)}
         onConfirmAction={() => handleDeleteLieuDitConfirmation(dialogLieuDit)}

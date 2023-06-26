@@ -1,4 +1,5 @@
 import { getDepartmentResponse, getDepartmentsResponse } from "@ou-ca/common/api/department";
+import { getLocalitiesResponse } from "@ou-ca/common/api/locality";
 import { getTownResponse, getTownsResponse } from "@ou-ca/common/api/town";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type Locality } from "@ou-ca/common/entities/locality";
@@ -8,7 +9,6 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useQuery as useQueryGql } from "urql";
 import { altitudeServiceStatusAtom } from "../../../atoms/altitudeServiceAtom";
 import {
   areCoordinatesCustomizedFromLocalityAtom,
@@ -20,7 +20,6 @@ import {
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import TextInput from "../../common/styled/TextInput";
 import Autocomplete from "../../common/styled/select/Autocomplete";
-import { AUTOCOMPLETE_LOCALITIES_QUERY } from "./InventoryFormQueries";
 import { type InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormLocationProps = Pick<UseFormReturn<InventoryFormState>, "register" | "control"> & {
@@ -170,39 +169,22 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
     }
   );
 
-  const [{ data: dataLocalities }] = useQueryGql({
-    query: AUTOCOMPLETE_LOCALITIES_QUERY,
-    variables: {
-      searchParams: {
+  const { data: dataLocalities } = useApiQuery(
+    {
+      path: "/localities",
+      queryParams: {
         q: localityInput,
         pageSize: 5,
+        townId: town?.id,
       },
-      townId: town?.id ? parseInt(town.id) : undefined,
+      schema: getLocalitiesResponse,
     },
-    pause: town?.id == null,
-  });
-
-  // Reshape GraphQL entities to map REST ones
-  // TODO cleanup one migration is complete
-  const autocompleteLocalities =
-    town?.id != null && dataLocalities?.lieuxDits?.data
-      ? dataLocalities.lieuxDits.data.map((locality) => {
-          const { id, altitude, latitude, longitude, __typename, coordinatesSystem, commune, ...restLocality } =
-            locality;
-          return {
-            ...restLocality,
-            id: `${id}`,
-            coordinates: {
-              altitude,
-              latitude,
-              longitude,
-            },
-            townId: `${commune.id}`,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-          } satisfies Locality;
-        })
-      : [];
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+      enabled: town?.id != null,
+    }
+  );
 
   // Handle when department is changed by the user
   const handleDepartmentChange = (newDepartment: Department | null) => {
@@ -286,9 +268,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
       <br />
       <Autocomplete
         ref={refLocality}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        data={autocompleteLocalities}
+        data={dataLocalities?.data}
         label={t("inventoryForm.locality")}
         onInputChange={setLocalityInput}
         onChange={handleLocalityChange}

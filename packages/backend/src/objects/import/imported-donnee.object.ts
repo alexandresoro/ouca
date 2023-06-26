@@ -144,7 +144,7 @@ export class ImportedDonnee {
   buildInputInventaire = (
     observateurId: string,
     associesIds: Set<string>,
-    lieuditId: number,
+    lieuditId: string,
     meteosIds: Set<string>,
     customizedAltitude: number | null,
     customizedCoordinates: Coordinates | null
@@ -166,7 +166,7 @@ export class ImportedDonnee {
       date: formattedDate ? format(formattedDate, DATE_PATTERN) : "null",
       time: getFormattedTime(this.heure),
       duration: getFormattedTime(this.duree),
-      localityId: `${lieuditId}`,
+      localityId: lieuditId,
       coordinates: customizedCoordinatesStr,
       temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
       weatherIds: [...meteosIds],

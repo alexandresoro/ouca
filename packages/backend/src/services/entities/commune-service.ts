@@ -48,12 +48,12 @@ export const buildCommuneService = ({
   };
 
   const findCommuneOfLieuDitId = async (
-    lieuditId: number | undefined,
+    lieuditId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Town | null> => {
     validateAuthorization(loggedUser);
 
-    const town = await communeRepository.findCommuneByLieuDitId(lieuditId);
+    const town = await communeRepository.findCommuneByLieuDitId(lieuditId ? parseInt(lieuditId) : undefined);
     return enrichEntityWithEditableStatus(town, loggedUser);
   };
 

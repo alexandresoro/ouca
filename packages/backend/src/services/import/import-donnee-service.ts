@@ -7,6 +7,7 @@ import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { type Environment } from "@ou-ca/common/entities/environment";
+import { type Locality } from "@ou-ca/common/entities/locality";
 import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Sex } from "@ou-ca/common/entities/sex";
@@ -17,7 +18,6 @@ import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type Espece } from "../../repositories/espece/espece-repository-types.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
-import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
 import { ImportService } from "./import-service.js";
@@ -27,7 +27,7 @@ export class ImportDonneeService extends ImportService {
   private observateurs!: Observer[];
   private departements!: Department[];
   private communes!: Town[];
-  private lieuxDits!: Lieudit[];
+  private lieuxDits!: Locality[];
   private especes!: Espece[];
   private ages!: Age[];
   private sexes!: Sex[];
@@ -381,9 +381,9 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findLieuDit = (communeId: string, nomLieuDit: string): Lieudit | undefined => {
+  private findLieuDit = (communeId: string, nomLieuDit: string): Locality | undefined => {
     return this.lieuxDits.find((lieuDit) => {
-      return lieuDit.communeId === parseInt(communeId) && this.compareStrings(lieuDit.nom, nomLieuDit);
+      return lieuDit.townId === communeId && this.compareStrings(lieuDit.nom, nomLieuDit);
     });
   };
 

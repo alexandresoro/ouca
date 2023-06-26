@@ -4,16 +4,17 @@ import {
   type CoordinatesSystemType,
 } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Department } from "@ou-ca/common/entities/department";
+import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Town } from "@ou-ca/common/entities/town";
 import { ImportedLieuDit } from "../../objects/import/imported-lieu-dit.object.js";
-import { type Lieudit, type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
+import { type LieuditCreateInput } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { ImportService } from "./import-service.js";
 
 export class ImportLieuxditService extends ImportService {
   private departements!: Department[];
   private communes!: Town[];
-  private lieuxDits!: (Lieudit | ImportedLieuDit)[];
+  private lieuxDits!: (Locality | ImportedLieuDit)[];
 
   private lieuxDitsToInsert!: Omit<LieuditCreateInput, "owner_id">[];
   private coordinatesSystem!: CoordinatesSystem;
@@ -73,8 +74,7 @@ export class ImportLieuxditService extends ImportService {
     // Check that the lieu-dit does not exist yet
     const lieudit = this.lieuxDits.find((lieuDit) => {
       return (
-        ((lieuDit as Lieudit)?.communeId === parseInt(commune.id) ||
-          (lieuDit as ImportedLieuDit)?.commune === commune.nom) &&
+        ((lieuDit as Locality)?.townId === commune.id || (lieuDit as ImportedLieuDit)?.commune === commune.nom) &&
         this.compareStrings(lieuDit.nom, importedLieuDit.nom)
       );
     });

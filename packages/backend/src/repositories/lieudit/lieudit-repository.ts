@@ -24,7 +24,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
   const findLieuditById = async (id: number, transaction?: DatabaseTransactionConnection): Promise<Lieudit | null> => {
     const query = sql.type(lieuditSchema)`
       SELECT 
-        *
+        lieudit.id::text,
+        lieudit.nom,
+        lieudit.altitude,
+        lieudit.longitude,
+        lieudit.latitude,
+        lieudit.commune_id::text AS town_id,
+        lieudit.owner_id
       FROM
         basenaturaliste.lieudit
       WHERE
@@ -41,7 +47,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
 
     const query = sql.type(lieuditSchema)`
       SELECT 
-        lieudit.*
+        lieudit.id::text,
+        lieudit.nom,
+        lieudit.altitude,
+        lieudit.longitude,
+        lieudit.latitude,
+        lieudit.commune_id::text AS town_id,
+        lieudit.owner_id
       FROM
         basenaturaliste.lieudit
       LEFT JOIN basenaturaliste.inventaire ON lieudit.id = inventaire.lieudit_id
@@ -72,7 +84,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     const matchStartNom = q ? `^${q}` : null;
     const query = sql.type(lieuditSchema)`
     SELECT 
-      lieudit.*
+      lieudit.id::text,
+      lieudit.nom,
+      lieudit.altitude,
+      lieudit.longitude,
+      lieudit.latitude,
+      lieudit.commune_id::text AS town_id,
+      lieudit.owner_id
     FROM
       basenaturaliste.lieudit
     ${
@@ -194,7 +212,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
   > => {
     const query = sql.type(lieuditWithCommuneAndDepartementCodeSchema)`
     SELECT 
-      lieudit.*,
+      lieudit.id::text,
+      lieudit.nom,
+      lieudit.altitude,
+      lieudit.longitude,
+      lieudit.latitude,
+      lieudit.commune_id::text AS town_id,
+      lieudit.owner_id,
       commune.code as commune_code,
       commune.nom as commune_nom,
       departement.code as departement_code
@@ -228,7 +252,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
         basenaturaliste.lieudit
         ${objectToKeyValueInsert(lieuditInput)}
       RETURNING
-        *
+        lieudit.id::text,
+        lieudit.nom,
+        lieudit.altitude,
+        lieudit.longitude,
+        lieudit.latitude,
+        lieudit.commune_id::text AS town_id,
+        lieudit.owner_id
     `;
 
     return slonik.one(query);
@@ -240,7 +270,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
         basenaturaliste.lieudit
         ${objectsToKeyValueInsert(lieuditInputs)}
       RETURNING
-        *
+        lieudit.id::text,
+        lieudit.nom,
+        lieudit.altitude,
+        lieudit.longitude,
+        lieudit.latitude,
+        lieudit.commune_id::text AS town_id,
+        lieudit.owner_id
     `;
 
     return slonik.many(query);
@@ -255,7 +291,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
       WHERE
         id = ${lieuditId}
       RETURNING
-        *
+        lieudit.id::text,
+        lieudit.nom,
+        lieudit.altitude,
+        lieudit.longitude,
+        lieudit.latitude,
+        lieudit.commune_id::text AS town_id,
+        lieudit.owner_id
     `;
 
     return slonik.one(query);
@@ -269,7 +311,13 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
       WHERE
         id = ${lieuditId}
       RETURNING
-        *
+        lieudit.id::text,
+        lieudit.nom,
+        lieudit.altitude,
+        lieudit.longitude,
+        lieudit.latitude,
+        lieudit.commune_id::text AS town_id,
+        lieudit.owner_id
     `;
 
     return slonik.one(query);

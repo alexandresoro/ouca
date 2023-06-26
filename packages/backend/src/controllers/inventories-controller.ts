@@ -6,7 +6,6 @@ import {
 } from "@ou-ca/common/api/inventory";
 import { type FastifyPluginCallback } from "fastify";
 import { type Services } from "../services/services.js";
-import { reshapeLocalityRepositoryToApi } from "./localities-controller.js";
 
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
@@ -40,7 +39,7 @@ const inventoriesController: FastifyPluginCallback<{
       id: `${inventory.id}`,
       observer,
       associates,
-      locality: reshapeLocalityRepositoryToApi(locality),
+      locality,
       weathers,
     } satisfies GetInventoryResponse;
 
