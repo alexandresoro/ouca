@@ -155,11 +155,6 @@ type Donnee {
 #
 # Args
 #
-input SearchParams {
-  q: String
-  pageNumber: Int
-  pageSize: Int
-}
 
 input SearchDonneeParams {
   pageNumber: Int
