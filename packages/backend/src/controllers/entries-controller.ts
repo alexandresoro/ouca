@@ -54,15 +54,7 @@ const entriesController: FastifyPluginCallback<{
       id: `${entry.id}`,
       inventoryId: `${entry.inventaireId}`,
       age,
-      // TODO Remove this later
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      behaviors: behaviors.map((behavior) => {
-        return {
-          ...behavior,
-          id: `${behavior.id}`,
-        };
-      }),
+      behaviors,
       // TODO Remove this later
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -72,22 +64,8 @@ const entriesController: FastifyPluginCallback<{
         classId: species.classeId ? `${species.classeId}` : "",
       },
       distanceEstimate,
-      // TODO Remove this later
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      numberEstimate: {
-        ...numberEstimate,
-        id: `${numberEstimate.id}`,
-      },
-      // TODO Remove this later
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      environments: environments.map((environment) => {
-        return {
-          ...environment,
-          id: `${environment.id}`,
-        };
-      }),
+      numberEstimate,
+      environments,
       sex,
       comment: entry.commentaire,
       number: entry.nombre,
