@@ -22,7 +22,11 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
   const findComportementById = async (id: number): Promise<Comportement | null> => {
     const query = sql.type(comportementSchema)`
       SELECT 
-        *
+        comportement.id::text,
+        comportement.code,
+        comportement.libelle,
+        comportement.nicheur,
+        comportement.owner_id
       FROM
         basenaturaliste.comportement
       WHERE
@@ -39,7 +43,11 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
 
     const query = sql.type(comportementSchema)`
       SELECT 
-        comportement.*
+        comportement.id::text,
+        comportement.code,
+        comportement.libelle,
+        comportement.nicheur,
+        comportement.owner_id
       FROM
         basenaturaliste.comportement
       LEFT JOIN basenaturaliste.donnee_comportement ON comportement.id = donnee_comportement.comportement_id
@@ -62,7 +70,11 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(comportementSchema)`
     SELECT 
-      comportement.*
+      comportement.id::text,
+      comportement.code,
+      comportement.libelle,
+      comportement.nicheur,
+      comportement.owner_id
     FROM
       basenaturaliste.comportement
     ${
@@ -127,7 +139,11 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
         basenaturaliste.comportement
         ${objectToKeyValueInsert(comportementInput)}
       RETURNING
-        *
+        comportement.id::text,
+        comportement.code,
+        comportement.libelle,
+        comportement.nicheur,
+        comportement.owner_id
     `;
 
     return slonik.one(query);
@@ -141,7 +157,11 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
         basenaturaliste.comportement
         ${objectsToKeyValueInsert(comportementInputs)}
       RETURNING
-        *
+        comportement.id::text,
+        comportement.code,
+        comportement.libelle,
+        comportement.nicheur,
+        comportement.owner_id
     `;
 
     return slonik.many(query);
@@ -159,7 +179,11 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
       WHERE
         id = ${comportementId}
       RETURNING
-        *
+        comportement.id::text,
+        comportement.code,
+        comportement.libelle,
+        comportement.nicheur,
+        comportement.owner_id
     `;
 
     return slonik.one(query);
@@ -173,7 +197,11 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
       WHERE
         id = ${comportementId}
       RETURNING
-        *
+        comportement.id::text,
+        comportement.code,
+        comportement.libelle,
+        comportement.nicheur,
+        comportement.owner_id
     `;
 
     return slonik.one(query);

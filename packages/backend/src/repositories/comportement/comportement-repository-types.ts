@@ -3,7 +3,7 @@ import { z } from "zod";
 import { type SortOrder } from "../common.js";
 
 export const comportementSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   code: z.string(),
   libelle: z.string(),
   nicheur: z.enum(NICHEUR_CODES).nullable(),

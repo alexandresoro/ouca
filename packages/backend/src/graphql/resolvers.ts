@@ -6,7 +6,6 @@ import {
   type Classe,
   type Commune,
   type Comportement,
-  type ComportementsPaginatedResult,
   type Departement,
   type Espece,
   type EstimationDistance,
@@ -40,16 +39,6 @@ export const buildResolvers = ({
 }: Services): IResolvers => {
   return {
     Query: {
-      comportements: async (_, args, { user }): Promise<ComportementsPaginatedResult> => {
-        const [data, count] = await Promise.all([
-          comportementService.findPaginatedComportements(user, args),
-          comportementService.getComportementsCount(user, args?.searchParams?.q),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
       especes: async (_, args, { user }): Promise<{ data: Omit<Espece, "classe">[]; count: number }> => {
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, args),
@@ -93,10 +82,6 @@ export const buildResolvers = ({
         };
       },
     },
-    Comportement: {
-      editable: isEntityEditableResolver(comportementService.findComportement),
-      nbDonnees: entityNbDonneesResolver(comportementService.getDonneesCountByComportement),
-    },
     Donnee: {
       age: async (parent, args, { user }): Promise<Age | null> => {
         const age = await ageService.findAgeOfDonneeId(parent?.id, user);
@@ -109,7 +94,13 @@ export const buildResolvers = ({
         };
       },
       comportements: async (parent, args, { user }): Promise<Comportement[]> => {
-        return comportementService.findComportementsOfDonneeId(parent?.id, user);
+        const behaviors = await comportementService.findComportementsOfDonneeId(parent?.id, user);
+        return behaviors.map((behavior) => {
+          return {
+            ...behavior,
+            id: parseInt(behavior.id),
+          };
+        });
       },
       espece: async (parent, args, { user }): Promise<Omit<Espece, "classe"> | null> => {
         return especeService.findEspeceOfDonneeId(parent?.id, user);

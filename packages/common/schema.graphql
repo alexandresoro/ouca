@@ -42,8 +42,6 @@ type Comportement {
   code: String!
   libelle: String!
   nicheur: Nicheur
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type Departement {
@@ -177,14 +175,6 @@ enum SortOrder {
   desc
 }
 
-enum ComportementsOrderBy {
-  id
-  code
-  libelle
-  nbDonnees
-  nicheur
-}
-
 enum EspecesOrderBy {
   id
   code
@@ -231,11 +221,6 @@ interface PaginatedResult {
   count: Int!
 }
 
-type ComportementsPaginatedResult implements PaginatedResult {
-  data: [Comportement!]
-  count: Int!
-}
-
 type EspecesPaginatedResult implements PaginatedResult {
   data: [Espece!]
   count: Int!
@@ -257,11 +242,6 @@ type PaginatedSearchDonneesResult implements PaginatedResult {
 }
 
 type Query {
-  comportements(
-    searchParams: SearchParams
-    orderBy: ComportementsOrderBy
-    sortOrder: SortOrder
-  ): ComportementsPaginatedResult
   especes(
     searchParams: SearchParams
     searchCriteria: SearchDonneeCriteria

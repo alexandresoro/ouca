@@ -3,6 +3,7 @@ import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coord
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
 import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Age } from "@ou-ca/common/entities/age";
+import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
 import { type Environment } from "@ou-ca/common/entities/environment";
@@ -13,7 +14,6 @@ import { type Town } from "@ou-ca/common/entities/town";
 import { type Weather } from "@ou-ca/common/entities/weather";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
-import { type Comportement } from "../../repositories/comportement/comportement-repository-types.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type Espece } from "../../repositories/espece/espece-repository-types.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
@@ -33,7 +33,7 @@ export class ImportDonneeService extends ImportService {
   private sexes!: Sex[];
   private estimationsNombre!: NumberEstimate[];
   private estimationsDistance!: DistanceEstimate[];
-  private comportements!: Comportement[];
+  private comportements!: Behavior[];
   private milieux!: Environment[];
   private meteos!: Weather[];
   private inventaires: Inventaire[] = []; // The list of existing inventaires + the ones we created along with the validation
@@ -208,7 +208,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Comportements" or return an error if some of them does not exist
-    const comportementsIds = new Set<number>();
+    const comportementsIds = new Set<string>();
     for (const comportementStr of importedDonnee.comportements) {
       const comportement = this.findComportement(comportementStr);
       if (!comportement) {
@@ -308,7 +308,10 @@ export class ImportDonneeService extends ImportService {
         donnee.distanceEstimateId === (estimationDistance?.id ?? null) &&
         donnee.regroupment === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
-        areSetsContainingSameValues(new Set(donnee.behaviorIds), comportementsIds) &&
+        areSetsContainingSameValues(
+          new Set(donnee.behaviorIds),
+          new Set([...comportementsIds].map((behavior) => parseInt(behavior)))
+        ) &&
         areSetsContainingSameValues(
           new Set(donnee.environmentIds),
           new Set([...milieuxIds].map((environment) => parseInt(environment)))
@@ -424,7 +427,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findComportement = (codeOrLibelleComportement: string): Comportement | undefined => {
+  private findComportement = (codeOrLibelleComportement: string): Behavior | undefined => {
     return this.comportements.find((comportement) => {
       return (
         this.compareStrings(comportement.code, codeOrLibelleComportement) ||

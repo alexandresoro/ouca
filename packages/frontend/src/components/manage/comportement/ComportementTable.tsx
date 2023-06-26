@@ -1,9 +1,10 @@
+import { getBehaviorsExtendedResponse, type BehaviorsOrderBy } from "@ou-ca/common/api/behavior";
+import { type BehaviorExtended } from "@ou-ca/common/entities/behavior";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type Comportement, type ComportementsOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +12,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_COMPORTEMENTS_QUERY } from "./ComportementManageQueries";
 
 const COLUMNS = [
   {
@@ -37,28 +37,34 @@ const ComportementTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<ComportementsOrderBy>();
+    usePaginatedTableParams<BehaviorsOrderBy>();
 
-  const [dialogComportement, setDialogComportement] = useState<Comportement | null>(null);
+  const [dialogComportement, setDialogComportement] = useState<BehaviorExtended | null>(null);
 
-  const [{ data }, reexecuteComportements] = useQuery({
-    query: PAGINATED_COMPORTEMENTS_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/behaviors",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getBehaviorsExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteComportements();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -77,19 +83,19 @@ const ComportementTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditComportement = (id: number | undefined) => {
+  const handleEditComportement = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteComportement = (comportement: Comportement | null) => {
+  const handleDeleteComportement = (comportement: BehaviorExtended | null) => {
     if (comportement) {
       setDialogComportement(comportement);
     }
   };
 
-  const handleDeleteComportementConfirmation = (comportement: Comportement | null) => {
+  const handleDeleteComportementConfirmation = (comportement: BehaviorExtended | null) => {
     if (comportement) {
       setDialogComportement(null);
       mutate({ path: `/behaviors/${comportement.id}` });
@@ -100,7 +106,7 @@ const ComportementTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: ComportementsOrderBy) => {
+  const handleRequestSort = (sortingColumn: BehaviorsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -113,7 +119,7 @@ const ComportementTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.comportements?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -134,13 +140,13 @@ const ComportementTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.comportements?.data?.map((comportement) => {
+        tableRows={data?.data.map((comportement) => {
           return (
             <tr className="hover:bg-base-200" key={comportement?.id}>
-              <td>{comportement?.code}</td>
-              <td>{comportement?.libelle}</td>
-              <td>{comportement?.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
-              <td>{comportement?.nbDonnees}</td>
+              <td>{comportement.code}</td>
+              <td>{comportement.libelle}</td>
+              <td>{comportement.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
+              <td>{comportement.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!comportement.editable}
@@ -153,7 +159,7 @@ const ComportementTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.comportements?.count ?? 0}
+        count={data?.meta.count ?? 0}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog

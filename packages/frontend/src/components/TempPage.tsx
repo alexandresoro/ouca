@@ -1,28 +1,15 @@
+import { getBehaviorsResponse } from "@ou-ca/common/api/behavior";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
+import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { useState, type FunctionComponent } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { useQuery } from "urql";
-import { graphql } from "../gql";
-import { type Comportement } from "../gql/graphql";
 import useApiQuery from "../hooks/api/useApiQuery";
 import FormAutocomplete from "./common/form/FormAutocomplete";
 
-const COMPS_QUERY = graphql(`
-  query TempComps($searchParams: SearchParams) {
-    comportements(searchParams: $searchParams) {
-      data {
-        id
-        code
-        libelle
-      }
-    }
-  }
-`);
-
 type Temp = {
   observateur: Observer | null;
-  comportement1: Comportement | null;
+  comportement1: Behavior | null;
 };
 
 const TempPage: FunctionComponent = () => {
@@ -63,15 +50,20 @@ const TempPage: FunctionComponent = () => {
     }
   );
 
-  const [{ data: dataComps }] = useQuery({
-    query: COMPS_QUERY,
-    variables: {
-      searchParams: {
+  const { data: dataComps } = useApiQuery(
+    {
+      path: "/behaviors",
+      queryParams: {
         q: compFilter,
         pageSize: 5,
       },
+      schema: getBehaviorsResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const onSubmit = (data: Temp) => {
     setDataSubmitted(data);
@@ -91,7 +83,7 @@ const TempPage: FunctionComponent = () => {
       />
       {comportement?.id} - {compFilter}
       <FormAutocomplete
-        data={dataComps?.comportements?.data}
+        data={dataComps?.data}
         name="comportement1"
         label="Comportement 1"
         control={control}

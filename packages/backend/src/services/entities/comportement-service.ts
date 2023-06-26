@@ -1,11 +1,8 @@
-import { type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
+import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
+import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type QueryComportementsArgs } from "../../graphql/generated/graphql-types.js";
-import {
-  type Comportement,
-  type ComportementCreateInput,
-} from "../../repositories/comportement/comportement-repository-types.js";
+import { type ComportementCreateInput } from "../../repositories/comportement/comportement-repository-types.js";
 import { type ComportementRepository } from "../../repositories/comportement/comportement-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -24,14 +21,14 @@ export const buildComportementService = ({
   comportementRepository,
   donneeRepository,
 }: ComportementServiceDependencies) => {
-  const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement | null> => {
+  const findComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior | null> => {
     validateAuthorization(loggedUser);
 
     const behavior = await comportementRepository.findComportementById(id);
     return enrichEntityWithEditableStatus(behavior, loggedUser);
   };
 
-  const findComportementsIdsOfDonneeId = async (donneeId: number): Promise<number[]> => {
+  const findComportementsIdsOfDonneeId = async (donneeId: number): Promise<string[]> => {
     const comportementsIds = await comportementRepository
       .findComportementsOfDonneeId(donneeId)
       .then((comportements) => comportements.map(({ id }) => id));
@@ -42,7 +39,7 @@ export const buildComportementService = ({
   const findComportementsOfDonneeId = async (
     donneeId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<Comportement[]> => {
+  ): Promise<Behavior[]> => {
     validateAuthorization(loggedUser);
 
     const comportements = await comportementRepository.findComportementsOfDonneeId(donneeId);
@@ -54,13 +51,13 @@ export const buildComportementService = ({
     return [...enrichedBehaviors];
   };
 
-  const getDonneesCountByComportement = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByComportement = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByComportementId(id);
+    return donneeRepository.getCountByComportementId(parseInt(id));
   };
 
-  const findAllComportements = async (): Promise<Comportement[]> => {
+  const findAllComportements = async (): Promise<Behavior[]> => {
     const comportements = await comportementRepository.findComportements({
       orderBy: COLUMN_CODE,
     });
@@ -74,15 +71,15 @@ export const buildComportementService = ({
 
   const findPaginatedComportements = async (
     loggedUser: LoggedUser | null,
-    options: QueryComportementsArgs = {}
-  ): Promise<Comportement[]> => {
+    options: BehaviorsSearchParams
+  ): Promise<Behavior[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const comportements = await comportementRepository.findComportements({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
+      q,
+      ...getSqlPagination(pagination),
       orderBy: orderByField,
       sortOrder,
     });
@@ -100,10 +97,7 @@ export const buildComportementService = ({
     return comportementRepository.getCount(q);
   };
 
-  const createComportement = async (
-    input: UpsertBehaviorInput,
-    loggedUser: LoggedUser | null
-  ): Promise<Comportement> => {
+  const createComportement = async (input: UpsertBehaviorInput, loggedUser: LoggedUser | null): Promise<Behavior> => {
     validateAuthorization(loggedUser);
 
     try {
@@ -125,7 +119,7 @@ export const buildComportementService = ({
     id: number,
     input: UpsertBehaviorInput,
     loggedUser: LoggedUser | null
-  ): Promise<Comportement> => {
+  ): Promise<Behavior> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -149,7 +143,7 @@ export const buildComportementService = ({
     }
   };
 
-  const deleteComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Comportement> => {
+  const deleteComportement = async (id: number, loggedUser: LoggedUser | null): Promise<Behavior> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -168,7 +162,7 @@ export const buildComportementService = ({
   const createComportements = async (
     comportements: Omit<ComportementCreateInput[], "owner_id">,
     loggedUser: LoggedUser
-  ): Promise<readonly Comportement[]> => {
+  ): Promise<readonly Behavior[]> => {
     const createdBehaviors = await comportementRepository.createComportements(
       comportements.map((comportement) => {
         return { ...comportement, owner_id: loggedUser.id };

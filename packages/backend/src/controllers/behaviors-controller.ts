@@ -1,4 +1,12 @@
-import { getBehaviorResponse, upsertBehaviorInput, upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
+import {
+  getBehaviorResponse,
+  getBehaviorsExtendedResponse,
+  getBehaviorsQueryParamsSchema,
+  getBehaviorsResponse,
+  upsertBehaviorInput,
+  upsertBehaviorResponse,
+} from "@ou-ca/common/api/behavior";
+import { type Behavior, type BehaviorExtended } from "@ou-ca/common/entities/behavior";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -20,6 +28,46 @@ const behaviorsController: FastifyPluginCallback<{
     }
 
     const response = getBehaviorResponse.parse(behavior);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getBehaviorsQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [behaviorsData, count] = await Promise.all([
+      comportementService.findPaginatedComportements(req.user, queryParams),
+      comportementService.getComportementsCount(req.user, queryParams.q),
+    ]);
+
+    let data: Behavior[] | BehaviorExtended[] = behaviorsData;
+    if (extended) {
+      data = await Promise.all(
+        behaviorsData.map(async (behaviorData) => {
+          const entriesCount = await comportementService.getDonneesCountByComportement(behaviorData.id, req.user);
+          return {
+            ...behaviorData,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getBehaviorsExtendedResponse : getBehaviorsResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 

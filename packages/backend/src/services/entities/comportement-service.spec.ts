@@ -1,8 +1,8 @@
-import { type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
+import { type BehaviorsSearchParams, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { ComportementsOrderBy, SortOrder, type QueryComportementsArgs } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import {
   type Comportement,
   type ComportementCreateInput,
@@ -40,10 +40,10 @@ describe("Find behavior", () => {
 
     comportementRepository.findComportementById.mockResolvedValueOnce(behaviorData);
 
-    await comportementService.findComportement(behaviorData.id, loggedUser);
+    await comportementService.findComportement(12, loggedUser);
 
     expect(comportementRepository.findComportementById).toHaveBeenCalledTimes(1);
-    expect(comportementRepository.findComportementById).toHaveBeenLastCalledWith(behaviorData.id);
+    expect(comportementRepository.findComportementById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle behavior not found", async () => {
@@ -66,14 +66,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await comportementService.getDonneesCountByComportement(12, loggedUser);
+    await comportementService.getDonneesCountByComportement("12", loggedUser);
 
     expect(donneeRepository.getCountByComportementId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByComportementId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(comportementService.getDonneesCountByComportement(12, null)).rejects.toEqual(
+    await expect(comportementService.getDonneesCountByComportement("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
   });
@@ -118,7 +118,7 @@ describe("Entities paginated find by search criteria", () => {
 
     comportementRepository.findComportements.mockResolvedValueOnce(behaviorsData);
 
-    await comportementService.findPaginatedComportements(loggedUser);
+    await comportementService.findPaginatedComportements(loggedUser, {});
 
     expect(comportementRepository.findComportements).toHaveBeenCalledTimes(1);
     expect(comportementRepository.findComportements).toHaveBeenLastCalledWith({});
@@ -128,14 +128,12 @@ describe("Entities paginated find by search criteria", () => {
     const behaviorsData = [mock<Comportement>(), mock<Comportement>(), mock<Comportement>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryComportementsArgs = {
-      orderBy: ComportementsOrderBy.Libelle,
+    const searchParams: BehaviorsSearchParams = {
+      orderBy: "libelle",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     comportementRepository.findComportements.mockResolvedValueOnce([behaviorsData[0]]);
@@ -148,12 +146,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(comportementService.findPaginatedComportements(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(comportementService.findPaginatedComportements(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
