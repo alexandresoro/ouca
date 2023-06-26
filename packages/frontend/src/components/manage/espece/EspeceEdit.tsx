@@ -15,7 +15,7 @@ import ManageTopBar from "../common/ManageTopBar";
 
 type EspeceEditProps = {
   title: string;
-  defaultValues?: UpsertSpeciesInput | null;
+  defaultValues?: (Omit<UpsertSpeciesInput, "classId"> & { classId?: string }) | null;
   onSubmit: SubmitHandler<UpsertSpeciesInput>;
 };
 

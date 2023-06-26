@@ -82,7 +82,11 @@ const EspeceUpdate: FunctionComponent = () => {
   return (
     <>
       {!isLoading && !isError && data && (
-        <EspeceEdit title={t("speciesEditionTitle")} defaultValues={data} onSubmit={onSubmit} />
+        <EspeceEdit
+          title={t("speciesEditionTitle")}
+          defaultValues={{ ...data, classId: data.classId ?? undefined }}
+          onSubmit={onSubmit}
+        />
       )}
     </>
   );
