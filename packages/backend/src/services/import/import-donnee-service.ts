@@ -5,6 +5,7 @@ import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordin
 import { type Age } from "@ou-ca/common/entities/age";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
+import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Town } from "@ou-ca/common/entities/town";
@@ -14,7 +15,6 @@ import { ImportedDonnee } from "../../objects/import/imported-donnee.object.js";
 import { type Comportement } from "../../repositories/comportement/comportement-repository-types.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type Espece } from "../../repositories/espece/espece-repository-types.js";
-import { type EstimationNombre } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
 import { type Milieu } from "../../repositories/milieu/milieu-repository-types.js";
@@ -31,7 +31,7 @@ export class ImportDonneeService extends ImportService {
   private especes!: Espece[];
   private ages!: Age[];
   private sexes!: Sex[];
-  private estimationsNombre!: EstimationNombre[];
+  private estimationsNombre!: NumberEstimate[];
   private estimationsDistance!: DistanceEstimate[];
   private comportements!: Comportement[];
   private milieux!: Milieu[];
@@ -275,7 +275,7 @@ export class ImportDonneeService extends ImportService {
         `${donnee.sexeId}` === sexe.id &&
         `${donnee.ageId}` === age.id &&
         donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
-        donnee.estimationNombreId === estimationNombre.id &&
+        `${donnee.estimationNombreId}` === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
         (donnee.estimationDistanceId ? `${donnee.estimationDistanceId}` : null) === (estimationDistance?.id ?? null) &&
         donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
@@ -303,7 +303,7 @@ export class ImportDonneeService extends ImportService {
         `${donnee.sexId}` === sexe.id &&
         `${donnee.ageId}` === age.id &&
         donnee.number === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
-        donnee.numberEstimateId === estimationNombre.id &&
+        `${donnee.numberEstimateId}` === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
         donnee.distanceEstimateId === (estimationDistance?.id ?? null) &&
         donnee.regroupment === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
@@ -409,7 +409,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findEstimationNombre = (libelleEstimation: string): EstimationNombre | undefined => {
+  private findEstimationNombre = (libelleEstimation: string): NumberEstimate | undefined => {
     return this.estimationsNombre.find((estimation) => {
       return this.compareStrings(estimation.libelle, libelleEstimation);
     });

@@ -120,7 +120,7 @@ export class ImportedDonnee {
     especeId: number,
     sexeId: string,
     ageId: string,
-    estimationNombreId: number,
+    estimationNombreId: string,
     estimationDistanceId: string | null,
     comportementsIds: Set<number>,
     milieuxIds: Set<number>
@@ -130,7 +130,7 @@ export class ImportedDonnee {
       speciesId: especeId,
       sexId: parseInt(sexeId),
       ageId: parseInt(ageId),
-      numberEstimateId: estimationNombreId,
+      numberEstimateId: parseInt(estimationNombreId),
       number: this.nombre ? +this.nombre : null,
       distanceEstimateId: estimationDistanceId != null ? parseInt(estimationDistanceId) : null,
       distance: this.distance ? +this.distance : null,

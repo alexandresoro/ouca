@@ -1,12 +1,9 @@
-import { type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
-import { type QueryEstimationsNombreArgs } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
-import {
-  type EstimationNombre,
-  type EstimationNombreCreateInput,
-} from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
+import { type EstimationNombreCreateInput } from "../../repositories/estimation-nombre/estimation-nombre-repository-types.js";
 import { type EstimationNombreRepository } from "../../repositories/estimation-nombre/estimation-nombre-repository.js";
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_LIBELLE } from "../../utils/constants.js";
@@ -25,7 +22,7 @@ export const buildEstimationNombreService = ({
   estimationNombreRepository,
   donneeRepository,
 }: EstimationNombreServiceDependencies) => {
-  const findEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationNombre | null> => {
+  const findEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
     const numberEstimate = await estimationNombreRepository.findEstimationNombreById(id);
@@ -35,20 +32,20 @@ export const buildEstimationNombreService = ({
   const findEstimationNombreOfDonneeId = async (
     donneeId: number | undefined,
     loggedUser: LoggedUser | null
-  ): Promise<EstimationNombre | null> => {
+  ): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
     const numberEstimate = await estimationNombreRepository.findEstimationNombreByDonneeId(donneeId);
     return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
   };
 
-  const getDonneesCountByEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<number> => {
+  const getDonneesCountByEstimationNombre = async (id: string, loggedUser: LoggedUser | null): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCountByEstimationNombreId(id);
+    return donneeRepository.getCountByEstimationNombreId(parseInt(id));
   };
 
-  const findAllEstimationsNombre = async (): Promise<EstimationNombre[]> => {
+  const findAllEstimationsNombre = async (): Promise<NumberEstimate[]> => {
     const estimationNombres = await estimationNombreRepository.findEstimationsNombre({
       orderBy: COLUMN_LIBELLE,
     });
@@ -62,15 +59,15 @@ export const buildEstimationNombreService = ({
 
   const findPaginatedEstimationsNombre = async (
     loggedUser: LoggedUser | null,
-    options: QueryEstimationsNombreArgs = {}
-  ): Promise<EstimationNombre[]> => {
+    options: NumberEstimatesSearchParams
+  ): Promise<NumberEstimate[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, orderBy: orderByField, sortOrder } = options;
+    const { q, orderBy: orderByField, sortOrder, ...pagination } = options;
 
     const estimationNombres = await estimationNombreRepository.findEstimationsNombre({
-      q: searchParams?.q,
-      ...getSqlPagination(searchParams),
+      q: q,
+      ...getSqlPagination(pagination),
       orderBy: orderByField === "nonCompte" ? "non_compte" : orderByField,
       sortOrder,
     });
@@ -91,7 +88,7 @@ export const buildEstimationNombreService = ({
   const createEstimationNombre = async (
     input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null
-  ): Promise<EstimationNombre> => {
+  ): Promise<NumberEstimate> => {
     validateAuthorization(loggedUser);
 
     try {
@@ -113,7 +110,7 @@ export const buildEstimationNombreService = ({
     id: number,
     input: UpsertNumberEstimateInput,
     loggedUser: LoggedUser | null
-  ): Promise<EstimationNombre> => {
+  ): Promise<NumberEstimate> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -140,7 +137,7 @@ export const buildEstimationNombreService = ({
     }
   };
 
-  const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<EstimationNombre> => {
+  const deleteEstimationNombre = async (id: number, loggedUser: LoggedUser | null): Promise<NumberEstimate> => {
     validateAuthorization(loggedUser);
 
     // Check that the user is allowed to modify the existing data
@@ -159,7 +156,7 @@ export const buildEstimationNombreService = ({
   const createEstimationsNombre = async (
     estimationsNombre: Omit<EstimationNombreCreateInput[], "owner_id">,
     loggedUser: LoggedUser
-  ): Promise<readonly EstimationNombre[]> => {
+  ): Promise<readonly NumberEstimate[]> => {
     const createdNumberEstimates = await estimationNombreRepository.createEstimationsNombre(
       estimationsNombre.map((estimationNombre) => {
         return { ...estimationNombre, owner_id: loggedUser.id };

@@ -1,9 +1,10 @@
+import { getNumberEstimatesExtendedResponse, type NumberEstimatesOrderBy } from "@ou-ca/common/api/number-estimate";
+import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type EstimationNombre, type EstimationNombreOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +12,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_ESTIMATIONS_NOMBRE_QUERY } from "./EstimationNombreManageQueries";
 
 const COLUMNS = [
   {
@@ -33,28 +33,34 @@ const EstimationNombreTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EstimationNombreOrderBy>();
+    usePaginatedTableParams<NumberEstimatesOrderBy>();
 
-  const [dialogEstimationNombre, setDialogEstimationNombre] = useState<EstimationNombre | null>(null);
+  const [dialogEstimationNombre, setDialogEstimationNombre] = useState<NumberEstimateExtended | null>(null);
 
-  const [{ data }, reexecuteEstimationsNombre] = useQuery({
-    query: PAGINATED_ESTIMATIONS_NOMBRE_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/number-estimates",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getNumberEstimatesExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteEstimationsNombre();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -73,19 +79,19 @@ const EstimationNombreTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditEstimationNombre = (id: number | undefined) => {
+  const handleEditEstimationNombre = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteEstimationNombre = (estimationNombre: EstimationNombre | null) => {
+  const handleDeleteEstimationNombre = (estimationNombre: NumberEstimateExtended | null) => {
     if (estimationNombre) {
       setDialogEstimationNombre(estimationNombre);
     }
   };
 
-  const handleDeleteEstimationNombreConfirmation = (estimationNombre: EstimationNombre | null) => {
+  const handleDeleteEstimationNombreConfirmation = (estimationNombre: NumberEstimateExtended | null) => {
     if (estimationNombre) {
       setDialogEstimationNombre(null);
       mutate({ path: `/number-estimates/${estimationNombre.id}` });
@@ -96,7 +102,7 @@ const EstimationNombreTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: EstimationNombreOrderBy) => {
+  const handleRequestSort = (sortingColumn: NumberEstimatesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -109,7 +115,7 @@ const EstimationNombreTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.estimationsNombre?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -130,12 +136,12 @@ const EstimationNombreTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.estimationsNombre?.data?.map((estimationNombre) => {
+        tableRows={data?.data.map((estimationNombre) => {
           return (
             <tr className="hover:bg-base-200" key={estimationNombre?.id}>
-              <td>{estimationNombre?.libelle}</td>
-              <td>{estimationNombre?.nonCompte ? "Oui" : ""}</td>
-              <td>{estimationNombre?.nbDonnees}</td>
+              <td>{estimationNombre.libelle}</td>
+              <td>{estimationNombre.nonCompte ? "Oui" : ""}</td>
+              <td>{estimationNombre.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!estimationNombre.editable}
@@ -148,7 +154,7 @@ const EstimationNombreTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.estimationsNombre?.count ?? 0}
+        count={data?.meta.count ?? 0}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog
@@ -157,7 +163,7 @@ const EstimationNombreTable: FunctionComponent = () => {
           name: dialogEstimationNombre?.libelle,
         })}
         impactedItemsMessage={t("deleteNumberPrecisionDialogMsgImpactedData", {
-          nbOfObservations: dialogEstimationNombre?.nbDonnees ?? 0,
+          nbOfObservations: dialogEstimationNombre?.entriesCount ?? 0,
         })}
         onCancelAction={() => setDialogEstimationNombre(null)}
         onConfirmAction={() => handleDeleteEstimationNombreConfirmation(dialogEstimationNombre)}

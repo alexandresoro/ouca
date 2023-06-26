@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getAgesResponse } from "@ou-ca/common/api/age";
 import { getDepartmentsResponse } from "@ou-ca/common/api/department";
+import { getNumberEstimatesResponse } from "@ou-ca/common/api/number-estimate";
 import { getObserversResponse } from "@ou-ca/common/api/observer";
 import {
   getSettingsResponse,
@@ -15,8 +16,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "urql";
-import { graphql } from "../gql";
 import useApiMutation from "../hooks/api/useApiMutation";
 import useApiQuery from "../hooks/api/useApiQuery";
 import useSnackbar from "../hooks/useSnackbar";
@@ -25,17 +24,6 @@ import FormSwitch from "./common/form/FormSwitch";
 import TextInput from "./common/styled/TextInput";
 import ContentContainerLayout from "./layout/ContentContainerLayout";
 import StyledPanelHeader from "./layout/StyledPanelHeader";
-
-const SETTINGS_QUERY = graphql(`
-  query GetUserSettingsPage {
-    estimationsNombre {
-      data {
-        id
-        libelle
-      }
-    }
-  }
-`);
 
 type SettingsInputs = {
   defaultObserver: number | null;
@@ -70,8 +58,6 @@ const SettingsPage: FunctionComponent = () => {
     schema: getSettingsResponse,
   });
 
-  const [{ fetching: fetchingGql, error: errorGql, data }] = useQuery({ query: SETTINGS_QUERY });
-
   const {
     data: ages,
     isError: isErrorAges,
@@ -88,6 +74,15 @@ const SettingsPage: FunctionComponent = () => {
   } = useApiQuery({
     path: "/departments",
     schema: getDepartmentsResponse,
+  });
+
+  const {
+    data: numberEstimates,
+    isError: isErrorNumberEstimates,
+    isFetching: isFetchingNumberEstimates,
+  } = useApiQuery({
+    path: "/number-estimates",
+    schema: getNumberEstimatesResponse,
   });
 
   const {
@@ -109,8 +104,14 @@ const SettingsPage: FunctionComponent = () => {
   });
 
   const fetching =
-    isFetching || isFetchingAges || isFetchingDepartments || isFetchingObservers || isFetchingSexes || fetchingGql;
-  const error = isError || isErrorAges || isErrorDepartments || isErrorObservers || isErrorSexes || errorGql;
+    isFetching ||
+    isFetchingAges ||
+    isFetchingDepartments ||
+    isFetchingNumberEstimates ||
+    isFetchingObservers ||
+    isFetchingSexes;
+  const error =
+    isError || isErrorAges || isErrorDepartments || isErrorNumberEstimates || isErrorObservers || isErrorSexes;
 
   const { mutate } = useApiMutation(
     {
@@ -243,7 +244,7 @@ const SettingsPage: FunctionComponent = () => {
                   name="defaultEstimationNombre"
                   label={t("defaultNumberPrecision")}
                   control={control}
-                  data={data?.estimationsNombre?.data}
+                  data={numberEstimates?.data}
                   renderValue={({ libelle }) => libelle}
                 />
 

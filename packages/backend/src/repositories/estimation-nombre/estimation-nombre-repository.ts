@@ -3,9 +3,9 @@ import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
   buildSortOrderFragment,
-  objectsToKeyValueInsert,
   objectToKeyValueInsert,
   objectToKeyValueSet,
+  objectsToKeyValueInsert,
 } from "../repository-helpers.js";
 import {
   estimationNombreSchema,
@@ -22,7 +22,10 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
   const findEstimationNombreById = async (id: number): Promise<EstimationNombre | null> => {
     const query = sql.type(estimationNombreSchema)`
       SELECT 
-        *
+        estimation_nombre.id::text,
+        estimation_nombre.libelle,
+        estimation_nombre.non_compte,
+        estimation_nombre.owner_id
       FROM
         basenaturaliste.estimation_nombre
       WHERE
@@ -39,7 +42,10 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
 
     const query = sql.type(estimationNombreSchema)`
       SELECT 
-        estimation_nombre.*
+        estimation_nombre.id::text,
+        estimation_nombre.libelle,
+        estimation_nombre.non_compte,
+        estimation_nombre.owner_id
       FROM
         basenaturaliste.estimation_nombre
       LEFT JOIN basenaturaliste.donnee ON estimation_nombre.id = donnee.estimation_nombre_id
@@ -61,7 +67,10 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(estimationNombreSchema)`
       SELECT 
-        estimation_nombre.*
+        estimation_nombre.id::text,
+        estimation_nombre.libelle,
+        estimation_nombre.non_compte,
+        estimation_nombre.owner_id
       FROM
         basenaturaliste.estimation_nombre
       ${
@@ -118,7 +127,10 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
         basenaturaliste.estimation_nombre
         ${objectToKeyValueInsert(estimationnombreInput)}
       RETURNING
-        *
+        estimation_nombre.id::text,
+        estimation_nombre.libelle,
+        estimation_nombre.non_compte,
+        estimation_nombre.owner_id
     `;
 
     return slonik.one(query);
@@ -132,7 +144,10 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
         basenaturaliste.estimation_nombre
         ${objectsToKeyValueInsert(estimationnombreInputs)}
       RETURNING
-        *
+        estimation_nombre.id::text,
+        estimation_nombre.libelle,
+        estimation_nombre.non_compte,
+        estimation_nombre.owner_id
     `;
 
     return slonik.many(query);
@@ -150,7 +165,10 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
       WHERE
         id = ${estimationnombreId}
       RETURNING
-        *
+        estimation_nombre.id::text,
+        estimation_nombre.libelle,
+        estimation_nombre.non_compte,
+        estimation_nombre.owner_id
     `;
 
     return slonik.one(query);
@@ -164,7 +182,10 @@ export const buildEstimationNombreRepository = ({ slonik }: EstimationNombreRepo
       WHERE
         id = ${estimationnombreId}
       RETURNING
-        *
+        estimation_nombre.id::text,
+        estimation_nombre.libelle,
+        estimation_nombre.non_compte,
+        estimation_nombre.owner_id
     `;
 
     return slonik.one(query);

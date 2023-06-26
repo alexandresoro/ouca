@@ -1,8 +1,12 @@
 import {
   getNumberEstimateResponse,
+  getNumberEstimatesExtendedResponse,
+  getNumberEstimatesQueryParamsSchema,
+  getNumberEstimatesResponse,
   upsertNumberEstimateInput,
   upsertNumberEstimateResponse,
 } from "@ou-ca/common/api/number-estimate";
+import { type NumberEstimate, type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -24,6 +28,49 @@ const numberEstimatesController: FastifyPluginCallback<{
     }
 
     const response = getNumberEstimateResponse.parse(numberEstimate);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getNumberEstimatesQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [numberEstimatesData, count] = await Promise.all([
+      estimationNombreService.findPaginatedEstimationsNombre(req.user, queryParams),
+      estimationNombreService.getEstimationsNombreCount(req.user, queryParams.q),
+    ]);
+
+    let data: NumberEstimate[] | NumberEstimateExtended[] = numberEstimatesData;
+    if (extended) {
+      data = await Promise.all(
+        numberEstimatesData.map(async (numberEstimateData) => {
+          const entriesCount = await estimationNombreService.getDonneesCountByEstimationNombre(
+            numberEstimateData.id,
+            req.user
+          );
+          return {
+            ...numberEstimateData,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getNumberEstimatesExtendedResponse : getNumberEstimatesResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 

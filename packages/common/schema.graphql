@@ -87,8 +87,6 @@ type EstimationNombre {
   id: Int!
   libelle: String!
   nonCompte: Boolean!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type Meteo {
@@ -189,13 +187,6 @@ enum ComportementsOrderBy {
   nicheur
 }
 
-enum EstimationNombreOrderBy {
-  id
-  libelle
-  nonCompte
-  nbDonnees
-}
-
 enum EspecesOrderBy {
   id
   code
@@ -259,11 +250,6 @@ type EspecesPaginatedResult implements PaginatedResult {
   count: Int!
 }
 
-type EstimationsNombrePaginatedResult implements PaginatedResult {
-  data: [EstimationNombre!]
-  count: Int!
-}
-
 type LieuxDitsPaginatedResult implements PaginatedResult {
   data: [LieuDit!]
   count: Int!
@@ -296,11 +282,6 @@ type Query {
     orderBy: EspecesOrderBy
     sortOrder: SortOrder
   ): EspecesPaginatedResult
-  estimationsNombre(
-    searchParams: SearchParams
-    orderBy: EstimationNombreOrderBy
-    sortOrder: SortOrder
-  ): EstimationsNombrePaginatedResult
   lieuxDits(searchParams: SearchParams, townId: Int, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
   milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
   searchDonnees: PaginatedSearchDonneesResult

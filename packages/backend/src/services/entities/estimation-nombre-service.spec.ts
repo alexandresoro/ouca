@@ -1,13 +1,9 @@
-import { type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
+import { type NumberEstimatesSearchParams, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import {
-  EstimationNombreOrderBy,
-  SortOrder,
-  type QueryEstimationsNombreArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type EstimationNombre,
@@ -55,10 +51,10 @@ describe("Find number estimate", () => {
 
     estimationNombreRepository.findEstimationNombreById.mockResolvedValueOnce(numberEstimateData);
 
-    await estimationNombreService.findEstimationNombre(numberEstimateData.id, loggedUser);
+    await estimationNombreService.findEstimationNombre(12, loggedUser);
 
     expect(estimationNombreRepository.findEstimationNombreById).toHaveBeenCalledTimes(1);
-    expect(estimationNombreRepository.findEstimationNombreById).toHaveBeenLastCalledWith(numberEstimateData.id);
+    expect(estimationNombreRepository.findEstimationNombreById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle number estimate not found", async () => {
@@ -81,14 +77,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await estimationNombreService.getDonneesCountByEstimationNombre(12, loggedUser);
+    await estimationNombreService.getDonneesCountByEstimationNombre("12", loggedUser);
 
     expect(donneeRepository.getCountByEstimationNombreId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByEstimationNombreId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(estimationNombreService.getDonneesCountByEstimationNombre(12, null)).rejects.toEqual(
+    await expect(estimationNombreService.getDonneesCountByEstimationNombre("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
   });
@@ -97,7 +93,7 @@ describe("Data count per entity", () => {
 describe("Find number estimate by data ID", () => {
   test("should handle number estimate found", async () => {
     const numberEstimateData = mock<EstimationNombre>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
@@ -107,7 +103,7 @@ describe("Find number estimate by data ID", () => {
 
     expect(estimationNombreRepository.findEstimationNombreByDonneeId).toHaveBeenCalledTimes(1);
     expect(estimationNombreRepository.findEstimationNombreByDonneeId).toHaveBeenLastCalledWith(43);
-    expect(numberEstimate?.id).toEqual(256);
+    expect(numberEstimate?.id).toEqual("256");
   });
 
   test("should throw an error when the requester is not logged", async () => {
@@ -137,7 +133,7 @@ describe("Entities paginated find by search criteria", () => {
 
     estimationNombreRepository.findEstimationsNombre.mockResolvedValueOnce(estimationsNombreData);
 
-    await estimationNombreService.findPaginatedEstimationsNombre(loggedUser);
+    await estimationNombreService.findPaginatedEstimationsNombre(loggedUser, {});
 
     expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenCalledTimes(1);
     expect(estimationNombreRepository.findEstimationsNombre).toHaveBeenLastCalledWith({});
@@ -147,14 +143,12 @@ describe("Entities paginated find by search criteria", () => {
     const estimationsNombreData = [mock<EstimationNombre>(), mock<EstimationNombre>(), mock<EstimationNombre>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryEstimationsNombreArgs = {
-      orderBy: EstimationNombreOrderBy.Libelle,
+    const searchParams: NumberEstimatesSearchParams = {
+      orderBy: "libelle",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     estimationNombreRepository.findEstimationsNombre.mockResolvedValueOnce([estimationsNombreData[0]]);
@@ -167,12 +161,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(estimationNombreService.findPaginatedEstimationsNombre(null)).rejects.toEqual(
+    await expect(estimationNombreService.findPaginatedEstimationsNombre(null, {})).rejects.toEqual(
       new OucaError("OUCA0001")
     );
   });

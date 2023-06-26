@@ -11,7 +11,6 @@ import {
   type Espece,
   type EstimationDistance,
   type EstimationNombre,
-  type EstimationsNombrePaginatedResult,
   type Inventaire,
   type LieuDit,
   type LieuxDitsPaginatedResult,
@@ -56,16 +55,6 @@ export const buildResolvers = ({
         const [data, count] = await Promise.all([
           especeService.findPaginatedEspeces(user, args),
           especeService.getEspecesCount(user, { q: args?.searchParams?.q, searchCriteria: args?.searchCriteria }),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
-      estimationsNombre: async (_, args, { user }): Promise<EstimationsNombrePaginatedResult> => {
-        const [data, count] = await Promise.all([
-          estimationNombreService.findPaginatedEstimationsNombre(user, args),
-          estimationNombreService.getEstimationsNombreCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -147,7 +136,14 @@ export const buildResolvers = ({
         };
       },
       estimationNombre: async (parent, args, { user }): Promise<EstimationNombre | null> => {
-        return estimationNombreService.findEstimationNombreOfDonneeId(parent?.id, user);
+        const numberEstimate = await estimationNombreService.findEstimationNombreOfDonneeId(parent?.id, user);
+        if (!numberEstimate) {
+          return null;
+        }
+        return {
+          ...numberEstimate,
+          id: parseInt(numberEstimate.id),
+        };
       },
       inventaire: async (
         parent,
@@ -183,10 +179,6 @@ export const buildResolvers = ({
         };
       },
       nbDonnees: entityNbDonneesResolver(especeService.getDonneesCountByEspece),
-    },
-    EstimationNombre: {
-      editable: isEntityEditableResolver(estimationNombreService.findEstimationNombre),
-      nbDonnees: entityNbDonneesResolver(estimationNombreService.getDonneesCountByEstimationNombre),
     },
     Inventaire: {
       observateur: async (parent, args, { user }): Promise<Observateur | null> => {

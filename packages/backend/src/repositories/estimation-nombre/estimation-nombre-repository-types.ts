@@ -2,7 +2,7 @@ import { z } from "zod";
 import { type SortOrder } from "../common.js";
 
 export const estimationNombreSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   libelle: z.string(),
   nonCompte: z.boolean(),
   ownerId: z.string().uuid().nullable(),
