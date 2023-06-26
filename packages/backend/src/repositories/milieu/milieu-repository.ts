@@ -22,7 +22,10 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
   const findMilieuById = async (id: number): Promise<Milieu | null> => {
     const query = sql.type(milieuSchema)`
       SELECT 
-        *
+        milieu.id::text,
+        milieu.code,
+        milieu.libelle,
+        milieu.owner_id
       FROM
         basenaturaliste.milieu
       WHERE
@@ -39,7 +42,10 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
 
     const query = sql.type(milieuSchema)`
       SELECT 
-        milieu.*
+        milieu.id::text,
+        milieu.code,
+        milieu.libelle,
+        milieu.owner_id
       FROM
         basenaturaliste.milieu
       LEFT JOIN basenaturaliste.donnee_milieu ON milieu.id = donnee_milieu.milieu_id
@@ -62,7 +68,10 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
     const libelleLike = q ? `%${q}%` : null;
     const query = sql.type(milieuSchema)`
     SELECT 
-      milieu.*
+      milieu.id::text,
+      milieu.code,
+      milieu.libelle,
+      milieu.owner_id
     FROM
       basenaturaliste.milieu
     ${
@@ -127,7 +136,10 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
         basenaturaliste.milieu
         ${objectToKeyValueInsert(milieuInput)}
       RETURNING
-        *
+        milieu.id::text,
+        milieu.code,
+        milieu.libelle,
+        milieu.owner_id
     `;
 
     return slonik.one(query);
@@ -139,7 +151,10 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
         basenaturaliste.milieu
         ${objectsToKeyValueInsert(milieuInputs)}
       RETURNING
-        *
+        milieu.id::text,
+        milieu.code,
+        milieu.libelle,
+        milieu.owner_id
     `;
 
     return slonik.many(query);
@@ -154,7 +169,10 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
       WHERE
         id = ${milieuId}
       RETURNING
-        *
+        milieu.id::text,
+        milieu.code,
+        milieu.libelle,
+        milieu.owner_id
     `;
 
     return slonik.one(query);
@@ -168,7 +186,10 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
       WHERE
         id = ${milieuId}
       RETURNING
-        *
+        milieu.id::text,
+        milieu.code,
+        milieu.libelle,
+        milieu.owner_id
     `;
 
     return slonik.one(query);

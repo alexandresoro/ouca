@@ -123,7 +123,7 @@ export class ImportedDonnee {
     estimationNombreId: string,
     estimationDistanceId: string | null,
     comportementsIds: Set<number>,
-    milieuxIds: Set<number>
+    milieuxIds: Set<string>
   ): UpsertEntryInput => {
     return {
       inventoryId: inventaireId,
@@ -137,7 +137,7 @@ export class ImportedDonnee {
       comment: this.commentaire ? this.commentaire : null,
       regroupment: this.regroupement ? +this.regroupement : null,
       behaviorIds: [...comportementsIds],
-      environmentIds: [...milieuxIds],
+      environmentIds: [...milieuxIds].map((environment) => parseInt(environment)),
     };
   };
 

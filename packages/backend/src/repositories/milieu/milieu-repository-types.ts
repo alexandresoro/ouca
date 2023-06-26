@@ -2,7 +2,7 @@ import { z } from "zod";
 import { type SortOrder } from "../common.js";
 
 export const milieuSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   code: z.string(),
   libelle: z.string(),
   ownerId: z.string().uuid().nullable(),

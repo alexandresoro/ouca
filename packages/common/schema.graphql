@@ -110,8 +110,6 @@ type Milieu {
   id: Int!
   code: String!
   libelle: String!
-  editable: Boolean
-  nbDonnees: Int
 }
 
 type Sexe {
@@ -208,13 +206,6 @@ enum LieuxDitsOrderBy {
   nbDonnees
 }
 
-enum MilieuxOrderBy {
-  id
-  code
-  libelle
-  nbDonnees
-}
-
 enum SearchDonneesOrderBy {
   id
   codeEspece
@@ -255,11 +246,6 @@ type LieuxDitsPaginatedResult implements PaginatedResult {
   count: Int!
 }
 
-type MilieuxPaginatedResult implements PaginatedResult {
-  data: [Milieu!]
-  count: Int!
-}
-
 type PaginatedSearchDonneesResult implements PaginatedResult {
   result(
     searchCriteria: SearchDonneeCriteria
@@ -283,6 +269,5 @@ type Query {
     sortOrder: SortOrder
   ): EspecesPaginatedResult
   lieuxDits(searchParams: SearchParams, townId: Int, orderBy: LieuxDitsOrderBy, sortOrder: SortOrder): LieuxDitsPaginatedResult
-  milieux(searchParams: SearchParams, orderBy: MilieuxOrderBy, sortOrder: SortOrder): MilieuxPaginatedResult
   searchDonnees: PaginatedSearchDonneesResult
 }

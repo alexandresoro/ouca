@@ -1,10 +1,10 @@
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
+import { type Environment } from "@ou-ca/common/entities/environment";
 import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper";
 import { type Redis } from "ioredis";
 import { randomUUID } from "node:crypto";
 import { type SearchDonneeCriteria } from "../graphql/generated/graphql-types.js";
 import { type Comportement } from "../repositories/comportement/comportement-repository-types.js";
-import { type Milieu } from "../repositories/milieu/milieu-repository-types.js";
 import { type LoggedUser } from "../types/User.js";
 import { SEPARATOR_COMMA } from "../utils/constants.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
@@ -127,7 +127,7 @@ const getComportement = (comportements: Comportement[], index: number): string =
   return comportements.length >= index ? `${comportements[index - 1].code} - ${comportements[index - 1].libelle}` : "";
 };
 
-const getMilieu = (milieux: Milieu[], index: number): string => {
+const getMilieu = (milieux: Environment[], index: number): string => {
   return milieux.length >= index ? `${milieux[index - 1].code} - ${milieux[index - 1].libelle}` : "";
 };
 

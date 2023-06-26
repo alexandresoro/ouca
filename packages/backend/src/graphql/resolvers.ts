@@ -16,7 +16,6 @@ import {
   type LieuxDitsPaginatedResult,
   type Meteo,
   type Milieu,
-  type MilieuxPaginatedResult,
   type Observateur,
   type Sexe,
 } from "./generated/graphql-types.js";
@@ -69,16 +68,6 @@ export const buildResolvers = ({
         const [data, count] = await Promise.all([
           lieuditService.findPaginatedLieuxDits(user, args),
           lieuditService.getLieuxDitsCount(user, { q: args.searchParams?.q, townId: args.townId }),
-        ]);
-        return {
-          data,
-          count,
-        };
-      },
-      milieux: async (_, args, { user }): Promise<MilieuxPaginatedResult> => {
-        const [data, count] = await Promise.all([
-          milieuService.findPaginatedMilieux(user, args),
-          milieuService.getMilieuxCount(user, args?.searchParams?.q),
         ]);
         return {
           data,
@@ -153,7 +142,13 @@ export const buildResolvers = ({
         return inventaireService.findInventaireOfDonneeId(parent?.id, user);
       },
       milieux: async (parent, args, { user }): Promise<Milieu[]> => {
-        return milieuService.findMilieuxOfDonneeId(parent?.id, user);
+        const environments = await milieuService.findMilieuxOfDonneeId(parent?.id, user);
+        return environments.map((environment) => {
+          return {
+            ...environment,
+            id: parseInt(environment.id),
+          };
+        });
       },
       sexe: async (parent, args, { user }): Promise<Sexe | null> => {
         const sex = await sexeService.findSexeOfDonneeId(parent?.id, user);
@@ -226,10 +221,6 @@ export const buildResolvers = ({
         };
       },
       nbDonnees: entityNbDonneesResolver(lieuditService.getDonneesCountByLieuDit),
-    },
-    Milieu: {
-      editable: isEntityEditableResolver(milieuService.findMilieu),
-      nbDonnees: entityNbDonneesResolver(milieuService.getDonneesCountByMilieu),
     },
     PaginatedSearchDonneesResult: {
       result: async (_, args, { user }): Promise<DonneeEntity[]> => {

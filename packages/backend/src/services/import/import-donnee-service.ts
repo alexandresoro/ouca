@@ -5,6 +5,7 @@ import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordin
 import { type Age } from "@ou-ca/common/entities/age";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type DistanceEstimate } from "@ou-ca/common/entities/distance-estimate";
+import { type Environment } from "@ou-ca/common/entities/environment";
 import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Sex } from "@ou-ca/common/entities/sex";
@@ -17,7 +18,6 @@ import { type Donnee } from "../../repositories/donnee/donnee-repository-types.j
 import { type Espece } from "../../repositories/espece/espece-repository-types.js";
 import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
-import { type Milieu } from "../../repositories/milieu/milieu-repository-types.js";
 import { type LoggedUser } from "../../types/User.js";
 import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js";
 import { ImportService } from "./import-service.js";
@@ -34,7 +34,7 @@ export class ImportDonneeService extends ImportService {
   private estimationsNombre!: NumberEstimate[];
   private estimationsDistance!: DistanceEstimate[];
   private comportements!: Comportement[];
-  private milieux!: Milieu[];
+  private milieux!: Environment[];
   private meteos!: Weather[];
   private inventaires: Inventaire[] = []; // The list of existing inventaires + the ones we created along with the validation
 
@@ -221,7 +221,7 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Get the "Milieux" or return an error if some of them does not exist
-    const milieuxIds = new Set<number>();
+    const milieuxIds = new Set<string>();
     for (const milieuStr of importedDonnee.milieux) {
       const milieu = this.findMilieu(milieuStr);
       if (!milieu) {
@@ -309,7 +309,10 @@ export class ImportDonneeService extends ImportService {
         donnee.regroupment === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
         areSetsContainingSameValues(new Set(donnee.behaviorIds), comportementsIds) &&
-        areSetsContainingSameValues(new Set(donnee.environmentIds), milieuxIds)
+        areSetsContainingSameValues(
+          new Set(donnee.environmentIds),
+          new Set([...milieuxIds].map((environment) => parseInt(environment)))
+        )
       );
     });
 
@@ -430,7 +433,7 @@ export class ImportDonneeService extends ImportService {
     });
   };
 
-  private findMilieu = (codeOrLibelleMilieu: string): Milieu | undefined => {
+  private findMilieu = (codeOrLibelleMilieu: string): Environment | undefined => {
     return this.milieux.find((milieu) => {
       return (
         this.compareStrings(milieu.code, codeOrLibelleMilieu) ||

@@ -1,9 +1,10 @@
+import { getEnvironmentsExtendedResponse, type EnvironmentsOrderBy } from "@ou-ca/common/api/environment";
+import { type Environment } from "@ou-ca/common/entities/environment";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { type Milieu, type MilieuxOrderBy } from "../../../gql/graphql";
 import useApiMutation from "../../../hooks/api/useApiMutation";
+import useApiQuery from "../../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
@@ -11,7 +12,6 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
-import { PAGINATED_MILIEUX_QUERY } from "./MilieuManageQueries";
 
 const COLUMNS = [
   {
@@ -33,28 +33,34 @@ const MilieuTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<MilieuxOrderBy>();
+    usePaginatedTableParams<EnvironmentsOrderBy>();
 
-  const [dialogMilieu, setDialogMilieu] = useState<Milieu | null>(null);
+  const [dialogMilieu, setDialogMilieu] = useState<Environment | null>(null);
 
-  const [{ data }, reexecuteMilieux] = useQuery({
-    query: PAGINATED_MILIEUX_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/environments",
+      queryParams: {
+        q: query,
         pageNumber: page,
         pageSize: rowsPerPage,
-        q: query,
+        orderBy,
+        sortOrder,
+        extended: true,
       },
-      orderBy,
-      sortOrder,
+      schema: getEnvironmentsExtendedResponse,
     },
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteMilieux();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -73,19 +79,19 @@ const MilieuTable: FunctionComponent = () => {
 
   const { displayNotification } = useSnackbar();
 
-  const handleEditMilieu = (id: number | undefined) => {
+  const handleEditMilieu = (id: string) => {
     if (id) {
       navigate(`edit/${id}`);
     }
   };
 
-  const handleDeleteMilieu = (milieu: Milieu | null) => {
+  const handleDeleteMilieu = (milieu: Environment | null) => {
     if (milieu) {
       setDialogMilieu(milieu);
     }
   };
 
-  const handleDeleteMilieuConfirmation = (milieu: Milieu | null) => {
+  const handleDeleteMilieuConfirmation = (milieu: Environment | null) => {
     if (milieu) {
       setDialogMilieu(null);
       mutate({ path: `/environments/${milieu.id}` });
@@ -96,7 +102,7 @@ const MilieuTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: MilieuxOrderBy) => {
+  const handleRequestSort = (sortingColumn: EnvironmentsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -109,7 +115,7 @@ const MilieuTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.milieux?.count}
+        count={data?.meta.count}
       />
       <Table
         tableHead={
@@ -130,12 +136,12 @@ const MilieuTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.milieux?.data?.map((milieu) => {
+        tableRows={data?.data.map((milieu) => {
           return (
             <tr className="hover:bg-base-200" key={milieu?.id}>
-              <td>{milieu?.code}</td>
-              <td>{milieu?.libelle}</td>
-              <td>{milieu?.nbDonnees}</td>
+              <td>{milieu.code}</td>
+              <td>{milieu.libelle}</td>
+              <td>{milieu.entriesCount}</td>
               <td align="right" className="pr-6">
                 <TableCellActionButtons
                   disabled={!milieu.editable}
@@ -148,7 +154,7 @@ const MilieuTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={data?.milieux?.count ?? 0}
+        count={data?.meta.count ?? 0}
         onPageChange={handleChangePage}
       />
       <DeletionConfirmationDialog

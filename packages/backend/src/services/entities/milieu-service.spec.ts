@@ -1,8 +1,8 @@
-import { type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
+import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { MilieuxOrderBy, SortOrder, type QueryMilieuxArgs } from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
@@ -37,10 +37,10 @@ describe("Find environment", () => {
 
     milieuRepository.findMilieuById.mockResolvedValueOnce(environmentData);
 
-    await milieuService.findMilieu(environmentData.id, loggedUser);
+    await milieuService.findMilieu(12, loggedUser);
 
     expect(milieuRepository.findMilieuById).toHaveBeenCalledTimes(1);
-    expect(milieuRepository.findMilieuById).toHaveBeenLastCalledWith(environmentData.id);
+    expect(milieuRepository.findMilieuById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle environment not found", async () => {
@@ -63,14 +63,14 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await milieuService.getDonneesCountByMilieu(12, loggedUser);
+    await milieuService.getDonneesCountByMilieu("12", loggedUser);
 
     expect(donneeRepository.getCountByMilieuId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByMilieuId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(milieuService.getDonneesCountByMilieu(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.getDonneesCountByMilieu("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -113,7 +113,7 @@ describe("Entities paginated find by search criteria", () => {
 
     milieuRepository.findMilieux.mockResolvedValueOnce(environmentsData);
 
-    await milieuService.findPaginatedMilieux(loggedUser);
+    await milieuService.findPaginatedMilieux(loggedUser, {});
 
     expect(milieuRepository.findMilieux).toHaveBeenCalledTimes(1);
     expect(milieuRepository.findMilieux).toHaveBeenLastCalledWith({});
@@ -123,14 +123,12 @@ describe("Entities paginated find by search criteria", () => {
     const environmentsData = [mock<Milieu>(), mock<Milieu>(), mock<Milieu>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: QueryMilieuxArgs = {
-      orderBy: MilieuxOrderBy.Libelle,
+    const searchParams: EnvironmentsSearchParams = {
+      orderBy: "libelle",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        q: "Bob",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      q: "Bob",
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     milieuRepository.findMilieux.mockResolvedValueOnce([environmentsData[0]]);
@@ -143,12 +141,12 @@ describe("Entities paginated find by search criteria", () => {
       orderBy: COLUMN_LIBELLE,
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: searchParams.pageSize,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(milieuService.findPaginatedMilieux(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.findPaginatedMilieux(null, {})).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

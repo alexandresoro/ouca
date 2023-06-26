@@ -1,8 +1,12 @@
 import {
   getEnvironmentResponse,
+  getEnvironmentsExtendedResponse,
+  getEnvironmentsQueryParamsSchema,
+  getEnvironmentsResponse,
   upsertEnvironmentInput,
   upsertEnvironmentResponse,
 } from "@ou-ca/common/api/environment";
+import { type Environment, type EnvironmentExtended } from "@ou-ca/common/entities/environment";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
@@ -24,6 +28,46 @@ const environmentsController: FastifyPluginCallback<{
     }
 
     const response = getEnvironmentResponse.parse(environment);
+    return await reply.send(response);
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getEnvironmentsQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [environmentsData, count] = await Promise.all([
+      milieuService.findPaginatedMilieux(req.user, queryParams),
+      milieuService.getMilieuxCount(req.user, queryParams.q),
+    ]);
+
+    let data: Environment[] | EnvironmentExtended[] = environmentsData;
+    if (extended) {
+      data = await Promise.all(
+        environmentsData.map(async (environmentData) => {
+          const entriesCount = await milieuService.getDonneesCountByMilieu(environmentData.id, req.user);
+          return {
+            ...environmentData,
+            entriesCount,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getEnvironmentsExtendedResponse : getEnvironmentsResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 
