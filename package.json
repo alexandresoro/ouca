@@ -12,9 +12,6 @@
   ],
   "license": "MIT",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "type": "module",
   "scripts": {
     "prepare": "husky install",

@@ -42,8 +42,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - run: pnpm run backend generate-graphql
-
       - name: Rome
         run: pnpm run rome:ci
 

@@ -1,5 +1,5 @@
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { CoordinatesSystemType } from "../../graphql/generated/graphql-types.js";
+import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type InventaireCreateInput } from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type Lieudit } from "../../repositories/lieudit/lieudit-repository-types.js";
 
@@ -34,7 +34,7 @@ export const reshapeInputInventaireUpsertData = (
     customLatitude = coordinates.latitude;
     customLongitude = coordinates.longitude;
     customAltitude = coordinates.altitude;
-    coordinatesSystem = CoordinatesSystemType.Gps;
+    coordinatesSystem = "gps";
   } else {
     customLatitude = null;
     customLongitude = null;

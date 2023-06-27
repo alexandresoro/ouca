@@ -18,7 +18,6 @@ COPY build/ /app/
 
 # Install production deps
 RUN npm pkg delete scripts.prepare && \
-  npm --workspaces pkg delete scripts.postinstall && \
   pnpm i --frozen-lockfile && \
   # Cleanup file not needed anymore
   rm -f pnpm-lock.yaml

@@ -12,13 +12,7 @@ export default defineConfig({
     coverage: {
       all: true,
       include: ["src"],
-      exclude: [
-        ...defaultExclude,
-        "**/*.spec.*",
-        "**/src/**/@types/**",
-        "**/src/graphql/resolvers.ts",
-        "**/src/**/generated/**",
-      ],
+      exclude: [...defaultExclude, "**/*.spec.*", "**/src/**/@types/**"],
     },
   },
 });
