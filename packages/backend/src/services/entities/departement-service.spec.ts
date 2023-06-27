@@ -128,7 +128,7 @@ describe("Find department by city ID", () => {
 
     departementRepository.findDepartementByCommuneId.mockResolvedValueOnce(departmentData);
 
-    const department = await departementService.findDepartementOfCommuneId(43, loggedUser);
+    const department = await departementService.findDepartementOfCommuneId("43", loggedUser);
 
     expect(departementRepository.findDepartementByCommuneId).toHaveBeenCalledTimes(1);
     expect(departementRepository.findDepartementByCommuneId).toHaveBeenLastCalledWith(43);
@@ -136,7 +136,7 @@ describe("Find department by city ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(departementService.findDepartementOfCommuneId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(departementService.findDepartementOfCommuneId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

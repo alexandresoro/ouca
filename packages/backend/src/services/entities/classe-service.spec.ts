@@ -101,7 +101,7 @@ describe("Find class by species ID", () => {
 
     classeRepository.findClasseByEspeceId.mockResolvedValueOnce(classData);
 
-    const classe = await classeService.findClasseOfEspeceId(43, loggedUser);
+    const classe = await classeService.findClasseOfEspeceId("43", loggedUser);
 
     expect(classeRepository.findClasseByEspeceId).toHaveBeenCalledTimes(1);
     expect(classeRepository.findClasseByEspeceId).toHaveBeenLastCalledWith(43);
@@ -109,7 +109,7 @@ describe("Find class by species ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(classeService.findClasseOfEspeceId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(classeService.findClasseOfEspeceId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

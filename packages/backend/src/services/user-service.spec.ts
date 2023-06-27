@@ -32,13 +32,10 @@ const userService = buildUserService({
 describe("User creation", () => {
   test("should handle creation of user", async () => {
     const signupData = mock<CreateUserInput>();
-    const loggedUser = mock<LoggedUser>({
-      role: "admin",
-    });
 
     userRepository.createUser.mockResolvedValueOnce(mock());
 
-    await userService.createUser(signupData, loggedUser);
+    await userService.createUser(signupData);
 
     expect(userRepository.createUser).toHaveBeenCalledTimes(1);
     expect(settingsRepository.createDefaultSettings).toHaveBeenCalledTimes(1);
