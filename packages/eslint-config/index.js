@@ -22,5 +22,5 @@ module.exports = {
     "@typescript-eslint/prefer-for-of": "error",
     "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowBoolean: true }],
   },
-  ignorePatterns: ["coverage", "dist", "vite.config.*", ".eslintrc.*", "tsup.config.*"],
+  ignorePatterns: ["coverage", "dist", "vite.config.*", ".eslintrc.*"],
 };
