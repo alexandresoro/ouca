@@ -25,7 +25,6 @@ export default defineConfig(({ mode }) => {
       open: true,
       proxy: {
         "/api/v1": API_SERVER_URL,
-        "/graphql": API_SERVER_URL,
         "/download": API_SERVER_URL,
       },
     },
@@ -57,7 +56,7 @@ export default defineConfig(({ mode }) => {
       coverage: {
         all: true,
         include: ["src"],
-        exclude: [...defaultExclude, "**/*.spec.*", "**/src/**/@types/**", "**/src/gql/**"],
+        exclude: [...defaultExclude, "**/*.spec.*", "**/src/**/@types/**"],
       },
     },
   };

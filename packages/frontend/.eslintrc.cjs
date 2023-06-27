@@ -24,7 +24,7 @@ module.exports = {
       version: "detect",
     },
   },
-  ignorePatterns: ["src/gql/", "tailwind.config.*"],
+  ignorePatterns: ["tailwind.config.*"],
   rules: {
     "@typescript-eslint/no-misused-promises": [
       "error",

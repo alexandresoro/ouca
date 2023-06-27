@@ -27,16 +27,6 @@
     }
   },
   "files": {
-    "ignore": [
-      "dist",
-      "coverage",
-      "generated",
-      "**/src/gql/**/*",
-      "Dockerfile",
-      "LICENSE",
-      "README",
-      "**/package.json",
-      "pnpm-*.yaml"
-    ]
+    "ignore": ["dist", "coverage", "generated", "Dockerfile", "LICENSE", "README", "**/package.json", "pnpm-*.yaml"]
   }
 }

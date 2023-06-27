@@ -1,8 +1,6 @@
 {
 	"recommendations": [
 		"dbaeumer.vscode-eslint",
-		"graphql.vscode-graphql",
-		"graphql.vscode-graphql-syntax",
 		"rome.rome",
 		"bradlc.vscode-tailwindcss",
 		"zixuanchen.vitest-explorer"
