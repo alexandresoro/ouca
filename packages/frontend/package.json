@@ -14,11 +14,9 @@
   "scripts": {
     "start": "vite",
     "build": "tsc --build tsconfig.build.json && vite build",
-    "postinstall": "pnpm run generate-graphql",
     "serve": "vite preview",
     "test": "vitest run",
-    "lint": "wireit",
-    "generate-graphql": "graphql-codegen --config codegen.ts"
+    "lint": "wireit"
   },
   "wireit": {
     "lint": {
