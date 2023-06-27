@@ -1,5 +1,5 @@
+import { type SortOrder } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { useState } from "react";
-import { type SortOrder } from "../gql/graphql";
 
 export default function usePaginatedTableParams<T>() {
   const [query, setQuery] = useState("");

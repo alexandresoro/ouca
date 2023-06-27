@@ -1,11 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { upsertBehaviorInput, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
-import { CERTAIN, POSSIBLE, PROBABLE } from "@ou-ca/common/types/nicheur.model";
+import { CERTAIN, POSSIBLE, PROBABLE, type NicheurCode } from "@ou-ca/common/types/nicheur.model";
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { type Nicheur } from "../../../gql/graphql";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
@@ -55,7 +54,7 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
       label: t("breedingStatus.certain"),
       value: CERTAIN,
     },
-  ] satisfies { label: string; value: Nicheur | null }[];
+  ] satisfies { label: string; value: NicheurCode | null }[];
 
   return (
     <>
