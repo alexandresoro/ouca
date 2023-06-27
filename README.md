@@ -5,7 +5,7 @@
 The aim of the _Où ça ?_ project is to provide naturalists with an application where they can record and visualize their wildlife observations.
 
 This project provides an API to interact with these observations - add new elements, edit them and so on.
-This API is structured as a stateless microservice. It exposes a REST API and some parts as a GraphQL endpoint, and is agnostic of the integrator.
+This API is structured as a stateless microservice. It exposes a REST API and is agnostic of the integrator.
 
 This project also provides a web application that consumes the API and allows a user-friendly representation of the data.
 
@@ -22,11 +22,9 @@ Hence, currently only [Zitadel](https://zitadel.com/) is supported, but addition
 
 ## API structure
 
-Most of the API is exposed via a REST API available under `/api/v1/`.
+Backend is exposed via a REST API available under `/api/v1/`.
 
-A small part of the API is still only exposed via GraphQL on `/graphql` path.
-
-The application exposes a static path at `/download`, that is to be used for two use cases: database exports and imports report files. The exact file paths are returned by their respective GraphQL actions.
+The application exposes a static path at `/download`, that is to be used for two use cases: database exports and imports report files. The exact file paths are returned by their respective REST actions.
 
 Finally, the app exposes a single REST endpoint at `POST /uploads/:entityName` to allow users to import observations. This endpoint expects a single file as a multipart data body and will return an `uploadId` if valid.
 
