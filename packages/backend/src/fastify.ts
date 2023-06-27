@@ -17,7 +17,6 @@ import { promisify } from "node:util";
 import downloadController from "./controllers/download-controller.js";
 import userController from "./controllers/user-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
-import graphQlServerPlugin from "./fastify/graphql-server-plugin.js";
 import sentryMetricsPlugin from "./fastify/sentry-metrics-plugin.js";
 
 const API_V1_PREFIX = "/api/v1";
@@ -54,15 +53,6 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
   logger.debug("Fastify static server successfully registered");
 
   await server.register(sentryMetricsPlugin);
-
-  // Mercurius GraphQL adapter
-
-  // Parse GraphQL schema
-  const graphQLSchema = fs.readFileSync(new URL("./schema.graphql", import.meta.url), "utf-8").toString();
-  logger.debug("GraphQL schema has been parsed");
-
-  await server.register(graphQlServerPlugin, { schema: graphQLSchema, services });
-  logger.debug("Mercurius GraphQL adapter successfully registered");
 
   // Register API routes
   await server.register(apiRoutesPlugin, { services, prefix: API_V1_PREFIX });

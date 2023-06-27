@@ -1,10 +1,9 @@
-import { ChildProcess, spawn, spawnSync } from "node:child_process";
+import { ChildProcess, spawn } from "node:child_process";
 import { defineConfig } from "tsup";
 
 let app: ChildProcess;
 
 const onSuccess = async () => {
-  spawnSync("node", ["scripts/copy-graphql-schemas-to-dist.js"]);
   if (app && !app.killed) {
     app.kill();
   }
