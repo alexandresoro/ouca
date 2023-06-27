@@ -30,12 +30,14 @@ export const buildEstimationNombreService = ({
   };
 
   const findEstimationNombreOfDonneeId = async (
-    donneeId: number | undefined,
+    donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<NumberEstimate | null> => {
     validateAuthorization(loggedUser);
 
-    const numberEstimate = await estimationNombreRepository.findEstimationNombreByDonneeId(donneeId);
+    const numberEstimate = await estimationNombreRepository.findEstimationNombreByDonneeId(
+      donneeId ? parseInt(donneeId) : undefined
+    );
     return enrichEntityWithEditableStatus(numberEstimate, loggedUser);
   };
 

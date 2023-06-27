@@ -48,10 +48,10 @@ describe("Find species", () => {
 
     especeRepository.findEspeceById.mockResolvedValueOnce(speciesData);
 
-    await especeService.findEspece(speciesData.id, loggedUser);
+    await especeService.findEspece(12, loggedUser);
 
     expect(especeRepository.findEspeceById).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeceById).toHaveBeenLastCalledWith(speciesData.id);
+    expect(especeRepository.findEspeceById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle species not found", async () => {
@@ -74,35 +74,35 @@ describe("Data count per entity", () => {
   test("should request the correct parameters", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await especeService.getDonneesCountByEspece(12, loggedUser);
+    await especeService.getDonneesCountByEspece("12", loggedUser);
 
     expect(donneeRepository.getCountByEspeceId).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCountByEspeceId).toHaveBeenLastCalledWith(12);
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.getDonneesCountByEspece(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(especeService.getDonneesCountByEspece("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
 describe("Find species by data ID", () => {
   test("should handle species found", async () => {
     const speciesData = mock<Espece>({
-      id: 256,
+      id: "256",
     });
     const loggedUser = mock<LoggedUser>();
 
     especeRepository.findEspeceByDonneeId.mockResolvedValueOnce(speciesData);
 
-    const species = await especeService.findEspeceOfDonneeId(43, loggedUser);
+    const species = await especeService.findEspeceOfDonneeId("43", loggedUser);
 
     expect(especeRepository.findEspeceByDonneeId).toHaveBeenCalledTimes(1);
     expect(especeRepository.findEspeceByDonneeId).toHaveBeenLastCalledWith(43);
-    expect(species?.id).toEqual(256);
+    expect(species?.id).toEqual("256");
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(especeService.findEspeceOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(especeService.findEspeceOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

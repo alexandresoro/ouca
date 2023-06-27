@@ -26,12 +26,12 @@ export const buildSexeService = ({ sexeRepository, donneeRepository }: SexeServi
   };
 
   const findSexeOfDonneeId = async (
-    donneeId: number | undefined,
+    donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Sex | null> => {
     validateAuthorization(loggedUser);
 
-    const sex = await sexeRepository.findSexeByDonneeId(donneeId);
+    const sex = await sexeRepository.findSexeByDonneeId(donneeId ? parseInt(donneeId) : undefined);
     return enrichEntityWithEditableStatus(sex, loggedUser);
   };
 

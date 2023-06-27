@@ -86,7 +86,7 @@ describe("Find behaviors by inventary ID", () => {
 
     comportementRepository.findComportementsOfDonneeId.mockResolvedValueOnce(behaviorsData);
 
-    const behaviors = await comportementService.findComportementsOfDonneeId(43, loggedUser);
+    const behaviors = await comportementService.findComportementsOfDonneeId("43", loggedUser);
 
     expect(comportementRepository.findComportementsOfDonneeId).toHaveBeenCalledTimes(1);
     expect(comportementRepository.findComportementsOfDonneeId).toHaveBeenLastCalledWith(43);
@@ -94,7 +94,9 @@ describe("Find behaviors by inventary ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(comportementService.findComportementsOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(comportementService.findComportementsOfDonneeId("12", null)).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
   });
 });
 

@@ -1,16 +1,13 @@
-import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type EntryNavigation } from "@ou-ca/common/entities/entry";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
-import {
-  type PaginatedSearchDonneesResultResultArgs,
-  type SearchDonneeCriteria,
-} from "../../graphql/generated/graphql-types.js";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { type Donnee } from "../../repositories/donnee/donnee-repository-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
+import { reshapeSearchCriteria } from "../../repositories/search-criteria.js";
 import { type LoggedUser } from "../../types/User.js";
 import { OucaError } from "../../utils/errors.js";
 import { validateAuthorization } from "./authorization-utils.js";
@@ -48,15 +45,20 @@ export const buildDonneeService = ({
 
   const findPaginatedDonnees = async (
     loggedUser: LoggedUser | null,
-    options: PaginatedSearchDonneesResultResultArgs = {}
+    options: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> & Partial<{ pageNumber: number; pageSize: number }>
   ): Promise<Donnee[]> => {
     validateAuthorization(loggedUser);
 
-    const { searchParams, searchCriteria, orderBy: orderByField, sortOrder } = options;
+    const { orderBy: orderByField, sortOrder, pageSize, pageNumber, ...searchCriteria } = options;
+
+    const reshapedSearchCriteria = reshapeSearchCriteria(searchCriteria);
 
     const donnees = await donneeRepository.findDonnees({
-      searchCriteria,
-      ...getSqlPagination(searchParams),
+      searchCriteria: reshapedSearchCriteria,
+      ...getSqlPagination({
+        pageNumber,
+        pageSize,
+      }),
       orderBy: orderByField,
       sortOrder,
     });
@@ -64,13 +66,12 @@ export const buildDonneeService = ({
     return [...donnees];
   };
 
-  const getDonneesCount = async (
-    loggedUser: LoggedUser | null,
-    searchCriteria?: SearchDonneeCriteria | null
-  ): Promise<number> => {
+  const getDonneesCount = async (loggedUser: LoggedUser | null, options: EntriesSearchParams): Promise<number> => {
     validateAuthorization(loggedUser);
 
-    return donneeRepository.getCount(searchCriteria);
+    const reshapedSearchCriteria = reshapeSearchCriteria(options);
+
+    return donneeRepository.getCount(reshapedSearchCriteria);
   };
 
   const findDonneeNavigationData = async (loggedUser: LoggedUser | null, entryId: string): Promise<EntryNavigation> => {
@@ -89,7 +90,7 @@ export const buildDonneeService = ({
     };
   };
 
-  const findLastDonneeId = async (loggedUser: LoggedUser | null): Promise<number | null> => {
+  const findLastDonneeId = async (loggedUser: LoggedUser | null): Promise<string | null> => {
     validateAuthorization(loggedUser);
 
     const latestDonneeId = await donneeRepository.findLatestDonneeId();
@@ -132,14 +133,18 @@ export const buildDonneeService = ({
 
       if (behaviorIds?.length) {
         await donneeComportementRepository.insertDonneeWithComportements(
-          createdDonnee.id,
+          parseInt(createdDonnee.id),
           behaviorIds,
           transactionConnection
         );
       }
 
       if (environmentIds?.length) {
-        await donneeMilieuRepository.insertDonneeWithMilieux(createdDonnee.id, environmentIds, transactionConnection);
+        await donneeMilieuRepository.insertDonneeWithMilieux(
+          parseInt(createdDonnee.id),
+          environmentIds,
+          transactionConnection
+        );
       }
 
       return createdDonnee;
@@ -148,7 +153,7 @@ export const buildDonneeService = ({
     return createdDonnee;
   };
 
-  const updateDonnee = async (id: number, input: UpsertEntryInput, loggedUser: LoggedUser | null): Promise<Donnee> => {
+  const updateDonnee = async (id: string, input: UpsertEntryInput, loggedUser: LoggedUser | null): Promise<Donnee> => {
     validateAuthorization(loggedUser);
 
     const { behaviorIds, environmentIds } = input;
@@ -169,21 +174,25 @@ export const buildDonneeService = ({
     } else {
       const updatedDonnee = await slonik.transaction(async (transactionConnection) => {
         const updatedDonnee = await donneeRepository.updateDonnee(
-          id,
+          parseInt(id),
           reshapeInputDonneeUpsertData(input),
           transactionConnection
         );
 
-        await donneeComportementRepository.deleteComportementsOfDonneeId(id, transactionConnection);
+        await donneeComportementRepository.deleteComportementsOfDonneeId(parseInt(id), transactionConnection);
 
         if (behaviorIds?.length) {
-          await donneeComportementRepository.insertDonneeWithComportements(id, behaviorIds, transactionConnection);
+          await donneeComportementRepository.insertDonneeWithComportements(
+            parseInt(id),
+            behaviorIds,
+            transactionConnection
+          );
         }
 
-        await donneeMilieuRepository.deleteMilieuxOfDonneeId(id, transactionConnection);
+        await donneeMilieuRepository.deleteMilieuxOfDonneeId(parseInt(id), transactionConnection);
 
         if (environmentIds?.length) {
-          await donneeMilieuRepository.insertDonneeWithMilieux(id, environmentIds, transactionConnection);
+          await donneeMilieuRepository.insertDonneeWithMilieux(parseInt(id), environmentIds, transactionConnection);
         }
 
         return updatedDonnee;

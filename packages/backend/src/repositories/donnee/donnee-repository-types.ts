@@ -4,14 +4,14 @@ import { type SortOrder } from "../common.js";
 import { type SearchCriteria } from "../search-criteria.js";
 
 export const donneeSchema = z.object({
-  id: z.number(),
-  inventaireId: z.number(),
-  especeId: z.number(),
-  sexeId: z.number(),
-  ageId: z.number(),
-  estimationNombreId: z.number(),
+  id: z.string(),
+  inventaireId: z.string(),
+  especeId: z.string(),
+  sexeId: z.string(),
+  ageId: z.string(),
+  estimationNombreId: z.string(),
   nombre: z.number().nullable(),
-  estimationDistanceId: z.number().nullable(),
+  estimationDistanceId: z.string().nullable(),
   distance: z.number().nullable(),
   commentaire: z.string().nullable(),
   regroupement: z.number().nullable(),

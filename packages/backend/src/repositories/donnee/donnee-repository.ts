@@ -30,7 +30,18 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   const findDonneeById = async (id: number): Promise<Donnee | null> => {
     const query = sql.type(donneeSchema)`
       SELECT 
-        *
+        donnee.id::text,
+        donnee.inventaire_id::text,
+        donnee.espece_id::text,
+        donnee.sexe_id::text,
+        donnee.age_id::text,
+        donnee.estimation_nombre_id::text,
+        donnee.nombre,
+        donnee.estimation_distance_id::text,
+        donnee.distance,
+        donnee.commentaire,
+        donnee.regroupement,
+        donnee.date_creation
       FROM
         basenaturaliste.donnee
       WHERE
@@ -49,7 +60,18 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   }: DonneeFindManyInput = {}): Promise<readonly Donnee[]> => {
     const query = sql.type(donneeSchema)`
       SELECT
-        donnee.*
+        donnee.id::text,
+        donnee.inventaire_id::text,
+        donnee.espece_id::text,
+        donnee.sexe_id::text,
+        donnee.age_id::text,
+        donnee.estimation_nombre_id::text,
+        donnee.nombre,
+        donnee.estimation_distance_id::text,
+        donnee.distance,
+        donnee.commentaire,
+        donnee.regroupement,
+        donnee.date_creation
       FROM basenaturaliste.donnee
       LEFT JOIN basenaturaliste.espece ON donnee.espece_id = espece.id
       LEFT JOIN basenaturaliste.donnee_comportement ON donnee.id = donnee_comportement.donnee_id
@@ -114,7 +136,18 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     // associated where clause, but we can consider this as acceptable
     const query = sql.type(donneeSchema)`
       SELECT
-        donnee.*
+        donnee.id::text,
+        donnee.inventaire_id::text,
+        donnee.espece_id::text,
+        donnee.sexe_id::text,
+        donnee.age_id::text,
+        donnee.estimation_nombre_id::text,
+        donnee.nombre,
+        donnee.estimation_distance_id::text,
+        donnee.distance,
+        donnee.commentaire,
+        donnee.regroupement,
+        donnee.date_creation
       FROM
         basenaturaliste.donnee
       LEFT JOIN
@@ -307,7 +340,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
     return slonik.oneFirst(query);
   };
 
-  const findLatestDonneeId = async (): Promise<number | null> => {
+  const findLatestDonneeId = async (): Promise<string | null> => {
     const query = sql.type(idSchema)`
       SELECT
 	      id
@@ -554,7 +587,18 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
         basenaturaliste.donnee
         ${objectToKeyValueInsert({ ...donneeInput, date_creation: "NOW()" })}
       RETURNING
-        *
+        donnee.id::text,
+        donnee.inventaire_id::text,
+        donnee.espece_id::text,
+        donnee.sexe_id::text,
+        donnee.age_id::text,
+        donnee.estimation_nombre_id::text,
+        donnee.nombre,
+        donnee.estimation_distance_id::text,
+        donnee.distance,
+        donnee.commentaire,
+        donnee.regroupement,
+        donnee.date_creation
     `;
 
     return (transaction ?? slonik).one(query);
@@ -573,7 +617,18 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
       WHERE
         id = ${donneeId}
       RETURNING
-        *
+        donnee.id::text,
+        donnee.inventaire_id::text,
+        donnee.espece_id::text,
+        donnee.sexe_id::text,
+        donnee.age_id::text,
+        donnee.estimation_nombre_id::text,
+        donnee.nombre,
+        donnee.estimation_distance_id::text,
+        donnee.distance,
+        donnee.commentaire,
+        donnee.regroupement,
+        donnee.date_creation
     `;
 
     return (transaction ?? slonik).one(query);
@@ -587,7 +642,18 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
       WHERE
         id = ${donneeId}
       RETURNING
-        *
+        donnee.id::text,
+        donnee.inventaire_id::text,
+        donnee.espece_id::text,
+        donnee.sexe_id::text,
+        donnee.age_id::text,
+        donnee.estimation_nombre_id::text,
+        donnee.nombre,
+        donnee.estimation_distance_id::text,
+        donnee.distance,
+        donnee.commentaire,
+        donnee.regroupement,
+        donnee.date_creation
     `;
 
     return (transaction ?? slonik).one(query);
@@ -606,7 +672,18 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
       WHERE
         donnee.inventaire_id = ${currentInventaireId}
       RETURNING
-        *
+        donnee.id::text,
+        donnee.inventaire_id::text,
+        donnee.espece_id::text,
+        donnee.sexe_id::text,
+        donnee.age_id::text,
+        donnee.estimation_nombre_id::text,
+        donnee.nombre,
+        donnee.estimation_distance_id::text,
+        donnee.distance,
+        donnee.commentaire,
+        donnee.regroupement,
+        donnee.date_creation
     `;
 
     return (transaction ?? slonik).query(query);

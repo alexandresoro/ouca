@@ -1,28 +1,57 @@
 import {
+  getEntriesExtendedResponse,
+  getEntriesQueryParamsSchema,
+  getEntriesResponse,
   getEntryResponse,
   upsertEntryInput,
   upsertEntryResponse,
   type GetEntryResponse,
 } from "@ou-ca/common/api/entry";
-import { entryNavigationSchema } from "@ou-ca/common/entities/entry";
+import { entryNavigationSchema, type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
+import { type Donnee } from "../repositories/donnee/donnee-repository-types.js";
 import { type Services } from "../services/services.js";
+import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
+import { enrichedInventory } from "./inventories-controller.js";
+
+const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser | null): Promise<GetEntryResponse> => {
+  const [age, behaviors, species, distanceEstimate, numberEstimate, environments, sex] = await Promise.all([
+    services.ageService.findAgeOfDonneeId(entry.id, user),
+    services.comportementService.findComportementsOfDonneeId(entry.id, user),
+    services.especeService.findEspeceOfDonneeId(entry.id, user),
+    services.estimationDistanceService.findEstimationDistanceOfDonneeId(entry.id, user),
+    services.estimationNombreService.findEstimationNombreOfDonneeId(entry.id, user),
+    services.milieuService.findMilieuxOfDonneeId(entry.id, user),
+    services.sexeService.findSexeOfDonneeId(entry.id, user),
+  ]);
+
+  if (!age || !species || !numberEstimate || !sex) {
+    return Promise.reject("Missing data for enriched entry");
+  }
+
+  return {
+    ...entry,
+    id: `${entry.id}`,
+    inventoryId: `${entry.inventaireId}`,
+    age,
+    behaviors,
+    species,
+    distanceEstimate,
+    numberEstimate,
+    environments,
+    sex,
+    comment: entry.commentaire,
+    number: entry.nombre,
+    regroupment: entry.regroupement,
+  };
+};
 
 const entriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const {
-    donneeService,
-    ageService,
-    comportementService,
-    especeService,
-    estimationDistanceService,
-    estimationNombreService,
-    milieuService,
-    sexeService,
-  } = services;
+  const { donneeService, inventaireService } = services;
 
   fastify.get<{
     Params: {
@@ -34,38 +63,65 @@ const entriesController: FastifyPluginCallback<{
       return await reply.status(404).send();
     }
 
-    // Enrich entry
-    const [age, behaviors, species, distanceEstimate, numberEstimate, environments, sex] = await Promise.all([
-      ageService.findAgeOfDonneeId(entry.id, req.user),
-      comportementService.findComportementsOfDonneeId(entry.id, req.user),
-      especeService.findEspeceOfDonneeId(entry.id, req.user),
-      estimationDistanceService.findEstimationDistanceOfDonneeId(entry.id, req.user),
-      estimationNombreService.findEstimationNombreOfDonneeId(entry.id, req.user),
-      milieuService.findMilieuxOfDonneeId(entry.id, req.user),
-      sexeService.findSexeOfDonneeId(entry.id, req.user),
-    ]);
-
-    if (!age || !species || !numberEstimate || !sex) {
+    try {
+      const entryEnriched = await enrichedEntry(services, entry, req.user);
+      const response = getEntryResponse.parse(entryEnriched);
+      return await reply.send(response);
+    } catch (e) {
       return await reply.status(404).send();
     }
+  });
 
-    const enrichedEntry = {
-      ...entry,
-      id: `${entry.id}`,
-      inventoryId: `${entry.inventaireId}`,
-      age,
-      behaviors,
-      species,
-      distanceEstimate,
-      numberEstimate,
-      environments,
-      sex,
-      comment: entry.commentaire,
-      number: entry.nombre,
-      regroupment: entry.regroupement,
-    } satisfies GetEntryResponse;
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getEntriesQueryParamsSchema.safeParse(req.query);
 
-    const response = getEntryResponse.parse(enrichedEntry);
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const {
+      data: { extended, ...queryParams },
+    } = parsedQueryParamsResult;
+
+    const [entriesData, count] = await Promise.all([
+      donneeService.findPaginatedDonnees(req.user, queryParams),
+      donneeService.getDonneesCount(req.user, queryParams),
+    ]);
+
+    // TODO look to optimize this request
+    const enrichedEntries = await Promise.all(
+      entriesData.map(async (entryData) => {
+        return enrichedEntry(services, entryData, req.user);
+      })
+    );
+
+    let data: Entry[] | EntryExtended[] = enrichedEntries;
+    if (extended) {
+      data = await Promise.all(
+        enrichedEntries.map(async (enrichedEntryData) => {
+          // TODO look to optimize this request
+          const inventory = await inventaireService.findInventaireOfDonneeId(enrichedEntryData.id, req.user);
+          if (!inventory) {
+            return Promise.reject("No matching inventory found");
+          }
+
+          const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
+          return {
+            ...enrichedEntryData,
+            inventory: inventoryEnriched,
+          };
+        })
+      );
+    }
+
+    const responseParser = extended ? getEntriesExtendedResponse : getEntriesResponse;
+    const response = responseParser.parse({
+      data,
+      meta: {
+        count,
+      },
+    });
+
     return await reply.send(response);
   });
 
@@ -93,7 +149,7 @@ const entriesController: FastifyPluginCallback<{
 
   fastify.put<{
     Params: {
-      id: number;
+      id: string;
     };
   }>("/:id", async (req, reply) => {
     const parsedInputResult = upsertEntryInput.safeParse(JSON.parse(req.body as string));

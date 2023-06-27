@@ -34,12 +34,12 @@ export const buildEstimationDistanceService = ({
   };
 
   const findEstimationDistanceOfDonneeId = async (
-    donneeId: number | undefined,
+    donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<DistanceEstimate | null> => {
     validateAuthorization(loggedUser);
 
-    const distanceEstimate = await estimationDistanceRepository.findEstimationDistanceByDonneeId(donneeId);
+    const distanceEstimate = await estimationDistanceRepository.findEstimationDistanceByDonneeId(donneeId ? parseInt(donneeId) : undefined);
     return enrichEntityWithEditableStatus(distanceEstimate, loggedUser);
   };
 

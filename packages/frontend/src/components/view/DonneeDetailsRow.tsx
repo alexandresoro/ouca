@@ -1,15 +1,15 @@
 import { Disclosure, Transition } from "@headlessui/react";
+import { type EntryExtended } from "@ou-ca/common/entities/entry";
 import { ChevronDown, Detail, Trash } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { type Donnee } from "../../gql/graphql";
 import IconButton from "../common/styled/IconButton";
 import DonneeDetailsView from "./DonneeDetailsView";
 import InventaireDetailsView from "./InventaireDetailsView";
 
 type DonneeRowProps = {
-  donnee: Donnee;
+  donnee: EntryExtended;
   onViewAction: () => void;
   onDeleteAction: () => void;
 };
@@ -33,14 +33,14 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
                 <ChevronDown className="h-6" />
               </Disclosure.Button>
             </td>
-            <td>{donnee?.espece.nomFrancais}</td>
-            <td>{donnee?.nombre}</td>
+            <td>{donnee.species.nomFrancais}</td>
+            <td>{donnee.number}</td>
             <td>
-              {donnee?.inventaire.lieuDit.commune.nom} ({donnee?.inventaire.lieuDit.commune.departement.code}),{" "}
-              {donnee?.inventaire.lieuDit.nom}
+              {donnee.inventory.locality.townName} ({donnee.inventory.locality.departmentCode}),{" "}
+              {donnee.inventory.locality.nom}
             </td>
-            <td>{intlFormat(parseISO(donnee?.inventaire.date))}</td>
-            <td>{donnee?.inventaire.observateur.libelle}</td>
+            <td>{intlFormat(parseISO(donnee?.inventory.date))}</td>
+            <td>{donnee.inventory.observer.libelle}</td>
             <td align="right" className="pr-6">
               <IconButton
                 className="mx-1 text-primary dark:text-white"
@@ -71,22 +71,22 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
               <div className="card border-2 border-primary p-4 bg-base-100 shadow-xl">
                 <h2 className="text-2xl font-normal">
                   {t("observationDetails.mainTitle", {
-                    speciesName: donnee?.espece.nomFrancais,
+                    speciesName: donnee.species.nomFrancais,
                   })}
                 </h2>
                 <div className="mt-1 text-[13px]">
                   {t("observationDetails.mainSubtitle", {
-                    owner: donnee?.inventaire.observateur.libelle,
-                    creationDate: intlFormat(parseISO(donnee?.inventaire.date)),
-                    updatedDate: intlFormat(parseISO(donnee?.inventaire.date)),
-                    inventoryId: donnee?.inventaire?.id,
+                    owner: donnee.inventory.observer.libelle,
+                    creationDate: intlFormat(parseISO(donnee.inventory.date)),
+                    updatedDate: intlFormat(parseISO(donnee.inventory.date)),
+                    inventoryId: donnee.inventory.id,
                     observationId: donnee?.id,
                   })}
                 </div>
 
                 <div className="mt-8 flex justify-center items-center flex-col sm:flex-row sm:gap-10 md:gap-16">
                   <div className="flex flex-col flex-auto w-full">
-                    <InventaireDetailsView inventaire={donnee.inventaire} />
+                    <InventaireDetailsView inventaire={donnee.inventory} />
                   </div>
 
                   <div className="flex flex-col flex-auto w-full">

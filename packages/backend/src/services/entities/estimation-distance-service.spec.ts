@@ -90,7 +90,7 @@ describe("Find distance estimate by data ID", () => {
 
     estimationDistanceRepository.findEstimationDistanceByDonneeId.mockResolvedValueOnce(distanceEstimateData);
 
-    const distanceEstimate = await estimationDistanceService.findEstimationDistanceOfDonneeId(43, loggedUser);
+    const distanceEstimate = await estimationDistanceService.findEstimationDistanceOfDonneeId("43", loggedUser);
 
     expect(estimationDistanceRepository.findEstimationDistanceByDonneeId).toHaveBeenCalledTimes(1);
     expect(estimationDistanceRepository.findEstimationDistanceByDonneeId).toHaveBeenLastCalledWith(43);
@@ -98,7 +98,7 @@ describe("Find distance estimate by data ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(estimationDistanceService.findEstimationDistanceOfDonneeId(12, null)).rejects.toEqual(
+    await expect(estimationDistanceService.findEstimationDistanceOfDonneeId("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
   });

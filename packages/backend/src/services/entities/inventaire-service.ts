@@ -39,12 +39,12 @@ export const buildInventaireService = ({
   };
 
   const findInventaireOfDonneeId = async (
-    donneeId: number | undefined,
+    donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Inventaire | null> => {
     validateAuthorization(loggedUser);
 
-    return inventaireRepository.findInventaireByDonneeId(donneeId);
+    return inventaireRepository.findInventaireByDonneeId(donneeId ? parseInt(donneeId) : undefined);
   };
 
   const findAllInventaires = async (): Promise<Inventaire[]> => {

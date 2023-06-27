@@ -83,7 +83,7 @@ describe("Find age by data ID", () => {
 
     ageRepository.findAgeByDonneeId.mockResolvedValueOnce(ageData);
 
-    const age = await ageService.findAgeOfDonneeId(43, loggedUser);
+    const age = await ageService.findAgeOfDonneeId("43", loggedUser);
 
     expect(ageRepository.findAgeByDonneeId).toHaveBeenCalledTimes(1);
     expect(ageRepository.findAgeByDonneeId).toHaveBeenLastCalledWith(43);
@@ -91,7 +91,7 @@ describe("Find age by data ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(ageService.findAgeOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(ageService.findAgeOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

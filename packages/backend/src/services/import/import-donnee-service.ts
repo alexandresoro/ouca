@@ -270,14 +270,14 @@ export class ImportDonneeService extends ImportService {
     // Check if already have a similar donnee in the database
     const existingDonneeDatabase = this.existingDonnees.find(async (donnee) => {
       return (
-        donnee.inventaireId === existingInventaire?.id &&
-        `${donnee.especeId}` === espece.id &&
-        `${donnee.sexeId}` === sexe.id &&
-        `${donnee.ageId}` === age.id &&
+        parseInt(donnee.inventaireId) === existingInventaire?.id &&
+        donnee.especeId === espece.id &&
+        donnee.sexeId === sexe.id &&
+        donnee.ageId === age.id &&
         donnee.nombre === (importedDonnee.nombre ? +importedDonnee.nombre : null) &&
-        `${donnee.estimationNombreId}` === estimationNombre.id &&
+        donnee.estimationNombreId === estimationNombre.id &&
         donnee.distance === (importedDonnee.distance ? +importedDonnee.distance : null) &&
-        (donnee.estimationDistanceId ? `${donnee.estimationDistanceId}` : null) === (estimationDistance?.id ?? null) &&
+        donnee.estimationDistanceId === (estimationDistance?.id ?? null) &&
         donnee.regroupement === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.commentaire, importedDonnee.commentaire) &&
         areSetsContainingSameValues(

@@ -1,14 +1,10 @@
-import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type EntriesSearchParams, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type EntryNavigation } from "@ou-ca/common/entities/entry";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
-import {
-  SearchDonneesOrderBy,
-  SortOrder,
-  type PaginatedSearchDonneesResultResultArgs,
-} from "../../graphql/generated/graphql-types.js";
+import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { type Donnee, type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
@@ -56,10 +52,10 @@ describe("Find data", () => {
 
     donneeRepository.findDonneeById.mockResolvedValueOnce(dataData);
 
-    await donneeService.findDonnee(dataData.id, loggedUser);
+    await donneeService.findDonnee(12, loggedUser);
 
     expect(donneeRepository.findDonneeById).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.findDonneeById).toHaveBeenLastCalledWith(dataData.id);
+    expect(donneeRepository.findDonneeById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle data not found", async () => {
@@ -95,27 +91,30 @@ describe("Data paginated find by search criteria", () => {
 
     donneeRepository.findDonnees.mockResolvedValueOnce(dataData);
 
-    await donneeService.findPaginatedDonnees(loggedUser);
+    await donneeService.findPaginatedDonnees(loggedUser, {
+      pageNumber: 1,
+      pageSize: 10,
+    });
 
     expect(donneeRepository.findDonnees).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.findDonnees).toHaveBeenLastCalledWith({});
+    expect(donneeRepository.findDonnees).toHaveBeenLastCalledWith({
+      offset: 0,
+      limit: 10,
+      searchCriteria: {},
+    });
   });
 
   test("should handle params when retrieving paginated data", async () => {
     const dataData = [mock<Donnee>(), mock<Donnee>(), mock<Donnee>()];
     const loggedUser = mock<LoggedUser>();
 
-    const searchParams: PaginatedSearchDonneesResultResultArgs = {
-      searchCriteria: {
-        nombre: 12,
-        nicheurs: ["certain", "probable"],
-      },
-      orderBy: SearchDonneesOrderBy.Departement,
+    const searchParams: EntriesSearchParams = {
+      number: 12,
+      breeders: ["certain", "probable"],
+      orderBy: "departement",
       sortOrder: SortOrder.Desc,
-      searchParams: {
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      pageNumber: 1,
+      pageSize: 10,
     };
 
     donneeRepository.findDonnees.mockResolvedValueOnce([dataData[0]]);
@@ -125,18 +124,23 @@ describe("Data paginated find by search criteria", () => {
     expect(donneeRepository.findDonnees).toHaveBeenCalledTimes(1);
     expect(donneeRepository.findDonnees).toHaveBeenLastCalledWith({
       searchCriteria: {
-        nombre: 12,
-        nicheurs: ["certain", "probable"],
+        number: 12,
+        breeders: ["certain", "probable"],
       },
       orderBy: "departement",
       sortOrder: SortOrder.Desc,
       offset: 0,
-      limit: searchParams.searchParams?.pageSize,
+      limit: 10,
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(donneeService.findPaginatedDonnees(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(
+      donneeService.findPaginatedDonnees(null, {
+        pageNumber: 1,
+        pageSize: 10,
+      })
+    ).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -144,31 +148,41 @@ describe("Entities count by search criteria", () => {
   test("should handle to be called without criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    await donneeService.getDonneesCount(loggedUser);
+    await donneeService.getDonneesCount(loggedUser, {
+      pageNumber: 1,
+      pageSize: 10,
+    });
 
     expect(donneeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCount).toHaveBeenLastCalledWith(undefined);
+    expect(donneeRepository.getCount).toHaveBeenLastCalledWith({});
   });
 
   test("should handle to be called with some criteria provided", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    const searchCriteria: PaginatedSearchDonneesResultResultArgs["searchCriteria"] = {
-      nombre: 12,
-      nicheurs: ["certain", "probable"],
+    const searchCriteria: EntriesSearchParams = {
+      pageNumber: 1,
+      pageSize: 10,
+      number: 12,
+      breeders: ["certain", "probable"],
     };
 
     await donneeService.getDonneesCount(loggedUser, searchCriteria);
 
     expect(donneeRepository.getCount).toHaveBeenCalledTimes(1);
     expect(donneeRepository.getCount).toHaveBeenLastCalledWith({
-      nombre: 12,
-      nicheurs: ["certain", "probable"],
+      number: 12,
+      breeders: ["certain", "probable"],
     });
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(donneeService.getDonneesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(
+      donneeService.getDonneesCount(null, {
+        pageNumber: 1,
+        pageSize: 10,
+      })
+    ).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 
@@ -201,12 +215,12 @@ describe("Get latest data id", () => {
   test("should handle existing data", async () => {
     const loggedUser = mock<LoggedUser>();
 
-    donneeRepository.findLatestDonneeId.mockResolvedValueOnce(18);
+    donneeRepository.findLatestDonneeId.mockResolvedValueOnce("18");
 
     const nextRegroupement = await donneeService.findLastDonneeId(loggedUser);
 
     expect(donneeRepository.findLatestDonneeId).toHaveBeenCalledTimes(1);
-    expect(nextRegroupement).toEqual(18);
+    expect(nextRegroupement).toEqual("18");
   });
 
   test("should handle no existing data", async () => {
@@ -263,7 +277,7 @@ describe("Deletion of a data", () => {
       const matchingInventory = mock<Inventaire>({});
 
       const deletedDonnee = mock<Donnee>({
-        id: 42,
+        id: "42",
       });
 
       inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
@@ -285,7 +299,7 @@ describe("Deletion of a data", () => {
       const matchingInventory = mock<Inventaire>({});
 
       const deletedDonnee = mock<Donnee>({
-        id: 42,
+        id: "42",
       });
 
       inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
@@ -305,7 +319,7 @@ describe("Deletion of a data", () => {
       });
 
       const deletedDonnee = mock<Donnee>({
-        id: 42,
+        id: "42",
       });
 
       inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(null);
@@ -331,7 +345,7 @@ describe("Deletion of a data", () => {
       });
 
       const deletedDonnee = mock<Donnee>({
-        id: 42,
+        id: "42",
       });
 
       inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
@@ -356,7 +370,7 @@ describe("Deletion of a data", () => {
       });
 
       const deletedDonnee = mock<Donnee>({
-        id: 42,
+        id: "42",
       });
 
       inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(matchingInventory);
@@ -377,7 +391,7 @@ describe("Deletion of a data", () => {
       });
 
       const deletedDonnee = mock<Donnee>({
-        id: 42,
+        id: "42",
       });
 
       inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(null);
@@ -418,14 +432,14 @@ describe("Update of a data", () => {
     donneeRepository.findExistingDonnee.mockResolvedValueOnce(null);
     donneeRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
-        id: 12,
+        id: "12",
       })
     );
 
     const reshapedInputData = mock<DonneeCreateInput>();
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
 
-    await donneeService.updateDonnee(12, dataData, loggedUser);
+    await donneeService.updateDonnee("12", dataData, loggedUser);
 
     expect(donneeRepository.updateDonnee).toHaveBeenCalledTimes(1);
     expect(donneeRepository.updateDonnee).toHaveBeenLastCalledWith(12, any(), any());
@@ -454,11 +468,11 @@ describe("Update of a data", () => {
 
     donneeRepository.findExistingDonnee.mockResolvedValueOnce(
       mock<Donnee>({
-        id: 345,
+        id: "345",
       })
     );
 
-    await expect(donneeService.updateDonnee(12, dataData, loggedUser)).rejects.toEqual(
+    await expect(donneeService.updateDonnee("12", dataData, loggedUser)).rejects.toEqual(
       new OucaError("OUCA0004", {
         code: "OUCA0004",
         message: "Cette donnée existe déjà (ID = 345).",
@@ -470,7 +484,7 @@ describe("Update of a data", () => {
   test("should throw an error when the requester is not logged", async () => {
     const dataData = mock<UpsertEntryInput>();
 
-    await expect(donneeService.updateDonnee(12, dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(donneeService.updateDonnee("12", dataData, null)).rejects.toEqual(new OucaError("OUCA0001"));
     expect(donneeRepository.createDonnee).not.toHaveBeenCalled();
   });
 });
@@ -507,7 +521,7 @@ describe("Creation of a data", () => {
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
     donneeRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
-        id: 12,
+        id: "12",
       })
     );
 
@@ -536,7 +550,7 @@ describe("Creation of a data", () => {
     reshapeInputDonneeUpsertData.mockReturnValueOnce(reshapedInputData);
     donneeRepository.createDonnee.mockResolvedValueOnce(
       mock<Donnee>({
-        id: 12,
+        id: "12",
       })
     );
 

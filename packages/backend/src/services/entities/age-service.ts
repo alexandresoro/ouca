@@ -26,12 +26,12 @@ export const buildAgeService = ({ ageRepository, donneeRepository }: AgeServiceD
   };
 
   const findAgeOfDonneeId = async (
-    donneeId: number | undefined,
+    donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Age | null> => {
     validateAuthorization(loggedUser);
 
-    const age = await ageRepository.findAgeByDonneeId(donneeId);
+    const age = await ageRepository.findAgeByDonneeId(donneeId ? parseInt(donneeId) : undefined);
     return enrichEntityWithEditableStatus(age, loggedUser);
   };
 

@@ -28,21 +28,23 @@ export const buildComportementService = ({
     return enrichEntityWithEditableStatus(behavior, loggedUser);
   };
 
-  const findComportementsIdsOfDonneeId = async (donneeId: number): Promise<string[]> => {
+  const findComportementsIdsOfDonneeId = async (donneeId: string): Promise<string[]> => {
     const comportementsIds = await comportementRepository
-      .findComportementsOfDonneeId(donneeId)
+      .findComportementsOfDonneeId(parseInt(donneeId))
       .then((comportements) => comportements.map(({ id }) => id));
 
     return [...comportementsIds];
   };
 
   const findComportementsOfDonneeId = async (
-    donneeId: number | undefined,
+    donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Behavior[]> => {
     validateAuthorization(loggedUser);
 
-    const comportements = await comportementRepository.findComportementsOfDonneeId(donneeId);
+    const comportements = await comportementRepository.findComportementsOfDonneeId(
+      donneeId ? parseInt(donneeId) : undefined
+    );
 
     const enrichedBehaviors = comportements.map((behavior) => {
       return enrichEntityWithEditableStatus(behavior, loggedUser);

@@ -81,7 +81,7 @@ describe("Find environments by inventary ID", () => {
 
     milieuRepository.findMilieuxOfDonneeId.mockResolvedValueOnce(environmentsData);
 
-    const environments = await milieuService.findMilieuxOfDonneeId(43, loggedUser);
+    const environments = await milieuService.findMilieuxOfDonneeId("43", loggedUser);
 
     expect(milieuRepository.findMilieuxOfDonneeId).toHaveBeenCalledTimes(1);
     expect(milieuRepository.findMilieuxOfDonneeId).toHaveBeenLastCalledWith(43);
@@ -89,7 +89,7 @@ describe("Find environments by inventary ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(milieuService.findMilieuxOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(milieuService.findMilieuxOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

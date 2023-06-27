@@ -85,7 +85,7 @@ describe("Find inventary by data ID", () => {
 
     inventaireRepository.findInventaireByDonneeId.mockResolvedValueOnce(inventaryData);
 
-    const inventary = await inventaireService.findInventaireOfDonneeId(43, loggedUser);
+    const inventary = await inventaireService.findInventaireOfDonneeId("43", loggedUser);
 
     expect(inventaireRepository.findInventaireByDonneeId).toHaveBeenCalledTimes(1);
     expect(inventaireRepository.findInventaireByDonneeId).toHaveBeenLastCalledWith(43);
@@ -93,7 +93,7 @@ describe("Find inventary by data ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(inventaireService.findInventaireOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(inventaireService.findInventaireOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

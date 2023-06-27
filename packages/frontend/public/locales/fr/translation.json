@@ -193,7 +193,7 @@
     "gender": "Sexe: {{gender}}",
     "group": "Regroupement n°{{group}}",
     "inventoryTitle": "Inventaire",
-    "locality": "Localisation: {{locality.nom}} à {{locality.commune.nom}} ({{locality.commune.departement.code}})",
+    "locality": "Localisation: {{locality.nom}} à {{locality.townName}} ({{locality.departmentCode}})",
     "mainSubtitle": "Propriétaire: {{owner}} • Création: {{creationDate}} • Dernière modification: {{updatedDate}} • Identifiant technique: {{inventoryId}}-{{observationId}}",
     "mainTitle": "Observation: {{speciesName}}",
     "number_defined": "Nombre d'individus: {{number}} ({{numberPrecision}})",

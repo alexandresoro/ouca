@@ -25,21 +25,21 @@ export const buildMilieuService = ({ milieuRepository, donneeRepository }: Milie
     return enrichEntityWithEditableStatus(environment, loggedUser);
   };
 
-  const findMilieuxIdsOfDonneeId = async (donneeId: number): Promise<string[]> => {
+  const findMilieuxIdsOfDonneeId = async (donneeId: string): Promise<string[]> => {
     const milieuxIds = await milieuRepository
-      .findMilieuxOfDonneeId(donneeId)
+      .findMilieuxOfDonneeId(parseInt(donneeId))
       .then((milieux) => milieux.map(({ id }) => id));
 
     return [...milieuxIds];
   };
 
   const findMilieuxOfDonneeId = async (
-    donneeId: number | undefined,
+    donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Environment[]> => {
     validateAuthorization(loggedUser);
 
-    const milieux = await milieuRepository.findMilieuxOfDonneeId(donneeId);
+    const milieux = await milieuRepository.findMilieuxOfDonneeId(donneeId ? parseInt(donneeId) : undefined);
 
     const enrichedEnvironments = milieux.map((environment) => {
       return enrichEntityWithEditableStatus(environment, loggedUser);

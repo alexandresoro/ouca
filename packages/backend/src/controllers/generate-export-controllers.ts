@@ -87,7 +87,7 @@ const generateExportController: FastifyPluginCallback<{
 
   fastify.post("/entries", async (req, reply) => {
     // TODO add search criteria
-    const id = await generateDonneesExport(services, req.user, undefined);
+    const id = await generateDonneesExport(services, req.user, {});
     return reply.header("Location", `${req.protocol}://${req.hostname}/download/${id}`).status(201).send();
   });
 

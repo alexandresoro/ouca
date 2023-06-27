@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { entryNavigationSchema, entrySchema } from "../entities/entry.js";
+import { entryExtendedSchema, entryNavigationSchema, entrySchema } from "../entities/entry.js";
+import { getPaginatedResponseSchema, paginationQueryParamsSchema } from "./common/pagination.js";
+import { getSearchCriteriaParamsSchema } from "./common/search-criteria.js";
 
 /**
  * `GET` `/entry/:id`
@@ -8,6 +10,43 @@ import { entryNavigationSchema, entrySchema } from "../entities/entry.js";
 export const getEntryResponse = entrySchema;
 
 export type GetEntryResponse = z.infer<typeof getEntryResponse>;
+
+/**
+ * `GET` `/entries`
+ *  Retrieve paginated entries results
+ */
+export const ENTRIES_ORDER_BY_ELEMENTS = [
+  "id",
+  "codeEspece",
+  "nomFrancais",
+  "nombre",
+  "sexe",
+  "age",
+  "departement",
+  "codeCommune",
+  "nomCommune",
+  "lieuDit",
+  "date",
+  "heure",
+  "duree",
+  "observateur",
+] as const;
+export type EntriesOrderBy = typeof ENTRIES_ORDER_BY_ELEMENTS[number];
+
+export const getEntriesQueryParamsSchema = paginationQueryParamsSchema
+  .required()
+  .extend({
+    orderBy: z.enum(ENTRIES_ORDER_BY_ELEMENTS).optional(),
+    sortOrder: z.enum(["asc", "desc"]).optional(),
+    extended: z.coerce.boolean().default(false),
+  })
+  .merge(getSearchCriteriaParamsSchema);
+
+export type EntriesSearchParams = Omit<z.infer<typeof getEntriesQueryParamsSchema>, "extended">;
+
+export const getEntriesResponse = getPaginatedResponseSchema(entrySchema);
+
+export const getEntriesExtendedResponse = getPaginatedResponseSchema(entryExtendedSchema);
 
 /**
  * `PUT` `/entry/:id` Update of entry

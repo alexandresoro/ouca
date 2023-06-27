@@ -1,14 +1,15 @@
+import { type Behavior } from "@ou-ca/common/entities/behavior";
+import { type EntryExtended } from "@ou-ca/common/entities/entry";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import { Angry, Bug, Comment, Link, PieChartAlt2 } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";
 import { type ParseKeys } from "i18next";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { type Comportement, type Donnee } from "../../gql/graphql";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 
 type DonneeDetailsViewProps = {
-  donnee: Donnee;
+  donnee: EntryExtended;
 };
 
 const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => {
@@ -16,7 +17,7 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
 
   const { t } = useTranslation();
 
-  const getNicheurStatusStr = (comportements: Comportement[]): string => {
+  const getNicheurStatusStr = (comportements: Behavior[]): string => {
     const statusCode = getHighestNicheurStatus(comportements);
     return statusCode ? t(`breedingStatus.${statusCode}`) : "";
   };
@@ -30,12 +31,12 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
               <h3 className="flex items-center gap-2.5 text-lg font-normal">
                 {t("observationDetails.observationTitle")}
 
-                {donnee.regroupement ? (
+                {donnee.regroupment ? (
                   <>
                     <span className="badge badge-primary badge-outline badge-lg">
                       <Link className="h-4 pr-1.5" />
                       {t("observationDetails.group", {
-                        group: donnee.regroupement,
+                        group: donnee.regroupment,
                       })}
                     </span>
                   </>
@@ -50,21 +51,21 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         <ItemWithAvatar
           icon={<PieChartAlt2 className="h-6" />}
           primary={t("observationDetails.number" as ParseKeys, {
-            context: donnee?.estimationNombre?.nonCompte ? "undefined" : "defined",
-            number: donnee?.nombre,
-            numberPrecision: donnee?.estimationNombre?.libelle,
+            context: donnee.numberEstimate?.nonCompte ? "undefined" : "defined",
+            number: donnee.number,
+            numberPrecision: donnee.numberEstimate?.libelle,
           })}
           secondary={t("observationDetails.distance" as ParseKeys, {
             context:
-              donnee?.distance && donnee?.estimationDistance
+              donnee?.distance && donnee.distanceEstimate
                 ? "both"
-                : donnee?.distance
+                : donnee.distance
                 ? "valueOnly"
-                : donnee?.estimationDistance
+                : donnee.distanceEstimate
                 ? "precisionOnly"
                 : "none",
-            distance: donnee?.distance,
-            distancePrecision: donnee?.estimationDistance?.libelle,
+            distance: donnee.distance,
+            distancePrecision: donnee.distanceEstimate?.libelle,
           })}
         />
 
@@ -74,12 +75,12 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
             <>
               <div>
                 {t("observationDetails.gender", {
-                  gender: donnee?.sexe.libelle,
+                  gender: donnee.sex.libelle,
                 })}
               </div>
               <div>
                 {t("observationDetails.age", {
-                  age: donnee?.age.libelle,
+                  age: donnee.age.libelle,
                 })}
               </div>
             </>
@@ -89,19 +90,19 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         <ItemWithAvatar
           icon={<Angry className="h-6" />}
           primary={t("observationDetails.behaviors", {
-            count: donnee?.comportements.length,
-            behaviors: donnee?.comportements.map((c) => {
+            count: donnee.behaviors.length,
+            behaviors: donnee.behaviors.map((c) => {
               return c?.libelle;
             }),
           })}
-          secondary={getNicheurStatusStr(donnee.comportements)}
+          secondary={getNicheurStatusStr(donnee.behaviors)}
         />
 
         <ItemWithAvatar
           icon={<Tree className="h-6" />}
           primary={t("observationDetails.environments", {
-            count: donnee?.milieux.length,
-            environments: donnee?.milieux.map((m) => {
+            count: donnee?.environments.length,
+            environments: donnee?.environments.map((m) => {
               return m?.libelle;
             }),
           })}
@@ -110,8 +111,8 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
         <ItemWithAvatar
           icon={<Comment className="h-6" />}
           primary={t("observationDetails.comment", {
-            context: donnee?.commentaire ? "" : "undefined",
-            comment: donnee?.commentaire,
+            context: donnee?.comment ? "" : "undefined",
+            comment: donnee?.comment,
           })}
         />
       </ul>

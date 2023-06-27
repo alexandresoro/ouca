@@ -83,7 +83,7 @@ describe("Find sex by data ID", () => {
 
     sexeRepository.findSexeByDonneeId.mockResolvedValueOnce(sexData);
 
-    const sex = await sexeService.findSexeOfDonneeId(43, loggedUser);
+    const sex = await sexeService.findSexeOfDonneeId("43", loggedUser);
 
     expect(sexeRepository.findSexeByDonneeId).toHaveBeenCalledTimes(1);
     expect(sexeRepository.findSexeByDonneeId).toHaveBeenLastCalledWith(43);
@@ -91,7 +91,7 @@ describe("Find sex by data ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(sexeService.findSexeOfDonneeId(12, null)).rejects.toEqual(new OucaError("OUCA0001"));
+    await expect(sexeService.findSexeOfDonneeId("12", null)).rejects.toEqual(new OucaError("OUCA0001"));
   });
 });
 

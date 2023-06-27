@@ -1,7 +1,7 @@
-import { type Inventaire } from "../gql/graphql";
+import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
 
 export const getInventaireCoordinates = (
-  inventaire: Inventaire
+  inventaire: InventoryExtended
 ): { latitude: number; longitude: number; altitude: number } => {
   // Customized coordinates are defined
   if (inventaire.customizedCoordinates && inventaire.customizedCoordinates.longitude != null) {
@@ -14,8 +14,8 @@ export const getInventaireCoordinates = (
 
   // Default lieu-dit coordinates are used
   return {
-    latitude: inventaire.lieuDit.latitude,
-    longitude: inventaire.lieuDit.longitude,
-    altitude: inventaire.lieuDit.altitude,
+    latitude: inventaire.locality.coordinates.latitude,
+    longitude: inventaire.locality.coordinates.longitude,
+    altitude: inventaire.locality.coordinates.altitude,
   };
 };

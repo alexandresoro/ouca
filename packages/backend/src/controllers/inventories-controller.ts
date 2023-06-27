@@ -1,16 +1,43 @@
-import {
-  getInventoryResponse,
-  upsertInventoryInput,
-  upsertInventoryResponse,
-  type GetInventoryResponse,
-} from "@ou-ca/common/api/inventory";
+import { getInventoryResponse, upsertInventoryInput, upsertInventoryResponse } from "@ou-ca/common/api/inventory";
+import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
 import { type FastifyPluginCallback } from "fastify";
+import { type Inventaire } from "../repositories/inventaire/inventaire-repository-types.js";
 import { type Services } from "../services/services.js";
+import { type LoggedUser } from "../types/User.js";
+import { enrichedLocality } from "./localities-controller.js";
+
+export const enrichedInventory = async (
+  services: Services,
+  inventory: Inventaire,
+  user: LoggedUser | null
+): Promise<InventoryExtended> => {
+  const [observer, associates, locality, weathers] = await Promise.all([
+    services.observateurService.findObservateurOfInventaireId(inventory.id, user),
+    services.observateurService.findAssociesOfInventaireId(inventory.id, user),
+    services.lieuditService.findLieuDitOfInventaireId(inventory.id, user),
+    services.meteoService.findMeteosOfInventaireId(inventory.id, user),
+  ]);
+
+  if (!observer || !locality) {
+    return Promise.reject("Missing data for enriched inventory");
+  }
+
+  const localityEnriched = await enrichedLocality(services, locality, user);
+
+  return {
+    ...inventory,
+    id: `${inventory.id}`,
+    observer,
+    associates,
+    locality: localityEnriched,
+    weathers,
+  };
+};
 
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { inventaireService, observateurService, lieuditService, meteoService } = services;
+  const { inventaireService } = services;
 
   fastify.get<{
     Params: {
@@ -22,29 +49,13 @@ const inventoriesController: FastifyPluginCallback<{
       return await reply.status(404).send();
     }
 
-    // Enrich inventory
-    const [observer, associates, locality, weathers] = await Promise.all([
-      observateurService.findObservateurOfInventaireId(inventory.id, req.user),
-      observateurService.findAssociesOfInventaireId(inventory.id, req.user),
-      lieuditService.findLieuDitOfInventaireId(inventory.id, req.user),
-      meteoService.findMeteosOfInventaireId(inventory.id, req.user),
-    ]);
-
-    if (!observer || !locality) {
+    try {
+      const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
+      const response = getInventoryResponse.parse(inventoryEnriched);
+      return await reply.send(response);
+    } catch (e) {
       return await reply.status(404).send();
     }
-
-    const enrichedInventory = {
-      ...inventory,
-      id: `${inventory.id}`,
-      observer,
-      associates,
-      locality,
-      weathers,
-    } satisfies GetInventoryResponse;
-
-    const response = getInventoryResponse.parse(enrichedInventory);
-    return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {

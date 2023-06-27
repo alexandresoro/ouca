@@ -10,7 +10,28 @@ import { type Locality, type LocalityExtended } from "@ou-ca/common/entities/loc
 import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
+import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
+
+export const enrichedLocality = async (
+  services: Services,
+  locality: Locality,
+  user: LoggedUser | null
+): Promise<Omit<LocalityExtended, "entriesCount">> => {
+  const town = await services.communeService.findCommuneOfLieuDitId(locality.id, user);
+  const department = town ? await services.departementService.findDepartementOfCommuneId(town.id, user) : null;
+
+  if (!town || !department) {
+    return Promise.reject("Missing data for enriched locality");
+  }
+
+  return {
+    ...locality,
+    townCode: town.code,
+    townName: town.nom,
+    departmentCode: department.code,
+  };
+};
 
 const localitiesController: FastifyPluginCallback<{
   services: Services;

@@ -99,7 +99,7 @@ describe("Find number estimate by data ID", () => {
 
     estimationNombreRepository.findEstimationNombreByDonneeId.mockResolvedValueOnce(numberEstimateData);
 
-    const numberEstimate = await estimationNombreService.findEstimationNombreOfDonneeId(43, loggedUser);
+    const numberEstimate = await estimationNombreService.findEstimationNombreOfDonneeId("43", loggedUser);
 
     expect(estimationNombreRepository.findEstimationNombreByDonneeId).toHaveBeenCalledTimes(1);
     expect(estimationNombreRepository.findEstimationNombreByDonneeId).toHaveBeenLastCalledWith(43);
@@ -107,7 +107,7 @@ describe("Find number estimate by data ID", () => {
   });
 
   test("should throw an error when the requester is not logged", async () => {
-    await expect(estimationNombreService.findEstimationNombreOfDonneeId(12, null)).rejects.toEqual(
+    await expect(estimationNombreService.findEstimationNombreOfDonneeId("12", null)).rejects.toEqual(
       new OucaError("OUCA0001")
     );
   });

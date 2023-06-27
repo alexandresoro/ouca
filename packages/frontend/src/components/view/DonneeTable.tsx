@@ -1,116 +1,16 @@
+import { getEntriesExtendedResponse, type EntriesOrderBy } from "@ou-ca/common/api/entry";
+import { type EntryExtended } from "@ou-ca/common/entities/entry";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "urql";
-import { graphql } from "../../gql";
-import { type Donnee, type SearchDonneesOrderBy } from "../../gql/graphql";
 import useApiMutation from "../../hooks/api/useApiMutation";
+import useApiQuery from "../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
 import Table from "../common/styled/table/Table";
 import TableSortLabel from "../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
-
-const PAGINATED_SEARCH_DONNEES_QUERY = graphql(`
-  query PaginatedSearchDonnees(
-    $sortOrder: SortOrder
-    $orderBy: SearchDonneesOrderBy
-    $searchParams: SearchDonneeParams
-    $searchCriteria: SearchDonneeCriteria
-  ) {
-    searchDonnees {
-      count(searchCriteria: $searchCriteria)
-      result(sortOrder: $sortOrder, orderBy: $orderBy, searchParams: $searchParams, searchCriteria: $searchCriteria) {
-        id
-        inventaire {
-          id
-          observateur {
-            id
-            libelle
-          }
-          associes {
-            id
-            libelle
-          }
-          date
-          heure
-          duree
-          lieuDit {
-            id
-            nom
-            altitude
-            longitude
-            latitude
-            coordinatesSystem
-            commune {
-              id
-              code
-              nom
-              departement {
-                id
-                code
-              }
-            }
-          }
-          customizedCoordinates {
-            altitude
-            longitude
-            latitude
-            system
-          }
-          temperature
-          meteos {
-            id
-            libelle
-          }
-        }
-        espece {
-          id
-          code
-          nomFrancais
-          nomLatin
-          classe {
-            id
-            libelle
-          }
-        }
-        sexe {
-          id
-          libelle
-        }
-        age {
-          id
-          libelle
-        }
-        estimationNombre {
-          id
-          libelle
-          nonCompte
-        }
-        nombre
-        estimationDistance {
-          id
-          libelle
-        }
-        distance
-        regroupement
-        comportements {
-          id
-          code
-          libelle
-          nicheur
-        }
-        milieux {
-          id
-          code
-          libelle
-        }
-        commentaire
-      }
-    }
-  }
-`);
 
 const COLUMNS = [
   {
@@ -141,31 +41,36 @@ const DonneeTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<SearchDonneesOrderBy>();
+    usePaginatedTableParams<EntriesOrderBy>();
 
-  const [deleteDialog, setDeleteDialog] = useState<Donnee | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<EntryExtended | null>(null);
 
   const { displayNotification } = useSnackbar();
 
-  const [{ data: donneesResult }, reexecuteSearchDonneesQuery] = useQuery({
-    query: PAGINATED_SEARCH_DONNEES_QUERY,
-    variables: {
-      searchParams: {
+  const { data, refetch } = useApiQuery(
+    {
+      path: "/entries",
+      queryParams: {
         pageNumber: page,
         pageSize: rowsPerPage,
+        orderBy,
+        sortOrder,
+        extended: true,
+        // TODO add search criteria
       },
-      orderBy,
-      sortOrder,
-      searchCriteria: null,
+      schema: getEntriesExtendedResponse,
     },
-    requestPolicy: "cache-and-network",
-  });
+    {
+      staleTime: Infinity,
+      refetchOnMount: "always",
+    }
+  );
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
     {
-      onSettled: () => {
-        reexecuteSearchDonneesQuery();
+      onSettled: async () => {
+        await refetch();
       },
       onSuccess: () => {
         displayNotification({
@@ -182,19 +87,19 @@ const DonneeTable: FunctionComponent = () => {
     }
   );
 
-  const handleOpenDonneeDetails = (donnee: Donnee) => {
+  const handleOpenDonneeDetails = (donnee: EntryExtended) => {
     if (donnee) {
       navigate(`/entry/${donnee.id}`);
     }
   };
 
-  const handleDeleteDonnee = (donnee: Donnee | null) => {
+  const handleDeleteDonnee = (donnee: EntryExtended | null) => {
     if (donnee) {
       setDeleteDialog(donnee);
     }
   };
 
-  const handleDeleteDonneeConfirmation = (donnee: Donnee | null) => {
+  const handleDeleteDonneeConfirmation = (donnee: EntryExtended | null) => {
     if (donnee) {
       setDeleteDialog(null);
       mutate({ path: `/entry/${donnee.id}` });
@@ -205,7 +110,7 @@ const DonneeTable: FunctionComponent = () => {
     setPage(newPage);
   };
 
-  const handleRequestSort = (sortingColumn: SearchDonneesOrderBy) => {
+  const handleRequestSort = (sortingColumn: EntriesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
     setOrderBy(sortingColumn);
@@ -233,7 +138,7 @@ const DonneeTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={donneesResult?.searchDonnees?.result?.map((donnee) => {
+        tableRows={data?.data.map((donnee) => {
           return donnee ? (
             <DonneeDetailsRow
               key={donnee.id}
@@ -247,18 +152,18 @@ const DonneeTable: FunctionComponent = () => {
         })}
         page={page}
         elementsPerPage={rowsPerPage}
-        count={donneesResult?.searchDonnees?.count ?? 0}
+        count={data?.meta.count ?? 0}
         onPageChange={handleChangePage}
       />
 
       <DeletionConfirmationDialog
         open={!!deleteDialog}
         messageContent={t("deleteObservationDialogMsg", {
-          species: deleteDialog?.espece.nomFrancais,
-          locality: deleteDialog?.inventaire.lieuDit.nom,
-          city: deleteDialog?.inventaire.lieuDit.commune.nom,
-          department: deleteDialog?.inventaire.lieuDit.commune.departement.code,
-          date: deleteDialog?.inventaire.date,
+          species: deleteDialog?.species.nomFrancais,
+          locality: deleteDialog?.inventory.locality.nom,
+          city: deleteDialog?.inventory.locality.townName,
+          department: deleteDialog?.inventory.locality.departmentCode,
+          date: deleteDialog?.inventory.date,
         })}
         onCancelAction={() => setDeleteDialog(null)}
         onConfirmAction={() => handleDeleteDonneeConfirmation(deleteDialog)}

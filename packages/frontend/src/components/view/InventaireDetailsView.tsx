@@ -1,13 +1,13 @@
+import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
 import { Calendar, Map as MapIcon, Sun, User } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { type Inventaire } from "../../gql/graphql";
 import { getInventaireCoordinates } from "../../utils/coordinates-helper";
 import ItemWithAvatar from "../common/ItemWithAvatar";
 
 type InventaireDetailsViewProps = {
-  inventaire: Inventaire;
+  inventaire: InventoryExtended;
 };
 
 const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (props) => {
@@ -23,11 +23,11 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         <ItemWithAvatar
           icon={<User className="h-6" />}
           primary={t("observationDetails.observer", {
-            name: inventaire.observateur.libelle,
+            name: inventaire.observer.libelle,
           })}
           secondary={t("observationDetails.secondaryObservers", {
-            count: inventaire.associes.length,
-            names: inventaire.associes.map((i) => {
+            count: inventaire.associates.length,
+            names: inventaire.associates.map((i) => {
               return i?.libelle;
             }),
           })}
@@ -48,7 +48,7 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         <ItemWithAvatar
           icon={<MapIcon className="h-6" />}
           primary={t("observationDetails.locality", {
-            locality: inventaire.lieuDit,
+            locality: inventaire.locality,
           })}
           secondary={
             <>
@@ -69,8 +69,8 @@ const InventaireDetailsView: FunctionComponent<InventaireDetailsViewProps> = (pr
         <ItemWithAvatar
           icon={<Sun className="h-6" />}
           primary={t("observationDetails.weathers", {
-            count: inventaire.meteos.length,
-            weathers: inventaire.meteos.map((m) => {
+            count: inventaire.weathers.length,
+            weathers: inventaire.weathers.map((m) => {
               return m?.libelle;
             }),
           })}

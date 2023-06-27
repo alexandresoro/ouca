@@ -1,10 +1,10 @@
+import { type EntriesSearchParams } from "@ou-ca/common/api/entry";
 import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Environment } from "@ou-ca/common/entities/environment";
 import { getNicheurStatusToDisplay } from "@ou-ca/common/helpers/nicheur-helper";
 import { type Redis } from "ioredis";
 import { randomUUID } from "node:crypto";
-import { type SearchDonneeCriteria } from "../graphql/generated/graphql-types.js";
 import { type LoggedUser } from "../types/User.js";
 import { SEPARATOR_COMMA } from "../utils/constants.js";
 import { writeExcelToBuffer } from "../utils/export-excel-utils.js";
@@ -168,12 +168,13 @@ export const generateDonneesExport = async (
     sexeService: SexeService;
   },
   loggedUser: LoggedUser | null,
-  searchCriteria: SearchDonneeCriteria | null | undefined
+  searchCriteria: Omit<EntriesSearchParams, "pageNumber" | "pageSize"> &
+    Partial<{ pageNumber: number; pageSize: number }>
 ): Promise<string> => {
   const coordinatesSystem = GPS_COORDINATES;
   const coordinatesSuffix = ` en ${coordinatesSystem.unitName} (${coordinatesSystem.name})`;
 
-  const donnees = await donneeService.findPaginatedDonnees(loggedUser, { searchCriteria });
+  const donnees = await donneeService.findPaginatedDonnees(loggedUser, searchCriteria ?? {});
 
   const objectsToExport = await Promise.all(
     donnees.map(async (donnee) => {

@@ -37,12 +37,12 @@ export const buildEspeceService = ({ especeRepository, donneeRepository }: Espec
   };
 
   const findEspeceOfDonneeId = async (
-    donneeId: number | undefined,
+    donneeId: string | undefined,
     loggedUser: LoggedUser | null
   ): Promise<Species | null> => {
     validateAuthorization(loggedUser);
 
-    const species = await especeRepository.findEspeceByDonneeId(donneeId);
+    const species = await especeRepository.findEspeceByDonneeId(donneeId ? parseInt(donneeId) : undefined);
     return enrichEntityWithEditableStatus(species, loggedUser);
   };
 
