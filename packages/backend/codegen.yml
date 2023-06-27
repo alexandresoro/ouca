@@ -3,9 +3,5 @@ generates:
   src/graphql/generated/graphql-types.ts:
     plugins:
       - typescript
-      - typescript-resolvers
-      - add:
-          content: "import {PartialDeep} from 'type-fest';"
     config:
       allowEnumStringTypes: true
-      defaultMapper: "PartialDeep<{T}, {recurseIntoArrays: true}> | null"
