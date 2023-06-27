@@ -123,8 +123,3 @@ type Donnee {
   milieux: [Milieu!]!
   commentaire: String
 }
-
-enum SortOrder {
-  asc
-  desc
-}

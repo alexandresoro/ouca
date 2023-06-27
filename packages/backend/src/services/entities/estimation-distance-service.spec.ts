@@ -2,13 +2,10 @@ import { type DistanceEstimatesSearchParams, type UpsertDistanceEstimateInput } 
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import {
-  SortOrder,
-} from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
-  type EstimationDistance,
-  type EstimationDistanceCreateInput
+    type EstimationDistance,
+    type EstimationDistanceCreateInput
 } from "../../repositories/estimation-distance/estimation-distance-repository-types.js";
 import { type EstimationDistanceRepository } from "../../repositories/estimation-distance/estimation-distance-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -144,7 +141,7 @@ describe("Entities paginated find by search criteria", () => {
 
     const searchParams: DistanceEstimatesSearchParams = {
       orderBy: "libelle",
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       q: "Bob",
       pageNumber: 1,
       pageSize: 10,
@@ -158,7 +155,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(estimationDistanceRepository.findEstimationsDistance).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: COLUMN_LIBELLE,
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,
     });

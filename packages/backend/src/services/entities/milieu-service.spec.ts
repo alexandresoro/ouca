@@ -2,7 +2,6 @@ import { type EnvironmentsSearchParams, type UpsertEnvironmentInput } from "@ou-
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type Milieu, type MilieuCreateInput } from "../../repositories/milieu/milieu-repository-types.js";
 import { type MilieuRepository } from "../../repositories/milieu/milieu-repository.js";
@@ -125,7 +124,7 @@ describe("Entities paginated find by search criteria", () => {
 
     const searchParams: EnvironmentsSearchParams = {
       orderBy: "libelle",
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       q: "Bob",
       pageNumber: 1,
       pageSize: 10,
@@ -139,7 +138,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(milieuRepository.findMilieux).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: COLUMN_LIBELLE,
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,
     });

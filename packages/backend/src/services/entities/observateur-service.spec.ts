@@ -2,7 +2,6 @@ import { type ObserversSearchParams, type UpsertObserverInput } from "@ou-ca/com
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import {
   type Observateur,
@@ -151,7 +150,7 @@ describe("Entities paginated find by search criteria", () => {
 
     const searchParams: ObserversSearchParams = {
       orderBy: "libelle",
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       q: "Bob",
       pageNumber: 1,
       pageSize: 10,
@@ -165,7 +164,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(observateurRepository.findObservateurs).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: COLUMN_LIBELLE,
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,
     });

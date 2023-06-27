@@ -2,7 +2,6 @@ import { type ClassesSearchParams, type UpsertClassInput } from "@ou-ca/common/a
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type Classe, type ClasseCreateInput } from "../../repositories/classe/classe-repository-types.js";
 import { type ClasseRepository } from "../../repositories/classe/classe-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -145,7 +144,7 @@ describe("Entities paginated find by search criteria", () => {
 
     const searchParams = mock<ClassesSearchParams>({
       orderBy: "libelle",
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       q: "Bob",
       pageNumber: 1,
       pageSize: 10,
@@ -159,7 +158,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(classeRepository.findClasses).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: COLUMN_LIBELLE,
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,
     });

@@ -2,7 +2,6 @@ import { type DepartmentsSearchParams, type UpsertDepartmentInput } from "@ou-ca
 import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { mock } from "vitest-mock-extended";
-import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import {
   type Departement,
@@ -172,7 +171,7 @@ describe("Entities paginated find by search criteria", () => {
 
     const searchParams: DepartmentsSearchParams = {
       orderBy: "code",
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       q: "Bob",
       pageNumber: 1,
       pageSize: 10,
@@ -186,7 +185,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(departementRepository.findDepartements).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: COLUMN_CODE,
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,
     });

@@ -4,7 +4,6 @@ import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
 import { any, anyNumber, anyObject, mock } from "vitest-mock-extended";
-import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type DonneeComportementRepository } from "../../repositories/donnee-comportement/donnee-comportement-repository.js";
 import { type DonneeMilieuRepository } from "../../repositories/donnee-milieu/donnee-milieu-repository.js";
 import { type Donnee, type DonneeCreateInput } from "../../repositories/donnee/donnee-repository-types.js";
@@ -112,7 +111,7 @@ describe("Data paginated find by search criteria", () => {
       number: 12,
       breeders: ["certain", "probable"],
       orderBy: "departement",
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       pageNumber: 1,
       pageSize: 10,
     };
@@ -128,7 +127,7 @@ describe("Data paginated find by search criteria", () => {
         breeders: ["certain", "probable"],
       },
       orderBy: "departement",
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       offset: 0,
       limit: 10,
     });

@@ -3,7 +3,6 @@ import { type Logger } from "pino";
 import { UniqueIntegrityConstraintViolationError } from "slonik";
 import { vi } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { SortOrder } from "../../graphql/generated/graphql-types.js";
 import { type Commune, type CommuneCreateInput } from "../../repositories/commune/commune-repository-types.js";
 import { type CommuneRepository } from "../../repositories/commune/commune-repository.js";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -156,7 +155,7 @@ describe("Entities paginated find by search criteria", () => {
 
     const searchParams: TownsSearchParams = {
       orderBy: "nom",
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       q: "Bob",
       pageNumber: 1,
       pageSize: 10,
@@ -170,7 +169,7 @@ describe("Entities paginated find by search criteria", () => {
     expect(communeRepository.findCommunes).toHaveBeenLastCalledWith({
       q: "Bob",
       orderBy: COLUMN_NOM,
-      sortOrder: SortOrder.Desc,
+      sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,
     });
