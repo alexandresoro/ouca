@@ -14,7 +14,7 @@
       "automerge": true
     },
     {
-      "matchPackagePatterns": ["fastify", "mercurius"],
+      "matchPackagePatterns": ["fastify"],
       "matchUpdateTypes": ["major", "minor"],
       "groupName": "fastify major & minor",
       "groupSlug": "fastify"
