@@ -343,7 +343,7 @@ export const buildDonneeRepository = ({ slonik }: DonneeRepositoryDependencies) 
   const findLatestDonneeId = async (): Promise<string | null> => {
     const query = sql.type(idSchema)`
       SELECT
-	      id
+	      id::text
       FROM
 	      basenaturaliste.donnee
       WHERE
