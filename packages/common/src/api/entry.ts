@@ -84,7 +84,7 @@ export type GetEntryNavigationResponse = z.infer<typeof getEntryNavigationRespon
  * `GET` `/entry/last`
  */
 export const getEntryLastResponse = z.object({
-  id: z.number().nullable(),
+  id: z.string().nullable(),
 });
 
 export type GetEntryLastResponse = z.infer<typeof getEntryLastResponse>;
