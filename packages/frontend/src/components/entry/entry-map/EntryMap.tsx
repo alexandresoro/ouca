@@ -3,7 +3,7 @@
 import { useAtom } from "jotai";
 import "leaflet/dist/leaflet.css";
 import { Marker as MapLibreMarker } from "maplibre-gl";
-import { useState, type FunctionComponent } from "react";
+import { useEffect, useRef, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { ScaleControl as LeafletScaleControl, MapContainer, TileLayer } from "react-leaflet";
 import {
@@ -12,12 +12,13 @@ import {
   Marker,
   NavigationControl,
   Popup,
+  Map as ReactMapGl,
   ScaleControl,
   Source,
+  type MapRef,
   type ViewState,
-} from "react-map-gl";
+} from "react-map-gl/maplibre";
 import { inventoryCoordinatesAtom } from "../../../atoms/inventoryFormAtoms";
-import MaplibreMap from "../../common/maps/MaplibreMap";
 import { MAP_PROVIDERS } from "../../common/maps/map-providers";
 import PhotosViewMapOpacityControl from "./PhotosViewMapOpacityControl";
 
@@ -32,12 +33,30 @@ const RED_PIN = new MapLibreMarker({
 const EntryMap: FunctionComponent = () => {
   const { t } = useTranslation();
 
+  const mapRef = useRef<MapRef>(null);
+
   const [inventoryCoordinates, setInventoryCoordinates] = useAtom(inventoryCoordinatesAtom);
 
+  useEffect(() => {
+    const currentMap = mapRef.current;
+    if (inventoryCoordinates && currentMap != null) {
+      const currentBounds = currentMap.getMap().getBounds();
+      const areCoordinatesInBounds = currentBounds?.contains(inventoryCoordinates);
+
+      if (!areCoordinatesInBounds || currentMap.getMap().getZoom() < 15) {
+        currentMap.flyTo({
+          center: inventoryCoordinates,
+          zoom: 15,
+          duration: 500,
+        });
+      }
+    }
+  }, [inventoryCoordinates]);
+
   const [viewState, setViewState] = useState<Partial<ViewState>>({
-    longitude: inventoryCoordinates?.lng ?? 0,
-    latitude: inventoryCoordinates?.lat ?? 45,
-    zoom: inventoryCoordinates != null ? 15 : 11,
+    longitude: inventoryCoordinates?.lng ?? 1,
+    latitude: inventoryCoordinates?.lat ?? 46.5,
+    zoom: inventoryCoordinates != null ? 15 : 4.5,
   });
 
   const [mapProvider, setMapProvider] = useState<keyof typeof MAP_PROVIDERS>("ign");
@@ -69,8 +88,10 @@ const EntryMap: FunctionComponent = () => {
         />
       </div>
       <div className="h-80 lg:h-[500px] card border-2 border-primary shadow-xl">
-        <MaplibreMap
+        <ReactMapGl
+          ref={mapRef}
           {...viewState}
+          reuseMaps
           onMove={(evt) => setViewState(evt.viewState)}
           // rome-ignore lint/suspicious/noExplicitAny: <explanation>
           mapStyle={MAP_PROVIDERS[mapProvider].mapboxStyle as any}
@@ -82,7 +103,7 @@ const EntryMap: FunctionComponent = () => {
             <Popup
               longitude={inventoryCoordinates.lng}
               latitude={inventoryCoordinates.lat}
-              offset={[-15, -35]}
+              offset={[-15, -35] as [number, number]}
               focusAfterOpen={false}
               closeButton={false}
               onClose={() => setDisplayCoordinatesInfoPopup(false)}
@@ -131,7 +152,7 @@ const EntryMap: FunctionComponent = () => {
           <NavigationControl />
           <FullscreenControl />
           <ScaleControl unit="metric" />
-        </MaplibreMap>
+        </ReactMapGl>
       </div>
       <MapContainer
         center={[45, 0]}

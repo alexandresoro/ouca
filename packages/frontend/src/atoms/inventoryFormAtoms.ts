@@ -12,8 +12,11 @@ export const inventoryLatitudeAtom = atom(
     return get(inventoryLatitudeInternal);
   },
   async (get, set, newLatitude: number | null | typeof RESET) => {
+    // Round to 6 digits as this is what is supported on backend side
+    const roundedLatitude = newLatitude !== RESET && newLatitude != null ? +newLatitude.toFixed(6) : newLatitude;
+
     // Update altitude
-    if (newLatitude != null && newLatitude !== RESET) {
+    if (roundedLatitude != null && roundedLatitude !== RESET) {
       const longitude = get(inventoryLongitudeAtom);
 
       const localityCoordinates = get(inventoryLocalityAtom)?.coordinates;
@@ -22,7 +25,7 @@ export const inventoryLatitudeAtom = atom(
       if (longitude != null && localityCoordinates != null) {
         const altitudeResult = await getAltitudeToDisplay(
           {
-            latitude: newLatitude,
+            latitude: roundedLatitude,
             longitude,
           },
           {
@@ -37,7 +40,7 @@ export const inventoryLatitudeAtom = atom(
         }
       }
     }
-    set(inventoryLatitudeInternal, newLatitude);
+    set(inventoryLatitudeInternal, roundedLatitude);
   }
 );
 
@@ -47,8 +50,11 @@ export const inventoryLongitudeAtom = atom(
     return get(inventoryLongitudeInternal);
   },
   async (get, set, newLongitude: number | null | typeof RESET) => {
+    // Round to 6 digits as this is what is supported on backend side
+    const roundedLongitude = newLongitude !== RESET && newLongitude != null ? +newLongitude.toFixed(6) : newLongitude;
+
     // Update altitude
-    if (newLongitude != null && newLongitude !== RESET) {
+    if (roundedLongitude != null && roundedLongitude !== RESET) {
       const latitude = get(inventoryLatitudeAtom);
 
       const localityCoordinates = get(inventoryLocalityAtom)?.coordinates;
@@ -58,7 +64,7 @@ export const inventoryLongitudeAtom = atom(
         const altitudeResult = await getAltitudeToDisplay(
           {
             latitude,
-            longitude: newLongitude,
+            longitude: roundedLongitude,
           },
           {
             lat: localityCoordinates.latitude,
@@ -72,7 +78,7 @@ export const inventoryLongitudeAtom = atom(
         }
       }
     }
-    set(inventoryLongitudeInternal, newLongitude);
+    set(inventoryLongitudeInternal, roundedLongitude);
   }
 );
 
@@ -94,19 +100,28 @@ export const inventoryCoordinatesAtom = atom(
     return undefined;
   },
   async (get, set, newCoordinates: Coordinates | typeof RESET) => {
-    set(inventoryLatitudeInternal, newCoordinates === RESET ? newCoordinates : newCoordinates.lat);
-    set(inventoryLongitudeInternal, newCoordinates === RESET ? newCoordinates : newCoordinates.lng);
+    // Round to 6 digits as this is what is supported on backend side
+    const roundedCoordinates =
+      newCoordinates !== RESET
+        ? ({
+            lat: +newCoordinates.lat.toFixed(6),
+            lng: +newCoordinates.lng.toFixed(6),
+          } satisfies Coordinates)
+        : newCoordinates;
+
+    set(inventoryLatitudeInternal, roundedCoordinates === RESET ? roundedCoordinates : roundedCoordinates.lat);
+    set(inventoryLongitudeInternal, roundedCoordinates === RESET ? roundedCoordinates : roundedCoordinates.lng);
 
     // Update altitude
-    if (newCoordinates !== RESET) {
+    if (roundedCoordinates !== RESET) {
       const localityCoordinates = get(inventoryLocalityAtom)?.coordinates;
       const customizedCoordinates = get(storedCustomizedCoordinatesAtom);
 
       if (localityCoordinates != null) {
         const altitudeResult = await getAltitudeToDisplay(
           {
-            latitude: newCoordinates.lat,
-            longitude: newCoordinates.lng,
+            latitude: roundedCoordinates.lat,
+            longitude: roundedCoordinates.lng,
           },
           {
             lat: localityCoordinates.latitude,
