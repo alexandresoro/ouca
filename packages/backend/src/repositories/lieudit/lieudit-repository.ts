@@ -1,3 +1,4 @@
+import { geoJSONLocalitySchema, type GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
 import { countSchema } from "../common.js";
 import {
@@ -323,6 +324,24 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     return slonik.one(query);
   };
 
+  const getLocatiesForGeoJSON = async (): Promise<readonly GeoJSONLocality[]> => {
+    const query = sql.type(geoJSONLocalitySchema)`
+      SELECT 
+        lieudit.id::text,
+        lieudit.nom,
+        lieudit.longitude,
+        lieudit.latitude,
+        commune.nom AS town_name,
+        departement.code AS department_code
+      FROM
+        basenaturaliste.lieudit
+      LEFT JOIN basenaturaliste.commune ON lieudit.commune_id = commune.id
+      LEFT JOIN basenaturaliste.departement ON commune.departement_id = departement.id
+    `;
+
+    return slonik.any(query);
+  };
+
   return {
     findLieuditById,
     findLieuditByInventaireId,
@@ -335,6 +354,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     createLieuxdits,
     updateLieudit,
     deleteLieuditById,
+    getLocatiesForGeoJSON,
   };
 };
 

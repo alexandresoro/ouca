@@ -35,6 +35,7 @@
     }
   },
   "dependencies": {
+    "@fastify/caching": "8.3.0",
     "@fastify/compress": "6.4.0",
     "@fastify/cors": "8.3.0",
     "@fastify/multipart": "7.7.0",
@@ -43,6 +44,8 @@
     "@ou-ca/common": "workspace:*",
     "@sentry/node": "7.57.0",
     "@sentry/tracing": "7.57.0",
+    "@turf/helpers": "6.5.0",
+    "bullmq": "4.1.0",
     "content-disposition": "0.5.4",
     "csv-parse": "5.4.0",
     "csv-stringify": "6.4.0",

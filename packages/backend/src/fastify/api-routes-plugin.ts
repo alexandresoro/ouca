@@ -7,6 +7,7 @@ import distanceEstimatesController from "../controllers/distance-estimates-contr
 import entriesController from "../controllers/entries-controller.js";
 import environmentsController from "../controllers/environments-controller.js";
 import generateExportController from "../controllers/generate-export-controllers.js";
+import geojsonController from "../controllers/geojson-controller.js";
 import inventoriesController from "../controllers/inventories-controller.js";
 import localitiesController from "../controllers/localities-controller.js";
 import numberEstimatesController from "../controllers/number-estimates-controller.js";
@@ -45,6 +46,8 @@ const apiRoutesPlugin: FastifyPluginAsync<{ services: Services }> = async (fasti
   await fastify.register(settingsController, { services, prefix: "/settings" });
 
   await fastify.register(generateExportController, { services, prefix: "/generate-export" });
+
+  await fastify.register(geojsonController, { services, prefix: "/geojson" });
 };
 
 export default apiRoutesPlugin;

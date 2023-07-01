@@ -43,6 +43,7 @@ import { buildMeteoService, type MeteoService } from "./entities/meteo-service.j
 import { buildMilieuService, type MilieuService } from "./entities/milieu-service.js";
 import { buildObservateurService, type ObservateurService } from "./entities/observateur-service.js";
 import { buildSexeService, type SexeService } from "./entities/sexe-service.js";
+import { buildGeoJSONService, type GeoJSONService } from "./geojson-service.js";
 import { buildOidcWithInternalUserMappingService } from "./oidc/oidc-with-internal-user-mapping.js";
 import { buildZitadelOidcService, type ZitadelOidcService } from "./oidc/zitadel-oidc-service.js";
 import { buildSettingsService, type SettingsService } from "./settings-service.js";
@@ -69,6 +70,7 @@ export type Services = {
   sexeService: SexeService;
   settingsService: SettingsService;
   userService: UserService;
+  geojsonService: GeoJSONService;
   zitadelOidcService: ZitadelOidcService;
 };
 
@@ -221,6 +223,12 @@ export const buildServices = async (config: Config): Promise<Services> => {
     observateurService,
   });
 
+  const geojsonService = buildGeoJSONService({
+    logger,
+    redis,
+    lieuditRepository,
+  });
+
   const oidcWithInternalUserMappingService = buildOidcWithInternalUserMappingService({ userService });
   const zitadelOidcService = buildZitadelOidcService({
     config,
@@ -250,6 +258,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
     sexeService,
     settingsService,
     userService,
+    geojsonService,
     zitadelOidcService,
   };
 };

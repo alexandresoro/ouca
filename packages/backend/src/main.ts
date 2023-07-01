@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/node";
 import { getConfig } from "./config.js";
 import { buildServer } from "./fastify.js";
+import { startWorkersAndJobs } from "./jobs/job-runner.js";
 import { buildServices } from "./services/services.js";
 import shutdown from "./shutdown.js";
 import { runDatabaseMigrations } from "./umzug.js";
@@ -32,10 +33,12 @@ checkAndCreateFolders();
     dbConfig: config.database,
   });
 
+  const queues = await startWorkersAndJobs(services);
+
   const server = await buildServer(services);
 
-  process.on("SIGINT", shutdown(server, services));
-  process.on("SIGTERM", shutdown(server, services));
+  process.on("SIGINT", shutdown(server, services, queues));
+  process.on("SIGTERM", shutdown(server, services, queues));
 
   await server.listen({ ...config.server });
 })().catch((e) => {
