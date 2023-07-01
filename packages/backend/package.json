@@ -63,7 +63,7 @@
   "devDependencies": {
     "@ou-ca/eslint-config": "workspace:*",
     "@types/content-disposition": "0.5.5",
-    "@types/node": "18.16.18",
+    "@types/node": "18.16.19",
     "@vitest/coverage-v8": "0.32.2",
     "dotenv": "16.3.1",
     "tsx": "3.12.7",
