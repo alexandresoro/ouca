@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useAtom } from "jotai";
-import "leaflet/dist/leaflet.css";
-import { Marker as MapLibreMarker } from "maplibre-gl";
-import { useEffect, useRef, useState, type FunctionComponent } from "react";
+import { getLocalityResponse } from "@ou-ca/common/api/locality";
+import { type GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
+// eslint-disable-next-line import/no-unresolved
+import { type Point } from "geojson";
+import { useAtom, useAtomValue } from "jotai";
+import { RESET } from "jotai/utils";
+import { type GeoJSONSource } from "maplibre-gl";
+import { useCallback, useEffect, useRef, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { ScaleControl as LeafletScaleControl, MapContainer, TileLayer } from "react-leaflet";
 import {
   FullscreenControl,
   Layer,
@@ -15,20 +18,20 @@ import {
   Map as ReactMapGl,
   ScaleControl,
   Source,
+  type MapLayerMouseEvent,
   type MapRef,
   type ViewState,
 } from "react-map-gl/maplibre";
-import { inventoryCoordinatesAtom } from "../../../atoms/inventoryFormAtoms";
+import {
+  areCoordinatesDifferentFromLocalityAtom,
+  inventoryCoordinatesAtom,
+  inventoryLocalityAtom,
+} from "../../../atoms/inventoryFormAtoms";
+import useApiFetch from "../../../hooks/api/useApiFetch";
+import useApiQuery from "../../../hooks/api/useApiQuery";
+import { clusterCountLayer, clusterLayer, singleLocalityLayer } from "../../common/maps/localities-layers";
 import { MAP_PROVIDERS } from "../../common/maps/map-providers";
 import PhotosViewMapOpacityControl from "./PhotosViewMapOpacityControl";
-
-// This is a workaround aswe want to be able to have the popup
-// open on marker hover.
-// To do that we create a div within Marker, but then, it won't
-// display back the default logo + we need to apply the same offset workarounds
-const RED_PIN = new MapLibreMarker({
-  color: "#b9383c",
-});
 
 const EntryMap: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -37,14 +40,38 @@ const EntryMap: FunctionComponent = () => {
 
   const [inventoryCoordinates, setInventoryCoordinates] = useAtom(inventoryCoordinatesAtom);
 
+  const [selectedLocality, setSelectedLocality] = useAtom(inventoryLocalityAtom);
+
+  const areCoordinatesCustomized = useAtomValue(areCoordinatesDifferentFromLocalityAtom);
+
+  const { data: localitiesGeoJson } = useApiQuery(
+    {
+      path: "/geojson/localities.json",
+    },
+    {
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 2 * 60 * 60 * 1000,
+    }
+  );
+
+  const fetchLocality = useApiFetch({
+    schema: getLocalityResponse,
+  });
+
+  const [hoverLocalityProperties, setHoverLocalityProperties] = useState<{
+    locality: GeoJSONLocality;
+    x: number;
+    y: number;
+  } | null>(null);
+
   useEffect(() => {
     const currentMap = mapRef.current;
     if (inventoryCoordinates && currentMap != null) {
       const currentBounds = currentMap.getMap().getBounds();
       const areCoordinatesInBounds = currentBounds?.contains(inventoryCoordinates);
 
-      if (!areCoordinatesInBounds || currentMap.getMap().getZoom() < 15) {
-        currentMap.flyTo({
+      if (!areCoordinatesInBounds) {
+        currentMap.easeTo({
           center: inventoryCoordinates,
           zoom: 15,
           duration: 500,
@@ -64,6 +91,74 @@ const EntryMap: FunctionComponent = () => {
   const [overlayOpacity, setOverlayOpacity] = useState(0);
 
   const [displayCoordinatesInfoPopup, setDisplayCoordinatesInfoPopup] = useState(false);
+
+  const onHoverMap = useCallback((event: MapLayerMouseEvent) => {
+    const {
+      features,
+      point: { x, y },
+    } = event;
+    const hoveredFeature = features?.[0];
+
+    setHoverLocalityProperties(
+      hoveredFeature?.properties && !hoveredFeature.properties.cluster
+        ? { locality: hoveredFeature.properties as GeoJSONLocality, x, y }
+        : null
+    );
+  }, []);
+
+  const onClickMap = useCallback(
+    async (event: MapLayerMouseEvent) => {
+      const { features } = event;
+
+      const feature = features?.[0];
+
+      // In case of cluster, zoom in
+      // https://github.com/visgl/react-map-gl/blob/7.1-release/examples/clusters/src/app.tsx
+      if (feature?.properties?.cluster_id != null) {
+        const clusterId = feature.properties.cluster_id as number;
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const mapboxSource = mapRef.current!.getSource("localities")! as GeoJSONSource;
+
+        mapboxSource.getClusterExpansionZoom(clusterId, (err, zoom) => {
+          if (err || !zoom) {
+            return;
+          }
+
+          mapRef.current?.easeTo({
+            center: (feature.geometry as Point).coordinates as [number, number],
+            zoom,
+            duration: 500,
+          });
+        });
+        return;
+      }
+
+      // In case of locality, set as selected
+      if (feature?.properties != null && !feature.properties.cluster) {
+        const clickedLocality = feature.properties as GeoJSONLocality | undefined;
+
+        if (clickedLocality != null && clickedLocality.id !== selectedLocality?.id) {
+          const newLocality = await fetchLocality({
+            path: `/localities/${clickedLocality.id}`,
+          });
+          await setSelectedLocality(newLocality);
+        }
+      }
+    },
+    [fetchLocality, selectedLocality?.id, setSelectedLocality]
+  );
+
+  const resetCustomCoordinates = (): void => {
+    void setInventoryCoordinates(
+      selectedLocality
+        ? {
+            lat: selectedLocality?.coordinates.latitude,
+            lng: selectedLocality?.coordinates.longitude,
+          }
+        : RESET
+    );
+  };
 
   return (
     <div className="flex flex-col">
@@ -95,46 +190,71 @@ const EntryMap: FunctionComponent = () => {
           onMove={(evt) => setViewState(evt.viewState)}
           // rome-ignore lint/suspicious/noExplicitAny: <explanation>
           mapStyle={MAP_PROVIDERS[mapProvider].mapboxStyle as any}
+          interactiveLayerIds={[clusterLayer.id!, singleLocalityLayer.id!]}
+          onMouseMove={onHoverMap}
+          onClick={onClickMap}
           style={{
             borderRadius: "14px",
           }}
         >
-          {displayCoordinatesInfoPopup && inventoryCoordinates != null && (
-            <Popup
-              longitude={inventoryCoordinates.lng}
-              latitude={inventoryCoordinates.lat}
-              offset={[-15, -35] as [number, number]}
-              focusAfterOpen={false}
-              closeButton={false}
-              onClose={() => setDisplayCoordinatesInfoPopup(false)}
-              anchor="right"
-            >
-              {t("maps.customPosition")}
-            </Popup>
+          {localitiesGeoJson && (
+            <Source id="localities" type="geojson" data={localitiesGeoJson} cluster clusterMinPoints={3}>
+              <Layer {...clusterLayer} />
+              <Layer {...clusterCountLayer} />
+              <Layer {...singleLocalityLayer} />
+            </Source>
+          )}
+          {selectedLocality != null && (
+            <Marker
+              longitude={selectedLocality.coordinates.longitude}
+              latitude={selectedLocality.coordinates.latitude}
+              color="#3FB1CE"
+            />
           )}
           {inventoryCoordinates != null && (
-            <Marker
-              longitude={inventoryCoordinates.lng}
-              latitude={inventoryCoordinates.lat}
-              draggable
-              color="#b9383c"
-              offset={[0, -14]}
-              onDragEnd={(e) => setInventoryCoordinates(e.lngLat)}
-              onClick={(e) => {
-                // Prevent the event from bubbling to avoid closing directly the popup after open
-                e.originalEvent.stopPropagation();
-                // TODO add the delete custom point
-                // setDisplayCustomMarkerPopup(true);
-              }}
-              anchor="bottom"
-            >
-              <div
-                // rome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-                dangerouslySetInnerHTML={{ __html: RED_PIN._element.innerHTML }}
-                onMouseEnter={() => setDisplayCoordinatesInfoPopup(true)}
-                onMouseLeave={() => setDisplayCoordinatesInfoPopup(false)}
+            <>
+              {displayCoordinatesInfoPopup && (
+                <Popup
+                  longitude={inventoryCoordinates.lng}
+                  latitude={inventoryCoordinates.lat}
+                  offset={[-15, -5] as [number, number]}
+                  focusAfterOpen={false}
+                  onClose={() => setDisplayCoordinatesInfoPopup(false)}
+                  anchor="right"
+                >
+                  <div className="flex flex-col items-center text-gray-700">
+                    <div>{t("maps.currentPosition")}</div>
+                    {areCoordinatesCustomized && (
+                      <button className="link-primary" type="button" onClick={resetCustomCoordinates}>
+                        {t("maps.resetCustomCoordinates")}
+                      </button>
+                    )}
+                  </div>
+                </Popup>
+              )}
+              <Marker
+                longitude={inventoryCoordinates.lng}
+                latitude={inventoryCoordinates.lat}
+                draggable
+                color="#b9383c"
+                onDragEnd={(e) => setInventoryCoordinates(e.lngLat)}
+                onClick={(e) => {
+                  // Prevent the event from bubbling to avoid closing directly the popup after open
+                  e.originalEvent.stopPropagation();
+                  // TODO add the delete custom point
+                  setDisplayCoordinatesInfoPopup(true);
+                }}
               />
-            </Marker>
+            </>
+          )}
+          {hoverLocalityProperties && (
+            <div
+              className="bg-base-100 relative pointer-events-none w-max px-2 rounded border"
+              style={{ left: hoverLocalityProperties.x, top: hoverLocalityProperties.y + 12 }}
+            >
+              <div className="font-semibold">{hoverLocalityProperties.locality.nom}</div>
+              <div className="">{`${hoverLocalityProperties.locality.townName} (${hoverLocalityProperties.locality.departmentCode})`}</div>
+            </div>
           )}
           {overlayOpacity && (
             <Source
@@ -154,19 +274,6 @@ const EntryMap: FunctionComponent = () => {
           <ScaleControl unit="metric" />
         </ReactMapGl>
       </div>
-      <MapContainer
-        center={[45, 0]}
-        zoom={12}
-        zoomSnap={0.5}
-        zoomDelta={0.5}
-        className="h-80 lg:h-[500px] card border-2 border-primary shadow-xl"
-      >
-        <TileLayer
-          url="https://wxs.ign.fr/choisirgeoportail/geoportail/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&format=image/png&style=normal"
-          attribution={t("maps.maps.ign.attribution")}
-        />
-        <LeafletScaleControl metric imperial={false} />
-      </MapContainer>
     </div>
   );
 };

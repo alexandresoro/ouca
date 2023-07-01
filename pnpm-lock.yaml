@@ -247,9 +247,6 @@ importers:
       jotai:
         specifier: 2.2.1
         version: 2.2.1(react@18.2.0)
-      leaflet:
-        specifier: 1.9.4
-        version: 1.9.4
       maplibre-gl:
         specifier: 3.1.0
         version: 3.1.0
@@ -268,9 +265,6 @@ importers:
       react-i18next:
         specifier: 13.0.1
         version: 13.0.1(i18next@23.2.6)(react-dom@18.2.0)(react@18.2.0)
-      react-leaflet:
-        specifier: 4.2.1
-        version: 4.2.1(leaflet@1.9.4)(react-dom@18.2.0)(react@18.2.0)
       react-map-gl:
         specifier: 7.1.0
         version: 7.1.0(maplibre-gl@3.1.0)(react-dom@18.2.0)(react@18.2.0)
@@ -299,6 +293,9 @@ importers:
       '@testing-library/user-event':
         specifier: 14.4.3
         version: 14.4.3(@testing-library/dom@9.3.1)
+      '@types/geojson':
+        specifier: 7946.0.10
+        version: 7946.0.10
       '@types/node':
         specifier: 18.16.19
         version: 18.16.19
@@ -1279,18 +1276,6 @@ packages:
       tslib: 2.5.3
     dev: true
 
-  /@react-leaflet/core@2.1.0(leaflet@1.9.4)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Qk7Pfu8BSarKGqILj4x7bCSZ1pjuAPZ+qmRwH5S7mDS91VSbVVsJSrW4qA+GPrro8t69gFYVMWb1Zc4yFmPiVg==}
-    peerDependencies:
-      leaflet: ^1.9.0
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      leaflet: 1.9.4
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
   /@remix-run/router@1.7.1:
     resolution: {integrity: sha512-bgVQM4ZJ2u2CM8k1ey70o1ePFXsEzYVZoWghh6WjM8p59jQ7HxzbHW4SbnWFG7V9ig9chLawQxDTZ3xzOF8MkQ==}
     engines: {node: '>=14'}
@@ -1687,7 +1672,6 @@ packages:
 
   /@types/geojson@7946.0.10:
     resolution: {integrity: sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==}
-    dev: false
 
   /@types/istanbul-lib-coverage@2.0.4:
     resolution: {integrity: sha512-z/QT1XN4K4KYuslS23k62yDIDLwLFkzxOuMplDtObz0+y7VqJCaO2o+SPwHCvLFZh7xazvvoor2tA/hPz9ee7g==}
@@ -4486,10 +4470,6 @@ packages:
       readable-stream: 2.3.8
     dev: false
 
-  /leaflet@1.9.4:
-    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
-    dev: false
-
   /levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
@@ -5662,19 +5642,6 @@ packages:
 
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
-    dev: false
-
-  /react-leaflet@4.2.1(leaflet@1.9.4)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-p9chkvhcKrWn/H/1FFeVSqLdReGwn2qmiobOQGO3BifX+/vV/39qhY8dGqbdcPh1e6jxh/QHriLXr7a4eLFK4Q==}
-    peerDependencies:
-      leaflet: ^1.9.0
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    dependencies:
-      '@react-leaflet/core': 2.1.0(leaflet@1.9.4)(react-dom@18.2.0)(react@18.2.0)
-      leaflet: 1.9.4
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react-map-gl@7.1.0(maplibre-gl@3.1.0)(react-dom@18.2.0)(react@18.2.0):

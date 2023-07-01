@@ -200,7 +200,7 @@ export const inventorySetAtom = atom(null, async (get, set, newInventory: Invent
 
 // Returns true if and only if the current coordinates are defined, a locality is defined,
 // and the current coordinates are different from the locality ones
-const areCoordinatesDifferentFromLocalityAtom = atom((get) => {
+export const areCoordinatesDifferentFromLocalityAtom = atom((get) => {
   const currentLocality = get(inventoryLocalityAtom);
   const currentCoordinates = get(inventoryCoordinatesAtom);
 

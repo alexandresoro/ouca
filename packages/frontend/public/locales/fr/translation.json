@@ -139,7 +139,8 @@
   "maps": {
     "title": "Carte",
     "opacityPhotosLabel": "Opacité de la vue photos",
-    "customPosition": "Position personnalisée",
+    "currentPosition": "Position actuelle",
+    "resetCustomCoordinates": "Revenir aux coordonnées du lieu-dit",
     "maps": {
       "openStreetMap": {
         "name": "OpenStreetMap",
