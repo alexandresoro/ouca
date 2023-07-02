@@ -331,7 +331,9 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
         lieudit.nom,
         lieudit.longitude,
         lieudit.latitude,
+        commune.id::text AS town_id,
         commune.nom AS town_name,
+        departement.id::text AS department_id,
         departement.code AS department_code
       FROM
         basenaturaliste.lieudit

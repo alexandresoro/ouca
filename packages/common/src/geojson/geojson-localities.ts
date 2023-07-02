@@ -5,7 +5,9 @@ export const geoJSONLocalitySchema = z.object({
   nom: z.string(),
   longitude: z.number(),
   latitude: z.number(),
+  townId: z.string(),
   townName: z.string(),
+  departmentId: z.string(),
   departmentCode: z.string(),
 });
 
