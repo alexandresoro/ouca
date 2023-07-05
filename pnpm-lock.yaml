@@ -266,8 +266,8 @@ importers:
         specifier: 13.0.1
         version: 13.0.1(i18next@23.2.7)(react-dom@18.2.0)(react@18.2.0)
       react-map-gl:
-        specifier: 7.1.0
-        version: 7.1.0(maplibre-gl@3.1.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: 7.1.1(maplibre-gl@3.1.0)(react-dom@18.2.0)(react@18.2.0)
       react-oidc-context:
         specifier: 2.2.2
         version: 2.2.2(oidc-client-ts@2.2.4)(react@18.2.0)
@@ -5609,8 +5609,8 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
-  /react-map-gl@7.1.0(maplibre-gl@3.1.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-D9wuywv9lD1ZBmgZRDCYQpc2GPJ8c75tn4RkwT2ETci4mCApk6j8Qu1j0cgtNos6AVwpVaiSo7B7T1SAhSCgEw==}
+  /react-map-gl@7.1.1(maplibre-gl@3.1.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-noq/0mSBe7AOu2D37TPzmD33UuDkycxWx44VJjQrbxGVT+BU3nwMlmoG7wj50sZOJTltzyhdjGGUepUOC91LqA==}
     peerDependencies:
       mapbox-gl: '>=1.13.0'
       maplibre-gl: '>=1.13.0'
