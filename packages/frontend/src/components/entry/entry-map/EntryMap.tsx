@@ -2,12 +2,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getLocalityResponse } from "@ou-ca/common/api/locality";
 import { type GeoJSONLocality } from "@ou-ca/common/geojson/geojson-localities";
+import bbox from "@turf/bbox";
+import bboxPolygon from "@turf/bbox-polygon";
+import booleanDisjoint from "@turf/boolean-disjoint";
+import booleanWithin from "@turf/boolean-within";
+import concave from "@turf/concave";
+import { featureCollection, point } from "@turf/helpers";
+import { type BBox2d } from "@turf/helpers/dist/js/lib/geojson";
+import { featureReduce } from "@turf/meta";
 // eslint-disable-next-line import/no-unresolved
-import { type Point } from "geojson";
+import { type Feature, type FeatureCollection, type MultiPolygon, type Point, type Polygon } from "geojson";
 import { useAtom, useAtomValue } from "jotai";
 import { RESET } from "jotai/utils";
 import { type GeoJSONSource } from "maplibre-gl";
-import { useCallback, useEffect, useRef, useState, type FunctionComponent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FullscreenControl,
@@ -27,9 +35,15 @@ import {
   inventoryCoordinatesAtom,
   inventoryLocalityAtom,
 } from "../../../atoms/inventoryFormAtoms";
+import { localitySelectionAtom, type LocalitySelectionType } from "../../../atoms/inventoryMapAtom";
 import useApiFetch from "../../../hooks/api/useApiFetch";
 import useApiQuery from "../../../hooks/api/useApiQuery";
-import { clusterCountLayer, clusterLayer, singleLocalityLayer } from "../../common/maps/localities-layers";
+import {
+  clusterCountLayer,
+  clusterLayer,
+  selectionLayer,
+  singleLocalityLayer,
+} from "../../common/maps/localities-layers";
 import { MAP_PROVIDERS } from "../../common/maps/map-providers";
 import PhotosViewMapOpacityControl from "./PhotosViewMapOpacityControl";
 
@@ -44,7 +58,10 @@ const EntryMap: FunctionComponent = () => {
 
   const areCoordinatesCustomized = useAtomValue(areCoordinatesDifferentFromLocalityAtom);
 
-  const { data: localitiesGeoJson } = useApiQuery(
+  const localitySelection = useAtomValue(localitySelectionAtom);
+  const previousSelection = useRef<LocalitySelectionType>(null);
+
+  const { data: localitiesGeoJson } = useApiQuery<FeatureCollection<Point>>(
     {
       path: "/geojson/localities.json",
     },
@@ -53,6 +70,98 @@ const EntryMap: FunctionComponent = () => {
       cacheTime: 2 * 60 * 60 * 1000,
     }
   );
+
+  // The feature collection containing only localities that
+  // match the current selection
+  const selectionFeatureCollection = useMemo(() => {
+    if (!localitiesGeoJson || !localitySelection) {
+      return null;
+    }
+
+    // Filter localities that only match the selection
+    let propertyField: string;
+    switch (localitySelection.type) {
+      case "locality":
+        propertyField = "id";
+        break;
+      case "town":
+        propertyField = "townId";
+        break;
+      case "department":
+        propertyField = "departmentId";
+        break;
+      default:
+        return;
+    }
+
+    const filteredLocalities = featureReduce(
+      localitiesGeoJson,
+      (previous, current) => {
+        if (current.properties?.[propertyField] === localitySelection.id) {
+          return [...previous, current];
+        }
+        return previous;
+      },
+      [] as Feature<Point>[]
+    );
+
+    return featureCollection(filteredLocalities);
+  }, [localitySelection, localitiesGeoJson]);
+
+  // Compute the polygon for the selection
+  const selectionFeatureCollectionPolygon = useMemo(() => {
+    if (!selectionFeatureCollection) {
+      return null;
+    }
+    const selectionPolygon = concave(selectionFeatureCollection);
+
+    if (!selectionPolygon) {
+      return null;
+    }
+
+    return featureCollection([selectionPolygon]);
+  }, [selectionFeatureCollection]);
+
+  // Whenever the selection changes,
+  // make sure that the map is focusing on it
+  const handleSelectionChange = (selectionCollectionPolygon: FeatureCollection<Polygon | MultiPolygon>) => {
+    const currentMap = mapRef.current;
+    if (!currentMap || !selectionCollectionPolygon?.features.length) {
+      return;
+    }
+
+    const currentMapBounds = currentMap.getBounds();
+    const currentMapBoundsPolygon = bboxPolygon(
+      bbox(
+        featureCollection([
+          point(currentMapBounds.getSouthWest().toArray()),
+          point(currentMapBounds.getNorthEast().toArray()),
+        ])
+      )
+    );
+
+    const shouldMoveToSelection =
+      // Zoom in whenever the current map completely contains the selection
+      booleanWithin(selectionCollectionPolygon.features[0], currentMapBoundsPolygon) ||
+      // Move whenever the current map contains no part of the selection
+      booleanDisjoint(selectionCollectionPolygon.features[0], currentMapBoundsPolygon);
+
+    if (shouldMoveToSelection) {
+      const selectionBoundingBox = bbox(selectionCollectionPolygon) as BBox2d;
+      currentMap.fitBounds(selectionBoundingBox, { linear: true, padding: 10, duration: 300, maxZoom: 15 });
+    }
+  };
+
+  useEffect(() => {
+    if (
+      selectionFeatureCollectionPolygon != null &&
+      localitySelection != null &&
+      localitySelection !== previousSelection.current
+    ) {
+      handleSelectionChange(selectionFeatureCollectionPolygon);
+      previousSelection.current = localitySelection;
+    }
+  }, [localitySelection, selectionFeatureCollectionPolygon]);
 
   const fetchLocality = useApiFetch({
     schema: getLocalityResponse,
@@ -83,7 +192,7 @@ const EntryMap: FunctionComponent = () => {
   const [viewState, setViewState] = useState<Partial<ViewState>>({
     longitude: inventoryCoordinates?.lng ?? 1,
     latitude: inventoryCoordinates?.lat ?? 46.5,
-    zoom: inventoryCoordinates != null ? 15 : 4.5,
+    zoom: inventoryCoordinates != null ? 15 : 0,
   });
 
   const [mapProvider, setMapProvider] = useState<keyof typeof MAP_PROVIDERS>("ign");
@@ -149,6 +258,12 @@ const EntryMap: FunctionComponent = () => {
     [fetchLocality, selectedLocality?.id, setSelectedLocality]
   );
 
+  const handleOnMapLoad = () => {
+    if (selectionFeatureCollectionPolygon != null) {
+      handleSelectionChange(selectionFeatureCollectionPolygon);
+    }
+  };
+
   const resetCustomCoordinates = (): void => {
     void setInventoryCoordinates(
       selectedLocality
@@ -159,6 +274,10 @@ const EntryMap: FunctionComponent = () => {
         : RESET
     );
   };
+
+  useEffect(() => {
+    console.log(localitySelection, selectionFeatureCollection);
+  });
 
   return (
     <div className="flex flex-col">
@@ -186,7 +305,7 @@ const EntryMap: FunctionComponent = () => {
         <ReactMapGl
           ref={mapRef}
           {...viewState}
-          reuseMaps
+          onLoad={handleOnMapLoad}
           onMove={(evt) => setViewState(evt.viewState)}
           // rome-ignore lint/suspicious/noExplicitAny: <explanation>
           mapStyle={MAP_PROVIDERS[mapProvider].mapboxStyle as any}
@@ -197,6 +316,11 @@ const EntryMap: FunctionComponent = () => {
             borderRadius: "14px",
           }}
         >
+          {selectionFeatureCollectionPolygon && (
+            <Source id="selected-localities" type="geojson" data={selectionFeatureCollectionPolygon}>
+              <Layer {...selectionLayer} />
+            </Source>
+          )}
           {localitiesGeoJson && (
             <Source id="localities" type="geojson" data={localitiesGeoJson} cluster clusterMinPoints={3}>
               <Layer {...clusterLayer} />

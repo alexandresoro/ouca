@@ -45,3 +45,14 @@ export const singleLocalityLayer: LayerProps = {
     "circle-stroke-color": "#fff",
   },
 };
+
+export const selectionLayer: LayerProps = {
+  id: "selection-layer",
+  type: "fill",
+  source: "selected-localities",
+  paint: {
+    "fill-outline-color": "#484896",
+    "fill-color": "#5C7F67",
+    "fill-opacity": 0.25,
+  },
+};

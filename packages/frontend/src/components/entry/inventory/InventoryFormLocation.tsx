@@ -6,6 +6,7 @@ import { type Locality } from "@ou-ca/common/entities/locality";
 import { type Town } from "@ou-ca/common/entities/town";
 import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
 import { useEffect, useState, type ChangeEventHandler, type FunctionComponent } from "react";
 import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -17,6 +18,7 @@ import {
   inventoryLocalityAtom,
   inventoryLongitudeAtom,
 } from "../../../atoms/inventoryFormAtoms";
+import { departmentIdAtom, townIdAtom } from "../../../atoms/inventoryMapAtom";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import TextInput from "../../common/styled/TextInput";
 import Autocomplete from "../../common/styled/select/Autocomplete";
@@ -45,7 +47,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [departmentId, setDepartmentId] = useState<string | null>(null);
+  const [departmentId, setDepartmentId] = useAtom(departmentIdAtom);
+
   const [departmentsInput, setDepartmentsInput] = useState("");
   const { data: department } = useApiQuery(
     {
@@ -61,13 +64,8 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   useEffect(() => {
     setDepartmentsInput(renderDepartment(department ?? null));
   }, [department]);
-  useEffect(() => {
-    if (defaultDepartment != null) {
-      setDepartmentId(defaultDepartment.id);
-    }
-  }, [defaultDepartment]);
 
-  const [townId, setTownId] = useState<string | null>(null);
+  const [townId, setTownId] = useAtom(townIdAtom);
   const [townsInput, setTownsInput] = useState("");
   const { data: town } = useApiQuery(
     {
@@ -89,6 +87,12 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   useEffect(() => {
     setLocalityInput(renderLocality(locality ?? null));
   }, [locality]);
+
+  // On init, reset the fields
+  useEffect(() => {
+    setDepartmentId(defaultDepartment?.id ?? RESET);
+    setTownId(RESET);
+  }, [defaultDepartment, setDepartmentId, setTownId]);
 
   const setLatitude = useSetAtom(inventoryLatitudeAtom);
   const setLongitude = useSetAtom(inventoryLongitudeAtom);
@@ -120,7 +124,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
     if (locality != null && locality.townId !== town?.id) {
       setTownId(locality.townId);
     }
-  }, [locality, town]);
+  }, [locality, town, setTownId]);
 
   // When the town changes, make sure that the appropriate department is displayed
   // This can happen when town is updated from an update of locality outside the component
@@ -128,7 +132,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
     if (town != null && town.departmentId !== department?.id) {
       setDepartmentId(town.departmentId);
     }
-  }, [town, department]);
+  }, [town, department, setDepartmentId]);
 
   const {
     field: { ref: refLocality },
