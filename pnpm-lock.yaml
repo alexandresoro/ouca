@@ -200,11 +200,11 @@ importers:
         specifier: 0.24.6
         version: 0.24.6(react-dom@18.2.0)(react@18.2.0)
       '@fontsource-variable/nunito':
+        specifier: 5.0.6
+        version: 5.0.6
+      '@fontsource/carter-one':
         specifier: 5.0.5
         version: 5.0.5
-      '@fontsource/carter-one':
-        specifier: 5.0.4
-        version: 5.0.4
       '@headlessui/react':
         specifier: 1.7.15
         version: 1.7.15(react-dom@18.2.0)(react@18.2.0)
@@ -1254,12 +1254,12 @@ packages:
       tabbable: 6.2.0
     dev: false
 
-  /@fontsource-variable/nunito@5.0.5:
-    resolution: {integrity: sha512-1VZqBsSzu8VTgIr2YhT5UqRMeQ3ghJhyM4niR/SUa01DpSA2YanPwcAw/alIAZHj2qHqbUGZqMc5FnMY1PMUSQ==}
+  /@fontsource-variable/nunito@5.0.6:
+    resolution: {integrity: sha512-WrjJq+YwiT40Bj/SJp0AxkFStwqyO2AheQ5ufZbpZtI4xz0wed8p/gZINmNAn/s5yv9v+2sVZO8zYWWsBiJ4vw==}
     dev: false
 
-  /@fontsource/carter-one@5.0.4:
-    resolution: {integrity: sha512-LnupPj59EamLEHTSyYHiecp6fXw78ZcMyalt1lr49bta8eCXKF94r/MYThmvMHguvaXmnhAHMVp9S53snFm97g==}
+  /@fontsource/carter-one@5.0.5:
+    resolution: {integrity: sha512-iWxQrHTeL+XvrmK4QbFemv9aodm0PKCKRS1AZUvqNQpFYRyOKsQRU3Ll4Mmj0Ryq7lDIQYLuitsdyADohLoaiQ==}
     dev: false
 
   /@headlessui/react@1.7.15(react-dom@18.2.0)(react@18.2.0):
