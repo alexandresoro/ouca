@@ -275,10 +275,6 @@ const EntryMap: FunctionComponent = () => {
     );
   };
 
-  useEffect(() => {
-    console.log(localitySelection, selectionFeatureCollection);
-  });
-
   return (
     <div className="flex flex-col">
       <div className="flex my-4 items-center justify-between">
