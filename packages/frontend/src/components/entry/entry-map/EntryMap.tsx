@@ -44,8 +44,7 @@ import {
   selectionLayer,
   singleLocalityLayer,
 } from "../../common/maps/localities-layers";
-import { MAP_PROVIDERS } from "../../common/maps/map-providers";
-import PhotosViewMapOpacityControl from "./PhotosViewMapOpacityControl";
+import { MAP_STYLE_PROVIDERS } from "../../common/maps/map-style-providers";
 
 const EntryMap: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -195,9 +194,7 @@ const EntryMap: FunctionComponent = () => {
     zoom: inventoryCoordinates != null ? 15 : 0,
   });
 
-  const [mapProvider, setMapProvider] = useState<keyof typeof MAP_PROVIDERS>("ign");
-
-  const [overlayOpacity, setOverlayOpacity] = useState(0);
+  const [mapStyle, setMapStyle] = useState<keyof typeof MAP_STYLE_PROVIDERS>("ign");
 
   const [displayCoordinatesInfoPopup, setDisplayCoordinatesInfoPopup] = useState(false);
 
@@ -279,23 +276,19 @@ const EntryMap: FunctionComponent = () => {
     <div className="flex flex-col">
       <div className="flex my-4 items-center justify-between">
         <div className="join">
-          {Object.entries(MAP_PROVIDERS).map(([providerKey, providerConfig]) => {
+          {Object.entries(MAP_STYLE_PROVIDERS).map(([providerKey, providerConfig]) => {
             return (
               <button
                 type="button"
                 key={providerKey}
-                className={`join-item btn btn-xs ${mapProvider === providerKey ? "btn-active btn-primary" : ""}`}
-                onClick={() => setMapProvider(providerKey as keyof typeof MAP_PROVIDERS)}
+                className={`join-item btn btn-xs ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
+                onClick={() => setMapStyle(providerKey as keyof typeof MAP_STYLE_PROVIDERS)}
               >
                 {t(providerConfig.nameKey)}
               </button>
             );
           })}
         </div>
-        <PhotosViewMapOpacityControl
-          value={overlayOpacity}
-          onChange={(e) => setOverlayOpacity(+e.currentTarget.value)}
-        />
       </div>
       <div className="h-80 lg:h-[500px] card border-2 border-primary shadow-xl">
         <ReactMapGl
@@ -304,7 +297,7 @@ const EntryMap: FunctionComponent = () => {
           onLoad={handleOnMapLoad}
           onMove={(evt) => setViewState(evt.viewState)}
           // rome-ignore lint/suspicious/noExplicitAny: <explanation>
-          mapStyle={MAP_PROVIDERS[mapProvider].mapboxStyle as any}
+          mapStyle={MAP_STYLE_PROVIDERS[mapStyle].mapboxStyle as any}
           interactiveLayerIds={[clusterLayer.id!, singleLocalityLayer.id!]}
           onMouseMove={onHoverMap}
           onClick={onClickMap}
@@ -375,19 +368,6 @@ const EntryMap: FunctionComponent = () => {
               <div className="font-semibold">{hoverLocalityProperties.locality.nom}</div>
               <div className="">{`${hoverLocalityProperties.locality.townName} (${hoverLocalityProperties.locality.departmentCode})`}</div>
             </div>
-          )}
-          {overlayOpacity && (
-            <Source
-              key="ign-satellite"
-              type="raster"
-              tiles={[
-                "https://wxs.ign.fr/ortho/geoportail/wmts?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}&layer=ORTHOIMAGERY.ORTHOPHOTOS&format=image/jpeg&style=normal",
-              ]}
-              tileSize={256}
-              attribution={t("maps.maps.ignSatellite.attribution")}
-            >
-              <Layer type="raster" paint={{ "raster-opacity": overlayOpacity }} />
-            </Source>
           )}
           <NavigationControl />
           <FullscreenControl />
