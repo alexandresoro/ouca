@@ -1,5 +1,4 @@
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
-import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Department } from "@ou-ca/common/entities/department";
 import { type Observer } from "@ou-ca/common/entities/observer";
 import { type Logger } from "pino";
@@ -43,10 +42,10 @@ export const buildSettingsService = ({
 
     const [defaultDepartment, defaultObserver] = await Promise.all([
       defaultDepartementId != null
-        ? departementService.findDepartement(defaultDepartementId, loggedUser)
+        ? departementService.findDepartement(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
-        ? observateurService.findObservateur(defaultObservateurId, loggedUser)
+        ? observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser)
         : Promise.resolve(null),
     ]);
 
@@ -55,10 +54,6 @@ export const buildSettingsService = ({
       defaultDepartment,
       defaultObserver,
     };
-  };
-
-  const findCoordinatesSystem = async (loggedUser: LoggedUser | null): Promise<CoordinatesSystemType | undefined> => {
-    return getSettings(loggedUser).then((settings) => settings?.coordinatesSystem);
   };
 
   const updateUserSettings = async (
@@ -83,10 +78,10 @@ export const buildSettingsService = ({
 
     const [defaultDepartment, defaultObserver] = await Promise.all([
       defaultDepartementId != null
-        ? departementService.findDepartement(defaultDepartementId, loggedUser)
+        ? departementService.findDepartement(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
-        ? observateurService.findObservateur(defaultObservateurId, loggedUser)
+        ? observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser)
         : Promise.resolve(null),
     ]);
 
@@ -99,7 +94,6 @@ export const buildSettingsService = ({
 
   return {
     getSettings,
-    findCoordinatesSystem,
     updateUserSettings,
   };
 };
@@ -110,14 +104,14 @@ const buildSettingsDbFromInputSettings = (inputUpdateSettings: PutSettingsInput)
   return {
     default_observateur_id: parseInt(inputUpdateSettings.defaultObserver),
     default_departement_id: parseInt(inputUpdateSettings.defaultDepartment),
-    default_age_id: inputUpdateSettings.defaultAge,
-    default_sexe_id: inputUpdateSettings.defaultSexe,
-    default_estimation_nombre_id: inputUpdateSettings.defaultEstimationNombre,
+    default_age_id: parseInt(inputUpdateSettings.defaultAge),
+    default_sexe_id: parseInt(inputUpdateSettings.defaultSexe),
+    default_estimation_nombre_id: parseInt(inputUpdateSettings.defaultEstimationNombre),
     default_nombre: inputUpdateSettings.defaultNombre,
     are_associes_displayed: inputUpdateSettings.areAssociesDisplayed,
     is_meteo_displayed: inputUpdateSettings.isMeteoDisplayed,
     is_distance_displayed: inputUpdateSettings.isDistanceDisplayed,
     is_regroupement_displayed: inputUpdateSettings.isRegroupementDisplayed,
-    coordinates_system: inputUpdateSettings.coordinatesSystem,
+    coordinates_system: "gps",
   };
 };

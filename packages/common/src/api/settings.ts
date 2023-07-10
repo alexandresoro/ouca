@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { COORDINATES_SYSTEMS } from "../coordinates-system/coordinates-system.object.js";
 import { departmentSchema } from "../entities/department.js";
 import { observerSchema } from "../entities/observer.js";
 
@@ -7,15 +6,14 @@ import { observerSchema } from "../entities/observer.js";
 const settingsResponse = z.object({
   defaultObserver: observerSchema.nullable(),
   defaultDepartment: departmentSchema.nullable(),
-  defaultAgeId: z.number().nullable(),
-  defaultSexeId: z.number().nullable(),
-  defaultEstimationNombreId: z.number().nullable(),
+  defaultAgeId: z.string().nullable(),
+  defaultSexeId: z.string().nullable(),
+  defaultEstimationNombreId: z.string().nullable(),
   defaultNombre: z.number().nullable(),
   areAssociesDisplayed: z.boolean(),
   isMeteoDisplayed: z.boolean(),
   isDistanceDisplayed: z.boolean(),
   isRegroupementDisplayed: z.boolean(),
-  coordinatesSystem: z.enum(COORDINATES_SYSTEMS),
 });
 
 /**
@@ -31,17 +29,16 @@ export type GetSettingsResponse = z.infer<typeof getSettingsResponse>;
  * Update of user settings
  */
 export const putSettingsInput = z.object({
-  defaultDepartment: z.coerce.string(),
-  defaultObserver: z.coerce.string(),
-  defaultEstimationNombre: z.number(),
+  defaultDepartment: z.string(),
+  defaultObserver: z.string(),
+  defaultEstimationNombre: z.string(),
   defaultNombre: z.coerce.number().min(1).max(65535),
-  defaultSexe: z.number(),
-  defaultAge: z.number(),
+  defaultSexe: z.string(),
+  defaultAge: z.string(),
   areAssociesDisplayed: z.boolean(),
   isMeteoDisplayed: z.boolean(),
   isDistanceDisplayed: z.boolean(),
   isRegroupementDisplayed: z.boolean(),
-  coordinatesSystem: z.enum(COORDINATES_SYSTEMS),
 });
 
 export type PutSettingsInput = z.infer<typeof putSettingsInput>;

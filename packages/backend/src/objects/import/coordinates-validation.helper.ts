@@ -1,4 +1,4 @@
-import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import { GPS_COORDINATES } from "@ou-ca/common/coordinates-system/gps.object";
 
 const ALTITUDE_MIN_VALUE = 0;
 const ALTITUDE_MAX_VALUE = 65535;
@@ -22,7 +22,7 @@ export class CoordinatesValidatorHelper {
     return null;
   }
 
-  public static checkLongitudeValidity(longitudeStr: string, coordinatesSystem: CoordinatesSystem): string | undefined {
+  public static checkLongitudeValidity(longitudeStr: string): string | undefined {
     if (!longitudeStr) {
       return "La longitude du lieu-dit ne peut pas être vide";
     }
@@ -31,14 +31,14 @@ export class CoordinatesValidatorHelper {
 
     if (
       isNaN(longitude) ||
-      longitude < coordinatesSystem.longitudeRange.min ||
-      longitude > coordinatesSystem.longitudeRange.max
+      longitude < GPS_COORDINATES.longitudeRange.min ||
+      longitude > GPS_COORDINATES.longitudeRange.max
     ) {
-      return `La longitude du lieu-dit doit être un nombre compris entre ${coordinatesSystem.longitudeRange.min} et ${coordinatesSystem.longitudeRange.max}`;
+      return `La longitude du lieu-dit doit être un nombre compris entre ${GPS_COORDINATES.longitudeRange.min} et ${GPS_COORDINATES.longitudeRange.max}`;
     }
   }
 
-  public static checkLatitudeValidity(latitudeStr: string, coordinatesSystem: CoordinatesSystem): string | undefined {
+  public static checkLatitudeValidity(latitudeStr: string): string | undefined {
     if (!latitudeStr) {
       return "La latitude du lieu-dit ne peut pas être vide";
     }
@@ -47,10 +47,10 @@ export class CoordinatesValidatorHelper {
 
     if (
       isNaN(latitude) ||
-      latitude < coordinatesSystem.latitudeRange.min ||
-      latitude > coordinatesSystem.latitudeRange.max
+      latitude < GPS_COORDINATES.latitudeRange.min ||
+      latitude > GPS_COORDINATES.latitudeRange.max
     ) {
-      return `La latitude du lieu-dit doit être un entier compris entre ${coordinatesSystem.latitudeRange.min} et ${coordinatesSystem.latitudeRange.max}`;
+      return `La latitude du lieu-dit doit être un entier compris entre ${GPS_COORDINATES.latitudeRange.min} et ${GPS_COORDINATES.latitudeRange.max}`;
     }
   }
 }

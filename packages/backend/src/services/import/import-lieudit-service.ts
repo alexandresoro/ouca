@@ -31,7 +31,7 @@ export class ImportLieuxditService extends ImportService {
       this.services.departementService.findAllDepartements(),
       this.services.communeService.findAllCommunes(),
       this.services.lieuditService.findAllLieuxDits(),
-      this.services.settingsService.findCoordinatesSystem(loggedUser),
+      "gps",
     ]);
 
     if (!coordinatesSystemType) {

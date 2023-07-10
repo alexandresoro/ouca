@@ -1,6 +1,5 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
 import { format } from "date-fns";
 import { DATE_PATTERN } from "../../utils/constants.js";
@@ -70,9 +69,8 @@ export class ImportedDonnee {
   commentaire: string;
   milieux: string[];
   comportements: string[];
-  coordinatesSystem: CoordinatesSystem;
 
-  constructor(donneeTab: string[], coordinatesSystem: CoordinatesSystem) {
+  constructor(donneeTab: string[]) {
     this.observateur = donneeTab[OBSERVATEUR_INDEX].trim();
     this.associes = donneeTab[ASSOCIES_INDEX] ? donneeTab[ASSOCIES_INDEX].trim().split(LIST_SEPARATOR) : [];
     this.date = donneeTab[DATE_INDEX].trim();
@@ -111,8 +109,6 @@ export class ImportedDonnee {
         this.milieux.push(milieu);
       }
     }
-
-    this.coordinatesSystem = coordinatesSystem;
   }
 
   buildInputDonnee = (
@@ -210,12 +206,12 @@ export class ImportedDonnee {
       return lieuDitError;
     }
 
-    const latitudeError = CoordinatesValidatorHelper.checkLatitudeValidity(this.latitude, this.coordinatesSystem);
+    const latitudeError = CoordinatesValidatorHelper.checkLatitudeValidity(this.latitude);
     if (latitudeError) {
       return latitudeError;
     }
 
-    const longitudeError = CoordinatesValidatorHelper.checkLongitudeValidity(this.longitude, this.coordinatesSystem);
+    const longitudeError = CoordinatesValidatorHelper.checkLongitudeValidity(this.longitude);
     if (longitudeError) {
       return longitudeError;
     }

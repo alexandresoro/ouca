@@ -1,22 +1,18 @@
-import {
-  COORDINATES_SYSTEMS,
-  type CoordinatesSystemType,
-} from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
 
 export const settingsSchema = z.object({
-  id: z.number(),
-  defaultObservateurId: z.number().nullable(),
-  defaultDepartementId: z.number().nullable(),
-  defaultAgeId: z.number().nullable(),
-  defaultSexeId: z.number().nullable(),
-  defaultEstimationNombreId: z.number().nullable(),
+  id: z.string(),
+  defaultObservateurId: z.string().nullable(),
+  defaultDepartementId: z.string().nullable(),
+  defaultAgeId: z.string().nullable(),
+  defaultSexeId: z.string().nullable(),
+  defaultEstimationNombreId: z.string().nullable(),
   defaultNombre: z.number().nullable(),
   areAssociesDisplayed: z.boolean(),
   isMeteoDisplayed: z.boolean(),
   isDistanceDisplayed: z.boolean(),
   isRegroupementDisplayed: z.boolean(),
-  coordinatesSystem: z.enum(COORDINATES_SYSTEMS),
   userId: z.string().uuid(),
 });
 

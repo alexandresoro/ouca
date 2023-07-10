@@ -35,8 +35,8 @@ describe("Fetch app configuration for user", () => {
     const loggedUser = mock<LoggedUser>();
 
     const mockResolved = mock<Settings>({
-      defaultDepartementId: 7,
-      defaultObservateurId: 13,
+      defaultDepartementId: "7",
+      defaultObservateurId: "13",
     });
     settingsRepository.getUserSettings.mockResolvedValueOnce(mockResolved);
 
@@ -73,31 +73,16 @@ describe("Fetch app configuration for user", () => {
   });
 });
 
-test("should query coordinates system for user", async () => {
-  const settings = mock<Settings>({
-    coordinatesSystem: "gps",
-  });
-  const loggedUser = mock<LoggedUser>();
-
-  settingsRepository.getUserSettings.mockResolvedValueOnce(settings);
-
-  const coordinatesSystem = await settingsService.findCoordinatesSystem(loggedUser);
-
-  expect(settingsRepository.getUserSettings).toHaveBeenCalledTimes(1);
-  expect(settingsRepository.getUserSettings).toHaveBeenCalledWith(loggedUser.id);
-  expect(coordinatesSystem).toEqual(settings.coordinatesSystem);
-});
-
 test("should update settings with parameters  for user", async () => {
   const updatedAppConfiguration = {
     areAssociesDisplayed: true,
     coordinatesSystem: "gps",
-    defaultAge: 1,
+    defaultAge: "1",
     defaultDepartment: "2",
-    defaultEstimationNombre: 3,
+    defaultEstimationNombre: "3",
     defaultNombre: 4,
     defaultObserver: "5",
-    defaultSexe: 6,
+    defaultSexe: "6",
     isDistanceDisplayed: true,
     isMeteoDisplayed: true,
     isRegroupementDisplayed: true,
@@ -106,8 +91,8 @@ test("should update settings with parameters  for user", async () => {
   const loggedUser = mock<LoggedUser>();
 
   const mockResolved = mock<Settings>({
-    defaultDepartementId: 2,
-    defaultObservateurId: 5,
+    defaultDepartementId: "2",
+    defaultObservateurId: "5",
   });
   settingsRepository.updateUserSettings.mockResolvedValueOnce(mockResolved);
 

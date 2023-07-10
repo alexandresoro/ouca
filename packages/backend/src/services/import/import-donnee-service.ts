@@ -1,7 +1,6 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { areCoordinatesCustomized } from "@ou-ca/common/coordinates-system/coordinates-helper";
 import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
-import { type CoordinatesSystem } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { type Age } from "@ou-ca/common/entities/age";
 import { type Behavior } from "@ou-ca/common/entities/behavior";
 import { type Department } from "@ou-ca/common/entities/department";
@@ -23,7 +22,6 @@ import { areSetsContainingSameValues, isIdInListIds } from "../../utils/utils.js
 import { ImportService } from "./import-service.js";
 
 export class ImportDonneeService extends ImportService {
-  private coordinatesSystem!: CoordinatesSystem;
   private observateurs!: Observer[];
   private departements!: Department[];
   private communes!: Town[];
@@ -49,15 +47,6 @@ export class ImportDonneeService extends ImportService {
   protected init = async (loggedUser: LoggedUser): Promise<void> => {
     this.newDonnees = [];
 
-    const coordinatesSystemType = await this.services.settingsService.findCoordinatesSystem(loggedUser);
-    if (!coordinatesSystemType) {
-      return Promise.reject(
-        "Veuillez choisir le système de coordonnées de l'application dans la page de configuration"
-      );
-    } else {
-      this.coordinatesSystem = COORDINATES_SYSTEMS_CONFIG[coordinatesSystemType];
-    }
-
     this.observateurs = await this.services.observateurService.findAllObservateurs();
     this.departements = await this.services.departementService.findAllDepartements();
     this.communes = await this.services.communeService.findAllCommunes();
@@ -75,7 +64,7 @@ export class ImportDonneeService extends ImportService {
   };
 
   protected validateAndPrepareEntity = async (donneeTab: string[], loggedUser: LoggedUser): Promise<string | null> => {
-    const importedDonnee: ImportedDonnee = new ImportedDonnee(donneeTab, this.coordinatesSystem);
+    const importedDonnee: ImportedDonnee = new ImportedDonnee(donneeTab);
 
     const dataValidity = importedDonnee.checkValidity();
     if (dataValidity) {
@@ -126,26 +115,14 @@ export class ImportDonneeService extends ImportService {
     let coordinates: Coordinates | null = {
       longitude: +importedDonnee.longitude,
       latitude: +importedDonnee.latitude,
-      system: importedDonnee.coordinatesSystem.code,
+      system: "gps",
     };
 
     // Round the coordinates
-    coordinates.longitude = +coordinates.longitude.toFixed(
-      COORDINATES_SYSTEMS_CONFIG[importedDonnee.coordinatesSystem.code].decimalPlaces
-    );
-    coordinates.latitude = +coordinates.latitude.toFixed(
-      COORDINATES_SYSTEMS_CONFIG[importedDonnee.coordinatesSystem.code].decimalPlaces
-    );
+    coordinates.longitude = +coordinates.longitude.toFixed(COORDINATES_SYSTEMS_CONFIG["gps"].decimalPlaces);
+    coordinates.latitude = +coordinates.latitude.toFixed(COORDINATES_SYSTEMS_CONFIG["gps"].decimalPlaces);
 
-    if (
-      !areCoordinatesCustomized(
-        lieudit,
-        altitude,
-        coordinates.longitude,
-        coordinates.latitude,
-        importedDonnee.coordinatesSystem.code
-      )
-    ) {
+    if (!areCoordinatesCustomized(lieudit, altitude, coordinates.longitude, coordinates.latitude, "gps")) {
       altitude = null;
       coordinates = null;
     }

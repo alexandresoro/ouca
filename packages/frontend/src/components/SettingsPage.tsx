@@ -26,12 +26,12 @@ import ContentContainerLayout from "./layout/ContentContainerLayout";
 import StyledPanelHeader from "./layout/StyledPanelHeader";
 
 type SettingsInputs = {
-  defaultObserver: number | null;
-  defaultDepartment: number | null;
-  defaultEstimationNombre: number | null;
+  defaultObserver: string | null;
+  defaultDepartment: string | null;
+  defaultEstimationNombre: string | null;
   defaultNombre: string;
-  defaultSexe: number | null;
-  defaultAge: number | null;
+  defaultSexe: string | null;
+  defaultAge: string | null;
   areAssociesDisplayed: boolean;
   isMeteoDisplayed: boolean;
   isDistanceDisplayed: boolean;
@@ -156,15 +156,14 @@ const SettingsPage: FunctionComponent = () => {
       isMeteoDisplayed: false,
       isDistanceDisplayed: false,
       isRegroupementDisplayed: false,
-      coordinatesSystem: "gps",
     },
     resolver: zodResolver(putSettingsInput),
   });
 
   useEffect(() => {
     reset({
-      defaultObserver: settings?.defaultObserver?.id ? parseInt(settings.defaultObserver.id) : null,
-      defaultDepartment: settings?.defaultDepartment?.id ? parseInt(settings.defaultDepartment.id) : null,
+      defaultObserver: settings?.defaultObserver?.id ?? null,
+      defaultDepartment: settings?.defaultDepartment?.id ?? null,
       defaultEstimationNombre: settings?.defaultEstimationNombreId ?? null,
       defaultNombre: settings?.defaultNombre ? `${settings.defaultNombre}` : "",
       defaultSexe: settings?.defaultSexeId ?? null,
@@ -173,7 +172,6 @@ const SettingsPage: FunctionComponent = () => {
       isMeteoDisplayed: !!settings?.isMeteoDisplayed,
       isDistanceDisplayed: !!settings?.isDistanceDisplayed,
       isRegroupementDisplayed: !!settings?.isRegroupementDisplayed,
-      coordinatesSystem: settings?.coordinatesSystem ?? "gps",
     });
   }, [settings, reset]);
 
@@ -288,15 +286,6 @@ const SettingsPage: FunctionComponent = () => {
                 <FormSwitch name="isDistanceDisplayed" label={t("displayDistance")} control={control} />
 
                 <FormSwitch name="isRegroupementDisplayed" label={t("displayRegroupmentNumber")} control={control} />
-
-                <FormSelect
-                  name="coordinatesSystem"
-                  label={t("coordinatesSystem")}
-                  control={control}
-                  data={COORDINATES_SYSTEMS}
-                  by="code"
-                  renderValue={({ name }) => name}
-                />
               </div>
             </form>
           </div>

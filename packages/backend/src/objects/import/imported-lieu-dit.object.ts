@@ -57,12 +57,12 @@ export class ImportedLieuDit {
       return nomLieuditError;
     }
 
-    const latitudeError = CoordinatesValidatorHelper.checkLatitudeValidity(this.latitude, this.coordinatesSystem);
+    const latitudeError = CoordinatesValidatorHelper.checkLatitudeValidity(this.latitude);
     if (latitudeError) {
       return latitudeError;
     }
 
-    const longitudeError = CoordinatesValidatorHelper.checkLongitudeValidity(this.longitude, this.coordinatesSystem);
+    const longitudeError = CoordinatesValidatorHelper.checkLongitudeValidity(this.longitude);
     if (longitudeError) {
       return longitudeError;
     }

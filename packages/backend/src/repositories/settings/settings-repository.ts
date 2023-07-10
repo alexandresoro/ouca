@@ -11,7 +11,19 @@ export const buildSettingsRepository = ({ slonik }: SettingsRepositoryDependenci
   const getUserSettings = async (userId: string): Promise<Settings | null> => {
     const query = sql.type(settingsSchema)`
       SELECT
-        *
+        id::text,
+        default_observateur_id::text,
+        default_departement_id::text,
+        default_age_id::text,
+        default_sexe_id::text,
+        default_estimation_nombre_id::text,
+        default_nombre,
+        are_associes_displayed,
+        is_meteo_displayed,
+        is_distance_displayed,
+        is_regroupement_displayed,
+        coordinates_system,
+        user_id
       FROM
         basenaturaliste.settings
       WHERE
@@ -30,7 +42,19 @@ export const buildSettingsRepository = ({ slonik }: SettingsRepositoryDependenci
       WHERE
         user_id = ${user_id}
       RETURNING
-        *
+        id::text,
+        default_observateur_id::text,
+        default_departement_id::text,
+        default_age_id::text,
+        default_sexe_id::text,
+        default_estimation_nombre_id::text,
+        default_nombre,
+        are_associes_displayed,
+        is_meteo_displayed,
+        is_distance_displayed,
+        is_regroupement_displayed,
+        coordinates_system,
+        user_id
     `;
 
     return slonik.one(query);
