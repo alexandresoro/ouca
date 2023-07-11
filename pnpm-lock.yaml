@@ -36,8 +36,8 @@ importers:
         specifier: 6.10.2
         version: 6.10.2
       '@fastify/under-pressure':
-        specifier: 8.2.0
-        version: 8.2.0
+        specifier: 8.3.0
+        version: 8.3.0
       '@ou-ca/common':
         specifier: workspace:*
         version: link:../common
@@ -1231,8 +1231,8 @@ packages:
       - supports-color
     dev: false
 
-  /@fastify/under-pressure@8.2.0:
-    resolution: {integrity: sha512-tqhWBhE6blM3jDn9dmxl5yhyoRWGFGwdihLmyek5pRN3KIOEcRQVtAoX5WKSbeEZ51clnDfCNqm96YC4cEUI7g==}
+  /@fastify/under-pressure@8.3.0:
+    resolution: {integrity: sha512-ap1EePB9vHm8uQLM0nnaOeIMBLooNmAMTnccavBRwaXmu+acJFuSEQRVdMGRkW6viFDhdo5RGTcHzMBQyrucEA==}
     dependencies:
       '@fastify/error': 3.3.0
       fastify-plugin: 4.5.0
