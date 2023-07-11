@@ -1,4 +1,5 @@
 import { type ParseKeys } from "i18next";
+import { type MapboxStyle } from "react-map-gl";
 import ignMapSatelliteStyle from "./ign-satellite.json";
 import ignMapStyle from "./ign.json";
 
@@ -9,16 +10,16 @@ export const MAP_STYLE_PROVIDERS = {
   },
   ign: {
     nameKey: "maps.maps.ign.name",
-    mapboxStyle: ignMapStyle,
+    mapboxStyle: ignMapStyle as unknown as MapboxStyle,
   },
   ignSatellite: {
     nameKey: "maps.maps.ignSatellite.name",
-    mapboxStyle: ignMapSatelliteStyle,
+    mapboxStyle: ignMapSatelliteStyle as unknown as MapboxStyle,
   },
 } satisfies Record<
   string,
   {
     nameKey: ParseKeys;
-    mapboxStyle: string | unknown;
+    mapboxStyle: string | MapboxStyle;
   }
 >;

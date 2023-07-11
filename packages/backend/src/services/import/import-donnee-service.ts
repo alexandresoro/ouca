@@ -44,7 +44,7 @@ export class ImportDonneeService extends ImportService {
     return 32;
   };
 
-  protected init = async (loggedUser: LoggedUser): Promise<void> => {
+  protected init = async (): Promise<void> => {
     this.newDonnees = [];
 
     this.observateurs = await this.services.observateurService.findAllObservateurs();

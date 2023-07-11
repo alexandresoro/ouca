@@ -23,7 +23,7 @@ export class ImportLieuxditService extends ImportService {
     return 6;
   };
 
-  protected init = async (loggedUser: LoggedUser): Promise<void> => {
+  protected init = async (): Promise<void> => {
     this.lieuxDitsToInsert = [];
     let coordinatesSystemType: CoordinatesSystemType | undefined;
 

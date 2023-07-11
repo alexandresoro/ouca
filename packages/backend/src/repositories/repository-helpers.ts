@@ -126,7 +126,7 @@ export const buildSortOrderFragment = ({
   orderBy,
   sortOrder,
 }: {
-  orderBy?: unknown | null;
+  orderBy?: unknown;
   sortOrder?: SortOrder;
 }): SqlFragment => {
   if (!orderBy || !sortOrder) {
