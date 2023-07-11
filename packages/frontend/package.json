@@ -87,7 +87,7 @@
     "vite": "4.4.2",
     "vitest": "0.33.0",
     "vitest-mock-extended": "1.1.4",
-    "wireit": "0.9.5"
+    "wireit": "0.10.0"
   },
   "engines": {
     "node": ">=16"
