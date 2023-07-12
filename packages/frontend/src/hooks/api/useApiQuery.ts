@@ -10,7 +10,11 @@ function useApiQuery<SType>(
     path,
     queryParams,
     schema,
-  }: { path: string; queryParams?: Record<string, string | number | boolean | undefined>; schema?: z.ZodType<SType> },
+  }: {
+    path: string;
+    queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
+    schema?: z.ZodType<SType>;
+  },
   queryOptions?: Omit<UseQueryOptions<SType, FetchError>, "queryKey" | "queryFn">
 ): UseQueryResult<SType, FetchError>;
 function useApiQuery<SType>(
@@ -18,7 +22,11 @@ function useApiQuery<SType>(
     path,
     queryParams,
     schema,
-  }: { path: string; queryParams?: Record<string, string | number | boolean | undefined>; schema?: z.ZodType<SType> },
+  }: {
+    path: string;
+    queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
+    schema?: z.ZodType<SType>;
+  },
   queryOptions?: Omit<UseQueryOptions<unknown, FetchError>, "queryKey" | "queryFn">
 ) {
   const { user } = useAuth();

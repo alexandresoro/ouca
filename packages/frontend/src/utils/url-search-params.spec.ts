@@ -32,11 +32,13 @@ describe("toUrlSearchParams()", () => {
       par: "am",
       number: 12,
       boolValue: false,
+      arr: [1, 3, 5],
+      emptyArr: [],
     };
 
     const urlSearchParams = toUrlSearchParams(params);
 
-    expect(urlSearchParams.toString()).toEqual("par=am&number=12&boolValue=false");
+    expect(urlSearchParams.toString()).toEqual("par=am&number=12&boolValue=false&arr=1&arr=3&arr=5");
   });
 
   test("should filter out undefined properties of an object", () => {

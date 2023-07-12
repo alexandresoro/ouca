@@ -1,5 +1,5 @@
 export const toUrlSearchParams = (
-  params: Record<string, string | number | boolean | undefined> | undefined
+  params: Record<string, string | string[] | number | number[] | boolean | undefined> | undefined
 ): URLSearchParams => {
   if (params === undefined) {
     return new URLSearchParams();
@@ -7,9 +7,9 @@ export const toUrlSearchParams = (
 
   // Filter out undefined values and transform remaining values to string
   const reshapedParams = Object.entries(params)
-    .filter((entry): entry is [string, string | number] => entry[1] !== undefined)
-    .map(([key, value]) => {
-      return [key, String(value)];
+    .filter((entry): entry is [string, string | string[] | number | number[] | boolean] => entry[1] !== undefined)
+    .flatMap(([key, value]) => {
+      return Array.isArray(value) ? value.map((v) => [key, String(v)]) : [[key, String(value)]];
     });
 
   return new URLSearchParams(reshapedParams);
