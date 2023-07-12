@@ -18,6 +18,7 @@
     "probable": "Reproducteur probable"
   },
   "code": "Code",
+  "comment": "commentaire",
   "components": {
     "autocomplete": {
       "noResults": "Aucun résultat",
@@ -234,6 +235,7 @@
   "sexEditionTitle": "Edition d'un sexe",
   "sexes": "Sexes",
   "speciesForm": "Fiche espèce",
+  "speciesSingular": "Espèce",
   "species": "Espèces",
   "speciesAlreadyExistingError": "Il existe déjà une espèce identique.",
   "speciesCode": "Code de l'espèce",

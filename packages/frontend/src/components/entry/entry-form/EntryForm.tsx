@@ -14,6 +14,7 @@ import {
 } from "../../../atoms/inventoryFormAtoms";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import TempPage from "../../TempPage";
+import EntryDetailsForm from "../entry-details/EntryDetailsForm";
 import InventoryForm from "../inventory/InventoryForm";
 
 const EntryMap = lazy(() => import("../entry-map/EntryMap"));
@@ -127,6 +128,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
             </Tab.List>
             <Tab.Panels>
               <Tab.Panel>
+                <EntryDetailsForm />
                 <div className="bg-green-600">
                   <TempPage />
                 </div>
