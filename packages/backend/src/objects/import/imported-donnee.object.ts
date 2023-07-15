@@ -112,7 +112,7 @@ export class ImportedDonnee {
   }
 
   buildInputDonnee = (
-    inventaireId: number,
+    inventaireId: string,
     especeId: string,
     sexeId: string,
     ageId: string,
@@ -123,17 +123,17 @@ export class ImportedDonnee {
   ): UpsertEntryInput => {
     return {
       inventoryId: inventaireId,
-      speciesId: parseInt(especeId),
-      sexId: parseInt(sexeId),
-      ageId: parseInt(ageId),
-      numberEstimateId: parseInt(estimationNombreId),
+      speciesId: especeId,
+      sexId: sexeId,
+      ageId: ageId,
+      numberEstimateId: estimationNombreId,
       number: this.nombre ? +this.nombre : null,
-      distanceEstimateId: estimationDistanceId != null ? parseInt(estimationDistanceId) : null,
+      distanceEstimateId: estimationDistanceId ?? null,
       distance: this.distance ? +this.distance : null,
       comment: this.commentaire ? this.commentaire : null,
       regroupment: this.regroupement ? +this.regroupement : null,
-      behaviorIds: [...comportementsIds].map((behavior) => parseInt(behavior)),
-      environmentIds: [...milieuxIds].map((environment) => parseInt(environment)),
+      behaviorIds: [...comportementsIds],
+      environmentIds: [...milieuxIds],
     };
   };
 

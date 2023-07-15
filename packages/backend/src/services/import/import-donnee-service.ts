@@ -275,7 +275,7 @@ export class ImportDonneeService extends ImportService {
     // Check if already have a similar donnee in the ones we want to create
     const existingDonneeNew = this.newDonnees.find((donnee) => {
       return (
-        donnee.inventoryId === existingInventaire?.id &&
+        parseInt(donnee.inventoryId) === existingInventaire?.id &&
         `${donnee.speciesId}` === espece.id &&
         `${donnee.sexId}` === sexe.id &&
         `${donnee.ageId}` === age.id &&
@@ -285,14 +285,8 @@ export class ImportDonneeService extends ImportService {
         donnee.distanceEstimateId === (estimationDistance?.id ?? null) &&
         donnee.regroupment === (importedDonnee.regroupement ? +importedDonnee.regroupement : null) &&
         this.compareStrings(donnee.comment, importedDonnee.commentaire) &&
-        areSetsContainingSameValues(
-          new Set(donnee.behaviorIds),
-          new Set([...comportementsIds].map((behavior) => parseInt(behavior)))
-        ) &&
-        areSetsContainingSameValues(
-          new Set(donnee.environmentIds),
-          new Set([...milieuxIds].map((environment) => parseInt(environment)))
-        )
+        areSetsContainingSameValues(new Set(donnee.behaviorIds), comportementsIds) &&
+        areSetsContainingSameValues(new Set(donnee.environmentIds), milieuxIds)
       );
     });
 
@@ -301,17 +295,17 @@ export class ImportDonneeService extends ImportService {
     }
 
     // Now we know that we need to add this donnee
-    let inventaireId: number;
+    let inventaireId: string;
 
     if (!existingInventaire) {
       // Create the inventaire if it does not exist yet
       const inventaire = await this.services.inventaireService.createInventaire(inputInventaire, loggedUser);
-      inventaireId = inventaire?.id;
+      inventaireId = `${inventaire.id}`;
 
       // Add the inventaire to the list
       this.inventaires.push(inventaire);
     } else {
-      inventaireId = existingInventaire.id;
+      inventaireId = `${existingInventaire.id}`;
     }
 
     // Build the donnee
