@@ -5,7 +5,7 @@ import TextArea from "../../common/styled/TextArea";
 const EntryDetailsCommentForm: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  return <TextArea label={t("comment")} labelTextClassName="first-letter:capitalize" />;
+  return <TextArea label={t("comments")} labelTextClassName="first-letter:capitalize" />;
 };
 
 export default EntryDetailsCommentForm;

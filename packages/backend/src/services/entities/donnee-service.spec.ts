@@ -421,8 +421,8 @@ describe("Deletion of a data", () => {
 describe("Update of a data", () => {
   test("should update existing data", async () => {
     const dataData = mock<UpsertEntryInput>({
-      behaviorIds: [2, 3],
-      environmentIds: [4, 5],
+      behaviorIds: ["2", "3"],
+      environmentIds: ["4", "5"],
     });
 
     const loggedUser = mock<LoggedUser>();
@@ -509,7 +509,7 @@ describe("Creation of a data", () => {
 
   test("should create new data with behaviors only", async () => {
     const dataData = mock<UpsertEntryInput>({
-      behaviorIds: [2, 3],
+      behaviorIds: ["2", "3"],
       environmentIds: [],
     });
 
@@ -528,18 +528,14 @@ describe("Creation of a data", () => {
     expect(donneeRepository.createDonnee).toHaveBeenCalledTimes(1);
     expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenCalledTimes(1);
-    expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(
-      12,
-      dataData.behaviorIds,
-      any()
-    );
+    expect(donneeComportementRepository.insertDonneeWithComportements).toHaveBeenLastCalledWith(12, [2, 3], any());
     expect(donneeMilieuRepository.insertDonneeWithMilieux).not.toHaveBeenCalled();
   });
 
   test("should create new data with environments only", async () => {
     const dataData = mock<UpsertEntryInput>({
       behaviorIds: [],
-      environmentIds: [2, 3],
+      environmentIds: ["2", "3"],
     });
 
     const loggedUser = mock<LoggedUser>();
@@ -558,6 +554,6 @@ describe("Creation of a data", () => {
     expect(donneeRepository.createDonnee).toHaveBeenLastCalledWith(any(), any());
     expect(donneeComportementRepository.insertDonneeWithComportements).not.toHaveBeenCalled();
     expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenCalledTimes(1);
-    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, dataData.environmentIds, any());
+    expect(donneeMilieuRepository.insertDonneeWithMilieux).toHaveBeenLastCalledWith(12, [2, 3], any());
   });
 });

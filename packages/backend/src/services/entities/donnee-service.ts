@@ -134,7 +134,7 @@ export const buildDonneeService = ({
       if (behaviorIds?.length) {
         await donneeComportementRepository.insertDonneeWithComportements(
           parseInt(createdDonnee.id),
-          behaviorIds,
+          behaviorIds.map((behavior) => parseInt(behavior)),
           transactionConnection
         );
       }
@@ -142,7 +142,7 @@ export const buildDonneeService = ({
       if (environmentIds?.length) {
         await donneeMilieuRepository.insertDonneeWithMilieux(
           parseInt(createdDonnee.id),
-          environmentIds,
+          environmentIds.map((environment) => parseInt(environment)),
           transactionConnection
         );
       }
@@ -184,7 +184,7 @@ export const buildDonneeService = ({
         if (behaviorIds?.length) {
           await donneeComportementRepository.insertDonneeWithComportements(
             parseInt(id),
-            behaviorIds,
+            behaviorIds.map((behavior) => parseInt(behavior)),
             transactionConnection
           );
         }
@@ -192,7 +192,11 @@ export const buildDonneeService = ({
         await donneeMilieuRepository.deleteMilieuxOfDonneeId(parseInt(id), transactionConnection);
 
         if (environmentIds?.length) {
-          await donneeMilieuRepository.insertDonneeWithMilieux(parseInt(id), environmentIds, transactionConnection);
+          await donneeMilieuRepository.insertDonneeWithMilieux(
+            parseInt(id),
+            environmentIds.map((environment) => parseInt(environment)),
+            transactionConnection
+          );
         }
 
         return updatedDonnee;

@@ -18,7 +18,7 @@
     "probable": "Reproducteur probable"
   },
   "code": "Code",
-  "comment": "commentaire",
+  "comments": "commentaires",
   "components": {
     "autocomplete": {
       "noResults": "Aucun résultat",
