@@ -121,7 +121,11 @@
     "altitudeCallOngoing": "Une mise à jour de l'altitude correspondant aux coordonnées actuelles est en cours. L'altitude actuellement affichée peut ne pas être correcte.",
     "altitudeCallError": "Une erreur est survenue lors de la récupération de l'altitude. L'altitude actuellement affichée peut ne pas être correcte.",
     "temperature": "Température",
-    "weathers": "Météos"
+    "weathers": "Météos",
+    "createSuccess": "L'inventaire a été créé avec succès",
+    "createError": "Une erreur est survenue lors de la création de l'inventaire",
+    "updateSuccess": "L'inventaire a été mis à jour avec succès",
+    "updateError": "Une erreur est survenue lors de la mise à jour de l'inventaire"
   },
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",

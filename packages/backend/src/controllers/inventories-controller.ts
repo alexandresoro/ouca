@@ -70,7 +70,8 @@ const inventoriesController: FastifyPluginCallback<{
     // eslint-disable-next-line no-useless-catch
     try {
       const inventory = await inventaireService.createInventaire(input, req.user);
-      const response = upsertInventoryResponse.parse(inventory);
+      const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
+      const response = upsertInventoryResponse.parse(inventoryEnriched);
 
       return await reply.send(response);
     } catch (e) {
@@ -96,7 +97,8 @@ const inventoriesController: FastifyPluginCallback<{
     // eslint-disable-next-line no-useless-catch
     try {
       const inventory = await inventaireService.updateInventaire(req.params.id, input, req.user);
-      const response = upsertInventoryResponse.parse(inventory);
+      const inventoryEnriched = await enrichedInventory(services, inventory, req.user);
+      const response = upsertInventoryResponse.parse(inventoryEnriched);
 
       return await reply.send(response);
     } catch (e) {
