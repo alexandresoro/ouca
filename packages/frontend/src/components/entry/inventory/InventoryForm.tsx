@@ -75,23 +75,22 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
 
   const [formValues, setFormValues] = useState<InventoryFormState>(defaultFormValues);
   useEffect(() => {
-    setFormValues((currentFormValues) => {
-      return {
-        ...currentFormValues,
-        localityId: locality?.id ?? null,
-        coordinates: {
-          ...currentFormValues.coordinates,
-          latitude,
-          longitude,
-          altitude,
-        },
-      };
+    setFormValues({
+      ...getValues(),
+      localityId: locality?.id ?? null,
+      coordinates: {
+        ...getValues().coordinates,
+        latitude,
+        longitude,
+        altitude,
+      },
     });
   }, [locality, latitude, longitude, altitude]);
 
   const {
     register,
     control,
+    getValues,
     formState: { isValid, isDirty, dirtyFields, defaultValues },
     handleSubmit,
     watch,
