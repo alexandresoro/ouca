@@ -39,10 +39,12 @@ const App: FunctionComponent = () => {
   const [appContext, setAppContext] = useState<AppContext>(DEFAULT_CONFIG);
 
   useEffect(() => {
-    setAppContext({
-      ...appContext,
-      apiUrl: config.apiUrl ?? "",
-      isSentryEnabled: !!config.sentry,
+    setAppContext((context) => {
+      return {
+        ...context,
+        apiUrl: config.apiUrl ?? "",
+        isSentryEnabled: !!config.sentry,
+      };
     });
   }, [config]);
 
