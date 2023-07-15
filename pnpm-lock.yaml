@@ -197,8 +197,8 @@ importers:
   packages/frontend:
     dependencies:
       '@floating-ui/react':
-        specifier: 0.24.7
-        version: 0.24.7(react-dom@18.2.0)(react@18.2.0)
+        specifier: 0.24.8
+        version: 0.24.8(react-dom@18.2.0)(react@18.2.0)
       '@fontsource-variable/nunito':
         specifier: 5.0.6
         version: 5.0.6
@@ -1259,8 +1259,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@floating-ui/react@0.24.7(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-lPlXxAtnkEvdCw8KkErTrTkaTosNsvd1tTmNBei0+5SyQ17wr9Oz9z1rVG6ve6M18p5QJ61V8RltKGXUn1rxCw==}
+  /@floating-ui/react@0.24.8(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-AuYeDoaR8jtUlUXtZ1IJ/6jtBkGnSpJXbGNzokBL87VDJ8opMq1Bgrc0szhK482ReQY6KZsMoZCVSb4xwalkBA==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
