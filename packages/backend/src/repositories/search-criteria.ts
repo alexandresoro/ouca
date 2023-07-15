@@ -32,7 +32,7 @@ export type SearchCriteria = {
 
 export const reshapeSearchCriteria = (
   params: Omit<SpeciesSearchParams, "q" | "pageNumber" | "pageSize" | "orderBy" | "sortOrder">
-): SearchCriteria => {
+): SearchCriteria | undefined => {
   const {
     entryId,
     observerIds,
@@ -61,7 +61,7 @@ export const reshapeSearchCriteria = (
     environmentIds,
   } = params;
 
-  return {
+  const reshapedSearchCriteria = {
     entryId: entryId ? parseInt(entryId) : undefined,
     observerIds: observerIds?.map((id) => parseInt(id)) ?? undefined,
     temperature,
@@ -88,6 +88,10 @@ export const reshapeSearchCriteria = (
     behaviorIds: behaviorIds?.map((id) => parseInt(id)) ?? undefined,
     environmentIds: environmentIds?.map((id) => parseInt(id)) ?? undefined,
   };
+
+  const areSearchCriteriaDefined = Object.values(reshapedSearchCriteria).filter((v) => v !== undefined).length > 0;
+
+  return areSearchCriteriaDefined ? reshapedSearchCriteria : undefined;
 };
 
 const getIdentifierForCriteria = (criteriaName: keyof NonNullable<SearchCriteria>): IdentifierSqlToken => {

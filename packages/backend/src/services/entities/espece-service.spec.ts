@@ -128,9 +128,7 @@ describe("Entities paginated find by search criteria", () => {
     await especeService.findPaginatedEspeces(loggedUser, {});
 
     expect(especeRepository.findEspeces).toHaveBeenCalledTimes(1);
-    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({
-      searchCriteria: {},
-    });
+    expect(especeRepository.findEspeces).toHaveBeenLastCalledWith({});
   });
 
   test("should handle params when retrieving paginated species ", async () => {
@@ -156,7 +154,6 @@ describe("Entities paginated find by search criteria", () => {
       sortOrder: "desc",
       offset: 0,
       limit: searchParams.pageSize,
-      searchCriteria: {},
     });
   });
 
@@ -208,9 +205,7 @@ describe("Entities count by search criteria", () => {
     await especeService.getEspecesCount(loggedUser, {});
 
     expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(especeRepository.getCount).toHaveBeenLastCalledWith({
-      searchCriteria: {},
-    });
+    expect(especeRepository.getCount).toHaveBeenLastCalledWith({});
   });
 
   test("should handle to be called with some criteria provided", async () => {
@@ -221,7 +216,6 @@ describe("Entities count by search criteria", () => {
     expect(especeRepository.getCount).toHaveBeenCalledTimes(1);
     expect(especeRepository.getCount).toHaveBeenLastCalledWith({
       q: "test",
-      searchCriteria: {},
     });
   });
 

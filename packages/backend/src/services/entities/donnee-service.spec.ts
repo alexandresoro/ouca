@@ -99,7 +99,6 @@ describe("Data paginated find by search criteria", () => {
     expect(donneeRepository.findDonnees).toHaveBeenLastCalledWith({
       offset: 0,
       limit: 10,
-      searchCriteria: {},
     });
   });
 
@@ -153,7 +152,7 @@ describe("Entities count by search criteria", () => {
     });
 
     expect(donneeRepository.getCount).toHaveBeenCalledTimes(1);
-    expect(donneeRepository.getCount).toHaveBeenLastCalledWith({});
+    expect(donneeRepository.getCount).toHaveBeenLastCalledWith(undefined);
   });
 
   test("should handle to be called with some criteria provided", async () => {
