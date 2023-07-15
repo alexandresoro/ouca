@@ -10,8 +10,6 @@ import {
   type PutSettingsInput,
 } from "@ou-ca/common/api/settings";
 import { getSexesResponse } from "@ou-ca/common/api/sex";
-import { COORDINATES_SYSTEMS_CONFIG } from "@ou-ca/common/coordinates-system/coordinates-system-list.object";
-import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -36,10 +34,7 @@ type SettingsInputs = {
   isMeteoDisplayed: boolean;
   isDistanceDisplayed: boolean;
   isRegroupementDisplayed: boolean;
-  coordinatesSystem: CoordinatesSystemType;
 };
-
-const COORDINATES_SYSTEMS = Object.values(COORDINATES_SYSTEMS_CONFIG);
 
 const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();
