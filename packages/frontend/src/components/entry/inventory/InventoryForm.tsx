@@ -1,5 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { upsertInventoryInput, type GetInventoryResponse } from "@ou-ca/common/api/inventory";
+import {
+  upsertInventoryInput,
+  type GetInventoryResponse,
+  type UpsertInventoryInput,
+} from "@ou-ca/common/api/inventory";
 import { FilePlus } from "@styled-icons/boxicons-solid";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
@@ -24,9 +28,10 @@ type InventoryFormProps = {
   // New inventory (w/ possible existing inventory as template)
   isNewInventory?: boolean;
   existingInventory?: GetInventoryResponse;
+  onSubmitForm?: (inventoryFormData: UpsertInventoryInput, inventoryId: string | undefined) => void;
 };
 
-const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventory }) => {
+const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventory, onSubmitForm }) => {
   const { t } = useTranslation();
 
   const { userSettings } = useUserSettingsContext();
@@ -100,7 +105,8 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
   const localityId = watch();
 
   const onSubmit: SubmitHandler<InventoryFormState> = (inventoryFormData) => {
-    console.log(inventoryFormData, existingInventory?.id);
+    // FIXME assertion is done thanks to zod resolver, however types are not inferred
+    onSubmitForm?.(inventoryFormData as unknown as UpsertInventoryInput, existingInventory?.id);
   };
 
   return (
@@ -129,30 +135,32 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
           </div>
         )}
       </div>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-        <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
-          <InventoryFormObserver
-            control={control}
-            defaultObserver={existingInventory?.observer ?? userSettings.defaultObserver ?? undefined}
-            areAssociesDisplayed={userSettings.areAssociesDisplayed}
-            autofocusOnObserver={isNewInventory}
-          />
-        </div>
-        <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
-          <InventoryFormDate register={register} />
-        </div>
-        <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
-          <InventoryFormLocation
-            register={register}
-            control={control}
-            defaultDepartment={isNewInventory ? userSettings.defaultDepartment ?? undefined : undefined}
-          />
-        </div>
-        {userSettings.isMeteoDisplayed && (
-          <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
-            <InventoryFormWeather control={control} register={register} />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <fieldset className="flex flex-col gap-4">
+          <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+            <InventoryFormObserver
+              control={control}
+              defaultObserver={existingInventory?.observer ?? userSettings.defaultObserver ?? undefined}
+              areAssociesDisplayed={userSettings.areAssociesDisplayed}
+              autofocusOnObserver={isNewInventory}
+            />
           </div>
-        )}
+          <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+            <InventoryFormDate register={register} />
+          </div>
+          <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+            <InventoryFormLocation
+              register={register}
+              control={control}
+              defaultDepartment={isNewInventory ? userSettings.defaultDepartment ?? undefined : undefined}
+            />
+          </div>
+          {userSettings.isMeteoDisplayed && (
+            <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+              <InventoryFormWeather control={control} register={register} />
+            </div>
+          )}
+        </fieldset>
         <button type="submit">submit</button>
       </form>
     </div>

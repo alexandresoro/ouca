@@ -1,4 +1,5 @@
 import { Tab } from "@headlessui/react";
+import { getEntryResponse } from "@ou-ca/common/api/entry";
 import { getInventoryResponse } from "@ou-ca/common/api/inventory";
 import { useAtomValue, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
@@ -13,7 +14,6 @@ import {
   storedCustomizedCoordinatesAtom,
 } from "../../../atoms/inventoryFormAtoms";
 import useApiQuery from "../../../hooks/api/useApiQuery";
-import TempPage from "../../TempPage";
 import EntryDetailsForm from "../entry-details/EntryDetailsForm";
 import InventoryForm from "../inventory/InventoryForm";
 
@@ -62,6 +62,25 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
     }
   }, [existingInventoryId, refetch]);
 
+  const {
+    data: existingEntry,
+    isFetching: isFetchingEntry,
+    refetch: refetchEntry,
+  } = useApiQuery(
+    {
+      path: `/entries/${existingEntryId!}`,
+      schema: getEntryResponse,
+    },
+    {
+      enabled: false,
+    }
+  );
+  useEffect(() => {
+    if (existingEntryId) {
+      void refetchEntry();
+    }
+  }, [existingEntryId, refetchEntry]);
+
   const [isInventoryReady, setIsInventoryReady] = useState(false);
 
   useEffect(() => {
@@ -71,7 +90,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
     });
   }, [existingInventory, existingInventoryId, setInventory]);
 
-  const inventoryFormKey = isNewEntry ? `new-${existingInventoryId ?? ""}` : `existing-${existingEntryId}`;
+  const entryFormKey = isNewEntry ? `new-${existingInventoryId ?? ""}` : `existing-${existingEntryId}`;
 
   return (
     <>
@@ -86,15 +105,9 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
           {isInventoryReady && (
             <>
               {existingInventoryId != null && existingInventory != null && !isFetching && (
-                <InventoryForm
-                  key={inventoryFormKey}
-                  isNewInventory={isNewEntry}
-                  existingInventory={existingInventory}
-                />
+                <InventoryForm key={entryFormKey} isNewInventory={isNewEntry} existingInventory={existingInventory} />
               )}
-              {existingInventoryId === undefined && (
-                <InventoryForm key={inventoryFormKey} isNewInventory={isNewEntry} />
-              )}
+              {existingInventoryId === undefined && <InventoryForm key={entryFormKey} isNewInventory={isNewEntry} />}
             </>
           )}
         </div>
@@ -127,13 +140,15 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
               </Tab>
             </Tab.List>
             <Tab.Panels>
-              <Tab.Panel>
-                <EntryDetailsForm />
-                <div className="bg-green-600">
-                  <TempPage />
-                </div>
+              <Tab.Panel unmount={false}>
+                {existingEntryId != null && existingEntry != null && !isFetchingEntry && (
+                  <EntryDetailsForm key={entryFormKey} existingEntry={existingEntry} />
+                )}
+                {existingEntryId === undefined && (
+                  <EntryDetailsForm key={entryFormKey} isNewEntry={true} existingInventoryId={existingInventoryId} />
+                )}
               </Tab.Panel>
-              <Tab.Panel>
+              <Tab.Panel unmount={false}>
                 <Suspense fallback={<></>}>
                   <EntryMap />
                 </Suspense>

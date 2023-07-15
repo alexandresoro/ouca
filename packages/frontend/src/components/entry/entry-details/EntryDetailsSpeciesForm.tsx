@@ -7,6 +7,10 @@ import { useTranslation } from "react-i18next";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import Autocomplete from "../../common/styled/select/Autocomplete";
 
+type EntryDetailsSpeciesFormProps = {
+  autofocusOnSpecies?: boolean;
+};
+
 const renderSpeciesClass = (speciesClass: SpeciesClass | null): string => {
   return speciesClass?.libelle ?? "";
 };
@@ -15,7 +19,7 @@ const renderSpecies = (species: Species | null): string => {
   return species ? `${species.code} - ${species.nomFrancais} - ${species.nomLatin}` : "";
 };
 
-const EntryDetailsSpeciesForm: FunctionComponent = () => {
+const EntryDetailsSpeciesForm: FunctionComponent<EntryDetailsSpeciesFormProps> = ({ autofocusOnSpecies }) => {
   const { t } = useTranslation();
 
   const [classInput, setClassInput] = useState("");
@@ -84,6 +88,9 @@ const EntryDetailsSpeciesForm: FunctionComponent = () => {
       />
       <Autocomplete
         autocompleteClassName="basis-3/4"
+        inputProps={{
+          autoFocus: autofocusOnSpecies,
+        }}
         data={dataSpecies?.data}
         name="species"
         label={t("speciesSingular")}

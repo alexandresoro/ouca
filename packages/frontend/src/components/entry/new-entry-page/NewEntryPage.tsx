@@ -1,16 +1,25 @@
 import { getEntryLastResponse } from "@ou-ca/common/api/entry";
 import { ChevronsRight } from "@styled-icons/boxicons-regular";
-import { type FunctionComponent } from "react";
+import { useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import StyledPanelHeader from "../../layout/StyledPanelHeader";
-import EntryForm from "../entry-form/EntryForm";
+import NewEntryFormContainer from "../new-entry-form-container/NewEntryFormContainer";
+import NewEntryPageStepper from "./NewEntryPageStepper";
+import { getNewEntryStepFromHash, type NewEntryStep } from "./new-entry-hash-step-mapper";
 
 const NewEntryPage: FunctionComponent = () => {
   const { t } = useTranslation();
+
   const navigate = useNavigate();
+  const { hash } = useLocation();
   const [searchParams] = useSearchParams();
+
+  const [currentStep, setCurrentStep] = useState<NewEntryStep | undefined>();
+  useEffect(() => {
+    setCurrentStep(getNewEntryStepFromHash(hash));
+  }, [hash]);
 
   const { data } = useApiQuery({ path: "/entries/last", schema: getEntryLastResponse });
 
@@ -24,12 +33,16 @@ const NewEntryPage: FunctionComponent = () => {
     }
   };
 
+  const handleSelectedPreviousStep = (selectedStep: NewEntryStep) => {
+    window.location.hash = `#${selectedStep.id}`;
+  };
+
   return (
     <>
       <StyledPanelHeader className="flex justify-between">
-        <div className="indicator pr-5">
-          <span className="indicator-item badge badge-xs badge-secondary">{t("createPage.newBadge")}</span>
-          <h1 className="flex items-center gap-3 text-2xl font-normal">{t("createPage.headerTitle")}</h1>
+        <div className="indicator pr-2">
+          <span className="indicator-item badge badge-xs badge-primary" />
+          <h1 className="flex items-center gap-3 text-2xl font-normal">{t("createPage.newEntryTitle")}</h1>
         </div>
         <div className="tooltip tooltip-bottom" data-tip={hasLastDonnee ? t("createPage.goToLastDataDescription") : ""}>
           <button
@@ -43,7 +56,12 @@ const NewEntryPage: FunctionComponent = () => {
           </button>
         </div>
       </StyledPanelHeader>
-      <EntryForm isNewEntry existingInventoryId={existingInventoryId} />
+      {currentStep != null && (
+        <>
+          <NewEntryPageStepper currentStep={currentStep} onSelectedStep={handleSelectedPreviousStep} />
+          <NewEntryFormContainer currentStep={currentStep} existingInventoryId={existingInventoryId} />
+        </>
+      )}
     </>
   );
 };

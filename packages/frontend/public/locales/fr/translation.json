@@ -28,6 +28,7 @@
   },
   "createPage": {
     "headerTitle": "Donnée",
+    "newEntryTitle": "Nouvelle donnée",
     "newBadge": "Nouvelle",
     "goToLastData": "Dernière donnée",
     "goToLastDataDescription": "Aller à la dernière donnée enregistrée"
@@ -100,6 +101,9 @@
   "distancePrecisionCreationTitle": "Création d'une estimation de la distance",
   "distancePrecisionEditionTitle": "Edition d'une estimation de la distance",
   "distancePrecisions": "Estimations de la distance",
+  "entryDetailsForm": {
+    "title": "Fiche espèce"
+  },
   "environmentAlreadyExistingError": "Il existe déjà un milieu naturel avec un code ou un libellé identique.",
   "environmentCreationTitle": "Création d'un milieu naturel",
   "environmentEditionTitle": "Edition d'un milieu naturel",
@@ -162,6 +166,12 @@
     "description": "Il semble que ce soit votre première connexion à l'application Où-çà.",
     "descriptionAction": "Cliquez sur le bouton ci-dessous afin de créer votre compte. Vous serez par la suite invité à configurer vos réglages.",
     "createAccountButton": "Créer mon compte"
+  },
+  "newEntry": {
+    "steps": {
+      "inventory": "Inventaire",
+      "entry": "Donnée"
+    }
   },
   "numberOfCities": "Nombre de communes",
   "numberOfLocalities": "Nombre de lieux-dits",
