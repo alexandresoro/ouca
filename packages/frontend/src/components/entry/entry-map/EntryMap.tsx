@@ -28,6 +28,7 @@ import {
   Source,
   type MapLayerMouseEvent,
   type MapRef,
+  type MarkerDragEvent,
   type ViewState,
 } from "react-map-gl/maplibre";
 import {
@@ -52,6 +53,27 @@ const EntryMap: FunctionComponent = () => {
   const mapRef = useRef<MapRef>(null);
 
   const [inventoryCoordinates, setInventoryCoordinates] = useAtom(inventoryCoordinatesAtom);
+  const [markerCoordinates, setMarkerCoordinates] = useState(inventoryCoordinates);
+  useEffect(() => {
+    setMarkerCoordinates(inventoryCoordinates);
+  }, [inventoryCoordinates]);
+
+  const onMarkerDrag = useCallback((event: MarkerDragEvent) => {
+    setMarkerCoordinates({
+      lng: event.lngLat.lng,
+      lat: event.lngLat.lat,
+    });
+  }, []);
+
+  const onMarkerDragEnd = useCallback(
+    (event: MarkerDragEvent) => {
+      void setInventoryCoordinates({
+        lng: event.lngLat.lng,
+        lat: event.lngLat.lat,
+      });
+    },
+    [setInventoryCoordinates]
+  );
 
   const [selectedLocality, setSelectedLocality] = useAtom(inventoryLocalityAtom);
 
@@ -272,6 +294,10 @@ const EntryMap: FunctionComponent = () => {
     );
   };
 
+  useEffect(() => {
+    console.log("RENDER");
+  });
+
   return (
     <div className="flex flex-col">
       <div className="flex my-4 items-center justify-between">
@@ -324,12 +350,12 @@ const EntryMap: FunctionComponent = () => {
               color="#3FB1CE"
             />
           )}
-          {inventoryCoordinates != null && (
+          {markerCoordinates != null && (
             <>
               {displayCoordinatesInfoPopup && (
                 <Popup
-                  longitude={inventoryCoordinates.lng}
-                  latitude={inventoryCoordinates.lat}
+                  longitude={markerCoordinates.lng}
+                  latitude={markerCoordinates.lat}
                   offset={[-15, -5] as [number, number]}
                   focusAfterOpen={false}
                   onClose={() => setDisplayCoordinatesInfoPopup(false)}
@@ -346,11 +372,12 @@ const EntryMap: FunctionComponent = () => {
                 </Popup>
               )}
               <Marker
-                longitude={inventoryCoordinates.lng}
-                latitude={inventoryCoordinates.lat}
+                longitude={markerCoordinates.lng}
+                latitude={markerCoordinates.lat}
                 draggable
                 color="#b9383c"
-                onDragEnd={(e) => setInventoryCoordinates(e.lngLat)}
+                onDrag={onMarkerDrag}
+                onDragEnd={onMarkerDragEnd}
                 onClick={(e) => {
                   // Prevent the event from bubbling to avoid closing directly the popup after open
                   e.originalEvent.stopPropagation();
