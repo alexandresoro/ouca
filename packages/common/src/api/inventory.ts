@@ -1,12 +1,12 @@
 import { isAfter, isBefore } from "date-fns";
 import { z } from "zod";
-import { inventorySchema } from "../entities/inventory.js";
+import { inventoryExtendedSchema, inventorySchema } from "../entities/inventory.js";
 
 /**
  * `GET` `/inventory/:id`
  *  Retrieve inventory
  */
-export const getInventoryResponse = inventorySchema;
+export const getInventoryResponse = inventoryExtendedSchema;
 
 export type GetInventoryResponse = z.infer<typeof getInventoryResponse>;
 
