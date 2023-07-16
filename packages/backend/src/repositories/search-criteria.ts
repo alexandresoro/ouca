@@ -4,6 +4,7 @@ import { sql, type IdentifierSqlToken } from "slonik";
 
 export type SearchCriteria = {
   entryId?: number;
+  inventoryId?: number;
   observerIds?: number[];
   temperature?: number | null;
   weatherIds?: number[];
@@ -35,6 +36,7 @@ export const reshapeSearchCriteria = (
 ): SearchCriteria | undefined => {
   const {
     entryId,
+    inventoryId,
     observerIds,
     temperature,
     weatherIds,
@@ -63,6 +65,7 @@ export const reshapeSearchCriteria = (
 
   const reshapedSearchCriteria = {
     entryId: entryId ? parseInt(entryId) : undefined,
+    inventoryId: inventoryId ? parseInt(inventoryId) : undefined,
     observerIds: observerIds?.map((id) => parseInt(id)) ?? undefined,
     temperature,
     weatherIds: weatherIds?.map((id) => parseInt(id)) ?? undefined,
@@ -126,6 +129,8 @@ const getIdentifierForCriteria = (criteriaName: keyof NonNullable<SearchCriteria
       return sql.identifier(["inventaire", "heure"]);
     case "entryId":
       return sql.identifier(["donnee", "id"]);
+    case "inventoryId":
+      return sql.identifier(["donnee", "inventaire_id"]);
     case "localityIds":
       return sql.identifier(["inventaire", "lieudit_id"]);
     case "weatherIds":

@@ -3,6 +3,7 @@ import { NICHEUR_CODES } from "../../types/nicheur.model.js";
 
 export const getSearchCriteriaParamsSchema = z.object({
   entryId: z.string().optional(),
+  inventoryId: z.string().optional(),
   observerIds: z.union([z.array(z.string()), z.string().transform((value) => [value])]).optional(),
   temperature: z.number().optional(),
   weatherIds: z.union([z.array(z.string()), z.string().transform((value) => [value])]).optional(),
