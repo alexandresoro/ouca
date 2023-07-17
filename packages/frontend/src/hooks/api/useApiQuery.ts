@@ -6,10 +6,10 @@ import useAppContext from "../useAppContext";
 import { type FetchError } from "./api-types";
 
 const useApiQuery = <
-  TQueryKey extends [string, Record<string, unknown>?],
-  TQueryFnData,
-  TError extends FetchError,
-  TData = TQueryFnData
+  TQueryFnData = unknown,
+  TError extends FetchError = FetchError,
+  TData = TQueryFnData,
+  TQueryKey extends unknown[] = unknown[]
 >(
   {
     path,

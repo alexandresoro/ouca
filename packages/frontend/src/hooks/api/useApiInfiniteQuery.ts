@@ -20,10 +20,10 @@ const getNextPage = (page: z.infer<PaginatedResponseSchemaType<z.ZodAny>>): numb
 
 const useApiInfiniteQuery = <
   S extends z.ZodAny,
-  TQueryKey extends [string, Record<string, unknown>?],
   TQueryFnData extends z.infer<PaginatedResponseSchemaType<S>>,
-  TError extends FetchError,
-  TData = TQueryFnData
+  TError extends FetchError = FetchError,
+  TData = TQueryFnData,
+  TQueryKey extends unknown[] = unknown[]
 >(
   {
     path,
