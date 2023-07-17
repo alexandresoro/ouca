@@ -1,9 +1,9 @@
 import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
-import { useEffect, type FunctionComponent } from "react";
+import { Fragment, useEffect, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import useApiQuery from "../../hooks/api/useApiQuery";
+import useApiInfiniteQuery from "../../hooks/api/useApiInfiniteQuery";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
-import Table from "../common/styled/table/Table";
+import InfiniteTable from "../common/styled/table/InfiniteTable";
 import TableSortLabel from "../common/styled/table/TableSortLabel";
 
 const COLUMNS = [
@@ -32,20 +32,18 @@ const COLUMNS = [
 const DonneesByEspeceTable: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<SpeciesOrderBy>();
+  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginatedTableParams<SpeciesOrderBy>();
 
   useEffect(() => {
     setOrderBy("nbDonnees");
     setSortOrder("desc");
   }, [setOrderBy, setSortOrder]);
 
-  const { data } = useApiQuery(
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery(
     {
       path: "/species",
       queryParams: {
-        pageNumber: page,
-        pageSize: rowsPerPage,
+        pageSize: 10,
         orderBy,
         sortOrder,
         extended: true,
@@ -59,10 +57,6 @@ const DonneesByEspeceTable: FunctionComponent = () => {
     }
   );
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
   const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -70,7 +64,7 @@ const DonneesByEspeceTable: FunctionComponent = () => {
   };
 
   return (
-    <Table
+    <InfiniteTable
       tableHead={
         <>
           {COLUMNS.map((column) => (
@@ -86,21 +80,25 @@ const DonneesByEspeceTable: FunctionComponent = () => {
           ))}
         </>
       }
-      tableRows={data?.data.map((espece) => {
+      tableRows={data?.pages.map((page) => {
         return (
-          <tr className="hover:bg-base-200" key={espece.id}>
-            <td>{espece.speciesClassName}</td>
-            <td>{espece.code}</td>
-            <td>{espece.nomFrancais}</td>
-            <td>{espece.nomLatin}</td>
-            <td>{espece.entriesCount}</td>
-          </tr>
+          <Fragment key={page.meta.pageNumber}>
+            {page.data.map((espece) => {
+              return (
+                <tr className="hover:bg-base-200" key={espece.id}>
+                  <td>{espece.speciesClassName}</td>
+                  <td>{espece.code}</td>
+                  <td>{espece.nomFrancais}</td>
+                  <td>{espece.nomLatin}</td>
+                  <td>{espece.entriesCount}</td>
+                </tr>
+              );
+            })}
+          </Fragment>
         );
       })}
-      page={page}
-      elementsPerPage={rowsPerPage}
-      count={data?.meta.count ?? 0}
-      onPageChange={handleChangePage}
+      enableScroll={hasNextPage}
+      onMoreRequested={() => fetchNextPage()}
     />
   );
 };

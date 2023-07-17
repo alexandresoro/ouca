@@ -1,13 +1,13 @@
 import { getEntriesExtendedResponse, type EntriesOrderBy } from "@ou-ca/common/api/entry";
 import { type EntryExtended } from "@ou-ca/common/entities/entry";
-import { useState, type FunctionComponent } from "react";
+import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiInfiniteQuery from "../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../hooks/api/useApiMutation";
-import useApiQuery from "../../hooks/api/useApiQuery";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
-import Table from "../common/styled/table/Table";
+import InfiniteTable from "../common/styled/table/InfiniteTable";
 import TableSortLabel from "../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
@@ -40,19 +40,17 @@ const DonneeTable: FunctionComponent = () => {
 
   const navigate = useNavigate();
 
-  const { page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<EntriesOrderBy>();
+  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginatedTableParams<EntriesOrderBy>();
 
   const [deleteDialog, setDeleteDialog] = useState<EntryExtended | null>(null);
 
   const { displayNotification } = useSnackbar();
 
-  const { data, refetch } = useApiQuery(
+  const { data, refetch, fetchNextPage, hasNextPage } = useApiInfiniteQuery(
     {
       path: "/entries",
       queryParams: {
-        pageNumber: page,
-        pageSize: rowsPerPage,
+        pageSize: 10,
         orderBy,
         sortOrder,
         extended: true,
@@ -106,10 +104,6 @@ const DonneeTable: FunctionComponent = () => {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
   const handleRequestSort = (sortingColumn: EntriesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -118,7 +112,7 @@ const DonneeTable: FunctionComponent = () => {
 
   return (
     <>
-      <Table
+      <InfiniteTable
         tableHead={
           <>
             <th />
@@ -138,22 +132,24 @@ const DonneeTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.data.map((donnee) => {
-          return donnee ? (
-            <DonneeDetailsRow
-              key={donnee.id}
-              donnee={donnee}
-              onViewAction={() => handleOpenDonneeDetails(donnee)}
-              onDeleteAction={() => handleDeleteDonnee(donnee)}
-            />
-          ) : (
-            <></>
+        tableRows={data?.pages.map((page) => {
+          return (
+            <Fragment key={page.meta.pageNumber}>
+              {page.data.map((donnee) => {
+                return (
+                  <DonneeDetailsRow
+                    key={donnee.id}
+                    donnee={donnee}
+                    onViewAction={() => handleOpenDonneeDetails(donnee)}
+                    onDeleteAction={() => handleDeleteDonnee(donnee)}
+                  />
+                );
+              })}
+            </Fragment>
           );
         })}
-        page={page}
-        elementsPerPage={rowsPerPage}
-        count={data?.meta.count ?? 0}
-        onPageChange={handleChangePage}
+        enableScroll={hasNextPage}
+        onMoreRequested={() => fetchNextPage()}
       />
 
       <DeletionConfirmationDialog
