@@ -11,6 +11,7 @@ import { type FastifyPluginCallback } from "fastify";
 import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { OucaError } from "../utils/errors.js";
+import { getPaginationMetadata } from "./controller-utils.js";
 
 const numberEstimatesController: FastifyPluginCallback<{
   services: Services;
@@ -66,9 +67,7 @@ const numberEstimatesController: FastifyPluginCallback<{
     const responseParser = extended ? getNumberEstimatesExtendedResponse : getNumberEstimatesResponse;
     const response = responseParser.parse({
       data,
-      meta: {
-        count,
-      },
+      meta: getPaginationMetadata(count, queryParams),
     });
 
     return await reply.send(response);

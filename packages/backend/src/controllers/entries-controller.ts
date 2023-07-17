@@ -14,6 +14,7 @@ import { type Donnee } from "../repositories/donnee/donnee-repository-types.js";
 import { type Services } from "../services/services.js";
 import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
+import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedInventory } from "./inventories-controller.js";
 
 const enrichedEntry = async (services: Services, entry: Donnee, user: LoggedUser | null): Promise<GetEntryResponse> => {
@@ -117,9 +118,7 @@ const entriesController: FastifyPluginCallback<{
     const responseParser = extended ? getEntriesExtendedResponse : getEntriesResponse;
     const response = responseParser.parse({
       data,
-      meta: {
-        count,
-      },
+      meta: getPaginationMetadata(count, queryParams),
     });
 
     return await reply.send(response);

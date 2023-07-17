@@ -12,6 +12,7 @@ import { NotFoundError } from "slonik";
 import { type Services } from "../services/services.js";
 import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
+import { getPaginationMetadata } from "./controller-utils.js";
 
 export const enrichedLocality = async (
   services: Services,
@@ -90,9 +91,7 @@ const localitiesController: FastifyPluginCallback<{
     const responseParser = extended ? getLocalitiesExtendedResponse : getLocalitiesResponse;
     const response = responseParser.parse({
       data,
-      meta: {
-        count,
-      },
+      meta: getPaginationMetadata(count, queryParams),
     });
 
     return await reply.send(response);
