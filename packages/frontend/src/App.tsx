@@ -16,6 +16,7 @@ const Layout = lazy(() => import("./components/Layout"));
 const NewAccount = lazy(() => import("./components/new-account/NewAccount"));
 const NewEntryPage = lazy(() => import("./components/entry/new-entry-page/NewEntryPage"));
 const ExistingEntryPage = lazy(() => import("./components/entry/existing-entry-page/ExistingEntryPage"));
+const InventoryPage = lazy(() => import("./components/inventory/inventory-page/InventoryPage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
 const ObservateurManage = lazy(() => import("./components/manage/observateur/ObservateurManage"));
 const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
@@ -101,6 +102,14 @@ const App: FunctionComponent = () => {
                         element={
                           <Suspense fallback={<></>}>
                             <ExistingEntryPage />
+                          </Suspense>
+                        }
+                      />
+                      <Route
+                        path="inventory/:id"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <InventoryPage />
                           </Suspense>
                         }
                       />

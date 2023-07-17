@@ -132,6 +132,14 @@
     "updateSuccess": "L'inventaire a été mis à jour avec succès",
     "updateError": "Une erreur est survenue lors de la mise à jour de l'inventaire"
   },
+  "inventoryMap": {
+    "inventoryPosition": "Position de l'inventaire",
+    "localityPosition": "Lieu-dit associé à l'inventaire"
+  },
+  "inventoryPage": {
+    "inventoryNotFound": "L'inventaire que vous recherchez n'existe pas.",
+    "genericError": "Une erreur est survenue lors de la récupération de cet inventaire."
+  },
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",
   "genders": "Sexes",
@@ -153,6 +161,7 @@
   "maps": {
     "title": "Carte",
     "opacityPhotosLabel": "Opacité de la vue photos",
+    "currentPosition": "Position actuelle",
     "currentPosition": "Position actuelle",
     "resetCustomCoordinates": "Revenir aux coordonnées du lieu-dit",
     "maps": {
