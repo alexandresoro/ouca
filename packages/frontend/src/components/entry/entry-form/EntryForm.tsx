@@ -144,9 +144,6 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
                 {existingEntryId != null && existingEntry != null && !isFetchingEntry && (
                   <EntryDetailsForm key={entryFormKey} existingEntry={existingEntry} />
                 )}
-                {existingEntryId === undefined && (
-                  <EntryDetailsForm key={entryFormKey} isNewEntry={true} existingInventoryId={existingInventoryId} />
-                )}
               </Tab.Panel>
               <Tab.Panel unmount={false}>
                 <Suspense fallback={<></>}>

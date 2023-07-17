@@ -1,11 +1,16 @@
-import { useQuery, type UseQueryOptions, type UseQueryResult } from "@tanstack/react-query";
+import { useQuery, type QueryFunction, type UseQueryOptions } from "@tanstack/react-query";
 import { useAuth } from "react-oidc-context";
 import { type z } from "zod";
 import { toUrlSearchParams } from "../../utils/url-search-params";
 import useAppContext from "../useAppContext";
 import { type FetchError } from "./api-types";
 
-function useApiQuery<SType>(
+const useApiQuery = <
+  TQueryKey extends [string, Record<string, unknown>?],
+  TQueryFnData,
+  TError extends FetchError,
+  TData = TQueryFnData
+>(
   {
     path,
     queryParams,
@@ -13,22 +18,10 @@ function useApiQuery<SType>(
   }: {
     path: string;
     queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
-    schema?: z.ZodType<SType>;
+    schema?: z.ZodType<TQueryFnData>;
   },
-  queryOptions?: Omit<UseQueryOptions<SType, FetchError>, "queryKey" | "queryFn">
-): UseQueryResult<SType, FetchError>;
-function useApiQuery<SType>(
-  {
-    path,
-    queryParams,
-    schema,
-  }: {
-    path: string;
-    queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
-    schema?: z.ZodType<SType>;
-  },
-  queryOptions?: Omit<UseQueryOptions<unknown, FetchError>, "queryKey" | "queryFn">
-) {
+  queryOptions?: Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryKey" | "queryFn">
+) => {
   const { user } = useAuth();
   const { apiUrl } = useAppContext();
 
@@ -36,36 +29,38 @@ function useApiQuery<SType>(
 
   const queryString = toUrlSearchParams(queryParams).toString();
 
-  const queryKey = ["API", path, ...(queryParams ? [queryParams] : [])];
+  const queryKey = ["API", path, ...(queryParams ? [queryParams] : [])] as unknown as TQueryKey;
 
-  return useQuery<unknown, FetchError>({
+  const queryFn: QueryFunction<TQueryFnData, TQueryKey> = async () => {
+    const response = await fetch(`${apiUrl}/api/v1${path}${queryString.length ? `?${queryString}` : ""}`, {
+      headers: {
+        ...(accessToken
+          ? {
+              Authorization: `Bearer ${accessToken}`,
+            }
+          : {}),
+      },
+    });
+    if (!response.ok) {
+      return Promise.reject({
+        status: response.status,
+        statusText: response.statusText,
+      } satisfies FetchError);
+    }
+    const jsonResponse = (await response.json()) as TQueryFnData;
+    if (schema) {
+      // If response schema is provided, use it
+      return schema.parse(jsonResponse);
+    } else {
+      return jsonResponse;
+    }
+  };
+
+  return useQuery({
     ...queryOptions,
-    queryKey: queryKey,
-    queryFn: async () => {
-      const response = await fetch(`${apiUrl}/api/v1${path}${queryString.length ? `?${queryString}` : ""}`, {
-        headers: {
-          ...(accessToken
-            ? {
-                Authorization: `Bearer ${accessToken}`,
-              }
-            : {}),
-        },
-      });
-      if (!response.ok) {
-        return Promise.reject({
-          status: response.status,
-          statusText: response.statusText,
-        } satisfies FetchError);
-      }
-      const jsonResponse = (await response.json()) as unknown;
-      if (schema) {
-        // If response schema is provided, use it
-        return schema.parse(jsonResponse);
-      } else {
-        return jsonResponse;
-      }
-    },
+    queryKey,
+    queryFn,
   });
-}
+};
 
 export default useApiQuery;

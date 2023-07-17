@@ -110,6 +110,11 @@
   "environments": "Milieux naturels",
   "firstNameLabel": "Prénom",
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
+  "inventoryDetails": {
+    "entries": {
+      "title": "Données appartenant à cet inventaire"
+    }
+  },
   "inventoryForm": {
     "title": "Fiche inventaire",
     "createNewEntryFromInventory": "Créer une nouvelle fiche espèce à partir de cet inventaire",
@@ -164,6 +169,9 @@
         "attribution": "IGN-F/Géoportail"
       }
     }
+  },
+  "infiniteScroll": {
+    "more": "plus"
   },
   "name": "Nom",
   "newAccount": {

@@ -9,9 +9,9 @@ import EntryDetailsSpeciesForm from "./EntryDetailsSpeciesForm";
 
 type EntryDetailsFormProps =
   | {
-      // New entry (w/ possible existing inventory id as template)
+      // New entry
       isNewEntry: true;
-      existingInventoryId?: string;
+      existingInventoryId: string;
       existingEntry?: never;
     }
   | {
@@ -28,11 +28,13 @@ const EntryDetailsForm: FunctionComponent<EntryDetailsFormProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  const inventoryId = existingEntry === undefined ? existingInventoryId : existingEntry.inventoryId;
+
   const defaultFormValues = (
     existingEntry === undefined
       ? {
           // New entry
-          inventoryId: existingInventoryId ?? null,
+          inventoryId,
           speciesId: null,
           sexId: null,
           ageId: null,
@@ -47,7 +49,7 @@ const EntryDetailsForm: FunctionComponent<EntryDetailsFormProps> = ({
         }
       : {
           // Existing entry
-          inventoryId: existingEntry.inventoryId,
+          inventoryId,
           speciesId: existingEntry.species.id,
           sexId: existingEntry.sex.id,
           ageId: existingEntry.age.id,
