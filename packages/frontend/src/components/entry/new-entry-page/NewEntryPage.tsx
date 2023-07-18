@@ -1,4 +1,4 @@
-import { getEntryLastResponse } from "@ou-ca/common/api/entry";
+import { getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import { ChevronsRight } from "@styled-icons/boxicons-regular";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,15 +21,24 @@ const NewEntryPage: FunctionComponent = () => {
     setCurrentStep(getNewEntryStepFromHash(hash));
   }, [hash]);
 
-  const { data } = useApiQuery({ path: "/entries/last", schema: getEntryLastResponse });
+  const { data: lastInventoryData } = useApiQuery({
+    path: "/inventories",
+    queryParams: {
+      orderBy: "creationDate",
+      sortOrder: "desc",
+      pageNumber: 1,
+      pageSize: 1,
+    },
+    schema: getInventoriesResponse,
+  });
 
-  const hasLastDonnee = data?.id != null;
+  const hasLastInventory = lastInventoryData?.data?.length != null && lastInventoryData.data.length > 0;
 
   const existingInventoryId = searchParams.get("inventoryId") ?? undefined;
 
-  const navigateToLastDonnee = () => {
-    if (data?.id != null) {
-      navigate(`/entry/${data.id}`, { replace: true });
+  const navigateToLastInventory = () => {
+    if (lastInventoryData?.data?.[0] != null) {
+      navigate(`/inventory/${lastInventoryData.data[0].id}`);
     }
   };
 
@@ -44,15 +53,18 @@ const NewEntryPage: FunctionComponent = () => {
           <span className="indicator-item badge badge-xs badge-primary" />
           <h1 className="flex items-center gap-3 text-2xl font-normal">{t("createPage.newEntryTitle")}</h1>
         </div>
-        <div className="tooltip tooltip-bottom" data-tip={hasLastDonnee ? t("createPage.goToLastDataDescription") : ""}>
+        <div
+          className="tooltip tooltip-bottom"
+          data-tip={hasLastInventory ? t("createPage.goToLastInventoryDescription") : ""}
+        >
           <button
             type="button"
-            className={`btn btn-sm ${hasLastDonnee ? "btn-accent" : "btn-disabled"}`}
-            tabIndex={hasLastDonnee ? 0 : -1}
-            onClick={navigateToLastDonnee}
+            className={`btn btn-sm ${hasLastInventory ? "btn-accent" : "btn-disabled"}`}
+            tabIndex={hasLastInventory ? 0 : -1}
+            onClick={navigateToLastInventory}
           >
             <ChevronsRight className="h-6" />
-            {t("createPage.goToLastData")}
+            {t("createPage.goToLastInventory")}
           </button>
         </div>
       </StyledPanelHeader>

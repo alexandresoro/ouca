@@ -30,8 +30,8 @@
     "headerTitle": "Donnée",
     "newEntryTitle": "Nouvelle donnée",
     "newBadge": "Nouvelle",
-    "goToLastData": "Dernière donnée",
-    "goToLastDataDescription": "Aller à la dernière donnée enregistrée"
+    "goToLastInventory": "Dernier inventaire",
+    "goToLastInventoryDescription": "Aller au dernier inventaire enregistré"
   },
   "deleteAgeDialogMsg": "Êtes-vous certain de vouloir supprimer l'âge {{name}} ?",
   "deleteAgeDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
