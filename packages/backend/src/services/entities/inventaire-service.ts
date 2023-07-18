@@ -39,6 +39,11 @@ export const buildInventaireService = ({
     return inventaire;
   };
 
+  const findInventoryIndex = async (id: number, loggedUser: LoggedUser | null): Promise<number | null> => {
+    validateAuthorization(loggedUser);
+    return inventaireRepository.findInventoryIndex(id);
+  };
+
   const findInventaireOfDonneeId = async (
     donneeId: string | undefined,
     loggedUser: LoggedUser | null
@@ -242,6 +247,7 @@ export const buildInventaireService = ({
 
   return {
     findInventaire,
+    findInventoryIndex,
     findInventaireOfDonneeId,
     findAllInventaires,
     findPaginatedInventaires,

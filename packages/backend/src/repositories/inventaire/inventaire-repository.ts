@@ -1,4 +1,5 @@
 import { sql, type DatabasePool, type DatabaseTransactionConnection } from "slonik";
+import { z } from "zod";
 import { countSchema } from "../common.js";
 import {
   buildPaginationFragment,
@@ -45,6 +46,27 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     const rawInventaire = await slonik.maybeOne(query);
 
     return reshapeRawInventaire(rawInventaire);
+  };
+
+  const findInventoryIndex = async (id: number): Promise<number | null> => {
+    const query = sql.type(
+      z.object({
+        rowNumber: z.number(),
+      })
+    )`
+      SELECT
+	      row_number
+      FROM (
+	      SELECT
+		      id,
+		      ROW_NUMBER() OVER (ORDER BY date_creation DESC)
+	      FROM
+		      basenaturaliste.inventaire) AS rown
+      WHERE
+	      id = ${id}
+    `;
+
+    return slonik.maybeOneFirst(query);
   };
 
   const findInventaires = async ({
@@ -262,6 +284,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
   return {
     findInventaireById,
     findInventaireByDonneeId,
+    findInventoryIndex,
     findInventaires,
     getCount,
     findExistingInventaire,

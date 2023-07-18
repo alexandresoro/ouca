@@ -27,6 +27,8 @@ export type InventoriesSearchParams = z.infer<typeof getInventoriesQueryParamsSc
 
 export const getInventoriesResponse = getPaginatedResponseSchema(inventoryExtendedSchema);
 
+export const getInventoryIndexResponse = z.number();
+
 /**
  * `PUT` `/inventory/:id` Update of inventory
  * `POST` `/inventory` Create new inventory
