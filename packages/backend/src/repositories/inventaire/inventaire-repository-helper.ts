@@ -1,6 +1,6 @@
 import { sql, type IdentifierSqlToken } from "slonik";
 import { buildAndClause } from "../repository-helpers.js";
-import { type InventaireFindMatchingInput } from "./inventaire-repository-types.js";
+import { type InventaireFindManyInput, type InventaireFindMatchingInput } from "./inventaire-repository-types.js";
 
 export const buildFindMatchingInventaireClause = (criteria: InventaireFindMatchingInput) => {
   if (!criteria) {
@@ -44,4 +44,13 @@ export const buildFindMatchingInventaireClause = (criteria: InventaireFindMatchi
   }
 
   return sql.fragment`WHERE ${builtClause}`;
+};
+
+export const buildOrderByIdentifier = (orderBy: InventaireFindManyInput["orderBy"]): IdentifierSqlToken => {
+  switch (orderBy) {
+    case "creationDate":
+      return sql.identifier(["inventaire", "date_creation"]);
+    default:
+      throw new Error();
+  }
 };

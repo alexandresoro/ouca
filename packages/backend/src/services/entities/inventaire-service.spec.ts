@@ -1,4 +1,4 @@
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type InventoriesSearchParams, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Logger } from "pino";
 import { createMockPool } from "slonik";
 import { vi } from "vitest";
@@ -56,10 +56,10 @@ describe("Find inventary", () => {
 
     inventaireRepository.findInventaireById.mockResolvedValueOnce(inventaryData);
 
-    await inventaireService.findInventaire(inventaryData.id, loggedUser);
+    await inventaireService.findInventaire(12, loggedUser);
 
     expect(inventaireRepository.findInventaireById).toHaveBeenCalledTimes(1);
-    expect(inventaireRepository.findInventaireById).toHaveBeenLastCalledWith(inventaryData.id);
+    expect(inventaireRepository.findInventaireById).toHaveBeenLastCalledWith(12);
   });
 
   test("should handle inventary not found", async () => {
@@ -107,6 +107,53 @@ test("Find all inventaries", async () => {
   expect(inventaireRepository.findInventaires).toHaveBeenCalledTimes(1);
 });
 
+describe("Inventories paginated find by search criteria", () => {
+  test("should handle params when retrieving paginated inventories", async () => {
+    const inventoriesData = [mock<Inventaire>(), mock<Inventaire>(), mock<Inventaire>()];
+    const loggedUser = mock<LoggedUser>();
+
+    const searchParams: InventoriesSearchParams = {
+      orderBy: "creationDate",
+      sortOrder: "desc",
+      pageNumber: 1,
+      pageSize: 10,
+    };
+
+    inventaireRepository.findInventaires.mockResolvedValueOnce([inventoriesData[0]]);
+
+    await inventaireService.findPaginatedInventaires(loggedUser, searchParams);
+
+    expect(inventaireRepository.findInventaires).toHaveBeenCalledTimes(1);
+    expect(inventaireRepository.findInventaires).toHaveBeenLastCalledWith({
+      orderBy: "creationDate",
+      sortOrder: "desc",
+      offset: 0,
+      limit: searchParams.pageSize,
+    });
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(inventaireService.findPaginatedInventaires(null, mock<InventoriesSearchParams>())).rejects.toEqual(
+      new OucaError("OUCA0001")
+    );
+  });
+});
+
+describe("Entities count by search criteria", () => {
+  test("should handle to be called without criteria provided", async () => {
+    const loggedUser = mock<LoggedUser>();
+
+    await inventaireService.getInventairesCount(loggedUser);
+
+    expect(inventaireRepository.getCount).toHaveBeenCalledTimes(1);
+    expect(inventaireRepository.getCount).toHaveBeenLastCalledWith();
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(inventaireService.getInventairesCount(null)).rejects.toEqual(new OucaError("OUCA0001"));
+  });
+});
+
 describe("Update of an inventory", () => {
   describe("to values already matching an existing inventory", () => {
     test("should return the correct state if no migration requested", async () => {
@@ -119,13 +166,13 @@ describe("Update of an inventory", () => {
       lieuditRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
       inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
-          id: 345,
+          id: "345",
         })
       );
 
       await expect(inventaireService.updateInventaire(12, inventoryData, loggedUser)).rejects.toEqual({
         inventaireExpectedToBeUpdated: 12,
-        correspondingInventaireFound: 345,
+        correspondingInventaireFound: "345",
       });
 
       expect(donneeRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
@@ -142,7 +189,7 @@ describe("Update of an inventory", () => {
       lieuditRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
       inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
-          id: 345,
+          id: "345",
         })
       );
 
@@ -152,7 +199,7 @@ describe("Update of an inventory", () => {
       expect(donneeRepository.updateAssociatedInventaire).toHaveBeenCalledWith(12, 345, any());
       expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
       expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledWith(12, any());
-      expect(result.id).toEqual(345);
+      expect(result.id).toEqual("345");
     });
 
     test("should throw an error when the requester is not logged", async () => {
@@ -178,7 +225,7 @@ describe("Update of an inventory", () => {
       inventaireRepository.findExistingInventaire.mockResolvedValueOnce(null);
       inventaireRepository.updateInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
-          id: 12,
+          id: "12",
         })
       );
 
@@ -228,7 +275,7 @@ describe("Creation of an inventory", () => {
       lieuditRepository.findLieuditById.mockResolvedValue(mock<Lieudit>());
       inventaireRepository.findExistingInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
-          id: 345,
+          id: "345",
         })
       );
 
@@ -236,7 +283,7 @@ describe("Creation of an inventory", () => {
 
       expect(donneeRepository.updateAssociatedInventaire).not.toHaveBeenCalled();
       expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
-      expect(result.id).toEqual(345);
+      expect(result.id).toEqual("345");
     });
 
     test("should throw an error when the requester is not logged", async () => {
@@ -260,7 +307,7 @@ describe("Creation of an inventory", () => {
       inventaireRepository.findExistingInventaire.mockResolvedValueOnce(null);
       inventaireRepository.createInventaire.mockResolvedValueOnce(
         mock<Inventaire>({
-          id: 322,
+          id: "322",
         })
       );
 

@@ -1,12 +1,10 @@
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import {
-  COORDINATES_SYSTEMS,
-  type CoordinatesSystemType,
-} from "@ou-ca/common/coordinates-system/coordinates-system.object";
+import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
+import { type SortOrder } from "../common.js";
 
 export const inventaireSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   observateurId: z.number(),
   date: z.string(), // YYYY-MM-DD
   heure: z.string().nullable(),
@@ -15,7 +13,6 @@ export const inventaireSchema = z.object({
   altitude: z.number().nullable(),
   longitude: z.number().nullable(),
   latitude: z.number().nullable(),
-  coordinatesSystem: z.enum(COORDINATES_SYSTEMS).nullable(),
   temperature: z.number().nullable(),
   dateCreation: z.number(), // timestamp
   ownerId: z.string().uuid().nullable(),
@@ -23,14 +20,20 @@ export const inventaireSchema = z.object({
 
 export type RawInventaire = z.infer<typeof inventaireSchema>;
 
-export type Inventaire = Omit<RawInventaire, "altitude" | "latitude" | "longitude" | "coordinatesSystem"> & {
+export type Inventaire = Omit<RawInventaire, "altitude" | "latitude" | "longitude"> & {
   customizedCoordinates: {
     altitude: number;
     latitude: number;
     longitude: number;
-    system: CoordinatesSystemType;
   } | null;
 };
+
+export type InventaireFindManyInput = Partial<{
+  orderBy: "creationDate" | null;
+  sortOrder: SortOrder;
+  offset: number | null;
+  limit: number | null;
+}>;
 
 export type InventaireFindMatchingInput = InventaireCreateInput &
   Required<Pick<UpsertInventoryInput, "associateIds" | "weatherIds">>;

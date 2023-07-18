@@ -5,7 +5,7 @@ import { observerSchema } from "./observer.js";
 import { weatherSchema } from "./weather.js";
 
 export const inventorySchema = z.object({
-  id: z.coerce.string(),
+  id: z.string(),
   observer: observerSchema,
   associates: z.array(observerSchema),
   date: z.string(),

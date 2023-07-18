@@ -179,12 +179,17 @@ export const generateDonneesExport = async (
   const objectsToExport = await Promise.all(
     donnees.map(async (donnee) => {
       const inventaire = await inventaireService.findInventaireOfDonneeId(donnee.id, loggedUser);
-      const observateur = await observateurService.findObservateurOfInventaireId(inventaire?.id, loggedUser);
-      const lieudit = await lieuditService.findLieuDitOfInventaireId(inventaire?.id, loggedUser);
+
+      if (!inventaire) {
+        return Promise.reject("Should not happen");
+      }
+
+      const observateur = await observateurService.findObservateurOfInventaireId(parseInt(inventaire.id), loggedUser);
+      const lieudit = await lieuditService.findLieuDitOfInventaireId(parseInt(inventaire.id), loggedUser);
       const commune = await communeService.findCommuneOfLieuDitId(lieudit?.id, loggedUser);
       const departement = await departementService.findDepartementOfCommuneId(commune?.id, loggedUser);
-      const associes = await observateurService.findAssociesOfInventaireId(inventaire?.id, loggedUser);
-      const meteos = await meteoService.findMeteosOfInventaireId(inventaire?.id, loggedUser);
+      const associes = await observateurService.findAssociesOfInventaireId(parseInt(inventaire.id), loggedUser);
+      const meteos = await meteoService.findMeteosOfInventaireId(parseInt(inventaire.id), loggedUser);
       const espece = await especeService.findEspeceOfDonneeId(donnee?.id, loggedUser);
       const classe = await classeService.findClasseOfEspeceId(espece?.id, loggedUser);
       const age = await ageService.findAgeOfDonneeId(donnee?.id, loggedUser);

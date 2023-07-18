@@ -1,4 +1,4 @@
-import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type InventoriesSearchParams, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Logger } from "pino";
 import { type DatabasePool } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
@@ -10,6 +10,7 @@ import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repos
 import { type LoggedUser } from "../../types/User.js";
 import { logger } from "../../utils/logger.js";
 import { validateAuthorization } from "./authorization-utils.js";
+import { getSqlPagination } from "./entities-utils.js";
 import { reshapeInputInventaireUpsertData } from "./inventaire-service-reshape.js";
 
 type InventaireServiceDependencies = {
@@ -53,6 +54,32 @@ export const buildInventaireService = ({
     return [...inventaires];
   };
 
+  const findPaginatedInventaires = async (
+    loggedUser: LoggedUser | null,
+    options: InventoriesSearchParams
+  ): Promise<Inventaire[]> => {
+    validateAuthorization(loggedUser);
+
+    const { orderBy: orderByField, sortOrder, pageSize, pageNumber } = options;
+
+    const inventories = await inventaireRepository.findInventaires({
+      ...getSqlPagination({
+        pageNumber,
+        pageSize,
+      }),
+      orderBy: orderByField,
+      sortOrder,
+    });
+
+    return [...inventories];
+  };
+
+  const getInventairesCount = async (loggedUser: LoggedUser | null): Promise<number> => {
+    validateAuthorization(loggedUser);
+
+    return inventaireRepository.getCount();
+  };
+
   const createInventaire = async (input: UpsertInventoryInput, loggedUser: LoggedUser | null): Promise<Inventaire> => {
     validateAuthorization(loggedUser);
 
@@ -93,7 +120,7 @@ export const buildInventaireService = ({
 
         if (associateIds?.length) {
           await inventaireAssocieRepository.insertInventaireWithAssocies(
-            createdInventaire.id,
+            parseInt(createdInventaire.id),
             associateIds.map((associateId) => parseInt(associateId)),
             transactionConnection
           );
@@ -101,7 +128,7 @@ export const buildInventaireService = ({
 
         if (weatherIds?.length) {
           await inventaireMeteoRepository.insertInventaireWithMeteos(
-            createdInventaire.id,
+            parseInt(createdInventaire.id),
             weatherIds.map((weatherId) => parseInt(weatherId)),
             transactionConnection
           );
@@ -167,7 +194,7 @@ export const buildInventaireService = ({
 
       // We update the inventaire ID for the donnees and we delete the duplicated inventaire
       await slonik.transaction(async (transactionConnection) => {
-        await donneeRepository.updateAssociatedInventaire(id, existingInventaire.id, transactionConnection);
+        await donneeRepository.updateAssociatedInventaire(id, parseInt(existingInventaire.id), transactionConnection);
         await inventaireRepository.deleteInventaireById(id, transactionConnection);
       });
 
@@ -217,6 +244,8 @@ export const buildInventaireService = ({
     findInventaire,
     findInventaireOfDonneeId,
     findAllInventaires,
+    findPaginatedInventaires,
+    getInventairesCount,
     createInventaire,
     updateInventaire,
   };

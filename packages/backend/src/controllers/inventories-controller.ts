@@ -1,9 +1,16 @@
-import { getInventoryResponse, upsertInventoryInput, upsertInventoryResponse } from "@ou-ca/common/api/inventory";
+import {
+  getInventoriesQueryParamsSchema,
+  getInventoriesResponse,
+  getInventoryResponse,
+  upsertInventoryInput,
+  upsertInventoryResponse,
+} from "@ou-ca/common/api/inventory";
 import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
 import { type FastifyPluginCallback } from "fastify";
 import { type Inventaire } from "../repositories/inventaire/inventaire-repository-types.js";
 import { type Services } from "../services/services.js";
 import { type LoggedUser } from "../types/User.js";
+import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedLocality } from "./localities-controller.js";
 
 export const enrichedInventory = async (
@@ -12,10 +19,10 @@ export const enrichedInventory = async (
   user: LoggedUser | null
 ): Promise<InventoryExtended> => {
   const [observer, associates, locality, weathers] = await Promise.all([
-    services.observateurService.findObservateurOfInventaireId(inventory.id, user),
-    services.observateurService.findAssociesOfInventaireId(inventory.id, user),
-    services.lieuditService.findLieuDitOfInventaireId(inventory.id, user),
-    services.meteoService.findMeteosOfInventaireId(inventory.id, user),
+    services.observateurService.findObservateurOfInventaireId(parseInt(inventory.id), user),
+    services.observateurService.findAssociesOfInventaireId(parseInt(inventory.id), user),
+    services.lieuditService.findLieuDitOfInventaireId(parseInt(inventory.id), user),
+    services.meteoService.findMeteosOfInventaireId(parseInt(inventory.id), user),
   ]);
 
   if (!observer || !locality) {
@@ -26,7 +33,6 @@ export const enrichedInventory = async (
 
   return {
     ...inventory,
-    id: `${inventory.id}`,
     observer,
     associates,
     locality: localityEnriched,
@@ -56,6 +62,35 @@ const inventoriesController: FastifyPluginCallback<{
     } catch (e) {
       return await reply.status(404).send();
     }
+  });
+
+  fastify.get("/", async (req, reply) => {
+    const parsedQueryParamsResult = getInventoriesQueryParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const { data: queryParams } = parsedQueryParamsResult;
+
+    const [inventoriesData, count] = await Promise.all([
+      inventaireService.findPaginatedInventaires(req.user, queryParams),
+      inventaireService.getInventairesCount(req.user),
+    ]);
+
+    // TODO look to optimize this request
+    const enrichedInventories = await Promise.all(
+      inventoriesData.map(async (inventoryData) => {
+        return enrichedInventory(services, inventoryData, req.user);
+      })
+    );
+
+    const response = getInventoriesResponse.parse({
+      data: enrichedInventories,
+      meta: getPaginationMetadata(count, queryParams),
+    });
+
+    return await reply.send(response);
   });
 
   fastify.post("/", async (req, reply) => {

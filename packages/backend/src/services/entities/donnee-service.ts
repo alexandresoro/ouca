@@ -225,11 +225,14 @@ export const buildDonneeService = ({
       }
 
       // Check how many donnees the inventaire has after the deletion
-      const nbDonneesOfInventaire = await donneeRepository.getCountByInventaireId(inventaire.id, transactionConnection);
+      const nbDonneesOfInventaire = await donneeRepository.getCountByInventaireId(
+        parseInt(inventaire.id),
+        transactionConnection
+      );
 
       if (nbDonneesOfInventaire === 0) {
         // If the inventaire has no more donnees then we remove the inventaire
-        await inventaireRepository.deleteInventaireById(inventaire.id, transactionConnection);
+        await inventaireRepository.deleteInventaireById(parseInt(inventaire.id), transactionConnection);
       }
 
       return deletedDonnee;

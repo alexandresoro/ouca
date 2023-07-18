@@ -234,11 +234,13 @@ export class ImportDonneeService extends ImportService {
         existingInventaire.customizedCoordinates?.latitude === inputInventaire.coordinates?.latitude &&
         existingInventaire.temperature === inputInventaire.temperature &&
         areSetsContainingSameValues(
-          new Set(await this.services.observateurService.findAssociesIdsOfInventaireId(existingInventaire.id)),
+          new Set(
+            await this.services.observateurService.findAssociesIdsOfInventaireId(parseInt(existingInventaire.id))
+          ),
           new Set(inputInventaire.associateIds)
         ) &&
         areSetsContainingSameValues(
-          new Set(await this.services.meteoService.findMeteosIdsOfInventaireId(existingInventaire.id)),
+          new Set(await this.services.meteoService.findMeteosIdsOfInventaireId(parseInt(existingInventaire.id))),
           new Set(inputInventaire.weatherIds)
         )
       );
@@ -247,7 +249,7 @@ export class ImportDonneeService extends ImportService {
     // Check if already have a similar donnee in the database
     const existingDonneeDatabase = this.existingDonnees.find(async (donnee) => {
       return (
-        parseInt(donnee.inventaireId) === existingInventaire?.id &&
+        donnee.inventaireId === existingInventaire?.id &&
         donnee.especeId === espece.id &&
         donnee.sexeId === sexe.id &&
         donnee.ageId === age.id &&
@@ -275,7 +277,7 @@ export class ImportDonneeService extends ImportService {
     // Check if already have a similar donnee in the ones we want to create
     const existingDonneeNew = this.newDonnees.find((donnee) => {
       return (
-        parseInt(donnee.inventoryId) === existingInventaire?.id &&
+        donnee.inventoryId === existingInventaire?.id &&
         `${donnee.speciesId}` === espece.id &&
         `${donnee.sexId}` === sexe.id &&
         `${donnee.ageId}` === age.id &&

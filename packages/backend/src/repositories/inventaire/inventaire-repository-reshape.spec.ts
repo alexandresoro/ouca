@@ -9,7 +9,6 @@ describe("Inventaire reshaper", () => {
         altitude: 12,
         latitude: 45,
         longitude: 0,
-        coordinatesSystem: "gps",
       });
 
       const inventaire = reshapeRawInventaire(rawInventaire);
@@ -18,7 +17,6 @@ describe("Inventaire reshaper", () => {
         altitude: 12,
         latitude: 45,
         longitude: 0,
-        system: "gps",
       });
     });
 
@@ -27,7 +25,6 @@ describe("Inventaire reshaper", () => {
         altitude: 12,
         latitude: null,
         longitude: 0,
-        coordinatesSystem: "gps",
       });
 
       const inventaire = reshapeRawInventaire(rawInventaire);
@@ -40,7 +37,6 @@ describe("Inventaire reshaper", () => {
         altitude: null,
         latitude: null,
         longitude: null,
-        coordinatesSystem: null,
       });
 
       const inventaire = reshapeRawInventaire(rawInventaire);

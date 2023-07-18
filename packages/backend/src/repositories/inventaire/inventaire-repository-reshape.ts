@@ -8,15 +8,14 @@ export function reshapeRawInventaire(rawInventaire: RawInventaire | null): Inven
     return null;
   }
 
-  const { altitude, latitude, longitude, coordinatesSystem, ...restInventaire } = rawInventaire;
+  const { altitude, latitude, longitude, ...restInventaire } = rawInventaire;
 
   const customizedCoordinates =
-    coordinatesSystem != null && altitude != null && latitude != null && longitude != null
+    altitude != null && latitude != null && longitude != null
       ? {
           altitude,
           latitude,
           longitude,
-          system: coordinatesSystem,
         }
       : null;
 

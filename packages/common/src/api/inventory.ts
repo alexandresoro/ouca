@@ -1,6 +1,7 @@
 import { isAfter, isBefore } from "date-fns";
 import { z } from "zod";
 import { inventoryExtendedSchema, inventorySchema } from "../entities/inventory.js";
+import { getPaginatedResponseSchema, paginationQueryParamsSchema } from "./common/pagination.js";
 
 /**
  * `GET` `/inventory/:id`
@@ -9,6 +10,22 @@ import { inventoryExtendedSchema, inventorySchema } from "../entities/inventory.
 export const getInventoryResponse = inventoryExtendedSchema;
 
 export type GetInventoryResponse = z.infer<typeof getInventoryResponse>;
+
+/**
+ * `GET` `/inventories`
+ *  Retrieve paginated inventories results
+ */
+export const INVENTORIES_ORDER_BY_ELEMENTS = ["creationDate"] as const;
+export type InventoriesOrderBy = typeof INVENTORIES_ORDER_BY_ELEMENTS[number];
+
+export const getInventoriesQueryParamsSchema = paginationQueryParamsSchema.required().extend({
+  orderBy: z.enum(INVENTORIES_ORDER_BY_ELEMENTS).optional(),
+  sortOrder: z.enum(["asc", "desc"]).optional(),
+});
+
+export type InventoriesSearchParams = z.infer<typeof getInventoriesQueryParamsSchema>;
+
+export const getInventoriesResponse = getPaginatedResponseSchema(inventoryExtendedSchema);
 
 /**
  * `PUT` `/inventory/:id` Update of inventory
