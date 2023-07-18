@@ -53,7 +53,7 @@
     "es-main": "1.2.0",
     "exceljs": "4.3.0",
     "fastify": "4.19.2",
-    "fastify-plugin": "4.5.0",
+    "fastify-plugin": "4.5.1",
     "ioredis": "5.3.2",
     "pino": "8.14.1",
     "pino-pretty": "10.0.1",
