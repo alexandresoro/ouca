@@ -1,6 +1,7 @@
 import {
   getInventoriesQueryParamsSchema,
   getInventoriesResponse,
+  getInventoryIndexParamsSchema,
   getInventoryIndexResponse,
   getInventoryResponse,
   upsertInventoryInput,
@@ -70,7 +71,17 @@ const inventoriesController: FastifyPluginCallback<{
       id: number;
     };
   }>("/:id/index", async (req, reply) => {
-    const inventoryIndex = await inventaireService.findInventoryIndex(req.params.id, req.user);
+    const parsedQueryParamsResult = getInventoryIndexParamsSchema.safeParse(req.query);
+
+    if (!parsedQueryParamsResult.success) {
+      return await reply.status(400).send(parsedQueryParamsResult.error.issues);
+    }
+
+    const inventoryIndex = await inventaireService.findInventoryIndex(
+      req.params.id,
+      parsedQueryParamsResult.data,
+      req.user
+    );
     if (inventoryIndex == null) {
       return await reply.status(404).send();
     }

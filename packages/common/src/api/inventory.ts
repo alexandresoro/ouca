@@ -27,6 +27,11 @@ export type InventoriesSearchParams = z.infer<typeof getInventoriesQueryParamsSc
 
 export const getInventoriesResponse = getPaginatedResponseSchema(inventoryExtendedSchema);
 
+export const getInventoryIndexParamsSchema = z.object({
+  orderBy: z.enum(INVENTORIES_ORDER_BY_ELEMENTS),
+  sortOrder: z.enum(["asc", "desc"]),
+});
+
 export const getInventoryIndexResponse = z.number();
 
 /**

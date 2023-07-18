@@ -4,7 +4,10 @@ import { type DatabasePool } from "slonik";
 import { type DonneeRepository } from "../../repositories/donnee/donnee-repository.js";
 import { type InventaireAssocieRepository } from "../../repositories/inventaire-associe/inventaire-associe-repository.js";
 import { type InventaireMeteoRepository } from "../../repositories/inventaire-meteo/inventaire-meteo-repository.js";
-import { type Inventaire } from "../../repositories/inventaire/inventaire-repository-types.js";
+import {
+  type Inventaire,
+  type InventaireFindManyInput,
+} from "../../repositories/inventaire/inventaire-repository-types.js";
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { type LoggedUser } from "../../types/User.js";
@@ -39,9 +42,16 @@ export const buildInventaireService = ({
     return inventaire;
   };
 
-  const findInventoryIndex = async (id: number, loggedUser: LoggedUser | null): Promise<number | null> => {
+  const findInventoryIndex = async (
+    id: number,
+    order: {
+      orderBy: NonNullable<InventaireFindManyInput["orderBy"]>;
+      sortOrder: NonNullable<InventaireFindManyInput["sortOrder"]>;
+    },
+    loggedUser: LoggedUser | null
+  ): Promise<number | null> => {
     validateAuthorization(loggedUser);
-    return inventaireRepository.findInventoryIndex(id);
+    return inventaireRepository.findInventoryIndex(id, order);
   };
 
   const findInventaireOfDonneeId = async (

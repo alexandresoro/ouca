@@ -48,7 +48,16 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
     return reshapeRawInventaire(rawInventaire);
   };
 
-  const findInventoryIndex = async (id: number): Promise<number | null> => {
+  const findInventoryIndex = async (
+    id: number,
+    {
+      orderBy,
+      sortOrder,
+    }: {
+      orderBy: NonNullable<InventaireFindManyInput["orderBy"]>;
+      sortOrder: NonNullable<InventaireFindManyInput["sortOrder"]>;
+    }
+  ): Promise<number | null> => {
     const query = sql.type(
       z.object({
         rowNumber: z.number(),
@@ -59,7 +68,12 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
       FROM (
 	      SELECT
 		      id,
-		      ROW_NUMBER() OVER (ORDER BY date_creation DESC)
+		      ROW_NUMBER() OVER (
+            ${sql.fragment`ORDER BY ${buildOrderByIdentifier(orderBy)}`}${buildSortOrderFragment({
+              orderBy,
+              sortOrder,
+            })}
+          )
 	      FROM
 		      basenaturaliste.inventaire) AS rown
       WHERE
