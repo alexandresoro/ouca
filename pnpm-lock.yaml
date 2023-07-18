@@ -139,8 +139,8 @@ importers:
   packages/cloudflare-functions:
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: 4.20230710.1
-        version: 4.20230710.1
+        specifier: 4.20230717.0
+        version: 4.20230717.0
       '@ou-ca/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -611,8 +611,8 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
 
-  /@cloudflare/workers-types@4.20230710.1:
-    resolution: {integrity: sha512-VqEY/ZqyHKBn6ivdePSWebpqojwbCXVEuwLkMYHs0UoOAqcGylkVcabdZYdQJKeNxXcOUZ9UBId/x9UsPUm2XQ==}
+  /@cloudflare/workers-types@4.20230717.0:
+    resolution: {integrity: sha512-OJWM1s0n9Il+GjfHvZhEcUGC+qY9IsijMtzRBDRpwSUR2jTy1WdjS9+SEh7sJlNQX2WzHQCgJMGjH2lI/Tf+tQ==}
     dev: true
 
   /@emotion/is-prop-valid@1.2.1:
