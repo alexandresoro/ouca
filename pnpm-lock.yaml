@@ -51,8 +51,8 @@ importers:
         specifier: 6.5.0
         version: 6.5.0
       bullmq:
-        specifier: 4.4.0
-        version: 4.4.0
+        specifier: 4.5.0
+        version: 4.5.0
       content-disposition:
         specifier: 0.5.4
         version: 0.5.4
@@ -2750,8 +2750,8 @@ packages:
     engines: {node: '>=0.2.0'}
     dev: false
 
-  /bullmq@4.4.0:
-    resolution: {integrity: sha512-2fpKxT9wQUTaOfAxaVXztYM3krvngi91lG340jz0rHcKADbkl1sSqzELystXFbormW98lhfWo6V72Cqs84biPA==}
+  /bullmq@4.5.0:
+    resolution: {integrity: sha512-pG0teKyP45jtyXIH0MBglxDfy1NCsdXf95YGzJEZTycl9eE1oXHJlr8/RlhVfIA+XCYEnEQD36u0OINGrxaqeQ==}
     dependencies:
       cron-parser: 4.8.1
       glob: 8.1.0
