@@ -35,7 +35,7 @@ export const buildInventaireRepository = ({ slonik }: InventaireRepositoryDepend
         inventaire.latitude,
         inventaire.temperature,
         inventaire.date_creation,
-        inventaire.owner_id,
+        inventaire.owner_id
       FROM
         basenaturaliste.inventaire
       WHERE
