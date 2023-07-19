@@ -2,6 +2,7 @@ import { autoUpdate, offset, shift, size, useFloating } from "@floating-ui/react
 import { Menu } from "@headlessui/react";
 import {
   Angry,
+  BookContent,
   Bug,
   CalendarPlus,
   ChevronDown,
@@ -24,9 +25,14 @@ import { useIsSizeLarge } from "../../hooks/useMediaQuery";
 
 const OBSERVATIONS_OPTIONS = [
   {
-    localizationKey: "observationButton" as ParseKeys,
+    localizationKey: "displayData.newData" as ParseKeys,
     Icon: Plus,
     to: "/create/new",
+  },
+  {
+    localizationKey: "inventories" as ParseKeys,
+    Icon: BookContent,
+    to: "/last-inventory",
   },
   {
     localizationKey: "viewObservations" as ParseKeys,
@@ -130,9 +136,13 @@ const HeaderActions: FunctionComponent = () => {
 
   return (
     <div className="flex items-center gap-4">
-      <Link className="hidden lg:flex btn btn-sm btn-ghost gap-1.5 font-normal normal-case" to="/create/new">
-        <Plus className="w-5 h-5" />
-        {t("observationButton")}
+      <Link className="hidden lg:flex btn btn-sm btn-secondary" to="/create/new">
+        <Plus className="h-6" />
+        {t("displayData.newData")}
+      </Link>
+      <Link className="hidden lg:flex btn btn-sm btn-ghost gap-1.5 font-normal capitalize" to="/last-inventory">
+        <BookContent className="h-5 w-5" />
+        {t("inventories")}
       </Link>
       <Link className="hidden lg:flex btn btn-sm btn-ghost gap-1.5 font-normal normal-case" to="/view">
         <SearchAlt2 className="w-5 h-5" />
@@ -179,7 +189,7 @@ const HeaderActions: FunctionComponent = () => {
             );
 
             const Dividers = [];
-            if (["observationButton", "viewObservations", "weathers"].includes(localizationKey)) {
+            if (["inventories", "viewObservations", "weathers"].includes(localizationKey)) {
               Dividers.push(<hr key={`divider-${to}`} className="w-full border-t-[1px] flex" />);
             }
             return [CurrentMenuItem, ...Dividers];

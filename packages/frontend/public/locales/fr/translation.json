@@ -81,8 +81,6 @@
   "displayData": {
     "headerTitle": "Donnée",
     "dataId": "ID",
-    "previousData": "Donnée précédente",
-    "nextData": "Donnée suivante",
     "newData": "Nouvelle donnée",
     "genericError": "Une erreur est survenue lors de la récupération de cette donnée.",
     "dataNotFound": "La donnée que vous recherchez n'existe pas."
@@ -110,6 +108,7 @@
   "environments": "Milieux naturels",
   "firstNameLabel": "Prénom",
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
+  "inventories": "Inventaires",
   "inventoryDetails": {
     "entries": {
       "title": "Données appartenant à cet inventaire"
@@ -138,7 +137,13 @@
   },
   "inventoryPage": {
     "inventoryNotFound": "L'inventaire que vous recherchez n'existe pas.",
-    "genericError": "Une erreur est survenue lors de la récupération de cet inventaire."
+    "genericError": "Une erreur est survenue lors de la récupération de cet inventaire.",
+    "previousInventory": "Inventaire précédent",
+    "nextInventory": "Inventaire suivant",
+    "entriesPanel": {
+      "title_one": "Observation",
+      "title_other": "Observations"
+    }
   },
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",
@@ -194,6 +199,7 @@
       "entry": "Donnée"
     }
   },
+  "noInventoryExists": "Il n'existe actuellement aucun inventaire. Créez votre premiere donnée pour parcourir les inventaires.",
   "numberOfCities": "Nombre de communes",
   "numberOfLocalities": "Nombre de lieux-dits",
   "numberOfSpecies": "Nombre d'espèces",
@@ -314,7 +320,6 @@
   "passwordLabel": "Mot de passe",
   "passwordRequiredLabel": "Le mot de passe est requis",
   "loginButton": "Connexion",
-  "observationButton": "Saisie des observations",
   "databaseManagementButton": "Gestion du référentiel",
   "createAction": "Créer",
   "exportAction": "Exporter",

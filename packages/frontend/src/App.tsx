@@ -5,6 +5,7 @@ import { Suspense, lazy, useEffect, useMemo, useState, type FunctionComponent } 
 import { AuthProvider } from "react-oidc-context";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AuthHandler } from "./components/AuthHandler";
+import LastInventory from "./components/inventory/last-inventory/LastInventory";
 import { AppContext, DEFAULT_CONFIG } from "./contexts/AppContext";
 import { queryClient } from "./query/query-client";
 import loadAnalytics from "./services/load-analytics";
@@ -102,6 +103,14 @@ const App: FunctionComponent = () => {
                         element={
                           <Suspense fallback={<></>}>
                             <ExistingEntryPage />
+                          </Suspense>
+                        }
+                      />
+                      <Route
+                        path="last-inventory"
+                        element={
+                          <Suspense fallback={<></>}>
+                            <LastInventory />
                           </Suspense>
                         }
                       />

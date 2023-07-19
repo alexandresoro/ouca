@@ -1,9 +1,7 @@
-import { getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import { ChevronsRight } from "@styled-icons/boxicons-regular";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import useApiQuery from "../../../hooks/api/useApiQuery";
 import StyledPanelHeader from "../../layout/StyledPanelHeader";
 import NewEntryFormContainer from "../new-entry-form-container/NewEntryFormContainer";
 import NewEntryPageStepper from "./NewEntryPageStepper";
@@ -21,25 +19,10 @@ const NewEntryPage: FunctionComponent = () => {
     setCurrentStep(getNewEntryStepFromHash(hash));
   }, [hash]);
 
-  const { data: lastInventoryData } = useApiQuery({
-    path: "/inventories",
-    queryParams: {
-      orderBy: "creationDate",
-      sortOrder: "desc",
-      pageNumber: 1,
-      pageSize: 1,
-    },
-    schema: getInventoriesResponse,
-  });
-
-  const hasLastInventory = lastInventoryData?.data?.length != null && lastInventoryData.data.length > 0;
-
   const existingInventoryId = searchParams.get("inventoryId") ?? undefined;
 
   const navigateToLastInventory = () => {
-    if (lastInventoryData?.data?.[0] != null) {
-      navigate(`/inventory/${lastInventoryData.data[0].id}`);
-    }
+    navigate("/last-inventory");
   };
 
   const handleSelectedPreviousStep = (selectedStep: NewEntryStep) => {
@@ -53,16 +36,8 @@ const NewEntryPage: FunctionComponent = () => {
           <span className="indicator-item badge badge-xs badge-primary" />
           <h1 className="flex items-center gap-3 text-2xl font-normal">{t("createPage.newEntryTitle")}</h1>
         </div>
-        <div
-          className="tooltip tooltip-bottom"
-          data-tip={hasLastInventory ? t("createPage.goToLastInventoryDescription") : ""}
-        >
-          <button
-            type="button"
-            className={`btn btn-sm ${hasLastInventory ? "btn-accent" : "btn-disabled"}`}
-            tabIndex={hasLastInventory ? 0 : -1}
-            onClick={navigateToLastInventory}
-          >
+        <div className="tooltip tooltip-bottom" data-tip={t("createPage.goToLastInventoryDescription")}>
+          <button type="button" className={"btn btn-sm btn-accent"} onClick={navigateToLastInventory}>
             <ChevronsRight className="h-6" />
             {t("createPage.goToLastInventory")}
           </button>

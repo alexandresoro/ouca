@@ -11,7 +11,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
   return (
     <div className="flex flex-col gap-2">
       <InventaireDetailsView inventaire={inventory} />
-      <InventoryMap inventory={inventory} />
+      <InventoryMap key={inventory.id} inventory={inventory} />
     </div>
   );
 };

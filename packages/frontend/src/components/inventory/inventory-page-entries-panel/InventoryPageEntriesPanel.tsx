@@ -3,6 +3,7 @@ import { Fragment, useEffect, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
+import InventoryPageEntryElement from "../inventory-page-entry-element/InventoryPageEntryElement";
 
 type InventoryPageEntriesPanelProps = {
   inventoryId: string;
@@ -34,15 +35,27 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
 
   return (
     <>
-      {entries?.pages.map((page) => {
-        return (
-          <Fragment key={page.meta.pageNumber}>
-            {page.data.map((entry) => {
-              return <li>{JSON.stringify(entry)}</li>;
-            })}
-          </Fragment>
-        );
-      })}
+      <div className="flex items-center gap-3 py-4">
+        <h3 className="text-xl font-normal">
+          {t("inventoryPage.entriesPanel.title", { count: entries?.pages[0].meta.count })}
+        </h3>
+        <span className="badge badge-primary badge-outline font-semibold">{entries?.pages[0].meta.count}</span>
+      </div>
+      <ul className="flex flex-wrap justify-evenly gap-x-4 gap-y-2">
+        {entries?.pages.map((page) => {
+          return (
+            <Fragment key={page.meta.pageNumber}>
+              {page.data.map((entry) => {
+                return (
+                  <li key={entry.id}>
+                    <InventoryPageEntryElement entry={entry} />
+                  </li>
+                );
+              })}
+            </Fragment>
+          );
+        })}
+      </ul>
       {hasNextPage && (
         <button ref={ref} type="button" className="btn btn-xs btn-link no-underline" onClick={() => fetchNextPage()}>
           {t("infiniteScroll.more")}
