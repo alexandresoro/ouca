@@ -1,10 +1,10 @@
 import { getEntriesResponse } from "@ou-ca/common/api/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
-import { Fragment, useEffect, type FunctionComponent } from "react";
+import { Fragment, useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
-import { Link } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
+import NewEntryDialogContainer from "../../entry/new-entry-dialog-container/NewEntryDialogContainer";
 import InventoryPageEntryElement from "../inventory-page-entry-element/InventoryPageEntryElement";
 
 type InventoryPageEntriesPanelProps = {
@@ -15,6 +15,8 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
   const { t } = useTranslation();
 
   const { ref, inView } = useInView();
+
+  const [newEntryDialogOpen, setNewEntryDialogOpen] = useState(false);
 
   const {
     data: entries,
@@ -44,10 +46,10 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
           </h3>
           <span className="badge badge-primary badge-outline font-semibold">{entries?.pages[0].meta.count}</span>
         </div>
-        <Link to={`/create/new?inventoryId=${inventoryId}#entry`} className="btn btn-sm btn-secondary">
+        <button type="button" className="btn btn-sm btn-secondary" onClick={() => setNewEntryDialogOpen(true)}>
           <Plus className="w-5 h-5" />
           {t("inventoryPage.entriesPanel.addNewEntry")}
-        </Link>
+        </button>
       </div>
       <ul className="flex flex-wrap justify-evenly gap-x-4 gap-y-2">
         {entries?.pages.map((page) => {
@@ -69,6 +71,11 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
           {t("infiniteScroll.more")}
         </button>
       )}
+      <NewEntryDialogContainer
+        inventoryId={inventoryId}
+        open={newEntryDialogOpen}
+        onClose={() => setNewEntryDialogOpen(false)}
+      />
     </>
   );
 };

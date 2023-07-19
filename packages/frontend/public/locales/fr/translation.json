@@ -79,7 +79,7 @@
   "displayData": {
     "headerTitle": "Donnée",
     "dataId": "ID",
-    "newData": "Nouvelle donnée",
+    "newData": "Nouvelle saisie",
     "genericError": "Une erreur est survenue lors de la récupération de cette donnée.",
     "dataNotFound": "La donnée que vous recherchez n'existe pas."
   },
@@ -141,7 +141,8 @@
     "entriesPanel": {
       "title_one": "Observation",
       "title_other": "Observations",
-      "addNewEntry": "Ajouter une observation"
+      "addNewEntry": "Ajouter une observation",
+      "newEntry": "Nouvelle observation"
     }
   },
   "lastNameLabel": "Nom",
