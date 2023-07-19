@@ -1,7 +1,9 @@
 import { getEntriesResponse } from "@ou-ca/common/api/entry";
+import { Plus } from "@styled-icons/boxicons-regular";
 import { Fragment, useEffect, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import InventoryPageEntryElement from "../inventory-page-entry-element/InventoryPageEntryElement";
 
@@ -35,11 +37,17 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
 
   return (
     <>
-      <div className="flex items-center gap-3 py-4">
-        <h3 className="text-xl font-normal">
-          {t("inventoryPage.entriesPanel.title", { count: entries?.pages[0].meta.count })}
-        </h3>
-        <span className="badge badge-primary badge-outline font-semibold">{entries?.pages[0].meta.count}</span>
+      <div className="flex items-center justify-between py-4">
+        <div className="flex items-center gap-3">
+          <h3 className="text-xl font-normal">
+            {t("inventoryPage.entriesPanel.title", { count: entries?.pages[0].meta.count })}
+          </h3>
+          <span className="badge badge-primary badge-outline font-semibold">{entries?.pages[0].meta.count}</span>
+        </div>
+        <Link to={`/create/new?inventoryId=${inventoryId}#entry`} className="btn btn-sm btn-secondary">
+          <Plus className="w-5 h-5" />
+          {t("inventoryPage.entriesPanel.addNewEntry")}
+        </Link>
       </div>
       <ul className="flex flex-wrap justify-evenly gap-x-4 gap-y-2">
         {entries?.pages.map((page) => {

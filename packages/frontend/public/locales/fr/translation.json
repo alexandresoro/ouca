@@ -29,9 +29,7 @@
   "createPage": {
     "headerTitle": "Donnée",
     "newEntryTitle": "Nouvelle donnée",
-    "newBadge": "Nouvelle",
-    "goToLastInventory": "Dernier inventaire",
-    "goToLastInventoryDescription": "Aller au dernier inventaire enregistré"
+    "newBadge": "Nouvelle"
   },
   "deleteAgeDialogMsg": "Êtes-vous certain de vouloir supprimer l'âge {{name}} ?",
   "deleteAgeDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
@@ -142,7 +140,8 @@
     "nextInventory": "Inventaire suivant",
     "entriesPanel": {
       "title_one": "Observation",
-      "title_other": "Observations"
+      "title_other": "Observations",
+      "addNewEntry": "Ajouter une observation"
     }
   },
   "lastNameLabel": "Nom",
