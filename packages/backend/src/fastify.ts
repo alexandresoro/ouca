@@ -8,12 +8,18 @@ import fastifyMultipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
 import fastifyUnderPressure from "@fastify/under-pressure";
 import { IMPORT_TYPE, type ImportType } from "@ou-ca/common/import/import-types";
-import fastify, { type FastifyInstance } from "fastify";
+import fastify, {
+  type FastifyInstance,
+  type RawReplyDefaultExpression,
+  type RawRequestDefaultExpression,
+  type RawServerDefault,
+} from "fastify";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
+import { type Logger } from "pino";
 import downloadController from "./controllers/download-controller.js";
 import userController from "./controllers/user-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
@@ -21,7 +27,16 @@ import sentryMetricsPlugin from "./fastify/sentry-metrics-plugin.js";
 
 const API_V1_PREFIX = "/api/v1";
 
-export const buildServer = async (services: Services): Promise<FastifyInstance> => {
+export const buildServer = async (
+  services: Services
+): Promise<
+  FastifyInstance<
+    RawServerDefault,
+    RawRequestDefaultExpression<RawServerDefault>,
+    RawReplyDefaultExpression<RawServerDefault>,
+    Logger
+  >
+> => {
   const { logger: loggerParent } = services;
   const logger = loggerParent.child({ module: "fastify" });
 
@@ -66,7 +81,14 @@ export const buildServer = async (services: Services): Promise<FastifyInstance> 
   return server;
 };
 
-const registerFastifyStaticRoutes = (server: FastifyInstance): void => {
+const registerFastifyStaticRoutes = (
+  server: FastifyInstance<
+    RawServerDefault,
+    RawRequestDefaultExpression<RawServerDefault>,
+    RawReplyDefaultExpression<RawServerDefault>,
+    Logger
+  >
+): void => {
   server.get<{ Params: { id: string }; Querystring: { filename?: string } }>(
     "/download/importReports/:id",
     async (req, reply) => {
