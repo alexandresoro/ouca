@@ -11,7 +11,7 @@ const shutdown =
   (server: FastifyInstance, services: Services, queues: Queues): (() => void) =>
   () => {
     services.logger.info("Shutdown requested");
-    Promise.all([
+    void Promise.all([
       stopJobsAndQueues(queues),
       Sentry.close(2000),
       services.slonik.end().then(() => {
