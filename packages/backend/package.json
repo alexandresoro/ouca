@@ -38,7 +38,7 @@
     "@fastify/caching": "8.3.0",
     "@fastify/compress": "6.4.0",
     "@fastify/cors": "8.3.0",
-    "@fastify/multipart": "7.7.1",
+    "@fastify/multipart": "7.7.2",
     "@fastify/static": "6.10.2",
     "@fastify/under-pressure": "8.3.0",
     "@ou-ca/common": "workspace:*",
