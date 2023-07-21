@@ -17,27 +17,25 @@ const NewEntryPageStepper: FunctionComponent<NewEntryPageStepperProps> = ({ curr
   };
 
   return (
-    <div className="container mx-auto flex justify-center py-2">
-      <ul className="steps">
-        {STEPS.map((step) => {
-          const isCurrentStepComplete = currentStep != null && currentStep?.index > step.index;
-          const isStepCurrent = currentStep?.index === step.index;
-          return (
-            <li
-              key={step.id}
-              className={`step ${isCurrentStepComplete || isStepCurrent ? "step-primary" : ""} ${
-                isCurrentStepComplete ? "cursor-pointer" : ""
-              }`}
-              data-content={isCurrentStepComplete ? "✓" : `${step.index}`}
-              onClick={() => handleSelectedStep(step)}
-              onKeyUp={() => handleSelectedStep(step)}
-            >
-              <span className="w-40">{t(`newEntry.steps.${step.id}`)}</span>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <ul className="steps">
+      {STEPS.map((step) => {
+        const isCurrentStepComplete = currentStep != null && currentStep?.index > step.index;
+        const isStepCurrent = currentStep?.index === step.index;
+        return (
+          <li
+            key={step.id}
+            className={`step ${isCurrentStepComplete || isStepCurrent ? "step-primary" : ""} ${
+              isCurrentStepComplete ? "cursor-pointer" : ""
+            }`}
+            data-content={isCurrentStepComplete ? "✓" : `${step.index}`}
+            onClick={() => handleSelectedStep(step)}
+            onKeyUp={() => handleSelectedStep(step)}
+          >
+            <span className="w-40">{t(`newEntry.steps.${step.id}`)}</span>
+          </li>
+        );
+      })}
+    </ul>
   );
 };
 

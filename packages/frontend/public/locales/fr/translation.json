@@ -4,9 +4,17 @@
   "ageCreationTitle": "Création d'un âge",
   "ageEditionTitle": "Edition d'un âge",
   "ages": "Âges",
+  "altitude_abbr": "Alt.",
   "altitude": "Altitude",
   "altitudeWithUnit": "Altitude en mètres",
-  "associateObservers": "observateurs associés",
+  "appHeader": {
+    "createNew": "Nouvelle entrée",
+    "viewEntries": "Observations",
+    "search": "Recherche",
+    "databaseManagement": "Référentiel"
+  },
+  "associateObservers_one": "observateur associé",
+  "associateObservers_other": "observateurs associés",
   "behaviorAlreadyExistingError": "Il existe déjà un comportement avec un code ou un libellé identique.",
   "behaviorCreationTitle": "Création d'un comportement",
   "behaviorEditionTitle": "Edition d'un comportement",
@@ -28,7 +36,7 @@
   },
   "createPage": {
     "headerTitle": "Donnée",
-    "newEntryTitle": "Nouvelle donnée",
+    "newEntryTitle": "Nouvelle entrée",
     "newBadge": "Nouvelle"
   },
   "deleteAgeDialogMsg": "Êtes-vous certain de vouloir supprimer l'âge {{name}} ?",
@@ -79,7 +87,6 @@
   "displayData": {
     "headerTitle": "Donnée",
     "dataId": "ID",
-    "newData": "Nouvelle saisie",
     "genericError": "Une erreur est survenue lors de la récupération de cette donnée.",
     "dataNotFound": "La donnée que vous recherchez n'existe pas."
   },
@@ -97,6 +104,7 @@
   "distancePrecisionCreationTitle": "Création d'une estimation de la distance",
   "distancePrecisionEditionTitle": "Edition d'une estimation de la distance",
   "distancePrecisions": "Estimations de la distance",
+  "duration": "Durée de l'inventaire",
   "entryDetailsForm": {
     "title": "Fiche espèce"
   },
@@ -106,7 +114,6 @@
   "environments": "Milieux naturels",
   "firstNameLabel": "Prénom",
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
-  "inventories": "Inventaires",
   "inventoryDetails": {
     "entries": {
       "title": "Données appartenant à cet inventaire"
@@ -148,6 +155,7 @@
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",
   "genders": "Sexes",
+  "latitude_abbr": "Lat.",
   "latitude": "Latitude",
   "latitudeWithUnit": "Latitude en degrés",
   "localityName": "Nom du lieu-dit",
@@ -160,6 +168,7 @@
     "welcomeTitle": "Où-ça !",
     "welcomeDescription": "Bienvenue sur l'application Où-ça !"
   },
+  "longitude_abbr": "Long.",
   "longitude": "Longitude",
   "longitudeWithUnit": "Longitude en degrés",
   "map": "Carte",
@@ -195,8 +204,8 @@
   },
   "newEntry": {
     "steps": {
-      "inventory": "Inventaire",
-      "entry": "Donnée"
+      "inventory": "Relevé",
+      "entry": "Fiche espèce"
     }
   },
   "noInventoryExists": "Il n'existe actuellement aucun inventaire. Créez votre premiere donnée pour parcourir les inventaires.",
@@ -208,6 +217,7 @@
   "numberPrecisionCreationTitle": "Création d'une estimation du nombre",
   "numberPrecisionEditionTitle": "Edition d'une estimation du nombre",
   "numberPrecisions": "Estimations du nombre",
+  "observation": "observation",
   "observationDetails": {
     "age": "Âge: {{age}}",
     "altitude": "Altitude: {{altitude}} m",
@@ -290,6 +300,7 @@
   "townCreationTitle": "Création d'une commune",
   "townEditionTitle": "Edition d'une commune",
   "towns": "Communes",
+  "unspecified": "non renseigné",
   "userForm": {
     "firstName": "Prénom",
     "lastName": "Nom",
@@ -314,13 +325,14 @@
   "weatherCreationTitle": "Création d'une météo",
   "weatherEditionTitle": "Edition d'une météo",
   "weathers": "Météos",
+  "weathers_one": "Météo",
+  "weathers_other": "Météos",
   "loginLabel": "Utilisateur",
   "loginRequiredLabel": "Le nom d'utilisateur est requis",
   "loginFailedMessage": "Le nom d'utilisateur ou le mot de passe est incorrect. Veuillez réessayer.",
   "passwordLabel": "Mot de passe",
   "passwordRequiredLabel": "Le mot de passe est requis",
   "loginButton": "Connexion",
-  "databaseManagementButton": "Gestion du référentiel",
   "createAction": "Créer",
   "exportAction": "Exporter",
   "filter": {

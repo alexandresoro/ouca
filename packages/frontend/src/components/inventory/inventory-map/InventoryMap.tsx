@@ -36,24 +36,8 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
   const [displayLocalityInfoPopup, setDisplayLocalityInfoPopup] = useState(false);
 
   return (
-    <div className="flex flex-col">
-      <div className="flex my-4 items-center justify-between">
-        <div className="join">
-          {Object.entries(MAP_STYLE_PROVIDERS).map(([providerKey, providerConfig]) => {
-            return (
-              <button
-                type="button"
-                key={providerKey}
-                className={`join-item btn btn-xs ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
-                onClick={() => setMapStyle(providerKey as keyof typeof MAP_STYLE_PROVIDERS)}
-              >
-                {t(providerConfig.nameKey)}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-      <div className="h-80 card border-2 border-primary shadow-xl">
+    <div className="flex flex-col card border-2 border-primary shadow-xl">
+      <div className="h-80">
         <ReactMapGl
           {...viewState}
           onMove={(evt) => setViewState(evt.viewState)}
@@ -121,6 +105,22 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
           <FullscreenControl />
           <ScaleControl unit="metric" />
         </ReactMapGl>
+      </div>
+      <div className="absolute top-2.5 mx-auto left-0 right-0 flex flex-grow items-center justify-center opacity-90">
+        <div className="join">
+          {Object.entries(MAP_STYLE_PROVIDERS).map(([providerKey, providerConfig]) => {
+            return (
+              <button
+                type="button"
+                key={providerKey}
+                className={`join-item btn btn-xs ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
+                onClick={() => setMapStyle(providerKey as keyof typeof MAP_STYLE_PROVIDERS)}
+              >
+                {t(providerConfig.nameKey)}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

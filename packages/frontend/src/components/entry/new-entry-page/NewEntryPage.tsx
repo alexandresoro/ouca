@@ -25,17 +25,19 @@ const NewEntryPage: FunctionComponent = () => {
 
   return (
     <>
-      <StyledPanelHeader className="flex justify-between">
+      <StyledPanelHeader className="flex justify-between h-20 md:h-20">
         <div className="indicator pr-2">
           <span className="indicator-item badge badge-xs badge-primary" />
           <h1 className="flex items-center gap-3 text-2xl font-normal">{t("createPage.newEntryTitle")}</h1>
         </div>
+        {currentStep != null && (
+          <div className="flex justify-center">
+            <NewEntryPageStepper currentStep={currentStep} onSelectedStep={handleSelectedPreviousStep} />
+          </div>
+        )}
       </StyledPanelHeader>
       {currentStep != null && (
-        <>
-          <NewEntryPageStepper currentStep={currentStep} onSelectedStep={handleSelectedPreviousStep} />
-          <NewEntryFormContainer currentStep={currentStep} existingInventoryId={existingInventoryId} />
-        </>
+        <NewEntryFormContainer currentStep={currentStep} existingInventoryId={existingInventoryId} />
       )}
     </>
   );

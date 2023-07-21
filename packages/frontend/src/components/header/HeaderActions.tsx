@@ -25,19 +25,19 @@ import { useIsSizeLarge } from "../../hooks/useMediaQuery";
 
 const OBSERVATIONS_OPTIONS = [
   {
-    localizationKey: "displayData.newData" as ParseKeys,
+    localizationKey: "appHeader.createNew" as ParseKeys,
     Icon: Plus,
     to: "/create/new",
   },
   {
-    localizationKey: "inventories" as ParseKeys,
+    localizationKey: "appHeader.viewEntries" as ParseKeys,
     Icon: BookContent,
     to: "/last-inventory",
   },
   {
-    localizationKey: "viewObservations" as ParseKeys,
+    localizationKey: "appHeader.search" as ParseKeys,
     Icon: SearchAlt2,
-    to: "/view",
+    to: "/search",
   },
 ];
 
@@ -138,15 +138,15 @@ const HeaderActions: FunctionComponent = () => {
     <div className="flex items-center gap-4">
       <Link className="hidden lg:flex btn btn-sm btn-secondary" to="/create/new">
         <Plus className="h-6" />
-        {t("displayData.newData")}
+        {t("appHeader.createNew")}
       </Link>
       <Link className="hidden lg:flex btn btn-sm btn-ghost gap-1.5 font-normal capitalize" to="/last-inventory">
         <BookContent className="h-5 w-5" />
-        {t("inventories")}
+        {t("appHeader.viewEntries")}
       </Link>
-      <Link className="hidden lg:flex btn btn-sm btn-ghost gap-1.5 font-normal normal-case" to="/view">
+      <Link className="hidden lg:flex btn btn-sm btn-ghost gap-1.5 font-normal normal-case" to="/search">
         <SearchAlt2 className="w-5 h-5" />
-        {t("viewObservations")}
+        {t("appHeader.search")}
       </Link>
 
       <Menu>
@@ -154,7 +154,7 @@ const HeaderActions: FunctionComponent = () => {
           {({ open }) => (
             <>
               <ListUl className="h-5 mr-1.5" />
-              <span className="hidden lg:inline">{t("databaseManagementButton")}</span>
+              <span className="hidden lg:inline">{t("appHeader.databaseManagement")}</span>
               <ChevronDown className={`h-6 ${open ? "rotate-180" : ""}`} />
             </>
           )}

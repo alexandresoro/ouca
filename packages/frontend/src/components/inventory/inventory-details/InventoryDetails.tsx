@@ -6,7 +6,7 @@ import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiQuery from "../../../hooks/api/useApiQuery";
-import InventaireDetailsView from "../../view/InventaireDetailsView";
+import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";
 
 type InventoryDetailsProps = { inventoryId: string };
 
@@ -50,7 +50,12 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
 
   return (
     <div className="flex flex-col gap-4 pb-2">
-      {inventory && <InventaireDetailsView inventaire={inventory} />}
+      {inventory && (
+        <>
+          <h3 className="text-xl font-normal">{t("observationDetails.inventoryTitle")}</h3>
+          <InventorySummaryPanel inventory={inventory} />
+        </>
+      )}
       <div className="stats">
         <div className="stat px-0 pb-2">
           <div className="stat-title">

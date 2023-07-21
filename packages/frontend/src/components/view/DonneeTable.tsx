@@ -11,6 +11,7 @@ import InfiniteTable from "../common/styled/table/InfiniteTable";
 import TableSortLabel from "../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
+import ViewEntryDialogContainer from "./view-entry-dialog-container/ViewEntryDialogContainer";
 
 const COLUMNS = [
   {
@@ -43,6 +44,7 @@ const DonneeTable: FunctionComponent = () => {
   const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginatedTableParams<EntriesOrderBy>();
 
   const [deleteDialog, setDeleteDialog] = useState<EntryExtended | null>(null);
+  const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
 
   const { displayNotification } = useSnackbar();
 
@@ -85,12 +87,6 @@ const DonneeTable: FunctionComponent = () => {
     }
   );
 
-  const handleOpenDonneeDetails = (donnee: EntryExtended) => {
-    if (donnee) {
-      navigate(`/entry/${donnee.id}`);
-    }
-  };
-
   const handleDeleteDonnee = (donnee: EntryExtended | null) => {
     if (donnee) {
       setDeleteDialog(donnee);
@@ -115,7 +111,6 @@ const DonneeTable: FunctionComponent = () => {
       <InfiniteTable
         tableHead={
           <>
-            <th />
             {COLUMNS.map((column) => (
               <th key={column.key}>
                 <TableSortLabel
@@ -140,7 +135,7 @@ const DonneeTable: FunctionComponent = () => {
                   <DonneeDetailsRow
                     key={donnee.id}
                     donnee={donnee}
-                    onViewAction={() => handleOpenDonneeDetails(donnee)}
+                    onViewAction={() => setViewEntryDialogEntry(donnee)}
                     onDeleteAction={() => handleDeleteDonnee(donnee)}
                   />
                 );
@@ -163,6 +158,12 @@ const DonneeTable: FunctionComponent = () => {
         })}
         onCancelAction={() => setDeleteDialog(null)}
         onConfirmAction={() => handleDeleteDonneeConfirmation(deleteDialog)}
+      />
+
+      <ViewEntryDialogContainer
+        entry={viewEntryDialogEntry}
+        open={viewEntryDialogEntry != null}
+        onClose={() => setViewEntryDialogEntry(undefined)}
       />
     </>
   );

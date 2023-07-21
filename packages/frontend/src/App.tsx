@@ -123,7 +123,7 @@ const App: FunctionComponent = () => {
                         }
                       />
                       <Route
-                        path="view"
+                        path="search"
                         element={
                           <Suspense fallback={<></>}>
                             <ViewDonneesPage />

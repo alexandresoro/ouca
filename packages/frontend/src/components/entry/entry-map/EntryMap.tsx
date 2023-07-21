@@ -295,24 +295,8 @@ const EntryMap: FunctionComponent = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex my-4 items-center justify-between">
-        <div className="join">
-          {Object.entries(MAP_STYLE_PROVIDERS).map(([providerKey, providerConfig]) => {
-            return (
-              <button
-                type="button"
-                key={providerKey}
-                className={`join-item btn btn-xs ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
-                onClick={() => setMapStyle(providerKey as keyof typeof MAP_STYLE_PROVIDERS)}
-              >
-                {t(providerConfig.nameKey)}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-      <div className="h-80 lg:h-[500px] card border-2 border-primary shadow-xl">
+    <div className="card border-2 border-primary shadow-xl mt-4">
+      <div className="h-80 lg:h-[500px]">
         <ReactMapGl
           ref={mapRef}
           {...viewState}
@@ -396,6 +380,22 @@ const EntryMap: FunctionComponent = () => {
           <FullscreenControl />
           <ScaleControl unit="metric" />
         </ReactMapGl>
+      </div>
+      <div className="absolute bottom-2.5 mx-auto left-0 right-0 flex flex-grow items-center justify-center opacity-90">
+        <div className="join">
+          {Object.entries(MAP_STYLE_PROVIDERS).map(([providerKey, providerConfig]) => {
+            return (
+              <button
+                type="button"
+                key={providerKey}
+                className={`join-item btn btn-xs ${mapStyle === providerKey ? "btn-active btn-primary" : ""}`}
+                onClick={() => setMapStyle(providerKey as keyof typeof MAP_STYLE_PROVIDERS)}
+              >
+                {t(providerConfig.nameKey)}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
