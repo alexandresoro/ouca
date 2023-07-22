@@ -22,7 +22,7 @@ type MutationParams<R> = MutationParamsSchema<R> | MutationParamsResponseHandler
 
 type MutationVariables = { path?: string; body?: Record<string, unknown> };
 
-export const useApiMutation = <TData, TVariables extends MutationVariables, TError extends FetchError = FetchError>(
+const useApiMutation = <TData, TVariables extends MutationVariables, TError extends FetchError = FetchError>(
   { path: pathFromOptions, method, responseHandler, schema }: MutationParams<TData>,
   mutationOptions?: Omit<UseMutationOptions<TData, TError, TVariables>, "mutationFn">
 ) => {

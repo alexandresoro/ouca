@@ -14,8 +14,8 @@ import {
   storedCustomizedCoordinatesAtom,
 } from "../../../atoms/inventoryFormAtoms";
 import useApiQuery from "../../../hooks/api/useApiQuery";
+import InventoryForm from "../../inventory/inventory-form/InventoryForm";
 import EntryDetailsForm from "../entry-details/EntryDetailsForm";
-import InventoryForm from "../inventory/InventoryForm";
 
 const EntryMap = lazy(() => import("../entry-map/EntryMap"));
 

@@ -45,9 +45,9 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
     <>
       <div className="flex items-center justify-between pb-6">
         <div className="flex items-center gap-3">
-          <h3 className="text-2xl font-semibold">
+          <h2 className="text-2xl font-semibold">
             {t("inventoryPage.entriesPanel.title", { count: entries?.pages[0].meta.count })}
-          </h3>
+          </h2>
           <span className="badge badge-primary badge-outline font-semibold">{entries?.pages[0].meta.count}</span>
         </div>
         <button type="button" className="btn btn-sm btn-secondary" onClick={() => setNewEntryDialogOpen(true)}>

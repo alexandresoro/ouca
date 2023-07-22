@@ -1,11 +1,14 @@
+import { FloatingArrow, arrow, autoUpdate, offset, shift, useFloating, type VirtualElement } from "@floating-ui/react";
+import { Menu } from "@headlessui/react";
 import { getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
-import { ChevronLeft, ChevronRight, EditAlt } from "@styled-icons/boxicons-regular";
-import { type FunctionComponent } from "react";
+import { ChevronLeft, ChevronRight, DotsHorizontalRounded, EditAlt } from "@styled-icons/boxicons-regular";
+import { useRef, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import useApiQuery from "../../../hooks/api/useApiQuery";
+import InventoryEditDialogContainer from "../inventory-edit-dialog-container/InventoryEditDialogContainer";
 import InventoryMap from "../inventory-map/InventoryMap";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";
 
@@ -81,6 +84,22 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     }
   );
 
+  const arrowRef = useRef(null);
+  const floatingMoreInventory = useFloating<HTMLButtonElement | VirtualElement>({
+    middleware: [
+      offset(12),
+      shift({
+        padding: 12,
+      }),
+      arrow({
+        element: arrowRef,
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
+
+  const [inventoryEditDialogOpen, setInventoryEditDialogOpen] = useState<boolean>(false);
+
   const hasPreviousInventory = previousInventoryIndex != null && previousInventoryData?.data?.[0] != null;
   const hasNextInventory = nextInventoryIndex != null && nextInventoryData?.data?.[0] != null;
 
@@ -88,13 +107,44 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     <>
       <div className="flex pb-4 items-center justify-between">
         <div className="tooltip tooltip-bottom" data-tip={`${t("displayData.dataId")} ${inventory.id}`}>
-          <h3 className="text-2xl font-semibold">{t("observationDetails.inventoryTitle")}</h3>
+          <h2 className="text-2xl font-semibold">{t("inventoryPage.inventoryPanel.title")}</h2>
         </div>
         <div className="flex items-center gap-4">
-          <button type="button" className="btn btn-sm btn-ghost text-primary">
-            <EditAlt className="h-5" />
-            {t("aria-editButton")}
-          </button>
+          <Menu>
+            <Menu.Button as="div" ref={floatingMoreInventory.refs.setReference} className="flex items-center">
+              {({ open }) => (
+                <button type="button" className={`btn btn-xs btn-circle btn-primary ${open ? "" : "btn-outline"}`}>
+                  <DotsHorizontalRounded className="h-5" />
+                </button>
+              )}
+            </Menu.Button>
+            <Menu.Items
+              ref={floatingMoreInventory.refs.setFloating}
+              style={{
+                position: floatingMoreInventory.strategy,
+                top: floatingMoreInventory.y ?? 0,
+                left: floatingMoreInventory.x ?? 0,
+              }}
+              className="z-10 flex flex-col p-1.5 outline-none shadow-md ring-2 ring-primary-focus bg-base-100 dark:bg-base-300 rounded-lg w-max"
+            >
+              <FloatingArrow
+                className="fill-primary"
+                ref={arrowRef}
+                context={floatingMoreInventory.context}
+                tipRadius={2}
+              />
+              <Menu.Item key="edit">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-ghost text-primary"
+                  onClick={() => setInventoryEditDialogOpen(true)}
+                >
+                  <EditAlt className="h-5" />
+                  {t("aria-editButton")}
+                </button>
+              </Menu.Item>
+            </Menu.Items>
+          </Menu>
           <div className="flex gap-2">
             <div
               className="tooltip tooltip-bottom"
@@ -129,6 +179,11 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
         <InventorySummaryPanel inventory={inventory} />
         <InventoryMap key={inventory.id} inventory={inventory} />
       </div>
+      <InventoryEditDialogContainer
+        inventoryId={inventory.id}
+        open={inventoryEditDialogOpen}
+        onClose={() => setInventoryEditDialogOpen(false)}
+      />
     </>
   );
 };

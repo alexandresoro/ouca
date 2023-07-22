@@ -24,11 +24,15 @@ const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProp
     <div className="card border border-primary p-4 bg-base-200 shadow-md">
       <div className="flex gap-10 items-center justify-between">
         <div className="flex flex-grow items-center justify-between">
-          <div className="flex items-center gap-1.5 font-semibold">
-            <div className="w-14 items-start">
-              <span className="badge badge-lg badge-primary badge-outline">
+          <div className="flex items-center gap-2.5 font-semibold">
+            <div className="flex flex-grow h-10 w-10 -my-2 px-1 items-center justify-center border-2 border-primary rounded-full">
+              <div
+                className={`flex flex-grow justify-center text-primary ${
+                  entry.number != null && entry.number >= 100 ? "text-sm" : "text-lg"
+                }`}
+              >
                 {entry.numberEstimate.nonCompte ? "?" : entry.number}
-              </span>
+              </div>
             </div>
             <h4 className="text-xl">{entry.species.nomFrancais}</h4>
           </div>

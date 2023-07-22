@@ -1,8 +1,8 @@
-import { upsertInventoryResponse, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import useApiMutation from "../../../hooks/api/useApiMutation";
+import { useApiInventoryCreate, useApiInventoryUpdate } from "../../../hooks/api/queries/api-inventory-queries";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { queryClient } from "../../../query/query-client";
 import { ENTRY_STEP, INVENTORY_STEP, type NewEntryStep } from "../new-entry-page/new-entry-hash-step-mapper";
@@ -22,57 +22,44 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
     navigate(`/create/new?${new URLSearchParams({ inventoryId }).toString()}#${ENTRY_STEP.id}`, { replace: true });
   };
 
-  const { mutate: updateInventory } = useApiMutation(
-    {
-      method: "PUT",
-      schema: upsertInventoryResponse,
+  const { mutate: updateInventory } = useApiInventoryUpdate({
+    onSuccess: (updatedInventory) => {
+      queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
+      displayNotification({
+        type: "success",
+        message: t("inventoryForm.updateSuccess"),
+      });
+      goToEntryStep(updatedInventory.id);
     },
-    {
-      onSuccess: (updatedInventory) => {
-        queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
-        displayNotification({
-          type: "success",
-          message: t("inventoryForm.updateSuccess"),
-        });
-        goToEntryStep(updatedInventory.id);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("inventoryForm.updateError"),
-        });
-      },
-    }
-  );
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("inventoryForm.updateError"),
+      });
+    },
+  });
 
-  const { mutate: createInventory } = useApiMutation(
-    {
-      path: "/inventories",
-      method: "POST",
-      schema: upsertInventoryResponse,
+  const { mutate: createInventory } = useApiInventoryCreate({
+    onSuccess: (updatedInventory) => {
+      queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
+      displayNotification({
+        type: "success",
+        message: t("inventoryForm.createSuccess"),
+      });
+      goToEntryStep(updatedInventory.id);
     },
-    {
-      onSuccess: (updatedInventory) => {
-        queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
-        displayNotification({
-          type: "success",
-          message: t("inventoryForm.createSuccess"),
-        });
-        goToEntryStep(updatedInventory.id);
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("inventoryForm.createError"),
-        });
-      },
-    }
-  );
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("inventoryForm.createError"),
+      });
+    },
+  });
 
   const handleSubmitInventoryForm = (inventoryFormData: UpsertInventoryInput, inventoryId: string | undefined) => {
     console.log(inventoryFormData, inventoryId);
     if (inventoryId) {
-      updateInventory({ path: `/inventories/${inventoryId}`, body: inventoryFormData });
+      updateInventory({ inventoryId, body: inventoryFormData });
     } else {
       createInventory({ body: inventoryFormData });
     }

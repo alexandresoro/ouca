@@ -145,12 +145,16 @@
     "genericError": "Une erreur est survenue lors de la récupération de cet inventaire.",
     "previousInventory": "Inventaire précédent",
     "nextInventory": "Inventaire suivant",
+    "inventoryPanel": {
+      "title": "Fiche inventaire"
+    },
     "entriesPanel": {
-      "title_one": "Observation",
-      "title_other": "Observations",
+      "title_one": "Fiche observation",
+      "title_other": "Fiches observations",
       "addNewEntry": "Ajouter une observation",
       "newEntry": "Nouvelle observation"
-    }
+    },
+    "inventoryEdition": "Édition de l'inventaire"
   },
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",

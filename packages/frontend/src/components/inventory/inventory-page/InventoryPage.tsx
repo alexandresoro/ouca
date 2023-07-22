@@ -3,7 +3,6 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import useApiQuery from "../../../hooks/api/useApiQuery";
-import StyledPanelHeader from "../../layout/StyledPanelHeader";
 import InventoryPageEntriesPanel from "../inventory-page-entries-panel/InventoryPageEntriesPanel";
 import InventoryPagePanel from "../inventory-page-panel/InventoryPagePanel";
 
@@ -42,15 +41,10 @@ const InventoryPage: FunctionComponent = () => {
   }
 
   return (
-    <>
-      <StyledPanelHeader className="flex justify-between">
-        <h1 className="text-2xl font-normal">{t("newEntry.steps.inventory")}</h1>
-      </StyledPanelHeader>
-      <div className="container mx-auto flex gap-10 mt-6">
-        <div className="basis-1/3">{inventory && <InventoryPagePanel inventory={inventory} />}</div>
-        <div className="basis-2/3">{id && <InventoryPageEntriesPanel inventoryId={id} />}</div>
-      </div>
-    </>
+    <div className="container mx-auto flex gap-10 mt-6">
+      <div className="basis-1/3">{inventory && <InventoryPagePanel inventory={inventory} />}</div>
+      <div className="basis-2/3">{id && <InventoryPageEntriesPanel inventoryId={id} />}</div>
+    </div>
   );
 };
 
