@@ -14,7 +14,7 @@ const InventorySummaryPanel: FunctionComponent<InventorySummaryPanelProps> = ({ 
   const { t } = useTranslation();
 
   return (
-    <div className="card border-2 border-primary shadow-xl py-4">
+    <div className="card border-2 border-primary bg-base-200 shadow-xl py-4">
       <ItemWithAvatar
         icon={<User className="h-6" />}
         primary={inventory.observer.libelle}

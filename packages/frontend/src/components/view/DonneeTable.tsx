@@ -2,16 +2,15 @@ import { getEntriesExtendedResponse, type EntriesOrderBy } from "@ou-ca/common/a
 import { type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../hooks/api/useApiMutation";
 import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
 import useSnackbar from "../../hooks/useSnackbar";
 import InfiniteTable from "../common/styled/table/InfiniteTable";
 import TableSortLabel from "../common/styled/table/TableSortLabel";
+import EntryDetailsDialogContainer from "../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
 import DonneeDetailsRow from "./DonneeDetailsRow";
-import ViewEntryDialogContainer from "./view-entry-dialog-container/ViewEntryDialogContainer";
 
 const COLUMNS = [
   {
@@ -38,8 +37,6 @@ const COLUMNS = [
 
 const DonneeTable: FunctionComponent = () => {
   const { t } = useTranslation();
-
-  const navigate = useNavigate();
 
   const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginatedTableParams<EntriesOrderBy>();
 
@@ -160,7 +157,7 @@ const DonneeTable: FunctionComponent = () => {
         onConfirmAction={() => handleDeleteDonneeConfirmation(deleteDialog)}
       />
 
-      <ViewEntryDialogContainer
+      <EntryDetailsDialogContainer
         entry={viewEntryDialogEntry}
         open={viewEntryDialogEntry != null}
         onClose={() => setViewEntryDialogEntry(undefined)}

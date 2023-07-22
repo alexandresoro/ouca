@@ -4,15 +4,15 @@ import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventorySummaryPanel from "../../inventory/inventory-summary-panel/InventorySummaryPanel";
-import DonneeDetailsView from "../DonneeDetailsView";
+import DonneeDetailsView from "../../view/DonneeDetailsView";
 
-type ViewEntryDialogContainerProps = {
+type EntryDetailsDialogContainerProps = {
   entry?: EntryExtended;
   open: boolean;
   onClose: (value: boolean) => void;
 };
 
-const ViewEntryDialogContainer: FunctionComponent<ViewEntryDialogContainerProps> = ({ entry, open, onClose }) => {
+const EntryDetailsDialogContainer: FunctionComponent<EntryDetailsDialogContainerProps> = ({ entry, open, onClose }) => {
   const { t } = useTranslation();
 
   if (!entry) {
@@ -51,4 +51,4 @@ const ViewEntryDialogContainer: FunctionComponent<ViewEntryDialogContainerProps>
   );
 };
 
-export default ViewEntryDialogContainer;
+export default EntryDetailsDialogContainer;
