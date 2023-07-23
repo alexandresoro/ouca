@@ -27,7 +27,7 @@ const OBSERVATIONS_OPTIONS = [
   {
     localizationKey: "appHeader.createNew" as ParseKeys,
     Icon: Plus,
-    to: "/create/new",
+    to: "/create-new",
   },
   {
     localizationKey: "appHeader.viewEntries" as ParseKeys,
@@ -136,7 +136,7 @@ const HeaderActions: FunctionComponent = () => {
 
   return (
     <div className="flex items-center gap-4">
-      <Link className="hidden lg:flex btn btn-sm btn-primary" to="/create/new">
+      <Link className="hidden lg:flex btn btn-sm btn-primary" to="/create-new">
         <Plus className="h-6" />
         {t("appHeader.createNew")}
       </Link>

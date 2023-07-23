@@ -17,12 +17,6 @@ const NewEntryPage: FunctionComponent = () => {
     setCurrentStep(getNewEntryStepFromHash(hash));
   }, [hash]);
 
-  const existingInventoryId = searchParams.get("inventoryId") ?? undefined;
-
-  const handleSelectedPreviousStep = (selectedStep: NewEntryStep) => {
-    window.location.hash = `#${selectedStep.id}`;
-  };
-
   return (
     <>
       <StyledPanelHeader className="flex justify-between h-20 md:h-20">
@@ -32,13 +26,11 @@ const NewEntryPage: FunctionComponent = () => {
         </div>
         {currentStep != null && (
           <div className="flex justify-center">
-            <NewEntryPageStepper currentStep={currentStep} onSelectedStep={handleSelectedPreviousStep} />
+            <NewEntryPageStepper currentStep={currentStep} />
           </div>
         )}
       </StyledPanelHeader>
-      {currentStep != null && (
-        <NewEntryFormContainer currentStep={currentStep} existingInventoryId={existingInventoryId} />
-      )}
+      {currentStep != null && <NewEntryFormContainer currentStep={currentStep} />}
     </>
   );
 };

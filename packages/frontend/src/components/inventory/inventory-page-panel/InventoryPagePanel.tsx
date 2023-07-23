@@ -2,7 +2,7 @@ import { FloatingArrow, arrow, autoUpdate, offset, shift, useFloating, type Virt
 import { Menu } from "@headlessui/react";
 import { getInventoriesResponse } from "@ou-ca/common/api/inventory";
 import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
-import { ChevronLeft, ChevronRight, DotsHorizontalRounded, EditAlt } from "@styled-icons/boxicons-regular";
+import { ChevronLeft, ChevronRight, CopyAlt, DotsHorizontalRounded, EditAlt } from "@styled-icons/boxicons-regular";
 import { useRef, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -125,7 +125,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                 top: floatingMoreInventory.y ?? 0,
                 left: floatingMoreInventory.x ?? 0,
               }}
-              className="z-10 flex flex-col p-1.5 outline-none shadow-md ring-2 ring-primary-focus bg-base-100 dark:bg-base-300 rounded-lg w-max"
+              className="z-10 flex flex-col gap-1.5 p-1.5 outline-none shadow-md ring-2 ring-primary-focus bg-base-100 dark:bg-base-300 rounded-lg w-max"
             >
               <FloatingArrow
                 className="fill-primary"
@@ -136,12 +136,21 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
               <Menu.Item key="edit">
                 <button
                   type="button"
-                  className="btn btn-sm btn-ghost text-primary"
+                  className="btn btn-xs btn-ghost text-primary"
                   onClick={() => setInventoryEditDialogOpen(true)}
                 >
                   <EditAlt className="h-5" />
-                  {t("aria-editButton")}
+                  {t("inventoryPage.inventoryPanel.edit")}
                 </button>
+              </Menu.Item>
+              <Menu.Item key="createNewFrom">
+                <Link
+                  className="btn btn-xs btn-ghost text-primary"
+                  to={`/create-new?${new URLSearchParams({ createFromInventory: `${inventory.id}` }).toString()}`}
+                >
+                  <CopyAlt className="h-5" />
+                  {t("inventoryPage.inventoryPanel.createNewFrom")}
+                </Link>
               </Menu.Item>
             </Menu.Items>
           </Menu>
@@ -180,7 +189,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
         <InventoryMap key={inventory.id} inventory={inventory} />
       </div>
       <InventoryEditDialogContainer
-        inventoryId={inventory.id}
+        inventory={inventory}
         open={inventoryEditDialogOpen}
         onClose={() => setInventoryEditDialogOpen(false)}
       />

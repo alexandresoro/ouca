@@ -1,7 +1,9 @@
-import { getInventoryResponse, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type Inventory, type InventoryExtended } from "@ou-ca/common/entities/inventory";
 import { useAtomValue, useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { lazy, useEffect, useState, type FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import {
   inventoryAltitudeAtom,
   inventoryLatitudeAtom,
@@ -10,20 +12,25 @@ import {
   inventorySetAtom,
   storedCustomizedCoordinatesAtom,
 } from "../../../atoms/inventoryFormAtoms";
-import useApiQuery from "../../../hooks/api/useApiQuery";
 import InventoryForm from "../inventory-form/InventoryForm";
 
 const EntryMap = lazy(() => import("../../entry/entry-map/EntryMap"));
 
-type InventoryFormWithMapProps = {
-  existingInventoryId?: string;
-  onSubmitInventoryForm?: (inventoryFormData: UpsertInventoryInput, inventoryId: string | undefined) => void;
-};
+type InventoryFormWithMapProps =
+  | {
+      mode: "update";
+      inventory: InventoryExtended;
+      onSubmitInventoryForm?: (inventoryFormData: UpsertInventoryInput, inventoryId: string) => void;
+    }
+  | {
+      mode: "create";
+      initialData?: Omit<Inventory, "id">;
+      onSubmitInventoryForm?: (inventoryFormData: UpsertInventoryInput) => void;
+    };
 
-const InventoryFormWithMap: FunctionComponent<InventoryFormWithMapProps> = ({
-  existingInventoryId,
-  onSubmitInventoryForm,
-}) => {
+const InventoryFormWithMap: FunctionComponent<InventoryFormWithMapProps> = (props) => {
+  const { t } = useTranslation();
+
   const setInventory = useSetAtom(inventorySetAtom);
 
   const inventoryLocality = useAtomValue(inventoryLocalityAtom);
@@ -32,35 +39,15 @@ const InventoryFormWithMap: FunctionComponent<InventoryFormWithMapProps> = ({
   const inventoryAltitude = useAtomValue(inventoryAltitudeAtom);
   const storedCustomizedCoordinates = useAtomValue(storedCustomizedCoordinatesAtom);
 
-  const {
-    data: existingInventory,
-    isFetching,
-    refetch,
-  } = useApiQuery(
-    {
-      path: `/inventories/${existingInventoryId!}`,
-      schema: getInventoryResponse,
-    },
-    {
-      enabled: false,
-    }
-  );
-  useEffect(() => {
-    if (existingInventoryId) {
-      void refetch();
-    }
-  }, [existingInventoryId, refetch]);
-
   const [isInventoryReady, setIsInventoryReady] = useState(false);
 
   useEffect(() => {
     setIsInventoryReady(false);
-    void setInventory(existingInventoryId != null ? existingInventory ?? RESET : RESET).then(() => {
+    const inventoryDataToSet = props.mode === "update" ? props.inventory : props.initialData ?? RESET;
+    void setInventory(inventoryDataToSet).then(() => {
       setIsInventoryReady(true);
     });
-  }, [existingInventory, existingInventoryId, setInventory]);
-
-  const newInventoryKey = `new-${existingInventoryId ?? ""}`;
+  }, [setInventory, props]);
 
   return (
     <div className="container mx-auto flex gap-10">
@@ -73,16 +60,24 @@ const InventoryFormWithMap: FunctionComponent<InventoryFormWithMapProps> = ({
         LOCALITY {JSON.stringify(inventoryLocality)}
         {isInventoryReady && (
           <>
-            {existingInventoryId != null && existingInventory != null && !isFetching && (
+            {props.mode === "update" && (
               <InventoryForm
-                key={newInventoryKey}
-                isNewInventory={true}
-                existingInventory={existingInventory}
-                onSubmitForm={onSubmitInventoryForm}
+                key={`update-inventory-${props.inventory.id}`}
+                initialData={props.inventory}
+                onSubmitForm={(inventoryFormData) =>
+                  props.onSubmitInventoryForm?.(inventoryFormData, props.inventory.id)
+                }
+                submitFormText={t("inventoryForm.formUpdate")}
+                disableIfNoChanges
               />
             )}
-            {existingInventoryId === undefined && (
-              <InventoryForm key={newInventoryKey} isNewInventory={true} onSubmitForm={onSubmitInventoryForm} />
+            {props.mode === "create" && (
+              <InventoryForm
+                key="create-inventory"
+                initialData={props.initialData}
+                onSubmitForm={props.onSubmitInventoryForm}
+                submitFormText={t("inventoryForm.formCreate")}
+              />
             )}
           </>
         )}

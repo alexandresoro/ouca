@@ -114,6 +114,10 @@
   "environments": "Milieux naturels",
   "firstNameLabel": "Prénom",
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
+  "inventoryCreateNewFromExisting": {
+    "createNewButton": "Créer nouveau",
+    "createNewButtonTooltip": "Crée un nouvel inventaire à partir de l'inventaire actuel"
+  },
   "inventoryDetails": {
     "entries": {
       "title": "Données appartenant à cet inventaire"
@@ -131,6 +135,8 @@
     "altitudeCallError": "Une erreur est survenue lors de la récupération de l'altitude. L'altitude actuellement affichée peut ne pas être correcte.",
     "temperature": "Température",
     "weathers": "Météos",
+    "formCreate": "Créer le relevé",
+    "formUpdate": "Mettre à jour le relevé",
     "createSuccess": "L'inventaire a été créé avec succès",
     "createError": "Une erreur est survenue lors de la création de l'inventaire",
     "updateSuccess": "L'inventaire a été mis à jour avec succès",
@@ -146,7 +152,9 @@
     "previousInventory": "Inventaire précédent",
     "nextInventory": "Inventaire suivant",
     "inventoryPanel": {
-      "title": "Fiche inventaire"
+      "title": "Fiche inventaire",
+      "edit": "Modifier l'inventaire",
+      "createNewFrom": "Dupliquer l'inventaire"
     },
     "entriesPanel": {
       "title_one": "Fiche observation",
@@ -179,7 +187,6 @@
   "maps": {
     "title": "Carte",
     "opacityPhotosLabel": "Opacité de la vue photos",
-    "currentPosition": "Position actuelle",
     "currentPosition": "Position actuelle",
     "resetCustomCoordinates": "Revenir aux coordonnées du lieu-dit",
     "maps": {

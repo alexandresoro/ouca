@@ -1,43 +1,29 @@
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { useApiInventoryCreate, useApiInventoryUpdate } from "../../../hooks/api/queries/api-inventory-queries";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useApiInventoryCreate } from "../../../hooks/api/queries/api-inventory-queries";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { queryClient } from "../../../query/query-client";
 import { ENTRY_STEP, INVENTORY_STEP, type NewEntryStep } from "../new-entry-page/new-entry-hash-step-mapper";
 import EntryStepContainer from "../steps/entry-step-container/EntryStepContainer";
 import InventoryStepContainer from "../steps/inventory-step-container/InventoryStepContainer";
 
-type NewEntryFormContainerProps = { currentStep: NewEntryStep; existingInventoryId?: string };
+type NewEntryFormContainerProps = { currentStep: NewEntryStep };
 
-const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ currentStep, existingInventoryId }) => {
+const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ currentStep }) => {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
+  const inventoryIdParam = searchParams.get("inventoryId") ?? undefined;
+
   const { displayNotification } = useSnackbar();
 
   const goToEntryStep = (inventoryId: string) => {
-    navigate(`/create/new?${new URLSearchParams({ inventoryId }).toString()}#${ENTRY_STEP.id}`, { replace: true });
+    navigate(`/create-new?${new URLSearchParams({ inventoryId }).toString()}#${ENTRY_STEP.id}`, { replace: true });
   };
-
-  const { mutate: updateInventory } = useApiInventoryUpdate({
-    onSuccess: (updatedInventory) => {
-      queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
-      displayNotification({
-        type: "success",
-        message: t("inventoryForm.updateSuccess"),
-      });
-      goToEntryStep(updatedInventory.id);
-    },
-    onError: () => {
-      displayNotification({
-        type: "error",
-        message: t("inventoryForm.updateError"),
-      });
-    },
-  });
 
   const { mutate: createInventory } = useApiInventoryCreate({
     onSuccess: (updatedInventory) => {
@@ -56,26 +42,16 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
     },
   });
 
-  const handleSubmitInventoryForm = (inventoryFormData: UpsertInventoryInput, inventoryId: string | undefined) => {
-    console.log(inventoryFormData, inventoryId);
-    if (inventoryId) {
-      updateInventory({ inventoryId, body: inventoryFormData });
-    } else {
-      createInventory({ body: inventoryFormData });
-    }
+  const handleSubmitInventoryForm = (inventoryFormData: UpsertInventoryInput) => {
+    createInventory({ body: inventoryFormData });
   };
 
   return (
     <>
       {currentStep.id === INVENTORY_STEP.id && (
-        <InventoryStepContainer
-          existingInventoryId={existingInventoryId}
-          onSubmitInventoryForm={handleSubmitInventoryForm}
-        />
+        <InventoryStepContainer onSubmitInventoryForm={handleSubmitInventoryForm} />
       )}
-      {currentStep.id === ENTRY_STEP.id && existingInventoryId && (
-        <EntryStepContainer existingInventoryId={existingInventoryId} />
-      )}
+      {currentStep.id === ENTRY_STEP.id && inventoryIdParam && <EntryStepContainer inventoryId={inventoryIdParam} />}
     </>
   );
 };

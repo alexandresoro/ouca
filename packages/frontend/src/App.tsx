@@ -16,7 +16,6 @@ const UserSettingsProvider = lazy(() => import("./contexts/UserSettingsContext")
 const Layout = lazy(() => import("./components/Layout"));
 const NewAccount = lazy(() => import("./components/new-account/NewAccount"));
 const NewEntryPage = lazy(() => import("./components/entry/new-entry-page/NewEntryPage"));
-const ExistingEntryPage = lazy(() => import("./components/entry/existing-entry-page/ExistingEntryPage"));
 const InventoryPage = lazy(() => import("./components/inventory/inventory-page/InventoryPage"));
 const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
 const ObservateurManage = lazy(() => import("./components/manage/observateur/ObservateurManage"));
@@ -89,20 +88,12 @@ const App: FunctionComponent = () => {
                         </Suspense>
                       }
                     >
-                      <Route index element={<Navigate to="/create/new" replace={true} />} />
+                      <Route index element={<Navigate to="/create-new" replace={true} />} />
                       <Route
-                        path="create/new"
+                        path="create-new"
                         element={
                           <Suspense fallback={<></>}>
                             <NewEntryPage />
-                          </Suspense>
-                        }
-                      />
-                      <Route
-                        path="entry/:id"
-                        element={
-                          <Suspense fallback={<></>}>
-                            <ExistingEntryPage />
                           </Suspense>
                         }
                       />

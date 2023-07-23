@@ -1,16 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  upsertInventoryInput,
-  type GetInventoryResponse,
-  type UpsertInventoryInput,
-} from "@ou-ca/common/api/inventory";
-import { FilePlus } from "@styled-icons/boxicons-solid";
+import { upsertInventoryInput, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
+import { type Inventory } from "@ou-ca/common/entities/inventory";
 import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import {
   inventoryAltitudeAtom,
   inventoryLatitudeAtom,
@@ -25,19 +20,24 @@ import { type InventoryFormState } from "./InventoryFormState";
 import InventoryFormWeather from "./InventoryFormWeather";
 
 type InventoryFormProps = {
-  // New inventory (w/ possible existing inventory as template)
-  isNewInventory?: boolean;
-  existingInventory?: GetInventoryResponse;
-  onSubmitForm?: (inventoryFormData: UpsertInventoryInput, inventoryId: string | undefined) => void;
+  initialData?: Inventory | Omit<Inventory, "id">;
+  onSubmitForm?: (inventoryFormData: UpsertInventoryInput) => void;
+  submitFormText?: string;
+  disableIfNoChanges?: boolean;
 };
 
-const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, existingInventory, onSubmitForm }) => {
+const InventoryForm: FunctionComponent<InventoryFormProps> = ({
+  initialData,
+  onSubmitForm,
+  submitFormText,
+  disableIfNoChanges,
+}) => {
   const { t } = useTranslation();
 
   const { userSettings } = useUserSettingsContext();
 
   const defaultFormValues = (
-    existingInventory === undefined
+    initialData === undefined
       ? {
           // Brand new inventory
           observerId: userSettings.defaultObserver?.id ?? null,
@@ -56,15 +56,15 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
         }
       : {
           // Existing inventory
-          observerId: existingInventory.observer.id,
-          associateIds: existingInventory.associates.map((associate) => associate.id),
-          date: existingInventory.date,
-          time: existingInventory.heure,
-          duration: existingInventory.duree,
-          localityId: existingInventory.locality.id,
-          coordinates: existingInventory.customizedCoordinates ?? existingInventory.locality.coordinates,
-          temperature: existingInventory.temperature,
-          weatherIds: existingInventory.weathers.map((weather) => weather.id),
+          observerId: initialData.observer.id,
+          associateIds: initialData.associates.map((associate) => associate.id),
+          date: initialData.date,
+          time: initialData.heure,
+          duration: initialData.duree,
+          localityId: initialData.locality.id,
+          coordinates: initialData.customizedCoordinates ?? initialData.locality.coordinates,
+          temperature: initialData.temperature,
+          weatherIds: initialData.weathers.map((weather) => weather.id),
         }
   ) satisfies InventoryFormState;
 
@@ -105,62 +105,56 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({ isNewInventory, 
 
   const onSubmit: SubmitHandler<InventoryFormState> = (inventoryFormData) => {
     // FIXME assertion is done thanks to zod resolver, however types are not inferred
-    onSubmitForm?.(inventoryFormData as unknown as UpsertInventoryInput, existingInventory?.id);
+    onSubmitForm?.(inventoryFormData as unknown as UpsertInventoryInput);
   };
 
   return (
-    <div
-      className={`${isValid ? "" : "bg-red-500 bg-opacity-70"} ${
-        isDirty && isValid ? "bg-yellow-500 bg-opacity-70" : ""
-      }`}
-    >
+    <div>
+      <div className="flex gap-2">
+        <span className={`text-xl ${isDirty ? "bg-yellow-500" : ""}`}>DIRTY</span>
+        <span className={`text-xl ${isValid ? "bg-green-500" : "bg-red-500"}`}>VALID</span>
+      </div>
       DIRTY FIELDS: {JSON.stringify(dirtyFields)}
       <br />
       DEFAULT: {JSON.stringify(defaultValues)}
       <br />
       LOCALITY: {JSON.stringify(localityId)}
-      <div className="flex justify-between">
-        <div className="tooltip tooltip-bottom" data-tip={existingInventory ? `ID ${existingInventory.id}` : undefined}>
-          <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
-        </div>
-        {!isNewInventory && existingInventory && (
-          <div className="tooltip tooltip-bottom" data-tip={t("inventoryForm.createNewEntryFromInventory")}>
-            <Link
-              className="btn btn-sm btn-circle btn-ghost"
-              to={`/create/new?${new URLSearchParams({ inventoryId: `${existingInventory.id}` }).toString()}`}
-            >
-              <FilePlus className="text-primary h-6" />
-            </Link>
-          </div>
-        )}
-      </div>
+      <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset className="flex flex-col gap-4">
-          <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
-            <InventoryFormObserver
-              control={control}
-              defaultObserver={existingInventory?.observer ?? userSettings.defaultObserver ?? undefined}
-              areAssociesDisplayed={userSettings.areAssociesDisplayed}
-              autofocusOnObserver={isNewInventory}
-            />
-          </div>
-          <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
-            <InventoryFormDate register={register} />
-          </div>
-          <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
-            <InventoryFormLocation
-              register={register}
-              control={control}
-              defaultDepartment={isNewInventory ? userSettings.defaultDepartment ?? undefined : undefined}
-            />
-          </div>
-          {userSettings.isMeteoDisplayed && (
-            <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
-              <InventoryFormWeather control={control} register={register} />
+        <div className="flex flex-col gap-4">
+          <fieldset className="flex flex-col gap-4">
+            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+              <InventoryFormObserver
+                control={control}
+                defaultObserver={initialData?.observer ?? userSettings.defaultObserver ?? undefined}
+                areAssociesDisplayed={userSettings.areAssociesDisplayed}
+                autofocusOnObserver={true}
+              />
             </div>
-          )}
-        </fieldset>
-        <button type="submit">submit</button>
+            <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+              <InventoryFormDate register={register} />
+            </div>
+            <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+              <InventoryFormLocation
+                register={register}
+                control={control}
+                defaultDepartment={initialData != null ? undefined : userSettings.defaultDepartment ?? undefined}
+              />
+            </div>
+            {userSettings.isMeteoDisplayed && (
+              <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+                <InventoryFormWeather control={control} register={register} />
+              </div>
+            )}
+          </fieldset>
+          <button
+            type="submit"
+            className="btn btn-primary btn-block mb-8"
+            disabled={(disableIfNoChanges && !isDirty) || !isValid}
+          >
+            {submitFormText ?? t("save")}
+          </button>
+        </div>
       </form>
     </div>
   );

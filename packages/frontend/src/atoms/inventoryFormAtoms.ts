@@ -171,32 +171,35 @@ export const inventoryLocalityAtom = atom(
 );
 
 // Write-only atom to update data when a new inventory is the current one
-export const inventorySetAtom = atom(null, async (get, set, newInventory: Inventory | typeof RESET) => {
-  if (newInventory === RESET) {
-    set(storedCustomizedCoordinatesAtom, RESET);
-    await set(inventoryLocalityAtom, RESET);
-  } else {
-    await set(inventoryLocalityAtom, newInventory.locality);
-    const customizedCoordinates = newInventory.customizedCoordinates;
-    if (customizedCoordinates != null) {
-      const customCoordinates = {
-        lat: customizedCoordinates.latitude,
-        lng: customizedCoordinates.longitude,
-        altitude: customizedCoordinates.altitude,
-      };
-      set(storedCustomizedCoordinatesAtom, customCoordinates);
-      await set(inventoryCoordinatesWithAltitudeSetAtom, customCoordinates);
-    } else {
-      const localityCoordinates = {
-        lat: newInventory.locality.coordinates.latitude,
-        lng: newInventory.locality.coordinates.longitude,
-        altitude: newInventory.locality.coordinates.altitude,
-      };
+export const inventorySetAtom = atom(
+  null,
+  async (get, set, newInventory: Inventory | Omit<Inventory, "id"> | typeof RESET) => {
+    if (newInventory === RESET) {
       set(storedCustomizedCoordinatesAtom, RESET);
-      await set(inventoryCoordinatesWithAltitudeSetAtom, localityCoordinates);
+      await set(inventoryLocalityAtom, RESET);
+    } else {
+      await set(inventoryLocalityAtom, newInventory.locality);
+      const customizedCoordinates = newInventory.customizedCoordinates;
+      if (customizedCoordinates != null) {
+        const customCoordinates = {
+          lat: customizedCoordinates.latitude,
+          lng: customizedCoordinates.longitude,
+          altitude: customizedCoordinates.altitude,
+        };
+        set(storedCustomizedCoordinatesAtom, customCoordinates);
+        await set(inventoryCoordinatesWithAltitudeSetAtom, customCoordinates);
+      } else {
+        const localityCoordinates = {
+          lat: newInventory.locality.coordinates.latitude,
+          lng: newInventory.locality.coordinates.longitude,
+          altitude: newInventory.locality.coordinates.altitude,
+        };
+        set(storedCustomizedCoordinatesAtom, RESET);
+        await set(inventoryCoordinatesWithAltitudeSetAtom, localityCoordinates);
+      }
     }
   }
-});
+);
 
 // Returns true if and only if the current coordinates are defined, a locality is defined,
 // and the current coordinates are different from the locality ones

@@ -1,16 +1,17 @@
 import { Dialog } from "@headlessui/react";
+import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventoryFormWithMap from "../inventory-form-with-map/InventoryFormWithMap";
 
 type InventoryEditDialogContainerProps = {
-  inventoryId: string;
+  inventory: InventoryExtended;
   open: boolean;
   onClose: (value: boolean) => void;
 };
 
 const InventoryEditDialogContainer: FunctionComponent<InventoryEditDialogContainerProps> = ({
-  inventoryId,
+  inventory,
   open,
   onClose,
 }) => {
@@ -22,7 +23,7 @@ const InventoryEditDialogContainer: FunctionComponent<InventoryEditDialogContain
         <Dialog.Title className="text-2xl font-semibold py-4 first-letter:uppercase">
           {t("inventoryPage.inventoryEdition")}
         </Dialog.Title>
-        <InventoryFormWithMap existingInventoryId={inventoryId} />
+        <InventoryFormWithMap mode="update" inventory={inventory} />
       </Dialog.Panel>
     </Dialog>
   );
