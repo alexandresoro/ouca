@@ -36,6 +36,7 @@
     "@sentry/tracing": "7.60.0",
     "@turf/helpers": "6.5.0",
     "bullmq": "4.6.0",
+    "camelcase": "7.0.1",
     "content-disposition": "0.5.4",
     "csv-parse": "5.4.0",
     "csv-stringify": "6.4.0",
@@ -49,7 +50,6 @@
     "pino-pretty": "10.1.0",
     "serialize-error": "11.0.0",
     "slonik": "34.0.1",
-    "slonik-interceptor-field-name-transformation": "1.6.5",
     "umzug": "3.2.1",
     "zod": "3.21.4"
   },

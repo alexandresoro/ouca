@@ -53,6 +53,9 @@ importers:
       bullmq:
         specifier: 4.6.0
         version: 4.6.0
+      camelcase:
+        specifier: 7.0.1
+        version: 7.0.1
       content-disposition:
         specifier: 0.5.4
         version: 0.5.4
@@ -92,9 +95,6 @@ importers:
       slonik:
         specifier: 34.0.1
         version: 34.0.1(zod@3.21.4)
-      slonik-interceptor-field-name-transformation:
-        specifier: 1.6.5
-        version: 1.6.5(slonik@34.0.1)
       umzug:
         specifier: 3.2.1
         version: 3.2.1
@@ -2809,9 +2809,9 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /camelcase@6.3.0:
-    resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
-    engines: {node: '>=10'}
+  /camelcase@7.0.1:
+    resolution: {integrity: sha512-xlx1yCK2Oc1APsPXDL2LdlNP6+uu8OCDdhOBSVT279M/S+y75O30C2VuD8T2ogdePBBl7PfPF4504tnLgX3zfw==}
+    engines: {node: '>=14.16'}
     dev: false
 
   /camelize@1.0.1:
@@ -3015,11 +3015,6 @@ packages:
     dependencies:
       is-what: 4.1.15
     dev: true
-
-  /core-js@3.31.1:
-    resolution: {integrity: sha512-2sKLtfq1eFST7l7v62zaqXacPc7uG8ZAya8ogijLhTtaKNcpzpB4TMoTw2Si+8GYKRwFPMMtUT0263QFWFfqyQ==}
-    requiresBuild: true
-    dev: false
 
   /core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -6465,17 +6460,6 @@ packages:
       ansi-styles: 6.2.1
       is-fullwidth-code-point: 4.0.0
     dev: true
-
-  /slonik-interceptor-field-name-transformation@1.6.5(slonik@34.0.1):
-    resolution: {integrity: sha512-SF7EenJQDKQBrMnnrvFPhZu2W9d8I9Egajw7hzemklqwboA7yK12jtSqKOHiFPpacH0lVP1xHdUh4aZaZKmbYw==}
-    engines: {node: '>=8.0'}
-    peerDependencies:
-      slonik: '>=27.0.0'
-    dependencies:
-      camelcase: 6.3.0
-      core-js: 3.31.1
-      slonik: 34.0.1(zod@3.21.4)
-    dev: false
 
   /slonik@34.0.1(zod@3.21.4):
     resolution: {integrity: sha512-vApQ8ctZLxcSuKR6uePfutTrNJhxi8QQTi2MXQAZgcy8Gq+3ogfdQMs8dpVeqF+JOgShdHV6I1fu+r2iX34tOg==}
