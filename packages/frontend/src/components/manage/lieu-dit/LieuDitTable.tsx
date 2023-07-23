@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useApiQuery from "../../../hooks/api/useApiQuery";
-import usePaginatedTableParams from "../../../hooks/usePaginatedTableParams";
+import { usePaginatedTableParams_legacy } from "../../../hooks/usePaginationParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import Table from "../../common/styled/table/Table";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
@@ -53,7 +53,7 @@ const LieuDitTable: FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams<LocalitiesOrderBy>();
+    usePaginatedTableParams_legacy<LocalitiesOrderBy>();
 
   const [dialogLieuDit, setDialogLieuDit] = useState<LocalityExtended | null>(null);
 

@@ -1,10 +1,10 @@
 import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
 import { Fragment, useEffect, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import useApiInfiniteQuery from "../../hooks/api/useApiInfiniteQuery";
-import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
-import InfiniteTable from "../common/styled/table/InfiniteTable";
-import TableSortLabel from "../common/styled/table/TableSortLabel";
+import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
+import usePaginationParams from "../../../hooks/usePaginationParams";
+import InfiniteTable from "../../common/styled/table/InfiniteTable";
+import TableSortLabel from "../../common/styled/table/TableSortLabel";
 
 const COLUMNS = [
   {
@@ -29,10 +29,10 @@ const COLUMNS = [
   },
 ] as const;
 
-const DonneesByEspeceTable: FunctionComponent = () => {
+const SearchSpeciesTable: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginatedTableParams<SpeciesOrderBy>();
+  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>();
 
   useEffect(() => {
     setOrderBy("nbDonnees");
@@ -103,4 +103,4 @@ const DonneesByEspeceTable: FunctionComponent = () => {
   );
 };
 
-export default DonneesByEspeceTable;
+export default SearchSpeciesTable;

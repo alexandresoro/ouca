@@ -17,7 +17,7 @@ const Layout = lazy(() => import("./components/Layout"));
 const NewAccount = lazy(() => import("./components/new-account/NewAccount"));
 const NewEntryPage = lazy(() => import("./components/entry/new-entry-page/NewEntryPage"));
 const InventoryPage = lazy(() => import("./components/inventory/inventory-page/InventoryPage"));
-const ViewDonneesPage = lazy(() => import("./components/view/ViewDonneesPage"));
+const SearchPage = lazy(() => import("./components/search/SearchPage"));
 const ObservateurManage = lazy(() => import("./components/manage/observateur/ObservateurManage"));
 const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
 const CommuneManage = lazy(() => import("./components/manage/commune/CommuneManage"));
@@ -117,7 +117,7 @@ const App: FunctionComponent = () => {
                         path="search"
                         element={
                           <Suspense fallback={<></>}>
-                            <ViewDonneesPage />
+                            <SearchPage />
                           </Suspense>
                         }
                       />

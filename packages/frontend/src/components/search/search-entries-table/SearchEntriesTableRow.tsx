@@ -3,15 +3,15 @@ import { Detail, Trash } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import IconButton from "../common/styled/IconButton";
+import IconButton from "../../common/styled/IconButton";
 
-type DonneeRowProps = {
+type SearchEntriesTableRowProps = {
   donnee: EntryExtended;
   onViewAction: () => void;
   onDeleteAction: () => void;
 };
 
-const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
+const SearchEntriesTableRow: FunctionComponent<SearchEntriesTableRowProps> = (props) => {
   const { donnee, onViewAction, onDeleteAction } = props;
 
   const { t } = useTranslation();
@@ -48,4 +48,4 @@ const DonneeDetailsRow: FunctionComponent<DonneeRowProps> = (props) => {
   );
 };
 
-export default DonneeDetailsRow;
+export default SearchEntriesTableRow;

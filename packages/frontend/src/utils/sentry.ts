@@ -1,6 +1,5 @@
 import { ExtraErrorData, HttpClient } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
 import { type User } from "oidc-client-ts";
 import { useEffect } from "react";
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType, type Routes } from "react-router-dom";
@@ -13,7 +12,7 @@ export const initializeSentry = (
   Sentry.init({
     ...sentryConfig,
     integrations: [
-      new BrowserTracing({
+      new Sentry.BrowserTracing({
         routingInstrumentation: Sentry.reactRouterV6Instrumentation(
           useEffect,
           useLocation,

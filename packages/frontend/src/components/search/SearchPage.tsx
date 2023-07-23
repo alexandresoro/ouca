@@ -5,10 +5,10 @@ import useAppContext from "../../hooks/useAppContext";
 import ContentContainerLayout from "../layout/ContentContainerLayout";
 import StyledPanelHeader from "../layout/StyledPanelHeader";
 import DonneeFilter from "./DonneeFilter";
-import DonneeTable from "./DonneeTable";
-import DonneesByEspeceTable from "./DonneesByEspeceTable";
+import SearchEntriesTable from "./search-entries-table/SearchEntriesTable";
+import SearchSpeciesTable from "./search-species-table/SearchSpeciesTable";
 
-const ViewDonneesPage: FunctionComponent = () => {
+const SearchPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const { features } = useAppContext();
@@ -47,10 +47,10 @@ const ViewDonneesPage: FunctionComponent = () => {
           </Tab.List>
           <Tab.Panels>
             <Tab.Panel>
-              <DonneeTable />
+              <SearchEntriesTable />
             </Tab.Panel>
             <Tab.Panel>
-              <DonneesByEspeceTable />
+              <SearchSpeciesTable />
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
@@ -59,4 +59,4 @@ const ViewDonneesPage: FunctionComponent = () => {
   );
 };
 
-export default ViewDonneesPage;
+export default SearchPage;

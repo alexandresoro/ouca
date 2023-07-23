@@ -2,15 +2,15 @@ import { getEntriesExtendedResponse, type EntriesOrderBy } from "@ou-ca/common/a
 import { type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import useApiInfiniteQuery from "../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../hooks/api/useApiMutation";
-import usePaginatedTableParams from "../../hooks/usePaginatedTableParams";
-import useSnackbar from "../../hooks/useSnackbar";
-import InfiniteTable from "../common/styled/table/InfiniteTable";
-import TableSortLabel from "../common/styled/table/TableSortLabel";
-import EntryDetailsDialogContainer from "../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
-import DeletionConfirmationDialog from "../manage/common/DeletionConfirmationDialog";
-import DonneeDetailsRow from "./DonneeDetailsRow";
+import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
+import useApiMutation from "../../../hooks/api/useApiMutation";
+import usePaginationParams from "../../../hooks/usePaginationParams";
+import useSnackbar from "../../../hooks/useSnackbar";
+import InfiniteTable from "../../common/styled/table/InfiniteTable";
+import TableSortLabel from "../../common/styled/table/TableSortLabel";
+import EntryDetailsDialogContainer from "../../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
+import DeletionConfirmationDialog from "../../manage/common/DeletionConfirmationDialog";
+import SearchEntriesTableRow from "./SearchEntriesTableRow";
 
 const COLUMNS = [
   {
@@ -35,10 +35,10 @@ const COLUMNS = [
   },
 ] as const;
 
-const DonneeTable: FunctionComponent = () => {
+const SearchEntriesTable: FunctionComponent = () => {
   const { t } = useTranslation();
 
-  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginatedTableParams<EntriesOrderBy>();
+  const { orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EntriesOrderBy>();
 
   const [deleteDialog, setDeleteDialog] = useState<EntryExtended | null>(null);
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
@@ -129,7 +129,7 @@ const DonneeTable: FunctionComponent = () => {
             <Fragment key={page.meta.pageNumber}>
               {page.data.map((donnee) => {
                 return (
-                  <DonneeDetailsRow
+                  <SearchEntriesTableRow
                     key={donnee.id}
                     donnee={donnee}
                     onViewAction={() => setViewEntryDialogEntry(donnee)}
@@ -166,4 +166,4 @@ const DonneeTable: FunctionComponent = () => {
   );
 };
 
-export default DonneeTable;
+export default SearchEntriesTable;

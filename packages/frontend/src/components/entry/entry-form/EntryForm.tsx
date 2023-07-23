@@ -3,11 +3,11 @@ import { upsertEntryInput, type GetEntryResponse } from "@ou-ca/common/api/entry
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import EntryDetailsCommentForm from "./EntryDetailsCommentForm";
-import { type EntryDetailsFormState } from "./EntryDetailsFormState";
-import EntryDetailsSpeciesForm from "./EntryDetailsSpeciesForm";
+import EntryCommentForm from "./EntryCommentForm";
+import { type EntryFormState } from "./EntryFormState";
+import EntrySpeciesForm from "./EntrySpeciesForm";
 
-type EntryDetailsFormProps =
+type EntryFormProps =
   | {
       // New entry
       isNewEntry: true;
@@ -21,11 +21,7 @@ type EntryDetailsFormProps =
       existingEntry: GetEntryResponse;
     };
 
-const EntryDetailsForm: FunctionComponent<EntryDetailsFormProps> = ({
-  isNewEntry,
-  existingInventoryId,
-  existingEntry,
-}) => {
+const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInventoryId, existingEntry }) => {
   const { t } = useTranslation();
 
   const inventoryId = existingEntry === undefined ? existingInventoryId : existingEntry.inventoryId;
@@ -62,7 +58,7 @@ const EntryDetailsForm: FunctionComponent<EntryDetailsFormProps> = ({
           environmentIds: existingEntry.environments.map((environment) => environment.id),
           comment: existingEntry.comment,
         }
-  ) satisfies EntryDetailsFormState;
+  ) satisfies EntryFormState;
 
   const {
     register,
@@ -70,14 +66,14 @@ const EntryDetailsForm: FunctionComponent<EntryDetailsFormProps> = ({
     formState: { isValid, isDirty, dirtyFields, defaultValues },
     handleSubmit,
     watch,
-  } = useForm<EntryDetailsFormState>({
+  } = useForm<EntryFormState>({
     resetOptions: { keepDefaultValues: true },
     defaultValues: defaultFormValues,
     values: defaultFormValues,
     resolver: zodResolver(upsertEntryInput),
   });
 
-  const onSubmit: SubmitHandler<EntryDetailsFormState> = (entryDetailsFormData) => {
+  const onSubmit: SubmitHandler<EntryFormState> = (entryDetailsFormData) => {
     console.log("ENTRY SUBMITTED", entryDetailsFormData);
   };
 
@@ -94,10 +90,10 @@ const EntryDetailsForm: FunctionComponent<EntryDetailsFormProps> = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <fieldset className="flex flex-col gap-4">
           <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
-            <EntryDetailsSpeciesForm />
+            <EntrySpeciesForm />
           </div>
           <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
-            <EntryDetailsCommentForm />
+            <EntryCommentForm />
           </div>
         </fieldset>
         <button type="submit">submit</button>
@@ -106,4 +102,4 @@ const EntryDetailsForm: FunctionComponent<EntryDetailsFormProps> = ({
   );
 };
 
-export default EntryDetailsForm;
+export default EntryForm;

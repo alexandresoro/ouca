@@ -1,6 +1,6 @@
 import { type FunctionComponent } from "react";
 import InventoryDetails from "../../../inventory/inventory-details/InventoryDetails";
-import EntryDetailsForm from "../../entry-details/EntryDetailsForm";
+import EntryForm from "../../entry-form/EntryForm";
 
 type EntryStepContainerProps = { inventoryId: string };
 
@@ -13,7 +13,7 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
         <InventoryDetails inventoryId={inventoryId} />
       </div>
       <div className="basis-2/3">
-        <EntryDetailsForm key={newEntryKey} isNewEntry={true} existingInventoryId={inventoryId} />
+        <EntryForm key={newEntryKey} isNewEntry={true} existingInventoryId={inventoryId} />
       </div>
     </div>
   );

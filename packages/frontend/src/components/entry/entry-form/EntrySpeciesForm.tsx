@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import Autocomplete from "../../common/styled/select/Autocomplete";
 
-type EntryDetailsSpeciesFormProps = {
+type EntrySpeciesFormProps = {
   autofocusOnSpecies?: boolean;
 };
 
@@ -19,7 +19,7 @@ const renderSpecies = (species: Species | null): string => {
   return species ? `${species.code} - ${species.nomFrancais} - ${species.nomLatin}` : "";
 };
 
-const EntryDetailsSpeciesForm: FunctionComponent<EntryDetailsSpeciesFormProps> = ({ autofocusOnSpecies }) => {
+const EntrySpeciesForm: FunctionComponent<EntrySpeciesFormProps> = ({ autofocusOnSpecies }) => {
   const { t } = useTranslation();
 
   const [classInput, setClassInput] = useState("");
@@ -104,4 +104,4 @@ const EntryDetailsSpeciesForm: FunctionComponent<EntryDetailsSpeciesFormProps> =
   );
 };
 
-export default EntryDetailsSpeciesForm;
+export default EntrySpeciesForm;

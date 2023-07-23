@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import EntryDetailsForm from "../entry-details/EntryDetailsForm";
+import EntryForm from "../entry-form/EntryForm";
 
 type NewEntryDialogContainerProps = {
   inventoryId: string;
@@ -16,7 +16,7 @@ const NewEntryDialogContainer: FunctionComponent<NewEntryDialogContainerProps> =
     <Dialog className={`modal ${open ? "modal-open" : ""}`} open={open} onClose={onClose}>
       <Dialog.Panel className="modal-box max-w-7xl">
         <Dialog.Title className="text-2xl font-semibold py-4">{t("inventoryPage.entriesPanel.newEntry")}</Dialog.Title>
-        <EntryDetailsForm isNewEntry={true} existingInventoryId={inventoryId} />
+        <EntryForm isNewEntry={true} existingInventoryId={inventoryId} />
       </Dialog.Panel>
     </Dialog>
   );

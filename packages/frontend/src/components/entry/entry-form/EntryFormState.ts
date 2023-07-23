@@ -1,4 +1,4 @@
-export type EntryDetailsFormState = {
+export type EntryFormState = {
   inventoryId: string | null;
   speciesId: string | null;
   sexId: string | null;
