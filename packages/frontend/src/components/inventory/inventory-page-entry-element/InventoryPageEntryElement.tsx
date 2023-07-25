@@ -1,4 +1,4 @@
-import { type EntryExtended } from "@ou-ca/common/entities/entry";
+import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Angry, CalendarPlus, Detail, EditAlt, MaleSign, Trash } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";
 import { type FunctionComponent } from "react";
@@ -8,8 +8,8 @@ import IconButton from "../../common/styled/IconButton";
 type InventoryPageEntryElementProps = {
   entry: EntryExtended;
   onViewDetailsAction?: (entry: EntryExtended) => void;
-  onEditAction?: (entryId: string) => void;
-  onDeleteAction?: (entryId: string) => void;
+  onEditAction?: (entry: Entry) => void;
+  onDeleteAction?: (entry: EntryExtended) => void;
 };
 
 const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProps> = ({
@@ -63,17 +63,13 @@ const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProp
           >
             <Detail className="h-5" />
           </IconButton>
-          <IconButton
-            className="text-primary"
-            aria-label={t("aria-editButton")}
-            onClick={() => onEditAction?.(entry.id)}
-          >
+          <IconButton className="text-primary" aria-label={t("aria-editButton")} onClick={() => onEditAction?.(entry)}>
             <EditAlt className="h-5" />
           </IconButton>
           <IconButton
             className="text-accent"
             aria-label={t("observationsTable.header.action.delete")}
-            onClick={() => onDeleteAction?.(entry.id)}
+            onClick={() => onDeleteAction?.(entry)}
           >
             <Trash className="h-5" />
           </IconButton>

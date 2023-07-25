@@ -2,8 +2,8 @@ import { getEntriesExtendedResponse, type EntriesOrderBy } from "@ou-ca/common/a
 import { type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { useApiEntryDelete } from "../../../hooks/api/queries/api-entry-queries";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
 import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
@@ -63,26 +63,23 @@ const SearchEntriesTable: FunctionComponent = () => {
     }
   );
 
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
+  const { mutate } = useApiEntryDelete({
+    onSettled: async () => {
+      await refetch();
+    },
+    onSuccess: () => {
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+    },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
 
   const handleDeleteDonnee = (donnee: EntryExtended | null) => {
     if (donnee) {
@@ -93,7 +90,7 @@ const SearchEntriesTable: FunctionComponent = () => {
   const handleDeleteDonneeConfirmation = (donnee: EntryExtended | null) => {
     if (donnee) {
       setDeleteDialog(null);
-      mutate({ path: `/entry/${donnee.id}` });
+      mutate({ entryId: donnee.id });
     }
   };
 

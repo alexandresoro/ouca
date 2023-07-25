@@ -1,12 +1,16 @@
-import { getEntriesExtendedResponse } from "@ou-ca/common/api/entry";
-import { type EntryExtended } from "@ou-ca/common/entities/entry";
+import { getEntriesExtendedResponse, type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
 import { Fragment, useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
+import { useApiEntryDelete } from "../../../hooks/api/queries/api-entry-queries";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
+import useSnackbar from "../../../hooks/useSnackbar";
 import EntryDetailsDialogContainer from "../../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import NewEntryDialogContainer from "../../entry/new-entry-dialog-container/NewEntryDialogContainer";
+import UpdateEntryDialogContainer from "../../entry/update-entry-dialog-container/UpdateEntryDialogContainer";
+import DeletionConfirmationDialog from "../../manage/common/DeletionConfirmationDialog";
 import InventoryPageEntryElement from "../inventory-page-entry-element/InventoryPageEntryElement";
 
 type InventoryPageEntriesPanelProps = {
@@ -16,15 +20,20 @@ type InventoryPageEntriesPanelProps = {
 const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProps> = ({ inventoryId }) => {
   const { t } = useTranslation();
 
+  const { displayNotification } = useSnackbar();
+
   const { ref, inView } = useInView();
 
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
   const [newEntryDialogOpen, setNewEntryDialogOpen] = useState(false);
+  const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
+  const [deleteEntryDialogEntry, setDeleteEntryDialogEntry] = useState<EntryExtended | null>(null);
 
   const {
     data: entries,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useApiInfiniteQuery({
     path: "/entries",
     queryParams: {
@@ -35,11 +44,42 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
     schema: getEntriesExtendedResponse,
   });
 
+  const { mutate: deleteEntry } = useApiEntryDelete({
+    onSettled: async () => {
+      await refetch();
+    },
+    onSuccess: () => {
+      setDeleteEntryDialogEntry(null);
+      displayNotification({
+        type: "success",
+        message: t("deleteConfirmationMessage"),
+      });
+    },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("deleteErrorMessage"),
+      });
+    },
+  });
+
   useEffect(() => {
     if (inView) {
       void fetchNextPage();
     }
   }, [inView, fetchNextPage]);
+
+  const handleSubmitNewEntryForm = (entryFormData: UpsertEntryInput) => {
+    console.log("NEW ENTRY", entryFormData);
+  };
+
+  const handleSubmitUpdateExistingEntryForm = (entryFormData: UpsertEntryInput, entryId: string) => {
+    console.log("UPDATE ENTRY", entryFormData, entryId);
+  };
+
+  const handleDeleteExistingEntry = (entryIdToDelete: string) => {
+    deleteEntry({ entryId: entryIdToDelete });
+  };
 
   return (
     <>
@@ -65,6 +105,8 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
                     <InventoryPageEntryElement
                       entry={entry}
                       onViewDetailsAction={(entry) => setViewEntryDialogEntry(entry)}
+                      onEditAction={(entry) => setUpdateEntryDialogEntry(entry)}
+                      onDeleteAction={(entry) => setDeleteEntryDialogEntry(entry)}
                     />
                   </li>
                 );
@@ -84,9 +126,28 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
         onClose={() => setViewEntryDialogEntry(undefined)}
       />
       <NewEntryDialogContainer
-        inventoryId={inventoryId}
         open={newEntryDialogOpen}
         onClose={() => setNewEntryDialogOpen(false)}
+        onSubmitNewEntryForm={handleSubmitNewEntryForm}
+        inventoryId={inventoryId}
+      />
+      <UpdateEntryDialogContainer
+        entry={updateEntryDialogEntry}
+        open={updateEntryDialogEntry != null}
+        onClose={() => setUpdateEntryDialogEntry(null)}
+        onSubmitUpdateEntryForm={handleSubmitUpdateExistingEntryForm}
+      />
+      <DeletionConfirmationDialog
+        open={deleteEntryDialogEntry != null}
+        messageContent={t("deleteObservationDialogMsg", {
+          species: deleteEntryDialogEntry?.species.nomFrancais,
+          locality: deleteEntryDialogEntry?.inventory.locality.nom,
+          city: deleteEntryDialogEntry?.inventory.locality.townName,
+          department: deleteEntryDialogEntry?.inventory.locality.departmentCode,
+          date: deleteEntryDialogEntry?.inventory.date,
+        })}
+        onCancelAction={() => setDeleteEntryDialogEntry(null)}
+        onConfirmAction={() => deleteEntryDialogEntry && handleDeleteExistingEntry(deleteEntryDialogEntry.id)}
       />
     </>
   );

@@ -2,12 +2,15 @@ import { getSpeciesPaginatedResponse } from "@ou-ca/common/api/species";
 import { getClassesResponse } from "@ou-ca/common/api/species-class";
 import { type Species } from "@ou-ca/common/entities/species";
 import { type SpeciesClass } from "@ou-ca/common/entities/species-class";
-import { useState, type FunctionComponent } from "react";
+import { useEffect, useState, type FunctionComponent } from "react";
+import { useController, type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import Autocomplete from "../../common/styled/select/Autocomplete";
+import { type EntryFormState } from "./EntryFormState";
 
-type EntrySpeciesFormProps = {
+type EntryFormSpeciesProps = Pick<UseFormReturn<EntryFormState>, "control"> & {
+  initialSpecies?: Species;
   autofocusOnSpecies?: boolean;
 };
 
@@ -16,17 +19,38 @@ const renderSpeciesClass = (speciesClass: SpeciesClass | null): string => {
 };
 
 const renderSpecies = (species: Species | null): string => {
+  return species?.nomFrancais ?? "";
+};
+
+const renderSpeciesComplete = (species: Species | null): string => {
   return species ? `${species.code} - ${species.nomFrancais} - ${species.nomLatin}` : "";
 };
 
-const EntrySpeciesForm: FunctionComponent<EntrySpeciesFormProps> = ({ autofocusOnSpecies }) => {
+const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
+  control,
+  initialSpecies,
+  autofocusOnSpecies,
+}) => {
   const { t } = useTranslation();
 
   const [classInput, setClassInput] = useState("");
   const [selectedClass, setSelectedClass] = useState<SpeciesClass | null>(null);
 
   const [speciesInput, setSpeciesInput] = useState("");
-  const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(null);
+  const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(initialSpecies ?? null);
+
+  const {
+    field: { ref: refSpecies, value: speciesId, onChange: onChangeSpeciesForm },
+  } = useController({
+    name: "speciesId",
+    control,
+  });
+
+  useEffect(() => {
+    // When the selected species changes, update both the input and the form value
+    setSpeciesInput(renderSpecies(selectedSpecies));
+    onChangeSpeciesForm(selectedSpecies?.id ?? null);
+  }, [selectedSpecies, onChangeSpeciesForm]);
 
   const { data: dataClasses } = useApiQuery(
     {
@@ -71,6 +95,12 @@ const EntrySpeciesForm: FunctionComponent<EntrySpeciesFormProps> = ({ autofocusO
 
   return (
     <div className="flex gap-2">
+      VALUE: {JSON.stringify(speciesId)}
+      <br />
+      INPUT: {JSON.stringify(speciesInput)}
+      <br />
+      SPECIES: {JSON.stringify(selectedSpecies)}
+      <br />
       <Autocomplete
         autocompleteClassName="basis-1/4"
         inputProps={{
@@ -87,6 +117,7 @@ const EntrySpeciesForm: FunctionComponent<EntrySpeciesFormProps> = ({ autofocusO
         labelTextClassName="first-letter:capitalize"
       />
       <Autocomplete
+        ref={refSpecies}
         autocompleteClassName="basis-3/4"
         inputProps={{
           autoFocus: autofocusOnSpecies,
@@ -94,14 +125,17 @@ const EntrySpeciesForm: FunctionComponent<EntrySpeciesFormProps> = ({ autofocusO
         data={dataSpecies?.data}
         name="species"
         label={t("speciesSingular")}
+        decorationKey="code"
+        decorationKeyClassName="w-28"
         onInputChange={setSpeciesInput}
         onChange={setSelectedSpecies}
         value={selectedSpecies}
         renderValue={renderSpecies}
+        renderValueAsOption={renderSpeciesComplete}
         labelTextClassName="first-letter:capitalize"
       />
     </div>
   );
 };
 
-export default EntrySpeciesForm;
+export default EntryFormSpecies;

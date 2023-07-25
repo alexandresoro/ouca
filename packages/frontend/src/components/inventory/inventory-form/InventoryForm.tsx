@@ -101,7 +101,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
     resolver: zodResolver(upsertInventoryInput),
   });
 
-  const localityId = watch();
+  const values = watch();
 
   const onSubmit: SubmitHandler<InventoryFormState> = (inventoryFormData) => {
     // FIXME assertion is done thanks to zod resolver, however types are not inferred
@@ -118,7 +118,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
       <br />
       DEFAULT: {JSON.stringify(defaultValues)}
       <br />
-      LOCALITY: {JSON.stringify(localityId)}
+      VALUES: {JSON.stringify(values)}
       <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">

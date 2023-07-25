@@ -12,10 +12,12 @@ type AutocompleteProps<T> = {
   onChange?: (value: T | null) => void;
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
+  renderValueAsOption?: (value: T) => string;
   autocompleteClassName?: string;
   labelClassName?: string;
   labelTextClassName?: string;
   decorationKey?: ConditionalKeys<T, Key> & string;
+  decorationKeyClassName?: string;
   inputProps?: Omit<ComponentPropsWithRef<"input">, "value" | "defaultValue">;
 } & (
   | {
@@ -37,7 +39,9 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     onInputChange,
     by,
     decorationKey,
+    decorationKeyClassName,
     renderValue,
+    renderValueAsOption,
     label,
     autocompleteClassName,
     labelClassName,
@@ -78,7 +82,9 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
   };
 
   const getDisplayValueAsOption = (value: T): string => {
-    return `${decorationKey ? `${value[decorationKey] as Key} - ` : ""}${renderValue(value)}`;
+    return typeof renderValueAsOption === "function"
+      ? renderValueAsOption(value)
+      : `${decorationKey ? `${value[decorationKey] as Key} - ` : ""}${renderValue(value)}`;
   };
 
   return (
@@ -99,7 +105,11 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
           </div>
           <div className={`w-full relative ${decorationKey ? "join" : ""}`} ref={refs.setReference}>
             {decorationKey && (
-              <span className="join-item w-20 bg-base-300/40 flex items-center px-4 border border-primary border-r-0 border-opacity-70">
+              <span
+                className={`join-item w-20 bg-base-300/40 flex items-center px-4 border border-primary border-r-0 border-opacity-70 ${
+                  decorationKeyClassName ?? ""
+                }`}
+              >
                 {value?.[decorationKey] as Key}
               </span>
             )}

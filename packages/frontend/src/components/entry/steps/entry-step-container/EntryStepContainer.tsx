@@ -1,10 +1,17 @@
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import InventoryDetails from "../../../inventory/inventory-details/InventoryDetails";
 import EntryForm from "../../entry-form/EntryForm";
 
-type EntryStepContainerProps = { inventoryId: string };
+type EntryStepContainerProps = {
+  inventoryId: string;
+  onSubmitEntryForm?: (entryFormData: UpsertEntryInput) => void;
+};
 
-const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ inventoryId }) => {
+const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ inventoryId, onSubmitEntryForm }) => {
+  const { t } = useTranslation();
+
   const newEntryKey = `new-entry-inventory-${inventoryId}`;
 
   return (
@@ -13,7 +20,13 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
         <InventoryDetails inventoryId={inventoryId} />
       </div>
       <div className="basis-2/3">
-        <EntryForm key={newEntryKey} isNewEntry={true} existingInventoryId={inventoryId} />
+        <EntryForm
+          key={newEntryKey}
+          mode="create"
+          initialData={{ inventoryId }}
+          onSubmitForm={onSubmitEntryForm}
+          submitFormText={t("entryForm.formCreate")}
+        />
       </div>
     </div>
   );

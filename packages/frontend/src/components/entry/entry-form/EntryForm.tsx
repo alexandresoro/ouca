@@ -1,36 +1,38 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { upsertEntryInput, type GetEntryResponse } from "@ou-ca/common/api/entry";
+import { upsertEntryInput, type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type Entry } from "@ou-ca/common/entities/entry";
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import EntryCommentForm from "./EntryCommentForm";
+import EntryFormComment from "./EntryFormComment";
+import EntryFormSpecies from "./EntryFormSpecies";
 import { type EntryFormState } from "./EntryFormState";
-import EntrySpeciesForm from "./EntrySpeciesForm";
 
-type EntryFormProps =
+type EntryFormProps = {
+  submitFormText?: string;
+  disableIfNoChanges?: boolean;
+} & (
   | {
-      // New entry
-      isNewEntry: true;
-      existingInventoryId: string;
-      existingEntry?: never;
+      mode: "update";
+      initialData: Entry;
+      onSubmitForm?: (entryFormData: UpsertEntryInput, entryId: string) => void;
     }
   | {
-      // Existing entry
-      isNewEntry?: never;
-      existingInventoryId?: never;
-      existingEntry: GetEntryResponse;
-    };
+      mode: "create";
+      initialData: Omit<Entry, "id"> | { inventoryId: string };
+      onSubmitForm?: (entryFormData: UpsertEntryInput) => void;
+    }
+);
 
-const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInventoryId, existingEntry }) => {
+const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
+  const { submitFormText, disableIfNoChanges } = props;
   const { t } = useTranslation();
 
-  const inventoryId = existingEntry === undefined ? existingInventoryId : existingEntry.inventoryId;
-
   const defaultFormValues = (
-    existingEntry === undefined
+    props.mode === "create"
       ? {
           // New entry
-          inventoryId,
+          inventoryId: props.initialData.inventoryId,
           speciesId: null,
           sexId: null,
           ageId: null,
@@ -45,18 +47,18 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
         }
       : {
           // Existing entry
-          inventoryId,
-          speciesId: existingEntry.species.id,
-          sexId: existingEntry.sex.id,
-          ageId: existingEntry.age.id,
-          numberEstimateId: existingEntry.numberEstimate.id,
-          number: existingEntry.number,
-          distanceEstimateId: existingEntry.distanceEstimate?.id ?? null,
-          distance: existingEntry.distance,
-          regroupment: existingEntry.regroupment,
-          behaviorIds: existingEntry.behaviors.map((behavior) => behavior.id),
-          environmentIds: existingEntry.environments.map((environment) => environment.id),
-          comment: existingEntry.comment,
+          inventoryId: props.initialData.inventoryId,
+          speciesId: props.initialData.species.id,
+          sexId: props.initialData.sex.id,
+          ageId: props.initialData.age.id,
+          numberEstimateId: props.initialData.numberEstimate.id,
+          number: props.initialData.number,
+          distanceEstimateId: props.initialData.distanceEstimate?.id ?? null,
+          distance: props.initialData.distance,
+          regroupment: props.initialData.regroupment,
+          behaviorIds: props.initialData.behaviors.map((behavior) => behavior.id),
+          environmentIds: props.initialData.environments.map((environment) => environment.id),
+          comment: props.initialData.comment,
         }
   ) satisfies EntryFormState;
 
@@ -73,30 +75,56 @@ const EntryForm: FunctionComponent<EntryFormProps> = ({ isNewEntry, existingInve
     resolver: zodResolver(upsertEntryInput),
   });
 
-  const onSubmit: SubmitHandler<EntryFormState> = (entryDetailsFormData) => {
-    console.log("ENTRY SUBMITTED", entryDetailsFormData);
+  const values = watch();
+
+  const onSubmit: SubmitHandler<EntryFormState> = (entryFormData) => {
+    // FIXME assertion is done thanks to zod resolver, however types are not inferred
+    switch (props.mode) {
+      case "create":
+        props.onSubmitForm?.(entryFormData as unknown as UpsertEntryInput);
+        break;
+      case "update":
+        props.onSubmitForm?.(entryFormData as unknown as UpsertEntryInput, props.initialData.id);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
-    <div
-      className={`${isValid ? "" : "bg-red-500 bg-opacity-70"} ${
-        isDirty && isValid ? "bg-yellow-500 bg-opacity-70" : ""
-      }`}
-    >
+    <div>
+      <div className="flex gap-2">
+        <span className={`text-xl ${isDirty ? "bg-yellow-500" : ""}`}>DIRTY</span>
+        <span className={`text-xl ${isValid ? "bg-green-500" : "bg-red-500"}`}>VALID</span>
+      </div>
       DIRTY FIELDS: {JSON.stringify(dirtyFields)}
       <br />
       DEFAULT: {JSON.stringify(defaultValues)}
+      <br />
+      VALUES: {JSON.stringify(values)}
       <h2 className="text-xl font-semibold mb-3">{t("entryDetailsForm.title")}</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset className="flex flex-col gap-4">
-          <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
-            <EntrySpeciesForm />
-          </div>
-          <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
-            <EntryCommentForm />
-          </div>
-        </fieldset>
-        <button type="submit">submit</button>
+        <div className="flex flex-col gap-4">
+          <fieldset className="flex flex-col gap-4">
+            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+              <EntryFormSpecies
+                control={control}
+                initialSpecies={props.mode === "update" ? props.initialData.species : undefined}
+                autofocusOnSpecies
+              />
+            </div>
+            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+              <EntryFormComment register={register} />
+            </div>
+          </fieldset>
+          <button
+            type="submit"
+            className="btn btn-primary btn-block mb-8"
+            disabled={(disableIfNoChanges && !isDirty) || !isValid}
+          >
+            {submitFormText ?? t("save")}
+          </button>
+        </div>
       </form>
     </div>
   );

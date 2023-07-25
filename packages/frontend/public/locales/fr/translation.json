@@ -107,6 +107,10 @@
   "entryDetailsForm": {
     "title": "Fiche espèce"
   },
+  "entryForm": {
+    "formCreate": "Créer l'observation",
+    "formUpdate": "Mettre à jour l'observation"
+  },
   "environmentAlreadyExistingError": "Il existe déjà un milieu naturel avec un code ou un libellé identique.",
   "environmentCreationTitle": "Création d'un milieu naturel",
   "environmentEditionTitle": "Edition d'un milieu naturel",
@@ -159,6 +163,7 @@
       "title_one": "Observation",
       "title_other": "Observations",
       "addNewEntry": "Ajouter une observation",
+      "updateEntry": "Mettre à jour une observation",
       "newEntry": "Nouvelle observation"
     },
     "inventoryEdition": "Édition de l'inventaire"
