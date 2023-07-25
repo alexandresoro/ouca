@@ -21,9 +21,7 @@ const InventorySummaryPanel: FunctionComponent<InventorySummaryPanelProps> = ({ 
         secondary={
           inventory.associates.length ? (
             <div className="first-letter:uppercase">
-              {`${t("associateObservers", { count: inventory.associates.length })}: ${inventory.associates
-                .map(({ libelle }) => libelle)
-                .join(", ")}`}
+              {`${inventory.associates.map(({ libelle }) => libelle).join(", ")}`}
             </div>
           ) : undefined
         }
@@ -43,27 +41,43 @@ const InventorySummaryPanel: FunctionComponent<InventorySummaryPanelProps> = ({ 
             <div>{`${inventory.locality.townName} (${inventory.locality.departmentCode})`}</div>
           </>
         }
-        secondary={`${t("latitude_abbr")}: ${getInventaireCoordinates(inventory).latitude}°, ${t("longitude_abbr")}: ${
-          getInventaireCoordinates(inventory).longitude
-        }° - ${t("altitude_abbr")}: ${getInventaireCoordinates(inventory).altitude} m`}
+        secondary={
+          <>
+            <div>
+              {t("observationDetails.coordinates", {
+                coordinates: {
+                  latitude: getInventaireCoordinates(inventory).latitude,
+                  longitude: getInventaireCoordinates(inventory).longitude,
+                },
+              })}
+            </div>
+            <div>
+              {t("observationDetails.altitude", {
+                altitude: getInventaireCoordinates(inventory).altitude,
+              })}
+            </div>
+          </>
+        }
       />
 
-      <ItemWithAvatar
-        icon={<Sun className="h-6" />}
-        primary={
-          <div className="first-letter:uppercase">
-            {inventory.weathers.length
-              ? `${t("weathers", { count: inventory.weathers.length })}: ${inventory.weathers
-                  .map(({ libelle }) => libelle)
-                  .join(", ")}`
-              : t("unspecified")}
-          </div>
-        }
-        secondary={t("observationDetails.temperature", {
-          context: inventory.temperature ? "" : "undefined",
-          temperature: inventory.temperature,
-        })}
-      />
+      {inventory.weathers.length > 0 && (
+        <ItemWithAvatar
+          icon={<Sun className="h-6" />}
+          primary={
+            <div className="first-letter:uppercase">
+              {inventory.weathers.length
+                ? `${t("weathers", { count: inventory.weathers.length })}: ${inventory.weathers
+                    .map(({ libelle }) => libelle)
+                    .join(", ")}`
+                : t("unspecified")}
+            </div>
+          }
+          secondary={t("observationDetails.temperature", {
+            context: inventory.temperature ? "" : "undefined",
+            temperature: inventory.temperature,
+          })}
+        />
+      )}
     </div>
   );
 };

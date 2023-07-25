@@ -4,11 +4,10 @@
   "ageCreationTitle": "Création d'un âge",
   "ageEditionTitle": "Edition d'un âge",
   "ages": "Âges",
-  "altitude_abbr": "Alt.",
   "altitude": "Altitude",
   "altitudeWithUnit": "Altitude en mètres",
   "appHeader": {
-    "createNew": "Nouvelle entrée",
+    "createNew": "Saisir une observation",
     "viewEntries": "Observations",
     "search": "Recherche",
     "databaseManagement": "Référentiel"
@@ -36,7 +35,7 @@
   },
   "createPage": {
     "headerTitle": "Donnée",
-    "newEntryTitle": "Nouvelle entrée",
+    "newEntryTitle": "Nouvelle observation",
     "newBadge": "Nouvelle"
   },
   "deleteAgeDialogMsg": "Êtes-vous certain de vouloir supprimer l'âge {{name}} ?",
@@ -74,7 +73,7 @@
   "deleteNotRequiredDialogMsgImpactedData": "Les données associées ne seront pas supprimées.",
   "deleteNumberPrecisionDialogMsg": "Êtes-vous certain de vouloir supprimer l'estimation du nombre {{name}} ?",
   "deleteNumberPrecisionDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
-  "deleteObservationDialogMsg": "Êtes-vous certain de vouloir supprimer l'observation [Espèce: {{species}}, Localisation: {{city}} ({{department}}), {{locality}}, Date: {{date}}] ?",
+  "deleteObservationDialogMsg": "Êtes-vous certain de vouloir supprimer l'observation [Espèce: {{species}}, Lieu: {{city}} ({{department}}), {{locality}}, Date: {{date}}] ?",
   "deleteObserverDialogMsg": "Êtes-vous certain de vouloir supprimer l'observateur {{name}} ?",
   "deleteObserverDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
   "deleteRequiredDialogMsgImpactedObservations_zero": "Aucune donnée associée n'existe.",
@@ -104,7 +103,7 @@
   "distancePrecisionCreationTitle": "Création d'une estimation de la distance",
   "distancePrecisionEditionTitle": "Edition d'une estimation de la distance",
   "distancePrecisions": "Estimations de la distance",
-  "duration": "Durée de l'inventaire",
+  "duration": "Durée",
   "entryDetailsForm": {
     "title": "Fiche espèce"
   },
@@ -124,7 +123,7 @@
     }
   },
   "inventoryForm": {
-    "title": "Fiche inventaire",
+    "title": "Inventaire",
     "createNewEntryFromInventory": "Créer une nouvelle fiche espèce à partir de cet inventaire",
     "date": "Date",
     "time": "Heure",
@@ -135,8 +134,8 @@
     "altitudeCallError": "Une erreur est survenue lors de la récupération de l'altitude. L'altitude actuellement affichée peut ne pas être correcte.",
     "temperature": "Température",
     "weathers": "Météos",
-    "formCreate": "Créer le relevé",
-    "formUpdate": "Mettre à jour le relevé",
+    "formCreate": "Créer l'inventaire",
+    "formUpdate": "Mettre à jour l'inventaire",
     "createSuccess": "L'inventaire a été créé avec succès",
     "createError": "Une erreur est survenue lors de la création de l'inventaire",
     "updateSuccess": "L'inventaire a été mis à jour avec succès",
@@ -152,13 +151,13 @@
     "previousInventory": "Inventaire précédent",
     "nextInventory": "Inventaire suivant",
     "inventoryPanel": {
-      "title": "Fiche inventaire",
+      "title": "Inventaire",
       "edit": "Modifier l'inventaire",
       "createNewFrom": "Dupliquer l'inventaire"
     },
     "entriesPanel": {
-      "title_one": "Fiche observation",
-      "title_other": "Fiches observations",
+      "title_one": "Observation",
+      "title_other": "Observations",
       "addNewEntry": "Ajouter une observation",
       "newEntry": "Nouvelle observation"
     },
@@ -167,7 +166,6 @@
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",
   "genders": "Sexes",
-  "latitude_abbr": "Lat.",
   "latitude": "Latitude",
   "latitudeWithUnit": "Latitude en degrés",
   "localityName": "Nom du lieu-dit",
@@ -180,7 +178,6 @@
     "welcomeTitle": "Où-ça !",
     "welcomeDescription": "Bienvenue sur l'application Où-ça !"
   },
-  "longitude_abbr": "Long.",
   "longitude": "Longitude",
   "longitudeWithUnit": "Longitude en degrés",
   "map": "Carte",
@@ -215,8 +212,8 @@
   },
   "newEntry": {
     "steps": {
-      "inventory": "Relevé",
-      "entry": "Fiche espèce"
+      "inventory": "Inventaire",
+      "entry": "Observation"
     }
   },
   "noInventoryExists": "Il n'existe actuellement aucun inventaire. Créez votre premiere donnée pour parcourir les inventaires.",
@@ -245,7 +242,7 @@
     "distance_valueOnly": "Distance d'observation: {{distance}} m",
     "distance_precisionOnly": "Distance d'observation: {{distancePrecision}}",
     "distance_none": "",
-    "duration": "Durée de l'inventaire: {{duration}}",
+    "duration": "Durée: {{duration}}",
     "duration_undefined": "",
     "environments_zero": "Milieu naturel: Non renseigné",
     "environments_one": "Milieu naturel: {{environments}}",
@@ -253,7 +250,7 @@
     "gender": "Sexe: {{gender}}",
     "group": "Regroupement n°{{group}}",
     "inventoryTitle": "Inventaire",
-    "locality": "Localisation: {{locality.nom}} à {{locality.townName}} ({{locality.departmentCode}})",
+    "locality": "Lieu: {{locality.nom}} à {{locality.townName}} ({{locality.departmentCode}})",
     "mainSubtitle": "Propriétaire: {{owner}} • Création: {{creationDate}} • Dernière modification: {{updatedDate}} • Identifiant technique: {{inventoryId}}-{{observationId}}",
     "mainTitle": "Observation: {{speciesName}}",
     "number_defined": "Nombre d'individus: {{number}} ({{numberPrecision}})",
@@ -277,7 +274,7 @@
       },
       "species": "Espèce",
       "number": "Nombre d'individus",
-      "locality": "Localisation",
+      "locality": "Lieu",
       "date": "Date",
       "observer": "Observateur"
     }
@@ -354,12 +351,12 @@
     "resultsCount_one": "{{count}} résultat"
   },
   "label": "Libellé",
-  "undefinedNumber": "Non compté",
+  "undefinedNumber": "Indénombrable",
   "actions": "Actions",
   "aria-ascendingSort": "Tri croissant",
   "aria-descendingSort": "Tri décroissant",
   "aria-userMenuButton": "Menu utilisateur",
-  "aria-editButton": "Éditer",
+  "aria-editButton": "Modifier",
   "aria-deleteButton": "Supprimer",
   "observerCreationTitle": "Création d'un observateur",
   "observerEditionTitle": "Edition d'un observateur",
