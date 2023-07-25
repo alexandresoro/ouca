@@ -336,8 +336,8 @@ importers:
         specifier: 10.4.14
         version: 10.4.14(postcss@8.4.27)
       daisyui:
-        specifier: 3.3.2
-        version: 3.3.2
+        specifier: 3.4.0
+        version: 3.4.0
       eslint-plugin-react:
         specifier: 7.33.0
         version: 7.33.0(eslint@8.45.0)
@@ -3109,8 +3109,8 @@ packages:
     resolution: {integrity: sha512-HQsw0QXiN5fdlO+R8/JzCZnR3Fqp8E87YVnhHlaPtNGJjt6ffbV0LpOkieIb1x6V1+xt878IYq77SpXHWAqKkA==}
     dev: false
 
-  /daisyui@3.3.2:
-    resolution: {integrity: sha512-6ilpsLMHySS/5Uj1/0NMA32uhnzqy1B+wZOi/5ByBCtEJeDq9VeeOqq5xc89tNyVFPnM7Ec36s2v0fmiXoD7RA==}
+  /daisyui@3.4.0:
+    resolution: {integrity: sha512-s9EvNxnw/ubCIopKul+3ddASzZG+jMOmZgLJ0BFOVnxFQy6HJ5+EbMx5yY7Ef0cA6qjeUMl88SwhE94WLSLtHQ==}
     engines: {node: '>=16.9.0'}
     dependencies:
       colord: 2.9.3
