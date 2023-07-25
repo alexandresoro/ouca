@@ -22,7 +22,6 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
   const { t } = useTranslation();
 
   const inventoryCoordinates = inventory.customizedCoordinates ?? inventory.locality.coordinates;
-  const localityCoordinates = inventory.locality.coordinates;
 
   const [viewState, setViewState] = useState<Partial<ViewState>>({
     longitude: inventoryCoordinates.longitude,
@@ -33,7 +32,6 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
   const [mapStyle, setMapStyle] = useState<keyof typeof MAP_STYLE_PROVIDERS>("ign");
 
   const [displayCoordinatesInfoPopup, setDisplayCoordinatesInfoPopup] = useState(false);
-  const [displayLocalityInfoPopup, setDisplayLocalityInfoPopup] = useState(false);
 
   return (
     <div className="flex flex-col card border-2 border-primary shadow-xl">
@@ -48,17 +46,6 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
           }}
         >
           <Marker
-            longitude={localityCoordinates.longitude}
-            latitude={localityCoordinates.latitude}
-            color="#3FB1CE"
-            onClick={(e) => {
-              // Prevent the event from bubbling to avoid closing directly the popup after open
-              e.originalEvent.stopPropagation();
-              // TODO add the delete custom point
-              setDisplayLocalityInfoPopup(true);
-            }}
-          />
-          <Marker
             longitude={inventoryCoordinates.longitude}
             latitude={inventoryCoordinates.latitude}
             color="#b9383c"
@@ -69,23 +56,6 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
               setDisplayCoordinatesInfoPopup(true);
             }}
           />
-          {displayLocalityInfoPopup && (
-            <Popup
-              longitude={localityCoordinates.longitude}
-              latitude={localityCoordinates.latitude}
-              offset={[15, -5] as [number, number]}
-              focusAfterOpen={false}
-              onClose={() => setDisplayLocalityInfoPopup(false)}
-              anchor="left"
-              closeOnClick
-            >
-              <div className="flex flex-col items-center text-gray-700">
-                <div>{t("inventoryMap.localityPosition")}</div>
-                <div className="font-semibold">{`${inventory.locality.nom}`}</div>
-                <div className="font-semibold">{`${inventory.locality.townName} (${inventory.locality.departmentCode})`}</div>
-              </div>
-            </Popup>
-          )}
           {displayCoordinatesInfoPopup && (
             <Popup
               longitude={inventoryCoordinates.longitude}
