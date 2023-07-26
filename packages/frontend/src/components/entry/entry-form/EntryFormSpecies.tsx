@@ -94,13 +94,7 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
   };
 
   return (
-    <div className="flex gap-2">
-      VALUE: {JSON.stringify(speciesId)}
-      <br />
-      INPUT: {JSON.stringify(speciesInput)}
-      <br />
-      SPECIES: {JSON.stringify(selectedSpecies)}
-      <br />
+    <div className="flex gap-4">
       <Autocomplete
         autocompleteClassName="basis-1/4"
         inputProps={{

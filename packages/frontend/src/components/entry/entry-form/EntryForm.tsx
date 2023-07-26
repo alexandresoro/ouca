@@ -4,7 +4,10 @@ import { type Entry } from "@ou-ca/common/entities/entry";
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
+import EntryFormCharacteristics from "./EntryFormCharacteristics";
 import EntryFormComment from "./EntryFormComment";
+import EntryFormDistanceRegroupment from "./EntryFormDistanceRegroupment";
 import EntryFormSpecies from "./EntryFormSpecies";
 import { type EntryFormState } from "./EntryFormState";
 
@@ -28,16 +31,18 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
   const { submitFormText, disableIfNoChanges } = props;
   const { t } = useTranslation();
 
+  const { userSettings } = useUserSettingsContext();
+
   const defaultFormValues = (
     props.mode === "create"
       ? {
           // New entry
           inventoryId: props.initialData.inventoryId,
           speciesId: null,
-          sexId: null,
-          ageId: null,
-          numberEstimateId: null,
-          number: null,
+          sexId: userSettings.defaultSex?.id ?? null,
+          ageId: userSettings.defaultAge?.id ?? null,
+          numberEstimateId: userSettings.defaultNumberEstimate?.id ?? null,
+          number: userSettings.defaultNombre != null ? userSettings.defaultNombre : null,
           distanceEstimateId: null,
           distance: null,
           regroupment: null,
@@ -65,6 +70,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
   const {
     register,
     control,
+    setValue,
     formState: { isValid, isDirty, dirtyFields, defaultValues },
     handleSubmit,
     watch,
@@ -72,6 +78,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
     resetOptions: { keepDefaultValues: true },
     defaultValues: defaultFormValues,
     values: defaultFormValues,
+    // FIX: case where number is not provided but estimate is not "nonCompte" is considered valid and should not
     resolver: zodResolver(upsertEntryInput),
   });
 
@@ -112,6 +119,42 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
                 initialSpecies={props.mode === "update" ? props.initialData.species : undefined}
                 autofocusOnSpecies
               />
+            </div>
+            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+              <div className="flex flex-col gap-2">
+                <EntryFormCharacteristics
+                  control={control}
+                  register={register}
+                  setValue={setValue}
+                  defaultNumber={userSettings?.defaultNombre ?? undefined}
+                  defaultNumberEstimate={
+                    (props.mode === "update" ? props.initialData.numberEstimate : undefined) ??
+                    userSettings.defaultNumberEstimate ??
+                    undefined
+                  }
+                  defaultSex={
+                    (props.mode === "update" ? props.initialData.sex : undefined) ??
+                    userSettings.defaultSex ??
+                    undefined
+                  }
+                  defaultAge={
+                    (props.mode === "update" ? props.initialData.age : undefined) ??
+                    userSettings.defaultAge ??
+                    undefined
+                  }
+                />
+                {(userSettings.isDistanceDisplayed || userSettings.isRegroupementDisplayed) && (
+                  <EntryFormDistanceRegroupment
+                    control={control}
+                    register={register}
+                    isDistanceDisplayed={userSettings.isDistanceDisplayed}
+                    isRegroupmentDisplayed={userSettings.isRegroupementDisplayed}
+                    defaultDistanceEstimate={
+                      (props.mode === "update" ? props.initialData.distanceEstimate : undefined) ?? undefined
+                    }
+                  />
+                )}
+              </div>
             </div>
             <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
               <EntryFormComment register={register} />

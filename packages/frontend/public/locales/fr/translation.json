@@ -108,6 +108,13 @@
     "title": "Fiche espèce"
   },
   "entryForm": {
+    "numberPrecision": "estimation du nombre",
+    "gender": "sexe",
+    "age": "age",
+    "distancePrecision": "estimation de la distance",
+    "distance": "distance de contact (m)",
+    "regroupment": "n° de regroupement",
+    "regroupmentGenerate": "générer",
     "formCreate": "Créer l'observation",
     "formUpdate": "Mettre à jour l'observation"
   },
