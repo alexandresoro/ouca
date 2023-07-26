@@ -6,8 +6,11 @@ import { type Settings } from "../repositories/settings/settings-repository-type
 import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
 import { type LoggedUser } from "../types/User.js";
 import { OucaError } from "../utils/errors.js";
+import { type AgeService } from "./entities/age-service.js";
 import { type DepartementService } from "./entities/departement-service.js";
+import { type EstimationNombreService } from "./entities/estimation-nombre-service.js";
 import { type ObservateurService } from "./entities/observateur-service.js";
+import { type SexeService } from "./entities/sexe-service.js";
 import { buildSettingsService } from "./settings-service.js";
 
 const settingsRepository = mock<SettingsRepository>({
@@ -21,6 +24,18 @@ const observateurService = mock<ObservateurService>({
   findObservateur: vi.fn(),
 });
 
+const sexeService = mock<SexeService>({
+  findSexe: vi.fn(),
+});
+
+const ageService = mock<AgeService>({
+  findAge: vi.fn(),
+});
+
+const estimationNombreService = mock<EstimationNombreService>({
+  findEstimationNombre: vi.fn(),
+});
+
 const logger = mock<Logger>();
 
 const settingsService = buildSettingsService({
@@ -28,6 +43,9 @@ const settingsService = buildSettingsService({
   settingsRepository,
   departementService,
   observateurService,
+  sexeService,
+  ageService,
+  estimationNombreService,
 });
 
 describe("Fetch app configuration for user", () => {
@@ -76,7 +94,6 @@ describe("Fetch app configuration for user", () => {
 test("should update settings with parameters  for user", async () => {
   const updatedAppConfiguration = {
     areAssociesDisplayed: true,
-    coordinatesSystem: "gps",
     defaultAge: "1",
     defaultDepartment: "2",
     defaultEstimationNombre: "3",

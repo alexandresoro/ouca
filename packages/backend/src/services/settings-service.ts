@@ -1,6 +1,9 @@
 import { type PutSettingsInput } from "@ou-ca/common/api/settings";
+import { type Age } from "@ou-ca/common/entities/age";
 import { type Department } from "@ou-ca/common/entities/department";
+import { type NumberEstimate } from "@ou-ca/common/entities/number-estimate";
 import { type Observer } from "@ou-ca/common/entities/observer";
+import { type Sex } from "@ou-ca/common/entities/sex";
 import { type Logger } from "pino";
 import {
   type Settings as SettingsRepositoryType,
@@ -8,20 +11,32 @@ import {
 } from "../repositories/settings/settings-repository-types.js";
 import { type SettingsRepository } from "../repositories/settings/settings-repository.js";
 import { type LoggedUser } from "../types/User.js";
+import { type AgeService } from "./entities/age-service.js";
 import { validateAuthorization } from "./entities/authorization-utils.js";
 import { type DepartementService } from "./entities/departement-service.js";
+import { type EstimationNombreService } from "./entities/estimation-nombre-service.js";
 import { type ObservateurService } from "./entities/observateur-service.js";
+import { type SexeService } from "./entities/sexe-service.js";
 
 type SettingsServiceDependencies = {
   logger: Logger;
   settingsRepository: SettingsRepository;
   departementService: DepartementService;
   observateurService: ObservateurService;
+  sexeService: SexeService;
+  ageService: AgeService;
+  estimationNombreService: EstimationNombreService;
 };
 
-type Settings = Omit<SettingsRepositoryType, "defaultDepartementId" | "defaultObservateurId"> & {
+type Settings = Omit<
+  SettingsRepositoryType,
+  "defaultDepartementId" | "defaultObservateurId" | "defaultSexeId" | "defaultAgeId" | "defaultEstimationNombreId"
+> & {
   defaultDepartment: Department | null;
   defaultObserver: Observer | null;
+  defaultSex: Sex | null;
+  defaultAge: Age | null;
+  defaultNumberEstimate: NumberEstimate | null;
 };
 
 export const buildSettingsService = ({
@@ -29,6 +44,9 @@ export const buildSettingsService = ({
   settingsRepository,
   departementService,
   observateurService,
+  sexeService,
+  ageService,
+  estimationNombreService,
 }: SettingsServiceDependencies) => {
   const getSettings = async (loggedUser: LoggedUser | null): Promise<Settings | null> => {
     validateAuthorization(loggedUser);
@@ -38,14 +56,26 @@ export const buildSettingsService = ({
       return null;
     }
 
-    const { defaultDepartementId, defaultObservateurId, ...restSettings } = settings;
+    const {
+      defaultDepartementId,
+      defaultObservateurId,
+      defaultSexeId,
+      defaultAgeId,
+      defaultEstimationNombreId,
+      ...restSettings
+    } = settings;
 
-    const [defaultDepartment, defaultObserver] = await Promise.all([
+    const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] = await Promise.all([
       defaultDepartementId != null
         ? departementService.findDepartement(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
         ? observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser)
+        : Promise.resolve(null),
+      defaultSexeId != null ? sexeService.findSexe(parseInt(defaultSexeId), loggedUser) : Promise.resolve(null),
+      defaultAgeId != null ? ageService.findAge(parseInt(defaultAgeId), loggedUser) : Promise.resolve(null),
+      defaultEstimationNombreId != null
+        ? estimationNombreService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
         : Promise.resolve(null),
     ]);
 
@@ -53,6 +83,9 @@ export const buildSettingsService = ({
       ...restSettings,
       defaultDepartment,
       defaultObserver,
+      defaultSex,
+      defaultAge,
+      defaultNumberEstimate,
     };
   };
 
@@ -74,14 +107,26 @@ export const buildSettingsService = ({
 
     const updatedSettings = await settingsRepository.updateUserSettings(loggedUser.id, updateSettingsInput);
 
-    const { defaultDepartementId, defaultObservateurId, ...restSettings } = updatedSettings;
+    const {
+      defaultDepartementId,
+      defaultObservateurId,
+      defaultSexeId,
+      defaultAgeId,
+      defaultEstimationNombreId,
+      ...restSettings
+    } = updatedSettings;
 
-    const [defaultDepartment, defaultObserver] = await Promise.all([
+    const [defaultDepartment, defaultObserver, defaultSex, defaultAge, defaultNumberEstimate] = await Promise.all([
       defaultDepartementId != null
         ? departementService.findDepartement(parseInt(defaultDepartementId), loggedUser)
         : Promise.resolve(null),
       defaultObservateurId != null
         ? observateurService.findObservateur(parseInt(defaultObservateurId), loggedUser)
+        : Promise.resolve(null),
+      defaultSexeId != null ? sexeService.findSexe(parseInt(defaultSexeId), loggedUser) : Promise.resolve(null),
+      defaultAgeId != null ? ageService.findAge(parseInt(defaultAgeId), loggedUser) : Promise.resolve(null),
+      defaultEstimationNombreId != null
+        ? estimationNombreService.findEstimationNombre(parseInt(defaultEstimationNombreId), loggedUser)
         : Promise.resolve(null),
     ]);
 
@@ -89,6 +134,9 @@ export const buildSettingsService = ({
       ...restSettings,
       defaultDepartment,
       defaultObserver,
+      defaultSex,
+      defaultAge,
+      defaultNumberEstimate,
     };
   };
 

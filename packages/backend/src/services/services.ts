@@ -221,6 +221,9 @@ export const buildServices = async (config: Config): Promise<Services> => {
     settingsRepository,
     departementService,
     observateurService,
+    sexeService,
+    ageService,
+    estimationNombreService,
   });
 
   const geojsonService = buildGeoJSONService({

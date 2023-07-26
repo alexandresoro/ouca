@@ -159,10 +159,10 @@ const SettingsPage: FunctionComponent = () => {
     reset({
       defaultObserver: settings?.defaultObserver?.id ?? null,
       defaultDepartment: settings?.defaultDepartment?.id ?? null,
-      defaultEstimationNombre: settings?.defaultEstimationNombreId ?? null,
+      defaultEstimationNombre: settings?.defaultNumberEstimate?.id ?? null,
       defaultNombre: settings?.defaultNombre ? `${settings.defaultNombre}` : "",
-      defaultSexe: settings?.defaultSexeId ?? null,
-      defaultAge: settings?.defaultAgeId ?? null,
+      defaultSexe: settings?.defaultSex?.id ?? null,
+      defaultAge: settings?.defaultAge?.id ?? null,
       areAssociesDisplayed: !!settings?.areAssociesDisplayed,
       isMeteoDisplayed: !!settings?.isMeteoDisplayed,
       isDistanceDisplayed: !!settings?.isDistanceDisplayed,
