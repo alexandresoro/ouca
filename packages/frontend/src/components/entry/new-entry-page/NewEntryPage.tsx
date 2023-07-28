@@ -1,6 +1,6 @@
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import StyledPanelHeader from "../../layout/StyledPanelHeader";
 import NewEntryFormContainer from "../new-entry-form-container/NewEntryFormContainer";
 import NewEntryPageStepper from "./NewEntryPageStepper";
@@ -10,7 +10,6 @@ const NewEntryPage: FunctionComponent = () => {
   const { t } = useTranslation();
 
   const { hash } = useLocation();
-  const [searchParams] = useSearchParams();
 
   const [currentStep, setCurrentStep] = useState<NewEntryStep | undefined>();
   useEffect(() => {

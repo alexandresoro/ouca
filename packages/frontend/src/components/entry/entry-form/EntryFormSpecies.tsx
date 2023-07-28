@@ -40,7 +40,7 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
   const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(initialSpecies ?? null);
 
   const {
-    field: { ref: refSpecies, value: speciesId, onChange: onChangeSpeciesForm },
+    field: { ref: refSpecies, onChange: onChangeSpeciesForm },
   } = useController({
     name: "speciesId",
     control,
