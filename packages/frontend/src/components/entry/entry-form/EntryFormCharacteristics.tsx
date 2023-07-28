@@ -168,7 +168,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
         <Autocomplete
           ref={refNumberEstimate}
           data={dataNumberEstimates?.data}
-          name="observer"
+          name="numberEstimate"
           label={t("entryForm.numberPrecision")}
           onInputChange={setNumberEstimateInput}
           onChange={handleChangeSelectedNumberEstimate}

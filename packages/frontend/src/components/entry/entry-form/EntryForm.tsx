@@ -147,6 +147,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
                   <EntryFormDistanceRegroupment
                     control={control}
                     register={register}
+                    setValue={setValue}
                     isDistanceDisplayed={userSettings.isDistanceDisplayed}
                     isRegroupmentDisplayed={userSettings.isRegroupementDisplayed}
                     defaultDistanceEstimate={
