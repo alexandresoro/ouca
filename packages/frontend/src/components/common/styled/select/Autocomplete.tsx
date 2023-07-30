@@ -1,7 +1,7 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Combobox } from "@headlessui/react";
 import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
-import { forwardRef, type ComponentPropsWithRef, type ForwardedRef, type Key } from "react";
+import { forwardRef, type ComponentPropsWithoutRef, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 
@@ -18,7 +18,7 @@ type AutocompleteProps<T> = {
   labelTextClassName?: string;
   decorationKey?: ConditionalKeys<T, Key> & string;
   decorationKeyClassName?: string;
-  inputProps?: Omit<ComponentPropsWithRef<"input">, "value" | "defaultValue">;
+  inputProps?: Omit<ComponentPropsWithoutRef<"input">, "value" | "defaultValue">;
 } & (
   | {
       data: (T & { id: Key })[] | null | undefined;

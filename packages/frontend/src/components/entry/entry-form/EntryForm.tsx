@@ -5,9 +5,11 @@ import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import useUserSettingsContext from "../../../hooks/useUserSettingsContext";
+import EntryFormBehaviors from "./EntryFormBehaviors";
 import EntryFormCharacteristics from "./EntryFormCharacteristics";
 import EntryFormComment from "./EntryFormComment";
 import EntryFormDistanceRegroupment from "./EntryFormDistanceRegroupment";
+import EntryFormEnvironments from "./EntryFormEnvironments";
 import EntryFormSpecies from "./EntryFormSpecies";
 import { type EntryFormState } from "./EntryFormState";
 
@@ -156,6 +158,15 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
                   />
                 )}
               </div>
+            </div>
+            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+              <EntryFormBehaviors
+                control={control}
+                initialBehaviors={(props.mode === "update" ? props.initialData.behaviors : []) ?? []}
+              />
+            </div>
+            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+              <EntryFormEnvironments />
             </div>
             <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
               <EntryFormComment register={register} />

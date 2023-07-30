@@ -116,6 +116,8 @@
     "distanceUnit": "m",
     "regroupment": "n° de regroupement",
     "regroupmentGenerate": "générer",
+    "behaviorWithIndex": "comportement {{index}}",
+    "environmentWithIndex": "milieu {{index}}",
     "formCreate": "Créer l'observation",
     "formUpdate": "Mettre à jour l'observation"
   },
