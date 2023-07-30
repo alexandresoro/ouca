@@ -72,7 +72,6 @@ const EntryFormBehaviors: FunctionComponent<EntryFormBehaviorsProps> = ({ contro
   };
 
   const handleFocusToNewBehavior = () => {
-    console.log(findFirstFocusableElement(newBehaviorRef.current, "input"));
     findFirstFocusableElement(newBehaviorRef.current, "input")?.focus();
   };
 
@@ -81,9 +80,8 @@ const EntryFormBehaviors: FunctionComponent<EntryFormBehaviorsProps> = ({ contro
       <div ref={refBehavior} className="flex flex-wrap gap-x-4 gap-y-2 justify-start">
         {selectedBehaviors.map((selectedBehavior, index) => {
           return (
-            <div className="basis-96">
+            <div key={`${selectedBehavior.id}-${index}`} className="basis-96">
               <EntryFormBehavior
-                key={`${selectedBehavior.id}-${index}`}
                 selectedBehavior={selectedBehaviors[index]}
                 onUpdateBehavior={(newBehavior) => {
                   handleUpdatedBehavior(newBehavior, index);
