@@ -63,7 +63,7 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
                 className="btn btn-xs btn-secondary"
                 to={`/create-new?${new URLSearchParams({ createFromInventory: `${inventory.id}` }).toString()}`}
               >
-                <CopyAlt className="text-primary h-4" />
+                <CopyAlt className="h-4" />
                 {t("inventoryCreateNewFromExisting.createNewButton")}
               </Link>
             </div>
