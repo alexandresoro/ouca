@@ -108,8 +108,6 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
       </div>
       DIRTY FIELDS: {JSON.stringify(dirtyFields)}
       <br />
-      DEFAULT: {JSON.stringify(defaultValues)}
-      <br />
       VALUES: {JSON.stringify(values)}
       <h2 className="text-xl font-semibold mb-3">{t("entryDetailsForm.title")}</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
