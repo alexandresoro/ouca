@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import useApiFetch from "../../../hooks/api/useApiFetch";
 import useApiQuery from "../../../hooks/api/useApiQuery";
+import { capitalizeFirstLetter } from "../../../utils/capitalize-first-letter";
 import TextInput from "../../common/styled/TextInput";
 import Autocomplete from "../../common/styled/select/Autocomplete";
 import { type EntryFormState } from "./EntryFormState";
@@ -118,10 +119,14 @@ const EntryFormDistanceRegroupment: FunctionComponent<EntryFormDistanceRegroupme
             label={t("entryForm.regroupment")}
             type="number"
           />
-          <button type="button" className="btn btn-secondary btn-sm mt-5" onClick={generateRegroupment}>
-            <MagicWand className="h-5" />
-            {t("entryForm.regroupmentGenerate")}
-          </button>
+          <div
+            className="tooltip tooltip-bottom absolute right-5 bottom-[30px]"
+            data-tip={capitalizeFirstLetter(t("entryForm.regroupmentGenerate"))}
+          >
+            <button type="button" className="btn btn-secondary btn-circle btn-xs" onClick={generateRegroupment}>
+              <MagicWand className="h-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>
