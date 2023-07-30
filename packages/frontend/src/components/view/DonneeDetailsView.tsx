@@ -3,7 +3,6 @@ import { type EntryExtended } from "@ou-ca/common/entities/entry";
 import { getHighestNicheurStatus } from "@ou-ca/common/helpers/nicheur-helper";
 import { Angry, Bug, Comment, Link, PieChartAlt2 } from "@styled-icons/boxicons-regular";
 import { Tree } from "@styled-icons/boxicons-solid";
-import { type ParseKeys } from "i18next";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import ItemWithAvatar from "../common/ItemWithAvatar";
@@ -50,12 +49,12 @@ const DonneeDetailsView: FunctionComponent<DonneeDetailsViewProps> = (props) => 
 
         <ItemWithAvatar
           icon={<PieChartAlt2 className="h-6" />}
-          primary={t("observationDetails.number" as ParseKeys, {
+          primary={t("observationDetails.number", {
             context: donnee.numberEstimate?.nonCompte ? "undefined" : "defined",
             number: donnee.number,
             numberPrecision: donnee.numberEstimate?.libelle,
           })}
-          secondary={t("observationDetails.distance" as ParseKeys, {
+          secondary={t("observationDetails.distance", {
             context:
               donnee?.distance && donnee.distanceEstimate
                 ? "both"
