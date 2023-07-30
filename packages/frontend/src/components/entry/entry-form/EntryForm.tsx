@@ -166,7 +166,10 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
               />
             </div>
             <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
-              <EntryFormEnvironments />
+              <EntryFormEnvironments
+                control={control}
+                initialEnvironments={(props.mode === "update" ? props.initialData.environments : []) ?? []}
+              />
             </div>
             <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
               <EntryFormComment register={register} />
