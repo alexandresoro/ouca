@@ -149,4 +149,4 @@ jobs:
           repository: alexandresoro/k3s
           event-type: ouca-backend-image-update
           token: ${{ secrets.DISPATCH_TOKEN }}
-          client-payload: '{"digest":"${{ steps.docker_build.outputs.digest }}", "label": "${{ steps.meta.outputs.version }}"}'
+          client-payload: '{"digest":"${{ steps.docker_build.outputs.digest }}", "label": "${{ steps.meta.outputs.version }}", "isProduction": false}'
