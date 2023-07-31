@@ -145,4 +145,4 @@ jobs:
       - name: Dispatch backend image update
         run: gh workflow run --repo alexandresoro/k3s -f label=${{ steps.meta.outputs.version }} -f digest=${{ steps.docker_build.outputs.digest }} -f isProduction=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }} ouca-backend-image-update.yaml
         env:
-          GITHUB_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
