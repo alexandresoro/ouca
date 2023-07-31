@@ -144,7 +144,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Dispatch backend image update
-        uses: github.com/alexandresoro/k3s/.github/workflows/ouca-backend-image-update.yaml@main
+        uses: alexandresoro/k3s/.github/workflows/ouca-backend-image-update.yaml@main
         with:
           image-digest: ${{ steps.docker_build.outputs.digest }}
           image-label: ${{ steps.meta.outputs.version }}
