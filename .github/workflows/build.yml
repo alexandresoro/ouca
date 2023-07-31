@@ -128,7 +128,6 @@ jobs:
 
       - name: Build and push to GitHub Container Registry
         id: docker_build
-        if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v4
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -144,11 +143,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Dispatch dev env update
-        if: github.ref_name == github.event.repository.default_branch
-        uses: peter-evans/repository-dispatch@v2
+      - name: Dispatch backend image update
+        uses: github.com/alexandresoro/k3s/.github/workflows/ouca-backend-image-update.yaml@main
         with:
-          repository: alexandresoro/k3s
-          event-type: update-ouca-dev-backend-image
-          token: ${{ secrets.DISPATCH_TOKEN }}
-          client-payload: '{"tag":"${{ steps.docker_build.outputs.digest }}"}'
+          image-digest: ${{ steps.docker_build.outputs.digest }}
+          image-label: ${{ steps.meta.outputs.version }}
+          is-production: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
