@@ -56,7 +56,6 @@ jobs:
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
       
       - name: Deploy to CloudFlare - frontend
-        if: github.ref == 'refs/heads/main'
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
