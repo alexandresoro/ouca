@@ -144,8 +144,9 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Dispatch backend image update
-        uses: alexandresoro/k3s/.github/workflows/ouca-backend-image-update.yaml@main
+        uses: peter-evans/repository-dispatch@v2
         with:
-          image-digest: ${{ steps.docker_build.outputs.digest }}
-          image-label: ${{ steps.meta.outputs.version }}
-          is-production: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+          repository: alexandresoro/k3s
+          event-type: ouca-backend-image-update
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          client-payload: '{"digest":"${{ steps.docker_build.outputs.digest }}", "label": "${{ steps.meta.outputs.version }}", "isProduction": ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}}'
