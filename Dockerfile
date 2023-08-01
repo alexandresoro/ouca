@@ -5,7 +5,7 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@8.6.3 --activate
+RUN corepack enable && corepack prepare pnpm@8.6.11 --activate
 
 COPY ./ /app/
 
@@ -19,7 +19,7 @@ ENV NODE_ENV=production
 # Install only the dependencies that are required at runtime
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@8.6.3 --activate
+RUN corepack enable && corepack prepare pnpm@8.6.11 --activate
 
 ENV OUCA_SERVER_HOST 0.0.0.0
 

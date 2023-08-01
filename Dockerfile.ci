@@ -3,7 +3,7 @@ ARG NODE_IMAGE_VERSION=18
 
 FROM node:${NODE_IMAGE_VERSION}-alpine
 
-RUN corepack enable && corepack prepare pnpm@8.6.3 --activate
+RUN corepack enable && corepack prepare pnpm@8.6.11 --activate
 
 # Sets to production, it also sets the install script to install deps only
 ENV NODE_ENV production
