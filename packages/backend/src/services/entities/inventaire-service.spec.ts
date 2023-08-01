@@ -333,3 +333,78 @@ describe("Creation of an inventory", () => {
     });
   });
 });
+
+describe("Deletion of an inventory", () => {
+  test("when deletion of inventory is done by an admin", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: "admin",
+    });
+
+    const inventory = mock<Inventaire>({
+      ownerId: loggedUser.id,
+    });
+
+    inventaireRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    donneeRepository.getCountByInventaireId.mockResolvedValueOnce(0);
+    inventaireRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+
+    const result = await inventaireService.deleteInventory("11", loggedUser);
+
+    expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(inventory);
+  });
+
+  test("when deletion of inventory is done by a non-admin owner", async () => {
+    const loggedUser = mock<LoggedUser>({
+      id: "12",
+      role: "contributor",
+    });
+
+    const inventory = mock<Inventaire>({
+      ownerId: loggedUser.id,
+    });
+
+    inventaireRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    donneeRepository.getCountByInventaireId.mockResolvedValueOnce(0);
+    inventaireRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+
+    const result = await inventaireService.deleteInventory("11", loggedUser);
+
+    expect(inventaireRepository.deleteInventaireById).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(inventory);
+  });
+
+  test("should throw an error when trying to delete an inventory still used", async () => {
+    const loggedUser = mock<LoggedUser>({
+      id: "12",
+      role: "contributor",
+    });
+
+    const inventory = mock<Inventaire>({
+      ownerId: loggedUser.id,
+    });
+
+    inventaireRepository.findInventaireById.mockResolvedValueOnce(inventory);
+    donneeRepository.getCountByInventaireId.mockResolvedValueOnce(3);
+    inventaireRepository.deleteInventaireById.mockResolvedValueOnce(inventory);
+
+    await expect(inventaireService.deleteInventory("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0005"));
+    expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+  });
+
+  test("should throw an error when trying to delete an inventory belonging to a non-owned inventory", async () => {
+    const loggedUser = mock<LoggedUser>({
+      role: "contributor",
+    });
+
+    inventaireRepository.findInventaireById.mockResolvedValueOnce(mock<Inventaire>());
+
+    await expect(inventaireService.deleteInventory("11", loggedUser)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+  });
+
+  test("should throw an error when the requester is not logged", async () => {
+    await expect(inventaireService.deleteInventory("11", null)).rejects.toEqual(new OucaError("OUCA0001"));
+    expect(inventaireRepository.deleteInventaireById).not.toHaveBeenCalled();
+  });
+});

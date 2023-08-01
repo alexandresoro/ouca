@@ -9,9 +9,11 @@ import {
 } from "@ou-ca/common/api/inventory";
 import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
 import { type FastifyPluginCallback } from "fastify";
+import { NotFoundError } from "slonik";
 import { type Inventaire } from "../repositories/inventaire/inventaire-repository-types.js";
 import { type Services } from "../services/services.js";
 import { type LoggedUser } from "../types/User.js";
+import { OucaError } from "../utils/errors.js";
 import { getPaginationMetadata } from "./controller-utils.js";
 import { enrichedLocality } from "./localities-controller.js";
 
@@ -45,7 +47,7 @@ export const enrichedInventory = async (
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { inventaireService } = services;
+  const { inventaireService, donneeService } = services;
 
   fastify.get<{
     Params: {
@@ -164,6 +166,26 @@ const inventoriesController: FastifyPluginCallback<{
     } catch (e) {
       // TODO handle duplicate inventory
       // rome-ignore lint/complexity/noUselessCatch: <explanation>
+      throw e;
+    }
+  });
+
+  fastify.delete<{
+    Params: {
+      id: string;
+    };
+  }>("/:id", async (req, reply) => {
+    try {
+      const { id: deletedId } = await inventaireService.deleteInventory(req.params.id, req.user);
+      return await reply.send({ id: deletedId });
+    } catch (e) {
+      if (e instanceof NotFoundError) {
+        return await reply.status(404).send();
+      } else if (e instanceof OucaError && e.name === "OUCA0001") {
+        return await reply.status(403).send();
+      } else if (e instanceof OucaError && e.name === "OUCA0005") {
+        return await reply.status(409).send("This inventory is still used by existing entries");
+      }
       throw e;
     }
   });

@@ -11,6 +11,7 @@ import {
 import { type InventaireRepository } from "../../repositories/inventaire/inventaire-repository.js";
 import { type LieuditRepository } from "../../repositories/lieudit/lieudit-repository.js";
 import { type LoggedUser } from "../../types/User.js";
+import { OucaError } from "../../utils/errors.js";
 import { logger } from "../../utils/logger.js";
 import { validateAuthorization } from "./authorization-utils.js";
 import { getSqlPagination } from "./entities-utils.js";
@@ -255,6 +256,30 @@ export const buildInventaireService = ({
     }
   };
 
+  const deleteInventory = async (id: string, loggedUser: LoggedUser | null): Promise<Inventaire> => {
+    validateAuthorization(loggedUser);
+
+    // Check that the user is allowed to modify the existing inventory
+    if (loggedUser?.role !== "admin") {
+      const existingInventory = await inventaireRepository.findInventaireById(parseInt(id));
+
+      if (existingInventory?.ownerId !== loggedUser?.id) {
+        throw new OucaError("OUCA0001");
+      }
+    }
+
+    const deletedInventory = await slonik.transaction(async (transactionConnection) => {
+      const entriesOfInventory = await donneeRepository.getCountByInventaireId(parseInt(id), transactionConnection);
+
+      if (entriesOfInventory > 0) {
+        throw new OucaError("OUCA0005");
+      }
+      return inventaireRepository.deleteInventaireById(parseInt(id), transactionConnection);
+    });
+
+    return deletedInventory;
+  };
+
   return {
     findInventaire,
     findInventoryIndex,
@@ -264,6 +289,7 @@ export const buildInventaireService = ({
     getInventairesCount,
     createInventaire,
     updateInventaire,
+    deleteInventory,
   };
 };
 
