@@ -1,6 +1,6 @@
 import { isAfter, isBefore } from "date-fns";
 import { z } from "zod";
-import { inventoryExtendedSchema, inventorySchema } from "../entities/inventory.js";
+import { inventoryExtendedSchema } from "../entities/inventory.js";
 import { getPaginatedResponseSchema, paginationQueryParamsSchema } from "./common/pagination.js";
 
 /**
@@ -66,6 +66,6 @@ export const upsertInventoryInput = z.object({
 
 export type UpsertInventoryInput = z.infer<typeof upsertInventoryInput>;
 
-export const upsertInventoryResponse = inventorySchema;
+export const upsertInventoryResponse = inventoryExtendedSchema;
 
 export type UpsertInventoryResponse = z.infer<typeof upsertInventoryResponse>;
