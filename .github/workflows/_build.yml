@@ -3,9 +3,6 @@ name: Validate, Test & Build
 on:
   workflow_call:
     inputs:
-      node-version:
-        required: true
-        type: string
       with-sentry:
         required: false
         type: boolean
@@ -15,12 +12,24 @@ on:
       upload-backend:
         required: false
         type: boolean
+    outputs:
+      nodeVersion:
+        description: "The node.js version used for the build"
+        value: ${{ jobs.validate-test-build.outputs.nodeVersion }}
+
+env:
+  NODE_VERSION: 18
 
 jobs:
-  build:
+  validate-test-build:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup Node version
+        id: nodeVersion
+        run: |
+          echo $NODE_VERSION >> $GITHUB_OUTPUT
+
       - uses: actions/checkout@v3
 
       - uses: pnpm/action-setup@v2
@@ -29,7 +38,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ inputs.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
       - uses: google/wireit@setup-github-actions-caching/v1
