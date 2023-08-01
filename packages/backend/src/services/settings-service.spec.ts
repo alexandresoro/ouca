@@ -91,7 +91,7 @@ describe("Fetch app configuration for user", () => {
   });
 });
 
-test("should update settings with parameters  for user", async () => {
+test("should update settings with parameters for user", async () => {
   const updatedAppConfiguration = {
     areAssociesDisplayed: true,
     defaultAge: "1",
@@ -99,7 +99,7 @@ test("should update settings with parameters  for user", async () => {
     defaultEstimationNombre: "3",
     defaultNombre: 4,
     defaultObserver: "5",
-    defaultSexe: "6",
+    defaultSexe: null,
     isDistanceDisplayed: true,
     isMeteoDisplayed: true,
     isRegroupementDisplayed: true,
@@ -118,13 +118,12 @@ test("should update settings with parameters  for user", async () => {
   expect(settingsRepository.updateUserSettings).toHaveBeenCalledTimes(1);
   expect(settingsRepository.updateUserSettings).toHaveBeenCalledWith(loggedUser.id, {
     are_associes_displayed: true,
-    coordinates_system: "gps",
     default_age_id: 1,
     default_departement_id: 2,
     default_estimation_nombre_id: 3,
     default_nombre: 4,
     default_observateur_id: 5,
-    default_sexe_id: 6,
+    default_sexe_id: null,
     is_distance_displayed: true,
     is_meteo_displayed: true,
     is_regroupement_displayed: true,

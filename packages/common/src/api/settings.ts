@@ -32,12 +32,12 @@ export type GetSettingsResponse = z.infer<typeof getSettingsResponse>;
  * Update of user settings
  */
 export const putSettingsInput = z.object({
-  defaultDepartment: z.string(),
-  defaultObserver: z.string(),
-  defaultEstimationNombre: z.string(),
-  defaultNombre: z.coerce.number().min(1).max(65535),
-  defaultSexe: z.string(),
-  defaultAge: z.string(),
+  defaultDepartment: z.string().nullable(),
+  defaultObserver: z.string().nullable(),
+  defaultEstimationNombre: z.string().nullable(),
+  defaultNombre: z.coerce.number().min(1).max(65535).nullable(),
+  defaultSexe: z.string().nullable(),
+  defaultAge: z.string().nullable(),
   areAssociesDisplayed: z.boolean(),
   isMeteoDisplayed: z.boolean(),
   isDistanceDisplayed: z.boolean(),

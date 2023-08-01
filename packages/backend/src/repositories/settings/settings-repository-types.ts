@@ -1,4 +1,3 @@
-import { type CoordinatesSystemType } from "@ou-ca/common/coordinates-system/coordinates-system.object";
 import { z } from "zod";
 
 export const settingsSchema = z.object({
@@ -19,15 +18,14 @@ export const settingsSchema = z.object({
 export type Settings = z.infer<typeof settingsSchema>;
 
 export type UpdateSettingsInput = Partial<{
-  default_observateur_id: number;
-  default_departement_id: number;
-  default_age_id: number;
-  default_sexe_id: number;
-  default_estimation_nombre_id: number;
-  default_nombre: number;
+  default_observateur_id: number | null;
+  default_departement_id: number | null;
+  default_age_id: number | null;
+  default_sexe_id: number | null;
+  default_estimation_nombre_id: number | null;
+  default_nombre: number | null;
   are_associes_displayed: boolean;
   is_meteo_displayed: boolean;
   is_distance_displayed: boolean;
   is_regroupement_displayed: boolean;
-  coordinates_system: CoordinatesSystemType;
 }>;

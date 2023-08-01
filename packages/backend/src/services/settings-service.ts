@@ -150,16 +150,19 @@ export type SettingsService = ReturnType<typeof buildSettingsService>;
 
 const buildSettingsDbFromInputSettings = (inputUpdateSettings: PutSettingsInput): UpdateSettingsInput => {
   return {
-    default_observateur_id: parseInt(inputUpdateSettings.defaultObserver),
-    default_departement_id: parseInt(inputUpdateSettings.defaultDepartment),
-    default_age_id: parseInt(inputUpdateSettings.defaultAge),
-    default_sexe_id: parseInt(inputUpdateSettings.defaultSexe),
-    default_estimation_nombre_id: parseInt(inputUpdateSettings.defaultEstimationNombre),
+    default_observateur_id: inputUpdateSettings.defaultObserver ? parseInt(inputUpdateSettings.defaultObserver) : null,
+    default_departement_id: inputUpdateSettings.defaultDepartment
+      ? parseInt(inputUpdateSettings.defaultDepartment)
+      : null,
+    default_age_id: inputUpdateSettings.defaultAge ? parseInt(inputUpdateSettings.defaultAge) : null,
+    default_sexe_id: inputUpdateSettings.defaultSexe ? parseInt(inputUpdateSettings.defaultSexe) : null,
+    default_estimation_nombre_id: inputUpdateSettings.defaultEstimationNombre
+      ? parseInt(inputUpdateSettings.defaultEstimationNombre)
+      : null,
     default_nombre: inputUpdateSettings.defaultNombre,
     are_associes_displayed: inputUpdateSettings.areAssociesDisplayed,
     is_meteo_displayed: inputUpdateSettings.isMeteoDisplayed,
     is_distance_displayed: inputUpdateSettings.isDistanceDisplayed,
     is_regroupement_displayed: inputUpdateSettings.isRegroupementDisplayed,
-    coordinates_system: "gps",
   };
 };
