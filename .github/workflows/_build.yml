@@ -24,6 +24,9 @@ jobs:
   validate-test-build:
     runs-on: ubuntu-latest
 
+    outputs:
+      nodeVersion: ${{ steps.nodeVersion.outputs.nodeVersion }}
+
     steps:
       - name: Setup Node version
         id: nodeVersion
