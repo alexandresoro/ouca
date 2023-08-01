@@ -47,7 +47,7 @@ export const enrichedInventory = async (
 const inventoriesController: FastifyPluginCallback<{
   services: Services;
 }> = (fastify, { services }, done) => {
-  const { inventaireService, donneeService } = services;
+  const { inventaireService } = services;
 
   fastify.get<{
     Params: {
