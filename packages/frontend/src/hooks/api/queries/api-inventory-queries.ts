@@ -4,6 +4,7 @@ import {
   type UpsertInventoryResponse,
 } from "@ou-ca/common/api/inventory";
 import { type UseMutationOptions } from "@tanstack/react-query";
+import { z } from "zod";
 import { type FetchError } from "../api-types";
 import useApiMutation from "../useApiMutation";
 
@@ -40,6 +41,25 @@ export const useApiInventoryUpdate = (
     mutate({
       path: `/inventories/${inventoryId}`,
       body,
+    });
+
+  return { ...restUseMutation, mutate: mutateApi };
+};
+
+export const useApiInventoryDelete = (
+  mutationOptions?: Omit<UseMutationOptions<{ id: string }, FetchError, { path?: string }>, "mutationFn">
+) => {
+  const { mutate, ...restUseMutation } = useApiMutation(
+    {
+      method: "DELETE",
+      schema: z.object({ id: z.string() }),
+    },
+    { ...mutationOptions }
+  );
+
+  const mutateApi = ({ inventoryId }: { inventoryId: string }) =>
+    mutate({
+      path: `/inventories/${inventoryId}`,
     });
 
   return { ...restUseMutation, mutate: mutateApi };

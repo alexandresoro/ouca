@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
-import { useState, type FunctionComponent } from "react";
+import { useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FullscreenControl,
@@ -24,10 +24,18 @@ const InventoryMap: FunctionComponent<InventoryMapProps> = ({ inventory }) => {
   const inventoryCoordinates = inventory.customizedCoordinates ?? inventory.locality.coordinates;
 
   const [viewState, setViewState] = useState<Partial<ViewState>>({
-    longitude: inventoryCoordinates.longitude,
-    latitude: inventoryCoordinates.latitude,
     zoom: 15,
   });
+  useEffect(() => {
+    const inventoryCoordinates = inventory.customizedCoordinates ?? inventory.locality.coordinates;
+    setViewState((viewState) => {
+      return {
+        ...viewState,
+        longitude: inventoryCoordinates.longitude,
+        latitude: inventoryCoordinates.latitude,
+      };
+    });
+  }, [inventory]);
 
   const [mapStyle, setMapStyle] = useState<keyof typeof MAP_STYLE_PROVIDERS>("ign");
 

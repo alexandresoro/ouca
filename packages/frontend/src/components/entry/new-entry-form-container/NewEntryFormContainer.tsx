@@ -26,8 +26,9 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
   };
 
   const { mutate: createInventory } = useApiInventoryCreate({
-    onSuccess: (updatedInventory) => {
+    onSuccess: async (updatedInventory) => {
       queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
+      await queryClient.invalidateQueries(["API", "indexInventory"]);
       displayNotification({
         type: "success",
         message: t("inventoryForm.createSuccess"),

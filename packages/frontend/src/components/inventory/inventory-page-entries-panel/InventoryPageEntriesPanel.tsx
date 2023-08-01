@@ -1,11 +1,11 @@
-import { getEntriesExtendedResponse, type UpsertEntryInput } from "@ou-ca/common/api/entry";
+import { type getEntriesExtendedResponse, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
-import { Fragment, useEffect, useState, type FunctionComponent } from "react";
+import { type InfiniteData } from "@tanstack/react-query";
+import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useInView } from "react-intersection-observer";
+import { type z } from "zod";
 import { useApiEntryDelete } from "../../../hooks/api/queries/api-entry-queries";
-import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EntryDetailsDialogContainer from "../../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import NewEntryDialogContainer from "../../entry/new-entry-dialog-container/NewEntryDialogContainer";
@@ -15,39 +15,26 @@ import InventoryPageEntryElement from "../inventory-page-entry-element/Inventory
 
 type InventoryPageEntriesPanelProps = {
   inventoryId: string;
+  entries: InfiniteData<z.infer<typeof getEntriesExtendedResponse>> | undefined;
+  onDeleteEntrySettled?: () => void | Promise<void>;
 };
 
-const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProps> = ({ inventoryId }) => {
+const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProps> = ({
+  inventoryId,
+  entries,
+  onDeleteEntrySettled,
+}) => {
   const { t } = useTranslation();
 
   const { displayNotification } = useSnackbar();
-
-  const { ref, inView } = useInView();
 
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
   const [newEntryDialogOpen, setNewEntryDialogOpen] = useState(false);
   const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
   const [deleteEntryDialogEntry, setDeleteEntryDialogEntry] = useState<EntryExtended | null>(null);
 
-  const {
-    data: entries,
-    fetchNextPage,
-    hasNextPage,
-    refetch,
-  } = useApiInfiniteQuery({
-    path: "/entries",
-    queryParams: {
-      pageSize: 10,
-      inventoryId,
-      extended: true,
-    },
-    schema: getEntriesExtendedResponse,
-  });
-
   const { mutate: deleteEntry } = useApiEntryDelete({
-    onSettled: async () => {
-      await refetch();
-    },
+    onSettled: onDeleteEntrySettled,
     onSuccess: () => {
       setDeleteEntryDialogEntry(null);
       displayNotification({
@@ -62,12 +49,6 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
       });
     },
   });
-
-  useEffect(() => {
-    if (inView) {
-      void fetchNextPage();
-    }
-  }, [inView, fetchNextPage]);
 
   const handleSubmitNewEntryForm = (entryFormData: UpsertEntryInput) => {
     console.log("NEW ENTRY", entryFormData);
@@ -115,11 +96,6 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
           );
         })}
       </ul>
-      {hasNextPage && (
-        <button ref={ref} type="button" className="btn btn-xs btn-link no-underline" onClick={() => fetchNextPage()}>
-          {t("infiniteScroll.more")}
-        </button>
-      )}
       <EntryDetailsDialogContainer
         entry={viewEntryDialogEntry}
         open={viewEntryDialogEntry != null}

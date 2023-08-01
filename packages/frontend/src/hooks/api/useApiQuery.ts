@@ -12,10 +12,12 @@ const useApiQuery = <
   TQueryKey extends unknown[] = unknown[]
 >(
   {
+    queryKeyPrefix,
     path,
     queryParams,
     schema,
   }: {
+    queryKeyPrefix?: string;
     path: string;
     queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
     schema?: z.ZodType<TQueryFnData>;
@@ -29,7 +31,12 @@ const useApiQuery = <
 
   const queryString = toUrlSearchParams(queryParams).toString();
 
-  const queryKey = ["API", path, ...(queryParams ? [queryParams] : [])] as unknown as TQueryKey;
+  const queryKey = [
+    "API",
+    ...(queryKeyPrefix ? [queryKeyPrefix] : []),
+    path,
+    ...(queryParams ? [queryParams] : []),
+  ] as unknown as TQueryKey;
 
   const queryFn: QueryFunction<TQueryFnData, TQueryKey> = async () => {
     const response = await fetch(`${apiUrl}/api/v1${path}${queryString.length ? `?${queryString}` : ""}`, {

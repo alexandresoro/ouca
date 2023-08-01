@@ -68,6 +68,7 @@
   "deleteErrorMessage": "Une erreur est survenue pendant la suppression.",
   "deleteGenderDialogMsg": "Êtes-vous certain de vouloir supprimer le sexe {{name}} ?",
   "deleteGenderDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
+  "deleteInventoryDialogMsg": "Êtes-vous certain de vouloir supprimer cet inventaire ?",
   "deleteLieuDitDialogMsg": "Êtes-vous certain de vouloir supprimer le lieu-dit {{name}} à {{city}} ({{department}}) ?",
   "deleteLieuDitDialogMsgImpactedData": "$t(deleteRequiredDialogMsgImpactedObservations, {\"count\": {{nbOfObservations}} })",
   "deleteNotRequiredDialogMsgImpactedData": "Les données associées ne seront pas supprimées.",
@@ -153,7 +154,9 @@
     "createSuccess": "L'inventaire a été créé avec succès",
     "createError": "Une erreur est survenue lors de la création de l'inventaire",
     "updateSuccess": "L'inventaire a été mis à jour avec succès",
-    "updateError": "Une erreur est survenue lors de la mise à jour de l'inventaire"
+    "updateError": "Une erreur est survenue lors de la mise à jour de l'inventaire",
+    "deleteSuccess": "L'inventaire a été supprimé",
+    "deleteError": "Une erreur est survenue lors de la suppression de l'inventaire"
   },
   "inventoryMap": {
     "inventoryPosition": "Position de l'inventaire",
@@ -167,7 +170,8 @@
     "inventoryPanel": {
       "title": "Inventaire",
       "edit": "Modifier l'inventaire",
-      "createNewFrom": "Dupliquer l'inventaire"
+      "createNewFrom": "Dupliquer l'inventaire",
+      "delete": "Supprimer l'inventaire"
     },
     "entriesPanel": {
       "title_one": "Observation",

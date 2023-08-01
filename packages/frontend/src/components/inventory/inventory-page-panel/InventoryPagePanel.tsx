@@ -1,23 +1,43 @@
 import { FloatingArrow, arrow, autoUpdate, offset, shift, useFloating, type VirtualElement } from "@floating-ui/react";
 import { Menu } from "@headlessui/react";
-import { getInventoriesResponse } from "@ou-ca/common/api/inventory";
+import { getInventoriesResponse, type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type InventoryExtended } from "@ou-ca/common/entities/inventory";
-import { ChevronLeft, ChevronRight, CopyAlt, DotsHorizontalRounded, EditAlt } from "@styled-icons/boxicons-regular";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CopyAlt,
+  DotsHorizontalRounded,
+  EditAlt,
+  Trash,
+} from "@styled-icons/boxicons-regular";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { useApiInventoryDelete, useApiInventoryUpdate } from "../../../hooks/api/queries/api-inventory-queries";
 import useApiQuery from "../../../hooks/api/useApiQuery";
+import useSnackbar from "../../../hooks/useSnackbar";
+import DeletionConfirmationDialog from "../../manage/common/DeletionConfirmationDialog";
 import InventoryEditDialogContainer from "../inventory-edit-dialog-container/InventoryEditDialogContainer";
 import InventoryMap from "../inventory-map/InventoryMap";
 import InventorySummaryPanel from "../inventory-summary-panel/InventorySummaryPanel";
 
 type InventoryPagePanelProps = {
   inventory: InventoryExtended;
+  isInventoryDeletionAllowed?: boolean;
 };
 
-const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ inventory }) => {
+const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ inventory, isInventoryDeletionAllowed }) => {
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
+
+  const { displayNotification } = useSnackbar();
+
+  const queryClient = useQueryClient();
+
+  const [deleteDialog, setDeleteDialog] = useState<InventoryExtended | null>(null);
 
   const { data: inventoryCountData } = useApiQuery({
     path: "/inventories",
@@ -50,8 +70,9 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
       : undefined;
   const nextInventoryIndex = inventoryIndex != null && inventoryIndex > 1 ? inventoryIndex - 1 : undefined;
 
-  const { data: previousInventoryData } = useApiQuery(
+  const { data: previousInventoryData, isFetching: isFetchingPrevious } = useApiQuery(
     {
+      queryKeyPrefix: "indexInventory",
       path: "/inventories",
       queryParams: {
         pageNumber: previousInventoryIndex,
@@ -63,12 +84,13 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     },
     {
       enabled: previousInventoryIndex != null,
-      staleTime: 10000,
+      staleTime: 30000,
     }
   );
 
-  const { data: nextInventoryData } = useApiQuery(
+  const { data: nextInventoryData, isFetching: isFetchingNext } = useApiQuery(
     {
+      queryKeyPrefix: "indexInventory",
       path: "/inventories",
       queryParams: {
         pageNumber: nextInventoryIndex,
@@ -80,9 +102,50 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
     },
     {
       enabled: nextInventoryIndex != null,
-      staleTime: 10000,
+      staleTime: 30000,
     }
   );
+
+  const { mutate: updateInventory } = useApiInventoryUpdate({
+    onSuccess: (updatedInventory) => {
+      queryClient.setQueryData(["API", `/inventories/${updatedInventory.id}`], updatedInventory);
+      displayNotification({
+        type: "success",
+        message: t("inventoryForm.updateSuccess"),
+      });
+      setInventoryEditDialogOpen(false);
+    },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("inventoryForm.updateError"),
+      });
+    },
+  });
+
+  const { mutate: deleteInventory } = useApiInventoryDelete({
+    onSuccess: async () => {
+      displayNotification({
+        type: "success",
+        message: t("inventoryForm.deleteSuccess"),
+      });
+      setDeleteDialog(null);
+      await queryClient.invalidateQueries(["API", "indexInventory"]);
+      if (previousInventoryId != null) {
+        navigate(`../${previousInventoryId}`, { replace: true, relative: "path" });
+      } else if (nextInventoryId != null) {
+        navigate(`../${nextInventoryId}`, { replace: true, relative: "path" });
+      } else {
+        navigate("/", { replace: true });
+      }
+    },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("inventoryForm.deleteError"),
+      });
+    },
+  });
 
   const arrowRef = useRef(null);
   const floatingMoreInventory = useFloating<HTMLButtonElement | VirtualElement>({
@@ -100,8 +163,18 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
 
   const [inventoryEditDialogOpen, setInventoryEditDialogOpen] = useState<boolean>(false);
 
-  const hasPreviousInventory = previousInventoryIndex != null && previousInventoryData?.data?.[0] != null;
-  const hasNextInventory = nextInventoryIndex != null && nextInventoryData?.data?.[0] != null;
+  const handleInventoryUpdate = (inventoryFormData: UpsertInventoryInput, inventoryId: string) => {
+    updateInventory({
+      inventoryId,
+      body: inventoryFormData,
+    });
+  };
+
+  const previousInventoryId = previousInventoryData?.data?.[0].id ?? null;
+  const nextInventoryId = nextInventoryData?.data?.[0].id ?? null;
+
+  const hasPreviousInventory = previousInventoryIndex != null && previousInventoryId != null;
+  const hasNextInventory = nextInventoryIndex != null && nextInventoryId != null;
 
   return (
     <>
@@ -152,6 +225,18 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                   {t("inventoryPage.inventoryPanel.createNewFrom")}
                 </Link>
               </Menu.Item>
+              {isInventoryDeletionAllowed && (
+                <Menu.Item key="delete">
+                  <button
+                    type="button"
+                    className="btn btn-xs btn-ghost text-error"
+                    onClick={() => setDeleteDialog(inventory)}
+                  >
+                    <Trash className="h-5" />
+                    {t("inventoryPage.inventoryPanel.delete")}
+                  </button>
+                </Menu.Item>
+              )}
             </Menu.Items>
           </Menu>
           <div className="flex gap-2">
@@ -160,8 +245,10 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
               data-tip={hasPreviousInventory ? t("inventoryPage.previousInventory") : undefined}
             >
               <Link
-                className={`btn btn-sm btn-square ${hasPreviousInventory ? "btn-primary" : "btn-disabled"}`}
-                to={`../${previousInventoryData?.data?.[0].id as string}`}
+                className={`btn btn-sm btn-square ${
+                  hasPreviousInventory && !isFetchingPrevious ? "btn-primary" : "btn-disabled"
+                }`}
+                to={`../${previousInventoryId as string}`}
                 tabIndex={hasPreviousInventory ? 0 : -1}
                 relative="path"
               >
@@ -173,8 +260,10 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
               data-tip={hasNextInventory ? t("inventoryPage.nextInventory") : undefined}
             >
               <Link
-                className={`btn btn-sm btn-square ${hasNextInventory ? "btn-primary" : "btn-disabled"}`}
-                to={`../${nextInventoryData?.data?.[0].id as string}`}
+                className={`btn btn-sm btn-square ${
+                  hasNextInventory && !isFetchingNext ? "btn-primary" : "btn-disabled"
+                }`}
+                to={`../${nextInventoryId as string}`}
                 tabIndex={hasNextInventory ? 0 : -1}
                 relative="path"
               >
@@ -186,12 +275,19 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
       </div>
       <div className="flex flex-col gap-2">
         <InventorySummaryPanel inventory={inventory} />
-        <InventoryMap key={inventory.id} inventory={inventory} />
+        <InventoryMap inventory={inventory} />
       </div>
       <InventoryEditDialogContainer
         inventory={inventory}
         open={inventoryEditDialogOpen}
         onClose={() => setInventoryEditDialogOpen(false)}
+        onInventoryUpdate={handleInventoryUpdate}
+      />
+      <DeletionConfirmationDialog
+        open={!!deleteDialog}
+        messageContent={t("deleteInventoryDialogMsg")}
+        onCancelAction={() => setDeleteDialog(null)}
+        onConfirmAction={() => deleteInventory({ inventoryId: inventory.id })}
       />
     </>
   );
