@@ -244,15 +244,11 @@ const SettingsPage: FunctionComponent = () => {
                 <TextInput
                   textInputClassName="w-full"
                   label={t("defaultNumber")}
-                  type="text"
-                  required
+                  type="number"
                   hasError={!!errors.defaultNombre}
                   className="text-base-content text-sm font-semibold"
                   {...register("defaultNombre", {
-                    required: true,
-                    min: 1,
-                    max: 65535,
-                    validate: (v) => !isNaN(v as unknown as number),
+                    setValueAs: (v: string) => (v?.length ? parseInt(v) : typeof v === "number" ? v : null),
                   })}
                 />
               </div>
