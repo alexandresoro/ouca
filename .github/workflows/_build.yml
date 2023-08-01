@@ -1,0 +1,84 @@
+name: Validate, Test & Build
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: true
+        type: string
+      with-sentry:
+        required: false
+        type: boolean
+      deploy-frontend:
+        required: false
+        type: boolean
+      upload-backend:
+        required: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: "pnpm"
+
+      - uses: google/wireit@setup-github-actions-caching/v1
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Rome
+        run: pnpm run rome:ci
+
+      - name: Test
+        run: pnpm --aggregate-output --recursive run test
+        
+      - name: Lint
+        run: pnpm --aggregate-output --recursive run lint
+
+      - name: Build
+        run: pnpm run build:ci
+        env:
+          ENABLE_SENTRY: ${{ inputs.with-sentry }}
+          SENTRY_RELEASE: ${{ github.sha }}
+          SENTRY_URL: ${{ vars.SENTRY_URL }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
+      
+      - name: Deploy to CloudFlare - frontend
+        if: ${{ inputs.deploy-frontend }}
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+          directory: "./packages/frontend/dist"
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact - backend
+        if: ${{ inputs.upload-backend }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-node-lts
+          path: |
+            packages/backend/dist/
+            packages/common/dist/
+            packages/backend/migrations/
+            package.json
+            pnpm-*.yaml
+            packages/backend/package.json
+            packages/common/package.json
+            !**/node_modules/**
+          retention-days: 1
+          if-no-files-found: error
