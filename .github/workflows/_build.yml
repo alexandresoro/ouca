@@ -28,7 +28,7 @@ jobs:
       - name: Setup Node version
         id: nodeVersion
         run: |
-          echo $NODE_VERSION >> $GITHUB_OUTPUT
+          echo "nodeVersion=$NODE_VERSION" >> $GITHUB_OUTPUT
 
       - uses: actions/checkout@v3
 
