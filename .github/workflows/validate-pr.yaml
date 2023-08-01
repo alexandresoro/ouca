@@ -4,75 +4,10 @@ on:
   pull_request:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    outputs:
-      nodeVersion: ${{ steps.nodeVersion.outputs.nodeVersion }}
-
-    steps:
-      - name: Setup Node version
-        id: nodeVersion
-        run: |
-          echo "nodeVersion=18" >> $GITHUB_OUTPUT
-          echo "nodeVersion=18" >> $GITHUB_ENV
-
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Get changed source files
-        id: changed-source-files
-        uses: tj-actions/changed-files@v37
-        with:
-          files: |
-            **.{ts,tsx,js}
-
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.nodeVersion }}
-          cache: "pnpm"
-
-      - uses: google/wireit@setup-github-actions-caching/v1
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Rome
-        run: pnpm run rome:ci
-
-      - name: Test
-        run: pnpm --aggregate-output --recursive run test
-        
-      - name: Lint - complete
-        # Do a complete lint whenever anything else than a source file has changed
-        if: steps.changed-source-files.outputs.only_changed != 'true'
-        run: pnpm --aggregate-output --recursive run lint
-
-      - name: Lint - only changed source files
-        # Lint only changed files when only changed files have changed
-        if: steps.changed-source-files.outputs.only_changed == 'true'
-        run: pnpm eslint ${{ steps.changed-source-files.outputs.src_all_changed_files }}
-
-      - name: Build
-        run: pnpm run build:ci
-        env:
-          ENABLE_SENTRY: false
-          SENTRY_RELEASE: ${{ github.sha }}
-          SENTRY_URL: ${{ vars.SENTRY_URL }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-      
-      - name: Deploy to CloudFlare - frontend
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
-          directory: "./packages/frontend/dist"
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+  validate-pr:    
+    uses: ./.github/workflows/_build.yml
+    secrets: inherit
+    with:
+      with-sentry: false
+      deploy-frontend: true
+      upload-backend: false
