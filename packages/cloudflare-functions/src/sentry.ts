@@ -14,12 +14,13 @@ export const onRequestPost: PagesFunction = async ({ request }) => {
 
     const response = await fetch(`https://${host}/api${projectId}/envelope/`, {
       method: "POST",
-      headers: request.headers,
+      headers: { ...request.headers, "Content-Type": "application/x-sentry-envelope" },
       body: request.body,
     });
 
     return response;
   } catch (e) {
+    console.log(e);
     return new Response("Invalid request", { status: 400 });
   }
 };
