@@ -61,12 +61,6 @@ const App: FunctionComponent = () => {
     } satisfies UserManagerSettings;
   }, [config]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      throw new Error("test");
-    }, 3000);
-  });
-
   const RouterRoutes = SentryRoutes ?? Routes;
 
   return (
