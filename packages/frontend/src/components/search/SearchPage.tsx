@@ -3,7 +3,6 @@ import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useAppContext from "../../hooks/useAppContext";
 import ContentContainerLayout from "../layout/ContentContainerLayout";
-import StyledPanelHeader from "../layout/StyledPanelHeader";
 import DonneeFilter from "./DonneeFilter";
 import SearchEntriesTable from "./search-entries-table/SearchEntriesTable";
 import SearchSpeciesTable from "./search-species-table/SearchSpeciesTable";
@@ -15,10 +14,6 @@ const SearchPage: FunctionComponent = () => {
 
   return (
     <>
-      <StyledPanelHeader>
-        <h1 className="text-2xl font-normal">{t("viewObservations")}</h1>
-      </StyledPanelHeader>
-
       <ContentContainerLayout>
         {features.tmp_view_search_filters && <DonneeFilter />}
 
