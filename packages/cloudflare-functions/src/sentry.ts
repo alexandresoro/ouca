@@ -1,7 +1,10 @@
 // Sentry proxy function
 export const onRequestPost: PagesFunction = async ({ request }) => {
   try {
-    const body = await request.text();
+    // https://developer.mozilla.org/en-US/docs/Web/API/Request/clone
+    // https://stackoverflow.com/questions/40497859/reread-a-response-body-from-javascripts-fetch
+    const clonedRequest = request.clone();
+    const body = await clonedRequest.text();
     const pieces = body.split("\n");
 
     // DSN is in the first JSON structure
