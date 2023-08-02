@@ -46,7 +46,8 @@ export const setUser = (user: User | null | undefined): void => {
     user
       ? {
           id: user.profile.sub,
-          username: user.profile.preferred_username,
+          username: user.profile.name,
+          email: user.profile.email,
         }
       : null
   );
