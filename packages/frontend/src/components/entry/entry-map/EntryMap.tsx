@@ -95,8 +95,12 @@ const EntryMap: FunctionComponent = () => {
   // The feature collection containing only localities that
   // match the current selection
   const selectionFeatureCollection = useMemo(() => {
-    if (!localitiesGeoJson || !localitySelection) {
+    if (!localitiesGeoJson) {
       return null;
+    }
+
+    if (!localitySelection) {
+      return localitiesGeoJson;
     }
 
     // Filter localities that only match the selection
@@ -313,7 +317,7 @@ const EntryMap: FunctionComponent = () => {
         >
           {selectionFeatureCollectionPolygon && (
             <Source id="selected-localities" type="geojson" data={selectionFeatureCollectionPolygon}>
-              <Layer {...selectionLayer} />
+              {localitySelection != null && <Layer {...selectionLayer} />}
             </Source>
           )}
           {localitiesGeoJson && (
