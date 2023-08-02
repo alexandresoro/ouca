@@ -10,7 +10,7 @@
       "name": "Alexandre Soro"
     }
   ],
-  "license": "MIT",
+  "license": "MPL-2.0-no-copyleft-exception",
   "private": true,
   "scripts": {
     "lint": "eslint ."
