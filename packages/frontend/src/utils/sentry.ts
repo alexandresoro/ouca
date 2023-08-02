@@ -21,7 +21,10 @@ export const initializeSentry = (
           matchRoutes
         ),
       }),
-      new Sentry.Replay(),
+      new Sentry.Replay({
+        // See https://github.com/getsentry/sentry-javascript/issues/7302
+        useCompression: false,
+      }),
       new ExtraErrorData(),
       new HttpClient(),
     ],
