@@ -1,11 +1,11 @@
 import { type getEntriesExtendedResponse, type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
 import { Plus } from "@styled-icons/boxicons-regular";
-import { type InfiniteData } from "@tanstack/react-query";
+import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { type z } from "zod";
-import { useApiEntryDelete } from "../../../hooks/api/queries/api-entry-queries";
+import { useApiEntryCreate, useApiEntryDelete, useApiEntryUpdate } from "../../../hooks/api/queries/api-entry-queries";
 import useSnackbar from "../../../hooks/useSnackbar";
 import EntryDetailsDialogContainer from "../../entry/entry-details-dialog-container/EntryDetailsDialogContainer";
 import NewEntryDialogContainer from "../../entry/new-entry-dialog-container/NewEntryDialogContainer";
@@ -16,22 +16,64 @@ import InventoryPageEntryElement from "../inventory-page-entry-element/Inventory
 type InventoryPageEntriesPanelProps = {
   inventoryId: string;
   entries: InfiniteData<z.infer<typeof getEntriesExtendedResponse>> | undefined;
+  onCreateEntrySettled?: () => void | Promise<void>;
+  onUpdateEntrySettled?: () => void | Promise<void>;
   onDeleteEntrySettled?: () => void | Promise<void>;
 };
 
 const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProps> = ({
   inventoryId,
   entries,
+  onCreateEntrySettled,
+  onUpdateEntrySettled,
   onDeleteEntrySettled,
 }) => {
   const { t } = useTranslation();
 
   const { displayNotification } = useSnackbar();
 
+  const queryClient = useQueryClient();
+
   const [viewEntryDialogEntry, setViewEntryDialogEntry] = useState<EntryExtended | undefined>();
   const [newEntryDialogOpen, setNewEntryDialogOpen] = useState(false);
   const [updateEntryDialogEntry, setUpdateEntryDialogEntry] = useState<Entry | null>(null);
   const [deleteEntryDialogEntry, setDeleteEntryDialogEntry] = useState<EntryExtended | null>(null);
+
+  const { mutate: createEntry } = useApiEntryCreate({
+    onSettled: onCreateEntrySettled,
+    onSuccess: (createdEntry) => {
+      queryClient.setQueryData(["API", `/entries/${createdEntry.id}`], createdEntry);
+      setNewEntryDialogOpen(false);
+      displayNotification({
+        type: "success",
+        message: t("inventoryForm.entries.createSuccess"),
+      });
+    },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("inventoryForm.entries.createError"),
+      });
+    },
+  });
+
+  const { mutate: updateEntry } = useApiEntryUpdate({
+    onSettled: onUpdateEntrySettled,
+    onSuccess: (updatedEntry) => {
+      queryClient.setQueryData(["API", `/entries/${updatedEntry.id}`], updatedEntry);
+      setUpdateEntryDialogEntry(null);
+      displayNotification({
+        type: "success",
+        message: t("inventoryForm.entries.updateSuccess"),
+      });
+    },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("inventoryForm.entries.updateError"),
+      });
+    },
+  });
 
   const { mutate: deleteEntry } = useApiEntryDelete({
     onSettled: onDeleteEntrySettled,
@@ -51,11 +93,16 @@ const InventoryPageEntriesPanel: FunctionComponent<InventoryPageEntriesPanelProp
   });
 
   const handleSubmitNewEntryForm = (entryFormData: UpsertEntryInput) => {
-    console.log("NEW ENTRY", entryFormData);
+    createEntry({
+      body: entryFormData,
+    });
   };
 
   const handleSubmitUpdateExistingEntryForm = (entryFormData: UpsertEntryInput, entryId: string) => {
-    console.log("UPDATE ENTRY", entryFormData, entryId);
+    updateEntry({
+      entryId,
+      body: entryFormData,
+    });
   };
 
   const handleDeleteExistingEntry = (entryIdToDelete: string) => {

@@ -87,6 +87,12 @@ const InventoryPage: FunctionComponent = () => {
             <InventoryPageEntriesPanel
               inventoryId={inventory.id}
               entries={entries}
+              onCreateEntrySettled={async () => {
+                await refetch();
+              }}
+              onUpdateEntrySettled={async () => {
+                await refetch();
+              }}
               onDeleteEntrySettled={async () => {
                 await refetch();
               }}
