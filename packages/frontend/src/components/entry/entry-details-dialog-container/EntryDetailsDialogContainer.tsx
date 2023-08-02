@@ -1,10 +1,11 @@
 import { Dialog } from "@headlessui/react";
 import { type EntryExtended } from "@ou-ca/common/entities/entry";
+import { Link } from "@styled-icons/boxicons-regular";
 import { intlFormat, parseISO } from "date-fns";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import InventorySummaryPanel from "../../inventory/inventory-summary-panel/InventorySummaryPanel";
-import DonneeDetailsView from "../../view/DonneeDetailsView";
+import EntrySummaryPanel from "../entry-summary-panel/EntrySummaryPanel";
 
 type EntryDetailsDialogContainerProps = {
   entry?: EntryExtended;
@@ -42,8 +43,22 @@ const EntryDetailsDialogContainer: FunctionComponent<EntryDetailsDialogContainer
             <InventorySummaryPanel inventory={entry.inventory} />
           </div>
           <div className="basis-3/5">
-            <h3 className="text-xl font-normal py-4 first-letter:uppercase">{t("observation")}</h3>
-            <DonneeDetailsView donnee={entry} />
+            <h3 className="flex justify-between py-4">
+              <span className="text-xl font-normal first-letter:uppercase">{t("observation")}</span>
+              {entry.regroupment ? (
+                <>
+                  <span className="badge badge-primary badge-outline badge-lg">
+                    <Link className="h-4 pr-1.5" />
+                    {t("observationDetails.group", {
+                      group: entry.regroupment,
+                    })}
+                  </span>
+                </>
+              ) : (
+                <></>
+              )}
+            </h3>
+            <EntrySummaryPanel entry={entry} />
           </div>
         </div>
       </Dialog.Panel>
