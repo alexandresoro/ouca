@@ -30,6 +30,11 @@ const UserSettingsProvider: FunctionComponent<PropsWithChildren> = ({ children }
     {
       notifyOnChangeProps: ["data", "error"],
       staleTime: Infinity,
+      retry: (count, error) => {
+        // If a 404 is returned, don't "lose time" retrying,
+        // otherwise use regular retry mechanism
+        return !(error?.status === 404) && count < 3;
+      },
     }
   );
 
