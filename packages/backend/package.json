@@ -50,7 +50,7 @@
     "pino-pretty": "10.2.0",
     "serialize-error": "11.0.0",
     "slonik": "34.0.1",
-    "umzug": "3.2.1",
+    "umzug": "3.3.0",
     "zod": "3.21.4"
   },
   "devDependencies": {
