@@ -203,8 +203,8 @@ importers:
         specifier: 5.0.6
         version: 5.0.6
       '@fontsource/carter-one':
-        specifier: 5.0.5
-        version: 5.0.5
+        specifier: 5.0.6
+        version: 5.0.6
       '@headlessui/react':
         specifier: 1.7.16
         version: 1.7.16(react-dom@18.2.0)(react@18.2.0)
@@ -1285,8 +1285,8 @@ packages:
     resolution: {integrity: sha512-WrjJq+YwiT40Bj/SJp0AxkFStwqyO2AheQ5ufZbpZtI4xz0wed8p/gZINmNAn/s5yv9v+2sVZO8zYWWsBiJ4vw==}
     dev: false
 
-  /@fontsource/carter-one@5.0.5:
-    resolution: {integrity: sha512-iWxQrHTeL+XvrmK4QbFemv9aodm0PKCKRS1AZUvqNQpFYRyOKsQRU3Ll4Mmj0Ryq7lDIQYLuitsdyADohLoaiQ==}
+  /@fontsource/carter-one@5.0.6:
+    resolution: {integrity: sha512-toj7qzUcBna7WO7+xuym4ydLbQHqV1rTaDEc9/t990+N2kr3AHRsPtZBvDEU4hu+wiDilymcXKmcmGmxwAEnNQ==}
     dev: false
 
   /@headlessui/react@1.7.16(react-dom@18.2.0)(react@18.2.0):
