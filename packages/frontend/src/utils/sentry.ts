@@ -21,7 +21,7 @@ export const initializeSentry = (
           matchRoutes
         ),
       }),
-      //new Sentry.Replay(),
+      new Sentry.Replay(),
       new ExtraErrorData(),
       new HttpClient(),
     ],
