@@ -135,7 +135,8 @@ const entriesController: FastifyPluginCallback<{
 
     try {
       const entry = await donneeService.createDonnee(input, req.user);
-      const response = upsertEntryResponse.parse(entry);
+      const entryEnriched = await enrichedEntry(services, entry, req.user);
+      const response = upsertEntryResponse.parse(entryEnriched);
 
       return await reply.send(response);
     } catch (e) {
@@ -161,7 +162,8 @@ const entriesController: FastifyPluginCallback<{
 
     try {
       const entry = await donneeService.updateDonnee(req.params.id, input, req.user);
-      const response = upsertEntryResponse.parse(entry);
+      const entryEnriched = await enrichedEntry(services, entry, req.user);
+      const response = upsertEntryResponse.parse(entryEnriched);
 
       return await reply.send(response);
     } catch (e) {
