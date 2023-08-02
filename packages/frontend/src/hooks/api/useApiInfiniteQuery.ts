@@ -26,10 +26,12 @@ const useApiInfiniteQuery = <
   TQueryKey extends unknown[] = unknown[]
 >(
   {
+    queryKeyPrefix,
     path,
     queryParams,
     schema,
   }: {
+    queryKeyPrefix?: string;
     path: string;
     queryParams?: Record<string, string | number | string[] | number[] | boolean | undefined>;
     schema: z.ZodType<TQueryFnData>;
@@ -44,7 +46,13 @@ const useApiInfiniteQuery = <
 
   const accessToken = user?.access_token;
 
-  const queryKey = ["API", path, ...(queryParams ? [queryParams] : []), "infinite"] as unknown as TQueryKey;
+  const queryKey = [
+    "API",
+    ...(queryKeyPrefix ? [queryKeyPrefix] : []),
+    path,
+    ...(queryParams ? [queryParams] : []),
+    "infinite",
+  ] as unknown as TQueryKey;
 
   const queryFn: QueryFunction<TQueryFnData, TQueryKey, number> = async ({ pageParam = 1 }) => {
     const queryString = toUrlSearchParams({ ...queryParams, pageNumber: pageParam }).toString();

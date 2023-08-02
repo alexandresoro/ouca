@@ -1,7 +1,9 @@
+import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
-import { type FunctionComponent } from "react";
+import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useApiEntryCreate } from "../../../hooks/api/queries/api-entry-queries";
 import { useApiInventoryCreate } from "../../../hooks/api/queries/api-inventory-queries";
 import useSnackbar from "../../../hooks/useSnackbar";
 import { queryClient } from "../../../query/query-client";
@@ -20,6 +22,8 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
   const inventoryIdParam = searchParams.get("inventoryId") ?? undefined;
 
   const { displayNotification } = useSnackbar();
+
+  const [entryFormKey, setEntryFormKey] = useState(0);
 
   const goToEntryStep = (inventoryId: string) => {
     navigate(`/create-new?${new URLSearchParams({ inventoryId }).toString()}#${ENTRY_STEP.id}`, { replace: true });
@@ -43,8 +47,32 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
     },
   });
 
+  const { mutate: createEntry } = useApiEntryCreate({
+    onSettled: async () => {
+      await queryClient.invalidateQueries(["API", "entriesForInventoryDetails"]);
+    },
+    onSuccess: (createdEntry) => {
+      queryClient.setQueryData(["API", `/entries/${createdEntry.id}`], createdEntry);
+      displayNotification({
+        type: "success",
+        message: t("inventoryForm.entries.createSuccess"),
+      });
+      setEntryFormKey(new Date().getTime());
+    },
+    onError: () => {
+      displayNotification({
+        type: "error",
+        message: t("inventoryForm.entries.createError"),
+      });
+    },
+  });
+
   const handleSubmitInventoryForm = (inventoryFormData: UpsertInventoryInput) => {
     createInventory({ body: inventoryFormData });
+  };
+
+  const handleSubmitEntryForm = (entryFormData: UpsertEntryInput) => {
+    createEntry({ body: entryFormData });
   };
 
   return (
@@ -52,7 +80,13 @@ const NewEntryFormContainer: FunctionComponent<NewEntryFormContainerProps> = ({ 
       {currentStep.id === INVENTORY_STEP.id && (
         <InventoryStepContainer onSubmitInventoryForm={handleSubmitInventoryForm} />
       )}
-      {currentStep.id === ENTRY_STEP.id && inventoryIdParam && <EntryStepContainer inventoryId={inventoryIdParam} />}
+      {currentStep.id === ENTRY_STEP.id && inventoryIdParam && (
+        <EntryStepContainer
+          inventoryId={inventoryIdParam}
+          entryFormKey={entryFormKey}
+          onSubmitEntryForm={handleSubmitEntryForm}
+        />
+      )}
     </>
   );
 };

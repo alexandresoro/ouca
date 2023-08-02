@@ -6,13 +6,18 @@ import EntryForm from "../../entry-form/EntryForm";
 
 type EntryStepContainerProps = {
   inventoryId: string;
+  entryFormKey: string | number;
   onSubmitEntryForm?: (entryFormData: UpsertEntryInput) => void;
 };
 
-const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ inventoryId, onSubmitEntryForm }) => {
+const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({
+  inventoryId,
+  entryFormKey,
+  onSubmitEntryForm,
+}) => {
   const { t } = useTranslation();
 
-  const newEntryKey = `new-entry-inventory-${inventoryId}`;
+  const newEntryKey = `new-entry-inventory-${inventoryId}-${entryFormKey}`;
 
   return (
     <div className="container mx-auto flex gap-10 pt-4">
@@ -20,6 +25,7 @@ const EntryStepContainer: FunctionComponent<EntryStepContainerProps> = ({ invent
         <InventoryDetails inventoryId={inventoryId} />
       </div>
       <div className="basis-2/3">
+        <h2 className="text-xl font-semibold mb-3">{t("entryDetailsForm.title")}</h2>
         <EntryForm
           key={newEntryKey}
           mode="create"

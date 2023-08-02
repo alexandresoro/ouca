@@ -73,9 +73,8 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
     register,
     control,
     setValue,
-    formState: { isValid, isDirty, dirtyFields, defaultValues },
+    formState: { isValid, isDirty },
     handleSubmit,
-    watch,
   } = useForm<EntryFormState>({
     resetOptions: { keepDefaultValues: true },
     defaultValues: defaultFormValues,
@@ -83,8 +82,6 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
     // FIX: case where number is not provided but estimate is not "nonCompte" is considered valid and should not
     resolver: zodResolver(upsertEntryInput),
   });
-
-  const values = watch();
 
   const onSubmit: SubmitHandler<EntryFormState> = (entryFormData) => {
     // FIXME assertion is done thanks to zod resolver, however types are not inferred
@@ -101,18 +98,10 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
   };
 
   return (
-    <div>
-      <div className="flex gap-2">
-        <span className={`text-xl ${isDirty ? "bg-yellow-500" : ""}`}>DIRTY</span>
-        <span className={`text-xl ${isValid ? "bg-green-500" : "bg-red-500"}`}>VALID</span>
-      </div>
-      DIRTY FIELDS: {JSON.stringify(dirtyFields)}
-      <br />
-      VALUES: {JSON.stringify(values)}
-      <h2 className="text-xl font-semibold mb-3">{t("entryDetailsForm.title")}</h2>
+    <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
-          <fieldset className="flex flex-col gap-4">
+          <fieldset className="flex flex-col gap-2.5">
             <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
               <EntryFormSpecies
                 control={control}
@@ -121,7 +110,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
               />
             </div>
             <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
                 <EntryFormCharacteristics
                   control={control}
                   register={register}
@@ -182,7 +171,7 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
           </button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

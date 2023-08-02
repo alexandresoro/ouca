@@ -77,7 +77,7 @@ const EntryFormEnvironments: FunctionComponent<EntryFormEnvironmentsProps> = ({ 
 
   return (
     <>
-      <div ref={refEnvironment} className="flex flex-wrap gap-x-4 gap-y-2 justify-start">
+      <div ref={refEnvironment} className="flex flex-wrap gap-x-4 justify-start">
         {selectedEnvironments.map((selectedEnvironment, index) => {
           return (
             <div key={`${selectedEnvironment.id}-${index}`} className="basis-96">

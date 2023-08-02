@@ -77,7 +77,7 @@ const EntryFormBehaviors: FunctionComponent<EntryFormBehaviorsProps> = ({ contro
 
   return (
     <>
-      <div ref={refBehavior} className="flex flex-wrap gap-x-4 gap-y-2 justify-start">
+      <div ref={refBehavior} className="flex flex-wrap gap-x-4 justify-start">
         {selectedBehaviors.map((selectedBehavior, index) => {
           return (
             <div key={`${selectedBehavior.id}-${index}`} className="basis-96">

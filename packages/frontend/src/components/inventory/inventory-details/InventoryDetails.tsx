@@ -25,6 +25,7 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
   });
 
   const { data: entriesForCount } = useApiQuery({
+    queryKeyPrefix: "entriesForInventoryDetails",
     path: "/entries",
     queryParams: {
       pageNumber: 1,
@@ -35,6 +36,7 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
   });
 
   const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
+    queryKeyPrefix: "entriesForInventoryDetails",
     path: "/entries",
     queryParams: {
       pageSize: 10,

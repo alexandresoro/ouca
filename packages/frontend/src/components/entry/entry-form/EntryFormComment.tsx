@@ -15,6 +15,7 @@ const EntryFormComment: FunctionComponent<EntryFormCommentProps> = ({ register }
         setValueAs: (v: string) => (v?.length ? v : null),
       })}
       label={t("comments")}
+      className="h-16"
       labelTextClassName="first-letter:capitalize"
     />
   );
