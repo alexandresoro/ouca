@@ -130,8 +130,8 @@ importers:
         specifier: 0.34.1
         version: 0.34.1
       vitest-mock-extended:
-        specifier: 1.1.4
-        version: 1.1.4(typescript@5.1.6)(vitest@0.34.1)
+        specifier: 1.2.0
+        version: 1.2.0(typescript@5.1.6)(vitest@0.34.1)
 
   packages/cloudflare-functions:
     devDependencies:
@@ -173,8 +173,8 @@ importers:
         specifier: 0.34.1
         version: 0.34.1
       vitest-mock-extended:
-        specifier: 1.1.4
-        version: 1.1.4(typescript@5.1.6)(vitest@0.34.1)
+        specifier: 1.2.0
+        version: 1.2.0(typescript@5.1.6)(vitest@0.34.1)
 
   packages/eslint-config:
     devDependencies:
@@ -363,8 +363,8 @@ importers:
         specifier: 0.34.1
         version: 0.34.1
       vitest-mock-extended:
-        specifier: 1.1.4
-        version: 1.1.4(typescript@5.1.6)(vitest@0.34.1)
+        specifier: 1.2.0
+        version: 1.2.0(typescript@5.1.6)(vitest@0.34.1)
       wireit:
         specifier: 0.10.0
         version: 0.10.0
@@ -7261,8 +7261,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest-mock-extended@1.1.4(typescript@5.1.6)(vitest@0.34.1):
-    resolution: {integrity: sha512-MKPdepFjk0CE7Ocb5txntHK/sloHO9s0Kk9dr630uL03shRSHMkZtSs5CBPsbJ8K/CvYLv0GHUmMt2zWks2eXg==}
+  /vitest-mock-extended@1.2.0(typescript@5.1.6)(vitest@0.34.1):
+    resolution: {integrity: sha512-/UwFogR1XFvLHmdru+IDbfEywwqKQ8QuaKPEyoWg1ElbZFck/y/jikeOu/EjAVEoYxS9pB/FKFHAidkNBtwEFA==}
     peerDependencies:
       typescript: 3.x || 4.x || 5.x
       vitest: '>=0.31.1'
