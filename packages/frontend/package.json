@@ -87,7 +87,7 @@
     "typescript": "5.1.6",
     "vite": "4.4.8",
     "vitest": "0.34.1",
-    "vitest-mock-extended": "1.1.4",
+    "vitest-mock-extended": "1.2.0",
     "wireit": "0.10.0"
   },
   "engines": {

@@ -63,7 +63,7 @@
     "typescript": "5.1.6",
     "undici": "5.23.0",
     "vitest": "0.34.1",
-    "vitest-mock-extended": "1.1.4"
+    "vitest-mock-extended": "1.2.0"
   },
   "engines": {
     "node": ">=18"
