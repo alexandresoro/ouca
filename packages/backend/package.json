@@ -61,7 +61,7 @@
     "dotenv": "16.3.1",
     "tsx": "3.12.7",
     "typescript": "5.1.6",
-    "undici": "5.22.1",
+    "undici": "5.23.0",
     "vitest": "0.34.1",
     "vitest-mock-extended": "1.1.4"
   },
