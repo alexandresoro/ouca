@@ -38,15 +38,7 @@ export default defineConfig(({ mode }) => {
         authToken: env.SENTRY_AUTH_TOKEN,
         release: {
           name: env.SENTRY_RELEASE,
-          // uploadLegacySourcemaps: {
-          //   paths: ["./dist"],
-          // },
         },
-        // Disable new sourcemaps structure
-        // Looks like it needs a new version of self-hosted sentry
-        // sourcemaps: {
-        //   assets: "./**",
-        // },
         telemetry: false,
       }),
     ],
