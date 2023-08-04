@@ -46,7 +46,7 @@
     "fastify": "4.21.0",
     "fastify-plugin": "4.5.1",
     "ioredis": "5.3.2",
-    "pino": "8.14.2",
+    "pino": "8.15.0",
     "pino-pretty": "10.2.0",
     "serialize-error": "11.0.1",
     "slonik": "34.0.1",
