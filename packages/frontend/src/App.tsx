@@ -63,12 +63,6 @@ const App: FunctionComponent = () => {
 
   const RouterRoutes = SentryRoutes ?? Routes;
 
-  useEffect(() => {
-    setTimeout(() => {
-      throw new Error("test");
-    }, 3000);
-  });
-
   return (
     <AppContext.Provider value={appContext}>
       <AuthProvider
