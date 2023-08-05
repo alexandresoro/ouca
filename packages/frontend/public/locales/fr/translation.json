@@ -1,8 +1,8 @@
 {
-  "age": "age",
+  "age": "âge",
   "ageAlreadyExistingError": "Il existe déjà un âge avec ce libellé.",
   "ageCreationTitle": "Création d'un âge",
-  "ageEditionTitle": "Edition d'un âge",
+  "ageEditionTitle": "Modification d'un âge",
   "ages": "Âges",
   "altitude": "Altitude",
   "altitudeWithUnit": "Altitude en mètres",
@@ -16,7 +16,7 @@
   "associateObservers_other": "observateurs associés",
   "behaviorAlreadyExistingError": "Il existe déjà un comportement avec un code ou un libellé identique.",
   "behaviorCreationTitle": "Création d'un comportement",
-  "behaviorEditionTitle": "Edition d'un comportement",
+  "behaviorEditionTitle": "Modification d'un comportement",
   "behaviors": "Comportements",
   "breeding": "Reproducteur",
   "breedingStatus": {
@@ -63,7 +63,7 @@
   "deleteDepartmentDialogMsgImpactedLocalities_other": "Les {{count}} lieux-dits  dans ce département seront supprimés.",
   "deleteDistancePrecisionDialogMsg": "Êtes-vous certain de vouloir supprimer l'estimation de la distance {{name}} ?",
   "deleteDistancePrecisionDialogMsgImpactedData": "$t(deleteNotRequiredDialogMsgImpactedData)",
-  "deleteEnvironmentDialogMsg": "Êtes-vous certain de vouloir supprimer le milieu {{name}} ?",
+  "deleteEnvironmentDialogMsg": "Êtes-vous certain de vouloir supprimer le milieu naturel {{name}} ?",
   "deleteEnvironmentDialogMsgImpactedData": "$t(deleteNotRequiredDialogMsgImpactedData)",
   "deleteErrorMessage": "Une erreur est survenue pendant la suppression.",
   "deleteGenderDialogMsg": "Êtes-vous certain de vouloir supprimer le sexe {{name}} ?",
@@ -98,39 +98,39 @@
   "department": "Département",
   "departmentAlreadyExistingError": "Il existe déjà un département identique.",
   "departmentCreationTitle": "Création d'un département",
-  "departmentEditionTitle": "Edition d'un département",
+  "departmentEditionTitle": "Modification d'un département",
   "departments": "Départements",
   "distancePrecisionAlreadyExistingError": "Il existe déjà une estimation de la distance avec ce libellé.",
   "distancePrecisionCreationTitle": "Création d'une estimation de la distance",
-  "distancePrecisionEditionTitle": "Edition d'une estimation de la distance",
+  "distancePrecisionEditionTitle": "Modification d'une estimation de la distance",
   "distancePrecisions": "Estimations de la distance",
   "duration": "Durée",
   "entryDetailsForm": {
-    "title": "Fiche espèce"
+    "title": "Observation"
   },
   "entryForm": {
     "numberPrecision": "estimation du nombre",
     "gender": "sexe",
-    "age": "age",
+    "age": "âge",
     "distancePrecision": "estimation de la distance",
     "distance": "distance de contact",
     "distanceUnit": "m",
     "regroupment": "n° de regroupement",
     "regroupmentGenerate": "générer",
     "behaviorWithIndex": "comportement {{index}}",
-    "environmentWithIndex": "milieu {{index}}",
+    "environmentWithIndex": "milieu naturel {{index}}",
     "formCreate": "Créer l'observation",
     "formUpdate": "Mettre à jour l'observation"
   },
   "environmentAlreadyExistingError": "Il existe déjà un milieu naturel avec un code ou un libellé identique.",
   "environmentCreationTitle": "Création d'un milieu naturel",
-  "environmentEditionTitle": "Edition d'un milieu naturel",
+  "environmentEditionTitle": "Modification d'un milieu naturel",
   "environments": "Milieux naturels",
   "firstNameLabel": "Prénom",
   "firstNameRequiredLabel": "Un prénom doit être renseigné",
   "inventoryCreateNewFromExisting": {
-    "createNewButton": "Créer nouveau",
-    "createNewButtonTooltip": "Crée un nouvel inventaire à partir de l'inventaire actuel"
+    "createNewButton": "Nouvel inventaire",
+    "createNewButtonTooltip": "Créer un nouvel inventaire"
   },
   "inventoryDetails": {
     "entries": {
@@ -186,7 +186,7 @@
       "updateEntry": "Mettre à jour une observation",
       "newEntry": "Nouvelle observation"
     },
-    "inventoryEdition": "Édition de l'inventaire"
+    "inventoryEdition": "Modification de l'inventaire"
   },
   "lastNameLabel": "Nom",
   "localizedName": "Nom français",
@@ -197,7 +197,7 @@
   "localityCoordinates": "Coordonnées du lieu-dit",
   "localityAlreadyExistingError": "Il existe déjà un lieu-dit identique.",
   "localityCreationTitle": "Création d'un lieu-dit",
-  "localityEditionTitle": "Edition d'un lieu-dit",
+  "localityEditionTitle": "Modification d'un lieu-dit",
   "localities": "Lieux-dits",
   "loginPanel": {
     "welcomeTitle": "Où-ça !",
@@ -248,7 +248,7 @@
   "numberOfObservations": "Nombre d'observations",
   "numberPrecisionAlreadyExistingError": "Il existe déjà une estimation du nombre avec ce libellé.",
   "numberPrecisionCreationTitle": "Création d'une estimation du nombre",
-  "numberPrecisionEditionTitle": "Edition d'une estimation du nombre",
+  "numberPrecisionEditionTitle": "Modification d'une estimation du nombre",
   "numberPrecisions": "Estimations du nombre",
   "observation": "observation",
   "observationDetails": {
@@ -275,16 +275,13 @@
     "secondaryObservers_one": "Observateur associé: {{names}}",
     "secondaryObservers_other": "Observateurs associés: {{names}}",
     "temperature_undefined": "",
-    "temperature": "Température: {{temperature}} °C",
-    "weathers_zero": "Météo: Non renseignée",
-    "weathers_one": "Météo: {{weathers}}",
-    "weathers_other": "Météo: {{weathers}}"
+    "temperature": "{{temperature}} °C"
   },
   "observationsTable": {
     "header": {
       "action": {
         "delete": "Supprimer",
-        "view": "Afficher la donnée"
+        "view": "Afficher"
       },
       "species": "Espèce",
       "number": "Nombre d'individus",
@@ -301,26 +298,26 @@
   "scientificName": "Nom scientifique",
   "sexAlreadyExistingError": "Il existe déjà un sexe avec ce libellé.",
   "sexCreationTitle": "Création d'un sexe",
-  "sexEditionTitle": "Edition d'un sexe",
+  "sexEditionTitle": "Modification d'un sexe",
   "sexes": "Sexes",
-  "speciesForm": "Fiche espèce",
+  "speciesForm": "Observation",
   "speciesSingular": "Espèce",
   "species": "Espèces",
   "speciesAlreadyExistingError": "Il existe déjà une espèce identique.",
   "speciesCode": "Code de l'espèce",
   "speciesCreationTitle": "Création d'une espèce",
-  "speciesEditionTitle": "Edition d'unw espèce",
+  "speciesEditionTitle": "Modification d'une espèce",
   "speciesClass": "Classe espèce",
   "speciesClassAlreadyExistingError": "Il existe déjà une classe d'espèces avec ce libellé.",
   "speciesClassCreationTitle": "Création d'une classe d'espèces",
-  "speciesClassEditionTitle": "Edition d'une classe d'espèces",
+  "speciesClassEditionTitle": "Modification d'une classe d'espèces",
   "speciesClasses": "Classes espèces",
   "town": "Commune",
   "townCode": "Code commune",
   "townName": "Nom commune",
   "townAlreadyExistingError": "Il existe déjà une commune identique.",
   "townCreationTitle": "Création d'une commune",
-  "townEditionTitle": "Edition d'une commune",
+  "townEditionTitle": "Modification d'une commune",
   "towns": "Communes",
   "unspecified": "non renseigné",
   "userForm": {
@@ -345,7 +342,7 @@
   "viewObservations": "Consultation des observations",
   "weatherAlreadyExistingError": "Il existe déjà une météo avec ce libellé.",
   "weatherCreationTitle": "Création d'une météo",
-  "weatherEditionTitle": "Edition d'une météo",
+  "weatherEditionTitle": "Modification d'une météo",
   "weathers": "Météos",
   "weathers_one": "Météo",
   "weathers_other": "Météos",
@@ -373,7 +370,7 @@
   "aria-editButton": "Modifier",
   "aria-deleteButton": "Supprimer",
   "observerCreationTitle": "Création d'un observateur",
-  "observerEditionTitle": "Edition d'un observateur",
+  "observerEditionTitle": "Modification d'un observateur",
   "observerAlreadyExistingError": "Il existe déjà un observateur avec ce libellé.",
   "deleteConfirmationDialogTitle": "Confirmation de suppression",
   "deleteConfirmationDialogCancelAction": "Non, annuler",
@@ -401,7 +398,7 @@
   "retrieveSettingsError": "Une erreur est survenue lors de la récupération des préférences. Veuillez réessayer",
   "saveProfileSuccess": "Votre profil a été mis à jour",
   "saveProfileError": "Une erreur est survenue lors de la mise à jour du profil. Veuillez réessayer",
-  "updateProfileButton": "Mettre à jour le profil",
+  "updateProfileButton": "Modifier mon profil",
   "saveSettingsSuccess": "Vos préférences sont sauvegardées",
   "saveSettingsError": "Une erreur est survenue lors de la sauvegarde de vos préférences. Veuillez réessayer",
   "exportDatabaseButton": "Sauvegarde de la base",

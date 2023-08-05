@@ -60,20 +60,16 @@ const InventorySummaryPanel: FunctionComponent<InventorySummaryPanelProps> = ({ 
         }
       />
 
-      {inventory.weathers.length > 0 && (
+      {(inventory.weathers.length > 0 || inventory.temperature !== null) && (
         <ItemWithAvatar
           icon={<Sun className="h-6" />}
           primary={
             <div className="first-letter:uppercase">
-              {inventory.weathers.length
-                ? `${t("weathers", { count: inventory.weathers.length })}: ${inventory.weathers
-                    .map(({ libelle }) => libelle)
-                    .join(", ")}`
-                : t("unspecified")}
+              {inventory.weathers.length > 0 ? `${inventory.weathers.map(({ libelle }) => libelle).join(", ")}` : ""}
             </div>
           }
           secondary={t("observationDetails.temperature", {
-            context: inventory.temperature ? "" : "undefined",
+            context: inventory.temperature !== null ? "" : "undefined",
             temperature: inventory.temperature,
           })}
         />
