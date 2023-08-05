@@ -85,7 +85,7 @@ export const buildAndClause = (
   conditions:
     | readonly (readonly [
         IdentifierSqlToken,
-        string | number | boolean | readonly string[] | readonly number[],
+        string | number | boolean | readonly string[] | readonly number[] | null,
         Readonly<{
           type: "SLONIK_TOKEN_FRAGMENT";
           sql: string;
@@ -109,7 +109,9 @@ export const buildAndClause = (
   }
 
   const conditionsFragments = filteredConditions.map(([identifier, value, overrideConditionComparator]) => {
-    if (Array.isArray(value)) {
+    if (value === null) {
+      return sql.join([identifier, sql.fragment`NULL`], sql.fragment` IS `);
+    } else if (Array.isArray(value)) {
       return sql.join([identifier, sql.fragment`(${sql.join(value, sql.fragment`,`)})`], sql.fragment` IN `);
     } else {
       return sql.join(

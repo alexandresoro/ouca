@@ -97,7 +97,7 @@ export const reshapeSearchCriteria = (
   return areSearchCriteriaDefined ? reshapedSearchCriteria : undefined;
 };
 
-const getIdentifierForCriteria = (criteriaName: keyof NonNullable<SearchCriteria>): IdentifierSqlToken => {
+const getIdentifierForCriteria = (criteriaName: keyof SearchCriteria): IdentifierSqlToken => {
   switch (criteriaName) {
     case "ageIds":
       return sql.identifier(["donnee", "age_id"]);
@@ -154,7 +154,7 @@ const getIdentifierForCriteria = (criteriaName: keyof NonNullable<SearchCriteria
   }
 };
 
-const getOperatorForCriteria = (criteriaName: keyof NonNullable<SearchCriteria>) => {
+const getOperatorForCriteria = (criteriaName: keyof SearchCriteria) => {
   switch (criteriaName) {
     case "comment":
       return sql.fragment`~*`;
@@ -167,14 +167,10 @@ const getOperatorForCriteria = (criteriaName: keyof NonNullable<SearchCriteria>)
   }
 };
 
-export const buildSearchCriteriaParameters = (searchCriteria: NonNullable<SearchCriteria>) => {
-  return Object.entries(searchCriteria)
-    .filter((criteria): criteria is [keyof SearchCriteria, NonNullable<SearchCriteria[keyof SearchCriteria]>] => {
-      return criteria?.[1] != null;
-    })
-    .map(([criteriaName, criteriaValue]) => {
-      const identifierCriteria = getIdentifierForCriteria(criteriaName);
-      const comperatorOperator = getOperatorForCriteria(criteriaName);
-      return [identifierCriteria, criteriaValue, comperatorOperator] as const;
-    });
+export const buildSearchCriteriaParameters = (searchCriteria: SearchCriteria) => {
+  return Object.entries(searchCriteria).map(([criteriaName, criteriaValue]) => {
+    const identifierCriteria = getIdentifierForCriteria(criteriaName as keyof SearchCriteria);
+    const comperatorOperator = getOperatorForCriteria(criteriaName as keyof SearchCriteria);
+    return [identifierCriteria, criteriaValue, comperatorOperator] as const;
+  });
 };

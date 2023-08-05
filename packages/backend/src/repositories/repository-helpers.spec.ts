@@ -216,6 +216,7 @@ describe("buildAndClause function", () => {
       [sql.identifier(["tab2", "id3"]), ["titi", "tutu"]],
       [sql.identifier(["tab2", "id4"]), false],
       [sql.identifier(["tab3", "id1"]), 7, sql.fragment`<`],
+      [sql.identifier(["tab4", "id1"]), null],
     ] as const;
 
     expect(buildAndClause(clause)).toEqual<ListSqlToken>({
@@ -281,6 +282,21 @@ describe("buildAndClause function", () => {
               type: "SLONIK_TOKEN_IDENTIFIER",
             },
             7,
+          ],
+          type: "SLONIK_TOKEN_LIST",
+        },
+        {
+          glue: sql.fragment` IS `,
+          members: [
+            {
+              names: ["tab4", "id1"],
+              type: "SLONIK_TOKEN_IDENTIFIER",
+            },
+            {
+              sql: "NULL",
+              type: "SLONIK_TOKEN_FRAGMENT",
+              values: [],
+            },
           ],
           type: "SLONIK_TOKEN_LIST",
         },
