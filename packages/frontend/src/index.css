@@ -22,3 +22,10 @@
 .checkbox {
   animation: none;
 }
+
+/* Override default z-index from daisy ui to allow content "on top"
+ * e.g. snackbars
+ */
+.modal {
+  z-index: 40;
+}
