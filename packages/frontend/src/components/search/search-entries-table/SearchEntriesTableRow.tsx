@@ -36,7 +36,7 @@ const SearchEntriesTableRow: FunctionComponent<SearchEntriesTableRowProps> = (pr
             <Detail className="h-5" />
           </IconButton>
           <IconButton
-            className="mx-1 text-accent"
+            className="mx-1 text-error"
             aria-label={t("observationsTable.header.action.delete")}
             onClick={onDeleteAction}
           >

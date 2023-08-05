@@ -34,7 +34,7 @@ const DeletionConfirmationDialog: FunctionComponent<DeletionConfirmationDialogPr
           <button type="button" className="btn btn-primary btn-outline" onClick={onCancelAction}>
             {t("deleteConfirmationDialogCancelAction")}
           </button>
-          <button type="button" className="btn btn-accent btn-outline" ref={confirmButtonRef} onClick={onConfirmAction}>
+          <button type="button" className="btn btn-error btn-outline" ref={confirmButtonRef} onClick={onConfirmAction}>
             {t("deleteConfirmationDialogConfirmAction")}
           </button>
         </div>

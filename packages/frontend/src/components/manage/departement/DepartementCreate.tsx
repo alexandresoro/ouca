@@ -31,7 +31,7 @@ const DepartementCreate: FunctionComponent = () => {
         if (e.status === 409) {
           displayNotification({
             type: "error",
-            message: t("ageAlreadyExistingError"),
+            message: t("departmentAlreadyExistingError"),
           });
         } else {
           displayNotification({

@@ -229,7 +229,7 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                 <Menu.Item key="delete">
                   <button
                     type="button"
-                    className="btn btn-xs btn-ghost text-accent"
+                    className="btn btn-xs btn-ghost text-error"
                     onClick={() => setDeleteDialog(inventory)}
                   >
                     <Trash className="h-5" />

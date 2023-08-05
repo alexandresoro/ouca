@@ -73,49 +73,49 @@ const InventoryDetails: FunctionComponent<InventoryDetailsProps> = ({ inventoryI
           <InventorySummaryPanel inventory={inventory} />
         </>
       )}
-      <div className="stats">
-        <div className="stat px-0 pb-2">
-          <div className="stat-title">
-            <h3 className="text-lg font-normal">{t("inventoryDetails.entries.title")}</h3>
-          </div>
-          <div className="stat-value text-lg">{entriesForCount?.meta.count}</div>
+      <div className="card border-2 border-primary p-3 shadow-md">
+        <div className="flex items-center gap-3 py-2">
+          <h3 className="text-lg font-semibold">
+            {t("inventoryPage.entriesPanel.title", { count: entriesForCount?.meta.count })}
+          </h3>
+          <span className="badge badge-primary badge-outline font-semibold">{entriesForCount?.meta.count}</span>
         </div>
-      </div>
-      <ul className="flex flex-col gap-1">
-        {data?.pages.map((page) => {
-          return (
-            <Fragment key={page.meta.pageNumber}>
-              {page.data.map((entry) => {
-                return (
-                  <li key={entry.id}>
-                    <div className="card border border-primary p-3 bg-base-200 shadow-md">
-                      <div className="flex">
-                        <div className="flex items-center gap-2.5 font-semibold">
-                          <div className="flex flex-grow flex-shrink-0 h-7 w-7 -my-2 px-1 items-center justify-center border border-primary rounded-full">
-                            <div
-                              className={`flex flex-grow justify-center text-primary ${
-                                entry.number != null && entry.number >= 100 ? "text-xs" : "text-sm"
-                              }`}
-                            >
-                              {entry.numberEstimate.nonCompte ? "?" : entry.number}
+        <ul className="flex flex-col gap-1">
+          {data?.pages.map((page) => {
+            return (
+              <Fragment key={page.meta.pageNumber}>
+                {page.data.map((entry) => {
+                  return (
+                    <li key={entry.id}>
+                      <div className="py-1.5">
+                        <div className="flex">
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex flex-grow flex-shrink-0 h-7 w-7 -my-2 px-1 items-center justify-center border border-primary rounded-full">
+                              <div
+                                className={`flex flex-grow justify-center text-primary ${
+                                  entry.number != null && entry.number >= 100 ? "text-xs" : "text-sm"
+                                }`}
+                              >
+                                {entry.numberEstimate.nonCompte ? "?" : entry.number}
+                              </div>
                             </div>
+                            <span>{entry.species.nomFrancais}</span>
                           </div>
-                          <span>{entry.species.nomFrancais}</span>
                         </div>
                       </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </Fragment>
-          );
-        })}
-      </ul>
-      {hasNextPage && (
-        <button ref={ref} type="button" className="btn btn-xs btn-link no-underline" onClick={() => fetchNextPage()}>
-          {t("infiniteScroll.more")}
-        </button>
-      )}
+                    </li>
+                  );
+                })}
+              </Fragment>
+            );
+          })}
+        </ul>
+        {hasNextPage && (
+          <button ref={ref} type="button" className="btn btn-xs btn-link no-underline" onClick={() => fetchNextPage()}>
+            {t("infiniteScroll.more")}
+          </button>
+        )}
+      </div>
     </div>
   );
 };

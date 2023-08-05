@@ -42,7 +42,7 @@ const UserProfilePage: FunctionComponent = () => {
         <h1 className="text-2xl font-normal">{t("profile")}</h1>
       </StyledPanelHeader>
       <ContentContainerLayout>
-        <div className="hero max-w-5xl mx-auto border-2 border-primary rounded-2xl bg-base-200 dark:bg-base-300 shadow-xl">
+        <div className="hero max-w-5xl mx-auto border-2 border-primary rounded-2xl shadow-xl">
           <div className="hero-content w-full max-w-5xl">
             <div className="card w-full">
               <div className="card-body items-center gap-4">

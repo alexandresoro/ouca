@@ -102,14 +102,14 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
           <fieldset className="flex flex-col gap-2.5">
-            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+            <div className="card border-2 border-primary rounded-lg px-3 pb-3 shadow-lg">
               <EntryFormSpecies
                 control={control}
                 initialSpecies={props.mode === "update" ? props.initialData.species : undefined}
                 autofocusOnSpecies
               />
             </div>
-            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+            <div className="card border-2 border-primary rounded-lg px-3 pb-3 shadow-lg">
               <div className="flex flex-col">
                 <EntryFormCharacteristics
                   control={control}
@@ -146,19 +146,19 @@ const EntryForm: FunctionComponent<EntryFormProps> = (props) => {
                 )}
               </div>
             </div>
-            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+            <div className="card border-2 border-primary rounded-lg px-3 pb-3 shadow-lg">
               <EntryFormBehaviors
                 control={control}
                 initialBehaviors={(props.mode === "update" ? props.initialData.behaviors : []) ?? []}
               />
             </div>
-            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+            <div className="card border-2 border-primary rounded-lg px-3 pb-3 shadow-lg">
               <EntryFormEnvironments
                 control={control}
                 initialEnvironments={(props.mode === "update" ? props.initialData.environments : []) ?? []}
               />
             </div>
-            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+            <div className="card border-2 border-primary rounded-lg px-3 pb-3 shadow-lg">
               <EntryFormComment register={register} />
             </div>
           </fieldset>

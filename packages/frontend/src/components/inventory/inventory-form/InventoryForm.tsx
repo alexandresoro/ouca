@@ -123,7 +123,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
           <fieldset className="flex flex-col gap-4">
-            <div className="card border border-primary rounded-lg px-3 pb-3 bg-base-200 shadow-lg">
+            <div className="card border-2 border-primary rounded-lg px-3 pb-3 shadow-lg">
               <InventoryFormObserver
                 control={control}
                 defaultObserver={initialData?.observer ?? userSettings.defaultObserver ?? undefined}
@@ -131,10 +131,10 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
                 autofocusOnObserver={true}
               />
             </div>
-            <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+            <div className="card border-2 border-primary rounded-lg px-3 pb-2 shadow-lg">
               <InventoryFormDate register={register} />
             </div>
-            <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+            <div className="card border-2 border-primary rounded-lg px-3 pb-2 shadow-lg">
               <InventoryFormLocation
                 register={register}
                 control={control}
@@ -142,7 +142,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
               />
             </div>
             {userSettings.isMeteoDisplayed && (
-              <div className="card border border-primary rounded-lg px-3 pb-2 bg-base-200 shadow-lg">
+              <div className="card border-2 border-primary rounded-lg px-3 pb-2 shadow-lg">
                 <InventoryFormWeather control={control} register={register} />
               </div>
             )}

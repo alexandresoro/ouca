@@ -154,7 +154,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
   );
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-4">
       <div className="flex gap-4">
         <TextInput
           {...register("number", {

@@ -20,7 +20,7 @@ const EntrySummaryPanel: FunctionComponent<EntrySummaryPanelProps> = ({ entry })
   };
 
   return (
-    <div className="card border-2 border-primary bg-base-200 shadow-xl py-4">
+    <div className="card border-2 border-primary shadow-xl py-4">
       <ItemWithAvatar
         icon={<PieChartAlt2 className="h-6" />}
         primary={t("observationDetails.number", {

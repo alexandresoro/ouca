@@ -17,7 +17,7 @@ const EntityUpsertFormActionButtons: FunctionComponent<EntityUpsertFormActionBut
 
   return (
     <div className={`card-actions justify-end ${className ?? ""}`}>
-      <button className="btn btn-secondary" type="button" onClick={onCancelClick}>
+      <button className="btn btn-secondary btn-outline" type="button" onClick={onCancelClick}>
         <X className="h-6 mr-1" />
         {t("cancel")}
       </button>

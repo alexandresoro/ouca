@@ -1,6 +1,5 @@
 import { type Entry, type EntryExtended } from "@ou-ca/common/entities/entry";
-import { Angry, CalendarPlus, Detail, EditAlt, MaleSign, Trash } from "@styled-icons/boxicons-regular";
-import { Tree } from "@styled-icons/boxicons-solid";
+import { CalendarPlus, Detail, EditAlt, MaleSign, Trash } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import IconButton from "../../common/styled/IconButton";
@@ -21,37 +20,29 @@ const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProp
   const { t } = useTranslation();
 
   return (
-    <div className="card border border-primary p-4 bg-base-200 shadow-md">
-      <div className="flex gap-10 items-center justify-between">
+    <div className="card border-2 border-primary p-4 shadow-md">
+      <div className="flex gap-16 items-center justify-between">
         <div className="flex flex-grow items-center justify-between">
           <div className="flex items-center gap-2.5 font-semibold">
-            <div className="flex flex-grow h-10 w-10 -my-2 px-1 items-center justify-center border-2 border-primary rounded-full">
+            <div className="flex flex-grow h-8 w-8 -my-2 px-1 items-center justify-center border border-primary rounded-full">
               <div
-                className={`flex flex-grow justify-center text-primary ${
-                  entry.number != null && entry.number >= 100 ? "text-sm" : "text-lg"
+                className={`flex flex-grow justify-center ${
+                  entry.number != null && entry.number >= 100 ? "text-xs" : "text-base"
                 }`}
               >
                 {entry.numberEstimate.nonCompte ? "?" : entry.number}
               </div>
             </div>
-            <h4 className="text-xl">{entry.species.nomFrancais}</h4>
+            <h4 className="text-lg">{entry.species.nomFrancais}</h4>
           </div>
           <div className="flex gap-5">
-            <div className="flex items-center text-lg gap-1">
-              <MaleSign className="text-primary h-6 w-6" />
+            <div className="flex items-center text-base gap-1">
+              <MaleSign className="h-5 w-5" />
               {entry.sex.libelle}
             </div>
-            <div className="flex items-center text-lg gap-1">
-              <CalendarPlus className="text-primary h-6 w-6" />
+            <div className="flex items-center text-base gap-1">
+              <CalendarPlus className="h-5 w-5" />
               {entry.age.libelle}
-            </div>
-            <div className="flex items-center text-lg gap-1">
-              <Angry className="text-primary h-6 w-6" />
-              {entry.behaviors.length}
-            </div>
-            <div className="flex items-center text-lg gap-1">
-              <Tree className="text-primary h-6 w-6" />
-              {entry.environments.length}
             </div>
           </div>
         </div>
@@ -67,7 +58,7 @@ const InventoryPageEntryElement: FunctionComponent<InventoryPageEntryElementProp
             <EditAlt className="h-5" />
           </IconButton>
           <IconButton
-            className="text-accent"
+            className="text-error"
             aria-label={t("observationsTable.header.action.delete")}
             onClick={() => onDeleteAction?.(entry)}
           >
