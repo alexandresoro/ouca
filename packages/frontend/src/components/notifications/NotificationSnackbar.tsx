@@ -23,7 +23,7 @@ const NotificationSnackbar: FunctionComponent<NotificationSnackbarProps> = (prop
   const { notifications } = props;
 
   return (
-    <div className="toast toast-center w-max">
+    <div className="toast toast-center w-max z-50 shadow-sm">
       {notifications.map(({ id, message, type }) => (
         <div
           key={`notification-${id}`}
