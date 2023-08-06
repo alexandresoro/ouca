@@ -38,6 +38,12 @@ export default defineConfig(({ mode }) => {
         authToken: env.SENTRY_AUTH_TOKEN,
         release: {
           name: env.SENTRY_RELEASE,
+          setCommits: {
+            auto: true,
+          },
+        },
+        sourcemaps: {
+          filesToDeleteAfterUpload: "**/assets/*.js.map",
         },
         telemetry: false,
       }),
