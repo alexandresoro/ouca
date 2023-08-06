@@ -6,9 +6,6 @@ on:
       with-sentry:
         required: false
         type: boolean
-      deploy-frontend:
-        required: false
-        type: boolean
       upload-backend:
         required: false
         type: boolean
@@ -67,17 +64,6 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-      
-      - name: Deploy to CloudFlare - frontend
-        if: ${{ inputs.deploy-frontend }}
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
-          branch: ${{ github.ref_name }}
-          directory: "./packages/frontend/dist"
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifact - frontend
         uses: actions/upload-artifact@v3

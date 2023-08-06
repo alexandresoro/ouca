@@ -9,7 +9,6 @@ jobs:
     secrets: inherit
     with:
       with-sentry: false
-      deploy-frontend: true
       upload-backend: false
 
   deploy-frontend:
