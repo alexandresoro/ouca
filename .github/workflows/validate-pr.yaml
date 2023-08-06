@@ -11,3 +11,16 @@ jobs:
       with-sentry: false
       deploy-frontend: true
       upload-backend: false
+
+  deploy-frontend:
+    needs: build
+    concurrency:
+      group: deploy-frontend-${{ github.ref }}
+      cancel-in-progress: true
+
+    uses: ./.github/workflows/_deploy-cloudflare.yml
+    secrets: inherit
+    with:
+      artifact: dist-frontend
+      branch: ${{ github.ref_name }}
+      distPath: './packages/frontend/dist'
