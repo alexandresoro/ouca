@@ -101,8 +101,8 @@ const HeaderSettings: FunctionComponent = () => {
               {({ active }) => (
                 <Link
                   to={to}
-                  className={`flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ${
-                    active ? "bg-opacity-10 bg-base-content" : ""
+                  className={`flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg ${
+                    active ? "bg-opacity-20 bg-base-content" : "bg-transparent"
                   }`}
                 >
                   <>
@@ -125,8 +125,8 @@ const HeaderSettings: FunctionComponent = () => {
           {({ active }) => (
             <button
               type="button"
-              className={`flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ${
-                active ? "bg-opacity-10 bg-base-content" : ""
+              className={`flex w-full items-center gap-3 px-4 py-2 text-sm rounded-lg ${
+                active ? "bg-opacity-20 bg-base-content" : "bg-transparent"
               }`}
               onClick={handleLogoutAction}
             >

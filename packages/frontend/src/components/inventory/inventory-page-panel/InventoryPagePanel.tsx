@@ -207,34 +207,40 @@ const InventoryPagePanel: FunctionComponent<InventoryPagePanelProps> = ({ invent
                 tipRadius={2}
               />
               <Menu.Item key="edit">
-                <button
-                  type="button"
-                  className="btn btn-xs btn-ghost text-primary"
-                  onClick={() => setInventoryEditDialogOpen(true)}
-                >
-                  <EditAlt className="h-5" />
-                  {t("inventoryPage.inventoryPanel.edit")}
-                </button>
+                {({ active }) => (
+                  <button
+                    type="button"
+                    className={`btn btn-xs text-primary ${active ? "bg-opacity-20 bg-base-content" : "btn-ghost"}`}
+                    onClick={() => setInventoryEditDialogOpen(true)}
+                  >
+                    <EditAlt className="h-5" />
+                    {t("inventoryPage.inventoryPanel.edit")}
+                  </button>
+                )}
               </Menu.Item>
               <Menu.Item key="createNewFrom">
-                <Link
-                  className="btn btn-xs btn-ghost text-primary"
-                  to={`/create-new?${new URLSearchParams({ createFromInventory: `${inventory.id}` }).toString()}`}
-                >
-                  <CopyAlt className="h-5" />
-                  {t("inventoryPage.inventoryPanel.createNewFrom")}
-                </Link>
+                {({ active }) => (
+                  <Link
+                    className={`btn btn-xs text-primary ${active ? "bg-opacity-20 bg-base-content" : "btn-ghost"}`}
+                    to={`/create-new?${new URLSearchParams({ createFromInventory: `${inventory.id}` }).toString()}`}
+                  >
+                    <CopyAlt className="h-5" />
+                    {t("inventoryPage.inventoryPanel.createNewFrom")}
+                  </Link>
+                )}
               </Menu.Item>
               {isInventoryDeletionAllowed && (
                 <Menu.Item key="delete">
-                  <button
-                    type="button"
-                    className="btn btn-xs btn-ghost text-error"
-                    onClick={() => setDeleteDialog(inventory)}
-                  >
-                    <Trash className="h-5" />
-                    {t("inventoryPage.inventoryPanel.delete")}
-                  </button>
+                  {({ active }) => (
+                    <button
+                      type="button"
+                      className={`btn btn-xs text-error ${active ? "bg-opacity-20 bg-base-content" : "btn-ghost"}`}
+                      onClick={() => setDeleteDialog(inventory)}
+                    >
+                      <Trash className="h-5" />
+                      {t("inventoryPage.inventoryPanel.delete")}
+                    </button>
+                  )}
                 </Menu.Item>
               )}
             </Menu.Items>

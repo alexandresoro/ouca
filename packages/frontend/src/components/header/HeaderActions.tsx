@@ -174,8 +174,8 @@ const HeaderActions: FunctionComponent = () => {
               <Menu.Item key={to}>
                 {({ active }) => (
                   <Link
-                    className={`flex items-center gap-3 px-4 py-2 text-sm rounded-lg bg-transparent ${
-                      active ? "bg-opacity-10 bg-base-content" : ""
+                    className={`flex items-center gap-3 px-4 py-2 text-sm rounded-lg ${
+                      active ? "bg-opacity-20 bg-base-content" : "bg-transparent"
                     }`}
                     to={to}
                   >
