@@ -9,15 +9,18 @@ import { type EspeceRepository } from "../../repositories/espece/espece-reposito
 import { type LoggedUser } from "../../types/User.js";
 import { COLUMN_CODE } from "../../utils/constants.js";
 import { OucaError } from "../../utils/errors.js";
+import { type ClasseService } from "./classe-service.js";
 import { reshapeInputEspeceUpsertData } from "./espece-service-reshape.js";
 import { buildEspeceService } from "./espece-service.js";
 
+const classeService = mock<ClasseService>();
 const especeRepository = mock<EspeceRepository>({});
 const donneeRepository = mock<DonneeRepository>({});
 const logger = mock<Logger>();
 
 const especeService = buildEspeceService({
   logger,
+  classeService,
   especeRepository,
   donneeRepository,
 });
@@ -277,6 +280,11 @@ describe("Update of a species", () => {
 
     const loggedUser = mock<LoggedUser>({ role: "admin" });
 
+    const species = mock<Espece>({
+      ownerId: loggedUser.id,
+    });
+    especeRepository.updateEspece.mockResolvedValueOnce(species);
+
     await especeService.updateEspece(12, speciesData, loggedUser);
 
     expect(especeRepository.updateEspece).toHaveBeenCalledTimes(1);
@@ -297,6 +305,11 @@ describe("Update of a species", () => {
     const loggedUser = mock<LoggedUser>({ id: "notAdmin" });
 
     especeRepository.findEspeceById.mockResolvedValueOnce(existingData);
+
+    const species = mock<Espece>({
+      ownerId: loggedUser.id,
+    });
+    especeRepository.updateEspece.mockResolvedValueOnce(species);
 
     await especeService.updateEspece(12, speciesData, loggedUser);
 
@@ -359,6 +372,11 @@ describe("Creation of a species", () => {
     mockedReshapeInputEspeceUpsertData.mockReturnValueOnce(reshapedInputData);
 
     const loggedUser = mock<LoggedUser>({ id: "a" });
+
+    const species = mock<Espece>({
+      ownerId: loggedUser.id,
+    });
+    especeRepository.createEspece.mockResolvedValueOnce(species);
 
     await especeService.createEspece(speciesData, loggedUser);
 

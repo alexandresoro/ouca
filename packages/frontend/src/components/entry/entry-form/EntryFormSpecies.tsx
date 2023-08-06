@@ -34,7 +34,7 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
   const { t } = useTranslation();
 
   const [classInput, setClassInput] = useState("");
-  const [selectedClass, setSelectedClass] = useState<SpeciesClass | null>(null);
+  const [selectedClass, setSelectedClass] = useState<SpeciesClass | null>(initialSpecies?.speciesClass ?? null);
 
   const [speciesInput, setSpeciesInput] = useState("");
   const [selectedSpecies, setSelectedSpecies] = useState<Species | null>(initialSpecies ?? null);
