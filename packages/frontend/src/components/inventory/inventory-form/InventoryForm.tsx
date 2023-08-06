@@ -127,6 +127,7 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
               <InventoryFormObserver
                 control={control}
                 defaultObserver={initialData?.observer ?? userSettings.defaultObserver ?? undefined}
+                defaultAssociates={initialData?.associates ?? []}
                 areAssociesDisplayed={userSettings.areAssociesDisplayed}
                 autofocusOnObserver={true}
               />
@@ -143,7 +144,11 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
             </div>
             {userSettings.isMeteoDisplayed && (
               <div className="card border-2 border-primary rounded-lg px-3 pb-2 shadow-lg">
-                <InventoryFormWeather control={control} register={register} />
+                <InventoryFormWeather
+                  control={control}
+                  register={register}
+                  defaultWeathers={initialData?.weathers ?? []}
+                />
               </div>
             )}
           </fieldset>

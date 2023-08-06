@@ -10,6 +10,7 @@ import { type InventoryFormState } from "./InventoryFormState";
 
 type InventoryFormObserverProps = Pick<UseFormReturn<InventoryFormState>, "control"> & {
   defaultObserver?: Observer;
+  defaultAssociates?: Observer[];
   autofocusOnObserver?: boolean;
   areAssociesDisplayed?: boolean;
 };
@@ -21,6 +22,7 @@ const renderObserver = (observer: Observer | null): string => {
 const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   control,
   defaultObserver,
+  defaultAssociates,
   autofocusOnObserver,
   areAssociesDisplayed,
 }) => {
@@ -33,7 +35,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   }, [defaultObserver]);
 
   const [associatesInput, setAssociatesInput] = useState("");
-  const [selectedAssociates, setSelectedAssociates] = useState<Observer[]>([]);
+  const [selectedAssociates, setSelectedAssociates] = useState<Observer[]>(defaultAssociates ?? []);
 
   const {
     field: { ref: refObserver, value: observerId, onChange: onChangeObserverForm },

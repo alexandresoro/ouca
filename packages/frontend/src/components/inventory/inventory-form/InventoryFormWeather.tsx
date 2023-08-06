@@ -8,13 +8,15 @@ import TextInput from "../../common/styled/TextInput";
 import AutocompleteMultiple from "../../common/styled/select/AutocompleteMultiple";
 import { type InventoryFormState } from "./InventoryFormState";
 
-type InventoryFormWeatherProps = Pick<UseFormReturn<InventoryFormState>, "control" | "register">;
+type InventoryFormWeatherProps = Pick<UseFormReturn<InventoryFormState>, "control" | "register"> & {
+  defaultWeathers?: Weather[];
+};
 
-const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ control, register }) => {
+const InventoryFormWeather: FunctionComponent<InventoryFormWeatherProps> = ({ control, register, defaultWeathers }) => {
   const { t } = useTranslation();
 
   const [weathersInput, setWeathersInput] = useState("");
-  const [selectedWeathers, setSelectedWeathers] = useState<Weather[]>([]);
+  const [selectedWeathers, setSelectedWeathers] = useState<Weather[]>(defaultWeathers ?? []);
 
   const {
     field: { ref: refWeathers, onChange: onChangeWeathersForm },
