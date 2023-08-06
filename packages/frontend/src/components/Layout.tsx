@@ -1,15 +1,16 @@
-import { type FunctionComponent } from "react";
+import { Suspense, lazy, type FunctionComponent } from "react";
 import { Outlet } from "react-router-dom";
 import { SnackbarContext } from "../contexts/SnackbarContext";
 import { useNotifications } from "../hooks/useNotifications";
-import Header from "./header/Header";
-import NotificationSnackbar from "./notifications/NotificationSnackbar";
+
+const Header = lazy(() => import("./header/Header"));
+const NotificationSnackbar = lazy(() => import("./notifications/NotificationSnackbar"));
 
 const Layout: FunctionComponent = () => {
   const [notifications, displayNotification] = useNotifications();
 
   return (
-    <>
+    <Suspense fallback={<></>}>
       <SnackbarContext.Provider value={{ displayNotification }}>
         <div className="flex flex-col h-[100dvh]">
           <Header />
@@ -19,7 +20,7 @@ const Layout: FunctionComponent = () => {
         </div>
       </SnackbarContext.Provider>
       <NotificationSnackbar notifications={notifications} />
-    </>
+    </Suspense>
   );
 };
 
