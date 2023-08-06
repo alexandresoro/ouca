@@ -1,7 +1,7 @@
 import { autoUpdate, flip, offset, shift, size, useFloating } from "@floating-ui/react";
 import { Combobox } from "@headlessui/react";
 import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
-import { forwardRef, type ComponentPropsWithRef, type ForwardedRef, type Key } from "react";
+import { forwardRef, type ComponentPropsWithRef, type FocusEventHandler, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
 
@@ -74,9 +74,13 @@ const AutocompleteMultiple = <T extends object,>(
     onInputChange?.(event.target.value);
   };
 
-  const handleOnBlur = () => {
-    // Trigger the input change on blur to match the behavior that clears the input
-    onInputChange?.("");
+  // Trigger the input change on blur to match the behavior that clears the input
+  // The library clears the input somehow whenever the input is getting blurred
+  // However, we need to propagate the info to the caller, otherwise
+  // the input will appear as "" whereas the real value in the caller might be different
+  // Keep in mind that an option selected via mouse click WILL trigger a blur of the input
+  const handleOnBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+    onInputChange?.(event.target.value);
   };
 
   const getDisplayedOption = (option: T) => {
@@ -104,7 +108,6 @@ const AutocompleteMultiple = <T extends object,>(
       name={name}
       value={values}
       onChange={onChange}
-      onBlur={handleOnBlur}
       // Ugly workaround weird types in combobox w/ TS 5.0
       by={key as keyof unknown}
       className={`form-control py-2 ${autocompleteClassName ?? ""}`}
@@ -124,6 +127,7 @@ const AutocompleteMultiple = <T extends object,>(
               className="flex-grow outline-none bg-transparent text-base-content placeholder-shown:text-ellipsis"
               onChange={handleInputChange}
               placeholder={values.map(renderValue).join(", ") ?? ""}
+              onBlur={handleOnBlur}
             />
             {value.length > 0 && <div className="badge badge-accent badge-outline">{value.length}</div>}
             <Combobox.Button className="flex items-center">
