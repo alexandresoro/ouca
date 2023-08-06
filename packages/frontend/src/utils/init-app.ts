@@ -1,4 +1,3 @@
-import { type Routes } from "react-router-dom";
 import { type AppConfig } from "../types/AppConfig";
 
 const fetchAppConfig = fetch("/appconfig", {
@@ -16,18 +15,16 @@ const fetchAppConfig = fetch("/appconfig", {
     } as AppConfig;
   });
 
-export const initApp = async (
-  ReactRouterDomRoutes: typeof Routes
-): Promise<{ config: AppConfig; SentryRoutes?: typeof Routes }> => {
+export const initApp = async () => {
   const config = await fetchAppConfig;
 
   // Sentry
   if (config.sentry) {
     const { initializeSentry } = await import("./sentry");
-    const { SentryRoutes } = initializeSentry(config.sentry, ReactRouterDomRoutes);
+    const { sentryRouter } = initializeSentry(config.sentry);
     return {
       config,
-      SentryRoutes,
+      sentryRouter,
     };
   } else {
     return {

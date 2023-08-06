@@ -2,13 +2,16 @@ import { ExtraErrorData, HttpClient } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
 import { type User } from "oidc-client-ts";
 import { useEffect } from "react";
-import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType, type Routes } from "react-router-dom";
+import {
+  createBrowserRouter,
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType,
+} from "react-router-dom";
 import { type AppConfig } from "../types/AppConfig";
 
-export const initializeSentry = (
-  sentryConfig: AppConfig["sentry"],
-  RouterRoutes: typeof Routes
-): { SentryRoutes: typeof Routes } => {
+export const initializeSentry = (sentryConfig: AppConfig["sentry"]) => {
   Sentry.init({
     ...sentryConfig,
     integrations: [
@@ -37,7 +40,7 @@ export const initializeSentry = (
     },
   });
   return {
-    SentryRoutes: Sentry.withSentryReactRouterV6Routing(RouterRoutes),
+    sentryRouter: Sentry.wrapCreateBrowserRouter(createBrowserRouter),
   };
 };
 
