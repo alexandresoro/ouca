@@ -13,7 +13,7 @@ jobs:
       upload-backend: false
 
   deploy-frontend:
-    needs: build
+    needs: validate-pr
     concurrency:
       group: deploy-frontend-${{ github.ref }}
       cancel-in-progress: true
