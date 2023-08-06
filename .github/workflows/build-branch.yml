@@ -14,6 +14,19 @@ jobs:
       deploy-frontend: true
       upload-backend: true
 
+  deploy-frontend:
+    needs: build
+    concurrency:
+      group: deploy-frontend-${{ github.ref }}
+      cancel-in-progress: true
+
+    uses: ./.github/workflows/_deploy-cloudflare.yml
+    secrets: inherit
+    with:
+      artifact: dist-frontend
+      branch: ${{ github.ref }}
+      distPath: './packages/frontend/dist'
+
   publish-backend-image:
     needs: build
     concurrency: publish-backend-docker-${{ github.ref }}

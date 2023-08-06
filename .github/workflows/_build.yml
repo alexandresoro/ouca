@@ -75,6 +75,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+          branch: ${{ github.ref_name }}
           directory: "./packages/frontend/dist"
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
