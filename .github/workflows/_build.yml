@@ -80,7 +80,6 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifact - frontend
-        if: ${{ inputs.deploy-frontend }}
         uses: actions/upload-artifact@v3
         with:
           name: dist-frontend
