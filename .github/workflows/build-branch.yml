@@ -24,7 +24,7 @@ jobs:
     secrets: inherit
     with:
       artifact: dist-frontend
-      branch: ${{ github.ref }}
+      branch: ${{ github.ref_name }}
       distPath: './packages/frontend/dist'
 
   publish-backend-image:
