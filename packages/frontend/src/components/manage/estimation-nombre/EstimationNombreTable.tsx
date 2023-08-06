@@ -1,13 +1,13 @@
 import { getNumberEstimatesExtendedResponse, type NumberEstimatesOrderBy } from "@ou-ca/common/api/number-estimate";
 import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
-import { useState, type FunctionComponent } from "react";
+import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import { usePaginatedTableParams_legacy } from "../../../hooks/usePaginationParams";
+import usePaginationParams from "../../../hooks/usePaginationParams";
 import useSnackbar from "../../../hooks/useSnackbar";
-import Table from "../../common/styled/table/Table";
+import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -32,18 +32,17 @@ const EstimationNombreTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams_legacy<NumberEstimatesOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
+    usePaginationParams<NumberEstimatesOrderBy>();
 
   const [dialogEstimationNombre, setDialogEstimationNombre] = useState<NumberEstimateExtended | null>(null);
 
-  const { data, refetch } = useApiQuery(
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
     {
       path: "/number-estimates",
       queryParams: {
         q: query,
-        pageNumber: page,
-        pageSize: rowsPerPage,
+        pageSize: 10,
         orderBy,
         sortOrder,
         extended: true,
@@ -98,10 +97,6 @@ const EstimationNombreTable: FunctionComponent = () => {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
   const handleRequestSort = (sortingColumn: NumberEstimatesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -115,9 +110,9 @@ const EstimationNombreTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.meta.count}
+        count={data?.pages?.[0].meta.count}
       />
-      <Table
+      <InfiniteTable
         tableHead={
           <>
             {COLUMNS.map((column) => (
@@ -136,26 +131,30 @@ const EstimationNombreTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.data.map((estimationNombre) => {
+        tableRows={data?.pages.map((page) => {
           return (
-            <tr className="hover:bg-base-200" key={estimationNombre?.id}>
-              <td>{estimationNombre.libelle}</td>
-              <td>{estimationNombre.nonCompte ? "Oui" : ""}</td>
-              <td>{estimationNombre.entriesCount}</td>
-              <td align="right" className="pr-6">
-                <TableCellActionButtons
-                  disabled={!estimationNombre.editable}
-                  onEditClicked={() => handleEditEstimationNombre(estimationNombre?.id)}
-                  onDeleteClicked={() => handleDeleteEstimationNombre(estimationNombre)}
-                />
-              </td>
-            </tr>
+            <Fragment key={page.meta.pageNumber}>
+              {page.data.map((estimationNombre) => {
+                return (
+                  <tr className="hover:bg-base-200" key={estimationNombre?.id}>
+                    <td>{estimationNombre.libelle}</td>
+                    <td>{estimationNombre.nonCompte ? "Oui" : ""}</td>
+                    <td>{estimationNombre.entriesCount}</td>
+                    <td align="right" className="pr-6">
+                      <TableCellActionButtons
+                        disabled={!estimationNombre.editable}
+                        onEditClicked={() => handleEditEstimationNombre(estimationNombre?.id)}
+                        onDeleteClicked={() => handleDeleteEstimationNombre(estimationNombre)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </Fragment>
           );
         })}
-        page={page}
-        elementsPerPage={rowsPerPage}
-        count={data?.meta.count ?? 0}
-        onPageChange={handleChangePage}
+        enableScroll={hasNextPage}
+        onMoreRequested={() => fetchNextPage()}
       />
       <DeletionConfirmationDialog
         open={!!dialogEstimationNombre}

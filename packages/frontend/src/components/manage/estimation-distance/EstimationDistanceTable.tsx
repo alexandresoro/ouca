@@ -1,14 +1,14 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getDistanceEstimatesExtendedResponse } from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
-import { useState, type FunctionComponent } from "react";
+import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import { usePaginatedTableParams_legacy } from "../../../hooks/usePaginationParams";
+import usePaginationParams from "../../../hooks/usePaginationParams";
 import useSnackbar from "../../../hooks/useSnackbar";
-import Table from "../../common/styled/table/Table";
+import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -29,18 +29,17 @@ const EstimationDistanceTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-  usePaginatedTableParams_legacy<EntitiesWithLabelOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
+  usePaginationParams<EntitiesWithLabelOrderBy>();
 
   const [dialogEstimationDistance, setDialogEstimationDistance] = useState<DistanceEstimateExtended | null>(null);
 
-  const { data, refetch } = useApiQuery(
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
     {
       path: "/distance-estimates",
       queryParams: {
         q: query,
-        pageNumber: page,
-        pageSize: rowsPerPage,
+        pageSize: 10,
         orderBy,
         sortOrder,
         extended: true,
@@ -95,10 +94,6 @@ const EstimationDistanceTable: FunctionComponent = () => {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -112,10 +107,10 @@ const EstimationDistanceTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.meta.count}
+        count={data?.pages?.[0].meta.count}
       />
-        <Table   
-          tableHead={ 
+      <InfiniteTable   
+        tableHead={ 
             <>
               {COLUMNS.map((column) => (
                 <th key={column.key}>
@@ -130,7 +125,8 @@ const EstimationDistanceTable: FunctionComponent = () => {
               ))}
               <th align="right" className="pr-8">{t("actions")}</th>
             </>}
-            tableRows={data?.data.map((estimationDistance) => {
+        tableRows={data?.pages.map((page) => {
+            return <Fragment key={page.meta.pageNumber}>{page.data.map((estimationDistance) => {
               return (
                 <tr className="hover:bg-base-200" key={estimationDistance?.id}>
                   <td>{estimationDistance.libelle}</td>
@@ -144,12 +140,11 @@ const EstimationDistanceTable: FunctionComponent = () => {
                   </td>
                 </tr>
               );
-            })}
-            page={page}
-            elementsPerPage={rowsPerPage}
-            count={data?.meta.count ?? 0}
-            onPageChange={handleChangePage}
-          ></Table>
+            })}</Fragment>;
+          })}
+        enableScroll={hasNextPage}
+        onMoreRequested={() => fetchNextPage()}
+      />
       <DeletionConfirmationDialog
         open={!!dialogEstimationDistance}
         messageContent={t("deleteDistancePrecisionDialogMsg", {

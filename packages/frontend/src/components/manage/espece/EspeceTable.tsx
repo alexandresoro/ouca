@@ -1,13 +1,13 @@
 import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
 import { type SpeciesExtended } from "@ou-ca/common/entities/species";
-import { useState, type FunctionComponent } from "react";
+import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import { usePaginatedTableParams_legacy } from "../../../hooks/usePaginationParams";
+import usePaginationParams from "../../../hooks/usePaginationParams";
 import useSnackbar from "../../../hooks/useSnackbar";
-import Table from "../../common/styled/table/Table";
+import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -40,18 +40,16 @@ const EspeceTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams_legacy<SpeciesOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>();
 
   const [dialogEspece, setDialogEspece] = useState<SpeciesExtended | null>(null);
 
-  const { data, refetch } = useApiQuery(
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
     {
       path: "/species",
       queryParams: {
         q: query,
-        pageNumber: page,
-        pageSize: rowsPerPage,
+        pageSize: 10,
         orderBy,
         sortOrder,
         extended: true,
@@ -106,10 +104,6 @@ const EspeceTable: FunctionComponent = () => {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
   const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -123,9 +117,9 @@ const EspeceTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.meta.count}
+        count={data?.pages?.[0].meta.count}
       />
-      <Table
+      <InfiniteTable
         tableHead={
           <>
             {COLUMNS.map((column) => (
@@ -144,28 +138,32 @@ const EspeceTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.data.map((espece) => {
+        tableRows={data?.pages.map((page) => {
           return (
-            <tr className="hover:bg-base-200" key={espece?.id}>
-              <td>{espece.speciesClassName}</td>
-              <td>{espece.code}</td>
-              <td>{espece.nomFrancais}</td>
-              <td>{espece.nomLatin}</td>
-              <td>{espece.entriesCount}</td>
-              <td align="right" className="pr-6">
-                <TableCellActionButtons
-                  disabled={!espece.editable}
-                  onEditClicked={() => handleEditEspece(espece?.id)}
-                  onDeleteClicked={() => handleDeleteEspece(espece)}
-                />
-              </td>
-            </tr>
+            <Fragment key={page.meta.pageNumber}>
+              {page.data.map((espece) => {
+                return (
+                  <tr className="hover:bg-base-200" key={espece?.id}>
+                    <td>{espece.speciesClassName}</td>
+                    <td>{espece.code}</td>
+                    <td>{espece.nomFrancais}</td>
+                    <td>{espece.nomLatin}</td>
+                    <td>{espece.entriesCount}</td>
+                    <td align="right" className="pr-6">
+                      <TableCellActionButtons
+                        disabled={!espece.editable}
+                        onEditClicked={() => handleEditEspece(espece?.id)}
+                        onDeleteClicked={() => handleDeleteEspece(espece)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </Fragment>
           );
         })}
-        page={page}
-        elementsPerPage={rowsPerPage}
-        count={data?.meta.count ?? 0}
-        onPageChange={handleChangePage}
+        enableScroll={hasNextPage}
+        onMoreRequested={() => fetchNextPage()}
       />
       <DeletionConfirmationDialog
         open={!!dialogEspece}

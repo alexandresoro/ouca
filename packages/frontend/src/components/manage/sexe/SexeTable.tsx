@@ -1,14 +1,14 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
 import { type SexExtended } from "@ou-ca/common/entities/sex";
-import { useState, type FunctionComponent } from "react";
+import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import { usePaginatedTableParams_legacy } from "../../../hooks/usePaginationParams";
+import usePaginationParams from "../../../hooks/usePaginationParams";
 import useSnackbar from "../../../hooks/useSnackbar";
-import Table from "../../common/styled/table/Table";
+import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -29,18 +29,17 @@ const SexeTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams_legacy<EntitiesWithLabelOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
+    usePaginationParams<EntitiesWithLabelOrderBy>();
 
   const [dialogSexe, setDialogSexe] = useState<SexExtended | null>(null);
 
-  const { data, refetch } = useApiQuery(
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
     {
       path: "/sexes",
       queryParams: {
         q: query,
-        pageNumber: page,
-        pageSize: rowsPerPage,
+        pageSize: 10,
         orderBy,
         sortOrder,
         extended: true,
@@ -94,10 +93,6 @@ const SexeTable: FunctionComponent = () => {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -111,9 +106,9 @@ const SexeTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.meta.count}
+        count={data?.pages?.[0].meta.count}
       />
-      <Table
+      <InfiniteTable
         tableHead={
           <>
             {COLUMNS.map((column) => (
@@ -132,25 +127,29 @@ const SexeTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.data.map((sexe) => {
+        tableRows={data?.pages.map((page) => {
           return (
-            <tr className="hover:bg-base-200" key={sexe?.id}>
-              <td>{sexe?.libelle}</td>
-              <td>{sexe?.entriesCount}</td>
-              <td align="right" className="pr-6">
-                <TableCellActionButtons
-                  disabled={!sexe.editable}
-                  onEditClicked={() => handleEditSexe(sexe?.id)}
-                  onDeleteClicked={() => handleDeleteSexe(sexe)}
-                />
-              </td>
-            </tr>
+            <Fragment key={page.meta.pageNumber}>
+              {page.data.map((sexe) => {
+                return (
+                  <tr className="hover:bg-base-200" key={sexe?.id}>
+                    <td>{sexe?.libelle}</td>
+                    <td>{sexe?.entriesCount}</td>
+                    <td align="right" className="pr-6">
+                      <TableCellActionButtons
+                        disabled={!sexe.editable}
+                        onEditClicked={() => handleEditSexe(sexe?.id)}
+                        onDeleteClicked={() => handleDeleteSexe(sexe)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </Fragment>
           );
         })}
-        page={page}
-        elementsPerPage={rowsPerPage}
-        count={data?.meta?.count ?? 0}
-        onPageChange={handleChangePage}
+        enableScroll={hasNextPage}
+        onMoreRequested={() => fetchNextPage()}
       />
       <DeletionConfirmationDialog
         open={!!dialogSexe}

@@ -1,13 +1,13 @@
 import { getDepartmentsExtendedResponse, type DepartmentsOrderBy } from "@ou-ca/common/api/department";
 import { type DepartmentExtended } from "@ou-ca/common/entities/department";
-import { useState, type FunctionComponent } from "react";
+import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import { usePaginatedTableParams_legacy } from "../../../hooks/usePaginationParams";
+import usePaginationParams from "../../../hooks/usePaginationParams";
 import useSnackbar from "../../../hooks/useSnackbar";
-import Table from "../../common/styled/table/Table";
+import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -36,18 +36,16 @@ const DepartementTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams_legacy<DepartmentsOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<DepartmentsOrderBy>();
 
   const [dialogDepartement, setDialogDepartement] = useState<DepartmentExtended | null>(null);
 
-  const { data, refetch } = useApiQuery(
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
     {
       path: "/departments",
       queryParams: {
         q: query,
-        pageNumber: page,
-        pageSize: rowsPerPage,
+        pageSize: 10,
         orderBy,
         sortOrder,
         extended: true,
@@ -102,10 +100,6 @@ const DepartementTable: FunctionComponent = () => {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
   const handleRequestSort = (sortingColumn: DepartmentsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -119,9 +113,9 @@ const DepartementTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.meta.count}
+        count={data?.pages?.[0].meta.count}
       />
-      <Table
+      <InfiniteTable
         tableHead={
           <>
             {COLUMNS.map((column) => (
@@ -140,27 +134,31 @@ const DepartementTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.data.map((departement) => {
+        tableRows={data?.pages.map((page) => {
           return (
-            <tr className="hover:bg-base-200" key={departement?.id}>
-              <td>{departement.code}</td>
-              <td>{departement.townsCount}</td>
-              <td>{departement.localitiesCount}</td>
-              <td>{departement.entriesCount}</td>
-              <td align="right" className="pr-6">
-                <TableCellActionButtons
-                  disabled={!departement.editable}
-                  onEditClicked={() => handleEditDepartement(departement?.id)}
-                  onDeleteClicked={() => handleDeleteDepartement(departement)}
-                />
-              </td>
-            </tr>
+            <Fragment key={page.meta.pageNumber}>
+              {page.data.map((departement) => {
+                return (
+                  <tr className="hover:bg-base-200" key={departement?.id}>
+                    <td>{departement.code}</td>
+                    <td>{departement.townsCount}</td>
+                    <td>{departement.localitiesCount}</td>
+                    <td>{departement.entriesCount}</td>
+                    <td align="right" className="pr-6">
+                      <TableCellActionButtons
+                        disabled={!departement.editable}
+                        onEditClicked={() => handleEditDepartement(departement?.id)}
+                        onDeleteClicked={() => handleDeleteDepartement(departement)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </Fragment>
           );
         })}
-        page={page}
-        elementsPerPage={rowsPerPage}
-        count={data?.meta.count ?? 0}
-        onPageChange={handleChangePage}
+        enableScroll={hasNextPage}
+        onMoreRequested={() => fetchNextPage()}
       />
       <DeletionConfirmationDialog
         open={!!dialogDepartement}

@@ -26,8 +26,8 @@ const InfiniteTable: FunctionComponent<InfiniteTableProps> = ({
   }, [inView, onMoreRequested]);
 
   return (
-    <div className="text-base-content my-4 border border-neutral rounded-lg border-opacity-10 shadow-md overflow-x-auto">
-      <table className="table table-sm table-zebra w-full">
+    <div className="text-base-content my-4 border border-neutral rounded-lg border-opacity-10 shadow-md">
+      <table className="table table-sm table-zebra w-full overflow-x-auto">
         <thead className="[&_td]:overflow-ellipsis">
           <tr>{tableHead}</tr>
         </thead>

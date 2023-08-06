@@ -1,13 +1,13 @@
 import { getBehaviorsExtendedResponse, type BehaviorsOrderBy } from "@ou-ca/common/api/behavior";
 import { type BehaviorExtended } from "@ou-ca/common/entities/behavior";
-import { useState, type FunctionComponent } from "react";
+import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
-import useApiQuery from "../../../hooks/api/useApiQuery";
-import { usePaginatedTableParams_legacy } from "../../../hooks/usePaginationParams";
+import usePaginationParams from "../../../hooks/usePaginationParams";
 import useSnackbar from "../../../hooks/useSnackbar";
-import Table from "../../common/styled/table/Table";
+import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
@@ -36,18 +36,16 @@ const ComportementTable: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { query, setQuery, page, setPage, rowsPerPage, orderBy, setOrderBy, sortOrder, setSortOrder } =
-    usePaginatedTableParams_legacy<BehaviorsOrderBy>();
+  const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>();
 
   const [dialogComportement, setDialogComportement] = useState<BehaviorExtended | null>(null);
 
-  const { data, refetch } = useApiQuery(
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
     {
       path: "/behaviors",
       queryParams: {
         q: query,
-        pageNumber: page,
-        pageSize: rowsPerPage,
+        pageSize: 10,
         orderBy,
         sortOrder,
         extended: true,
@@ -102,10 +100,6 @@ const ComportementTable: FunctionComponent = () => {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
   const handleRequestSort = (sortingColumn: BehaviorsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
     setSortOrder(isAsc ? "desc" : "asc");
@@ -119,9 +113,9 @@ const ComportementTable: FunctionComponent = () => {
         onChange={(e) => {
           setQuery(e.currentTarget.value);
         }}
-        count={data?.meta.count}
+        count={data?.pages?.[0].meta.count}
       />
-      <Table
+      <InfiniteTable
         tableHead={
           <>
             {COLUMNS.map((column) => (
@@ -140,27 +134,31 @@ const ComportementTable: FunctionComponent = () => {
             </th>
           </>
         }
-        tableRows={data?.data.map((comportement) => {
+        tableRows={data?.pages.map((page) => {
           return (
-            <tr className="hover:bg-base-200" key={comportement?.id}>
-              <td>{comportement.code}</td>
-              <td>{comportement.libelle}</td>
-              <td>{comportement.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
-              <td>{comportement.entriesCount}</td>
-              <td align="right" className="pr-6">
-                <TableCellActionButtons
-                  disabled={!comportement.editable}
-                  onEditClicked={() => handleEditComportement(comportement?.id)}
-                  onDeleteClicked={() => handleDeleteComportement(comportement)}
-                />
-              </td>
-            </tr>
+            <Fragment key={page.meta.pageNumber}>
+              {page.data.map((comportement) => {
+                return (
+                  <tr className="hover:bg-base-200" key={comportement?.id}>
+                    <td>{comportement.code}</td>
+                    <td>{comportement.libelle}</td>
+                    <td>{comportement.nicheur ? t(`breedingStatus.${comportement?.nicheur}`) : ""}</td>
+                    <td>{comportement.entriesCount}</td>
+                    <td align="right" className="pr-6">
+                      <TableCellActionButtons
+                        disabled={!comportement.editable}
+                        onEditClicked={() => handleEditComportement(comportement?.id)}
+                        onDeleteClicked={() => handleDeleteComportement(comportement)}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </Fragment>
           );
         })}
-        page={page}
-        elementsPerPage={rowsPerPage}
-        count={data?.meta.count ?? 0}
-        onPageChange={handleChangePage}
+        enableScroll={hasNextPage}
+        onMoreRequested={() => fetchNextPage()}
       />
       <DeletionConfirmationDialog
         open={!!dialogComportement}
