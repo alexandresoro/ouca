@@ -78,6 +78,17 @@ jobs:
           directory: "./packages/frontend/dist"
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload artifact - frontend
+        if: ${{ inputs.deploy-frontend }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-frontend
+          path: |
+            packages/frontend/dist/
+            functions/
+          retention-days: 1
+          if-no-files-found: error
+
       - name: Upload artifact - backend
         if: ${{ inputs.upload-backend }}
         uses: actions/upload-artifact@v3
