@@ -144,7 +144,7 @@ const EspeceTable: FunctionComponent = () => {
               {page.data.map((espece) => {
                 return (
                   <tr className="hover:bg-base-200" key={espece?.id}>
-                    <td>{espece.speciesClassName}</td>
+                    <td>{espece.speciesClass?.libelle}</td>
                     <td>{espece.code}</td>
                     <td>{espece.nomFrancais}</td>
                     <td>{espece.nomLatin}</td>

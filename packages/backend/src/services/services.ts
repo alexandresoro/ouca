@@ -152,6 +152,7 @@ export const buildServices = async (config: Config): Promise<Services> => {
 
   const especeService = buildEspeceService({
     logger,
+    classeService,
     especeRepository,
     donneeRepository,
   });
