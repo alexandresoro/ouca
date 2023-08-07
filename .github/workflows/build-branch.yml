@@ -78,6 +78,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           build-args: |
             NODE_IMAGE_VERSION=${{ needs.build.outputs.nodeVersion }}
+            GIT_SHA=${{ github.sha }}
           context: .
           file: Dockerfile.ci
           platforms: |
