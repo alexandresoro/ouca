@@ -68,6 +68,7 @@ export type Config = {
   sentry: {
     dsn: EnvSchemaType["SENTRY_DSN"];
     environment: EnvSchemaType["SENTRY_ENV"];
+    release: EnvSchemaType["SENTRY_RELEASE"];
   };
   isProduction: EnvSchemaType["NODE_ENV"];
 };
