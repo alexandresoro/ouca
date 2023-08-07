@@ -9,16 +9,9 @@ export const buildFindMatchingDonneeClause = (criteria: DonneeFindMatchingInput)
   }
 
   const andClause = Object.entries(criteria)
-    .filter(
-      (
-        criteria
-      ): criteria is [
-        keyof DonneeFindMatchingInput,
-        NonNullable<DonneeFindMatchingInput[keyof DonneeFindMatchingInput]>
-      ] => {
-        return criteria?.[1] != null;
-      }
-    )
+    .filter((criteria) => {
+      return criteria?.[1] !== undefined;
+    })
     .map(([criteriaName, criteriaValue]) => {
       let identifierCriteria: IdentifierSqlToken;
       switch (criteriaName) {

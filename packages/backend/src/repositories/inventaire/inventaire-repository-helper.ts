@@ -8,16 +8,9 @@ export const buildFindMatchingInventaireClause = (criteria: InventaireFindMatchi
   }
 
   const andClause = Object.entries(criteria)
-    .filter(
-      (
-        criteria
-      ): criteria is [
-        keyof InventaireFindMatchingInput,
-        NonNullable<InventaireFindMatchingInput[keyof InventaireFindMatchingInput]>
-      ] => {
-        return criteria?.[1] != null;
-      }
-    )
+    .filter((criteria) => {
+      return criteria?.[1] !== undefined;
+    })
     .map(([criteriaName, criteriaValue]) => {
       let identifierCriteria: IdentifierSqlToken;
       switch (criteriaName) {
