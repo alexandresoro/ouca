@@ -26,7 +26,7 @@ const envSchema = z.object({
   OIDC_CLIENT_SECRET: z.string(),
   SENTRY_DSN: z.string().optional(),
   SENTRY_ENV: z.string().optional(),
-  SENTRY_RELEASE: z.string().optional(),
+  SENTRY_RELEASE: z.string().trim().min(1).optional(),
   NODE_ENV: z.string().optional(),
 });
 
