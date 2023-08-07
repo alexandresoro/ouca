@@ -5,6 +5,10 @@ on:
     branches:
       - '*'
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:    
     uses: ./.github/workflows/_build.yml
@@ -15,9 +19,6 @@ jobs:
 
   deploy-frontend:
     needs: build
-    concurrency:
-      group: deploy-frontend-${{ github.ref }}
-      cancel-in-progress: true
 
     uses: ./.github/workflows/_deploy-cloudflare.yml
     secrets: inherit
