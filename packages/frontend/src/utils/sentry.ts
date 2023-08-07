@@ -11,9 +11,15 @@ import {
 } from "react-router-dom";
 import { type AppConfig } from "../types/AppConfig";
 
-export const initializeSentry = (sentryConfig: AppConfig["sentry"]) => {
+export const initializeSentry = (config: AppConfig) => {
+  const { sentry, apiUrl } = config;
   Sentry.init({
-    ...sentryConfig,
+    ...sentry,
+    ...(apiUrl
+      ? {
+          tracePropagationTargets: [apiUrl],
+        }
+      : {}),
     integrations: [
       new Sentry.BrowserTracing({
         routingInstrumentation: Sentry.reactRouterV6Instrumentation(
