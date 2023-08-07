@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG NODE_IMAGE_VERSION=18
+ARG GIT_SHA
 
 FROM node:${NODE_IMAGE_VERSION}-alpine
 
@@ -27,6 +28,8 @@ WORKDIR /app/packages/backend/dist
 # Create the necessary directories
 RUN mkdir public && \
   mkdir uploads
+
+ENV SENTRY_RELEASE ${GIT_SHA}
 
 ENTRYPOINT ["node", "main.js"]
 
