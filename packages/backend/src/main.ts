@@ -16,10 +16,6 @@ if (config.sentry.dsn) {
 }
 Sentry.init({
   dsn: config.sentry.dsn,
-  integrations: [
-    new Sentry.Integrations.Http({ tracing: true }),
-    ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations(),
-  ],
   environment: config.sentry.environment,
   release: config.sentry.release,
   tracesSampleRate: 1.0,
