@@ -26,6 +26,7 @@ const envSchema = z.object({
   OIDC_CLIENT_SECRET: z.string(),
   SENTRY_DSN: z.string().optional(),
   SENTRY_ENV: z.string().optional(),
+  SENTRY_RELEASE: z.string().optional(),
   NODE_ENV: z.string().optional(),
 });
 
@@ -120,6 +121,7 @@ export const getConfig = (): Config => {
     sentry: {
       dsn: env.SENTRY_DSN,
       environment: env.SENTRY_ENV,
+      release: env.SENTRY_RELEASE,
     },
     isProduction: env.NODE_ENV,
   };
