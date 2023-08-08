@@ -48,7 +48,6 @@
     "@turf/boolean-within": "6.5.0",
     "@turf/concave": "6.5.0",
     "@turf/helpers": "6.5.0",
-    "@turf/meta": "6.5.0",
     "date-fns": "2.30.0",
     "i18next": "23.4.3",
     "i18next-http-backend": "2.2.1",

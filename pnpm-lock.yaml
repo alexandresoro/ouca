@@ -250,9 +250,6 @@ importers:
       '@turf/helpers':
         specifier: 6.5.0
         version: 6.5.0
-      '@turf/meta':
-        specifier: 6.5.0
-        version: 6.5.0
       date-fns:
         specifier: 2.30.0
         version: 2.30.0

@@ -9,9 +9,8 @@ import booleanWithin from "@turf/boolean-within";
 import concave from "@turf/concave";
 import { featureCollection, point } from "@turf/helpers";
 import { type BBox2d } from "@turf/helpers/dist/js/lib/geojson";
-import { featureReduce } from "@turf/meta";
 // eslint-disable-next-line import/no-unresolved
-import { type Feature, type FeatureCollection, type MultiPolygon, type Point, type Polygon } from "geojson";
+import { type FeatureCollection, type MultiPolygon, type Point, type Polygon } from "geojson";
 import { useAtom, useAtomValue } from "jotai";
 import { RESET } from "jotai/utils";
 import { type GeoJSONSource } from "maplibre-gl";
@@ -92,52 +91,39 @@ const EntryMap: FunctionComponent = () => {
     }
   );
 
-  // The feature collection containing only localities that
-  // match the current selection
-  const selectionFeatureCollection = useMemo(() => {
+  // Compute the polygon for the selection
+  const selectionFeatureCollectionPolygon = useMemo(() => {
     if (!localitiesGeoJson) {
       return null;
     }
 
+    let selectionFeatureCollection;
     if (!localitySelection) {
-      return localitiesGeoJson;
+      selectionFeatureCollection = localitiesGeoJson;
+    } else {
+      // Filter localities that only match the selection
+      let propertyField: string;
+      switch (localitySelection.type) {
+        case "locality":
+          propertyField = "id";
+          break;
+        case "town":
+          propertyField = "townId";
+          break;
+        case "department":
+          propertyField = "departmentId";
+          break;
+        default:
+          return;
+      }
+
+      const filteredLocalities = localitiesGeoJson.features.filter((localityFeature) => {
+        return localityFeature.properties?.[propertyField] === localitySelection.id;
+      });
+
+      selectionFeatureCollection = featureCollection(filteredLocalities);
     }
 
-    // Filter localities that only match the selection
-    let propertyField: string;
-    switch (localitySelection.type) {
-      case "locality":
-        propertyField = "id";
-        break;
-      case "town":
-        propertyField = "townId";
-        break;
-      case "department":
-        propertyField = "departmentId";
-        break;
-      default:
-        return;
-    }
-
-    const filteredLocalities = featureReduce(
-      localitiesGeoJson,
-      (previous, current) => {
-        if (current.properties?.[propertyField] === localitySelection.id) {
-          return [...previous, current];
-        }
-        return previous;
-      },
-      [] as Feature<Point>[]
-    );
-
-    return featureCollection(filteredLocalities);
-  }, [localitySelection, localitiesGeoJson]);
-
-  // Compute the polygon for the selection
-  const selectionFeatureCollectionPolygon = useMemo(() => {
-    if (!selectionFeatureCollection) {
-      return null;
-    }
     const selectionPolygon = concave(selectionFeatureCollection);
 
     if (!selectionPolygon) {
@@ -145,7 +131,7 @@ const EntryMap: FunctionComponent = () => {
     }
 
     return featureCollection([selectionPolygon]);
-  }, [selectionFeatureCollection]);
+  }, [localitiesGeoJson, localitySelection]);
 
   // Whenever the selection changes,
   // make sure that the map is focusing on it
