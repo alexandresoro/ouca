@@ -16,7 +16,8 @@ const geojsonController: FastifyPluginAsync<{
 
   fastify.get("/localities.json", async (req, reply) => {
     const geoJsonLocalities = await geojsonService.getLocalities(req.user);
-    return await reply.etag(sha256(JSON.stringify(geoJsonLocalities))).send(geoJsonLocalities);
+    const geoJsonLocalitiesStr = JSON.stringify(geoJsonLocalities);
+    return await reply.etag(sha256(geoJsonLocalitiesStr)).send(geoJsonLocalitiesStr);
   });
 };
 
