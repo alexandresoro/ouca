@@ -303,8 +303,8 @@ importers:
         specifier: workspace:*
         version: link:../eslint-config
       '@sentry/vite-plugin':
-        specifier: 2.5.0
-        version: 2.5.0
+        specifier: 2.6.0
+        version: 2.6.0
       '@tanstack/react-query-devtools':
         specifier: 4.29.25
         version: 4.29.25(@tanstack/react-query@4.29.25)(react-dom@18.2.0)(react@18.2.0)
@@ -1590,13 +1590,13 @@ packages:
       tslib: 2.6.1
     dev: false
 
-  /@sentry/bundler-plugin-core@2.5.0:
-    resolution: {integrity: sha512-UNjeTSf0Irt/RsC1Xsfxa+RC92mBvjzuWQnvHJ5c+mXwUt+jLcFgGMCSVK/FCDZO+gAeKzmU1+G2UexbsNAP8w==}
+  /@sentry/bundler-plugin-core@2.6.0:
+    resolution: {integrity: sha512-3oYJKacxzKg4Xw5t2crsJCeE1/wsN1g3p5o2mesNm+KvP6ovgz8+cqxq5dJigNYqfR9KTSUFo+ZLhOy/pyfkmw==}
     engines: {node: '>= 14'}
     dependencies:
       '@sentry/cli': 2.20.1
       '@sentry/node': 7.61.1
-      '@sentry/utils': 7.61.0
+      '@sentry/utils': 7.61.1
       dotenv: 16.3.1
       find-up: 5.0.0
       glob: 9.3.2
@@ -1686,22 +1686,9 @@ packages:
       '@sentry-internal/tracing': 7.61.1
     dev: false
 
-  /@sentry/types@7.61.0:
-    resolution: {integrity: sha512-/GLlIBNR35NKPE/SfWi9W10dK9hE8qTShzsuPVn5wAJxpT3Lb4+dkwmKCTLUYxdkmvRDEudkfOxgalsfQGTAWA==}
-    engines: {node: '>=8'}
-    dev: true
-
   /@sentry/types@7.61.1:
     resolution: {integrity: sha512-CpPKL+OfwYOduRX9AT3p+Ie1fftgcCPd5WofTVVq7xeWRuerOOf2iJd0v+8yHQ25omgres1YOttDkCcvQRn4Jw==}
     engines: {node: '>=8'}
-
-  /@sentry/utils@7.61.0:
-    resolution: {integrity: sha512-jfj14d0XBFiCU0G6dZZ12SizATiF5Mt4stBGzkM5iS9nXFj8rh1oTT7/p+aZoYzP2JTF+sDzkNjWxyKZkcTo0Q==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/types': 7.61.0
-      tslib: 2.6.1
-    dev: true
 
   /@sentry/utils@7.61.1:
     resolution: {integrity: sha512-pUPXoiuYrTEPcBHjRizFB6eZEGm/6cTBwdWSHUjkGKvt19zuZ1ixFJQV6LrIL/AMeiQbmfQ+kTd/8SR7E9rcTQ==}
@@ -1710,11 +1697,11 @@ packages:
       '@sentry/types': 7.61.1
       tslib: 2.6.1
 
-  /@sentry/vite-plugin@2.5.0:
-    resolution: {integrity: sha512-u5lfIysy6UVzUGn/adyDcRXfzFyip4mLGThTnKeOeA9rCgmJUVnErH8TD8xhTKdpq/MBiQ+KqrC6xG9pKCa96g==}
+  /@sentry/vite-plugin@2.6.0:
+    resolution: {integrity: sha512-SPQfXsB1xQs9dR/dX6dBT9CWlmfg2tdDPvvNuCeLmMmr8R9CJoMi+QE83nvJCYH3pY9S5kZlpq/4WSGE34oasA==}
     engines: {node: '>= 14'}
     dependencies:
-      '@sentry/bundler-plugin-core': 2.5.0
+      '@sentry/bundler-plugin-core': 2.6.0
       unplugin: 1.0.1
     transitivePeerDependencies:
       - encoding
