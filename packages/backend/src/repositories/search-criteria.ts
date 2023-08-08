@@ -168,9 +168,15 @@ const getOperatorForCriteria = (criteriaName: keyof SearchCriteria) => {
 };
 
 export const buildSearchCriteriaParameters = (searchCriteria: SearchCriteria) => {
-  return Object.entries(searchCriteria).map(([criteriaName, criteriaValue]) => {
-    const identifierCriteria = getIdentifierForCriteria(criteriaName as keyof SearchCriteria);
-    const comperatorOperator = getOperatorForCriteria(criteriaName as keyof SearchCriteria);
-    return [identifierCriteria, criteriaValue, comperatorOperator] as const;
-  });
+  return Object.entries(searchCriteria)
+    .filter(
+      (criteria): criteria is [keyof SearchCriteria, Exclude<SearchCriteria[keyof SearchCriteria], undefined>] => {
+        return criteria?.[1] !== undefined;
+      }
+    )
+    .map(([criteriaName, criteriaValue]) => {
+      const identifierCriteria = getIdentifierForCriteria(criteriaName);
+      const comperatorOperator = getOperatorForCriteria(criteriaName);
+      return [identifierCriteria, criteriaValue, comperatorOperator] as const;
+    });
 };
