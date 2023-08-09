@@ -48,11 +48,12 @@ export const singleLocalityLayer: LayerProps = {
 
 export const selectionLayer: LayerProps = {
   id: "selection-layer",
-  type: "fill",
+  beforeId: "clusters-localities",
+  type: "line",
   source: "selected-localities",
   paint: {
-    "fill-outline-color": "#484896",
-    "fill-color": "#5C7F67",
-    "fill-opacity": 0.25,
+    "line-color": "#5C7F67",
+    "line-width": 3,
+    "line-opacity": 0.85,
   },
 };
