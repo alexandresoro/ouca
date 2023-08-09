@@ -159,7 +159,7 @@ const EntryMap: FunctionComponent = () => {
 
     if (shouldMoveToSelection) {
       const selectionBoundingBox = bbox(selectionCollectionPolygon) as BBox2d;
-      currentMap.fitBounds(selectionBoundingBox, { linear: true, padding: 10, duration: 300, maxZoom: 15 });
+      currentMap.fitBounds(selectionBoundingBox, { linear: true, padding: 20, duration: 300, maxZoom: 15 });
     }
   };
 
