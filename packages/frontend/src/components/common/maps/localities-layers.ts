@@ -15,7 +15,7 @@ export const clusterLayer: LayerProps = {
       25000,
       "#24BD5A",
     ],
-    "circle-radius": ["interpolate", ["cubic-bezier", 0, 0.85, 0.9, 0.6], ["get", "point_count"], 2, 10, 25000, 75],
+    "circle-radius": ["interpolate", ["cubic-bezier", 0, 0.9, 0.8, 0.3], ["get", "point_count"], 2, 10, 25000, 60],
     "circle-stroke-width": 2,
     "circle-stroke-color": "#fff",
   },
