@@ -46,7 +46,11 @@ import {
 } from "../../common/maps/localities-layers";
 import { MAP_STYLE_PROVIDERS } from "../../common/maps/map-style-providers";
 
-const EntryMap: FunctionComponent = () => {
+type EntryMapProps = {
+  initialMapState?: Partial<ViewState>;
+};
+
+const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
   const { t } = useTranslation();
 
   const mapRef = useRef<MapRef>(null);
@@ -203,12 +207,7 @@ const EntryMap: FunctionComponent = () => {
     }
   }, [inventoryCoordinates]);
 
-  const [viewState, setViewState] = useState<Partial<ViewState>>({
-    longitude: inventoryCoordinates?.lng ?? 1,
-    latitude: inventoryCoordinates?.lat ?? 46.5,
-    zoom: inventoryCoordinates != null ? 15 : 0,
-  });
-
+  const [viewState, setViewState] = useState<Partial<ViewState> | undefined>(initialMapState);
   const [mapStyle, setMapStyle] = useState<keyof typeof MAP_STYLE_PROVIDERS>("ign");
 
   const [displayCoordinatesInfoPopup, setDisplayCoordinatesInfoPopup] = useState(false);

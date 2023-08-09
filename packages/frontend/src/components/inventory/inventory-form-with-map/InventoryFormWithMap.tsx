@@ -1,17 +1,10 @@
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Inventory, type InventoryExtended } from "@ou-ca/common/entities/inventory";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { lazy, useEffect, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  inventoryAltitudeAtom,
-  inventoryLatitudeAtom,
-  inventoryLocalityAtom,
-  inventoryLongitudeAtom,
-  inventorySetAtom,
-  storedCustomizedCoordinatesAtom,
-} from "../../../atoms/inventoryFormAtoms";
+import { inventorySetAtom } from "../../../atoms/inventoryFormAtoms";
 import InventoryForm from "../inventory-form/InventoryForm";
 
 const EntryMap = lazy(() => import("../../entry/entry-map/EntryMap"));
@@ -33,12 +26,6 @@ const InventoryFormWithMap: FunctionComponent<InventoryFormWithMapProps> = (prop
 
   const setInventory = useSetAtom(inventorySetAtom);
 
-  const inventoryLocality = useAtomValue(inventoryLocalityAtom);
-  const inventoryLatitude = useAtomValue(inventoryLatitudeAtom);
-  const inventoryLongitude = useAtomValue(inventoryLongitudeAtom);
-  const inventoryAltitude = useAtomValue(inventoryAltitudeAtom);
-  const storedCustomizedCoordinates = useAtomValue(storedCustomizedCoordinatesAtom);
-
   const [isInventoryReady, setIsInventoryReady] = useState(false);
 
   useEffect(() => {
@@ -52,12 +39,6 @@ const InventoryFormWithMap: FunctionComponent<InventoryFormWithMapProps> = (prop
   return (
     <div className="container mx-auto flex gap-10">
       <div className="basis-1/3 mt-4">
-        Coords - LAT {inventoryLatitude} - LONG {inventoryLongitude} - ALT {inventoryAltitude}
-        <br />
-        Stored custom coords - LAT {storedCustomizedCoordinates?.lat} - LONG {storedCustomizedCoordinates?.lng} - ALT{" "}
-        {storedCustomizedCoordinates?.altitude}
-        <br />
-        LOCALITY {JSON.stringify(inventoryLocality)}
         {isInventoryReady && (
           <>
             {props.mode === "update" && (
@@ -83,7 +64,38 @@ const InventoryFormWithMap: FunctionComponent<InventoryFormWithMapProps> = (prop
         )}
       </div>
       <div className="basis-2/3">
-        <EntryMap />
+        {isInventoryReady && (
+          <>
+            {props.mode === "update" && (
+              <EntryMap
+                initialMapState={{
+                  longitude:
+                    props.inventory.customizedCoordinates?.longitude ?? props.inventory.locality.coordinates.longitude,
+                  latitude:
+                    props.inventory.customizedCoordinates?.latitude ?? props.inventory.locality.coordinates.latitude,
+                  zoom: 15,
+                }}
+              />
+            )}
+            {props.mode === "create" && (
+              <EntryMap
+                initialMapState={
+                  props.initialData
+                    ? {
+                        longitude:
+                          props.initialData.customizedCoordinates?.longitude ??
+                          props.initialData.locality.coordinates.longitude,
+                        latitude:
+                          props.initialData.customizedCoordinates?.latitude ??
+                          props.initialData.locality.coordinates.latitude,
+                        zoom: 15,
+                      }
+                    : undefined
+                }
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );

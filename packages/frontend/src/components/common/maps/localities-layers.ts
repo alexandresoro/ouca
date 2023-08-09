@@ -18,6 +18,7 @@ export const clusterLayer: LayerProps = {
     "circle-radius": ["interpolate", ["cubic-bezier", 0, 0.9, 0.8, 0.3], ["get", "point_count"], 2, 10, 25000, 60],
     "circle-stroke-width": 2,
     "circle-stroke-color": "#fff",
+    "circle-opacity": 0.8,
   },
 };
 
@@ -43,6 +44,7 @@ export const singleLocalityLayer: LayerProps = {
     "circle-radius": 8,
     "circle-stroke-width": 1,
     "circle-stroke-color": "#fff",
+    "circle-opacity": 0.8,
   },
 };
 

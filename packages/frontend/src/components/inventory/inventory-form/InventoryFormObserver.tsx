@@ -94,12 +94,6 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
 
   return (
     <>
-      VALUE: {JSON.stringify(observerId)}
-      <br />
-      INPUT: {JSON.stringify(observateurInput)}
-      <br />
-      OBS: {JSON.stringify(selectedObserver)}
-      <br />
       <Autocomplete
         ref={refObserver}
         inputProps={{
@@ -114,12 +108,6 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
         renderValue={renderObserver}
         labelTextClassName="first-letter:capitalize"
       />
-      VALUES: {JSON.stringify(associateIds)}
-      <br />
-      INPUT: {JSON.stringify(associatesInput)}
-      <br />
-      ASS: {JSON.stringify(selectedAssociates)}
-      <br />
       {areAssociesDisplayed && (
         <AutocompleteMultiple
           ref={refAssociates}

@@ -230,12 +230,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
   return (
     <>
       <div className="flex gap-2">
-        INPUT: {JSON.stringify(departmentsInput)}
-        <br />
-        DPT ID: {JSON.stringify(departmentId)}
-        <br />
-        DPT: {JSON.stringify(department)}
-        <br />
         <Autocomplete
           data={dataDepartments?.data}
           name="department"
@@ -247,12 +241,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           autocompleteClassName="w-28"
           labelTextClassName="first-letter:capitalize"
         />
-        INPUT: {JSON.stringify(townsInput)}
-        <br />
-        TWN ID: {JSON.stringify(townId)}
-        <br />
-        TWN: {JSON.stringify(town)}
-        <br />
         <Autocomplete
           data={dataTowns?.data}
           name="town"
@@ -266,10 +254,6 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           labelTextClassName="first-letter:capitalize"
         />
       </div>
-      INPUT: {JSON.stringify(localityInput)}
-      <br />
-      LOC: {JSON.stringify(locality)}
-      <br />
       <Autocomplete
         ref={refLocality}
         data={dataLocalities?.data}

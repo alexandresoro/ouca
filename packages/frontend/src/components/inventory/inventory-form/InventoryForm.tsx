@@ -91,17 +91,14 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
     register,
     control,
     getValues,
-    formState: { isValid, isDirty, dirtyFields, defaultValues },
+    formState: { isValid, isDirty },
     handleSubmit,
-    watch,
   } = useForm<InventoryFormState>({
     resetOptions: { keepDefaultValues: true },
     defaultValues: defaultFormValues,
     values: formValues,
     resolver: zodResolver(upsertInventoryInput),
   });
-
-  const values = watch();
 
   const onSubmit: SubmitHandler<InventoryFormState> = (inventoryFormData) => {
     // FIXME assertion is done thanks to zod resolver, however types are not inferred
@@ -110,15 +107,6 @@ const InventoryForm: FunctionComponent<InventoryFormProps> = ({
 
   return (
     <div>
-      <div className="flex gap-2">
-        <span className={`text-xl ${isDirty ? "bg-yellow-500" : ""}`}>DIRTY</span>
-        <span className={`text-xl ${isValid ? "bg-green-500" : "bg-red-500"}`}>VALID</span>
-      </div>
-      DIRTY FIELDS: {JSON.stringify(dirtyFields)}
-      <br />
-      DEFAULT: {JSON.stringify(defaultValues)}
-      <br />
-      VALUES: {JSON.stringify(values)}
       <h2 className="text-xl font-semibold mb-3">{t("inventoryForm.title")}</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4">
