@@ -6,7 +6,7 @@ import bbox from "@turf/bbox";
 import bboxPolygon from "@turf/bbox-polygon";
 import booleanDisjoint from "@turf/boolean-disjoint";
 import booleanWithin from "@turf/boolean-within";
-import concave from "@turf/concave";
+import convex from "@turf/convex";
 import { featureCollection, point } from "@turf/helpers";
 import { type BBox2d } from "@turf/helpers/dist/js/lib/geojson";
 // eslint-disable-next-line import/no-unresolved
@@ -124,7 +124,10 @@ const EntryMap: FunctionComponent = () => {
       selectionFeatureCollection = featureCollection(filteredLocalities);
     }
 
-    const selectionPolygon = concave(selectionFeatureCollection);
+    const selectionPolygon = convex(selectionFeatureCollection, {
+      // If no selection, we don't care much about a realistic shape -> Infinity
+      concavity: localitySelection != null ? 2 : Infinity,
+    });
 
     if (!selectionPolygon) {
       return null;
