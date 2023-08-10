@@ -30,7 +30,7 @@
     }
   },
   "dependencies": {
-    "@floating-ui/react": "0.25.0",
+    "@floating-ui/react": "0.25.1",
     "@fontsource-variable/nunito": "5.0.9",
     "@fontsource/carter-one": "5.0.8",
     "@headlessui/react": "1.7.16",
