@@ -6,8 +6,8 @@ import { type EspeceFindManyInput } from "./espece-repository-types.js";
 export const buildQClause = (q: string) => {
   return sql.fragment`
     espece.code ~* ${q}
-    OR espece.nom_francais ~* ${q}
-    OR espece.nom_latin ~* ${q}
+    OR unaccent(espece.nom_francais) ~* unaccent(${q})
+    OR unaccent(espece.nom_latin) ~* unaccent(${q})
   `;
 };
 

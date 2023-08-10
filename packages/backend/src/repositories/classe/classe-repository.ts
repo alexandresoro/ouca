@@ -86,7 +86,7 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
     ${
       libelleLike
         ? sql.fragment`
-    WHERE libelle ILIKE ${libelleLike}
+    WHERE unaccent(libelle) ILIKE unaccent(${libelleLike})
     `
         : sql.fragment``
     }
@@ -118,7 +118,7 @@ export const buildClasseRepository = ({ slonik }: ClasseRepositoryDependencies) 
         libelleLike
           ? sql.fragment`
               WHERE
-                libelle ILIKE ${libelleLike}
+                unaccent(libelle) ILIKE unaccent(${libelleLike})
           `
           : sql.fragment``
       }

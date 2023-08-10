@@ -116,7 +116,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
     ${
       nomOrDepartementLike
         ? sql.fragment`
-    (commune.nom ILIKE ${nomOrDepartementLike}
+    (unaccent(commune.nom) ILIKE unaccent(${nomOrDepartementLike})
     OR CAST(commune.code as VARCHAR) ILIKE ${nomOrDepartementStarts})
     `
         : sql.fragment``
@@ -169,7 +169,7 @@ export const buildCommuneRepository = ({ slonik }: CommuneRepositoryDependencies
       ${
         codeLike
           ? sql.fragment`
-                (commune.nom ILIKE ${codeLike}
+                (unaccent(commune.nom) ILIKE unaccent(${codeLike})
                 OR CAST(commune.code as VARCHAR) ILIKE ${codeStarts})
           `
           : sql.fragment``

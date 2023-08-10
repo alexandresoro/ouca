@@ -99,7 +99,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
     ${
       codeLike
         ? sql.fragment`
-    WHERE departement.code ILIKE ${codeLike}
+    WHERE unaccent(departement.code) ILIKE unaccent(${codeLike})
     `
         : sql.fragment``
     }
@@ -140,8 +140,7 @@ export const buildDepartementRepository = ({ slonik }: DepartementRepositoryDepe
       ${
         codeLike
           ? sql.fragment`
-              WHERE
-                code ILIKE ${codeLike}
+          WHERE unaccent(code) ILIKE unaccent(${codeLike})
           `
           : sql.fragment``
       }
