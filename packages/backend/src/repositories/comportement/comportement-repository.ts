@@ -89,7 +89,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
         ? sql.fragment`
     WHERE
       code ~* ${codeLike}
-      OR libelle ILIKE ${libelleLike}
+      OR unaccent(libelle) ILIKE unaccent(${libelleLike})
     `
         : sql.fragment``
     }
@@ -124,7 +124,7 @@ export const buildComportementRepository = ({ slonik }: ComportementRepositoryDe
           ? sql.fragment`
               WHERE
                 code ~* ${codeLike}
-                OR libelle ILIKE ${libelleLike}
+                OR unaccent(libelle) ILIKE unaccent(${libelleLike})
           `
           : sql.fragment``
       }

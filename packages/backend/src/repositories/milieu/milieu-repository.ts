@@ -86,7 +86,7 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
         ? sql.fragment`
     WHERE
       code ILIKE ${codeStarts}
-      OR libelle ILIKE ${libelleLike}
+      OR unaccent(libelle) ILIKE unaccent(${libelleLike})
     `
         : sql.fragment``
     }
@@ -121,7 +121,7 @@ export const buildMilieuRepository = ({ slonik }: MilieuRepositoryDependencies) 
           ? sql.fragment`
               WHERE
                 code ILIKE ${codeStarts}
-                OR libelle ILIKE ${libelleLike}
+                OR unaccent(libelle) ILIKE unaccent(${libelleLike})
           `
           : sql.fragment``
       }

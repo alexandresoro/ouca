@@ -125,7 +125,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
     ${
       qLike
         ? sql.fragment`
-          lieudit.nom ILIKE ${qLike}
+          unaccent(lieudit.nom) ILIKE unaccent(${qLike})
     `
         : sql.fragment``
     }
@@ -178,7 +178,7 @@ export const buildLieuditRepository = ({ slonik }: LieuditRepositoryDependencies
       ${
         qLike
           ? sql.fragment`
-              lieudit.nom ILIKE ${qLike}
+            unaccent(lieudit.nom) ILIKE unaccent(${qLike})
           `
           : sql.fragment``
       }
