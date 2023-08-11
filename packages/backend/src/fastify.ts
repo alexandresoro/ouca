@@ -1,6 +1,9 @@
-import { startImportTask } from "./services/import-manager.js";
-import { type Services } from "./services/services.js";
-import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "./utils/paths.js";
+import { randomUUID } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { pipeline } from "node:stream";
+import { promisify } from "node:util";
+import zlib from "node:zlib";
 /* eslint-disable import/no-named-as-default */
 import fastifyCompress from "@fastify/compress";
 import fastifyCors from "@fastify/cors";
@@ -14,17 +17,14 @@ import fastify, {
   type RawRequestDefaultExpression,
   type RawServerDefault,
 } from "fastify";
-import { randomUUID } from "node:crypto";
-import fs from "node:fs";
-import path from "node:path";
-import { pipeline } from "node:stream";
-import { promisify } from "node:util";
-import zlib from "node:zlib";
 import { type Logger } from "pino";
 import downloadController from "./controllers/download-controller.js";
 import userController from "./controllers/user-controller.js";
 import apiRoutesPlugin from "./fastify/api-routes-plugin.js";
 import sentryMetricsPlugin from "./fastify/sentry-metrics-plugin.js";
+import { startImportTask } from "./services/import-manager.js";
+import { type Services } from "./services/services.js";
+import { DOWNLOAD_ENDPOINT, IMPORTS_DIR_PATH, IMPORT_REPORTS_DIR, IMPORT_REPORTS_DIR_PATH } from "./utils/paths.js";
 
 const API_V1_PREFIX = "/api/v1";
 
@@ -44,6 +44,7 @@ export const buildServer = async (
   // Server
   const server = fastify.default({
     logger: services.logger,
+    trustProxy: true,
   });
 
   // Middlewares
