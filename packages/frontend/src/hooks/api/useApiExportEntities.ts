@@ -8,11 +8,13 @@ const useApiExportEntities = ({ filename }: { filename: string }) => {
     {
       method: "POST",
       responseHandler: (response) => {
+        console.log("headers", response.headers);
         return response.headers.get("Location");
       },
     },
     {
       onSuccess: (location) => {
+        console.log("location", location);
         if (location) {
           downloadFile(location, `${filename}${EXCEL_FILE_EXTENSION}`);
         }
