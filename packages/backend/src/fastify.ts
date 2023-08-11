@@ -58,6 +58,7 @@ export const buildServer = async (
     origin: true,
     credentials: true,
     maxAge: 3600,
+    exposedHeaders: ["Location"],
   });
   await server.register(fastifyUnderPressure, {
     exposeStatusRoute: "/healthz",
