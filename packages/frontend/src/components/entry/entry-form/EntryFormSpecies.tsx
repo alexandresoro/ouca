@@ -97,10 +97,6 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
     <div className="flex gap-4">
       <Autocomplete
         autocompleteClassName="basis-1/4"
-        inputProps={{
-          // Species class field should not be focusable
-          tabIndex: -1,
-        }}
         data={dataClasses?.data}
         name="class"
         label={t("speciesClass")}
