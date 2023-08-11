@@ -30,9 +30,9 @@ const EntrySummaryPanel: FunctionComponent<EntrySummaryPanelProps> = ({ entry })
         })}
         secondary={t("observationDetails.distance", {
           context:
-            entry?.distance && entry.distanceEstimate
+            entry?.distance != null && entry.distanceEstimate
               ? "both"
-              : entry.distance
+              : entry.distance != null
               ? "valueOnly"
               : entry.distanceEstimate
               ? "precisionOnly"
