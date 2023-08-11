@@ -278,8 +278,8 @@ importers:
         specifier: 7.45.4
         version: 7.45.4(react@18.2.0)
       react-i18next:
-        specifier: 13.1.1
-        version: 13.1.1(i18next@23.4.4)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 13.1.2
+        version: 13.1.2(i18next@23.4.4)(react-dom@18.2.0)(react@18.2.0)
       react-intersection-observer:
         specifier: 9.5.2
         version: 9.5.2(react@18.2.0)
@@ -5781,8 +5781,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-i18next@13.1.1(i18next@23.4.4)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-V81cspLxZd37/ltd8Md5Lz99cfeqIn7vJCAUsCXuaTi1vRPKVr0dWq1DhVFUJBHpAi3PJsmFAR3/YstpP+CDYg==}
+  /react-i18next@13.1.2(i18next@23.4.4)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-D/OJ/8ZQYscabsvbCAiOgvJq8W3feQF/VIV0to1w7V7UvrUE1IZ3hcalOckUYvKBd7BP3b8EPm+hop3J8sS+Mw==}
     peerDependencies:
       i18next: '>= 23.2.3'
       react: '>= 16.8.0'
