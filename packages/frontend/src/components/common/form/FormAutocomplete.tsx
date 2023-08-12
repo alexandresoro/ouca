@@ -16,6 +16,7 @@ type FormAutocompleteProps<TFieldValues extends FieldValues, T extends object> =
 > & {
   renderValue: (value: T) => string;
   label: string;
+  required?: boolean;
   autocompleteClassName?: string;
   labelClassName?: string;
   labelTextClassName?: string;
@@ -43,6 +44,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
     onInputChange,
     name,
     label,
+    required,
     defaultValue,
     control,
     rules,
@@ -71,6 +73,7 @@ const FormAutocomplete = <TFieldValues extends FieldValues, T extends object>(
       ref={ref}
       inputProps={inputProps}
       label={label}
+      required={required}
       data={data}
       by={by as ConditionalKeys<T, Key> & string}
       decorationKey={props.decorationKey}

@@ -16,6 +16,7 @@ type FormAutocompleteMultipleProps<TFieldValues extends FieldValues, T extends o
 > & {
   renderValue: (value: T) => string;
   label: string;
+  required?: boolean;
   autocompleteClassName?: string;
   labelClassName?: string;
   labelTextClassName?: string;
@@ -36,6 +37,7 @@ const FormAutocompleteMultiple = <TFieldValues extends FieldValues, T extends ob
     onInputChange,
     name,
     label,
+    required,
     defaultValue,
     control,
     rules,
@@ -63,6 +65,7 @@ const FormAutocompleteMultiple = <TFieldValues extends FieldValues, T extends ob
       ref={ref}
       inputProps={inputProps}
       label={label}
+      required={required}
       data={data}
       by={by as ConditionalKeys<T, Key> & string}
       values={value}

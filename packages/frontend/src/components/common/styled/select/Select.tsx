@@ -3,12 +3,14 @@ import { Listbox } from "@headlessui/react";
 import { Check } from "@styled-icons/boxicons-regular";
 import { forwardRef, type ForwardedRef, type Key } from "react";
 import { type ConditionalKeys } from "type-fest";
+import RequiredField from "../RequiredField";
 
 type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   data: T[] | null | undefined;
   name?: string;
   label: string;
   value: T | null;
+  required?: boolean;
   onChange?: (value: T) => void;
   renderValue: (value: T) => string;
   selectClassName?: string;
@@ -19,7 +21,7 @@ type SelectProps<T, K extends ConditionalKeys<T, Key>> = {
   : { by: K });
 
 const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: ForwardedRef<HTMLElement>) => {
-  const { data, name, value, onChange, by, renderValue, label, selectClassName } = props;
+  const { data, name, value, required, onChange, by, renderValue, label, selectClassName } = props;
 
   const { x, y, strategy, refs } = useFloating<HTMLButtonElement>({
     placement: "bottom-start",
@@ -60,7 +62,10 @@ const Select = <T,>(props: SelectProps<T, ConditionalKeys<T, Key>>, ref: Forward
       className={`form-control py-2 ${selectClassName ?? ""}`}
     >
       <div className="label">
-        <Listbox.Label className="label-text">{label}</Listbox.Label>
+        <Listbox.Label className="label-text">
+          {label}
+          {required && <RequiredField />}
+        </Listbox.Label>
       </div>
       <Listbox.Button
         className="w-full select select-bordered select-primary items-center text-base-content"

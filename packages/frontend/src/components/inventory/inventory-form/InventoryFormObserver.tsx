@@ -101,6 +101,7 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
         }}
         data={dataObservers?.data}
         name="observer"
+        required
         label={t("observer")}
         onInputChange={setObservateurInput}
         onChange={setSelectedObserver}

@@ -72,6 +72,7 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
               <FormSelect
                 name="nicheur"
                 label={t("breeding")}
+                required
                 control={control}
                 data={breedingStatuses}
                 by="value"

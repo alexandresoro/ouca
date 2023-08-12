@@ -82,6 +82,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
               <FormSelect
                 name="classId"
                 label={t("speciesClass")}
+                required
                 control={control}
                 data={classes?.data}
                 renderValue={({ libelle }) => libelle}

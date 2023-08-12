@@ -1,4 +1,5 @@
 import { forwardRef, type ComponentPropsWithRef, type FunctionComponent } from "react";
+import RequiredField from "./RequiredField";
 
 type TextInputProps = {
   textInputClassName?: string;
@@ -26,7 +27,10 @@ const TextInput: FunctionComponent<TextInputProps> = forwardRef<HTMLInputElement
       <div className={`form-control py-2 ${helperMessage ? "pb-0" : ""} ${textInputClassName ?? ""}`}>
         {label && (
           <label className="label py-1">
-            <span className="label-text first-letter:capitalize">{label}</span>
+            <span className="label-text first-letter:capitalize">
+              {label}
+              {inputProps.required && <RequiredField />}
+            </span>
           </label>
         )}
 

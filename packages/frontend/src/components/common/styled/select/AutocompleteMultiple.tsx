@@ -4,11 +4,13 @@ import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
 import { forwardRef, type ComponentPropsWithRef, type FocusEventHandler, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
+import RequiredField from "../RequiredField";
 
 type AutocompleteMultipleProps<T extends object> = {
   name?: string;
   label: string;
   values: T[];
+  required?: boolean;
   onChange?: (value: T[]) => void;
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
@@ -35,6 +37,7 @@ const AutocompleteMultiple = <T extends object,>(
     data,
     name,
     values,
+    required,
     onChange,
     onInputChange,
     by,
@@ -116,7 +119,10 @@ const AutocompleteMultiple = <T extends object,>(
       {({ value }) => (
         <>
           <div className={`label py-1 ${labelClassName ?? ""}`}>
-            <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>{label}</Combobox.Label>
+            <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>
+              {label}
+              {required && <RequiredField />}
+            </Combobox.Label>
           </div>
           <div
             className="w-full inline-flex items-center input input-bordered focus-within:outline focus-within:outline-2 focus-within:outline-primary focus-within:outline-offset-2 input-primary gap-3 px-2"

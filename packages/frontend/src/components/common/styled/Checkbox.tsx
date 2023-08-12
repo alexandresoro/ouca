@@ -1,4 +1,5 @@
 import { forwardRef, type ComponentPropsWithoutRef, type FunctionComponent } from "react";
+import RequiredField from "./RequiredField";
 
 type CheckboxProps = {
   checkboxClassName?: string;
@@ -12,7 +13,10 @@ const Checkbox: FunctionComponent<CheckboxProps> = forwardRef<HTMLInputElement, 
     return (
       <div className={`form-control py-2 ${checkboxClassName ?? ""}`}>
         <label className="label gap-4 justify-start cursor-pointer">
-          <span className="label-text">{label}</span>
+          <span className="label-text">
+            {label}
+            {inputProps.required && <RequiredField />}
+          </span>
           <input
             type="checkbox"
             className={`checkbox checkbox-primary ${className ?? ""}`}

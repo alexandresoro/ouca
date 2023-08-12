@@ -10,6 +10,7 @@ type FormSelectProps<TFieldValues extends FieldValues, T, K extends ConditionalK
   data: T[] | null | undefined;
   renderValue: (value: T) => string;
   label: string;
+  required?: boolean;
   selectClassName?: string;
 } & (T extends { id: Key }
     ? {
@@ -20,7 +21,7 @@ type FormSelectProps<TFieldValues extends FieldValues, T, K extends ConditionalK
 const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKeys<T, Key>>(
   props: FormSelectProps<TFieldValues, T, K>
 ) => {
-  const { data, by, renderValue, name, label, defaultValue, control, rules, selectClassName } = props;
+  const { data, by, renderValue, name, label, required, defaultValue, control, rules, selectClassName } = props;
 
   const {
     field: { ref, value, onChange },
@@ -44,6 +45,7 @@ const FormSelect = <TFieldValues extends FieldValues, T, K extends ConditionalKe
     <Select
       ref={ref}
       label={label}
+      required={required}
       data={data}
       by={by as K}
       value={selectedEntry}

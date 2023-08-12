@@ -114,6 +114,7 @@ const EntryFormSpecies: FunctionComponent<EntryFormSpeciesProps> = ({
         }}
         data={dataSpecies?.data}
         name="species"
+        required
         label={t("speciesSingular")}
         decorationKey="code"
         decorationKeyClassName="w-28"
