@@ -29,3 +29,9 @@
 .modal {
   z-index: 40;
 }
+
+/* Apply small backdrop blur effect on opened modals to improve readability
+*/
+.modal-open {
+  @apply backdrop-blur-sm;
+}
