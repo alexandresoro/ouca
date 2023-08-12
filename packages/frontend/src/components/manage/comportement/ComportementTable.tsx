@@ -40,23 +40,17 @@ const ComportementTable: FunctionComponent = () => {
 
   const [dialogComportement, setDialogComportement] = useState<BehaviorExtended | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/behaviors",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getBehaviorsExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/behaviors",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getBehaviorsExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },

@@ -37,23 +37,17 @@ const EstimationNombreTable: FunctionComponent = () => {
 
   const [dialogEstimationNombre, setDialogEstimationNombre] = useState<NumberEstimateExtended | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/number-estimates",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getNumberEstimatesExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/number-estimates",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getNumberEstimatesExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },

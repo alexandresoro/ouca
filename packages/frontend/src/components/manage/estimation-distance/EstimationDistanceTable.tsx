@@ -45,10 +45,6 @@ const EstimationDistanceTable: FunctionComponent = () => {
         extended: true,
       },
       schema: getDistanceEstimatesExtendedResponse,
-    },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
     }
   );
 

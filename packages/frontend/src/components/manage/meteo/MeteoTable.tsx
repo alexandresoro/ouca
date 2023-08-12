@@ -34,23 +34,17 @@ const MeteoTable: FunctionComponent = () => {
 
   const [dialogMeteo, setDialogMeteo] = useState<WeatherExtended | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/weathers",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getWeathersExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/weathers",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getWeathersExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },

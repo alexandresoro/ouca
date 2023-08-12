@@ -56,23 +56,17 @@ const LieuDitTable: FunctionComponent = () => {
 
   const [dialogLieuDit, setDialogLieuDit] = useState<LocalityExtended | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/localities",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getLocalitiesExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/localities",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getLocalitiesExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
