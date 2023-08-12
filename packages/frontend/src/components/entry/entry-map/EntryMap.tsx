@@ -301,16 +301,16 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
             borderRadius: "14px",
           }}
         >
-          {selectionFeatureCollectionPolygon && (
-            <Source id="selected-localities" type="geojson" data={selectionFeatureCollectionPolygon}>
-              {localitySelection != null && <Layer {...selectionLayer} />}
-            </Source>
-          )}
           {localitiesGeoJson && (
             <Source id="localities" type="geojson" data={localitiesGeoJson} cluster clusterMinPoints={3}>
               <Layer {...clusterLayer} />
               <Layer {...clusterCountLayer} />
               <Layer {...singleLocalityLayer} />
+            </Source>
+          )}
+          {selectionFeatureCollectionPolygon && (
+            <Source id="selected-localities" type="geojson" data={selectionFeatureCollectionPolygon}>
+              {localitySelection != null && <Layer {...selectionLayer} beforeId={"clusters-localities"} />}
             </Source>
           )}
           {selectedLocality != null && (

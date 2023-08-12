@@ -50,7 +50,6 @@ export const singleLocalityLayer: LayerProps = {
 
 export const selectionLayer: LayerProps = {
   id: "selection-layer",
-  beforeId: "clusters-localities",
   type: "line",
   source: "selected-localities",
   paint: {
