@@ -81,6 +81,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
               <FormSelect
                 name="departmentId"
                 label={t("department")}
+                required
                 control={control}
                 data={departments?.data}
                 renderValue={({ code }) => code}

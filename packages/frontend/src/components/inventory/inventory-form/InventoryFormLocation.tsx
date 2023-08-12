@@ -258,6 +258,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
         ref={refLocality}
         data={dataLocalities?.data}
         label={t("inventoryForm.locality")}
+        required
         onInputChange={setLocalityInput}
         onChange={handleLocalityChange}
         value={locality}
@@ -269,6 +270,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           {...register("coordinates.latitude", {
             valueAsNumber: true,
           })}
+          required
           onChange={handleLatitudeChange}
           textInputClassName="flex-grow w-24 py-1"
           label={t("latitude")}
@@ -279,6 +281,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           {...register("coordinates.longitude", {
             valueAsNumber: true,
           })}
+          required
           onChange={handleLongitudeChange}
           textInputClassName="flex-grow w-24 py-1"
           label={t("longitude")}
@@ -289,6 +292,7 @@ const InventoryFormLocation: FunctionComponent<InventoryFormLocationProps> = ({
           {...register("coordinates.altitude", {
             valueAsNumber: true,
           })}
+          required
           onChange={handleAltitudeChange}
           textInputClassName="flex-grow w-24 py-1"
           label={t("altitude")}

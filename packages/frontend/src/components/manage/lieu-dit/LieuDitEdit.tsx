@@ -10,8 +10,8 @@ import { useNavigate } from "react-router-dom";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
-import Select from "../../common/styled/select/Select";
 import TextInput from "../../common/styled/TextInput";
+import Select from "../../common/styled/select/Select";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
 import ManageTopBar from "../common/ManageTopBar";
@@ -143,6 +143,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
                   selectClassName="basis-3/4"
                   name="townId"
                   label={t("town")}
+                  required
                   control={control}
                   data={dataTowns?.data}
                   renderValue={({ code, nom }) => `${code} - ${nom}`}

@@ -4,11 +4,13 @@ import { Check, ExpandVertical } from "@styled-icons/boxicons-regular";
 import { forwardRef, type ComponentPropsWithoutRef, type ForwardedRef, type Key } from "react";
 import { useTranslation } from "react-i18next";
 import { type ConditionalKeys } from "type-fest";
+import RequiredField from "../RequiredField";
 
 type AutocompleteProps<T> = {
   name?: string;
   label: string;
   value: T | null;
+  required?: boolean;
   onChange?: (value: T | null) => void;
   onInputChange?: (value: string) => void;
   renderValue: (value: T) => string;
@@ -35,6 +37,7 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
     data,
     name,
     value,
+    required,
     onChange,
     onInputChange,
     by,
@@ -101,7 +104,10 @@ const Autocomplete = <T,>(props: AutocompleteProps<T>, ref: ForwardedRef<HTMLEle
       {({ value }) => (
         <>
           <div className={`label py-1 ${labelClassName ?? ""}`}>
-            <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>{label}</Combobox.Label>
+            <Combobox.Label className={`label-text ${labelTextClassName ?? ""}`}>
+              {label}
+              {required && <RequiredField />}
+            </Combobox.Label>
           </div>
           <div className={`w-full relative ${decorationKey ? "join" : ""}`} ref={refs.setReference}>
             {decorationKey && (

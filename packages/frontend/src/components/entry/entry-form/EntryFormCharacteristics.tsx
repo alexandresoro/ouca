@@ -169,6 +169,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
           ref={refNumberEstimate}
           data={dataNumberEstimates?.data}
           name="numberEstimate"
+          required
           label={t("entryForm.numberPrecision")}
           onInputChange={setNumberEstimateInput}
           onChange={handleChangeSelectedNumberEstimate}
@@ -181,6 +182,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
         ref={refSex}
         data={dataSexes?.data}
         name="sex"
+        required
         label={t("entryForm.gender")}
         onInputChange={setSexInput}
         onChange={setSelectedSex}
@@ -192,6 +194,7 @@ const EntryFormCharacteristics: FunctionComponent<EntryFormCharacteristicsProps>
         ref={refAge}
         data={dataAges?.data}
         name="age"
+        required
         label={t("entryForm.age")}
         onInputChange={setAgeInput}
         onChange={setSelectedAge}
