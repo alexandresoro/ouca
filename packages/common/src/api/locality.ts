@@ -46,9 +46,9 @@ export const getLocalitiesExtendedResponse = getPaginatedResponseSchema(locality
 export const upsertLocalityInput = z.object({
   townId: z.string().trim().min(1),
   nom: z.string().trim().min(1),
-  altitude: z.coerce.number(),
-  longitude: z.coerce.number().min(-180).max(180),
-  latitude: z.coerce.number().min(-90).max(90),
+  altitude: z.number().int().min(-1000).max(9000),
+  longitude: z.number().min(-180).max(180),
+  latitude: z.number().min(-90).max(90),
 });
 
 export type UpsertLocalityInput = z.infer<typeof upsertLocalityInput>;
