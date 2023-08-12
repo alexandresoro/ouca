@@ -34,23 +34,17 @@ const AgeTable: FunctionComponent = () => {
 
   const [dialogAge, setDialogAge] = useState<AgeExtended | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/ages",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getAgesExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/ages",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getAgesExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },

@@ -44,23 +44,17 @@ const CommuneTable: FunctionComponent = () => {
 
   const [dialogCommune, setDialogCommune] = useState<TownExtended | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/towns",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getTownsExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/towns",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getTownsExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },

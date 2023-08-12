@@ -36,23 +36,17 @@ const MilieuTable: FunctionComponent = () => {
 
   const [dialogMilieu, setDialogMilieu] = useState<Environment | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/environments",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getEnvironmentsExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/environments",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getEnvironmentsExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },

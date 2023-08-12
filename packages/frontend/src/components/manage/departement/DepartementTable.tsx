@@ -40,23 +40,17 @@ const DepartementTable: FunctionComponent = () => {
 
   const [dialogDepartement, setDialogDepartement] = useState<DepartmentExtended | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/departments",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getDepartmentsExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/departments",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getDepartmentsExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },

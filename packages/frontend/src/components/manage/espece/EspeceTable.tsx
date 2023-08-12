@@ -44,23 +44,17 @@ const EspeceTable: FunctionComponent = () => {
 
   const [dialogEspece, setDialogEspece] = useState<SpeciesExtended | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
-    {
-      path: "/species",
-      queryParams: {
-        q: query,
-        pageSize: 10,
-        orderBy,
-        sortOrder,
-        extended: true,
-      },
-      schema: getSpeciesExtendedResponse,
+  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+    path: "/species",
+    queryParams: {
+      q: query,
+      pageSize: 10,
+      orderBy,
+      sortOrder,
+      extended: true,
     },
-    {
-      staleTime: Infinity,
-      refetchOnMount: "always",
-    }
-  );
+    schema: getSpeciesExtendedResponse,
+  });
 
   const { mutate } = useApiMutation(
     { method: "DELETE" },
