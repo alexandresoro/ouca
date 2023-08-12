@@ -6,11 +6,10 @@ import bbox from "@turf/bbox";
 import bboxPolygon from "@turf/bbox-polygon";
 import booleanDisjoint from "@turf/boolean-disjoint";
 import booleanWithin from "@turf/boolean-within";
-import convex from "@turf/convex";
 import { featureCollection, point } from "@turf/helpers";
 import { type BBox2d } from "@turf/helpers/dist/js/lib/geojson";
 // eslint-disable-next-line import/no-unresolved
-import { type FeatureCollection, type MultiPolygon, type Point, type Polygon } from "geojson";
+import { type FeatureCollection, type Point, type Polygon } from "geojson";
 import { useAtom, useAtomValue } from "jotai";
 import { RESET } from "jotai/utils";
 import { type GeoJSONSource } from "maplibre-gl";
@@ -38,6 +37,7 @@ import {
 import { localitySelectionAtom, type LocalitySelectionType } from "../../../atoms/inventoryMapAtom";
 import useApiFetch from "../../../hooks/api/useApiFetch";
 import useApiQuery from "../../../hooks/api/useApiQuery";
+import { boundingPolygon } from "../../../utils/map/bounding-polygon";
 import {
   clusterCountLayer,
   clusterLayer,
@@ -128,10 +128,8 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
       selectionFeatureCollection = featureCollection(filteredLocalities);
     }
 
-    const selectionPolygon = convex(selectionFeatureCollection, {
-      // If no selection, we don't care much about a realistic shape -> Infinity
-      concavity: localitySelection != null ? 2 : Infinity,
-    });
+    // If no selection, we don't care much about a realistic shape -> Infinity
+    const selectionPolygon = boundingPolygon(selectionFeatureCollection, localitySelection != null ? 2 : Infinity);
 
     if (!selectionPolygon) {
       return null;
@@ -142,7 +140,7 @@ const EntryMap: FunctionComponent<EntryMapProps> = ({ initialMapState }) => {
 
   // Whenever the selection changes,
   // make sure that the map is focusing on it
-  const handleSelectionChange = (selectionCollectionPolygon: FeatureCollection<Polygon | MultiPolygon>) => {
+  const handleSelectionChange = (selectionCollectionPolygon: FeatureCollection<Polygon>) => {
     const currentMap = mapRef.current;
     if (!currentMap || !selectionCollectionPolygon?.features.length) {
       return;
