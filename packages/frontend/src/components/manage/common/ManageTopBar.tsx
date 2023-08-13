@@ -7,11 +7,12 @@ import StyledPanelHeader from "../../layout/StyledPanelHeader";
 type ManageTopBarProps = {
   showButtons?: boolean;
   title: string;
+  onClickCreate?: () => void;
   onClickExport?: () => void;
 };
 
 const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
-  const { title, onClickExport, showButtons } = props;
+  const { title, onClickCreate, onClickExport, showButtons } = props;
 
   const { t } = useTranslation();
 
@@ -21,10 +22,18 @@ const ManageTopBar: FunctionComponent<ManageTopBarProps> = (props) => {
         <h1 className="text-2xl font-normal">{title}</h1>
         {showButtons && (
           <div className="flex items-center gap-6">
-            <Link className="btn btn-secondary btn-sm shadow" to="create">
-              <Plus className="h-5 mr-1" />
-              {t("createAction")}
-            </Link>
+            {onClickCreate != null && (
+              <button type="button" className="btn btn-secondary btn-sm shadow" onClick={onClickCreate}>
+                <Plus className="h-5 mr-1" />
+                {t("createAction")}
+              </button>
+            )}
+            {onClickCreate === undefined && (
+              <Link className="btn btn-secondary btn-sm shadow" to="create">
+                <Plus className="h-5 mr-1" />
+                {t("createAction")}
+              </Link>
+            )}
             <button type="button" className="btn btn-secondary btn-sm shadow" onClick={onClickExport}>
               <Export className="h-5 mr-2" />
               {t("exportAction")}
