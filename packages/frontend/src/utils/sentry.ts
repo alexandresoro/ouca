@@ -36,6 +36,17 @@ export const initializeSentry = (config: AppConfig) => {
     ],
     beforeSend(event) {
       // Check if it is an exception, and if so, show the report dialog
+
+      // Ignore exceptions for which the stacktrace includes references to analytics
+      const shouldErrorBeIgnored =
+        config.umami?.url != null &&
+        event.exception?.values?.[0].stacktrace?.frames?.find(({ filename }) => {
+          return filename === config.umami?.url;
+        }) != null;
+      if (shouldErrorBeIgnored) {
+        return null;
+      }
+
       if (event.exception) {
         Sentry.showReportDialog({
           eventId: event.event_id,
@@ -44,7 +55,6 @@ export const initializeSentry = (config: AppConfig) => {
       }
       return event;
     },
-    denyUrls: config.umami?.url ? [config.umami.url] : [],
   });
   return {
     sentryRouter: Sentry.wrapCreateBrowserRouter(createBrowserRouter),
