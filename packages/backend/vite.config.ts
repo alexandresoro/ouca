@@ -1,6 +1,12 @@
+import path from "node:path";
 import { defaultExclude, defineConfig } from "vitest/config";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@ou-ca/common": path.resolve(__dirname, "../common/src"),
+    },
+  },
   test: {
     env: {
       OIDC_ISSUER: "",

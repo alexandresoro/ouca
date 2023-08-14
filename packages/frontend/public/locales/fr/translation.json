@@ -143,6 +143,7 @@
     "date": "Date",
     "time": "Heure",
     "duration": "Durée",
+    "durationFormatDescription": "Formats acceptés: --:--, --H--, --h--, ou nombre exprimé en minutes",
     "locality": "Lieu-dit",
     "customCoordinatesInformation": "Les coordonnées du lieu-dit sont personnalisées pour cet inventaire.",
     "altitudeCallOngoing": "Une mise à jour de l'altitude correspondant aux coordonnées actuelles est en cours. L'altitude actuellement affichée peut ne pas être correcte.",

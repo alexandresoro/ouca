@@ -124,7 +124,7 @@ const inventoriesController: FastifyPluginCallback<{
     const parsedInputResult = upsertInventoryInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(400).send(parsedInputResult.error);
     }
 
     const { data: input } = parsedInputResult;
@@ -151,7 +151,7 @@ const inventoriesController: FastifyPluginCallback<{
     const parsedInputResult = upsertInventoryInput.safeParse(JSON.parse(req.body as string));
 
     if (!parsedInputResult.success) {
-      return await reply.status(400).send();
+      return await reply.status(400).send(parsedInputResult.error);
     }
 
     const { data: input } = parsedInputResult;
