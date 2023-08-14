@@ -6,8 +6,6 @@ import {
   type RawServerDefault,
 } from "fastify";
 import { type Logger } from "pino";
-import { stopJobsAndQueues } from "./jobs/job-runner.js";
-import { type Queues } from "./jobs/queues.js";
 import { type Services } from "./services/services.js";
 
 // Handle shutdown request gracefully
@@ -21,13 +19,11 @@ const shutdown =
       RawReplyDefaultExpression<RawServerDefault>,
       Logger
     >,
-    services: Services,
-    queues: Queues
+    services: Services
   ): (() => void) =>
   () => {
     services.logger.info("Shutdown requested");
     void Promise.all([
-      stopJobsAndQueues(queues),
       Sentry.close(2000),
       services.slonik.end().then(() => {
         services.logger.info("Database connector has been shut down");

@@ -34,12 +34,12 @@ checkAndCreateFolders();
     dbConfig: config.database,
   });
 
-  const queues = await startWorkersAndJobs(services);
+  await startWorkersAndJobs(services);
 
   const server = await buildServer(services);
 
-  process.on("SIGINT", shutdown(server, services, queues));
-  process.on("SIGTERM", shutdown(server, services, queues));
+  process.on("SIGINT", shutdown(server, services));
+  process.on("SIGTERM", shutdown(server, services));
 
   await server.listen({ ...config.server });
 })().catch((e) => {
