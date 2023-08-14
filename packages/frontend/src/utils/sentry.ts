@@ -44,6 +44,7 @@ export const initializeSentry = (config: AppConfig) => {
       }
       return event;
     },
+    denyUrls: config.umami?.url ? [config.umami.url] : [],
   });
   return {
     sentryRouter: Sentry.wrapCreateBrowserRouter(createBrowserRouter),
