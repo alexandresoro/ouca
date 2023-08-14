@@ -94,13 +94,13 @@ importers:
         version: 11.0.1
       slonik:
         specifier: 34.1.0
-        version: 34.1.0(zod@3.21.4)
+        version: 34.1.0(zod@3.22.0)
       umzug:
         specifier: 3.3.1
         version: 3.3.1
       zod:
-        specifier: 3.21.4
-        version: 3.21.4
+        specifier: 3.22.0
+        version: 3.22.0
     devDependencies:
       '@ou-ca/eslint-config':
         specifier: workspace:*
@@ -154,8 +154,8 @@ importers:
         specifier: 2.9.0
         version: 2.9.0
       zod:
-        specifier: 3.21.4
-        version: 3.21.4
+        specifier: 3.22.0
+        version: 3.22.0
     devDependencies:
       '@ou-ca/eslint-config':
         specifier: workspace:*
@@ -293,8 +293,8 @@ importers:
         specifier: 6.15.0
         version: 6.15.0(react-dom@18.2.0)(react@18.2.0)
       zod:
-        specifier: 3.21.4
-        version: 3.21.4
+        specifier: 3.22.0
+        version: 3.22.0
     devDependencies:
       '@ou-ca/eslint-config':
         specifier: workspace:*
@@ -6185,7 +6185,7 @@ packages:
       is-fullwidth-code-point: 4.0.0
     dev: true
 
-  /slonik@34.1.0(zod@3.21.4):
+  /slonik@34.1.0(zod@3.22.0):
     resolution: {integrity: sha512-sGw8nopmEFIg7parn2HD7AvPfJLTUkPg/8vZr9jWrf/s4TItYvtgI8V3kH1JrCbFvDmz0ln/WV6yhsIQewm0gg==}
     engines: {node: '>=10.0'}
     peerDependencies:
@@ -6205,7 +6205,7 @@ packages:
       safe-stable-stringify: 2.4.3
       serialize-error: 8.1.0
       through2: 4.0.2
-      zod: 3.21.4
+      zod: 3.22.0
     transitivePeerDependencies:
       - pg-native
     dev: false
@@ -7167,6 +7167,6 @@ packages:
       readable-stream: 3.6.2
     dev: false
 
-  /zod@3.21.4:
-    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+  /zod@3.22.0:
+    resolution: {integrity: sha512-y5KZY/ssf5n7hCGDGGtcJO/EBJEm5Pa+QQvFBeyMOtnFYOSflalxIFFvdaYevPhePcmcKC4aTbFkCcXN7D0O8Q==}
     dev: false

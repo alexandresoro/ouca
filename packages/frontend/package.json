@@ -62,7 +62,7 @@
     "react-map-gl": "7.1.3",
     "react-oidc-context": "2.2.2",
     "react-router-dom": "6.15.0",
-    "zod": "3.21.4"
+    "zod": "3.22.0"
   },
   "devDependencies": {
     "@ou-ca/eslint-config": "workspace:*",
