@@ -15,6 +15,13 @@ export const startWorkersAndJobs = async (services: Services): Promise<Queues> =
   });
 
   // Start jobs
+  // https://docs.bullmq.io/guide/jobs/repeatable
+  // Pay attention to the trick where you can have two similar job ids with different options
+  // Don't remove the job on shutdown as it won't support scaling otherwise
+  // e.g. when a pod is stopped but others still remain or RollingUpdate strategy
+  //
+  // /!\ Pay attention whenever updating or removing jobs in the code, as they will still live
+  // inside redis. They will need to be removed manually.
   await geoJsonQueue.add("geojsonrefresh", undefined, {
     removeOnComplete: true,
     repeat: {
@@ -25,22 +32,4 @@ export const startWorkersAndJobs = async (services: Services): Promise<Queues> =
   return {
     geoJsonQueue,
   };
-};
-
-export const stopJobsAndQueues = async (queuesObj: Queues): Promise<void> => {
-  const queues = Object.values(queuesObj);
-  await Promise.all(
-    queues.map(async (queue) => {
-      // TODO: cleanup this
-      await queue.removeRepeatable("geojsonrefresh", {
-        every: 300000,
-      });
-    })
-  );
-
-  await Promise.all(
-    queues.map(async (queue) => {
-      await queue.obliterate();
-    })
-  );
 };
