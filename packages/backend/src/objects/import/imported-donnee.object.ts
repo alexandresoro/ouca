@@ -1,6 +1,7 @@
 import { type UpsertEntryInput } from "@ou-ca/common/api/entry";
 import { type UpsertInventoryInput } from "@ou-ca/common/api/inventory";
 import { type Coordinates } from "@ou-ca/common/types/coordinates.object";
+import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert.js";
 import { format } from "date-fns";
 import { DATE_PATTERN } from "../../utils/constants.js";
 import { getFormattedDate, getFormattedTime, isTimeValid } from "../../utils/utils.js";
@@ -161,7 +162,7 @@ export class ImportedDonnee {
       observerId: observateurId,
       date: formattedDate ? format(formattedDate, DATE_PATTERN) : "null",
       time: getFormattedTime(this.heure),
-      duration: getFormattedTime(this.duree),
+      duration: getMinutesFromTime(this.duree),
       localityId: lieuditId,
       coordinates: customizedCoordinatesStr,
       temperature: this.temperature == null || this.temperature === "" ? null : +this.temperature,
