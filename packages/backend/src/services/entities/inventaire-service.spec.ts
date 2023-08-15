@@ -268,7 +268,9 @@ describe("Update of an inventory", () => {
 describe("Creation of an inventory", () => {
   describe("with values already matching an existing inventory", () => {
     test("should return the existing inventory", async () => {
-      const inventoryData = mock<UpsertInventoryInput>();
+      const inventoryData = mock<UpsertInventoryInput>({
+        duration: null,
+      });
 
       const loggedUser = mock<LoggedUser>();
 
@@ -299,6 +301,7 @@ describe("Creation of an inventory", () => {
       const inventoryData = mock<UpsertInventoryInput>({
         associateIds: ["2", "3"],
         weatherIds: ["4", "5"],
+        duration: null,
       });
 
       const loggedUser = mock<LoggedUser>();

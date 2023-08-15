@@ -35,6 +35,9 @@ export const getFormattedDate = (value: string): Date | null => {
   return null;
 };
 
+/**
+ * @deprecated use getMinutesFromTime + getHumanFriendlyTimeFromMinutes instead
+ */
 export const getFormattedTime = (timeStr: string): string | null => {
   const timeRegExpExpected = new RegExp("^[0-9][0-9]:[0-5][0-9]$");
   if (timeRegExpExpected.test(timeStr)) {
@@ -59,6 +62,9 @@ export const getFormattedTime = (timeStr: string): string | null => {
   return null;
 };
 
+/**
+ * @deprecated use validTimeSchema instead
+ */
 export const isTimeValid = (timeStr: string): boolean => {
   const value = getFormattedTime(timeStr);
 

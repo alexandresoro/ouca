@@ -1,3 +1,5 @@
+import { getMinutesFromTime } from "@ou-ca/common/utils/time-format-convert";
+import { InfoCircle } from "@styled-icons/boxicons-regular";
 import { type FunctionComponent } from "react";
 import { type UseFormRegister } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -30,10 +32,17 @@ const InventoryFormDate: FunctionComponent<InventoryFormDateProps> = ({ register
       />
       <TextInput
         {...register("duration", {
-          setValueAs: (v: string) => (v?.length ? v : null),
+          setValueAs: (v: string | null) => (v?.length ? getMinutesFromTime(v) : null),
         })}
         textInputClassName="w-24 py-1"
-        label={t("inventoryForm.duration")}
+        label={
+          <span className="inline-flex items-center gap-1">
+            {t("inventoryForm.duration")}{" "}
+            <div className="tooltip tooltip-info" data-tip={t("inventoryForm.durationFormatDescription")}>
+              <InfoCircle className="h-4" />
+            </div>
+          </span>
+        }
         type="text"
       />
     </div>

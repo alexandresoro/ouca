@@ -11,6 +11,7 @@ describe("Reshape input inventory", () => {
         latitude: 45,
         longitude: 67,
       },
+      duration: null,
     });
     const locality = mock<Lieudit>({
       altitude: 12,
@@ -31,6 +32,7 @@ describe("Reshape input inventory", () => {
         latitude: 34,
         longitude: 56,
       },
+      duration: null,
     });
     const locality = mock<Lieudit>({
       altitude: 12,
@@ -51,6 +53,7 @@ describe("Reshape input inventory", () => {
         latitude: 34,
         longitude: 56,
       },
+      duration: null,
     });
     const locality = mock<Lieudit>({
       altitude: 12,
@@ -67,6 +70,7 @@ describe("Reshape input inventory", () => {
   test("should handle when custom coordinates are not provided", () => {
     const inventory = mock<UpsertInventoryInput>({
       coordinates: null,
+      duration: null,
     });
     const locality = mock<Lieudit>({
       altitude: 12,
