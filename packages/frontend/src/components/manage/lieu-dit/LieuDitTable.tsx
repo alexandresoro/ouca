@@ -2,7 +2,6 @@ import { getLocalitiesExtendedResponse, type LocalitiesOrderBy } from "@ou-ca/co
 import { type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -12,6 +11,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type LieuDitTableProps = {
+  onClickUpdateLocality: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -48,9 +51,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const LieuDitTable: FunctionComponent = () => {
+const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocality }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>();
 
@@ -90,12 +92,6 @@ const LieuDitTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditLieuDit = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteLieuDit = (lieuDit: LocalityExtended | null) => {
     if (lieuDit) {
@@ -161,7 +157,7 @@ const LieuDitTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!lieuDit.editable}
-                        onEditClicked={() => handleEditLieuDit(lieuDit?.id)}
+                        onEditClicked={() => onClickUpdateLocality(lieuDit?.id)}
                         onDeleteClicked={() => handleDeleteLieuDit(lieuDit)}
                       />
                     </td>

@@ -2,7 +2,6 @@ import { getEnvironmentsExtendedResponse, type EnvironmentsOrderBy } from "@ou-c
 import { type Environment } from "@ou-ca/common/entities/environment";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -12,6 +11,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type MilieuTableProps = {
+  onClickUpdateEnvironment: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -28,9 +31,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const MilieuTable: FunctionComponent = () => {
+const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnvironment }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>();
 
@@ -70,12 +72,6 @@ const MilieuTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditMilieu = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteMilieu = (milieu: Environment | null) => {
     if (milieu) {
@@ -136,7 +132,7 @@ const MilieuTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!milieu.editable}
-                        onEditClicked={() => handleEditMilieu(milieu?.id)}
+                        onEditClicked={() => onClickUpdateEnvironment(milieu?.id)}
                         onDeleteClicked={() => handleDeleteMilieu(milieu)}
                       />
                     </td>

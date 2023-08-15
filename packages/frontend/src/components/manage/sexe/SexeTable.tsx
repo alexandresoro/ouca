@@ -3,7 +3,6 @@ import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
 import { type SexExtended } from "@ou-ca/common/entities/sex";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -13,6 +12,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type SexeTableProps = {
+  onClickUpdateSex: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -25,9 +28,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const SexeTable: FunctionComponent = () => {
+const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>();
@@ -67,12 +69,6 @@ const SexeTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditSexe = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteSexe = (sexe: SexExtended | null) => {
     if (sexe) {
@@ -132,7 +128,7 @@ const SexeTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!sexe.editable}
-                        onEditClicked={() => handleEditSexe(sexe?.id)}
+                        onEditClicked={() => onClickUpdateSex(sexe?.id)}
                         onDeleteClicked={() => handleDeleteSexe(sexe)}
                       />
                     </td>

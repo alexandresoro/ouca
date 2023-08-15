@@ -2,7 +2,6 @@ import { getTownsExtendedResponse, type TownsOrderBy } from "@ou-ca/common/api/t
 import { type TownExtended } from "@ou-ca/common/entities/town";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -12,6 +11,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type CommuneTableProps = {
+  onClickUpdateTown: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -36,9 +39,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const CommuneTable: FunctionComponent = () => {
+const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>();
 
@@ -78,12 +80,6 @@ const CommuneTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditCommune = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteCommune = (commune: TownExtended | null) => {
     if (commune) {
@@ -146,7 +142,7 @@ const CommuneTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!commune.editable}
-                        onEditClicked={() => handleEditCommune(commune?.id)}
+                        onEditClicked={() => onClickUpdateTown(commune?.id)}
                         onDeleteClicked={() => handleDeleteCommune(commune)}
                       />
                     </td>

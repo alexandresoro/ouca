@@ -2,7 +2,6 @@ import { getClassesExtendedResponse, type ClassesOrderBy } from "@ou-ca/common/a
 import { type SpeciesClassExtended } from "@ou-ca/common/entities/species-class";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -12,6 +11,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type ClasseTableProps = {
+  onClickUpdateSpeciesClass: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -28,9 +31,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const ClasseTable: FunctionComponent = () => {
+const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpeciesClass }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<ClassesOrderBy>();
 
@@ -70,12 +72,6 @@ const ClasseTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditClasse = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteClasse = (classe: SpeciesClassExtended | null) => {
     if (classe) {
@@ -136,7 +132,7 @@ const ClasseTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!classe.editable}
-                        onEditClicked={() => handleEditClasse(classe?.id)}
+                        onEditClicked={() => onClickUpdateSpeciesClass(classe?.id)}
                         onDeleteClicked={() => handleDeleteClasse(classe)}
                       />
                     </td>

@@ -3,7 +3,6 @@ import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entities
 import { type AgeExtended } from "@ou-ca/common/entities/age";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -13,6 +12,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type AgeTableProps = {
+  onClickUpdateAge: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -25,9 +28,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const AgeTable: FunctionComponent = () => {
+const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>();
@@ -68,12 +70,6 @@ const AgeTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditAge = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteAge = (age: AgeExtended) => {
     if (age) {
@@ -133,7 +129,7 @@ const AgeTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!age.editable}
-                        onEditClicked={() => handleEditAge(age.id)}
+                        onEditClicked={() => onClickUpdateAge(age.id)}
                         onDeleteClicked={() => handleDeleteAge(age)}
                       />
                     </td>

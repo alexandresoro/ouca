@@ -2,7 +2,6 @@ import { getBehaviorsExtendedResponse, type BehaviorsOrderBy } from "@ou-ca/comm
 import { type BehaviorExtended } from "@ou-ca/common/entities/behavior";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -12,6 +11,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type ComportementTableProps = {
+  onClickUpdateBehavior: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -32,9 +35,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const ComportementTable: FunctionComponent = () => {
+const ComportementTable: FunctionComponent<ComportementTableProps> = ({ onClickUpdateBehavior }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>();
 
@@ -74,12 +76,6 @@ const ComportementTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditComportement = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteComportement = (comportement: BehaviorExtended | null) => {
     if (comportement) {
@@ -141,7 +137,7 @@ const ComportementTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!comportement.editable}
-                        onEditClicked={() => handleEditComportement(comportement?.id)}
+                        onEditClicked={() => onClickUpdateBehavior(comportement?.id)}
                         onDeleteClicked={() => handleDeleteComportement(comportement)}
                       />
                     </td>

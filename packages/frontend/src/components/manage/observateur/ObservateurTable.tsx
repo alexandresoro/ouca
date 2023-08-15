@@ -3,7 +3,6 @@ import { getObserversExtendedResponse } from "@ou-ca/common/api/observer";
 import { type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -13,6 +12,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type ObservateurTableProps = {
+  onClickUpdateObserver: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -25,9 +28,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const ObservateurTable: FunctionComponent = () => {
+const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({ onClickUpdateObserver }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>();
@@ -68,12 +70,6 @@ const ObservateurTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditObservateur = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteObservateur = (observateur: ObserverExtended | null) => {
     if (observateur) {
@@ -133,7 +129,7 @@ const ObservateurTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!observateur.editable}
-                        onEditClicked={() => handleEditObservateur(observateur?.id)}
+                        onEditClicked={() => onClickUpdateObserver(observateur?.id)}
                         onDeleteClicked={() => handleDeleteObservateur(observateur)}
                       />
                     </td>

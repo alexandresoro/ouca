@@ -2,7 +2,6 @@ import { getDepartmentsExtendedResponse, type DepartmentsOrderBy } from "@ou-ca/
 import { type DepartmentExtended } from "@ou-ca/common/entities/department";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -12,6 +11,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type DepartementTableProps = {
+  onClickUpdateDepartment: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -32,9 +35,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const DepartementTable: FunctionComponent = () => {
+const DepartementTable: FunctionComponent<DepartementTableProps> = ({ onClickUpdateDepartment }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<DepartmentsOrderBy>();
 
@@ -74,12 +76,6 @@ const DepartementTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditDepartement = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteDepartement = (departement: DepartmentExtended | null) => {
     if (departement) {
@@ -141,7 +137,7 @@ const DepartementTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!departement.editable}
-                        onEditClicked={() => handleEditDepartement(departement?.id)}
+                        onEditClicked={() => onClickUpdateDepartment(departement?.id)}
                         onDeleteClicked={() => handleDeleteDepartement(departement)}
                       />
                     </td>

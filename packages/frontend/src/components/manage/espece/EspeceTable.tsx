@@ -2,7 +2,6 @@ import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/a
 import { type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -12,6 +11,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type EspeceTableProps = {
+  onClickUpdateSpecies: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -36,9 +39,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const EspeceTable: FunctionComponent = () => {
+const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>();
 
@@ -78,12 +80,6 @@ const EspeceTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditEspece = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteEspece = (espece: SpeciesExtended | null) => {
     if (espece) {
@@ -146,7 +142,7 @@ const EspeceTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!espece.editable}
-                        onEditClicked={() => handleEditEspece(espece?.id)}
+                        onEditClicked={() => onClickUpdateSpecies(espece?.id)}
                         onDeleteClicked={() => handleDeleteEspece(espece)}
                       />
                     </td>

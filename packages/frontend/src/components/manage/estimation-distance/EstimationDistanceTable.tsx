@@ -3,7 +3,6 @@ import { getDistanceEstimatesExtendedResponse } from "@ou-ca/common/api/distance
 import { type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -13,6 +12,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type EstimationDistanceTableProps = {
+  onClickUpdateDistanceEstimate: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -25,9 +28,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const EstimationDistanceTable: FunctionComponent = () => {
+const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> = ({ onClickUpdateDistanceEstimate }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
   usePaginationParams<EntitiesWithLabelOrderBy>();
@@ -70,12 +72,6 @@ const EstimationDistanceTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditEstimationDistance = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteEstimationDistance = (estimationDistance: DistanceEstimateExtended) => {
     if (estimationDistance) {
@@ -130,7 +126,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
                   <td align="right" className="pr-6">
                     <TableCellActionButtons
                       disabled={!estimationDistance.editable}
-                      onEditClicked={() => handleEditEstimationDistance(estimationDistance?.id)}
+                      onEditClicked={() => onClickUpdateDistanceEstimate(estimationDistance?.id)}
                       onDeleteClicked={() => handleDeleteEstimationDistance(estimationDistance)}
                     />
                   </td>

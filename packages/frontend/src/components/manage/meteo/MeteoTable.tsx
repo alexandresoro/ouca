@@ -3,7 +3,6 @@ import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
 import { type WeatherExtended } from "@ou-ca/common/entities/weather";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
@@ -13,6 +12,10 @@ import TableSortLabel from "../../common/styled/table/TableSortLabel";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
+
+type MeteoTableProps = {
+  onClickUpdateWeather: (id: string) => void;
+};
 
 const COLUMNS = [
   {
@@ -25,9 +28,8 @@ const COLUMNS = [
   },
 ] as const;
 
-const MeteoTable: FunctionComponent = () => {
+const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather }) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>();
@@ -68,12 +70,6 @@ const MeteoTable: FunctionComponent = () => {
   );
 
   const { displayNotification } = useSnackbar();
-
-  const handleEditMeteo = (id: string) => {
-    if (id) {
-      navigate(`edit/${id}`);
-    }
-  };
 
   const handleDeleteMeteo = (meteo: WeatherExtended | null) => {
     if (meteo) {
@@ -133,7 +129,7 @@ const MeteoTable: FunctionComponent = () => {
                     <td align="right" className="pr-6">
                       <TableCellActionButtons
                         disabled={!meteo.editable}
-                        onEditClicked={() => handleEditMeteo(meteo?.id)}
+                        onEditClicked={() => onClickUpdateWeather(meteo?.id)}
                         onDeleteClicked={() => handleDeleteMeteo(meteo)}
                       />
                     </td>
