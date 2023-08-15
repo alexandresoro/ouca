@@ -3,13 +3,13 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type MilieuDeleteProps = {
+type MilieuDeleteDialogProps = {
   environmentToDelete: EnvironmentExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (environment: EnvironmentExtended) => void;
 };
 
-const MilieuDelete: FunctionComponent<MilieuDeleteProps> = ({
+const MilieuDeleteDialog: FunctionComponent<MilieuDeleteDialogProps> = ({
   environmentToDelete,
   onCancelDeletion,
   onConfirmDeletion,
@@ -35,4 +35,4 @@ const MilieuDelete: FunctionComponent<MilieuDeleteProps> = ({
   );
 };
 
-export default MilieuDelete;
+export default MilieuDeleteDialog;

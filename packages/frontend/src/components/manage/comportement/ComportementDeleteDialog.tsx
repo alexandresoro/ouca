@@ -3,13 +3,13 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type ComportementDeleteProps = {
+type ComportementDeleteDialogProps = {
   behaviorToDelete: BehaviorExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (behavior: BehaviorExtended) => void;
 };
 
-const ComportementDelete: FunctionComponent<ComportementDeleteProps> = ({
+const ComportementDeleteDialog: FunctionComponent<ComportementDeleteDialogProps> = ({
   behaviorToDelete,
   onCancelDeletion,
   onConfirmDeletion,
@@ -35,4 +35,4 @@ const ComportementDelete: FunctionComponent<ComportementDeleteProps> = ({
   );
 };
 
-export default ComportementDelete;
+export default ComportementDeleteDialog;

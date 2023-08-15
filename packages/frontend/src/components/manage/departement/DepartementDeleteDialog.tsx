@@ -3,13 +3,13 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type DepartementDeleteProps = {
+type DepartementDeleteDialogProps = {
   departmentToDelete: DepartmentExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (department: DepartmentExtended) => void;
 };
 
-const DepartementDelete: FunctionComponent<DepartementDeleteProps> = ({
+const DepartementDeleteDialog: FunctionComponent<DepartementDeleteDialogProps> = ({
   departmentToDelete,
   onCancelDeletion,
   onConfirmDeletion,
@@ -39,4 +39,4 @@ const DepartementDelete: FunctionComponent<DepartementDeleteProps> = ({
   );
 };
 
-export default DepartementDelete;
+export default DepartementDeleteDialog;

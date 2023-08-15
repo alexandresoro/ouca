@@ -3,13 +3,13 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type LieuDitDeleteProps = {
+type LieuDitDeleteDialogProps = {
   localityToDelete: LocalityExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (locality: LocalityExtended) => void;
 };
 
-const LieuDitDelete: FunctionComponent<LieuDitDeleteProps> = ({
+const LieuDitDeleteDialog: FunctionComponent<LieuDitDeleteDialogProps> = ({
   localityToDelete,
   onCancelDeletion,
   onConfirmDeletion,
@@ -39,4 +39,4 @@ const LieuDitDelete: FunctionComponent<LieuDitDeleteProps> = ({
   );
 };
 
-export default LieuDitDelete;
+export default LieuDitDeleteDialog;

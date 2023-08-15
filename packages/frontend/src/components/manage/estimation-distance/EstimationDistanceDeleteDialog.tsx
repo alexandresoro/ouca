@@ -3,13 +3,13 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type EstimationDistanceDeleteProps = {
+type EstimationDistanceDeleteDialogProps = {
   distanceEstimateToDelete: DistanceEstimateExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (distanceestimate: DistanceEstimateExtended) => void;
 };
 
-const EstimationDistanceDelete: FunctionComponent<EstimationDistanceDeleteProps> = ({
+const EstimationDistanceDeleteDialog: FunctionComponent<EstimationDistanceDeleteDialogProps> = ({
   distanceEstimateToDelete,
   onCancelDeletion,
   onConfirmDeletion,
@@ -37,4 +37,4 @@ const EstimationDistanceDelete: FunctionComponent<EstimationDistanceDeleteProps>
   );
 };
 
-export default EstimationDistanceDelete;
+export default EstimationDistanceDeleteDialog;

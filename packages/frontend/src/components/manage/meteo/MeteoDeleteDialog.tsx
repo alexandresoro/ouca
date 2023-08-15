@@ -3,13 +3,17 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type MeteoDeleteProps = {
+type MeteoDeleteDialogProps = {
   weatherToDelete: WeatherExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (weather: WeatherExtended) => void;
 };
 
-const MeteoDelete: FunctionComponent<MeteoDeleteProps> = ({ weatherToDelete, onCancelDeletion, onConfirmDeletion }) => {
+const MeteoDeleteDialog: FunctionComponent<MeteoDeleteDialogProps> = ({
+  weatherToDelete,
+  onCancelDeletion,
+  onConfirmDeletion,
+}) => {
   const { t } = useTranslation();
 
   const handleConfirmDeletion = (weatherToDelete: WeatherExtended | null) => {
@@ -31,4 +35,4 @@ const MeteoDelete: FunctionComponent<MeteoDeleteProps> = ({ weatherToDelete, onC
   );
 };
 
-export default MeteoDelete;
+export default MeteoDeleteDialog;

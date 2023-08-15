@@ -3,13 +3,17 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type SexeDeleteProps = {
+type SexeDeleteDialogProps = {
   sexToDelete: SexExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (sex: SexExtended) => void;
 };
 
-const SexeDelete: FunctionComponent<SexeDeleteProps> = ({ sexToDelete, onCancelDeletion, onConfirmDeletion }) => {
+const SexeDeleteDialog: FunctionComponent<SexeDeleteDialogProps> = ({
+  sexToDelete,
+  onCancelDeletion,
+  onConfirmDeletion,
+}) => {
   const { t } = useTranslation();
 
   const handleConfirmDeletion = (sexToDelete: SexExtended | null) => {
@@ -33,4 +37,4 @@ const SexeDelete: FunctionComponent<SexeDeleteProps> = ({ sexToDelete, onCancelD
   );
 };
 
-export default SexeDelete;
+export default SexeDeleteDialog;

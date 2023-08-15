@@ -3,13 +3,13 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type ObservateurDeleteProps = {
+type ObservateurDeleteDialogProps = {
   observerToDelete: ObserverExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (observer: ObserverExtended) => void;
 };
 
-const ObservateurDelete: FunctionComponent<ObservateurDeleteProps> = ({
+const ObservateurDeleteDialog: FunctionComponent<ObservateurDeleteDialogProps> = ({
   observerToDelete,
   onCancelDeletion,
   onConfirmDeletion,
@@ -37,4 +37,4 @@ const ObservateurDelete: FunctionComponent<ObservateurDeleteProps> = ({
   );
 };
 
-export default ObservateurDelete;
+export default ObservateurDeleteDialog;

@@ -3,13 +3,13 @@ import { type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 
-type ClasseDeleteProps = {
+type ClasseDeleteDialogProps = {
   speciesClassToDelete: SpeciesClassExtended | null;
   onCancelDeletion?: () => void;
   onConfirmDeletion?: (speciesClass: SpeciesClassExtended) => void;
 };
 
-const ClasseDelete: FunctionComponent<ClasseDeleteProps> = ({
+const ClasseDeleteDialog: FunctionComponent<ClasseDeleteDialogProps> = ({
   speciesClassToDelete,
   onCancelDeletion,
   onConfirmDeletion,
@@ -38,4 +38,4 @@ const ClasseDelete: FunctionComponent<ClasseDeleteProps> = ({
   );
 };
 
-export default ClasseDelete;
+export default ClasseDeleteDialog;
