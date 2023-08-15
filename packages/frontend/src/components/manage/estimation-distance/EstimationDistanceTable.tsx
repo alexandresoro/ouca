@@ -139,7 +139,7 @@ const EstimationDistanceTable: FunctionComponent = () => {
             })}</Fragment>;
           })}
         enableScroll={hasNextPage}
-        onMoreRequested={() => fetchNextPage()}
+        onMoreRequested={fetchNextPage}
       />
       <DeletionConfirmationDialog
         open={!!dialogEstimationDistance}

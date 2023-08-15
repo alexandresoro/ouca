@@ -143,7 +143,7 @@ const SexeTable: FunctionComponent = () => {
           );
         })}
         enableScroll={hasNextPage}
-        onMoreRequested={() => fetchNextPage()}
+        onMoreRequested={fetchNextPage}
       />
       <DeletionConfirmationDialog
         open={!!dialogSexe}

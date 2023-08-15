@@ -172,7 +172,7 @@ const LieuDitTable: FunctionComponent = () => {
           );
         })}
         enableScroll={hasNextPage}
-        onMoreRequested={() => fetchNextPage()}
+        onMoreRequested={fetchNextPage}
       />
       <DeletionConfirmationDialog
         open={!!dialogLieuDit}

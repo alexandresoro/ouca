@@ -148,7 +148,7 @@ const EstimationNombreTable: FunctionComponent = () => {
           );
         })}
         enableScroll={hasNextPage}
-        onMoreRequested={() => fetchNextPage()}
+        onMoreRequested={fetchNextPage}
       />
       <DeletionConfirmationDialog
         open={!!dialogEstimationNombre}

@@ -144,7 +144,7 @@ const ObservateurTable: FunctionComponent = () => {
           );
         })}
         enableScroll={hasNextPage}
-        onMoreRequested={() => fetchNextPage()}
+        onMoreRequested={fetchNextPage}
       />
       <DeletionConfirmationDialog
         open={!!dialogObservateur}
