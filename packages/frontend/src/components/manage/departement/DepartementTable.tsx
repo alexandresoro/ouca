@@ -152,7 +152,7 @@ const DepartementTable: FunctionComponent = () => {
           );
         })}
         enableScroll={hasNextPage}
-        onMoreRequested={() => fetchNextPage()}
+        onMoreRequested={fetchNextPage}
       />
       <DeletionConfirmationDialog
         open={!!dialogDepartement}

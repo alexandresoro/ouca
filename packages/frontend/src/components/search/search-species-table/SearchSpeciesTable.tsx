@@ -98,7 +98,7 @@ const SearchSpeciesTable: FunctionComponent = () => {
         );
       })}
       enableScroll={hasNextPage}
-      onMoreRequested={() => fetchNextPage()}
+      onMoreRequested={fetchNextPage}
     />
   );
 };
