@@ -53,7 +53,9 @@ const AgePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/ages" });
   };
 
-  const handleDeleteAge = (ageToDelete: AgeExtended) => {};
+  const handleDeleteAge = (ageToDelete: AgeExtended) => {
+    deleteAge({ path: `/ages/${ageToDelete.id}` });
+  };
 
   return (
     <>

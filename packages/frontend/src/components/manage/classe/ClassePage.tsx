@@ -53,7 +53,9 @@ const ClassePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/classes" });
   };
 
-  const handleDeleteSpeciesClass = (speciesClassToDelete: SpeciesClassExtended) => {};
+  const handleDeleteSpeciesClass = (speciesClassToDelete: SpeciesClassExtended) => {
+    deleteSpeciesClass({ path: `/classes/${speciesClassToDelete.id}` });
+  };
 
   return (
     <>

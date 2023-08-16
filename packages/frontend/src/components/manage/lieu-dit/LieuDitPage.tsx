@@ -53,7 +53,9 @@ const LieuDitPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/localities" });
   };
 
-  const handleDeleteLocality = (localityToDelete: LocalityExtended) => {};
+  const handleDeleteLocality = (localityToDelete: LocalityExtended) => {
+    deleteLocality({ path: `/localities/${localityToDelete.id}` });
+  };
 
   return (
     <>

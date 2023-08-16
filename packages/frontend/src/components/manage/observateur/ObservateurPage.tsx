@@ -53,7 +53,9 @@ const ObservateurPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/observers" });
   };
 
-  const handleDeleteObserver = (observerToDelete: ObserverExtended) => {};
+  const handleDeleteObserver = (observerToDelete: ObserverExtended) => {
+    deleteObserver({ path: `/observers/${observerToDelete.id}` });
+  };
 
   return (
     <>

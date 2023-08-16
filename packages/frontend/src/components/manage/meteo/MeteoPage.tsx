@@ -53,7 +53,9 @@ const MeteoPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/weathers" });
   };
 
-  const handleDeleteWeather = (weatherToDelete: WeatherExtended) => {};
+  const handleDeleteWeather = (weatherToDelete: WeatherExtended) => {
+    deleteWeather({ path: `/weathers/${weatherToDelete.id}` });
+  };
 
   return (
     <>

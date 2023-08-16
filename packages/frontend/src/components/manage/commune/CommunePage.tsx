@@ -53,7 +53,9 @@ const CommunePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/towns" });
   };
 
-  const handleDeleteTown = (townToDelete: TownExtended) => {};
+  const handleDeleteTown = (townToDelete: TownExtended) => {
+    deleteTown({ path: `/towns/${townToDelete.id}` });
+  };
 
   return (
     <>

@@ -53,7 +53,9 @@ const SexePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/sexes" });
   };
 
-  const handleDeleteSex = (sexToDelete: SexExtended) => {};
+  const handleDeleteSex = (sexToDelete: SexExtended) => {
+    deleteSex({ path: `/sexes/${sexToDelete.id}` });
+  };
 
   return (
     <>

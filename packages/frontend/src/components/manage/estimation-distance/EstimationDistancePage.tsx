@@ -53,7 +53,9 @@ const EstimationDistancePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/distance-estimates" });
   };
 
-  const handleDeleteDistanceEstimate = (distanceEstimateToDelete: DistanceEstimateExtended) => {};
+  const handleDeleteDistanceEstimate = (distanceEstimateToDelete: DistanceEstimateExtended) => {
+    deleteDistanceEstimate({ path: `/distance-estimates/${distanceEstimateToDelete.id}` });
+  };
 
   return (
     <>

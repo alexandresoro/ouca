@@ -53,7 +53,9 @@ const MilieuPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/environments" });
   };
 
-  const handleDeleteEnvironment = (environmentToDelete: EnvironmentExtended) => {};
+  const handleDeleteEnvironment = (environmentToDelete: EnvironmentExtended) => {
+    deleteEnvironment({ path: `/environments/${environmentToDelete.id}` });
+  };
 
   return (
     <>

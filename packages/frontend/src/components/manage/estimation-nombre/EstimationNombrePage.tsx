@@ -53,7 +53,9 @@ const EstimationNombrePage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/number-estimates" });
   };
 
-  const handleDeleteNumberEstimate = (numberEstimateToDelete: NumberEstimateExtended) => {};
+  const handleDeleteNumberEstimate = (numberEstimateToDelete: NumberEstimateExtended) => {
+    deleteNumberEstimate({ path: `/number-estimates/${numberEstimateToDelete.id}` });
+  };
 
   return (
     <>

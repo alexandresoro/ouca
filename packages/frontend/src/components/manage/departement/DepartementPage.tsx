@@ -53,7 +53,9 @@ const DepartementPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/departments" });
   };
 
-  const handleDeleteDepartment = (departmentToDelete: DepartmentExtended) => {};
+  const handleDeleteDepartment = (departmentToDelete: DepartmentExtended) => {
+    deleteDepartment({ path: `/departments/${departmentToDelete.id}` });
+  };
 
   return (
     <>

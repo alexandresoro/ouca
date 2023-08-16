@@ -53,7 +53,9 @@ const ComportementPage: FunctionComponent = () => {
     generateExport({ path: "/generate-export/behaviors" });
   };
 
-  const handleDeleteBehavior = (behaviorToDelete: BehaviorExtended) => {};
+  const handleDeleteBehavior = (behaviorToDelete: BehaviorExtended) => {
+    deleteBehavior({ path: `/behaviors/${behaviorToDelete.id}` });
+  };
 
   return (
     <>
