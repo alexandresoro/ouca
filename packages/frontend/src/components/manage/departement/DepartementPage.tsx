@@ -32,6 +32,7 @@ const DepartementPage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setDepartmentToDelete(null);
       },
       onError: () => {
         displayNotification({

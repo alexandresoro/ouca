@@ -32,6 +32,7 @@ const AgePage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setAgeToDelete(null);
       },
       onError: () => {
         displayNotification({

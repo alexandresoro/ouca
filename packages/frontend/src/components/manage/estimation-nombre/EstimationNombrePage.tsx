@@ -32,6 +32,7 @@ const EstimationNombrePage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setNumberEstimateToDelete(null);
       },
       onError: () => {
         displayNotification({

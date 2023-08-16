@@ -32,6 +32,7 @@ const CommunePage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setTownToDelete(null);
       },
       onError: () => {
         displayNotification({

@@ -32,6 +32,7 @@ const ClassePage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setSpeciesClassToDelete(null);
       },
       onError: () => {
         displayNotification({

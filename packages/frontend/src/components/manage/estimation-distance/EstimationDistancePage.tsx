@@ -32,6 +32,7 @@ const EstimationDistancePage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setDistanceEstimateToDelete(null)
       },
       onError: () => {
         displayNotification({

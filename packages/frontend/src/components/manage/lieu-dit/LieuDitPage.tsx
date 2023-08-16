@@ -32,6 +32,7 @@ const LieuDitPage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setLocalityToDelete(null);
       },
       onError: () => {
         displayNotification({

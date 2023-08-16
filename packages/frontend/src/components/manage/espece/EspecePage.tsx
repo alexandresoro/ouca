@@ -32,6 +32,7 @@ const EspecePage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setSpeciesToDelete(null);
       },
       onError: () => {
         displayNotification({

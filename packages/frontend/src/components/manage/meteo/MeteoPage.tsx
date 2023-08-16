@@ -32,6 +32,7 @@ const MeteoPage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setWeatherToDelete(null);
       },
       onError: () => {
         displayNotification({

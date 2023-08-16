@@ -32,6 +32,7 @@ const MilieuPage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setEnvironmentToDelete(null);
       },
       onError: () => {
         displayNotification({

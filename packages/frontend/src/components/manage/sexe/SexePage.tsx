@@ -32,6 +32,7 @@ const SexePage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setSexToDelete(null);
       },
       onError: () => {
         displayNotification({

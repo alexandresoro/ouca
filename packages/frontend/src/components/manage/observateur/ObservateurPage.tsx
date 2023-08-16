@@ -32,6 +32,7 @@ const ObservateurPage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setObserverToDelete(null);
       },
       onError: () => {
         displayNotification({

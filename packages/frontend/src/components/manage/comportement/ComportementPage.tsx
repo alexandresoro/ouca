@@ -32,6 +32,7 @@ const ComportementPage: FunctionComponent = () => {
           type: "success",
           message: t("deleteConfirmationMessage"),
         });
+        setBehaviorToDelete(null);
       },
       onError: () => {
         displayNotification({
