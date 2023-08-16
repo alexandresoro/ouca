@@ -61,7 +61,7 @@ const EspecePage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("species")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <EspeceTable onClickUpdateSpecies={handleUpdateClick} />
+        <EspeceTable onClickUpdateSpecies={handleUpdateClick} onClickDeleteSpecies={setSpeciesToDelete} />
       </ContentContainerLayout>
       <EspeceDeleteDialog
         speciesToDelete={speciesToDelete}

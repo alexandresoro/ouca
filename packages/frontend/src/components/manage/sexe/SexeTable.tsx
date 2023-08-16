@@ -15,6 +15,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type SexeTableProps = {
   onClickUpdateSex: (id: string) => void;
+  onClickDeleteSex: (sex: SexExtended) => void;
 };
 
 const COLUMNS = [
@@ -28,7 +29,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex }) => {
+const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClickDeleteSex }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

@@ -61,7 +61,7 @@ const EstimationDistancePage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("distancePrecisions")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <EstimationDistanceTable onClickUpdateDistanceEstimate={handleUpdateClick} />
+        <EstimationDistanceTable onClickUpdateDistanceEstimate={handleUpdateClick} onClickDeleteDistanceEstimate={setDistanceEstimateToDelete} />
       </ContentContainerLayout>
       <EstimationDistanceDeleteDialog
         distanceEstimateToDelete={distanceEstimateToDelete}

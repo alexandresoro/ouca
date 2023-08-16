@@ -61,7 +61,7 @@ const MeteoPage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("weathers")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <MeteoTable onClickUpdateWeather={handleUpdateClick} />
+        <MeteoTable onClickUpdateWeather={handleUpdateClick} onClickDeleteWeather={setWeatherToDelete} />
       </ContentContainerLayout>
       <MeteoDeleteDialog
         weatherToDelete={weatherToDelete}

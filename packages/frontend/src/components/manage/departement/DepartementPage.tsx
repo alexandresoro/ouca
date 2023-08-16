@@ -61,7 +61,7 @@ const DepartementPage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("departments")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <DepartementTable onClickUpdateDepartment={handleUpdateClick} />
+        <DepartementTable onClickUpdateDepartment={handleUpdateClick} onClickDeleteDepartment={setDepartmentToDelete} />
       </ContentContainerLayout>
       <DepartementDeleteDialog
         departmentToDelete={departmentToDelete}

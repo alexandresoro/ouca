@@ -61,7 +61,10 @@ const ClassePage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("speciesClasses")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <ClasseTable onClickUpdateSpeciesClass={handleUpdateClick} />
+        <ClasseTable
+          onClickUpdateSpeciesClass={handleUpdateClick}
+          onClickDeleteSpeciesClass={setSpeciesClassToDelete}
+        />
       </ContentContainerLayout>
       <ClasseDeleteDialog
         speciesClassToDelete={speciesClassToDelete}

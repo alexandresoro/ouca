@@ -14,6 +14,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type EstimationNombreTableProps = {
   onClickUpdateNumberEstimate: (id: string) => void;
+  onClickDeleteNumberEstimate: (numberEstimate: NumberEstimateExtended) => void;
 };
 
 const COLUMNS = [
@@ -31,7 +32,10 @@ const COLUMNS = [
   },
 ] as const;
 
-const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({ onClickUpdateNumberEstimate }) => {
+const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
+  onClickUpdateNumberEstimate,
+  onClickDeleteNumberEstimate,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

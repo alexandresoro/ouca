@@ -14,6 +14,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type DepartementTableProps = {
   onClickUpdateDepartment: (id: string) => void;
+  onClickDeleteDepartment: (department: DepartmentExtended) => void;
 };
 
 const COLUMNS = [
@@ -35,7 +36,10 @@ const COLUMNS = [
   },
 ] as const;
 
-const DepartementTable: FunctionComponent<DepartementTableProps> = ({ onClickUpdateDepartment }) => {
+const DepartementTable: FunctionComponent<DepartementTableProps> = ({
+  onClickUpdateDepartment,
+  onClickDeleteDepartment,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<DepartmentsOrderBy>();

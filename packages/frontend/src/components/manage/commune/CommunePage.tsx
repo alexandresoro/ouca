@@ -61,7 +61,7 @@ const CommunePage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("towns")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <CommuneTable onClickUpdateTown={handleUpdateClick} />
+        <CommuneTable onClickUpdateTown={handleUpdateClick} onClickDeleteTown={setTownToDelete} />
       </ContentContainerLayout>
       <CommuneDeleteDialog
         townToDelete={townToDelete}

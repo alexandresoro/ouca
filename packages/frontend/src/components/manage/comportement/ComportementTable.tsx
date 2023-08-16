@@ -14,6 +14,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type ComportementTableProps = {
   onClickUpdateBehavior: (id: string) => void;
+  onClickDeleteBehavior: (behavior: BehaviorExtended) => void;
 };
 
 const COLUMNS = [
@@ -35,7 +36,10 @@ const COLUMNS = [
   },
 ] as const;
 
-const ComportementTable: FunctionComponent<ComportementTableProps> = ({ onClickUpdateBehavior }) => {
+const ComportementTable: FunctionComponent<ComportementTableProps> = ({
+  onClickUpdateBehavior,
+  onClickDeleteBehavior,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>();

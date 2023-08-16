@@ -61,7 +61,7 @@ const ComportementPage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("behaviors")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <ComportementTable onClickUpdateBehavior={handleUpdateClick} />
+        <ComportementTable onClickUpdateBehavior={handleUpdateClick} onClickDeleteBehavior={setBehaviorToDelete} />
       </ContentContainerLayout>
       <ComportementDeleteDialog
         behaviorToDelete={behaviorToDelete}

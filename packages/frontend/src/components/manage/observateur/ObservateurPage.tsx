@@ -61,7 +61,7 @@ const ObservateurPage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("observers")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <ObservateurTable onClickUpdateObserver={handleUpdateClick} />
+        <ObservateurTable onClickUpdateObserver={handleUpdateClick} onClickDeleteObserver={setObserverToDelete} />
       </ContentContainerLayout>
       <ObservateurDeleteDialog
         observerToDelete={observerToDelete}

@@ -1,5 +1,5 @@
 import { getEnvironmentsExtendedResponse, type EnvironmentsOrderBy } from "@ou-ca/common/api/environment";
-import { type Environment } from "@ou-ca/common/entities/environment";
+import { type Environment, type EnvironmentExtended } from "@ou-ca/common/entities/environment";
 import { Fragment, useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
@@ -14,6 +14,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type MilieuTableProps = {
   onClickUpdateEnvironment: (id: string) => void;
+  onClickDeleteEnvironment: (environment: EnvironmentExtended) => void;
 };
 
 const COLUMNS = [
@@ -31,7 +32,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnvironment }) => {
+const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnvironment, onClickDeleteEnvironment }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>();

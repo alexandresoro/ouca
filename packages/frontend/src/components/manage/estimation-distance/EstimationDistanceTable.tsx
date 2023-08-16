@@ -15,6 +15,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type EstimationDistanceTableProps = {
   onClickUpdateDistanceEstimate: (id: string) => void;
+  onClickDeleteDistanceEstimate: (distanceEstimate: DistanceEstimateExtended) => void;
 };
 
 const COLUMNS = [
@@ -28,7 +29,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> = ({ onClickUpdateDistanceEstimate }) => {
+const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> = ({ onClickUpdateDistanceEstimate, onClickDeleteDistanceEstimate }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

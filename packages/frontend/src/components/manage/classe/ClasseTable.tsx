@@ -14,6 +14,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type ClasseTableProps = {
   onClickUpdateSpeciesClass: (id: string) => void;
+  onClickDeleteSpeciesClass: (speciesClass: SpeciesClassExtended) => void;
 };
 
 const COLUMNS = [
@@ -31,7 +32,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpeciesClass }) => {
+const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpeciesClass, onClickDeleteSpeciesClass }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<ClassesOrderBy>();

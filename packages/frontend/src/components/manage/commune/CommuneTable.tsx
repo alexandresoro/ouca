@@ -14,6 +14,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type CommuneTableProps = {
   onClickUpdateTown: (id: string) => void;
+  onClickDeleteTown: (town: TownExtended) => void;
 };
 
 const COLUMNS = [
@@ -39,7 +40,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown }) => {
+const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown, onClickDeleteTown }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>();

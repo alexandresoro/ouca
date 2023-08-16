@@ -14,6 +14,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type EspeceTableProps = {
   onClickUpdateSpecies: (id: string) => void;
+  onClickDeleteSpecies: (species: SpeciesExtended) => void;
 };
 
 const COLUMNS = [
@@ -39,7 +40,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies }) => {
+const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies, onClickDeleteSpecies }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>();

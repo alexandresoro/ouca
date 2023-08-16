@@ -61,7 +61,7 @@ const AgePage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("ages")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <AgeTable onClickUpdateAge={handleUpdateClick} />
+        <AgeTable onClickUpdateAge={handleUpdateClick} onClickDeleteAge={setAgeToDelete} />
       </ContentContainerLayout>
       <AgeDeleteDialog
         ageToDelete={ageToDelete}

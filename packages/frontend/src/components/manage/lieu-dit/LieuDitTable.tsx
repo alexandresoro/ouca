@@ -14,6 +14,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type LieuDitTableProps = {
   onClickUpdateLocality: (id: string) => void;
+  onClickDeleteLocality: (locality: LocalityExtended) => void;
 };
 
 const COLUMNS = [
@@ -51,7 +52,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocality }) => {
+const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocality, onClickDeleteLocality }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>();

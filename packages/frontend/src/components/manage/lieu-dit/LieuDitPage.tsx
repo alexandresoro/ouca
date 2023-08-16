@@ -61,7 +61,7 @@ const LieuDitPage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("localities")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <LieuDitTable onClickUpdateLocality={handleUpdateClick} />
+        <LieuDitTable onClickUpdateLocality={handleUpdateClick} onClickDeleteLocality={setLocalityToDelete} />
       </ContentContainerLayout>
       <LieuDitDeleteDialog
         localityToDelete={localityToDelete}

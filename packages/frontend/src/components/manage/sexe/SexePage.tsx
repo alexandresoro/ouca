@@ -61,7 +61,7 @@ const SexePage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("genders")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <SexeTable onClickUpdateSex={handleUpdateClick} />
+        <SexeTable onClickUpdateSex={handleUpdateClick} onClickDeleteSex={setSexToDelete} />
       </ContentContainerLayout>
       <SexeDeleteDialog
         sexToDelete={sexToDelete}

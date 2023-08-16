@@ -15,6 +15,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type MeteoTableProps = {
   onClickUpdateWeather: (id: string) => void;
+  onClickDeleteWeather: (weather: WeatherExtended) => void;
 };
 
 const COLUMNS = [
@@ -28,7 +29,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather }) => {
+const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, onClickDeleteWeather }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

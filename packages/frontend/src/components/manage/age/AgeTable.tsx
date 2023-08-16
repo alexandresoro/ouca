@@ -15,6 +15,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type AgeTableProps = {
   onClickUpdateAge: (id: string) => void;
+  onClickDeleteAge: (age: AgeExtended) => void;
 };
 
 const COLUMNS = [
@@ -28,7 +29,7 @@ const COLUMNS = [
   },
 ] as const;
 
-const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge }) => {
+const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickDeleteAge }) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

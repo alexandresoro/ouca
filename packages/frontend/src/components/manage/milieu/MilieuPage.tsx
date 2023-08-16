@@ -61,7 +61,7 @@ const MilieuPage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("environments")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <MilieuTable onClickUpdateEnvironment={handleUpdateClick} />
+        <MilieuTable onClickUpdateEnvironment={handleUpdateClick} onClickDeleteEnvironment={setEnvironmentToDelete} />
       </ContentContainerLayout>
       <MilieuDeleteDialog
         environmentToDelete={environmentToDelete}

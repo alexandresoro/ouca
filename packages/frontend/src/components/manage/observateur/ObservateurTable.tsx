@@ -15,6 +15,7 @@ import TableCellActionButtons from "../common/TableCellActionButtons";
 
 type ObservateurTableProps = {
   onClickUpdateObserver: (id: string) => void;
+  onClickDeleteObserver: (observer: ObserverExtended) => void;
 };
 
 const COLUMNS = [
@@ -28,7 +29,10 @@ const COLUMNS = [
   },
 ] as const;
 
-const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({ onClickUpdateObserver }) => {
+const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
+  onClickUpdateObserver,
+  onClickDeleteObserver,
+}) => {
   const { t } = useTranslation();
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =

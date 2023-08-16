@@ -61,7 +61,10 @@ const EstimationNombrePage: FunctionComponent = () => {
     <>
       <ManageTopBar title={t("numberPrecisions")} onClickExport={handleExportClick} />
       <ContentContainerLayout>
-        <EstimationNombreTable onClickUpdateNumberEstimate={handleUpdateClick} />
+        <EstimationNombreTable
+          onClickUpdateNumberEstimate={handleUpdateClick}
+          onClickDeleteNumberEstimate={setNumberEstimateToDelete}
+        />
       </ContentContainerLayout>
       <EstimationNombreDeleteDialog
         numberEstimateToDelete={numberEstimateToDelete}
