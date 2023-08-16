@@ -38,14 +38,14 @@ const InventoryFormObserver: FunctionComponent<InventoryFormObserverProps> = ({
   const [selectedAssociates, setSelectedAssociates] = useState<Observer[]>(defaultAssociates ?? []);
 
   const {
-    field: { ref: refObserver, value: observerId, onChange: onChangeObserverForm },
+    field: { ref: refObserver, onChange: onChangeObserverForm },
   } = useController({
     name: "observerId",
     control,
   });
 
   const {
-    field: { ref: refAssociates, value: associateIds, onChange: onChangeAssociatesForm },
+    field: { ref: refAssociates, onChange: onChangeAssociatesForm },
   } = useController({
     name: "associateIds",
     control,
