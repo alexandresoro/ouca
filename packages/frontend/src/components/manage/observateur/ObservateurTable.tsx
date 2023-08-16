@@ -1,15 +1,12 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getObserversExtendedResponse } from "@ou-ca/common/api/observer";
 import { type ObserverExtended } from "@ou-ca/common/entities/observer";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -38,9 +35,7 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>();
 
-  const [dialogObservateur, setDialogObservateur] = useState<ObserverExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/observers",
     queryKeyPrefix: "observerTable",
     queryParams: {
@@ -52,42 +47,6 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
     },
     schema: getObserversExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteObservateur = (observateur: ObserverExtended | null) => {
-    if (observateur) {
-      setDialogObservateur(observateur);
-    }
-  };
-
-  const handleDeleteObservateurConfirmation = (observateur: ObserverExtended | null) => {
-    if (observateur) {
-      setDialogObservateur(null);
-      mutate({ path: `/observers/${observateur.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -135,7 +94,7 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
                       <TableCellActionButtons
                         disabled={!observateur.editable}
                         onEditClicked={() => onClickUpdateObserver(observateur?.id)}
-                        onDeleteClicked={() => handleDeleteObservateur(observateur)}
+                        onDeleteClicked={() => onClickDeleteObserver(observateur)}
                       />
                     </td>
                   </tr>
@@ -146,17 +105,6 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogObservateur}
-        messageContent={t("deleteObserverDialogMsg", {
-          name: dialogObservateur?.libelle,
-        })}
-        impactedItemsMessage={t("deleteObserverDialogMsgImpactedData", {
-          nbOfObservations: dialogObservateur?.entriesCount ?? 0,
-        })}
-        onCancelAction={() => setDialogObservateur(null)}
-        onConfirmAction={() => handleDeleteObservateurConfirmation(dialogObservateur)}
       />
     </>
   );

@@ -1,14 +1,11 @@
 import { getLocalitiesExtendedResponse, type LocalitiesOrderBy } from "@ou-ca/common/api/locality";
 import { type LocalityExtended } from "@ou-ca/common/entities/locality";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -57,9 +54,7 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<LocalitiesOrderBy>();
 
-  const [dialogLieuDit, setDialogLieuDit] = useState<LocalityExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/localities",
     queryKeyPrefix: "localityTable",
     queryParams: {
@@ -71,42 +66,6 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
     },
     schema: getLocalitiesExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteLieuDit = (lieuDit: LocalityExtended | null) => {
-    if (lieuDit) {
-      setDialogLieuDit(lieuDit);
-    }
-  };
-
-  const handleDeleteLieuDitConfirmation = (lieuDit: Pick<LocalityExtended, "id"> | null) => {
-    if (lieuDit) {
-      setDialogLieuDit(null);
-      mutate({ path: `/localities/${lieuDit.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: LocalitiesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -160,7 +119,7 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
                       <TableCellActionButtons
                         disabled={!lieuDit.editable}
                         onEditClicked={() => onClickUpdateLocality(lieuDit?.id)}
-                        onDeleteClicked={() => handleDeleteLieuDit(lieuDit)}
+                        onDeleteClicked={() => onClickDeleteLocality(lieuDit)}
                       />
                     </td>
                   </tr>
@@ -171,19 +130,6 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogLieuDit}
-        messageContent={t("deleteLieuDitDialogMsg", {
-          name: dialogLieuDit?.nom,
-          city: dialogLieuDit?.townName,
-          department: dialogLieuDit?.departmentCode,
-        })}
-        impactedItemsMessage={t("deleteLieuDitDialogMsgImpactedData", {
-          nbOfObservations: dialogLieuDit?.entriesCount ?? 0,
-        })}
-        onCancelAction={() => setDialogLieuDit(null)}
-        onConfirmAction={() => handleDeleteLieuDitConfirmation(dialogLieuDit)}
       />
     </>
   );

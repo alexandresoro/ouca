@@ -1,14 +1,11 @@
 import { getEnvironmentsExtendedResponse, type EnvironmentsOrderBy } from "@ou-ca/common/api/environment";
-import { type Environment, type EnvironmentExtended } from "@ou-ca/common/entities/environment";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { type EnvironmentExtended } from "@ou-ca/common/entities/environment";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -37,9 +34,7 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<EnvironmentsOrderBy>();
 
-  const [dialogMilieu, setDialogMilieu] = useState<Environment | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/environments",
     queryKeyPrefix: "environmentTable",
     queryParams: {
@@ -51,42 +46,6 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
     },
     schema: getEnvironmentsExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteMilieu = (milieu: Environment | null) => {
-    if (milieu) {
-      setDialogMilieu(milieu);
-    }
-  };
-
-  const handleDeleteMilieuConfirmation = (milieu: Environment | null) => {
-    if (milieu) {
-      setDialogMilieu(null);
-      mutate({ path: `/environments/${milieu.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: EnvironmentsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -135,7 +94,7 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
                       <TableCellActionButtons
                         disabled={!milieu.editable}
                         onEditClicked={() => onClickUpdateEnvironment(milieu?.id)}
-                        onDeleteClicked={() => handleDeleteMilieu(milieu)}
+                        onDeleteClicked={() => onClickDeleteEnvironment(milieu)}
                       />
                     </td>
                   </tr>
@@ -146,15 +105,6 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogMilieu}
-        messageContent={t("deleteEnvironmentDialogMsg", {
-          name: dialogMilieu?.libelle,
-        })}
-        impactedItemsMessage={t("deleteEnvironmentDialogMsgImpactedData")}
-        onCancelAction={() => setDialogMilieu(null)}
-        onConfirmAction={() => handleDeleteMilieuConfirmation(dialogMilieu)}
       />
     </>
   );

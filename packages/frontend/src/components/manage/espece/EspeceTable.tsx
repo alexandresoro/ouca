@@ -1,14 +1,11 @@
 import { getSpeciesExtendedResponse, type SpeciesOrderBy } from "@ou-ca/common/api/species";
 import { type SpeciesExtended } from "@ou-ca/common/entities/species";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -45,9 +42,7 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<SpeciesOrderBy>();
 
-  const [dialogEspece, setDialogEspece] = useState<SpeciesExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/species",
     queryKeyPrefix: "speciesTable",
     queryParams: {
@@ -59,42 +54,6 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
     },
     schema: getSpeciesExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteEspece = (espece: SpeciesExtended | null) => {
-    if (espece) {
-      setDialogEspece(espece);
-    }
-  };
-
-  const handleDeleteEspeceConfirmation = (espece: SpeciesExtended | null) => {
-    if (espece) {
-      setDialogEspece(null);
-      mutate({ path: `/species/${espece.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: SpeciesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -145,7 +104,7 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
                       <TableCellActionButtons
                         disabled={!espece.editable}
                         onEditClicked={() => onClickUpdateSpecies(espece?.id)}
-                        onDeleteClicked={() => handleDeleteEspece(espece)}
+                        onDeleteClicked={() => onClickDeleteSpecies(espece)}
                       />
                     </td>
                   </tr>
@@ -156,18 +115,6 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogEspece}
-        messageContent={t("deleteSpeciesDialogMsg", {
-          name: dialogEspece?.nomFrancais,
-          code: dialogEspece?.code,
-        })}
-        impactedItemsMessage={t("deleteSpeciesDialogMsgImpactedData", {
-          nbOfObservations: dialogEspece?.entriesCount ?? 0,
-        })}
-        onCancelAction={() => setDialogEspece(null)}
-        onConfirmAction={() => handleDeleteEspeceConfirmation(dialogEspece)}
       />
     </>
   );

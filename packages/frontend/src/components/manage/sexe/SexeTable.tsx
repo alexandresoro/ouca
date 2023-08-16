@@ -1,15 +1,12 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getSexesExtendedResponse } from "@ou-ca/common/api/sex";
 import { type SexExtended } from "@ou-ca/common/entities/sex";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -35,9 +32,7 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>();
 
-  const [dialogSexe, setDialogSexe] = useState<SexExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/sexes",
     queryKeyPrefix: "sexTable",
     queryParams: {
@@ -49,41 +44,6 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
     },
     schema: getSexesExtendedResponse,
   });
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteSexe = (sexe: SexExtended | null) => {
-    if (sexe) {
-      setDialogSexe(sexe);
-    }
-  };
-
-  const handleDeleteSexeConfirmation = (sexe: SexExtended | null) => {
-    if (sexe) {
-      setDialogSexe(null);
-      mutate({ path: `/sexes/${sexe.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -131,7 +91,7 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
                       <TableCellActionButtons
                         disabled={!sexe.editable}
                         onEditClicked={() => onClickUpdateSex(sexe?.id)}
-                        onDeleteClicked={() => handleDeleteSexe(sexe)}
+                        onDeleteClicked={() => onClickDeleteSex(sexe)}
                       />
                     </td>
                   </tr>
@@ -142,17 +102,6 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex, onClic
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogSexe}
-        messageContent={t("deleteGenderDialogMsg", {
-          name: dialogSexe?.libelle,
-        })}
-        impactedItemsMessage={t("deleteGenderDialogMsgImpactedData", {
-          nbOfObservations: dialogSexe?.entriesCount ?? 0,
-        })}
-        onCancelAction={() => setDialogSexe(null)}
-        onConfirmAction={() => handleDeleteSexeConfirmation(dialogSexe)}
       />
     </>
   );

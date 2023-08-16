@@ -1,15 +1,12 @@
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { getWeathersExtendedResponse } from "@ou-ca/common/api/weather";
 import { type WeatherExtended } from "@ou-ca/common/entities/weather";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -35,9 +32,7 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>();
 
-  const [dialogMeteo, setDialogMeteo] = useState<WeatherExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/weathers",
     queryKeyPrefix: "weatherTable",
     queryParams: {
@@ -49,42 +44,6 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
     },
     schema: getWeathersExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteMeteo = (meteo: WeatherExtended | null) => {
-    if (meteo) {
-      setDialogMeteo(meteo);
-    }
-  };
-
-  const handleDeleteMeteoConfirmation = (meteo: WeatherExtended | null) => {
-    if (meteo) {
-      setDialogMeteo(null);
-      mutate({ path: `/weathers/${meteo.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -132,7 +91,7 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
                       <TableCellActionButtons
                         disabled={!meteo.editable}
                         onEditClicked={() => onClickUpdateWeather(meteo?.id)}
-                        onDeleteClicked={() => handleDeleteMeteo(meteo)}
+                        onDeleteClicked={() => onClickDeleteWeather(meteo)}
                       />
                     </td>
                   </tr>
@@ -143,15 +102,6 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather, 
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogMeteo}
-        messageContent={t("deleteWeatherDialogMsg", {
-          name: dialogMeteo?.libelle,
-        })}
-        impactedItemsMessage={t("deleteWeatherDialogMsgImpactedData")}
-        onCancelAction={() => setDialogMeteo(null)}
-        onConfirmAction={() => handleDeleteMeteoConfirmation(dialogMeteo)}
       />
     </>
   );

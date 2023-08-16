@@ -1,14 +1,11 @@
 import { getBehaviorsExtendedResponse, type BehaviorsOrderBy } from "@ou-ca/common/api/behavior";
 import { type BehaviorExtended } from "@ou-ca/common/entities/behavior";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -44,9 +41,7 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<BehaviorsOrderBy>();
 
-  const [dialogComportement, setDialogComportement] = useState<BehaviorExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/behaviors",
     queryKeyPrefix: "behaviorTable",
     queryParams: {
@@ -58,42 +53,6 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
     },
     schema: getBehaviorsExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteComportement = (comportement: BehaviorExtended | null) => {
-    if (comportement) {
-      setDialogComportement(comportement);
-    }
-  };
-
-  const handleDeleteComportementConfirmation = (comportement: BehaviorExtended | null) => {
-    if (comportement) {
-      setDialogComportement(null);
-      mutate({ path: `/behaviors/${comportement.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: BehaviorsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -143,7 +102,7 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
                       <TableCellActionButtons
                         disabled={!comportement.editable}
                         onEditClicked={() => onClickUpdateBehavior(comportement?.id)}
-                        onDeleteClicked={() => handleDeleteComportement(comportement)}
+                        onDeleteClicked={() => onClickDeleteBehavior(comportement)}
                       />
                     </td>
                   </tr>
@@ -154,15 +113,6 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogComportement}
-        messageContent={t("deleteBehaviorDialogMsg", {
-          name: dialogComportement?.libelle,
-        })}
-        impactedItemsMessage={t("deleteBehaviorDialogMsgImpactedData")}
-        onCancelAction={() => setDialogComportement(null)}
-        onConfirmAction={() => handleDeleteComportementConfirmation(dialogComportement)}
       />
     </>
   );

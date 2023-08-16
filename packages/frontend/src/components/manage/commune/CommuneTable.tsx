@@ -1,14 +1,11 @@
 import { getTownsExtendedResponse, type TownsOrderBy } from "@ou-ca/common/api/town";
 import { type TownExtended } from "@ou-ca/common/entities/town";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -45,9 +42,7 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<TownsOrderBy>();
 
-  const [dialogCommune, setDialogCommune] = useState<TownExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/towns",
     queryKeyPrefix: "townTable",
     queryParams: {
@@ -59,42 +54,6 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
     },
     schema: getTownsExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteCommune = (commune: TownExtended | null) => {
-    if (commune) {
-      setDialogCommune(commune);
-    }
-  };
-
-  const handleDeleteCommuneConfirmation = (commune: TownExtended | null) => {
-    if (commune) {
-      setDialogCommune(null);
-      mutate({ path: `/towns/${commune.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: TownsOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -145,7 +104,7 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
                       <TableCellActionButtons
                         disabled={!commune.editable}
                         onEditClicked={() => onClickUpdateTown(commune?.id)}
-                        onDeleteClicked={() => handleDeleteCommune(commune)}
+                        onDeleteClicked={() => onClickDeleteTown(commune)}
                       />
                     </td>
                   </tr>
@@ -156,19 +115,6 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown,
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogCommune}
-        messageContent={t("deleteCityDialogMsg", {
-          name: dialogCommune?.nom,
-          department: dialogCommune?.departmentCode,
-        })}
-        impactedItemsMessage={t("deleteCityDialogMsgImpactedData", {
-          nbOfObservations: dialogCommune?.entriesCount ?? 0,
-          nbOfLocalities: dialogCommune?.localitiesCount ?? 0,
-        })}
-        onCancelAction={() => setDialogCommune(null)}
-        onConfirmAction={() => handleDeleteCommuneConfirmation(dialogCommune)}
       />
     </>
   );

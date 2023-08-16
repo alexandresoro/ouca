@@ -1,14 +1,11 @@
 import { getClassesExtendedResponse, type ClassesOrderBy } from "@ou-ca/common/api/species-class";
 import { type SpeciesClassExtended } from "@ou-ca/common/entities/species-class";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -37,9 +34,7 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
 
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } = usePaginationParams<ClassesOrderBy>();
 
-  const [dialogClasse, setDialogClasse] = useState<SpeciesClassExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/classes",
     queryKeyPrefix: "speciesClassTable",
     queryParams: {
@@ -51,42 +46,6 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
     },
     schema: getClassesExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteClasse = (classe: SpeciesClassExtended | null) => {
-    if (classe) {
-      setDialogClasse(classe);
-    }
-  };
-
-  const handleDeleteClasseConfirmation = (classe: SpeciesClassExtended | null) => {
-    if (classe) {
-      setDialogClasse(null);
-      mutate({ path: `/classes/${classe.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: ClassesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -135,7 +94,7 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
                       <TableCellActionButtons
                         disabled={!classe.editable}
                         onEditClicked={() => onClickUpdateSpeciesClass(classe?.id)}
-                        onDeleteClicked={() => handleDeleteClasse(classe)}
+                        onDeleteClicked={() => onClickDeleteSpeciesClass(classe)}
                       />
                     </td>
                   </tr>
@@ -146,18 +105,6 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogClasse}
-        messageContent={t("deleteClassDialogMsg", {
-          name: dialogClasse?.libelle,
-        })}
-        impactedItemsMessage={t("deleteClassDialogMsgImpactedData", {
-          nbOfObservations: dialogClasse?.entriesCount ?? 0,
-          nbOfSpecies: dialogClasse?.speciesCount ?? 0,
-        })}
-        onCancelAction={() => setDialogClasse(null)}
-        onConfirmAction={() => handleDeleteClasseConfirmation(dialogClasse)}
       />
     </>
   );

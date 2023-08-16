@@ -1,15 +1,12 @@
 import { getAgesExtendedResponse } from "@ou-ca/common/api/age";
 import { type EntitiesWithLabelOrderBy } from "@ou-ca/common/api/common/entitiesSearchParams";
 import { type AgeExtended } from "@ou-ca/common/entities/age";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -35,9 +32,7 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<EntitiesWithLabelOrderBy>();
 
-  const [dialogAge, setDialogAge] = useState<AgeExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/ages",
     queryKeyPrefix: "ageTable",
     queryParams: {
@@ -49,42 +44,6 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
     },
     schema: getAgesExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteAge = (age: AgeExtended) => {
-    if (age) {
-      setDialogAge(age);
-    }
-  };
-
-  const handleDeleteAgeConfirmation = (age: AgeExtended | null) => {
-    if (age) {
-      setDialogAge(null);
-      mutate({ path: `/ages/${age.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: EntitiesWithLabelOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -132,7 +91,7 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
                       <TableCellActionButtons
                         disabled={!age.editable}
                         onEditClicked={() => onClickUpdateAge(age.id)}
-                        onDeleteClicked={() => handleDeleteAge(age)}
+                        onDeleteClicked={() => onClickDeleteAge(age)}
                       />
                     </td>
                   </tr>
@@ -143,17 +102,6 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge, onClickD
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogAge}
-        messageContent={t("deleteAgeDialogMsg", {
-          name: dialogAge?.libelle,
-        })}
-        impactedItemsMessage={t("deleteAgeDialogMsgImpactedData", {
-          nbOfObservations: dialogAge?.entriesCount ?? 0,
-        })}
-        onCancelAction={() => setDialogAge(null)}
-        onConfirmAction={() => handleDeleteAgeConfirmation(dialogAge)}
       />
     </>
   );

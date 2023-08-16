@@ -1,14 +1,11 @@
 import { getNumberEstimatesExtendedResponse, type NumberEstimatesOrderBy } from "@ou-ca/common/api/number-estimate";
 import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
-import { Fragment, useState, type FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import useApiInfiniteQuery from "../../../hooks/api/useApiInfiniteQuery";
-import useApiMutation from "../../../hooks/api/useApiMutation";
 import usePaginationParams from "../../../hooks/usePaginationParams";
-import useSnackbar from "../../../hooks/useSnackbar";
 import InfiniteTable from "../../common/styled/table/InfiniteTable";
 import TableSortLabel from "../../common/styled/table/TableSortLabel";
-import DeletionConfirmationDialog from "../common/DeletionConfirmationDialog";
 import ManageEntitiesHeader from "../common/ManageEntitiesHeader";
 import TableCellActionButtons from "../common/TableCellActionButtons";
 
@@ -41,9 +38,7 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
   const { query, setQuery, orderBy, setOrderBy, sortOrder, setSortOrder } =
     usePaginationParams<NumberEstimatesOrderBy>();
 
-  const [dialogEstimationNombre, setDialogEstimationNombre] = useState<NumberEstimateExtended | null>(null);
-
-  const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useApiInfiniteQuery({
     path: "/number-estimates",
     queryKeyPrefix: "numberEstimateTable",
     queryParams: {
@@ -55,42 +50,6 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
     },
     schema: getNumberEstimatesExtendedResponse,
   });
-
-  const { mutate } = useApiMutation(
-    { method: "DELETE" },
-    {
-      onSettled: async () => {
-        await refetch();
-      },
-      onSuccess: () => {
-        displayNotification({
-          type: "success",
-          message: t("deleteConfirmationMessage"),
-        });
-      },
-      onError: () => {
-        displayNotification({
-          type: "error",
-          message: t("deleteErrorMessage"),
-        });
-      },
-    }
-  );
-
-  const { displayNotification } = useSnackbar();
-
-  const handleDeleteEstimationNombre = (estimationNombre: NumberEstimateExtended | null) => {
-    if (estimationNombre) {
-      setDialogEstimationNombre(estimationNombre);
-    }
-  };
-
-  const handleDeleteEstimationNombreConfirmation = (estimationNombre: NumberEstimateExtended | null) => {
-    if (estimationNombre) {
-      setDialogEstimationNombre(null);
-      mutate({ path: `/number-estimates/${estimationNombre.id}` });
-    }
-  };
 
   const handleRequestSort = (sortingColumn: NumberEstimatesOrderBy) => {
     const isAsc = orderBy === sortingColumn && sortOrder === "asc";
@@ -139,7 +98,7 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
                       <TableCellActionButtons
                         disabled={!estimationNombre.editable}
                         onEditClicked={() => onClickUpdateNumberEstimate(estimationNombre?.id)}
-                        onDeleteClicked={() => handleDeleteEstimationNombre(estimationNombre)}
+                        onDeleteClicked={() => onClickDeleteNumberEstimate(estimationNombre)}
                       />
                     </td>
                   </tr>
@@ -150,17 +109,6 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({
         })}
         enableScroll={hasNextPage}
         onMoreRequested={fetchNextPage}
-      />
-      <DeletionConfirmationDialog
-        open={!!dialogEstimationNombre}
-        messageContent={t("deleteNumberPrecisionDialogMsg", {
-          name: dialogEstimationNombre?.libelle,
-        })}
-        impactedItemsMessage={t("deleteNumberPrecisionDialogMsgImpactedData", {
-          nbOfObservations: dialogEstimationNombre?.entriesCount ?? 0,
-        })}
-        onCancelAction={() => setDialogEstimationNombre(null)}
-        onConfirmAction={() => handleDeleteEstimationNombreConfirmation(dialogEstimationNombre)}
       />
     </>
   );
