@@ -7,7 +7,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./i18n";
 import "./index.css";
-import { routes } from "./routes";
+import { routes } from "./router/routes";
 import { initApp } from "./utils/init-app";
 
 // rome-ignore lint/style/noNonNullAssertion: <explanation>

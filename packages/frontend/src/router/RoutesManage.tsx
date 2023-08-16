@@ -1,22 +1,24 @@
 import { Suspense, lazy, type FunctionComponent } from "react";
 import { Route, Routes } from "react-router-dom";
 
-const ObservateurManage = lazy(() => import("./components/manage/observateur/ObservateurManage"));
-const DepartementManage = lazy(() => import("./components/manage/departement/DepartementManage"));
-const CommuneManage = lazy(() => import("./components/manage/commune/CommuneManage"));
-const LieuDitManage = lazy(() => import("./components/manage/lieu-dit/LieuDitManage"));
-const MeteoManage = lazy(() => import("./components/manage/meteo/MeteoManage"));
-const ClasseManage = lazy(() => import("./components/manage/classe/ClasseManage"));
-const EspeceManage = lazy(() => import("./components/manage/espece/EspeceManage"));
-const SexeManage = lazy(() => import("./components/manage/sexe/SexeManage"));
-const AgeManage = lazy(() => import("./components/manage/age/AgeManage"));
-const EstimationNombreManage = lazy(() => import("./components/manage/estimation-nombre/EstimationNombreManage"));
-const EstimationDistanceManage = lazy(() => import("./components/manage/estimation-distance/EstimationDistanceManage"));
-const ComportementManage = lazy(() => import("./components/manage/comportement/ComportementManage"));
-const MilieuManage = lazy(() => import("./components/manage/milieu/MilieuManage"));
+const ObservateurManage = lazy(() => import("../components/manage/observateur/ObservateurManage"));
+const DepartementManage = lazy(() => import("../components/manage/departement/DepartementManage"));
+const CommuneManage = lazy(() => import("../components/manage/commune/CommuneManage"));
+const LieuDitManage = lazy(() => import("../components/manage/lieu-dit/LieuDitManage"));
+const MeteoManage = lazy(() => import("../components/manage/meteo/MeteoManage"));
+const ClasseManage = lazy(() => import("../components/manage/classe/ClasseManage"));
+const EspeceManage = lazy(() => import("../components/manage/espece/EspeceManage"));
+const SexeManage = lazy(() => import("../components/manage/sexe/SexeManage"));
+const AgeManage = lazy(() => import("../components/manage/age/AgeManage"));
+const EstimationNombreManage = lazy(() => import("../components/manage/estimation-nombre/EstimationNombreManage"));
+const EstimationDistanceManage = lazy(
+  () => import("../components/manage/estimation-distance/EstimationDistanceManage")
+);
+const ComportementManage = lazy(() => import("../components/manage/comportement/ComportementManage"));
+const MilieuManage = lazy(() => import("../components/manage/milieu/MilieuManage"));
 
 /**
- * @deprecated migrate to createBrowserRouter
+ * @deprecated migrate to routes-manage
  */
 const RoutesManage: FunctionComponent = () => {
   return (

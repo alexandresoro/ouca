@@ -8,3 +8,13 @@ export const lazyRoute = (
       return { Component: defaultExport };
     });
 };
+
+export const lazyComponent = <K extends string>(
+  factory: () => Promise<{ [k in K]: FunctionComponent }>,
+  name: K
+): (() => Promise<{ Component: FunctionComponent }>) => {
+  return () =>
+    factory().then((imported) => {
+      return { Component: imported[name] };
+    });
+};

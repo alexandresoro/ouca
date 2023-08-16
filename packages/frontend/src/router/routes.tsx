@@ -1,9 +1,9 @@
 import { Navigate, Outlet, type RouteObject } from "react-router-dom";
+import Layout from "../components/Layout";
+import LastInventory from "../components/inventory/last-inventory/LastInventory";
+import UserSettingsProvider from "../contexts/UserSettingsContext";
+import { lazyRoute } from "../utils/lazy-route";
 import RoutesManage from "./RoutesManage";
-import Layout from "./components/Layout";
-import LastInventory from "./components/inventory/last-inventory/LastInventory";
-import UserSettingsProvider from "./contexts/UserSettingsContext";
-import { lazyRoute } from "./utils/lazy-route";
 
 export const routes: RouteObject[] = [
   {
@@ -20,7 +20,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: "create-new",
-        lazy: lazyRoute(() => import("./components/entry/new-entry-page/NewEntryPage")),
+        lazy: lazyRoute(() => import("../components/entry/new-entry-page/NewEntryPage")),
       },
       {
         path: "last-inventory",
@@ -28,11 +28,11 @@ export const routes: RouteObject[] = [
       },
       {
         path: "inventory/:id",
-        lazy: lazyRoute(() => import("./components/inventory/inventory-page/InventoryPage")),
+        lazy: lazyRoute(() => import("../components/inventory/inventory-page/InventoryPage")),
       },
       {
         path: "search",
-        lazy: lazyRoute(() => import("./components/search/SearchPage")),
+        lazy: lazyRoute(() => import("../components/search/SearchPage")),
       },
       {
         path: "manage",
@@ -46,11 +46,11 @@ export const routes: RouteObject[] = [
       },
       {
         path: "profile",
-        lazy: lazyRoute(() => import("./components/user-profile/UserProfilePage")),
+        lazy: lazyRoute(() => import("../components/user-profile/UserProfilePage")),
       },
       {
         path: "settings",
-        lazy: lazyRoute(() => import("./components/SettingsPage")),
+        lazy: lazyRoute(() => import("../components/SettingsPage")),
       },
       {
         path: "*",
@@ -60,6 +60,6 @@ export const routes: RouteObject[] = [
   },
   {
     path: "new-account",
-    lazy: lazyRoute(() => import("./components/new-account/NewAccount")),
+    lazy: lazyRoute(() => import("../components/new-account/NewAccount")),
   },
 ];
