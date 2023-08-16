@@ -4,6 +4,7 @@ import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
+import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import ManageTopBar from "../common/ManageTopBar";
@@ -19,6 +20,27 @@ const DepartementPage: FunctionComponent = () => {
   const { displayNotification } = useSnackbar();
 
   const [departmentToDelete, setDepartmentToDelete] = useState<DepartmentExtended | null>(null);
+
+  const { mutate: deleteDepartment } = useApiMutation(
+    { method: "DELETE" },
+    {
+      onSettled: async () => {
+        await queryClient.invalidateQueries(["API", "departmentTable"]);
+      },
+      onSuccess: () => {
+        displayNotification({
+          type: "success",
+          message: t("deleteConfirmationMessage"),
+        });
+      },
+      onError: () => {
+        displayNotification({
+          type: "error",
+          message: t("deleteErrorMessage"),
+        });
+      },
+    }
+  );
 
   const { mutate: generateExport } = useApiExportEntities({ filename: t("departments") });
 
