@@ -38,6 +38,7 @@ const AgeTable: FunctionComponent<AgeTableProps> = ({ onClickUpdateAge }) => {
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/ages",
+    queryKeyPrefix: "ageTable",
     queryParams: {
       q: query,
       pageSize: 10,

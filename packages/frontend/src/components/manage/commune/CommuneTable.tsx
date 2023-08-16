@@ -48,6 +48,7 @@ const CommuneTable: FunctionComponent<CommuneTableProps> = ({ onClickUpdateTown 
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/towns",
+    queryKeyPrefix: "townTable",
     queryParams: {
       q: query,
       pageSize: 10,

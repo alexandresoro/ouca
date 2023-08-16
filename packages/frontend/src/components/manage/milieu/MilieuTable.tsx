@@ -40,6 +40,7 @@ const MilieuTable: FunctionComponent<MilieuTableProps> = ({ onClickUpdateEnviron
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/environments",
+    queryKeyPrefix: "environmentTable",
     queryParams: {
       q: query,
       pageSize: 10,

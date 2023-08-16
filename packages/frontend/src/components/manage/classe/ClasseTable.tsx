@@ -40,6 +40,7 @@ const ClasseTable: FunctionComponent<ClasseTableProps> = ({ onClickUpdateSpecies
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/classes",
+    queryKeyPrefix: "speciesClassTable",
     queryParams: {
       q: query,
       pageSize: 10,

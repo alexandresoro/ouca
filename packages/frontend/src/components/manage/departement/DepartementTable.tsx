@@ -44,6 +44,7 @@ const DepartementTable: FunctionComponent<DepartementTableProps> = ({ onClickUpd
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/departments",
+    queryKeyPrefix: "departmentTable",
     queryParams: {
       q: query,
       pageSize: 10,

@@ -38,6 +38,7 @@ const MeteoTable: FunctionComponent<MeteoTableProps> = ({ onClickUpdateWeather }
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/weathers",
+    queryKeyPrefix: "weatherTable",
     queryParams: {
       q: query,
       pageSize: 10,

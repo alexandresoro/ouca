@@ -38,6 +38,7 @@ const SexeTable: FunctionComponent<SexeTableProps> = ({ onClickUpdateSex }) => {
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/sexes",
+    queryKeyPrefix: "sexTable",
     queryParams: {
       q: query,
       pageSize: 10,

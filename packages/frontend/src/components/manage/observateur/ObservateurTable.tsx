@@ -38,6 +38,7 @@ const ObservateurTable: FunctionComponent<ObservateurTableProps> = ({ onClickUpd
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/observers",
+    queryKeyPrefix: "observerTable",
     queryParams: {
       q: query,
       pageSize: 10,

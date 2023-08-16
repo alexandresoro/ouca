@@ -44,6 +44,7 @@ const ComportementTable: FunctionComponent<ComportementTableProps> = ({ onClickU
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/behaviors",
+    queryKeyPrefix: "behaviorTable",
     queryParams: {
       q: query,
       pageSize: 10,

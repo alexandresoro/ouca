@@ -60,6 +60,7 @@ const LieuDitTable: FunctionComponent<LieuDitTableProps> = ({ onClickUpdateLocal
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/localities",
+    queryKeyPrefix: "localityTable",
     queryParams: {
       q: query,
       pageSize: 10,

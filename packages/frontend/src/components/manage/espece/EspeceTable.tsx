@@ -48,6 +48,7 @@ const EspeceTable: FunctionComponent<EspeceTableProps> = ({ onClickUpdateSpecies
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/species",
+    queryKeyPrefix: "speciesTable",
     queryParams: {
       q: query,
       pageSize: 10,

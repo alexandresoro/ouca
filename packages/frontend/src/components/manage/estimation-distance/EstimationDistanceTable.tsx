@@ -39,6 +39,7 @@ const EstimationDistanceTable: FunctionComponent<EstimationDistanceTableProps> =
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery(
     {
       path: "/distance-estimates",
+      queryKeyPrefix: "distanceEstimateTable",
       queryParams: {
         q: query,
         pageSize: 10,

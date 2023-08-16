@@ -1,24 +1,36 @@
-import { type FunctionComponent } from "react";
+import { type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
+import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import ManageTopBar from "../common/ManageTopBar";
+import EstimationDistanceDeleteDialog from "./EstimationDistanceDeleteDialog";
 import EstimationDistanceTable from "./EstimationDistanceTable";
 
 const EstimationDistancePage: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { mutate } = useApiExportEntities({ filename: t("distancePrecisions") });
+  const queryClient = useQueryClient();
+
+  const { displayNotification } = useSnackbar();
+
+  const [distanceEstimateToDelete, setDistanceEstimateToDelete] = useState<DistanceEstimateExtended | null>(null);
+
+  const { mutate: generateExport } = useApiExportEntities({ filename: t("distancePrecisions") });
 
   const handleUpdateClick = (id: string) => {
     navigate(`edit/${id}`);
   };
 
   const handleExportClick = () => {
-    mutate({ path: "/generate-export/distance-estimates" });
+    generateExport({ path: "/generate-export/distance-estimates" });
   };
+
+  const handleDeleteDistanceEstimate = (distanceEstimateToDelete: DistanceEstimateExtended) => {};
 
   return (
     <>
@@ -26,6 +38,11 @@ const EstimationDistancePage: FunctionComponent = () => {
       <ContentContainerLayout>
         <EstimationDistanceTable onClickUpdateDistanceEstimate={handleUpdateClick} />
       </ContentContainerLayout>
+      <EstimationDistanceDeleteDialog
+        distanceEstimateToDelete={distanceEstimateToDelete}
+        onCancelDeletion={() => setDistanceEstimateToDelete(null)}
+        onConfirmDeletion={handleDeleteDistanceEstimate}
+      />
     </>
   );
 };

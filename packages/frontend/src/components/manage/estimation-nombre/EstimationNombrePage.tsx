@@ -1,24 +1,36 @@
-import { type FunctionComponent } from "react";
+import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
+import useSnackbar from "../../../hooks/useSnackbar";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import ManageTopBar from "../common/ManageTopBar";
+import EstimationNombreDeleteDialog from "./EstimationNombreDeleteDialog";
 import EstimationNombreTable from "./EstimationNombreTable";
 
 const EstimationNombrePage: FunctionComponent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { mutate } = useApiExportEntities({ filename: t("numberPrecisions") });
+  const queryClient = useQueryClient();
+
+  const { displayNotification } = useSnackbar();
+
+  const [numberEstimateToDelete, setNumberEstimateToDelete] = useState<NumberEstimateExtended | null>(null);
+
+  const { mutate: generateExport } = useApiExportEntities({ filename: t("numberPrecisions") });
 
   const handleUpdateClick = (id: string) => {
     navigate(`edit/${id}`);
   };
 
   const handleExportClick = () => {
-    mutate({ path: "/generate-export/number-estimates" });
+    generateExport({ path: "/generate-export/number-estimates" });
   };
+
+  const handleDeleteNumberEstimate = (numberEstimateToDelete: NumberEstimateExtended) => {};
 
   return (
     <>
@@ -26,6 +38,11 @@ const EstimationNombrePage: FunctionComponent = () => {
       <ContentContainerLayout>
         <EstimationNombreTable onClickUpdateNumberEstimate={handleUpdateClick} />
       </ContentContainerLayout>
+      <EstimationNombreDeleteDialog
+        numberEstimateToDelete={numberEstimateToDelete}
+        onCancelDeletion={() => setNumberEstimateToDelete(null)}
+        onConfirmDeletion={handleDeleteNumberEstimate}
+      />
     </>
   );
 };

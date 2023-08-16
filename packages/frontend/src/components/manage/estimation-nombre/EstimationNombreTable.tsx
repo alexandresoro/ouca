@@ -41,6 +41,7 @@ const EstimationNombreTable: FunctionComponent<EstimationNombreTableProps> = ({ 
 
   const { data, fetchNextPage, hasNextPage, refetch } = useApiInfiniteQuery({
     path: "/number-estimates",
+    queryKeyPrefix: "numberEstimateTable",
     queryParams: {
       q: query,
       pageSize: 10,
