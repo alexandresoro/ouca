@@ -26,10 +26,10 @@ export const routesManage: RouteObject[] = [
     path: "espece",
     lazy: lazyComponent(() => import("../components/manage/manage-pages"), "EspecePage"),
   },
-  // {
-  //   path: "estimation-distance",
-  //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "EstimationDistancePage"),
-  // },
+  {
+    path: "estimation-distance",
+    lazy: lazyComponent(() => import("../components/manage/manage-pages"), "EstimationDistancePage"),
+  },
   // {
   //   path: "estimation-nombre",
   //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "EstimationNombrePage"),

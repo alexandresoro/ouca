@@ -6,9 +6,6 @@ const LieuDitManage = lazy(() => import("../components/manage/lieu-dit/LieuDitMa
 const MeteoManage = lazy(() => import("../components/manage/meteo/MeteoManage"));
 const SexeManage = lazy(() => import("../components/manage/sexe/SexeManage"));
 const EstimationNombreManage = lazy(() => import("../components/manage/estimation-nombre/EstimationNombreManage"));
-const EstimationDistanceManage = lazy(
-  () => import("../components/manage/estimation-distance/EstimationDistanceManage")
-);
 const MilieuManage = lazy(() => import("../components/manage/milieu/MilieuManage"));
 
 /**
@@ -54,14 +51,6 @@ const RoutesManage: FunctionComponent = () => {
         element={
           <Suspense fallback={<></>}>
             <EstimationNombreManage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="estimation-distance/*"
-        element={
-          <Suspense fallback={<></>}>
-            <EstimationDistanceManage />
           </Suspense>
         }
       />
