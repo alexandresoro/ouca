@@ -48,12 +48,12 @@ const DepartementCreate: FunctionComponent<DepartementCreateProps> = ({ onCancel
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertDepartmentInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertDepartmentInput> = (input) => {
     mutate({ body: input });
   };
 
   return (
-    <DepartementEdit title={t("departmentCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />
+    <DepartementEdit title={t("departmentCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />
   );
 };
 

@@ -48,11 +48,11 @@ const MilieuCreate: FunctionComponent<MilieuCreateProps> = ({ onCancel, onSubmit
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertEnvironmentInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertEnvironmentInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <MilieuEdit title={t("environmentCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
+  return <MilieuEdit title={t("environmentCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />;
 };
 
 export default MilieuCreate;

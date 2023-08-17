@@ -48,7 +48,7 @@ const EstimationNombreCreate: FunctionComponent<EstimationNombreCreateProps> = (
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertNumberEstimateInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertNumberEstimateInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -56,7 +56,7 @@ const EstimationNombreCreate: FunctionComponent<EstimationNombreCreateProps> = (
     <EstimationNombreEdit
       title={t("numberPrecisionCreationTitle")}
       onCancel={() => navigate("..")}
-      onSubmit={onSubmitLegacy}
+      onSubmit={handleSubmit}
     />
   );
 };

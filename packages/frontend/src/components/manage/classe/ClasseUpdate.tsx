@@ -76,7 +76,7 @@ const ClasseUpdate: FunctionComponent<ClasseUpdateProps> = ({ onCancel, onSubmit
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertClassInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertClassInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,7 @@ const ClasseUpdate: FunctionComponent<ClasseUpdateProps> = ({ onCancel, onSubmit
           title={t("speciesClassEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

@@ -48,11 +48,11 @@ const AgeCreate: FunctionComponent<AgeCreateProps> = ({ onCancel, onSubmit }) =>
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertAgeInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertAgeInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <AgeEdit title={t("ageCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
+  return <AgeEdit title={t("ageCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />;
 };
 
 export default AgeCreate;

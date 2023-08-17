@@ -76,7 +76,7 @@ const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ onCancel, onSubmit }) =>
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertAgeInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertAgeInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,7 @@ const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ onCancel, onSubmit }) =>
           title={t("ageEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

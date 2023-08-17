@@ -76,7 +76,7 @@ const ObservateurUpdate: FunctionComponent<ObservateurUpdateProps> = ({ onCancel
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertObserverInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertObserverInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,7 @@ const ObservateurUpdate: FunctionComponent<ObservateurUpdateProps> = ({ onCancel
           title={t("observerEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

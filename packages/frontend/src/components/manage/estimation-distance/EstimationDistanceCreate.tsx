@@ -48,11 +48,11 @@ const EstimationDistanceCreate: FunctionComponent<EstimationDistanceCreateProps>
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertDistanceEstimateInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertDistanceEstimateInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <EstimationDistanceEdit title={t("distancePrecisionCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
+  return <EstimationDistanceEdit title={t("distancePrecisionCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />;
 };
 
 export default EstimationDistanceCreate;

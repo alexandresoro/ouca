@@ -76,7 +76,7 @@ const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ onCancel, onSubm
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertTownInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertTownInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,7 @@ const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ onCancel, onSubm
           title={t("townEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

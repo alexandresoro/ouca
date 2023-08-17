@@ -48,11 +48,11 @@ const SexeCreate: FunctionComponent<SexeCreateProps> = ({ onCancel, onSubmit }) 
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertSexInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertSexInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <SexeEdit title={t("sexCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
+  return <SexeEdit title={t("sexCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />;
 };
 
 export default SexeCreate;

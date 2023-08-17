@@ -48,11 +48,11 @@ const EspeceCreate: FunctionComponent<EspeceCreateProps> = ({ onCancel, onSubmit
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertSpeciesInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertSpeciesInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <EspeceEdit title={t("speciesCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
+  return <EspeceEdit title={t("speciesCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />;
 };
 
 export default EspeceCreate;

@@ -97,7 +97,7 @@ const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ onCancel, onSubm
 
   const departmentId = dataTown?.departmentId;
 
-  const onSubmitLegacy: SubmitHandler<UpsertLocalityInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertLocalityInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -124,7 +124,7 @@ const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ onCancel, onSubm
           defaultValues={defaultValues}
           defaultDepartmentId={departmentId}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

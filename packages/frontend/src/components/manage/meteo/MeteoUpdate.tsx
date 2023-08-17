@@ -76,7 +76,7 @@ const MeteoUpdate: FunctionComponent<MeteoUpdateProps> = ({ onCancel, onSubmit }
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertWeatherInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertWeatherInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,7 @@ const MeteoUpdate: FunctionComponent<MeteoUpdateProps> = ({ onCancel, onSubmit }
           title={t("weatherEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

@@ -48,11 +48,11 @@ const LieuDitCreate: FunctionComponent<LieuDitCreateProps> = ({ onCancel, onSubm
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertLocalityInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertLocalityInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <LieuDitEdit title={t("localityCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
+  return <LieuDitEdit title={t("localityCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />;
 };
 
 export default LieuDitCreate;

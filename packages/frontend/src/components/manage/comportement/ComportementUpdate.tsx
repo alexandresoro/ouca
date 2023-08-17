@@ -76,7 +76,7 @@ const ComportementUpdate: FunctionComponent<ComportementUpdateProps> = ({ onCanc
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertBehaviorInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertBehaviorInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,7 @@ const ComportementUpdate: FunctionComponent<ComportementUpdateProps> = ({ onCanc
           title={t("behaviorEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

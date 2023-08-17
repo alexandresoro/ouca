@@ -76,7 +76,7 @@ const EstimationDistanceUpdate: FunctionComponent<EstimationDistanceUpdateProps>
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertDistanceEstimateInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertDistanceEstimateInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -87,7 +87,7 @@ const EstimationDistanceUpdate: FunctionComponent<EstimationDistanceUpdateProps>
   return (
     <>
       {!isLoading && !isError && data && (
-        <EstimationDistanceEdit title={t("distancePrecisionEditionTitle")} defaultValues={data} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />
+        <EstimationDistanceEdit title={t("distancePrecisionEditionTitle")} defaultValues={data} onCancel={() => navigate("..")} onSubmit={handleSubmit} />
       )}
     </>
   );

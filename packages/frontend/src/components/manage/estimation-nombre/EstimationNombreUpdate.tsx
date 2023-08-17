@@ -80,7 +80,7 @@ const EstimationNombreUpdate: FunctionComponent<EstimationNombreProps> = ({ onCa
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertNumberEstimateInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertNumberEstimateInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -95,7 +95,7 @@ const EstimationNombreUpdate: FunctionComponent<EstimationNombreProps> = ({ onCa
           title={t("numberPrecisionEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

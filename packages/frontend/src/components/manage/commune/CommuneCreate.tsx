@@ -48,11 +48,11 @@ const CommuneCreate: FunctionComponent<CommuneCreateProps> = ({ onCancel, onSubm
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertTownInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertTownInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <CommuneEdit title={t("townCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
+  return <CommuneEdit title={t("townCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />;
 };
 
 export default CommuneCreate;

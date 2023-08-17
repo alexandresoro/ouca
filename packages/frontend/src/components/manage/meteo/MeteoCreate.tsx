@@ -48,11 +48,11 @@ const MeteoCreate: FunctionComponent<MeteoCreateProps> = ({ onCancel, onSubmit }
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertWeatherInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertWeatherInput> = (input) => {
     mutate({ body: input });
   };
 
-  return <MeteoEdit title={t("weatherCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
+  return <MeteoEdit title={t("weatherCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />;
 };
 
 export default MeteoCreate;

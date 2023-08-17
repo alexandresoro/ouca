@@ -76,7 +76,7 @@ const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ onCancel, onSubmit }) 
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertSexInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertSexInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -91,7 +91,7 @@ const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ onCancel, onSubmit }) 
           title={t("sexEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

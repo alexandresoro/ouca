@@ -80,7 +80,7 @@ const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ onCancel
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertDepartmentInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertDepartmentInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -95,7 +95,7 @@ const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ onCancel
           title={t("departmentEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>

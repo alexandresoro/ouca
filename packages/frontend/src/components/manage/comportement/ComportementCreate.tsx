@@ -48,12 +48,12 @@ const ComportementCreate: FunctionComponent<ComportementCreateProps> = ({ onCanc
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertBehaviorInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertBehaviorInput> = (input) => {
     mutate({ body: input });
   };
 
   return (
-    <ComportementEdit title={t("behaviorCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />
+    <ComportementEdit title={t("behaviorCreationTitle")} onCancel={() => navigate("..")} onSubmit={handleSubmit} />
   );
 };
 

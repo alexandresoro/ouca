@@ -80,7 +80,7 @@ const MilieuUpdate: FunctionComponent<MilieuUpdateProps> = ({ onCancel, onSubmit
     }
   );
 
-  const onSubmitLegacy: SubmitHandler<UpsertEnvironmentInput> = (input) => {
+  const handleSubmit: SubmitHandler<UpsertEnvironmentInput> = (input) => {
     mutate({ body: input });
   };
 
@@ -95,7 +95,7 @@ const MilieuUpdate: FunctionComponent<MilieuUpdateProps> = ({ onCancel, onSubmit
           title={t("environmentEditionTitle")}
           defaultValues={data}
           onCancel={() => navigate("..")}
-          onSubmit={onSubmitLegacy}
+          onSubmit={handleSubmit}
         />
       )}
     </>
