@@ -1,7 +1,6 @@
 import { Suspense, lazy, type FunctionComponent } from "react";
 import { Route, Routes } from "react-router-dom";
 
-const ObservateurManage = lazy(() => import("../components/manage/observateur/ObservateurManage"));
 const SexeManage = lazy(() => import("../components/manage/sexe/SexeManage"));
 
 /**
@@ -10,14 +9,6 @@ const SexeManage = lazy(() => import("../components/manage/sexe/SexeManage"));
 const RoutesManage: FunctionComponent = () => {
   return (
     <Routes>
-      <Route
-        path="observateur/*"
-        element={
-          <Suspense fallback={<></>}>
-            <ObservateurManage />
-          </Suspense>
-        }
-      />
       <Route
         path="sexe/*"
         element={
