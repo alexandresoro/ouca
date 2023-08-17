@@ -1,4 +1,4 @@
-import { upsertAgeResponse } from "@ou-ca/common/api/age";
+import { upsertAgeResponse, type UpsertAgeInput } from "@ou-ca/common/api/age";
 import { type AgeExtended } from "@ou-ca/common/entities/age";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const AgePage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/ages" });
+  };
+
+  const handleCreateAge = () => {
+    createAge({});
+  };
+
+  const handleUpdateAge = (id: string, input: UpsertAgeInput) => {
+    updateAge({ path: `/ages/${id}`, body: input });
   };
 
   const handleDeleteAge = (ageToDelete: AgeExtended) => {

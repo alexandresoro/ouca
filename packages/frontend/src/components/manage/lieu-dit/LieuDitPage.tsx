@@ -1,4 +1,4 @@
-import { upsertLocalityResponse } from "@ou-ca/common/api/locality";
+import { upsertLocalityResponse, type UpsertLocalityInput } from "@ou-ca/common/api/locality";
 import { type LocalityExtended } from "@ou-ca/common/entities/locality";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const LieuDitPage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/localities" });
+  };
+
+  const handleCreateLocality = () => {
+    createLocality({});
+  };
+
+  const handleUpdateLocality = (id: string, input: UpsertLocalityInput) => {
+    updateLocality({ path: `/localities/${id}`, body: input });
   };
 
   const handleDeleteLocality = (localityToDelete: LocalityExtended) => {

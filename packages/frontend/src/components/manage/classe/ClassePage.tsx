@@ -1,4 +1,4 @@
-import { upsertClassResponse } from "@ou-ca/common/api/species-class";
+import { upsertClassResponse, type UpsertClassInput } from "@ou-ca/common/api/species-class";
 import { type SpeciesClassExtended } from "@ou-ca/common/entities/species-class";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const ClassePage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/classes" });
+  };
+
+  const handleCreateSpeciesClass = () => {
+    createSpeciesClass({});
+  };
+
+  const handleUpdateSpeciesClass = (id: string, input: UpsertClassInput) => {
+    updateSpeciesClass({ path: `/classes/${id}`, body: input });
   };
 
   const handleDeleteSpeciesClass = (speciesClassToDelete: SpeciesClassExtended) => {

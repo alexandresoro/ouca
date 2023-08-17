@@ -1,4 +1,4 @@
-import { upsertBehaviorResponse } from "@ou-ca/common/api/behavior";
+import { upsertBehaviorResponse, type UpsertBehaviorInput } from "@ou-ca/common/api/behavior";
 import { type BehaviorExtended } from "@ou-ca/common/entities/behavior";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const ComportementPage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/behaviors" });
+  };
+
+  const handleCreateBehavior = () => {
+    createBehavior({});
+  };
+
+  const handleUpdateBehavior = (id: string, input: UpsertBehaviorInput) => {
+    updateBehavior({ path: `/behaviors/${id}`, body: input });
   };
 
   const handleDeleteBehavior = (behaviorToDelete: BehaviorExtended) => {

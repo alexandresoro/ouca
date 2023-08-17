@@ -1,4 +1,4 @@
-import { upsertDistanceEstimateResponse } from "@ou-ca/common/api/distance-estimate";
+import { upsertDistanceEstimateResponse, type UpsertDistanceEstimateInput } from "@ou-ca/common/api/distance-estimate";
 import { type DistanceEstimateExtended } from "@ou-ca/common/entities/distance-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const EstimationDistancePage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/distance-estimates" });
+  };
+
+  const handleCreateDistanceEstimate = () => {
+    createDistanceEstimate({});
+  };
+
+  const handleUpdateDistanceEstimate = (id: string, input: UpsertDistanceEstimateInput) => {
+    updateDistanceEstimate({ path: `/distance-estimates/${id}`, body: input });
   };
 
   const handleDeleteDistanceEstimate = (distanceEstimateToDelete: DistanceEstimateExtended) => {

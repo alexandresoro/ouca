@@ -1,4 +1,4 @@
-import { upsertEnvironmentResponse } from "@ou-ca/common/api/environment";
+import { upsertEnvironmentResponse, type UpsertEnvironmentInput } from "@ou-ca/common/api/environment";
 import { type EnvironmentExtended } from "@ou-ca/common/entities/environment";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const MilieuPage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/environments" });
+  };
+
+  const handleCreateEnvironment = () => {
+    createEnvironment({});
+  };
+
+  const handleUpdateEnvironment = (id: string, input: UpsertEnvironmentInput) => {
+    updateEnvironment({ path: `/environments/${id}`, body: input });
   };
 
   const handleDeleteEnvironment = (environmentToDelete: EnvironmentExtended) => {

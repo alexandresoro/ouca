@@ -1,4 +1,4 @@
-import { upsertSexResponse } from "@ou-ca/common/api/sex";
+import { upsertSexResponse, type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type SexExtended } from "@ou-ca/common/entities/sex";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const SexePage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/sexes" });
+  };
+
+  const handleCreateSex = () => {
+    createSex({});
+  };
+
+  const handleUpdateSex = (id: string, input: UpsertSexInput) => {
+    updateSex({ path: `/sexes/${id}`, body: input });
   };
 
   const handleDeleteSex = (sexToDelete: SexExtended) => {

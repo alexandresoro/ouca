@@ -1,4 +1,4 @@
-import { upsertObserverResponse } from "@ou-ca/common/api/observer";
+import { upsertObserverResponse, type UpsertObserverInput } from "@ou-ca/common/api/observer";
 import { type ObserverExtended } from "@ou-ca/common/entities/observer";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -58,7 +58,7 @@ const ObservateurPage: FunctionComponent = () => {
     }
   );
 
-  const { mutate: mutateObserver } = useApiMutation(
+  const { mutate: updateObserver } = useApiMutation(
     {
       method: "PUT",
       schema: upsertObserverResponse,
@@ -125,6 +125,14 @@ const ObservateurPage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/observers" });
+  };
+
+  const handleCreateObserver = () => {
+    createObserver({});
+  };
+
+  const handleUpdateObserver = (id: string, input: UpsertObserverInput) => {
+    updateObserver({ path: `/observers/${id}`, body: input });
   };
 
   const handleDeleteObserver = (observerToDelete: ObserverExtended) => {

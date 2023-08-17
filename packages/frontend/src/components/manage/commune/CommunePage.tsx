@@ -1,4 +1,4 @@
-import { upsertTownResponse } from "@ou-ca/common/api/town";
+import { upsertTownResponse, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { type TownExtended } from "@ou-ca/common/entities/town";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const CommunePage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/towns" });
+  };
+
+  const handleCreateTown = () => {
+    createTown({});
+  };
+
+  const handleUpdateTown = (id: string, input: UpsertTownInput) => {
+    updateTown({ path: `/towns/${id}`, body: input });
   };
 
   const handleDeleteTown = (townToDelete: TownExtended) => {

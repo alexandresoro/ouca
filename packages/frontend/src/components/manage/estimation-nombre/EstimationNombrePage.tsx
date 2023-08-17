@@ -1,4 +1,4 @@
-import { upsertNumberEstimateResponse } from "@ou-ca/common/api/number-estimate";
+import { upsertNumberEstimateResponse, type UpsertNumberEstimateInput } from "@ou-ca/common/api/number-estimate";
 import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estimate";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const EstimationNombrePage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/number-estimates" });
+  };
+
+  const handleCreateNumberEstimate = () => {
+    createNumberEstimate({});
+  };
+
+  const handleUpdateNumberEstimate = (id: string, input: UpsertNumberEstimateInput) => {
+    updateNumberEstimate({ path: `/number-estimates/${id}`, body: input });
   };
 
   const handleDeleteNumberEstimate = (numberEstimateToDelete: NumberEstimateExtended) => {

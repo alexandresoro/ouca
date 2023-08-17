@@ -1,4 +1,4 @@
-import { upsertWeatherResponse } from "@ou-ca/common/api/weather";
+import { upsertWeatherResponse, type UpsertWeatherInput } from "@ou-ca/common/api/weather";
 import { type WeatherExtended } from "@ou-ca/common/entities/weather";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const MeteoPage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/weathers" });
+  };
+
+  const handleCreateWeather = () => {
+    createWeather({});
+  };
+
+  const handleUpdateWeather = (id: string, input: UpsertWeatherInput) => {
+    updateWeather({ path: `/weathers/${id}`, body: input });
   };
 
   const handleDeleteWeather = (weatherToDelete: WeatherExtended) => {

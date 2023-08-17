@@ -1,4 +1,4 @@
-import { upsertSpeciesResponse } from "@ou-ca/common/api/species";
+import { upsertSpeciesResponse, type UpsertSpeciesInput } from "@ou-ca/common/api/species";
 import { type SpeciesExtended } from "@ou-ca/common/entities/species";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const EspecePage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/species" });
+  };
+
+  const handleCreateSpecies = () => {
+    createSpecies({});
+  };
+
+  const handleUpdateSpecies = (id: string, input: UpsertSpeciesInput) => {
+    updateSpecies({ path: `/species/${id}`, body: input });
   };
 
   const handleDeleteSpecies = (speciesToDelete: SpeciesExtended) => {

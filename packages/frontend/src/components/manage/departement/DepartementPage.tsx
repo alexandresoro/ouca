@@ -1,4 +1,4 @@
-import { upsertDepartmentResponse } from "@ou-ca/common/api/department";
+import { upsertDepartmentResponse, type UpsertDepartmentInput } from "@ou-ca/common/api/department";
 import { type DepartmentExtended } from "@ou-ca/common/entities/department";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
@@ -125,6 +125,14 @@ const DepartementPage: FunctionComponent = () => {
 
   const handleExportClick = () => {
     generateExport({ path: "/generate-export/departments" });
+  };
+
+  const handleCreateDepartment = () => {
+    createDepartment({});
+  };
+
+  const handleUpdateDepartment = (id: string, input: UpsertDepartmentInput) => {
+    updateDepartment({ path: `/departments/${id}`, body: input });
   };
 
   const handleDeleteDepartment = (departmentToDelete: DepartmentExtended) => {
