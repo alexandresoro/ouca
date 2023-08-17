@@ -34,10 +34,10 @@ export const routesManage: RouteObject[] = [
     path: "estimation-nombre",
     lazy: lazyComponent(() => import("../components/manage/manage-pages"), "EstimationNombrePage"),
   },
-  // {
-  //   path: "lieudit",
-  //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "LieuDitPage"),
-  // },
+  {
+    path: "lieudit",
+    lazy: lazyComponent(() => import("../components/manage/manage-pages"), "LieuDitPage"),
+  },
   // {
   //   path: "meteo",
   //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "MeteoPage"),
