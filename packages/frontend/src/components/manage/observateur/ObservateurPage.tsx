@@ -12,8 +12,8 @@ import EntityUpsertDialog from "../common/EntityUpsertDialog";
 import ManageTopBar from "../common/ManageTopBar";
 import ObservateurCreate from "./ObservateurCreate";
 import ObservateurDeleteDialog from "./ObservateurDeleteDialog";
-import ObservateurEdit from "./ObservateurEdit";
 import ObservateurTable from "./ObservateurTable";
+import ObservateurUpdate from "./ObservateurUpdate";
 
 const ObservateurPage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -163,7 +163,7 @@ const ObservateurPage: FunctionComponent = () => {
           <ObservateurCreate onCancel={() => setUpsertObserverDialog(null)} onSubmit={handleCreateObserver} />
         )}
         {upsertObserverDialog?.mode === "update" && (
-          <ObservateurEdit onCancel={() => setUpsertObserverDialog(null)} onSubmit={handleUpdateObserver} />
+          <ObservateurUpdate onCancel={() => setUpsertObserverDialog(null)} onSubmit={handleUpdateObserver} />
         )}
       </EntityUpsertDialog>
       <ObservateurDeleteDialog
