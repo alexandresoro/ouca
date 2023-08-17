@@ -3,7 +3,6 @@ import { upsertNumberEstimateInput, type UpsertNumberEstimateInput } from "@ou-c
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import Checkbox from "../../common/styled/Checkbox";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
@@ -21,7 +20,6 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -48,7 +46,7 @@ const EstimationNombreEdit: FunctionComponent<EstimationNombreEditProps> = (prop
               <Checkbox label={t("undefinedNumber")} {...register("nonCompte")} />
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={!isValid || !isDirty}
               />
             </form>

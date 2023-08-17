@@ -52,7 +52,7 @@ const EspeceCreate: FunctionComponent<EspeceCreateProps> = ({ onCancel, onSubmit
     mutate({ body: input });
   };
 
-  return <EspeceEdit title={t("speciesCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return <EspeceEdit title={t("speciesCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
 };
 
 export default EspeceCreate;

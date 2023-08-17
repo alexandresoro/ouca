@@ -4,7 +4,6 @@ import { CERTAIN, POSSIBLE, PROBABLE, type NicheurCode } from "@ou-ca/common/typ
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import FormSelect from "../../common/form/FormSelect";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
@@ -14,7 +13,7 @@ import ManageTopBar from "../common/ManageTopBar";
 type ComportementEditProps = {
   title: string;
   defaultValues?: UpsertBehaviorInput | null;
-  onCancel?: () => void;
+  onCancel: () => void;
   onSubmit: SubmitHandler<UpsertBehaviorInput>;
 };
 
@@ -22,7 +21,6 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -82,7 +80,7 @@ const ComportementEdit: FunctionComponent<ComportementEditProps> = (props) => {
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={!isValid || !isDirty}
               />
             </form>

@@ -87,7 +87,12 @@ const AgeUpdate: FunctionComponent<AgeUpdateProps> = ({ onCancel, onSubmit }) =>
   return (
     <>
       {!isLoading && !isError && data && (
-        <AgeEdit title={t("ageEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmitLegacy} />
+        <AgeEdit
+          title={t("ageEditionTitle")}
+          defaultValues={data}
+          onCancel={() => navigate("..")}
+          onSubmit={onSubmitLegacy}
+        />
       )}
     </>
   );

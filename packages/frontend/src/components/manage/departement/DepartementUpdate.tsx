@@ -94,7 +94,7 @@ const DepartementUpdate: FunctionComponent<DepartementUpdateProps> = ({ onCancel
         <DepartementEdit
           title={t("departmentEditionTitle")}
           defaultValues={data}
-          onCancel={onCancel}
+          onCancel={() => navigate("..")}
           onSubmit={onSubmitLegacy}
         />
       )}

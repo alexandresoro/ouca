@@ -3,7 +3,6 @@ import { upsertSexInput, type UpsertSexInput } from "@ou-ca/common/api/sex";
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
@@ -12,7 +11,7 @@ import ManageTopBar from "../common/ManageTopBar";
 type SexeEditProps = {
   title: string;
   defaultValues?: UpsertSexInput | null;
-  onCancel?: () => void;
+  onCancel: () => void;
   onSubmit: SubmitHandler<UpsertSexInput>;
 };
 
@@ -20,7 +19,6 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -52,7 +50,7 @@ const SexeEdit: FunctionComponent<SexeEditProps> = (props) => {
               />
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={!isValid || !isDirty}
               />
             </form>

@@ -94,7 +94,7 @@ const EstimationNombreUpdate: FunctionComponent<EstimationNombreProps> = ({ onCa
         <EstimationNombreEdit
           title={t("numberPrecisionEditionTitle")}
           defaultValues={data}
-          onCancel={onCancel}
+          onCancel={() => navigate("..")}
           onSubmit={onSubmitLegacy}
         />
       )}

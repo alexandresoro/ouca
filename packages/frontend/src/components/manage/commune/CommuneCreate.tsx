@@ -52,7 +52,7 @@ const CommuneCreate: FunctionComponent<CommuneCreateProps> = ({ onCancel, onSubm
     mutate({ body: input });
   };
 
-  return <CommuneEdit title={t("townCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return <CommuneEdit title={t("townCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
 };
 
 export default CommuneCreate;

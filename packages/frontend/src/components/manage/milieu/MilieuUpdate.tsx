@@ -94,7 +94,7 @@ const MilieuUpdate: FunctionComponent<MilieuUpdateProps> = ({ onCancel, onSubmit
         <MilieuEdit
           title={t("environmentEditionTitle")}
           defaultValues={data}
-          onCancel={onCancel}
+          onCancel={() => navigate("..")}
           onSubmit={onSubmitLegacy}
         />
       )}

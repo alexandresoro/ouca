@@ -52,7 +52,7 @@ const LieuDitCreate: FunctionComponent<LieuDitCreateProps> = ({ onCancel, onSubm
     mutate({ body: input });
   };
 
-  return <LieuDitEdit title={t("localityCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return <LieuDitEdit title={t("localityCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
 };
 
 export default LieuDitCreate;

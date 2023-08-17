@@ -52,7 +52,9 @@ const DepartementCreate: FunctionComponent<DepartementCreateProps> = ({ onCancel
     mutate({ body: input });
   };
 
-  return <DepartementEdit title={t("departmentCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return (
+    <DepartementEdit title={t("departmentCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />
+  );
 };
 
 export default DepartementCreate;

@@ -90,7 +90,7 @@ const MeteoUpdate: FunctionComponent<MeteoUpdateProps> = ({ onCancel, onSubmit }
         <MeteoEdit
           title={t("weatherEditionTitle")}
           defaultValues={data}
-          onCancel={onCancel}
+          onCancel={() => navigate("..")}
           onSubmit={onSubmitLegacy}
         />
       )}

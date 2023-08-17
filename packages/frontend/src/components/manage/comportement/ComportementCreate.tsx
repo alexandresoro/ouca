@@ -52,7 +52,9 @@ const ComportementCreate: FunctionComponent<ComportementCreateProps> = ({ onCanc
     mutate({ body: input });
   };
 
-  return <ComportementEdit title={t("behaviorCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return (
+    <ComportementEdit title={t("behaviorCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />
+  );
 };
 
 export default ComportementCreate;

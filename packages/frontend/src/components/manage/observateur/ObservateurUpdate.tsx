@@ -90,7 +90,7 @@ const ObservateurUpdate: FunctionComponent<ObservateurUpdateProps> = ({ onCancel
         <ObservateurEdit
           title={t("observerEditionTitle")}
           defaultValues={data}
-          onCancel={onCancel}
+          onCancel={() => navigate("..")}
           onSubmit={onSubmitLegacy}
         />
       )}

@@ -52,7 +52,7 @@ const EstimationDistanceCreate: FunctionComponent<EstimationDistanceCreateProps>
     mutate({ body: input });
   };
 
-  return <EstimationDistanceEdit title={t("distancePrecisionCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return <EstimationDistanceEdit title={t("distancePrecisionCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
 };
 
 export default EstimationDistanceCreate;

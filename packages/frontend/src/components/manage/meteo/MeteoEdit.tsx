@@ -3,7 +3,6 @@ import { upsertWeatherInput, type UpsertWeatherInput } from "@ou-ca/common/api/w
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
@@ -12,7 +11,7 @@ import ManageTopBar from "../common/ManageTopBar";
 type MeteoEditProps = {
   title: string;
   defaultValues?: UpsertWeatherInput | null;
-  onCancel?: () => void;
+  onCancel: () => void;
   onSubmit: SubmitHandler<UpsertWeatherInput>;
 };
 
@@ -20,7 +19,6 @@ const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -46,7 +44,7 @@ const MeteoEdit: FunctionComponent<MeteoEditProps> = (props) => {
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={!isValid || !isDirty}
               />
             </form>

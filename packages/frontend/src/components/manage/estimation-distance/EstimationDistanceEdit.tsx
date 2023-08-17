@@ -3,7 +3,6 @@ import { upsertDistanceEstimateInput, type UpsertDistanceEstimateInput } from "@
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
@@ -12,7 +11,7 @@ import ManageTopBar from "../common/ManageTopBar";
 type EstimationDistanceEditProps = {
   title: string;
   defaultValues?: UpsertDistanceEstimateInput | null;
-  onCancel?: () => void;
+  onCancel: () => void;
   onSubmit: SubmitHandler<UpsertDistanceEstimateInput>;
 };
 
@@ -20,7 +19,6 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -50,7 +48,7 @@ const EstimationDistanceEdit: FunctionComponent<EstimationDistanceEditProps> = (
               />
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={!isValid || !isDirty}
               />
             </form>

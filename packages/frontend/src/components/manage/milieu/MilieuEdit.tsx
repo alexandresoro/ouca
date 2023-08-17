@@ -3,7 +3,6 @@ import { upsertEnvironmentInput, type UpsertEnvironmentInput } from "@ou-ca/comm
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
@@ -12,7 +11,7 @@ import ManageTopBar from "../common/ManageTopBar";
 type MilieuEditProps = {
   title: string;
   defaultValues?: UpsertEnvironmentInput | null;
-  onCancel?: () => void;
+  onCancel: () => void;
   onSubmit: SubmitHandler<UpsertEnvironmentInput>;
 };
 
@@ -20,7 +19,6 @@ const MilieuEdit: FunctionComponent<MilieuEditProps> = (props) => {
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -49,7 +47,7 @@ const MilieuEdit: FunctionComponent<MilieuEditProps> = (props) => {
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={!isValid || !isDirty}
               />
             </form>

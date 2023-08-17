@@ -52,7 +52,7 @@ const MilieuCreate: FunctionComponent<MilieuCreateProps> = ({ onCancel, onSubmit
     mutate({ body: input });
   };
 
-  return <MilieuEdit title={t("environmentCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return <MilieuEdit title={t("environmentCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
 };
 
 export default MilieuCreate;

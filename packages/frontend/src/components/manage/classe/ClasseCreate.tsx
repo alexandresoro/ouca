@@ -52,7 +52,9 @@ const ClasseCreate: FunctionComponent<ClasseCreateProps> = ({ onCancel, onSubmit
     mutate({ body: input });
   };
 
-  return <ClasseEdit title={t("speciesClassCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return (
+    <ClasseEdit title={t("speciesClassCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />
+  );
 };
 
 export default ClasseCreate;

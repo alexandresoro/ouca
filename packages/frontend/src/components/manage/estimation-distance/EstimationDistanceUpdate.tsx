@@ -87,7 +87,7 @@ const EstimationDistanceUpdate: FunctionComponent<EstimationDistanceUpdateProps>
   return (
     <>
       {!isLoading && !isError && data && (
-        <EstimationDistanceEdit title={t("distancePrecisionEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmitLegacy} />
+        <EstimationDistanceEdit title={t("distancePrecisionEditionTitle")} defaultValues={data} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />
       )}
     </>
   );

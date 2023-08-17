@@ -90,7 +90,7 @@ const EspeceUpdate: FunctionComponent<EspeceUpdateProps> = ({ onCancel, onSubmit
         <EspeceEdit
           title={t("speciesEditionTitle")}
           defaultValues={{ ...data, classId: data.classId ?? undefined }}
-          onCancel={onCancel}
+          onCancel={() => navigate("..")}
           onSubmit={onSubmitLegacy}
         />
       )}

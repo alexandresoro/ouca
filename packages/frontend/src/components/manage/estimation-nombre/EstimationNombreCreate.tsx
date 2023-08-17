@@ -53,7 +53,11 @@ const EstimationNombreCreate: FunctionComponent<EstimationNombreCreateProps> = (
   };
 
   return (
-    <EstimationNombreEdit title={t("numberPrecisionCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />
+    <EstimationNombreEdit
+      title={t("numberPrecisionCreationTitle")}
+      onCancel={() => navigate("..")}
+      onSubmit={onSubmitLegacy}
+    />
   );
 };
 

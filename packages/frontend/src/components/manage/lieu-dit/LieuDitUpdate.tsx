@@ -123,7 +123,7 @@ const LieuDitUpdate: FunctionComponent<LieuDitUpdateProps> = ({ onCancel, onSubm
           title={t("localityEditionTitle")}
           defaultValues={defaultValues}
           defaultDepartmentId={departmentId}
-          onCancel={onCancel}
+          onCancel={() => navigate("..")}
           onSubmit={onSubmitLegacy}
         />
       )}

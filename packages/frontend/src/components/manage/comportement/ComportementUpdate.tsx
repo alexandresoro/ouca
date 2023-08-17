@@ -90,7 +90,7 @@ const ComportementUpdate: FunctionComponent<ComportementUpdateProps> = ({ onCanc
         <ComportementEdit
           title={t("behaviorEditionTitle")}
           defaultValues={data}
-          onCancel={onCancel}
+          onCancel={() => navigate("..")}
           onSubmit={onSubmitLegacy}
         />
       )}

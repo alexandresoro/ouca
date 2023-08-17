@@ -52,7 +52,9 @@ const ObservateurCreate: FunctionComponent<ObservateurCreateProps> = ({ onCancel
     mutate({ body: input });
   };
 
-  return <ObservateurEdit title={t("observerCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return (
+    <ObservateurEdit title={t("observerCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />
+  );
 };
 
 export default ObservateurCreate;

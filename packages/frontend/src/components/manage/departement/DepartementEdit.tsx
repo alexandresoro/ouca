@@ -3,7 +3,6 @@ import { upsertDepartmentInput, type UpsertDepartmentInput } from "@ou-ca/common
 import { type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import TextInput from "../../common/styled/TextInput";
 import ContentContainerLayout from "../../layout/ContentContainerLayout";
 import EntityUpsertFormActionButtons from "../common/EntityUpsertFormActionButtons";
@@ -12,7 +11,7 @@ import ManageTopBar from "../common/ManageTopBar";
 type DepartementEditProps = {
   title: string;
   defaultValues?: UpsertDepartmentInput | null;
-  onCancel?: () => void;
+  onCancel: () => void;
   onSubmit: SubmitHandler<UpsertDepartmentInput>;
 };
 
@@ -20,7 +19,6 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -46,7 +44,7 @@ const DepartementEdit: FunctionComponent<DepartementEditProps> = (props) => {
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={!isValid || !isDirty}
               />
             </form>

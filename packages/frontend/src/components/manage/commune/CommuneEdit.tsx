@@ -4,7 +4,6 @@ import { upsertTownInput, type UpsertTownInput } from "@ou-ca/common/api/town";
 import { useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
@@ -16,7 +15,7 @@ import ManageTopBar from "../common/ManageTopBar";
 type CommuneEditProps = {
   title: string;
   defaultValues?: UpsertTownInput | null;
-  onCancel?: () => void;
+  onCancel: () => void;
   onSubmit: SubmitHandler<UpsertTownInput>;
 };
 
@@ -24,7 +23,6 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -93,7 +91,7 @@ const CommuneEdit: FunctionComponent<CommuneEditProps> = (props) => {
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={fetchingDepartements || !isValid || !isDirty}
               />
             </form>

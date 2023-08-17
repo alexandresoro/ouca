@@ -87,7 +87,12 @@ const SexeUpdate: FunctionComponent<SexeUpdateProps> = ({ onCancel, onSubmit }) 
   return (
     <>
       {!isLoading && !isError && data && (
-        <SexeEdit title={t("sexEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmitLegacy} />
+        <SexeEdit
+          title={t("sexEditionTitle")}
+          defaultValues={data}
+          onCancel={() => navigate("..")}
+          onSubmit={onSubmitLegacy}
+        />
       )}
     </>
   );

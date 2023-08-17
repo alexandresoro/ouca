@@ -87,7 +87,12 @@ const CommuneUpdate: FunctionComponent<CommuneUpdateProps> = ({ onCancel, onSubm
   return (
     <>
       {!isLoading && !isError && data && (
-        <CommuneEdit title={t("townEditionTitle")} defaultValues={data} onCancel={onCancel} onSubmit={onSubmitLegacy} />
+        <CommuneEdit
+          title={t("townEditionTitle")}
+          defaultValues={data}
+          onCancel={() => navigate("..")}
+          onSubmit={onSubmitLegacy}
+        />
       )}
     </>
   );

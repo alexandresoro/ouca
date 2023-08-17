@@ -52,7 +52,7 @@ const MeteoCreate: FunctionComponent<MeteoCreateProps> = ({ onCancel, onSubmit }
     mutate({ body: input });
   };
 
-  return <MeteoEdit title={t("weatherCreationTitle")} onCancel={onCancel} onSubmit={onSubmitLegacy} />;
+  return <MeteoEdit title={t("weatherCreationTitle")} onCancel={() => navigate("..")} onSubmit={onSubmitLegacy} />;
 };
 
 export default MeteoCreate;

@@ -4,7 +4,6 @@ import { getClassesResponse } from "@ou-ca/common/api/species-class";
 import { useEffect, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
@@ -16,7 +15,7 @@ import ManageTopBar from "../common/ManageTopBar";
 type EspeceEditProps = {
   title: string;
   defaultValues?: (Omit<UpsertSpeciesInput, "classId"> & { classId?: string }) | null;
-  onCancel?: () => void;
+  onCancel: () => void;
   onSubmit: SubmitHandler<UpsertSpeciesInput>;
 };
 
@@ -24,7 +23,6 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
   const { title, defaultValues, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -95,7 +93,7 @@ const EspeceEdit: FunctionComponent<EspeceEditProps> = (props) => {
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={fetchingClasses || !isValid || !isDirty}
               />
             </form>

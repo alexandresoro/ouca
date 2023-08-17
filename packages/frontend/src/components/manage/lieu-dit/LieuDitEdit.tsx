@@ -6,7 +6,6 @@ import { type Department } from "@ou-ca/common/entities/department";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiQuery from "../../../hooks/api/useApiQuery";
 import useSnackbar from "../../../hooks/useSnackbar";
 import FormSelect from "../../common/form/FormSelect";
@@ -28,7 +27,6 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
   const { title, defaultValues, defaultDepartmentId, onCancel, onSubmit } = props;
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const {
     register,
@@ -192,7 +190,7 @@ const LieuDitEdit: FunctionComponent<LieuDitEditProps> = (props) => {
 
               <EntityUpsertFormActionButtons
                 className="mt-6"
-                onCancelClick={() => navigate("..")}
+                onCancelClick={onCancel}
                 disabled={fetchingTowns || fetchingDepartements || !isValid || !isDirty}
               />
             </form>
