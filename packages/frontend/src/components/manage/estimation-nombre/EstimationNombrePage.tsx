@@ -3,7 +3,6 @@ import { type NumberEstimateExtended } from "@ou-ca/common/entities/number-estim
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import useApiExportEntities from "../../../hooks/api/useApiExportEntities";
 import useApiMutation from "../../../hooks/api/useApiMutation";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -17,7 +16,6 @@ import EstimationNombreUpdate from "./EstimationNombreUpdate";
 
 const EstimationNombrePage: FunctionComponent = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -122,8 +120,7 @@ const EstimationNombrePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertNumberEstimateDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertNumberEstimateDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +141,7 @@ const EstimationNombrePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("numberPrecisions")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("numberPrecisions")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <EstimationNombreTable
           onClickUpdateNumberEstimate={handleUpdateClick}
@@ -170,6 +167,7 @@ const EstimationNombrePage: FunctionComponent = () => {
         )}
         {upsertNumberEstimateDialog?.mode === "update" && (
           <EstimationNombreUpdate
+            id={upsertNumberEstimateDialog.id}
             onCancel={() => setUpsertNumberEstimateDialog(null)}
             onSubmit={handleUpdateNumberEstimate}
           />
