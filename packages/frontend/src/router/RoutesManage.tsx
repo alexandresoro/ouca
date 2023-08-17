@@ -6,7 +6,6 @@ const DepartementManage = lazy(() => import("../components/manage/departement/De
 const CommuneManage = lazy(() => import("../components/manage/commune/CommuneManage"));
 const LieuDitManage = lazy(() => import("../components/manage/lieu-dit/LieuDitManage"));
 const MeteoManage = lazy(() => import("../components/manage/meteo/MeteoManage"));
-const ClasseManage = lazy(() => import("../components/manage/classe/ClasseManage"));
 const EspeceManage = lazy(() => import("../components/manage/espece/EspeceManage"));
 const SexeManage = lazy(() => import("../components/manage/sexe/SexeManage"));
 const EstimationNombreManage = lazy(() => import("../components/manage/estimation-nombre/EstimationNombreManage"));
@@ -59,14 +58,6 @@ const RoutesManage: FunctionComponent = () => {
         element={
           <Suspense fallback={<></>}>
             <MeteoManage />
-          </Suspense>
-        }
-      />
-      <Route
-        path="classe/*"
-        element={
-          <Suspense fallback={<></>}>
-            <ClasseManage />
           </Suspense>
         }
       />

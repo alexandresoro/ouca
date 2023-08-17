@@ -122,8 +122,7 @@ const ClassePage: FunctionComponent = () => {
   };
 
   const handleUpdateClick = (id: string) => {
-    // setUpsertSpeciesClassDialog({ mode: "update", id });
-    navigate(`edit/${id}`);
+    setUpsertSpeciesClassDialog({ mode: "update", id });
   };
 
   const handleExportClick = () => {
@@ -144,7 +143,7 @@ const ClassePage: FunctionComponent = () => {
 
   return (
     <>
-      <ManageTopBar title={t("speciesClasses")} onClickExport={handleExportClick} />
+      <ManageTopBar title={t("speciesClasses")} onClickCreate={handleCreateClick} onClickExport={handleExportClick} />
       <ContentContainerLayout>
         <ClasseTable
           onClickUpdateSpeciesClass={handleUpdateClick}
@@ -166,7 +165,11 @@ const ClassePage: FunctionComponent = () => {
           <ClasseCreate onCancel={() => setUpsertSpeciesClassDialog(null)} onSubmit={handleCreateSpeciesClass} />
         )}
         {upsertSpeciesClassDialog?.mode === "update" && (
-          <ClasseUpdate onCancel={() => setUpsertSpeciesClassDialog(null)} onSubmit={handleUpdateSpeciesClass} />
+          <ClasseUpdate
+            id={upsertSpeciesClassDialog.id}
+            onCancel={() => setUpsertSpeciesClassDialog(null)}
+            onSubmit={handleUpdateSpeciesClass}
+          />
         )}
       </EntityUpsertDialog>
       <ClasseDeleteDialog

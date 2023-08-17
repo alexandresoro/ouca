@@ -6,10 +6,10 @@ export const routesManage: RouteObject[] = [
     path: "age",
     lazy: lazyComponent(() => import("../components/manage/manage-pages"), "AgePage"),
   },
-  // {
-  //   path: "classe",
-  //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "ClassePage"),
-  // },
+  {
+    path: "classe",
+    lazy: lazyComponent(() => import("../components/manage/manage-pages"), "ClassePage"),
+  },
   // {
   //   path: "commune",
   //   lazy: lazyComponent(() => import("../components/manage/manage-pages"), "CommunePage"),
